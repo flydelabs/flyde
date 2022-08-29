@@ -1,7 +1,7 @@
 {
   "name": "@flyde/editor",
-  "version": "0.1.0",
-  "private": true,
+  "version": "1.0.0",
+  "private": false,
   "proxy": "http://localhost:8484",
   "dependencies": {
     "@blueprintjs/core": "^3.11.0",
