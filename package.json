@@ -33,7 +33,7 @@
     "website",
     "examples/*",
     "flyde-vscode-extension",
-    "integrated-editor",
+    "editor",
     "remote-debugger"
   ],
   "packageManager": "yarn@3.2.0"
