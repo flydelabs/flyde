@@ -9,6 +9,11 @@ const basePath3 = path.join(__dirname, "../../../node_modules/react-scripts");
 
 const basePath = [basePath1, basePath2, basePath3].find((p) => fs.existsSync(p));
 
+if (!basePath) {
+  // cannot find react-scripts folder to monkey patch, relevant only for Flyde development
+  return;
+}
+
 const webpackConfig = path.join(basePath, "config/webpack.config.js");
 
 const patchedConfig = path.join(__dirname, "webpack.config.patched.js");
