@@ -1,0 +1,169 @@
+imports:
+  "@flyde/stdlib":
+    - name: Debounce
+      alias: Debounce
+    - name: Throttle
+      alias: Throttle
+exports: []
+mainId: Main
+parts:
+  Main:
+    id: Main
+    inputs:
+      click:
+        mode: required
+        type: any
+    outputs:
+      result:
+        type: any
+    inputsPosition:
+      click:
+        x: 469.29
+        y: 217.81
+      ggg:
+        x: 8.112505244875974
+        y: 489.6946435546802
+    outputsPosition:
+      result:
+        x: 520.3483764808892
+        y: 782.3317382066446
+      bb:
+        x: -119.26
+        y: 783.62
+    completionOutputs: []
+    reactiveInputs:
+      - click
+    instances:
+      - partId: Debounce
+        pos:
+          x: 629.034691619873
+          y: 374.0604626464844
+        id: Debounce-194-d108
+        inputConfig:
+          ms:
+            mode: static
+            value: 1500
+        visibleInputs:
+          - i
+      - partId: Throttle
+        pos:
+          x: 263.14565002441407
+          y: 370.5749322509766
+        id: Throttle-652
+        inputConfig:
+          threshold:
+            mode: static
+            value: 4000
+      - partId: Inline Code 49743
+        pos:
+          x: 585.4111373901367
+          y: 526.6986157226562
+        id: Inline Code 49743-659
+        inputConfig: {}
+      - partId: Inline Code 86171
+        pos:
+          x: 180.43777160644527
+          y: 541.9656292724609
+        id: Inline Code 49743-659-d371
+        inputConfig: {}
+    connections:
+      - from:
+          insId: __this
+          pinId: click
+        to:
+          insId: Throttle-652
+          pinId: value
+      - from:
+          insId: __this
+          pinId: click
+        to:
+          insId: Debounce-194-d108
+          pinId: i
+      - from:
+          insId: Inline Code 49743-659
+          pinId: r
+        to:
+          insId: __this
+          pinId: result
+      - from:
+          insId: Inline Code 49743-659-d371
+          pinId: r
+        to:
+          insId: __this
+          pinId: result
+      - from:
+          insId: Debounce-194-d108
+          pinId: r
+        to:
+          insId: Inline Code 49743-659
+          pinId: val
+      - from:
+          insId: Throttle-652
+          pinId: result
+        to:
+          insId: Inline Code 49743-659-d371
+          pinId: val
+  Inline Code 37961:
+    id: Inline Code 37961
+    inputs:
+      a:
+        mode: required
+        type: any
+      b:
+        mode: required
+        type: any
+    outputs:
+      r:
+        type: any
+    customViewCode: "`Result is ${inputs.a + inputs.b}`"
+    dataBuilderSource: YFJlc3VsdCBpcyAke2lucHV0cy5hICsgaW5wdXRzLmJ9YA==
+    templateType: value
+    completionOutputs:
+      - r
+    fnCode: outputs.r.next((`Result is ${inputs.a + inputs.b}`))
+  Inline Code 49743:
+    id: Inline Code 49743
+    inputs:
+      val:
+        mode: required
+        type: any
+    outputs:
+      r:
+        type: any
+    customViewCode: "`Debounce - ${inputs.val}`"
+    dataBuilderSource: YERlYm91bmNlIC0gJHtpbnB1dHMudmFsfWA=
+    templateType: value
+    completionOutputs:
+      - r
+    fnCode: outputs.r.next((`Debounce - ${inputs.val}`))
+  Inline Code 60713:
+    id: Inline Code 60713
+    inputs:
+      val:
+        mode: required
+        type: any
+    outputs:
+      r:
+        type: any
+    customViewCode: "`Debounced #2 ${inputs.val}`"
+    dataBuilderSource: YERlYm91bmNlZCAjMiAke2lucHV0cy52YWx9YA==
+    templateType: value
+    completionOutputs:
+      - r
+    fnCode: "outputs.r.next((`Debounced #2 ${inputs.val}`))"
+  Inline Code 86171:
+    id: Inline Code 86171
+    inputs:
+      val:
+        mode: required
+        type: any
+    outputs:
+      r:
+        type: any
+    customViewCode: "`Thtrottled - ${inputs.val}`"
+    dataBuilderSource: YFRodHJvdHRsZWQgLSAke2lucHV0cy52YWx9YA==
+    templateType: value
+    completionOutputs:
+      - r
+    fnCode: outputs.r.next((`Thtrottled - ${inputs.val}`))
+exposedFunctionality: []

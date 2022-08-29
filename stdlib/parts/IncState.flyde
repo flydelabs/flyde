@@ -1,0 +1,119 @@
+imports: {}
+exports:
+  - IncState
+parts:
+  IncState:
+    id: IncState
+    inputs:
+      key:
+        mode: required
+        type: any
+      val:
+        mode: required-if-connected
+        type: any
+    outputs:
+      r:
+        type: any
+    inputsPosition:
+      key:
+        x: -76.65097432304756
+        y: 5.896224966039105
+      val:
+        x: 369.1542438417885
+        y: -3.731338322790656
+    outputsPosition:
+      r:
+        x: 251.0626870006079
+        y: 683.6652230620817
+    completionOutputs:
+      - r
+    instances:
+      - partId: GetState
+        pos:
+          x: 22.655526123046855
+          y: 152.19640151977538
+        id: GetState-837
+        inputConfig: {}
+      - partId: Transform
+        pos:
+          x: 268.38306884765626
+          y: 258.5248794555664
+        id: Transform-49
+        inputConfig:
+          to:
+            mode: static
+            value: 0
+      - partId: Merge
+        pos:
+          x: 67.4421728515625
+          y: 373.56526992797853
+        id: Merge-843
+        inputConfig: {}
+      - partId: Add
+        pos:
+          x: 116.54649902343749
+          y: 531.4074108886718
+        id: Add-627
+        inputConfig: {}
+      - partId: SetState
+        pos:
+          x: -151.1680419921875
+          y: 662.9141485595703
+        id: SetState-795
+        inputConfig: {}
+    connections:
+      - from:
+          insId: __this
+          pinId: key
+        to:
+          insId: GetState-837
+          pinId: key
+      - from:
+          insId: GetState-837
+          pinId: err
+        to:
+          insId: Transform-49
+          pinId: from
+      - from:
+          insId: GetState-837
+          pinId: r
+        to:
+          insId: Merge-843
+          pinId: a
+      - from:
+          insId: Transform-49
+          pinId: r
+        to:
+          insId: Merge-843
+          pinId: b
+      - from:
+          insId: __this
+          pinId: val
+        to:
+          insId: Add-627
+          pinId: n2
+      - from:
+          insId: Merge-843
+          pinId: r
+        to:
+          insId: Add-627
+          pinId: n1
+      - from:
+          insId: __this
+          pinId: key
+        to:
+          insId: SetState-795
+          pinId: key
+      - from:
+          insId: Add-627
+          pinId: r
+        to:
+          insId: SetState-795
+          pinId: value
+      - from:
+          insId: Add-627
+          pinId: r
+        to:
+          insId: __this
+          pinId: r
+exposedFunctionality: []

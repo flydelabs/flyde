@@ -1,0 +1,54 @@
+imports: {}
+exports:
+  - HOP_ScanValue-284_onValue
+parts:
+  HOP_ScanValue-284_onValue:
+    id: HOP_ScanValue-284_onValue
+    inputs:
+      prevValue:
+        mode: required
+        type: any
+      currValue:
+        mode: required
+        type: any
+    outputs:
+      newVal:
+        type: any
+    inputsPosition:
+      currValue:
+        x: -80.00001534301744
+        y: -230.90908896113217
+      prevValue:
+        x: 244.5454744314122
+        y: -175.4545333326883
+    outputsPosition:
+      newVal:
+        x: -25.454545454545453
+        y: 182.72726516093104
+    instances:
+      - partId: Add
+        pos:
+          x: 18.159999999999997
+          y: -68.91
+        id: Add-110
+        inputConfig: {}
+    connections:
+      - from:
+          insId: __this
+          pinId: prevValue
+        to:
+          insId: Add-110
+          pinId: n2
+      - from:
+          insId: __this
+          pinId: currValue
+        to:
+          insId: Add-110
+          pinId: n1
+      - from:
+          insId: Add-110
+          pinId: r
+        to:
+          insId: __this
+          pinId: newVal
+exposedFunctionality: []

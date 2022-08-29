@@ -1,0 +1,77 @@
+exports:
+  - Add1
+parts:
+  Add3Nums:
+    inputs:
+        n1: number
+        n2: number
+        n3: number
+    outputs:
+        r:
+          type: number
+    fnCode: "ref:./code/fn.js"
+  Add42:
+    inputs:
+      n1: "number"
+      n2: "number"
+    outputs: 
+      r: "number"
+    instances: 
+      - id: "ins"
+        pos:
+          x: 0
+          y: 0
+        partId: "Add3Nums"
+        inputConfig:
+          n3:
+            mode: "static"
+            value: 42
+    connections:
+      - from:
+          pinId: "n1"
+          insId: "__this"
+        to:
+          pinId: "n1"
+          insId: "ins"
+      - from:
+          pinId: "n2"
+          insId: "__this"
+        to:
+          pinId: "n2"
+          insId: "ins"
+      - from:
+          pinId: "r"
+          insId: "ins"
+        to:
+          pinId: "r"
+          insId: "__this"
+  Add42And73:
+    inputs:
+      n1: "number"
+    outputs: 
+      r: "number"
+    instances: 
+      - id: "ins"
+        pos:
+          x: 0
+          y: 0
+        partId: "Add42"
+        inputConfig:
+          n2:
+            mode: "static"
+            value: 73
+    connections:
+      - from:
+          pinId: "n1"
+          insId: "__this"
+        to:
+          pinId: "n1"
+          insId: "ins"
+      - from:
+          pinId: "r"
+          insId: "ins"
+        to:
+          pinId: "r"
+          insId: "__this"
+
+

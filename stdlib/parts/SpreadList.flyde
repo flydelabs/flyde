@@ -1,0 +1,27 @@
+imports: {}
+exports:
+  - SpreadList
+parts:
+  SpreadList:
+    id: SpreadList
+    inputs:
+      list:
+        mode: required
+        type: any
+    outputs:
+      length:
+        type: any
+      idx:
+        type: any
+      val:
+        type: any
+    fnCode: |-
+      // magic here
+      const { list } = inputs;
+      const { val, idx, length } = outputs;
+      length.next(list.length);
+      list.forEach((v, i) => {
+          val.next(v);
+          idx.next(i);
+      });
+exposedFunctionality: []

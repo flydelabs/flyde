@@ -1,0 +1,19 @@
+imports: {}
+exports:
+  - Publish
+parts:
+  Publish:
+    id: Publish
+    inputs:
+      key:
+        mode: required
+        type: any
+      value:
+        mode: required
+        type: any
+    outputs: {}
+    fnCode: |-
+      // magic here
+
+      PubSub.publish(inputs.key, inputs.value);
+exposedFunctionality: []

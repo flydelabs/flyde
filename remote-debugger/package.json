@@ -1,0 +1,30 @@
+{
+  "name": "@flyde/remote-debugger",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "build-ts": "tsc -p .",
+    "start": "concurrently 'ts-node-dev src/cli.ts' 'npm run watch'",
+    "bts": "tsc -p .",
+    "build": "rm -rf dist && tsc -p .",
+    "watch": "tsc -p . -w --incremental"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/runtime": "^7.8.4",
+    "@flyde/core": "^1.0.0",
+    "@socket.io/admin-ui": "^0.2.0",
+    "@types/express": "^4.16.1",
+    "@types/node": "^11.10.5",
+    "concurrently": "^4.1.0",
+    "express": "^4.16.4",
+    "serialize-error": "^8.1.0",
+    "socket.io": "^4.0.0",
+    "socket.io-client": "^4.0.0",
+    "ts-node-dev": "^1.0.0-pre.32",
+    "typescript": "^4.0.0"
+  }
+}

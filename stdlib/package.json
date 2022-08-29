@@ -1,0 +1,33 @@
+{
+    "name": "@flyde/stdlib",
+    "version": "1.0.0",
+    "description": "Flyde's StdLib",
+    "flyde": {
+        "exposes": [
+            "parts/*.flyde"
+        ],
+        "typings": "flyde-typings.d.ts"
+    },
+    "main": "dist/index.js",
+    "typings": "dist/index.d.ts",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "echo": "echo 'no watch'",
+        "build": "echo 'no build'",
+        "prod": "node dist/index.js",
+        "start": "concurrently 'flyde --port=8383'",
+        "watch": "yarn run start"
+    },
+    "author": "Flyde",
+    "license": "ISC",
+    "dependencies": {
+        "@flyde/core": "^1.0.0",
+        "@flyde/dev-server": "workspace:^",
+        "@flyde/runtime": "workspace:^"
+    },
+    "devDependencies": {
+        "concurrently": "^7.3.0",
+        "ts-node-dev": "^1.0.0-pre.32",
+        "typescript": "^4.0.0"
+    }
+}

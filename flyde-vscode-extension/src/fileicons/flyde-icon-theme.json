@@ -1,0 +1,10 @@
+{
+    "iconDefinitions": {
+        "_flyde_dark": {
+          "iconPath": "./flyde_vscode_dark.svg"
+        }
+    },
+  "fileExtensions": {
+    "flyde": "_flyde_dark"
+  }
+}

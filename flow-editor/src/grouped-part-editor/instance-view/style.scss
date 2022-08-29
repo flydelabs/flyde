@@ -1,0 +1,119 @@
+$const-color: #FCF0FF;
+
+$trigger-pin-width: 40px;
+$half-of-pin-height: 16px;
+
+.ins-view {
+  display: inline-block;
+  position: absolute;
+
+  .inputs,
+  .outputs {
+    display: flex;
+    width: 100%;
+    align-content: space-between;
+    align-items: center;
+    justify-content: space-around;
+  }
+
+  // .inputs {
+  //   padding-right: $trigger-pin-width + 10px;
+
+  //   .pin[data-pin-id="__trigger"] {
+  //     position: absolute;
+  //     right: 0px;
+  //   }
+  // }
+}
+
+.ins-vp-fixer {
+  transform-origin: top left;
+  will-change: transform;
+}
+
+.ins-view-wrapper {
+  position: absolute;
+  transform-origin: top left;
+}
+
+.ins-view {
+  transform-origin: top left;
+  display: inline-block;
+  position: absolute;
+  transition: box-shadow ease-in-out 0.5s;
+  will-change: transform, width;
+  z-index: 1;
+
+  &.display-mode {
+    position: initial;
+  }
+
+  &.dragged {
+    opacity: 0.8;
+  }
+  
+  &.no-inputs {
+    padding-top: 15px;
+  }
+  
+  &.no-outputs {
+    padding-bottom: 15px;
+  }
+
+  .pin {
+    transition: transform 0.1s ease-in-out;
+  }
+
+  &:not(:hover) {
+    &:not(.force-minimized-input) {
+      .pin.input.minimized:not(.selected) {
+        // the -half of pin thing + scale Y 0 is for the connections to be drawn to the center of the intance
+        transform: translateY(calc(100% - #{$half-of-pin-height})) scaleY(0);
+      }
+    }
+  
+    &:not(.force-minimized-output) {
+      .pin.output.minimized:not(.selected) {
+        // the -half of pin thing + scale Y 0 is for the connections to be drawn to the center of the intance
+        transform: translateY(calc(-100% + #{$half-of-pin-height})) scaleY(0);
+      }
+    }
+  }
+
+
+  &[data-part-id="Pick"],
+  &[data-part-id="Dot"] {
+  
+    .base-part-view-inner {
+      font-size: 18px;
+      padding: 2px 8px;
+      background: #f2fdff;
+      line-height: 20px;
+    }
+  }
+
+  &[data-part-id^="Inline Code"] {  
+    .base-part-view-inner {
+      font-size: 18px;
+      padding: 2px 8px;
+      line-height: 20px;
+      font-weight: 400;
+      font-family: monospace;
+    }
+
+    .base-part-view:not(.selected) {
+      .base-part-view-inner {
+        background: #e9e9e9;
+        color: #000000;
+      }
+    }
+
+  }
+      // background
+    // .ins-view-inner {
+      // background: #007EC6;
+      // color: white;
+    // }
+}
+
+

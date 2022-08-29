@@ -1,0 +1,540 @@
+imports: {}
+exports: []
+mainId: Main
+parts:
+  Main:
+    id: Main
+    inputs:
+      formData:
+        mode: required
+        type: any
+    outputs:
+      result: any
+    inputsPosition:
+      formData:
+        x: 29.192659127886166
+        y: -569.0034642450744
+    outputsPosition:
+      result:
+        x: 99.12938771377732
+        y: 494.51463059444563
+    instances:
+      - partId: CRM.getUserByEmail
+        pos:
+          x: -209.39634765625
+          y: -361.3827197265625
+        id: CRM.getUserByEmail-143
+        inputConfig: {}
+      - partId: Dot
+        pos:
+          x: -190.54316162109376
+          y: -437.61596923828125
+        id: Dot-966
+        inputConfig:
+          key:
+            mode: static
+            value: email
+      - partId: Dot
+        pos:
+          x: 321.46758056640624
+          y: -456.225771484375
+        id: Dot-966-d839
+        inputConfig:
+          key:
+            mode: static
+            value: amount
+      - partId: Dot
+        pos:
+          x: -68.43030761718751
+          y: -267.42432861328126
+        id: Dot-241
+        inputConfig:
+          key:
+            mode: static
+            value: id
+      - partId: Inline Code 14302
+        pos:
+          x: 191.6616796875
+          y: 324.06435333251954
+        id: Inline Code 14302-197-d838
+        inputConfig: {}
+      - partId: Inline Code 40721
+        pos:
+          x: -114.3210986328125
+          y: 306.1920185852051
+        id: Inline Code 40721-776
+        inputConfig: {}
+      - partId: RiskService.calculateRisk
+        pos:
+          x: 197.20525512695312
+          y: -143.28453857421874
+        id: RiskService.calculateRisk-687
+        inputConfig: {}
+      - partId: CreditService.getCredit
+        pos:
+          x: -207.16667724609374
+          y: -113.90080078125001
+        id: CreditService.getCredit-978
+        inputConfig: {}
+      - partId: Inline Code 90963
+        pos:
+          x: -99.50531982421876
+          y: 42.52135681152345
+        id: Inline Code 90963-281
+        inputConfig: {}
+        visibleInputs:
+          - credit
+          - risk
+      - partId: Boolean Split
+        pos:
+          x: 45.76263671875
+          y: 166.08981628417973
+        id: Boolean Split-898
+        inputConfig: {}
+    connections:
+      - from:
+          insId: __this
+          pinId: formData
+        to:
+          insId: Dot-966
+          pinId: obj
+      - from:
+          insId: Dot-966
+          pinId: value
+        to:
+          insId: CRM.getUserByEmail-143
+          pinId: email
+      - from:
+          insId: __this
+          pinId: formData
+        to:
+          insId: Dot-966-d839
+          pinId: obj
+      - from:
+          insId: CRM.getUserByEmail-143
+          pinId: result
+        to:
+          insId: Dot-241
+          pinId: obj
+      - from:
+          insId: Inline Code 14302-197-d838
+          pinId: r
+        to:
+          insId: __this
+          pinId: result
+      - from:
+          insId: Inline Code 40721-776
+          pinId: r
+        to:
+          insId: __this
+          pinId: result
+      - from:
+          insId: CreditService.getCredit-978
+          pinId: result
+        to:
+          insId: Inline Code 90963-281
+          pinId: credit
+      - from:
+          insId: RiskService.calculateRisk-687
+          pinId: result
+        to:
+          insId: Inline Code 90963-281
+          pinId: risk
+      - from:
+          insId: Inline Code 90963-281
+          pinId: r
+        to:
+          insId: Boolean Split-898
+          pinId: val
+      - from:
+          insId: Boolean Split-898
+          pinId: "false"
+        to:
+          insId: Inline Code 14302-197-d838
+          pinId: __trigger
+      - from:
+          insId: Boolean Split-898
+          pinId: "true"
+        to:
+          insId: Inline Code 40721-776
+          pinId: __trigger
+      - from:
+          insId: Dot-241
+          pinId: value
+        to:
+          insId: CreditService.getCredit-978
+          pinId: userId
+      - from:
+          insId: Dot-966-d839
+          pinId: value
+        to:
+          insId: RiskService.calculateRisk-687
+          pinId: amount
+      - from:
+          insId: Dot-241
+          pinId: value
+        to:
+          insId: RiskService.calculateRisk-687
+          pinId: userId
+  CRM.getUserByEmail:
+    id: CRM.getUserByEmail
+    inputs:
+      email:
+        mode: required
+        type: any
+    outputs:
+      result:
+        type: any
+    completionOutputs:
+      - result
+    fnCode: "
+
+      \              const func = exposed[\"CRM.getUserByEmail\"];
+
+      \              const res = func(inputs.email);
+
+      \              if (res && res.then && res.catch) {
+
+      \                res
+
+      \                  .then((data) => outputs.result.next(data))
+
+      \                  .catch((e) => adv.onError(e));
+
+      \              } else {
+
+      \                outputs.result.next(res);
+
+      \              }
+
+      \              "
+  CreditService.getCredit:
+    id: CreditService.getCredit
+    inputs:
+      userId:
+        mode: required
+        type: any
+    outputs:
+      result:
+        type: any
+    completionOutputs:
+      - result
+    fnCode: "
+
+      \              const func = exposed[\"CreditService.getCredit\"];
+
+      \              const res = func(inputs.userId);
+
+      \              if (res && res.then && res.catch) {
+
+      \                res
+
+      \                  .then((data) => outputs.result.next(data))
+
+      \                  .catch((e) => adv.onError(e));
+
+      \              } else {
+
+      \                outputs.result.next(res);
+
+      \              }
+
+      \              "
+  RiskService.calculateRisk:
+    id: RiskService.calculateRisk
+    inputs:
+      userId:
+        mode: required
+        type: any
+      amount:
+        mode: required
+        type: any
+    outputs:
+      result:
+        type: any
+    completionOutputs:
+      - result
+    fnCode: "
+
+      \              const func = exposed[\"RiskService.calculateRisk\"];
+
+      \              const res = func(inputs.userId, inputs.amount);
+
+      \              if (res && res.then && res.catch) {
+
+      \                res
+
+      \                  .then((data) => outputs.result.next(data))
+
+      \                  .catch((e) => adv.onError(e));
+
+      \              } else {
+
+      \                outputs.result.next(res);
+
+      \              }
+
+      \              "
+  Inline Code 90963:
+    id: Inline Code 90963
+    inputs:
+      risk:
+        mode: required
+        type: any
+      credit:
+        mode: required
+        type: any
+    outputs:
+      r:
+        type: any
+    customViewCode: inputs.risk < 0.3 && inputs.credit > 250
+    completionOutputs:
+      - r
+    fnCode: outputs.r.next((inputs.risk < 0.3 && inputs.credit > 250))
+    templateType: value
+  Inline Code 14302:
+    id: Inline Code 14302
+    inputs: {}
+    outputs:
+      r:
+        type: any
+    customViewCode: "'Denied'"
+    completionOutputs:
+      - r
+    fnCode: outputs.r.next(('Denied'))
+    templateType: value
+  Inline Code 40721:
+    id: Inline Code 40721
+    inputs: {}
+    outputs:
+      r:
+        type: any
+    customViewCode: "'Approved'"
+    completionOutputs:
+      - r
+    fnCode: outputs.r.next(('Approved'))
+    templateType: value
+  Bob 1:
+    id: Bob 1
+    inputs:
+      userId:
+        mode: required
+        type: any
+      amount:
+        mode: required
+        type: any
+    outputs:
+      "false":
+        type: any
+      "true":
+        type: any
+    inputsPosition:
+      userId:
+        x: -94.41487218310994
+        y: -364.36169541649184
+      amount:
+        x: 278.1914413896597
+        y: -365.6914756554522
+    outputsPosition:
+      "false":
+        x: 0
+        y: 400
+      "true":
+        x: 100
+        y: 400
+    completionOutputs:
+      - "false"
+      - "true"
+    instances:
+      - partId: RiskService.calculateRisk
+        pos:
+          x: 208.33880004882812
+          y: -186.71187622070312
+        id: RiskService.calculateRisk-687
+        inputConfig: {}
+      - partId: CreditService.getCredit
+        pos:
+          x: -262.9937646484375
+          y: -167.52921875
+        id: CreditService.getCredit-978
+        inputConfig: {}
+      - partId: Inline Code 90963
+        pos:
+          x: -99.50531982421876
+          y: 42.52135681152345
+        id: Inline Code 90963-281
+        inputConfig: {}
+        visibleInputs:
+          - credit
+          - risk
+      - partId: Boolean Split
+        pos:
+          x: 45.76263671875
+          y: 166.08981628417973
+        id: Boolean Split-898
+        inputConfig: {}
+    connections:
+      - from:
+          insId: CreditService.getCredit-978
+          pinId: result
+        to:
+          insId: Inline Code 90963-281
+          pinId: credit
+      - from:
+          insId: RiskService.calculateRisk-687
+          pinId: result
+        to:
+          insId: Inline Code 90963-281
+          pinId: risk
+      - from:
+          insId: Inline Code 90963-281
+          pinId: r
+        to:
+          insId: Boolean Split-898
+          pinId: val
+      - from:
+          insId: __this
+          pinId: userId
+        to:
+          insId: RiskService.calculateRisk-687
+          pinId: userId
+      - from:
+          insId: __this
+          pinId: amount
+        to:
+          insId: RiskService.calculateRisk-687
+          pinId: amount
+      - from:
+          insId: __this
+          pinId: userId
+        to:
+          insId: CreditService.getCredit-978
+          pinId: userId
+      - from:
+          insId: Boolean Split-898
+          pinId: "false"
+        to:
+          insId: __this
+          pinId: "false"
+      - from:
+          insId: Boolean Split-898
+          pinId: "true"
+        to:
+          insId: __this
+          pinId: "true"
+  Inline Code 50829:
+    id: Inline Code 50829
+    inputs:
+      a:
+        mode: required
+        type: any
+      b:
+        mode: required
+        type: any
+    outputs:
+      r:
+        type: any
+    customViewCode: "`Result is ${inputs.a + inputs.b}`"
+    completionOutputs:
+      - r
+    fnCode: outputs.r.next((`Result is ${inputs.a + inputs.b}`))
+    templateType: value
+  Hello:
+    id: Hello
+    inputs:
+      hi:
+        mode: required
+        type: any
+    outputs:
+      result:
+        type: any
+    completionOutputs:
+      - result
+    fnCode: "
+
+      \              const func = exposed[\"Hello\"];
+
+      \              const res = func(inputs.hi);
+
+      \              if (res && res.then && res.catch) {
+
+      \                res
+
+      \                  .then((data) => outputs.result.next(data))
+
+      \                  .catch((e) => adv.onError(e));
+
+      \              } else {
+
+      \                outputs.result.next(res);
+
+      \              }
+
+      \              "
+exposedFunctionality:
+  - codeName: crmService.getUser
+    displayName: CRM.getUserByEmail
+    inputs:
+      - email
+    path: /Users/gabrielgrinberg/projects/flyde/integrated/invoices-example/src/index.ts
+    line: '  // expose(crmService.getUser, "CRM.getUserByEmail", ["email"]);'
+  - codeName: creditService.getCredit
+    displayName: CreditService.getCredit
+    inputs:
+      - userId
+    path: /Users/gabrielgrinberg/projects/flyde/integrated/invoices-example/src/index.ts
+    line: '  expose(creditService.getCredit, "CreditService.getCredit", ["userId"]);'
+  - codeName: riskService.calculateRisk
+    displayName: RiskService.calculateRisk
+    inputs:
+      - userId
+      - amount
+    path: /Users/gabrielgrinberg/projects/flyde/integrated/invoices-example/src/index.ts
+    line: '  expose(riskService.calculateRisk, "RiskService.calculateRisk",
+      ["userId", "amount"]);'
+  - codeName: bob
+    displayName: Hello
+    inputs:
+      - hi
+    path: /Users/gabrielgrinberg/projects/flyde/integrated/invoices-example/src/index.ts
+    line: '  expose(bob, "Hello", ["hi"]);'
+  - codeName: crmService.getUser
+    displayName: CRM.getUserByEmail
+    inputs:
+      - email
+    path: /Users/gabrielgrinberg/projects/flyde/integrated/invoices-example/src/loan-app2.flyde
+    line: "    line: '  // expose(crmService.getUser, \"CRM.getUserByEmail\",
+      [\"email\"]);'"
+  - codeName: creditService.getCredit
+    displayName: CreditService.getCredit
+    inputs:
+      - userId
+    path: /Users/gabrielgrinberg/projects/flyde/integrated/invoices-example/src/loan-app2.flyde
+    line: "    line: '  expose(creditService.getCredit, \"CreditService.getCredit\",
+      [\"userId\"]);'"
+  - codeName: bob
+    displayName: Hello
+    inputs:
+      - hi
+    path: /Users/gabrielgrinberg/projects/flyde/integrated/invoices-example/src/loan-app2.flyde
+    line: "    line: '  expose(bob, \"Hello\", [\"hi\"]);'"
+  - codeName: crmService.getUser
+    displayName: CRM.getUserByEmail
+    inputs:
+      - email
+    path: /Users/gabrielgrinberg/projects/flyde/integrated/invoices-example/src/new-flow.flyde
+    line: "    line: '  expose(crmService.getUser, \"CRM.getUserByEmail\",
+      [\"email\"]);'"
+  - codeName: creditService.getCredit
+    displayName: CreditService.getCredit
+    inputs:
+      - userId
+    path: /Users/gabrielgrinberg/projects/flyde/integrated/invoices-example/src/new-flow.flyde
+    line: "    line: '  expose(creditService.getCredit, \"CreditService.getCredit\",
+      [\"userId\"]);'"
+  - codeName: bob
+    displayName: Hello
+    inputs:
+      - hi
+    path: /Users/gabrielgrinberg/projects/flyde/integrated/invoices-example/src/new-flow.flyde
+    line: "    line: '  expose(bob, \"Hello\", [\"hi\"]);'"

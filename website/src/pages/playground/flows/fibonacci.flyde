@@ -1,0 +1,253 @@
+imports:
+  "@flyde/stdlib":
+    - name: Debounce
+      alias: Debounce
+    - name: Throttle
+      alias: Throttle
+    - name: Equals
+      alias: Equals
+    - name: Equals
+      alias: Equals
+    - name: Add
+      alias: Add
+    - name: Add
+      alias: Add
+    - name: Subtract
+      alias: Subtract
+    - name: Subtract
+      alias: Subtract
+exports: []
+mainId: Fibonacci
+parts:
+  Main:
+    id: Main
+    inputs:
+      number:
+        mode: required
+        type: any
+    outputs:
+      result:
+        type: any
+    inputsPosition:
+      click:
+        x: -125.66545105324758
+        y: -263.4653616952434
+      number:
+        x: -123.90573217544589
+        y: -331.72275376891196
+    outputsPosition:
+      result:
+        x: -117.25574185038472
+        y: 248.13999284260964
+    completionOutputs:
+      - result
+    instances:
+      - partId: Fibonacci
+        pos:
+          x: -143.56120117187498
+          y: -102.25517944335937
+        id: Fibonacci-900
+        inputConfig: {}
+    connections:
+      - from:
+          insId: __this
+          pinId: number
+        to:
+          insId: Fibonacci-900
+          pinId: n
+      - from:
+          insId: Fibonacci-900
+          pinId: result
+        to:
+          insId: __this
+          pinId: result
+  Inline Code 3497:
+    id: Inline Code 3497
+    inputs: {}
+    outputs:
+      r:
+        type: any
+    customViewCode: '"Debounce 1"'
+    dataBuilderSource: IkRlYm91bmNlIDEi
+    templateType: value
+    completionOutputs:
+      - r
+    fnCode: bob
+  Inline Code 58421:
+    id: Inline Code 58421
+    inputs: {}
+    outputs:
+      r:
+        type: any
+    customViewCode: '"Debounce 2"'
+    dataBuilderSource: IkRlYm91bmNlIDIi
+    templateType: value
+    completionOutputs:
+      - r
+    fnCode: outputs.r.next(("Debounce 2"))
+  Inline Code 59172:
+    id: Inline Code 59172
+    inputs: {}
+    outputs:
+      r:
+        type: any
+    customViewCode: '"Throttled Value"'
+    dataBuilderSource: IlRocm90dGxlZCBWYWx1ZSI=
+    templateType: value
+    completionOutputs:
+      - r
+    fnCode: outputs.r.next(("Throttled Value"))
+  Inline Code 4796:
+    id: Inline Code 4796
+    inputs: {}
+    outputs:
+      r:
+        type: any
+    customViewCode: "'Hello World'"
+    dataBuilderSource: J0hlbGxvIFdvcmxkJw==
+    templateType: value
+    completionOutputs:
+      - r
+    fnCode: outputs.r.next(('Hello World'))
+  Fibonacci:
+    id: Fibonacci
+    inputs:
+      n:
+        mode: required
+        type: any
+    outputs:
+      result:
+        type: any
+    inputsPosition:
+      n:
+        x: -143.86010604896114
+        y: -152.48753764734144
+    outputsPosition:
+      result:
+        x: -112.36608834597975
+        y: 704.1733607816236
+    completionOutputs:
+      - result
+    instances:
+      - partId: Equals
+        pos:
+          x: -178.1720971679688
+          y: -34.94999176025391
+        id: Equals-364
+        inputConfig:
+          compare:
+            mode: static
+            value: 0
+      - partId: Equals
+        pos:
+          x: -65.86722656250001
+          y: 85.62096923828125
+        id: Equals-364-d95
+        inputConfig:
+          compare:
+            mode: static
+            value: 1
+      - partId: Add
+        pos:
+          x: 60.215429687500006
+          y: 501.717759475708
+        id: Add-539
+        inputConfig: {}
+      - partId: Subtract
+        pos:
+          x: -2.407990722656251
+          y: 260.93969085693357
+        id: Subtract-210
+        inputConfig:
+          n2:
+            mode: static
+            value: 1
+      - partId: Subtract
+        pos:
+          x: 177.77401611328128
+          y: 257.0448468017578
+        id: Subtract-210-d215
+        inputConfig:
+          n2:
+            mode: static
+            value: 2
+      - partId: Fibonacci
+        pos:
+          x: -25.2734521484375
+          y: 367.05894348144534
+        id: Fibonacci-261
+        inputConfig: {}
+      - partId: Fibonacci
+        pos:
+          x: 173.19598388671875
+          y: 372.0815182495117
+        id: Fibonacci-379
+        inputConfig: {}
+    connections:
+      - from:
+          insId: __this
+          pinId: n
+        to:
+          insId: Equals-364
+          pinId: val
+      - from:
+          insId: Equals-364
+          pinId: else
+        to:
+          insId: Equals-364-d95
+          pinId: val
+      - from:
+          insId: Equals-364-d95
+          pinId: r
+        to:
+          insId: __this
+          pinId: result
+      - from:
+          insId: Equals-364
+          pinId: r
+        to:
+          insId: __this
+          pinId: result
+      - from:
+          insId: Add-539
+          pinId: r
+        to:
+          insId: __this
+          pinId: result
+      - from:
+          insId: Equals-364-d95
+          pinId: else
+        to:
+          insId: Subtract-210
+          pinId: n1
+      - from:
+          insId: Equals-364-d95
+          pinId: else
+        to:
+          insId: Subtract-210-d215
+          pinId: n1
+      - from:
+          insId: Subtract-210
+          pinId: r
+        to:
+          insId: Fibonacci-261
+          pinId: n
+      - from:
+          insId: Fibonacci-261
+          pinId: result
+        to:
+          insId: Add-539
+          pinId: n1
+      - from:
+          insId: Subtract-210-d215
+          pinId: r
+        to:
+          insId: Fibonacci-379
+          pinId: n
+      - from:
+          insId: Fibonacci-379
+          pinId: result
+        to:
+          insId: Add-539
+          pinId: n2
+exposedFunctionality: []

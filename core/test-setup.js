@@ -1,0 +1,1 @@
+global.vm2 = require('vm2')

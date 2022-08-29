@@ -1,0 +1,43 @@
+exports:
+  - Exponent2
+parts:
+  Exponent:
+    inputs:
+        n1:
+          type: number
+          mode: required
+        n2: number
+    outputs:
+        r:
+          type: number
+    fnCode: "ref:./code/fn.js"
+  Exponent2:
+    inputs:
+      n: "number"
+    outputs: 
+      r: "number"
+    instances: 
+      - id: "ins"
+        pos:
+          x: 0
+          y: 0
+        partId: "Exponent"
+        inputConfig:
+          n2:
+            mode: "static"
+            value: 2
+    connections:
+      - from:
+          pinId: "n"
+          insId: "__this"
+        to:
+          pinId: "n1"
+          insId: "ins"
+      - from:
+          pinId: "r"
+          insId: "ins"
+        to:
+          pinId: "r"
+          insId: "__this"
+
+

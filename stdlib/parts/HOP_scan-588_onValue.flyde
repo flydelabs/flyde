@@ -1,0 +1,66 @@
+imports: {}
+exports:
+  - HOP_scan-588_onValue
+parts:
+  HOP_scan-588_onValue:
+    id: HOP_scan-588_onValue
+    inputs:
+      prevValue:
+        mode: required
+        type: any
+      currValue:
+        mode: required
+        type: any
+    outputs:
+      newVal:
+        type: any
+    inputsPosition:
+      currValue:
+        x: -80.9090852500531
+        y: -181.81817917601782
+      prevValue:
+        x: 150.00000071748116
+        y: -160.00000039611518
+    outputsPosition:
+      newVal:
+        x: 22.727290129703565
+        y: 264.5454696851694
+    instances:
+      - partId: Id
+        pos:
+          x: 62.3
+          y: 119.27000000000001
+        id: Id-184
+        inputConfig: {}
+      - partId: ConcatList
+        pos:
+          x: 66.00348999023436
+          y: -12.730777587890628
+        id: concat-809
+        inputConfig: {}
+    connections:
+      - from:
+          insId: concat-809
+          pinId: r
+        to:
+          insId: Id-184
+          pinId: val
+      - from:
+          insId: __this
+          pinId: prevValue
+        to:
+          insId: concat-809
+          pinId: b
+      - from:
+          insId: __this
+          pinId: currValue
+        to:
+          insId: concat-809
+          pinId: a
+      - from:
+          insId: Id-184
+          pinId: r
+        to:
+          insId: __this
+          pinId: newVal
+exposedFunctionality: []

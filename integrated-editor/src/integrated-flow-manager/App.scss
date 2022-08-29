@@ -1,0 +1,133 @@
+#root {
+  display: flex;
+  min-height: 100vh;
+
+  > .loader {
+    margin: auto auto;
+  }
+}
+
+.app {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  font-family: Nunito, sans-serif;
+  height: 100vh;
+
+  .app-header, .side-menu {
+    // display: none;
+  }
+}
+
+.app > main {
+  flex: 1;
+  display: flex;
+  max-width: 100vw;
+  flex-direction: row;
+  overflow: auto;
+}
+
+.app > header {
+  z-index: 2;
+}
+
+.app > main > .stage-wrapper {
+  flex: 1;
+  overflow: hidden;
+  /* padding: 50px; */
+  display: flex;
+  background: #27363e;
+  flex-direction: column;
+  /* box-shadow: inset -2px 2px 4px rgba(0, 0, 0, 0.25); */
+  position: relative;
+  outline: none;
+
+  > .breadcrumbs {
+    flex-shrink: 0;
+    text-align: center;
+  }
+
+  > .project-editor {
+    height: 100%;
+
+    > .grouped-part-editor {
+      height: 100%;
+      flex: 1;
+      // padding: 20px;
+    }
+  }
+
+}
+
+.app > main > .stage-wrapper 
+
+.bob {
+  pointer-events: none;
+}
+
+.aul {
+  font-family: inherit !important;
+  /* -webkit-font-smoothing: antialiased; */
+}
+
+.aul.tooltip {
+  background: #2d2d2d !important;
+  transition: all 0.05s ease-out 0s !important;
+}
+
+.aul.tooltip .popper-arrow {
+  border-color: transparent !important;
+}
+
+.running .connection polyline {
+  stroke: #d3ffc5 !important;
+}
+
+.status-indication {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  transform: scale(0.75);
+
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  text-transform: capitalize;
+}
+
+.__react_component_tooltip {
+  user-select: none;
+}
+
+.debug-delay-slider {
+  position: absolute;
+  top: 10px;
+  right: 500px;
+  z-index: 2;
+  .label {
+    color: white;
+  }
+}
+
+$primary-color: #007ec6;
+@import "~loaders.css/src/animations/ball-scale-ripple-multiple.scss";
+@import "~loaders.css/src/animations/ball-clip-rotate.scss";
+
+.loader-hidden {
+  display: none;
+}
+.loader-active {
+  display: block;
+}
+.side-menu,
+.integrated-flow-header {
+  // display: none !important;
+}
+
+.integrated-flow-header {
+  display: none;
+}
+
+.app.try-me {
+
+}

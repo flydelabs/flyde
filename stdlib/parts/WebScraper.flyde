@@ -1,0 +1,28 @@
+imports: {}
+exports:
+  - WebScraper
+parts:
+  WebScraper:
+    id: WebScraper
+    inputs:
+      url:
+        mode: required
+        type: any
+      config:
+        mode: required
+        type: any
+    outputs:
+      result:
+        type: any
+    completionOutputs:
+      - result
+    fnCode: |-
+      // magic here
+      const {onError} = adv;
+
+      scrapeIt(inputs.url, inputs.config).then(({ data, response }) => {
+          outputs.result.next(data)
+      }, err => {
+          onError(err);
+      })
+exposedFunctionality: []

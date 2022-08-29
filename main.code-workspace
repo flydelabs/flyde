@@ -1,0 +1,38 @@
+{
+	"folders": [
+		{
+			"path": "core"
+		},
+		{
+			"path": "integrated-editor"
+		},
+		{
+			"path": "dev-server"
+		},
+		{
+			"path": "runtime"
+		},
+		{
+			"path": "flyde-vscode-extension"
+		},
+		{
+			"path": "website"
+		},
+		{
+			"path": "flow-editor"
+		},
+		{
+			"path": "stdlib"
+		},
+		{
+			"path": "examples/invoices-example"
+		}
+	],
+	"settings": {
+		"search.useGlobalIgnoreFiles": true,
+		"search.useParentIgnoreFiles": true,
+		"search.exclude": {
+			"**/dist": true
+		}
+	}
+}

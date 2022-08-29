@@ -1,0 +1,28 @@
+imports: {}
+exports:
+  - EachMs
+parts:
+  EachMs:
+    id: EachMs
+    inputs:
+      ms:
+        mode: required
+        type: any
+    outputs:
+      r:
+        type: any
+    completionOutputs:
+      - never
+    fnCode: |-
+      const { ms } = inputs;
+      const { r } = outputs;
+              
+      // magic here
+      const s = setInterval(() => {
+          r.next();
+      }, ms);
+
+      adv.onCleanup(() => {
+          clearInterval(s);
+      })        
+exposedFunctionality: []

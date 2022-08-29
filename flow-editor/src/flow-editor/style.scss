@@ -1,0 +1,29 @@
+@import './base-part-editor/styles.scss';
+@import './code-part-editor/styles.scss';
+@import './inline-code-modal/style.scss';
+@import './manage-code-part-view/styles.scss';
+@import './manage-grouped-part-view/styles.scss';
+@import './value-builder-view/styles.scss';
+@import './omnibar/style.scss';
+
+.project-editor {
+  display: flex;
+  flex: 1;
+  position: relative;
+  flex-direction: column;
+  background-color: white;
+
+  > .grouped-part-editor {
+    height: 100%;
+    flex: 1;
+    // padding: 20px;
+  }
+
+  > .breadcrumbs {
+    flex-shrink: 0;
+
+    // max-width: 90%;
+  }
+}
+
+

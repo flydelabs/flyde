@@ -1,0 +1,62 @@
+imports: {}
+exports:
+  - HOP_ListFilter-294_fn
+parts:
+  HOP_ListFilter-294_fn:
+    id: HOP_ListFilter-294_fn
+    inputs:
+      item:
+        mode: required
+        type: any
+      idx:
+        mode: optional
+        type: any
+    outputs:
+      allow:
+        type: any
+      block:
+        type: any
+    inputsPosition:
+      idx:
+        x: -116.01732333490163
+        y: -75.3246722733323
+      item:
+        x: 72.7272804012065
+        y: -112.55409799123164
+    outputsPosition:
+      block:
+        x: -126.83980081384578
+        y: 262.03465534285374
+      allow:
+        x: 115.1515186446284
+        y: 250.21643623868778
+    instances:
+      - partId: Equals
+        pos:
+          x: 33.272480468750004
+          y: 79.25907409667968
+        id: Equals-753
+        inputConfig:
+          compare:
+            mode: static
+            value: 1
+    connections:
+      - from:
+          insId: __this
+          pinId: item
+        to:
+          insId: Equals-753
+          pinId: val
+      - from:
+          insId: Equals-753
+          pinId: r
+        to:
+          insId: __this
+          pinId: block
+      - from:
+          insId: Equals-753
+          pinId: else
+        to:
+          insId: __this
+          pinId: allow
+exposedFunctionality: []

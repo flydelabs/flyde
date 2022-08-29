@@ -1,0 +1,51 @@
+
+.examples__menu {
+    display: inline-flex;
+    list-style: none;
+    margin-top: 20px;
+
+    > li  {
+        font-size: 18px;
+        font-weight: 700;
+        
+        a {
+            color: white;
+        }
+
+        &:not(:last-of-type):after {
+            content: '•';
+            margin: 0 10px;
+        }
+    }
+}
+
+.playground-container {
+    padding: 4rem 0;
+
+    
+    > header {
+        max-width: var(--ifm-container-width);
+        margin: 0 auto;
+        text-align: center;
+    }
+
+
+
+    .playground {
+        display: flex;
+        flex-direction: row;
+        margin: 50px;
+        border: 1px solid rgb(204, 204, 204);
+
+        
+    
+        .flow-container {
+            flex: 1;
+            border-right:rgb(204, 204, 204) 1px solid;
+        }
+    
+        .output-container {
+            flex: 1;
+        }
+    }
+}

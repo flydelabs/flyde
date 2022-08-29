@@ -1,0 +1,29 @@
+imports: {}
+exports:
+  - CollectionDeleteOne
+parts:
+  CollectionDeleteOne:
+    id: CollectionDeleteOne
+    inputs:
+      collectionName:
+        mode: required
+        type: any
+      filter:
+        mode: required
+        type: any
+      options:
+        mode: optional
+        type: any
+    outputs:
+      result:
+        type: any
+    completionOutputs:
+      - result
+    fnCode: |-
+      mongoDb.collection(inputs.collectionName)
+          .deleteOne(inputs.filter, inputs.options)
+          .then(res => {
+              outputs.result.next(res);
+          })
+          .catch((e) => adv.onError(e));
+exposedFunctionality: []

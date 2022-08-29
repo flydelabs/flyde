@@ -1,0 +1,15 @@
+imports: {}
+exports:
+  - ReloadPage
+parts:
+  ReloadPage:
+    id: ReloadPage
+    inputs:
+      reload:
+        mode: required
+        type: any
+    outputs: {}
+    fnCode: |
+      const document = getDocument();
+      document.location.reload();
+exposedFunctionality: []

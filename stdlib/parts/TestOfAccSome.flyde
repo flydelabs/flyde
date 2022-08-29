@@ -1,0 +1,137 @@
+imports: {}
+exports:
+  - TestOfAccSome
+parts:
+  TestOfAccSome:
+    id: TestOfAccSome
+    inputs:
+      a:
+        mode: required
+        type: any
+    outputs:
+      r:
+        type: any
+      r2:
+        type: any
+    inputsPosition:
+      a:
+        x: -864.5455210733347
+        y: 37.0853412319167
+    outputsPosition:
+      r:
+        x: -74.07311811648336
+        y: 1335.3780521565373
+      r2:
+        x: 286.74
+        y: 1157.5
+    instances:
+      - partId: SpreadList
+        pos:
+          x: -392.9765795898437
+          y: 57.15516021728516
+        id: SpreadList-880
+        inputConfig:
+          list:
+            mode: static
+            value:
+              - - 1
+              - - 2
+              - - 3
+      - partId: AccumulateSome
+        pos:
+          x: -336.4517333984375
+          y: 524.7437069702148
+        id: AccumulateSome-75
+        inputConfig:
+          count:
+            mode: static
+            value: 1
+      - partId: Accumulate
+        pos:
+          x: -575.1424633789063
+          y: 519.5536912536621
+        id: Accumulate-869
+        inputConfig:
+          count:
+            mode: static
+            value: 1
+      - partId: SpreadListDelayed
+        pos:
+          x: -673.6451489257813
+          y: 292.0476149749756
+        id: SpreadListDelayed-983
+        inputConfig: {}
+      - partId: SpreadListDelayed
+        pos:
+          x: -681.9226171875
+          y: 85.79833587646485
+        id: SpreadListDelayed-547
+        inputConfig:
+          list:
+            mode: static
+            value:
+              - - 1
+                - 5
+                - 6
+              - - 3
+              - - 4
+                - 7
+      - partId: Accumulate
+        pos:
+          x: -907.9038159179688
+          y: 337.3001626586914
+        id: Accumulate-869-d919
+        inputConfig:
+          count:
+            mode: static
+            value: 1
+      - partId: SpreadList
+        pos:
+          x: -931.68
+          y: 145.18
+        id: SpreadList-886
+        inputConfig: {}
+      - partId: SpreadListDelayed
+        pos:
+          x: -383.56
+          y: 273.64
+        id: SpreadListDelayed-582
+        inputConfig: {}
+    connections:
+      - from:
+          insId: SpreadListDelayed-983
+          pinId: val
+        to:
+          insId: Accumulate-869
+          pinId: val
+      - from:
+          insId: SpreadListDelayed-547
+          pinId: val
+        to:
+          insId: SpreadListDelayed-983
+          pinId: list
+      - from:
+          insId: __this
+          pinId: a
+        to:
+          insId: SpreadList-886
+          pinId: list
+      - from:
+          insId: SpreadList-886
+          pinId: val
+        to:
+          insId: Accumulate-869-d919
+          pinId: val
+      - from:
+          insId: SpreadList-880
+          pinId: val
+        to:
+          insId: SpreadListDelayed-582
+          pinId: list
+      - from:
+          insId: SpreadListDelayed-582
+          pinId: val
+        to:
+          insId: AccumulateSome-75
+          pinId: allow
+exposedFunctionality: []

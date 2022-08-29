@@ -1,0 +1,17 @@
+imports: {}
+exports:
+  - MouseEvent
+parts:
+  MouseEvent:
+    id: MouseEvent
+    inputs: {}
+    outputs:
+      event:
+        type: any
+    completionOutputs:
+      - never
+    fnCode: |-
+      getDocument().body.addEventListener('mousemove', ev => {
+        outputs.event.next(ev);
+      })
+exposedFunctionality: []

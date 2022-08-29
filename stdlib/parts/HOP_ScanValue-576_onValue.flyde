@@ -1,0 +1,69 @@
+imports: {}
+exports:
+  - HOP_ScanValue-576_onValue
+parts:
+  HOP_ScanValue-576_onValue:
+    id: HOP_ScanValue-576_onValue
+    inputs:
+      prevValue:
+        mode: required
+        type: any
+      currValue:
+        mode: required
+        type: any
+    outputs:
+      newVal:
+        type: any
+    inputsPosition:
+      currValue:
+        x: -16.363656493942194
+        y: -212.72726406233642
+      prevValue:
+        x: -328.1817929794024
+        y: -236.36361997199768
+    outputsPosition:
+      newVal:
+        x: -66.12734854192284
+        y: 344.7868620971345
+    instances:
+      - partId: Add
+        pos:
+          x: -70.46533935546876
+          y: 92.24279052734374
+        id: Add-212
+        inputConfig: {}
+      - partId: Transform
+        pos:
+          x: 13.577863769531248
+          y: -67.44209838867188
+        id: Transform-452
+        inputConfig:
+          to:
+            mode: static
+            value: 1
+    connections:
+      - from:
+          insId: __this
+          pinId: prevValue
+        to:
+          insId: Add-212
+          pinId: n1
+      - from:
+          insId: Add-212
+          pinId: r
+        to:
+          insId: __this
+          pinId: newVal
+      - from:
+          insId: __this
+          pinId: currValue
+        to:
+          insId: Transform-452
+          pinId: from
+      - from:
+          insId: Transform-452
+          pinId: r
+        to:
+          insId: Add-212
+          pinId: n2
+exposedFunctionality: []

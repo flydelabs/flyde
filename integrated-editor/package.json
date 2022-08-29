@@ -1,0 +1,72 @@
+{
+  "name": "@flyde/integrated-editor",
+  "version": "0.1.0",
+  "private": true,
+  "proxy": "http://localhost:8484",
+  "dependencies": {
+    "@blueprintjs/core": "^3.11.0",
+    "@blueprintjs/popover2": "^0.3.1",
+    "@blueprintjs/select": "^3.5.0",
+    "@flyde/core": "^1.0.0",
+    "@flyde/dev-server": "^1.0.0",
+    "@flyde/flow-editor": "^1.0.0",
+    "@flyde/remote-debugger": "^1.0.0",
+    "@monaco-editor/react": "^4.0.10",
+    "@testing-library/jest-dom": "^5.11.4",
+    "@types/jest": "^26.0.15",
+    "@types/lodash": "^4.14.168",
+    "@types/node": "^12.0.0",
+    "@types/react": "^17.0.0",
+    "@types/react-dom": "^17.0.0",
+    "@types/react-resizable": "^1.7.2",
+    "@types/react-router-dom": "^5.1.7",
+    "axios": "^0.18.0",
+    "classnames": "^2.3.1",
+    "cuid": "^2.1.8",
+    "file-saver": "^2.0.2",
+    "immer": "^4.0.1",
+    "loaders.css": "^0.1.2",
+    "lodash": "^4.17.21",
+    "patch-package": "^6.4.7",
+    "postinstall-postinstall": "^2.1.0",
+    "query-string": "^7.0.1",
+    "react": "^17.0.0",
+    "react-dom": "^17.0.0",
+    "react-resizable": "^1.11.0",
+    "react-router-dom": "^5.2.0",
+    "react-scripts": "5.0.0",
+    "sass": "^1.52.3",
+    "typescript": "^4.1.2",
+    "use-debounce": "^8.0.1",
+    "use-error-boundary": "^2.0.6",
+    "use-query-params": "^1.2.3",
+    "usehooks-ts": "^2.4.2",
+    "web-vitals": "^1.0.1"
+  },
+  "scripts": {
+    "build": "PUBLIC_URL=/editor REACT_APP_FLYDE_MODE=production react-scripts build --debug --log --verbose",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "watch": "FAST_REFRESH=false PUBLIC_URL=/editor REACT_APP_FLYDE_MODE=development FORCE_ENV=production react-scripts start",
+    "start": "FAST_REFRESH=false PUBLIC_URL=/editor REACT_APP_FLYDE_MODE=development FORCE_ENV=production react-scripts start --openssl-legacy-provider",
+    "postinstall": "node react-scripts-patch/index.js"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

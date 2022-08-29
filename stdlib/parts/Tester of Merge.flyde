@@ -1,0 +1,50 @@
+imports: {}
+exports:
+  - Tester of Merge
+parts:
+  Tester of Merge:
+    id: Tester of Merge
+    inputs:
+      a:
+        mode: required
+        type: any
+    outputs:
+      r:
+        type: any
+    inputsPosition:
+      a:
+        x: 0
+        y: 0
+    outputsPosition:
+      r:
+        x: 33.558563231349595
+        y: 338.06306457534095
+    completionOutputs:
+      - r
+    instances:
+      - partId: Merge
+        pos:
+          x: -6.950776367187501
+          y: 160.76382263183592
+        id: Merge-22
+        inputConfig: {}
+    connections:
+      - from:
+          insId: __this
+          pinId: a
+        to:
+          insId: Merge-22
+          pinId: a
+      - from:
+          insId: __this
+          pinId: a
+        to:
+          insId: Merge-22
+          pinId: b
+      - from:
+          insId: Merge-22
+          pinId: r
+        to:
+          insId: __this
+          pinId: r
+exposedFunctionality: []

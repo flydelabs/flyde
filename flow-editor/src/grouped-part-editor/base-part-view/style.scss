@@ -1,0 +1,86 @@
+$const-color: #fcf0ff;
+$part-max-width: 600px;
+
+
+.base-part-view-vp-fixer {
+  transform-origin: top left;
+  will-change: transform;
+}
+
+.base-part-view-wrapper {
+  position: absolute;
+  transform-origin: top left;
+  transition: background-color ease-out 3s, box-shadow ease-out 3s;
+}
+
+.base-part-view-vp-fixer.display-mode {
+  position: initial;
+
+  .base-part-view-wrapper {
+    position: initial;
+  }
+
+  .base-part-view {
+    position: initial;
+  }
+}
+
+.base-part-view {
+  transform-origin: top left;
+  display: inline-block;
+  position: absolute;
+  transition: box-shadow ease-in-out 0.5s;
+  will-change: transform, width;
+
+  $base-color: #fff;
+
+  .base-part-view-inner {
+    background: $base-color;
+    font-family: Nunito, sans-serif;
+    box-shadow: 0px 0px 10px 2px rgba(48, 48, 48, 0.15);
+    border-radius: 3px;
+    font-size: 20px;
+    font-weight: 600;
+    text-align: center;
+    padding: 4px 15px 3px;
+    user-select: none;
+    transition: background-color ease-in-out 0.4s, box-shadow ease-in-out 0.7s;
+    border: 2px solid transparent;
+
+    max-width: $part-max-width;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    position: relative;
+    z-index: 1; // added so that it is above pin view when it is retracted when minimized
+  }
+}
+
+.base-part-view:not(.selected) .base-part-view-inner:hover {
+  border: 2px solid #007ec6;
+}
+
+.base-part-view.selected .base-part-view-inner {
+  border: 2px solid transparent;
+  background: #007ec6;
+  color: white;
+  transition: background-color none;
+}
+
+.base-part-view:not(.native) {
+  cursor: pointer;
+}
+
+.base-part-view.dragged {
+  opacity: 0.8;
+}
+
+// .base-part-view {
+//   padding-top: 15px;
+// }
+
+// .base-part-view {
+//   padding-bottom: 15px;
+// }
+

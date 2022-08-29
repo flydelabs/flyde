@@ -1,0 +1,18 @@
+imports: {}
+exports:
+  - Id
+parts:
+  Id:
+    id: Id
+    inputs:
+      v:
+        mode: required
+        type: any
+    outputs:
+      r:
+        type: object
+    customViewCode: ""
+    completionOutputs:
+      - r
+    fnCode: outputs.r.next(inputs.v)
+exposedFunctionality: []

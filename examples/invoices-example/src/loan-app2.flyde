@@ -1,0 +1,483 @@
+imports: {}
+exports: []
+mainId: Inline Code 50829
+parts:
+  Main:
+    id: Main
+    inputs:
+      formData:
+        mode: required
+        type: any
+    outputs:
+      result: any
+    inputsPosition:
+      formData:
+        x: -6.242986743005908
+        y: -614.0040858288172
+    outputsPosition:
+      result:
+        x: 90.41247010273175
+        y: 180.7031508792565
+    instances:
+      - partId: CRM.getUserByEmail
+        pos:
+          x: -186.8364111328125
+          y: -364.9440600585938
+        id: CRM.getUserByEmail-143
+        inputConfig: {}
+      - partId: Dot
+        pos:
+          x: -238.3101904296875
+          y: -463.475771484375
+        id: Dot-966
+        inputConfig:
+          key:
+            mode: static
+            value: email
+      - partId: Dot
+        pos:
+          x: 325.45125366210937
+          y: -445.84955078125
+        id: Dot-966-d839
+        inputConfig:
+          key:
+            mode: static
+            value: amount
+      - partId: Dot
+        pos:
+          x: -68.43030761718751
+          y: -267.42432861328126
+        id: Dot-241
+        inputConfig:
+          key:
+            mode: static
+            value: id
+      - partId: Inline Code 14302
+        pos:
+          x: 125.23608154296875
+          y: -57.623573913574205
+        id: Inline Code 14302-197-d838
+        inputConfig: {}
+      - partId: Inline Code 40721
+        pos:
+          x: -86.46349365234374
+          y: -47.70525924682613
+        id: Inline Code 40721-776
+        inputConfig: {}
+      - partId: bobiatto
+        pos:
+          x: 25.20884376525879
+          y: -171.05672363281246
+        id: bobiatto-ins
+        inputConfig: {}
+      - partId: Inline Code 16090
+        pos:
+          x: -52.5
+          y: 237
+        id: Inline Code 16090-663-copy
+        inputConfig: {}
+    connections:
+      - from:
+          insId: __this
+          pinId: formData
+        to:
+          insId: Dot-966
+          pinId: obj
+      - from:
+          insId: Dot-966
+          pinId: value
+        to:
+          insId: CRM.getUserByEmail-143
+          pinId: email
+      - from:
+          insId: __this
+          pinId: formData
+        to:
+          insId: Dot-966-d839
+          pinId: obj
+      - from:
+          insId: CRM.getUserByEmail-143
+          pinId: result
+        to:
+          insId: Dot-241
+          pinId: obj
+      - from:
+          insId: Inline Code 14302-197-d838
+          pinId: r
+        to:
+          insId: __this
+          pinId: result
+      - from:
+          insId: Inline Code 40721-776
+          pinId: r
+        to:
+          insId: __this
+          pinId: result
+      - from:
+          insId: bobiatto-ins
+          pinId: "false"
+        to:
+          insId: Inline Code 14302-197-d838
+          pinId: __trigger
+      - from:
+          insId: bobiatto-ins
+          pinId: "true"
+        to:
+          insId: Inline Code 40721-776
+          pinId: __trigger
+      - from:
+          insId: Dot-966-d839
+          pinId: value
+        to:
+          insId: bobiatto-ins
+          pinId: amount
+      - from:
+          insId: Dot-241
+          pinId: value
+        to:
+          insId: bobiatto-ins
+          pinId: userId
+  CRM.getUserByEmail:
+    id: CRM.getUserByEmail
+    inputs:
+      email:
+        mode: required
+        type: any
+    outputs:
+      result:
+        type: any
+    completionOutputs:
+      - result
+    fnCode: "
+
+      \              const func = exposed[\"CRM.getUserByEmail\"];
+
+      \              const res = func(inputs.email);
+
+      \              if (res && res.then && res.catch) {
+
+      \                res
+
+      \                  .then((data) => outputs.result.next(data))
+
+      \                  .catch((e) => adv.onError(e));
+
+      \              } else {
+
+      \                outputs.result.next(res);
+
+      \              }
+
+      \              "
+  CreditService.getCredit:
+    id: CreditService.getCredit
+    inputs:
+      userId:
+        mode: required
+        type: any
+    outputs:
+      result:
+        type: any
+    completionOutputs:
+      - result
+    fnCode: "
+
+      \              const func = exposed[\"CreditService.getCredit\"];
+
+      \              const res = func(inputs.userId);
+
+      \              if (res && res.then && res.catch) {
+
+      \                res
+
+      \                  .then((data) => outputs.result.next(data))
+
+      \                  .catch((e) => adv.onError(e));
+
+      \              } else {
+
+      \                outputs.result.next(res);
+
+      \              }
+
+      \              "
+  RiskService.calculateRisk:
+    id: RiskService.calculateRisk
+    inputs:
+      userId:
+        mode: required
+        type: any
+      amount:
+        mode: required
+        type: any
+    outputs:
+      result:
+        type: any
+    completionOutputs:
+      - result
+    fnCode: "
+
+      \              const func = exposed[\"RiskService.calculateRisk\"];
+
+      \              const res = func(inputs.userId, inputs.amount);
+
+      \              if (res && res.then && res.catch) {
+
+      \                res
+
+      \                  .then((data) => outputs.result.next(data))
+
+      \                  .catch((e) => adv.onError(e));
+
+      \              } else {
+
+      \                outputs.result.next(res);
+
+      \              }
+
+      \              "
+  Inline Code 90963:
+    id: Inline Code 90963
+    inputs:
+      risk:
+        mode: required
+        type: any
+      credit:
+        mode: required
+        type: any
+    outputs:
+      r:
+        type: any
+    customViewCode: inputs.risk < 0.3 && inputs.credit > 250
+    completionOutputs:
+      - r
+    fnCode: outputs.r.next((inputs.risk < 0.3 && inputs.credit > 250))
+    templateType: value
+  Inline Code 14302:
+    id: Inline Code 14302
+    inputs: {}
+    outputs:
+      r:
+        type: any
+    customViewCode: ""
+    completionOutputs:
+      - r
+    fnCode: outputs.r.next(('Denied'))
+    templateType: value
+  Inline Code 40721:
+    id: Inline Code 40721
+    inputs: {}
+    outputs:
+      r:
+        type: any
+    customViewCode: "'Approved'"
+    completionOutputs:
+      - r
+    fnCode: outputs.r.next(('Approved'))
+    templateType: value
+  Inline Code 50829:
+    id: Inline Code 50829
+    inputs:
+      a:
+        mode: required
+        type: any
+      b:
+        mode: required
+        type: any
+    outputs:
+      r:
+        type: any
+    customViewCode: ""
+    completionOutputs:
+      - r
+    fnCode: outputs.r.next((`Result is ${inputs.a + inputs.b}`))
+    templateType: value
+  Hello:
+    id: Hello
+    inputs:
+      hi:
+        mode: required
+        type: any
+    outputs:
+      result:
+        type: any
+    completionOutputs:
+      - result
+    fnCode: "
+
+      \              const func = exposed[\"Hello\"];
+
+      \              const res = func(inputs.hi);
+
+      \              if (res && res.then && res.catch) {
+
+      \                res
+
+      \                  .then((data) => outputs.result.next(data))
+
+      \                  .catch((e) => adv.onError(e));
+
+      \              } else {
+
+      \                outputs.result.next(res);
+
+      \              }
+
+      \              "
+  bobiatto:
+    id: bobiatto
+    inputs:
+      userId:
+        mode: required
+        type: any
+      amount:
+        mode: required
+        type: any
+    outputs:
+      "false":
+        type: any
+      "true":
+        type: any
+    inputsPosition:
+      userId:
+        x: 27
+        y: -293
+      amount:
+        x: 369
+        y: -267
+    outputsPosition:
+      "false":
+        x: 0
+        y: 400
+      "true":
+        x: 100
+        y: 400
+    completionOutputs:
+      - "false"
+      - "true"
+    instances:
+      - partId: RiskService.calculateRisk
+        pos:
+          x: 197.20525512695312
+          y: -143.28453857421874
+        id: RiskService.calculateRisk-687
+        inputConfig: {}
+      - partId: CreditService.getCredit
+        pos:
+          x: -207.16667724609374
+          y: -113.90080078125001
+        id: CreditService.getCredit-978
+        inputConfig: {}
+      - partId: Inline Code 90963
+        pos:
+          x: -99.50531982421876
+          y: 42.52135681152345
+        id: Inline Code 90963-281
+        inputConfig: {}
+        visibleInputs:
+          - credit
+          - risk
+      - partId: Boolean Split
+        pos:
+          x: 45.76263671875
+          y: 166.08981628417973
+        id: Boolean Split-898
+        inputConfig: {}
+    connections:
+      - from:
+          insId: CreditService.getCredit-978
+          pinId: result
+        to:
+          insId: Inline Code 90963-281
+          pinId: credit
+      - from:
+          insId: RiskService.calculateRisk-687
+          pinId: result
+        to:
+          insId: Inline Code 90963-281
+          pinId: risk
+      - from:
+          insId: Inline Code 90963-281
+          pinId: r
+        to:
+          insId: Boolean Split-898
+          pinId: val
+      - from:
+          insId: __this
+          pinId: userId
+        to:
+          insId: CreditService.getCredit-978
+          pinId: userId
+      - from:
+          insId: __this
+          pinId: amount
+        to:
+          insId: RiskService.calculateRisk-687
+          pinId: amount
+      - from:
+          insId: __this
+          pinId: userId
+        to:
+          insId: RiskService.calculateRisk-687
+          pinId: userId
+      - from:
+          insId: Boolean Split-898
+          pinId: "false"
+        to:
+          insId: __this
+          pinId: "false"
+      - from:
+          insId: Boolean Split-898
+          pinId: "true"
+        to:
+          insId: __this
+          pinId: "true"
+  Bob222:
+    id: Bob222
+    inputs:
+      a:
+        mode: required
+        type: any
+      b:
+        mode: required
+        type: any
+    outputs:
+      r:
+        type: any
+    inputsPosition:
+      a:
+        x: 0
+        y: 0
+      b:
+        x: 200
+        y: 0
+    outputsPosition:
+      r:
+        x: 100
+        y: 400
+    instances:
+      - partId: Inline Code 16090
+        pos:
+          x: 88.8446044921875
+          y: 153.74241638183594
+        id: Inline Code 16090-663
+        inputConfig: {}
+    connections: []
+  Inline Code 16090:
+    id: Inline Code 16090
+    inputs:
+      a:
+        mode: required
+        type: any
+      b:
+        mode: required
+        type: any
+    outputs:
+      r:
+        type: any
+    customViewCode: "`Result is ${inputs.a + inputs.b}`"
+    completionOutputs:
+      - r
+    fnCode: outputs.r.next((`Result is ${inputs.a + inputs.b}`))
+    templateType: value
+exposedFunctionality: []

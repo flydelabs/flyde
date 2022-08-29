@@ -1,0 +1,26 @@
+imports: {}
+exports:
+  - Transform
+parts:
+  Transform:
+    id: Transform
+    inputs:
+      from:
+        mode: required
+        type: any
+      to:
+        mode: required
+        type: any
+    outputs:
+      r:
+        type: any
+    customViewCode: <% if (inputs.to) { %> to "<%- inputs.to %>" <% } %>
+    completionOutputs:
+      - r
+    fnCode: |-
+      const { to } = inputs;
+      const { r } = outputs;
+              
+      // magic here
+      r.next(to);
+exposedFunctionality: []

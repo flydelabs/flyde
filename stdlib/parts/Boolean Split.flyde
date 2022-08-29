@@ -1,0 +1,56 @@
+imports: {}
+exports:
+  - Boolean Split
+parts:
+  Boolean Split:
+    id: Boolean Split
+    inputs:
+      val:
+        mode: required
+        type: any
+    outputs:
+      "true":
+        type: any
+      "false":
+        type: any
+    inputsPosition:
+      val:
+        x: -53.899108855416266
+        y: -19.49542241235728
+    outputsPosition:
+      "true":
+        x: -107.53062440952482
+        y: 361.3771973987992
+      "false":
+        x: 75.17321928763755
+        y: 350.95064554922453
+    instances:
+      - partId: Equals
+        pos:
+          x: -55.038107910156256
+          y: 123.8628857421875
+        id: Equals-530
+        inputConfig:
+          compare:
+            mode: static
+            value: true
+    connections:
+      - from:
+          insId: __this
+          pinId: val
+        to:
+          insId: Equals-530
+          pinId: val
+      - from:
+          insId: Equals-530
+          pinId: r
+        to:
+          insId: __this
+          pinId: "true"
+      - from:
+          insId: Equals-530
+          pinId: else
+        to:
+          insId: __this
+          pinId: "false"
+exposedFunctionality: []

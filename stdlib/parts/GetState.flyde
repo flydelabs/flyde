@@ -1,0 +1,27 @@
+imports: {}
+exports:
+  - GetState
+parts:
+  GetState:
+    id: GetState
+    inputs:
+      key:
+        mode: required
+        type: any
+    outputs:
+      r:
+        type: any
+      err:
+        type: any
+    fnCode: |
+      const {state} = adv;
+      const {key} = inputs;
+      const {r, err} = outputs;
+
+      const val = state.get(key);
+      if (isDefined(val)) {
+          r.next(val);
+      } else {
+          err.next(key);
+      }
+exposedFunctionality: []

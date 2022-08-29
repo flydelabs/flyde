@@ -1,0 +1,151 @@
+imports: {}
+exports:
+  - UI tester
+parts:
+  UI tester:
+    id: UI tester
+    inputs:
+      mouse:
+        mode: optional
+        type: obj
+      keyPress:
+        mode: optional
+        type: obj
+    outputs:
+      jsx:
+        type: jsx
+    inputsPosition:
+      mouse:
+        x: 35.86348196105321
+        y: -364.0287124683135
+      keyPress:
+        x: 607.2119328350132
+        y: -253.45397666631152
+    outputsPosition:
+      response:
+        x: 0
+        y: 400
+      jsx:
+        x: -532.6700480392535
+        y: 478.80609538260927
+    completionOutputs:
+      - jsx
+    instances:
+      - partId: Transform
+        pos:
+          x: -538.6681103515625
+          y: -138.5090856933594
+        id: Transform-550
+        inputConfig:
+          to:
+            mode: sticky
+      - partId: Publish
+        pos:
+          x: -267.97675048828125
+          y: 465.83757797241213
+        id: pub-878
+        inputConfig:
+          key:
+            mode: static
+            value: click
+      - partId: Subscribe
+        pos:
+          x: -576.937470703125
+          y: -241.93766601562498
+        id: sub-426
+        inputConfig:
+          key:
+            mode: static
+            value: click
+      - partId: Id
+        pos:
+          x: -318.03816650390627
+          y: -262.10097412109377
+        id: id-552
+        inputConfig:
+          val:
+            mode: static
+            value: Bob
+      - partId: HtmlDiv
+        pos:
+          x: -466.7677825927734
+          y: 236.22352294921876
+        id: HtmlDiv-ins
+        inputConfig: {}
+      - partId: HtmlTag
+        pos:
+          x: 246.02260864257812
+          y: -34.234521484374994
+        id: HtmlTag-292
+        inputConfig: {}
+      - partId: HtmlValueTag
+        pos:
+          x: -52.98415039062502
+          y: 192.06499938964845
+        id: HtmlValueTag-149
+        inputConfig:
+          tagName:
+            mode: static
+            value: input
+      - partId: Transform
+        pos:
+          x: -921.34
+          y: -236.06
+        id: Transform-30
+        inputConfig: {}
+      - partId: Add
+        pos:
+          x: -323.21
+          y: -128.01
+        id: Add-980
+        inputConfig: {}
+      - partId: CollectionFind
+        pos:
+          x: -1040.0700000000002
+          y: 94.74000000000001
+        id: CollectionFind-597
+        inputConfig: {}
+      - partId: CollectionFind
+        pos:
+          x: -1096.2174462890625
+          y: -39.085946044921876
+        id: CollectionFind-531
+        inputConfig: {}
+      - partId: CollectionFindOneAndUpdate
+        pos:
+          x: -870.6577099609375
+          y: 28.04667236328125
+        id: CollectionFindOneAndUpdate-184
+        inputConfig: {}
+      - partId: GetItem
+        pos:
+          x: -979.57
+          y: 390.67
+        id: GetItem-391
+        inputConfig: {}
+      - partId: IsGreater
+        pos:
+          x: -126.13
+          y: 56.260000000000005
+        id: IsGreater-141
+        inputConfig: {}
+    connections:
+      - from:
+          insId: sub-426
+          pinId: val
+        to:
+          insId: Transform-550
+          pinId: from
+      - from:
+          insId: id-552
+          pinId: r
+        to:
+          insId: Transform-550
+          pinId: to
+      - from:
+          insId: HtmlDiv-ins
+          pinId: click
+        to:
+          insId: pub-878
+          pinId: value
+exposedFunctionality: []

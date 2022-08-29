@@ -1,0 +1,33 @@
+imports: {}
+exports:
+  - CollectionCountDocuments
+parts:
+  CollectionCountDocuments:
+    id: CollectionCountDocuments
+    inputs:
+      options:
+        mode: optional
+        type: any
+      collectionName:
+        mode: required
+        type: any
+      filter:
+        mode: required
+        type: any
+      "":
+        mode: optional
+        type: any
+    outputs:
+      count:
+        type: any
+    completionOutputs:
+      - count
+    fnCode: |-
+      // magic here
+      mongoDb
+          .collection(inputs.collectionName)
+          .countDocuments(inputs.filter, inputs.options)
+          .then((count) => {
+              outputs.count.next(count);
+          });
+exposedFunctionality: []

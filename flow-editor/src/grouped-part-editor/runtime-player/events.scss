@@ -1,0 +1,89 @@
+
+$blink-duration: 2s;
+
+.base-part-view-wrapper[data-runtime="processing"] .base-part-view-inner {
+  background: #88f8ff !important; //88F8FF
+  box-shadow: 0px 0px 10px 2px #007dc6aa;
+  // transition: background-color ease-in-out 0.05s, box-shadow ease-in-out 0.2s;
+  animation: pulse 1.5s infinite;
+}
+
+.base-part-view-wrapper[data-runtime="done"] .base-part-view-inner {
+  animation: blink-done $blink-duration;
+  // background: #C1FF91 !important;
+  // box-shadow: 0px 0px 10px 2px rgba(10, 126, 0, 0.5);
+  // transition: background-color ease-in-out 0.3s, box-shadow ease-in-out 0.3s;
+}
+
+.base-part-view-wrapper[data-runtime="error"] .base-part-view-inner {
+    animation: blink-error $blink-duration;
+//   box-shadow: 0px 0px 10px 2px rgba(99, 38, 24, 0.5);
+//   transition: background-color ease-in-out 0.05s, box-shadow ease-in-out 0.2s;
+}
+
+.pin-inner[data-runtime='active'] {
+    animation: blink-done $blink-duration;
+    // transition: background-color ease-in-out 0.05s, box-shadow ease-in-out 0.2s;
+    // background: #C1FF91 !important;
+    // box-shadow: 0px 0px 10px 2px rgba(10, 126, 0, 0.5);
+  }
+
+  .pin-inner[data-runtime-queue] {
+      &:after {
+        color: #595959;
+        margin-left: 3px;
+        content: attr(data-runtime-queue)" in Q";
+      }
+      // transition: background-color ease-in-out 0.05s, box-shadow ease-in-out 0.2s;
+      // background: #C1FF91 !important;
+      // box-shadow: 0px 0px 10px 2px rgba(10, 126, 0, 0.5);
+  }
+
+@keyframes blink-done {
+  0% {
+    // background-color: $base-color;
+  }
+  8% {
+    background-color: #c1ff91;
+    box-shadow: 0px 0px 10px 2px rgba(9, 114, 0, 0.429);
+  }
+  100% {
+    // background-color: $base-color;
+  }
+}
+
+@keyframes blink-error {
+    0% {
+      // background-color: $base-color;
+    }
+    8% {
+      background-color: #ff9999;
+    }
+    100% {
+      // background-color: $base-color;
+    }
+  }
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.98);
+    background-color: #defdff !important; //88F8FF
+    box-shadow: 0px 0px 10px 2px rgba(0, 125, 198, 0.7);
+
+    // box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.7);
+  }
+
+  50% {
+    transform: scale(1.01);
+    box-shadow: 0px 0px 10px 2px rgba(0, 125, 198, 0.3);
+    background-color: #88f8ff !important; //88F8FF
+    // box-shadow: 0 0 0 10px rgba(0, 0, 0, 0);
+  }
+
+  100% {
+    transform: scale(0.98);
+    background-color: #88f8ff !important; //88F8FF
+    box-shadow: 0px 0px 10px 2px rgba(0, 125, 198, 0.7);
+    // box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+  }
+}

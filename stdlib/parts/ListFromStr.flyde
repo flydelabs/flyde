@@ -1,0 +1,25 @@
+imports: {}
+exports:
+  - ListFromStr
+parts:
+  ListFromStr:
+    id: ListFromStr
+    inputs:
+      count:
+        mode: required
+        type: any
+      char:
+        mode: required
+        type: any
+    outputs:
+      r:
+        type: any
+    completionOutputs:
+      - r
+    fnCode: |-
+      // magic here
+
+      outputs
+          .r
+          .next(new Array(inputs.count).fill(inputs.char));
+exposedFunctionality: []

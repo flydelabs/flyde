@@ -1,0 +1,11 @@
+parts:
+  main:
+    inputs:
+      n1:
+        type: number
+        mode: required
+      n2: number
+    outputs:
+      result:
+        type: number
+    fnCode: "ref:./local-code-ref-fn.js"

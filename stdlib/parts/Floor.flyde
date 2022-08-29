@@ -1,0 +1,25 @@
+imports: {}
+exports:
+  - Floor
+parts:
+  Floor:
+    id: Floor
+    inputs:
+      n:
+        mode: required
+        type: any
+    outputs:
+      r:
+        type: any
+    completionOutputs:
+      - r
+    fnCode: "const { n } = inputs;
+
+      const { r } = outputs;
+
+      \     \ 
+
+      r.next(Math.floor(n));
+
+      \      "
+exposedFunctionality: []

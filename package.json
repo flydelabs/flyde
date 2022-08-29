@@ -1,0 +1,40 @@
+{
+  "name": "flyde",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "proxy": "http://localhost:8484",
+  "scripts": {
+    "start": "concurrently 'yarn run watch-all-integrated' 'yarn run open-vscode'",
+    "open-vscode": "code main.code-workspace",
+    "watch-all-integrated": "yarn workspaces foreach -piAv -j 999 --exclude @flyde/managed-editor --exclude flyde-vscode run watch",
+    "build": "yarn workspaces foreach -Avi run build",
+    "clean": "yarn workspaces foreach clean -y"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^4.1.0",
+    "mixpanel-browser": "^2.45.0",
+    "yarn": "^1.22.18"
+  },
+  "resolutions": {
+    "react-error-overlay": "6.0.9",
+    "website": "portal:/Users/gabrielgrinberg/projects/flyde/website",
+    "flyde-vscode": "portal:/Users/gabrielgrinberg/projects/flyde-vscode-extension"
+  },
+  "private": true,
+  "workspaces": [
+    "core",
+    "flow-editor",
+    "runtime",
+    "dev-server",
+    "stdlib",
+    "website",
+    "examples/*",
+    "flyde-vscode-extension",
+    "integrated-editor",
+    "remote-debugger"
+  ],
+  "packageManager": "yarn@3.2.0"
+}

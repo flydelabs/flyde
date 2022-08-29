@@ -1,0 +1,141 @@
+imports: {}
+exports:
+  - Bob
+mainId: Main
+parts:
+  Main:
+    inputs: {}
+    outputs: {}
+    inputsPosition: {}
+    outputsPosition: {}
+    instances: []
+    connections: []
+  Bob:
+    inputs:
+      a:
+        mode: required
+        type: any
+    outputs:
+      b:
+        type: any
+    inputsPosition:
+      a:
+        x: 0
+        y: 0
+    outputsPosition:
+      b:
+        x: -21.67690635866622
+        y: 358.0777053833008
+    instances:
+      - partId: Multiply
+        pos:
+          x: -139.03301025390624
+          y: 128.83037872314452
+        id: Multiply-128
+        inputConfig:
+          n2:
+            mode: static
+            value: 42
+    connections:
+      - from:
+          insId: __this
+          pinId: a
+        to:
+          insId: Multiply-128
+          pinId: n1
+      - from:
+          insId: Multiply-128
+          pinId: r
+        to:
+          insId: __this
+          pinId: b
+  CRM.getUserByEmail:
+    inputs:
+      email:
+        mode: required
+        type: any
+    outputs:
+      result:
+        type: any
+    fnCode: "
+
+      \              const func = exposed[\"CRM.getUserByEmail\"];
+
+      \              const res = func(inputs.email);
+
+      \              if (res && res.then && res.catch) {
+
+      \                res
+
+      \                  .then((data) => outputs.result.next(data))
+
+      \                  .catch((e) => adv.onError(e));
+
+      \              } else {
+
+      \                outputs.result.next(res);
+
+      \              }
+
+      \              "
+  CreditService.getCredit:
+    inputs:
+      userId:
+        mode: required
+        type: any
+    outputs:
+      result:
+        type: any
+    fnCode: "
+
+      \              const func = exposed[\"CreditService.getCredit\"];
+
+      \              const res = func(inputs.userId);
+
+      \              if (res && res.then && res.catch) {
+
+      \                res
+
+      \                  .then((data) => outputs.result.next(data))
+
+      \                  .catch((e) => adv.onError(e));
+
+      \              } else {
+
+      \                outputs.result.next(res);
+
+      \              }
+
+      \              "
+  RiskService.calculateRisk:
+    inputs:
+      userId:
+        mode: required
+        type: any
+      amount:
+        mode: required
+        type: any
+    outputs:
+      result:
+        type: any
+    fnCode: "
+
+      \              const func = exposed[\"RiskService.calculateRisk\"];
+
+      \              const res = func(inputs.userId, inputs.amount);
+
+      \              if (res && res.then && res.catch) {
+
+      \                res
+
+      \                  .then((data) => outputs.result.next(data))
+
+      \                  .catch((e) => adv.onError(e));
+
+      \              } else {
+
+      \                outputs.result.next(res);
+
+      \              }
+
+      \              "

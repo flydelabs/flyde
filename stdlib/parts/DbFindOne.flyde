@@ -1,0 +1,27 @@
+imports: {}
+exports:
+  - DbFindOne
+parts:
+  DbFindOne:
+    id: DbFindOne
+    inputs:
+      query:
+        mode: required
+        type: any
+    outputs:
+      res:
+        type: any
+    completionOutputs:
+      - res
+    fnCode: |-
+      // magic here
+      db.findOne(inputs.query)
+          .then((doc) => {
+              if (isDefined(doc)) {
+                  outputs.res.next(doc)
+              } else {
+                  adv.onError('Not found');
+              }
+          })
+          .catch((err) => adv.onError(err))
+exposedFunctionality: []

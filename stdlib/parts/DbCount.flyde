@@ -1,0 +1,27 @@
+imports: {}
+exports:
+  - DbCount
+parts:
+  DbCount:
+    id: DbCount
+    inputs:
+      query:
+        mode: required
+        type: any
+    outputs:
+      count:
+        type: any
+    completionOutputs:
+      - count
+    fnCode: |
+      // magic here
+      const {query} = inputs;
+
+      const {onError} = adv;
+
+      db.count(query)
+          .then(d => outputs.count.next(d))
+          .catch(err => {
+              onError(err);
+          });
+exposedFunctionality: []

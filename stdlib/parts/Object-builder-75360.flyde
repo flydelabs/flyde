@@ -1,0 +1,20 @@
+imports: {}
+exports:
+  - Object-builder-75360
+parts:
+  Object-builder-75360:
+    id: Object-builder-75360
+    inputs:
+      statusCode:
+        mode: required
+        type: any
+      body:
+        mode: required
+        type: any
+    outputs:
+      r:
+        type: object
+    customViewCode: '{"statusCode":"${statusCode}","body":"${body}"}'
+    fnCode: outputs.r.next(compileObjectTemplate("%7B%22statusCode%22%3A%22%24%7BstatusCode%7D%22%2C%22body%22%3A%22%24%7Bbody%7D%22%7D",
+      inputs));
+exposedFunctionality: []

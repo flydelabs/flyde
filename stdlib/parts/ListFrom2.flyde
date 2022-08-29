@@ -1,0 +1,27 @@
+imports: {}
+exports:
+  - ListFrom2
+parts:
+  ListFrom2:
+    id: ListFrom2
+    inputs:
+      item1:
+        mode: required
+        type: any
+      item2:
+        mode: required
+        type: any
+    outputs:
+      list:
+        type: any
+    completionOutputs:
+      - list
+    fnCode: |-
+      // magic here
+      outputs.list.next(
+          [
+              inputs.item1,
+              inputs.item2
+          ]
+      );
+exposedFunctionality: []

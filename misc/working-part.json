@@ -1,0 +1,218 @@
+{
+    "id": "GetOrCreateTagByName",
+    "controlled": false,
+    "inputs": {
+        "name": {
+            "type": "any",
+            "optional": false,
+            "mode": "required"
+        }
+    },
+    "outputs": {
+        "r": {
+            "type": "any",
+            "optional": false
+        }
+    },
+    "instances": [
+        {
+            "id": "DbFindOne-768",
+            "partId": "DbFindOne",
+            "inputConfig": {},
+            "pos": {
+                "x": -335.4569189453125,
+                "y": 584.2409210205078
+            }
+        },
+        {
+            "id": "NameDto-151",
+            "partId": "NameDto",
+            "inputConfig": {},
+            "pos": {
+                "x": -202.07217529296875,
+                "y": 466.93025390624996
+            }
+        },
+        {
+            "id": "Pick-212",
+            "partId": "Pick",
+            "inputConfig": {
+                "key": {
+                    "mode": "static",
+                    "value": "gid"
+                }
+            },
+            "pos": {
+                "x": -321.67752929687504,
+                "y": 1423.6145043945312
+            }
+        },
+        {
+            "id": "Transform-582",
+            "partId": "Transform",
+            "inputConfig": {},
+            "pos": {
+                "x": 95.6154833984375,
+                "y": 796.0834692382813
+            }
+        },
+        {
+            "id": "AsanaCreateTag-774",
+            "partId": "AsanaCreateTag",
+            "inputConfig": {
+                "workspace": {
+                    "mode": "static",
+                    "value": "8468933813111"
+                },
+                "color": {
+                    "mode": "static",
+                    "value": "light-blue"
+                }
+            },
+            "pos": {
+                "x": -13.816236572265666,
+                "y": 1032.7946240234376
+            }
+        },
+        {
+            "id": "DbInsert-607",
+            "partId": "DbInsert",
+            "inputConfig": {},
+            "pos": {
+                "x": -57.0541979980469,
+                "y": 1514.6486767578126
+            }
+        },
+        {
+            "id": "Pick-101",
+            "partId": "Pick",
+            "inputConfig": {
+                "key": {
+                    "mode": "static",
+                    "value": "data"
+                }
+            },
+            "pos": {
+                "x": -70.34304321289062,
+                "y": 1246.3035229492189
+            }
+        }
+    ],
+    "inputsPosition": {
+        "name": {
+            "x": -5.372822618061381,
+            "y": 324.16125717870824
+        }
+    },
+    "outputsPosition": {
+        "r": {
+            "x": -290.74110404317753,
+            "y": 1859.5209037867196
+        }
+    },
+    "connections": [
+        {
+            "from": {
+                "insId": "NameDto-151",
+                "pinId": "r"
+            },
+            "to": {
+                "insId": "DbFindOne-768",
+                "pinId": "query"
+            }
+        },
+        {
+            "from": {
+                "insId": "DbFindOne-768",
+                "pinId": "res"
+            },
+            "to": {
+                "insId": "Pick-212",
+                "pinId": "obj"
+            }
+        },
+        {
+            "from": {
+                "insId": "DbFindOne-768",
+                "pinId": "err"
+            },
+            "to": {
+                "insId": "Transform-582",
+                "pinId": "from"
+            }
+        },
+        {
+            "from": {
+                "insId": "Pick-101",
+                "pinId": "r"
+            },
+            "to": {
+                "insId": "DbInsert-607",
+                "pinId": "doc"
+            }
+        },
+        {
+            "from": {
+                "insId": "__this",
+                "pinId": "name"
+            },
+            "to": {
+                "insId": "NameDto-151",
+                "pinId": "name"
+            }
+        },
+        {
+            "from": {
+                "insId": "__this",
+                "pinId": "name"
+            },
+            "to": {
+                "insId": "Transform-582",
+                "pinId": "to"
+            }
+        },
+        {
+            "from": {
+                "insId": "Pick-212",
+                "pinId": "r"
+            },
+            "to": {
+                "insId": "__this",
+                "pinId": "r"
+            }
+        },
+        {
+            "from": {
+                "insId": "Pick-101",
+                "pinId": "r"
+            },
+            "to": {
+                "insId": "Pick-212",
+                "pinId": "obj"
+            }
+        },
+        {
+            "from": {
+                "insId": "AsanaCreateTag-774",
+                "pinId": "res"
+            },
+            "to": {
+                "insId": "Pick-101",
+                "pinId": "obj"
+            }
+        },
+        {
+            "from": {
+                "insId": "Transform-582",
+                "pinId": "r"
+            },
+            "to": {
+                "insId": "AsanaCreateTag-774",
+                "pinId": "name"
+            }
+        }
+    ],
+    "completionOutputs": [
+        "r"
+    ]
+}

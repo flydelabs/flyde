@@ -1,0 +1,31 @@
+imports: {}
+exports:
+  - HeadCSS
+parts:
+  HeadCSS:
+    id: HeadCSS
+    inputs:
+      css:
+        mode: required
+        type: any
+      key:
+        mode: optional
+        type: any
+    outputs: {}
+    fnCode: |-
+      try {
+          const document = getDocument();
+          const normKey = inputs.key || "default-css";
+          const tag = document.createElement("style");
+          tag.innerHTML = inputs.css;
+          tag.id = normKey;
+          
+          const existing = document.getElementById(normKey);
+          if (existing) {
+            existing.remove();
+          }
+          document.head.appendChild(tag);
+      } catch (e) {
+          log(`Unable to run head css part`, e);
+      }
+exposedFunctionality: []

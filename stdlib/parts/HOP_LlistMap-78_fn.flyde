@@ -1,0 +1,59 @@
+imports: {}
+exports:
+  - HOP_LlistMap-78_fn
+parts:
+  HOP_LlistMap-78_fn:
+    id: HOP_LlistMap-78_fn
+    inputs:
+      item:
+        mode: optional
+        type: any
+      idx:
+        mode: optional
+        type: any
+    outputs:
+      r:
+        type: any
+      rs:
+        type: any
+    inputsPosition:
+      idx:
+        x: -59.09091775533694
+        y: -175.45454701586416
+      item:
+        x: 96.36363336877515
+        y: -134.54543856610042
+    outputsPosition:
+      rs:
+        x: -117.27273855388036
+        y: 179.09092315605162
+      r:
+        x: 51.81817405089249
+        y: 225.45454992140463
+    instances:
+      - partId: Multiply
+        pos:
+          x: 9.319999999999993
+          y: -57.09
+        id: Multiply-11
+        inputConfig: {}
+    connections:
+      - from:
+          insId: __this
+          pinId: idx
+        to:
+          insId: Multiply-11
+          pinId: n1
+      - from:
+          insId: Multiply-11
+          pinId: r
+        to:
+          insId: __this
+          pinId: r
+      - from:
+          insId: __this
+          pinId: item
+        to:
+          insId: Multiply-11
+          pinId: n2
+exposedFunctionality: []

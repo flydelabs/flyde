@@ -1,0 +1,77 @@
+imports: {}
+exports:
+  - Test of debounce
+parts:
+  Test of debounce:
+    id: Test of debounce
+    inputs:
+      a:
+        mode: required
+        type: any
+    outputs:
+      r:
+        type: any
+    inputsPosition:
+      a:
+        x: 0
+        y: 0
+    outputsPosition:
+      r:
+        x: 66.54125420799826
+        y: 667.4621176028547
+    completionOutputs:
+      - r
+    instances:
+      - partId: Debounce
+        pos:
+          x: 145.58282104492184
+          y: 475.82003692626955
+        id: Debounce-199
+        inputConfig:
+          ms:
+            mode: static
+            value: 500
+      - partId: Repeat
+        pos:
+          x: 68.87
+          y: 87.46000000000001
+        id: Repeat-673
+        inputConfig:
+          count:
+            mode: static
+            value: 5
+      - partId: Delay
+        pos:
+          x: -2.9718041992187523
+          y: 275.15917556762696
+        id: Delay-328
+        inputConfig:
+          ms:
+            mode: static
+            value: 1000
+    connections:
+      - from:
+          insId: __this
+          pinId: a
+        to:
+          insId: Repeat-673
+          pinId: val
+      - from:
+          insId: Repeat-673
+          pinId: r
+        to:
+          insId: Delay-328
+          pinId: value
+      - from:
+          insId: Delay-328
+          pinId: r
+        to:
+          insId: Debounce-199
+          pinId: i
+      - from:
+          insId: Debounce-199
+          pinId: r
+        to:
+          insId: __this
+          pinId: r
+exposedFunctionality: []

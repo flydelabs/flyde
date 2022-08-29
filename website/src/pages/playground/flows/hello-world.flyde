@@ -1,0 +1,88 @@
+imports:
+  "@flyde/stdlib":
+    - name: Debounce
+      alias: Debounce
+    - name: Throttle
+      alias: Throttle
+exports: []
+mainId: Main
+parts:
+  Main:
+    id: Main
+    inputs: {}
+    outputs:
+      result:
+        type: any
+    inputsPosition:
+      click:
+        x: -125.66545105324758
+        y: -263.4653616952434
+    outputsPosition:
+      result:
+        x: -115.33722007201499
+        y: 126.07441056479868
+    completionOutputs:
+      - result
+    instances:
+      - partId: Inline Code 4796
+        pos:
+          x: -163.62
+          y: -156.7
+        id: Inline Code 4796-573
+        inputConfig: {}
+    connections:
+      - from:
+          insId: Inline Code 4796-573
+          pinId: r
+        to:
+          insId: __this
+          pinId: result
+  Inline Code 3497:
+    id: Inline Code 3497
+    inputs: {}
+    outputs:
+      r:
+        type: any
+    customViewCode: '"Debounce 1"'
+    dataBuilderSource: IkRlYm91bmNlIDEi
+    templateType: value
+    completionOutputs:
+      - r
+    fnCode: bob
+  Inline Code 58421:
+    id: Inline Code 58421
+    inputs: {}
+    outputs:
+      r:
+        type: any
+    customViewCode: '"Debounce 2"'
+    dataBuilderSource: IkRlYm91bmNlIDIi
+    templateType: value
+    completionOutputs:
+      - r
+    fnCode: outputs.r.next(("Debounce 2"))
+  Inline Code 59172:
+    id: Inline Code 59172
+    inputs: {}
+    outputs:
+      r:
+        type: any
+    customViewCode: '"Throttled Value"'
+    dataBuilderSource: IlRocm90dGxlZCBWYWx1ZSI=
+    templateType: value
+    completionOutputs:
+      - r
+    fnCode: outputs.r.next(("Throttled Value"))
+  Inline Code 4796:
+    id: Inline Code 4796
+    inputs: {}
+    outputs:
+      r:
+        type: any
+    customViewCode: "'Hello World'"
+    dataBuilderSource: J0hlbGxvIFdvcmxkJw==
+    templateType: value
+    completionOutputs:
+      - r
+    fnCode: outputs.r.next(('Hello World'))
+exposedFunctionality: []

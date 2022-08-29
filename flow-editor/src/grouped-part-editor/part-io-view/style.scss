@@ -1,0 +1,52 @@
+
+.part-io-view {
+
+  .base-part-view-inner {
+    font-size: 14px;
+    font-weight: 400;
+  }
+
+  &.input {
+    .base-part-view-inner {
+      background: #FFD5C9;
+    }
+  }
+
+  &:hover .base-part-view-inner {
+    border: 4px solid#007EC6;
+    opacity: 0.85;
+  }
+
+  &.closest .base-part-view-inner {
+    border: 2px dashed #007EC6;
+  }
+
+  &.selected .base-part-view-inner {
+    border: 2px solid#007EC6;
+    // opacity: 0.7;
+  }
+
+  &.output {
+    .base-part-view-inner {
+      background: #E7F8FF;
+    }
+
+
+    &.selected { 
+      .base-part-view-inner {
+        color: #000000;
+        background: #45F4FF;
+      }
+    }
+  }
+
+
+
+  &.active .part-io-view-inner {
+    background: #c8ffc7;
+  }
+
+  &.active-2 .part-io-view-inner {
+    background: #9d00ff;
+  }
+}

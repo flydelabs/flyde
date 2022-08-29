@@ -1,0 +1,142 @@
+imports: {}
+exports:
+  - HtmlTextarea
+parts:
+  HtmlTextarea:
+    id: HtmlTextarea
+    inputs:
+      children:
+        mode: optional
+        type: any
+      className:
+        mode: optional
+        type: any
+      style:
+        mode: optional
+        type: any
+      extra:
+        mode: optional
+        type: any
+      id:
+        mode: optional
+        type: any
+      value:
+        mode: required
+        type: any
+      placeholder:
+        mode: optional
+        type: any
+    outputs:
+      jsx:
+        type: any
+      click:
+        type: any
+      change:
+        type: any
+    inputsPosition:
+      children:
+        x: 198.04206479406017
+        y: -245.99481931731708
+      className:
+        x: -69.13582255860676
+        y: -142.48246371581018
+      style:
+        x: -115.72005229266348
+        y: -241.4589222372525
+      extra:
+        x: 57.55185097680204
+        y: -275.801503518959
+      id:
+        x: -248.71519834765635
+        y: -202.88061148563915
+      value:
+        x: 363.0011568408785
+        y: -131.47162384065362
+      placeholder:
+        x: 460.0736230110707
+        y: -143.54132159541848
+    outputsPosition:
+      jsx:
+        x: -150.11084357782397
+        y: 424.0177174689956
+      click:
+        x: -37.93502806156163
+        y: 435.1639936674112
+      style:
+        x: 1.46
+        y: -24.05
+      change:
+        x: 167.6133118501262
+        y: 375.5068672388183
+    instances:
+      - partId: HtmlValueTag
+        pos:
+          x: -193.14
+          y: 182.22
+        id: HtmlValueTag-866
+        inputConfig:
+          tagName:
+            mode: static
+            value: textarea
+    connections:
+      - from:
+          insId: HtmlValueTag-866
+          pinId: change
+        to:
+          insId: __this
+          pinId: change
+      - from:
+          insId: HtmlValueTag-866
+          pinId: click
+        to:
+          insId: __this
+          pinId: click
+      - from:
+          insId: HtmlValueTag-866
+          pinId: jsx
+        to:
+          insId: __this
+          pinId: jsx
+      - from:
+          insId: __this
+          pinId: value
+        to:
+          insId: HtmlValueTag-866
+          pinId: value
+      - from:
+          insId: __this
+          pinId: children
+        to:
+          insId: HtmlValueTag-866
+          pinId: children
+      - from:
+          insId: __this
+          pinId: className
+        to:
+          insId: HtmlValueTag-866
+          pinId: className
+      - from:
+          insId: __this
+          pinId: id
+        to:
+          insId: HtmlValueTag-866
+          pinId: id
+      - from:
+          insId: __this
+          pinId: style
+        to:
+          insId: HtmlValueTag-866
+          pinId: style
+      - from:
+          insId: __this
+          pinId: extra
+        to:
+          insId: HtmlValueTag-866
+          pinId: extra
+      - from:
+          insId: __this
+          pinId: placeholder
+        to:
+          insId: HtmlValueTag-866
+          pinId: placeholder
+exposedFunctionality: []
