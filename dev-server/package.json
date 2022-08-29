@@ -24,7 +24,7 @@
   "license": "ISC",
   "dependencies": {
     "@flyde/core": "^1.0.0",
-    "@flyde/integrated-editor": "workspace:^",
+    "@flyde/editor": "workspace:^",
     "@types/args": "^5.0.0",
     "@types/chokidar": "^2.1.3",
     "@types/cuid": "^1.3.0",
