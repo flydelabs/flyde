@@ -22,8 +22,8 @@
     "license": "ISC",
     "dependencies": {
         "@flyde/core": "^1.0.0",
-        "@flyde/dev-server": "workspace:^",
-        "@flyde/runtime": "workspace:^"
+        "@flyde/dev-server": "^1.0.0",
+        "@flyde/runtime": "^1.0.0"
     },
     "devDependencies": {
         "concurrently": "^7.3.0",

@@ -1,6 +1,6 @@
 {
   "name": "@flyde/dev-server",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -23,8 +23,8 @@
   "license": "ISC",
   "dependencies": {
     "@flyde/core": "^1.0.0",
-    "@flyde/editor": "workspace:^",
-    "@flyde/runtime": "workspace:^",
+    "@flyde/editor": "^1.0.0",
+    "@flyde/runtime": "^1.0.0",
     "@types/args": "^5.0.0",
     "@types/chokidar": "^2.1.3",
     "@types/cuid": "^1.3.0",
