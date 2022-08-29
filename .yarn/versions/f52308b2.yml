@@ -1,0 +1,8 @@
+declined:
+  - "@flyde/dev-server"
+
+undecided:
+  - flyde
+  - "@flyde/invoices-example"
+  - "@flyde/stdlib"
+  - website
