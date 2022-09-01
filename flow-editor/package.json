@@ -28,7 +28,6 @@
     "@types/react-dom": "^16.0.0",
     "@types/react-resizable": "^1.7.2",
     "@types/react-router-dom": "^5.1.7",
-    "@types/react-tooltip": "^3.9.3",
     "classnames": "^2.3.1",
     "ejs": "^3.1.8",
     "hotkeys-js": "^3.7.3",
@@ -42,7 +41,7 @@
     "react-loaders": "^3.0.1",
     "react-resizable": "^1.11.0",
     "react-router-dom": "^5.2.0",
-    "react-tooltip": "^3.9.2",
+    "react-tooltip": "^4.2.21",
     "typescript": "^4.1.2",
     "use-debounce": "^8.0.1"
   },

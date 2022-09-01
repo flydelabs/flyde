@@ -47,8 +47,8 @@ parts:
           - i
       - partId: Throttle
         pos:
-          x: 263.14565002441407
-          y: 370.5749322509766
+          x: 135.14565002441407
+          y: 149.5749322509766
         id: Throttle-652
         inputConfig:
           threshold:
@@ -62,8 +62,8 @@ parts:
         inputConfig: {}
       - partId: Inline Code 86171
         pos:
-          x: 180.43777160644527
-          y: 541.9656292724609
+          x: 203.64521484374995
+          y: 675.6304089355468
         id: Inline Code 49743-659-d371
         inputConfig: {}
     connections:

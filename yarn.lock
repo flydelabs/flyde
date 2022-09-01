@@ -4980,7 +4980,6 @@ __metadata:
     "@flyde/editor": ^1.0.0
     "@flyde/runtime": ^1.0.0
     "@types/args": ^5.0.0
-    "@types/chokidar": ^2.1.3
     "@types/cuid": ^1.3.0
     "@types/express": ^4.16.1
     "@types/glob": ^7.2.0
@@ -4994,10 +4993,11 @@ __metadata:
     ejs: ^3.1.8
     express: ^4.16.4
     find-git-root: ^1.0.4
-    forever: ^3.0.0
+    fs-extra: ^10.1.0
     glob: ^8.0.3
     ignore: ^5.2.0
     pkg-up: ^3.0.0
+    resolve-from: ^5.0.0
     source-map-support: ^0.5.21
     toml: ^3.0.0
     ts-node-dev: ^1.0.0-pre.32
@@ -5071,7 +5071,6 @@ __metadata:
     "@types/react-dom": ^17.0.0
     "@types/react-resizable": ^1.7.2
     "@types/react-router-dom": ^5.1.7
-    "@types/react-tooltip": ^3.9.3
     chai: ^4.3.6
     classnames: ^2.3.1
     ejs: ^3.1.8
@@ -5088,7 +5087,7 @@ __metadata:
     react-loaders: ^3.0.1
     react-resizable: ^1.11.0
     react-router-dom: ^5.2.0
-    react-tooltip: ^3.9.2
+    react-tooltip: ^4.2.21
     sinon: ^14.0.0
     ts-node-dev: ^1.0.0-pre.32
     typescript: ^4.1.2
@@ -5147,7 +5146,6 @@ __metadata:
   dependencies:
     "@flyde/core": ^1.0.0
     "@types/cuid": ^1.3.0
-    "@types/express": ^4.16.1
     "@types/node": ^11.10.5
     axios: ^0.19.2
     body-parser: ^1.19.0
@@ -5155,8 +5153,6 @@ __metadata:
     chai: ^4.3.6
     concurrently: ^5.2.0
     cuid: ^2.1.8
-    express: ^4.16.4
-    forever: ^3.0.0
     glob: ^8.0.3
     resolve-from: ^5.0.0
     sinon: ^14.0.0
@@ -6492,15 +6488,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/chokidar@npm:^2.1.3":
-  version: 2.1.3
-  resolution: "@types/chokidar@npm:2.1.3"
-  dependencies:
-    chokidar: "*"
-  checksum: bdd3d49a8b4672ae0ecf62af6902a2724fd6311daedaf041868e3bafe9827bd4cc4f4799d39dfc57a38241b54cd32b51be33a88f1add8de4f35c9bf546fd7387
-  languageName: node
-  linkType: hard
-
 "@types/component-emitter@npm:^1.2.10":
   version: 1.2.10
   resolution: "@types/component-emitter@npm:1.2.10"
@@ -6983,15 +6970,6 @@ __metadata:
     "@types/history": "*"
     "@types/react": "*"
   checksum: 6309f345b8774765cb6b7588feac11ce1b824884eedbe5d13553c463aedc667fa179efd9c5a7c95d00dd7202dbd4abffd4592cc17464de18ffd9e8049738057d
-  languageName: node
-  linkType: hard
-
-"@types/react-tooltip@npm:^3.9.3":
-  version: 3.11.0
-  resolution: "@types/react-tooltip@npm:3.11.0"
-  dependencies:
-    "@types/react": "*"
-  checksum: 2a5b4b4bd8806278ebbe0a07af3e9aeed4d3ae6fd57ae723ef26169d7768995f3557bf0e9584831ea2d4e5baf30619fb56fe8863553b6544f7de6624c5b00b48
   languageName: node
   linkType: hard
 
@@ -9360,7 +9338,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chokidar@npm:*, chokidar@npm:>=3.0.0 <4.0.0, chokidar@npm:^3.4.2, chokidar@npm:^3.5.3":
+"chokidar@npm:>=3.0.0 <4.0.0, chokidar@npm:^3.4.2, chokidar@npm:^3.5.3":
   version: 3.5.3
   resolution: "chokidar@npm:3.5.3"
   dependencies:
@@ -20162,15 +20140,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-tooltip@npm:^3.9.2":
-  version: 3.11.6
-  resolution: "react-tooltip@npm:3.11.6"
+"react-tooltip@npm:^4.2.21":
+  version: 4.2.21
+  resolution: "react-tooltip@npm:4.2.21"
   dependencies:
-    prop-types: ^15.6.0
+    prop-types: ^15.7.2
+    uuid: ^7.0.3
   peerDependencies:
-    react: "*"
-    react-dom: "*"
-  checksum: b107fb82919fa2431b7847f13a61bd2550d131abe49d65885c4f5245c7b2930da422c2e85c96bfd7a82c2a1b95f028d36dca3153d879647121d97cee9372e024
+    react: ">=16.0.0"
+    react-dom: ">=16.0.0"
+  checksum: dd145ae90768a8af5518672bfd91b985a57ff021b50a60044caedd872b457ea5134793cf8d5426bd45587fa6f722320936009f5c6533a4f94d665c0a23589222
   languageName: node
   linkType: hard
 
@@ -23918,6 +23897,15 @@ __metadata:
   bin:
     uuid: ./bin/uuid
   checksum: 58de2feed61c59060b40f8203c0e4ed7fd6f99d42534a499f1741218a1dd0c129f4aa1de797bcf822c8ea5da7e4137aa3673431a96dae729047f7aca7b27866f
+  languageName: node
+  linkType: hard
+
+"uuid@npm:^7.0.3":
+  version: 7.0.3
+  resolution: "uuid@npm:7.0.3"
+  bin:
+    uuid: dist/bin/uuid
+  checksum: f5b7b5cc28accac68d5c083fd51cca64896639ebd4cca88c6cfb363801aaa83aa439c86dfc8446ea250a7a98d17afd2ad9e88d9d4958c79a412eccb93bae29de
   languageName: node
   linkType: hard
 

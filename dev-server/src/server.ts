@@ -12,8 +12,9 @@ import { resolveFlow } from "@flyde/runtime";
 import { join } from "path";
 
 import { entries } from "@flyde/core";
+import resolveFrom = require("resolve-from");
 
-export const runDevServer = (port: number, rootDir: string) => {
+export const runDevServer = (port: number, rootDir: string, editorStaticRoot: string) => {
   const service = createService(rootDir);
 
   const app = express();
@@ -109,12 +110,11 @@ export const runDevServer = (port: number, rootDir: string) => {
     res.send(combined);
   });
 
-  const editorBuildRoot = join(__dirname, "../../editor/build");
 
-  app.use("/editor", express.static(editorBuildRoot));
+  app.use("/editor", express.static(editorStaticRoot));
 
   app.use(["/editor", "/editor/*"], async (req, res, next) => {
-    const path = join(editorBuildRoot, "index.html");
+    const path = join(editorStaticRoot, "index.html");
     res.sendFile(path);
   });
 

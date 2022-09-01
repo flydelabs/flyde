@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import ReactTooltip from "react-tooltip";
+import { TooltipProps, default as ReactTooltip} from "react-tooltip";
+
 
 // Create root level element for react-tooltips
 const domNode = document.createElement('div');
@@ -15,7 +16,7 @@ function BodyPortal ({ children }: any) {
 }
 
 // Custom tooltip wrapper to ensure all tooltips get rendered into the portal
-export const CustomReactTooltip: React.FC<ReactTooltip.Props> = (props) => {
+export const CustomReactTooltip: React.FC<TooltipProps> = (props) => {
   return (
     <BodyPortal>
       <ReactTooltip

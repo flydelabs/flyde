@@ -9,6 +9,7 @@ const TYPINGS_TARGET = "src/flyde-typings.d.ts";
 export type InitFlydeDevServerOptions = {
   port: number;
   root: string;
+  editorStaticsRoot: string;
 };
 
 export const initFlydeDevServer = (options: InitFlydeDevServerOptions) => {
@@ -16,7 +17,7 @@ export const initFlydeDevServer = (options: InitFlydeDevServerOptions) => {
 
   console.log("running dev server on", options.port, "root", root);
 
-  runDevServer(Number(options.port), root);
+  runDevServer(Number(options.port), root, options.editorStaticsRoot);
   console.log("running dev server on", options.port, "root", root);
 
   setupFlowsWatcher(root, (flows) => {
