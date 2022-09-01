@@ -1,6 +1,6 @@
 {
   "name": "@flyde/core",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -16,13 +16,9 @@
   "dependencies": {
     "@types/debug": "^4.1.7",
     "@types/node": "^10.12.24",
-    "@types/react": "^16.7.18",
-    "@types/react-dom": "^16.0.11",
     "debug": "^4.3.2",
     "dependency-graph": "^0.8.0",
     "md5": "^2.3.0",
-    "react": "^16.7.0",
-    "react-dom": "^16.7.0",
     "rxjs": "^6.3.3",
     "ts-node": "^10.8.0",
     "typescript": "^4.0.0",

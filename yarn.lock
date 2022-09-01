@@ -4951,8 +4951,6 @@ __metadata:
     "@types/debug": ^4.1.7
     "@types/mocha": ^5.2.5
     "@types/node": ^10.12.24
-    "@types/react": ^16.7.18
-    "@types/react-dom": ^16.0.11
     "@types/sinon": ^7.0.3
     chai: ^4.2.0
     debug: ^4.3.2
@@ -6903,15 +6901,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:^16.0.11":
-  version: 16.9.12
-  resolution: "@types/react-dom@npm:16.9.12"
-  dependencies:
-    "@types/react": ^16
-  checksum: 9c6c3ee42671d98d585046ae3ff14dd56772e490608ffb7efdb0d0be74bb4347c3cf4d5ff30b03d631cee3e3df444ba759570e5b119f55432e2e2278b4757cab
-  languageName: node
-  linkType: hard
-
 "@types/react-dom@npm:^17.0.0":
   version: 17.0.17
   resolution: "@types/react-dom@npm:17.0.17"
@@ -6981,17 +6970,6 @@ __metadata:
     "@types/scheduler": "*"
     csstype: ^3.0.2
   checksum: d29f2a33ed69fae9d9f42f8b39b40352e3209eb821f827d566330adfdffb48d2dc730982356cd50a7fda6171e6bc7deca793f7b105c95fce615a45ab313ecf41
-  languageName: node
-  linkType: hard
-
-"@types/react@npm:^16, @types/react@npm:^16.7.18":
-  version: 16.14.5
-  resolution: "@types/react@npm:16.14.5"
-  dependencies:
-    "@types/prop-types": "*"
-    "@types/scheduler": "*"
-    csstype: ^3.0.2
-  checksum: 5dd962b769e88e4390dbfb93cdb99f5db964d80c1da92bf8c34a570971cae2c1bbe0c399bace0d070ef4a253d41aa8f40c6ac7c5bc6979ef24c95740819380e6
   languageName: node
   linkType: hard
 
