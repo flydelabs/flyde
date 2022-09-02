@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkwebsite=self.webpackChunkwebsite||[]).push([[535],{45641:function(e){e.exports=JSON.parse('{"title":"Recent posts","items":[{"title":"Introducing Flyde","permalink":"/blog/introducing-flyde"}]}')}}]);
