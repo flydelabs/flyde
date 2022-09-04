@@ -14,7 +14,7 @@ const FeatureList: FeatureItem[] = [
     Svg: require('@site/static/img/undraw_vcs.svg').default,
     description: (
       <>
-        Flyde fully integrates into your existing codebase, version control system and CI/CD pipeline. Enjoy the benefits of visual programming without sacrificing modern engineering practices.
+        Flyde fully integrates into your <mark>existing codebase, version control system and CI/CD</mark> pipeline. Enjoy the benefits of visual programming without sacrificing modern engineering practices.
       </>
     ),
   },
@@ -24,7 +24,7 @@ const FeatureList: FeatureItem[] = [
     description: (
       <>
         Flyde democratizes development by allowing anyone to understand and even collaborate on a project.
-        Turn your own codebase into a low-code platform!
+        Turn <mark>your codebase into a low-code platform!</mark>
       </>
     ),
   },
@@ -33,7 +33,8 @@ const FeatureList: FeatureItem[] = [
     Svg: require('@site/static/img/undraw_visionary_tech.svg').default,
     description: (
       <>
-        By using Flyde for flows, you get an always correct flow chart representing your logic.
+        Maintaining and updating diagrams for documentation is hard.
+        By using Flyde for flows, you get an <mark>consistent flow chart representing your logic.</mark>
       </>
     ),
   },

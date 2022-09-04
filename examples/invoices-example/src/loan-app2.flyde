@@ -84,22 +84,10 @@ parts:
           insId: Dot-966
           pinId: obj
       - from:
-          insId: Dot-966
-          pinId: value
-        to:
-          insId: CRM.getUserByEmail-143
-          pinId: email
-      - from:
           insId: __this
           pinId: formData
         to:
           insId: Dot-966-d839
-          pinId: obj
-      - from:
-          insId: CRM.getUserByEmail-143
-          pinId: result
-        to:
-          insId: Dot-241
           pinId: obj
       - from:
           insId: Inline Code 14302-197-d838
@@ -125,18 +113,6 @@ parts:
         to:
           insId: Inline Code 40721-776
           pinId: __trigger
-      - from:
-          insId: Dot-966-d839
-          pinId: value
-        to:
-          insId: bobiatto-ins
-          pinId: amount
-      - from:
-          insId: Dot-241
-          pinId: value
-        to:
-          insId: bobiatto-ins
-          pinId: userId
   CRM.getUserByEmail:
     id: CRM.getUserByEmail
     inputs:
@@ -249,10 +225,10 @@ parts:
       r:
         type: any
     customViewCode: inputs.risk < 0.3 && inputs.credit > 250
+    templateType: value
     completionOutputs:
       - r
     fnCode: outputs.r.next((inputs.risk < 0.3 && inputs.credit > 250))
-    templateType: value
   Inline Code 14302:
     id: Inline Code 14302
     inputs: {}
@@ -260,10 +236,10 @@ parts:
       r:
         type: any
     customViewCode: ""
+    templateType: value
     completionOutputs:
       - r
     fnCode: outputs.r.next(('Denied'))
-    templateType: value
   Inline Code 40721:
     id: Inline Code 40721
     inputs: {}
@@ -271,10 +247,10 @@ parts:
       r:
         type: any
     customViewCode: "'Approved'"
+    templateType: value
     completionOutputs:
       - r
     fnCode: outputs.r.next(('Approved'))
-    templateType: value
   Inline Code 50829:
     id: Inline Code 50829
     inputs:
@@ -288,10 +264,10 @@ parts:
       r:
         type: any
     customViewCode: ""
+    templateType: value
     completionOutputs:
       - r
     fnCode: outputs.r.next((`Result is ${inputs.a + inputs.b}`))
-    templateType: value
   Hello:
     id: Hello
     inputs:
@@ -476,8 +452,8 @@ parts:
       r:
         type: any
     customViewCode: "`Result is ${inputs.a + inputs.b}`"
+    templateType: value
     completionOutputs:
       - r
     fnCode: outputs.r.next((`Result is ${inputs.a + inputs.b}`))
-    templateType: value
 exposedFunctionality: []

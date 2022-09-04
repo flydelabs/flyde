@@ -1,10 +1,24 @@
-import { BasePart, CustomPartRepo, FlydeFlow, isGroupedPart, Part, ResolvedFlydeFlow, ResolvedFlydeFlowDefinition, ResolvedFlydeRuntimeFlow, FlydeFlowImportDef, keys, CustomPart, isCodePart, NativePart, PartRepo } from "@flyde/core";
+import {
+  BasePart,
+  CustomPartRepo,
+  FlydeFlow,
+  isGroupedPart,
+  Part,
+  ResolvedFlydeFlow,
+  ResolvedFlydeFlowDefinition,
+  ResolvedFlydeRuntimeFlow,
+  FlydeFlowImportDef,
+  keys,
+  CustomPart,
+  isCodePart,
+  NativePart,
+  PartRepo,
+} from "@flyde/core";
 import { existsSync, readFileSync } from "fs";
 import { dirname, join, relative } from "path";
 import { deserializeFlow } from "../serdes/deserialize";
 import { resolveImportablePaths } from "./resolve-importable-paths";
 import { resolvePartWithDeps } from "./resolve-part-with-deps/resolve-part-with-deps";
-
 
 /*
 Resolving algorithm:
@@ -18,9 +32,12 @@ Resolving algorithm:
 
 */
 
-export type ResolveMode = 'implementation' | 'definition' | 'bundle';
+export type ResolveMode = "implementation" | "definition" | "bundle";
 
-const resolveImports = <T extends ResolvedFlydeFlow>(resolvedImportedFlow: T, importDefs: FlydeFlowImportDef[]): T => {
+const resolveImports = <T extends ResolvedFlydeFlow>(
+  resolvedImportedFlow: T,
+  importDefs: FlydeFlowImportDef[]
+): T => {
   return importDefs.reduce((acc, importDef) => {
     const part = resolvedImportedFlow[importDef.name];
 
@@ -36,19 +53,21 @@ const resolveImports = <T extends ResolvedFlydeFlow>(resolvedImportedFlow: T, im
     for (const partId in withDeps) {
       const part = withDeps[partId];
       if (part.id === importDef.name) {
-        aliasedDeps[importDef.alias] = {...part, id: importDef.alias};
+        aliasedDeps[importDef.alias] = { ...part, id: importDef.alias };
       } else {
         aliasedDeps[partId] = part;
       }
     }
 
-    return {...acc, ...aliasedDeps};
+    return { ...acc, ...aliasedDeps };
   }, {});
-}
+};
 
-
-const _resolveFlow = (fullFlowPath: string, mode: ResolveMode = 'definition', exportedOnly: boolean = false): ResolvedFlydeFlow => {
-  
+const _resolveFlow = (
+  fullFlowPath: string,
+  mode: ResolveMode = "definition",
+  exportedOnly: boolean = false
+): ResolvedFlydeFlow => {
   const flow = deserializeFlow(readFileSync(fullFlowPath, "utf8"));
 
   const parts = flow.parts || {};
@@ -61,43 +80,37 @@ const _resolveFlow = (fullFlowPath: string, mode: ResolveMode = 'definition', ex
   const exports = flow.exports;
 
   const getLocalOrExternalPaths = (importPath: string) => {
-    const fullImportPath = join(fullFlowPath, '..', importPath);
-  
+    const fullImportPath = join(fullFlowPath, "..", importPath);
+
     if (existsSync(fullImportPath)) {
       return [fullImportPath];
     } else {
       return resolveImportablePaths(fullFlowPath, importPath);
     }
-  }
-
+  };
 
   for (const importPath in imports) {
-
-
     const importablePaths = getLocalOrExternalPaths(importPath);
 
     let importData = {};
 
-    const exports  = new Set();
+    const exports = new Set();
     for (const fullPath of importablePaths) {
-      
       if (existsSync(fullPath)) {
         const contents = readFileSync(fullPath, "utf8");
         const flow = deserializeFlow(contents);
         const resolvedImport = _resolveFlow(fullPath, mode);
-        
 
         flow.exports.forEach((exp) => {
-          console.log(exp);
-          
           if (exports.has(exp)) {
-            throw new Error(`Module ${importPath} is exporting part "${exp}" which was already exported by another package.`);
+            throw new Error(
+              `Module ${importPath} is exporting part "${exp}" which was already exported by another package.`
+            );
           }
           exports.add(exp);
         });
-        
+
         importData = { ...importData, ...resolvedImport };
-        
       } else {
         throw new Error(`Error importing ${importPath} - file does not exist`);
       }
@@ -121,13 +134,12 @@ const _resolveFlow = (fullFlowPath: string, mode: ResolveMode = 'definition', ex
       }
       tempRepo[partId] = importedRepo[partId];
     }
- 
   }
-  
+
   const repo: PartRepo = {};
   for (const name in tempRepo) {
     const part: CustomPart = tempRepo[name];
-    
+
     if (!part) {
       throw new Error(`Error resolving shared part ${name} - part not found`);
     }
@@ -136,22 +148,19 @@ const _resolveFlow = (fullFlowPath: string, mode: ResolveMode = 'definition', ex
     repo[name] = part;
 
     if (isCodePart(part)) {
-
       const refMatches = part.fnCode.match(/^ref:(.*)$/);
 
-  
-      const nativePart = (part as any) as NativePart;
+      const nativePart = part as any as NativePart;
       if (refMatches) {
         const [_, ref] = refMatches;
 
-        if (mode === 'implementation' || mode === 'bundle') {
-
+        if (mode === "implementation" || mode === "bundle") {
           const flowFolder = dirname(fullFlowPath);
-          
+
           const fnPath = join(flowFolder, ref);
           const requirePath = relative(flowFolder, fnPath);
-          
-          if (mode === 'bundle') {
+
+          if (mode === "bundle") {
             nativePart.fn = `__BUNDLE:[[${requirePath}]]` as any;
           } else {
             nativePart.fn = require("./" + requirePath);
@@ -162,10 +171,9 @@ const _resolveFlow = (fullFlowPath: string, mode: ResolveMode = 'definition', ex
         }
       }
     }
-  }  
+  }
 
   return repo;
 };
-
 
 export const resolveFlow = _resolveFlow;

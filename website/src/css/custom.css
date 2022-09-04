@@ -28,3 +28,7 @@
   --ifm-color-primary-lightest: #4fddbf;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
+
+mark {
+  background-color: #d7f0ff;
+}

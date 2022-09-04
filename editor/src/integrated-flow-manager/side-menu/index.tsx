@@ -13,10 +13,7 @@ import { Resizable, ResizeCallbackData } from "react-resizable";
 import "react-resizable/css/styles.css";
 import { useResizePref } from "@flyde/flow-editor";
 import { MenuAddSection } from "./add-section";
-import {
-  folderIcon,
-  menuAddIcon,
-} from "./icons";
+import { folderIcon, menuAddIcon } from "./icons";
 
 import "./style.scss";
 import { values } from "@flyde/flow-editor";
@@ -93,7 +90,7 @@ export const IntegratedFlowSideMenu: React.FC<IntegratedFlowSideMenuProps> = (pr
     onDeletePart,
     onAddPart,
     onFocusInstance,
-    onChangeFlow
+    onChangeFlow,
   } = props;
 
   const onSelect = (item: string) => {
@@ -187,17 +184,29 @@ export const IntegratedFlowSideMenu: React.FC<IntegratedFlowSideMenuProps> = (pr
     [onAddPart, flow]
   );
 
-  const onChangeMainPartId = useCallback((partId) => {
-    onChangeFlow(produce(flow, (draft) => {
-      draft.mainId = partId;
-    }), functionalChange('change main id'));
-  }, [flow, onChangeFlow]);
+  const onChangeMainPartId = useCallback(
+    (partId) => {
+      onChangeFlow(
+        produce(flow, (draft) => {
+          draft.mainId = partId;
+        }),
+        functionalChange("change main id")
+      );
+    },
+    [flow, onChangeFlow]
+  );
 
-  const onChangeExported = useCallback((exported: string[]) => {
-    onChangeFlow(produce(flow, (draft) => {
-      draft.exports = exported
-    }), functionalChange('change main id'));
-  }, [flow, onChangeFlow]);
+  const onChangeExported = useCallback(
+    (exported: string[]) => {
+      onChangeFlow(
+        produce(flow, (draft) => {
+          draft.exports = exported;
+        }),
+        functionalChange("change main id")
+      );
+    },
+    [flow, onChangeFlow]
+  );
 
   const renderSection = () => {
     switch (selectedItem) {
@@ -212,9 +221,8 @@ export const IntegratedFlowSideMenu: React.FC<IntegratedFlowSideMenuProps> = (pr
         );
       }
       case "folder": {
-        console.log({filename: props.flowPath});
         if (!navigatorData) {
-          return <Loader/>
+          return <Loader />;
         }
         return (
           <div className="menu-section folder" style={{ width: `${width}px` }}>

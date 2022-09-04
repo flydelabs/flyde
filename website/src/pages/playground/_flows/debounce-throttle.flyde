@@ -47,8 +47,8 @@ parts:
           - i
       - partId: Throttle
         pos:
-          x: 135.14565002441407
-          y: 149.5749322509766
+          x: 228.61573516845704
+          y: 383.7714730834961
         id: Throttle-652
         inputConfig:
           threshold:

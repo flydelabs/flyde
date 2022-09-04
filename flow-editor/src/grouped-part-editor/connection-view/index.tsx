@@ -9,7 +9,6 @@ import {
   ConnectionNode,
   isInternalConnectionNode,
   isExternalConnectionNode,
-  TRIGGER_PIN_ID,
 } from "@flyde/core";
 import {
   calcPinPosition,
@@ -18,8 +17,10 @@ import {
 } from "./calc-pin-position";
 import { Size } from "../../utils";
 // ;
-import { calcInstancePosition } from "../instance-view/utils";
 import { calcBezierPath } from "./bezier";
+
+import { useSsr } from 'usehooks-ts'
+
 
 export interface ConnectionViewProps {
   from: ConnectionNode;
@@ -56,6 +57,8 @@ const calcTargetPos = (props: ConnectionViewProps): Pos => {
 };
 
 export const ConnectionView: React.FC<ConnectionViewProps> = (props) => {
+    const { isBrowser } = useSsr();
+
   const { from, onDblClick, part, viewPort, repo, future, instances, to } = props;
   const [renderTrigger, setRenderTrigger] = React.useState(0);
 
@@ -71,8 +74,8 @@ export const ConnectionView: React.FC<ConnectionViewProps> = (props) => {
   const sourcePin = fromPart.outputs[from.pinId];
   const delayed = sourcePin && sourcePin.delayed;
 
-  const { x: x1, y: y1 } = calcStartPos(props);
-  const { x: x2, y: y2 } = calcTargetPos(props);
+  const { x: x1, y: y1 } = isBrowser ? calcStartPos(props) : {x: 0, y: 0};
+  const { x: x2, y: y2 } = isBrowser ? calcTargetPos(props) : {x: 0, y: 0};
 
   React.useEffect(() => {
     let t: number = 0;

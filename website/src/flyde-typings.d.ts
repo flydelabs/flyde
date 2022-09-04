@@ -11,6 +11,9 @@ declare module '@flyde/runtime' {
     export function executeFlow(path: 'fibonacci.flyde', args: {n: any}): Promise<any>;
     export function executeFlow(path: 'hello-world.flyde', args: {}): Promise<any>;
     export function executeFlow(path: 'react-counter.flyde', args: {}): Promise<any>;
+    export function executeFlow(path: 'fibonacci.flyde', args: {n: any}): Promise<any>;
+    export function executeFlow(path: 'debounce-throttle.flyde', args: {click: any}): Promise<any>;
+    export function executeFlow(path: 'hello-world.flyde', args: {na: any}): Promise<any>;
 
     // repeating static function typings.. TODO - find a way to avoid needing this
     export const expose: (func: Function, name: string, inputs?: string[]) => void;

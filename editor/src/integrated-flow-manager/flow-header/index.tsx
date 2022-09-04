@@ -123,7 +123,7 @@ export const IntegratedFlowHeader: React.FC<IntegratedFlowHeaderProps> = React.m
   );
 
   return (
-    <header className="integrated-flow-header">
+    <header className="flow-header">
       <Popover content={ProjectMenu} position={Position.RIGHT_BOTTOM}>
         <span className="project-name">
           <img className="logo" src={logo} alt="Flyde logo" />

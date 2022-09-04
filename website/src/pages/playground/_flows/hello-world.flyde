@@ -9,7 +9,10 @@ mainId: Main
 parts:
   Main:
     id: Main
-    inputs: {}
+    inputs:
+      na:
+        mode: required
+        type: any
     outputs:
       result:
         type: any
@@ -17,6 +20,9 @@ parts:
       click:
         x: -125.66545105324758
         y: -263.4653616952434
+      na:
+        x: -321.62
+        y: -142.81
     outputsPosition:
       result:
         x: -115.33722007201499

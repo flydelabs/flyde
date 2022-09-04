@@ -1,14 +1,9 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import ReactDOM from "react-dom";
 import { TooltipProps, default as ReactTooltip} from "react-tooltip";
 
-
-// Create root level element for react-tooltips
-const domNode = document.createElement('div');
-document.body.appendChild(domNode);
-
 // Wrapper component to portal react-tooltips
-function BodyPortal ({ children }: any) {
+function BodyPortal ({ children, domNode }: any) {
   return ReactDOM.createPortal(
     children,
     domNode
@@ -17,12 +12,18 @@ function BodyPortal ({ children }: any) {
 
 // Custom tooltip wrapper to ensure all tooltips get rendered into the portal
 export const CustomReactTooltip: React.FC<TooltipProps> = (props) => {
-  return (
-    <BodyPortal>
+
+  const domNode = useRef<Element>();
+
+  useEffect(() => {
+    domNode.current = document.createElement('div');
+    document.body.appendChild(domNode.current);
+  }, [])
+  return (domNode.current ? <BodyPortal domNode={domNode.current}>
       <ReactTooltip
         {...props}
       />
-    </BodyPortal>
+    </BodyPortal> : null
   );
 }
 

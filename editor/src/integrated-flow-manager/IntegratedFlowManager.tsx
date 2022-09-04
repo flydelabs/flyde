@@ -14,7 +14,7 @@ import classNames from "classnames";
 import { createEditorClient, EditorDebuggerClient } from "@flyde/remote-debugger/dist/client";
 
 import produce from "immer";
-import { IntegratedFlowHeader } from "./integrated-flow-header";
+import { IntegratedFlowHeader } from "./flow-header";
 import { createNewPartInstance } from "@flyde/flow-editor"; // ../../common/grouped-part-editor/utils
 import { vAdd } from "@flyde/flow-editor"; // ../../common/physics
 
@@ -22,7 +22,7 @@ import { FlowEditor } from "@flyde/flow-editor"; // ../../common/flow-editor/Flo
 
 import { useDebouncedCallback } from "use-debounce";
 
-import { IntegratedFlowSideMenu } from "./integrated-flow-side-menu";
+import { IntegratedFlowSideMenu } from "./side-menu";
 import {
   CustomPart,
   isCodePart,
@@ -34,7 +34,7 @@ import {
 
 import { AppToaster, toastMsg } from "@flyde/flow-editor"; // ../../common/toaster
 
-import { useQueryParam, StringParam } from "use-query-params";
+import { useQueryParam, StringParam, BooleanParam } from "use-query-params";
 import { values } from "@flyde/flow-editor"; // ../../common/utils
 import { PinType } from "@flyde/core";
 import { createRuntimePlayer, RuntimePlayer } from "@flyde/flow-editor"; // ../../common/grouped-part-editor/runtime-player
@@ -62,6 +62,8 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (prop
   // const searchParams = useSearchParams();
 
   const [editedPartQuery, setEditedPartQuery] = useQueryParam("editedPartId", StringParam);
+
+  const [isEmbeddedMode] = useQueryParam("embedded", BooleanParam);
 
   const [state, setState] = React.useState<FlowEditorState>({
     flow: initialFlow,
@@ -493,7 +495,7 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (prop
   }, [importedParts, flow.parts, exposedFunc, resolvedDefinitions]);
 
   return (
-    <div className={classNames("app")}>
+    <div className={classNames("app", {embedded: isEmbeddedMode})}>
       <IntegratedFlowHeader
         flow={flow}
         part={editedPart}

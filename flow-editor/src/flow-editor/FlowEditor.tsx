@@ -82,7 +82,7 @@ export type FlydeFlowEditorProps = {
 
   ref?: React.Ref<any>;
 
-  hideTemplatingTips: boolean;
+  hideTemplatingTips?: boolean;
 };
 
 const maxUndoStackSize = 50;

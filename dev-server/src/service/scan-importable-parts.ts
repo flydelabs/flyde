@@ -24,8 +24,6 @@ export const resolveDependentPackages = async (rootPath: string, flydeDependenci
   return flydeDependencies.reduce<Record<string, PartDefRepo>>((acc, dep) => {
     const paths = resolveImportablePaths(rootPath, dep);
 
-    // console.log({ paths });
-
     const parts = paths.reduce((acc, filePath) => {
       const flow = resolveFlow(filePath, "definition");
       return (acc = { ...acc, ...flow });
@@ -54,7 +52,6 @@ const getLocalFlydeFiles = (rootPath: string) => {
 };
 
 export const scanImportableParts = async (rootPath: string, filename: string) => {
-
   const fileRoot = join(rootPath, filename);
 
   const localFiles = getLocalFlydeFiles(rootPath);
@@ -64,22 +61,19 @@ export const scanImportableParts = async (rootPath: string, filename: string) =>
   const localParts = localFiles
     .filter((file) => !file.relativePath.endsWith(filename))
     .reduce<Record<string, PartDefRepo>>((acc, file) => {
+      const flowContents = readFileSync(file.fullPath, "utf8");
+      const { exports } = deserializeFlow(flowContents);
 
-    const flowContents = readFileSync(file.fullPath, "utf8");
-    const { exports }= deserializeFlow(flowContents);
+      const resolvedFlow = resolveFlow(file.fullPath, "definition");
 
-    const resolvedFlow = resolveFlow(file.fullPath, "definition");
+      const relativePath = relative(dirname(fileRoot), file.fullPath);
 
-    const relativePath = relative(dirname(fileRoot), file.fullPath);
+      const onlyExported = exports.reduce((acc, id) => {
+        return { ...acc, [id]: resolvedFlow[id] };
+      }, {});
 
-    const onlyExported = exports.reduce((acc, id) => {
-      return {...acc, [id]: resolvedFlow[id]};
-      },{});
-
-    
-
-    return { ...acc, [relativePath]: onlyExported };
-  }, {});
+      return { ...acc, [relativePath]: onlyExported };
+    }, {});
 
   return { ...depsParts, ...localParts };
 };

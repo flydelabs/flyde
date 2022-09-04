@@ -1,5 +1,32 @@
 import * as React from "react";
 
+// const handler = {
+//   get: function (obj, prop) {
+//     console.log("ACCESS ATTEMPT", prop);
+//     return obj[prop];
+
+//     // throw new Error(`Someone is trying to access ${prop}`);
+//     // return obj[prop] ? obj[prop] : 'property does not exist';
+//   },
+// };
+
+// // the code below is needed to make SSG in docusaurus work. TODO - find the root cause!
+// try {
+//   // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+//   const b = typeof document.documentElement;
+// } catch (e) {
+//   let documentElement = {} as any;
+
+//   const proxy = new Proxy(documentElement, handler);
+//   let document = {
+//     documentElement: proxy,
+//   } as any;
+
+//   globalThis.document = document;
+
+//   (global as any).document = document;
+// }
+
 import {
   isExternalConnectionNode,
   THIS_INS_ID,
@@ -86,6 +113,11 @@ const DBL_CLICK_TIME = 300;
 
 const defaultPos = { x: 0, y: 0 };
 
+export const defaultViewPort: ViewPort = {
+  pos: { x: 0, y: 0 },
+  zoom: 1,
+};
+
 export interface ClosestPinData {
   ins: PartInstance;
   pin: string;
@@ -103,11 +135,6 @@ export type GroupEditorBoardData = {
   lastMousePos: Pos;
   from?: ConnectionNode;
   to?: ConnectionNode;
-};
-
-export const defaultViewPort: ViewPort = {
-  pos: { x: 0, y: 0 },
-  zoom: 1,
 };
 
 export type GroupedPartEditorProps = {
@@ -171,7 +198,7 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
       onChangeBoardData,
       insId: thisInsId,
       part,
-      onShowOmnibar
+      onShowOmnibar,
     } = props;
 
     const { selected, from, to } = boardData;
@@ -191,7 +218,10 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
 
     const [copiedConstValue, setCopiedConstValue] = useState<any>();
 
-    const [inspectedInstance, setInspectedInstance] = useState<{part: GroupedPart, insId: string}>();
+    const [inspectedInstance, setInspectedInstance] = useState<{
+      part: GroupedPart;
+      insId: string;
+    }>();
 
     const viewPort = boardData.viewPort;
 
@@ -200,7 +230,7 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
         onChangeBoardData({ viewPort });
       },
       [onChangeBoardData]
-      );
+    );
 
     const _onRequestHistory: GroupedPartEditorProps["onRequestHistory"] = React.useCallback(
       (insId, pinId, pinType) => {
@@ -239,13 +269,13 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
       type: "input" | "output";
     }>();
 
-    const {allowScroll, blockScroll} = useScrollBlock()
+    const { allowScroll, blockScroll } = useScrollBlock();
 
     useEffect(() => {
       preloadMonaco();
     }, []);
 
-    const boardRef = useRef<HTMLDivElement>(document.createElement("div"));
+    const boardRef = useRef<HTMLDivElement>();
     const vpSize: Size = useComponentSize(boardRef);
     const lastMousePos = React.useRef({ x: 400, y: 400 });
 
@@ -640,16 +670,14 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
 
     const onMouseMove: React.MouseEventHandler = React.useCallback(
       (e) => {
-
         const posForSelection = { x: e.clientX - boardPos.x, y: e.clientY - boardPos.y };
-      
+
         const eventPos = { x: e.clientX, y: e.clientY };
         const normal = vSub(eventPos, boardPos);
         const posInBoard = domToViewPort(normal, viewPort);
         // const posInBoard = normal; //domToViewPort(eventPos, viewPort);
 
         // console.log({bpy: boardPos.y, ny: normal.y, epy: eventPos.y, py: posInBoard.y});
-        
 
         if (selectionBox) {
           setSelectionBox({ ...selectionBox, to: eventPos });
@@ -681,7 +709,18 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
         lastMousePos.current = posInBoard;
         onChangeBoardData({ lastMousePos: lastMousePos.current });
       },
-      [boardPos, selectionBox, part, repo, vpSize, thisInsId, closestPin, onChangeBoardData, viewPort, setViewPort]
+      [
+        boardPos,
+        selectionBox,
+        part,
+        repo,
+        vpSize,
+        thisInsId,
+        closestPin,
+        onChangeBoardData,
+        viewPort,
+        setViewPort,
+      ]
     );
 
     const onMouseLeave: React.MouseEventHandler = React.useCallback(() => {
@@ -689,7 +728,6 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
       posRef.current = undefined;
       vpMoveStart.current = undefined;
     }, []);
-
 
     const onDoubleClickInstance = React.useCallback(
       (ins: PartInstance, shift: boolean) => {
@@ -1024,26 +1062,28 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
       [part, repo]
     );
 
-    const onMaybeZoom = React.useCallback((e: WheelEvent) => {
-      if (e.metaKey) {
-        // blockScroll();
-        const zoomDiff = e.deltaY * -0.001;
-        setViewPort({ ...viewPort, zoom: viewPort.zoom + zoomDiff });
-        e.preventDefault();
-      }
-    }, [setViewPort, viewPort]);
+    const onMaybeZoom = React.useCallback(
+      (e: WheelEvent) => {
+        if (e.metaKey) {
+          // blockScroll();
+          const zoomDiff = e.deltaY * -0.001;
+          setViewPort({ ...viewPort, zoom: viewPort.zoom + zoomDiff });
+          e.preventDefault();
+        }
+      },
+      [setViewPort, viewPort]
+    );
 
     useEffect(() => {
-      const {current} = boardRef;
+      const { current } = boardRef;
       if (current) {
         current.addEventListener("wheel", onMaybeZoom);
 
         return () => {
           current.removeEventListener("wheel", onMaybeZoom);
-        }
+        };
       }
-
-    }, [onMaybeZoom])
+    }, [onMaybeZoom]);
 
     const backgroundStyle: any = {
       backgroundPositionX: roundNumber(-viewPort.pos.x * viewPort.zoom),
@@ -1093,9 +1133,7 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
         console.log(`${orphanConnections.length} orphan connections removed`, orphanConnections);
 
         const newPart = produce(part, (draft) => {
-          draft.connections = part.connections.filter(
-            (conn) => !orphanConnections.includes(conn)
-          );
+          draft.connections = part.connections.filter((conn) => !orphanConnections.includes(conn));
         });
         onChange(newPart, functionalChange("prune orphan connections"));
       }
@@ -1151,15 +1189,7 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
           editOrCreateConstValue(ins, pinId, "n/a", pos, true);
         }
       },
-      [
-        quickAddMenuVisible,
-        viewPort,
-        repo,
-        part,
-        onChange,
-        onCloseQuickAdd,
-        editOrCreateConstValue,
-      ]
+      [quickAddMenuVisible, viewPort, repo, part, onChange, onCloseQuickAdd, editOrCreateConstValue]
     );
 
     const copyPartToClipboard = React.useCallback(async () => {
@@ -1236,7 +1266,10 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
       [getContextMenu, viewPort]
     );
 
-    const onSlide = React.useCallback((v) => setViewPort({ ...viewPort, zoom: v }), [setViewPort, viewPort]);
+    const onSlide = React.useCallback(
+      (v) => setViewPort({ ...viewPort, zoom: v }),
+      [setViewPort, viewPort]
+    );
 
     useHotkeys("shift+c", fitToScreen);
     useHotkeys("cmd+c", onCopyInner);
@@ -1251,7 +1284,7 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
     const onChangeInspected: GroupedPartEditorProps["onChangePart"] = React.useCallback(
       (data, type) => {
         if (type.type === "meta") {
-          setInspectedInstance(val => ({...val, part: data}));
+          setInspectedInstance((val) => ({ ...val, part: data }));
         } else {
           toastMsg("Cannot change inspected part");
         }
@@ -1262,7 +1295,7 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
     const [inspectedBoardData, setInspectedBoardData] = useState<GroupEditorBoardData>({
       selected: [],
       viewPort: defaultViewPort,
-      lastMousePos: { x: 0, y: 0 }
+      lastMousePos: { x: 0, y: 0 },
     });
 
     const onChangeInspectedBoardData = React.useCallback((partial) => {

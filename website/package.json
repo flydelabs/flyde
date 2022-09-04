@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "docusaurus": "docusaurus",
-    "start": "concurrently 'docusaurus start --port 3003' 'flyde'",
+    "start": "concurrently 'docusaurus start --port 3003'",
     "watch": "yarn start",
     "build": "docusaurus build",
     "swizzle": "docusaurus swizzle",

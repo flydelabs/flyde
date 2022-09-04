@@ -11,7 +11,7 @@
     "build": "rm -rf dist && tsc -p .",
     "prod": "node dist/index.js",
     "bob": "flyde",
-    "start": "concurrently 'ts-node-dev --respawn src/index.ts' 'npm run watch' 'flyde'",
+    "start": "concurrently 'ts-node-dev --respawn src/index.ts' 'npm run watch'",
     "dev": "concurrently 'ts-node-dev --respawn src/index.ts' 'npm run watch'"
   },
   "author": "",

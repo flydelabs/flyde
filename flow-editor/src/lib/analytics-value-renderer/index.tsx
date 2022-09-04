@@ -1,5 +1,5 @@
 import { isDefined } from "@flyde/core";
-import ReactJsonView from "react-json-view";
+import { BrowserOnlyReactJson } from "./BrowserJsonView";
 
 export const AnalyticsValueRenderer: React.FC<{ val: any }> = ({ val }) => {
     // const [isOpen, setIsOpen] = React.useState(false);
@@ -17,7 +17,7 @@ export const AnalyticsValueRenderer: React.FC<{ val: any }> = ({ val }) => {
       const obj3 = isJsx ? {jsxValue: obj}  : obj2;
   
       return (
-        <ReactJsonView
+        <BrowserOnlyReactJson
           src={obj3}
           name={false}
           collapseStringsAfterLength={50}
@@ -27,7 +27,7 @@ export const AnalyticsValueRenderer: React.FC<{ val: any }> = ({ val }) => {
       );
     } catch (e) {
       return (
-        <ReactJsonView
+        <BrowserOnlyReactJson
           src={{value: val}}
           name={false}
           collapseStringsAfterLength={50}

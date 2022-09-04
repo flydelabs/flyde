@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha src/**/*.spec.tsx --require ts-node/register",
     "watch": "tsc -p . -w --incremental",
     "build": "rm -rf dist && tsc -p .",
     "start": "npm run watch",
@@ -44,6 +44,8 @@
     "use-debounce": "^8.0.1"
   },
   "devDependencies": {
+    "mocha": "^5.0.0",
+    "@types/mocha": "^5.0.0",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
     "chai": "^4.3.6",

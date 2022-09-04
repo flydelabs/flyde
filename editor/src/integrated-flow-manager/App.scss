@@ -14,9 +14,12 @@
   font-family: Nunito, sans-serif;
   height: 100vh;
 
-  .app-header, .side-menu {
-    // display: none;
+  &.embedded {
+    .flow-header, .side-menu {
+      display: none;
+    }
   }
+
 }
 
 .app > main {
@@ -120,11 +123,11 @@ $primary-color: #007ec6;
   display: block;
 }
 .side-menu,
-.integrated-flow-header {
+.flow-header {
   // display: none !important;
 }
 
-.integrated-flow-header {
+.flow-header {
   display: none;
 }
 

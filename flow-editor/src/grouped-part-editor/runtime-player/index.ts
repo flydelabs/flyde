@@ -2,8 +2,6 @@ import { debugLogger } from "@flyde/core";
 import { RuntimeEvents } from "@flyde/remote-debugger";
 import { playEvent } from "./play-event";
 
-
-
 const debug = debugLogger("runtime-player");
 
 export interface RuntimePlayer {
@@ -23,8 +21,8 @@ export const createRuntimePlayer = (insId: string): RuntimePlayer => {
   const playEvents = (fromDt: number, untilDt: number) => {
     // console.log(queue);
     // assumes sorting order
-    const toPlay = queue // .filter((e) => e.dt < untilDt);
-    queue = [] // queue.filter((e) => e.dt >= untilDt);
+    const toPlay = queue; // .filter((e) => e.dt < untilDt);
+    queue = []; // queue.filter((e) => e.dt >= untilDt);
 
     if (toPlay.length) {
       debug(`Playing ${toPlay.length} events from`, fromDt, untilDt);
@@ -90,8 +88,12 @@ export const createRuntimePlayer = (insId: string): RuntimePlayer => {
     clear,
     status: () => {
       return {
-        running, currDt, lastDt, queue, last
-      }
-    }
+        running,
+        currDt,
+        lastDt,
+        queue,
+        last,
+      };
+    },
   };
 };
