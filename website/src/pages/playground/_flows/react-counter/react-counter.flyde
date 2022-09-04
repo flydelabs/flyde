@@ -168,8 +168,8 @@ parts:
         inputConfig: {}
       - partId: Publish
         pos:
-          x: -36.03804443359377
-          y: 138.30580078125
+          x: -23.290394287109393
+          y: 72.78687225341798
         id: Publish-817-d15
         inputConfig:
           key:

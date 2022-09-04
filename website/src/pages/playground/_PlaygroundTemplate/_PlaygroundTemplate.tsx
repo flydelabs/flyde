@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import * as PubSub from "pubsub-js";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import Layout from "@theme/Layout";
@@ -30,6 +30,9 @@ import styles from "../../index.module.css";
 
 import "./PlaygroundTemplate.scss";
 import "@flyde/flow-editor/src/index.scss";
+
+import { Resizable } from 'react-resizable';
+
 import BrowserOnly from "@docusaurus/BrowserOnly";
 
 const deps = require("../_flows/bundle-deps.json");
@@ -50,7 +53,12 @@ export interface PlaygroundTemplateProps {
     resolvedFlow: PartDefRepo;
     output: PartOutput;
   };
+  prefixComponent?: JSX.Element;
+  extraInfo?: string;
+  showExtra?: boolean;
   defaultDelay?: number;
+  hideDelay?: boolean;
+  initWidth?: number;
 }
 
 export type PlaygroundFlowDto = {
@@ -87,6 +95,8 @@ export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (props) => 
 
   const { flow, inputs, output } = props.flowProps;
 
+  const [childrenWidth, setChildrenWidth] = useState(props.initWidth || 500);
+
   const [debugDelay, setDebugDelay] = useState(props.defaultDelay || 0);
 
   const runtimePlayerRef = useRef(createRuntimePlayer(props.flowProps.flow.mainId));
@@ -116,7 +126,7 @@ export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (props) => 
     onChangeState: setFlowEditorState,
     onInspectPin: noop,
     onRequestHistory: historyPlayer.requestHistory,
-    hideTemplatingTips: false,
+    hideTemplatingTips: true,
     onImportPart: noop,
   };
 
@@ -143,10 +153,28 @@ export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (props) => 
     };
   }, [debugDelay, resolvedDeps]);
 
+  const onResizeChildren = useCallback((_, {size}) => {
+    setChildrenWidth(size.width);
+  }, []);
+
+  const debugDelayElem = (<div className='delay-container'>
+  <input
+    type="range"
+    id="volume"
+    name="delay"
+    value={debugDelay}
+    step="100"
+    min="0"
+    max="300"
+    onChange={(e) => setDebugDelay(Number(e.target.value))}
+  />
+  <label htmlFor="volume">Debug Delay: {debugDelay}ms</label>
+</div>)
+
   return (
     <Layout
       title={`${props.meta.title} | Playground`}
-      description="Description will go into a meta tag in <head />"
+      description={`Flyde Playground - ${props.meta.title} example`}
     >
       <header className={clsx("hero hero--primary", styles.heroBanner)}>
         <div className="container">
@@ -175,27 +203,22 @@ export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (props) => 
 
       <div className="playground-container">
         <header>
-          <h3 className="playground-title">{props.meta.title}</h3>
+          <h2 className="playground-title">{props.meta.title}</h2>
           <div className="playground-description">{props.meta.description}</div>
-          <div>
-            <input
-              type="range"
-              id="volume"
-              name="delay"
-              value={debugDelay}
-              step="100"
-              min="0"
-              max="300"
-              onChange={(e) => setDebugDelay(Number(e.target.value))}
-            />
-            <label htmlFor="volume">Debug Delay - {debugDelay}ms</label>
-          </div>
+          {props.showExtra ? <Fragment><hr/><div className='playground-extra'>{props.extraInfo}</div></Fragment> : null }
+          {props.prefixComponent}
         </header>
         <div className="playground">
           <div className="flow-container">
+              {props.hideDelay !== true ? debugDelayElem: null }
               <FlowEditor {...flowEditorProps} />
           </div>
-          <div className="output-container">{props.children}</div>
+          <Resizable height={0} width={childrenWidth} onResize={onResizeChildren} axis='x' handle={<div className='handle'/>} resizeHandles={['w']}>
+
+          <div className="output-container" style={{flexBasis: childrenWidth}}>
+            {props.children}
+            </div>
+            </Resizable>
         </div>
       </div>
     </Layout>

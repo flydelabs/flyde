@@ -9,10 +9,7 @@ mainId: Main
 parts:
   Main:
     id: Main
-    inputs:
-      na:
-        mode: required
-        type: any
+    inputs: {}
     outputs:
       result:
         type: any

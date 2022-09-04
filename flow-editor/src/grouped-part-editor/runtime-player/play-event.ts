@@ -102,7 +102,10 @@ export const playEvent = (parentInsId: string, event: RuntimeEvent) => {
       }
 
       clearTimeout(cancelTimers.get(timerKey));
-      element.setAttribute("data-runtime", "error");
+      element.removeAttribute('data-runtime');
+      setTimeout(() => {
+        element.setAttribute("data-runtime", "error");
+      });
       const timer = setTimeout(() => {
         element.removeAttribute("data-runtime");
         cancelTimers.delete(timerKey);

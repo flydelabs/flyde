@@ -44,11 +44,11 @@
     "use-debounce": "^8.0.1"
   },
   "devDependencies": {
-    "mocha": "^5.0.0",
     "@types/mocha": "^5.0.0",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
     "chai": "^4.3.6",
+    "mocha": "^5.0.0",
     "patch-package": "^6.4.7",
     "postinstall-postinstall": "^2.1.0",
     "react": "^17.0.0",

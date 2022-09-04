@@ -34,33 +34,27 @@ parts:
     inputsPosition: {}
     outputsPosition:
       result:
-        x: -202.5216643658403
-        y: 433.0321023416526
+        x: -312.8969505148232
+        y: 474.9747063414614
     completionOutputs:
       - result
     instances:
-      - partId: Inline Code 19610
-        pos:
-          x: -208.17045654296874
-          y: -307.57098510742185
-        id: Inline Code 19610-27
-        inputConfig: {}
       - partId: TestCode
         pos:
-          x: 12.437968749999982
-          y: -49.72576904296875
+          x: -348.36812255859377
+          y: 208.48209381103516
         id: TestCode-201
         inputConfig: {}
       - partId: Inline Code 67624
         pos:
-          x: -2.9157226562499545
-          y: -198.61336181640627
+          x: -513.7404296875
+          y: 11.306140441894513
         id: Inline Code 67624-618
         inputConfig: {}
       - partId: Inline Code 18564
         pos:
-          x: 99.68134765624995
-          y: -214.92205810546875
+          x: -213.7680541992188
+          y: -26.241798400878906
         id: Inline Code 18564-770
         inputConfig: {}
     connections:
@@ -130,110 +124,4 @@ parts:
     completionOutputs:
       - r
     fnCode: outputs.r.next(("Bob"))
-exposedFunctionality:
-  - codeName: crmService.getUser
-    displayName: CRM.getUserByEmail
-    inputs:
-      - email
-    path: /Users/gabrielgrinberg/projects/flyde/examples/invoices-example/src/hello-world.flyde
-    line: "    line: '  expose(crmService.getUser, \"CRM.getUserByEmail\",
-      [\"email\"]);'"
-  - codeName: creditService.getCredit
-    displayName: CreditService.getCredit
-    inputs:
-      - userId
-    path: /Users/gabrielgrinberg/projects/flyde/examples/invoices-example/src/hello-world.flyde
-    line: "    line: '  expose(creditService.getCredit, \"CreditService.getCredit\",
-      [\"userId\"]);'"
-  - codeName: bob
-    displayName: Hello
-    inputs:
-      - hi
-    path: /Users/gabrielgrinberg/projects/flyde/examples/invoices-example/src/hello-world.flyde
-    line: "    line: '  expose(bob, \"Hello\", [\"hi\"]);'"
-  - codeName: crmService.getUser
-    displayName: CRM.getUserByEmail
-    inputs:
-      - email
-    path: /Users/gabrielgrinberg/projects/flyde/examples/invoices-example/src/index.ts
-    line: '  expose(crmService.getUser, "CRM.getUserByEmail", ["email"]);'
-  - codeName: creditService.getCredit
-    displayName: CreditService.getCredit
-    inputs:
-      - userId
-    path: /Users/gabrielgrinberg/projects/flyde/examples/invoices-example/src/index.ts
-    line: '  expose(creditService.getCredit, "CreditService.getCredit", ["userId"]);'
-  - codeName: riskService.calculateRisk
-    displayName: RiskService.calculateRisk
-    inputs:
-      - userId
-      - amount
-    path: /Users/gabrielgrinberg/projects/flyde/examples/invoices-example/src/index.ts
-    line: '  expose(riskService.calculateRisk, "RiskService.calculateRisk",
-      ["userId", "amount"]);'
-  - codeName: bob
-    displayName: Hello
-    inputs:
-      - hi
-    path: /Users/gabrielgrinberg/projects/flyde/examples/invoices-example/src/index.ts
-    line: '  expose(bob, "Hello", ["hi"]);'
-  - codeName: crmService.getUser
-    displayName: CRM.getUserByEmail
-    inputs:
-      - email
-    path: /Users/gabrielgrinberg/projects/flyde/examples/invoices-example/src/loan-app.flyde
-    line: "    line: '  expose(crmService.getUser, \"CRM.getUserByEmail\",
-      [\"email\"]);'"
-  - codeName: creditService.getCredit
-    displayName: CreditService.getCredit
-    inputs:
-      - userId
-    path: /Users/gabrielgrinberg/projects/flyde/examples/invoices-example/src/loan-app.flyde
-    line: "    line: '  expose(creditService.getCredit, \"CreditService.getCredit\",
-      [\"userId\"]);'"
-  - codeName: bob
-    displayName: Hello
-    inputs:
-      - hi
-    path: /Users/gabrielgrinberg/projects/flyde/examples/invoices-example/src/loan-app.flyde
-    line: "    line: '  expose(bob, \"Hello\", [\"hi\"]);'"
-  - codeName: crmService.getUser
-    displayName: CRM.getUserByEmail
-    inputs:
-      - email
-    path: /Users/gabrielgrinberg/projects/flyde/examples/invoices-example/src/new-flow.flyde
-    line: "    line: '  // expose(crmService.getUser, \"CRM.getUserByEmail\",
-      [\"email\"]);'"
-  - codeName: creditService.getCredit
-    displayName: CreditService.getCredit
-    inputs:
-      - userId
-    path: /Users/gabrielgrinberg/projects/flyde/examples/invoices-example/src/new-flow.flyde
-    line: "    line: '  expose(creditService.getCredit, \"CreditService.getCredit\",
-      [\"userId\"]);'"
-  - codeName: bob
-    displayName: Hello
-    inputs:
-      - hi
-    path: /Users/gabrielgrinberg/projects/flyde/examples/invoices-example/src/new-flow.flyde
-    line: "    line: '  expose(bob, \"Hello\", [\"hi\"]);'"
-  - codeName: crmService.getUser
-    displayName: CRM.getUserByEmail
-    inputs:
-      - email
-    path: /Users/gabrielgrinberg/projects/flyde/examples/invoices-example/src/flow-folder/flow-bob.flyde
-    line: "    line: '  expose(crmService.getUser, \"CRM.getUserByEmail\",
-      [\"email\"]);'"
-  - codeName: creditService.getCredit
-    displayName: CreditService.getCredit
-    inputs:
-      - userId
-    path: /Users/gabrielgrinberg/projects/flyde/examples/invoices-example/src/flow-folder/flow-bob.flyde
-    line: "    line: '  expose(creditService.getCredit, \"CreditService.getCredit\",
-      [\"userId\"]);'"
-  - codeName: bob
-    displayName: Hello
-    inputs:
-      - hi
-    path: /Users/gabrielgrinberg/projects/flyde/examples/invoices-example/src/flow-folder/flow-bob.flyde
-    line: "    line: '  expose(bob, \"Hello\", [\"hi\"]);'"
+exposedFunctionality: []

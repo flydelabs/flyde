@@ -12,7 +12,7 @@ declare module '@flyde/runtime' {
     export function executeFlow(path: 'loan-app2.flyde', args: {a: any, b: any}): Promise<any>;
     export function executeFlow(path: 'new-flow.flyde', args: {formData: any}): Promise<any>;
     export function executeFlow(path: 'shared.flyde', args: {}): Promise<any>;
-    export function executeFlow(path: 'flow-bob.flyde', args: {a: any, b: any}): Promise<any>;
+    export function executeFlow(path: 'my-flow.flyde', args: {}): Promise<any>;
 
     // repeating static function typings.. TODO - find a way to avoid needing this
     export const expose: (func: Function, name: string, inputs?: string[]) => void;

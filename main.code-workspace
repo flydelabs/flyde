@@ -29,6 +29,9 @@
 		},
 		{
 			"path": "../flyde-vscode-extension"
+		},
+		{
+			"path": "../flyde-vscode"
 		}
 	],
 	"settings": {
