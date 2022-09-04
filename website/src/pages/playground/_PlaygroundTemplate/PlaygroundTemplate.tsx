@@ -5,6 +5,7 @@ import Layout from "@theme/Layout";
 import clsx from "clsx";
 import {
   createRuntimePlayer,
+  fitViewPortToPart,
   FlowEditor,
   FlowEditorState,
   FlydeFlowEditorProps,
@@ -34,6 +35,8 @@ import "@flyde/flow-editor/src/index.scss";
 import { Resizable } from 'react-resizable';
 
 import BrowserOnly from "@docusaurus/BrowserOnly";
+import produce from "immer";
+import { finishDraft } from "immer";
 
 const deps = require("../_flows/bundle-deps.json");
 
@@ -55,7 +58,6 @@ export interface PlaygroundTemplateProps {
   };
   prefixComponent?: JSX.Element;
   extraInfo?: string;
-  showExtra?: boolean;
   defaultDelay?: number;
   hideDelay?: boolean;
   initWidth?: number;
@@ -98,6 +100,8 @@ export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (props) => 
   const [childrenWidth, setChildrenWidth] = useState(props.initWidth || 500);
 
   const [debugDelay, setDebugDelay] = useState(props.defaultDelay || 0);
+
+  const [outputReceived, setOutputReceived] = useState(false);
 
   const runtimePlayerRef = useRef(createRuntimePlayer(props.flowProps.flow.mainId));
 
@@ -155,6 +159,18 @@ export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (props) => 
 
   const onResizeChildren = useCallback((_, {size}) => {
     setChildrenWidth(size.width);
+    
+    setFlowEditorState((state) => {
+      const container = document.querySelector('.flow-container'); // yack
+      const vpSize = container ? container.getBoundingClientRect() : {width: 500, height: 500};
+      return produce(state, draft => {
+        draft.boardData.viewPort = fitViewPortToPart(draft.flow.parts[draft.currentPartId] as any, draft.flow.parts, vpSize);
+      })
+    })
+  }, []);
+
+  useEffect(() => {
+    props.flowProps.output.subscribe(() => setOutputReceived(true));
   }, []);
 
   const debugDelayElem = (<div className='delay-container'>
@@ -205,7 +221,7 @@ export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (props) => 
         <header>
           <h2 className="playground-title">{props.meta.title}</h2>
           <div className="playground-description">{props.meta.description}</div>
-          {props.showExtra ? <Fragment><hr/><div className='playground-extra'>{props.extraInfo}</div></Fragment> : null }
+          {outputReceived ? <Fragment><hr/><div className='playground-extra'>{props.extraInfo}</div></Fragment> : null }
           {props.prefixComponent}
         </header>
         <div className="playground">

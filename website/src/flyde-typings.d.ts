@@ -7,7 +7,7 @@
 declare module '@flyde/runtime' {
 
     // generated flow typings
-    export function executeFlow(path: 'debounce-throttle.flyde', args: {click: any}): Promise<any>;
+    export function executeFlow(path: 'debounce-throttle.flyde', args: {value: any}): Promise<any>;
     export function executeFlow(path: 'fibonacci.flyde', args: {n: any}): Promise<any>;
     export function executeFlow(path: 'hello-world.flyde', args: {}): Promise<any>;
     export function executeFlow(path: 'react-counter.flyde', args: {}): Promise<any>;

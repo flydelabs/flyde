@@ -6,7 +6,7 @@ import { DynamicOutput, dynamicOutput } from "@site/../core/dist";
 import {
   PlaygroundTemplate,
   PlaygroundTemplateProps,
-} from "./_PlaygroundTemplate/_PlaygroundTemplate";
+} from "./_PlaygroundTemplate/PlaygroundTemplate";
 
 import "./style.scss";
 

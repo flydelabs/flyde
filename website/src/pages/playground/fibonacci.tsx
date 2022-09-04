@@ -5,7 +5,7 @@ import { dynamicOutput, dynamicPartInput } from "@site/../core/dist";
 import {
   PlaygroundTemplate,
   PlaygroundTemplateProps,
-} from "./_PlaygroundTemplate/_PlaygroundTemplate";
+} from "./_PlaygroundTemplate/PlaygroundTemplate";
 
 import "@flyde/flow-editor/src/index.scss";
 import "./style.scss";

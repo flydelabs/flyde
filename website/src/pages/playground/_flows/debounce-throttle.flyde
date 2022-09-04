@@ -10,34 +10,34 @@ parts:
   Main:
     id: Main
     inputs:
-      click:
+      value:
         mode: required
         type: any
     outputs:
       result:
         type: any
     inputsPosition:
-      click:
-        x: 469.29
-        y: 217.81
+      value:
+        x: 568.0241762040988
+        y: 208.94923588243964
       ggg:
         x: 8.112505244875974
         y: 489.6946435546802
     outputsPosition:
       result:
-        x: 520.3483764808892
-        y: 782.3317382066446
+        x: 525.4116685565004
+        y: 796.2557521628453
       bb:
         x: -119.26
         y: 783.62
     completionOutputs: []
     reactiveInputs:
-      - click
+      - value
     instances:
       - partId: Debounce
         pos:
-          x: 629.034691619873
-          y: 374.0604626464844
+          x: 712.5219085693359
+          y: 359.94190185546876
         id: Debounce-194-d108
         inputConfig:
           ms:
@@ -47,8 +47,8 @@ parts:
           - i
       - partId: Throttle
         pos:
-          x: 228.61573516845704
-          y: 383.7714730834961
+          x: 306.8443423461914
+          y: 355.9699746704102
         id: Throttle-652
         inputConfig:
           threshold:
@@ -56,53 +56,71 @@ parts:
             value: 4000
       - partId: Inline Code 49743
         pos:
-          x: 585.4111373901367
-          y: 526.6986157226562
+          x: 719.9535148620605
+          y: 497.826987915039
         id: Inline Code 49743-659
         inputConfig: {}
       - partId: Inline Code 86171
         pos:
-          x: 203.64521484374995
-          y: 675.6304089355468
+          x: -42.15787656307225
+          y: 541.5266186523437
         id: Inline Code 49743-659-d371
+        inputConfig: {}
+      - partId: Inline Code 18421
+        pos:
+          x: 419.6411108398438
+          y: 512.5374676513671
+        id: Inline Code 18421-104
         inputConfig: {}
     connections:
       - from:
+          insId: Inline Code 49743-659
+          pinId: r
+        to:
           insId: __this
-          pinId: click
+          pinId: result
+      - from:
+          insId: Inline Code 49743-659-d371
+          pinId: r
+        to:
+          insId: __this
+          pinId: result
+      - from:
+          insId: Debounce-194-d108
+          pinId: r
+        to:
+          insId: Inline Code 49743-659
+          pinId: val
+      - from:
+          insId: __this
+          pinId: value
         to:
           insId: Throttle-652
           pinId: value
       - from:
           insId: __this
-          pinId: click
+          pinId: value
         to:
           insId: Debounce-194-d108
           pinId: i
       - from:
-          insId: Inline Code 49743-659
+          insId: Throttle-652
+          pinId: __error
+        to:
+          insId: Inline Code 18421-104
+          pinId: __trigger
+      - from:
+          insId: Inline Code 18421-104
           pinId: r
         to:
           insId: __this
           pinId: result
-      - from:
-          insId: Inline Code 49743-659-d371
-          pinId: r
-        to:
-          insId: __this
-          pinId: result
-      - from:
-          insId: Debounce-194-d108
-          pinId: r
-        to:
-          insId: Inline Code 49743-659
-          pinId: val
       - from:
           insId: Throttle-652
           pinId: result
         to:
           insId: Inline Code 49743-659-d371
-          pinId: val
+          pinId: value
   Inline Code 37961:
     id: Inline Code 37961
     inputs:
@@ -130,12 +148,12 @@ parts:
     outputs:
       r:
         type: any
-    customViewCode: "`Debounce - ${inputs.val}`"
-    dataBuilderSource: YERlYm91bmNlIC0gJHtpbnB1dHMudmFsfWA=
+    customViewCode: '`"Debounce" output - ${inputs.val}`'
+    dataBuilderSource: YCJEZWJvdW5jZSIgb3V0cHV0IC0gJHtpbnB1dHMudmFsfWA=
     templateType: value
     completionOutputs:
       - r
-    fnCode: outputs.r.next((`Debounce - ${inputs.val}`))
+    fnCode: outputs.r.next((`"Debounce" output - ${inputs.val}`))
   Inline Code 60713:
     id: Inline Code 60713
     inputs:
@@ -154,16 +172,43 @@ parts:
   Inline Code 86171:
     id: Inline Code 86171
     inputs:
-      val:
+      value:
         mode: required
         type: any
     outputs:
       r:
         type: any
-    customViewCode: "`Thtrottled - ${inputs.val}`"
-    dataBuilderSource: YFRodHJvdHRsZWQgLSAke2lucHV0cy52YWx9YA==
+    customViewCode: '`"Throttle" output - ${inputs.value}`'
+    dataBuilderSource: YCJUaHJvdHRsZSIgb3V0cHV0IC0gJHtpbnB1dHMudmFsdWV9YA==
     templateType: value
     completionOutputs:
       - r
-    fnCode: outputs.r.next((`Thtrottled - ${inputs.val}`))
+    fnCode: outputs.r.next((`"Throttle" output - ${inputs.value}`))
+  Inline Code 18421:
+    id: Inline Code 18421
+    inputs: {}
+    outputs:
+      r:
+        type: any
+    customViewCode: "`Value was throttled!`"
+    dataBuilderSource: YFZhbHVlIHdhcyB0aHJvdHRsZWQhYA==
+    templateType: value
+    completionOutputs:
+      - r
+    fnCode: outputs.r.next((`Value was throttled!`))
+  Inline Code 25003:
+    id: Inline Code 25003
+    inputs:
+      value:
+        mode: required
+        type: any
+    outputs:
+      r:
+        type: any
+    customViewCode: "`Untransformed Value - ${inputs.value}`"
+    dataBuilderSource: YFVudHJhbnNmb3JtZWQgVmFsdWUgLSAke2lucHV0cy52YWx1ZX1g
+    templateType: value
+    completionOutputs:
+      - r
+    fnCode: outputs.r.next((`Untransformed Value - ${inputs.value}`))
 exposedFunctionality: []

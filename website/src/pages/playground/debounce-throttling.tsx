@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 import { produce } from "immer";
 
 import "@flyde/flow-editor/src/index.scss";
@@ -15,25 +15,26 @@ import {
 import {
   PlaygroundTemplate,
   PlaygroundTemplateProps,
-} from "./_PlaygroundTemplate/_PlaygroundTemplate";
+} from "./_PlaygroundTemplate/PlaygroundTemplate";
 
 import example from "./_flows/debounce-throttle.flyde";
+import { OutputLogs } from "./_OutputLogs/OutputLogs";
 
 const META_DATA = {
   title: "Debounce vs. Throttling",
   description:
-    "This example takes Flyde's visual feeback to the next level by showing the difference between debounce and throttling. Click on the 'Trigger' button to emit a value to the Flyde flow. Try clicking multiple times and see how the debounce and throttling functions behave differently.",
+    `This example takes Flyde's visual feeback to the next level by showing the difference between debouncing and throttling. Click on the buttons below to emit some Emojis.`,
   key: "debounce-throttling",
 };
+
+const extraInfo = 'Cool right? you can try duplicating parts by pressing cmd/ctrl + D. Connect parts together by clicking on an input and then clicking on an output.'
 
 export default function DebounceThrottlingExample(): JSX.Element {
   const result = useRef(dynamicOutput());
 
   const inputs = useRef({
-    click: dynamicPartInput(),
+    value: dynamicPartInput(),
   });
-
-  const [log, setLog] = useState<string[]>([]);
 
   const [deb, setDeb] = useState(1500);
   const [thr, setThr] = useState(4000);
@@ -68,13 +69,12 @@ export default function DebounceThrottlingExample(): JSX.Element {
 
   useEffect(() => {
     result.current.subscribe((d) => {
-      setLog((l) => [...l, d]);
+      // setLog((l) => [...l, d]);
     });
   }, []);
 
-  return (
-    <PlaygroundTemplate meta={META_DATA} flowProps={flowProps}>
-      <div>
+  const controls = <Fragment>
+      <div style={{display: 'flex', justifyContent: 'center', gap: 5}}>
         <input
           type="range"
           id="deb"
@@ -87,7 +87,7 @@ export default function DebounceThrottlingExample(): JSX.Element {
         />
         <label htmlFor="deb">Debounce - {deb}ms</label>
       </div>
-      <div>
+      <div style={{display: 'flex', justifyContent: 'center', gap: 5}}>
         <input
           type="range"
           id="thr"
@@ -100,15 +100,15 @@ export default function DebounceThrottlingExample(): JSX.Element {
         />
         <label htmlFor="thr">Throttle - {thr}ms</label>
       </div>
-      <button onClick={() => inputs.current.click.subject.next("🐶")}>Emit 🐶</button>
-      <button onClick={() => inputs.current.click.subject.next("😸")}>Emit 😸</button>
-      <button onClick={() => inputs.current.click.subject.next("🦄")}>Emit 🦄</button>
-      <button onClick={() => setLog([])}>Clear</button>
-      <code>
-        {log.map((o, i) => (
-          <div key={i}>{o}</div>
-        ))}
-      </code>
+      
+      <button className="emit-btn button button--outline button--primary" onClick={() => inputs.current.value.subject.next("🐶")}>Emit 🐶</button>
+      <button className="emit-btn button button--outline button--primary" onClick={() => inputs.current.value.subject.next("😸")}>Emit 😸</button>
+      <button className="emit-btn button button--outline button--primary" onClick={() => inputs.current.value.subject.next("🦄")}>Emit 🦄</button>
+  </Fragment>;
+
+  return (
+    <PlaygroundTemplate meta={META_DATA} flowProps={flowProps} prefixComponent={controls} hideDelay={true} extraInfo={extraInfo}>
+      <OutputLogs output={result.current}/>
     </PlaygroundTemplate>
   );
 }
