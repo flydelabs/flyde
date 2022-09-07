@@ -49,6 +49,7 @@ export interface PlaygroundTemplateProps {
     title: string;
     key: string;
     description: string;
+    extraInfo?: string;
   };
   flowProps: {
     inputs: Record<string, DynamicPartInput>;
@@ -221,7 +222,7 @@ export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (props) => 
         <header>
           <h2 className="playground-title">{props.meta.title}</h2>
           <div className="playground-description">{props.meta.description}</div>
-          {outputReceived ? <Fragment><hr/><div className='playground-extra'>{props.extraInfo}</div></Fragment> : null }
+          {outputReceived ? <Fragment><hr/><div className='playground-extra'>{props.extraInfo || props.meta.extraInfo}</div></Fragment> : null }
           {props.prefixComponent}
         </header>
         <div className="playground">

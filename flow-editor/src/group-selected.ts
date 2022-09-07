@@ -1,4 +1,3 @@
-import { emptyWebUiProject } from "./lib/project-types";
 import { GroupedPart, PartDefRepo, partInstance, ConnectionData } from "@flyde/core";
 import produce from "immer";
 import { createGroup } from "./lib/create-group";
@@ -7,7 +6,8 @@ import { middlePos } from "./grouped-part-editor/utils";
 export const groupSelected = (
   selected: string[],
   part: GroupedPart,
-  repo: PartDefRepo
+  repo: PartDefRepo,
+  partName: string
 ): { newPart: GroupedPart; currentPart: GroupedPart } => {
   const { instances, connections } = part;
   const relevantInstances = instances.filter((ins) => selected.includes(ins.id));
@@ -23,13 +23,13 @@ export const groupSelected = (
   const { groupedPart, renamedInputs, renamedOutputs } = createGroup(
     relevantInstances,
     relevantConnections,
-    repo
+    partName
   );
   const midPos = relevantInstances.reduce((p, c) => {
     return middlePos(c.pos, p);
     // return { x: (c.pos.x + p.x) / 2, y: (c.pos.y + p.y) / 2 };
   }, instances[0].pos);
-  const newInstance = partInstance(`${groupedPart.id}-ins`, groupedPart, {}, midPos);
+  const newInstance = partInstance(`${groupedPart.id}-ins`, groupedPart.id, {}, midPos);
 
   // replace relevant parts with new part
   const newInstancesArr = instances.filter((ins) => {

@@ -323,7 +323,7 @@ export const connect = (
               // skipping emitting an undefined value. VERY UNSURE OF THIS, TRIGGER WAS VISUAL MERGE
             }
           } else {
-            throw "todo";
+            throw new Error(`Unsure what to do with key ${key}, input: ${input} of ins ${parentInsId}`);
           }
         });
       });

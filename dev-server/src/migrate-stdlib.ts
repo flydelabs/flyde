@@ -5,17 +5,10 @@ import { join } from "path";
 
 const stdlib = require('../src/stdlib.json').customRepo as CustomPartRepo;
 
-
-
 export const migrateStdlib = async (targetDir: string) => {
     
     for (const partId in stdlib) {
         const part = stdlib[partId];
-
-        // if (!isCodePart(part)) {
-        //     console.log("skipping", partId);
-        //     continue;
-        // }
 
         console.log("migrating", partId);
         

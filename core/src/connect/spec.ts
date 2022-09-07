@@ -21,7 +21,7 @@ describe("connect", () => {
         connect(
           {
             id: "bob",
-            instances: [partInstance("a", optAdd)],
+            instances: [partInstance("a", optAdd.id)],
             connections: [],
             inputs: {},
             outputs: {}
@@ -35,7 +35,7 @@ describe("connect", () => {
       const part = connect(
         {
           id: "bob",
-          instances: [partInstance("a", optAdd)],
+          instances: [partInstance("a", optAdd.id)],
           connections: [
             connectionData('n1', 'a.n1'),
             connectionData('a.r', 'r')
@@ -64,7 +64,7 @@ describe("connect", () => {
       const part = connect(
         {
           id: "bob",
-          instances: [partInstance("a", optAdd)],
+          instances: [partInstance("a", optAdd.id)],
           connections: [
             connectionData('n1', 'a.n1'),
             connectionData('n2', 'a.n2'),
@@ -130,8 +130,8 @@ describe("connect", () => {
         {
           id: "bob",
           instances: [
-            partInstance("d", delayedId),
-            partInstance("add", add),
+            partInstance("d", delayedId.id),
+            partInstance("add", add.id),
             // partInstance('m', merge, {
             // 	b: {type: 'static', value: 0}
             // }),
@@ -173,7 +173,7 @@ describe("connect", () => {
     const part = connect(
       {
         id: "bob",
-        instances: [partInstance("a", add)],
+        instances: [partInstance("a", add.id)],
         connections: [
           connectionData('n1', 'a.n1'),
           connectionData('n2', 'a.n2'),

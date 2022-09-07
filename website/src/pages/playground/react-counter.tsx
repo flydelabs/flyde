@@ -24,6 +24,8 @@ const outputWithSub = (sub: any) => {
   return o;
 };
 
+console.log({counterFlow})
+
 export default function ReactCounterExample(): JSX.Element {
   const [element, setElement] = useState<JSX.Element>(<div>Loading</div>);
 

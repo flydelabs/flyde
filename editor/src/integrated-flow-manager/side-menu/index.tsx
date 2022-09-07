@@ -3,6 +3,7 @@ import {
   CustomPartRepo,
   FlydeFlow,
   isGroupedPart,
+  isRefPartInstance,
   PartDefinition,
   PartDefRepo,
 } from "@flyde/core";
@@ -112,7 +113,7 @@ export const IntegratedFlowSideMenu: React.FC<IntegratedFlowSideMenuProps> = (pr
     const usage = values(flow.parts).reduce<Map<string, string[]>>((acc, currPart) => {
       if (isGroupedPart(currPart)) {
         currPart.instances.forEach((ins) => {
-          if (flow.parts[ins.partId]) {
+          if (isRefPartInstance(ins) && flow.parts[ins.partId]) {
             const curr = acc.get(ins.partId) || [];
             if (!curr.includes(currPart.id) && currPart.id !== ins.partId) {
               acc.set(ins.partId, [...curr, currPart.id]);

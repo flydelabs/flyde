@@ -33,6 +33,7 @@ import {
   dynamicPartInputs,
   groupedPart,
   partOutputs,
+  inlinePartInstance,
 } from "./part";
 import { execute, PartError } from "./execute";
 import {
@@ -186,7 +187,7 @@ describe("main ", () => {
     it("works with nested parts", () => {
       const add1mul2twice = {
         id: "a1m2x2",
-        instances: [partInstance("p1", add1mul2), partInstance("p2", add1mul2)],
+        instances: [partInstance("p1", add1mul2.id), partInstance("p2", add1mul2.id)],
         connections: [
           {
             from: connectionNode("p1", "r"),
@@ -218,12 +219,47 @@ describe("main ", () => {
       assert.equal(fn.lastCall.args[0], 86);
     });
 
+    it('supports inline instance parts', () => {
+      const add1: GroupedPart = {
+        id: "add1",
+        inputs: {
+          n: partInput("number"),
+        },
+        outputs: {
+          r: partOutput("number"),
+        },
+        inputsPosition: {},
+        outputsPosition: {},
+        instances: [inlinePartInstance("a", add, {n1: staticInputPinConfig(1)})],
+        connections: [
+          {
+            from: externalConnectionNode("n"),
+            to: connectionNode("a", "n2"),
+          },
+          {
+            from: connectionNode("a", "r"),
+            to: externalConnectionNode("r"),
+          },
+        ],
+      };
+
+      const n = dynamicPartInput();
+      const [s, r] = spiedOutput();
+
+      execute({part: add1, inputs: { n }, outputs: { r }, partsRepo: testRepo});
+
+      n.subject.next(2);
+
+      assert.equal(s.lastCall.args[0], 3);
+
+    });
+
     describe("optional inputs", () => {
       it("runs parts with optional pins that were left unconnected", () => {
         const part = connect(
           {
             id: "bob",
-            instances: [partInstance("a", optAdd)],
+            instances: [partInstance("a", optAdd.id)],
             connections: [connectionData("n1", "a.n1"), connectionData("a.r", "r")],
             inputs: {
               n1: partInput(),
@@ -248,7 +284,7 @@ describe("main ", () => {
         const part = connect(
           {
             id: "bob",
-            instances: [partInstance("a", optAdd)],
+            instances: [partInstance("a", optAdd.id)],
             inputs: {
               n1: partInput(),
               n2: partInput(),
@@ -289,9 +325,9 @@ describe("main ", () => {
           {
             id: "bob",
             instances: [
-              partInstance("b", Value(5)),
-              partInstance("v", Value(42)),
-              partInstance("a", optAdd),
+              partInstance("b", Value(5).id),
+              partInstance("v", Value(42).id),
+              partInstance("a", optAdd.id),
             ],
             connections: [
               connectionData(["b", "r"], ["a", "n2"]),
@@ -319,7 +355,7 @@ describe("main ", () => {
         const p1 = connect(
           {
             id: "test",
-            instances: [partInstance("a", add1)],
+            instances: [partInstance("a", add1.id)],
             inputs: {
               n: partInput(),
             },
@@ -352,7 +388,7 @@ describe("main ", () => {
       it("connects 2 pieces and runs it", () => {
         const add1mul2: GroupedPart = {
           id: "test",
-          instances: [partInstance("a", add1), partInstance("b", mul2)],
+          instances: [partInstance("a", add1.id), partInstance("b", mul2.id)],
           connections: [
             {
               from: connectionNode("a", "r"),
@@ -408,7 +444,7 @@ describe("main ", () => {
         const part = connect(
           {
             id: "test",
-            instances: [partInstance("v1", Value(n)), partInstance("a", add1)],
+            instances: [partInstance("v1", Value(n).id), partInstance("a", add1.id)],
             connections: [
               {
                 from: connectionNode("v1", "r"),
@@ -438,7 +474,7 @@ describe("main ", () => {
         const part = connect(
           {
             id: "test",
-            instances: [partInstance("v", Value(n)), partInstance("a", add)],
+            instances: [partInstance("v", Value(n).id), partInstance("a", add.id)],
             connections: [
               {
                 from: connectionNode("v", "r"),
@@ -471,7 +507,7 @@ describe("main ", () => {
       it("works regardless of the order of the instances and connections with 2 pieces", () => {
         const n = randomInt(99);
         const repo = testRepoWith(Value(n));
-        const instances = [partInstance("a", add1), partInstance("v", Value(n))];
+        const instances = [partInstance("a", add1.id), partInstance("v", Value(n).id)];
 
         for (let i = 0; i < 10; i++) {
           const part = connect(
@@ -506,9 +542,9 @@ describe("main ", () => {
         const n = randomInt(99);
         const repo = testRepoWith(Value(n));
         const instances: PartInstance[] = [
-          partInstance("a", add),
-          partInstance("v1", Value(n)),
-          partInstance("v2", Value(n)),
+          partInstance("a", add.id),
+          partInstance("v1", Value(n).id),
+          partInstance("v2", Value(n).id),
         ];
 
         for (let i = 0; i < 10; i++) {
@@ -553,7 +589,7 @@ describe("main ", () => {
           outputs: {
             r: partOutput("number"),
           },
-          instances: [partInstance("v1", Value(n)), partInstance("a", add1)],
+          instances: [partInstance("v1", Value(n).id), partInstance("a", add1.id)],
           connections: [connectionData("v1.r", "a.n"), connectionData("a.r", "r")],
           inputsPosition: {},
           outputsPosition: {},
@@ -573,7 +609,7 @@ describe("main ", () => {
       const p = connect(
         {
           id: "test",
-          instances: [partInstance("a", add1)],
+          instances: [partInstance("a", add1.id)],
           connections: [connectionData("n", "a.n"), connectionData("a.r", "r")],
           inputs: {
             n: partInput(),
@@ -624,7 +660,7 @@ describe("main ", () => {
       const part = connect(
         {
           id: "test",
-          instances: [partInstance("v", Value(7)), partInstance("a", add)],
+          instances: [partInstance("v", Value(7).id), partInstance("a", add.id)],
           connections: [
             connectionData("v.r", "a.n1"),
             connectionData("n2", "a.n2"),
@@ -659,7 +695,7 @@ describe("main ", () => {
       const part = connect(
         {
           id: "test",
-          instances: [partInstance("v", Value(7)), partInstance("a", transform)],
+          instances: [partInstance("v", Value(7).id), partInstance("a", transform.id)],
           connections: [
             connectionData("v.r", "a.to"),
             connectionData("from", "a.from"),
@@ -723,7 +759,7 @@ describe("main ", () => {
         const part = connect(
           {
             id: "bob",
-            instances: [partInstance("a", ids), partInstance("b", ids)],
+            instances: [partInstance("a", ids.id), partInstance("b", ids.id)],
             connections: [
               {
                 from: connectionNode("a", "r"),
@@ -781,7 +817,7 @@ describe("main ", () => {
         outputs: {
           a: partOutput("number"),
         },
-        instances: [partInstance("v", Value(1)), partInstance("add", add)],
+        instances: [partInstance("v", Value(1).id), partInstance("add", add.id)],
         connections: [
           connectionData("v.r", "add.n2"),
           connection(externalConnectionNode("a"), connectionNode("add", "n1")),
@@ -811,7 +847,7 @@ describe("main ", () => {
           outputs: {
             r: partOutput("number"),
           },
-          instances: [partInstance("a", add)],
+          instances: [partInstance("a", add.id)],
           connections: [
             connection(externalConnectionNode("n"), connectionNode("a", "n1")),
             connection(externalConnectionNode("n"), connectionNode("a", "n2")),
@@ -842,7 +878,7 @@ describe("main ", () => {
           },
           inputsPosition: {},
           outputsPosition: {},
-          instances: [partInstance("a", Value(1)), partInstance("b", Value(2))],
+          instances: [partInstance("a", Value(1).id), partInstance("b", Value(2).id)],
           connections: [
             connection(connectionNode("a", "r"), externalConnectionNode("r")),
             connection(connectionNode("b", "r"), externalConnectionNode("r")),
@@ -1002,8 +1038,8 @@ describe("main ", () => {
           inputs: ["n1", "n2"],
           outputs: ["r"],
           instances: [
-            partInstance("i1", add),
-            partInstance("i2", id), // id to simualte anot
+            partInstance("i1", add.id),
+            partInstance("i2", id.id), // id to simualte anot
           ],
           connections: [
             ["n1", "i1.n1"],
@@ -1037,8 +1073,8 @@ describe("main ", () => {
           inputs: ["n1", "n2"],
           outputs: ["r"],
           instances: [
-            partInstance("i1", add),
-            partInstance("i2", id), // id to simualte anot
+            partInstance("i1", add.id),
+            partInstance("i2", id.id), // id to simualte anot
           ],
           connections: [
             ["n1", "i1.n1"],
@@ -1087,7 +1123,7 @@ describe("main ", () => {
           id: "cwrap",
           inputs: ["v"],
           outputs: ["r"],
-          instances: [partInstance("i1", counter)],
+          instances: [partInstance("i1", counter.id)],
           connections: [
             ["v", "i1.v"],
             ["i1.r", "r"],
@@ -1133,7 +1169,7 @@ describe("main ", () => {
           completionOutputs: ["r2"],
           outputs: ["r", "r2"],
           reactiveInputs: ["v", "v2"],
-          instances: [partInstance("i1", counter), partInstance("i2", id)],
+          instances: [partInstance("i1", counter.id), partInstance("i2", id.id)],
           connections: [
             ["v", "i1.v"],
             ["i1.r", "r"],
@@ -1189,7 +1225,7 @@ describe("main ", () => {
         outputs: {
           r: partOutput("number"),
         },
-        instances: [partInstance("p1", id), partInstance("p2", add)],
+        instances: [partInstance("p1", id.id), partInstance("p2", add.id)],
         connections: [connectionData("n", "p1.v"), connectionData("p1.r", "r")],
       };
 
@@ -1249,7 +1285,7 @@ describe("main ", () => {
         id: "bob",
         inputs: { n: partInput("any") },
         outputs: {},
-        instances: [partInstance("i", innerPart)],
+        instances: [partInstance("i", innerPart.id)],
         connections: [],
         inputsPosition: {},
         outputsPosition: {},
@@ -1307,10 +1343,10 @@ describe("main ", () => {
         inputsPosition: {},
         outputsPosition: {},
         instances: [
-          partInstance("if", peq, { compare: staticInputPinConfig(0) }),
+          partInstance("if", peq.id, { compare: staticInputPinConfig(0) }),
           partInstance("arr", "add-rec"),
-          partInstance("add1", add, { n2: staticInputPinConfig(-1) }),
-          partInstance("add2", add, { n2: staticInputPinConfig(1) }),
+          partInstance("add1", add.id, { n2: staticInputPinConfig(-1) }),
+          partInstance("add2", add.id, { n2: staticInputPinConfig(1) }),
           partInstance("tr1", transform.id, { to: staticInputPinConfig(1) }),
         ],
         connections: [
@@ -1368,10 +1404,10 @@ describe("main ", () => {
           // partInstance("z", zero),
           // partInstance("one", one),
           // partInstance("m1", mOne),
-          partInstance("if", peq, { compare: staticInputPinConfig(0) }),
+          partInstance("if", peq.id, { compare: staticInputPinConfig(0) }),
           partInstance("f", "fact"),
-          partInstance("add", add, { n2: staticInputPinConfig(-1) }),
-          partInstance("mul", mul),
+          partInstance("add", add.id, { n2: staticInputPinConfig(-1) }),
+          partInstance("mul", mul.id),
           partInstance("tr1", transform.id, { to: staticInputPinConfig(1) }),
         ],
         connections: [
@@ -1606,7 +1642,7 @@ describe("main ", () => {
         id: "part",
         inputs: ["n1"],
         outputs: ["r"],
-        instances: [partInstance("a", add, { n2: staticInputPinConfig(n2) })],
+        instances: [partInstance("a", add.id, { n2: staticInputPinConfig(n2) })],
         connections: [
           ["n1", "a.n1"],
           ["a.r", "r"],
@@ -1634,7 +1670,7 @@ describe("main ", () => {
         id: "part",
         inputs: ["n1"],
         outputs: ["r"],
-        instances: [partInstance("a", add, { n2: staticInputPinConfig(n2) })],
+        instances: [partInstance("a", add.id, { n2: staticInputPinConfig(n2) })],
         connections: [
           ["n1", "a.n1"],
           ["a.r", "r"],
@@ -2083,7 +2119,7 @@ describe("main ", () => {
           outputs: ["r"],
           completionOutputs: ["r"],
           reactiveInputs: ["val"],
-          instances: [partInstance("i1", accumulate, { count: staticInputPinConfig(2) })],
+          instances: [partInstance("i1", accumulate.id, { count: staticInputPinConfig(2) })],
           connections: [
             ["val", "i1.item"],
             ["i1.r", "r"],
@@ -2116,7 +2152,7 @@ describe("main ", () => {
           inputs: ["val", "count"],
           outputs: ["r"],
           reactiveInputs: ["val"],
-          instances: [partInstance("i1", accumulate, {})],
+          instances: [partInstance("i1", accumulate.id, {})],
           connections: [
             ["val", "i1.item"],
             ["count", "i1.count"],
@@ -2211,7 +2247,7 @@ describe("main ", () => {
           r: partOutput("number"),
         },
         instances: [
-          partInstance("a", add, {
+          partInstance("a", add.id, {
             n1: staticInputPinConfig(num1),
             n2: staticInputPinConfig(num2),
           }),
@@ -2295,7 +2331,7 @@ describe("main ", () => {
         outputs: {
           r: partOutput("number"),
         },
-        instances: [partInstance("id", id2)],
+        instances: [partInstance("id", id2.id)],
         connections: [
           connectionData("a", "id.v"),
           connectionData("b", "id.v"),
@@ -2454,7 +2490,7 @@ describe("main ", () => {
         id: "badWrap",
         inputs: ["a"],
         outputs: ["r"],
-        instances: [partInstance("i1", p2)],
+        instances: [partInstance("i1", p2.id)],
         connections: [["a", "i1.a"]],
       });
 
@@ -2482,7 +2518,7 @@ describe("main ", () => {
         id: "badWrap",
         inputs: ["a"],
         outputs: ["r"],
-        instances: [partInstance("i1", badPart)],
+        instances: [partInstance("i1", badPart.id)],
         connections: [["a", "i1.a"]],
       });
 
@@ -2514,7 +2550,7 @@ describe("main ", () => {
         id: "badWrap",
         inputs: ["a"],
         outputs: ["r"],
-        instances: [partInstance("i1", badPart)],
+        instances: [partInstance("i1", badPart.id)],
         connections: [
           ["a", "i1.a"],
           [`i1.${ERROR_PIN_ID}`, "r"],
@@ -2580,8 +2616,8 @@ describe("main ", () => {
         inputs: ["list"],
         outputs: ["r"],
         instances: [
-          partInstance("i1", spreadList),
-          partInstance("i2", accumulate, { count: staticInputPinConfig(1) }),
+          partInstance("i1", spreadList.id),
+          partInstance("i2", accumulate.id, { count: staticInputPinConfig(1) }),
         ],
         connections: [
           ["list", "i1.list"],
@@ -2624,7 +2660,7 @@ describe("main ", () => {
           r: partOutput("number"),
         },
         instances: [
-          partInstance("a", add, {
+          partInstance("a", add.id, {
             n1: staticInputPinConfig(`$ENV.${prop1Name}`),
             n2: staticInputPinConfig(`$ENV.${prop2Name}`),
           }),
@@ -2665,7 +2701,7 @@ describe("main ", () => {
         inputs: [],
         outputs: ["r"],
         connections: [["i1.r", "r"]],
-        instances: [partInstance("i1", id, { v: staticInputPinConfig("$ENV.aValue") })],
+        instances: [partInstance("i1", id.id, { v: staticInputPinConfig("$ENV.aValue") })],
       });
 
       const values = [true, false, randomInt(999), { obj: { obj2: randomInt(99) } }];
@@ -2683,7 +2719,7 @@ describe("main ", () => {
         inputs: [],
         outputs: ["r"],
         connections: [["i1.r", "r"]],
-        instances: [partInstance("i1", id, { v: staticInputPinConfig("$ENV.myObj.student.name") })],
+        instances: [partInstance("i1", id.id, { v: staticInputPinConfig("$ENV.myObj.student.name") })],
       });
 
       const env = {
@@ -2705,7 +2741,7 @@ describe("main ", () => {
         inputs: [],
         outputs: ["r"],
         connections: [["i1.r", "r"]],
-        instances: [partInstance("i1", id, { v: staticInputPinConfig("$ENV.myObj.student.name") })],
+        instances: [partInstance("i1", id.id, { v: staticInputPinConfig("$ENV.myObj.student.name") })],
       });
 
       const env = {};
@@ -2734,7 +2770,7 @@ describe("main ", () => {
         id: "grouped-part",
         inputs: ["a|optional"],
         outputs: ["r"],
-        instances: [partInstance("v1", v42)],
+        instances: [partInstance("v1", v42.id)],
         connections: [
           ["a", "v1.__trigger"],
           ["v1.r", "r"],
@@ -2770,7 +2806,7 @@ describe("main ", () => {
         inputs: ["a|optional"],
         outputs: ["r"],
         instances: [
-          partInstance("a1", addPart, {
+          partInstance("a1", addPart.id, {
             a: staticInputPinConfig(1),
             b: staticInputPinConfig(2),
           }),
@@ -2816,7 +2852,7 @@ describe("main ", () => {
         inputs: ["a"],
         outputs: ["r"],
         instances: [
-          partInstance("a1", addPart, {
+          partInstance("a1", addPart.id, {
             a: staticInputPinConfig(1),
             b: staticInputPinConfig(2),
             __trigger: staticInputPinConfig(2),
@@ -2850,7 +2886,7 @@ describe("main ", () => {
   });
 
   describe('misc', () => {
-    it.only('does not clean state when reactive input is received', () => {
+    it('does not clean state when reactive input is received', () => {
       const part = conciseNativePart({
         id: 'part',
         inputs: ['a'],

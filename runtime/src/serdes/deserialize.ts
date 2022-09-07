@@ -1,8 +1,26 @@
 import { CustomPart, FlydeFlow, flydeFlowSchema } from '@flyde/core';
 import * as yaml from 'yaml';
+import * as rfs from 'require-from-string';
 
-export const deserializeFlow = (flowContents: string): FlydeFlow => {
-const unsafeflow = yaml.parse(flowContents);
+
+export const deserializeCodeFlow = (contents: string, fileName: string): FlydeFlow => {
+  const part = rfs(contents, fileName);
+
+  // TODO - validate part
+
+  part.__importFrom = fileName; // TODO - remove this when all flows come with imported from
+
+  return {
+    exports: [part.id],
+    parts: {[part.id]: part},
+    mainId: part.id,
+    imports: {}
+  }
+}
+
+export const deserializVisualFlow = (flowContents: string): FlydeFlow => {
+
+  const unsafeflow = yaml.parse(flowContents);
 
   const result = flydeFlowSchema.safeParse(unsafeflow);
   if (result.success === false) {
@@ -38,4 +56,12 @@ const unsafeflow = yaml.parse(flowContents);
     part.id = partId;
   }
   return {imports: {}, exports: [], ...data as any};
+}
+
+export const deserializeFlow = (flowContents: string, fileName: string): FlydeFlow => {
+  if (fileName.endsWith('.flyde')) {
+    return deserializVisualFlow(flowContents);
+  } else {
+    return deserializeCodeFlow(flowContents, fileName);
+  }
 }

@@ -19,9 +19,10 @@ export const setupFlowsWatcher = (rootDir: string, onFlowsChange: (map: FlowsMap
         case "change":
           {
             try {
-              const contents = readFileSync(join(rootDir, path), "utf8");
+              const flowPath = join(rootDir, path);
+              const contents = readFileSync(flowPath, "utf8");
               try {
-                const flow = deserializeFlow(contents);
+                const flow = deserializeFlow(contents, flowPath);
                 flows.set(path, flow);
               } catch (e) {
                   flows.set(path, 'corrupt');

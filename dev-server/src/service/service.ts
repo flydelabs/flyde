@@ -15,7 +15,7 @@ export const createService = (root: string) => {
 
         const contents = readFileSync(path, 'utf-8');
         try {
-            return deserializeFlow(contents);
+            return deserializeFlow(contents, path);
         } catch (e) {
             console.log('ERROR', e);
             return JSON.parse(contents);

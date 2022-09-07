@@ -63,7 +63,7 @@ describe("execute", () => {
     },
     inputsPosition: {},
     outputsPosition: {},
-    instances: [partInstance("a", optAdd)],
+    instances: [partInstance("a", optAdd.id)],
     connections: [
       {
         from: externalConnectionNode("n1"),
@@ -91,7 +91,7 @@ describe("execute", () => {
     outputs: {
       r: partOutput("number"),
     },
-    instances: [partInstance("a", add)],
+    instances: [partInstance("a", add.id)],
     connections: [
       {
         from: externalConnectionNode("n1"),
@@ -318,7 +318,7 @@ describe("execute", () => {
             r: partOutput("number"),
           },
           instances: [
-            partInstance("a", id),
+            partInstance("a", id.id),
             // partInstance('b', id),
           ],
           connections: [
@@ -363,7 +363,7 @@ describe("execute", () => {
           outputs: {
             r: partOutput("number"),
           },
-          instances: [partInstance("v", Value(2)), partInstance("a", id)],
+          instances: [partInstance("v", Value(2).id), partInstance("a", id.id)],
           connections: [connectionData(["a", "r"], ["r"]), connectionData(["v", "r"], ["a", "v"])],
         };
 
@@ -439,7 +439,7 @@ describe("execute", () => {
       outputs: {
         r: { type: "boolean" },
       },
-      instances: [partInstance("a", isEven)],
+      instances: [partInstance("a", isEven.id)],
       connections: [
         {
           from: externalConnectionNode("item"),

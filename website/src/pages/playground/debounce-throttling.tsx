@@ -20,6 +20,9 @@ import {
 import example from "./_flows/debounce-throttle.flyde";
 import { OutputLogs } from "./_OutputLogs/OutputLogs";
 
+console.log({example});
+
+
 const META_DATA = {
   title: "Debounce vs. Throttling",
   description:

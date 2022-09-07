@@ -124,15 +124,15 @@ parts:
         y: -152.48753764734144
     outputsPosition:
       result:
-        x: -112.36608834597975
-        y: 704.1733607816236
+        x: -135.1549331794976
+        y: 533.2568633719678
     completionOutputs:
       - result
     instances:
       - partId: Equals
         pos:
-          x: -178.1720971679688
-          y: -34.94999176025391
+          x: -179.03373046875004
+          y: -98.1199594116211
         id: Equals-364
         inputConfig:
           compare:
@@ -140,8 +140,8 @@ parts:
             value: 0
       - partId: Equals
         pos:
-          x: -65.86722656250001
-          y: 85.62096923828125
+          x: -75.12186523437501
+          y: 22.182240905761716
         id: Equals-364-d95
         inputConfig:
           compare:
@@ -149,14 +149,14 @@ parts:
             value: 1
       - partId: Add
         pos:
-          x: 60.215429687500006
-          y: 501.717759475708
+          x: 30.815893554687506
+          y: 374.8691590881348
         id: Add-539
         inputConfig: {}
       - partId: Subtract
         pos:
-          x: -2.407990722656251
-          y: 260.93969085693357
+          x: -34.96145751953125
+          y: 160.11758544921872
         id: Subtract-210
         inputConfig:
           n2:
@@ -164,8 +164,8 @@ parts:
             value: 1
       - partId: Subtract
         pos:
-          x: 177.77401611328128
-          y: 257.0448468017578
+          x: 109.47726318359378
+          y: 158.06905105590818
         id: Subtract-210-d215
         inputConfig:
           n2:
@@ -173,14 +173,14 @@ parts:
             value: 2
       - partId: Fibonacci
         pos:
-          x: -25.2734521484375
-          y: 367.05894348144534
+          x: -49.93635498046875
+          y: 267.77435180664065
         id: Fibonacci-261
         inputConfig: {}
       - partId: Fibonacci
         pos:
-          x: 173.19598388671875
-          y: 372.0815182495117
+          x: 96.69393920898438
+          y: 268.03501136779784
         id: Fibonacci-379
         inputConfig: {}
     connections:

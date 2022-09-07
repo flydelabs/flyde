@@ -401,6 +401,9 @@ export const execute: ExecuteFn = ({
 
   const processedRepo = customRepoToPartRepo(partsRepo, codePartExtraContext);
 
+  console.log({part});
+  
+
   const onError = (err: unknown) => {
     // this means "catch the error"
     if (outputs[ERROR_PIN_ID]) {

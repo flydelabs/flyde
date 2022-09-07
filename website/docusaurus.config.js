@@ -107,6 +107,10 @@ const config = {
             require.resolve("@flyde/flow-editor/src/index.scss"),
           ],
         },
+        gtag: {
+          trackingID: 'G-RCVXXHJXZ6',
+          anonymizeIP: true,
+        },
       }),
     ],
   ],

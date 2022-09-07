@@ -10,4 +10,4 @@ parts:
     outputs:
         result:
           type: number
-    fnCode: "ref:./code/fn.js"
+    fnCode: "outputs.result.next(inputs.n1 ** inputs.n2);"

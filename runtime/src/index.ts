@@ -8,8 +8,6 @@ import { simplifiedExecute } from "./simplified-execute";
 export * from "./serdes";
 export * from './resolver';
 
-const stdlib = require("../stdlib.json");
-
 const exposed = {};
 
 export const expose = (functionality: any, name: string, inputs?: string[]) => {
@@ -31,7 +29,7 @@ export const executeFlowResolved = async (
 
 export const executeFlow = async (flowPath: string, inputs: Record<string, any>): Promise<any> => {
   const path = resolveFlowPath(flowPath);
-  const flow = deserializeFlow(readFileSync(path, "utf8"));
+  const flow = deserializeFlow(readFileSync(path, "utf8"), path);
   const parts = resolveFlow(path, "implementation");
   const main = parts.Main;
 
@@ -52,7 +50,6 @@ export const executeFlow = async (flowPath: string, inputs: Record<string, any>)
       completionOutputs: ["result"],
       fn: (inputs, outputs, adv) => {
         const exposedFn = exposed[func.displayName];
-        console.log('inside fn!', exposedFn, func.displayName);
         
         if (!exposedFn) {
           throw new Error(`Functionality ${func.displayName} not exposed`);
@@ -71,5 +68,5 @@ export const executeFlow = async (flowPath: string, inputs: Record<string, any>)
     parts[part.id] = part;
   }
 
-  return simplifiedExecute(main, {...stdlib.customRepo, ...parts}, inputs, { exposed });
+  return simplifiedExecute(main, { ...parts }, inputs, { exposed });
 };

@@ -53,6 +53,9 @@ import {
   keys,
   TRIGGER_PIN_ID,
   ImportablePart,
+  inlinePartInstance,
+  isInlinePartInstance,
+  isRefPartInstance,
 } from "@flyde/core";
 import { InstanceView } from "./instance-view/InstanceView";
 import { ConnectionView } from "./connection-view";
@@ -103,6 +106,7 @@ import {
 import { createEditorCommand } from "../flow-editor/commands/commands";
 import { EditorCommand } from "../flow-editor/commands/definition";
 import { useScrollBlock } from "../lib/react-utils/use-scroll-block";
+import { usePrompt } from "../lib/react-utils/prompt";
 
 const MemodSlider = React.memo(Slider);
 
@@ -222,6 +226,8 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
       part: GroupedPart;
       insId: string;
     }>();
+
+    const _prompt = usePrompt();
 
     const viewPort = boardData.viewPort;
 
@@ -732,7 +738,7 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
     const onDoubleClickInstance = React.useCallback(
       (ins: PartInstance, shift: boolean) => {
         if (shift) {
-          const part = repo[ins.partId];
+          const part = isInlinePartInstance(ins) ? ins.part : repo[ins.partId];
           if (!part) {
             throw new Error(`Impossible state inspecting inexisting part`);
           }
@@ -744,7 +750,11 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
 
           setInspectedInstance({ insId: `${thisInsId}.${ins.id}`, part });
         } else {
-          onEditPart(ins.partId);
+          if (isRefPartInstance(ins)) {
+            onEditPart(ins.partId);
+          } else {
+            toastMsg('Editing inline grouped part not supported yet');
+          }
         }
       },
       [onEditPart, repo, thisInsId]
@@ -798,7 +808,7 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
     );
 
     const onConvertConstToEnv = React.useCallback(
-      (ins: PartInstance, pinId: string) => {
+      async (ins: PartInstance, pinId: string) => {
         if (!onNewEnvVar) {
           throw new Error("Impossible state");
         }
@@ -807,7 +817,7 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
         if (!isStaticInputPinConfig(currConfig)) {
           throw new Error(`Impossible state converting non const input to env var`);
         }
-        const name = prompt("Env variable name?", `myVar${randomInt(9999)}`);
+        const name = await _prompt("Env variable name?", `myVar${randomInt(9999)}`);
         if (name) {
           const newValue = produce(part, (draft) => {
             draft.instances.forEach((_ins) => {
@@ -821,13 +831,13 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
           onNewEnvVar(name, currConfig.value);
         }
       },
-      [onChange, onNewEnvVar, part]
+      [_prompt, onChange, onNewEnvVar, part]
     );
 
     const onAddIoPin = React.useCallback(
-      (type: PartIoType) => {
-        const newPinId = prompt("New name?") || "na";
-        const newPinType = prompt("type?") || "any";
+      async (type: PartIoType) => {
+        const newPinId = await _prompt("New name?") || "na";
+        const newPinType = await _prompt("type?") || "any";
 
         const newValue = produce(part, (draft) => {
           if (type === "input") {
@@ -847,12 +857,12 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
 
         onChange(newValue, functionalChange("add new io pin"));
       },
-      [part, onChange]
+      [_prompt, part, onChange]
     );
 
-    const editCompletionOutputs = React.useCallback(() => {
+    const editCompletionOutputs = React.useCallback(async () => {
       const curr = part.completionOutputs?.join(",");
-      const newVal = prompt(`Edit completion outputs`, curr);
+      const newVal = await _prompt(`Edit completion outputs`, curr);
       if (isDefined(newVal) && newVal !== null) {
         const newValue = produce(part, (draft) => {
           draft.completionOutputs = newVal === "" ? undefined : newVal.split(",");
@@ -860,11 +870,11 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
 
         onChange(newValue, functionalChange("change part completions"));
       }
-    }, [onChange, part]);
+    }, [_prompt, onChange, part]);
 
-    const editReactiveInputs = React.useCallback(() => {
+    const editReactiveInputs = React.useCallback(async () => {
       const curr = part.reactiveInputs?.join(",");
-      const newVal = prompt(`Edit reactive inputs`, curr);
+      const newVal = await _prompt(`Edit reactive inputs`, curr);
       if (isDefined(newVal) && newVal !== null) {
         const newValue = produce(part, (draft) => {
           draft.reactiveInputs = newVal === "" ? undefined : newVal.split(",");
@@ -872,7 +882,7 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
 
         onChange(newValue, functionalChange("change reactive inputs"));
       }
-    }, [onChange, part]);
+    }, [_prompt, onChange, part]);
 
     const onRemoveIoPin = React.useCallback(
       (type: PartIoType, pinId: string) => {
@@ -1097,7 +1107,7 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
     // prune orphan connections
     React.useEffect(() => {
       const validInputs = instances.reduce((acc, ins) => {
-        const part = repo[ins.partId];
+        const part = getPartDef(ins, repo);
         if (part) {
           acc.set(ins.id, keys(part.inputs));
         }
@@ -1105,7 +1115,7 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
       }, new Map());
 
       const validOutputs = instances.reduce((acc, ins) => {
-        const part = repo[ins.partId];
+        const part = getPartDef(ins, repo);
         if (part) {
           acc.set(ins.id, keys(part.outputs));
         }
@@ -1475,7 +1485,7 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
         if (!instance) {
           throw new Error("Selected instance not found");
         }
-        const insPart = repo[instance.partId];
+        const insPart = getPartDef(instance, repo);
         if (!insPart) {
           throw new Error("Selected instance part not found");
         }

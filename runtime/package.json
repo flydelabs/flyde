@@ -22,6 +22,7 @@
     "callsite": "^1.0.0",
     "cuid": "^2.1.8",
     "glob": "^8.0.3",
+    "require-from-string": "^2.0.2",
     "resolve-from": "^5.0.0",
     "yaml": "^2.1.1",
     "zod": "^3.17.10"

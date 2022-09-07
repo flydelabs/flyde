@@ -20,6 +20,7 @@ import { deserializeFlow } from "../serdes/deserialize";
 import { resolveImportablePaths } from "./resolve-importable-paths";
 import { resolvePartWithDeps } from "./resolve-part-with-deps/resolve-part-with-deps";
 
+
 /*
 Resolving algorithm:
 1. Read and deserialize file
@@ -68,7 +69,7 @@ const _resolveFlow = (
   mode: ResolveMode = "definition",
   exportedOnly: boolean = false
 ): ResolvedFlydeFlow => {
-  const flow = deserializeFlow(readFileSync(fullFlowPath, "utf8"));
+  const flow = deserializeFlow(readFileSync(fullFlowPath, "utf8"), fullFlowPath);
 
   const parts = flow.parts || {};
 
@@ -98,19 +99,20 @@ const _resolveFlow = (
     for (const fullPath of importablePaths) {
       if (existsSync(fullPath)) {
         const contents = readFileSync(fullPath, "utf8");
-        const flow = deserializeFlow(contents);
-        const resolvedImport = _resolveFlow(fullPath, mode);
-
-        flow.exports.forEach((exp) => {
-          if (exports.has(exp)) {
-            throw new Error(
-              `Module ${importPath} is exporting part "${exp}" which was already exported by another package.`
-            );
-          }
-          exports.add(exp);
-        });
-
-        importData = { ...importData, ...resolvedImport };
+          
+          const flow = deserializeFlow(contents, fullPath);
+          const resolvedImport = _resolveFlow(fullPath, mode);
+  
+          flow.exports.forEach((exp) => {
+            if (exports.has(exp)) {
+              throw new Error(
+                `Module ${importPath} is exporting part "${exp}" which was already exported by another package.`
+              );
+            }
+            exports.add(exp);
+          });
+  
+          importData = { ...importData, ...resolvedImport };
       } else {
         throw new Error(`Error importing ${importPath} - file does not exist`);
       }
@@ -147,31 +149,17 @@ const _resolveFlow = (
     part.id = name;
     repo[name] = part;
 
-    if (isCodePart(part)) {
-      const refMatches = part.fnCode.match(/^ref:(.*)$/);
+      const maybeHackPart = part as any as NativePart & {__importFrom: string};
 
-      const nativePart = part as any as NativePart;
-      if (refMatches) {
-        const [_, ref] = refMatches;
+      if (maybeHackPart.__importFrom && mode === 'bundle') {
+        const flowFolder = dirname(fullFlowPath);
+        const requirePath = relative(flowFolder, maybeHackPart.__importFrom);
 
-        if (mode === "implementation" || mode === "bundle") {
-          const flowFolder = dirname(fullFlowPath);
-
-          const fnPath = join(flowFolder, ref);
-          const requirePath = relative(flowFolder, fnPath);
-
-          if (mode === "bundle") {
-            nativePart.fn = `__BUNDLE:[[${requirePath}]]` as any;
-          } else {
-            nativePart.fn = require("./" + requirePath);
-          }
-
-          delete (nativePart as any).fnCode;
-          repo[name] = nativePart;
-        }
+        maybeHackPart.fn = `__BUNDLE_FN:[[${requirePath}]]` as any;
       }
+      repo[name] = maybeHackPart;
     }
-  }
+    
 
   return repo;
 };

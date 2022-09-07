@@ -1,7 +1,9 @@
 import {
   FlydeFlow,
   isGroupedPart,
+  isRefPartInstance,
   PartDefRepo,
+  RefPartInstance,
 } from "@flyde/core";
 import { buildPartsRelationshipData, PartsRelationshipNode } from "@flyde/flow-editor"; // ../../../common/lib/part-relationship-data
 import { NavigatorCodePartItem, NavigatorData, NavigatorInstanceGroup, NavigatorItem, NavigatorVisualPartItem } from "./FoldersSection/FlowPartsSection";
@@ -31,14 +33,20 @@ export const buildNavigatorData = (
 
     const instances = isGroupedPart(part) ? part.instances : [];
     const instancesCount = instances.reduce<Record<string, number>>((acc, curr) => {
-      const c = acc[curr.partId] || 0;
-      acc[curr.partId] = c + 1;
+      if (isRefPartInstance(curr)) {
+        const c = acc[curr.partId] || 0;
+        acc[curr.partId] = c + 1;
+      }
       return acc;
     }, {});
 
     const childPartNodes = node.children.map(toNavigatorItem);
 
-    const instancesNodes = instances.reduce<NavigatorItem[]>((acc, { partId, id }) => {
+    const refInstances = instances
+      .filter((ins) => isRefPartInstance(ins)) as RefPartInstance[];
+
+    const instancesNodes = refInstances
+      .reduce<NavigatorItem[]>((acc, { partId, id }) => {
       const isExternal = !stdLibRepo[partId];
       const item: NavigatorItem = {
         type: isExternal ? "external-instance" : "internal-instance",

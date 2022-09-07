@@ -49,3 +49,29 @@
         border-radius: 0;
     }
 }
+
+.fib-btn {
+    margin-right: 5px;
+}
+
+input.input {
+    margin-right: 5px;
+    border: 1px solid var(--ifm-color-primary);
+    color: var(--ifm-color-primary);
+    background-color: var(--ifm-button-background-color);
+    // border: var(--ifm-button-border-width) solid var(--ifm-button-border-color);
+    border-radius: var(--ifm-button-border-radius);
+    // color: var(--ifm-button-color);
+    cursor: pointer;
+    display: inline-block;
+    font-size: calc(0.875rem * var(--ifm-button-size-multiplier));
+    font-weight: var(--ifm-button-font-weight);
+    line-height: 1.5;
+    padding: calc( var(--ifm-button-padding-vertical) * var(--ifm-button-size-multiplier) ) calc( var(--ifm-button-padding-horizontal) * var(--ifm-button-size-multiplier) );
+    text-align: center;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+    vertical-align: middle;
+    white-space: nowrap;
+}

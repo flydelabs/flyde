@@ -21,6 +21,7 @@ import React, { useState } from "react";
 import Editor, { OnMount } from "@monaco-editor/react";
 import { ExecuteEnv, getEnvKeyFromValue, isDefined, isEnvValue, OMap } from "@flyde/core";
 import { Popover2 } from "@blueprintjs/popover2";
+import { toastMsg } from "../../toaster";
 
 export type ValueBuilderType = "string" | "object" | "number" | "boolean" | "env";
 
@@ -233,7 +234,7 @@ export const ValueBuilderView: React.FC<ValueBuilderViewProps> = (props) => {
       onSubmit(ppValue, dataType);
     } catch (e) {
       console.error(`Error parsing value: ${e}`);
-      alert("Something went wrong. Check the console for more info.");
+      toastMsg("Something went wrong. Check the console for more info.", 'danger');
     }
   }, [value, dataType, onSubmit]);
 

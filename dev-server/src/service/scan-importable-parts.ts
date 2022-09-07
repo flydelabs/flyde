@@ -43,7 +43,7 @@ const getLocalFlydeFiles = (rootPath: string) => {
     const item = queue.pop();
     if (item.isFolder === true) {
       queue.push(...item.children);
-    } else if (item.isFlyde === true) {
+    } else if (item.isFlyde || item.isFlydeCode) {
       localFlydeFiles.push(item as FlydeFile);
     }
   }
@@ -57,12 +57,13 @@ export const scanImportableParts = async (rootPath: string, filename: string) =>
   const localFiles = getLocalFlydeFiles(rootPath);
   const depsNames = await getFlydeDependencies(rootPath);
   const depsParts = await resolveDependentPackages(rootPath, depsNames);
+  
 
   const localParts = localFiles
     .filter((file) => !file.relativePath.endsWith(filename))
     .reduce<Record<string, PartDefRepo>>((acc, file) => {
       const flowContents = readFileSync(file.fullPath, "utf8");
-      const { exports } = deserializeFlow(flowContents);
+      const { exports } = deserializeFlow(flowContents, file.fullPath);
 
       const resolvedFlow = resolveFlow(file.fullPath, "definition");
 

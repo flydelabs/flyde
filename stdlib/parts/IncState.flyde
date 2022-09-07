@@ -69,47 +69,17 @@ parts:
           insId: GetState-837
           pinId: key
       - from:
-          insId: GetState-837
-          pinId: err
-        to:
-          insId: Transform-49
-          pinId: from
-      - from:
-          insId: GetState-837
-          pinId: r
-        to:
-          insId: Merge-843
-          pinId: a
-      - from:
-          insId: Transform-49
-          pinId: r
-        to:
-          insId: Merge-843
-          pinId: b
-      - from:
           insId: __this
           pinId: val
         to:
           insId: Add-627
           pinId: n2
       - from:
-          insId: Merge-843
-          pinId: r
-        to:
-          insId: Add-627
-          pinId: n1
-      - from:
           insId: __this
           pinId: key
         to:
           insId: SetState-795
           pinId: key
-      - from:
-          insId: Add-627
-          pinId: r
-        to:
-          insId: SetState-795
-          pinId: value
       - from:
           insId: Add-627
           pinId: r

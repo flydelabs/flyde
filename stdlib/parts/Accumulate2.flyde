@@ -81,18 +81,6 @@ parts:
           insId: __this
           pinId: both
       - from:
-          insId: Accumulate-780
-          pinId: r
-        to:
-          insId: GetListItem-773-d931
-          pinId: list
-      - from:
-          insId: Accumulate-780
-          pinId: r
-        to:
-          insId: GetListItem-773
-          pinId: list
-      - from:
           insId: GetListItem-773
           pinId: r
         to:

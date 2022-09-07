@@ -22,6 +22,7 @@ import {
   ResolvedFlydeFlowDefinition,
   ImportablePart,
   Part,
+  isRefPartInstance,
 } from "@flyde/core";
 import { GroupedPartEditor, ClipboardData, defaultViewPort, GroupEditorBoardData, PART_HEIGHT } from "../grouped-part-editor/GroupedPartEditor";
 import { groupSelected } from "../group-selected";
@@ -56,6 +57,7 @@ import { FlydeFlowChangeType, functionalChange } from "./flyde-flow-change-type"
 import { handleCommand } from "./commands/commands";
 import { EditorCommand } from "./commands/definition";
 import { Omnibar, OmniBarCmd, OmniBarCmdType } from "./omnibar/Omnibar";
+import { PromptContextProvider, PromptFunction, usePrompt } from "../lib/react-utils/prompt";
 
 
 export type FlowEditorState = {
@@ -63,6 +65,8 @@ export type FlowEditorState = {
   boardData: GroupEditorBoardData;
   currentPartId: string;
 }
+
+const defaultPromptHandler: PromptFunction = async (text, defaultValue) => prompt(`${text}`, defaultValue);
 
 export type FlydeFlowEditorProps = {
 
@@ -83,6 +87,8 @@ export type FlydeFlowEditorProps = {
   ref?: React.Ref<any>;
 
   hideTemplatingTips?: boolean;
+
+  promptHandler?: PromptFunction
 };
 
 const maxUndoStackSize = 50;
@@ -133,6 +139,8 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
     
     const {flow, boardData: editorBoardData, currentPartId} = state;
     const editedPart = state.flow.parts[currentPartId];
+
+    const promptHandler = props.promptHandler || defaultPromptHandler;
 
     const onChangeFlow = React.useCallback((newFlow: FlydeFlow, changeType: FlydeFlowChangeType) => {
       console.log("onChangeFlow", changeType.type);
@@ -346,7 +354,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
       setInlineCodeTarget({ pos, type: "new" });
     }, []);
 
-    const onGroupPart = React.useCallback(() => {
+    const onGroupPart = React.useCallback(async () => {
       const {selected} = editorBoardData;
 
       if (!selected.length) {
@@ -359,7 +367,9 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
         return;
       }
 
-      const { newPart, currentPart } = groupSelected(selected, editedPart, resolvedFlow);
+      const partName = await promptHandler('Name your new part');
+
+      const { newPart, currentPart } = groupSelected(selected, editedPart, resolvedFlow, partName);
 
       const newProject = produce(flow, (draft) => {
         draft.parts[newPart.id] = newPart;
@@ -368,7 +378,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
       });
 
       onChangeFlow(newProject, functionalChange("group part"));
-    }, [editorBoardData, resolvedFlow, flow, onChangeFlow, editedPart]);
+    }, [editorBoardData, editedPart, promptHandler, resolvedFlow, flow, onChangeFlow]);
 
     const onFinishEditingConstValue = React.useCallback(
       (v: any, type: ValueBuilderType) => {
@@ -393,7 +403,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
             }
 
             if (flow.parts[newPart.id]) {
-              alert(`Part with id ${newPart.id} already exists`);
+              toastMsg(`Part with id ${newPart.id} already exists`, 'danger');
               return;
             }
 
@@ -519,7 +529,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
 
         if (newPart.id !== editedDataBuilder.partId) {
           if (flow.parts[newPart.id]) {
-            alert(`Part with id ${newPart.id} already exists`);
+            toastMsg(`Part with id ${newPart.id} already exists`, 'danger');
             return;
           }
         }
@@ -537,7 +547,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
             const _part = draft.parts[partId];
             if (_part && isGroupedPart(_part)) {
               const instancesOfValuePart = new Set(
-                _part.instances.filter((ins) => ins.partId === dataPartId).map((ins) => ins.id)
+                _part.instances.filter((ins) => isRefPartInstance(ins) && ins.partId === dataPartId).map((ins) => ins.id)
               );
               _part.connections = _part.connections.filter((conn) => {
                 const { insId, pinId } = conn.to;
@@ -593,7 +603,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
               if (_part && isGroupedPart(_part)) {
                 const instancesOfValuePart = new Set(
                   _part.instances
-                    .filter((ins) => ins.partId === existingPart.id)
+                    .filter((ins) => isRefPartInstance(ins) && ins.partId === existingPart.id)
                     .map((ins) => ins.id)
                 );
                 _part.connections = _part.connections.filter((conn) => {
@@ -618,7 +628,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
           const inlineCodePart = createInlineCodePart({ code, customView, type });
 
           if (flow.parts[inlineCodePart.id]) {
-            alert(`Part with id ${inlineCodePart.id} already exists`);
+            toastMsg(`Part with id ${inlineCodePart.id} already exists`, 'danger');
             return;
           }
 
@@ -832,7 +842,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
     const onAddGroupedPart = React.useCallback(
       (part: GroupedPart) => {
         if (keys(part.inputs).length === 0 && keys(part.outputs).length === 0) {
-          alert("part must have one input or one output");
+          toastMsg("part must have one input or one output", 'danger');
           return;
         }
         const inputsPosition = keys(part.inputs).reduce((acc, curr, idx) => {
@@ -844,7 +854,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
         }, {});
 
         if (flow.parts[part.id]) {
-          alert(`Part named ${part.id} already exists`);
+          toastMsg(`Part named ${part.id} already exists`, 'danger');
           return;
         }
 
@@ -889,8 +899,10 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
 
     return (
       <div className="project-editor">
-        {renderInner()}
-        {maybeShowAddPart()}
+        <PromptContextProvider showPrompt={promptHandler} >
+          {renderInner()}
+          {maybeShowAddPart()}
+        </PromptContextProvider>
       </div>
     );
   })

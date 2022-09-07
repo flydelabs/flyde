@@ -6,7 +6,6 @@ import * as ReactDOMServer from 'react-dom/server';
 import { FlowEditor } from '..';
 import { FlydeFlowEditorProps } from '../flow-editor/FlowEditor';
 import { defaultViewPort } from '../grouped-part-editor';
-import { createRuntimePlayer } from '../grouped-part-editor/runtime-player';
 
 describe('ssg/ssr support', () => {
 

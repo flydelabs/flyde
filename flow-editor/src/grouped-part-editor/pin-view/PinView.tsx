@@ -232,7 +232,7 @@ export const PinView: React.SFC<PinViewProps> = React.memo(function PinView(prop
         : "";
 
     return `<div><div>${displayLabel} (${type}) </div>
-    <strong>Activated ${total} times since last deployment</strong>
+    <strong>Activated ${total} times this session</strong>
     ${maybeLastValueContent}`;
   };
 

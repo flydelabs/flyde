@@ -4,7 +4,7 @@ import { Subject } from "rxjs";
 import { CancelFn, InnerExecuteFn } from "../execute";
 import { ConnectionData } from "../connect";
 import { Pos, PartDefRepo, PartRepo } from "..";
-import { PartInstance } from "./part-instance";
+import { isInlinePartInstance, PartInstance } from "./part-instance";
 import { InputPin, InputPinMap, OutputPin, OutputPinMap, PartInput, PartInputs } from "./part-pins";
 
 export * from "./part-instance";
@@ -190,6 +190,10 @@ export const getStaticValue = (value: any, repo: PartDefRepo, calleeId: string) 
 };
 
 export const getPart = (idOrIns: string | PartInstance, repo: PartRepo): Part => {
+
+  if (typeof idOrIns !== 'string' && isInlinePartInstance(idOrIns)) {
+    return idOrIns.part;
+  }
   const id = typeof idOrIns === "string" ? idOrIns : idOrIns.partId;
   const part = repo[id];
   if (!part) {
@@ -199,6 +203,9 @@ export const getPart = (idOrIns: string | PartInstance, repo: PartRepo): Part =>
 };
 
 export const getPartDef = (idOrIns: string | PartInstance, repo: PartDefRepo): PartDefinition => {
+  if (typeof idOrIns !== 'string' && isInlinePartInstance(idOrIns)) {
+    return idOrIns.part;
+  }
   const id = typeof idOrIns === "string" ? idOrIns : idOrIns.partId;
   const part = repo[id];
   if (!part) {

@@ -4,7 +4,6 @@ import {
   InputPinMap,
   externalConnectionNode,
   connectionNode,
-  PartDefRepo,
   partInput,
   connectionNodeEquals,
   GroupedPart,
@@ -16,15 +15,13 @@ import { PartInstance } from "@flyde/core";
 export const createGroup = (
   instances: PartInstance[],
   connections: ConnectionData[],
-  repo: PartDefRepo
+  name: string
 ) => {
   if (instances.length === 0) {
     throw new Error("cannot create group without instances");
   }
 
   const instanceIds = instances.map((ins) => ins.id);
-
-  const name = prompt("Name your part!") || "n/a";
 
   // connections that were "left out" after the grouping make great candidates for inputs of the new part
 

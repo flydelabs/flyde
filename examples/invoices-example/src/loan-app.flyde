@@ -22,12 +22,21 @@ parts:
         x: -6.104829320062765
         y: -682.6545593085294
       na:
-        x: -562.54
-        y: -114.31
+        x: -474.04
+        y: -208.69
+      bob:
+        x: -409.36
+        y: -513.43
+      Yo:
+        x: -363.0594004730904
+        y: -629.8892308684807
     outputsPosition:
       result:
         x: 23.40026688302037
         y: 636.1671070290962
+      na:
+        x: -276.14
+        y: -279.56
     instances:
       - partId: CRM.getUserByEmail
         pos:
@@ -663,4 +672,30 @@ parts:
         to:
           insId: __this
           pinId: result
-exposedFunctionality: []
+exposedFunctionality:
+  - codeName: crmService.getUser
+    displayName: CRM.getUserByEmail
+    inputs:
+      - email
+    path: /Users/gabrielgrinberg/projects/flyde/examples/invoices-example/src/index.ts
+    line: '  expose(crmService.getUser, "CRM.getUserByEmail", ["email"]);'
+  - codeName: creditService.getCredit
+    displayName: CreditService.getCredit
+    inputs:
+      - userId
+    path: /Users/gabrielgrinberg/projects/flyde/examples/invoices-example/src/index.ts
+    line: '  expose(creditService.getCredit, "CreditService.getCredit", ["userId"]);'
+  - codeName: riskService.calculateRisk
+    displayName: RiskService.calculateRisk
+    inputs:
+      - userId
+      - amount
+    path: /Users/gabrielgrinberg/projects/flyde/examples/invoices-example/src/index.ts
+    line: '  expose(riskService.calculateRisk, "RiskService.calculateRisk",
+      ["userId", "amount"]);'
+  - codeName: bob
+    displayName: Hello
+    inputs:
+      - hi
+    path: /Users/gabrielgrinberg/projects/flyde/examples/invoices-example/src/index.ts
+    line: '  expose(bob, "Hello", ["hi"]);'

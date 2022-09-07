@@ -1,7 +1,5 @@
 imports:
   "@flyde/stdlib":
-    - name: HtmlSpan
-      alias: HtmlSpan
     - name: ListFrom3
       alias: ListFrom3
     - name: ListFrom2
@@ -10,22 +8,20 @@ imports:
       alias: SpreadList3
     - name: SetState
       alias: SetState
-    - name: SetState
-      alias: SetState
     - name: Boolean Split
       alias: Boolean Split
     - name: Publish
       alias: Publish
-    - name: Publish
-      alias: Publish
-    - name: Subscribe
-      alias: Subscribe
     - name: Subscribe
       alias: Subscribe
     - name: Add
       alias: Add
-    - name: Add
-      alias: Add
+  "./Button.flyde.js":
+    - name: Button
+      alias: Button
+  "./Span.flyde.js":
+    - name: Span
+      alias: Span
 exports: []
 mainId: Main
 parts:
@@ -252,30 +248,6 @@ parts:
         to:
           insId: Publish-817-d15
           pinId: value
-  Button:
-    id: Button
-    inputs:
-      children:
-        mode: required-if-connected
-        type: any
-    outputs:
-      jsx:
-        type: any
-      click:
-        type: any
-    completionOutputs:
-      - jsx
-    fnCode: ref:Button.js
-  Span:
-    id: Span
-    inputs:
-      children:
-        mode: required
-        type: any
-    outputs:
-      jsx:
-        type: any
-    fnCode: ref:Span.js
   Inline Code 73878:
     id: Inline Code 73878
     inputs:

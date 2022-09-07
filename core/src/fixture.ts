@@ -126,7 +126,7 @@ export const add1mul2: GroupedPart = {
   },
   inputsPosition: {},
   outputsPosition: {},
-  instances: [partInstance("a", add1), partInstance("b", mul2)],
+  instances: [partInstance("a", add1.id), partInstance("b", mul2.id)],
   connections: [
     {
       from: externalConnectionNode("n"),
@@ -153,7 +153,7 @@ export const add1mul2add1: GroupedPart = {
   },
   inputsPosition: {},
   outputsPosition: {},
-  instances: [partInstance("a", add1), partInstance("b", mul2), partInstance("c", add1)],
+  instances: [partInstance("a", add1.id), partInstance("b", mul2.id), partInstance("c", add1.id)],
   connections: [
     {
       from: externalConnectionNode("n"),
@@ -185,7 +185,7 @@ export const addGrouped: GroupedPart = {
   outputs: {
     r: partOutput("number"),
   },
-  instances: [partInstance("a", add)],
+  instances: [partInstance("a", add.id)],
   connections: [
     {
       from: externalConnectionNode("n1"),
@@ -213,7 +213,7 @@ export const addGroupedQueued: GroupedPart = {
   outputs: {
     r: partOutput("number"),
   },
-  instances: [partInstance("a", add, { n1: queueInputPinConfig(), n2: queueInputPinConfig() })],
+  instances: [partInstance("a", add.id, { n1: queueInputPinConfig(), n2: queueInputPinConfig() })],
   connections: [
     {
       from: externalConnectionNode("n1"),

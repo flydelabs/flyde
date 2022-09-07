@@ -40,6 +40,7 @@ import { calcPartWidth } from "./instance-view/utils";
 import { calcPartIoWidth as calcIoPartWidth } from "./part-io-view/utils";
 import { vSub, vAdd } from "../physics";
 import { getLeafInstancesOfSelection } from "./part-graph-utils";
+import { toastMsg } from "../toaster";
 
 export const emptyObj = {}; // for immutability
 export const emptyList = []; // for immutability
@@ -78,7 +79,7 @@ export const findClosestPin = (
   insId: string
 ) => {
 
-  const rootInstance: PartInstance = partInstance(part.id, part);
+  const rootInstance: PartInstance = partInstance(part.id, part.id);
   const mainInputsData = okeys(part.inputs).map((pinId) => {
     const pos = calcMainInputPosition(part, size, pinId, insId, "input", boardPos);
     return { id: pinId, type: "input", pos, ins: rootInstance };
@@ -151,11 +152,6 @@ export const parsePromptValue = (raw: string | null) => {
     value = maybeNum;
   }
   return value;
-};
-
-export const promptConstValue = (lastVal?: string) => {
-  const raw = prompt("value?", lastVal);
-  return parsePromptValue(raw);
 };
 
 export const parseInputOutputTypes = (
@@ -437,23 +433,24 @@ export const dismantleGroup = (
     if (!isGroupedPart(part)) {
       throw new Error("impossible state");
     }
-    const { instances: newInstances, connections: newConnections } = part;
+    toastMsg('TODO', "danger")
+  //   const { instances: newInstances, connections: newConnections } = part;
 
-    const instancesFound = draft.instances.filter((ins) => ins.partId === part.id);
-    const instancesFoundIds = instancesFound.map((i) => i.id);
+  //   const instancesFound = draft.instances.filter((ins) => ins.partId === part.id);
+  //   const instancesFoundIds = instancesFound.map((i) => i.id);
 
-    draft.instances = draft.instances.filter((ins) => !instancesFound.includes(ins));
+  //   draft.instances = draft.instances.filter((ins) => !instancesFound.includes(ins));
 
-    draft.connections = draft.connections.filter(({ from, to }) => {
-      return !instancesFoundIds.includes(from.insId) && !instancesFoundIds.includes(to.insId);
-    });
+  //   draft.connections = draft.connections.filter(({ from, to }) => {
+  //     return !instancesFoundIds.includes(from.insId) && !instancesFoundIds.includes(to.insId);
+  //   });
 
-    draft.instances.push(...newInstances);
-    draft.connections.push(
-      ...newConnections.filter(
-        (conn) => !isExternalConnectionNode(conn.from) && !isExternalConnectionNode(conn.to)
-      )
-    );
+  //   draft.instances.push(...newInstances);
+  //   draft.connections.push(
+  //     ...newConnections.filter(
+  //       (conn) => !isExternalConnectionNode(conn.from) && !isExternalConnectionNode(conn.to)
+  //     )
+  //   );
   });
 };
 

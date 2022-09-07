@@ -2,6 +2,8 @@ module.exports = function (w) {
 
 	return {
 	  files: [
+		'dist/**/*',
+		"webpack-loader.js",
 		'**/*.flyde',
 		'src/**/*.ts',
 		'src/**/*.tsx',

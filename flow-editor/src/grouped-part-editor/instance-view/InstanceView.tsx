@@ -1,5 +1,5 @@
 import * as React from "react";
-import { entries, pickFirst, OMap, okeys, partInput, keys } from "@flyde/core";
+import { entries, pickFirst, OMap, okeys, partInput, keys, isInlinePartInstance } from "@flyde/core";
 import classNames from "classnames";
 
 // ;
@@ -24,6 +24,7 @@ import { getInstanceDomId } from "../dom-ids";
 import { HistoryPayload } from "@flyde/remote-debugger";
 import { toastMsg } from "../../toaster";
 import { ClosestPinData } from "../GroupedPartEditor";
+import { usePrompt } from "../../lib/react-utils/prompt";
 
 export const PIECE_HORIZONTAL_PADDING = 25;
 export const PIECE_CHAR_WIDTH = 11;
@@ -135,6 +136,8 @@ export const InstanceView: React.SFC<InstanceViewProps> = function InstanceViewI
   const { id } = instance;
 
   const isNative = isNativePart(part);
+
+  const _prompt = usePrompt();
 
   const onInputClick = React.useCallback(
     (pin: string) => onPinClick(instance, pin, "input"),
@@ -295,21 +298,21 @@ export const InstanceView: React.SFC<InstanceViewProps> = function InstanceViewI
     os.push([ERROR_PIN_ID, partOutput("error")]);
   }
 
-  const _onChangeVisibleInputs = React.useCallback(() => {
+  const _onChangeVisibleInputs = React.useCallback(async () => {
     const inputs = okeys(part.inputs);
-    const res = prompt("New order?", (instance.visibleInputs || inputs).join(","));
+    const res = await _prompt("New order?", (instance.visibleInputs || inputs).join(","));
     if (res) {
       onChangeVisibleInputs(instance, res.split(","));
     }
-  }, [instance, part.inputs, onChangeVisibleInputs]);
+  }, [part.inputs, _prompt, instance, onChangeVisibleInputs]);
 
-  const _onChangeVisibleOutputs = React.useCallback(() => {
+  const _onChangeVisibleOutputs = React.useCallback(async () => {
     const outputs = okeys(part.outputs);
-    const res = prompt("New order?", (instance.visibleOutputs || outputs).join(","));
+    const res = await _prompt("New order?", (instance.visibleOutputs || outputs).join(","));
     if (res) {
       onChangeVisibleOutputs(instance, res.split(","));
     }
-  }, [instance, part.outputs, onChangeVisibleOutputs]);
+  }, [part.outputs, _prompt, instance, onChangeVisibleOutputs]);
 
   const contextMenuItems = [
     {
@@ -324,7 +327,7 @@ export const InstanceView: React.SFC<InstanceViewProps> = function InstanceViewI
       : []),
     { label: `Ins id: ${instance.id}`, callback: noop },
     {
-      label: `Copy part - "${instance.partId}""`,
+      label: `Copy part - "${isInlinePartInstance(instance) ? instance.part.id : instance.partId}"`,
       callback: async () => {
         const str = JSON.stringify(part, null, 4);
         await navigator.clipboard.writeText(str);

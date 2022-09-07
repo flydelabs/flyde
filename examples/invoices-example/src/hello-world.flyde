@@ -87,19 +87,6 @@ parts:
     completionOutputs:
       - r
     fnCode: outputs.r.next((`Hello World!`))
-  TestCode:
-    id: TestCode
-    inputs:
-      a:
-        mode: required
-        type: any
-      b:
-        mode: required
-        type: any
-    outputs:
-      r:
-        type: any
-    fnCode: ref:./bob.js
   Inline Code 67624:
     id: Inline Code 67624
     inputs: {}

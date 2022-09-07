@@ -39,18 +39,6 @@ describe("resolver", () => {
     assert.exists(Add.fnCode);
   });
 
-  it("resolves a .flyde with dependency on a native code part from another Flyde file ", () => {
-    const data = resolveFlow(getFixturePath("a-imports-code-fn-from-b/a.flyde"), "implementation");
-
-    const Exponent = data.Exponent as NativePart;
-
-    assert.exists(Exponent);
-    assert.isFunction(Exponent.fn);
-    const outputs = { result: { next: spy() } };
-    Exponent.fn({ n1: 2, n2: 3 }, outputs as any);
-    assert.isTrue(outputs.result.next.calledWith(8));
-  });
-
   it("resolves a .flyde with dependency on a grouped part from a different package", () => {
     const data = resolveFlow(
       getFixturePath("a-imports-code-fn-from-package/a.flyde"),
@@ -85,7 +73,7 @@ describe("resolver", () => {
 
       assert.throws(
         () => {
-          deserializeFlow(path);
+          deserializeFlow(path, '');
         },
         /Error parsing/,
         `File ${invalid} should have failed schema validation`
@@ -127,4 +115,36 @@ describe("resolver", () => {
       resolveFlow(path);
     }, /not exporting/);
   });
+
+  it.only('allows importing simple code based parts', async () => { 
+    const path = getFixturePath("a-imports-js-part-from-b/a.flyde");
+    const flow = resolveFlow(path);
+    
+    const val = await simplifiedExecute(flow.Add1, flow, { n: 2 });
+    assert.equal(val, 3);
+  });
+
+  it('allows importing simple code based parts that require packages', async () => { 
+    const path = getFixturePath("a-imports-js-part-from-b-with-dep/a.flyde");
+    const flow = resolveFlow(path);
+    
+    const val = await simplifiedExecute(flow.Add1, flow, { n: 2 });
+    assert.equal(val, 3);
+  });
+
+  it.only('bundles flows importing simple code based parts as expected', async () => { 
+    const path = getFixturePath("a-imports-js-part-from-b-with-dep/a.flyde");
+    const flow = resolveFlow(path, 'bundle');
+    
+    assert.match((flow.Add as any).fn, /__BUNDLE_FN:\[\[\Add\.flyde\.js\]\]/);
+  });
+
+  it('works for counter example', async () => { 
+    const path = getFixturePath("react-counter-example/react-counter.flyde");
+    const flow = resolveFlow(path, 'bundle');
+
+    assert.exists(flow.Button);
+    assert.exists(flow.Span);
+  });
+
 });

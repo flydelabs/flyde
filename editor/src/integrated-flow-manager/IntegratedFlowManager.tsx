@@ -8,6 +8,8 @@ import {
   ExposedFunctionality,
   ResolvedFlydeFlowDefinition,
   ImportablePart,
+  isInlinePartInstance,
+  isRefPartInstance,
 } from "@flyde/core";
 
 import classNames from "classnames";
@@ -44,6 +46,7 @@ import { useDevServerApi } from "../api/apis-context";
 import { FlydeFlowChangeType, functionalChange } from "@flyde/flow-editor"; // ../../common/flow-editor/flyde-flow-change-type
 import { useHotkeys, FlowEditorState } from "@flyde/flow-editor"; // ../../common/lib/react-utils/use-hotkeys
 import { defaultViewPort } from "@flyde/flow-editor/dist/grouped-part-editor/GroupedPartEditor";
+import { vscodePromptHandler } from "../vscode-prompt-handler";
 
 export const PIECE_HEIGHT = 28;
 
@@ -301,7 +304,7 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (prop
         const parts = values(flow.parts).filter((_part) => {
           if (isGroupedPart(_part)) {
             return (
-              _part.instances.filter((ins) => ins.partId === part.id && _part.id !== part.id)
+              _part.instances.filter((ins) => isRefPartInstance(ins) && ins.partId === part.id && _part.id !== part.id)
                 .length > 0
             );
           } else {
@@ -355,7 +358,7 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (prop
           const p = draft.parts[partId];
           if (p && isGroupedPart(p)) {
             p.instances = p.instances.map((ins) => {
-              if (ins.partId === renamedPart.id) {
+              if (!isInlinePartInstance(ins) &&  ins.partId === renamedPart.id) {
                 renames++;
                 return { ...ins, partId: newPartId };
               }
@@ -527,6 +530,7 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (prop
         />
         <div className={classNames("stage-wrapper", { running: false })}>
           <FlowEditor
+            promptHandler={isEmbeddedMode ? vscodePromptHandler : undefined}
             key={props.integratedSource}
             state={state}
             onChangeState={setState}

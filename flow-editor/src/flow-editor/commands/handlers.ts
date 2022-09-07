@@ -125,26 +125,10 @@ export const handleDuplicateSelectedEditorCommand: CommandHandler<EditorCommandD
         throw new Error(`impossible state duplicate selected no matching instance`);
       }
 
-      const part = draft.flow.parts[ins.partId];
-
-      let partIdToUse = ins.partId;
-
-      if (part && isCodePart(part)) {
-        if (part.templateType) {
-          const newPart = createInlineCodePart({
-            code: atob(part.dataBuilderSource),
-            type: part.templateType,
-          });
-          draft.flow.parts[newPart.id] = newPart;
-          partIdToUse = newPart.id;
-        }
-      }
-
       if (ins) {
         const { pos } = ins;
         const newIns = {
           ...ins,
-          partId: partIdToUse,
           pos: { x: pos.x + 20, y: pos.y + 20 },
           id: `${ins.id}-d${randomInt(999)}`,
         };
@@ -166,24 +150,8 @@ export const handlePasteInstancesEditorCommand: CommandHandler<EditorCommandPast
 
   const newInstances = instances.map((ins) => {
 
-    const part = draft.flow.parts[ins.partId];
-
-    let partIdToUse = ins.partId;
-
-    if (part && isCodePart(part)) {
-      if (part.templateType) {
-        const newPart = createInlineCodePart({
-          code: atob(part.dataBuilderSource),
-          type: part.templateType,
-        });
-        draft.flow.parts[newPart.id] = newPart;
-        partIdToUse = newPart.id;
-      }
-    }
-
     return {
       ...ins,
-      partId: partIdToUse,
       pos: vAdd(ins.pos, pasteOffset),
       id: `${ins.id}-copy`
     };

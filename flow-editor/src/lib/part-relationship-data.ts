@@ -1,4 +1,4 @@
-import { CustomPart, Project, isGroupedPart, GroupedPart, isCodePart, FlydeFlow } from "@flyde/core";
+import { CustomPart, Project, isGroupedPart, GroupedPart, isCodePart, FlydeFlow, isRefPartInstance, RefPartInstance } from "@flyde/core";
 import { keys, values } from "../utils";
 
 export type PartsRelationshipNode = {
@@ -43,7 +43,7 @@ export const buildPartsRelationshipData = (projectOrFlow: Project | FlydeFlow): 
     (acc, currPart) => {
       if (isGroupedPart(currPart)) {
         currPart.instances.forEach((ins) => {
-          if (parts[ins.partId]) {
+          if (isRefPartInstance(ins) &&  parts[ins.partId] ) {
             const curr = acc[ins.partId] || [];
             if (!curr.includes(currPart.id) && ins.partId !== currPart.id) {
               acc[ins.partId] = [...curr, currPart.id];
@@ -65,7 +65,9 @@ export const buildPartsRelationshipData = (projectOrFlow: Project | FlydeFlow): 
   const map: Record<string, PartsRelationshipNode> = {};
 
   const traversePart = (mainPart: GroupedPart, parent?: PartsRelationshipNode) => {
-    return mainPart.instances.reduce<PartsRelationshipNode[]>((acc, { partId }) => {
+    return mainPart.instances
+      .filter((ins) => isRefPartInstance(ins))
+      .reduce<PartsRelationshipNode[]>((acc, { partId }: RefPartInstance) => {
       const usages = partsUsingOtherMap[partId] || [];
       if (usages.length > 1) {
         // multi used, not relevant

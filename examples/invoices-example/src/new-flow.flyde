@@ -99,22 +99,10 @@ parts:
           insId: Dot-966
           pinId: obj
       - from:
-          insId: Dot-966
-          pinId: value
-        to:
-          insId: CRM.getUserByEmail-143
-          pinId: email
-      - from:
           insId: __this
           pinId: formData
         to:
           insId: Dot-966-d839
-          pinId: obj
-      - from:
-          insId: CRM.getUserByEmail-143
-          pinId: result
-        to:
-          insId: Dot-241
           pinId: obj
       - from:
           insId: Inline Code 14302-197-d838
@@ -141,12 +129,6 @@ parts:
           insId: Inline Code 90963-281
           pinId: risk
       - from:
-          insId: Inline Code 90963-281
-          pinId: r
-        to:
-          insId: Boolean Split-898
-          pinId: val
-      - from:
           insId: Boolean Split-898
           pinId: "false"
         to:
@@ -158,24 +140,6 @@ parts:
         to:
           insId: Inline Code 40721-776
           pinId: __trigger
-      - from:
-          insId: Dot-241
-          pinId: value
-        to:
-          insId: CreditService.getCredit-978
-          pinId: userId
-      - from:
-          insId: Dot-966-d839
-          pinId: value
-        to:
-          insId: RiskService.calculateRisk-687
-          pinId: amount
-      - from:
-          insId: Dot-241
-          pinId: value
-        to:
-          insId: RiskService.calculateRisk-687
-          pinId: userId
   CRM.getUserByEmail:
     id: CRM.getUserByEmail
     inputs:
@@ -288,10 +252,10 @@ parts:
       r:
         type: any
     customViewCode: inputs.risk < 0.3 && inputs.credit > 250
+    templateType: value
     completionOutputs:
       - r
     fnCode: outputs.r.next((inputs.risk < 0.3 && inputs.credit > 250))
-    templateType: value
   Inline Code 14302:
     id: Inline Code 14302
     inputs: {}
@@ -299,10 +263,10 @@ parts:
       r:
         type: any
     customViewCode: "'Denied'"
+    templateType: value
     completionOutputs:
       - r
     fnCode: outputs.r.next(('Denied'))
-    templateType: value
   Inline Code 40721:
     id: Inline Code 40721
     inputs: {}
@@ -310,10 +274,10 @@ parts:
       r:
         type: any
     customViewCode: "'Approved'"
+    templateType: value
     completionOutputs:
       - r
     fnCode: outputs.r.next(('Approved'))
-    templateType: value
   Bob 1:
     id: Bob 1
     inputs:
@@ -435,10 +399,10 @@ parts:
       r:
         type: any
     customViewCode: "`Result is ${inputs.a + inputs.b}`"
+    templateType: value
     completionOutputs:
       - r
     fnCode: outputs.r.next((`Result is ${inputs.a + inputs.b}`))
-    templateType: value
   Hello:
     id: Hello
     inputs:
@@ -471,70 +435,4 @@ parts:
       \              }
 
       \              "
-exposedFunctionality:
-  - codeName: crmService.getUser
-    displayName: CRM.getUserByEmail
-    inputs:
-      - email
-    path: /Users/gabrielgrinberg/projects/flyde/integrated/invoices-example/src/index.ts
-    line: '  // expose(crmService.getUser, "CRM.getUserByEmail", ["email"]);'
-  - codeName: creditService.getCredit
-    displayName: CreditService.getCredit
-    inputs:
-      - userId
-    path: /Users/gabrielgrinberg/projects/flyde/integrated/invoices-example/src/index.ts
-    line: '  expose(creditService.getCredit, "CreditService.getCredit", ["userId"]);'
-  - codeName: riskService.calculateRisk
-    displayName: RiskService.calculateRisk
-    inputs:
-      - userId
-      - amount
-    path: /Users/gabrielgrinberg/projects/flyde/integrated/invoices-example/src/index.ts
-    line: '  expose(riskService.calculateRisk, "RiskService.calculateRisk",
-      ["userId", "amount"]);'
-  - codeName: bob
-    displayName: Hello
-    inputs:
-      - hi
-    path: /Users/gabrielgrinberg/projects/flyde/integrated/invoices-example/src/index.ts
-    line: '  expose(bob, "Hello", ["hi"]);'
-  - codeName: crmService.getUser
-    displayName: CRM.getUserByEmail
-    inputs:
-      - email
-    path: /Users/gabrielgrinberg/projects/flyde/integrated/invoices-example/src/loan-app2.flyde
-    line: "    line: '  // expose(crmService.getUser, \"CRM.getUserByEmail\",
-      [\"email\"]);'"
-  - codeName: creditService.getCredit
-    displayName: CreditService.getCredit
-    inputs:
-      - userId
-    path: /Users/gabrielgrinberg/projects/flyde/integrated/invoices-example/src/loan-app2.flyde
-    line: "    line: '  expose(creditService.getCredit, \"CreditService.getCredit\",
-      [\"userId\"]);'"
-  - codeName: bob
-    displayName: Hello
-    inputs:
-      - hi
-    path: /Users/gabrielgrinberg/projects/flyde/integrated/invoices-example/src/loan-app2.flyde
-    line: "    line: '  expose(bob, \"Hello\", [\"hi\"]);'"
-  - codeName: crmService.getUser
-    displayName: CRM.getUserByEmail
-    inputs:
-      - email
-    path: /Users/gabrielgrinberg/projects/flyde/integrated/invoices-example/src/new-flow.flyde
-    line: "    line: '  expose(crmService.getUser, \"CRM.getUserByEmail\",
-      [\"email\"]);'"
-  - codeName: creditService.getCredit
-    displayName: CreditService.getCredit
-    inputs:
-      - userId
-    path: /Users/gabrielgrinberg/projects/flyde/integrated/invoices-example/src/new-flow.flyde
-    line: "    line: '  expose(creditService.getCredit, \"CreditService.getCredit\",
-      [\"userId\"]);'"
-  - codeName: bob
-    displayName: Hello
-    inputs:
-      - hi
-    path: /Users/gabrielgrinberg/projects/flyde/integrated/invoices-example/src/new-flow.flyde
-    line: "    line: '  expose(bob, \"Hello\", [\"hi\"]);'"
+exposedFunctionality: []
