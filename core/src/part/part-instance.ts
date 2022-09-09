@@ -46,7 +46,7 @@ export const inlinePartInstance = (
 });
 
 export const isInlinePartInstance = (ins: PartInstance): ins is InlinePartInstance => {
-  return (ins as any).part;
+  return !!(ins as any).part;
 }
 export const isRefPartInstance = (ins: PartInstance): ins is RefPartInstance => !isInlinePartInstance(ins);
 

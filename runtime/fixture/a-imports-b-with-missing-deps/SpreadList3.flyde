@@ -1,6 +1,4 @@
-imports:
-  "./GetListItem.flyde.js":
-    - GetListItem
+imports: {}
 exports:
   - SpreadList3
 parts:

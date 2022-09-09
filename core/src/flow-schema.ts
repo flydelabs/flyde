@@ -28,16 +28,17 @@ const inputConfig = z.discriminatedUnion("mode", [
   }),
 ]);
 
+const instance = z.object({
+  pos: position.default({x: 0, y: 0}),
+  id: z.string(),
+  inputConfig: z.optional(z.record(z.string(), inputConfig)).default({}),
+  visibleInputs: z.optional(z.array(z.string())),
+  partId: z.optional(z.string()),
+  part: z.optional(z.any())
+}).refine((val) => val.part || val.partId, {message: 'Instance must have either an inline part or refer to a partId'});
+
 const groupedPart = z.object({
-  instances: z.array(
-    z.strictObject({
-      partId: z.string(),
-      pos: position.default({x: 0, y: 0}),
-      id: z.string(),
-      inputConfig: z.optional(z.record(z.string(), inputConfig)).default({}),
-      visibleInputs: z.optional(z.array(z.string()))
-    })
-  ),
+  instances: z.array(instance),
   connections: z.array(
     z.strictObject({
       from: z.strictObject({ insId: z.string(), pinId: z.string() }),

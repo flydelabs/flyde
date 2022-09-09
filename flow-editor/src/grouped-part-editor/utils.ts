@@ -19,6 +19,7 @@ import {
   InputMode,
   TRIGGER_PIN_ID,
   ERROR_PIN_ID,
+  inlinePartInstance,
 } from "@flyde/core";
 import {
   calcPinPosition,
@@ -184,16 +185,35 @@ export const parseInputOutputTypes = (
   };
 };
 
-export const createNewPartInstance = (
-  partOrPartId: string | PartDefinition,
+export const createNewInlinePartInstance = (
+  part: PartDefinition,
   offset: number = -1 * PART_HEIGHT * 1.5,
   lastMousePos: Pos,
   repo: PartDefRepo
 ): PartInstance => {
-  const part = typeof partOrPartId === "string" ? repo[partOrPartId] : partOrPartId;
+
+  const ins = inlinePartInstance(`${part.id}-${randomInt(999)}`, part as any, {}, { x: 0, y: 0 });
+  const width = calcPartWidth(ins, part, false, {}, {}, repo);
+
+  const { x, y } = lastMousePos;
+  const pos = {
+    x: x - width / 2,
+    y: y + offset,
+  };
+
+  return { ...ins, pos };
+};
+
+export const createNewPartInstance = (
+  partId: string,
+  offset: number = -1 * PART_HEIGHT * 1.5,
+  lastMousePos: Pos,
+  repo: PartDefRepo
+): PartInstance => {
+  const part = repo[partId];
 
   if (!part) {
-    throw new Error(`${partOrPartId} part not found in repo`);
+    throw new Error(`${partId} part not found in repo`);
   }
 
   const ins = partInstance(`${part.id}-${randomInt(999)}`, part as any, {}, { x: 0, y: 0 });

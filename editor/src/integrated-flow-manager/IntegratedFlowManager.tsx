@@ -233,7 +233,7 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (prop
 
   const onAddPartToStage = (part: PartDefinition) => {
     const finalPos = vAdd({ x: 100, y: 0 }, state.boardData.lastMousePos);
-    const newPartIns = createNewPartInstance(part, 0, finalPos, flow.parts);
+    const newPartIns = createNewPartInstance(part.id, 0, finalPos, flow.parts);
     if (newPartIns) {
       const valueChanged = produce(flow, (draft) => {
         const part = draft.parts[editedPartId]!;
@@ -438,7 +438,7 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (prop
       }
 
       const finalPos = vAdd({ x: 0, y: 0 }, state.boardData.lastMousePos);
-      const newPartIns = createNewPartInstance(importedPart, 0, finalPos, flow.parts);
+      const newPartIns = createNewPartInstance(importedPart.id, 0, finalPos, flow.parts);
 
       setImportedParts((parts) => [...parts, { part: importedPart, module }]);
 

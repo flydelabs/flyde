@@ -1,0 +1,14 @@
+imports:
+  "@acme/one-problematic-one-ok":
+  - Ok
+parts:
+  main:
+    inputs:
+      n1:
+        type: number
+        mode: required
+      n2: number
+    outputs:
+      result:
+        type: number
+    fnCode: "outputs.result.next(inputs.n1 + inputs.n2)"

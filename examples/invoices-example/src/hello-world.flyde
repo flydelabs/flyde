@@ -14,14 +14,9 @@ imports:
       alias: AccumulateUntil
     - name: Multiply
       alias: Multiply
-    - name: Test of debounce
-      alias: Test of debounce
   ./loan-app.flyde:
     - name: Bob2
       alias: Bob2
-  flow-folder/flow-bob.flyde:
-    - name: BobFromFlowfoilder
-      alias: BobFromFlowfoilder
 exports: []
 mainId: Main
 parts:

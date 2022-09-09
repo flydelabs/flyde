@@ -22,20 +22,33 @@ parts:
         y: -142.81
     outputsPosition:
       result:
-        x: -115.33722007201499
-        y: 126.07441056479868
+        x: -149.93927536610897
+        y: 94.76806688560694
     completionOutputs:
       - result
     instances:
-      - partId: Inline Code 4796
-        pos:
-          x: -163.62
-          y: -156.7
-        id: Inline Code 4796-573
+      - pos:
+          x: -199.38042480468744
+          y: -178.8486254882813
+        id: Inline Code 29279-82
         inputConfig: {}
+        part:
+          id: Inline Code 29279
+          inputs: {}
+          outputs:
+            r:
+              type: any
+              delayed: false
+              optional: false
+          fnCode: outputs.r.next(("Hello World"))
+          customViewCode: '"Hello World"'
+          dataBuilderSource: IkhlbGxvIFdvcmxkIg==
+          templateType: value
+          completionOutputs:
+            - r
     connections:
       - from:
-          insId: Inline Code 4796-573
+          insId: Inline Code 29279-82
           pinId: r
         to:
           insId: __this
@@ -82,10 +95,10 @@ parts:
     outputs:
       r:
         type: any
-    customViewCode: "'Hello World'"
-    dataBuilderSource: J0hlbGxvIFdvcmxkJw==
+    customViewCode: "'Hello World 2'"
+    dataBuilderSource: J0hlbGxvIFdvcmxkIDIn
     templateType: value
     completionOutputs:
       - r
-    fnCode: outputs.r.next(('Hello World'))
+    fnCode: outputs.r.next(('Hello World 2'))
 exposedFunctionality: []

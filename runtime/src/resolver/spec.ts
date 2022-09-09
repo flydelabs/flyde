@@ -1,4 +1,4 @@
-import { CodePart, NativePart } from "@flyde/core";
+import { CodePart, GroupedPart, InlinePartInstance, NativePart, RefPartInstance } from "@flyde/core";
 import { assert } from "chai";
 import { readdirSync } from "fs";
 import { join } from "path";
@@ -138,6 +138,29 @@ describe("resolver", () => {
     
     assert.match((flow.Add as any).fn, /__BUNDLE_FN:\[\[\Add\.flyde\.js\]\]/);
   });
+
+  it.only('throws error when importing part that has a missing dep transitively', async () => { 
+    const path = getFixturePath("a-imports-b-with-missing-deps/a.flyde");
+    assert.throws(() => {
+      resolveFlow(path); 
+    }, /Unable to find part/)
+  });
+
+  it.only('throws error when importing part that has a missing dep directly', async () => { 
+    // has a missing depen
+    const path = getFixturePath("a-imports-b-with-missing-deps/SpreadList3.flyde");
+    assert.throws(() => {
+      resolveFlow(path); 
+    }, /GetListItem/)
+  });
+
+  it.only('only resolves imported parts, aka does not break if a package exports a broken part that is not imported', () => {
+    const path = getFixturePath("imports-ok-from-package-with-problematic.flyde");
+    
+    const flow = resolveFlow(path);
+    assert.exists(flow.Ok);
+    assert.notExists(flow.Problematic);
+  })
 
   it('works for counter example', async () => { 
     const path = getFixturePath("react-counter-example/react-counter.flyde");

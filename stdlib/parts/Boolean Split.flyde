@@ -1,4 +1,6 @@
-imports: {}
+imports:
+  "./Equals.flyde.js":
+    - Equals
 exports:
   - Boolean Split
 parts:

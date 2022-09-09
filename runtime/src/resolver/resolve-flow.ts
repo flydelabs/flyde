@@ -13,6 +13,7 @@ import {
   isCodePart,
   NativePart,
   PartRepo,
+  isRefPartInstance,
 } from "@flyde/core";
 import { existsSync, readFileSync } from "fs";
 import { dirname, join, relative } from "path";
@@ -47,6 +48,7 @@ const resolveImports = <T extends ResolvedFlydeFlow>(
         `Error importing shared part ${importDef.name} from ${resolvedImportedFlow} - part not found`
       );
     }
+    
 
     const withDeps = resolvePartWithDeps(resolvedImportedFlow, importDef.name);
 
@@ -92,6 +94,7 @@ const _resolveFlow = (
 
   for (const importPath in imports) {
     const importablePaths = getLocalOrExternalPaths(importPath);
+    const importDefs = imports[importPath];
 
     let importData = {};
 
@@ -99,8 +102,14 @@ const _resolveFlow = (
     for (const fullPath of importablePaths) {
       if (existsSync(fullPath)) {
         const contents = readFileSync(fullPath, "utf8");
-          
           const flow = deserializeFlow(contents, fullPath);
+
+          const hasRequiredPart = flow.exports.some(exp => importDefs.some(def => def.name === exp));
+          
+          if (!hasRequiredPart) {
+            continue;
+          }
+          
           const resolvedImport = _resolveFlow(fullPath, mode);
   
           flow.exports.forEach((exp) => {
@@ -118,13 +127,12 @@ const _resolveFlow = (
       }
     }
 
-    const importDefs = imports[importPath];
 
     importDefs.forEach((def) => {
       if (!exports.has(def.name)) {
         throw new Error(`Module ${importPath} is not exporting part "${def.name}"`);
       }
-    });
+    });    
 
     const importedRepo = resolveImports(importData, importDefs);
 
@@ -144,6 +152,19 @@ const _resolveFlow = (
 
     if (!part) {
       throw new Error(`Error resolving shared part ${name} - part not found`);
+    }
+
+    if (isGroupedPart(part)) {
+      const unfoundRefs = 
+        new Set(part.instances
+        .filter(isRefPartInstance)
+        .map(ins => ins.partId)
+        .filter(partId => !tempRepo[partId]));
+      
+      
+      if (unfoundRefs.size > 0) {
+        throw new Error(`Part ${part.id} is referrencing ${unfoundRefs.size} part(s) that were not imported: ${Array.from(unfoundRefs).join(', ')}`)
+      }
     }
 
     part.id = name;

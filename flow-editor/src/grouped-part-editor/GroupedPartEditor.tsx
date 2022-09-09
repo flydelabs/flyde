@@ -1177,7 +1177,7 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
         const { ins, pos, pinId } = quickAddMenuVisible;
 
         if (match.type === "part") {
-          const newPartIns = createNewPartInstance(match.part, 100, lastMousePos.current, repo);
+          const newPartIns = createNewPartInstance(match.part.id, 100, lastMousePos.current, repo);
 
           if (newPartIns) {
             const newValue = produce(part, (draft) => {

@@ -1,5 +1,6 @@
 import { CustomPart, isCodePart } from ".";
 import { CustomPartRepo, removeDupes } from "..";
+import { isRefPartInstance, RefPartInstance } from "./part-instance";
 
 export const getPartWithDependencies = (part: CustomPart, repo: CustomPartRepo, existingIds: string[] = []): CustomPart[] => {
     if (isCodePart(part)) {
@@ -10,7 +11,8 @@ export const getPartWithDependencies = (part: CustomPart, repo: CustomPartRepo, 
       return [];
     }
     const deps = removeDupes(part.instances
-      .map(i => i.partId)
+      .filter(i => isRefPartInstance(i))
+      .map((i: RefPartInstance) => i.partId)
       .filter(i => repo[i])
     );
 

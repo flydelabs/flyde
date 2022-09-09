@@ -24,13 +24,20 @@ import {
   Part,
   isRefPartInstance,
 } from "@flyde/core";
-import { GroupedPartEditor, ClipboardData, defaultViewPort, GroupEditorBoardData, PART_HEIGHT } from "../grouped-part-editor/GroupedPartEditor";
+import {
+  GroupedPartEditor,
+  ClipboardData,
+  defaultViewPort,
+  GroupEditorBoardData,
+  PART_HEIGHT,
+} from "../grouped-part-editor/GroupedPartEditor";
 import { groupSelected } from "../group-selected";
 import produce from "immer";
 import { useHotkeys } from "../lib/react-utils/use-hotkeys";
 
 // ;
 import {
+  createNewInlinePartInstance,
   createNewPartInstance,
   domToViewPort,
   emptyObj,
@@ -59,19 +66,18 @@ import { EditorCommand } from "./commands/definition";
 import { Omnibar, OmniBarCmd, OmniBarCmdType } from "./omnibar/Omnibar";
 import { PromptContextProvider, PromptFunction, usePrompt } from "../lib/react-utils/prompt";
 
-
 export type FlowEditorState = {
   flow: FlydeFlow;
   boardData: GroupEditorBoardData;
   currentPartId: string;
-}
+};
 
-const defaultPromptHandler: PromptFunction = async (text, defaultValue) => prompt(`${text}`, defaultValue);
+const defaultPromptHandler: PromptFunction = async (text, defaultValue) =>
+  prompt(`${text}`, defaultValue);
 
 export type FlydeFlowEditorProps = {
-
   state: FlowEditorState;
-  onChangeState: React.Dispatch<React.SetStateAction<FlowEditorState>>
+  onChangeState: React.Dispatch<React.SetStateAction<FlowEditorState>>;
 
   resolvedRepoWithDeps: ResolvedFlydeFlowDefinition;
 
@@ -88,7 +94,7 @@ export type FlydeFlowEditorProps = {
 
   hideTemplatingTips?: boolean;
 
-  promptHandler?: PromptFunction
+  promptHandler?: PromptFunction;
 };
 
 const maxUndoStackSize = 50;
@@ -136,27 +142,29 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
 
     const [undoStack, setUndoStack] = React.useState<Partial<FlowEditorState>[]>([]);
     const [redoStack, setRedoStack] = React.useState<Partial<FlowEditorState>[]>([]);
-    
-    const {flow, boardData: editorBoardData, currentPartId} = state;
+
+    const { flow, boardData: editorBoardData, currentPartId } = state;
     const editedPart = state.flow.parts[currentPartId];
 
     const promptHandler = props.promptHandler || defaultPromptHandler;
 
-    const onChangeFlow = React.useCallback((newFlow: FlydeFlow, changeType: FlydeFlowChangeType) => {
-      console.log("onChangeFlow", changeType.type);
+    const onChangeFlow = React.useCallback(
+      (newFlow: FlydeFlow, changeType: FlydeFlowChangeType) => {
+        console.log("onChangeFlow", changeType.type);
 
-      if (changeType.type === 'functional') {
-        setUndoStack([{flow: newFlow}, ...undoStack.slice(0, maxUndoStackSize)]);
-        setRedoStack([]);
-      }
-      onChangeState(state => ({...state, flow: newFlow}));
-    }, [onChangeState, undoStack]);
+        if (changeType.type === "functional") {
+          setUndoStack([{ flow: newFlow }, ...undoStack.slice(0, maxUndoStackSize)]);
+          setRedoStack([]);
+        }
+        onChangeState((state) => ({ ...state, flow: newFlow }));
+      },
+      [onChangeState, undoStack]
+    );
 
     const [showAddPart, setShowAddPart] = React.useState<{ visible: Boolean; isCode: boolean }>({
       visible: false,
       isCode: false,
     });
-
 
     const [clipboardData, setClipboardData] = React.useState<ClipboardData>({
       instances: [],
@@ -183,19 +191,31 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
     const hideOmnibar = React.useCallback(() => setOmnibarVisible(false), []);
     const showOmnibar = React.useCallback(() => setOmnibarVisible(true), []);
 
-    const onChangeEditorBoardData = React.useCallback((partial: Partial<GroupEditorBoardData>) => {
-      onChangeState(state => ({...state, boardData: {...state.boardData, ...partial}}));
-    }, [onChangeState]);
+    const onChangeEditorBoardData = React.useCallback(
+      (partial: Partial<GroupEditorBoardData>) => {
+        onChangeState((state) => ({ ...state, boardData: { ...state.boardData, ...partial } }));
+      },
+      [onChangeState]
+    );
 
-    const setEditedPart = React.useCallback((part: CustomPart) => {
-      onChangeState(state => ({...state, currentPartId: part.id}));
-    }, [onChangeState])
+    const setEditedPart = React.useCallback(
+      (part: CustomPart) => {
+        onChangeState((state) => ({ ...state, currentPartId: part.id }));
+      },
+      [onChangeState]
+    );
 
     const [inlineCodeTarget, setInlineCodeTarget] = React.useState<InlineCodeTarget>();
 
     // clear board data that isn't related to part when it changes
     React.useEffect(() => {
-      onChangeEditorBoardData({selected: [], viewPort: defaultViewPort, from: undefined, to: undefined, lastMousePos: {x: 0, y: 0}});
+      onChangeEditorBoardData({
+        selected: [],
+        viewPort: defaultViewPort,
+        from: undefined,
+        to: undefined,
+        lastMousePos: { x: 0, y: 0 },
+      });
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [editedPart.id]);
 
@@ -205,7 +225,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
         setRedoStack([...redoStack, state]);
         const [last, ...rest] = undoStack;
         if (last) {
-          onChangeState(state => ({...state, ...last}));
+          onChangeState((state) => ({ ...state, ...last }));
           setUndoStack(rest);
         }
         e.preventDefault();
@@ -224,12 +244,12 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
         if (!shouldIgnore) {
           setRedoStack([]);
         }
-        
+
         if (flow.parts[editedPart.id]) {
           const changedProject = produce(flow, (draft) => {
             draft.parts[editedPart.id] = newBoardData;
           });
-          
+
           onChangeFlow(changedProject, changeType);
         }
       },
@@ -241,7 +261,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
         const part = getPartDef(partId, resolvedFlow);
 
         if (!state.flow.parts[part.id]) {
-          toastMsg('Cannot edit imported part');
+          toastMsg("Cannot edit imported part");
           return;
         }
 
@@ -355,7 +375,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
     }, []);
 
     const onGroupPart = React.useCallback(async () => {
-      const {selected} = editorBoardData;
+      const { selected } = editorBoardData;
 
       if (!selected.length) {
         console.info("tried to group without selection");
@@ -367,7 +387,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
         return;
       }
 
-      const partName = await promptHandler('Name your new part');
+      const partName = await promptHandler("Name your new part");
 
       const { newPart, currentPart } = groupSelected(selected, editedPart, resolvedFlow, partName);
 
@@ -403,7 +423,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
             }
 
             if (flow.parts[newPart.id]) {
-              toastMsg(`Part with id ${newPart.id} already exists`, 'danger');
+              toastMsg(`Part with id ${newPart.id} already exists`, "danger");
               return;
             }
 
@@ -411,7 +431,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
               throw new Error(`finishing const value on non grouped part - ${editedPart.id}`);
             }
 
-            const newPartIns = createNewPartInstance(newPart, -150, constTarget.pos, resolvedFlow);
+            const newPartIns = createNewPartInstance(newPart.id, -150, constTarget.pos, resolvedFlow);
             const valueWithPart = produce(editedPart, (draft) => {
               draft.instances.push(newPartIns);
             });
@@ -425,13 +445,11 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
                 delete ins.inputConfig[pinId];
               });
 
-              const withConnection = produce(valueWithParthWithoutConst, draft => {
-                draft.connections.push(
-                  {
-                    from: {insId: newPartIns.id, pinId: "r" },
-                    to: { insId: insTarget.id, pinId }
-                  }
-                )
+              const withConnection = produce(valueWithParthWithoutConst, (draft) => {
+                draft.connections.push({
+                  from: { insId: newPartIns.id, pinId: "r" },
+                  to: { insId: insTarget.id, pinId },
+                });
               });
 
               const newProject = produce(flow, (draft) => {
@@ -529,7 +547,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
 
         if (newPart.id !== editedDataBuilder.partId) {
           if (flow.parts[newPart.id]) {
-            toastMsg(`Part with id ${newPart.id} already exists`, 'danger');
+            toastMsg(`Part with id ${newPart.id} already exists`, "danger");
             return;
           }
         }
@@ -547,7 +565,9 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
             const _part = draft.parts[partId];
             if (_part && isGroupedPart(_part)) {
               const instancesOfValuePart = new Set(
-                _part.instances.filter((ins) => isRefPartInstance(ins) && ins.partId === dataPartId).map((ins) => ins.id)
+                _part.instances
+                  .filter((ins) => isRefPartInstance(ins) && ins.partId === dataPartId)
+                  .map((ins) => ins.id)
               );
               _part.connections = _part.connections.filter((conn) => {
                 const { insId, pinId } = conn.to;
@@ -627,16 +647,16 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
         } else {
           const inlineCodePart = createInlineCodePart({ code, customView, type });
 
-          if (flow.parts[inlineCodePart.id]) {
-            toastMsg(`Part with id ${inlineCodePart.id} already exists`, 'danger');
-            return;
+          // if (flow.parts[inlineCodePart.id]) {
+          //   toastMsg(`Part with id ${inlineCodePart.id} already exists`, 'danger');
+          //   return;
+          // }
+
+          if (!isGroupedPart(editedPart)) {
+            throw new Error(`Impossible state, no grouped part to add inline code part to`);
           }
 
-         if (!isGroupedPart(editedPart)) {
-          throw new Error(`Impossible state, no grouped part to add inline code part to`);
-         }
-
-          const newPartIns = createNewPartInstance(
+          const newPartIns = createNewInlinePartInstance(
             inlineCodePart,
             150,
             inlineCodeTarget.pos,
@@ -649,8 +669,6 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
           const newPartInputs = keys(inlineCodePart.inputs);
 
           const newProject = produce(flow, (draft) => {
-            // draft.parts[boardData.part.id] = valueWithPart.part;
-            draft.parts[inlineCodePart.id] = inlineCodePart;
 
             if (inlineCodeTarget.type === "new-connected") {
               const pinToConnect = newPartInputs.includes(inlineCodeTarget.pinId)
@@ -694,55 +712,80 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
       setShowAddPart({ visible: true, isCode: type === "code" });
     }, []);
 
+    const commandHandler = React.useCallback(
+      (command: EditorCommand) => {
+        if (!isGroupedPart(editedPart)) {
+          throw new Error(`Impossible state, handling command handler on non grouped part`);
+        }
 
-    const commandHandler = React.useCallback((command: EditorCommand) => {
-      if (!isGroupedPart(editedPart)) {
-        throw new Error(`Impossible state, handling command handler on non grouped part`);
-      }
-
-      const newValue = handleCommand(command, {flow, boardData: editorBoardData, currentPartId: editedPart.id});
-
-      onChangeFlow(newValue.flow, functionalChange(command.type));
-      onChangeEditorBoardData(newValue.boardData);
-    }, [editedPart, editorBoardData, flow, onChangeFlow, onChangeEditorBoardData]);
-
-    const onAdd = React.useCallback((partOrPartId: string | Part, offset: number = -1 * PART_HEIGHT * 1.5) => {
-      const newPartIns = createNewPartInstance(partOrPartId, offset, editorBoardData.lastMousePos, resolvedFlow);
-      if (newPartIns) {
-        const valueChanged = produce(flow, (draft) => {
-          const part = draft.parts[editedPart.id];
-          if (!isGroupedPart(part)) {
-            throw new Error(`Impossible state, adding part to non grouped part`);
-          }
-          part.instances.push(newPartIns);
+        const newValue = handleCommand(command, {
+          flow,
+          boardData: editorBoardData,
+          currentPartId: editedPart.id,
         });
-        onChangeFlow(valueChanged, functionalChange("add-part"));
-        hideOmnibar();
-        return newPartIns;
-      }
-    }, [editedPart.id, editorBoardData.lastMousePos, flow, onChangeFlow, hideOmnibar, resolvedFlow]);
 
-    const onOmnibarCmd = React.useCallback((cmd: OmniBarCmd) => {
-      switch (cmd.type) {
-        case OmniBarCmdType.ADD:
-          return onAdd(cmd.data);
-        case OmniBarCmdType.ADD_VALUE:
-          const pos = domToViewPort(editorBoardData.lastMousePos, editorBoardData.viewPort);
-          return requestNewConstValue(pos);
-        case OmniBarCmdType.CREATE_CODE_PART:
-          onCreateNewPart("code");
-          break;
-        case OmniBarCmdType.CREATE_GROUPED_PART:
-          onCreateNewPart("grouped");
-          break;
-        case OmniBarCmdType.IMPORT:
-          onImportPart(cmd.data);
-          break;
-        default:
-          AppToaster.show({ intent: "warning", message: "Not supported yet" });
-      }
-      hideOmnibar();
-    }, [editorBoardData.lastMousePos, editorBoardData.viewPort, onAdd, hideOmnibar, onCreateNewPart, onImportPart, requestNewConstValue]);
+        onChangeFlow(newValue.flow, functionalChange(command.type));
+        onChangeEditorBoardData(newValue.boardData);
+      },
+      [editedPart, editorBoardData, flow, onChangeFlow, onChangeEditorBoardData]
+    );
+
+    const onAdd = React.useCallback(
+      (partId: string, offset: number = -1 * PART_HEIGHT * 1.5) => {
+        const newPartIns = createNewPartInstance(
+          partId,
+          offset,
+          editorBoardData.lastMousePos,
+          resolvedFlow
+        );
+        if (newPartIns) {
+          const valueChanged = produce(flow, (draft) => {
+            const part = draft.parts[editedPart.id];
+            if (!isGroupedPart(part)) {
+              throw new Error(`Impossible state, adding part to non grouped part`);
+            }
+            part.instances.push(newPartIns);
+          });
+          onChangeFlow(valueChanged, functionalChange("add-part"));
+          hideOmnibar();
+          return newPartIns;
+        }
+      },
+      [editedPart.id, editorBoardData.lastMousePos, flow, onChangeFlow, hideOmnibar, resolvedFlow]
+    );
+
+    const onOmnibarCmd = React.useCallback(
+      (cmd: OmniBarCmd) => {
+        switch (cmd.type) {
+          case OmniBarCmdType.ADD:
+            return onAdd(cmd.data);
+          case OmniBarCmdType.ADD_VALUE:
+            const pos = domToViewPort(editorBoardData.lastMousePos, editorBoardData.viewPort);
+            return requestNewConstValue(pos);
+          case OmniBarCmdType.CREATE_CODE_PART:
+            onCreateNewPart("code");
+            break;
+          case OmniBarCmdType.CREATE_GROUPED_PART:
+            onCreateNewPart("grouped");
+            break;
+          case OmniBarCmdType.IMPORT:
+            onImportPart(cmd.data);
+            break;
+          default:
+            AppToaster.show({ intent: "warning", message: "Not supported yet" });
+        }
+        hideOmnibar();
+      },
+      [
+        editorBoardData.lastMousePos,
+        editorBoardData.viewPort,
+        onAdd,
+        hideOmnibar,
+        onCreateNewPart,
+        onImportPart,
+        requestNewConstValue,
+      ]
+    );
 
     const renderInner = () => {
       if (isCodePart(editedPart)) {
@@ -800,7 +843,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
               />
             ) : null}
 
-          {omnibarVisible ? (
+            {omnibarVisible ? (
               <Omnibar
                 flow={flow}
                 repo={resolvedFlow}
@@ -842,7 +885,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
     const onAddGroupedPart = React.useCallback(
       (part: GroupedPart) => {
         if (keys(part.inputs).length === 0 && keys(part.outputs).length === 0) {
-          toastMsg("part must have one input or one output", 'danger');
+          toastMsg("part must have one input or one output", "danger");
           return;
         }
         const inputsPosition = keys(part.inputs).reduce((acc, curr, idx) => {
@@ -854,7 +897,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
         }, {});
 
         if (flow.parts[part.id]) {
-          toastMsg(`Part named ${part.id} already exists`, 'danger');
+          toastMsg(`Part named ${part.id} already exists`, "danger");
           return;
         }
 
@@ -899,7 +942,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
 
     return (
       <div className="project-editor">
-        <PromptContextProvider showPrompt={promptHandler} >
+        <PromptContextProvider showPrompt={promptHandler}>
           {renderInner()}
           {maybeShowAddPart()}
         </PromptContextProvider>

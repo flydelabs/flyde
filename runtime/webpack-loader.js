@@ -9,7 +9,7 @@ module.exports = async function loader() {
     })
     .replace(/"__BUNDLE_FN\:\[\[(.+?)\]\]"/g, (_, p1) => {
       return `require('./${p1}').fn`;
-    })
+    });
 
   return `export default ${rawData}`;
 };
