@@ -1,4 +1,4 @@
-import { GroupedPart, PartDefRepo, partInstance, ConnectionData } from "@flyde/core";
+import { GroupedPart, PartDefRepo, partInstance, ConnectionData, inlinePartInstance } from "@flyde/core";
 import produce from "immer";
 import { createGroup } from "./lib/create-group";
 import { middlePos } from "./grouped-part-editor/utils";
@@ -6,8 +6,8 @@ import { middlePos } from "./grouped-part-editor/utils";
 export const groupSelected = (
   selected: string[],
   part: GroupedPart,
-  repo: PartDefRepo,
-  partName: string
+  partName: string,
+  type: 'inline' | 'ref'
 ): { newPart: GroupedPart; currentPart: GroupedPart } => {
   const { instances, connections } = part;
   const relevantInstances = instances.filter((ins) => selected.includes(ins.id));
@@ -29,7 +29,7 @@ export const groupSelected = (
     return middlePos(c.pos, p);
     // return { x: (c.pos.x + p.x) / 2, y: (c.pos.y + p.y) / 2 };
   }, instances[0].pos);
-  const newInstance = partInstance(`${groupedPart.id}-ins`, groupedPart.id, {}, midPos);
+  const newInstance = type === 'ref' ? partInstance(`${groupedPart.id}-ins`, groupedPart.id, {}, midPos) : inlinePartInstance(`${groupedPart.id}-ins`, groupedPart, {}, midPos);
 
   // replace relevant parts with new part
   const newInstancesArr = instances.filter((ins) => {

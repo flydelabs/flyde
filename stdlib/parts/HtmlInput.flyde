@@ -139,4 +139,3 @@ parts:
         to:
           insId: HtmlValueTag-866
           pinId: placeholder
-exposedFunctionality: []

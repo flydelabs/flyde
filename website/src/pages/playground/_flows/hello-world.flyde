@@ -13,27 +13,20 @@ parts:
     outputs:
       result:
         type: any
-    inputsPosition:
-      click:
-        x: -125.66545105324758
-        y: -263.4653616952434
-      na:
-        x: -321.62
-        y: -142.81
     outputsPosition:
       result:
-        x: -149.93927536610897
-        y: 94.76806688560694
+        x: -164.93927536610897
+        y: 53.76806688560694
     completionOutputs:
       - result
     instances:
       - pos:
-          x: -199.38042480468744
-          y: -178.8486254882813
-        id: Inline Code 29279-82
+          x: -205.88
+          y: -170.04
+        id: Inline-value-Hello World-673
         inputConfig: {}
         part:
-          id: Inline Code 29279
+          id: Inline-value-Hello World
           inputs: {}
           outputs:
             r:
@@ -48,57 +41,8 @@ parts:
             - r
     connections:
       - from:
-          insId: Inline Code 29279-82
+          insId: Inline-value-Hello World-673
           pinId: r
         to:
           insId: __this
           pinId: result
-  Inline Code 3497:
-    id: Inline Code 3497
-    inputs: {}
-    outputs:
-      r:
-        type: any
-    customViewCode: '"Debounce 1"'
-    dataBuilderSource: IkRlYm91bmNlIDEi
-    templateType: value
-    completionOutputs:
-      - r
-    fnCode: bob
-  Inline Code 58421:
-    id: Inline Code 58421
-    inputs: {}
-    outputs:
-      r:
-        type: any
-    customViewCode: '"Debounce 2"'
-    dataBuilderSource: IkRlYm91bmNlIDIi
-    templateType: value
-    completionOutputs:
-      - r
-    fnCode: outputs.r.next(("Debounce 2"))
-  Inline Code 59172:
-    id: Inline Code 59172
-    inputs: {}
-    outputs:
-      r:
-        type: any
-    customViewCode: '"Throttled Value"'
-    dataBuilderSource: IlRocm90dGxlZCBWYWx1ZSI=
-    templateType: value
-    completionOutputs:
-      - r
-    fnCode: outputs.r.next(("Throttled Value"))
-  Inline Code 4796:
-    id: Inline Code 4796
-    inputs: {}
-    outputs:
-      r:
-        type: any
-    customViewCode: "'Hello World 2'"
-    dataBuilderSource: J0hlbGxvIFdvcmxkIDIn
-    templateType: value
-    completionOutputs:
-      - r
-    fnCode: outputs.r.next(('Hello World 2'))
-exposedFunctionality: []

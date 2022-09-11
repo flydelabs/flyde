@@ -21,7 +21,6 @@ import {
   FlydeFlow,
   ResolvedFlydeFlowDefinition,
   ImportablePart,
-  Part,
   isRefPartInstance,
 } from "@flyde/core";
 import {
@@ -53,7 +52,7 @@ import { isDefined } from "../utils";
 import { rnd } from "../physics";
 import _ from "lodash";
 import { HistoryPayload } from "@flyde/remote-debugger";
-import { InlineCodeModal } from "./inline-code-modal";
+import { InlineCodeModal, InlineCodeTarget } from "./inline-code-modal";
 import { createInlineCodePart } from "./inline-code-modal/inline-code-to-part";
 import { AppToaster, toastMsg } from "../toaster";
 import { CodePartEditor } from "./code-part-editor";
@@ -64,7 +63,7 @@ import { FlydeFlowChangeType, functionalChange } from "./flyde-flow-change-type"
 import { handleCommand } from "./commands/commands";
 import { EditorCommand } from "./commands/definition";
 import { Omnibar, OmniBarCmd, OmniBarCmdType } from "./omnibar/Omnibar";
-import { PromptContextProvider, PromptFunction, usePrompt } from "../lib/react-utils/prompt";
+import { PromptContextProvider, PromptFunction } from "../lib/react-utils/prompt";
 
 export type FlowEditorState = {
   flow: FlydeFlow;
@@ -109,30 +108,6 @@ export type DataBuilderTarget = {
   partId: string;
   src: string;
 };
-
-export type InlineCodeTargetExisting = {
-  type: "existing";
-  partId: string;
-  value: string;
-  codeType: CodePartTemplateTypeInline;
-};
-
-export type InlineCodeTargetNew = {
-  pos: Pos;
-  type: "new";
-};
-
-export type InlineCodeTargetNewConnected = {
-  pos: Pos;
-  ins: PartInstance;
-  pinId: string;
-  type: "new-connected";
-};
-
-export type InlineCodeTarget =
-  | InlineCodeTargetExisting
-  | InlineCodeTargetNew
-  | InlineCodeTargetNewConnected;
 
 const ignoreUndoChangeTypes = ["select", "drag-move", "order-step"];
 
@@ -389,7 +364,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
 
       const partName = await promptHandler("Name your new part");
 
-      const { newPart, currentPart } = groupSelected(selected, editedPart, resolvedFlow, partName);
+      const { newPart, currentPart } = groupSelected(selected, editedPart, partName, 'ref');
 
       const newProject = produce(flow, (draft) => {
         draft.parts[newPart.id] = newPart;
@@ -398,7 +373,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
       });
 
       onChangeFlow(newProject, functionalChange("group part"));
-    }, [editorBoardData, editedPart, promptHandler, resolvedFlow, flow, onChangeFlow]);
+    }, [editorBoardData, editedPart, promptHandler, flow, onChangeFlow]);
 
     const onFinishEditingConstValue = React.useCallback(
       (v: any, type: ValueBuilderType) => {
@@ -645,12 +620,9 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
           }
           setInlineCodeTarget(undefined);
         } else {
-          const inlineCodePart = createInlineCodePart({ code, customView, type });
+          const partId = `Inline-value-${customView.substr(0, 15).replace(/["'`]/g, '')}`
+          const inlineCodePart = createInlineCodePart({ code, customView, type, partId});
 
-          // if (flow.parts[inlineCodePart.id]) {
-          //   toastMsg(`Part with id ${inlineCodePart.id} already exists`, 'danger');
-          //   return;
-          // }
 
           if (!isGroupedPart(editedPart)) {
             throw new Error(`Impossible state, no grouped part to add inline code part to`);
@@ -814,7 +786,6 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
               onInspectPin={props.onInspectPin}
               onRequestHistory={props.onRequestHistory}
               onNewEnvVar={props.onNewEnvVar}
-              onCreateNewPart={onCreateNewPart}
               onRequestImportables={props.onQueryImportables}
               onCommand={commandHandler}
               onShowOmnibar={showOmnibar}

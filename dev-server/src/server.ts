@@ -56,11 +56,6 @@ export const runDevServer = (port: number, rootDir: string, editorStaticRoot: st
     }
   });
 
-  app.get("/exposed", async (req, res) => {
-    const exposed = await service.scanExposed(rootDir);
-    res.send(exposed);
-  });
-
   app.get("/importables", async (req, res) => {
     const { filename } = req.query as { filename: string };
     try {

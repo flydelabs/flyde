@@ -76,15 +76,6 @@ export type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] }
 
 // export type FlydeFlow = WithRequired<PartialFlydeFlow, "parts">;
 
-export interface ExposedFunctionality {
-  codeName: string;
-  displayName: string;
-  inputs: string[];
-  path: string;
-  line: string;
-}
-
-
 export type FlydeFlowImportDef = z.infer<typeof importDef>;
 export type FlydeFlowImportDefOrId = z.infer<typeof importedIdOrDef>;
 
@@ -93,7 +84,6 @@ export type FlydeFlow = {
   exports: string[];
   parts: Record<string, CustomPart>;
   mainId?: string;
-  exposedFunctionality?: ExposedFunctionality[];
 }
 
 export type ResolvedFlydeFlowDefinition = Record<string, CustomPart & { imported?: boolean;}>
@@ -107,13 +97,6 @@ export const flydeFlowSchema = z
     exports: z.optional(z.array(z.string())).default([]),
     mainId: z.optional(z.string()),
     main: z.optional(z.any()), // deprecated
-    parts: z.record(z.string(), flydePart).default({}),
-    exposedFunctionality: z.optional(z.array(z.strictObject({
-      codeName: z.string(),
-      displayName: z.string(),
-      inputs: z.optional(z.array(z.string())),
-      path: z.string(),
-      line: z.string()
-    }))).default([])
+    parts: z.record(z.string(), flydePart).default({})
   });
 

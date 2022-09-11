@@ -66,4 +66,3 @@ parts:
         to:
           insId: Add-212
           pinId: n2
-exposedFunctionality: []

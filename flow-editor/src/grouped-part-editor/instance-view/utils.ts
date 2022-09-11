@@ -35,7 +35,7 @@ export const calcPartContent = (
   outputs: OMap<PartInstance[]>,
   repo: PartDefRepo
 ) => {
-  if (isCodePart(part) && part.customViewCode) {
+  if (part.customViewCode) {
     try {
       const inputs = Object.entries(instance.inputConfig)
         .filter(([, v]) => isStaticInputPinConfig(v))

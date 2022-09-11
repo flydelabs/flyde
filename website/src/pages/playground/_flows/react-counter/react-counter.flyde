@@ -16,10 +16,10 @@ imports:
       alias: Subscribe
     - name: Add
       alias: Add
-  "./Button.flyde.js":
+  ./Button.flyde.js:
     - name: Button
       alias: Button
-  "./Span.flyde.js":
+  ./Span.flyde.js:
     - name: Span
       alias: Span
 exports: []
@@ -39,8 +39,7 @@ parts:
     completionOutputs:
       - result
     instances:
-      - partId: Button
-        pos:
+      - pos:
           x: -112.55849853515622
           y: 264.69233886718746
         id: Button-410
@@ -50,8 +49,8 @@ parts:
             value: + 1
         visibleInputs:
           - children
-      - partId: Span
-        pos:
+        partId: Button
+      - pos:
           x: -316.5079125976563
           y: 277.8121800231934
         id: Span-677
@@ -61,18 +60,8 @@ parts:
         visibleInputs:
           - __trigger
           - children
-      - partId: Inline Code 73878
-        pos:
-          x: -434.4105419921875
-          y: 150.16451232910157
-        id: Inline Code 73878-936
-        inputConfig:
-          count:
-            mode: queue
-        visibleInputs:
-          - count
-      - partId: ListFrom3
-        pos:
+        partId: Span
+      - pos:
           x: -347.506982421875
           y: 450.8367645263672
         id: ListFrom3-404
@@ -83,8 +72,8 @@ parts:
             mode: sticky
           item2:
             mode: queue
-      - partId: Button
-        pos:
+        partId: ListFrom3
+      - pos:
           x: -515.2419702148437
           y: 266.9907855224609
         id: Button-410-d44
@@ -94,8 +83,8 @@ parts:
             value: "- 1"
         visibleInputs:
           - children
-      - partId: Publish
-        pos:
+        partId: Button
+      - pos:
           x: -90.45
           y: 472.37
         id: Publish-107
@@ -106,8 +95,8 @@ parts:
           value:
             mode: static
             value: 1
-      - partId: Subscribe
-        pos:
+        partId: Publish
+      - pos:
           x: -201.807001953125
           y: -187.86253479003906
         id: Subscribe-896
@@ -115,16 +104,16 @@ parts:
           key:
             mode: static
             value: inc
-      - partId: Add
-        pos:
+        partId: Subscribe
+      - pos:
           x: -272.72882080078125
           y: -9.603830566406259
         id: Add-138
         inputConfig:
           n1:
             mode: sticky
-      - partId: Subscribe
-        pos:
+        partId: Add
+      - pos:
           x: -387.2609814453125
           y: -186.2929638671875
         id: Subscribe-227
@@ -132,8 +121,8 @@ parts:
           key:
             mode: static
             value: value
-      - partId: Publish
-        pos:
+        partId: Subscribe
+      - pos:
           x: -541.97
           y: 466.84
         id: Publish-441
@@ -144,8 +133,8 @@ parts:
           value:
             mode: static
             value: -1
-      - partId: Publish
-        pos:
+        partId: Publish
+      - pos:
           x: -599.5746044921875
           y: -143.15812744140624
         id: Publish-817
@@ -156,16 +145,10 @@ parts:
           value:
             mode: static
             value: 0
-      - partId: Inline Code 6685
-        pos:
-          x: -429.99247314453123
-          y: -53.56334594726559
-        id: Inline Code 6685-155
-        inputConfig: {}
-      - partId: Publish
-        pos:
-          x: -23.290394287109393
-          y: 72.78687225341798
+        partId: Publish
+      - pos:
+          x: -61.70970581054689
+          y: 109.43610321044923
         id: Publish-817-d15
         inputConfig:
           key:
@@ -175,13 +158,49 @@ parts:
             mode: queue
         visibleInputs:
           - value
+        partId: Publish
+      - pos:
+          x: -449.69109130859374
+          y: 132.32694366455075
+        id: Inline-value-Value is ${inp-308
+        inputConfig: {}
+        part:
+          id: Inline-value-Value is ${inp
+          inputs:
+            count:
+              type: any
+              mode: required
+          outputs:
+            r:
+              type: any
+              delayed: false
+              optional: false
+          fnCode: outputs.r.next((`Value is ${inputs.count}`))
+          customViewCode: "`Value is ${inputs.count}`"
+          dataBuilderSource: YFZhbHVlIGlzICR7aW5wdXRzLmNvdW50fWA=
+          templateType: value
+          completionOutputs:
+            - r
+      - pos:
+          x: -435.9594775390625
+          y: -57.659471435546834
+        id: Inline-value-0-783
+        inputConfig: {}
+        part:
+          id: Inline-value-0
+          inputs: {}
+          outputs:
+            r:
+              type: any
+              delayed: false
+              optional: false
+          fnCode: outputs.r.next((0))
+          customViewCode: "0"
+          dataBuilderSource: MA==
+          templateType: value
+          completionOutputs:
+            - r
     connections:
-      - from:
-          insId: Inline Code 73878-936
-          pinId: r
-        to:
-          insId: Span-677
-          pinId: children
       - from:
           insId: Span-677
           pinId: jsx
@@ -234,69 +253,23 @@ parts:
           insId: Add-138
           pinId: r
         to:
-          insId: Inline Code 73878-936
-          pinId: count
-      - from:
-          insId: Inline Code 6685-155
-          pinId: r
-        to:
-          insId: Inline Code 73878-936
-          pinId: count
+          insId: Publish-817-d15
+          pinId: value
       - from:
           insId: Add-138
           pinId: r
         to:
-          insId: Publish-817-d15
-          pinId: value
-  Inline Code 73878:
-    id: Inline Code 73878
-    inputs:
-      count:
-        mode: required
-        type: any
-    outputs:
-      r:
-        type: any
-    customViewCode: "`Value is ${inputs.count}`"
-    dataBuilderSource: YFZhbHVlIGlzICR7aW5wdXRzLmNvdW50fWA=
-    templateType: value
-    completionOutputs:
-      - r
-    fnCode: outputs.r.next((`Value is ${inputs.count}`))
-  Inline Code 33269:
-    id: Inline Code 33269
-    inputs: {}
-    outputs:
-      r:
-        type: any
-    customViewCode: ""
-    dataBuilderSource: ""
-    templateType: value
-    completionOutputs:
-      - r
-    fnCode: outputs.r.next(())
-  Inline Code 6685:
-    id: Inline Code 6685
-    inputs: {}
-    outputs:
-      r:
-        type: any
-    customViewCode: "0"
-    dataBuilderSource: MA==
-    templateType: value
-    completionOutputs:
-      - r
-    fnCode: outputs.r.next((0))
-  Inline Code 70187:
-    id: Inline Code 70187
-    inputs: {}
-    outputs:
-      r:
-        type: any
-    customViewCode: ""
-    dataBuilderSource: ""
-    templateType: value
-    completionOutputs:
-      - r
-    fnCode: outputs.r.next(())
-exposedFunctionality: []
+          insId: Inline-value-Value is ${inp-308
+          pinId: count
+      - from:
+          insId: Inline-value-Value is ${inp-308
+          pinId: r
+        to:
+          insId: Span-677
+          pinId: children
+      - from:
+          insId: Inline-value-0-783
+          pinId: r
+        to:
+          insId: Inline-value-Value is ${inp-308
+          pinId: count

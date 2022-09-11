@@ -1,32 +1,5 @@
 import * as React from "react";
 
-// const handler = {
-//   get: function (obj, prop) {
-//     console.log("ACCESS ATTEMPT", prop);
-//     return obj[prop];
-
-//     // throw new Error(`Someone is trying to access ${prop}`);
-//     // return obj[prop] ? obj[prop] : 'property does not exist';
-//   },
-// };
-
-// // the code below is needed to make SSG in docusaurus work. TODO - find the root cause!
-// try {
-//   // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-//   const b = typeof document.documentElement;
-// } catch (e) {
-//   let documentElement = {} as any;
-
-//   const proxy = new Proxy(documentElement, handler);
-//   let document = {
-//     documentElement: proxy,
-//   } as any;
-
-//   globalThis.document = document;
-
-//   (global as any).document = document;
-// }
-
 import {
   isExternalConnectionNode,
   THIS_INS_ID,
@@ -56,6 +29,9 @@ import {
   inlinePartInstance,
   isInlinePartInstance,
   isRefPartInstance,
+  CodePartTemplateTypeInline,
+  isCodePart,
+  InlinePartInstance,
 } from "@flyde/core";
 import { InstanceView } from "./instance-view/InstanceView";
 import { ConnectionView } from "./connection-view";
@@ -89,7 +65,7 @@ import useComponentSize from "@rehooks/component-size";
 import { Slider, Menu, MenuItem, ContextMenu, Button } from "@blueprintjs/core";
 import { PartIoView, PartIoType } from "./part-io-view";
 
-import { vAdd, vec, vSub } from "../physics";
+import { rnd, vec, vSub } from "../physics";
 import { QuickAddMenu, QuickAddMenuData, QuickMenuMatch } from "./quick-add-menu";
 import { queueInputPinConfig } from "@flyde/core";
 import { HistoryPayload } from "@flyde/remote-debugger";
@@ -105,8 +81,12 @@ import {
 } from "../flow-editor/flyde-flow-change-type";
 import { createEditorCommand } from "../flow-editor/commands/commands";
 import { EditorCommand } from "../flow-editor/commands/definition";
-import { useScrollBlock } from "../lib/react-utils/use-scroll-block";
 import { usePrompt } from "../lib/react-utils/prompt";
+import { InlineCodeModal } from "../flow-editor/inline-code-modal";
+import { createInlineCodePart } from "../flow-editor/inline-code-modal/inline-code-to-part";
+import _ from "lodash";
+import { createGroup } from "../lib/create-group";
+import { groupSelected } from "../group-selected";
 
 const MemodSlider = React.memo(Slider);
 
@@ -173,13 +153,15 @@ export type GroupedPartEditorProps = {
 
   onGroupSelected: () => void;
   onRequestHistory: (insId: string, pinId: string, pinType: PinType) => Promise<HistoryPayload>;
-  onCreateNewPart: (type: "code" | "grouped") => void;
   onRequestImportables?: (query: string) => Promise<ImportablePart[]>;
 
   onShowOmnibar: (e: any) => void;
 
   onCommand: (command: EditorCommand) => void;
 };
+
+type InlineValueTarget = 
+    {insId: string, value: string, templateType: CodePartTemplateTypeInline}
 
 export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }> = React.memo(
   React.forwardRef((props, ref) => {
@@ -222,6 +204,8 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
 
     const [copiedConstValue, setCopiedConstValue] = useState<any>();
 
+    const [inlineCodeTarget, setInlineCodeTarget] = useState<InlineValueTarget>();
+
     const [inspectedInstance, setInspectedInstance] = useState<{
       part: GroupedPart;
       insId: string;
@@ -259,6 +243,14 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
       [onCommand]
     );
 
+    const onGroupSelectedInternal = React.useCallback(async () => {
+      const name = await _prompt('Part name?');
+      const { currentPart } = groupSelected(boardData.selected, part, name, 'inline');
+      onChange(currentPart, functionalChange('group part'));
+
+      toastMsg('Part grouped!');
+    }, [_prompt, boardData.selected, onChange, part]);
+
     useEffect(() => {
       if (lastSelectedId) {
         const t = setTimeout(() => {
@@ -274,8 +266,6 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
       pin: string;
       type: "input" | "output";
     }>();
-
-    const { allowScroll, blockScroll } = useScrollBlock();
 
     useEffect(() => {
       preloadMonaco();
@@ -735,7 +725,7 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
       vpMoveStart.current = undefined;
     }, []);
 
-    const onDoubleClickInstance = React.useCallback(
+    const onDblClickInstance = React.useCallback(
       (ins: PartInstance, shift: boolean) => {
         if (shift) {
           const part = isInlinePartInstance(ins) ? ins.part : repo[ins.partId];
@@ -753,6 +743,13 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
           if (isRefPartInstance(ins)) {
             onEditPart(ins.partId);
           } else {
+            const part  = ins.part;
+            if (!isCodePart(part)) {
+              toastMsg('Editing non code inline part is not supported');
+              return;
+            }
+            const value = atob(part.dataBuilderSource);
+            setInlineCodeTarget({insId: ins.id, templateType: part.templateType, value})
             toastMsg('Editing inline grouped part not supported yet');
           }
         }
@@ -1005,7 +1002,7 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
           const partInput = part.inputs[pinId];
           const type = partInput ? partInput.type : "any";
 
-          editOrCreateConstValue(ins, pinId, type, lastMousePos.current);
+          editOrCreateConstValue(ins, pinId, type, lastMousePos.current, true);
         } else {
           const part = getPartDef(ins, repo);
           const pin = part.outputs[pinId];
@@ -1199,7 +1196,7 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
           editOrCreateConstValue(ins, pinId, "n/a", pos, true);
         }
       },
-      [quickAddMenuVisible, viewPort, repo, part, onChange, onCloseQuickAdd, editOrCreateConstValue]
+      [quickAddMenuVisible, repo, part, onChange, onCloseQuickAdd, editOrCreateConstValue]
     );
 
     const copyPartToClipboard = React.useCallback(async () => {
@@ -1286,7 +1283,7 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
     useHotkeys("cmd+v", onPaste);
     useHotkeys("esc", clearSelections);
     useHotkeys("backspace", deleteInstance);
-    useHotkeys("shift+g", onGroupSelected);
+    useHotkeys("shift+g", onGroupSelectedInternal);
     useHotkeys("shift+d", duplicate);
     useHotkeys("cmd+a", selectAll);
     useHotkeys("s", selectClosest);
@@ -1312,7 +1309,7 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
       return setInspectedBoardData((data) => ({ ...data, ...partial }));
     }, []);
 
-    const maybeRenderInspectedBoard = () => {
+    const maybeRenderInlinePartInstance = () => {
       if (inspectedInstance) {
         return (
           <div className="inspected-part-container">
@@ -1336,7 +1333,6 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
               part={inspectedInstance.part}
               onChangePart={onChangeInspected}
               onNewEnvVar={props.onNewEnvVar}
-              onCreateNewPart={noop}
               onCommand={noop}
               onShowOmnibar={onShowOmnibar}
             />
@@ -1507,18 +1503,50 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
       return null;
     };
 
+    const onSaveInlineCodePart = React.useCallback((type: CodePartTemplateTypeInline, code: string) => {
+      const [existingInlinePart] = part.instances
+        .filter(ins => ins.id === inlineCodeTarget.insId)
+        .filter(ins => isInlinePartInstance(ins))
+        .map((ins: InlinePartInstance) => ins.part);
+      
+      if (!existingInlinePart) {
+        throw new Error(`Unable to find inline part to save to`);
+      }
+
+      const customView = code.trim().substr(0, 100);
+      const partId = `Inline-value-${customView.substr(0, 15).replace(/["'`]/g, '')}`
+
+      const newPart = createInlineCodePart({
+        code,
+        customView,
+        partId,
+        type,
+      });
+
+      const oldInputs = keys(existingInlinePart.inputs);
+      const newInputs = keys(newPart.inputs);
+
+      const removedInputs = new Set(_.difference(oldInputs, newInputs));
+
+      const newVal = produce(part, draft => {
+        draft.instances = draft.instances.map(i => {
+          return i.id === inlineCodeTarget.insId ? inlinePartInstance(i.id, newPart, i.inputConfig, i.pos) : i;
+        });
+        draft.connections = draft.connections.filter((conn) => {
+          const wasRemoved = conn.to.insId === inlineCodeTarget.insId && removedInputs.has(conn.to.pinId);
+          return !wasRemoved;
+        })
+      });
+
+      onChange(newVal, functionalChange('change inline value'));
+
+      setInlineCodeTarget(undefined);
+        
+    }, [inlineCodeTarget, onChange, part])
+
     try {
       return (
         <div className="grouped-part-editor" data-id={part.id} onContextMenu={showContextMenu}>
-          {/* <SideBar
-          onDblClick={zoomPart}
-          onSelect={onSelect}
-          part={part}
-          selectedIds={selected}
-          onFocusInput={zoomInput}
-          onFocusOutput={zoomOutput}
-          repo={repo}
-        /> */}
           <main
             className="board-editor-inner"
             // onWheel={onMaybeZoom}
@@ -1583,7 +1611,7 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
                 onDragEnd={onDragEnd}
                 partDefRepo={repo}
                 onDragMove={onDragMove}
-                onDoubleClick={onDoubleClickInstance}
+                onDblClick={onDblClickInstance}
                 onSelect={onSelectInstance}
                 onToggleSticky={onToggleSticky}
                 selected={selected.indexOf(v.id) !== -1}
@@ -1631,8 +1659,17 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
                 value={viewPort.zoom}
               />
             </div>
+            {inlineCodeTarget ? (
+              <InlineCodeModal
+                env={emptyObj}
+                initialValue={inlineCodeTarget.value}
+                initialType={inlineCodeTarget.templateType}
+                onCancel={() => setInlineCodeTarget(undefined)}
+                onSubmit={onSaveInlineCodePart}
+              />
+            ) : null}
           </main>
-          {maybeRenderInspectedBoard()}
+          {maybeRenderInlinePartInstance()}
           {maybeRenderInstancePanel()}
         </div>
       );

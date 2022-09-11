@@ -16,7 +16,7 @@ import {
 } from "@blueprintjs/core";
 import classNames from 'classnames';
 import { getVariables } from "./inline-code-to-part";
-import { CodePartTemplateTypeInline, ExecuteEnv, isDefined } from "@flyde/core";
+import { CodePartTemplateTypeInline, ExecuteEnv, isDefined, PartInstance, Pos } from "@flyde/core";
 import { Tooltip2 } from "@blueprintjs/popover2";
 
 export type InlineCodeModalProps = {
@@ -27,8 +27,35 @@ export type InlineCodeModalProps = {
   env?: ExecuteEnv;
 };
 
+
+export type InlineCodeTargetExistingRef = {
+  type: "existing";
+  partId: string;
+  value: string;
+  codeType: CodePartTemplateTypeInline;
+};
+
+
+export type InlineCodeTargetNew = {
+  pos: Pos;
+  type: "new";
+};
+
+export type InlineCodeTargetNewConnected = {
+  pos: Pos;
+  ins: PartInstance;
+  pinId: string;
+  type: "new-connected";
+};
+
+export type InlineCodeTarget =
+  | InlineCodeTargetExistingRef
+  | InlineCodeTargetNew
+  | InlineCodeTargetNewConnected;
+
 // eslint-disable-next-line no-template-curly-in-string
 const defaultValue = "`Result is ${inputs.a + inputs.b}`";
+
 
 export const InlineCodeModal: React.FC<InlineCodeModalProps> = React.memo(function ValueEditorModal(
   props

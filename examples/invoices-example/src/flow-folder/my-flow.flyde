@@ -23,4 +23,3 @@ parts:
       - result
     instances: []
     connections: []
-exposedFunctionality: []

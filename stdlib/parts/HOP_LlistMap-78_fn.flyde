@@ -56,4 +56,3 @@ parts:
         to:
           insId: Multiply-11
           pinId: n2
-exposedFunctionality: []

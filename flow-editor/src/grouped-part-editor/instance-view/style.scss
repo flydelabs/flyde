@@ -92,7 +92,8 @@ $half-of-pin-height: 16px;
     }
   }
 
-  &[data-part-id^="Inline Code"] {  
+  &[data-part-id^="Inline Code"],
+  &[data-part-id^="Inline-value"] {  
     .base-part-view-inner {
       font-size: 18px;
       padding: 2px 8px;

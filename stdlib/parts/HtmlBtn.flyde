@@ -106,4 +106,3 @@ parts:
         to:
           insId: __this
           pinId: click
-exposedFunctionality: []

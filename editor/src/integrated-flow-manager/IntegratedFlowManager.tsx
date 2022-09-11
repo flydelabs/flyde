@@ -5,7 +5,6 @@ import {
   okeys,
   FlydeFlow,
   keys,
-  ExposedFunctionality,
   ResolvedFlydeFlowDefinition,
   ImportablePart,
   isInlinePartInstance,
@@ -29,9 +28,7 @@ import {
   CustomPart,
   isCodePart,
   isGroupedPart,
-  PartDefinition,
-  partInput,
-  partOutput,
+  PartDefinition
 } from "@flyde/core";
 
 import { AppToaster, toastMsg } from "@flyde/flow-editor"; // ../../common/toaster
@@ -131,26 +128,6 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (prop
 
   const editedPart = getEditedPart();
 
-  const [exposedFunc, setExposedFunc] = React.useState<ExposedFunctionality[]>([]);
-
-  React.useEffect(() => {
-    const timer = setInterval(() => {
-      devServerClient.exposed().then((func) => {
-        const newKeys = new Set(func.map((f) => f.displayName));
-        const existingKeys = new Set(exposedFunc.map((f) => f.displayName));
-
-        const hasChanged =
-          newKeys.size !== existingKeys.size ||
-          Array.from(newKeys).some((x) => !existingKeys.has(x));
-
-        if (hasChanged) {
-          setExposedFunc(func);
-        }
-      });
-    }, 1000);
-    return () => clearInterval(timer);
-  });
-
   const connectToRemoteDebugger = React.useCallback(
     (url: string) => {
       const newClient = createEditorClient(url, "integrated-mode");
@@ -208,8 +185,7 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (prop
   }, [debuggerClient]);
 
   const debouncedSaveFile = useDebouncedCallback((flow, src: string) => {
-    // saving exposed like this is a bit hacky, but it works for now
-    devServerClient.saveFile(src, { ...flow, exposedFunctionality: exposedFunc });
+    devServerClient.saveFile(src, flow);
   }, 500);
 
   const onChangeFlow = React.useCallback(
@@ -472,30 +448,16 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (prop
   );
 
   React.useEffect(() => {
-    const exposedPartsDefinitions = exposedFunc.reduce((acc, func) => {
-      const inputs = func.inputs.reduce((acc, curr) => {
-        return { ...acc, [curr]: partInput("any") };
-      }, {});
-      const part = {
-        id: func.displayName,
-        inputs,
-        outputs: { result: partOutput("any") },
-        completionOutputs: ["result"],
-      } as PartDefinition;
-
-      return { ...acc, [part.id]: part };
-    }, {});
     const importedPartsRepo = importedParts.reduce((acc, curr) => {
       return { ...acc, [curr.part.id]: curr.part };
     }, {});
 
     setResolvedRepoWithDeps({
       ...resolvedDefinitions,
-      ...exposedPartsDefinitions,
       ...flow.parts,
       ...importedPartsRepo,
     });
-  }, [importedParts, flow.parts, exposedFunc, resolvedDefinitions]);
+  }, [importedParts, flow.parts, resolvedDefinitions]);
 
   return (
     <div className={classNames("app", {embedded: isEmbeddedMode})}>

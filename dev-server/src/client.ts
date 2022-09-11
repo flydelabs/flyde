@@ -1,6 +1,6 @@
 import axios from "axios"
-import { CustomPart, ExposedFunctionality, FlydeFlow, GroupedPart, PartDefRepo, Project, ResolvedFlydeFlowDefinition } from '@flyde/core';
-import { FlydeFile, FolderStructure } from "./fs-helper/shared";
+import { FlydeFlow, PartDefRepo, ResolvedFlydeFlowDefinition } from '@flyde/core';
+import { FolderStructure } from "./fs-helper/shared";
 
 export const createDevServerClient = (baseUrl: string)  => {
     return {
@@ -9,9 +9,6 @@ export const createDevServerClient = (baseUrl: string)  => {
         },
         saveFile: async (filename: string, data: FlydeFlow) => {
             return axios.put(`${baseUrl}/file?name=${filename}`, data);
-        },
-        exposed: async (): Promise<ExposedFunctionality[]> => {
-            return axios.get(`${baseUrl}/exposed`).then(res => res.data);
         },
         fileStructure: async (): Promise<FolderStructure> => {
             return axios.get(`${baseUrl}/structure`).then(res => res.data);

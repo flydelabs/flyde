@@ -117,12 +117,17 @@ describe("resolver", () => {
   });
 
   it.only('allows importing simple code based parts', async () => { 
-    const path = getFixturePath("a-imports-js-part-from-b/a.flyde");
+    const path = getFixturePath("CompleteCodePart.flyde.js");
     const flow = resolveFlow(path);
-    
-    const val = await simplifiedExecute(flow.Add1, flow, { n: 2 });
-    assert.equal(val, 3);
+
+    assert.exists(flow.Add.customViewCode);
+    assert.deepEqual(flow.Add.completionOutputs, ['r']);
+    assert.deepEqual(flow.Add.reactiveInputs, ['b']);
   });
+
+  it('properly loads all properties of a js flyde flow', async () => {
+
+  })
 
   it('allows importing simple code based parts that require packages', async () => { 
     const path = getFixturePath("a-imports-js-part-from-b-with-dep/a.flyde");
@@ -130,23 +135,23 @@ describe("resolver", () => {
     
     const val = await simplifiedExecute(flow.Add1, flow, { n: 2 });
     assert.equal(val, 3);
-  });
+  }); 
 
-  it.only('bundles flows importing simple code based parts as expected', async () => { 
+  it('bundles flows importing simple code based parts as expected', async () => { 
     const path = getFixturePath("a-imports-js-part-from-b-with-dep/a.flyde");
     const flow = resolveFlow(path, 'bundle');
     
     assert.match((flow.Add as any).fn, /__BUNDLE_FN:\[\[\Add\.flyde\.js\]\]/);
   });
 
-  it.only('throws error when importing part that has a missing dep transitively', async () => { 
+  it('throws error when importing part that has a missing dep transitively', async () => { 
     const path = getFixturePath("a-imports-b-with-missing-deps/a.flyde");
     assert.throws(() => {
       resolveFlow(path); 
     }, /Unable to find part/)
   });
 
-  it.only('throws error when importing part that has a missing dep directly', async () => { 
+  it('throws error when importing part that has a missing dep directly', async () => { 
     // has a missing depen
     const path = getFixturePath("a-imports-b-with-missing-deps/SpreadList3.flyde");
     assert.throws(() => {
@@ -154,7 +159,7 @@ describe("resolver", () => {
     }, /GetListItem/)
   });
 
-  it.only('only resolves imported parts, aka does not break if a package exports a broken part that is not imported', () => {
+  it('only resolves imported parts, aka does not break if a package exports a broken part that is not imported', () => {
     const path = getFixturePath("imports-ok-from-package-with-problematic.flyde");
     
     const flow = resolveFlow(path);

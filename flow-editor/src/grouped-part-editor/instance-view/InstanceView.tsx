@@ -74,7 +74,7 @@ export interface InstanceViewProps {
   onDragStart: (ins: PartInstance, ...data: any[]) => void;
   onDragMove: (ins: PartInstance, ev: React.MouseEvent, pos: Pos) => void;
   onSelect: (ins: PartInstance, ev: React.MouseEvent) => void;
-  onDoubleClick: (ins: PartInstance, shiftKey: boolean) => void;
+  onDblClick: (ins: PartInstance, shiftKey: boolean) => void;
   onToggleSticky: (ins: PartInstance, pinId: string) => void;
   onTogglePinLog: (insId: string, pinId: string, type: PinType) => void;
   onTogglePinBreakpoint: (insId: string, pinId: string, type: PinType) => void;
@@ -127,7 +127,7 @@ export const InstanceView: React.SFC<InstanceViewProps> = function InstanceViewI
     onDragMove,
     onToggleSticky,
     onSelect,
-    onDoubleClick,
+    onDblClick: onDoubleClick,
     onChangeVisibleInputs,
     onChangeVisibleOutputs,
     onConvertConstToEnv,

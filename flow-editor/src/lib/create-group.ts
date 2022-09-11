@@ -137,9 +137,6 @@ export const createGroup = (
     (conn) => instanceIds.includes(conn.from.insId) && instanceIds.includes(conn.to.insId)
   );
 
-  // fix bug where exposed trigger pins get duplicated when grouped
-  delete inputs[TRIGGER_PIN_ID];
-
   const groupedPart: GroupedPart = {
     id: name,
     inputs,

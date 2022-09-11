@@ -148,4 +148,3 @@ parts:
         to:
           insId: pub-878
           pinId: value
-exposedFunctionality: []

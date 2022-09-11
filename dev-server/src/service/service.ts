@@ -1,6 +1,6 @@
 import { readFileSync, writeFileSync } from "fs";
 import { join } from "path";
-import { CustomPartRepo, ExposedFunctionality, FlydeFlow, GroupedPart, Project, Trigger } from "@flyde/core";
+import { FlydeFlow } from "@flyde/core";
 import { defaultScanFilter } from "../fs-helper/default-scan-filter";
 import { findInFiles } from "../fs-helper/find-in-files";
 import { scanFolderStructure } from "./scan-folders-structure";
@@ -41,29 +41,9 @@ export const createService = (root: string) => {
         }
     }
 
-    const scanExposed = (dir: string): Promise<ExposedFunctionality[]> => {
-
-        const pattern = /expose\(([a-zA-Z_\.\-\d]*),\s+['"]([^,]+)['"],?(.*)\)/i;
-
-        return findInFiles(dir, pattern, defaultScanFilter)
-        .then(results => {
-
-            return results.map(result => {
-                    return {
-                        codeName: result.matches[1],
-                        displayName: result.matches[2].replace(/['"](.*)['"]/, '$1'),
-                        inputs: maybeParseInputs(result.matches[3]) || ['args'],
-                        path: result.path,
-                        line: result.line
-                    };
-                });
-            });
-    }
-
     return {
         readFile,
         saveFile,
-        scanExposed,
         scanFolderStructure
     }
 }

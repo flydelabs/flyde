@@ -19,96 +19,6 @@ imports:
 exports: []
 mainId: Fibonacci
 parts:
-  Main:
-    id: Main
-    inputs:
-      number:
-        mode: required
-        type: any
-    outputs:
-      result:
-        type: any
-    inputsPosition:
-      click:
-        x: -125.66545105324758
-        y: -263.4653616952434
-      number:
-        x: -123.90573217544589
-        y: -331.72275376891196
-    outputsPosition:
-      result:
-        x: -117.25574185038472
-        y: 248.13999284260964
-    completionOutputs:
-      - result
-    instances:
-      - partId: Fibonacci
-        pos:
-          x: -143.56120117187498
-          y: -102.25517944335937
-        id: Fibonacci-900
-        inputConfig: {}
-    connections:
-      - from:
-          insId: __this
-          pinId: number
-        to:
-          insId: Fibonacci-900
-          pinId: n
-      - from:
-          insId: Fibonacci-900
-          pinId: result
-        to:
-          insId: __this
-          pinId: result
-  Inline Code 3497:
-    id: Inline Code 3497
-    inputs: {}
-    outputs:
-      r:
-        type: any
-    customViewCode: '"Debounce 1"'
-    dataBuilderSource: IkRlYm91bmNlIDEi
-    templateType: value
-    completionOutputs:
-      - r
-    fnCode: bob
-  Inline Code 58421:
-    id: Inline Code 58421
-    inputs: {}
-    outputs:
-      r:
-        type: any
-    customViewCode: '"Debounce 2"'
-    dataBuilderSource: IkRlYm91bmNlIDIi
-    templateType: value
-    completionOutputs:
-      - r
-    fnCode: outputs.r.next(("Debounce 2"))
-  Inline Code 59172:
-    id: Inline Code 59172
-    inputs: {}
-    outputs:
-      r:
-        type: any
-    customViewCode: '"Throttled Value"'
-    dataBuilderSource: IlRocm90dGxlZCBWYWx1ZSI=
-    templateType: value
-    completionOutputs:
-      - r
-    fnCode: outputs.r.next(("Throttled Value"))
-  Inline Code 4796:
-    id: Inline Code 4796
-    inputs: {}
-    outputs:
-      r:
-        type: any
-    customViewCode: "'Hello World'"
-    dataBuilderSource: J0hlbGxvIFdvcmxkJw==
-    templateType: value
-    completionOutputs:
-      - r
-    fnCode: outputs.r.next(('Hello World'))
   Fibonacci:
     id: Fibonacci
     inputs:
@@ -129,8 +39,7 @@ parts:
     completionOutputs:
       - result
     instances:
-      - partId: Equals
-        pos:
+      - pos:
           x: -179.03373046875004
           y: -98.1199594116211
         id: Equals-364
@@ -138,8 +47,8 @@ parts:
           compare:
             mode: static
             value: 0
-      - partId: Equals
-        pos:
+        partId: Equals
+      - pos:
           x: -75.12186523437501
           y: 22.182240905761716
         id: Equals-364-d95
@@ -147,14 +56,14 @@ parts:
           compare:
             mode: static
             value: 1
-      - partId: Add
-        pos:
-          x: 30.815893554687506
-          y: 374.8691590881348
+        partId: Equals
+      - pos:
+          x: 29.675939941406256
+          y: 398.8068879699707
         id: Add-539
         inputConfig: {}
-      - partId: Subtract
-        pos:
+        partId: Add
+      - pos:
           x: -34.96145751953125
           y: 160.11758544921872
         id: Subtract-210
@@ -162,8 +71,8 @@ parts:
           n2:
             mode: static
             value: 1
-      - partId: Subtract
-        pos:
+        partId: Subtract
+      - pos:
           x: 109.47726318359378
           y: 158.06905105590818
         id: Subtract-210-d215
@@ -171,18 +80,22 @@ parts:
           n2:
             mode: static
             value: 2
-      - partId: Fibonacci
-        pos:
+        visibleInputs:
+          - n1
+          - n2
+        partId: Subtract
+      - pos:
           x: -49.93635498046875
           y: 267.77435180664065
         id: Fibonacci-261
         inputConfig: {}
-      - partId: Fibonacci
-        pos:
-          x: 96.69393920898438
+        partId: Fibonacci
+      - pos:
+          x: 97.69393920898438
           y: 268.03501136779784
         id: Fibonacci-379
         inputConfig: {}
+        partId: Fibonacci
     connections:
       - from:
           insId: __this
@@ -250,4 +163,3 @@ parts:
         to:
           insId: Add-539
           pinId: n2
-exposedFunctionality: []

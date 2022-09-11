@@ -34,39 +34,76 @@ parts:
     completionOutputs:
       - result
     instances:
-      - partId: TestCode
-        pos:
-          x: -348.36812255859377
-          y: 208.48209381103516
-        id: TestCode-201
-        inputConfig: {}
-      - partId: Inline Code 67624
-        pos:
-          x: -513.7404296875
-          y: 11.306140441894513
+      - pos:
+          x: -576.7404296875
+          y: -31.693859558105487
         id: Inline Code 67624-618
         inputConfig: {}
-      - partId: Inline Code 18564
-        pos:
-          x: -213.7680541992188
-          y: -26.241798400878906
+        partId: Inline Code 67624
+      - pos:
+          x: -428.7680541992188
+          y: -86.2417984008789
         id: Inline Code 18564-770
         inputConfig: {}
+        partId: Inline Code 18564
+      - pos:
+          x: -421.25
+          y: 109.37
+        id: Add-419
+        inputConfig: {}
+        partId: Add
+      - pos:
+          x: -341.75
+          y: 292.37
+        id: Multiply-561
+        inputConfig: {}
+        partId: Multiply
+      - pos:
+          x: -215.25
+          y: 160.37
+        id: Inline-value-3-738
+        inputConfig: {}
+        part:
+          id: Inline-value-3
+          inputs: {}
+          outputs:
+            r:
+              type: any
+              delayed: false
+              optional: false
+          fnCode: outputs.r.next((3))
+          customViewCode: "3"
+          dataBuilderSource: Mw==
+          templateType: value
+          completionOutputs:
+            - r
     connections:
       - from:
           insId: Inline Code 67624-618
           pinId: r
         to:
-          insId: TestCode-201
-          pinId: a
+          insId: Add-419
+          pinId: n1
       - from:
           insId: Inline Code 18564-770
           pinId: r
         to:
-          insId: TestCode-201
-          pinId: b
+          insId: Add-419
+          pinId: n2
       - from:
-          insId: TestCode-201
+          insId: Add-419
+          pinId: r
+        to:
+          insId: Multiply-561
+          pinId: n1
+      - from:
+          insId: Inline-value-3-738
+          pinId: r
+        to:
+          insId: Multiply-561
+          pinId: n2
+      - from:
+          insId: Multiply-561
           pinId: r
         to:
           insId: __this
@@ -106,4 +143,3 @@ parts:
     completionOutputs:
       - r
     fnCode: outputs.r.next(("Bob"))
-exposedFunctionality: []

@@ -216,7 +216,7 @@ export const createNewPartInstance = (
     throw new Error(`${partId} part not found in repo`);
   }
 
-  const ins = partInstance(`${part.id}-${randomInt(999)}`, part as any, {}, { x: 0, y: 0 });
+  const ins = partInstance(`${part.id}-${randomInt(999)}`, part.id, {}, { x: 0, y: 0 });
   const width = calcPartWidth(ins, part, false, {}, {}, repo);
 
   const { x, y } = lastMousePos;

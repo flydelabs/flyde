@@ -13,7 +13,7 @@ export const PartPreview: React.FC<{part: PartDefinition}> = ({part}) => {
       viewPort: { pos: { x: 0, y: 0 }, zoom: 1 },
       partDefRepo: {},
       onDismantleGroup: noop,
-      onDoubleClick: noop,
+      onDblClick: noop,
       onDragEnd: noop,
       onDragMove: noop,
       onDragStart: noop,

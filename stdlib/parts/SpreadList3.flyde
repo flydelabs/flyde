@@ -99,4 +99,3 @@ parts:
         to:
           insId: GetListItem-877-d285-d900
           pinId: list
-exposedFunctionality: []

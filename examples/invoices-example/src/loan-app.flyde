@@ -38,14 +38,13 @@ parts:
         x: -276.14
         y: -279.56
     instances:
-      - partId: CRM.getUserByEmail
-        pos:
+      - pos:
           x: -297.70576538085936
           y: -434.7264086914063
         id: CRM.getUserByEmail-143
         inputConfig: {}
-      - partId: Dot
-        pos:
+        partId: CRM.getUserByEmail
+      - pos:
           x: -161.93000244140626
           y: -551.0469384765624
         id: Dot-966
@@ -53,8 +52,8 @@ parts:
           key:
             mode: static
             value: email
-      - partId: Dot
-        pos:
+        partId: Dot
+      - pos:
           x: 347.1066796875
           y: -458.29046875
         id: Dot-966-d839
@@ -62,45 +61,62 @@ parts:
           key:
             mode: static
             value: amount
-      - partId: Dot
-        pos:
-          x: -127.89438842773438
-          y: -313.22044067382814
-        id: Dot-241
-        inputConfig:
-          key:
-            mode: static
-            value: id
-      - partId: Inline Code 40721
-        pos:
+        partId: Dot
+      - pos:
           x: -133.55077392578124
           y: 433.5726452636719
         id: Inline Code 40721-776
         inputConfig: {}
-      - partId: RiskService.calculateRisk
-        pos:
-          x: 155.77083740234377
-          y: -133.40590698242187
+        partId: Inline Code 40721
+      - pos:
+          x: 156.6826110839844
+          y: -162.3445361328125
         id: RiskService.calculateRisk-687
         inputConfig: {}
-      - partId: CreditService.getCredit
-        pos:
-          x: -269.07640625
-          y: -121.87208374023442
+        partId: RiskService.calculateRisk
+      - pos:
+          x: -319.8487451171875
+          y: -71.06989868164067
         id: CreditService.getCredit-978
         inputConfig: {}
-      - partId: Inline Code 45460
-        pos:
+        partId: CreditService.getCredit
+      - pos:
           x: 104.71751708984374
           y: 408.0734001159668
         id: Inline Code 45460-196
         inputConfig: {}
-      - partId: logic
-        pos:
+        partId: Inline Code 45460
+      - pos:
           x: 87.00526672363281
           y: 120.65938613891603
         id: logic-ins
         inputConfig: {}
+        partId: logic
+      - pos:
+          x: -192.64407592773438
+          y: -258.15241455078126
+        id: Inline-value-bob3-297
+        inputConfig: {}
+        part:
+          id: Inline-value-inputs.v + inpu
+          inputs:
+            v:
+              type: any
+              mode: required
+            b:
+              type: any
+              mode: required
+          outputs:
+            r:
+              type: any
+              delayed: false
+              optional: false
+          fnCode: outputs.r.next((inputs.v + inputs.b + 42))
+          customViewCode: inputs.v + inputs.b + 42
+          dataBuilderSource: aW5wdXRzLnYgKyBpbnB1dHMuYiArIDQy
+          templateType: value
+          completionOutputs:
+            - r
     connections:
       - from:
           insId: __this
@@ -157,28 +173,22 @@ parts:
           insId: CRM.getUserByEmail-143
           pinId: email
       - from:
-          insId: CRM.getUserByEmail-143
-          pinId: result
-        to:
-          insId: Dot-241
-          pinId: obj
-      - from:
-          insId: Dot-241
-          pinId: value
-        to:
-          insId: CreditService.getCredit-978
-          pinId: userId
-      - from:
           insId: Dot-966-d839
           pinId: value
         to:
           insId: RiskService.calculateRisk-687
           pinId: amount
       - from:
-          insId: Dot-241
+          insId: Dot-966-d839
           pinId: value
         to:
-          insId: RiskService.calculateRisk-687
+          insId: Inline-value-bob3-297
+          pinId: b
+      - from:
+          insId: Inline-value-bob3-297
+          pinId: r
+        to:
+          insId: CreditService.getCredit-978
           pinId: userId
   CRM.getUserByEmail:
     id: CRM.getUserByEmail
@@ -399,20 +409,19 @@ parts:
       - "false"
       - "true"
     instances:
-      - partId: RiskService.calculateRisk
-        pos:
+      - pos:
           x: 197.20525512695312
           y: -143.28453857421874
         id: RiskService.calculateRisk-687
         inputConfig: {}
-      - partId: CreditService.getCredit
-        pos:
+        partId: RiskService.calculateRisk
+      - pos:
           x: -207.16667724609374
           y: -113.90080078125001
         id: CreditService.getCredit-978
         inputConfig: {}
-      - partId: Inline Code 90963
-        pos:
+        partId: CreditService.getCredit
+      - pos:
           x: -99.50531982421876
           y: 42.52135681152345
         id: Inline Code 90963-281
@@ -420,18 +429,19 @@ parts:
         visibleInputs:
           - credit
           - risk
-      - partId: Boolean Split
-        pos:
+        partId: Inline Code 90963
+      - pos:
           x: 45.76263671875
           y: 166.08981628417973
         id: Boolean Split-898
         inputConfig: {}
-      - partId: Bob2
-        pos:
+        partId: Boolean Split
+      - pos:
           x: -440.5423724365234
           y: -33.67226928710937
         id: Bob2-ins
         inputConfig: {}
+        partId: Bob2
     connections:
       - from:
           insId: CreditService.getCredit-978
@@ -499,12 +509,12 @@ parts:
         x: 100
         y: 400
     instances:
-      - partId: Inline Code 16090
-        pos:
+      - pos:
           x: 88.8446044921875
           y: 153.74241638183594
         id: Inline Code 16090-663
         inputConfig: {}
+        partId: Inline Code 16090
     connections: []
   Inline Code 16090:
     id: Inline Code 16090
@@ -567,8 +577,7 @@ parts:
       - "true"
       - "false"
     instances:
-      - partId: Inline Code 90963
-        pos:
+      - pos:
           x: -52.25446533203126
           y: 64.0371649169922
         id: Inline Code 90963-281
@@ -576,12 +585,13 @@ parts:
         visibleInputs:
           - credit
           - risk
-      - partId: Boolean Split
-        pos:
+        partId: Inline Code 90963
+      - pos:
           x: -18.622678222656248
           y: 217.9766265869141
         id: Boolean Split-898
         inputConfig: {}
+        partId: Boolean Split
     connections:
       - from:
           insId: Inline Code 90963-281
@@ -650,8 +660,7 @@ parts:
         y: 240.94
     completionOutputs: []
     instances:
-      - partId: Inline Code 48976
-        pos:
+      - pos:
           x: -1056.29
           y: 51.94
         id: Inline Code 48976-383
@@ -659,6 +668,7 @@ parts:
           a:
             mode: static
             value: 42
+        partId: Inline Code 48976
     connections:
       - from:
           insId: __this
@@ -672,30 +682,3 @@ parts:
         to:
           insId: __this
           pinId: result
-exposedFunctionality:
-  - codeName: crmService.getUser
-    displayName: CRM.getUserByEmail
-    inputs:
-      - email
-    path: /Users/gabrielgrinberg/projects/flyde/examples/invoices-example/src/index.ts
-    line: '  expose(crmService.getUser, "CRM.getUserByEmail", ["email"]);'
-  - codeName: creditService.getCredit
-    displayName: CreditService.getCredit
-    inputs:
-      - userId
-    path: /Users/gabrielgrinberg/projects/flyde/examples/invoices-example/src/index.ts
-    line: '  expose(creditService.getCredit, "CreditService.getCredit", ["userId"]);'
-  - codeName: riskService.calculateRisk
-    displayName: RiskService.calculateRisk
-    inputs:
-      - userId
-      - amount
-    path: /Users/gabrielgrinberg/projects/flyde/examples/invoices-example/src/index.ts
-    line: '  expose(riskService.calculateRisk, "RiskService.calculateRisk",
-      ["userId", "amount"]);'
-  - codeName: bob
-    displayName: Hello
-    inputs:
-      - hi
-    path: /Users/gabrielgrinberg/projects/flyde/examples/invoices-example/src/index.ts
-    line: '  expose(bob, "Hello", ["hi"]);'

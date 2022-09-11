@@ -71,4 +71,3 @@ parts:
         to:
           insId: __this
           pinId: r
-exposedFunctionality: []

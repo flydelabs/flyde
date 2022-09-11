@@ -2,8 +2,7 @@ module.exports = {
   id: "Debounce",
   inputs: { i: { mode: "required", type: "any" }, ms: { mode: "required", type: "any" } },
   outputs: { r: { type: "any" } },
-  customViewCode:
-    "<% if (inputs.ms) { %> Debounce  <%- inputs.ms %>ms <% } else { %> Debounce <% } %>",
+  customViewCode: "<% if (inputs.ms) { %> Debounce  <%- inputs.ms %>ms <% } else { %> Debounce <% } %>",
   completionOutputs: ["r"],
   reactiveInputs: ["i"],
   fn: function (inputs, outputs, adv) {
