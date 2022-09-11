@@ -1,19 +1,9 @@
 import { z } from "zod";
-import { CustomPart, Part, PartDefinition } from "./part";
+import { PartDefRepo } from ".";
+import { CustomPart, GroupedPart, Part, PartDefinition } from "./part";
 
-
-const importDef = z.strictObject({ name: z.string(), alias: z.string() });
-const importedIdOrDef = z.union([
-  z.string(),
-  importDef,
-]);
-const importSchema = z.record(z.string(), z.array(importedIdOrDef));
+const importSchema = z.record(z.string(), z.string().or(z.array(z.string())));
 const position = z.strictObject({ x: z.number(), y: z.number() });
-
-const inlineCode = z.object({
-  fnCode: z.string(),
-  templateType: z.optional(z.string())
-});
 
 const inputConfig = z.discriminatedUnion("mode", [
   z.strictObject({
@@ -37,16 +27,6 @@ const instance = z.object({
   part: z.optional(z.any())
 }).refine((val) => val.part || val.partId, {message: 'Instance must have either an inline part or refer to a partId'});
 
-const groupedPart = z.object({
-  instances: z.array(instance),
-  connections: z.array(
-    z.strictObject({
-      from: z.strictObject({ insId: z.string(), pinId: z.string() }),
-      to: z.strictObject({ insId: z.string(), pinId: z.string() }),
-    })
-  ),
-});
-
 const flydeBasePart = z.object({
   id: z.optional(z.string()),
   inputs: z.record(
@@ -69,34 +49,45 @@ const flydeBasePart = z.object({
   reactiveInputs: z.optional(z.array(z.string()))
 });
 
-const flydePart = flydeBasePart
-  .and(z.union([inlineCode, groupedPart]));
-  
-export type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] }
 
-// export type FlydeFlow = WithRequired<PartialFlydeFlow, "parts">;
-
-export type FlydeFlowImportDef = z.infer<typeof importDef>;
-export type FlydeFlowImportDefOrId = z.infer<typeof importedIdOrDef>;
+const groupedPart = z.object({
+  instances: z.array(instance),
+  connections: z.array(
+    z.strictObject({
+      from: z.strictObject({ insId: z.string(), pinId: z.string() }),
+      to: z.strictObject({ insId: z.string(), pinId: z.string() }),
+    })
+  ),
+}).and(flydeBasePart);
 
 export type FlydeFlow = {
-  imports: Record<string, FlydeFlowImportDef[]>;
-  exports: string[];
-  parts: Record<string, CustomPart>;
-  mainId?: string;
+  imports?: Record<string, String[]>;
+  part: GroupedPart;
 }
 
-export type ResolvedFlydeFlowDefinition = Record<string, CustomPart & { imported?: boolean;}>
-export type ResolvedFlydeRuntimeFlow = Record<string, Part>;
+export type ImportedPartDefinition  = PartDefinition & {
+  importPath: string;
+}
+
+export type ImportedPart  = Part & {
+  importPath: string;
+}
+
+export type ResolvedFlydeFlowDefinition = {
+  main: GroupedPart;
+  imports: Record<string, ImportedPartDefinition>
+};
+
+export type ResolvedFlydeRuntimeFlow = {
+  main: GroupedPart;
+  imports: Record<string, ImportedPart>
+}
 
 export type ResolvedFlydeFlow = ResolvedFlydeFlowDefinition | ResolvedFlydeRuntimeFlow;
 
 export const flydeFlowSchema = z
   .strictObject({
     imports: z.optional(importSchema).default({}),
-    exports: z.optional(z.array(z.string())).default([]),
-    mainId: z.optional(z.string()),
-    main: z.optional(z.any()), // deprecated
-    parts: z.record(z.string(), flydePart).default({})
+    part: groupedPart
   });
 

@@ -1,9 +1,0 @@
-imports:
-  "./b.flyde":
-  - Exponent
-main:
-  inputs:
-    n1: number
-  outputs:
-    result: number
-  fnCode: "bob"

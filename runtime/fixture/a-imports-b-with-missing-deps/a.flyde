@@ -2,9 +2,17 @@
 imports:
   "./SpreadList3.flyde":
     - SpreadList3
-main:
+part:
+  id: Bob
   inputs:
     n1: "number"
   outputs:
     result: number
-  fnCode: "bob"
+  instances:
+    - id: ins1
+      partId: SpreadList3
+      pos:
+        x: 0
+        y: 0
+  connections: []
+

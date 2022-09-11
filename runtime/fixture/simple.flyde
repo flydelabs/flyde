@@ -1,11 +1,19 @@
-parts:
-  main:
-    inputs:
-      n1:
-        type: number
-        mode: required
-      n2: number
-    outputs:
-      result:
-        type: number
-    fnCode: "outputs.result.next(inputs.n1 + inputs.n2)"
+part:
+  id: Simple
+  inputs:
+    a:
+      mode: required
+      type: any
+  outputs:
+    r:
+      type: any
+  inputsPosition:
+    a:
+      x: 0
+      y: 0
+  outputsPosition:
+    r:
+      x: 0
+      y: 100
+  instances: []
+  connections: []

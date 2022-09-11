@@ -1,29 +1,31 @@
 ---
-bob: "2"
+imports:
+  "./Add1WrapperTwice.flyde": Add1WrapperTwice
 part:
+  id: Container
   inputs:
-    n1:
+    n:
       type: number
       mode: required
   outputs:
-    result:
+    r:
       type: number
   instances:
   - id: ins1
-    partId: Bob
+    partId: Add1WrapperTwice
     pos:
       x: 0
       y: 0
   connections:
     - from:
         insId: __this
-        pinId: n1
+        pinId: n
       to:
         insId: ins1
-        pinId: n1
+        pinId: n
     - from:
-        insId: __this
-        pinId: n2
-      to:
         insId: ins1
-        pinId: n2
+        pinId: r
+      to:
+        insId: __this
+        pinId: r

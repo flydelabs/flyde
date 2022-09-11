@@ -1,26 +1,19 @@
 import {
-  BasePart,
   CustomPartRepo,
-  FlydeFlow,
   isGroupedPart,
-  Part,
   ResolvedFlydeFlow,
-  ResolvedFlydeFlowDefinition,
-  ResolvedFlydeRuntimeFlow,
-  FlydeFlowImportDef,
-  keys,
-  CustomPart,
-  isCodePart,
-  NativePart,
-  PartRepo,
   isRefPartInstance,
+  FlydeFlow,
+  isNativePart,
+  NativePart,
+  ImportedPart,
 } from "@flyde/core";
 import { existsSync, readFileSync } from "fs";
+import _ = require("lodash");
 import { dirname, join, relative } from "path";
 import { deserializeFlow } from "../serdes/deserialize";
 import { resolveImportablePaths } from "./resolve-importable-paths";
-import { resolvePartWithDeps } from "./resolve-part-with-deps/resolve-part-with-deps";
-
+import { namespaceFlowImports } from "./namespace-flow-imports/namespace-flow-imports";
 
 /*
 Resolving algorithm:
@@ -36,51 +29,22 @@ Resolving algorithm:
 
 export type ResolveMode = "implementation" | "definition" | "bundle";
 
-const resolveImports = <T extends ResolvedFlydeFlow>(
-  resolvedImportedFlow: T,
-  importDefs: FlydeFlowImportDef[]
-): T => {
-  return importDefs.reduce((acc, importDef) => {
-    const part = resolvedImportedFlow[importDef.name];
-
-    if (!part) {
-      throw new Error(
-        `Error importing shared part ${importDef.name} from ${resolvedImportedFlow} - part not found`
-      );
-    }
-    
-
-    const withDeps = resolvePartWithDeps(resolvedImportedFlow, importDef.name);
-
-    const aliasedDeps: any = {};
-    for (const partId in withDeps) {
-      const part = withDeps[partId];
-      if (part.id === importDef.name) {
-        aliasedDeps[importDef.alias] = { ...part, id: importDef.alias };
-      } else {
-        aliasedDeps[partId] = part;
-      }
-    }
-
-    return { ...acc, ...aliasedDeps };
-  }, {});
-};
-
 const _resolveFlow = (
   fullFlowPath: string,
   mode: ResolveMode = "definition",
-  exportedOnly: boolean = false
+  namespaceIds = ""
 ): ResolvedFlydeFlow => {
   const flow = deserializeFlow(readFileSync(fullFlowPath, "utf8"), fullFlowPath);
 
-  const parts = flow.parts || {};
+  const part = flow.part;
 
   const tempRepo: CustomPartRepo = {
-    ...parts,
+    [part.id]: part,
   };
 
   const imports = flow.imports;
-  const exports = flow.exports;
+
+  const inverseImports = _.invert(imports);
 
   const getLocalOrExternalPaths = (importPath: string) => {
     const fullImportPath = join(fullFlowPath, "..", importPath);
@@ -92,97 +56,67 @@ const _resolveFlow = (
     }
   };
 
-  for (const importPath in imports) {
-    const importablePaths = getLocalOrExternalPaths(importPath);
-    const importDefs = imports[importPath];
+  if (isGroupedPart(part)) {
+    const refPartIds = _.uniq(part.instances.filter(isRefPartInstance).map((ins) => ins.partId));
 
-    let importData = {};
+    let imported: ResolvedFlydeFlow['imports'] = {};
 
-    const exports = new Set();
-    for (const fullPath of importablePaths) {
-      if (existsSync(fullPath)) {
-        const contents = readFileSync(fullPath, "utf8");
-          const flow = deserializeFlow(contents, fullPath);
-
-          const hasRequiredPart = flow.exports.some(exp => importDefs.some(def => def.name === exp));
-          
-          if (!hasRequiredPart) {
-            continue;
-          }
-          
-          const resolvedImport = _resolveFlow(fullPath, mode);
-  
-          flow.exports.forEach((exp) => {
-            if (exports.has(exp)) {
-              throw new Error(
-                `Module ${importPath} is exporting part "${exp}" which was already exported by another package.`
-              );
-            }
-            exports.add(exp);
-          });
-  
-          importData = { ...importData, ...resolvedImport };
-      } else {
-        throw new Error(`Error importing ${importPath} - file does not exist`);
-      }
-    }
-
-
-    importDefs.forEach((def) => {
-      if (!exports.has(def.name)) {
-        throw new Error(`Module ${importPath} is not exporting part "${def.name}"`);
-      }
-    });    
-
-    const importedRepo = resolveImports(importData, importDefs);
-
-    for (const partId in importedRepo) {
-      if (tempRepo[partId]) {
+    for (const refPartId of refPartIds) {
+      const importPath = inverseImports[refPartId];
+      if (!importPath) {
         throw new Error(
-          `Error importing shared part ${partId} from ${importPath} - shared part already exists in repo`
+          `${part.id} in ${fullFlowPath} is using referenced part with id ${refPartId} that is not imported`
         );
       }
-      tempRepo[partId] = importedRepo[partId];
+
+      const paths = getLocalOrExternalPaths(importPath);
+
+      const { flow, path } = paths
+        .map((path) => {
+          const contents = readFileSync(path, "utf-8");
+          return { flow: deserializeFlow(contents, path), path };
+        })
+        .find((obj) => obj.flow.part.id === refPartId);
+
+      if (!flow) {
+        throw new Error(
+          `Cannot find part ${refPartId} in ${importPath}. It is imported by ${part.id} (${fullFlowPath})`
+        );
+      }
+
+      const resolvedImport = resolveFlow(path, mode);
+      
+      const namespacedImport = namespaceFlowImports(resolvedImport, `${refPartId}__`);
+
+      imported = {
+        ...imported,
+        ...namespacedImport.imports,
+        [refPartId]: {
+          ...namespacedImport.main, importPath: path
+        }
+      };
+
+      /* 
+        when flow is resolved for bundling, replace functions with a special directive that will result in a require statement instead of the function
+        TODO - check if this is really required
+      */
+
+      imported = _.mapValues(imported, (val: ImportedPart, key) => {
+        const part = val as NativePart;
+        if (typeof part.fn === 'function' && mode === 'bundle') {
+          const flowFolder = dirname(fullFlowPath);
+          const requirePath = relative(flowFolder, val.importPath);
+          part.fn = `__BUNDLE_FN:[[${requirePath}]]` as any;
+          return {...val, part}
+        }
+        return val;
+      });
     }
+
+    return { main: part, imports: imported };
+  } else {
+    return { main: part, imports: {} };
   }
-
-  const repo: PartRepo = {};
-  for (const name in tempRepo) {
-    const part: CustomPart = tempRepo[name];
-
-    if (!part) {
-      throw new Error(`Error resolving shared part ${name} - part not found`);
-    }
-
-    if (isGroupedPart(part)) {
-      const unfoundRefs = 
-        new Set(part.instances
-        .filter(isRefPartInstance)
-        .map(ins => ins.partId)
-        .filter(partId => !tempRepo[partId]));
-      
-      
-      if (unfoundRefs.size > 0) {
-        throw new Error(`Part ${part.id} is referrencing ${unfoundRefs.size} part(s) that were not imported: ${Array.from(unfoundRefs).join(', ')}`)
-      }
-    }
-
-    part.id = name;
-    repo[name] = part;
-
-      const maybeHackPart = part as any as NativePart & {__importFrom: string};
-
-      if (maybeHackPart.__importFrom && mode === 'bundle') {
-        const flowFolder = dirname(fullFlowPath);
-        const requirePath = relative(flowFolder, maybeHackPart.__importFrom);
-
-        maybeHackPart.fn = `__BUNDLE_FN:[[${requirePath}]]` as any;
-      }
-      repo[name] = maybeHackPart;
-    }
-    
-
-  return repo;
 };
 
 export const resolveFlow = _resolveFlow;

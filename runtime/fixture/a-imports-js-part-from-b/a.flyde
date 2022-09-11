@@ -1,36 +1,35 @@
 imports:
   "./Add.flyde.js":
   - Add
-parts:
-  Add1:
-    inputs:
-      n:
-        type: number
-        mode: required
-    outputs:
-      result:
-        type: number
-    instances:
-    - id: ins1
-      partId: Add
-      inputConfig:
-          b:
-            mode: static
-            value: 1
-      pos:
-        x: 0
-        y: 0
-    connections:
-      - from:
-          insId: __this
-          pinId: n
-        to:
-          insId: ins1
-          pinId: a
-      - from:
-          insId: ins1
-          pinId: r
-        to:
-          insId: __this
-          pinId: result
-mainId: "Add1"
+part:
+  id: Add1
+  inputs:
+    n:
+      type: number
+      mode: required
+  outputs:
+    result:
+      type: number
+  instances:
+  - id: ins1
+    partId: Add
+    inputConfig:
+        b:
+          mode: static
+          value: 1
+    pos:
+      x: 0
+      y: 0
+  connections:
+    - from:
+        insId: __this
+        pinId: n
+      to:
+        insId: ins1
+        pinId: a
+    - from:
+        insId: ins1
+        pinId: r
+      to:
+        insId: __this
+        pinId: result

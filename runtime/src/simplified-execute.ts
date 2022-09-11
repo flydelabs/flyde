@@ -5,8 +5,8 @@ export const simplifiedExecute = async (partToRun: Part, repo: PartRepo, inputs:
    (global as any).vm2 = require("vm2");
    try {
     const output = dynamicOutput();
-    const outputName = keys(partToRun.outputs)[0];    
-
+    const outputName = keys(partToRun.outputs)[0]; 
+  
     const _inputs = Object.keys(inputs).reduce((acc, curr) => {
       return {
         ...acc,

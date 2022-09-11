@@ -1,14 +1,20 @@
 imports:
   "@acme/one-problematic-one-ok":
   - Ok
-parts:
-  main:
-    inputs:
-      n1:
-        type: number
-        mode: required
-      n2: number
-    outputs:
-      result:
-        type: number
-    fnCode: "outputs.result.next(inputs.n1 + inputs.n2)"
+part:
+  id: Bob
+  inputs:
+    n1:
+      type: number
+      mode: required
+    n2: number
+  outputs:
+    result:
+      type: number
+  instances:
+    - partId: Ok
+      id: ins
+      pos: 
+        x: 0
+        y: 0
+  connections: []

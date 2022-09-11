@@ -1,5 +1,8 @@
-# Flyde Runtime
+# Flyde Resolver
 
-Is responsible of running .flyde flows.
-It first resolves a .flyde flow and all it's dependencies into one repository of parts, consisting of a `Main` part, and other parts as declared in "parts".
-Then it wraps `@flyde/core` with a simpler, Promise-based API.
+Resolves .flyde files and their imports into a resolved flow that contains all information required for it to be executed.
+
+It resolves all imports, recursively, until reaching leaf flows (either code flows or visual flows with no imports).
+
+The resolved flow will include all imported parts, namespaced by the part required them.
+

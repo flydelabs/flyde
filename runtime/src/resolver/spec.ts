@@ -1,11 +1,13 @@
-import { CodePart, GroupedPart, InlinePartInstance, NativePart, RefPartInstance } from "@flyde/core";
+import { dynamicPartInput, execute, PartRepo, randomInt, values } from "@flyde/core";
 import { assert } from "chai";
-import { readdirSync } from "fs";
+import { readdirSync, readFileSync } from "fs";
 import { join } from "path";
-import { spy } from "sinon";
 import { deserializeFlow } from "../serdes";
 import { simplifiedExecute } from "../simplified-execute";
 import { resolveFlow } from "./resolve-flow";
+
+import { spiedOutput} from '@flyde/core/dist/test-utils';
+import _ = require("lodash");
 
 const getFixturePath = (path: string) => join(__dirname, "../../fixture", path);
 
@@ -13,54 +15,117 @@ describe("resolver", () => {
   beforeEach(() => {
     (global as any).vm2 = require("vm2");
   });
-  it("resolves a simple .flyde file without any dependency into a repo", () => {
+
+  it ("resolves a simple .flyde file without any dependencies", () => {
     const data = resolveFlow(getFixturePath("simple.flyde"));
-    assert.exists(data.main);
-    assert.equal(data.main.inputs.n1.type, "number");
+
+    assert.equal(data.main.id, 'Simple');
+    assert.exists(data.main.instances);
+    assert.exists(data.main.connections);
   });
 
-  it("resolves a part with native code reference", () => {
-    const data = resolveFlow(getFixturePath("local-code-ref.flyde"), "implementation");
+  it("resolves a .flyde with dependency on an inline code part from another Flyde file ", async () => {
+    const data = resolveFlow(getFixturePath("a-imports-js-part-from-b/a.flyde"));
+    const part = data.main;
 
-    const outputs = { result: { next: spy() } } as any;
+    const repo = data.imports as PartRepo;
+    
+    const val = await simplifiedExecute(part, repo, { n: 2 });
+    
+    assert.equal(val, 3);
+  }, 50);
 
-    const main = data.main as NativePart;
+  it('resolves flows with transitive dependencies', async() => {
+  
+    const data = resolveFlow(getFixturePath("a-imports-b-imports-c/Container.flyde"));
+    
+    const repo = data.imports as PartRepo;
+    
+    const val = await simplifiedExecute(data.main, repo, { n: 2 });
 
-    assert.isFunction(main.fn);
-    main.fn({ n1: 1, n2: 2 }, outputs);
-    assert.isTrue(outputs.result.next.calledWith(3));
+    assert.equal(val, 3)
+    
   });
 
-  it("resolves a .flyde with dependency on an inline code part from another Flyde file ", () => {
-    const data = resolveFlow(getFixturePath("a-imports-inline-fn-from-b/a.flyde"));
+  it('resolves flows with 2 levels of transitive dependencies and properly namespaces them', async() => {
+  
+    const data = resolveFlow(getFixturePath("a-imports-b-imports-c-imports-d/Container.flyde"));
+    
+    const repo = data.imports as PartRepo;
 
-    const Add = data.Add as CodePart;
-    assert.exists(Add);
-    assert.exists(Add.fnCode);
+    const keys = _.keys(repo);
+    
+    assert.deepEqual(keys, [
+      'Add1WrapperTwice__Add1Wrapper__Add1',
+      'Add1WrapperTwice__Add1Wrapper',
+      'Add1WrapperTwice',
+    ])
+
+    const val = await simplifiedExecute(data.main, repo, { n: 2 });
+
+    assert.equal(val, 3)
   });
 
-  it("resolves a .flyde with dependency on a grouped part from a different package", () => {
+  it('avoids clashes in imports by namespacing imports', async() => {
+    /*
+       part Container will import 2 parts, each importing a part 
+       named "Special" but with a different content (one does +1, the other does -1)
+    */
+    const data = resolveFlow(getFixturePath("a-imports-b-and-c-potential-ambiguity/Container.flyde"));
+    const repo = data.imports as PartRepo;
+    
+    assert.deepEqual(_.keys(repo), [
+      'Adds1Wrapper__Special',
+      'Adds1Wrapper',
+      'Subs1Wrapper__Special',
+      'Subs1Wrapper' 
+    ]);
+
+    const input = dynamicPartInput();
+    const [s1, nplus1] = spiedOutput();
+    const [s2, nminus1] = spiedOutput();
+    execute({
+      part: data.main,
+      partsRepo: repo,
+      inputs: {
+        n: input
+      },
+      outputs: {
+        nplus1,
+        nminus1
+      }
+    });
+    const n = randomInt(42);
+    input.subject.next(n);
+
+    assert.equal(s1.lastCall.args[0], n + 1);
+    assert.equal(s2.lastCall.args[0], n - 1);
+  });
+
+  it("resolves a .flyde with dependency on a code part from a different package", async  () => {
     const data = resolveFlow(
-      getFixturePath("a-imports-code-fn-from-package/a.flyde"),
+      getFixturePath("a-imports-b-code-from-package/a.flyde"),
       "implementation"
     );
 
-    const Multiply = data.Multiply as NativePart;
-    assert.exists(Multiply);
-    assert.isFunction(Multiply.fn);
-    const outputs = { result: { next: spy() } };
-    Multiply.fn({ n1: 2, n2: 3 }, outputs as any);
-    assert.isTrue(outputs.result.next.calledWith(6));
+    const repo = data.imports as PartRepo;
+    const res = await simplifiedExecute(data.main, repo, {n: 2});
+    assert.equal(res, 3);
+    assert.match(data.imports.Add1.importPath, /@acme\/add1\/src\/add1\.flyde\.js$/);
   });
 
-  it("supports aliases for imports", () => {
-    const file = getFixturePath("a-imports-aliased-part-from-b/a.flyde");
-    const data = resolveFlow(file, "implementation");
+  it("resolves a .flyde with dependency on a grouped part from a different package", async  () => {
+    const data = resolveFlow(
+      getFixturePath("a-imports-b-grouped-from-package/a.flyde"),
+      "implementation"
+    );
 
-    const Bob = data.Bob as NativePart;
-    assert.exists(Bob);
-    assert.isFunction(Bob.fn);
+    const repo = data.imports as PartRepo;
+    const res = await simplifiedExecute(data.main, repo, {n: 2});
+    assert.equal(res, 3);
+    assert.match(data.imports.Add1Wrapped.importPath, /@acme\/add1-wrapped\/src\/add1-wrapped\.flyde$/);
   });
+
 
   it("breaks on invalid schemas", () => {
     const invalidsRoot = getFixturePath("schema-validation/invalid");
@@ -70,10 +135,11 @@ describe("resolver", () => {
         break;
       }
       const path = join(invalidsRoot, invalid);
-
+      const contents = readFileSync(path, 'utf-8');
+      
       assert.throws(
         () => {
-          deserializeFlow(path, '');
+          deserializeFlow(contents, path);
         },
         /Error parsing/,
         `File ${invalid} should have failed schema validation`
@@ -81,59 +147,21 @@ describe("resolver", () => {
     }
   });
 
-  it("works on imported parts that have transitive dependencies that were not imported explicitly", async () => {
-    const path = getFixturePath("a-imports-b-with-internal-transitive-dep/a.flyde");
-    const flow = resolveFlow(path, "implementation");
-
-    assert.isUndefined(flow.Exponent, "Exponent should have been namespaced");
-    assert.isDefined(flow["Exponent2__Exponent"]);
-
-    const val = await simplifiedExecute(flow.Exponent2, flow, { n: 2 });
-    assert.equal(val, 4);
-  });
-
-  it("works on imported parts that have 2nd level transitive dependencies that were not imported explicitly", async () => {
-    const path = getFixturePath("a-imports-b-with-2-level-internal-transitive-dep/a.flyde");
-    const flow = resolveFlow(path, "implementation");
-
-    // console.log({flow});
-
-    assert.isUndefined(flow.Add, "internals should have been namespaced");
-    assert.isUndefined(flow.Add42, "internals should have been namespaced");
-    assert.isDefined(flow["Add42And73"]);
-    // assert.isDefined(flow['Add42And73__Add42']);
-    // assert.isDefined(flow['Exponent2.Exponent']);
-
-    const val = await simplifiedExecute(flow.Add42And73, flow, { n1: 2 });
-    assert.equal(val, 42 + 73 + 2);
-  });
-
-  it("does not allow to import a non-exported part", () => {
-    const path = getFixturePath("a-imports-non-exported-from-b/a.flyde");
-
-    assert.throws(() => {
-      resolveFlow(path);
-    }, /not exporting/);
-  });
-
-  it.only('allows importing simple code based parts', async () => { 
+  it('allows importing simple code based parts', async () => { 
     const path = getFixturePath("CompleteCodePart.flyde.js");
     const flow = resolveFlow(path);
 
-    assert.exists(flow.Add.customViewCode);
-    assert.deepEqual(flow.Add.completionOutputs, ['r']);
-    assert.deepEqual(flow.Add.reactiveInputs, ['b']);
+    assert.exists(flow.main.customViewCode);
+    assert.deepEqual(flow.main.completionOutputs, ['r']);
+    assert.deepEqual(flow.main.reactiveInputs, ['b']);
   });
-
-  it('properly loads all properties of a js flyde flow', async () => {
-
-  })
 
   it('allows importing simple code based parts that require packages', async () => { 
     const path = getFixturePath("a-imports-js-part-from-b-with-dep/a.flyde");
     const flow = resolveFlow(path);
     
-    const val = await simplifiedExecute(flow.Add1, flow, { n: 2 });
+    const repo = flow.imports as PartRepo;
+    const val = await simplifiedExecute(flow.main, repo, { n: 2 });
     assert.equal(val, 3);
   }); 
 
@@ -141,14 +169,14 @@ describe("resolver", () => {
     const path = getFixturePath("a-imports-js-part-from-b-with-dep/a.flyde");
     const flow = resolveFlow(path, 'bundle');
     
-    assert.match((flow.Add as any).fn, /__BUNDLE_FN:\[\[\Add\.flyde\.js\]\]/);
+    assert.match((flow.imports.Add as any).fn, /__BUNDLE_FN:\[\[\Add\.flyde\.js\]\]/);
   });
 
   it('throws error when importing part that has a missing dep transitively', async () => { 
     const path = getFixturePath("a-imports-b-with-missing-deps/a.flyde");
     assert.throws(() => {
       resolveFlow(path); 
-    }, /Unable to find part/)
+    }, /not imported/)
   });
 
   it('throws error when importing part that has a missing dep directly', async () => { 
@@ -163,16 +191,8 @@ describe("resolver", () => {
     const path = getFixturePath("imports-ok-from-package-with-problematic.flyde");
     
     const flow = resolveFlow(path);
-    assert.exists(flow.Ok);
-    assert.notExists(flow.Problematic);
+    assert.exists(flow.imports.Ok);
+    assert.notExists(flow.imports.Problematic);
   })
-
-  it('works for counter example', async () => { 
-    const path = getFixturePath("react-counter-example/react-counter.flyde");
-    const flow = resolveFlow(path, 'bundle');
-
-    assert.exists(flow.Button);
-    assert.exists(flow.Span);
-  });
 
 });

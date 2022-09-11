@@ -1,0 +1,51 @@
+---
+imports:
+  "./Adds1Wrapper.flyde": Adds1Wrapper
+  "./Subs1Wrapper.flyde": Subs1Wrapper
+part:
+  id: Container
+  inputs:
+    n:
+      type: number
+      mode: required
+  outputs:
+    nplus1:
+      type: number
+    nminus1:
+      type: number
+  instances:
+  - id: ins1
+    partId: Adds1Wrapper
+    pos:
+      x: 0
+      y: 0
+  - id: ins2
+    partId: Subs1Wrapper
+    pos:
+      x: 0
+      y: 0
+  connections:
+    - from:
+        insId: __this
+        pinId: n
+      to:
+        insId: ins1
+        pinId: n
+    - from:
+        insId: ins1
+        pinId: r
+      to:
+        insId: __this
+        pinId: nplus1
+    - from:
+        insId: __this
+        pinId: n
+      to:
+        insId: ins2
+        pinId: n
+    - from:
+        insId: ins2
+        pinId: r
+      to:
+        insId: __this
+        pinId: nminus1
