@@ -1,275 +1,259 @@
 imports:
   "@flyde/stdlib":
-    - name: ListFrom3
-      alias: ListFrom3
-    - name: ListFrom2
-      alias: ListFrom2
-    - name: SpreadList3
-      alias: SpreadList3
-    - name: SetState
-      alias: SetState
-    - name: Boolean Split
-      alias: Boolean Split
-    - name: Publish
-      alias: Publish
-    - name: Subscribe
-      alias: Subscribe
-    - name: Add
-      alias: Add
+    - ListFrom3
+    - Boolean Split
+    - Publish
+    - Subscribe
+    - Add
   ./Button.flyde.js:
-    - name: Button
-      alias: Button
+    - Button
   ./Span.flyde.js:
-    - name: Span
-      alias: Span
-exports: []
-mainId: Main
-parts:
-  Main:
-    id: Main
-    inputs: {}
-    outputs:
-      result:
-        type: any
-    inputsPosition: {}
-    outputsPosition:
-      result:
-        x: -321.3338928563413
-        y: 690.4970809936208
-    completionOutputs:
-      - result
-    instances:
-      - pos:
-          x: -112.55849853515622
-          y: 264.69233886718746
-        id: Button-410
-        inputConfig:
-          children:
-            mode: static
-            value: + 1
-        visibleInputs:
-          - children
-        partId: Button
-      - pos:
-          x: -316.5079125976563
-          y: 277.8121800231934
-        id: Span-677
-        inputConfig:
-          children:
-            mode: queue
-        visibleInputs:
-          - __trigger
-          - children
-        partId: Span
-      - pos:
-          x: -347.506982421875
-          y: 450.8367645263672
-        id: ListFrom3-404
-        inputConfig:
-          item1:
-            mode: sticky
-          item3:
-            mode: sticky
-          item2:
-            mode: queue
-        partId: ListFrom3
-      - pos:
-          x: -515.2419702148437
-          y: 266.9907855224609
-        id: Button-410-d44
-        inputConfig:
-          children:
-            mode: static
-            value: "- 1"
-        visibleInputs:
-          - children
-        partId: Button
-      - pos:
-          x: -90.45
-          y: 472.37
-        id: Publish-107
-        inputConfig:
-          key:
-            mode: static
-            value: inc
-          value:
-            mode: static
-            value: 1
-        partId: Publish
-      - pos:
-          x: -201.807001953125
-          y: -187.86253479003906
-        id: Subscribe-896
-        inputConfig:
-          key:
-            mode: static
-            value: inc
-        partId: Subscribe
-      - pos:
-          x: -272.72882080078125
-          y: -9.603830566406259
-        id: Add-138
-        inputConfig:
-          n1:
-            mode: sticky
-        partId: Add
-      - pos:
-          x: -387.2609814453125
-          y: -186.2929638671875
-        id: Subscribe-227
-        inputConfig:
-          key:
-            mode: static
-            value: value
-        partId: Subscribe
-      - pos:
-          x: -541.97
-          y: 466.84
-        id: Publish-441
-        inputConfig:
-          key:
-            mode: static
-            value: inc
-          value:
-            mode: static
-            value: -1
-        partId: Publish
-      - pos:
-          x: -599.5746044921875
-          y: -143.15812744140624
-        id: Publish-817
-        inputConfig:
-          key:
-            mode: static
-            value: value
-          value:
-            mode: static
-            value: 0
-        partId: Publish
-      - pos:
-          x: -61.70970581054689
-          y: 109.43610321044923
-        id: Publish-817-d15
-        inputConfig:
-          key:
-            mode: static
-            value: value
-          value:
-            mode: queue
-        visibleInputs:
-          - value
-        partId: Publish
-      - pos:
-          x: -449.69109130859374
-          y: 132.32694366455075
-        id: Inline-value-Value is ${inp-308
-        inputConfig: {}
-        part:
-          id: Inline-value-Value is ${inp
-          inputs:
-            count:
-              type: any
-              mode: required
-          outputs:
-            r:
-              type: any
-              delayed: false
-              optional: false
-          fnCode: outputs.r.next((`Value is ${inputs.count}`))
-          customViewCode: "`Value is ${inputs.count}`"
-          dataBuilderSource: YFZhbHVlIGlzICR7aW5wdXRzLmNvdW50fWA=
-          templateType: value
-          completionOutputs:
-            - r
-      - pos:
-          x: -435.9594775390625
-          y: -57.659471435546834
-        id: Inline-value-0-783
-        inputConfig: {}
-        part:
-          id: Inline-value-0
-          inputs: {}
-          outputs:
-            r:
-              type: any
-              delayed: false
-              optional: false
-          fnCode: outputs.r.next((0))
-          customViewCode: "0"
-          dataBuilderSource: MA==
-          templateType: value
-          completionOutputs:
-            - r
-    connections:
-      - from:
-          insId: Span-677
-          pinId: jsx
-        to:
-          insId: ListFrom3-404
-          pinId: item2
-      - from:
-          insId: Button-410
-          pinId: jsx
-        to:
-          insId: ListFrom3-404
-          pinId: item3
-      - from:
-          insId: Button-410-d44
-          pinId: jsx
-        to:
-          insId: ListFrom3-404
-          pinId: item1
-      - from:
-          insId: ListFrom3-404
-          pinId: list
-        to:
-          insId: __this
-          pinId: result
-      - from:
-          insId: Button-410
-          pinId: click
-        to:
-          insId: Publish-107
-          pinId: __trigger
-      - from:
-          insId: Subscribe-896
-          pinId: val
-        to:
-          insId: Add-138
-          pinId: n2
-      - from:
-          insId: Button-410-d44
-          pinId: click
-        to:
-          insId: Publish-441
-          pinId: __trigger
-      - from:
-          insId: Subscribe-227
-          pinId: val
-        to:
-          insId: Add-138
-          pinId: n1
-      - from:
-          insId: Add-138
-          pinId: r
-        to:
-          insId: Publish-817-d15
-          pinId: value
-      - from:
-          insId: Add-138
-          pinId: r
-        to:
-          insId: Inline-value-Value is ${inp-308
-          pinId: count
-      - from:
-          insId: Inline-value-Value is ${inp-308
-          pinId: r
-        to:
-          insId: Span-677
-          pinId: children
-      - from:
-          insId: Inline-value-0-783
-          pinId: r
-        to:
-          insId: Inline-value-Value is ${inp-308
-          pinId: count
+    - Span
+part:
+  id: Main
+  inputs: {}
+  outputs:
+    result:
+      type: any
+  inputsPosition: {}
+  outputsPosition:
+    result:
+      x: -321.3338928563413
+      y: 690.4970809936208
+  completionOutputs:
+    - result
+  instances:
+    - pos:
+        x: -112.55849853515622
+        y: 264.69233886718746
+      id: Button-410
+      inputConfig:
+        children:
+          mode: static
+          value: + 1
+      visibleInputs:
+        - children
+      partId: Button
+    - pos:
+        x: -316.5079125976563
+        y: 277.8121800231934
+      id: Span-677
+      inputConfig:
+        children:
+          mode: queue
+      visibleInputs:
+        - __trigger
+        - children
+      partId: Span
+    - pos:
+        x: -347.506982421875
+        y: 450.8367645263672
+      id: ListFrom3-404
+      inputConfig:
+        item1:
+          mode: sticky
+        item3:
+          mode: sticky
+        item2:
+          mode: queue
+      partId: ListFrom3
+    - pos:
+        x: -515.2419702148437
+        y: 266.9907855224609
+      id: Button-410-d44
+      inputConfig:
+        children:
+          mode: static
+          value: "- 1"
+      visibleInputs:
+        - children
+      partId: Button
+    - pos:
+        x: -90.45
+        y: 472.37
+      id: Publish-107
+      inputConfig:
+        key:
+          mode: static
+          value: inc
+        value:
+          mode: static
+          value: 1
+      partId: Publish
+    - pos:
+        x: -201.807001953125
+        y: -187.86253479003906
+      id: Subscribe-896
+      inputConfig:
+        key:
+          mode: static
+          value: inc
+      partId: Subscribe
+    - pos:
+        x: -272.72882080078125
+        y: -9.603830566406259
+      id: Add-138
+      inputConfig:
+        n1:
+          mode: sticky
+      partId: Add
+    - pos:
+        x: -387.2609814453125
+        y: -186.2929638671875
+      id: Subscribe-227
+      inputConfig:
+        key:
+          mode: static
+          value: value
+      partId: Subscribe
+    - pos:
+        x: -541.97
+        y: 466.84
+      id: Publish-441
+      inputConfig:
+        key:
+          mode: static
+          value: inc
+        value:
+          mode: static
+          value: -1
+      partId: Publish
+    - pos:
+        x: -599.5746044921875
+        y: -143.15812744140624
+      id: Publish-817
+      inputConfig:
+        key:
+          mode: static
+          value: value
+        value:
+          mode: static
+          value: 0
+      partId: Publish
+    - pos:
+        x: -61.70970581054689
+        y: 109.43610321044923
+      id: Publish-817-d15
+      inputConfig:
+        key:
+          mode: static
+          value: value
+        value:
+          mode: queue
+      visibleInputs:
+        - value
+      partId: Publish
+    - pos:
+        x: -449.69109130859374
+        y: 132.32694366455075
+      id: Inline-value-Value is ${inp-308
+      inputConfig: {}
+      part:
+        id: Inline-value-Value is ${inp
+        inputs:
+          count:
+            type: any
+            mode: required
+        outputs:
+          r:
+            type: any
+            delayed: false
+            optional: false
+        fnCode: outputs.r.next((`Value is ${inputs.count}`))
+        customViewCode: "`Value is ${inputs.count}`"
+        dataBuilderSource: YFZhbHVlIGlzICR7aW5wdXRzLmNvdW50fWA=
+        templateType: value
+        completionOutputs:
+          - r
+    - pos:
+        x: -435.9594775390625
+        y: -57.659471435546834
+      id: Inline-value-0-783
+      inputConfig: {}
+      part:
+        id: Inline-value-0
+        inputs: {}
+        outputs:
+          r:
+            type: any
+            delayed: false
+            optional: false
+        fnCode: outputs.r.next((0))
+        customViewCode: "0"
+        dataBuilderSource: MA==
+        templateType: value
+        completionOutputs:
+          - r
+  connections:
+    - from:
+        insId: Span-677
+        pinId: jsx
+      to:
+        insId: ListFrom3-404
+        pinId: item2
+    - from:
+        insId: Button-410
+        pinId: jsx
+      to:
+        insId: ListFrom3-404
+        pinId: item3
+    - from:
+        insId: Button-410-d44
+        pinId: jsx
+      to:
+        insId: ListFrom3-404
+        pinId: item1
+    - from:
+        insId: ListFrom3-404
+        pinId: list
+      to:
+        insId: __this
+        pinId: result
+    - from:
+        insId: Button-410
+        pinId: click
+      to:
+        insId: Publish-107
+        pinId: __trigger
+    - from:
+        insId: Subscribe-896
+        pinId: val
+      to:
+        insId: Add-138
+        pinId: n2
+    - from:
+        insId: Button-410-d44
+        pinId: click
+      to:
+        insId: Publish-441
+        pinId: __trigger
+    - from:
+        insId: Subscribe-227
+        pinId: val
+      to:
+        insId: Add-138
+        pinId: n1
+    - from:
+        insId: Add-138
+        pinId: r
+      to:
+        insId: Publish-817-d15
+        pinId: value
+    - from:
+        insId: Add-138
+        pinId: r
+      to:
+        insId: Inline-value-Value is ${inp-308
+        pinId: count
+    - from:
+        insId: Inline-value-Value is ${inp-308
+        pinId: r
+      to:
+        insId: Span-677
+        pinId: children
+    - from:
+        insId: Inline-value-0-783
+        pinId: r
+      to:
+        insId: Inline-value-Value is ${inp-308
+        pinId: count

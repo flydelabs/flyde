@@ -12,7 +12,7 @@ describe('namespace flows', () => {
                     partInstance('i1', 'Alice')
                 ],
             }),
-            imports: {
+            dependencies: {
                 'Alice': {...groupedPart({
                         id: 'Alice',
                         instances: [
@@ -26,10 +26,10 @@ describe('namespace flows', () => {
 
         assert.equal((namespaced.main.instances[0] as RefPartInstance).partId, 'NS__Alice')
 
-        assert.deepEqual(_.keys(namespaced.imports), ['NS__Alice']);
-        assert.equal(namespaced.imports['NS__Alice'].id, 'NS__Alice');
+        assert.deepEqual(_.keys(namespaced.dependencies), ['NS__Alice']);
+        assert.equal(namespaced.dependencies['NS__Alice'].id, 'NS__Alice');
 
-        assert.equal(((namespaced.imports['NS__Alice'] as unknown as GroupedPart).instances[0] as RefPartInstance).partId, 'NS__Dave')
+        assert.equal(((namespaced.dependencies['NS__Alice'] as unknown as GroupedPart).instances[0] as RefPartInstance).partId, 'NS__Dave')
 
     })
 

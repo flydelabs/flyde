@@ -3,7 +3,6 @@ import * as React from "react";
 import {
   isExternalConnectionNode,
   THIS_INS_ID,
-  PartDefRepo,
   ConnectionData,
   isInternalConnectionNode,
   GroupedPart,
@@ -32,6 +31,7 @@ import {
   CodePartTemplateTypeInline,
   isCodePart,
   InlinePartInstance,
+  ResolvedFlydeFlowDefinition,
 } from "@flyde/core";
 import { InstanceView } from "./instance-view/InstanceView";
 import { ConnectionView } from "./connection-view";
@@ -65,7 +65,7 @@ import useComponentSize from "@rehooks/component-size";
 import { Slider, Menu, MenuItem, ContextMenu, Button } from "@blueprintjs/core";
 import { PartIoView, PartIoType } from "./part-io-view";
 
-import { rnd, vec, vSub } from "../physics";
+import { vec, vSub } from "../physics";
 import { QuickAddMenu, QuickAddMenuData, QuickMenuMatch } from "./quick-add-menu";
 import { queueInputPinConfig } from "@flyde/core";
 import { HistoryPayload } from "@flyde/remote-debugger";
@@ -85,7 +85,6 @@ import { usePrompt } from "../lib/react-utils/prompt";
 import { InlineCodeModal } from "../flow-editor/inline-code-modal";
 import { createInlineCodePart } from "../flow-editor/inline-code-modal/inline-code-to-part";
 import _ from "lodash";
-import { createGroup } from "../lib/create-group";
 import { groupSelected } from "../group-selected";
 
 const MemodSlider = React.memo(Slider);
@@ -126,7 +125,7 @@ export type GroupedPartEditorProps = {
   insId: string;
 
   clipboardData: ClipboardData;
-  repo: PartDefRepo;
+  resolvedFlow: ResolvedFlydeFlowDefinition;
 
   partIoEditable: boolean;
   thumbnailMode?: true;
@@ -141,17 +140,17 @@ export type GroupedPartEditorProps = {
   onInspectPin: (insId: string, pinId: string, type: PinType) => void;
 
   onEditPart: (partId: string) => void;
-  editOrCreateConstValue: (
-    ins: PartInstance,
-    pinId: string,
-    type: string,
-    pos: Pos,
-    useInlineCode?: boolean
-  ) => void;
-  requestNewConstValue: (pos: Pos) => void;
+  // editOrCreateConstValue: (
+  //   ins: PartInstance,
+  //   pinId: string,
+  //   type: string,
+  //   pos: Pos,
+  //   useInlineCode?: boolean
+  // ) => void;
+  // requestNewConstValue: (pos: Pos) => void;
   onNewEnvVar?: (name: string, value: any) => void;
 
-  onGroupSelected: () => void;
+  // onGroupSelected: () => void;
   onRequestHistory: (insId: string, pinId: string, pinType: PinType) => Promise<HistoryPayload>;
   onRequestImportables?: (query: string) => Promise<ImportablePart[]>;
 
@@ -168,15 +167,13 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
     const {
       onChangePart: onChange,
       onCommand,
-      repo,
       partIoEditable,
       onCopy,
       // onToggleLog,
       // onToggleBreakpoint,
       onEditPart,
-      editOrCreateConstValue,
-      onGroupSelected,
-      requestNewConstValue,
+      // editOrCreateConstValue,
+      // requestNewConstValue,
       onRequestHistory,
       onInspectPin,
       onNewEnvVar,
@@ -185,7 +182,16 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
       insId: thisInsId,
       part,
       onShowOmnibar,
+      resolvedFlow
     } = props;
+
+    const [repo, setRepo] = useState({...resolvedFlow.dependencies, [resolvedFlow.main.id]: resolvedFlow.main});
+
+    useEffect(() => {
+      setRepo({...resolvedFlow.dependencies, [resolvedFlow.main.id]: resolvedFlow.main});
+    }, [resolvedFlow])
+    
+
 
     const { selected, from, to } = boardData;
     const { instances, connections, inputsPosition, outputsPosition, inputs, outputs } = part;
@@ -276,7 +282,6 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
     const lastMousePos = React.useRef({ x: 400, y: 400 });
 
     const boardPos = boardRef.current ? boardRef.current.getBoundingClientRect() : defaultPos;
-    // const boardPos = useRect(boardRef);
 
     const fitToScreen = () => {
       const vp = fitViewPortToPart(part, repo, vpSize);
@@ -461,7 +466,7 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
           }
         })();
       },
-      [onChange, part, repo]
+      [onChange, part, resolvedFlow]
     );
 
     useHotkeys(
@@ -705,18 +710,7 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
         lastMousePos.current = posInBoard;
         onChangeBoardData({ lastMousePos: lastMousePos.current });
       },
-      [
-        boardPos,
-        selectionBox,
-        part,
-        repo,
-        vpSize,
-        thisInsId,
-        closestPin,
-        onChangeBoardData,
-        viewPort,
-        setViewPort,
-      ]
+      [boardPos, viewPort, selectionBox, part, repo, vpSize, thisInsId, closestPin, onChangeBoardData, setViewPort]
     );
 
     const onMouseLeave: React.MouseEventHandler = React.useCallback(() => {
@@ -728,7 +722,7 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
     const onDblClickInstance = React.useCallback(
       (ins: PartInstance, shift: boolean) => {
         if (shift) {
-          const part = isInlinePartInstance(ins) ? ins.part : repo[ins.partId];
+          const part = isInlinePartInstance(ins) ? ins.part : getPartDef(ins.partId, repo)
           if (!part) {
             throw new Error(`Impossible state inspecting inexisting part`);
           }
@@ -1002,7 +996,8 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
           const partInput = part.inputs[pinId];
           const type = partInput ? partInput.type : "any";
 
-          editOrCreateConstValue(ins, pinId, type, lastMousePos.current, true);
+          toastMsg('TODO');
+          // editOrCreateConstValue(ins, pinId, type, lastMousePos.current, true);
         } else {
           const part = getPartDef(ins, repo);
           const pin = part.outputs[pinId];
@@ -1011,7 +1006,7 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
             throw new Error("Dbl clicked on un-existing pin");
           }
 
-          const matches = values(repo).reduce<QuickMenuMatch[]>(
+          const matches = values({...resolvedFlow.dependencies, [resolvedFlow.main.id]: resolvedFlow.main}).reduce<QuickMenuMatch[]>(
             (acc, curr) => {
               const matches: QuickMenuMatch[] = entries(curr.inputs).map(([id, val]) => ({
                 pinId: id,
@@ -1034,7 +1029,7 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
           });
         }
       },
-      [repo, lastMousePos, editOrCreateConstValue]
+      [repo]
     );
 
     const onMainInputDblClick = React.useCallback(
@@ -1066,7 +1061,7 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
           pinType: pin.type,
         });
       },
-      [part, repo]
+      [part, resolvedFlow]
     );
 
     const onMaybeZoom = React.useCallback(
@@ -1144,7 +1139,7 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
         });
         onChange(newPart, functionalChange("prune orphan connections"));
       }
-    }, [instances, onChange, connections, repo, part]);
+    }, [instances, onChange, connections, resolvedFlow, part]);
 
     useEffect(() => {
       const instanceMap = new Map(instances.map((ins) => [ins.id, ins]));
@@ -1193,10 +1188,11 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
             toastMsg("Cannot add value to main input");
             return;
           }
-          editOrCreateConstValue(ins, pinId, "n/a", pos, true);
+          toastMsg('TODO');
+          // editOrCreateConstValue(ins, pinId, "n/a", pos, true);
         }
       },
-      [quickAddMenuVisible, repo, part, onChange, onCloseQuickAdd, editOrCreateConstValue]
+      [quickAddMenuVisible, resolvedFlow, part, onChange, onCloseQuickAdd]
     );
 
     const copyPartToClipboard = React.useCallback(async () => {
@@ -1214,7 +1210,7 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
             <MenuItem
               onMouseDown={(e) => e.stopPropagation()}
               label={"New Value"}
-              onClick={preventDefaultAnd(() => requestNewConstValue(pos))}
+              onClick={preventDefaultAnd(() => toastMsg('TODO') /*requestNewConstValue(pos)*/)}
             />
             <MenuItem
               label={`New input ${maybeDisabledLabel}`}
@@ -1236,7 +1232,7 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
             <MenuItem
               onMouseDown={(e) => e.stopPropagation()}
               label={"New Value"}
-              onClick={preventDefaultAnd(() => requestNewConstValue(pos))}
+              onClick={preventDefaultAnd(() => toastMsg('TODO') /*requestNewConstValue(pos)*/)}
             />
             <MenuItem
               onMouseDown={(e) => e.stopPropagation()}
@@ -1256,7 +1252,6 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
         copyPartToClipboard,
         onAddIoPin,
         partIoEditable,
-        requestNewConstValue,
         editCompletionOutputs,
         part,
         editReactiveInputs,
@@ -1320,16 +1315,16 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
               insId={`${thisInsId}.${inspectedInstance.insId}`}
               boardData={inspectedBoardData}
               onChangeBoardData={onChangeInspectedBoardData}
-              repo={repo}
+              resolvedFlow={resolvedFlow}
               onCopy={onCopy}
               clipboardData={props.clipboardData}
               onInspectPin={props.onInspectPin}
               onEditPart={props.onEditPart}
               partIoEditable={props.partIoEditable}
-              requestNewConstValue={props.requestNewConstValue}
-              onGroupSelected={noop}
+              // requestNewConstValue={props.requestNewConstValue}
+              // onGroupSelected={noop}
               onRequestHistory={onRequestHistory}
-              editOrCreateConstValue={props.editOrCreateConstValue}
+              // editOrCreateConstValue={props.editOrCreateConstValue}
               part={inspectedInstance.part}
               onChangePart={onChangeInspected}
               onNewEnvVar={props.onNewEnvVar}

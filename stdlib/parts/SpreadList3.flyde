@@ -1,101 +1,98 @@
 imports:
   "./GetListItem.flyde.js":
     - GetListItem
-exports:
-  - SpreadList3
-parts:
-  SpreadList3:
-    id: SpreadList3
-    inputs:
-      list:
-        mode: required
-        type: any
-    outputs:
-      first:
-        type: any
-      second:
-        type: any
-      third:
-        type: any
-    inputsPosition:
-      list:
-        x: 326.68066376398093
-        y: 7.352935664945553
-    outputsPosition:
-      first:
-        x: 100
-        y: 400
-      second:
-        x: 300
-        y: 400
-      third:
-        x: 500
-        y: 400
-      rest:
-        x: 726.2604947250959
-        y: 383.1932748030569
-    instances:
-      - partId: GetListItem
-        pos:
-          x: 65.52127563476563
-          y: 153.09548217773437
-        id: GetListItem-877
-        inputConfig:
-          idx:
-            mode: static
-            value: 0
-      - partId: GetListItem
-        pos:
-          x: 267.9924060058594
-          y: 186.69313079833984
-        id: GetListItem-877-d285
-        inputConfig:
-          idx:
-            mode: static
-            value: 1
-      - partId: GetListItem
-        pos:
-          x: 431.89740478515625
-          y: 176.2309420776367
-        id: GetListItem-877-d285-d900
-        inputConfig:
-          idx:
-            mode: static
-            value: 2
-    connections:
-      - from:
-          insId: __this
-          pinId: list
-        to:
-          insId: GetListItem-877
-          pinId: list
-      - from:
-          insId: GetListItem-877
-          pinId: r
-        to:
-          insId: __this
-          pinId: first
-      - from:
-          insId: __this
-          pinId: list
-        to:
-          insId: GetListItem-877-d285
-          pinId: list
-      - from:
-          insId: GetListItem-877-d285
-          pinId: r
-        to:
-          insId: __this
-          pinId: second
-      - from:
-          insId: GetListItem-877-d285-d900
-          pinId: r
-        to:
-          insId: __this
-          pinId: third
-      - from:
-          insId: __this
-          pinId: list
-        to:
-          insId: GetListItem-877-d285-d900
-          pinId: list
+part:
+  id: SpreadList3
+  inputs:
+    list:
+      mode: required
+      type: any
+  outputs:
+    first:
+      type: any
+    second:
+      type: any
+    third:
+      type: any
+  inputsPosition:
+    list:
+      x: 326.68066376398093
+      y: 7.352935664945553
+  outputsPosition:
+    first:
+      x: 100
+      y: 400
+    second:
+      x: 300
+      y: 400
+    third:
+      x: 500
+      y: 400
+    rest:
+      x: 726.2604947250959
+      y: 383.1932748030569
+  instances:
+    - partId: GetListItem
+      pos:
+        x: 65.52127563476563
+        y: 153.09548217773437
+      id: GetListItem-877
+      inputConfig:
+        idx:
+          mode: static
+          value: 0
+    - partId: GetListItem
+      pos:
+        x: 267.9924060058594
+        y: 186.69313079833984
+      id: GetListItem-877-d285
+      inputConfig:
+        idx:
+          mode: static
+          value: 1
+    - partId: GetListItem
+      pos:
+        x: 431.89740478515625
+        y: 176.2309420776367
+      id: GetListItem-877-d285-d900
+      inputConfig:
+        idx:
+          mode: static
+          value: 2
+  connections:
+    - from:
+        insId: __this
+        pinId: list
+      to:
+        insId: GetListItem-877
+        pinId: list
+    - from:
+        insId: GetListItem-877
+        pinId: r
+      to:
+        insId: __this
+        pinId: first
+    - from:
+        insId: __this
+        pinId: list
+      to:
+        insId: GetListItem-877-d285
+        pinId: list
+    - from:
+        insId: GetListItem-877-d285
+        pinId: r
+      to:
+        insId: __this
+        pinId: second
+    - from:
+        insId: GetListItem-877-d285-d900
+        pinId: r
+      to:
+        insId: __this
+        pinId: third
+    - from:
+        insId: __this
+        pinId: list
+      to:
+        insId: GetListItem-877-d285-d900
+        pinId: list

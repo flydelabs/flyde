@@ -65,27 +65,18 @@ export const FlowLoader: React.FC = (props) => {
 
   // eslint-disable-next-line no-constant-condition
   if (flow && resolvedDefinitions) {
-    const partFromQuery = new URLSearchParams(search).get("editedPartId") || "";
-
-    const firstPartId = keys(flow.parts)[0];
-    const startingPart = flow.parts[partFromQuery] || flow.parts[firstPartId];
-
-    if (!startingPart) {
-      throw new Error("impossible state");
-    }
-
     const params = new URLSearchParams(window.location.search);
     const locationPortIfNot3000 = location.port === "3000" ? null : location.port;
     const port = Number(params.get("port") || locationPortIfNot3000 || 8545);
 
-    console.log("Rendering", fileName, flow.parts.Main);
+    console.log("Rendering", fileName, flow.part);
 
     return (
       <IntegratedFlowManager
         key={fileName}
         flow={flow}
         resolvedDefinitions={resolvedDefinitions}
-        initialPart={startingPart}
+        initialPart={flow.part}
         integratedSource={fileName}
         port={port}
       />

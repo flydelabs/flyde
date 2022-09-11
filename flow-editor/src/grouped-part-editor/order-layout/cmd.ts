@@ -6,6 +6,7 @@ import {
   GroupedPart,
   PartDefRepo,
   getPartDef,
+  ResolvedFlydeFlowDefinition,
 } from "@flyde/core";
 import { orderLayout, LayoutData } from ".";
 import produce from "immer";
@@ -47,7 +48,7 @@ export const orderGroupedPart = (
 ) => {
   const { instances, connections } = part;
   const insNodes = instances.reduce((prev, curr) => {
-    const s = size(calcPartWidth(curr, getPartDef(curr, repo), false, {}, {}, repo), PART_HEIGHT);
+    const s = size(calcPartWidth(curr, getPartDef(curr, repo)), PART_HEIGHT);
     return {
       ...prev,
       [`ins-${curr.id}`]: { p: curr.pos, s },

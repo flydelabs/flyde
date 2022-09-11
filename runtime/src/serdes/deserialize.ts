@@ -8,7 +8,6 @@ export const deserializeCodeFlow = (contents: string, fileName: string): FlydeFl
   const part = rfs(contents, fileName);
 
   // TODO - validate part
-  part.__importFrom = fileName; // TODO - remove this when all flows come with imported from
 
   return {
     part,
@@ -16,13 +15,13 @@ export const deserializeCodeFlow = (contents: string, fileName: string): FlydeFl
   }
 }
 
-export const deserializeVisualFlow = (flowContents: string): FlydeFlow => {
+export const deserializeVisualFlow = (flowContents: string, path: string): FlydeFlow => {
 
   const unsafeflow = yaml.parse(flowContents);
 
   const result = flydeFlowSchema.safeParse(unsafeflow);
   if (result.success === false) {
-    throw new Error(`Error parsing Flyde flow ${result.error}`);
+    throw new Error(`Error parsing Flyde flow ${result.error} from ${path}`);
   }
 
   const data = result.data;
@@ -38,7 +37,7 @@ export const deserializeVisualFlow = (flowContents: string): FlydeFlow => {
 
 export const deserializeFlow = (flowContents: string, fileName: string): FlydeFlow => {
   if (fileName.endsWith('.flyde')) {
-    return deserializeVisualFlow(flowContents);
+    return deserializeVisualFlow(flowContents, fileName);
   } else {
     return deserializeCodeFlow(flowContents, fileName);
   }

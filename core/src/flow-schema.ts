@@ -75,12 +75,12 @@ export type ImportedPart  = Part & {
 
 export type ResolvedFlydeFlowDefinition = {
   main: GroupedPart;
-  imports: Record<string, ImportedPartDefinition>
+  dependencies: Record<string, ImportedPartDefinition>
 };
 
 export type ResolvedFlydeRuntimeFlow = {
   main: GroupedPart;
-  imports: Record<string, ImportedPart>
+  dependencies: Record<string, ImportedPart>
 }
 
 export type ResolvedFlydeFlow = ResolvedFlydeFlowDefinition | ResolvedFlydeRuntimeFlow;

@@ -1,4 +1,4 @@
-import { NativePart, partInput, partOutput, ResolvedFlydeRuntimeFlow, values } from "@flyde/core";
+import { ResolvedFlydeRuntimeFlow } from "@flyde/core";
 import { readFileSync } from "fs";
 import { resolveFlowPath } from "./resolve-flow-path";
 import { resolveFlow } from "./resolver/resolve-flow";
@@ -18,5 +18,5 @@ export const executeFlow = async (flowPath: string, inputs: Record<string, any>)
     throw new Error("No Main part found");
   }
 
-  return simplifiedExecute(main, resFlow.imports, inputs, { });
+  return simplifiedExecute(main, resFlow.dependencies, inputs, { });
 };

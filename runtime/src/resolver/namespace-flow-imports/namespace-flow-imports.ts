@@ -13,7 +13,7 @@ import _ = require("lodash");
         })
       };
 
-      const namespacedImports = _.chain(resolvedFlow.imports)
+      const namespacedImports = _.chain(resolvedFlow.dependencies)
         .mapKeys((_, key) => `${namespace}${key}`)
         .mapValues((part) => {
           const newPart = isGroupedPart(part) ? {
@@ -34,7 +34,7 @@ import _ = require("lodash");
       return {
         ...resolvedFlow,
         main: namespacedPart,
-        imports: namespacedImports
+        dependencies: namespacedImports
       }
     } else {
       return resolvedFlow;

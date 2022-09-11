@@ -3,7 +3,6 @@ export * from "./utils";
 export * from "./lib/user-preferences";
 export * from "./toaster";
 export * from "./lib/loader";
-export * from "./lib/part-relationship-data";
 export * from "./flow-editor/flyde-flow-change-type";
 export * from "./PartPreview/PartPreview";
 export * from "./grouped-part-editor/use-debounce";

@@ -6,6 +6,7 @@ import { ConnectionData } from "../connect";
 import { Pos, PartDefRepo, PartRepo } from "..";
 import { isInlinePartInstance, PartInstance } from "./part-instance";
 import { InputPin, InputPinMap, OutputPin, OutputPinMap, PartInput, PartInputs } from "./part-pins";
+import { ResolvedFlydeFlowDefinition } from "../flow-schema";
 
 export * from "./part-instance";
 export * from "./part-pins";

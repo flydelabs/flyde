@@ -32,21 +32,17 @@ describe('ssg/ssr support', () => {
             state: {
                 flow: {
                     imports: {},
-                    exports: [],
-                    parts: {
-                        [part.id]: part
-                    }
+                    part
                 },
                 boardData: {
                     selected: [],
                     viewPort: defaultViewPort,
                     lastMousePos: {x: 0, y: 0}
-                },
-                currentPartId: part.id
+                }
             },
             onChangeState: noop,
             onImportPart: noop,
-            resolvedRepoWithDeps: {[part.id]: part},
+            resolvedRepoWithDeps: {main: part, dependencies: {[part.id]: part as any}},
             onInspectPin: noop,
             onRequestHistory: noop as any,
             hideTemplatingTips: false

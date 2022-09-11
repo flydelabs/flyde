@@ -9,6 +9,7 @@ import {
   isCodePart,
   randomInt,
   queueInputPinConfig,
+  inlinePartInstance,
 } from "@flyde/core";
 import { vAdd, vec } from "../..";
 import { createInlineCodePart } from "../inline-code-modal/inline-code-to-part";
@@ -25,7 +26,7 @@ export const handleDetachConstEditorCommand: CommandHandler<EditorCommandDetachC
   draft
 ) => {
   const { insId, inputId: pinId } = payload;
-  const part = draft.flow.parts[draft.currentPartId] as GroupedPart;
+  const part = draft.flow.part;
   const { instances } = part;
 
   const instance = instances.find((i) => i.id === insId);
@@ -50,11 +51,9 @@ export const handleDetachConstEditorCommand: CommandHandler<EditorCommandDetachC
     type: CodePartTemplateTypeInline.VALUE,
   });
 
-  draft.flow.parts[newPart.id] = newPart;
-
-  const newIns = partInstance(
+  const newIns = inlinePartInstance(
     `value-${randomInt(999)}`,
-    newPart.id,
+    newPart,
     {},
     { x: instance.pos.x, y: instance.pos.y - 100 }
   );
@@ -76,7 +75,7 @@ export const handleConnectionCloseEditorCommand: CommandHandler<EditorCommandClo
   draft
 ) => {
   const { from, to } = payload;
-  const part = draft.flow.parts[draft.currentPartId] as GroupedPart;
+  const part = draft.flow.part as GroupedPart;
   const instances = part.instances;
 
   const existing = part.connections.find((conn) => {
@@ -113,7 +112,7 @@ export const handleDuplicateSelectedEditorCommand: CommandHandler<EditorCommandD
   draft
 ) => {
   const { selected } = payload;
-  const { instances } = draft.flow.parts[draft.currentPartId] as GroupedPart;
+  const { instances } = draft.flow.part;
 
 
   if (selected.length) {
@@ -146,7 +145,7 @@ export const handlePasteInstancesEditorCommand: CommandHandler<EditorCommandPast
 ) => {
   const pasteOffset = vec(10, 10);
   const { instances } = payload;
-  const part = draft.flow.parts[draft.currentPartId] as GroupedPart;
+  const part = draft.flow.part;
 
   const newInstances = instances.map((ins) => {
 

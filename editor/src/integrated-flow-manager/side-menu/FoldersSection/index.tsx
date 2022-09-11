@@ -19,25 +19,16 @@ import { toastMsg } from "@flyde/flow-editor"; // ../../../../common/toaster
 import { useHistory } from "react-router-dom";
 import { NewFlowModal } from "./NewFlowModal/NewFlowModal";
 import { BasePart, CustomPart, FlydeFlow, groupedPart, partOutput } from "@flyde/core";
-import { FlowPartsSection, NavigatorData } from "./FlowPartsSection";
-import { PartsRelationshipData } from "@flyde/flow-editor"; // ../../../../common/lib/part-relationship-data
 
 export interface FoldersSectionProps {
   currentFile: string;
   flow: FlydeFlow;
 
-  data: NavigatorData;
-  relationshipData: PartsRelationshipData;
+  // data: NavigatorData;
   editedPart: CustomPart;
   
-  onEditPart: (partId: string) => void;
-  onRenamePart: (partId: string) => void;
-  onDeletePart: (partId: string) => void;
-  onClonePart: (partId: string) => void;
+  // onEditPart: (partId: string) => void;
   onFocusInstance: (partId: string) => void;
-
-  onChangeExported: (exportedParts: string[]) => void;
-  onChangeMainPartId: (partId: string) => void;
 }
 
 const toTreeNode = (
@@ -86,10 +77,6 @@ export const FoldersSection: React.FC<FoldersSectionProps> = (props) => {
 
   const toggleFolders = useCallback(() => setFoldersExpanded(!foldersExpanded), [
     foldersExpanded,
-  ]);
-
-  const toggleFlows = useCallback(() => setFlowsExpanded(!flowsExpanded), [
-    flowsExpanded,
   ]);
 
   const history = useHistory();
@@ -175,9 +162,7 @@ export const FoldersSection: React.FC<FoldersSectionProps> = (props) => {
 
     const flow: FlydeFlow = {
       imports: {},
-      exports: [],
-      parts: {[part.id]: part},
-      mainId: 'Main'
+      part: part
     }
     devClient.saveFile(path, flow);
 
@@ -211,10 +196,10 @@ export const FoldersSection: React.FC<FoldersSectionProps> = (props) => {
         className={Classes.ELEVATION_0}
       />
       </Collapse>
-      <h4 onClick={toggleFlows}>Current Flow - {props.currentFile} </h4>
+      {/* <h4 onClick={toggleFlows}>Current Flow - {props.currentFile} </h4>
       <Collapse isOpen={flowsExpanded}>
         <FlowPartsSection {...props}/>
-      </Collapse>
+      </Collapse> */}
 
 
       {newFlowTarget ? <NewFlowModal onCreate={onCreateFlow} folder={newFlowTarget} onCancel={() => setNewFlowTarget(undefined)} /> : null}

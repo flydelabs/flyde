@@ -11,6 +11,7 @@ import {
   isStaticInputPinConfig,
   getStaticValue,
   StaticInputPinConfig,
+  ResolvedFlydeFlowDefinition,
 } from "@flyde/core";
 
 import * as ejs from 'ejs';
@@ -29,11 +30,7 @@ import { getInstanceDomId, getMainPinDomId } from "../dom-ids";
 
 export const calcPartContent = (
   instance: PartInstance,
-  part: PartDefinition,
-  selected: boolean,
-  inputs: OMap<PartInstance[]>,
-  outputs: OMap<PartInstance[]>,
-  repo: PartDefRepo
+  part: PartDefinition
 ) => {
   if (part.customViewCode) {
     try {
@@ -60,16 +57,12 @@ export const calcPartContent = (
 
 export const calcPartWidth = (
   instance: PartInstance,
-  part: PartDefinition,
-  selected: boolean,
-  inputs: OMap<PartInstance[]>,
-  outputs: OMap<PartInstance[]>,
-  repo: PartDefRepo
+  part: PartDefinition
 ) => {
   const allInputKeys = okeys(part.inputs);
   const visibleInputs = allInputKeys.length;
   const minWidth = visibleInputs * MIN_WIDTH_PER_PIN;
-  const partContent = calcPartContent(instance, part, selected, inputs, outputs, repo);
+  const partContent = calcPartContent(instance, part);
 
   const charWidth = PIECE_CHAR_WIDTH;
 

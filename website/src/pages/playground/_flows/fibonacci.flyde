@@ -1,165 +1,149 @@
 imports:
   "@flyde/stdlib":
-    - name: Debounce
-      alias: Debounce
-    - name: Throttle
-      alias: Throttle
-    - name: Equals
-      alias: Equals
-    - name: Equals
-      alias: Equals
-    - name: Add
-      alias: Add
-    - name: Add
-      alias: Add
-    - name: Subtract
-      alias: Subtract
-    - name: Subtract
-      alias: Subtract
-exports: []
-mainId: Fibonacci
-parts:
-  Fibonacci:
-    id: Fibonacci
-    inputs:
-      n:
-        mode: required
-        type: any
-    outputs:
-      result:
-        type: any
-    inputsPosition:
-      n:
-        x: -143.86010604896114
-        y: -152.48753764734144
-    outputsPosition:
-      result:
-        x: -135.1549331794976
-        y: 533.2568633719678
-    completionOutputs:
-      - result
-    instances:
-      - pos:
-          x: -179.03373046875004
-          y: -98.1199594116211
-        id: Equals-364
-        inputConfig:
-          compare:
-            mode: static
-            value: 0
-        partId: Equals
-      - pos:
-          x: -75.12186523437501
-          y: 22.182240905761716
-        id: Equals-364-d95
-        inputConfig:
-          compare:
-            mode: static
-            value: 1
-        partId: Equals
-      - pos:
-          x: 29.675939941406256
-          y: 398.8068879699707
-        id: Add-539
-        inputConfig: {}
-        partId: Add
-      - pos:
-          x: -34.96145751953125
-          y: 160.11758544921872
-        id: Subtract-210
-        inputConfig:
-          n2:
-            mode: static
-            value: 1
-        partId: Subtract
-      - pos:
-          x: 109.47726318359378
-          y: 158.06905105590818
-        id: Subtract-210-d215
-        inputConfig:
-          n2:
-            mode: static
-            value: 2
-        visibleInputs:
-          - n1
-          - n2
-        partId: Subtract
-      - pos:
-          x: -49.93635498046875
-          y: 267.77435180664065
-        id: Fibonacci-261
-        inputConfig: {}
-        partId: Fibonacci
-      - pos:
-          x: 97.69393920898438
-          y: 268.03501136779784
-        id: Fibonacci-379
-        inputConfig: {}
-        partId: Fibonacci
-    connections:
-      - from:
-          insId: __this
-          pinId: n
-        to:
-          insId: Equals-364
-          pinId: val
-      - from:
-          insId: Equals-364
-          pinId: else
-        to:
-          insId: Equals-364-d95
-          pinId: val
-      - from:
-          insId: Equals-364-d95
-          pinId: r
-        to:
-          insId: __this
-          pinId: result
-      - from:
-          insId: Equals-364
-          pinId: r
-        to:
-          insId: __this
-          pinId: result
-      - from:
-          insId: Add-539
-          pinId: r
-        to:
-          insId: __this
-          pinId: result
-      - from:
-          insId: Equals-364-d95
-          pinId: else
-        to:
-          insId: Subtract-210
-          pinId: n1
-      - from:
-          insId: Equals-364-d95
-          pinId: else
-        to:
-          insId: Subtract-210-d215
-          pinId: n1
-      - from:
-          insId: Subtract-210
-          pinId: r
-        to:
-          insId: Fibonacci-261
-          pinId: n
-      - from:
-          insId: Fibonacci-261
-          pinId: result
-        to:
-          insId: Add-539
-          pinId: n1
-      - from:
-          insId: Subtract-210-d215
-          pinId: r
-        to:
-          insId: Fibonacci-379
-          pinId: n
-      - from:
-          insId: Fibonacci-379
-          pinId: result
-        to:
-          insId: Add-539
-          pinId: n2
+  - Equals
+  - Subtract
+  - Add
+part:
+  id: Fibonacci
+  inputs:
+    n:
+      mode: required
+      type: any
+  outputs:
+    result:
+      type: any
+  inputsPosition:
+    n:
+      x: -143.86010604896114
+      y: -152.48753764734144
+  outputsPosition:
+    result:
+      x: -135.1549331794976
+      y: 533.2568633719678
+  completionOutputs:
+    - result
+  instances:
+    - pos:
+        x: -179.03373046875004
+        y: -98.1199594116211
+      id: Equals-364
+      inputConfig:
+        compare:
+          mode: static
+          value: 0
+      partId: Equals
+    - pos:
+        x: -75.12186523437501
+        y: 22.182240905761716
+      id: Equals-364-d95
+      inputConfig:
+        compare:
+          mode: static
+          value: 1
+      partId: Equals
+    - pos:
+        x: 29.675939941406256
+        y: 398.8068879699707
+      id: Add-539
+      inputConfig: {}
+      partId: Add
+    - pos:
+        x: -34.96145751953125
+        y: 160.11758544921872
+      id: Subtract-210
+      inputConfig:
+        n2:
+          mode: static
+          value: 1
+      partId: Subtract
+    - pos:
+        x: 109.47726318359378
+        y: 158.06905105590818
+      id: Subtract-210-d215
+      inputConfig:
+        n2:
+          mode: static
+          value: 2
+      visibleInputs:
+        - n1
+        - n2
+      partId: Subtract
+    - pos:
+        x: -49.93635498046875
+        y: 267.77435180664065
+      id: Fibonacci-261
+      inputConfig: {}
+      partId: Fibonacci
+    - pos:
+        x: 97.69393920898438
+        y: 268.03501136779784
+      id: Fibonacci-379
+      inputConfig: {}
+      partId: Fibonacci
+  connections:
+    - from:
+        insId: __this
+        pinId: n
+      to:
+        insId: Equals-364
+        pinId: val
+    - from:
+        insId: Equals-364
+        pinId: else
+      to:
+        insId: Equals-364-d95
+        pinId: val
+    - from:
+        insId: Equals-364-d95
+        pinId: r
+      to:
+        insId: __this
+        pinId: result
+    - from:
+        insId: Equals-364
+        pinId: r
+      to:
+        insId: __this
+        pinId: result
+    - from:
+        insId: Add-539
+        pinId: r
+      to:
+        insId: __this
+        pinId: result
+    - from:
+        insId: Equals-364-d95
+        pinId: else
+      to:
+        insId: Subtract-210
+        pinId: n1
+    - from:
+        insId: Equals-364-d95
+        pinId: else
+      to:
+        insId: Subtract-210-d215
+        pinId: n1
+    - from:
+        insId: Subtract-210
+        pinId: r
+      to:
+        insId: Fibonacci-261
+        pinId: n
+    - from:
+        insId: Fibonacci-261
+        pinId: result
+      to:
+        insId: Add-539
+        pinId: n1
+    - from:
+        insId: Subtract-210-d215
+        pinId: r
+      to:
+        insId: Fibonacci-379
+        pinId: n
+    - from:
+        insId: Fibonacci-379
+        pinId: result
+      to:
+        insId: Add-539
+        pinId: n2

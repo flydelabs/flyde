@@ -1,0 +1,43 @@
+imports:
+  "@acme/add1-add2":
+  - Add1
+  - Add2
+part:
+  id: Bob
+  inputs:
+    n:
+      type: number
+      mode: required
+  outputs:
+    r:
+      type: number
+  instances:
+    - partId: Add1
+      id: ins1
+      pos: 
+        x: 0
+        y: 0
+    - partId: Add2
+      id: ins2
+      pos: 
+        x: 0
+        y: 0
+  connections:
+    - from:
+        insId: __this
+        pinId: n
+      to:
+        insId: ins1
+        pinId: n
+    - from:
+        insId: ins1
+        pinId: r
+      to:
+        insId: ins2
+        pinId: n
+    - from:
+        insId: ins2
+        pinId: r
+      to:
+        insId: __this
+        pinId: r

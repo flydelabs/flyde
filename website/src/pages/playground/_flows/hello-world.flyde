@@ -1,48 +1,39 @@
-imports:
-  "@flyde/stdlib":
-    - name: Debounce
-      alias: Debounce
-    - name: Throttle
-      alias: Throttle
-exports: []
-mainId: Main
-parts:
-  Main:
-    id: Main
-    inputs: {}
-    outputs:
-      result:
-        type: any
-    outputsPosition:
-      result:
-        x: -164.93927536610897
-        y: 53.76806688560694
-    completionOutputs:
-      - result
-    instances:
-      - pos:
-          x: -205.88
-          y: -170.04
-        id: Inline-value-Hello World-673
-        inputConfig: {}
-        part:
-          id: Inline-value-Hello World
-          inputs: {}
-          outputs:
-            r:
-              type: any
-              delayed: false
-              optional: false
-          fnCode: outputs.r.next(("Hello World"))
-          customViewCode: '"Hello World"'
-          dataBuilderSource: IkhlbGxvIFdvcmxkIg==
-          templateType: value
-          completionOutputs:
-            - r
-    connections:
-      - from:
-          insId: Inline-value-Hello World-673
-          pinId: r
-        to:
-          insId: __this
-          pinId: result
+part:
+  id: Main
+  inputs: {}
+  outputs:
+    result:
+      type: any
+  outputsPosition:
+    result:
+      x: -164.93927536610897
+      y: 53.76806688560694
+  completionOutputs:
+    - result
+  instances:
+    - pos:
+        x: -205.88
+        y: -170.04
+      id: Inline-value-Hello World-673
+      inputConfig: {}
+      part:
+        id: Inline-value-Hello World
+        inputs: {}
+        outputs:
+          r:
+            type: any
+            delayed: false
+            optional: false
+        fnCode: outputs.r.next(("Hello World"))
+        customViewCode: '"Hello World"'
+        dataBuilderSource: IkhlbGxvIFdvcmxkIg==
+        templateType: value
+        completionOutputs:
+          - r
+  connections:
+    - from:
+        insId: Inline-value-Hello World-673
+        pinId: r
+      to:
+        insId: __this
+        pinId: result

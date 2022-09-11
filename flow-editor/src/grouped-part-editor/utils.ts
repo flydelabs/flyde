@@ -20,6 +20,8 @@ import {
   TRIGGER_PIN_ID,
   ERROR_PIN_ID,
   inlinePartInstance,
+  ResolvedFlydeFlowDefinition,
+  getPart,
 } from "@flyde/core";
 import {
   calcPinPosition,
@@ -188,12 +190,11 @@ export const parseInputOutputTypes = (
 export const createNewInlinePartInstance = (
   part: PartDefinition,
   offset: number = -1 * PART_HEIGHT * 1.5,
-  lastMousePos: Pos,
-  repo: PartDefRepo
+  lastMousePos: Pos
 ): PartInstance => {
 
   const ins = inlinePartInstance(`${part.id}-${randomInt(999)}`, part as any, {}, { x: 0, y: 0 });
-  const width = calcPartWidth(ins, part, false, {}, {}, repo);
+  const width = calcPartWidth(ins, part);
 
   const { x, y } = lastMousePos;
   const pos = {
@@ -210,14 +211,14 @@ export const createNewPartInstance = (
   lastMousePos: Pos,
   repo: PartDefRepo
 ): PartInstance => {
-  const part = repo[partId];
+  const part = getPartDef(partId, repo);
 
   if (!part) {
     throw new Error(`${partId} part not found in repo`);
   }
 
   const ins = partInstance(`${part.id}-${randomInt(999)}`, part.id, {}, { x: 0, y: 0 });
-  const width = calcPartWidth(ins, part, false, {}, {}, repo);
+  const width = calcPartWidth(ins, part);
 
   const { x, y } = lastMousePos;
   const pos = {
@@ -345,7 +346,7 @@ const calcPoints = (w: number, h: number, pos: Pos, tag: string): Points => {
 
 export const calcPartsPositions = (part: GroupedPart, repo: PartDefRepo): Points[] => {
   const insParts = part.instances.map((curr) => {
-    const w = calcPartWidth(curr, getPartDef(curr, repo), false, {}, {}, repo);
+    const w = calcPartWidth(curr, getPartDef(curr, repo));
     const h = PART_HEIGHT;
     return calcPoints(w, h, curr.pos, curr.id);
   });
@@ -492,10 +493,6 @@ export const getInstancesInRect = (
       const w = calcPartWidth(
         ins,
         getPartDef(ins, repo),
-        false,
-        instancesConnectToPins.get(ins.id) || {},
-        {},
-        repo
       );
       const rec2 = { ...pos, w, h: PART_HEIGHT };
       return intersectRect(rect, rec2) || intersectRect(rec2, rect);

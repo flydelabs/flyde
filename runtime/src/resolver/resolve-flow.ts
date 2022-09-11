@@ -44,7 +44,13 @@ const _resolveFlow = (
 
   const imports = flow.imports;
 
-  const inverseImports = _.invert(imports);
+  const inverseImports = Object.entries(imports)
+    .reduce((acc, curr) => {
+      const [module, parts] = curr;
+      
+      const obj = parts.reduce((acc, curr) => ({...acc, [curr as string]: module}), {});
+      return {...acc, ...obj};
+    }, {});  
 
   const getLocalOrExternalPaths = (importPath: string) => {
     const fullImportPath = join(fullFlowPath, "..", importPath);
@@ -59,9 +65,15 @@ const _resolveFlow = (
   if (isGroupedPart(part)) {
     const refPartIds = _.uniq(part.instances.filter(isRefPartInstance).map((ins) => ins.partId));
 
-    let imported: ResolvedFlydeFlow['imports'] = {};
+    let deps: ResolvedFlydeFlow['dependencies'] = {};
 
     for (const refPartId of refPartIds) {
+
+      if (refPartId === part.id) {
+        // recursive call
+        continue;
+      }
+
       const importPath = inverseImports[refPartId];
       if (!importPath) {
         throw new Error(
@@ -74,8 +86,13 @@ const _resolveFlow = (
       const { flow, path } = paths
         .map((path) => {
           const contents = readFileSync(path, "utf-8");
-          return { flow: deserializeFlow(contents, path), path };
+          try {
+            return { flow: deserializeFlow(contents, path), path };
+          } catch (e) {
+            return null
+          }
         })
+        .filter(obj => !!obj)
         .find((obj) => obj.flow.part.id === refPartId);
 
       if (!flow) {
@@ -88,9 +105,9 @@ const _resolveFlow = (
       
       const namespacedImport = namespaceFlowImports(resolvedImport, `${refPartId}__`);
 
-      imported = {
-        ...imported,
-        ...namespacedImport.imports,
+      deps = {
+        ...deps,
+        ...namespacedImport.dependencies,
         [refPartId]: {
           ...namespacedImport.main, importPath: path
         }
@@ -101,7 +118,7 @@ const _resolveFlow = (
         TODO - check if this is really required
       */
 
-      imported = _.mapValues(imported, (val: ImportedPart, key) => {
+      deps = _.mapValues(deps, (val: ImportedPart, key) => {
         const part = val as NativePart;
         if (typeof part.fn === 'function' && mode === 'bundle') {
           const flowFolder = dirname(fullFlowPath);
@@ -113,9 +130,9 @@ const _resolveFlow = (
       });
     }
 
-    return { main: part, imports: imported };
+    return { main: part, dependencies: deps };
   } else {
-    return { main: part, imports: {} };
+    return { main: part, dependencies: {} };
   }
 };
 

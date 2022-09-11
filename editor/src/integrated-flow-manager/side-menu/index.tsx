@@ -2,13 +2,11 @@ import {
   CustomPart,
   CustomPartRepo,
   FlydeFlow,
-  isGroupedPart,
-  isRefPartInstance,
   PartDefinition,
   PartDefRepo,
 } from "@flyde/core";
 import classNames from "classnames";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback } from "react";
 import { Resizable, ResizeCallbackData } from "react-resizable";
 
 import "react-resizable/css/styles.css";
@@ -17,33 +15,24 @@ import { MenuAddSection } from "./add-section";
 import { folderIcon, menuAddIcon } from "./icons";
 
 import "./style.scss";
-import { values } from "@flyde/flow-editor";
 // import { TriggersSection } from "./triggers-section";
 // import { DeploymentsSection } from "./deployments-section";
 import { EditorDebuggerClient } from "@flyde/remote-debugger";
-import { Loader } from "@flyde/flow-editor";
-import { buildNavigatorData } from "./build-navigator-data";
-import { toastMsg } from "@flyde/flow-editor";
-import { PartsRelationshipData } from "@flyde/flow-editor"; // ../../../common/lib/part-relationship-data
+// import { buildNavigatorData } from "./build-navigator-data";
 import { FoldersSection } from "./FoldersSection";
-import { FlydeFlowChangeType, functionalChange } from "@flyde/flow-editor"; // ../../../common/flow-editor/flyde-flow-change-type
-import produce from "immer";
-import { NavigatorData } from "./FoldersSection/FlowPartsSection";
+import { FlydeFlowChangeType } from "@flyde/flow-editor"; // ../../../common/flow-editor/flyde-flow-change-type
 
 export interface IntegratedFlowSideMenuProps {
   repo: PartDefRepo;
 
   flow: FlydeFlow;
   flowPath: string;
-  partsRelationshipData: PartsRelationshipData;
-
-  editedPart: CustomPart;
 
   onAdd: (part: PartDefinition) => void;
-  onEditPart: (part: CustomPart) => void;
-  onAddPart: (part: CustomPart) => void;
-  onDeletePart: (part: CustomPart) => void;
-  onRenamePart: (part: CustomPart) => void;
+  // onEditPart: (part: CustomPart) => void;
+  // onAddPart: (part: CustomPart) => void;
+  // onDeletePart: (part: CustomPart) => void;
+  // onRenamePart: (part: CustomPart) => void;
 
   onChangeFlow: (flow: FlydeFlow, type: FlydeFlowChangeType) => void;
 
@@ -56,7 +45,7 @@ export interface IntegratedFlowSideMenuProps {
 
   // onChangeDeployments: (data: RunningDeploymentData[]) => void;
   editorDebugger?: EditorDebuggerClient;
-  resolvedParts: CustomPartRepo;
+  resolvedParts: PartDefRepo;
 }
 
 interface SideMenuBtnProps {
@@ -85,13 +74,7 @@ export const IntegratedFlowSideMenu: React.FC<IntegratedFlowSideMenuProps> = (pr
   const {
     selectedMenuItem: selectedItem,
     setSelectedMenuItem: setSelectedItem,
-    flow,
-    onEditPart: onEdit,
-    onRenamePart,
-    onDeletePart,
-    onAddPart,
     onFocusInstance,
-    onChangeFlow,
   } = props;
 
   const onSelect = (item: string) => {
@@ -107,108 +90,6 @@ export const IntegratedFlowSideMenu: React.FC<IntegratedFlowSideMenuProps> = (pr
     setWidth(data.size.width);
   };
 
-  const [navigatorData, setNavigatorData] = useState<NavigatorData>();
-
-  useEffect(() => {
-    const usage = values(flow.parts).reduce<Map<string, string[]>>((acc, currPart) => {
-      if (isGroupedPart(currPart)) {
-        currPart.instances.forEach((ins) => {
-          if (isRefPartInstance(ins) && flow.parts[ins.partId]) {
-            const curr = acc.get(ins.partId) || [];
-            if (!curr.includes(currPart.id) && currPart.id !== ins.partId) {
-              acc.set(ins.partId, [...curr, currPart.id]);
-            }
-          }
-        });
-      }
-      return acc;
-    }, new Map());
-
-    const navData = buildNavigatorData(flow, usage, props.resolvedParts);
-    setNavigatorData(navData);
-  }, [flow, props.resolvedParts]);
-
-  const onNavigatorEditPart = React.useCallback(
-    (partId) => {
-      const part = flow.parts[partId];
-      if (!part) {
-        throw new Error(`editing inexisting part ${partId}`);
-      }
-      onEdit(part);
-    },
-    [onEdit, flow]
-  );
-
-  const onNavigatorRenamePart = React.useCallback(
-    (partId) => {
-      const part = flow.parts[partId];
-      if (!part) {
-        throw new Error(`editing inexisting part ${partId}`);
-      }
-      onRenamePart(part);
-    },
-    [onRenamePart, flow]
-  );
-
-  const onNavigatorDeletePart = React.useCallback(
-    (partId) => {
-      const part = flow.parts[partId];
-      if (!part) {
-        throw new Error(`deleting inexisting part ${partId}`);
-      }
-      onDeletePart(part);
-    },
-    [onDeletePart, flow]
-  );
-
-  const onClonePart = React.useCallback(
-    (partId: string) => {
-      const part = flow.parts[partId];
-      if (!part) {
-        throw new Error(`cloning inexisting part ${partId}`);
-      }
-      const newName = prompt("Id?", part.id) || "";
-
-      if (!newName) {
-        return;
-      }
-
-      if (flow.parts[newName]) {
-        toastMsg("Name exists");
-        return;
-      }
-      return onAddPart({
-        ...part,
-        id: newName,
-      });
-    },
-    [onAddPart, flow]
-  );
-
-  const onChangeMainPartId = useCallback(
-    (partId) => {
-      onChangeFlow(
-        produce(flow, (draft) => {
-          draft.mainId = partId;
-        }),
-        functionalChange("change main id")
-      );
-    },
-    [flow, onChangeFlow]
-  );
-
-  const onChangeExported = useCallback(
-    (exported: string[]) => {
-      onChangeFlow(
-        produce(flow, (draft) => {
-          draft.exports = exported;
-        }),
-        functionalChange("change main id")
-      );
-    },
-    [flow, onChangeFlow]
-  );
-
   const renderSection = () => {
     switch (selectedItem) {
       case undefined:
@@ -222,25 +103,14 @@ export const IntegratedFlowSideMenu: React.FC<IntegratedFlowSideMenuProps> = (pr
         );
       }
       case "folder": {
-        if (!navigatorData) {
-          return <Loader />;
-        }
         return (
           <div className="menu-section folder" style={{ width: `${width}px` }}>
             <div className="title">Files & Flows</div>
             <FoldersSection
               currentFile={props.flowPath}
-              relationshipData={props.partsRelationshipData}
-              editedPart={props.editedPart}
-              data={navigatorData}
-              onEditPart={onNavigatorEditPart}
+              editedPart={props.flow.part}
               onFocusInstance={onFocusInstance}
-              onRenamePart={onNavigatorRenamePart}
-              onDeletePart={onNavigatorDeletePart}
-              onClonePart={onClonePart}
               flow={props.flow}
-              onChangeMainPartId={onChangeMainPartId}
-              onChangeExported={onChangeExported}
             />
           </div>
         );

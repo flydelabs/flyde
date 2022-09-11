@@ -277,11 +277,7 @@ export const InstanceView: React.SFC<InstanceViewProps> = function InstanceViewI
 
   const content = calcPartContent(
     instance,
-    part,
-    selected || false,
-    connectionsPerInput,
-    connectionsPerOutput,
-    partDefRepo
+    part
   );
 
   const getStaticValue = (k: string) => {
