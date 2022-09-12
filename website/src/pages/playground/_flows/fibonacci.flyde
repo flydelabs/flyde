@@ -1,27 +1,9 @@
 imports:
   "@flyde/stdlib":
-  - Equals
-  - Subtract
-  - Add
+    - Equals
+    - Subtract
+    - Add
 part:
-  id: Fibonacci
-  inputs:
-    n:
-      mode: required
-      type: any
-  outputs:
-    result:
-      type: any
-  inputsPosition:
-    n:
-      x: -143.86010604896114
-      y: -152.48753764734144
-  outputsPosition:
-    result:
-      x: -135.1549331794976
-      y: 533.2568633719678
-  completionOutputs:
-    - result
   instances:
     - pos:
         x: -179.03373046875004
@@ -147,3 +129,21 @@ part:
       to:
         insId: Add-539
         pinId: n2
+  id: Fibonacci
+  inputs:
+    n:
+      mode: required
+      type: any
+  outputs:
+    result:
+      type: any
+  inputsPosition:
+    n:
+      x: -143.86010604896114
+      y: -152.48753764734144
+  outputsPosition:
+    result:
+      x: -135.1549331794976
+      y: 533.2568633719678
+  completionOutputs:
+    - result

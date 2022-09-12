@@ -12,6 +12,7 @@ import "./style.scss";
 import helloWorldExample from "./_flows/hello-world.flyde";
 import { OutputLogs } from "./_OutputLogs/OutputLogs";
 
+
 const META_DATA = {
   title: "Hello World",
   description: `The mandatory "Hello World" example. Click on the blue button bellow to run this flow.\n This demonstrates one of the most powerful features of Flyde - the ability to view it running live!`,
@@ -28,12 +29,8 @@ export default function Home(): JSX.Element {
   });
 
   const [flowProps, setFlowProps] = useState<PlaygroundTemplateProps["flowProps"]>({
-    flow: {
-      imports: {},
-      exports: [],
-      parts: helloWorldExample,
-    },
-    resolvedFlow: helloWorldExample,
+    flow: helloWorldExample.flow,
+    resolvedFlow: helloWorldExample.resolvedFlow,
     inputs: inputs.current,
     output: result.current,
   });

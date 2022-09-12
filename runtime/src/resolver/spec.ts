@@ -204,7 +204,7 @@ describe("resolver", () => {
     assert.equal(val, 2 + 1 + 2);
   }, 20);
 
-  it('properly resolved recursions', async () => {
+  it('properly resolves recursions', async () => {
     const path = getFixturePath("recursive.flyde");
 
     assert.doesNotThrow(() => {

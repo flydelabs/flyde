@@ -37,13 +37,8 @@ export default function ReactCounterExample(): JSX.Element {
   const inputs = useRef({ n: dynamicPartInput() });
 
   const [flowProps, setFlowProps] = useState<PlaygroundTemplateProps["flowProps"]>({
-    flow: {
-      imports: {},
-      exports: [],
-      parts: fiboFlow,
-      mainId: "Fibonacci",
-    },
-    resolvedFlow: fiboFlow,
+    flow: fiboFlow.flow,
+    resolvedFlow: fiboFlow.resolvedFlow,
     inputs: inputs.current,
     output: result.current,
   });

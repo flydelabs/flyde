@@ -1,15 +1,5 @@
+imports: {}
 part:
-  id: Main
-  inputs: {}
-  outputs:
-    result:
-      type: any
-  outputsPosition:
-    result:
-      x: -164.93927536610897
-      y: 53.76806688560694
-  completionOutputs:
-    - result
   instances:
     - pos:
         x: -205.88
@@ -37,3 +27,14 @@ part:
       to:
         insId: __this
         pinId: result
+  id: Main
+  inputs: {}
+  outputs:
+    result:
+      type: any
+  outputsPosition:
+    result:
+      x: -164.93927536610897
+      y: 53.76806688560694
+  completionOutputs:
+    - result

@@ -23,6 +23,8 @@ import {
   PartInputs,
   PartOutput,
   PartRepo,
+  ResolvedFlydeFlow,
+  ResolvedFlydeRuntimeFlow,
 } from "@flyde/core";
 import { defaultViewPort } from "@site/../flow-editor/dist/grouped-part-editor";
 import { createHistoryPlayer } from "../_lib/createHistoryPlayer";
@@ -33,12 +35,7 @@ import "./PlaygroundTemplate.scss";
 import "@flyde/flow-editor/src/index.scss";
 
 import { Resizable } from 'react-resizable';
-
-import BrowserOnly from "@docusaurus/BrowserOnly";
 import produce from "immer";
-import { finishDraft } from "immer";
-
-const deps = require("../_flows/bundle-deps.json");
 
 (global as any).vm2 = fakeVm;
 
@@ -54,7 +51,7 @@ export interface PlaygroundTemplateProps {
   flowProps: {
     inputs: Record<string, DynamicPartInput>;
     flow: FlydeFlow;
-    resolvedFlow: PartDefRepo;
+    resolvedFlow: ResolvedFlydeRuntimeFlow;
     output: PartOutput;
   };
   prefixComponent?: JSX.Element;
@@ -65,24 +62,23 @@ export interface PlaygroundTemplateProps {
 }
 
 export type PlaygroundFlowDto = {
-  parts: PartRepo;
+  flow: ResolvedFlydeRuntimeFlow;
   output: PartOutput;
   inputs: PartInputs;
   onError: any;
-  mainId: string;
   debugDelay?: number;
   player: RuntimePlayer
 };
-const runFlow = ({ parts, output, inputs, onError, mainId, debugDelay, player }: PlaygroundFlowDto) => {
+const runFlow = ({ flow, output, inputs, onError, debugDelay, player }: PlaygroundFlowDto) => {
   const localDebugger = createRuntimeClientDebugger(player, historyPlayer);
 
   localDebugger.debugDelay = debugDelay;
 
   return execute({
-    part: parts[mainId],
+    part: flow.main,
     inputs: inputs,
     outputs: { result: output },
-    partsRepo: { ...deps, ...parts },
+    partsRepo: {...flow.dependencies, [flow.main.id]: flow.main},
     _debugger: localDebugger,
     onBubbleError: (e) => {
       onError(e);
@@ -94,8 +90,6 @@ const runFlow = ({ parts, output, inputs, onError, mainId, debugDelay, player }:
 };
 
 export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (props) => {
-  const { siteConfig } = useDocusaurusContext();
-
   const { flow, inputs, output } = props.flowProps;
 
   const [childrenWidth, setChildrenWidth] = useState(props.initWidth || 500);
@@ -104,7 +98,9 @@ export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (props) => 
 
   const [outputReceived, setOutputReceived] = useState(false);
 
-  const runtimePlayerRef = useRef(createRuntimePlayer(props.flowProps.flow.mainId));
+  const runtimePlayerRef = useRef(createRuntimePlayer(props.flowProps.flow.part.id));
+
+  const [resolvedFlow, setResolvedFlow] = useState<ResolvedFlydeRuntimeFlow>(props.flowProps.resolvedFlow);
 
   const [editorState, setFlowEditorState] = useState<FlowEditorState>({
     flow,
@@ -115,19 +111,20 @@ export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (props) => 
       },
       lastMousePos: { x: 0, y: 0 },
       selected: [],
-    },
-    currentPartId: flow.mainId || keys(flow.parts)[0],
+    }
   });
 
-  useEffect(() => {
-    setFlowEditorState((state) => ({ ...state, flow }));
-  }, [flow]);
+  // useEffect(() => {
+  //   setResolvedFlow((f) => ({...f, main: flow.part}))
+  // }, [flow]);
 
-  const [resolvedDeps, setResolvedDeps] = useState({ ...editorState.flow.parts, ...deps });
+  useEffect(() => {
+    setResolvedFlow((f) => ({...f, main: editorState.flow.part}))
+  }, [editorState.flow.part])
 
   const flowEditorProps: FlydeFlowEditorProps = {
     state: editorState,
-    resolvedRepoWithDeps: resolvedDeps,
+    resolvedRepoWithDeps: resolvedFlow,
     onChangeState: setFlowEditorState,
     onInspectPin: noop,
     onRequestHistory: historyPlayer.requestHistory,
@@ -140,23 +137,18 @@ export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (props) => 
   }, []);
 
   useEffect(() => {
-    setResolvedDeps({ ...deps, ...editorState.flow.parts });
-  }, [editorState.flow.parts]);
-
-  useEffect(() => {
     const clean = runFlow({
-      parts: resolvedDeps,
+      flow: resolvedFlow,
       output,
       inputs,
       onError: noop,
-      mainId: flow.mainId || "Main",
       debugDelay,
       player: runtimePlayerRef.current
     });
     return () => {
       clean();
     };
-  }, [debugDelay, resolvedDeps]);
+  }, [debugDelay, resolvedFlow]);
 
   const onResizeChildren = useCallback((_, {size}) => {
     setChildrenWidth(size.width);
@@ -165,7 +157,7 @@ export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (props) => 
       const container = document.querySelector('.flow-container'); // yack
       const vpSize = container ? container.getBoundingClientRect() : {width: 500, height: 500};
       return produce(state, draft => {
-        draft.boardData.viewPort = fitViewPortToPart(draft.flow.parts[draft.currentPartId] as any, draft.flow.parts, vpSize);
+        draft.boardData.viewPort = fitViewPortToPart(draft.flow.part as any, resolvedFlow.dependencies, vpSize);
       })
     })
   }, []);

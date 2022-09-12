@@ -8,6 +8,7 @@ import {
   dynamicOutput,
   dynamicPartInput,
   isGroupedPart,
+  isRefPartInstance,
   PartDefRepo,
   staticInputPinConfig,
 } from "@site/../core/dist";
@@ -43,13 +44,8 @@ export default function DebounceThrottlingExample(): JSX.Element {
   const [thr, setThr] = useState(4000);
 
   const [flowProps, setFlowProps] = useState<PlaygroundTemplateProps["flowProps"]>({
-    flow: {
-      imports: {},
-      exports: [],
-      parts: example,
-      mainId: "Main",
-    },
-    resolvedFlow: example,
+    flow: example.flow,
+    resolvedFlow: example.resolvedFlow,
     inputs: inputs.current,
     output: result.current,
   });
@@ -57,15 +53,13 @@ export default function DebounceThrottlingExample(): JSX.Element {
   useEffect(() => {
     setFlowProps(
       produce(flowProps, (draft) => {
-        for (const partId in draft.flow.parts) {
-          const part = draft.flow.parts[partId];
+          const part = draft.flow.part;
           if (isGroupedPart(part)) {
-            const debIns = part.instances.find((p) => p.partId === "Debounce");
+            const debIns = part.instances.find((ins) => isRefPartInstance(ins) && ins.partId === "Debounce");
             debIns.inputConfig.ms = staticInputPinConfig(deb);
-            const thrIns = part.instances.find((p) => p.partId === "Throttle");
+            const thrIns = part.instances.find((ins) => isRefPartInstance(ins) && ins.partId === "Throttle");
             thrIns.inputConfig.threshold = staticInputPinConfig(thr);
           }
-        }
       })
     );
   }, [deb, thr]);

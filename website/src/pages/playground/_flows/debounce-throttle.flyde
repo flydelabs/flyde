@@ -3,34 +3,6 @@ imports:
     - Debounce
     - Throttle
 part:
-  id: Main
-  inputs:
-    value:
-      mode: required
-      type: any
-  outputs:
-    result:
-      type: any
-  inputsPosition:
-    value:
-      x: 568.0241762040988
-      y: 208.94923588243964
-    ggg:
-      x: 8.112505244875974
-      y: 489.6946435546802
-    rr:
-      x: 319.4
-      y: 268.6
-  outputsPosition:
-    result:
-      x: 533.2714674326223
-      y: 848.1304470496965
-    bb:
-      x: -119.26
-      y: 783.62
-  completionOutputs: []
-  reactiveInputs:
-    - value
   instances:
     - pos:
         x: 696.9777572631835
@@ -44,8 +16,8 @@ part:
         - i
       partId: Debounce
     - pos:
-        x: 278.22889434814454
-        y: 357.62009063720706
+        x: 272.8030520629883
+        y: 345.68007293701174
       id: Throttle-652
       inputConfig:
         threshold:
@@ -164,3 +136,31 @@ part:
       to:
         insId: __this
         pinId: result
+  id: Main
+  inputs:
+    value:
+      mode: required
+      type: any
+  outputs:
+    result:
+      type: any
+  inputsPosition:
+    value:
+      x: 568.0241762040988
+      y: 208.94923588243964
+    ggg:
+      x: 8.112505244875974
+      y: 489.6946435546802
+    rr:
+      x: 319.4
+      y: 268.6
+  outputsPosition:
+    result:
+      x: 533.2714674326223
+      y: 848.1304470496965
+    bb:
+      x: -119.26
+      y: 783.62
+  completionOutputs: []
+  reactiveInputs:
+    - value

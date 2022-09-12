@@ -8,7 +8,7 @@ declare module '@flyde/runtime' {
 
     // generated flow typings
     /**
-    * @deprecated Path "parts/Accumulate2.flyde"" is corrupt. Please fix it.    */
+    * @deprecated Path "parts/Accumulate2.flyde"" is corrupt. Please fix it."mainId" is missing.    */
     export function executeFlow(path: 'Accumulate2.flyde', args: never): never;
     /**
     * @deprecated Path "parts/AccumulateUntilTimeVis.flyde"" is corrupt. Please fix it.    */
@@ -71,7 +71,7 @@ declare module '@flyde/runtime' {
     * @deprecated Path "parts/PropertyEquals.flyde"" is corrupt. Please fix it.    */
     export function executeFlow(path: 'PropertyEquals.flyde', args: never): never;
     /**
-    * @deprecated Path "parts/SpreadList3.flyde"" is corrupt. Please fix it.    */
+    * @deprecated Path "parts/SpreadList3.flyde"" is corrupt. Please fix it."mainId" is missing.    */
     export function executeFlow(path: 'SpreadList3.flyde', args: never): never;
     /**
     * @deprecated Path "parts/UI tester.flyde"" is corrupt. Please fix it.    */

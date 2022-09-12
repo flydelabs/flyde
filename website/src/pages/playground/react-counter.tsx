@@ -24,8 +24,6 @@ const outputWithSub = (sub: any) => {
   return o;
 };
 
-console.log({counterFlow})
-
 export default function ReactCounterExample(): JSX.Element {
   const [element, setElement] = useState<JSX.Element>(<div>Loading</div>);
 
@@ -34,12 +32,8 @@ export default function ReactCounterExample(): JSX.Element {
   const inputs = useRef({});
 
   const [flowProps, setFlowProps] = useState<PlaygroundTemplateProps["flowProps"]>({
-    flow: {
-      imports: {},
-      exports: [],
-      parts: counterFlow,
-    },
-    resolvedFlow: counterFlow,
+    flow: counterFlow.flow,
+    resolvedFlow: counterFlow.resolvedFlow,
     inputs: inputs.current,
     output: result.current,
   });

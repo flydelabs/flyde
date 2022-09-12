@@ -1,9 +1,16 @@
-const { resolveFlow } = require("./dist");
+const { readFileSync } = require("fs");
+const { resolveFlow, deserializeFlow } = require("./dist");
 
 module.exports = async function loader() {
-  const data = await resolveFlow(this.resourcePath, "bundle");
 
-  const rawData = JSON.stringify(data)
+  const contents = readFileSync(this.resourcePath, 'utf-8');
+  const resolved = await resolveFlow(this.resourcePath, "bundle");
+  const raw = await deserializeFlow(contents, this.resourcePath);
+
+  const output = {resolvedFlow: resolved, flow: raw};
+
+  // hack to transform serialized functions into webpack requires. TODO - find a more elegant way
+  const transformedOutput = JSON.stringify(output)
     .replace(/"__BUNDLE\:\[\[(.+?)\]\]"/g, (_, p1) => {
       return `require('./${p1}')`;
     })
@@ -11,5 +18,6 @@ module.exports = async function loader() {
       return `require('./${p1}').fn`;
     });
 
-  return `export default ${rawData}`;
+
+  return `export default ${transformedOutput}`;
 };

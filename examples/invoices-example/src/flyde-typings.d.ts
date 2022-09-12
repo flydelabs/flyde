@@ -7,8 +7,12 @@
 declare module '@flyde/runtime' {
 
     // generated flow typings
-    export function executeFlow(path: 'hello-world.flyde', args: {}): Promise<any>;
-    export function executeFlow(path: 'loan-app.flyde', args: {formData: any}): Promise<any>;
+    /**
+    * @deprecated Path "src/hello-world.flyde"" is corrupt. Please fix it.    */
+    export function executeFlow(path: 'hello-world.flyde', args: never): never;
+    /**
+    * @deprecated Path "src/loan-app.flyde"" is corrupt. Please fix it.    */
+    export function executeFlow(path: 'loan-app.flyde', args: never): never;
     export function executeFlow(path: 'loan-app2.flyde', args: {a: any, b: any}): Promise<any>;
     export function executeFlow(path: 'new-flow.flyde', args: {formData: any}): Promise<any>;
     export function executeFlow(path: 'shared.flyde', args: {}): Promise<any>;

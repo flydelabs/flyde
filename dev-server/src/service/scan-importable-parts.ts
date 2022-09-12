@@ -2,7 +2,7 @@ import { dirname, join, relative } from "path";
 import { deserializeFlow, resolveFlow, resolveImportablePaths } from "@flyde/runtime";
 
 import * as pkgUp from "pkg-up";
-import { PartDefinition, PartDefRepo } from "@flyde/core";
+import { CustomPart, PartDefinition, PartDefRepo } from "@flyde/core";
 import { scanFolderStructure } from "./scan-folders-structure";
 import { FlydeFile } from "../fs-helper/shared";
 import { readFileSync } from "fs";
@@ -62,18 +62,12 @@ export const scanImportableParts = async (rootPath: string, filename: string) =>
   const localParts = localFiles
     .filter((file) => !file.relativePath.endsWith(filename))
     .reduce<Record<string, PartDefRepo>>((acc, file) => {
-      const flowContents = readFileSync(file.fullPath, "utf8");
-      const { exports } = deserializeFlow(flowContents, file.fullPath);
-
-      const resolvedFlow = resolveFlow(file.fullPath, "definition");
+      // const flowContents = readFileSync(file.fullPath, "utf8");
+      const {main} = resolveFlow(file.fullPath, "definition");
 
       const relativePath = relative(dirname(fileRoot), file.fullPath);
 
-      const onlyExported = exports.reduce((acc, id) => {
-        return { ...acc, [id]: resolvedFlow[id] };
-      }, {});
-
-      return { ...acc, [relativePath]: onlyExported };
+      return { ...acc, [relativePath]: {[main.id]: main} };
     }, {});
 
   return { ...depsParts, ...localParts };
