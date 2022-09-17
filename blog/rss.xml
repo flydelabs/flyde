@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/">
     <channel>
         <title>Flyde Blog</title>
-        <link>https://your-docusaurus-test-site.com/blog</link>
+        <link>https://www.flyde.dev/blog</link>
         <description>Flyde Blog</description>
         <lastBuildDate>Sat, 20 Aug 2022 00:00:00 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
@@ -10,7 +10,7 @@
         <language>en</language>
         <item>
             <title><![CDATA[Introducing Flyde]]></title>
-            <link>https://your-docusaurus-test-site.com/blog/introducing-flyde</link>
+            <link>https://www.flyde.dev/blog/introducing-flyde</link>
             <guid>introducing-flyde</guid>
             <pubDate>Sat, 20 Aug 2022 00:00:00 GMT</pubDate>
             <description><![CDATA[I'm thrilled to introduce the Alpha version of Flyde!]]></description>
