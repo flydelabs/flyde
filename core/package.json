@@ -1,9 +1,13 @@
 {
   "name": "@flyde/core",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
+  "files": [
+    "dist/",
+    "README.md"
+  ],
   "scripts": {
     "test": "mocha src/spec.ts src/execute/spec.ts src/**/spec.ts --require ts-node/register --require test-setup.js",
     "start": "tsc -p . -w --incremental",

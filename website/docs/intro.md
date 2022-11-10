@@ -2,46 +2,40 @@
 sidebar_position: 1
 ---
 
-# Tutorial Intro
+# Hello World with Flyde
 
-Let's discover **Docusaurus in less than 5 minutes**.
+This tutorial will guide you step-by-step into creating an "Hello world" program using Flyde. For simplicity, we will use vanilla JS. For TS support check any of the official examples.
 
-## Getting Started
 
-Get started by **creating a new site**.
+## What you'll need
 
-Or **try Docusaurus immediately** with **[docusaurus.new](https://docusaurus.new)**.
+- [Node.js](https://nodejs.org/en/download/) (LTS version recommended)
+- [VS Code](https://code.visualstudio.com/)
+- [Flyde for VSCode](https://marketplace.visualstudio.com/items?itemName=flyde.flyde-vscode)
 
-### What you'll need
 
-- [Node.js](https://nodejs.org/en/download/) version 16.14 or above:
-  - When installing Node.js, you are recommended to check all checkboxes related to dependencies.
+## Create a new project
 
-## Generate a new site
+1. Navigate to projects favorite folder
+1. `mkdir hello-flyde && cd hello-flyde` - create a new folder to host our future project
+2. `npm init --yes` - initializes an empty npm project
+3. `npm install @flyde/runtime && @flyde/stdlib` - install the runtime package (runs Flyde projects) and the Flyde stdlib
+4. `code .` to open the project's folder using VSCode. If it's not working, check out [this article](https://code.visualstudio.com/docs/editor/command-line#_code-is-not-recognized-as-an-internal-or-external-command) or just open the folder you've created using VSCode
 
-Generate a new Docusaurus site using the **classic template**.
+## Code-based sanity checkpoint
 
-The classic template will automatically be added to your project after you run the command:
+To ensure everything is installed properly, paste the following into a new file named `index.js`:
+```
+const {loadFlow} = require('@flyde/runtime');
 
-```bash
-npm init docusaurus@latest my-website classic
+console.log('Hello, world!');
 ```
 
-You can type this command into Command Prompt, Powershell, Terminal, or any other integrated terminal of your code editor.
+Then run `node index.js` in the terminal and make sure you're seeing the "Hello, world!" message.
 
-The command also installs all necessary dependencies you need to run Docusaurus.
+### Creating a visual Flyde flow
 
-## Start your site
 
-Run the development server:
 
-```bash
-cd my-website
-npm run start
-```
 
-The `cd` command changes the directory you're working with. In order to work with your newly created Docusaurus site, you'll need to navigate the terminal there.
 
-The `npm run start` command builds your website locally and serves it through a development server, ready for you to view at http://localhost:3000/.
-
-Open `docs/intro.md` (this page) and edit some lines: the site **reloads automatically** and displays your changes.

@@ -29,7 +29,7 @@ In other words, using Flyde flows in your software is permitted without any limi
 
 ### Is this production ready?
 
-No. Not yet. Flyde hasn't been truly battle-tested other than some internal use-cases. However, if interest and usage grows there is absolutely no reason for Flyde to stay an experimental tool. If you're using Flyde for anything that received real traffic please let me know! I'd love to chat.
+No. Not yet. Flyde hasn't been truly battle-tested other than some internal use-cases. However, if interest and usage grows there is absolutely no reason for Flyde to stay an experimental tool. If you're using Flyde for anything that is on production / has real traffic, please let me know!
 
 ### Does it replace normal coding?
 
