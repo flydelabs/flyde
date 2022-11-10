@@ -1,6 +1,6 @@
 {
   "name": "@flyde/dev-server",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -24,9 +24,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@flyde/core": "^0.0.1",
-    "@flyde/resolver": "^0.0.1",
-    "@flyde/runtime": "^0.0.1",
+    "@flyde/core": "^0.1.0",
+    "@flyde/resolver": "^0.1.0",
+    "@flyde/runtime": "^0.1.0",
     "@types/args": "^5.0.0",
     "@types/cuid": "^1.3.0",
     "@types/express": "^4.16.1",
@@ -51,7 +51,7 @@
     "walker": "^1.0.8"
   },
   "devDependencies": {
-    "@flyde/editor": "^0.0.1",
+    "@flyde/editor": "^0.1.0",
     "fs-extra": "^10.1.0",
     "ts-node-dev": "^1.0.0-pre.32"
   },

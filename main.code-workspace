@@ -22,9 +22,6 @@
 			"path": "stdlib"
 		},
 		{
-			"path": "examples/invoices-example"
-		},
-		{
 			"path": "../flyde-vscode"
 		},
 		{
