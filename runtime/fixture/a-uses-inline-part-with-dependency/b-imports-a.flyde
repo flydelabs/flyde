@@ -1,0 +1,32 @@
+imports:
+  "./a.flyde":
+    - Add1Wrapper
+part:
+  id: Add1WrapperTwice
+  inputs:
+    n:
+      type: number
+      mode: required
+  outputs:
+    result:
+      type: number
+  instances:
+  - id: ins1
+    partId: Add1Wrapper
+    inputConfig: {}
+    pos:
+      x: 0
+      y: 0
+  connections:
+    - from:
+        insId: __this
+        pinId: n
+      to:
+        insId: ins1
+        pinId: n
+    - from:
+        insId: ins1
+        pinId: result
+      to:
+        insId: __this
+        pinId: result

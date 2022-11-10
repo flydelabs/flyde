@@ -1,0 +1,114 @@
+
+  .connection:hover polyline {
+    stroke-width: 3;
+  }
+
+  @keyframes dashdash {
+    from {
+      stroke-dashoffset: 0;
+    }
+
+    to {
+      stroke-dashoffset: -16;
+    }
+  }
+
+  .connection polyline,
+  path.connection {
+    fill: none;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke: #6c6c6c;
+    // stroke-dasharray: 8;
+    // animation: dashdash 1s linear infinite;
+
+    cursor: pointer;
+
+    &.hidden{
+      stroke: transparent;
+      &.parent-selected {
+        stroke-dasharray: 8;
+        stroke: #6c6c6c;
+      }
+    }
+
+  }
+  
+  .connection[data-runtime='active'] {
+    path {
+      box-shadow: 5px 10px #888888;
+      stroke: #4bac00;
+    }
+  }
+
+  .connection.future-addition {
+    stroke-dasharray: 6;
+    
+    path {
+        stroke-width: 2;
+        stroke: #007dc6a5;
+    }
+  }
+
+  .connection.future-removal {
+    stroke-dasharray: 6;
+    
+    path {
+      stroke-width: 2;
+        stroke: #c60000a5;
+    }
+  }
+
+  .connection.delayed polyline {
+    stroke-dasharray: 6;
+  }
+
+  .connection polyline:hover {
+    stroke: #3bb8ff;
+  }
+
+  .connection {
+    position: absolute;
+    /* width: 0;
+		height: 0; */
+  }
+
+  .connections-view svg {
+    overflow: visible;
+    width: 1px; /* hack so it doesn't get in the way of selection box */
+  }
+
+  .connections-view {
+    position: absolute;
+
+    .connection.delayed polyline {
+      stroke-dasharray: 6;
+    }
+
+    path {
+      fill: none;
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      stroke: #6c6c6c;
+
+      &.future-add {
+        stroke: #007dc6a5;
+      }
+
+      &.future-remove {
+        stroke: #c60000a5;
+      }
+      
+    }
+
+    text.label {
+      // transform: translateX(-50%);
+      // transform-origin: center;
+      // transform: translate(50%);
+      // position: relative;
+      font-size: 14px;
+      text-anchor: middle;
+
+    }
+
+  }

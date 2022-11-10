@@ -1,0 +1,44 @@
+imports:
+  ./SetItem.flyde.js: SetItem
+  ./GetItem.flyde.js: GetItem
+part:
+  instances:
+    - pos:
+        x: -210.536103515625
+        y: 69.48443603515625
+      id: SetItem-362
+      inputConfig:
+        key:
+          mode: static
+          value: dgfdg
+        value:
+          mode: static
+          value: 42
+      partId: SetItem
+    - pos:
+        x: 78.46392578125
+        y: 52.616253662109386
+      id: GetItem-344
+      inputConfig:
+        key:
+          mode: static
+          value: dgfdg
+        defaultValue:
+          mode: static
+          value: 500
+      visibleInputs:
+        - __trigger
+        - defaultValue
+      partId: GetItem
+  connections: []
+  id: NewPart
+  inputs:
+    f:
+      mode: required
+      type: any
+  outputs: {}
+  inputsPosition:
+    f:
+      x: 30.959782628458374
+      y: -147.058795235587
+  outputsPosition: {}

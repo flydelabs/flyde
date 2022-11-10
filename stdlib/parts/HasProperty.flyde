@@ -1,0 +1,95 @@
+imports:
+  ./Pick.flyde.js: Pick
+  ./Transform.flyde.js: Transform
+part:
+  instances:
+    - pos:
+        x: 79.93398437500002
+        y: 178.49835540771483
+      id: Pick-631
+      inputConfig: {}
+      partId: Pick
+    - pos:
+        x: -147.15357177734376
+        y: 321.90995727539064
+      id: Transform-244
+      inputConfig: {}
+      partId: Transform
+  connections:
+    - from:
+        insId: __this
+        pinId: key
+      to:
+        insId: Pick-631
+        pinId: key
+    - from:
+        insId: __this
+        pinId: obj
+      to:
+        insId: Pick-631
+        pinId: obj
+    - from:
+        insId: Pick-631
+        pinId: r
+      to:
+        insId: Transform-244
+        pinId: from
+    - from:
+        insId: Transform-244
+        pinId: r
+      to:
+        insId: __this
+        pinId: yes
+    - from:
+        insId: __this
+        pinId: obj
+      to:
+        insId: Transform-244
+        pinId: to
+    - from:
+        insId: Pick-631
+        pinId: e
+      to:
+        insId: __this
+        pinId: no
+    - from:
+        insId: Pick-631
+        pinId: r
+      to:
+        insId: __this
+        pinId: value
+  id: HasProperty
+  inputs:
+    obj:
+      mode: required
+      type: any
+    key:
+      mode: required
+      type: string
+  outputs:
+    yes:
+      type: any
+    no:
+      type: any
+    value:
+      type: obj
+  inputsPosition:
+    obj:
+      x: 0
+      y: 0
+    key:
+      x: 131.02912565443012
+      y: 1.185922256102797
+    value:
+      x: 109.57379698327027
+      y: 432.7913263156525
+  outputsPosition:
+    yes:
+      x: -124.74231291007487
+      y: 504.1237182588364
+    no:
+      x: 203.09272889992454
+      y: 512.3711238476654
+    value:
+      x: 65.51598909952996
+      y: 519.8002718700914

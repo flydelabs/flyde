@@ -1,0 +1,19 @@
+part:
+  id: Simple
+  inputs:
+    a:
+      mode: required
+      type: any
+  outputs:
+    r:
+      type: any
+  inputsPosition:
+    a:
+      x: 0
+      y: 0
+  outputsPosition:
+    r:
+      x: 0
+      y: 100
+  instances: []
+  connections: []

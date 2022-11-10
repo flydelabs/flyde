@@ -1,0 +1,35 @@
+imports:
+  "./Sub.flyde.ts":
+  - Sub
+part:
+  id: Sub1
+  inputs:
+    n:
+      type: number
+      mode: required
+  outputs:
+    result:
+      type: number
+  instances:
+  - id: ins1
+    partId: Sub
+    inputConfig:
+        b:
+          mode: static
+          value: 1
+    pos:
+      x: 0
+      y: 0
+  connections:
+    - from:
+        insId: __this
+        pinId: n
+      to:
+        insId: ins1
+        pinId: a
+    - from:
+        insId: ins1
+        pinId: r
+      to:
+        insId: __this
+        pinId: result

@@ -1,0 +1,40 @@
+{
+  "name": "@flyde/core",
+  "version": "0.0.1",
+  "description": "",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "test": "mocha src/spec.ts src/execute/spec.ts src/**/spec.ts --require ts-node/register --require test-setup.js",
+    "start": "tsc -p . -w --incremental",
+    "dev": "tsc -p . -w --incremental",
+    "__publish": "npm version patch && npm publish",
+    "bts": "tsc -p .",
+    "build": "rm -rf dist && (tsc -p . || true)"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/debug": "^4.1.7",
+    "@types/node": "^10.12.24",
+    "debug": "^4.3.2",
+    "dependency-graph": "^0.8.0",
+    "md5": "^2.3.0",
+    "rxjs": "^6.3.3",
+    "ts-node": "^10.8.0",
+    "typescript": "^4.0.0",
+    "vm2": "^3.9.2",
+    "zod": "^3.17.10"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.1.7",
+    "@types/mocha": "^5.2.5",
+    "@types/sinon": "^7.0.3",
+    "chai": "^4.2.0",
+    "jsdom": "^13.1.0",
+    "jsdom-global": "^3.0.2",
+    "mocha": "^5.2.0",
+    "sinon": "^7.2.2"
+  },
+  "gitHead": "5f06bd4a0f3da610e64d74c19cc84babc4557f56"
+}

@@ -1,0 +1,27 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es5",
+        "strict": false,
+        "noImplicitAny": false,
+        "noImplicitReturns": false,
+        "noUnusedLocals": false,
+        "noUnusedParameters": false,
+        "noFallthroughCasesInSwitch": true,
+        "inlineSourceMap": true,
+        "skipLibCheck": true,
+        "outDir": "dist",
+        "moduleResolution": "node",
+        "lib": [
+            "dom",
+            "es2017"
+        ],
+        "jsx": "react",
+        "declaration": true,
+        "declarationMap": true
+    },
+    "exclude": [
+        "node_modules",
+        "dist"
+    ]
+}

@@ -1,0 +1,29 @@
+---
+bob: "2"
+part:
+  inputs:
+    n1:
+      type: number
+      mode: required
+  outputs:
+    result:
+      type: number
+  instances:
+  - id: ins1
+    partId: Bob
+    pos:
+      x: 0
+      y: 0
+  connections:
+    - from:
+        insId: __this
+        pinId: n1
+      to:
+        insId: ins1
+        pinId: n1
+    - from:
+        insId: __this
+        pinId: n2
+      to:
+        insId: ins1
+        pinId: n2

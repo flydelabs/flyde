@@ -1,0 +1,873 @@
+imports:
+  "@flyde/stdlib":
+    - ListFrom2
+    - Pick
+    - Dot
+    - Switch
+    - Round
+    - Boolean Split
+    - Equals
+    - PropertyEquals
+    - AssertProperties
+  ./tasks/AddTask.flyde.ts:
+    - Add Task
+  ./tasks/GetTasks.flyde.ts:
+    - Get Tasks
+  Bot.flyde.ts:
+    - Discord Bot
+part:
+  instances:
+    - pos:
+        x: -397.24336547851567
+        y: -902.475394897461
+      id: cl918rngj00074666es8w7c41
+      inputConfig: {}
+      partId: Discord Bot
+    - pos:
+        x: -263.01300781249984
+        y: -304.44172485351555
+      id: Add Task-676
+      inputConfig: {}
+      partId: Add Task
+      style:
+        size: regular
+        color: "#f15bb5"
+    - pos:
+        x: -325.1449755859376
+        y: -173.33627212524414
+      id: Inline-value-inputs.interact17
+      inputConfig: {}
+      part:
+        id: Inline-value-Task ${inputs
+        inputs:
+          task:
+            type: any
+            mode: required
+        outputs:
+          r:
+            type: any
+            delayed: false
+            optional: false
+        fnCode: outputs.r.next((`Task "${inputs.task.name}" added!`))
+        customViewCode: '`Task "${inputs.task.name}" added!`'
+        dataBuilderSource: YFRhc2sgIiR7aW5wdXRzLnRhc2submFtZX0iIGFkZGVkIWA=
+        templateType: value
+        completionOutputs:
+          - r
+        defaultStyle:
+          size: small
+          icon: code
+          cssOverride:
+            fontFamily: monospace
+            fontWeight: "300"
+      style:
+        size: small
+        icon: code
+        color: "#f15bb5"
+    - pos:
+        x: -563.9905137634277
+        y: -562.0356966400146
+      id: Tasks Command Router-ins
+      inputConfig: {}
+      part:
+        id: Tasks Command Router
+        inputs:
+          data:
+            type: any
+            mode: required
+        outputs:
+          list:
+            type: any
+            delayed: false
+            optional: false
+          add:
+            type: any
+            delayed: false
+            optional: false
+        instances:
+          - pos:
+              x: -515.7888037109375
+              y: -497.1356201171875
+            id: Pick-693
+            inputConfig:
+              key:
+                mode: static
+                value: data.options.0
+            visibleInputs:
+              - obj
+            partId: Pick
+          - pos:
+              x: -509.24797119140624
+              y: -333.75165771484376
+            id: PropertyEquals-567
+            inputConfig:
+              key:
+                mode: static
+                value: name
+              compare:
+                mode: static
+                value: list
+            partId: PropertyEquals
+          - pos:
+              x: -286.7098242187499
+              y: -159.91498779296876
+            id: cl9193aqh000u4666f7469ktv
+            inputConfig:
+              key:
+                mode: static
+                value: name
+              compare:
+                mode: static
+                value: add
+            partId: PropertyEquals
+        inputsPosition:
+          obj:
+            x: -459.99183993828063
+            y: -604.1436817775989
+          data:
+            x: -459.99183993828063
+            y: -604.1436817775989
+        outputsPosition:
+          equals:
+            x: -280.2038449602285
+            y: 79.68157116447972
+          i77:
+            x: -504.43829121883425
+            y: 75.44304997172169
+          list:
+            x: -504.43829121883425
+            y: 75.44304997172169
+          add:
+            x: -280.2038449602285
+            y: 79.68157116447972
+        connections:
+          - from:
+              insId: Pick-693
+              pinId: r
+            to:
+              insId: PropertyEquals-567
+              pinId: obj
+          - from:
+              insId: PropertyEquals-567
+              pinId: notEquals
+            to:
+              insId: cl9193aqh000u4666f7469ktv
+              pinId: obj
+          - from:
+              insId: __this
+              pinId: data
+            to:
+              insId: Pick-693
+              pinId: obj
+          - from:
+              insId: cl9193aqh000u4666f7469ktv
+              pinId: equals
+            to:
+              insId: __this
+              pinId: add
+          - from:
+              insId: PropertyEquals-567
+              pinId: equals
+            to:
+              insId: __this
+              pinId: list
+        completionOutputs:
+          - list
+          - add
+      style:
+        size: regular
+        color: "#fee440"
+    - pos:
+        x: -578.688310546875
+        y: -385.08027587890626
+      id: cl932yd64001u4666242a73d5
+      inputConfig: {}
+      partId: Get Tasks
+      style:
+        size: regular
+        color: "#f15bb5"
+    - pos:
+        x: -494.2280767822266
+        y: -709.5029061889649
+      id: Command Router-ins
+      inputConfig: {}
+      visibleOutputs:
+        - tasks
+        - other
+      part:
+        id: Command Router
+        inputs:
+          interaction:
+            type: any
+            mode: required
+        outputs:
+          other:
+            type: any
+            delayed: false
+            optional: false
+          tasks:
+            type: any
+            delayed: false
+            optional: false
+        instances:
+          - pos:
+              x: -291.08235595703127
+              y: -532.7571630859375
+            id: PropertyEquals-828
+            inputConfig:
+              key:
+                mode: static
+                value: data.name
+              compare:
+                mode: static
+                value: tasks
+            partId: PropertyEquals
+        inputsPosition:
+          obj:
+            x: -275.5959656977121
+            y: -638.8073894694614
+          interaction:
+            x: -275.5959656977121
+            y: -638.8073894694614
+        outputsPosition:
+          equals:
+            x: -284.80696343789106
+            y: -313.77749701341213
+          other:
+            x: -159.47270290603967
+            y: -312.98581755886596
+          tasks:
+            x: -284.80696343789106
+            y: -313.77749701341213
+        connections:
+          - from:
+              insId: __this
+              pinId: interaction
+            to:
+              insId: PropertyEquals-828
+              pinId: obj
+          - from:
+              insId: PropertyEquals-828
+              pinId: equals
+            to:
+              insId: __this
+              pinId: tasks
+          - from:
+              insId: PropertyEquals-828
+              pinId: notEquals
+            to:
+              pinId: other
+              insId: __this
+        completionOutputs:
+          - tasks
+          - other
+      style:
+        size: regular
+    - pos:
+        x: -760.1337451171876
+        y: -258.2449024963379
+      id: cl935owgw002046664zlvwaum
+      inputConfig: {}
+      part:
+        id: "Inline-value-Current tasks "
+        inputs:
+          tasks:
+            type: any
+            mode: required
+        outputs:
+          r:
+            type: any
+            delayed: false
+            optional: false
+        fnCode: "outputs.r.next((`Current tasks are: ${inputs.tasks.map(task =>
+          task.name).join(', ')}`))"
+        customViewCode: "`Current tasks are: ${inputs.tasks.map(task =>
+          task.name).join(', ')}`"
+        dataBuilderSource: YEN1cnJlbnQgdGFza3MgYXJlOiAke2lucHV0cy50YXNrcy5tYXAodGFzayA9PiB0YXNrLm5hbWUpLmpvaW4oJywgJyl9YA==
+        templateType: value
+        completionOutputs:
+          - r
+        defaultStyle:
+          size: small
+          icon: code
+          cssOverride:
+            fontFamily: monospace
+            fontWeight: "300"
+    - pos:
+        x: -295.2616143798829
+        y: -60.57020118713382
+      id: Create Message-ins
+      inputConfig:
+        interaction:
+          mode: sticky
+      visibleInputs:
+        - msg
+      part:
+        id: Create Message
+        inputs:
+          msg:
+            type: any
+            mode: required
+          interaction:
+            type: any
+            mode: required
+        outputs: {}
+        instances:
+          - pos:
+              x: -413.2448291015626
+              y: 66.17001449584961
+            id: cl9337the00014666v6s9fbqy
+            inputConfig: {}
+            part:
+              id: Inline-value-inputs.interact
+              inputs:
+                interaction:
+                  type: any
+                  mode: required
+                msg:
+                  type: any
+                  mode: required
+              outputs:
+                r:
+                  type: any
+                  delayed: false
+                  optional: false
+              fnCode: outputs.r.next((inputs.interaction.createMessage(inputs.msg)))
+              customViewCode: inputs.interaction.createMessage(inputs.msg)
+              dataBuilderSource: aW5wdXRzLmludGVyYWN0aW9uLmNyZWF0ZU1lc3NhZ2UoaW5wdXRzLm1zZyk=
+              templateType: value
+              completionOutputs:
+                - r
+        inputsPosition:
+          msg:
+            x: 0
+            y: 0
+          interaction:
+            x: 100
+            y: 0
+        outputsPosition: {}
+        connections:
+          - from:
+              insId: __this
+              pinId: msg
+            to:
+              insId: cl9337the00014666v6s9fbqy
+              pinId: msg
+          - from:
+              insId: __this
+              pinId: interaction
+            to:
+              insId: cl9337the00014666v6s9fbqy
+              pinId: interaction
+      style:
+        color: "#00f5d4"
+    - pos:
+        x: -661.1897149658204
+        y: -157.64039161682132
+      id: cl935tkuj000g46665ec7pbyf
+      inputConfig:
+        interaction:
+          mode: sticky
+      visibleInputs:
+        - msg
+      part:
+        id: Create Message
+        inputs:
+          msg:
+            type: any
+            mode: required
+          interaction:
+            type: any
+            mode: required
+        outputs: {}
+        instances:
+          - pos:
+              x: -355.4229907226563
+              y: 72.94857894897461
+            id: cl9337the00014666v6s9fbqy
+            inputConfig: {}
+            part:
+              id: Inline-value-inputs.interact
+              inputs:
+                interaction:
+                  type: any
+                  mode: required
+                msg:
+                  type: any
+                  mode: required
+              outputs:
+                r:
+                  type: any
+                  delayed: false
+                  optional: false
+              fnCode: outputs.r.next((inputs.interaction.createMessage(inputs.msg)))
+              customViewCode: inputs.interaction.createMessage(inputs.msg)
+              dataBuilderSource: aW5wdXRzLmludGVyYWN0aW9uLmNyZWF0ZU1lc3NhZ2UoaW5wdXRzLm1zZyk=
+              templateType: value
+              completionOutputs:
+                - r
+        inputsPosition:
+          msg:
+            x: -46.26254232938515
+            y: -23.128459385566725
+          interaction:
+            x: -271.9704502793983
+            y: -37.546130867574
+        outputsPosition: {}
+        connections:
+          - from:
+              insId: __this
+              pinId: msg
+            to:
+              insId: cl9337the00014666v6s9fbqy
+              pinId: msg
+          - from:
+              insId: __this
+              pinId: interaction
+            to:
+              insId: cl9337the00014666v6s9fbqy
+              pinId: interaction
+      style:
+        color: "#00f5d4"
+    - pos:
+        x: -332.56988525390625
+        y: -405.06505615234374
+      id: cl9483fov000j4666i5npj8p2
+      inputConfig:
+        name:
+          mode: static
+          value: name
+      visibleInputs:
+        - cmd
+        - name
+      part:
+        id: Option Extractor
+        inputs:
+          cmd:
+            type: any
+            mode: required
+          name:
+            type: any
+            mode: required
+        outputs:
+          value:
+            type: any
+            delayed: false
+            optional: false
+        instances:
+          - pos:
+              x: -234.71979003906245
+              y: -199.4793701171875
+            id: InlineValueBob
+            inputConfig:
+              name:
+                mode: queue
+            part:
+              id: Inline-value-inputs.cmd.opti
+              inputs:
+                cmd:
+                  type: any
+                  mode: required
+                name:
+                  type: any
+                  mode: required
+              outputs:
+                r:
+                  type: any
+                  delayed: false
+                  optional: false
+              fnCode: outputs.r.next((inputs.cmd.options.find(opt => opt.name ===
+                inputs.name)))
+              customViewCode: inputs.cmd.options.find(opt => opt.name === inputs.name)
+              dataBuilderSource: aW5wdXRzLmNtZC5vcHRpb25zLmZpbmQob3B0ID0+IG9wdC5uYW1lID09PSBpbnB1dHMubmFtZSk=
+              templateType: value
+              completionOutputs:
+                - r
+          - pos:
+              x: -51.828081054687345
+              y: -48.03347961425777
+            id: cl919hcpq000y4666jczcn5lb
+            inputConfig:
+              key:
+                mode: static
+                value: value
+            partId: Dot
+        inputsPosition:
+          cmd:
+            x: -171.10925114704733
+            y: -316.18283212581497
+          name:
+            x: 24.598509148878538
+            y: -314.9710169391446
+        outputsPosition:
+          value:
+            x: -28.10469031335169
+            y: 132.6009054659386
+        connections:
+          - from:
+              insId: InlineValueBob
+              pinId: r
+            to:
+              insId: cl919hcpq000y4666jczcn5lb
+              pinId: obj
+          - from:
+              insId: __this
+              pinId: cmd
+            to:
+              insId: InlineValueBob
+              pinId: cmd
+          - from:
+              insId: __this
+              pinId: name
+            to:
+              insId: InlineValueBob
+              pinId: name
+          - from:
+              insId: cl919hcpq000y4666jczcn5lb
+              pinId: value
+            to:
+              insId: __this
+              pinId: value
+        completionOutputs:
+          - value
+        defaultStyle:
+          size: small
+    - pos:
+        x: -135.8602294921875
+        y: -413.2389453125
+      id: cl9483sde000u46661deearov
+      inputConfig:
+        name:
+          mode: static
+          value: assignee
+      visibleInputs:
+        - cmd
+        - name
+      part:
+        id: Option Extractor
+        inputs:
+          cmd:
+            type: any
+            mode: required
+          name:
+            type: any
+            mode: required
+        outputs:
+          value:
+            type: any
+            delayed: false
+            optional: false
+        instances:
+          - pos:
+              x: -234.71979003906245
+              y: -199.4793701171875
+            id: InlineValueBob
+            inputConfig:
+              name:
+                mode: queue
+            part:
+              id: Inline-value-inputs.cmd.opti
+              inputs:
+                cmd:
+                  type: any
+                  mode: required
+                name:
+                  type: any
+                  mode: required
+              outputs:
+                r:
+                  type: any
+                  delayed: false
+                  optional: false
+              fnCode: outputs.r.next((inputs.cmd.options.find(opt => opt.name ===
+                inputs.name)))
+              customViewCode: inputs.cmd.options.find(opt => opt.name === inputs.name)
+              dataBuilderSource: aW5wdXRzLmNtZC5vcHRpb25zLmZpbmQob3B0ID0+IG9wdC5uYW1lID09PSBpbnB1dHMubmFtZSk=
+              templateType: value
+              completionOutputs:
+                - r
+          - pos:
+              x: -121.4868334960936
+              y: -9.532075805664022
+            id: cl919hcpq000y4666jczcn5lb
+            inputConfig:
+              key:
+                mode: static
+                value: value
+            partId: Dot
+        inputsPosition:
+          cmd:
+            x: -175.72568778754993
+            y: -275.59231538684475
+          name:
+            x: 28.44284098059575
+            y: -283.3058207596764
+        outputsPosition:
+          value:
+            x: -83.19532029587972
+            y: 162.74064002202232
+        connections:
+          - from:
+              insId: InlineValueBob
+              pinId: r
+            to:
+              insId: cl919hcpq000y4666jczcn5lb
+              pinId: obj
+          - from:
+              insId: __this
+              pinId: cmd
+            to:
+              insId: InlineValueBob
+              pinId: cmd
+          - from:
+              insId: __this
+              pinId: name
+            to:
+              insId: InlineValueBob
+              pinId: name
+          - from:
+              insId: cl919hcpq000y4666jczcn5lb
+              pinId: value
+            to:
+              insId: __this
+              pinId: value
+        completionOutputs:
+          - value
+      style:
+        size: small
+    - pos:
+        x: -250.94019027709965
+        y: -686.2005346298217
+      id: Ping Pong Handler-ins
+      inputConfig: {}
+      part:
+        id: Ping Pong Handler
+        inputs:
+          message:
+            type: any
+            mode: required
+        outputs: {}
+        instances:
+          - pos:
+              x: 193.07418823242185
+              y: -633.7509741210938
+            id: Dot-19
+            inputConfig:
+              key:
+                mode: static
+                value: content
+            visibleOutputs:
+              - value
+            partId: Dot
+            visibleInputs:
+              - obj
+          - pos:
+              x: 253.00029052734374
+              y: -523.0982446289063
+            id: Equals-380
+            inputConfig:
+              compare:
+                mode: static
+                value: "!ping"
+            partId: Equals
+            visibleInputs:
+              - val
+              - transform
+          - id: cl948hivp00004666tlhc3b4c
+            part:
+              id: Inline-value-bot.createMessa
+              inputs:
+                channelId:
+                  type: any
+                  mode: required
+              outputs:
+                r:
+                  type: any
+                  delayed: false
+                  optional: false
+              fnCode: outputs.r.next((bot.createMessage(inputs.channelId, "Pong!")))
+              customViewCode: bot.createMessage(inputs.channelId, "Pong!")
+              dataBuilderSource: Ym90LmNyZWF0ZU1lc3NhZ2UoaW5wdXRzLmNoYW5uZWxJZCwgIlBvbmchIik=
+              templateType: value
+              completionOutputs:
+                - r
+            inputConfig: {}
+            pos:
+              x: -50.03387817382816
+              y: -373.76348876953125
+            visibleInputs:
+              - channelId
+              - __trigger
+          - id: Dot-213
+            partId: Dot
+            inputConfig:
+              key:
+                mode: static
+                value: channel.id
+            pos:
+              x: -17.393941650390644
+              y: -610.2366625976563
+            visibleInputs:
+              - obj
+        inputsPosition:
+          obj:
+            x: 90.2587756039907
+            y: -772.5220864188068
+          message:
+            x: 90.2587756039907
+            y: -772.5220864188068
+        outputsPosition: {}
+        connections:
+          - from:
+              insId: Dot-19
+              pinId: value
+            to:
+              insId: Equals-380
+              pinId: val
+          - from:
+              insId: Dot-213
+              pinId: value
+            to:
+              insId: cl948hivp00004666tlhc3b4c
+              pinId: channelId
+          - from:
+              insId: Equals-380
+              pinId: r
+            to:
+              insId: cl948hivp00004666tlhc3b4c
+              pinId: __trigger
+          - from:
+              insId: __this
+              pinId: message
+            to:
+              insId: Dot-19
+              pinId: obj
+          - from:
+              insId: __this
+              pinId: message
+            to:
+              insId: Dot-213
+              pinId: obj
+        completionOutputs: []
+      style:
+        icon: table-tennis-paddle-ball
+        color: "#00bbf9"
+  connections:
+    - from:
+        insId: Add Task-676
+        pinId: task
+      to:
+        insId: Inline-value-inputs.interact17
+        pinId: task
+    - from:
+        insId: Tasks Command Router-ins
+        pinId: list
+      to:
+        insId: cl932yd64001u4666242a73d5
+        pinId: __trigger
+    - from:
+        insId: cl918rngj00074666es8w7c41
+        pinId: interaction
+      to:
+        insId: Command Router-ins
+        pinId: interaction
+    - from:
+        insId: Command Router-ins
+        pinId: tasks
+      to:
+        insId: Tasks Command Router-ins
+        pinId: data
+    - from:
+        insId: cl932yd64001u4666242a73d5
+        pinId: tasks
+      to:
+        insId: cl935owgw002046664zlvwaum
+        pinId: tasks
+    - from:
+        insId: Inline-value-inputs.interact17
+        pinId: r
+      to:
+        insId: Create Message-ins
+        pinId: msg
+    - from:
+        insId: cl918rngj00074666es8w7c41
+        pinId: interaction
+      to:
+        insId: Create Message-ins
+        pinId: interaction
+      hidden: true
+    - from:
+        insId: cl935owgw002046664zlvwaum
+        pinId: r
+      to:
+        insId: cl935tkuj000g46665ec7pbyf
+        pinId: msg
+    - from:
+        insId: cl918rngj00074666es8w7c41
+        pinId: interaction
+      to:
+        insId: cl935tkuj000g46665ec7pbyf
+        pinId: interaction
+      hidden: true
+    - from:
+        insId: cl9483fov000j4666i5npj8p2
+        pinId: value
+      to:
+        insId: Add Task-676
+        pinId: name
+    - from:
+        insId: Tasks Command Router-ins
+        pinId: add
+      to:
+        insId: cl9483fov000j4666i5npj8p2
+        pinId: cmd
+    - from:
+        insId: Tasks Command Router-ins
+        pinId: add
+      to:
+        insId: cl9483sde000u46661deearov
+        pinId: cmd
+    - from:
+        insId: cl9483sde000u46661deearov
+        pinId: value
+      to:
+        insId: Add Task-676
+        pinId: assignee
+    - from:
+        insId: cl918rngj00074666es8w7c41
+        pinId: message
+      to:
+        insId: Ping Pong Handler-ins
+        pinId: message
+  id: Test
+  inputs: {}
+  outputs: {}
+  inputsPosition:
+    name:
+      x: 50
+      y: 0
+    assignee:
+      x: 213.41464230124672
+      y: -0.9424757136281402
+    na:
+      x: -494.05
+      y: -195.55
+    gg:
+      x: -205.69758969263015
+      y: -899.1652450176554
+    bb:
+      x: -532.14
+      y: -717.72
+    test:
+      x: -610.42
+      y: -767.77
+    ttt:
+      x: -623.25
+      y: -740.82
+    ggxcgfdg:
+      x: -623.25
+      y: -740.82
+  outputsPosition:
+    task:
+      x: 139.71624555740541
+      y: 305.0083678621793

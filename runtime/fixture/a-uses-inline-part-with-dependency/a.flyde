@@ -1,0 +1,62 @@
+imports:
+  "./Add.flyde.js":
+    - Add
+part:
+  id: Add1Wrapper
+  inputs:
+    n:
+      type: number
+      mode: required
+  outputs:
+    result:
+      type: number
+  instances:
+  - id: ins1
+    part:
+      id: Add1Ins
+      inputs:
+        n: 
+          type: number
+          mode: required
+      outputs:
+        result: number
+      instances: 
+        - id: ins1
+          partId: Add
+          pos: 
+            x: 0
+            y: 0
+          inputConfig:
+            b:
+              mode: static
+              value: 1
+      connections:
+        - from:
+            insId: __this
+            pinId: n
+          to:
+            insId: ins1
+            pinId: a
+        - from:
+            insId: ins1
+            pinId: r
+          to:
+            insId: __this
+            pinId: result
+    inputConfig: {}
+    pos:
+      x: 0
+      y: 0
+  connections:
+    - from:
+        insId: __this
+        pinId: n
+      to:
+        insId: ins1
+        pinId: n
+    - from:
+        insId: ins1
+        pinId: result
+      to:
+        insId: __this
+        pinId: result

@@ -1,0 +1,53 @@
+@import '../../lib/common.scss';
+
+.part-io-view {
+  
+  .part-io-view-inner {
+    @include base-part;
+    font-size: 14px;
+    font-weight: 400;
+  }
+
+  &.input  {
+    .part-io-view-inner {
+      @include custom-part-color(#FFD5C9);
+    }
+  }
+
+  &.output {
+    .part-io-view-inner {
+      @include custom-part-color(#E7F8FF);
+    }
+  }
+
+  // &.output:not(.selected) {
+  //   .base-part-view-inner {
+  //     background: #E7F8FF;
+  // }
+
+  // &:hover .base-part-view-inner {
+  //   border: 4px solid#007EC6;
+  //   opacity: 0.85;
+  // }
+
+  // &.closest .base-part-view-inner {
+  //   border: 2px dashed #007EC6;
+  // }
+
+
+
+
+    // &.selected { 
+    //   .base-part-view-inner {
+    //     color: #000000;
+    //     background: #45F4FF;
+    //   }
+    // }
+
+
+
+  &.active .part-io-view-inner {
+    background: #c8ffc7;
+  }
+
+}

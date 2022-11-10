@@ -1,0 +1,32 @@
+<!-- html boilerplate -->
+<html lang="en">
+    <head>
+        <title>Loan app</title>
+    </head>
+    <h1>Request Loan</h1>
+    <!-- embed nice css please -->
+    <style>
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        input {
+            margin: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            margin: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+  <form action="/loan" method="post">
+     <input type="text" name="email" placeholder="Email">
+     <input type="text" name="amount" placeholder="Amount">
+     <input type="submit" value="Submit">
+     </form>
+</html>

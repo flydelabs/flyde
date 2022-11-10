@@ -1,0 +1,53 @@
+imports:
+  ./Object-builder-75360.flyde.js: Object-builder-75360
+part:
+  instances:
+    - pos:
+        x: -65.07217651367182
+        y: 185.1182067871094
+      id: Object-builder-75360-942
+      inputConfig: {}
+      partId: Object-builder-75360
+  connections:
+    - from:
+        insId: __this
+        pinId: statusCode
+      to:
+        insId: Object-builder-75360-942
+        pinId: statusCode
+    - from:
+        insId: __this
+        pinId: body
+      to:
+        insId: Object-builder-75360-942
+        pinId: body
+    - from:
+        insId: Object-builder-75360-942
+        pinId: r
+      to:
+        insId: __this
+        pinId: response
+  id: HttpResponse
+  inputs:
+    statusCode:
+      mode: required
+      type: any
+    body:
+      mode: required
+      type: any
+  outputs:
+    response:
+      type: any
+  inputsPosition:
+    statusCode:
+      x: -5.3060613688112035
+      y: 73.37662203501435
+    body:
+      x: 208.34878226229236
+      y: 47.309814505141865
+  outputsPosition:
+    response:
+      x: 100
+      y: 400
+  completionOutputs:
+    - response

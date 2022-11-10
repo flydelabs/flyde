@@ -1,0 +1,46 @@
+
+.layout-debugger {
+  transform-origin: top left;
+  display: inline-block;
+  position: absolute;
+  transition: box-shadow ease-in-out 0.5s;
+  will-change: transform, width;
+  z-index: 2;
+  
+
+
+
+  .drag-sim {
+    position: absolute;
+    transform-origin: top left;
+  }
+
+  .layout-debugger-inner {
+    background: pink;
+    border: 1px solid white;
+  }
+
+  .layout-debugger-inner {
+    transform-origin: top left;
+  }
+
+  .layout-debugger-zoom-wrapper {
+    position: absolute;
+    transform-origin: top left;
+  }
+
+}
+
+.viewport-data {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+
+.pos-debugger {
+  position: absolute;
+  background: black;
+  color: yellow;
+  font-size: 8px;
+  z-index: 2;
+}

@@ -1,0 +1,291 @@
+imports:
+  "@flyde/stdlib":
+    - ListFrom3
+    - Boolean Split
+    - Publish
+    - Subscribe
+    - Add
+    - HtmlBtn
+  ./Button.flyde.js:
+    - Button
+  ./Span.flyde.js:
+    - Span
+part:
+  instances:
+    - pos:
+        x: -115.26095214843747
+        y: 226.5338534545898
+      id: Button-410
+      inputConfig:
+        children:
+          mode: static
+          value: +
+      visibleInputs:
+        - children
+      partId: Button
+      style:
+        size: large
+        color: "#00bbf9"
+    - pos:
+        x: -329.9831323242188
+        y: 226.03836868286135
+      id: Span-677
+      inputConfig:
+        children:
+          mode: queue
+      visibleInputs:
+        - children
+      partId: Span
+      style:
+        size: large
+        color: "#9b5de5"
+    - pos:
+        x: -350.2094360351563
+        y: 412.6782791137695
+      id: ListFrom3-404
+      inputConfig:
+        item1:
+          mode: sticky
+        item3:
+          mode: sticky
+        item2:
+          mode: queue
+      partId: ListFrom3
+      style:
+        size: small
+    - pos:
+        x: -516.944423828125
+        y: 228.83230010986324
+      id: Button-410-d44
+      inputConfig:
+        children:
+          mode: static
+          value: "-"
+      visibleInputs:
+        - children
+      partId: Button
+      style:
+        size: large
+        color: "#00bbf9"
+    - pos:
+        x: -42.589892578125
+        y: 414.4257174682617
+      id: Publish-107
+      inputConfig:
+        key:
+          mode: static
+          value: inc
+        value:
+          mode: static
+          value: 1
+      visibleInputs:
+        - key
+        - value
+        - __trigger
+      partId: Publish
+      style:
+        color: "#00bbf9"
+    - pos:
+        x: -201.807001953125
+        y: -187.86253479003906
+      id: Subscribe-896
+      inputConfig:
+        key:
+          mode: static
+          value: inc
+      partId: Subscribe
+      style:
+        color: "#00f5d4"
+    - pos:
+        x: -272.72882080078125
+        y: -9.603830566406259
+      id: Add-138
+      inputConfig:
+        n1:
+          mode: sticky
+      partId: Add
+    - pos:
+        x: -387.2609814453125
+        y: -186.2929638671875
+      id: Subscribe-227
+      inputConfig:
+        key:
+          mode: static
+          value: value
+        initial:
+          mode: static
+          value: 0
+      partId: Subscribe
+      style:
+        color: "#00f5d4"
+    - pos:
+        x: -676.053251953125
+        y: 420.80437835693357
+      id: Publish-441
+      inputConfig:
+        key:
+          mode: static
+          value: inc
+        value:
+          mode: static
+          value: -1
+      visibleInputs:
+        - key
+        - value
+        - __trigger
+      partId: Publish
+      style:
+        color: "#00bbf9"
+    - pos:
+        x: -122.10039184570314
+        y: 113.89903961181642
+      id: Publish-817-d15
+      inputConfig:
+        key:
+          mode: static
+          value: value
+        value:
+          mode: queue
+      visibleInputs:
+        - value
+      partId: Publish
+      style:
+        color: "#00bbf9"
+    - pos:
+        x: -393.0812890625
+        y: 110.83120086669919
+      id: Inline-value-Value is ${inp-308
+      inputConfig: {}
+      part:
+        id: Inline-value-${inputs.count
+        inputs:
+          count:
+            type: any
+            mode: required
+        outputs:
+          r:
+            type: any
+            delayed: false
+            optional: false
+        fnCode: outputs.r.next((`${inputs.count}`))
+        customViewCode: "`${inputs.count}`"
+        dataBuilderSource: YCR7aW5wdXRzLmNvdW50fWA=
+        templateType: value
+        completionOutputs:
+          - r
+        defaultStyle:
+          size: small
+          icon: code
+          cssOverride:
+            fontFamily: monospace
+            fontWeight: "300"
+    - pos:
+        x: -416.83026611328125
+        y: 12.137357788085978
+      id: Inline-value-0-783
+      inputConfig: {}
+      part:
+        id: Inline-value-0
+        inputs: {}
+        outputs:
+          r:
+            type: any
+            delayed: false
+            optional: false
+        fnCode: outputs.r.next((0))
+        customViewCode: "0"
+        dataBuilderSource: MA==
+        templateType: value
+        completionOutputs:
+          - r
+        defaultStyle:
+          size: small
+          icon: code
+          cssOverride:
+            fontFamily: monospace
+            fontWeight: "300"
+  connections:
+    - from:
+        insId: Span-677
+        pinId: jsx
+      to:
+        insId: ListFrom3-404
+        pinId: item2
+    - from:
+        insId: Button-410
+        pinId: jsx
+      to:
+        insId: ListFrom3-404
+        pinId: item3
+    - from:
+        insId: Button-410-d44
+        pinId: jsx
+      to:
+        insId: ListFrom3-404
+        pinId: item1
+    - from:
+        insId: ListFrom3-404
+        pinId: list
+      to:
+        insId: __this
+        pinId: jsx
+    - from:
+        insId: Button-410
+        pinId: click
+      to:
+        insId: Publish-107
+        pinId: __trigger
+    - from:
+        insId: Subscribe-896
+        pinId: val
+      to:
+        insId: Add-138
+        pinId: n2
+    - from:
+        insId: Button-410-d44
+        pinId: click
+      to:
+        insId: Publish-441
+        pinId: __trigger
+    - from:
+        insId: Subscribe-227
+        pinId: val
+      to:
+        insId: Add-138
+        pinId: n1
+    - from:
+        insId: Add-138
+        pinId: r
+      to:
+        insId: Publish-817-d15
+        pinId: value
+    - from:
+        insId: Add-138
+        pinId: r
+      to:
+        insId: Inline-value-Value is ${inp-308
+        pinId: count
+    - from:
+        insId: Inline-value-Value is ${inp-308
+        pinId: r
+      to:
+        insId: Span-677
+        pinId: children
+    - from:
+        insId: Inline-value-0-783
+        pinId: r
+      to:
+        insId: Inline-value-Value is ${inp-308
+        pinId: count
+  id: Main
+  inputs: {}
+  outputs:
+    jsx:
+      type: any
+  inputsPosition: {}
+  outputsPosition:
+    jsx:
+      x: -283.81852447487364
+      y: 588.5155366362267
+  completionOutputs:
+    - result

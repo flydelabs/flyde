@@ -1,0 +1,36 @@
+{
+    "name": "@flyde/stdlib",
+    "version": "0.0.1",
+    "description": "Flyde's StdLib",
+    "flyde": {
+        "exposes": [
+            "parts/*.flyde",
+            "parts/*.flyde.js",
+            "parts/**/*.flyde.js",
+            "parts/**/*.flyde"
+        ],
+        "typings": "flyde-typings.d.ts"
+    },
+    "main": "dist/index.js",
+    "typings": "dist/index.d.ts",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "echo": "echo 'no watch'",
+        "build": "echo 'no build'",
+        "prod": "node dist/index.js",
+        "__publish": "npm version patch && npm publish"
+    },
+    "author": "Flyde",
+    "license": "ISC",
+    "dependencies": {
+        "@flyde/core": "^0.0.1",
+        "axios": "^0.27.2",
+        "pubsub-js": "^1.9.4"
+    },
+    "devDependencies": {
+        "concurrently": "^7.3.0",
+        "ts-node-dev": "^1.0.0-pre.32",
+        "typescript": "^4.0.0"
+    },
+    "gitHead": "5f06bd4a0f3da610e64d74c19cc84babc4557f56"
+}

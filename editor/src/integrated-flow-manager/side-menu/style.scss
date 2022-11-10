@@ -1,0 +1,175 @@
+.side-menu {
+  display: flex;
+  max-height: 100%;
+
+  user-select: none;
+
+  &:not(:hover) .resizer {
+    opacity: 0.2;
+  }
+
+  .resizer {
+    top: 0;
+    width: 3px;
+    height: 100%;
+    background: #aeaeae;
+    position: absolute;
+    cursor: col-resize;
+    flex-shrink: 0;
+    flex-grow: 0;
+    right: 0;
+    bottom: 0;
+    transition: opacity 0.05s linear;
+
+    &:after {
+      display: block;
+      content: "";
+      background-color: #cecece;
+      position: absolute;
+      height: 80%;
+      width: 1px;
+      left: 1px;
+      top: 10%;
+    }
+  }
+
+  .menu-strip {
+    width: 65px;
+    background: #3e3e3e;
+    border-right: 1px solid #e5e5e5;
+
+    .menu-btn {
+      position: relative;
+      margin: 15px 0;
+      text-align: center;
+      cursor: pointer;
+
+      .inner {
+        padding-top: 8px;
+        padding-left: 1px;
+        width: 40px;
+        height: 40px;
+        border-radius: 6px;
+        display: block;
+        text-align: center;
+        margin: 0 auto;
+        z-index: 1;
+        position: relative;
+      }
+
+      &.selected {
+        &:before {
+          content: "";
+          position: absolute;
+          display: block;
+          width: 60px;
+          border-radius: 6px 0 0 6px;
+          height: 50px;
+          top: -5px;
+          right: -1px;
+          background: white;
+          z-index: 0;
+        }
+      }
+
+      &:hover .inner {
+        opacity: 0.7;
+      }
+
+      .inner {
+        background: #127cbd;
+      }
+
+      &.add .inner {
+        // background: #11ABC4;
+      }
+
+      &.parts .inner {
+        // background: #FF9271;
+      }
+
+      &.analytics .inner {
+        // background: #86D67F;
+      }
+
+      &.history .inner {
+        // background: #D66269;
+      }
+
+      .badge {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        display: block;
+        position: absolute;
+        right: 5px;
+        bottom: -3px;
+        z-index: 2;
+
+        &.stale {
+          border: 1px solid #d6c87f;
+          background-color: #fff900;
+        }
+
+        &.none {
+          border: 1px solid #808080;
+          background-color: #cdcdcd;
+        }
+
+        &.online {
+          background-color: #c1ff90;
+          border: 1px solid #86d67f;
+        }
+      }
+    }
+  }
+
+  .menu-section {
+    background: white;
+    // width: 255px;
+    // position: absolute;
+    // left: 65px;
+    z-index: 1;
+    border-right: 1px solid #dfdfdf;
+    padding: 15px 25px;
+    overflow: auto;
+    max-height: 100%;
+
+    .title {
+      font-size: 18px;
+      color: black;
+      margin: 15px 0;
+    }
+
+    &.add {
+      user-select: none;
+
+      .part-section-title {
+        font-size: 14px;
+        color: #505050;
+        margin: 30px 10px 10px;
+      }
+
+      .part-section {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+      }
+
+      .ins-wrapper {
+        display: inline-block;
+        cursor: pointer;
+
+        &:hover {
+          .ins-view {
+            opacity: 0.6;
+          }
+        }
+      }
+
+      .part-preview {
+        margin: 15px 10px;
+      }
+    }
+  }
+}

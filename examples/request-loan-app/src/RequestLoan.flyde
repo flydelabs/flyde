@@ -1,0 +1,262 @@
+imports:
+  GetUserByEmail.flyde.ts:
+    - Get User By Email
+  GetCredit.flyde.ts:
+    - Get Credit By Id
+  "@flyde/stdlib":
+    - Dot
+    - Boolean Split
+  CalculateRisk.flyde.ts:
+    - Calculate Risk
+part:
+  instances:
+    - pos:
+        x: -44.367919921875
+        y: 76.70314407348633
+      id: Get User By Email-516
+      inputConfig: {}
+      partId: Get User By Email
+      style:
+        size: large
+        icon: user
+        color: "#9b5de5"
+    - pos:
+        x: -179.3867840576172
+        y: 330.68904666900636
+      id: Get Credit By Id-957
+      inputConfig: {}
+      partId: Get Credit By Id
+      style:
+        size: large
+        icon: dollar
+        color: "#00f5d4"
+    - pos:
+        x: 41.36167480468748
+        y: 182.37955390930176
+      id: Dot-748
+      inputConfig:
+        key:
+          mode: static
+          value: id
+      visibleInputs:
+        - obj
+      partId: Dot
+      style:
+        size: regular
+    - pos:
+        x: 153.94222442626955
+        y: 341.3220679473877
+      id: Calculate Risk-145
+      inputConfig: {}
+      visibleInputs:
+        - userId
+        - amount
+      partId: Calculate Risk
+      style:
+        size: large
+        icon: warning
+        color: "#fee440"
+    - pos:
+        x: -128.39114990234376
+        y: 465.4783494567871
+      id: cl9l9t9gb000b4666ckct55oy
+      inputConfig: {}
+      part:
+        id: "Inline-value-(inputs.credit "
+        inputs:
+          credit:
+            type: any
+            mode: required
+          risk:
+            type: any
+            mode: required
+        outputs:
+          r:
+            type: any
+            delayed: false
+            optional: false
+        fnCode: outputs.r.next(((inputs.credit * inputs.risk) > 20))
+        customViewCode: (inputs.credit * inputs.risk) > 20
+        dataBuilderSource: KGlucHV0cy5jcmVkaXQgKiBpbnB1dHMucmlzaykgPiAyMA==
+        templateType: value
+        completionOutputs:
+          - r
+        defaultStyle:
+          size: small
+          icon: code
+          cssOverride:
+            fontFamily: monospace
+            fontWeight: "300"
+      style:
+        size: regular
+        icon: code
+        cssOverride:
+          fontFamily: monospace
+          fontWeight: "300"
+    - pos:
+        x: 4.424071044921874
+        y: 579.3847015380859
+      id: Boolean Split-226
+      inputConfig: {}
+      partId: Boolean Split
+    - pos:
+        x: -126.08520629882813
+        y: 716.1647003173828
+      id: cl9l9uq6i001a46661ezsuxk5
+      inputConfig: {}
+      part:
+        id: Inline-value-Approved!
+        inputs: {}
+        outputs:
+          r:
+            type: any
+            delayed: false
+            optional: false
+        fnCode: outputs.r.next(('Approved!'))
+        customViewCode: "'Approved!'"
+        dataBuilderSource: J0FwcHJvdmVkISc=
+        templateType: value
+        completionOutputs:
+          - r
+        defaultStyle:
+          size: small
+          icon: code
+          cssOverride:
+            fontFamily: monospace
+            fontWeight: "300"
+      style:
+        size: regular
+        icon: code
+        color: "#00f5d4"
+        cssOverride:
+          fontFamily: monospace
+          fontWeight: "300"
+    - pos:
+        x: 103.67207214355469
+        y: 720.6115234375
+      id: cl9l9uuxb001g4666zyaqbluw
+      inputConfig: {}
+      part:
+        id: Inline-value-Denied!
+        inputs: {}
+        outputs:
+          r:
+            type: any
+            delayed: false
+            optional: false
+        fnCode: outputs.r.next(('Denied!'))
+        customViewCode: "'Denied!'"
+        dataBuilderSource: J0RlbmllZCEn
+        templateType: value
+        completionOutputs:
+          - r
+        defaultStyle:
+          size: small
+          icon: code
+          cssOverride:
+            fontFamily: monospace
+            fontWeight: "300"
+      style:
+        size: regular
+        icon: code
+        color: "#f15bb5"
+        cssOverride:
+          fontFamily: monospace
+          fontWeight: "300"
+  connections:
+    - from:
+        insId: __this
+        pinId: email
+      to:
+        insId: Get User By Email-516
+        pinId: email
+    - from:
+        insId: Get User By Email-516
+        pinId: user
+      to:
+        insId: Dot-748
+        pinId: obj
+    - from:
+        insId: Dot-748
+        pinId: value
+      to:
+        insId: Get Credit By Id-957
+        pinId: userId
+    - from:
+        insId: __this
+        pinId: amount
+      to:
+        insId: Calculate Risk-145
+        pinId: amount
+    - from:
+        insId: Dot-748
+        pinId: value
+      to:
+        insId: Calculate Risk-145
+        pinId: userId
+    - from:
+        insId: Calculate Risk-145
+        pinId: risk
+      to:
+        insId: cl9l9t9gb000b4666ckct55oy
+        pinId: risk
+    - from:
+        insId: Get Credit By Id-957
+        pinId: credit
+      to:
+        insId: cl9l9t9gb000b4666ckct55oy
+        pinId: credit
+    - from:
+        insId: cl9l9t9gb000b4666ckct55oy
+        pinId: r
+      to:
+        insId: Boolean Split-226
+        pinId: val
+    - from:
+        insId: Boolean Split-226
+        pinId: "true"
+      to:
+        insId: cl9l9uq6i001a46661ezsuxk5
+        pinId: __trigger
+    - from:
+        insId: cl9l9uq6i001a46661ezsuxk5
+        pinId: r
+      to:
+        insId: __this
+        pinId: result
+    - from:
+        insId: Boolean Split-226
+        pinId: "false"
+      to:
+        insId: cl9l9uuxb001g4666zyaqbluw
+        pinId: __trigger
+    - from:
+        insId: cl9l9uuxb001g4666zyaqbluw
+        pinId: r
+      to:
+        insId: __this
+        pinId: result
+  id: RequestLoan
+  inputs:
+    email:
+      mode: required
+      type: any
+    amount:
+      mode: required
+      type: any
+  outputs:
+    result:
+      type: any
+      optional: false
+      delayed: false
+  inputsPosition:
+    email:
+      x: 44.23541166783585
+      y: -28.200920025866488
+    amount:
+      x: 294.80848066701947
+      y: -45.40135184067938
+  outputsPosition:
+    result:
+      x: 43.87561048645854
+      y: 881.2666662594652

@@ -1,0 +1,31 @@
+---
+imports:
+  "@acme/add1-wrapped": Add1Wrapped
+part:
+  id: Add1WrappedTwice
+  inputs:
+    n:
+      type: number
+      mode: required
+  outputs:
+    r:
+      type: number
+  instances:
+  - id: ins1
+    partId: Add1Wrapped
+    pos:
+      x: 0
+      y: 0
+  connections:
+    - from:
+        insId: __this
+        pinId: n
+      to:
+        insId: ins1
+        pinId: n
+    - from:
+        insId: ins1
+        pinId: r
+      to:
+        insId: __this
+        pinId: r

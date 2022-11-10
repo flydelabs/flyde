@@ -1,0 +1,74 @@
+$selection-color: #007ec6;
+$selection-text-color: #e9e9e9;
+
+$font-family: Nunito, sans-serif;
+
+$shadow-a: 0px 0px 10px 2px rgba(48, 48, 48, 0.15);
+
+$amethyst: #9b5de5ff;
+$magenta-crayola: #f15bb5ff;
+$minion-yellow: #fee440ff;
+$capri: #00bbf9ff;
+$sea-green-crayola: #00f5d4ff;
+
+/* SCSS HEX */
+$uranian-blue: #ade1ffff;
+$pale-pink: #ffd6dbff;
+$pale-purple-puntone: #eddfefff;
+$aero-blue: #c1ebdbff;
+$tea-green: #dff2baff;
+
+
+
+@mixin base-part($bg-color: white) {
+    color: #000000;
+    background: $bg-color;
+    font-family: $font-family;
+    border: 2px solid transparent;
+    box-shadow: $shadow-a;
+    user-select: none;
+    font-size: 20px;
+    font-weight: 600;
+    text-align: center;
+    padding: 8px 15px 6px;
+    transition: background-color ease-in-out 0.1s, box-shadow ease-in-out 0.2s;
+    max-width: 400px;
+    white-space: nowrap;
+    overflow: hidden;
+
+    // display: -webkit-box;
+    // -webkit-box-orient: vertical;
+    // -webkit-line-clamp: 3;
+    // overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+
+    position: relative;
+    z-index: 1; // added so that it is above pin view when it is retracted when minimized
+
+    &.selected {
+        background: $selection-color;
+        color: $selection-text-color;
+
+        transition: background-color ease-in-out 0.05s;
+    }
+
+    &:hover:not(.selected) {
+        border-color: $selection-color;
+    }
+
+    &.dragged {
+        opacity: 0.8;
+    }
+
+    &.closest {
+        border: 2px dashed $selection-color;
+    }
+}
+
+@mixin custom-part-color($bg, $fg: inherit) {
+    &:not(.selected) {
+        background: $bg;
+        color: $fg;
+    }
+}

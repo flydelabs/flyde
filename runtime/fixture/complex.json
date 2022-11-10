@@ -1,0 +1,62 @@
+{
+    "uses": {
+      "@flyde/stdlib": [
+        "Add",
+        "Sub",
+        "Bob"
+      ],
+      "../../shared.shared": [
+        "Bob",
+        "Bob2"
+      ]
+    },
+    "exports": [
+      "Add"
+    ],
+    "main": {
+      "inputs": {
+          "n1": {
+            "type": "number",
+            "mode": "required"
+          },
+          "n2": "number"
+        },
+        "outputs": {
+          "result": {
+            "type": "number"
+          }
+        }
+    },
+    "parts": {
+      "Add": {
+        "inputs": {
+          "n1": {
+            "type": "number",
+            "mode": "required"
+          },
+          "n2": "number"
+        },
+        "outputs": {
+          "result": {
+            "type": "number"
+          }
+        },
+        "fnPath": "./dist/math/Add.js"
+      },
+      "Subtract": {
+        "inputs": {
+          "n1": {
+            "type": "number",
+            "mode": "required"
+          },
+          "n2": "number"
+        },
+        "outputs": {
+          "result": {
+            "type": "number"
+          }
+        },
+        "fnPath": "./dist/math/Subtract.js"
+      }
+    }
+  }

@@ -1,0 +1,59 @@
+{
+  "name": "@flyde/dev-server",
+  "version": "0.0.1",
+  "description": "",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.d.ts",
+    "src/**/*"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch-ts": "tsc -p . -w --incremental",
+    "watch-flyde": "ts-node-dev src/cli.ts --root=../website",
+    "dev": "concurrently 'ts-node-dev src/cli.ts --root=../website --port=8545' 'npm run watch-ts'",
+    "__publish": "npm version patch && npm publish",
+    "build": "rm -rf dist && tsc -p .",
+    "prod": "node dist/index.js"
+  },
+  "bin": {
+    "flyde": "dist/cli.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@flyde/core": "^0.0.1",
+    "@flyde/resolver": "^0.0.1",
+    "@flyde/runtime": "^0.0.1",
+    "@types/args": "^5.0.0",
+    "@types/cuid": "^1.3.0",
+    "@types/express": "^4.16.1",
+    "@types/glob": "^7.2.0",
+    "@types/node": "^11.10.5",
+    "args": "^5.0.3",
+    "axios": "^0.19.2",
+    "body-parser": "^1.19.0",
+    "chokidar": "^3.5.3",
+    "concurrently": "^5.2.0",
+    "cuid": "^2.1.8",
+    "ejs": "^3.1.8",
+    "express": "^4.16.4",
+    "find-git-root": "^1.0.4",
+    "glob": "^8.0.3",
+    "ignore": "^5.2.0",
+    "pkg-up": "^3.0.0",
+    "resolve-from": "^5.0.0",
+    "source-map-support": "^0.5.21",
+    "toml": "^3.0.0",
+    "typescript": "^4.0.0",
+    "walker": "^1.0.8"
+  },
+  "devDependencies": {
+    "@flyde/editor": "^0.0.1",
+    "fs-extra": "^10.1.0",
+    "ts-node-dev": "^1.0.0-pre.32"
+  },
+  "gitHead": "5f06bd4a0f3da610e64d74c19cc84babc4557f56"
+}

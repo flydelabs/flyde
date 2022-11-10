@@ -1,0 +1,58 @@
+{
+  "name": "flyde",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "proxy": "http://localhost:8484",
+  "scripts": {
+    "start": "concurrently 'yarn run watch-all-integrated' 'yarn run open-vscode'",
+    "open-vscode": "code main.code-workspace",
+    "watch-all-integrated": "yarn workspaces foreach -piAv -j 999 --exclude @flyde/managed-editor --exclude flyde-vscode run dev",
+    "build": "yarn workspaces foreach -Avit run build",
+    "clean": "yarn workspaces foreach clean -y",
+    "release": "lerna publish --no-private"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^4.1.0",
+    "mixpanel-browser": "^2.45.0",
+    "yarn": "^1.22.18"
+  },
+  "private": true,
+  "workspaces": [
+    "core",
+    "flow-editor",
+    "dev-server",
+    "stdlib",
+    "website",
+    "editor",
+    "remote-debugger",
+    "resolver",
+    "runtime",
+    "!examples/*"
+  ],
+  "packageManager": "yarn@3.2.0",
+  "devDependencies": {
+    "@release-it-plugins/workspaces": "^3.2.0",
+    "lerna": "^5.5.2",
+    "release-it": "^15.4.2"
+  },
+  "release-it": {
+    "plugins": {
+      "@release-it-plugins/workspaces": {
+        "workspaces": [
+          "editor",
+          "stdlib",
+          "dev-server",
+          "core",
+          "flow-editor",
+          "resolver",
+          "runtime",
+          "remote-debugger"
+        ]
+      }
+    },
+    "npm": false
+  }
+}

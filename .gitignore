@@ -1,0 +1,21 @@
+node_modules
+.DS_Store
+yarn-error.log
+lerna-debug.log
+*.tsbuildinfo
+
+.env
+
+dist
+build
+
+.yarn/*
+!.yarn/cache/react-telephone-input-https-e5c19fa9d0-73c7718491.zip
+# !.yarn/cache/*.zip
+!.yarn/override-cache
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+# above to support boris's telephone fork not working

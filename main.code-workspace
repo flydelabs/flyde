@@ -1,0 +1,44 @@
+{
+	"folders": [
+		{
+			"path": "core"
+		},
+		{
+			"path": "editor"
+		},
+		{
+			"path": "dev-server"
+		},
+		{
+			"path": "runtime"
+		},
+		{
+			"path": "website"
+		},
+		{
+			"path": "flow-editor"
+		},
+		{
+			"path": "stdlib"
+		},
+		{
+			"path": "examples/invoices-example"
+		},
+		{
+			"path": "../flyde-vscode"
+		},
+		{
+			"path": "examples/discord-tasks-manager"
+		}
+	],
+	"settings": {
+		"search.useGlobalIgnoreFiles": true,
+		"search.useParentIgnoreFiles": true,
+		"search.exclude": {
+			"**/dist": true
+		},
+		"cSpell.words": [
+			"Ungroup"
+		]
+	}
+}

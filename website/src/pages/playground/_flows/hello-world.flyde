@@ -1,0 +1,47 @@
+imports: {}
+part:
+  instances:
+    - pos:
+        x: -187.77300537109375
+        y: -95.10884765624999
+      id: Inline-value-Hello World-673
+      inputConfig: {}
+      part:
+        id: Inline-value-Hello World
+        inputs: {}
+        outputs:
+          r:
+            type: any
+            delayed: false
+            optional: false
+        fnCode: outputs.r.next(("Hello World"))
+        customViewCode: '"Hello World"'
+        dataBuilderSource: IkhlbGxvIFdvcmxkIg==
+        templateType: value
+        completionOutputs:
+          - r
+        defaultStyle:
+          size: small
+          icon: code
+          cssOverride:
+            fontFamily: monospace
+            fontWeight: "300"
+  connections:
+    - from:
+        insId: Inline-value-Hello World-673
+        pinId: r
+      to:
+        insId: __this
+        pinId: result
+  id: Main
+  inputs: {}
+  outputs:
+    result:
+      type: any
+  inputsPosition: {}
+  outputsPosition:
+    result:
+      x: -164.93927536610897
+      y: 53.76806688560694
+  completionOutputs:
+    - result
