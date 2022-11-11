@@ -1,0 +1,55 @@
+imports: {}
+part:
+  instances:
+    - pos:
+        x: -152.2423840332031
+        y: 312.0960006713867
+      id: clacz9qa700034664mecvv1ga
+      inputConfig: {}
+      part:
+        id: Inline-value-Hello, Flyde!
+        inputs: {}
+        outputs:
+          r:
+            type: any
+            delayed: false
+            optional: false
+        fnCode: outputs.r.next(('Hello, Flyde!'))
+        customViewCode: "'Hello, Flyde!'"
+        dataBuilderSource: J0hlbGxvLCBGbHlkZSEn
+        templateType: value
+        completionOutputs:
+          - r
+        defaultStyle:
+          size: small
+          icon: code
+          cssOverride:
+            fontFamily: monospace
+            fontWeight: "500"
+      style:
+        size: large
+        icon: code
+        cssOverride:
+          fontFamily: monospace
+          fontWeight: "500"
+  connections:
+    - from:
+        insId: clacz9qa700034664mecvv1ga
+        pinId: r
+      to:
+        insId: __this
+        pinId: message
+  id: HelloFlyde
+  inputs: {}
+  outputs:
+    message:
+      type: any
+      optional: false
+      delayed: false
+  inputsPosition: {}
+  outputsPosition:
+    message:
+      x: -50
+      y: 500
+  completionOutputs:
+    - message

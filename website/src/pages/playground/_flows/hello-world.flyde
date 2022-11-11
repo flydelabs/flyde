@@ -2,8 +2,8 @@ imports: {}
 part:
   instances:
     - pos:
-        x: -187.77300537109375
-        y: -95.10884765624999
+        x: -231.11345947265625
+        y: -107.60747436523437
       id: Inline-value-Hello World-673
       inputConfig: {}
       part:
@@ -26,6 +26,12 @@ part:
           cssOverride:
             fontFamily: monospace
             fontWeight: "300"
+      style:
+        size: regular
+        icon: code
+        cssOverride:
+          fontFamily: monospace
+          fontWeight: "300"
   connections:
     - from:
         insId: Inline-value-Hello World-673

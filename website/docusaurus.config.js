@@ -55,7 +55,8 @@ const FixWebpack5Plugin = () => ({
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: "Visual Programming Inside VSCode",
-  tagline: "Flyde is a flow-based, visual programming tool that fully integrates with the tools you love",
+  tagline:
+    "Flyde is a flow-based, visual programming tool that fully integrates with the tools you love",
   url: "https://www.flyde.dev",
   baseUrl: "/",
   onBrokenLinks: "warn",
@@ -127,7 +128,7 @@ const config = {
         items: [
           {
             type: "doc",
-            docId: "intro",
+            docId: "hello-world-with-flyde",
             position: "left",
             label: "Tutorial",
           },
