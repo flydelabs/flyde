@@ -8,7 +8,7 @@ This tutorial will guide you step-by-step into creating an "Hello world" program
 
 This is how the end result should look like:
 ![./hello-world-result.gif](./assets/hello-world-final-result.gif)
-Resulting code can be in the [examples folder](https://github.com/FlydeHQ/flyde/tree/main/examples/hello-world).
+Resulting code can be in the [examples folder](https://github.com/FlydeHQ/flyde/tree/main/examples/hello-flyde).
 
 ## What you'll need
 
