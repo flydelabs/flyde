@@ -101,7 +101,7 @@ export const createRuntimeClient = (
 
       const depth = changeData.insId.split(".").length;
 
-      debouncedSendBatchedEvent({
+      debouncedSendBatchedEvent.addItem({
         type: RuntimeEventType.INPUT_CHANGE,
         id: `${changeData.insId}.${changeData.pinId}.input`,
         dt: dt(),
@@ -153,7 +153,7 @@ export const createRuntimeClient = (
         changeData.val
       );
 
-      debouncedSendBatchedEvent({
+      debouncedSendBatchedEvent.addItem({
         type: RuntimeEventType.OUTPUT_CHANGE,
         id: `${changeData.insId}.${changeData.pinId}.output`,
         dt: dt(),
@@ -201,7 +201,7 @@ export const createRuntimeClient = (
       const depth = val.insId.split(".").length;
       // socket.emit(EventType.PROCESSING_CHANGE, val);
 
-      debouncedSendBatchedEvent({
+      debouncedSendBatchedEvent.addItem({
         type: RuntimeEventType.PROCESSING_CHANGE,
         id: val.insId,
         dt: dt(),
@@ -216,7 +216,7 @@ export const createRuntimeClient = (
 
       // socket.emit(EventType.INPUTS_STATE_CHANGE, val);
 
-      debouncedSendBatchedEvent({
+      debouncedSendBatchedEvent.addItem({
         type: RuntimeEventType.INPUTS_STATE_CHANGE,
         id: val.insId,
         dt: dt(),
@@ -230,7 +230,7 @@ export const createRuntimeClient = (
       const serializedError = serializeError(val);
       // socket.emit(EventType.PART_ERROR, { ...val, error: serializedError });
 
-      debouncedSendBatchedEvent({
+      debouncedSendBatchedEvent.addItem({
         type: RuntimeEventType.ERROR,
         id: val.insId,
         dt: dt(),
@@ -238,7 +238,7 @@ export const createRuntimeClient = (
         t: Date.now(),
       });
 
-      debouncedSendBatchedEvent({
+      debouncedSendBatchedEvent.addItem({
         type: RuntimeEventType.OUTPUT_CHANGE,
         id: `${val.insId}.${ERROR_PIN_ID}.output`,
         dt: dt(),
@@ -260,6 +260,7 @@ export const createRuntimeClient = (
       socket.emit(EventType.IS_ALIVE, { time });
     },
     destroy: () => {
+      debouncedSendBatchedEvent.flush();
       enumToArray(EventType).forEach((type) => socket.off(type));
       socket.disconnect();
     },

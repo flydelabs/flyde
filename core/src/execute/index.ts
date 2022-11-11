@@ -80,6 +80,7 @@ export type Debugger = {
   onInputsStateChange?: (value: InputsStateChangeData) => void;
   debugDelay?: number;
   onError?: (err: PartError) => void;
+  destroy?: () => void;
 };
 
 export type ExecuteNativeFn = (
@@ -122,7 +123,9 @@ export type NativeExecutionData = {
   onError: (err: any) => void;
   onBubbleError: (err: any) => void;
   env: ExecuteEnv;
+  onCompleted?: (data: any) => void;
 };
+
 
 
 export const INNER_STATE_SUFFIX = "_inner";
@@ -140,6 +143,7 @@ const executeNative = (data: NativeExecutionData) => {
     mainState,
     onError,
     onBubbleError,
+    onCompleted,
     env,
     extraContext
   } = data;
@@ -150,7 +154,7 @@ const executeNative = (data: NativeExecutionData) => {
   const cleanUps: any = [];
   let partCleanupFn: any;
 
-  const innerExec: InnerExecuteFn = (part, i, o, id) => execute({part: part, inputs: i, outputs: o, partsRepo: repo, _debugger, insId: id});
+  const innerExec: InnerExecuteFn = (part, i, o, id) => execute({part: part, inputs: i, outputs: o, partsRepo: repo, _debugger, insId: id, onCompleted});
 
   const onProcessing: Debugger["onProcessing"] = _debugger.onProcessing || noop;
   const onInputsStateChange: Debugger["onInputsStateChange"] =
@@ -253,6 +257,7 @@ const executeNative = (data: NativeExecutionData) => {
         }
 
         let completedOutputs = new Set();
+        let completedOutputsValues = {};
 
         if (part.completionOutputs) {
           processing = true;
@@ -270,6 +275,7 @@ const executeNative = (data: NativeExecutionData) => {
           entries(outputs).forEach(([key, subj]) => {
             subj.pipe(first()).subscribe((val) => {
               completedOutputs.add(key);
+              completedOutputsValues[key] = val;
 
               let requirementArr = dependenciesMap.get(key);
 
@@ -286,6 +292,10 @@ const executeNative = (data: NativeExecutionData) => {
                 processing = false;
                 onProcessing({ processing, insId: fullInsId });
 
+                if (onCompleted) {              
+                  onCompleted(completedOutputsValues);
+                }
+
                 cleanState();
                 if (partCleanupFn) {
                   partCleanupFn();
@@ -294,8 +304,10 @@ const executeNative = (data: NativeExecutionData) => {
                   // no cleanup
                 }
 
+
                 completedOutputs.clear();
-                // this avoids an endless loop after triggerring an ended part with static inputs
+                completedOutputsValues = {};
+                // this avoids an endless loop after triggering an ended part with static inputs
                 if (hasNewSignificantValues(inputs, inputsState, env, part.id)) {
                   maybeRunPart();
                 }
@@ -400,6 +412,8 @@ export type ExecuteParams = {
   onBubbleError?: <Err extends PartError>(err: Err) => void;
   env?: ExecuteEnv;
   extraContext?: Record<string, any>;
+
+  onCompleted?: (data: any) => void;
 }
 
 
@@ -414,7 +428,8 @@ export const execute: ExecuteFn = ({
   mainState = {},
   parentInsId = "root",
   onBubbleError = noop, // (err) => { throw err},
-  env = {}
+  env = {},
+  onCompleted = noop
 }) => {
   const toCancel: Function[] = [];
 
@@ -526,7 +541,8 @@ export const execute: ExecuteFn = ({
     onError,
     onBubbleError,
     env,
-    extraContext
+    extraContext,
+    onCompleted
   });
 
   return () => {

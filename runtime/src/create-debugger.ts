@@ -3,7 +3,7 @@ import { createRuntimeClient } from "@flyde/remote-debugger/dist/clients/runtime
 
 const url = 'http://localhost:8545';
 
-export const createDebugger = async () => {
+export const createDebugger = async (): Promise<Debugger> => {
     return createRuntimeClient(url, 'bob').then((client) => {
         const _debugger: Debugger = {
             onInput: (wrappedValue) => {
@@ -21,6 +21,9 @@ export const createDebugger = async () => {
             onError: (data) => {
                 return client.emitPartError(data);
             },
+            destroy: () => {
+                return client.destroy();
+            }
         };
     
         return _debugger;

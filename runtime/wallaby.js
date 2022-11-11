@@ -10,7 +10,8 @@ module.exports = function (w) {
 		'src/**/*.js',
 		{pattern: 'src/**/spec.ts', ignore: true},
 		{pattern: 'src/**/spec.tsx', ignore: true},
-		'fixture/**'
+		'fixture/**',
+		{pattern: 'node_modules', ignore: true}
 	  ],
   
 	  tests: [

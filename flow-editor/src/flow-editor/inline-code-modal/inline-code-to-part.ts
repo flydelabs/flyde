@@ -40,7 +40,7 @@ export const createInlineCodePart = ({ code, customView, partId, type }: InlineC
     templateType: type,
     completionOutputs: ["r"],
     defaultStyle: {
-      size: 'small',
+      size: 'regular',
       icon: 'code',
       cssOverride: {
         fontFamily: 'monospace',

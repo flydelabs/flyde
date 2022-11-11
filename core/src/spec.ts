@@ -62,9 +62,9 @@ import { codePartToNative } from "./code-to-native";
 import {
   concisePart,
   conciseNativePart,
-  spiedOutput,
   callsFirstArgs,
   valuePart,
+  spiedOutput
 } from "./test-utils";
 
 describe("main ", () => {
@@ -1576,6 +1576,32 @@ describe("main ", () => {
       assert.equal(s.callCount < 5, true);
     });
 
+    it("calls destroy fn of debugger when cleaning up", () => {
+      const spyFn = spy();
+      const part: NativePart = {
+        id: "id",
+        inputs: {
+          v: partInput("number"),
+        },
+        outputs: {
+          r: partInput("number"),
+        },
+        fn: ({ v }, { r }, { onCleanup: cleanup }) => {
+          r.next(v);
+          cleanup(() => {
+            spyFn();
+          });
+        },
+      };
+      const v = dynamicPartInput();
+      const r = dynamicOutput();
+      const clean = execute({part: part, inputs: { v }, outputs: { r }, partsRepo: testRepo});
+      v.subject.next(2);
+      assert.equal(spyFn.calledOnce, false);
+      clean();
+      assert.equal(spyFn.calledOnce, true);
+    });
+
   });
 
   describe('extra context', () => {
@@ -1620,7 +1646,7 @@ describe("main ", () => {
       assert.equal(s.lastCall.args[0], 54);
     });
     
-    it("passes external context forward to grouped parts", async () => {
+    it.skip("passes external context forward to grouped parts", async () => {
       // TODO - write test
     });
   })
@@ -2041,6 +2067,35 @@ describe("main ", () => {
           200,
           5
         );
+      });
+
+      it('triggers the completion callback with last values when completed', async () => {
+        const simpleCompletion: NativePart = {
+          id: "simpleCompletion",
+          inputs: {},
+          outputs: {
+            r: partOutput("number")
+          },
+          completionOutputs: ["r"],
+          fn: ({ }, { r}) => {
+            
+            setTimeout(() => {
+              r.next('bob');
+            }, 10);
+          },
+        };
+        const r = dynamicOutput();
+
+        const completionSpy = spy();
+
+        execute({part: simpleCompletion, inputs: { }, outputs: { r }, partsRepo: testRepo, onCompleted: completionSpy});
+        
+        assert.equal(completionSpy.called, false);
+        await eventually(() => {
+          assert.equal(completionSpy.called, true);
+        }, 100, 10);
+        assert.equal(completionSpy.callCount, 1);
+        assert.deepEqual(completionSpy.lastCall.args[0], {r: 'bob'})
       });
     });
 

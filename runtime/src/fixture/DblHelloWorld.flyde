@@ -1,0 +1,87 @@
+imports: {}
+part:
+  instances:
+    - pos:
+        x: -50.477996826171875
+        y: 273.1924496459961
+      id: clachgdym000a46649wnbf5cb
+      inputConfig: {}
+      part:
+        id: Inline-value-Hello
+        inputs: {}
+        outputs:
+          r:
+            type: any
+            delayed: false
+            optional: false
+        fnCode: outputs.r.next(('Hello'))
+        customViewCode: "'Hello'"
+        dataBuilderSource: J0hlbGxvJw==
+        templateType: value
+        completionOutputs:
+          - r
+        defaultStyle:
+          size: small
+          icon: code
+          cssOverride:
+            fontFamily: monospace
+            fontWeight: "500"
+    - pos:
+        x: 133.62673950195312
+        y: 278.1868420410156
+      id: clachgfqy000d4664i72bcel2
+      inputConfig: {}
+      part:
+        id: Inline-value-World
+        inputs: {}
+        outputs:
+          r:
+            type: any
+            delayed: false
+            optional: false
+        fnCode: outputs.r.next(('World'))
+        customViewCode: "'World'"
+        dataBuilderSource: J1dvcmxkJw==
+        templateType: value
+        completionOutputs:
+          - r
+        defaultStyle:
+          size: small
+          icon: code
+          cssOverride:
+            fontFamily: monospace
+            fontWeight: "500"
+  connections:
+    - from:
+        insId: clachgdym000a46649wnbf5cb
+        pinId: r
+      to:
+        insId: __this
+        pinId: res1
+    - from:
+        insId: clachgfqy000d4664i72bcel2
+        pinId: r
+      to:
+        insId: __this
+        pinId: res2
+  id: DblHelloWorld
+  inputs: {}
+  outputs:
+    res1:
+      type: any
+      optional: false
+      delayed: false
+    res2:
+      type: any
+      optional: false
+      delayed: false
+  inputsPosition: {}
+  outputsPosition:
+    res1:
+      x: -50
+      y: 500
+    res2:
+      x: 150
+      y: 500
+  completionOutputs:
+    - res1+res2

@@ -6,10 +6,11 @@ import { request } from 'http';
 export const getCallPath = () => {
     const stack = callsite();
 
-    const idx = stack.findIndex(s =>{
+    const idx = stack.findIndex(s =>{      
       return (s.getFileName() || 'n/a').includes('/runtime/')
         && (s.getFunctionName() || 'n/a').includes('loadFlow')
     });
+    
 
     if (idx === -1) {
       throw new Error('Could not find runtime in stack');

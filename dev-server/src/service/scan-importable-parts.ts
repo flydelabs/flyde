@@ -11,9 +11,10 @@ const FLYDE_LIBRARY = /^flyde[-_](.*)/;
 
 export const getFlydeDependencies = async (rootPath: string) => {
   const pjsonPath = await pkgUp({ cwd: rootPath });
-  const { dependencies } = require(pjsonPath);
+  const { dependencies, devDependencies } = require(pjsonPath);
+  const combinedDeps = {...dependencies, ...devDependencies};
 
-  const depKeys = Object.keys(dependencies) || [];
+  const depKeys = Object.keys(combinedDeps) || [];
   return depKeys.filter((dep) => {
     return dep.match(FLYDE_STDLIB_PATTERN) || dep.match(FLYDE_LIBRARY);
   });

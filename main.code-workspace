@@ -26,6 +26,9 @@
 		},
 		{
 			"path": "examples/discord-tasks-manager"
+		},
+		{
+			"path": "remote-debugger"
 		}
 	],
 	"settings": {

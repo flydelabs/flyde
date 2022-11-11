@@ -1,4 +1,0 @@
-imports:
-  "./b.flyde":
-  - name: Exponent
-    alias: Bob
