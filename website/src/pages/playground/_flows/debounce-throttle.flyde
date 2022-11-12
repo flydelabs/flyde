@@ -133,13 +133,13 @@ part:
   connections:
     - from:
         insId: __this
-        pinId: threshold
+        pinId: input
       to:
         insId: Throttle-652
         pinId: value
     - from:
         insId: __this
-        pinId: threshold
+        pinId: input
       to:
         insId: Debounce-194-d108
         pinId: i
@@ -181,7 +181,7 @@ part:
         pinId: result
   id: Main
   inputs:
-    threshold:
+    input:
       mode: required
       type: any
   outputs:
@@ -200,6 +200,9 @@ part:
     threshold:
       x: 485.56077831498897
       y: 225.21610416222086
+    input:
+      x: 485.56077831498897
+      y: 225.21610416222086
   outputsPosition:
     result:
       x: 533.2714674326223
@@ -209,4 +212,4 @@ part:
       y: 783.62
   completionOutputs: []
   reactiveInputs:
-    - value
+    - input

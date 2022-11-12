@@ -148,7 +148,7 @@ const config = {
             items: [
               {
                 label: "Tutorial",
-                to: "/docs/intro",
+                to: "/docs",
               },
             ],
           },
@@ -161,7 +161,7 @@ const config = {
               },
               {
                 label: "Discord",
-                href: "https://discordapp.com/invite/docusaurus",
+                href: "https://discord.gg/x7t4tjZQP8",
               },
               {
                 label: "Twitter",

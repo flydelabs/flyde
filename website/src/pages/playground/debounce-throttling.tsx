@@ -37,7 +37,7 @@ export default function DebounceThrottlingExample(): JSX.Element {
   const result = useRef(dynamicOutput());
 
   const inputs = useRef({
-    value: dynamicPartInput(),
+    input: dynamicPartInput(),
   });
 
   const [deb, setDeb] = useState(1500);
@@ -98,9 +98,9 @@ export default function DebounceThrottlingExample(): JSX.Element {
         <label htmlFor="thr">Throttle - {thr}ms</label>
       </div>
       
-      <button className="emit-btn button button--outline button--primary" onClick={() => inputs.current.value.subject.next("🐶")}>Emit 🐶</button>
-      <button className="emit-btn button button--outline button--primary" onClick={() => inputs.current.value.subject.next("😸")}>Emit 😸</button>
-      <button className="emit-btn button button--outline button--primary" onClick={() => inputs.current.value.subject.next("🦄")}>Emit 🦄</button>
+      <button className="emit-btn button button--outline button--primary" onClick={() => inputs.current.input.subject.next("🐶")}>Emit 🐶</button>
+      <button className="emit-btn button button--outline button--primary" onClick={() => inputs.current.input.subject.next("😸")}>Emit 😸</button>
+      <button className="emit-btn button button--outline button--primary" onClick={() => inputs.current.input.subject.next("🦄")}>Emit 🦄</button>
   </Fragment>;
 
   return (
