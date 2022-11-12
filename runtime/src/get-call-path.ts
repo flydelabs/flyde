@@ -1,37 +1,35 @@
-import { join } from 'path';
-import { existsSync } from 'fs';
-import * as callsite from 'callsite';
-import { request } from 'http';
+import { sep } from "path";
+import * as callsite from "callsite";
 
 export const getCallPath = () => {
-    const stack = callsite();
+  // Very hacky.. might need a refactor
+  const stack = callsite();
+  const idx = stack.findIndex((s) => {
+    const folders = (s.getFileName() || "not available").split(sep); // for windows support
+    const functionName = s.getFunctionName() || "n/a";
+    return folders.include("runtime") && functionName.includes("loadFlow");
+  });
 
-    const idx = stack.findIndex(s =>{      
-      return (s.getFileName() || 'n/a').includes('/runtime/')
-        && (s.getFunctionName() || 'n/a').includes('loadFlow')
-    });
-    
-
-    if (idx === -1) {
-      throw new Error('Could not find runtime in stack');
-    }
-  
-    const requester = stack[idx + 1].getFileName();
-
-    return requester;
-  
-    // const path = join(requester, '..', flowPath);
-  
-    // const possiblePaths = [
-    //   path,
-    //   path.replace('/dist/', '/src/')
-    // ];
-
-    // while (possiblePaths.length) {
-    //   const path = possiblePaths.shift();
-    //   if (existsSync(path)) {
-    //     return path;
-    //   }
-    // }
-    // throw new Error(`Could not find flow file at ${possiblePaths.join(',')}`);
+  if (idx === -1) {
+    throw new Error("Could not find runtime in stack");
   }
+
+  const requester = stack[idx + 1].getFileName();
+
+  return requester;
+
+  // const path = join(requester, '..', flowPath);
+
+  // const possiblePaths = [
+  //   path,
+  //   path.replace('/dist/', '/src/')
+  // ];
+
+  // while (possiblePaths.length) {
+  //   const path = possiblePaths.shift();
+  //   if (existsSync(path)) {
+  //     return path;
+  //   }
+  // }
+  // throw new Error(`Could not find flow file at ${possiblePaths.join(',')}`);
+};

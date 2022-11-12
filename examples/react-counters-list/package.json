@@ -11,9 +11,9 @@
   },
   "dependencies": {
     "@babel/core": "^7.16.0",
-    "@flyde/core": "^0.0.1",
-    "@flyde/runtime": "^0.0.1",
-    "@flyde/stdlib": "^0.0.1",
+    "@flyde/core": "latest",
+    "@flyde/runtime": "latest",
+    "@flyde/stdlib": "latest",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.3",
     "@svgr/webpack": "^5.5.0",
     "@testing-library/jest-dom": "^5.16.5",

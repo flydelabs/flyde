@@ -11,9 +11,9 @@
     "build": "tsc -p ."
   },
   "dependencies": {
-    "@flyde/resolver": "^0.0.1",
-    "@flyde/runtime": "^0.0.1",
-    "@flyde/stdlib": "^0.0.1",
+    "@flyde/resolver": "latest",
+    "@flyde/runtime": "latest",
+    "@flyde/stdlib": "latest",
     "axios": "^1.1.3",
     "chalk": "^4.0.0",
     "meow": "^9.0.0"

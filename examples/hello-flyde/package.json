@@ -9,6 +9,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@flyde/runtime": "^0.2.0"
+    "@flyde/runtime": "latest"
   }
 }

@@ -1218,7 +1218,7 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
 
     const onMaybeZoom = React.useCallback(
       (e: WheelEvent) => {
-        if (e.metaKey) {
+        if (e.metaKey || e.ctrlKey) {
           // blockScroll();
           const zoomDiff = e.deltaY * -0.001;
           onZoom(viewPort.zoom + zoomDiff, "mouse");

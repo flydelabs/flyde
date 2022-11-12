@@ -1,6 +1,6 @@
-@import  '../../lib/common.scss';
+@import "../../lib/common.scss";
 
-$const-color: #FCF0FF;
+$const-color: #fcf0ff;
 $trigger-pin-width: 40px;
 $half-of-pin-height: 16px;
 
@@ -28,7 +28,6 @@ $half-of-pin-height: 16px;
   // }
 }
 
-
 .ins-view {
   transform-origin: top left;
   display: inline-block;
@@ -44,11 +43,11 @@ $half-of-pin-height: 16px;
   &.dragged {
     opacity: 0.8;
   }
-  
+
   &.no-inputs {
     padding-top: 15px;
   }
-  
+
   &.no-outputs {
     padding-bottom: 15px;
   }
@@ -59,12 +58,13 @@ $half-of-pin-height: 16px;
     .svg-inline--fa {
       // color: hsl(var(--part-color), 10%);
       color: var(--part-color);
-      filter: brightness(0.75); // might be possible using css vars but it's conflicting with scss in a way (https://blog.jim-nielsen.com/2019/dynamically-darken-a-color-in-css/)
+      filter: brightness(
+        0.75
+      ); // might be possible using css vars but it's conflicting with scss in a way (https://blog.jim-nielsen.com/2019/dynamically-darken-a-color-in-css/)
     }
-    
 
     &.size-small {
-      font-size: 12px;
+      font-size: 14px;
       padding: 3px 10px 2px;
     }
 
@@ -88,7 +88,6 @@ $half-of-pin-height: 16px;
   }
 
   &.inline-part-edited {
-
     z-index: 2; // otherwise other instances get rendered on top of inline part editor
 
     > .base-part-view .base-part-view-inner {
@@ -106,19 +105,18 @@ $half-of-pin-height: 16px;
         height: 85%;
         left: 10%;
         top: 7.5%;
-        
-  
+
         background: #ffffff;
-      
+
         box-shadow: $shadow-a;
         // position: relative;
-        
+
         z-index: 2;
         display: flex;
         flex-direction: column;
         position: absolute;
         overflow: hidden;
-  
+
         > header {
           font-size: 20px;
           font-weight: 600;
@@ -128,7 +126,7 @@ $half-of-pin-height: 16px;
           user-select: none;
           z-index: 1;
         }
-  
+
         > .grouped-part-editor {
           flex: 1;
           display: flex;
@@ -137,9 +135,6 @@ $half-of-pin-height: 16px;
         }
       }
     }
-    
-
-    
   }
 
   .pin {
@@ -153,7 +148,7 @@ $half-of-pin-height: 16px;
         transform: translateY(calc(100% - #{$half-of-pin-height})) scaleY(0);
       }
     }
-  
+
     &:not(.force-minimized-output) {
       .pin.output.minimized:not(.selected) {
         // the -half of pin thing + scale Y 0 is for the connections to be drawn to the center of the intance
@@ -162,5 +157,3 @@ $half-of-pin-height: 16px;
     }
   }
 }
-
-
