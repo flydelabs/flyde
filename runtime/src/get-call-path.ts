@@ -5,9 +5,9 @@ export const getCallPath = () => {
   // Very hacky.. might need a refactor
   const stack = callsite();
   const idx = stack.findIndex((s) => {
-    const folders = (s.getFileName() || "not available").split(sep); // for windows support
+    const folders: string[] = (s.getFileName() || "not available").split(sep); // for windows support
     const functionName = s.getFunctionName() || "n/a";
-    return folders.include("runtime") && functionName.includes("loadFlow");
+    return folders.includes("runtime") && functionName.includes("loadFlow");
   });
 
   if (idx === -1) {

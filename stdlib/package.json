@@ -1,6 +1,6 @@
 {
     "name": "@flyde/stdlib",
-    "version": "0.1.4",
+    "version": "0.1.5",
     "description": "Flyde's StdLib",
     "flyde": {
         "exposes": [
@@ -23,7 +23,7 @@
     "author": "Flyde",
     "license": "ISC",
     "dependencies": {
-        "@flyde/core": "^0.1.4",
+        "@flyde/core": "^0.1.5",
         "axios": "^0.27.2",
         "pubsub-js": "^1.9.4"
     },
