@@ -72,11 +72,17 @@ export const scanImportableParts = async (rootPath: string, filename: string) =>
     .reduce<Record<string, PartDefRepo>>((acc, file) => {
       // const flowContents = readFileSync(file.fullPath, "utf8");
 
-      const { main } = resolveFlow(file.fullPath, "definition");
+      try {
+        const { main } = resolveFlow(file.fullPath, "definition");
 
       const relativePath = relative(join(fileRoot, ".."), file.fullPath);
 
       return { ...acc, [relativePath]: { [main.id]: main } };
+        // return { ...acc, [main.id]: main };
+      } catch (e) {
+        console.error(`Skipping corrupt flow at ${file.fullPath}, error: ${e}`);
+        return acc;
+      }
     }, {});
 
   return { ...depsParts, ...localParts };

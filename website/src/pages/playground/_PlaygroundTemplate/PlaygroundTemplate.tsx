@@ -187,12 +187,11 @@ export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (props) => 
       title={`${props.meta.title} | Playground`}
       description={`Flyde Playground - ${props.meta.title} example`}
     >
-      <header className={clsx("hero hero--primary", styles.heroBanner)}>
+      <header className={clsx("hero hero--primary", styles.heroBanner, 'playground-hero')}>
         <div className="container">
-          <h2 className="hero__title">Flyde Playground</h2>
+          <h1 className="hero__title">Welcome to Flyde's Online Playground</h1>
           <p className="hero__subtitle">
-            Flyde's playground allows you to see how Flyde looks and feels like. Choose one of the
-            examples below to get started. Feel free to play around with the canvas and see how your
+            Choose one of the examples below to get started. Feel free to play around with the canvas and see how your
             changes affect the result!
           </p>
           <ul className="examples__menu">

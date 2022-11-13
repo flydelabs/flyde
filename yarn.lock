@@ -5259,7 +5259,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@flyde/dev-server@^0.4.0, @flyde/dev-server@workspace:dev-server":
+"@flyde/dev-server@^0.4.1, @flyde/dev-server@workspace:dev-server":
   version: 0.0.0-use.local
   resolution: "@flyde/dev-server@workspace:dev-server"
   dependencies:
@@ -5305,7 +5305,7 @@ __metadata:
     "@blueprintjs/popover2": ^0.3.1
     "@blueprintjs/select": ^3.5.0
     "@flyde/core": ^0.1.6
-    "@flyde/dev-server": ^0.4.0
+    "@flyde/dev-server": ^0.4.1
     "@flyde/flow-editor": ^0.1.0
     "@flyde/remote-debugger": ^0.2.5
     "@monaco-editor/react": ^4.0.10
@@ -27909,7 +27909,7 @@ __metadata:
     "@docusaurus/module-type-aliases": 2.0.1
     "@docusaurus/plugin-google-gtag": ^2.1.0
     "@docusaurus/preset-classic": 2.0.1
-    "@flyde/dev-server": ^0.4.0
+    "@flyde/dev-server": ^0.4.1
     "@flyde/resolver": ^0.1.1
     "@flyde/stdlib": ^0.1.6
     "@mdx-js/react": ^1.6.22

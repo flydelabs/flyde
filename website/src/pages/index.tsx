@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Typical from 'react-typical'
 import clsx from 'clsx';
 import Link from '@docusaurus/Link';
@@ -17,17 +17,38 @@ const IntegrationPoints = () => {
 
 function HomepageHeader() {
   const {siteConfig} = useDocusaurusContext();
+
   return (
     <header className={clsx('hero hero--primary', styles.heroBanner)}>
+
+      <div className='videos-container'>
+        <video className='videoTag' loop muted autoPlay>
+          <source src={'/background.mp4'} type='video/mp4' />
+        </video>
+      </div>
       <div className="container">
         <h1 className="hero__title">{siteConfig.title}</h1>
-        <p className="hero__subtitle">Flyde is an <em>open source</em> flow-based, visual programming tool that fully integrates with your <IntegrationPoints/></p>
+        <p className="hero__subtitle">Flyde is an <em>open source</em> flow-based, visual programming tool. JavaScript and TypeScript native support. Works in Node.js and browsers.<br/>Fully integrates with your <IntegrationPoints/></p>
         <div className={styles.buttons}>
           <Link
             className="button button--secondary button--lg"
             to="/playground">
-            Try Online for Free
+            Online Playground
           </Link>
+          <Link
+            className="button button--primary button--lg"
+            to="/docs/hello-world-with-flyde/">
+            Get Started
+          </Link>
+          <span className='gh-stars-wrapper'>
+                <iframe
+                  className='gh-stars-frame'
+                  src="https://ghbtns.com/github-btn.html?user=flydehq&amp;repo=flyde&amp;type=star&amp;count=true&amp;size=large"
+                  width={160}
+                  height={30}
+                  title="GitHub Stars"
+                />
+          </span>
         </div>
       </div>
     </header>

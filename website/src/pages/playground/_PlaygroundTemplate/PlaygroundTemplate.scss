@@ -1,7 +1,7 @@
 .examples__menu {
   display: inline-flex;
   list-style: none;
-  margin-top: 20px;
+  margin-top: 10px;
 
   > li {
     font-size: 18px;
@@ -19,7 +19,7 @@
 }
 
 .playground-container {
-  padding: 4rem 0;
+  padding: 2rem 0;
   position: relative;
 
 
@@ -115,4 +115,18 @@
   }
 
   
+}
+
+
+.playground-hero {
+  padding: 0.5rem 0;
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  .hero__subtitle {
+    font-size: 1.25rem;
+    margin-bottom: 5px;
+  }
 }

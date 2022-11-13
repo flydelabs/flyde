@@ -55,7 +55,7 @@ const FixWebpack5Plugin = () => ({
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: "Visual Programming Inside VSCode",
+  title: "Visual Programming in VSCode",
   tagline:
     "Flyde is a flow-based, visual programming tool that fully integrates with the tools you love",
   url: "https://www.flyde.dev",
@@ -177,6 +177,10 @@ const config = {
               {
                 label: "Blog",
                 to: "/blog",
+              },
+              {
+                label: "VSCode Extension",
+                href: "https://marketplace.visualstudio.com/items?itemName=flyde.flyde-vscode",
               },
               {
                 label: "GitHub",

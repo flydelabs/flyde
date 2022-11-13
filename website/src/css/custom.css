@@ -32,3 +32,35 @@
 mark {
   background-color: #d7f0ff;
 }
+
+video {
+  /* object-fit: cover; */
+  /* top: 0; */
+  /* right: 0; */
+  /* left: 0; */
+  /* bottom: 0; */
+  /* opacity: 0.5; */
+  display:inline-block;
+  z-index: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  /* filter: blur(10px); */
+}
+
+.videos-container {
+  object-fit: cover;
+  position: absolute;
+  height: 100%;
+  filter: blur(3px);
+  opacity: 0.2;
+}
+
+
+
+.container {
+  z-index: 1;
+  /* opacity: 0; */
+}
+
+
