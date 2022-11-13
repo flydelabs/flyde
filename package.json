@@ -17,6 +17,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@flyde/runtime": "workspace:^",
     "concurrently": "^4.1.0",
     "mixpanel-browser": "^2.45.0",
     "yarn": "^1.22.18"

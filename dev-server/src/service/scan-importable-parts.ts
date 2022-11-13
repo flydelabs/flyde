@@ -6,7 +6,7 @@ import { PartDefRepo } from "@flyde/core";
 import { scanFolderStructure } from "./scan-folders-structure";
 import { FlydeFile } from "../fs-helper/shared";
 
-const FLYDE_STDLIB_PATTERN = /^\@flyde\/stdlib/;
+const FLYDE_PACKAGE_PATTERN = /^\@flyde\/(.*)/;
 const FLYDE_LIBRARY = /^flyde[-_](.*)/;
 
 export const getFlydeDependencies = async (rootPath: string) => {
@@ -16,7 +16,7 @@ export const getFlydeDependencies = async (rootPath: string) => {
 
   const depKeys = Object.keys(combinedDeps) || [];
   return depKeys.filter((dep) => {
-    return dep.match(FLYDE_STDLIB_PATTERN) || dep.match(FLYDE_LIBRARY);
+    return dep.match(FLYDE_PACKAGE_PATTERN) || dep.match(FLYDE_LIBRARY);
   });
 };
 

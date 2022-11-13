@@ -1,6 +1,6 @@
 {
   "name": "@flyde/runtime",
-  "version": "0.3.0",
+  "version": "0.4.1",
   "description": "",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -8,9 +8,18 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsc -p . -w --incremental",
     "__publish": "npm version patch && npm publish",
-    "build": "rm -rf dist && tsc -p .",
+    "copy-stdlib": "mkdir -p dist/stdlib-copy &&  cp -r ../stdlib/parts dist/stdlib-copy",
+    "build": "rm -rf dist && tsc -p . && yarn run copy-stdlib",
     "prod": "node dist/index.js",
     "start": "concurrently 'ts-node-dev src/index.ts' 'npm run watch'"
+  },
+  "flyde": {
+    "exposes": [
+      "dist/stdlib-copy/parts/*.flyde",
+      "dist/stdlib-copy/parts/*.flyde.js",
+      "dist/stdlib-copy/parts/**/*.flyde.js",
+      "dist/stdlib-copy/parts/**/*.flyde"
+    ]
   },
   "files": [
     "dist/",
@@ -20,10 +29,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@flyde/core": "^0.1.5",
-    "@flyde/remote-debugger": "^0.2.4",
-    "@flyde/resolver": "^0.3.4",
-    "@flyde/stdlib": "^0.1.5",
+    "@flyde/core": "^0.1.6",
+    "@flyde/remote-debugger": "^0.2.5",
+    "@flyde/resolver": "^0.3.5",
+    "@flyde/stdlib": "^0.1.6",
     "@types/cuid": "^1.3.0",
     "@types/node": "^11.10.5",
     "axios": "^0.21.1",

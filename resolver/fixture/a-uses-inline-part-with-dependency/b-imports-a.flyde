@@ -8,7 +8,7 @@ part:
       type: number
       mode: required
   outputs:
-    result:
+    r:
       type: number
   instances:
   - id: ins1
@@ -26,7 +26,7 @@ part:
         pinId: n
     - from:
         insId: ins1
-        pinId: result
+        pinId: r
       to:
         insId: __this
-        pinId: result
+        pinId: r

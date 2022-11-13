@@ -6,6 +6,7 @@ import {
   PreBundleNativePart,
   randomInt,
   simplifiedExecute,
+  staticPartInput,
   values,
 } from "@flyde/core";
 import { assert } from "chai";
@@ -38,19 +39,24 @@ describe("resolver", () => {
 
     const repo = data.dependencies as PartRepo;
 
-    const val = await simplifiedExecute(part, repo, { n: 2 });
+    const [s, r] = spiedOutput();
+    execute({part, partsRepo: repo, inputs: {n: staticPartInput(2)}, outputs: {r}});
 
-    assert.equal(val, 3);
+    assert.equal(s.lastCall.args[0], 3);
   }, 50);
 
   it("resolves flows with transitive dependencies", async () => {
     const data = resolveFlow(getFixturePath("a-imports-b-imports-c/Container.flyde"));
 
+    const part = data.main;
     const repo = data.dependencies as PartRepo;
 
-    const val = await simplifiedExecute(data.main, repo, { n: 2 });
+    const [s, r] = spiedOutput();
+    execute({part, partsRepo: repo, inputs: {n: staticPartInput(2)}, outputs: {r}});
 
-    assert.equal(val, 3);
+    // const val = await simplifiedExecute(data.main, repo, { n: 2 });
+
+    assert.equal(s.lastCall.args[0], 3);
   });
 
   it("resolves flows with 2 levels of transitive dependencies and properly namespaces them", async () => {
@@ -66,9 +72,10 @@ describe("resolver", () => {
       "Add1WrapperTwice",
     ]);
 
-    const val = await simplifiedExecute(data.main, repo, { n: 2 });
+    const [s, r] = spiedOutput();
+    execute({part: data.main, partsRepo: repo, inputs: {n: staticPartInput(2)}, outputs: {r}});
 
-    assert.equal(val, 3);
+    assert.equal(s.lastCall.args[0], 3);
   });
 
   it("avoids clashes in imports by namespacing imports", async () => {
@@ -116,8 +123,9 @@ describe("resolver", () => {
     );
 
     const repo = data.dependencies as PartRepo;
-    const res = await simplifiedExecute(data.main, repo, { n: 2 });
-    assert.equal(res, 3);
+    const [s, r] = spiedOutput()
+    execute({part: data.main, partsRepo: repo, inputs: { n: staticPartInput(2) }, outputs: {r}});
+    assert.equal(s.lastCall.args[0], 3);
     assert.match(data.dependencies.Add1.importPath, /@acme\/add1\/src\/add1\.flyde\.js$/);
   });
 
@@ -128,9 +136,11 @@ describe("resolver", () => {
     );
 
     const repo = data.dependencies as PartRepo;
+    const [s, r] = spiedOutput();
+    execute({part: data.main, partsRepo: repo, inputs: {n: staticPartInput(2)}, outputs: {r}});
 
-    const res = await simplifiedExecute(data.main, repo, { n: 2 });
-    assert.equal(res, 3);
+    assert.equal(s.lastCall.args[0], 3);
+
     assert.match(
       data.dependencies.Add1Wrapped.importPath,
       /@acme\/add1-wrapped\/src\/add1-wrapped\.flyde$/
@@ -171,8 +181,12 @@ describe("resolver", () => {
     const flow = resolveFlow(path);
 
     const repo = flow.dependencies as PartRepo;
-    const val = await simplifiedExecute(flow.main, repo, { n: 2 });
-    assert.equal(val, 3);
+
+    const [s, r] = spiedOutput();
+    execute({part: flow.main, partsRepo: repo, inputs: {n: staticPartInput(2)}, outputs: {r}});
+  
+    assert.equal(s.lastCall.args[0], 2 + 1);
+
   });
 
   it("bundles flows importing simple code based parts as expected", async () => {
@@ -210,8 +224,11 @@ describe("resolver", () => {
 
     const flow = resolveFlow(path);
     const repo = flow.dependencies as PartRepo;
-    const val = await simplifiedExecute(flow.main, repo, { n: 2 });
-    assert.equal(val, 2 + 1 + 2);
+
+    const [s, r] = spiedOutput();
+    execute({part: flow.main, partsRepo: repo, inputs: {n: staticPartInput(2)}, outputs: {r}});
+
+    assert.equal(s.lastCall.args[0], 2 + 1 + 2);
   }, 20);
 
   it("properly resolves recursions", async () => {
@@ -240,11 +257,13 @@ describe("resolver", () => {
     const flow = resolveFlow(getFixturePath("a-uses-inline-part-with-dependency/a.flyde"));
 
     const repo = flow.dependencies as PartRepo;
-    console.log(repo);
 
     assert.exists(repo.Add);
-    const val = await simplifiedExecute(flow.main, repo, { n: 2 });
-    assert.equal(val, 2 + 1);
+    // const val = await simplifiedExecute(flow.main, repo, { n: 2 });
+
+    const [s, r] = spiedOutput();
+    execute({part: flow.main, partsRepo: repo, inputs: {n: staticPartInput(2)}, outputs: {r}});
+    assert.equal(s.lastCall.args[0], 2 + 1);
   });
 
   it("resolves dependencies of imported inline parts", async () => {
@@ -255,9 +274,11 @@ describe("resolver", () => {
     const repo = flow.dependencies as PartRepo;
 
     assert.exists(repo.Add1Wrapper);
-    const val = await simplifiedExecute(flow.main, repo, { n: 2 });
 
-    assert.equal(val, 2 + 1);
+    const [s, r] = spiedOutput();
+    execute({part: flow.main, partsRepo: repo, inputs: {n: staticPartInput(2)}, outputs: {r}});
+  
+    assert.equal(s.lastCall.args[0], 2 + 1);
   });
 
   describe("typescript", () => {
@@ -267,9 +288,11 @@ describe("resolver", () => {
 
       const repo = data.dependencies as PartRepo;
 
-      const val = await simplifiedExecute(part, repo, { n: 2 });
+      const [s, r] = spiedOutput();
 
-      assert.equal(val, 1);
+      execute({part, partsRepo: repo, inputs: {n: staticPartInput(2)}, outputs: {r}});
+
+      assert.equal(s.lastCall.args[0], 1);
     });
   });
 });

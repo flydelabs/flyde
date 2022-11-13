@@ -25,20 +25,13 @@ const safelyGetGitRoot = (path: string): string | undefined => {
 export const defaultScanFilter = (path: string, root: string): boolean => {
     const gitRoot = safelyGetGitRoot(root);
     const ignoreFilePath = join(gitRoot, '../.gitignore');
-
-    console.log({ignoreFilePath});
-    
     
     if (gitRoot && existsSync(ignoreFilePath)) {
         const ig = ignore().add(readFileSync(ignoreFilePath, 'utf-8'));
         const ignores = ig.ignores(path);
-
-        console.log(ig);
-        
         
         return !ignores;
     } else {
-        console.log('not using ignore file', ignoreFilePath);
         return !path.includes('node_modules') && !path.includes('dist');
     }
 
