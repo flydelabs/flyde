@@ -3,9 +3,9 @@
  * and scoped locally.
  */
 
- body {
+body {
   font-size: 16px;
- }
+}
 
 .heroBanner {
   padding: 4rem 0;
@@ -25,6 +25,10 @@
   align-items: center;
   justify-content: center;
   gap: 0.75rem;
+}
+
+.gh-stars-wrapper {
+  display: flex;
 }
 
 .project-editor {
