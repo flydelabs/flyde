@@ -4,7 +4,7 @@
 const webpack = require("webpack");
 const lightCodeTheme = require("prism-react-renderer/themes/github");
 const darkCodeTheme = require("prism-react-renderer/themes/dracula");
-const HOTJAR_ID = '3245180';
+const HOTJAR_ID = "3245180";
 
 const FixWebpack5Plugin = () => ({
   configureWebpack(config, isServer, utils) {
@@ -80,7 +80,7 @@ const config = {
   },
   plugins: [
     "docusaurus-plugin-sass",
-    'docusaurus-plugin-hotjar',
+    "docusaurus-plugin-hotjar",
     // @ts-ignore
     FixWebpack5Plugin,
   ],
@@ -121,6 +121,9 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
+      colorMode: {
+        disableSwitch: true,
+      },
       navbar: {
         title: "Flyde",
         logo: {
@@ -197,7 +200,7 @@ const config = {
       },
       hotjar: {
         applicationId: HOTJAR_ID,
-      }
+      },
     }),
 };
 
