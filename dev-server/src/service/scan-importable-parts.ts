@@ -22,19 +22,23 @@ export const getFlydeDependencies = async (rootPath: string) => {
 
 export const resolveDependentPackages = async (rootPath: string, flydeDependencies: string[]) => {
   return flydeDependencies.reduce<Record<string, PartDefRepo>>((acc, dep) => {
-    const paths = resolveImportablePaths(rootPath, dep);
 
-    const parts = paths.reduce((acc, filePath) => {
-      try {
-        const { main } = resolveFlow(filePath, "definition");
-        return { ...acc, [main.id]: main };
-      } catch (e) {
-        console.error(`Skipping corrupt flow at ${filePath}, error: ${e}`);
-        return acc;
-      }
-    }, {});
-    return { ...acc, [dep]: parts };
-
+    try {
+      const paths = resolveImportablePaths(rootPath, dep);
+      const parts = paths.reduce((acc, filePath) => {
+        try {
+          const { main } = resolveFlow(filePath, "definition");
+          return { ...acc, [main.id]: main };
+        } catch (e) {
+          console.error(`Skipping corrupt flow at ${filePath}, error: ${e}`);
+          return acc;
+        }
+      }, {});
+      return { ...acc, [dep]: parts };
+    } catch (e) {
+      console.log(`skipping invalid dependency ${dep}`);
+      return acc;
+    }
     // return acc;
   }, {});
 };

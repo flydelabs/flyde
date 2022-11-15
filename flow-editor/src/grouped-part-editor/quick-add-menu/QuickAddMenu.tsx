@@ -1,15 +1,23 @@
 import * as React from "react";
 
 import { Pos } from "../../utils";
-import { PartDefinition, PartInstance } from "@flyde/core";
+import {
+  entries,
+  getInputName,
+  getPartInputs,
+  ImportablePart,
+  PartDefinition,
+  PartInstance,
+  PinType,
+  ResolvedFlydeFlowDefinition,
+  values,
+} from "@flyde/core";
 // ;
 import { MenuDivider, MenuItem } from "@blueprintjs/core";
 import { Select, ItemRenderer, ItemPredicate } from "@blueprintjs/select";
 import { highlightText } from "../../lib/highlight-text";
 
 export type QuickMenuPartMatch = {
-  pinType: string;
-  pinId: string;
   part: PartDefinition;
   type: "part";
 };
@@ -18,19 +26,26 @@ export type QuickMenuValueMatch = {
   type: "value";
 };
 
-export type QuickMenuMatch = QuickMenuPartMatch | QuickMenuValueMatch;
+export type QuickMenuImportMatch = {
+  type: "import";
+  importablePart: ImportablePart;
+};
+
+export type QuickMenuMatch = QuickMenuPartMatch | QuickMenuValueMatch | QuickMenuImportMatch;
 
 export type QuickAddMenuData = {
   pos: Pos;
-  matches: QuickMenuMatch[];
   ins?: PartInstance;
-  pinType: string;
+  part: PartDefinition;
   pinId: string;
+  pinType: PinType;
 };
 
 export type QuickMenuProps = QuickAddMenuData & {
   onAdd: (match: QuickMenuMatch) => void;
   onClose: () => void;
+  onRequestImportables?: (query: string) => Promise<ImportablePart[]>;
+  resolvedFlow: ResolvedFlydeFlowDefinition;
 };
 
 // Select<T> is a generic component to work with your data types.
@@ -38,10 +53,16 @@ export type QuickMenuProps = QuickAddMenuData & {
 const PartSelect = Select.ofType<QuickMenuMatch>();
 
 const matchTitle = (match: QuickMenuMatch) => {
-  if (match.type === "part") {
-    return `${match.part.id} - ${match.pinId} (${match.pinType})`;
-  } else {
-    return "Add value";
+  switch (match.type) {
+    case "part": {
+      return `${match.part.id}`;
+    }
+    case "value": {
+      return "Add inline value or function";
+    }
+    case "import": {
+      return `Import ${match.importablePart.part.id} from ${match.importablePart.module}`;
+    }
   }
 };
 
@@ -58,7 +79,6 @@ const renderPart: ItemRenderer<QuickMenuMatch> = (match, { handleClick, modifier
         <MenuItem
           active={modifiers.active}
           disabled={modifiers.disabled}
-          // label={film.year.toString()}
           key={matchTitle(match)}
           onClick={handleClick}
           text={highlightText(text, query)}
@@ -71,7 +91,6 @@ const renderPart: ItemRenderer<QuickMenuMatch> = (match, { handleClick, modifier
     <MenuItem
       active={modifiers.active}
       disabled={modifiers.disabled}
-      // label={film.year.toString()}
       key={matchTitle(match)}
       onClick={handleClick}
       text={highlightText(text, query)}
@@ -91,16 +110,54 @@ const partPredicate: ItemPredicate<QuickMenuMatch> = (query, match, _index, exac
 };
 
 export const QuickAddMenu: React.FC<QuickMenuProps> = (props) => {
+  const { resolvedFlow, onRequestImportables } = props;
   const style = {
     left: props.pos.x,
     top: props.pos.y,
   };
 
+  const [importables, setImportables] = React.useState<ImportablePart[]>();
+
+  React.useEffect(() => {
+    if (onRequestImportables) {
+      onRequestImportables("").then(setImportables);
+    }
+  }, [onRequestImportables]);
+
+  const availableParts =  values({
+    ...resolvedFlow.dependencies,
+    [resolvedFlow.main.id]: resolvedFlow.main,
+  });
+
+  const existingPartMatches = availableParts.map<QuickMenuMatch>(
+    (curr) => {
+      return {
+        type: "part",
+        part: curr as PartDefinition,
+      };
+  });
+
+  const existingIds = new Set(availableParts.map(p => p.id));  
+
+  const importableParts = importables
+    ? importables
+      .filter(imp => !existingIds.has(imp.part.id))
+      .map<QuickMenuMatch>((curr) => {
+      return {
+          type: "import",
+          importablePart: curr,
+      }
+    }) : [];
+
+  const matches: QuickMenuMatch[] = existingPartMatches
+    .concat(importableParts)
+    .concat({type: 'value'})
+
   return (
     <div className="quick-add-menu" style={style}>
       <PartSelect
         className="quick-add-parts-select"
-        items={props.matches}
+        items={matches}
         itemPredicate={partPredicate}
         itemRenderer={renderPart}
         inputProps={{ className: "quick-add-input" }}

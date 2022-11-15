@@ -5,6 +5,8 @@ imports:
     - Pick
     - HttpPost
     - Dot
+    - HtmlBtn
+    - Accumulate2
 part:
   instances:
     - pos:
@@ -405,6 +407,12 @@ part:
       style:
         size: large
         color: "#00bbf9"
+    - pos:
+        x: -225.01
+        y: 237.48
+      id: HtmlBtn-32
+      inputConfig: {}
+      partId: HtmlBtn
   connections:
     - from:
         insId: Inline-value-Hello from ${i76
@@ -448,6 +456,12 @@ part:
       to:
         insId: cl8x5r4qp00074666lb382z1c
         pinId: city
+    - from:
+        insId: Format Number-ins
+        pinId: string
+      to:
+        insId: HtmlBtn-32
+        pinId: __trigger
   id: ApisCombination
   inputs: {}
   outputs:

@@ -153,7 +153,7 @@ const config = {
             items: [
               {
                 label: "Tutorial",
-                to: "/docs",
+                to: "/docs/hello-world-with-flyde",
               },
             ],
           },

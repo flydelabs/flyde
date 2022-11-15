@@ -12,6 +12,9 @@ import {
   randomInt,
   pickRandom,
   PartStyle,
+  getPartOutputs,
+  getInputName,
+  getOutputName,
 } from "@flyde/core";
 import classNames from "classnames";
 
@@ -31,7 +34,7 @@ import {
   partOutput,
   isInputPinOptional,
 } from "@flyde/core";
-import { PartInstance, isGroupedPart, PartDefinition, isNativePart, PinType } from "@flyde/core";
+import { PartInstance, isGroupedPart, PartDefinition, isNativePart, PinType, getPartInputs } from "@flyde/core";
 import { calcPartContent } from "./utils";
 import { BasePartView } from "../base-part-view";
 import { isStaticInputPinConfig } from "@flyde/core";
@@ -63,15 +66,15 @@ export const getVisibleInputs = (
     return visibleInputs;
   }
 
-  const visiblePins = [...keys(part.inputs), TRIGGER_PIN_ID].filter((k, v) => {
+  const visiblePins = keys(getPartInputs(part)).filter((k, v) => {
     const isConnected = connections.some((c) => c.to.insId === instance.id && c.to.pinId === k);
-    const isStatic = isStaticInputPinConfig(instance.inputConfig[k]);
+    // const isStatic = isStaticInputPinConfig(instance.inputConfig[k]);
 
-    const isRequired = part.inputs[k] && part.inputs[k]?.mode === "required";
+    // const isRequired = part.inputs[k] && part.inputs[k]?.mode === "required";
 
     const isOptional = part.inputs[k] && part.inputs[k]?.mode === "optional";
 
-    return !isOptional && k !== TRIGGER_PIN_ID;
+    return isConnected || (!isOptional && k !== TRIGGER_PIN_ID);
   });
 
   if (visiblePins.length === 0) {
@@ -404,8 +407,8 @@ export const InstanceView: React.FC<InstanceViewProps> = function InstanceViewIn
     }
   }, [part.outputs, _prompt, instance, onChangeVisibleOutputs]);
 
-  const inputKeys = [...Object.keys(part.inputs), TRIGGER_PIN_ID];
-  const outputKeys = [...Object.keys(part.outputs), ERROR_PIN_ID];
+  const inputKeys = Object.keys(getPartInputs(part));
+  const outputKeys = Object.keys(getPartOutputs(part));
 
   const _onRequestHistory = React.useCallback(
     (pinId: string, pinType: PinType) => {
@@ -498,7 +501,7 @@ export const InstanceView: React.FC<InstanceViewProps> = function InstanceViewIn
       const isVisible = _visibleInputs.includes(k);
       const isConnectedAndNotHidden = connectedInputs.has(k) && connectedInputs.get(k) !== true;
   
-      const pinName = k === TRIGGER_PIN_ID ? "Trigger Pin" : k;
+      const pinName = getInputName(k);
   
       return {
         text: isVisible
@@ -519,7 +522,7 @@ export const InstanceView: React.FC<InstanceViewProps> = function InstanceViewIn
       const isVisible = _visibleOutputs.includes(k);
       const isConnected = connectedOutputs.has(k);
   
-      const pinName = k === ERROR_PIN_ID ? "Error Pin" : k;
+      const pinName = getOutputName(k);
   
       return {
         text: isVisible
@@ -639,3 +642,4 @@ export const InstanceView: React.FC<InstanceViewProps> = function InstanceViewIn
     </div>
   );
 };
+

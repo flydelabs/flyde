@@ -13,6 +13,7 @@ import {
   PartDefRepo,
   ImportedPartDef,
   InlinePartInstance,
+  partInstance,
 } from "@flyde/core";
 import {
   GroupedPartEditor,
@@ -25,10 +26,7 @@ import produce from "immer";
 import { useHotkeys } from "../lib/react-utils/use-hotkeys";
 
 // ;
-import {
-  createNewPartInstance,
-  domToViewPort,
-} from "../grouped-part-editor/utils";
+import { createNewPartInstance, domToViewPort } from "../grouped-part-editor/utils";
 
 import { HistoryPayload } from "@flyde/remote-debugger";
 import { AppToaster, toastMsg } from "../toaster";
@@ -38,16 +36,14 @@ import { Omnibar, OmniBarCmd, OmniBarCmdType } from "./omnibar/Omnibar";
 
 import { usePorts } from "./ports";
 
-import { library } from '@fortawesome/fontawesome-svg-core';
-import { fab } from '@fortawesome/free-brands-svg-icons';
-import {fas} from '@fortawesome/free-solid-svg-icons';
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { fab } from "@fortawesome/free-brands-svg-icons";
+import { fas } from "@fortawesome/free-solid-svg-icons";
+import { vAdd } from "..";
 
-export * from './ports';
+export * from "./ports";
 
-
-
-library.add(fab, fas)
-
+library.add(fab, fas);
 
 export type FlowEditorState = {
   flow: FlydeFlow;
@@ -60,7 +56,7 @@ export type FlydeFlowEditorProps = {
 
   resolvedRepoWithDeps: ResolvedFlydeFlowDefinition;
 
-  onImportPart: (part: ImportablePart) => void;
+  onImportPart: (part: ImportablePart, target?: {pos: Pos,  connectTo?: {insId: string, outputId: string}} ) => void;
   onQueryImportables?: (query: string) => Promise<ImportablePart[]>;
 
   onInspectPin: (insId: string, pinId: string, pinType: PinType) => void;
@@ -69,7 +65,7 @@ export type FlydeFlowEditorProps = {
 
   onNewEnvVar?: (name: string, val: any) => void;
 
-  onExtractInlinePart: (ins: InlinePartInstance) => Promise<void>,
+  onExtractInlinePart: (ins: InlinePartInstance) => Promise<void>;
 
   ref?: React.Ref<any>;
 
@@ -93,8 +89,8 @@ const ignoreUndoChangeTypes = ["select", "drag-move", "order-step"];
 
 const resolvedToRepo = (res: ResolvedFlydeFlowDefinition): PartDefRepo => ({
   ...res.dependencies,
-  [res.main.id]: res.main
-})
+  [res.main.id]: res.main,
+});
 
 export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
   React.forwardRef((props, ref) => {
@@ -106,7 +102,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
     const { flow, boardData: editorBoardData } = state;
     const editedPart = state.flow.part;
 
-    const {openFile} = usePorts();
+    const { openFile } = usePorts();
 
     const onChangeFlow = React.useCallback(
       (newFlow: FlydeFlow, changeType: FlydeFlowChangeType) => {
@@ -133,7 +129,9 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
 
     const onChangeEditorBoardData = React.useCallback(
       (partial: Partial<GroupEditorBoardData>) => {
-        onChangeEditorState((state) => ({ ...state, boardData: { ...state.boardData, ...partial } }));
+        onChangeEditorState((state) => {
+          return { ...state, boardData: { ...state.boardData, ...partial } };
+        });
       },
       [onChangeEditorState]
     );
@@ -177,21 +175,19 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
           setRedoStack([]);
         }
 
-      
-          const changedProject = produce(flow, (draft) => {
-            draft.part = newPart;
-          });
+        const changedProject = produce(flow, (draft) => {
+          draft.part = newPart;
+        });
 
-          onChangeFlow(changedProject, changeType);
+        onChangeFlow(changedProject, changeType);
       },
       [flow, onChangeFlow]
     );
 
     const onEditPart = React.useCallback(
       (part: ImportedPartDef) => {
+        openFile({ absPath: part.importPath });
 
-        openFile({absPath: part.importPath});
-        
         // toastMsg('TODO');
       },
       [openFile]
@@ -222,37 +218,62 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
     );
 
     const onOmnibarCmd = React.useCallback(
-      (cmd: OmniBarCmd) => {
+      async (cmd: OmniBarCmd) => {
         switch (cmd.type) {
           case OmniBarCmdType.ADD:
             return onAddPartInstance(cmd.data);
           case OmniBarCmdType.ADD_VALUE:
-            const pos = domToViewPort(editorBoardData.lastMousePos, editorBoardData.viewPort, defaultViewPort);
-            toastMsg('TODO')
+            const pos = domToViewPort(
+              editorBoardData.lastMousePos,
+              editorBoardData.viewPort,
+              defaultViewPort
+            );
+            toastMsg("TODO");
             // return requestNewConstValue(pos);
             break;
           case OmniBarCmdType.CREATE_CODE_PART:
-            toastMsg('TODO')
+            toastMsg("TODO");
             // onCreateNewPart("code");
             break;
           case OmniBarCmdType.CREATE_GROUPED_PART:
-            toastMsg('TODO')
+            toastMsg("TODO");
             // onCreateNewPart("grouped");
             break;
-          case OmniBarCmdType.IMPORT:
-            onImportPart(cmd.data);
+          case OmniBarCmdType.IMPORT: {
+            await onImportPart(cmd.data, {pos: editorBoardData.lastMousePos});
+            const finalPos = vAdd({ x: 0, y: 0 }, editorBoardData.lastMousePos);
+            const newPartIns = createNewPartInstance(
+              cmd.data.part,
+              0,
+              finalPos,
+              resolvedToRepo(resolvedFlow)
+            );
+            const newValue = produce(flow, (draft) => {
+              draft.part.instances.push(newPartIns);
+            });
+            onChangeFlow(newValue, functionalChange("add-imported-part"));
             break;
+          }
           default:
             AppToaster.show({ intent: "warning", message: "Not supported yet" });
         }
         hideOmnibar();
       },
-      [editorBoardData.lastMousePos, editorBoardData.viewPort, onAddPartInstance, hideOmnibar, onImportPart]
+      [
+        hideOmnibar,
+        onAddPartInstance,
+        editorBoardData.lastMousePos,
+        editorBoardData.viewPort,
+        onImportPart,
+        resolvedFlow,
+        flow,
+        onChangeFlow,
+      ]
     );
 
     const renderInner = () => {
       if (isCodePart(editedPart)) {
-        throw new Error('Impossible state')
+        throw new Error("Impossible state");
         // return <CodePartEditor part={editedPart} onChange={onChangeCodePart} editMode={true} />;
       } else {
         return (
@@ -278,6 +299,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
               onInspectPin={props.onInspectPin}
               onRequestHistory={props.onRequestHistory}
               onRequestImportables={props.onQueryImportables}
+              onImportPart={props.onImportPart}
               onShowOmnibar={showOmnibar}
               onExtractInlinePart={props.onExtractInlinePart}
             />
@@ -297,10 +319,6 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
       }
     };
 
-    return (
-      <div className="project-editor">
-          {renderInner()}
-      </div>
-    );
+    return <div className="project-editor">{renderInner()}</div>;
   })
 );

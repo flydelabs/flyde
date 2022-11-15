@@ -6,6 +6,10 @@ import {
   ResolvedFlydeFlowDefinition,
   ImportablePart,
   hashFlow,
+  delay,
+  Pos,
+  connectionData,
+  TRIGGER_PIN_ID,
 } from "@flyde/core";
 
 import classNames from "classnames";
@@ -42,6 +46,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import _ from "lodash";
 import { useBootstrapData } from "./use-bootstrap-data";
+import { deflate } from "node:zlib";
 
 export const PIECE_HEIGHT = 28;
 
@@ -247,16 +252,35 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (prop
   );
 
   const onImportPart = React.useCallback(
-    ({ part: importedPart, module }: ImportablePart) => {
+    async ({ part: importedPart, module }: ImportablePart, target?: {pos: Pos, connectTo?: {insId: string, outputId: string}}) => {
 
       const existingModuleImports = (flow.imports || {})[module] || [];
-      const finalPos = vAdd({ x: 0, y: 0 }, editorState.boardData.lastMousePos);
-      const newPartIns = createNewPartInstance(importedPart, 0, finalPos, repo);
+      // const finalPos = vAdd({ x: 0, y: 0 }, editorState.boardData.lastMousePos);
+      // const newPartIns = createNewPartInstance(importedPart, 0, finalPos, repo);
 
       setImportedParts((parts) => [...parts, { part: importedPart, module }]);
 
       const newFlow = produce(flow, (draft) => {
-        draft.part.instances.push(newPartIns);
+
+        if (target) {
+          const finalPos = vAdd({ x: 0, y: 0 }, target.pos);
+          const newPartIns = createNewPartInstance(importedPart, 0, finalPos, repo);
+          draft.part.instances.push(newPartIns);
+
+          if (target.connectTo) {
+            const {insId, outputId} = target.connectTo;
+            draft.part.connections.push({
+              from: {
+                insId,
+                pinId: outputId
+              },
+              to: {
+                insId: newPartIns.id,
+                pinId: TRIGGER_PIN_ID
+              }
+            });
+          }
+        }
 
         const imports = draft.imports || {};
         const modImports = imports[module] || [];
@@ -270,11 +294,12 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (prop
       });
 
       // yacky hack to make sure flow is only rerendered when the new part exists
-      setTimeout(() => {
-        onChangeFlow(newFlow, functionalChange("imported-part"));
-      }, 10);
+      await delay(10);
+
+      onChangeFlow(newFlow, functionalChange("imported-part"));
+      toastMsg(`Part ${importedPart.id} successfully imported from ${module}`)
     },
-    [flow, onChangeFlow, repo, editorState.boardData.lastMousePos]
+    [flow, onChangeFlow, repo]
   );
 
   const onExtractInlinePart = React.useCallback(async () => {

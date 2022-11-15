@@ -1,5 +1,5 @@
 import * as React from "react";
-import cuid from 'cuid';
+import cuid from "cuid";
 
 import {
   isExternalConnectionNode,
@@ -35,6 +35,7 @@ import {
   ImportedPartDef,
   ERROR_PIN_ID,
   PartStyle,
+  getPartOutputs,
 } from "@flyde/core";
 import { InstanceView } from "./instance-view/InstanceView";
 import { ConnectionView, ConnectionViewProps } from "./connection-view/ConnectionView";
@@ -97,6 +98,7 @@ import { handleDetachConstEditorCommand } from "./commands/detach-const";
 import { handleDuplicateSelectedEditorCommand } from "./commands/duplicate-instances";
 import { connect } from "node:http2";
 import { PartStyleMenu } from "./instance-view/PartStyleMenu";
+import { FlydeFlowEditorProps } from "../flow-editor/FlowEditor";
 
 const MemodSlider = React.memo(Slider);
 
@@ -116,7 +118,7 @@ export const defaultBoardData: GroupEditorBoardData = {
   selected: [],
   viewPort: defaultViewPort,
   lastMousePos: { x: 0, y: 0 },
-}
+};
 
 export interface ClosestPinData {
   ins: PartInstance;
@@ -162,12 +164,14 @@ export type GroupedPartEditorProps = {
   onRequestHistory: (insId: string, pinId: string, pinType: PinType) => Promise<HistoryPayload>;
   onRequestImportables?: (query: string) => Promise<ImportablePart[]>;
 
-  onExtractInlinePart: (instance: InlinePartInstance) => Promise<void>,
+  onImportPart: FlydeFlowEditorProps["onImportPart"];
+
+  onExtractInlinePart: (instance: InlinePartInstance) => Promise<void>;
 
   onShowOmnibar: (e: any) => void;
 
   className?: string;
-  
+
   parentViewport?: ViewPort;
   parentBoardPos?: Pos;
 };
@@ -217,6 +221,7 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
       part,
       onShowOmnibar,
       resolvedFlow,
+      onImportPart,
     } = props;
 
     const parentViewport = props.parentViewport || defaultViewPort;
@@ -257,8 +262,10 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
     const inlineEditorPortalRootRef = useRef();
 
     useDidMount(() => {
-      inlineEditorPortalRootRef.current = boardRef.current.querySelector('.inline-editor-portal-root');
-    })
+      inlineEditorPortalRootRef.current = boardRef.current.querySelector(
+        ".inline-editor-portal-root"
+      );
+    });
 
     const _prompt = usePrompt();
 
@@ -289,23 +296,21 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
 
     const onConnectionClose = React.useCallback(
       (from: ConnectionNode, to: ConnectionNode) => {
+        const newPart = handleConnectionCloseEditorCommand(part, { from, to });
 
-        const newPart = handleConnectionCloseEditorCommand(part, {from, to});
-
-        const maybeIns = isInternalConnectionNode(to) ? instances.find((i) => i.id === to.insId) : null;
+        const maybeIns = isInternalConnectionNode(to)
+          ? instances.find((i) => i.id === to.insId)
+          : null;
         const inputConfig = maybeIns ? maybeIns.inputConfig : {};
         const pinConfig = inputConfig[to.pinId];
         const isTargetStaticValue = isStaticInputPinConfig(pinConfig);
 
-        const maybeDetachedPart = isTargetStaticValue ? handleDetachConstEditorCommand(
-          newPart,
-          to.insId,
-          to.pinId
-        ) : newPart;
-  
-        
-        onChange(maybeDetachedPart, functionalChange('close-connection'));
-        onChangeBoardData({from: undefined, to: undefined});
+        const maybeDetachedPart = isTargetStaticValue
+          ? handleDetachConstEditorCommand(newPart, to.insId, to.pinId)
+          : newPart;
+
+        onChange(maybeDetachedPart, functionalChange("close-connection"));
+        onChangeBoardData({ from: undefined, to: undefined });
       },
       [instances, onChange, onChangeBoardData, part]
     );
@@ -390,7 +395,10 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
       (ins: PartInstance, pinId: string, type: PinType) => {
         const { from: currFrom, to: currTo } = boardData;
 
-        if (type === "input") {
+        if ((from && from.insId === ins.id) || (to && to.insId === ins.id)) {
+          // trying to connect the same instance to itself, so clear selection
+          onChangeBoardData({ from: undefined, to: undefined });
+        } else if (type === "input") {
           const to = { insId: ins.id, pinId };
 
           // is selecting same one
@@ -449,20 +457,21 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
       const instances = part.instances
         .filter((ins) => selected.includes(ins.id))
         .map((ins) => ({ ...ins, id: ins.id + "-copy" }));
-      const connections = part.connections
-        .filter(({ from, to }) => {
-          return selected.includes(from.insId) && selected.includes(to.insId);
-        })
+      const connections = part.connections.filter(({ from, to }) => {
+        return selected.includes(from.insId) && selected.includes(to.insId);
+      });
       onCopy({ instances, connections });
     }, [boardData, onCopy, part]);
 
     const onPaste = React.useCallback(() => {
+      const { newPart, newInstances } = pasteInstancesCommand(
+        part,
+        lastMousePos.current,
+        props.clipboardData
+      );
+      onChange(newPart, functionalChange("paste instances"));
 
-      const {newPart, newInstances} = pasteInstancesCommand(part, lastMousePos.current, props.clipboardData);
-      onChange(newPart, functionalChange('paste instances'));
-
-      onChangeBoardData({selected: newInstances.map(ins => ins.id)});
-      
+      onChangeBoardData({ selected: newInstances.map((ins) => ins.id) });
     }, [onChange, onChangeBoardData, part, props.clipboardData]);
 
     const selectClosest = React.useCallback(() => {
@@ -692,10 +701,10 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
     );
 
     const duplicate = React.useCallback(() => {
-      const {newPart, newInstances} = handleDuplicateSelectedEditorCommand(part, selected);
+      const { newPart, newInstances } = handleDuplicateSelectedEditorCommand(part, selected);
 
-      onChange(newPart, functionalChange('duplicated instances'));
-      onChangeBoardData({selected: newInstances.map(ins => ins.id)});
+      onChange(newPart, functionalChange("duplicated instances"));
+      onChangeBoardData({ selected: newInstances.map((ins) => ins.id) });
       // onChange(duplicateSelected(value), functionalChange("duplicate"));
     }, [onChange, onChangeBoardData, part, selected]);
 
@@ -713,13 +722,12 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
         if (!isEventOnCurrentBoard(e.nativeEvent, part.id)) {
           return;
         }
-        
+
         if (e.shiftKey) {
           posRef.current = { x: e.pageX, y: e.pageY };
           vpMoveStart.current = viewPort.pos;
 
-          console.log('STARTING', part.id);
-          
+          console.log("STARTING", part.id);
         } else {
           if (target && target.className === "board-editor-inner") {
             // dbl click and onMouseDown did not work, so we use onMouseDown to detect double click
@@ -754,19 +762,29 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
               boardPos,
               parentViewport
             );
-            console.log({toSelect, selectionBox});
-            
+            console.log({ toSelect, selectionBox });
+
             const newSelected = e.shiftKey ? [...selected, ...toSelect] : toSelect;
             onChangeBoardData({ selected: newSelected });
           }
-          
+
           setSelectionBox(undefined);
         }
 
         posRef.current = undefined;
         vpMoveStart.current = undefined;
       },
-      [part.id, part.instances, selectionBox, repo, viewPort, boardPos, parentViewport, selected, onChangeBoardData]
+      [
+        part.id,
+        part.instances,
+        selectionBox,
+        repo,
+        viewPort,
+        boardPos,
+        parentViewport,
+        selected,
+        onChangeBoardData,
+      ]
     );
 
     const onMouseMove: React.MouseEventHandler = React.useCallback(
@@ -796,7 +814,15 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
           e.stopPropagation();
         }
 
-        const closest = findClosestPin(part, repo, normalizedPos, vpSize, boardPos, thisInsId, viewPort);
+        const closest = findClosestPin(
+          part,
+          repo,
+          normalizedPos,
+          vpSize,
+          boardPos,
+          thisInsId,
+          viewPort
+        );
         const currClosest = closestPin;
         if (closest) {
           const isNewClosest =
@@ -815,7 +841,19 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
         lastMousePos.current = posInBoard;
         onChangeBoardData({ lastMousePos: lastMousePos.current });
       },
-      [part, boardPos, viewPort, parentViewport, selectionBox, repo, vpSize, thisInsId, closestPin, onChangeBoardData, setViewPort]
+      [
+        part,
+        boardPos,
+        viewPort,
+        parentViewport,
+        selectionBox,
+        repo,
+        vpSize,
+        thisInsId,
+        closestPin,
+        onChangeBoardData,
+        setViewPort,
+      ]
     );
 
     const onMouseLeave: React.MouseEventHandler = React.useCallback(() => {
@@ -870,38 +908,37 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
 
     const onUngroup = React.useCallback(
       (groupPartIns: PartInstance) => {
-
-
         if (isInlinePartInstance(groupPartIns)) {
           const groupedPart = groupPartIns.part;
           if (!isGroupedPart(groupedPart)) {
-            toastMsg('Not supported', 'warning');
+            toastMsg("Not supported", "warning");
             return;
           }
-  
-          const newPart = produce(part, draft => {
-            draft.instances = draft.instances
-              .filter(ins => ins.id !== groupPartIns.id)
-  
-            draft.connections = draft.connections
-              .filter(({from, to}) => from.insId !== groupPartIns.id && to.insId !== groupPartIns.id)
-            
+
+          const newPart = produce(part, (draft) => {
+            draft.instances = draft.instances.filter((ins) => ins.id !== groupPartIns.id);
+
+            draft.connections = draft.connections.filter(
+              ({ from, to }) => from.insId !== groupPartIns.id && to.insId !== groupPartIns.id
+            );
+
             draft.instances.push(...groupedPart.instances);
-            draft.connections.push(...groupedPart.connections.filter((conn) => {
-              return isInternalConnectionNode(conn.from) && isInternalConnectionNode(conn.to);
-            }));
+            draft.connections.push(
+              ...groupedPart.connections.filter((conn) => {
+                return isInternalConnectionNode(conn.from) && isInternalConnectionNode(conn.to);
+              })
+            );
           });
-  
-  
+
           onChange(newPart, { type: "functional", message: "ungroup" });
           // todo - combine the above with below to an atomic action
           onChangeBoardData({ selected: [] });
         } else {
           const groupedPart = getPartDef(groupPartIns.partId, repo);
 
-          // const imports = 
+          // const imports =
           if (!isGroupedPart(groupedPart)) {
-            toastMsg('Not supported', 'warning');
+            toastMsg("Not supported", "warning");
             return;
           }
         }
@@ -909,15 +946,13 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
       [part, onChange, onChangeBoardData, repo]
     );
 
-    const onExtractInlinePart = React.useCallback(async (inlineInstance: InlinePartInstance) => {
-
-    }, []);
+    const onExtractInlinePart = React.useCallback(async (inlineInstance: InlinePartInstance) => {},
+    []);
 
     const onDetachConstValue = React.useCallback(
       (ins: PartInstance, pinId: string) => {
-
         const newPart = handleDetachConstEditorCommand(part, ins.id, pinId);
-        onChange(newPart, functionalChange('detach-const'));
+        onChange(newPart, functionalChange("detach-const"));
       },
       [onChange, part]
     );
@@ -954,7 +989,7 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
 
     const onAddIoPin = React.useCallback(
       async (type: PartIoType) => {
-        const newPinId = (await _prompt("New name?"));
+        const newPinId = await _prompt("New name?");
 
         if (!newPinId) {
           // name selection dismissed, cancelling
@@ -1007,12 +1042,15 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
       }
     }, [_prompt, onChange, part]);
 
-    const onChangeDefaultStyle = React.useCallback((style: PartStyle) => {
-      const newPart = produce(part, draft => {
-        draft.defaultStyle = style;
-      });
-      onChange(newPart, functionalChange('change default style'));
-    }, [onChange, part])
+    const onChangeDefaultStyle = React.useCallback(
+      (style: PartStyle) => {
+        const newPart = produce(part, (draft) => {
+          draft.defaultStyle = style;
+        });
+        onChange(newPart, functionalChange("change default style"));
+      },
+      [onChange, part]
+    );
 
     const onRemoveIoPin = React.useCallback(
       (type: PartIoType, pinId: string) => {
@@ -1122,15 +1160,11 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
       if (selectionBox) {
         const { from, to } = selectionBox;
 
-        
         const realFrom = logicalPosToRenderedPos(from, viewPort);
         const realTo = logicalPosToRenderedPos(to, viewPort);
-        console.log(from.x, to.x, ' | ', realFrom.x, realTo.x);
-        
-        const { x, y, w, h } = getSelectionBoxRect(
-          realFrom,
-          realTo
-        );
+        console.log(from.x, to.x, " | ", realFrom.x, realTo.x);
+
+        const { x, y, w, h } = getSelectionBoxRect(realFrom, realTo);
 
         return <div className="selection-box" style={{ top: y, left: x, width: w, height: h }} />;
       } else {
@@ -1143,45 +1177,35 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
         if (type === "input") {
           const inputConfig = ins.inputConfig[pinId];
 
-          const normalizedValue = isStaticInputPinConfig(inputConfig) ?
-            JSON.stringify(inputConfig.value): undefined;
+          const normalizedValue = isStaticInputPinConfig(inputConfig)
+            ? JSON.stringify(inputConfig.value)
+            : undefined;
 
-          setInlineCodeTarget({ type: "static-input", insId: ins.id, pinId, value: normalizedValue });
+          setInlineCodeTarget({
+            type: "static-input",
+            insId: ins.id,
+            pinId,
+            value: normalizedValue,
+          });
         } else {
           const part = getPartDef(ins, repo);
-          const pin = part.outputs[pinId];
+          const partOutputs = getPartOutputs(part);
+          const pin = partOutputs[pinId];
 
           if (!pin) {
             throw new Error("Dbl clicked on un-existing pin");
           }
 
-          const matches = values({
-            ...resolvedFlow.dependencies,
-            [resolvedFlow.main.id]: resolvedFlow.main,
-          }).reduce<QuickMenuMatch[]>(
-            (acc, curr) => {
-              const matches: QuickMenuMatch[] = entries(curr.inputs).map(([id, val]) => ({
-                pinId: id,
-                pinType: val.type,
-                part: curr,
-                type: "part",
-              }));
-
-              return [...acc, ...matches];
-            },
-            [{ type: "value" }]
-          );
-
           setQuickAddMenuVisible({
             pos: { x: e.clientX, y: e.clientY },
-            matches,
             ins,
+            part,
             pinId,
-            pinType: pin.type,
+            pinType: type,
           });
         }
       },
-      [repo, resolvedFlow.dependencies, resolvedFlow.main]
+      [repo]
     );
 
     const onMainInputDblClick = React.useCallback(
@@ -1192,28 +1216,14 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
           throw new Error("Dbl clicked on un-existing pin");
         }
 
-        const matches = values(repo).reduce<QuickMenuMatch[]>(
-          (acc, curr) => {
-            const matches: QuickMenuMatch[] = entries(curr.inputs).map(([id, val]) => ({
-              pinId: id,
-              pinType: val.type,
-              part: curr,
-              type: "part",
-            }));
-
-            return [...acc, ...matches];
-          },
-          [{ type: "value" }]
-        );
-
         setQuickAddMenuVisible({
           pos: { x: e.clientX, y: e.clientY },
-          matches,
           pinId,
-          pinType: pin.type,
+          pinType: "input",
+          part,
         });
       },
-      [part.inputs, repo]
+      [part]
     );
 
     const onMaybeZoom = React.useCallback(
@@ -1247,7 +1257,9 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
     };
 
     // unoptimized code to get connected inputs
-    const instancesConnectToPinsRef = React.useRef(new Map<string, Record<string, PartInstance[]>>());
+    const instancesConnectToPinsRef = React.useRef(
+      new Map<string, Record<string, PartInstance[]>>()
+    );
 
     // prune orphan connections
     React.useEffect(() => {
@@ -1314,37 +1326,54 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
     }, []);
 
     const onQuickAdd = React.useCallback(
-      (match: QuickMenuMatch) => {
+      async (match: QuickMenuMatch) => {
         if (!quickAddMenuVisible) {
           throw new Error("impossible state - quick add menu invoked but not available");
         }
 
         const { ins, pos, pinId } = quickAddMenuVisible;
 
-        if (match.type === "part") {
-          const newPartIns = createNewPartInstance(match.part.id, 100, lastMousePos.current, repo);
+        switch (match.type) {
+          case "part": {
+            const newPartIns = createNewPartInstance(
+              match.part.id,
+              100,
+              lastMousePos.current,
+              repo
+            );
 
-          if (newPartIns) {
-            const newValue = produce(part, (draft) => {
-              draft.instances.push(newPartIns);
-              draft.connections.push({
-                from: { insId: ins ? ins.id : THIS_INS_ID, pinId },
-                to: { insId: newPartIns.id, pinId: match.pinId },
+            if (newPartIns) {
+              const newValue = produce(part, (draft) => {
+                draft.instances.push(newPartIns);
+                draft.connections.push({
+                  from: { insId: ins ? ins.id : THIS_INS_ID, pinId },
+                  to: { insId: newPartIns.id, pinId: TRIGGER_PIN_ID },
+                });
               });
-            });
 
-            onChange(newValue, functionalChange("add-item-quick-menu"));
+              onChange(newValue, functionalChange("add-item-quick-menu"));
+              onCloseQuickAdd();
+            }
+            break;
+          }
+          case "import": {
+            await onImportPart(match.importablePart, {
+              pos: lastMousePos.current,
+              connectTo: { insId: ins.id, outputId: pinId },
+            });
             onCloseQuickAdd();
+            break;
           }
-        } else {
-          if (!ins) {
-            toastMsg("Cannot add value to main input");
-            return;
+          case "value": {
+            if (!ins) {
+              toastMsg("Cannot add value to main input");
+              return;
+            }
+            setInlineCodeTarget({ type: "new-output", insId: ins.id, pinId });
           }
-          setInlineCodeTarget({ type: "new-output", insId: ins.id, pinId });
         }
       },
-      [quickAddMenuVisible, repo, part, onChange, onCloseQuickAdd]
+      [quickAddMenuVisible, repo, part, onChange, onCloseQuickAdd, onImportPart]
     );
 
     const copyPartToClipboard = React.useCallback(async () => {
@@ -1394,9 +1423,13 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
               text={`Edit Reactive inputs (${part.reactiveInputs?.join(",") || "n/a"})`}
               onClick={preventDefaultAnd(() => editReactiveInputs())}
             />
-            <MenuDivider/>
-            <MenuItem text='Default Style'>
-              <PartStyleMenu style={part.defaultStyle} onChange={onChangeDefaultStyle} promptFn={_prompt}/>
+            <MenuDivider />
+            <MenuItem text="Default Style">
+              <PartStyleMenu
+                style={part.defaultStyle}
+                onChange={onChangeDefaultStyle}
+                promptFn={_prompt}
+              />
             </MenuItem>
           </Menu>
         );
@@ -1483,7 +1516,8 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
           parentViewport: defaultViewPort,
           // parentViewport: viewPort, // this was needed when I rendered it completely inline
           parentBoardPos: boardPos,
-          onExtractInlinePart: props.onExtractInlinePart
+          onExtractInlinePart: props.onExtractInlinePart,
+          onImportPart: props.onImportPart,
         };
       } else {
         return;
@@ -1553,14 +1587,17 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
       [part, onChange]
     );
 
-    const onChangeInstanceStyle = React.useCallback((instance: PartInstance, style: PartStyle) => {
-      const newPart = produce(part, draft => {
-        draft.instances = draft.instances.map((ins) => {
-          return ins.id === instance.id ? {...ins, style} : ins;
+    const onChangeInstanceStyle = React.useCallback(
+      (instance: PartInstance, style: PartStyle) => {
+        const newPart = produce(part, (draft) => {
+          draft.instances = draft.instances.map((ins) => {
+            return ins.id === instance.id ? { ...ins, style } : ins;
+          });
         });
-      });
-      onChange(newPart, functionalChange('change instance style'));
-    }, [onChange, part]);
+        onChange(newPart, functionalChange("change instance style"));
+      },
+      [onChange, part]
+    );
 
     const onChangeVisibleOutputs = React.useCallback(
       (ins: PartInstance, outputs: string[]) => {
@@ -1763,24 +1800,36 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
       setInspectedBoardData(defaultBoardData);
     }, []);
 
-    const toggleConnectionHidden = React.useCallback((connection: ConnectionData) => {
-      const val = produce(part, draft => {
-        const conn = draft.connections.find(conn => connectionDataEquals(conn, connection));
-        conn.hidden = !conn.hidden;
-      })
-      onChange(val, functionalChange('toggle connection hidden'));
-    }, [onChange, part]);
+    const toggleConnectionHidden = React.useCallback(
+      (connection: ConnectionData) => {
+        const val = produce(part, (draft) => {
+          const conn = draft.connections.find((conn) => connectionDataEquals(conn, connection));
+          conn.hidden = !conn.hidden;
+        });
+        onChange(val, functionalChange("toggle connection hidden"));
+      },
+      [onChange, part]
+    );
 
-    const removeConnection = React.useCallback((connection: ConnectionData) => {
-      const val = produce(part, draft => {
-        draft.connections = draft.connections.filter(conn => !connectionDataEquals(conn, connection));
-      })
-      onChange(val, functionalChange('remove connection'));
-    }, [onChange, part]);
+    const removeConnection = React.useCallback(
+      (connection: ConnectionData) => {
+        const val = produce(part, (draft) => {
+          draft.connections = draft.connections.filter(
+            (conn) => !connectionDataEquals(conn, connection)
+          );
+        });
+        onChange(val, functionalChange("remove connection"));
+      },
+      [onChange, part]
+    );
 
     try {
       return (
-        <div className={classNames('grouped-part-editor', props.className)} data-id={part.id} onContextMenu={showContextMenu}>
+        <div
+          className={classNames("grouped-part-editor", props.className)}
+          data-id={part.id}
+          onContextMenu={showContextMenu}
+        >
           <main
             className="board-editor-inner"
             onMouseDown={onMouseDown}
@@ -1866,10 +1915,14 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
                 onChangeVisibleOutputs={onChangeVisibleOutputs}
                 key={ins.id}
                 forceShowMinimized={from ? "input" : to ? "output" : undefined}
-                isConnectedInstanceSelected={selected.some(selInsId => connections.some(({from, to}) => {
-                  return (from.insId === ins.id && to.insId === selInsId) 
-                   || (from.insId === selInsId && to.insId === ins.id);
-                }))}
+                isConnectedInstanceSelected={selected.some((selInsId) =>
+                  connections.some(({ from, to }) => {
+                    return (
+                      (from.insId === ins.id && to.insId === selInsId) ||
+                      (from.insId === selInsId && to.insId === ins.id)
+                    );
+                  })
+                )}
                 inlineGroupProps={maybeGetInlineProps(ins)}
                 onCloseInlineEditor={closeInlineEditor}
                 inlineEditorPortalDomNode={inlineEditorPortalRootRef.current}
@@ -1880,7 +1933,16 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
             {/* {maybeRenderEditGroupModal()} */}
             {renderPartOutputs()}
             {quickAddMenuVisible ? (
-              <QuickAddMenu {...quickAddMenuVisible} onAdd={onQuickAdd} onClose={onCloseQuickAdd} />
+              <QuickAddMenu
+                part={quickAddMenuVisible.part}
+                pinId={quickAddMenuVisible.pinId}
+                pinType={quickAddMenuVisible.pinType}
+                pos={quickAddMenuVisible.pos}
+                resolvedFlow={resolvedFlow}
+                onRequestImportables={props.onRequestImportables}
+                onAdd={onQuickAdd}
+                onClose={onCloseQuickAdd}
+              />
             ) : null}
             <div className="zoom-slider">
               <MemodSlider
@@ -1904,7 +1966,7 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
                 onSubmit={onSaveInlineCodePart}
               />
             ) : null}
-            <div className='inline-editor-portal-root'/>
+            <div className="inline-editor-portal-root" />
           </main>
           {/* {maybeRenderInlinePartInstance()} */}
           {/* {maybeRenderInstancePanel()} */}
@@ -1917,12 +1979,9 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
   })
 );
 
-
-
 const isEventOnCurrentBoard = (e: KeyboardEvent | MouseEvent, partId: string) => {
   const targetElem = e.target as Element;
-  const closestBoard = targetElem.closest('.grouped-part-editor');
-        
-  return closestBoard && closestBoard.getAttribute('data-id') === partId;
+  const closestBoard = targetElem.closest(".grouped-part-editor");
 
-}
+  return closestBoard && closestBoard.getAttribute("data-id") === partId;
+};
