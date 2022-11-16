@@ -47,7 +47,7 @@ export interface PlaygroundTemplateProps {
     title: string;
     key: string;
     description: string;
-    extraInfo?: string;
+    extraInfo?: string | JSX.Element;
   };
   flowProps: {
     inputs: Record<string, DynamicPartInput>;
@@ -199,16 +199,16 @@ export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (props) => 
               <Link to="/playground/hello">Hello World</Link>{" "}
             </li>
             <li>
-              <Link to="/playground/debounce-throttling">Debounce vs. Throttling</Link>
-            </li>
-            <li>
               <Link to="/playground/react-counter">React Counter</Link>
             </li>
             <li>
-              <Link to="/playground/fibonacci">Fibonacci Sequence</Link>
+              <Link to="/playground/apis">REST API Usage</Link>
             </li>
             <li>
-              <Link to="/playground/apis">REST API Usage</Link>
+              <Link to="/playground/debounce-throttling">Debounce vs. Throttling</Link>
+            </li>
+            <li>
+              <Link to="/playground/fibonacci">Fibonacci Sequence</Link>
             </li>
           </ul>
         </div>

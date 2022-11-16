@@ -21,17 +21,11 @@ part:
         completionOutputs:
           - r
         defaultStyle:
-          size: small
+          size: regular
           icon: code
           cssOverride:
             fontFamily: monospace
-            fontWeight: "300"
-      style:
-        size: regular
-        icon: code
-        cssOverride:
-          fontFamily: monospace
-          fontWeight: "300"
+            fontWeight: "500"
   connections:
     - from:
         insId: Inline-value-Hello World-673

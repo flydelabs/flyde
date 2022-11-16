@@ -52,7 +52,7 @@ part:
           fontFamily: monospace
           fontWeight: "500"
     - pos:
-        x: -586.805941772461
+        x: -587.805941772461
         y: -218.61628173112865
       id: Get User's Country-ins
       inputConfig: {}
@@ -126,7 +126,7 @@ part:
         size: large
         color: "#f15bb5"
     - pos:
-        x: -635.9743029785157
+        x: -636.9743029785157
         y: -85.37110525846481
       id: Get Country Name And Capital-ins
       inputConfig: {}

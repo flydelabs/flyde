@@ -1010,6 +1010,15 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
             }
             draft.outputs[newPinId] = partOutput(newPinType, false, false);
             draft.outputsPosition[newPinId] = lastMousePos.current;
+            // hackily add the new output as required for completion to an existing 
+
+            const firstCompletionOutput = (draft.completionOutputs || [])[0];
+            if (firstCompletionOutput) {
+              const arr = firstCompletionOutput.split('+');
+              draft.completionOutputs[0] = [...arr, newPinId].join('+');
+            } else {
+              draft.completionOutputs = [newPinId]
+            }
           }
         });
 
@@ -1064,6 +1073,11 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
             draft.connections = draft.connections.filter(
               (conn) => !(isExternalConnectionNode(conn.to) && conn.to.pinId === pinId)
             );
+            draft.completionOutputs = (draft.completionOutputs || []).map(comp => {
+              const arr = comp.split('+'); // due to the r1+r1,r3 hack, see core tests
+              return arr.filter(pin => pin !== pinId).join('+')
+            })
+            .filter(i => !!i)
             delete draft.outputs[pinId];
           }
         });

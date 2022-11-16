@@ -32,8 +32,14 @@ function HomepageHeader() {
       <div className="container">
         <h1 className="hero__title">{siteConfig.title}</h1>
         <p className="hero__subtitle">
-          Flyde is an <em>open source</em> flow-based, visual programming tool. JavaScript and
-          TypeScript native support. Works in Node.js and browsers.
+          Flyde is an <em>open source</em> flow-based, visual programming tool. <br />
+          Build visual flows using the{" "}
+          <a
+            href="https://marketplace.visualstudio.com/items?itemName=flyde.flyde-vscode"
+            target="_blank"
+          >
+            VSCode extension
+          </a>.<br/>Integrate them to your JS/TS codebase using the runtime library.
           <br />
           Fully integrates with your <IntegrationPoints />
         </p>

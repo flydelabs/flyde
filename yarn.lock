@@ -5234,7 +5234,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@flyde/core@^0.1.1, @flyde/core@^0.1.6, @flyde/core@workspace:core":
+"@flyde/core@^0.1.1, @flyde/core@^0.1.7, @flyde/core@workspace:core":
   version: 0.0.0-use.local
   resolution: "@flyde/core@workspace:core"
   dependencies:
@@ -5259,15 +5259,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@flyde/dev-server@^0.4.1, @flyde/dev-server@workspace:dev-server":
+"@flyde/dev-server@^0.4.2, @flyde/dev-server@workspace:dev-server":
   version: 0.0.0-use.local
   resolution: "@flyde/dev-server@workspace:dev-server"
   dependencies:
-    "@flyde/core": ^0.1.6
+    "@flyde/core": ^0.1.7
     "@flyde/editor": ^0.1.0
-    "@flyde/remote-debugger": ^0.2.5
+    "@flyde/remote-debugger": ^0.2.6
     "@flyde/resolver": ^0.1.1
-    "@flyde/runtime": ^0.4.1
+    "@flyde/runtime": ^0.4.2
     "@types/args": ^5.0.0
     "@types/cuid": ^1.3.0
     "@types/express": ^4.16.1
@@ -5304,10 +5304,10 @@ __metadata:
     "@blueprintjs/core": ^3.11.0
     "@blueprintjs/popover2": ^0.3.1
     "@blueprintjs/select": ^3.5.0
-    "@flyde/core": ^0.1.6
-    "@flyde/dev-server": ^0.4.1
+    "@flyde/core": ^0.1.7
+    "@flyde/dev-server": ^0.4.2
     "@flyde/flow-editor": ^0.1.0
-    "@flyde/remote-debugger": ^0.2.5
+    "@flyde/remote-debugger": ^0.2.6
     "@monaco-editor/react": ^4.0.10
     "@simbathesailor/use-what-changed": ^2.0.0
     "@testing-library/jest-dom": ^5.11.4
@@ -5349,8 +5349,8 @@ __metadata:
     "@blueprintjs/core": ^3.11.0
     "@blueprintjs/popover2": ^0.3.1
     "@blueprintjs/select": ^3.5.0
-    "@flyde/core": ^0.1.6
-    "@flyde/remote-debugger": ^0.2.5
+    "@flyde/core": ^0.1.7
+    "@flyde/remote-debugger": ^0.2.6
     "@fortawesome/fontawesome-svg-core": ^6.2.0
     "@fortawesome/free-brands-svg-icons": ^6.2.0
     "@fortawesome/free-solid-svg-icons": ^6.2.0
@@ -5388,7 +5388,6 @@ __metadata:
     ts-node-dev: ^1.0.0-pre.32
     typescript: ^4.1.2
     use-debounce: ^8.0.1
-    zoom-level: ^2.5.0
   peerDependencies:
     "@types/react": ^17.0.0
     "@types/react-dom": ^17.0.0
@@ -5397,12 +5396,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@flyde/remote-debugger@^0.2.5, @flyde/remote-debugger@workspace:remote-debugger":
+"@flyde/remote-debugger@^0.2.6, @flyde/remote-debugger@workspace:remote-debugger":
   version: 0.0.0-use.local
   resolution: "@flyde/remote-debugger@workspace:remote-debugger"
   dependencies:
     "@babel/runtime": ^7.8.4
-    "@flyde/core": ^0.1.6
+    "@flyde/core": ^0.1.7
     "@socket.io/admin-ui": ^0.2.0
     "@types/express": ^4.16.1
     "@types/node": ^11.10.5
@@ -5416,11 +5415,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@flyde/resolver@^0.3.5, @flyde/resolver@workspace:resolver":
+"@flyde/resolver@^0.3.6, @flyde/resolver@workspace:resolver":
   version: 0.0.0-use.local
   resolution: "@flyde/resolver@workspace:resolver"
   dependencies:
-    "@flyde/core": ^0.1.6
+    "@flyde/core": ^0.1.7
     "@types/cuid": ^1.3.0
     "@types/node": ^11.10.5
     axios: ^0.21.1
@@ -5465,14 +5464,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@flyde/runtime@^0.4.1, @flyde/runtime@workspace:^, @flyde/runtime@workspace:runtime":
+"@flyde/runtime@^0.4.2, @flyde/runtime@workspace:^, @flyde/runtime@workspace:runtime":
   version: 0.0.0-use.local
   resolution: "@flyde/runtime@workspace:runtime"
   dependencies:
-    "@flyde/core": ^0.1.6
-    "@flyde/remote-debugger": ^0.2.5
-    "@flyde/resolver": ^0.3.5
-    "@flyde/stdlib": ^0.1.6
+    "@flyde/core": ^0.1.7
+    "@flyde/remote-debugger": ^0.2.6
+    "@flyde/resolver": ^0.3.6
+    "@flyde/stdlib": ^0.1.7
     "@types/cuid": ^1.3.0
     "@types/node": ^11.10.5
     axios: ^0.21.1
@@ -5495,11 +5494,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@flyde/stdlib@^0.1.6, @flyde/stdlib@workspace:stdlib":
+"@flyde/stdlib@^0.1.7, @flyde/stdlib@workspace:stdlib":
   version: 0.0.0-use.local
   resolution: "@flyde/stdlib@workspace:stdlib"
   dependencies:
-    "@flyde/core": ^0.1.6
+    "@flyde/core": ^0.1.7
     axios: ^0.27.2
     concurrently: ^7.3.0
     pubsub-js: ^1.9.4
@@ -27909,9 +27908,9 @@ __metadata:
     "@docusaurus/module-type-aliases": 2.0.1
     "@docusaurus/plugin-google-gtag": ^2.1.0
     "@docusaurus/preset-classic": 2.0.1
-    "@flyde/dev-server": ^0.4.1
+    "@flyde/dev-server": ^0.4.2
     "@flyde/resolver": ^0.1.1
-    "@flyde/stdlib": ^0.1.6
+    "@flyde/stdlib": ^0.1.7
     "@mdx-js/react": ^1.6.22
     "@tsconfig/docusaurus": ^1.0.5
     clsx: ^1.2.1
@@ -28777,13 +28776,6 @@ __metadata:
   version: 3.17.10
   resolution: "zod@npm:3.17.10"
   checksum: 5de630b8eceda3de211cce0a734b629f8c4ca4bc887127b0ebd57e9c9be23204725e60adf2faf1c5ccb9b660c7588a8b04f60dfda1ed8e67a789e93c15f838f1
-  languageName: node
-  linkType: hard
-
-"zoom-level@npm:^2.5.0":
-  version: 2.5.0
-  resolution: "zoom-level@npm:2.5.0"
-  checksum: a5ef4080d38f975cfc983f2c358eb5d00bff88da80842fb85bc3e762a2b6584f0851ee661257d6eaeead7793726e43df010d8573be39432b41cb9402dcd84ab8
   languageName: node
   linkType: hard
 

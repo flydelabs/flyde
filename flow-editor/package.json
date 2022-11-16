@@ -19,8 +19,8 @@
     "@blueprintjs/core": "^3.11.0",
     "@blueprintjs/popover2": "^0.3.1",
     "@blueprintjs/select": "^3.5.0",
-    "@flyde/core": "^0.1.6",
-    "@flyde/remote-debugger": "^0.2.5",
+    "@flyde/core": "^0.1.7",
+    "@flyde/remote-debugger": "^0.2.6",
     "@fortawesome/fontawesome-svg-core": "^6.2.0",
     "@fortawesome/free-brands-svg-icons": "^6.2.0",
     "@fortawesome/free-solid-svg-icons": "^6.2.0",
@@ -48,8 +48,7 @@
     "react-tooltip": "^4.2.21",
     "rooks": "^7.4.0",
     "typescript": "^4.1.2",
-    "use-debounce": "^8.0.1",
-    "zoom-level": "^2.5.0"
+    "use-debounce": "^8.0.1"
   },
   "devDependencies": {
     "@types/mocha": "^5.0.0",

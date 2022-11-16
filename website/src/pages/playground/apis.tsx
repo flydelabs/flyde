@@ -18,7 +18,7 @@ const META_DATA = {
   title: "HTTP Requests",
   description: `Flyde works great for heavy asynchronous & concurrent tasks, like combining several REST APIs together. This example shows exactly that, by combining 3 different REST APIs, the population of the capital of the country your IP is assigned with is retrieved`,
   key: "api",
-  extraInfo: `Double click each API part to see it's underlying implementation! In Flyde, nothing is hidden, only abstracted.`
+  extraInfo: <strong><h3>Try double-clicking each API part to see it's underlying implementation! In Flyde, nothing is hidden, only abstracted</h3></strong>
 };
 
 

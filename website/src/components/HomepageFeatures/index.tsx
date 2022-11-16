@@ -14,27 +14,28 @@ const FeatureList: FeatureItem[] = [
     Svg: require('@site/static/img/undraw_vcs.svg').default,
     description: (
       <>
-        Flyde fully integrates into your <mark>existing codebase, version control system and CI/CD</mark> pipeline. Enjoy the benefits of visual programming without sacrificing modern engineering practices.
+        Flyde fully integrates into your <mark>existing codebase, version control system and CI/CD</mark> pipeline.
+        Enjoy the benefits of visual programming without sacrificing modern engineering practices. Flyde flows are saved as files in your project's folder just like any other file. Using the runtime library, it integrates with your code. Write code-based components, write inline code snippets when necessary and even pass extra runtime context to your visual flow to achieve almost anything imaginable.
       </>
     ),
   },
   {
-    title: 'Everyone Can Understand and Collaborate',
+    title: 'Easy and Fun To Use and Learn',
     Svg: require('@site/static/img/undraw_collab.svg').default,
     description: (
       <>
-        Flyde democratizes development by allowing anyone to understand and even collaborate on a project.
-        Turn <mark>your codebase into a low-code platform!</mark>
+        For new programmers, Flyde provides another layer of abstraction that makes it <mark>much easier</mark> to build async and parallel flows without worrying about complex syntax.
+        For experienced programmers, Flyde can help build high-level async heavy flows <mark>much faster</mark> then using only textual-coding.
       </>
     ),
   },
   {
-    title: 'Living Documentation',
+    title: 'Visual Feedback and Debugging',
     Svg: require('@site/static/img/undraw_visionary_tech.svg').default,
     description: (
       <>
-        Maintaining and updating diagrams for documentation is hard.
-        By using Flyde for flows, you get an <mark>consistent flow chart representing your logic.</mark>
+        Flyde not only allows you to build flows visually, but also provides live visual feedback of the program running.
+        Components light up as data pass through them. Runtime values can be inspected live. <mark>No more tedious console logging!</mark>
       </>
     ),
   },

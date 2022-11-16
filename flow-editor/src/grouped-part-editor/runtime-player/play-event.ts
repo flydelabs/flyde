@@ -2,7 +2,7 @@ import { debugLogger, entries } from "@flyde/core";
 import { RuntimeEvent, RuntimeEventType } from "@flyde/remote-debugger";
 import { getInstanceDomId, getPinDomId } from "../dom-ids";
 
-const BLINK_TIMEOUT = 2000; // also change animation time in scss
+const BLINK_TIMEOUT = 5000; // also change animation time in scss
 
 const debug = debugLogger("runtime-player:play-event");
 

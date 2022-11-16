@@ -24,7 +24,7 @@ const safelyGetGitRoot = (path: string): string | undefined => {
 
 export const defaultScanFilter = (path: string, root: string): boolean => {
     const gitRoot = safelyGetGitRoot(root);
-    const ignoreFilePath = join(gitRoot, '../.gitignore');
+    const ignoreFilePath = gitRoot && join(gitRoot, '../.gitignore');
     
     if (gitRoot && existsSync(ignoreFilePath)) {
         const ig = ignore().add(readFileSync(ignoreFilePath, 'utf-8'));

@@ -31,7 +31,7 @@ const META_DATA = {
   key: "debounce-throttling",
 };
 
-const extraInfo = 'Cool right? you can try duplicating parts by pressing cmd/ctrl + D. Connect parts together by clicking on an input and then clicking on an output.'
+const extraInfo = `Cool right? you can try duplicating parts by pressing shift+D. Connect parts together by clicking on the source part's output pin and then on a the targets part's input pin`
 
 export default function DebounceThrottlingExample(): JSX.Element {
   const result = useRef(dynamicOutput());

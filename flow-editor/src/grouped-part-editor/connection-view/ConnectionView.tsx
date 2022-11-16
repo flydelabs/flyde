@@ -199,7 +199,7 @@ export const ConnectionView: React.FC<ConnectionViewProps> = (props) => {
       // data-bob={renderTriggser}
       // key={renderTrigger}
     >
-      <svg>
+      <svg style={{width: '100%'}}>
         {connectionPaths}
       </svg>
     </span>
