@@ -58,7 +58,7 @@ export const Omnibar: React.FC<OmnibarProps> = (props) => {
   const {repo} = props;
 
   const [searchValue, setSearchValue] = React.useState("");
-  const [items, setItems] = React.useState<OmniBarItem[]>([]);
+  const [items, setItems] = React.useState<OmniBarItem[] | null>(null);
 
   const [importables, setImportables] = React.useState<ImportablePart[]>([]);
 
@@ -148,7 +148,7 @@ export const Omnibar: React.FC<OmnibarProps> = (props) => {
     props.onClose();
   }, [props]);
 
-  return (
+  return items ? (
     <ExternalOmnibar
       query={searchValue}
       onQueryChange={setSearchValue}
@@ -161,7 +161,6 @@ export const Omnibar: React.FC<OmnibarProps> = (props) => {
       onItemSelect={onSelect as any}
       itemRenderer={renderItem}
       inputProps={{placeholder: 'Search for parts or commands..'}}
-      
     />
-  );
+  ) : null;
 }
