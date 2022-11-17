@@ -4,19 +4,21 @@
   
   .part-io-view-inner {
     @include base-part;
-    font-size: 14px;
-    font-weight: 400;
+    font-size: 18px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 5px;
   }
 
   &.input  {
     .part-io-view-inner {
-      @include custom-part-color(#FFD5C9);
+      @include custom-part-color(#E7F8FF);
     }
   }
-
+  
   &.output {
     .part-io-view-inner {
-      @include custom-part-color(#E7F8FF);
+      @include custom-part-color($output-color);
     }
   }
 

@@ -2770,6 +2770,30 @@ describe("main ", () => {
       assert.equal(s.callCount, 3);
       assert.deepEqual(callsFirstArgs(s), [[1], [2], [3]]);
     });
+
+    it('does not get in a loop with a sticky input that got data', () => {
+      const part = concisePart({
+        id: "test",
+        inputs: [],
+        outputs: ["r"],
+        instances: [
+          partInstance("i1", id.id, {v: staticInputPinConfig('bob')}),
+          partInstance("i2", id.id, {v: stickyInputPinConfig()}),
+        ],
+        connections: [
+          ['i1.r', 'i2.v'],
+          ['i2.r', 'r']
+        ]
+      });
+
+      const [s, r] = spiedOutput();
+
+      execute({part: part, inputs: {  }, outputs: { r }, partsRepo: testRepoWith(id)});
+
+      // a.subject.next(1);
+
+      assert.equal(s.callCount, 1);
+    })
   });
 
   describe("environment vars", () => {

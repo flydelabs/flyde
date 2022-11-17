@@ -229,7 +229,14 @@ export const createRuntimeClient = (
       debug(`Emitting error event of ${val.insId}, error - [${val}]`);
       const serializedError = serializeError(val);
       // socket.emit(EventType.PART_ERROR, { ...val, error: serializedError });
-
+      debouncedSendBatchedEvent.addItem({
+        type: RuntimeEventType.OUTPUT_CHANGE,
+        id: `${val.insId}.${ERROR_PIN_ID}.output`,
+        dt: dt(),
+        val: toString(val),
+        t: Date.now(),
+      });
+      
       debouncedSendBatchedEvent.addItem({
         type: RuntimeEventType.ERROR,
         id: val.insId,
@@ -238,13 +245,6 @@ export const createRuntimeClient = (
         t: Date.now(),
       });
 
-      debouncedSendBatchedEvent.addItem({
-        type: RuntimeEventType.OUTPUT_CHANGE,
-        id: `${val.insId}.${ERROR_PIN_ID}.output`,
-        dt: dt(),
-        val: toString(val),
-        t: Date.now(),
-      });
     },
     // onProcessingChange: () => {},
     emitRuntimeReady: () => {

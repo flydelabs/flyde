@@ -97,14 +97,14 @@ export const peekValuesForExecution = (partInputs: PartInputs, state: PartState,
 export const hasNewSignificantValues = (partInputs: PartInputs, state: PartState, env: ExecuteEnv, partId: string) => {
   return entries(partInputs)
     .some(([k, i]) => {
-      const isStatic = isStaticInput(i);
+      const isQueue = isQueueInputPinConfig(i.config, i);
       const value = peekValueForExecution(k, i, state, env, partId);
 
-      return isDefined(value) && !isStatic;
+      return isDefined(value) && isQueue;
     })
 }
 
-export const isPartStateValid = (partInputs: PartInputs, state: PartState, part: Part, lastValues: any) => {
+export const isPartStateValid = (partInputs: PartInputs, state: PartState, part: Part) => {
 
   const connectedKeys = keys(partInputs);  
 

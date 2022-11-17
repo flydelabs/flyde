@@ -202,6 +202,9 @@ export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (props) => 
               <Link to="/playground/react-counter">React Counter</Link>
             </li>
             <li>
+              <Link to="/playground/bmi">BMI Calculator</Link>
+            </li>
+            <li>
               <Link to="/playground/apis">REST API Usage</Link>
             </li>
             <li>

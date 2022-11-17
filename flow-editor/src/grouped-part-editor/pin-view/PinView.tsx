@@ -3,8 +3,6 @@ import classNames from "classnames";
 
 import { Menu, MenuItem, ContextMenu } from "@blueprintjs/core";
 
-// ;
-
 import { isDefined, toString } from "../../utils";
 
 import { useState } from "react";
@@ -13,6 +11,7 @@ import { ERROR_PIN_ID } from "@flyde/core";
 import { getPinDomId } from "../dom-ids";
 import { HistoryPayload, valuePreview } from "@flyde/remote-debugger";
 import CustomReactTooltip from "../../lib/tooltip";
+import { domToViewPort, ViewPort } from "../..";
 export const PIN_HEIGHT = 23;
 
 export type InputPinViewProps = {
@@ -155,7 +154,7 @@ export const PinView: React.SFC<PinViewProps> = React.memo(function PinView(prop
     e.preventDefault();
     e.stopPropagation();
     const menu = getContextMenu();
-    ContextMenu.show(menu, { left: e.pageX, top: e.pageY });
+    ContextMenu.show(menu, { left: e.clientX, top: e.clientY });
   };
 
   const onClick = (e: React.MouseEvent) => {

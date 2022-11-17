@@ -1,0 +1,165 @@
+imports:
+  "@flyde/stdlib":
+    - IsGreater
+part:
+  instances:
+    - pos:
+        x: -339.8445458984375
+        y: -298.6939727783203
+      id: clal8c6ws00054664pn7mxwak
+      inputConfig: {}
+      part:
+        id: Inline-value-prompt(What is
+        inputs: {}
+        outputs:
+          r:
+            type: any
+            delayed: false
+            optional: false
+        fnCode: outputs.r.next((prompt('What is your weight (in kilograms)?')))
+        customViewCode: prompt('What is your weight (in kilograms)?')
+        dataBuilderSource: cHJvbXB0KCdXaGF0IGlzIHlvdXIgd2VpZ2h0IChpbiBraWxvZ3JhbXMpPycp
+        templateType: value
+        completionOutputs:
+          - r
+        defaultStyle:
+          size: regular
+          icon: code
+          cssOverride:
+            fontFamily: monospace
+            fontWeight: "500"
+    - pos:
+        x: 97.43304077148437
+        y: -298.35113525390625
+      id: clal8cm19000b4664u3iz2pbb
+      inputConfig: {}
+      part:
+        id: Inline-value-prompt(What is
+        inputs: {}
+        outputs:
+          r:
+            type: any
+            delayed: false
+            optional: false
+        fnCode: outputs.r.next((prompt('What is your height (in cm)?')))
+        customViewCode: prompt('What is your height (in cm)?')
+        dataBuilderSource: cHJvbXB0KCdXaGF0IGlzIHlvdXIgaGVpZ2h0IChpbiBjbSk/Jyk=
+        templateType: value
+        completionOutputs:
+          - r
+        defaultStyle:
+          size: regular
+          icon: code
+          cssOverride:
+            fontFamily: monospace
+            fontWeight: "500"
+    - pos:
+        x: -140.88708862304688
+        y: -123.31595092773438
+      id: clal8dus5000j4664s9pwujgy
+      inputConfig: {}
+      part:
+        id: "Inline-value-(inputs.weight "
+        inputs:
+          weight:
+            type: any
+            mode: required
+          height:
+            type: any
+            mode: required
+        outputs:
+          r:
+            type: any
+            delayed: false
+            optional: false
+        fnCode: outputs.r.next(((inputs.weight / inputs.height**2)  * 10000))
+        customViewCode: (inputs.weight / inputs.height**2)  * 10000
+        dataBuilderSource: KGlucHV0cy53ZWlnaHQgLyBpbnB1dHMuaGVpZ2h0KioyKSAgKiAxMDAwMA==
+        templateType: value
+        completionOutputs:
+          - r
+        defaultStyle:
+          size: regular
+          icon: code
+          cssOverride:
+            fontFamily: monospace
+            fontWeight: "500"
+    - pos:
+        x: -66.90457885742188
+        y: 23.413818359375
+      id: clal91glf00024664mfh47zbj
+      inputConfig: {}
+      part:
+        id: |-
+          Inline-value-let range;
+          if (
+        inputs:
+          bmi:
+            type: any
+            mode: required
+        outputs:
+          r:
+            type: any
+            delayed: false
+            optional: false
+        fnCode: |-
+          const result = (function() { let range;
+          if (inputs.bmi < 18.5) 
+              range = 'overweight'
+          else if (inputs.bmi < 25) {
+              range = 'normal';
+          } else if (inputs.bmi < 30) {
+              range = 'overweight';
+          } else {
+              range = 'obese';
+          }
+
+          return `You are in the ${range} range`}());
+            outputs.r.next(result)
+        customViewCode: Format BMI range string
+        dataBuilderSource: bGV0IHJhbmdlOwppZiAoaW5wdXRzLmJtaSA8IDE4LjUpIAogICAgcmFuZ2UgPSAnb3ZlcndlaWdodCcKZWxzZSBpZiAoaW5wdXRzLmJtaSA8IDI1KSB7CiAgICByYW5nZSA9ICdub3JtYWwnOwp9IGVsc2UgaWYgKGlucHV0cy5ibWkgPCAzMCkgewogICAgcmFuZ2UgPSAnb3ZlcndlaWdodCc7Cn0gZWxzZSB7CiAgICByYW5nZSA9ICdvYmVzZSc7Cn0KCnJldHVybiBgWW91IGFyZSBpbiB0aGUgJHtyYW5nZX0gcmFuZ2Vg
+        templateType: function
+        completionOutputs:
+          - r
+        defaultStyle:
+          size: regular
+          icon: code
+  connections:
+    - from:
+        insId: clal8cm19000b4664u3iz2pbb
+        pinId: r
+      to:
+        insId: clal8dus5000j4664s9pwujgy
+        pinId: height
+    - from:
+        insId: clal8c6ws00054664pn7mxwak
+        pinId: r
+      to:
+        insId: clal8dus5000j4664s9pwujgy
+        pinId: weight
+    - from:
+        insId: clal8dus5000j4664s9pwujgy
+        pinId: r
+      to:
+        insId: clal91glf00024664mfh47zbj
+        pinId: bmi
+    - from:
+        insId: clal91glf00024664mfh47zbj
+        pinId: r
+      to:
+        insId: __this
+        pinId: result
+  id: BMI
+  inputs: {}
+  outputs:
+    result:
+      type: any
+      optional: false
+      delayed: false
+  inputsPosition: {}
+  outputsPosition:
+    result:
+      x: 24.354419059198683
+      y: 165.7657006221402
+  completionOutputs:
+    - result

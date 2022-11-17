@@ -76,14 +76,15 @@ export const mul2: Part = fromSimplified({
   },
 });
 
-export const id: Part = fromSimplified({
+export const id: Part = {
   id: "id",
-  inputTypes: { v: "any" },
-  outputTypes: { r: "any" },
+  inputs: { v: partInput('v') },
+  outputs: { r: partOutput('r') },
   fn: ({ v }, { r }) => {
     r.next(v);
   },
-});
+  completionOutputs: ['r']
+};
 
 export const id2: NativePart = {
   id: "id2",
@@ -95,7 +96,7 @@ export const id2: NativePart = {
   },
   fn: ({ v }, { r }) => {
     r.next(v);
-  },
+  }
 };
 
 export const transform: Part = {

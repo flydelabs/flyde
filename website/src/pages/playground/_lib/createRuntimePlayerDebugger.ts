@@ -1,5 +1,5 @@
 import { RuntimePlayer } from "@flyde/flow-editor";
-import { Debugger } from "@flyde/core";
+import { Debugger, TRIGGER_PIN_ID } from "@flyde/core";
 import { RuntimeEventType } from "@flyde/remote-debugger";
 import { HistoryPlayer } from "./createHistoryPlayer";
 
@@ -57,6 +57,16 @@ export const createRuntimeClientDebugger = (runtimePlayer: RuntimePlayer, histor
           type: RuntimeEventType.ERROR,
           t: Date.now(),
           id: `${e.insId}`,
+          dt: 0,
+          val: e.message
+        },
+      ]);
+
+      runtimePlayer.addEvents([
+        {
+          type: RuntimeEventType.OUTPUT_CHANGE,
+          t: Date.now(),
+          id: `${e.insId}.${TRIGGER_PIN_ID}.output`,
           dt: 0,
           val: e.message
         },

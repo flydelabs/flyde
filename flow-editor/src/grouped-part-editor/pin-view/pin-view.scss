@@ -197,7 +197,7 @@ $MINIMIZED_WIRE_LENGTH: 6px;
     }
 
     .pin-inner {
-      background: #FCF0FF;
+      background: $output-color
     }
 
     &.closest:not(.selected) .pin-inner {

@@ -35,3 +35,7 @@ body {
   color: black;
   position: absolute;
 }
+
+._hj_feedback_container {
+  --hjFeedbackAccentColor: var(--ifm-color-primary);
+}

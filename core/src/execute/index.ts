@@ -205,9 +205,8 @@ const executeNative = (data: NativeExecutionData) => {
 
   let lastValues;
 
-  let runs = 0;
-
   const reactiveInputs = part.reactiveInputs || [];
+
 
   const cleanState = () => {
     mainState[innerStateId].clear();
@@ -232,7 +231,7 @@ const executeNative = (data: NativeExecutionData) => {
     } else {
       const isReactiveInputWhileRunning = processing && isReactiveInput;
 
-      const partStateValid = isPartStateValid(inputs, inputsState, part, lastValues);      
+      const partStateValid = isPartStateValid(inputs, inputsState, part);      
 
       if (partStateValid || isReactiveInputWhileRunning) {
         let argValues;

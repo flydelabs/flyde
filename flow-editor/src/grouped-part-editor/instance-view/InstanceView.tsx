@@ -566,7 +566,7 @@ export const InstanceView: React.FC<InstanceViewProps> = function InstanceViewIn
       e.preventDefault();
       e.stopPropagation();
       const menu = getContextMenu();
-      ContextMenu.show(menu, { left: e.pageX, top: e.pageY });
+      ContextMenu.show(menu, { left: e.clientX, top: e.clientY });
     },
     [getContextMenu]
   );
