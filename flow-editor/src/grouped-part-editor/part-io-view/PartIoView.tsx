@@ -134,7 +134,7 @@ export const PartIoView: React.SFC<PartIoViewProps> = React.memo(function PartIo
       e.preventDefault();
       e.stopPropagation();
       const menu = getContextMenu();
-      ContextMenu.show(menu, { left: e.pageX, top: e.pageY });
+      ContextMenu.show(menu, { left: e.clientX, top: e.clientY });
     },
     [getContextMenu]
   );
