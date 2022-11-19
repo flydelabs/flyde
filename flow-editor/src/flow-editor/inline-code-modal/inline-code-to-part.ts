@@ -25,8 +25,8 @@ export const createInlineCodePart = ({ code, customView, partId, type }: InlineC
   const fnCode =
     type === CodePartTemplateTypeInline.FUNCTION
       ? `const result = (function() { ${code}}());
-  outputs.r.next(result)`
-      : `outputs.r.next((${code}))`;
+  Promise.resolve(result).then(val => outputs.r.next(val))`
+      : `const result = (${code}); Promise.resolve(result).then(val => outputs.r.next(val))`;
 
   const dataBuilderSource = btoa(code);
 
