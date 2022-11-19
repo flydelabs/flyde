@@ -672,23 +672,30 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
       onChangeBoardData({ selected: allIds, from: undefined, to: undefined });
     }, [onChangeBoardData, part.instances]);
 
+    const onDeleteInstances = React.useCallback((ids: string[]) => {
+      const newConnections = connections.filter(({ from, to }) => {
+        return ids.indexOf(from.insId) === -1 && ids.indexOf(to.insId) === -1;
+      });
+
+      const newValue = produce(part, (draft) => {
+        draft.connections = newConnections;
+        draft.instances = draft.instances.filter((_ins) => !ids.includes(_ins.id));
+      });
+
+      onChange(newValue, functionalChange("delete-ins"));
+      onChangeBoardData({ selected: [] });
+    }, [connections, onChange, onChangeBoardData, part]);
+
+    const onDeleteInstance = React.useCallback((ins: PartInstance) => {
+      onDeleteInstances([ins.id]);
+    }, [onDeleteInstances])
+
     const deleteInstance = React.useCallback(() => {
       const { selected } = boardData;
-      const { instances, connections } = part;
       if (selected.length) {
-        const newConnections = connections.filter(({ from, to }) => {
-          return selected.indexOf(from.insId) === -1 && selected.indexOf(to.insId) === -1;
-        });
-
-        const newValue = produce(part, (draft) => {
-          draft.connections = newConnections;
-          draft.instances = instances.filter((ins) => !selected.includes(ins.id));
-        });
-
-        onChange(newValue, functionalChange("delete-ins"));
-        onChangeBoardData({ selected: [] });
+        onDeleteInstances(selected);
       }
-    }, [boardData, onChange, onChangeBoardData, part]);
+    }, [boardData, onDeleteInstances]);
 
     const onToggleSticky = React.useCallback(
       (ins: PartInstance, pinId: string, forceValue?: boolean) => {
@@ -1624,6 +1631,18 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
       },
       [part, onChange]
     );
+
+    const onChangeInstanceDisplayName = React.useCallback(
+      (ins: PartInstance, name: string) => {
+        const newPart = produce(part, (draft) => {
+          draft.instances = draft.instances.map((i) => {
+            return i.id === ins.id ? { ...i, displayName: name } : i;
+          });
+        });
+        onChange(newPart, functionalChange("change instance display name"));
+      },
+      [part, onChange]
+    );
     // The component instance will be extended
     // with whatever you return from the callback passed
     // as the second argument
@@ -1927,6 +1946,8 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
                 onRequestHistory={_onRequestHistory}
                 onChangeVisibleInputs={onChangeVisibleInputs}
                 onChangeVisibleOutputs={onChangeVisibleOutputs}
+                onSetDisplayName={onChangeInstanceDisplayName}
+                onDeleteInstance={onDeleteInstance}
                 key={ins.id}
                 forceShowMinimized={from ? "input" : to ? "output" : undefined}
                 isConnectedInstanceSelected={selected.some((selInsId) =>

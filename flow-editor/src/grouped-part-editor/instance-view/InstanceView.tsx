@@ -142,6 +142,9 @@ export interface InstanceViewProps {
   onChangeVisibleInputs: (ins: PartInstance, inputs: string[]) => void;
   onChangeVisibleOutputs: (ins: PartInstance, outputs: string[]) => void;
 
+  onDeleteInstance: (ins: PartInstance) => void;
+  onSetDisplayName: (ins: PartInstance, view: string | undefined) => void;
+
   copiedConstValue?: any;
 
   displayMode?: true;
@@ -194,7 +197,9 @@ export const InstanceView: React.FC<InstanceViewProps> = function InstanceViewIn
     onExtractInlinePart,
     isConnectedInstanceSelected,
     inlineEditorPortalDomNode,
-    onChangeStyle
+    onChangeStyle,
+    onDeleteInstance,
+    onSetDisplayName
   } = props;
 
   const { id } = instance;
@@ -407,6 +412,15 @@ export const InstanceView: React.FC<InstanceViewProps> = function InstanceViewIn
     }
   }, [part.outputs, _prompt, instance, onChangeVisibleOutputs]);
 
+  const _onDeleteInstance = React.useCallback(() => {
+    onDeleteInstance(instance)
+  }, [onDeleteInstance, instance]);
+
+  const _onSetDisplayName = React.useCallback(async () => {
+    const name = await _prompt(`Set custom display name`, instance.displayName || part.id);
+    onSetDisplayName(instance, name);
+  }, [_prompt, instance, onSetDisplayName, part.id]);
+
   const inputKeys = Object.keys(getPartInputs(part));
   const outputKeys = Object.keys(getPartOutputs(part));
 
@@ -548,6 +562,8 @@ export const InstanceView: React.FC<InstanceViewProps> = function InstanceViewIn
       ...(isInlinePartInstance(instance) ? [{text: "Extract inline part to file", onClick: () => onExtractInlinePart(instance)}] : []),
             { text: "Reorder inputs", onClick: _onChangeVisibleInputs },
       { text: "Reorder outputs", onClick: _onChangeVisibleOutputs },
+      { text: `Set display name`, onClick: _onSetDisplayName },
+      { text: 'Delete instance', intent: 'danger', onClick: _onDeleteInstance}
     ];
     return (
       <Menu>
@@ -559,7 +575,7 @@ export const InstanceView: React.FC<InstanceViewProps> = function InstanceViewIn
         ))}
       </Menu>
     );
-  }, [inputKeys, outputKeys, instance, _onChangeVisibleInputs, _onChangeVisibleOutputs, style, _onChangeStyle, _prompt, _visibleInputs, connectedInputs, onChangeVisibleInputs, _visibleOutputs, connectedOutputs, onChangeVisibleOutputs, onUngroup, onExtractInlinePart]);
+  }, [inputKeys, outputKeys, instance, _onChangeVisibleInputs, _onChangeVisibleOutputs, _onSetDisplayName, _onDeleteInstance, style, _onChangeStyle, _prompt, _visibleInputs, connectedInputs, onChangeVisibleInputs, _visibleOutputs, connectedOutputs, onChangeVisibleOutputs, onUngroup, onExtractInlinePart]);
 
   const showMenu = React.useCallback(
     (e: React.MouseEvent) => {

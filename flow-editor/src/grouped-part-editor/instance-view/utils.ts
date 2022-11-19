@@ -26,12 +26,16 @@ import {
 } from "./InstanceView";
 
 import { clamp } from "lodash";
-import { getInstanceDomId, getMainPinDomId } from "../dom-ids";
+import { getInstanceDomId } from "../dom-ids";
 
 export const calcPartContent = (
   instance: PartInstance,
   part: PartDefinition
 ) => {
+  if (instance.displayName) {
+    return instance.displayName;
+  }
+
   if (part.customViewCode) {
     try {
       const inputs = Object.entries(instance.inputConfig)
