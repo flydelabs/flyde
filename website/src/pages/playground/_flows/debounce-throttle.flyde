@@ -27,6 +27,10 @@ part:
         threshold:
           mode: static
           value: 4000
+      visibleOutputs:
+        - result
+        - available
+        - __error
       partId: Throttle
       style:
         size: large
@@ -144,12 +148,6 @@ part:
         insId: Debounce-194-d108
         pinId: i
     - from:
-        insId: Throttle-652
-        pinId: available
-      to:
-        insId: Inline-value-Value was thro-555
-        pinId: __trigger
-    - from:
         insId: Inline-value-Value was thro-555
         pinId: r
       to:
@@ -179,6 +177,12 @@ part:
       to:
         insId: __this
         pinId: result
+    - from:
+        insId: Throttle-652
+        pinId: __error
+      to:
+        insId: Inline-value-Value was thro-555
+        pinId: __trigger
   id: Main
   inputs:
     input:

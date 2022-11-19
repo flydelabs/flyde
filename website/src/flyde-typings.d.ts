@@ -8,6 +8,7 @@ declare module '@flyde/runtime' {
 
     // generated flow typings
     export function loadFlow(path: 'src/pages/playground/_flows/ApisCombination.flyde'): LoadedFlowExecuteFn<{}>;
+    export function loadFlow(path: 'src/pages/playground/_flows/bmi.flyde'): LoadedFlowExecuteFn<{}>;
     export function loadFlow(path: 'src/pages/playground/_flows/debounce-throttle.flyde'): LoadedFlowExecuteFn<{input: any}>;
     export function loadFlow(path: 'src/pages/playground/_flows/fibonacci.flyde'): LoadedFlowExecuteFn<{n: any}>;
     export function loadFlow(path: 'src/pages/playground/_flows/hello-world.flyde'): LoadedFlowExecuteFn<{}>;
