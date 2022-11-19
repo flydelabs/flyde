@@ -2726,6 +2726,29 @@ describe("main ", () => {
     });
   });
 
+  describe('async part function', () => {
+    it('works with async functions', async () => {
+      const part = conciseNativePart({
+        id: 'Async',
+        inputs: [],
+        outputs: ['r'],
+        fn: async (i, o) => {
+          await delay(10);
+          o.r.next('ok');
+        }
+      });
+
+      const [s, r] = spiedOutput();
+      const clean = execute({part, partsRepo: {}, inputs: {}, outputs: {r}});
+      await eventually(() => {
+        assert.equal(s.called, true);
+      })
+
+      clean();
+      assert.isTrue(s.calledOnceWith('ok'));
+    })
+  })
+
   describe("bugs found", () => {
     it("works with accumulate and a static input", () => {
       const [s, r] = spiedOutput();

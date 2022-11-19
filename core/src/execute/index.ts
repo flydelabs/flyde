@@ -3,7 +3,6 @@ import { first } from "rxjs/operators";
 
 import * as cuid from "cuid";
 
-
 import {
   isDynamicInput,
   dynamicPartInput,
@@ -35,7 +34,7 @@ import {
 } from "../execution-values";
 import { delay, entries, isDefined, keys, OMap, OMapF } from "../common";
 import { debugLogger } from "../common/debug-logger";
-import { codePartToNative, customRepoToPartRepo, PartRepo } from "..";
+import { callFnOrFnPromise, codePartToNative, customRepoToPartRepo, PartFn, PartRepo } from "..";
 
 export type SubjectMap = OMapF<Subject<any>>;
 
@@ -152,7 +151,7 @@ const executeNative = (data: NativeExecutionData) => {
   const debug = debugLogger("core");
 
   const cleanUps: any = [];
-  let partCleanupFn: any;
+  let partCleanupFn: ReturnType<PartFn>;
 
   const innerExec: InnerExecuteFn = (part, i, o, id) => execute({part: part, inputs: i, outputs: o, partsRepo: repo, _debugger, insId: id, onCompleted});
 
@@ -296,20 +295,15 @@ const executeNative = (data: NativeExecutionData) => {
                 }
 
                 cleanState();
-                if (partCleanupFn) {
-                  partCleanupFn();
-                  partCleanupFn = undefined;
-                } else {
-                  // no cleanup
-                }
 
-
-                completedOutputs.clear();
-                completedOutputsValues = {};
-                // this avoids an endless loop after triggering an ended part with static inputs
-                if (hasNewSignificantValues(inputs, inputsState, env, part.id)) {
-                  maybeRunPart();
-                }
+                callFnOrFnPromise(partCleanupFn, `Error with cleanup function of ${part.id}`)
+                partCleanupFn = undefined;
+                    completedOutputs.clear();
+                    completedOutputsValues = {};
+                    // this avoids an endless loop after triggering an ended part with static inputs
+                    if (hasNewSignificantValues(inputs, inputsState, env, part.id)) {
+                      maybeRunPart();
+                    }
               } else {
                 // do nothing, part is not done
               }
@@ -390,9 +384,7 @@ const executeNative = (data: NativeExecutionData) => {
   cleanUps.push(cleanSubscriptions);
 
   return () => {
-    if (partCleanupFn) {
-      partCleanupFn();
-    }
+    callFnOrFnPromise(partCleanupFn, `Error with cleanup function of ${part.id}`)
     cleanUps.forEach((fn: any) => fn());
   };
 };

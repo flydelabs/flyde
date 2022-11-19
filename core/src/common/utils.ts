@@ -99,6 +99,37 @@ export const isDefined = <T>(o: T): o is NonNullable<T> => {
   return typeof o !== "undefined";
 };
 
+export const isPromise = <T>(o: any): o is Promise<T> => {
+  return o && typeof (o as any).then === "function";
+};
+
+// helper for cleanup fn code. A simple "Promise.resolve" would have caused all cleanups to be async, which is better to avoid (is it?)
+export const callFnOrFnPromise = (
+  maybeFnOrFnPromise: void | Function | Promise<void> | Promise<Function>,
+  errorMsg: string
+) => {
+  if (!isDefined(maybeFnOrFnPromise)) {
+    return;
+  }
+
+  const handleFn = (fn: any) => {
+    try {
+      fn();
+    } catch (e) {
+      console.error(e);
+    }
+  };
+  if (typeof maybeFnOrFnPromise === "function") {
+    handleFn(maybeFnOrFnPromise);
+  } else {
+    Promise.resolve(maybeFnOrFnPromise as any).then((maybeFn) => {
+      if (typeof maybeFn === "function") {
+        handleFn(maybeFn);
+      }
+    });
+  }
+};
+
 export const isOptionalType = (type: string) => {
   return /\?$/.test(type);
 };
