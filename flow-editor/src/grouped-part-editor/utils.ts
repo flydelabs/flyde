@@ -606,6 +606,11 @@ export const handleIoPinRename = (part: GroupedPart, type: PinType, pinId: strin
           ? { ...conn, to: { ...conn.to, pinId: newPinId } }
           : conn;
       });
+
+      draft.completionOutputs = (draft.completionOutputs || []).map(comp => {
+        const arr = comp.split('+'); // due to the r1+r1,r3 hack, see core tests
+        return arr.map(pin => pin === pinId ? newPinId : pinId).join('+')
+      })
       delete draft.outputs[pinId];
     }
   });
