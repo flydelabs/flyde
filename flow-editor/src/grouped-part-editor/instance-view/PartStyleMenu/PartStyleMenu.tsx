@@ -1,7 +1,8 @@
 import { MenuDivider, MenuItem } from '@blueprintjs/core';
 import { Part, PartStyle } from '@flyde/core';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { PromptFn, usePrompt } from '../../../flow-editor/ports';
+import { toastMsg } from '../../../toaster';
 
 export interface PartStyleMenuProps {
 	style: PartStyle | undefined;
@@ -27,6 +28,18 @@ export const PartStyleMenu: React.FC<PartStyleMenuProps> = (props) => {
 		
 		onChangeStyleProp('icon', icon);
 	  }, [_prompt, onChangeStyleProp]);
+	
+	const onChooseCustomStyling = useCallback(async () => {
+		const custom = await _prompt('Enter a custom style (valid JSON representing a React CSS object)', style.cssOverride ? JSON.stringify(style.cssOverride) : '');
+		try {
+			const obj = JSON.parse(custom);
+			onChangeStyleProp('cssOverride', obj);
+		} catch (e) {
+			console.error(e);
+			toastMsg('Invalid object', 'danger')
+		}
+
+	}, [_prompt, onChangeStyleProp, style.cssOverride]);
 
 	return (<React.Fragment>
 	<MenuItem text='Color'>
@@ -47,6 +60,9 @@ export const PartStyleMenu: React.FC<PartStyleMenuProps> = (props) => {
 	<MenuItem text='Icon'>
 	  <MenuItem text='Choose Icon' onClick={onChooseIcon}/>
 	  <MenuItem text='Remove Icon' onClick={() => onChangeStyleProp('icon', undefined)}/>
+	</MenuItem>
+	<MenuItem text='Custom Styling' onClick={onChooseCustomStyling}>
+
 	</MenuItem>
   </React.Fragment>);
 }
