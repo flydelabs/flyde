@@ -19,14 +19,14 @@ export const createInlineCodePart = ({ code, customView, partId, type }: InlineC
   }, {});
 
   const outputs = {
-    r: partOutput("any"),
+    value: partOutput("any"),
   };
 
   const fnCode =
     type === CodePartTemplateTypeInline.FUNCTION
       ? `const result = (function() { ${code}}());
-  Promise.resolve(result).then(val => outputs.r.next(val))`
-      : `const result = (${code}); Promise.resolve(result).then(val => outputs.r.next(val))`;
+  Promise.resolve(result).then(val => outputs.value.next(val))`
+      : `const result = (${code}); Promise.resolve(result).then(val => outputs.value.next(val))`;
 
   const dataBuilderSource = btoa(code);
 
@@ -38,7 +38,7 @@ export const createInlineCodePart = ({ code, customView, partId, type }: InlineC
     customViewCode: customView || code,
     dataBuilderSource,
     templateType: type,
-    completionOutputs: ["r"],
+    completionOutputs: ["value"],
     defaultStyle: {
       size: 'regular',
       icon: 'code',
