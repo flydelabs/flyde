@@ -39,7 +39,7 @@ import {
 } from "@flyde/core";
 import { InstanceView } from "./instance-view/InstanceView";
 import { ConnectionView, ConnectionViewProps } from "./connection-view/ConnectionView";
-import { entries, isDefined, Pos, preventDefaultAnd, Size, values } from "../utils";
+import { entries, isDefined, Pos, preventDefaultAnd, Size } from "../utils";
 import { useBoundingclientrect, useDidMount } from "rooks";
 
 import {
@@ -59,7 +59,6 @@ import {
   handleChangePartInputType,
   calcSelectionBoxArea,
   centerBoardPosOnTarget,
-  calcCenter,
   emptyList,
 } from "./utils";
 
@@ -68,10 +67,10 @@ import { useState, useRef, useEffect } from "react";
 import { useHotkeys } from "../lib/react-utils/use-hotkeys";
 import useComponentSize from "@rehooks/component-size";
 
-import { Slider, Menu, MenuItem, ContextMenu, Button, MenuDivider } from "@blueprintjs/core";
+import { Slider, Menu, MenuItem, ContextMenu, MenuDivider } from "@blueprintjs/core";
 import { PartIoView, PartIoType } from "./part-io-view";
 
-import { rnd, vAdd, vDiv, vec, vMul, vSub, vZero } from "../physics";
+import { vAdd, vec, vSub, vZero } from "../physics";
 import { QuickAddMenu, QuickAddMenuData, QuickMenuMatch } from "./quick-add-menu";
 import { queueInputPinConfig } from "@flyde/core";
 import { HistoryPayload } from "@flyde/remote-debugger";
@@ -87,16 +86,15 @@ import {
 } from "../flow-editor/flyde-flow-change-type";
 import { InlineCodeModal } from "../flow-editor/inline-code-modal";
 import { createInlineCodePart } from "../flow-editor/inline-code-modal/inline-code-to-part";
-import _, { pick, toPairs } from "lodash";
+import _ from "lodash";
 import { groupSelected } from "../group-selected";
-import { usePrompt } from "../flow-editor/ports";
+import { useConfirm, usePrompt } from "../flow-editor/ports";
 import classNames from "classnames";
 import { pasteInstancesCommand } from "./commands/paste-instances";
 import { animateViewPort, logicalPosToRenderedPos } from "..";
 import { handleConnectionCloseEditorCommand } from "./commands/close-connection";
 import { handleDetachConstEditorCommand } from "./commands/detach-const";
 import { handleDuplicateSelectedEditorCommand } from "./commands/duplicate-instances";
-import { connect } from "node:http2";
 import { PartStyleMenu } from "./instance-view/PartStyleMenu";
 import { FlydeFlowEditorProps } from "../flow-editor/FlowEditor";
 
@@ -267,6 +265,7 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
       );
     });
 
+    const _confirm = useConfirm();
     const _prompt = usePrompt();
 
     const viewPort = boardData.viewPort;
@@ -316,7 +315,7 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
     );
 
     const onGroupSelectedInternal = React.useCallback(async () => {
-      const name = await _prompt("Part name?");
+      const name = await _prompt("New grouped part name?");
       const { currentPart } = await groupSelected(
         boardData.selected,
         part,
@@ -672,30 +671,73 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
       onChangeBoardData({ selected: allIds, from: undefined, to: undefined });
     }, [onChangeBoardData, part.instances]);
 
-    const onDeleteInstances = React.useCallback((ids: string[]) => {
-      const newConnections = connections.filter(({ from, to }) => {
-        return ids.indexOf(from.insId) === -1 && ids.indexOf(to.insId) === -1;
-      });
+    const onDeleteInstances = React.useCallback(
+      (ids: string[]) => {
+        const newConnections = connections.filter(({ from, to }) => {
+          return ids.indexOf(from.insId) === -1 && ids.indexOf(to.insId) === -1;
+        });
 
-      const newValue = produce(part, (draft) => {
-        draft.connections = newConnections;
-        draft.instances = draft.instances.filter((_ins) => !ids.includes(_ins.id));
-      });
+        const newValue = produce(part, (draft) => {
+          draft.connections = newConnections;
+          draft.instances = draft.instances.filter((_ins) => !ids.includes(_ins.id));
+        });
 
-      onChange(newValue, functionalChange("delete-ins"));
-      onChangeBoardData({ selected: [] });
-    }, [connections, onChange, onChangeBoardData, part]);
+        onChange(newValue, functionalChange("delete-ins"));
+        onChangeBoardData({ selected: [] });
+      },
+      [connections, onChange, onChangeBoardData, part]
+    );
 
-    const onDeleteInstance = React.useCallback((ins: PartInstance) => {
-      onDeleteInstances([ins.id]);
-    }, [onDeleteInstances])
+    const onDeleteInstance = React.useCallback(
+      (ins: PartInstance) => {
+        onDeleteInstances([ins.id]);
+      },
+      [onDeleteInstances]
+    );
 
-    const deleteInstance = React.useCallback(() => {
-      const { selected } = boardData;
-      if (selected.length) {
+    const onRemoveIoPin = React.useCallback(
+      (type: PartIoType, pinId: string) => {
+        const newValue = produce(part, (draft) => {
+          if (type === "input") {
+            delete draft.inputs[pinId];
+            draft.connections = draft.connections.filter(
+              (conn) => !(isExternalConnectionNode(conn.from) && conn.from.pinId === pinId)
+            );
+          } else {
+            draft.connections = draft.connections.filter(
+              (conn) => !(isExternalConnectionNode(conn.to) && conn.to.pinId === pinId)
+            );
+            draft.completionOutputs = (draft.completionOutputs || [])
+              .map((comp) => {
+                const arr = comp.split("+"); // due to the r1+r1,r3 hack, see core tests
+                return arr.filter((pin) => pin !== pinId).join("+");
+              })
+              .filter((i) => !!i);
+            delete draft.outputs[pinId];
+          }
+        });
+
+        onChange(newValue, functionalChange("remove io pin"));
+      },
+      [part, onChange]
+    );
+
+    const deleteSelection = React.useCallback(async () => {
+      const { selected, from, to } = boardData;
+      if (selected.length === 0) {
+        if (isExternalConnectionNode(from)) {
+          if (await _confirm(`Are you sure you want to remove main input ${from.pinId}?`)) {
+            onRemoveIoPin("input", from.pinId);
+          }
+        } else if (isExternalConnectionNode(to)) {
+          if (await _confirm(`Are you sure you want to remove main output ${to.pinId}?`)) {
+            onRemoveIoPin("output", to.pinId);
+          }
+        }
+      } else {
         onDeleteInstances(selected);
       }
-    }, [boardData, onDeleteInstances]);
+    }, [_confirm, boardData, onDeleteInstances, onRemoveIoPin]);
 
     const onToggleSticky = React.useCallback(
       (ins: PartInstance, pinId: string, forceValue?: boolean) => {
@@ -1017,14 +1059,14 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
             }
             draft.outputs[newPinId] = partOutput(newPinType, false, false);
             draft.outputsPosition[newPinId] = lastMousePos.current;
-            // hackily add the new output as required for completion to an existing 
+            // hackily add the new output as required for completion to an existing
 
             const firstCompletionOutput = (draft.completionOutputs || [])[0];
             if (firstCompletionOutput) {
-              const arr = firstCompletionOutput.split('+');
-              draft.completionOutputs[0] = [...arr, newPinId].join('+');
+              const arr = firstCompletionOutput.split("+");
+              draft.completionOutputs[0] = [...arr, newPinId].join("+");
             } else {
-              draft.completionOutputs = [newPinId]
+              draft.completionOutputs = [newPinId];
             }
           }
         });
@@ -1066,32 +1108,6 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
         onChange(newPart, functionalChange("change default style"));
       },
       [onChange, part]
-    );
-
-    const onRemoveIoPin = React.useCallback(
-      (type: PartIoType, pinId: string) => {
-        const newValue = produce(part, (draft) => {
-          if (type === "input") {
-            delete draft.inputs[pinId];
-            draft.connections = draft.connections.filter(
-              (conn) => !(isExternalConnectionNode(conn.from) && conn.from.pinId === pinId)
-            );
-          } else {
-            draft.connections = draft.connections.filter(
-              (conn) => !(isExternalConnectionNode(conn.to) && conn.to.pinId === pinId)
-            );
-            draft.completionOutputs = (draft.completionOutputs || []).map(comp => {
-              const arr = comp.split('+'); // due to the r1+r1,r3 hack, see core tests
-              return arr.filter(pin => pin !== pinId).join('+')
-            })
-            .filter(i => !!i)
-            delete draft.outputs[pinId];
-          }
-        });
-
-        onChange(newValue, functionalChange("remove io pin"));
-      },
-      [part, onChange]
     );
 
     const onRenameIoPin = React.useCallback(
@@ -1483,7 +1499,7 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
     useHotkeys("cmd+c", onCopyInner, isBoardInFocus);
     useHotkeys("cmd+v", onPaste, isBoardInFocus);
     useHotkeys("esc", clearSelections, isBoardInFocus);
-    useHotkeys("backspace", deleteInstance, isBoardInFocus);
+    useHotkeys("backspace", deleteSelection, isBoardInFocus);
     useHotkeys("shift+g", onGroupSelectedInternal, isBoardInFocus);
     useHotkeys("shift+d", duplicate, isBoardInFocus);
     useHotkeys("cmd+a", selectAll, isBoardInFocus);
@@ -1962,6 +1978,7 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
                 onCloseInlineEditor={closeInlineEditor}
                 inlineEditorPortalDomNode={inlineEditorPortalRootRef.current}
                 onChangeStyle={onChangeInstanceStyle}
+                onGroupSelected={onGroupSelectedInternal}
               />
             ))}
             {maybeRenderSelectionBox()}

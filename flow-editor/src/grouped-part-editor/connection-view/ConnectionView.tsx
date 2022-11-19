@@ -132,8 +132,8 @@ export const SingleConnectionView: React.FC<ConnectionItemViewProps> = (props) =
 
   return (<React.Fragment>
       <path d={bob} className={cm} style={{strokeWidth, strokeDasharray}} onContextMenu={showMenu}/>
-      {type  === 'future-add' ? <text className='label' x={middleX} y={middleY} font-size="12px">Add connection</text> : null }
-      {type  === 'future-remove' ? <text className='label' x={middleX} y={middleY} font-size="12">Remove connection</text> : null }
+      {type  === 'future-add' ? <text className='label' x={middleX} y={middleY} fontSize="12px">Add connection</text> : null }
+      {type  === 'future-remove' ? <text className='label' x={middleX} y={middleY} fontSize="12">Remove connection</text> : null }
     </React.Fragment>
   );
 }

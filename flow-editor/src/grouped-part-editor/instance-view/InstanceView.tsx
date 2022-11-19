@@ -161,6 +161,7 @@ export interface InstanceViewProps {
   inlineEditorPortalDomNode: HTMLElement;
 
   onChangeStyle: (instance: PartInstance, style: PartStyle) => void;
+  onGroupSelected: () => void;
 }
 
 export const InstanceView: React.FC<InstanceViewProps> = function InstanceViewInner(props) {
@@ -195,6 +196,7 @@ export const InstanceView: React.FC<InstanceViewProps> = function InstanceViewIn
     inlineGroupProps,
     onUngroup,
     onExtractInlinePart,
+    onGroupSelected,
     isConnectedInstanceSelected,
     inlineEditorPortalDomNode,
     onChangeStyle,
@@ -563,6 +565,7 @@ export const InstanceView: React.FC<InstanceViewProps> = function InstanceViewIn
             { text: "Reorder inputs", onClick: _onChangeVisibleInputs },
       { text: "Reorder outputs", onClick: _onChangeVisibleOutputs },
       { text: `Set display name`, onClick: _onSetDisplayName },
+      { text: 'Group selected instances', onClick: onGroupSelected},
       { text: 'Delete instance', intent: 'danger', onClick: _onDeleteInstance}
     ];
     return (
@@ -575,7 +578,7 @@ export const InstanceView: React.FC<InstanceViewProps> = function InstanceViewIn
         ))}
       </Menu>
     );
-  }, [inputKeys, outputKeys, instance, _onChangeVisibleInputs, _onChangeVisibleOutputs, _onSetDisplayName, _onDeleteInstance, style, _onChangeStyle, _prompt, _visibleInputs, connectedInputs, onChangeVisibleInputs, _visibleOutputs, connectedOutputs, onChangeVisibleOutputs, onUngroup, onExtractInlinePart]);
+  }, [inputKeys, outputKeys, instance, _onChangeVisibleInputs, _onChangeVisibleOutputs, _onSetDisplayName, _onDeleteInstance, style, _onChangeStyle, _prompt, _visibleInputs, connectedInputs, onChangeVisibleInputs, _visibleOutputs, connectedOutputs, onChangeVisibleOutputs, onUngroup, onExtractInlinePart, onGroupSelected]);
 
   const showMenu = React.useCallback(
     (e: React.MouseEvent) => {

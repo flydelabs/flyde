@@ -63,6 +63,9 @@ export const createVsCodePorts = (): EditorPorts => {
         prompt: ({text, defaultValue}) => {
             return postMessageCallback('prompt', {text, defaultValue});
         },
+        confirm: ({text}) => {
+            return postMessageCallback('confirm', {text});
+        },
         openFile: async (dto) => {
             return postMessageCallback('openFile', dto);
         },
