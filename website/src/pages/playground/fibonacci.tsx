@@ -17,7 +17,7 @@ import { OutputLogs } from "./_OutputLogs/OutputLogs";
 const META_DATA = {
   title: "Fibonacci Sequence",
   description: `This example showcases a classical recursion - the Fibonacci sequence. On numbers higher than 1, the "Fibonacci" part calls itself recursively!`,
-  key: "fibo",
+  key: "fibonacci",
   extraInfo: 'Cool right? everything is editable, so try changing the algorithm and see how it affects the end result!'
 };
 

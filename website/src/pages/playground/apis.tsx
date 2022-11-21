@@ -40,7 +40,7 @@ export default function ReactCounterExample(): JSX.Element {
     output: result.current,
   });
 
-  const prefixComponent = <button className='button button--primary' onClick={() => inputs.current.__trigger.subject.next("run")}>Run!</button>;
+  const prefixComponent = <button className='button button--success' onClick={() => inputs.current.__trigger.subject.next("run")}>Run!</button>;
   return (
     <PlaygroundTemplate meta={META_DATA} flowProps={flowProps} defaultDelay={100} prefixComponent={prefixComponent}>
 

@@ -36,7 +36,7 @@ export default function Home(): JSX.Element {
   });
 
 
-  const prefixComponent = <button className='button button--primary' onClick={() => inputs.current.__trigger.subject.next("run")}>Run!</button>;
+  const prefixComponent = <button className='button button--success' onClick={() => inputs.current.__trigger.subject.next("run")}>Run!</button>;
 
   return (
     <PlaygroundTemplate meta={META_DATA} flowProps={flowProps} hideDelay={true} prefixComponent={prefixComponent} initWidth={300} extraInfo={extraInfo}>
