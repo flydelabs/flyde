@@ -571,22 +571,6 @@ export const handleInstanceDrag = (
   return {newValue, newSelected};
 };
 
-export const calcMoveViewPort = (
-  event: React.MouseEvent,
-  lastMousePos: Pos,
-  moveStart: Pos,
-  viewPort: ViewPort
-) => {
-  const now = { x: event.pageX, y: event.pageY };
-  const dx = lastMousePos.x - now.x;
-  const dy = lastMousePos.y - now.y;
-  const { x, y } = moveStart;
-  return immer.produce(viewPort, (vp) => {
-    vp.pos.x = x + (dx * 3) / vp.zoom;
-    vp.pos.y = y + (dy * 3) / vp.zoom;
-  });
-};
-
 export const handleIoPinRename = (part: GroupedPart, type: PinType, pinId: string, newPinId: string) => {
   return immer.produce(part, (draft) => {
     if (type === "input") {

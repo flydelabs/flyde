@@ -53,7 +53,6 @@ import {
   roundNumber,
   fitViewPortToPart,
   getInstancesInRect,
-  calcMoveViewPort,
   handleInstanceDrag,
   handleIoPinRename,
   handleChangePartInputType,
@@ -104,8 +103,6 @@ const sliderRenderer = (p: any) => <div></div>;
 
 export const PART_HEIGHT = 28;
 const DBL_CLICK_TIME = 300;
-
-const defaultPos = { x: 0, y: 0 };
 
 export const defaultViewPort: ViewPort = {
   pos: { x: 0, y: 0 },
@@ -757,42 +754,32 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
       // onChange(duplicateSelected(value), functionalChange("duplicate"));
     }, [onChange, onChangeBoardData, part, selected]);
 
-    const vpMoveStart = useRef<Pos>();
-    const posRef = useRef<Pos>();
-
     const onMouseDown: React.MouseEventHandler = React.useCallback(
       (e) => {
         const target = e.nativeEvent.target as HTMLElement;
 
         if (e.button !== 0) {
-          // left click
+          // right click
           return;
         }
         if (!isEventOnCurrentBoard(e.nativeEvent, part.id)) {
           return;
         }
 
-        if (e.shiftKey) {
-          posRef.current = { x: e.pageX, y: e.pageY };
-          vpMoveStart.current = viewPort.pos;
-
-          console.log("STARTING", part.id);
-        } else {
-          if (target && target.className === "board-editor-inner") {
-            // dbl click and onMouseDown did not work, so we use onMouseDown to detect double click
-            if (Date.now() - lastBoardClickTime < DBL_CLICK_TIME) {
-              onShowOmnibar(e);
-              return;
-            }
-            setLastBoardClickTime(Date.now());
-            const eventPos = { x: e.clientX, y: e.clientY };
-            const normalizedPos = vSub(eventPos, boardPos);
-            const posInBoard = domToViewPort(normalizedPos, viewPort, parentViewport);
-            setSelectionBox({ from: posInBoard, to: posInBoard });
+        if (target && target.className === "board-editor-inner") {
+          // dbl click and onMouseDown did not work, so we use onMouseDown to detect double click
+          if (Date.now() - lastBoardClickTime < DBL_CLICK_TIME) {
+            onShowOmnibar(e);
+            return;
           }
+          setLastBoardClickTime(Date.now());
+          const eventPos = { x: e.clientX, y: e.clientY };
+          const normalizedPos = vSub(eventPos, boardPos);
+          const posInBoard = domToViewPort(normalizedPos, viewPort, parentViewport);
+          setSelectionBox({ from: posInBoard, to: posInBoard });
         }
       },
-      [part.id, viewPort, lastBoardClickTime, boardPos, onShowOmnibar]
+      [part.id, viewPort, lastBoardClickTime, boardPos, parentViewport, onShowOmnibar]
     );
 
     const onMouseUp: React.MouseEventHandler = React.useCallback(
@@ -819,9 +806,6 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
 
           setSelectionBox(undefined);
         }
-
-        posRef.current = undefined;
-        vpMoveStart.current = undefined;
       },
       [
         part.id,
@@ -854,13 +838,6 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
 
         if (selectionBox) {
           setSelectionBox({ ...selectionBox, to: posInBoard });
-        }
-
-        if (posRef.current && vpMoveStart.current) {
-          // console.log("changing VP");
-          const newViewPort = calcMoveViewPort(e, posRef.current, vpMoveStart.current, viewPort);
-          setViewPort(newViewPort);
-          e.stopPropagation();
         }
 
         const closest = findClosestPin(
@@ -901,14 +878,11 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
         thisInsId,
         closestPin,
         onChangeBoardData,
-        setViewPort,
       ]
     );
 
     const onMouseLeave: React.MouseEventHandler = React.useCallback(() => {
       setClosestPin(undefined);
-      posRef.current = undefined;
-      vpMoveStart.current = undefined;
       isBoardInFocus.current = false;
     }, []);
 
@@ -1263,7 +1237,7 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
       [part]
     );
 
-    const onMaybeZoom = React.useCallback(
+    const onMaybeZoomOrPan = React.useCallback(
       (e: WheelEvent) => {
         if (e.metaKey || e.ctrlKey) {
           // blockScroll();
@@ -1271,21 +1245,32 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
           onZoom(viewPort.zoom + zoomDiff, "mouse");
           e.preventDefault();
           e.stopPropagation();
+        } else {
+          const dx = e.deltaX;
+          const dy = e.deltaY;
+
+          const newViewPort = produce(viewPort, (vp) => {
+            vp.pos.x = vp.pos.x + dx / vp.zoom;
+            vp.pos.y = vp.pos.y + dy / vp.zoom;
+          });
+          setViewPort(newViewPort);
+          e.stopPropagation();
+          e.preventDefault();
         }
       },
-      [onZoom, viewPort.zoom]
+      [onZoom, setViewPort, viewPort]
     );
 
     useEffect(() => {
       const { current } = boardRef;
       if (current) {
-        current.addEventListener("wheel", onMaybeZoom);
+        current.addEventListener("wheel", onMaybeZoomOrPan);
 
         return () => {
-          current.removeEventListener("wheel", onMaybeZoom);
+          current.removeEventListener("wheel", onMaybeZoomOrPan);
         };
       }
-    }, [onMaybeZoom]);
+    }, [onMaybeZoomOrPan]);
 
     const backgroundStyle: any = {
       backgroundPositionX: roundNumber(-viewPort.pos.x * viewPort.zoom),

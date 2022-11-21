@@ -39,6 +39,9 @@ export const PartPreview: React.FC<{ part: PartDefinition }> = ({ part }) => {
     isConnectedInstanceSelected: false,
     inlineEditorPortalDomNode: null as any,
     onChangeStyle: noop,
+    onDeleteInstance: noop,
+    onGroupSelected: noop,
+    onSetDisplayName: noop,
   };
 
   return (
