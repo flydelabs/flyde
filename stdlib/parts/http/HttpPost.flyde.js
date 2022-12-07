@@ -6,11 +6,12 @@ module.exports = {
     headers: { mode: "required-if-connected", type: "any" },
     bodyType: { mode: "required-if-connected", type: "any" },
   },
-  outputs: { r: { type: "any" }, e: { type: "any" } },
+  completionOutputs: ['response'],
+  outputs: {response: { type: "any" }},
   fn: function (inputs, outputs, adv) {
     const axios = require("axios");
     const { url, body, headers, bodyType } = inputs;
-    const { r, e } = outputs;
+    const { response } = outputs;
 
     const { onError } = adv;
 
@@ -27,28 +28,26 @@ module.exports = {
       });
       axios.post(url, parts.join("&"), config).then(
         (res) => {
-          r.next(res.data);
+          response.next(res.data);
         },
         (err) => {
           const { response, message } = err;
           const errorObj = response
             ? { data: response.data, status: response.status }
             : { data: message, status: -1 };
-          e.next(errorObj);
           onError(errorObj);
         }
       );
     } else {
       axios.post(url, body, config).then(
         (res) => {
-          r.next(res.data);
+          response.next(res.data);
         },
         (err) => {
           const { response, message } = err;
           const errorObj = response
             ? { data: response.data, status: response.status }
             : { data: message, status: -1 };
-          e.next(errorObj);
           onError(errorObj);
         }
       );

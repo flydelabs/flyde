@@ -121,12 +121,21 @@ $background-gradient: linear-gradient(249.43deg, #ffffff 3.24%, #f7fcff 26.19%, 
     outline: none;
   }
 
-  .zoom-slider {
+  .viewport-controls {
     position: absolute;
     bottom: 10px;
     right: 20px;
-    width: 150px;
+    // width: 200px;
     height: 30px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    z-index: 2;
+
+    .bp3-slider {
+      width: 150px;
+      height: 20px;
+    }
   }
 
   .temp {

@@ -1,7 +1,6 @@
-import { GroupedPart, PartDefRepo, partInstance, ConnectionData, inlinePartInstance } from "@flyde/core";
+import { GroupedPart, middlePos, partInstance, ConnectionData, inlinePartInstance } from "@flyde/core";
 import produce from "immer";
 import { createGroup } from "./lib/create-group";
-import { middlePos } from "./grouped-part-editor/utils";
 import { PromptFn } from "./flow-editor/ports";
 
 export const groupSelected = async (

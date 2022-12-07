@@ -27,7 +27,7 @@ console.log({example});
 const META_DATA = {
   title: "Debounce vs. Throttling",
   description:
-    `This example takes Flyde's visual feeback to the next level by showing the difference between debouncing and throttling. Click on the buttons below to emit some Emojis.`,
+    `This example takes Flyde's visual feedback to the next level by showing the difference between debouncing and throttling. Click on the buttons below to emit some Emojis.`,
   key: "debounce-throttling",
 };
 
@@ -56,7 +56,7 @@ export default function DebounceThrottlingExample(): JSX.Element {
           const part = draft.flow.part;
           if (isGroupedPart(part)) {
             const debIns = part.instances.find((ins) => isRefPartInstance(ins) && ins.partId === "Debounce");
-            debIns.inputConfig.ms = staticInputPinConfig(deb);
+            debIns.inputConfig.wait = staticInputPinConfig(deb);
             const thrIns = part.instances.find((ins) => isRefPartInstance(ins) && ins.partId === "Throttle");
             thrIns.inputConfig.threshold = staticInputPinConfig(thr);
           }

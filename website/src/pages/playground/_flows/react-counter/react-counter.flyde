@@ -54,8 +54,8 @@ part:
       style:
         size: small
     - pos:
-        x: -516.944423828125
-        y: 228.83230010986324
+        x: -518.7030297851562
+        y: 216.28152648925777
       id: Button-410-d44
       inputConfig:
         children:
@@ -254,18 +254,6 @@ part:
         insId: Add-138
         pinId: n1
     - from:
-        insId: Add-138
-        pinId: r
-      to:
-        insId: Publish-817-d15
-        pinId: value
-    - from:
-        insId: Add-138
-        pinId: r
-      to:
-        insId: Inline-value-Value is ${inp-308
-        pinId: count
-    - from:
         insId: Inline-value-Value is ${inp-308
         pinId: r
       to:
@@ -277,6 +265,18 @@ part:
       to:
         insId: Inline-value-Value is ${inp-308
         pinId: count
+    - from:
+        insId: Add-138
+        pinId: sum
+      to:
+        insId: Inline-value-Value is ${inp-308
+        pinId: count
+    - from:
+        insId: Add-138
+        pinId: sum
+      to:
+        insId: Publish-817-d15
+        pinId: value
   id: Main
   inputs: {}
   outputs:

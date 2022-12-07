@@ -11,16 +11,21 @@ export type PinType = string;
 
 export type InputMode = "optional" | "required" | "required-if-connected";
 
-export type InputPin = {
+export interface BasePinData {
+  description?: string;
+}
+
+export interface InputPin extends BasePinData {
   type: PinType;
   mode?: InputMode;
+  defaultValue?: any;
 };
 
 export type InputPinMap = OMap<InputPin>;
 
 export type OutputPinMap = OMap<OutputPin>;
 
-export type OutputPin = {
+export interface OutputPin extends BasePinData {
   type: PinType;
   optional?: boolean;
   delayed?: boolean;

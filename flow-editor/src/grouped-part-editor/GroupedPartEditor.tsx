@@ -36,10 +36,11 @@ import {
   ERROR_PIN_ID,
   PartStyle,
   getPartOutputs,
+  Pos
 } from "@flyde/core";
 import { InstanceView } from "./instance-view/InstanceView";
 import { ConnectionView, ConnectionViewProps } from "./connection-view/ConnectionView";
-import { entries, isDefined, Pos, preventDefaultAnd, Size } from "../utils";
+import { entries, isDefined, preventDefaultAnd, Size } from "../utils";
 import { useBoundingclientrect, useDidMount } from "rooks";
 
 import {
@@ -66,7 +67,7 @@ import { useState, useRef, useEffect } from "react";
 import { useHotkeys } from "../lib/react-utils/use-hotkeys";
 import useComponentSize from "@rehooks/component-size";
 
-import { Slider, Menu, MenuItem, ContextMenu, MenuDivider } from "@blueprintjs/core";
+import { Slider, Menu, MenuItem, ContextMenu, MenuDivider, Button } from "@blueprintjs/core";
 import { PartIoView, PartIoType } from "./part-io-view";
 
 import { vAdd, vec, vSub, vZero } from "../physics";
@@ -96,10 +97,11 @@ import { handleDetachConstEditorCommand } from "./commands/detach-const";
 import { handleDuplicateSelectedEditorCommand } from "./commands/duplicate-instances";
 import { PartStyleMenu } from "./instance-view/PartStyleMenu";
 import { FlydeFlowEditorProps } from "../flow-editor/FlowEditor";
+import { access } from "node:fs";
 
 const MemodSlider = React.memo(Slider);
 
-const sliderRenderer = (p: any) => <div></div>;
+const sliderRenderer = (p: any) => null;
 
 export const PART_HEIGHT = 28;
 const DBL_CLICK_TIME = 300;
@@ -278,7 +280,7 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
 
     const _onRequestHistory: GroupedPartEditorProps["onRequestHistory"] = React.useCallback(
       (insId, pinId, pinType) => {
-        return onRequestHistory(`${thisInsId}.${insId}`, pinId, pinType);
+        return onRequestHistory(insId, pinId, pinType);
       },
       [onRequestHistory, thisInsId]
     );
@@ -354,7 +356,7 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
     const fitToScreen = () => {
       const vp = fitViewPortToPart(part, repo, vpSize);
 
-      animateViewPort(viewPort, vp, 10, (vp) => {
+      animateViewPort(viewPort, vp, 500, (vp) => {
         setViewPort(vp);
       });
     };
@@ -386,6 +388,17 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
       },
       [boardData, onChangeBoardData, onConnectionClose]
     );
+
+    const onPartIoSetDescription = React.useCallback((type: PinType, pinId: string, description: string) => {
+      const newPart = produce(part, (draft) => {
+        if (type === 'input') {
+          draft.inputs[pinId].description = description
+        } else {
+          draft.outputs[pinId].description = description
+        }
+      });
+      onChange(newPart, functionalChange('Part io description'));
+    }, [onChange, part])
 
     const onPinClick = React.useCallback(
       (ins: PartInstance, pinId: string, type: PinType) => {
@@ -844,7 +857,6 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
           part,
           repo,
           normalizedPos,
-          vpSize,
           boardPos,
           thisInsId,
           viewPort
@@ -1074,6 +1086,15 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
       }
     }, [_prompt, onChange, part]);
 
+    const editPartDescription = React.useCallback(async () => {
+      const description = await _prompt(`Description?`, part.description);
+      const newValue = produce(part, (draft) => {
+        draft.description = description;
+      });
+
+      onChange(newValue, functionalChange("Edit part description"));
+    }, [_prompt, onChange, part]);
+
     const onChangeDefaultStyle = React.useCallback(
       (style: PartStyle) => {
         const newPart = produce(part, (draft) => {
@@ -1131,7 +1152,9 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
           onDragMove={onDragMovePartIo}
           pinType={v.type}
           onSelect={onPartIoPinClick}
+          onSetDescription={onPartIoSetDescription}
           selected={from?.pinId === k}
+          description={v.description}
         />
       ));
     };
@@ -1162,6 +1185,8 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
           onDragMove={onDragMovePartIo}
           pinType={v.type}
           onSelect={onPartIoPinClick}
+          onSetDescription={onPartIoSetDescription}
+          description={v.description}
           selected={to?.pinId === k}
         />
       ));
@@ -1240,8 +1265,7 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
     const onMaybeZoomOrPan = React.useCallback(
       (e: WheelEvent) => {
         if (e.metaKey || e.ctrlKey) {
-          // blockScroll();
-          const zoomDiff = e.deltaY * -0.001;
+          const zoomDiff = e.deltaY * -0.005;
           onZoom(viewPort.zoom + zoomDiff, "mouse");
           e.preventDefault();
           e.stopPropagation();
@@ -1291,7 +1315,7 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
           acc.set(ins.id, keys(part.inputs));
         }
         return acc;
-      }, new Map());
+      }, new Map<string, string[]>());
 
       const validOutputs = instances.reduce((acc, ins) => {
         const part = getPartDef(ins, repo);
@@ -1299,12 +1323,15 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
           acc.set(ins.id, keys(part.outputs));
         }
         return acc;
-      }, new Map());
+      }, new Map<string, string[]>());
+
+      /* the parts output are targets for connections therefore they are fed into the "validInputs" map */
+      validInputs.set(THIS_INS_ID, keys(part.outputs));
+      /* the parts inputs are targets for connections therefore they are fed into the "validOutputs" map */
+      validOutputs.set(THIS_INS_ID, keys(part.inputs));
+
       const orphanConnections = connections.filter((conn) => {
-        if (isExternalConnectionNode(conn.from) || isExternalConnectionNode(conn.to)) {
-          return false;
-          // TODO - check if external connection is still valid
-        }
+      
         if (conn.to.pinId === TRIGGER_PIN_ID || conn.from.pinId === ERROR_PIN_ID) {
           return false;
         }
@@ -1320,6 +1347,7 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
       if (orphanConnections.length > 0) {
         toastMsg(`${orphanConnections.length} orphan connections removed`, "warning");
         console.log(`${orphanConnections.length} orphan connections removed`, orphanConnections);
+
 
         const newPart = produce(part, (draft) => {
           draft.connections = part.connections.filter((conn) => !orphanConnections.includes(conn));
@@ -1444,6 +1472,11 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
               onMouseDown={(e) => e.stopPropagation()}
               text={`Edit Reactive inputs (${part.reactiveInputs?.join(",") || "n/a"})`}
               onClick={preventDefaultAnd(() => editReactiveInputs())}
+            />
+            <MenuItem
+              onMouseDown={(e) => e.stopPropagation()}
+              text={`Edit description`}
+              onClick={preventDefaultAnd(() => editPartDescription())}
             />
             <MenuDivider />
             <MenuItem text="Default Style">
@@ -1981,7 +2014,8 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
                 onClose={onCloseQuickAdd}
               />
             ) : null}
-            <div className="zoom-slider">
+            <div className="viewport-controls">
+              <Button small onClick={fitToScreen}>Reset view</Button>
               <MemodSlider
                 min={0.05}
                 max={3}

@@ -6,8 +6,8 @@ import {
   partInput,
   connectionNodeEquals,
   GroupedPart,
+  middlePos
 } from "@flyde/core";
-import { middlePos } from "../grouped-part-editor/utils";
 import { rnd } from "../physics";
 import { PartInstance } from "@flyde/core";
 import { PromptFn } from "..";

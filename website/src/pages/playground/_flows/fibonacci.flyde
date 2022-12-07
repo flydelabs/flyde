@@ -9,8 +9,8 @@ imports:
 part:
   instances:
     - pos:
-        x: -186.8057641601563
-        y: -66.9137826538086
+        x: -183.5922631835938
+        y: -91.88231903076172
       id: Equals-364
       inputConfig:
         compare:
@@ -22,8 +22,8 @@ part:
       style:
         size: regular
     - pos:
-        x: -72.88431640625001
-        y: 33.32936614990234
+        x: -41.06736083984376
+        y: 25.66968292236328
       id: Equals-364-d95
       inputConfig:
         compare:
@@ -33,16 +33,16 @@ part:
         - val
       partId: Equals
     - pos:
-        x: 29.675939941406256
-        y: 398.8068879699707
+        x: 113.69263305664063
+        y: 421.4117921447754
       id: Add-539
       inputConfig: {}
       partId: Add
       style:
         color: "#fee440"
     - pos:
-        x: -34.96145751953125
-        y: 161.11758544921872
+        x: 32.912535400390624
+        y: 186.91488006591794
       id: Subtract-210
       inputConfig:
         n2:
@@ -54,8 +54,8 @@ part:
       style:
         color: "#f15bb5"
     - pos:
-        x: 109.47726318359378
-        y: 158.06905105590818
+        x: 193.49395629882815
+        y: 180.67395523071286
       id: Subtract-210-d215
       inputConfig:
         n2:
@@ -67,14 +67,14 @@ part:
       style:
         color: "#f15bb5"
     - pos:
-        x: -49.93635498046875
-        y: 267.77435180664065
+        x: 34.080338134765626
+        y: 290.37925598144534
       id: Fibonacci-261
       inputConfig: {}
       partId: Fibonacci
     - pos:
-        x: 97.69393920898438
-        y: 268.03501136779784
+        x: 181.71063232421875
+        y: 290.6399155426025
       id: Fibonacci-379
       inputConfig: {}
       partId: Fibonacci
@@ -86,65 +86,65 @@ part:
         insId: Equals-364
         pinId: val
     - from:
-        insId: Equals-364
-        pinId: else
-      to:
-        insId: Equals-364-d95
-        pinId: val
-    - from:
-        insId: Equals-364-d95
-        pinId: r
-      to:
-        insId: __this
-        pinId: result
-    - from:
-        insId: Equals-364
-        pinId: r
-      to:
-        insId: __this
-        pinId: result
-    - from:
-        insId: Add-539
-        pinId: r
-      to:
-        insId: __this
-        pinId: result
-    - from:
-        insId: Equals-364-d95
-        pinId: else
-      to:
-        insId: Subtract-210
-        pinId: n1
-    - from:
-        insId: Equals-364-d95
-        pinId: else
-      to:
-        insId: Subtract-210-d215
-        pinId: n1
-    - from:
-        insId: Subtract-210
-        pinId: r
-      to:
-        insId: Fibonacci-261
-        pinId: n
-    - from:
         insId: Fibonacci-261
         pinId: result
       to:
         insId: Add-539
         pinId: n1
-    - from:
-        insId: Subtract-210-d215
-        pinId: r
-      to:
-        insId: Fibonacci-379
-        pinId: n
     - from:
         insId: Fibonacci-379
         pinId: result
       to:
         insId: Add-539
         pinId: n2
+    - from:
+        insId: Add-539
+        pinId: sum
+      to:
+        insId: __this
+        pinId: result
+    - from:
+        insId: Equals-364-d95
+        pinId: "false"
+      to:
+        insId: Subtract-210-d215
+        pinId: n1
+    - from:
+        insId: Subtract-210
+        pinId: difference
+      to:
+        insId: Fibonacci-261
+        pinId: n
+    - from:
+        insId: Subtract-210-d215
+        pinId: difference
+      to:
+        insId: Fibonacci-379
+        pinId: n
+    - from:
+        insId: Equals-364
+        pinId: "false"
+      to:
+        insId: Equals-364-d95
+        pinId: val
+    - from:
+        insId: Equals-364
+        pinId: "true"
+      to:
+        insId: __this
+        pinId: result
+    - from:
+        insId: Equals-364-d95
+        pinId: "false"
+      to:
+        insId: Subtract-210
+        pinId: n1
+    - from:
+        insId: Equals-364-d95
+        pinId: "true"
+      to:
+        insId: __this
+        pinId: result
   id: Fibonacci
   inputs:
     n:
@@ -153,14 +153,16 @@ part:
   outputs:
     result:
       type: any
+      optional: false
+      delayed: false
   inputsPosition:
     n:
       x: -147.94243817117712
       y: -143.4378851898441
   outputsPosition:
     result:
-      x: -135.1549331794976
-      y: 533.2568633719678
+      x: -73.24718891505835
+      y: 601.5018248987091
   completionOutputs:
     - result
   defaultStyle:

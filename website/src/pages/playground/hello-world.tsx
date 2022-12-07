@@ -15,11 +15,11 @@ import { OutputLogs } from "./_OutputLogs/OutputLogs";
 
 const META_DATA = {
   title: "Hello World",
-  description: `The mandatory "Hello World" example. Click on the blue button bellow to run this flow.\n This demonstrates one of the most powerful features of Flyde - the ability to view it running live!`,
+  description: `The mandatory "Hello, World!" example. This flow will first output "Hello", wait 3 seconds and output "World!". Click on the "Run" button bellow to run see for yourself!.\n This demonstrates one of the most powerful features of Flyde - the ability to view it running live! PS: The delay part is there just to make the flow longer `,
   key: "hello-world",
 };
 
-const extraInfo = 'Great job. You can change the "Hello World" string by double-clicking it. Go ahead, try it now!';
+const extraInfo = 'Great job. You can change the strings  double-clicking them. Double click on the green "ms: 3000" to edit the delay threshold. Go ahead, try it now!';
 
 export default function Home(): JSX.Element {
   const result = useRef(dynamicOutput());

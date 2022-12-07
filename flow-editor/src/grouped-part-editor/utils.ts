@@ -9,7 +9,6 @@ import {
   PartDefRepo,
   PartDefinition,
   isExternalConnectionNode,
-  isGroupedPart,
   getPartDef,
   PinType,
   partInstance,
@@ -17,19 +16,16 @@ import {
   queueInputPinConfig,
   isStickyInputPinConfig,
   InputMode,
-  TRIGGER_PIN_ID,
-  ERROR_PIN_ID,
   inlinePartInstance,
-  ResolvedFlydeFlowDefinition,
-  getPart,
-  InlinePartInstance,
+  staticInputPinConfig,
+  intersectRect, Rect, calcCenter
 } from "@flyde/core";
 import {
   calcPinPosition,
   calcMainInputPosition,
   calcMainOutputPosition,
 } from "./connection-view/calc-pin-position";
-import { Size, intersectRect, Rect } from "../utils";
+import { Size } from "../utils";
 import {
   isOptionalType,
   randomInt,
@@ -42,11 +38,9 @@ import {
 import { calcPartWidth } from "./instance-view/utils";
 
 import { calcPartIoWidth as calcIoPartWidth } from "./part-io-view/utils";
-import { vSub, vAdd, vMul, vDiv, vToStr } from "../physics";
+import { vSub, vAdd, vMul, vDiv } from "../physics";
 import { getLeafInstancesOfSelection } from "./part-graph-utils";
-import { toastMsg } from "../toaster";
 import { getVisibleInputs, getVisibleOutputs } from "./instance-view";
-import { PromptFn } from "../flow-editor/ports";
 
 export const emptyObj = {}; // for immutability
 export const emptyList = []; // for immutability
@@ -80,7 +74,6 @@ export const findClosestPin = (
   part: GroupedPart,
   repo: PartDefRepo,
   mousePos: Pos,
-  size: Size,
   boardPos: Pos,
   insId: string,
   viewPort: ViewPort
@@ -88,12 +81,12 @@ export const findClosestPin = (
 
   const rootInstance: PartInstance = partInstance(part.id, part.id);
   const mainInputsData = okeys(part.inputs).map((pinId) => {
-    const pos = calcMainInputPosition(part, size, pinId, insId, "input", boardPos, viewPort);
+    const pos = calcMainInputPosition(pinId, insId, "input", boardPos, viewPort);
     return { id: pinId, type: "input", pos, ins: rootInstance };
   });
 
   const mainOutputsData = okeys(part.outputs).map((pinId) => {
-    const pos = calcMainOutputPosition(part, size, pinId, insId, "output", boardPos, viewPort);
+    const pos = calcMainOutputPosition(pinId, insId, "output", boardPos, viewPort);
     return { id: pinId, type: "output", pos, ins: rootInstance };
   });
 
@@ -221,8 +214,18 @@ export const createNewPartInstance = (
     throw new Error(`${partIdOrPart} part not found in repo`);
   }
 
-  const ins = partInstance(`${part.id}-${randomInt(999)}`, part.id, {}, { x: 0, y: 0 });
+  const inputsConfig = entries(part.inputs).reduce((acc, [k, v]) => {
+    // if (v.)
+    if (v.defaultValue) {
+      acc[k] = staticInputPinConfig(v.defaultValue);
+    }
+    return acc;
+  }, {})
+
+  const ins = partInstance(`${part.id}-${randomInt(999)}`, part.id, inputsConfig, { x: 0, y: 0 });
   const width = calcPartWidth(ins, part);
+
+
 
   const { x, y } = lastMousePos;
   const pos = {
@@ -301,7 +304,7 @@ export const animateViewPort = (vp1: ViewPort, vp2: ViewPort, duration: number, 
   const dis = distance(vp1.pos, vp2.pos);
 
   const start = Date.now();
-  const normDuration = Math.sqrt(dis) * duration;
+  const normDuration = duration;
 
   if (dis === 0) {
     cb(vp1);
@@ -321,19 +324,6 @@ export const animateViewPort = (vp1: ViewPort, vp2: ViewPort, duration: number, 
   };
 
   requestAnimationFrame(animate);
-};
-
-
-export const calcCenter = ({ w, h, x, y }: Rect): Pos => {
-  const mx = x + w / 2;
-  const my = y + h / 2;
-  return { x: mx, y: my };
-};
-
-export const middlePos = (p1: Pos, p2: Pos): Pos => {
-  const x = (p1.x + p2.x) / 2;
-  const y = (p1.y + p2.y) / 2;
-  return { x, y };
 };
 
 export const calcSelectionBoxArea = (box: { from: Pos; to: Pos }): number => {

@@ -225,11 +225,11 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (prop
   }, []);
 
   const _onRequestHistory = React.useCallback(
-    (fullInsId: string, pinId: string, pinType: PinType) => {
+    (insId: string, pinId: string, pinType: PinType) => {
       if (!debuggerClient) {
         return Promise.resolve({ total: 0, lastSamples: [] });
       }
-      return debuggerClient.getHistory({ id: `${fullInsId}.${pinId}.${pinType}`, limit: 1 });
+      return debuggerClient.getHistory({ insId, pinId, limit: 1 });
     },
     [debuggerClient]
   );

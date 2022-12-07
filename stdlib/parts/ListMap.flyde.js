@@ -1,3 +1,5 @@
+const { dynamicOutput, dynamicPartInput} = require('@flyde/core');
+
 module.exports = {"id":"ListMap","inputs":{"list":{"mode":"required","type":"any"},"fn":{"mode":"required","type":"part({\"item?\": \"any\", \"idx?\": \"any\"}|{\"r\": \"any\", \"rs\": \"any\"})"}},"outputs":{"r":{"type":"any"},"rs":{"type":"any"}},"fn":function (inputs, outputs, adv) { let newList = [];
 
 const { list, fn} = inputs;

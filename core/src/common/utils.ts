@@ -14,6 +14,27 @@ export interface OMapF<T> {
   [k: string]: T;
 }
 
+export type Rect = Pos & { w: number; h: number };
+
+export const intersectRect = (r1: Rect, r2: Rect) => {
+  const r1Right = r1.x + r1.w;
+  const r2Right = r2.x + r2.w;
+  return !(r2.x > r1Right || r2Right < r1.x || r2.y > r1.y + r1.h || r2.y + r2.h < r1.y);
+};
+
+
+export const calcCenter = ({ w, h, x, y }: Rect): Pos => {
+  const mx = x + w / 2;
+  const my = y + h / 2;
+  return { x: mx, y: my };
+};
+
+export const middlePos = (p1: Pos, p2: Pos): Pos => {
+  const x = (p1.x + p2.x) / 2;
+  const y = (p1.y + p2.y) / 2;
+  return { x, y };
+};
+
 export const mapOMap = <T>(map: OMap<T>, cb: (key: string, item: T) => T) => {
   return entries(map)
     .map(([key, item]) => [key, cb(key, item)])

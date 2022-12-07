@@ -6,12 +6,10 @@ import { Menu, MenuItem, ContextMenu } from "@blueprintjs/core";
 import { isDefined, toString } from "../../utils";
 
 import { useState } from "react";
-import { isEnvValue, PinType, TRIGGER_PIN_ID } from "@flyde/core";
-import { ERROR_PIN_ID } from "@flyde/core";
+import { getInputName, getOutputName, isEnvValue, PinType } from "@flyde/core";
 import { getPinDomId } from "../dom-ids";
 import { HistoryPayload, valuePreview } from "@flyde/remote-debugger";
 import CustomReactTooltip from "../../lib/tooltip";
-import { domToViewPort, ViewPort } from "../..";
 export const PIN_HEIGHT = 23;
 
 export type InputPinViewProps = {
@@ -46,6 +44,7 @@ export type PinViewProps = {
   onClick: (id: string, type: PinType, e?: React.MouseEvent) => void;
   rotate?: true;
   isClosestToMouse: boolean;
+  description?: string;
   onToggleLogged: (insId: string, pinId: string, type: PinType) => void;
   onToggleBreakpoint: (insId: string, pinId: string, type: PinType) => void;
   onInspect: (insId: string, pinId: string, type: PinType) => void;
@@ -59,16 +58,6 @@ export interface OptionalPinViewProps {
 
 const INSIGHTS_TOOLTIP_INTERVAL = 500;
 
-const getDisplayId = (id: string) => {
-  switch (id) {
-    case TRIGGER_PIN_ID:
-      return "Trigger";
-    case ERROR_PIN_ID:
-      return "Error";
-    default:
-      return id;
-  }
-};
 
 export const PinView: React.SFC<PinViewProps> = React.memo(function PinView(props) {
   const {
@@ -82,8 +71,6 @@ export const PinView: React.SFC<PinViewProps> = React.memo(function PinView(prop
     id,
     onRequestHistory,
   } = props;
-
-  const displayLabel = getDisplayId(id);
 
   const [history, setHistory] = useState<HistoryPayload>();
 
@@ -166,6 +153,8 @@ export const PinView: React.SFC<PinViewProps> = React.memo(function PinView(prop
     }
   };
 
+  const displayName = type === 'input' ? getInputName(id) : getOutputName(id);
+
   const calcClassNames = () => {
     if (props.type === "input") {
       const { isSticky, isPart, constValue } = props;
@@ -209,30 +198,36 @@ export const PinView: React.SFC<PinViewProps> = React.memo(function PinView(prop
   const maybeConstValue =
     props.type === "input" && isDefined(props.constValue) ? props.constValue : undefined;
 
-  const calcTooltipContent = (tip: any) => {
-    if (isDefined(maybeConstValue)) {
-      return `<div>${displayLabel} (${type})<div>Const Value: <strong>${valuePreview(
-        maybeConstValue
-      ).substr(0, 200)}</strong></div></div>`;
-    }
+  const calcHistoryContent = () => {
+    if (history) {
+      const { total, lastSamples } = history;
 
-    if (!history) {
-      return `<div>Loading..</div>`;
-    }
-
-    const { total, lastSamples } = history;
-
-    const maybeLastValueContent =
-      lastSamples.length > 0
+      const timesActivated = `<strong>Activated ${total} times this session</strong>`;
+      const lastValueData =  lastSamples.length > 0
         ? `<div>Last value: <strong>${valuePreview(lastSamples[0].val).substr(
             0,
             200
           )}</strong></div>`
         : "";
+      return `${timesActivated } ${lastValueData}`
+    } else {
+      return 'Loading session data..'
+    }
+  }
 
-    return `<div><div>${displayLabel} (${type}) </div>
-    <strong>Activated ${total} times this session</strong>
-    ${maybeLastValueContent}`;
+  const calcTooltipContent = (tip: any) => {
+  
+    const historyContent = calcHistoryContent();
+
+    const maybeDescription = props.description ? `<em>${props.description}</em>` : '';
+    
+    return `<div><div><strong>${displayName}</strong> (${type}) </div>
+      ${maybeDescription}
+      <hr/>
+      ${isDefined(maybeConstValue) ? `<div>Static value: <strong>${valuePreview(
+        maybeConstValue
+      ).substr(0, 200)}</strong></div>` : historyContent}
+    `;
   };
 
   const tooltipDown = rotate && type === "input";
@@ -275,17 +270,17 @@ export const PinView: React.SFC<PinViewProps> = React.memo(function PinView(prop
   const renderContent = () => {
     return isDefined(maybeConstValue) ? (
       <React.Fragment>
-        {displayLabel}: <span className="value">{toString(maybeConstValue)}</span>
+        {displayName}: <span className="value">{toString(maybeConstValue)}</span>
       </React.Fragment>
     ) : (
-      displayLabel
+      displayName
     );
   };
 
   return (
     <div className={calcClassNames()} onContextMenu={showMenu} data-pin-id={id}>
       <CustomReactTooltip
-        className="insights-tooltip"
+        className="pin-info-tooltip"
         html
         id={id + props.insId}
         getContent={[calcTooltipContent, INSIGHTS_TOOLTIP_INTERVAL / 20]}
@@ -302,7 +297,7 @@ export const PinView: React.SFC<PinViewProps> = React.memo(function PinView(prop
         className={`pin-inner`}
         onClick={onClick}
       >
-        {renderContent()}
+        {displayName} {isDefined(maybeConstValue) ? (<React.Fragment>{':'}<span className="value">{toString(maybeConstValue)}</span></React.Fragment>) : null }
         {maybeStickyLabel()}
         {maybeQueueLabel()}
       </div>

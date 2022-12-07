@@ -46,6 +46,7 @@ export const createInlineCodePart = ({ code, customView, partId, type }: InlineC
         fontFamily: 'monospace',
         fontWeight: '500'
       }
-    }
+    },
+    description: `Custom inline ${type === CodePartTemplateTypeInline.VALUE ? 'value' : 'function'}`
   });
 };

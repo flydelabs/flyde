@@ -41,8 +41,6 @@ export const calcPinPosition = (
 };
 
 export const calcMainInputPosition = (
-  _: PartDefinition,
-  __: Size,
   pinId: string,
   insId: string,
   type: "output" | "input",
@@ -56,8 +54,6 @@ export const calcMainInputPosition = (
 };
 
 export const calcMainOutputPosition = (
-  _: PartDefinition,
-  __: Size,
   pinId: string,
   insId: string,
   type: "input" | "output",

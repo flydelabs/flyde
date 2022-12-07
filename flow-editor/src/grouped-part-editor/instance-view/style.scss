@@ -157,3 +157,9 @@ $half-of-pin-height: 16px;
     }
   }
 }
+
+.__react_component_tooltip.instance-info-tooltip {
+  font-size: 14px;
+  max-width: 400px;
+  // min-width: 300px;
+}

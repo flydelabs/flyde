@@ -12,7 +12,7 @@ import {
 } from "../part";
 import { execute } from ".";
 import { Subject } from "rxjs";
-import { spy, useFakeTimers } from "sinon";
+import { spy } from "sinon";
 import { assert } from "chai";
 import { connectionNode, externalConnectionNode, connectionData, connect } from "../connect";
 import { randomInt, isDefined, keys, eventually } from "../common";
@@ -33,7 +33,8 @@ import {
   delay5,
 } from "../fixture";
 
-import { conciseNativePart } from "../test-utils";
+import { conciseNativePart, wrappedOnEvent } from "../test-utils";
+import { Debugger, DebuggerEvent, DebuggerEventType } from "./debugger";
 
 describe("execute", () => {
   const totalOptInput: NativePart = {
@@ -493,31 +494,33 @@ describe("execute", () => {
 
         const s = spy();
 
-        clock = useFakeTimers(10);
-        execute({part: add1mul2, inputs: { n }, outputs: { r }, partsRepo: testRepo, _debugger: { onInput: s }});
+        const onEvent = wrappedOnEvent(DebuggerEventType.INPUT_CHANGE, s);
+
+        execute({part: add1mul2, inputs: { n }, outputs: { r }, partsRepo: testRepo, _debugger: { onEvent }});
 
         assert.equal(s.called, false);
         n.subject.next(2);
 
         assert.equal(s.callCount, 3);
         assert.equal(
-          s.calledWithMatch({ insId: "root.a1m2.b", pinId: "n", val: 3, time: 10 }),
+          s.calledWithMatch({type: DebuggerEventType.INPUT_CHANGE, insId: "b", parentInsId: 'root.a1m2', pinId: "n", val: 3 }),
           true
         );
         assert.equal(
-          s.calledWithMatch({ insId: "root.a1m2.a", pinId: "n", val: 2, time: 10 }),
+          s.calledWithMatch({type: DebuggerEventType.INPUT_CHANGE, parentInsId: 'root.a1m2', insId: "a", pinId: "n", val: 2 }),
           true
         );
-        assert.equal(s.calledWithMatch({ insId: "root.a1m2", pinId: "n", val: 2 }), true);
+        assert.equal(s.calledWithMatch({ type: DebuggerEventType.INPUT_CHANGE, parentInsId: "root", insId: 'a1m2', pinId: "n", val: 2 }), true);
       });
 
       it("is called for all parts inside the group", () => {
-        clock = useFakeTimers(10);
         const n = dynamicPartInput();
         const r = dynamicOutput();
 
         const s = spy();
-        execute({part: add1mul2add1, inputs: { n }, outputs: { r }, partsRepo: testRepo,  _debugger: { onInput: s }});
+        const onEvent = wrappedOnEvent(DebuggerEventType.INPUT_CHANGE, s);
+
+        execute({part: add1mul2add1, inputs: { n }, outputs: { r }, partsRepo: testRepo,  _debugger: { onEvent }});
 
         assert.equal(s.called, false);
         n.subject.next(2);
@@ -525,18 +528,18 @@ describe("execute", () => {
         assert.equal(s.callCount, 4);
 
         assert.equal(
-          s.calledWithMatch({ insId: "root.a1m2a1.b", pinId: "n", val: 3, time: 10 }),
+          s.calledWithMatch({ parentInsId: 'root.a1m2a1', insId: "b", pinId: "n", val: 3 }),
           true
         );
         assert.equal(
-          s.calledWithMatch({ insId: "root.a1m2a1.c", pinId: "n", val: 6, time: 10 }),
+          s.calledWithMatch({ parentInsId: 'root.a1m2a1', insId: 'c', pinId: "n", val: 6 }),
           true
         );
         assert.equal(
-          s.calledWithMatch({ insId: "root.a1m2a1.a", pinId: "n", val: 2, time: 10 }),
+          s.calledWithMatch({ parentInsId: 'root.a1m2a1', insId: 'a', pinId: "n", val: 2 }),
           true
         );
-        assert.equal(s.calledWithMatch({ insId: "root.a1m2a1", pinId: "n", val: 2 }), true);
+        assert.equal(s.calledWithMatch({ insId: "a1m2a1", parentInsId: 'root', pinId: "n", val: 2 }), true);
       });
 
       it("group - waits for the promise to be resolved if the command is an intercept cmd", async () => {
@@ -544,14 +547,17 @@ describe("execute", () => {
         const r = dynamicOutput();
 
         const s = spy();
+        
         r.subscribe(s);
         execute({part: add1mul2add1, inputs: { n }, outputs: { r }, partsRepo: testRepo, _debugger: {
-          onInput: ({ val, insId }) => {
-            // return undefined;
-            return {
-              cmd: "intercept",
-              valuePromise: Promise.resolve(insId ? val * 2 : val), // intercept only inside
-            };
+          onEvent: ({ val, insId, type }) => {
+
+            if (type === DebuggerEventType.INPUT_CHANGE) {
+              return {
+                cmd: "intercept",
+                valuePromise: Promise.resolve(insId ? val * 2 : val), // intercept only inside
+              };
+            }
           },
         }});
 
@@ -570,13 +576,14 @@ describe("execute", () => {
         const r = new Subject();
 
         const inputSpy = spy();
-
-        execute({part: add, inputs: { n1, n2 }, outputs: { r }, partsRepo: testRepo, _debugger: { onInput: inputSpy }, insId: "myIns"});
+        const onEvent = wrappedOnEvent(DebuggerEventType.INPUT_CHANGE, inputSpy);
+        execute({part: add, inputs: { n1, n2 }, outputs: { r }, partsRepo: testRepo, _debugger: { onEvent }, insId: "myIns"});
         n1.subject.next(5);
         n2.subject.next(10);
         assert.equal(inputSpy.callCount, 2);
-        assert.equal(inputSpy.calledWithMatch({ insId: "root.myIns", pinId: "n1", val: 5 }), true);
-        assert.equal(inputSpy.calledWithMatch({ insId: "root.myIns", pinId: "n2", val: 10 }), true);
+        
+        assert.equal(inputSpy.calledWithMatch({ insId: "myIns", parentInsId: 'root', pinId: "n1", val: 5}), true);
+        assert.equal(inputSpy.calledWithMatch({ insId: "myIns", parentInsId: 'root', pinId: "n2", val: 10 }), true);
       });
 
       it("emits input change msgs on main inputs as well - grouped", () => {
@@ -585,14 +592,15 @@ describe("execute", () => {
         const r = new Subject();
 
         const inputSpy = spy();
+        const onEvent = wrappedOnEvent(DebuggerEventType.INPUT_CHANGE, inputSpy);
 
-        execute({part: addGrouped, inputs: { n1, n2 }, outputs: { r }, partsRepo: testRepo, _debugger: { onInput: inputSpy }, insId: "myIns"});
+        execute({part: addGrouped, inputs: { n1, n2 }, outputs: { r }, partsRepo: testRepo, _debugger: { onEvent }, insId: "myIns"});
         n1.subject.next(5);
         n2.subject.next(10);
 
         assert.equal(inputSpy.callCount, 4);
-        assert.equal(inputSpy.calledWithMatch({ insId: "root.myIns", pinId: "n1", val: 5 }), true);
-        assert.equal(inputSpy.calledWithMatch({ insId: "root.myIns", pinId: "n2", val: 10 }), true);
+        assert.equal(inputSpy.calledWithMatch({ insId: "myIns", pinId: "n1", val: 5 }), true);
+        assert.equal(inputSpy.calledWithMatch({ insId: "myIns", pinId: "n2", val: 10 }), true);
       });
 
       it("intercepts input value on grouped part", async () => {
@@ -602,11 +610,13 @@ describe("execute", () => {
         const s = spy();
         r.subscribe(s);
         execute({part: add1mul2add1, inputs: { n }, outputs: { r }, partsRepo: testRepo, _debugger: {
-          onInput: ({ val, insId }) => {
-            return {
-              cmd: "intercept",
-              valuePromise: Promise.resolve(insId ? val * 2 : val), // intercept only inside
-            };
+          onEvent: ({ val, insId, type }) => {
+            if (type === DebuggerEventType.INPUT_CHANGE) {
+              return {
+                cmd: "intercept",
+                valuePromise: Promise.resolve(insId ? val * 2 : val), // intercept only inside
+              };
+            }
           },
         }});
 
@@ -626,7 +636,8 @@ describe("execute", () => {
         const s = spy();
         r.subscribe(s);
         execute({part: mul2, inputs: { n }, outputs: { r }, partsRepo: testRepo, _debugger: {
-          onInput: ({ val }) => {
+          onEvent: ({ val, type }) => {
+            if (type !== DebuggerEventType.INPUT_CHANGE) return;
             return {
               cmd: "intercept",
               valuePromise: Promise.resolve(val * 2), // intercept only inside
@@ -654,13 +665,13 @@ describe("execute", () => {
       });
 
       it("is called properly inside group", () => {
-        clock = useFakeTimers(10);
         const n = dynamicPartInput();
         const r = dynamicOutput();
 
         const s = spy();
+        const onEvent = wrappedOnEvent(DebuggerEventType.OUTPUT_CHANGE, s);
 
-        execute({part: add1mul2, inputs: { n }, outputs: { r }, partsRepo: testRepo, _debugger: { onOutput: s }, insId: "myIns"});
+        execute({part: add1mul2, inputs: { n }, outputs: { r }, partsRepo: testRepo, _debugger: { onEvent }, insId: "myIns"});
 
         assert.equal(s.called, false);
         n.subject.next(2);
@@ -669,26 +680,24 @@ describe("execute", () => {
 
         assert.equal(
           s.calledWithMatch({
-            insId: "root.myIns.b",
+            insId: "b",
+            parentInsId: 'root.myIns',
             pinId: "r",
-            val: 6,
-            time: 10,
-            partId: "mul2",
+            val: 6
           }),
           true
         );
         assert.equal(
           s.calledWithMatch({
-            insId: "root.myIns.a",
+            insId: "a",
+            parentInsId: 'root.myIns',
             pinId: "r",
-            val: 3,
-            time: 10,
-            partId: "add1",
+            val: 3
           }),
           true
         );
         assert.equal(
-          s.calledWithMatch({ insId: "root.myIns", pinId: "r", val: 6, partId: "a1m2", time: 10 }),
+          s.calledWithMatch({ insId: "myIns", pinId: "r", val: 6}),
           true
         );
       });
@@ -700,13 +709,16 @@ describe("execute", () => {
 
         const onOutput = spy();
 
-        execute({part: add, inputs: { n1, n2 }, outputs: { r }, partsRepo: testRepo, _debugger: { onOutput }, insId: "myIns"});
+        const onEvent = wrappedOnEvent(DebuggerEventType.OUTPUT_CHANGE, onOutput);
+        
+
+        execute({part: add, inputs: { n1, n2 }, outputs: { r }, partsRepo: testRepo, _debugger: { onEvent }, insId: "myIns"});
         n1.subject.next(5);
         n2.subject.next(10);
         assert.equal(onOutput.callCount, 1);
 
         const lastCallArg = onOutput.lastCall.args[0];
-        assert.equal(lastCallArg.insId, "root.myIns");
+        assert.equal(lastCallArg.insId, "myIns");
         assert.equal(lastCallArg.pinId, "r");
         assert.equal(lastCallArg.val, "15");
 
@@ -719,8 +731,9 @@ describe("execute", () => {
         const r = new Subject();
 
         const onOutput = spy();
+        const onEvent = wrappedOnEvent(DebuggerEventType.OUTPUT_CHANGE, onOutput);
 
-        execute({part: addGrouped, inputs: { n1, n2 }, outputs: { r }, partsRepo: testRepo, _debugger: { onOutput }, insId: "myIns"});
+        execute({part: addGrouped, inputs: { n1, n2 }, outputs: { r }, partsRepo: testRepo, _debugger: { onEvent }, insId: "myIns"});
         n1.subject.next(5);
         n2.subject.next(10);
 
@@ -729,7 +742,8 @@ describe("execute", () => {
         assert.equal(onOutput.callCount, 2);
         assert.equal(lastCallArg.pinId, "r");
         assert.equal(lastCallArg.val, 15);
-        assert.equal(lastCallArg.insId, "root.myIns");
+        assert.equal(lastCallArg.insId, "myIns");
+        assert.equal(lastCallArg.parentInsId, "root");
       });
 
       it("intercepts returned value", async () => {
@@ -739,7 +753,8 @@ describe("execute", () => {
         const s = spy();
         r.subscribe(s);
         execute({part: add1mul2add1, inputs: { n }, outputs: { r }, partsRepo: testRepo, _debugger: {
-          onOutput: ({ val, insId }) => {
+          onEvent: ({ val, insId, type }) => {
+            if (type !== DebuggerEventType.OUTPUT_CHANGE) return;
             // return undefined;
             const newVal = val * 2;
             return {
@@ -759,12 +774,13 @@ describe("execute", () => {
       });
     });
 
-    describe("onProcessing()", () => {
+    describe("processing event", () => {
       it("notifies when part starts processing", async () => {
         const [item] = dynamicPartInputs(1);
         const r = dynamicOutput();
 
         const onProcessing = spy();
+        const onEvent = wrappedOnEvent(DebuggerEventType.PROCESSING_CHANGE, onProcessing);
 
         const delay = conciseNativePart({
           id: "delay5",
@@ -778,15 +794,15 @@ describe("execute", () => {
           },
         });
         execute({part: delay, inputs: { item }, outputs: { r }, partsRepo: testRepo, _debugger: {
-          onProcessing,
+          onEvent
         }});
 
         assert.equal(onProcessing.called, false);
         item.subject.next(3);
 
         assert.equal(onProcessing.called, true);
-        assert.equal(onProcessing.lastCall.args[0].processing, true);
-        assert.equal(onProcessing.lastCall.args[0].insId, "root.delay5");
+        assert.equal(onProcessing.lastCall.args[0].val, true);
+        assert.equal(onProcessing.lastCall.args[0].insId, "delay5");
       });
 
       it("notifies when part ends processing", async () => {
@@ -794,16 +810,17 @@ describe("execute", () => {
         const r = dynamicOutput();
 
         const onProcessing = spy();
+        const onEvent = wrappedOnEvent(DebuggerEventType.PROCESSING_CHANGE, onProcessing);
 
         execute({part: delay5, inputs: { item }, outputs: { r }, partsRepo: testRepo, _debugger: {
-          onProcessing,
+          onEvent,
         }});
 
         item.subject.next("bobs");
 
         return eventually(() => {
-          assert.equal(onProcessing.lastCall.args[0].processing, false);
-          assert.equal(onProcessing.lastCall.args[0].insId, "root.delay5");
+          assert.equal(onProcessing.lastCall.args[0].val, false);
+          assert.equal(onProcessing.lastCall.args[0].insId, "delay5");
           assert.equal(onProcessing.callCount, 2);
         }, 200);
       });
@@ -814,8 +831,10 @@ describe("execute", () => {
 
         const onInputsStateChange = spy();
 
+        const onEvent = wrappedOnEvent(DebuggerEventType.INPUTS_STATE_CHANGE, onInputsStateChange);
+
         execute({part: delay5, inputs: { item }, outputs: { r }, partsRepo: testRepo, _debugger: {
-          onInputsStateChange,
+          onEvent,
         }});
 
         item.subject.next("a");
@@ -823,41 +842,43 @@ describe("execute", () => {
 
         assert.equal(onInputsStateChange.callCount, 3);
 
-        assert.equal(onInputsStateChange.lastCall.args[0].inputs.item, 1);
-        assert.equal(onInputsStateChange.lastCall.args[0].insId, "root.delay5");
+        assert.equal(onInputsStateChange.lastCall.args[0].val.item, 1);
+        assert.equal(onInputsStateChange.lastCall.args[0].insId, "delay5");
 
         item.subject.next("c");
-        assert.equal(onInputsStateChange.lastCall.args[0].inputs.item, 2);
+        assert.equal(onInputsStateChange.lastCall.args[0].val.item, 2);
 
         await eventually(() => {
-          assert.equal(onInputsStateChange.lastCall.args[0].inputs.item, 0);
+          assert.equal(onInputsStateChange.lastCall.args[0].val.item, 0);
         }, 200);
       });
 
-      it("notifies with state count when inputs state is changed on sticky inputs as well", async () => {
+      it("notifies with state count when inputs state is changed on sticky inputs", async () => {
         const [item, ms] = dynamicPartInputs(2);
         const r = dynamicOutput();
 
         ms.config = stickyInputPinConfig();
 
-        const onInputsStateChange = spy();
+        const onEventSpy = spy();
+
+        const onEvent = wrappedOnEvent(DebuggerEventType.INPUTS_STATE_CHANGE, onEventSpy);
 
         execute({part: delay, inputs: { item, ms }, outputs: { r }, partsRepo: testRepo, _debugger: {
-          onInputsStateChange,
+          onEvent,
         }});
 
         ms.subject.next(2);
-        assert.equal(onInputsStateChange.lastCall.args[0].inputs.ms, 1);
+        assert.equal(onEventSpy.lastCall.args[0].val.ms, 1);
 
         item.subject.next("a");
-        assert.equal(onInputsStateChange.lastCall.args[0].inputs.ms, 1);
+        assert.equal(onEventSpy.lastCall.args[0].val.ms, 1);
 
         item.subject.next("c");
-        assert.equal(onInputsStateChange.lastCall.args[0].inputs.ms, 1);
+        assert.equal(onEventSpy.lastCall.args[0].val.ms, 1);
 
         await eventually(() => {
-          assert.equal(onInputsStateChange.lastCall.args[0].inputs.item, 0);
-          assert.equal(onInputsStateChange.lastCall.args[0].inputs.ms, 1);
+          assert.equal(onEventSpy.lastCall.args[0].val.item, 0);
+          assert.equal(onEventSpy.lastCall.args[0].val.ms, 1);
         }, 200);
       });
     });

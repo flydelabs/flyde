@@ -54,22 +54,22 @@ export interface ConnectionItemViewProps extends BaseConnectionViewProps {
 }
 
 const calcStartPos = (props: ConnectionItemViewProps): Pos => {
-  const { connection, part, size, boardPos, parentInsId, viewPort } = props;
+  const { connection, boardPos, parentInsId, viewPort } = props;
   const {from} = connection;
 
   if (isExternalConnectionNode(from)) {
-    return calcMainInputPosition(part, size, from.pinId, parentInsId, "input", boardPos, viewPort);
+    return calcMainInputPosition(from.pinId, parentInsId, "input", boardPos, viewPort);
   } else {
     return calcPinPosition(parentInsId, from.insId, from.pinId, "output", boardPos, viewPort);
   }
 };
 
 const calcTargetPos = (props: ConnectionItemViewProps): Pos => {
-  const { connection, part, size, boardPos, parentInsId, viewPort } = props;
+  const { connection, boardPos, parentInsId, viewPort } = props;
   const {to} = connection;
 
   if (isExternalConnectionNode(to)) {
-    return calcMainOutputPosition(part, size, to.pinId, parentInsId, "output", boardPos, viewPort);
+    return calcMainOutputPosition(to.pinId, parentInsId, "output", boardPos, viewPort);
   } else {
     return calcPinPosition(parentInsId, to.insId, to.pinId, "input", boardPos, viewPort);
   }
@@ -182,7 +182,7 @@ export const ConnectionView: React.FC<ConnectionViewProps> = (props) => {
 
   const connectionPaths = props.connections.map(conn => {
     const parentSelected = selectedInstances.includes(conn.from.insId) || selectedInstances.includes(conn.to.insId);
-    return <SingleConnectionView {...props} connection={conn} type='regular' parentSelected={parentSelected}/>
+    return <SingleConnectionView {...props} connection={conn} type='regular' parentSelected={parentSelected} key={conn.from.insId+conn.from.pinId+conn.to.insId+conn.to.pinId} />
   });
 
 

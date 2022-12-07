@@ -10,6 +10,6 @@ export const getPinDomId = (parentInsId: string, insId: string, pinId: string, t
 }
 
 export const getMainPinDomId = (insId: string, pinId: string, type: PinType) => {
-    return `pin-main-${insId}-${pinId}-${type}`.replace(/\s+/g, "-");
+    return `pin-${insId}-${pinId}-${type}`.replace(/\s+/g, "-");
 }
 

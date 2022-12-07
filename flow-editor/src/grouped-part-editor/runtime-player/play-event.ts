@@ -1,36 +1,38 @@
-import { debugLogger, entries } from "@flyde/core";
-import { RuntimeEvent, RuntimeEventType } from "@flyde/remote-debugger";
-import { getInstanceDomId, getPinDomId } from "../dom-ids";
+import { DebuggerEvent, DebuggerEventType, debugLogger, entries, ERROR_PIN_ID } from "@flyde/core";
+import { getInstanceDomId, getMainPinDomId, getPinDomId } from "../dom-ids";
 
 const BLINK_TIMEOUT = 5000; // also change animation time in scss
 
 const debug = debugLogger("runtime-player:play-event");
 
-const getCancelTimerKey = (event: RuntimeEvent) => {
+const getCancelTimerKey = (event: DebuggerEvent) => {
   /*
       on inputs and outputs the id is the ins + pin, and on others it's ins
       this ensures that clearing timeouts work across relevant elements only
      */
-  return `${event.id}`;
+    if (event.type === DebuggerEventType.INPUT_CHANGE || event.type === DebuggerEventType.OUTPUT_CHANGE) {
+      return `${event.parentInsId}.${event.insId}.${event.pinId}`;
+    } else {
+      return `${event.parentInsId}.${event.insId}`;
+    }
 };
 export const cancelTimers = new Map();
 
-export const playEvent = (parentInsId: string, event: RuntimeEvent) => {
+export const playEvent = (editorInsId: string, event: DebuggerEvent) => {
   const timerKey = getCancelTimerKey(event);
 
   switch (event.type) {
-    case RuntimeEventType.INPUT_CHANGE:
-    case RuntimeEventType.OUTPUT_CHANGE: {
-      const [pinType, pinId, insId, ...parentInsIdParts] = event.id.split(".").reverse();
+    case DebuggerEventType.INPUT_CHANGE:
+    case DebuggerEventType.OUTPUT_CHANGE: {
+      const {pinId, insId, parentInsId} = event;
+      const pinType = event.type === DebuggerEventType.INPUT_CHANGE ? 'input' : 'output';
 
-      const parentInsId = parentInsIdParts.reverse().join(".");
-
-      const domId = getPinDomId(parentInsId, insId, pinId, pinType);
+      const domId = insId === editorInsId ? getMainPinDomId(insId, pinId, pinType) : getPinDomId(parentInsId, insId, pinId, pinType);
       const element = document.getElementById(domId);
 
       const connDomIdAttr = `${insId}.${pinId}`;
       const connectionElems =
-        event.type === RuntimeEventType.OUTPUT_CHANGE
+        event.type === DebuggerEventType.OUTPUT_CHANGE
           ? document.querySelectorAll(`[data-from-id="${connDomIdAttr}"]`)
           : [];
       if (!element) {
@@ -62,9 +64,8 @@ export const playEvent = (parentInsId: string, event: RuntimeEvent) => {
       }
       break;
     }
-    case RuntimeEventType.PROCESSING_CHANGE: {
-      const [insId, ...parentInsIdParts] = event.id.split(".").reverse();
-      const parentInsId = parentInsIdParts.reverse().join(".");
+    case DebuggerEventType.PROCESSING_CHANGE: {
+      const {insId, parentInsId} = event;
 
       const domId = getInstanceDomId(parentInsId, insId);
       const element = document.getElementById(domId)?.parentElement;
@@ -90,9 +91,10 @@ export const playEvent = (parentInsId: string, event: RuntimeEvent) => {
       }
       break;
     }
-    case RuntimeEventType.ERROR: {
-      const [insId, ...parentInsIdParts] = event.id.split(".").reverse();
-      const parentInsId = parentInsIdParts.reverse().join(".");
+    case DebuggerEventType.ERROR: {
+      const {insId, parentInsId} = event;
+
+      
 
       const domId = getInstanceDomId(parentInsId, insId);
       const element = document.getElementById(domId)?.parentElement;
@@ -111,12 +113,19 @@ export const playEvent = (parentInsId: string, event: RuntimeEvent) => {
         cancelTimers.delete(timerKey);
       }, BLINK_TIMEOUT);
       cancelTimers.set(timerKey, timer);
+
+      const fakeErrorPinEvent: DebuggerEvent = {
+        ...event,
+        type: DebuggerEventType.OUTPUT_CHANGE,
+        pinId: ERROR_PIN_ID
+      }
+
+      playEvent(editorInsId, fakeErrorPinEvent)
       break;
     }
-    case RuntimeEventType.INPUTS_STATE_CHANGE: {
+    case DebuggerEventType.INPUTS_STATE_CHANGE: {
       entries(event.val).forEach(([k, v]) => {
-        const [insId, ...parentInsIdParts] = event.id.split(".").reverse();
-        const parentInsId = parentInsIdParts.reverse().join(".");
+        const {insId, parentInsId} = event;
         const domId = getPinDomId(parentInsId, insId, k, "input");
         const element = document.getElementById(domId);
         if (!element) {

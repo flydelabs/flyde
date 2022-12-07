@@ -1,11 +1,10 @@
-import { debugLogger } from "@flyde/core";
-import { RuntimeEvents } from "@flyde/remote-debugger";
+import { DebuggerEvent, debugLogger } from "@flyde/core";
 import { playEvent } from "./play-event";
 
 const debug = debugLogger("runtime-player");
 
 export interface RuntimePlayer {
-  addEvents: (events: RuntimeEvents) => void;
+  addEvents: (events: Array<DebuggerEvent>) => void;
   start: (dt?: number) => void;
   stop: () => void;
   destroy: () => void;
@@ -16,7 +15,7 @@ export interface RuntimePlayer {
 export const createRuntimePlayer = (insId: string): RuntimePlayer => {
   let currDt = 0;
 
-  let queue: RuntimeEvents = [];
+  let queue: DebuggerEvent[] = [];
 
   const playEvents = (fromDt: number, untilDt: number) => {
     // console.log(queue);
@@ -79,7 +78,6 @@ export const createRuntimePlayer = (insId: string): RuntimePlayer => {
     },
     addEvents: (events) => {
       queue.push(...events);
-      queue.sort((a, b) => a.dt - b.dt);
     },
     destroy: () => {
       stop();

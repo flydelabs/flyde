@@ -6,6 +6,7 @@ import { BasePartView } from "../base-part-view";
 import { getMainPinDomId } from "../dom-ids";
 import classNames from "classnames";
 import { Menu, MenuItem, ContextMenu } from "@blueprintjs/core";
+import { usePrompt } from "../../flow-editor/ports";
 
 export type PartIoType = "input" | "output";
 
@@ -31,6 +32,9 @@ interface PartIoViewProps {
 
   onSelect: (id: string, type: PartIoType) => void;
   selected: boolean;
+
+  description: string;
+  onSetDescription: (type: PartIoType, pin: string, description: string) => void;
 }
 
 export const PartIoView: React.SFC<PartIoViewProps> = React.memo(function PartIoViewInner(props) {
@@ -47,6 +51,8 @@ export const PartIoView: React.SFC<PartIoViewProps> = React.memo(function PartIo
     inputMode,
     onSelect,
     closest,
+    onSetDescription,
+    description
   } = props;
 
   const onDragStart = (event: any, data: any) => {
@@ -70,6 +76,13 @@ export const PartIoView: React.SFC<PartIoViewProps> = React.memo(function PartIo
     const newY = currPos.y + dy;
     props.onDragMove(type, id, event, { ...data, x: newX, y: newY });
   };
+
+  const _prompt = usePrompt()
+
+  const _onSetDescription = React.useCallback(async () => {
+    const newDescription = await _prompt('Description?', description)
+    onSetDescription(type, id, newDescription);
+  }, [_prompt, description, onSetDescription, type, id])
 
   const onDeleteInner = React.useCallback(() => {
     if (onDelete) {
@@ -100,6 +113,10 @@ export const PartIoView: React.SFC<PartIoViewProps> = React.memo(function PartIo
       {
         text: "Make required-if-connected",
         onClick: () => onChangeInputModeInner("required-if-connected"),
+      },
+      {
+        text: 'Set description',
+        onClick: _onSetDescription
       },
       ...(props.onRename ? [{ text: "Rename", onClick: onRenameInner }] : []),
       ...(props.onDelete ? [{ text: "Delete", onClick: onDeleteInner }] : []),
@@ -142,7 +159,6 @@ export const PartIoView: React.SFC<PartIoViewProps> = React.memo(function PartIo
   return (
     <BasePartView
       className={classNames(`part-io-view`, type)}
-      domId={getMainPinDomId(props.insId, id, type)}
       pos={pos}
       onDragEnd={onDragEnd}
       onDragStart={onDragStart}
@@ -151,6 +167,7 @@ export const PartIoView: React.SFC<PartIoViewProps> = React.memo(function PartIo
     >
         <div
             className={classNames('part-io-view-inner', { closest, selected })}
+            id={getMainPinDomId(props.insId, id, type)}
             onClick={_onClick}
             onDoubleClick={onDblClickInner}
             onContextMenu={showMenu}

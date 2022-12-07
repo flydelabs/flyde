@@ -1,8 +1,12 @@
 imports:
-  ./Pick.flyde.js: Pick
-  ./Equals.flyde.js: Equals
-  ./Accumulate.flyde.js: Accumulate
-  ./SpreadList.flyde.js: SpreadList
+  ./Pick.flyde.js:
+    - Pick
+  ./Equals.flyde.js:
+    - Equals
+  ./Accumulate.flyde.js:
+    - Accumulate
+  ./SpreadList.flyde.js:
+    - SpreadList
 part:
   instances:
     - pos:
@@ -12,23 +16,11 @@ part:
       inputConfig: {}
       partId: Pick
     - pos:
-        x: -509.89554931640623
-        y: 338.29360092163085
+        x: -546.7869067382812
+        y: 321.4971226501465
       id: Equals-553
       inputConfig: {}
       partId: Equals
-    - pos:
-        x: -903.08
-        y: -192.68
-      id: Accumulate-111
-      inputConfig: {}
-      partId: Accumulate
-    - pos:
-        x: -2042.07
-        y: -466.77
-      id: SpreadList-818
-      inputConfig: {}
-      partId: SpreadList
   connections:
     - from:
         insId: __this
@@ -61,23 +53,23 @@ part:
         insId: Equals-553
         pinId: transform
     - from:
-        insId: Equals-553
-        pinId: r
-      to:
-        insId: __this
-        pinId: equals
-    - from:
-        insId: Equals-553
-        pinId: else
-      to:
-        insId: __this
-        pinId: notEquals
-    - from:
         insId: Pick-736
         pinId: e
       to:
         insId: __this
         pinId: error
+    - from:
+        insId: Equals-553
+        pinId: "true"
+      to:
+        insId: __this
+        pinId: equals
+    - from:
+        insId: Equals-553
+        pinId: "false"
+      to:
+        insId: __this
+        pinId: notEquals
   id: PropertyEquals
   inputs:
     obj:
@@ -108,11 +100,11 @@ part:
       y: -389.9386987690251
   outputsPosition:
     equals:
-      x: -455.0930418816584
-      y: 671.4762934787418
+      x: -509.75687179607456
+      y: 643.2018836656437
     notEquals:
-      x: -235.29395392100537
-      y: 652.0438016945807
+      x: -318.23215984825083
+      y: 638.8491103506376
     error:
       x: 2.280335052544504
       y: 645.8189385408034

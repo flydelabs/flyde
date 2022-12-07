@@ -64,8 +64,10 @@ import {
   conciseNativePart,
   callsFirstArgs,
   valuePart,
-  spiedOutput
+  spiedOutput,
+  wrappedOnEvent
 } from "./test-utils";
+import { DebuggerEventType } from "./execute/debugger";
 
 describe("main ", () => {
   let cleanups: any[] = [];
@@ -2597,7 +2599,10 @@ describe("main ", () => {
           throw new Error("blaft");
         },
       };
-      execute({part: p2, inputs: { a }, outputs: {}, partsRepo: testRepo, _debugger: {onError: s}, insId: "someIns"});
+
+      const onEvent = wrappedOnEvent(DebuggerEventType.ERROR, s);
+
+      execute({part: p2, inputs: { a }, outputs: {}, partsRepo: testRepo, _debugger: {onEvent}, insId: "someIns"});
 
       assert.equal(s.callCount, 0);
 
@@ -2605,11 +2610,11 @@ describe("main ", () => {
 
       assert.equal(s.callCount, 1);
 
-      assert.include(s.lastCall.args[0].toString(), "blaft");
+      assert.include(s.lastCall.args[0].val.toString(), "blaft");
       assert.include(s.lastCall.args[0].insId, "someIns");
     });
 
-    it("reports uncaught thrown that happened on an internal part", async () => {
+    it("reports uncaught thrown that happened on an grouped part", async () => {
       const s = spy();
       const a = dynamicPartInput();
 
@@ -2629,20 +2634,22 @@ describe("main ", () => {
         connections: [["a", "i1.a"]],
       });
 
-      execute({part: badWrapper, inputs: { a }, outputs: {}, partsRepo: testRepoWith(p2), _debugger: {onError: s}, insId: "someIns"});
+      const onEvent = wrappedOnEvent(DebuggerEventType.ERROR, s);
+
+      execute({part: badWrapper, inputs: { a }, outputs: {}, partsRepo: testRepoWith(p2), _debugger: {onEvent}, insId: "someIns"});
 
       assert.equal(s.callCount, 0);
 
       a.subject.next("bob");
 
-      assert.equal(s.callCount, 2);
+      assert.equal(s.callCount, 2);      
 
-      assert.include(s.getCalls()[0].args[0].toString(), "blaft");
-      assert.include(s.getCalls()[0].args[0].insId, "someIns.i1");
+      assert.include(s.getCalls()[1].args[0].val.toString(), "blaft");
+      assert.include(s.getCalls()[1].args[0].insId, "i1");
 
-      assert.include(s.getCalls()[1].args[0].toString(), "child instance i1");
-      assert.include(s.getCalls()[1].args[0].toString(), "blaft");
-      assert.include(s.getCalls()[1].args[0].insId, "someIns");
+      assert.include(s.getCalls()[0].args[0].val.toString(), "child instance i1");
+      assert.include(s.getCalls()[0].args[0].val.toString(), "blaft");
+      assert.include(s.getCalls()[0].args[0].insId, "someIns");
     });
 
     it("reports uncaught errors that happened on an internal part", async () => {
@@ -2657,7 +2664,9 @@ describe("main ", () => {
         connections: [["a", "i1.a"]],
       });
 
-      execute({part: badWrapper, inputs: { a }, outputs: {}, partsRepo: testRepoWith(errorReportingPart), _debugger: {onError: s}, insId: "someIns"});
+      const onEvent = wrappedOnEvent(DebuggerEventType.ERROR, s);
+
+      execute({part: badWrapper, inputs: { a }, outputs: {}, partsRepo: testRepoWith(errorReportingPart), _debugger: {onEvent}, insId: "someIns"});
 
       assert.equal(s.callCount, 0);
 
@@ -2665,12 +2674,12 @@ describe("main ", () => {
 
       assert.equal(s.callCount, 2);
 
-      assert.include(s.getCalls()[0].args[0].toString(), "blah");
-      assert.include(s.getCalls()[0].args[0].insId, "someIns.i1");
+      assert.include(s.getCalls()[1].args[0].val.toString(), "blah");
+      assert.include(s.getCalls()[1].args[0].insId, "i1");
 
-      assert.include(s.getCalls()[1].args[0].toString(), "child instance i1");
-      assert.include(s.getCalls()[1].args[0].toString(), "blah");
-      assert.include(s.getCalls()[1].args[0].insId, "someIns");
+      assert.include(s.getCalls()[0].args[0].val.toString(), "child instance i1");
+      assert.include(s.getCalls()[0].args[0].val.toString(), "blah");
+      assert.include(s.getCalls()[0].args[0].insId, "someIns");
     });
 
     it('allows to catch errors in any part using the "error" pin', async () => {
@@ -2692,13 +2701,14 @@ describe("main ", () => {
         ],
       });
 
-      execute({part: badWrapper, inputs:{ a }, outputs: { r }, partsRepo: testRepoWith(errorReportingPart), _debugger: {onError: s1}, insId: "someIns"});
+      const onEvent = wrappedOnEvent(DebuggerEventType.ERROR, s1);
+
+      execute({part: badWrapper, inputs:{ a }, outputs: { r }, partsRepo: testRepoWith(errorReportingPart), _debugger: {onEvent}, insId: "someIns"});
 
       assert.equal(s1.callCount, 0);
 
       a.subject.next("bob");
 
-      assert.equal(s1.callCount, 0);
       assert.equal(s2.callCount, 1);
 
       assert.include(s2.getCalls()[0].args[0].toString(), "blah");
@@ -2723,6 +2733,22 @@ describe("main ", () => {
       assert.equal(s2.callCount, 1);
 
       assert.include(s2.lastCall.args[0].toString(), "blah");
+    });
+
+    it("does report errors caught errors via debugger", async () => {
+      const s = spy();
+      const onEvent = wrappedOnEvent(DebuggerEventType.ERROR, s);
+      const a = dynamicPartInput();
+
+      const errPin = dynamicOutput();
+
+      execute({part: errorReportingPart, inputs: { a }, outputs: { [ERROR_PIN_ID]: errPin }, partsRepo: testRepo, insId: "someIns", _debugger: {onEvent}});
+
+      assert.equal(s.callCount, 0);
+      a.subject.next("bob");
+      assert.include(s.getCalls()[0].args[0].val.toString(), "blah");
+      assert.include(s.getCalls()[0].args[0].insId, "someIns");
+      assert.equal(s.callCount, 1);
     });
   });
 

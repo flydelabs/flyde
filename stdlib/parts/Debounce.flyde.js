@@ -1,13 +1,19 @@
 module.exports = {
   id: "Debounce",
-  inputs: { i: { mode: "required", type: "any" }, ms: { mode: "required", type: "any" } },
-  outputs: { r: { type: "any" } },
-  customViewCode: "<% if (inputs.ms) { %> Debounce  <%- inputs.ms %>ms <% } else { %> Debounce <% } %>",
-  completionOutputs: ["r"],
-  reactiveInputs: ["i"],
+  inputs: {
+    value: { mode: "required", type: "any", description: "The data that needs to be debounced"},
+    wait: { mode: "required", type: "any", defaultValue: 250, description: "Time (in millis) to wait until 'value' is emitted"},
+  },
+  outputs: { result: { type: "any", description: 'The debounced value' } },
+  customViewCode:
+    "<% if (inputs.wait) { %> Debounce  <%- inputs.wait %>ms <% } else { %> Debounce <% } %>",
+  completionOutputs: ["result"],
+  reactiveInputs: ["value"],
+  description:
+    'Emits the last value received after being idle for "wait" amount of milliseconds',
   fn: function (inputs, outputs, adv) {
-    const { i, ms } = inputs;
-    const { r } = outputs;
+    const { value, wait } = inputs;
+    const { result } = outputs;
 
     const timer = adv.state.get("timer");
     if (timer) {
@@ -15,8 +21,8 @@ module.exports = {
     }
 
     const newTimer = setTimeout(() => {
-      r.next(i);
-    }, ms);
+      result.next(value);
+    }, wait);
 
     adv.state.set("timer", newTimer);
 

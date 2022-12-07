@@ -18,11 +18,6 @@ import {
 } from "@flyde/core";
 import classNames from "classnames";
 
-// import { fab } from '@fortawesome/free-brands-svg-icons'
-
-
-
-// ;
 import { PinView } from "../pin-view/PinView";
 import {
   ConnectionData,
@@ -47,11 +42,13 @@ import { usePrompt } from "../..";
 import { ContextMenu, IMenuItemProps, Menu, MenuDivider, MenuItem } from "@blueprintjs/core";
 import ReactDOM from "react-dom";
 import { PartStyleMenu } from "./PartStyleMenu";
+import CustomReactTooltip from "../../lib/tooltip";
 
 export const PIECE_HORIZONTAL_PADDING = 25;
 export const PIECE_CHAR_WIDTH = 11;
 export const MIN_WIDTH_PER_PIN = 40;
 export const MAX_INSTANCE_WIDTH = 400; // to change in CSS as well
+export const INSTANCE_INFO_TOOLTIP_DELAY = 400;
 
 const INLINE_GROUP_EDITOR_CENTER_DEBOUNCE = 100;
 
@@ -474,6 +471,7 @@ export const InstanceView: React.FC<InstanceViewProps> = function InstanceViewIn
             dataType={v.type}
             onRequestHistory={_onRequestHistory}
             onConvertConstToEnv={props.onConvertConstToEnv ? _onConvertConstToEnv : undefined}
+            description={v.description}
           />
         ))}
       </div>
@@ -502,6 +500,7 @@ export const InstanceView: React.FC<InstanceViewProps> = function InstanceViewIn
             dataType={v.type}
             onInspect={props.onInspectPin}
             onRequestHistory={_onRequestHistory}
+            description={v.description}
           />
         ))}
       </div>
@@ -609,6 +608,9 @@ export const InstanceView: React.FC<InstanceViewProps> = function InstanceViewIn
     ...(style.cssOverride || {})
   } as React.CSSProperties;
 
+  const instanceDomId = getInstanceDomId(props.parentInsId, instance.id);
+
+
   const renderContent = () => {
     if (inlineGroupProps) {
       return (
@@ -634,6 +636,8 @@ export const InstanceView: React.FC<InstanceViewProps> = function InstanceViewIn
           onDoubleClick={onDblClick}
           onContextMenu={showMenu}
           style={styleVarProp}
+          data-tip={part.description}
+          data-for={instanceDomId + '__tooltip'}
         >
           {style.icon ? <FontAwesomeIcon icon={style.icon as any} /> : null } {content}
         </div>
@@ -641,8 +645,9 @@ export const InstanceView: React.FC<InstanceViewProps> = function InstanceViewIn
     }
   };
 
+
   return (
-    <div className={cm} data-part-id={part.id}>
+    <div className={cm}>
       <BasePartView
         pos={instance.pos}
         viewPort={viewPort}
@@ -652,8 +657,14 @@ export const InstanceView: React.FC<InstanceViewProps> = function InstanceViewIn
         upperRenderer={renderInputs}
         bottomRenderer={renderOutputs}
         displayMode={displayMode}
-        domId={getInstanceDomId(props.parentInsId, instance.id)}
+        domId={instanceDomId}
       >
+        <CustomReactTooltip
+        className="instance-info-tooltip"
+        html
+        id={instanceDomId + '__tooltip'}
+        delayShow={INSTANCE_INFO_TOOLTIP_DELAY}
+      />
         {renderInputs()}
         {renderContent()}
         {renderOutputs()}

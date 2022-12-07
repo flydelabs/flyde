@@ -1,16 +1,13 @@
 import * as React from "react";
 
-import { Pos } from "../../utils";
 import {
-  entries,
-  getInputName,
-  getPartInputs,
   ImportablePart,
   PartDefinition,
   PartInstance,
   PinType,
   ResolvedFlydeFlowDefinition,
   values,
+  Pos
 } from "@flyde/core";
 // ;
 import { MenuDivider, MenuItem } from "@blueprintjs/core";

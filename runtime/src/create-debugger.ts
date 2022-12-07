@@ -7,22 +7,8 @@ export const createDebugger = async (): Promise<Debugger> => {
   return createRuntimeClient(url, "bob")
     .then((client) => {
       const _debugger: Debugger = {
-        onInput: (wrappedValue) => {
-          return client.emitInputChange(wrappedValue);
-        },
-        onOutput: (val) => {
-          return client.emitOutputChange(val);
-        },
-        onProcessing: (val) => {
-          return client.emitProcessing(val);
-        },
-        onInputsStateChange: (val) => {
-          return client.emitInputsStateChange(val);
-        },
-        onError: (data) => {
-          return client.emitPartError(data);
-        },
-        destroy: () => {
+        onEvent: e => client.emitEvent(e),
+      destroy: () => {
           return client.destroy();
         },
       };

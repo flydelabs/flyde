@@ -1,7 +1,7 @@
 import { noop, Subject } from "rxjs";
 import { first } from "rxjs/operators";
 
-import * as cuid from "cuid";
+export * from './debugger';
 
 import {
   isDynamicInput,
@@ -35,52 +35,13 @@ import {
 import { delay, entries, isDefined, keys, OMap, OMapF } from "../common";
 import { debugLogger } from "../common/debug-logger";
 import { callFnOrFnPromise, codePartToNative, customRepoToPartRepo, PartFn, PartRepo } from "..";
+import { Debugger, DebuggerEventType } from "./debugger";
 
 export type SubjectMap = OMapF<Subject<any>>;
 
 export type ExecutionState = Map<string, any>;
 
 export type CancelFn = () => void;
-
-export type DebuggerInterceptCommand = {
-  cmd: "intercept";
-  valuePromise: Promise<any>;
-};
-
-export type DebuggerCommand = DebuggerInterceptCommand | void;
-
-export type DebuggerValue = {
-  pinId: string;
-  insId: string;
-  val: any;
-  time: number;
-  partId: string;
-  executionId: string;
-};
-
-export type ProcessingChangeData = {
-  processing: boolean;
-  insId: string;
-};
-
-export interface PartError extends Error {
-  insId: string;
-}
-
-export type InputsStateChangeData = {
-  inputs: OMap<number>;
-  insId: string;
-};
-
-export type Debugger = {
-  onInput?: (value: DebuggerValue) => DebuggerCommand;
-  onOutput?: (value: DebuggerValue) => DebuggerCommand;
-  onProcessing?: (value: ProcessingChangeData) => void;
-  onInputsStateChange?: (value: InputsStateChangeData) => void;
-  debugDelay?: number;
-  onError?: (err: PartError) => void;
-  destroy?: () => void;
-};
 
 export type ExecuteNativeFn = (
   part: NativePart,
@@ -141,7 +102,6 @@ const executeNative = (data: NativeExecutionData) => {
     parentInsId,
     mainState,
     onError,
-    onBubbleError,
     onCompleted,
     env,
     extraContext
@@ -155,9 +115,7 @@ const executeNative = (data: NativeExecutionData) => {
 
   const innerExec: InnerExecuteFn = (part, i, o, id) => execute({part: part, inputs: i, outputs: o, partsRepo: repo, _debugger, insId: id, onCompleted});
 
-  const onProcessing: Debugger["onProcessing"] = _debugger.onProcessing || noop;
-  const onInputsStateChange: Debugger["onInputsStateChange"] =
-    _debugger.onInputsStateChange || noop;
+  const onEvent: Debugger['onEvent'] = _debugger.onEvent || noop;
 
   const fullInsId = `${parentInsId || "root"}.${insId}`;
   const innerStateId = `${fullInsId}${INNER_STATE_SUFFIX}`;
@@ -186,7 +144,7 @@ const executeNative = (data: NativeExecutionData) => {
       return { ...acc, [k]: isQueue ? v?.length : 1 };
     }, {});
 
-    onInputsStateChange({ inputs: obj, insId: fullInsId });
+    onEvent({ type: DebuggerEventType.INPUTS_STATE_CHANGE, val: obj, insId, parentInsId });
   };
   
   const advPartContext: PartAdvancedContext = {
@@ -205,7 +163,6 @@ const executeNative = (data: NativeExecutionData) => {
   let lastValues;
 
   const reactiveInputs = part.reactiveInputs || [];
-
 
   const cleanState = () => {
     mainState[innerStateId].clear();
@@ -259,7 +216,8 @@ const executeNative = (data: NativeExecutionData) => {
 
         if (part.completionOutputs) {
           processing = true;
-          onProcessing({ processing, insId: fullInsId });
+          
+          onEvent({ type: DebuggerEventType.PROCESSING_CHANGE, val: processing, insId, parentInsId });
 
           // completion outputs support the "AND" operator via "+" sign, i.e. "a+b,c" means "(a AND b) OR c)""
           const dependenciesArray = part.completionOutputs.map(k => k.split('+'));
@@ -288,7 +246,7 @@ const executeNative = (data: NativeExecutionData) => {
 
               if (requirementArr.length === 0) {
                 processing = false;
-                onProcessing({ processing, insId: fullInsId });
+                onEvent({ type: DebuggerEventType.PROCESSING_CHANGE, val: processing, insId, parentInsId });
 
                 if (onCompleted) {              
                   onCompleted(completedOutputsValues);
@@ -321,8 +279,9 @@ const executeNative = (data: NativeExecutionData) => {
           innerDebug(`Running part %s with values %o`, part.id, argValues);
           partCleanupFn = fn(argValues as any, outputs, advPartContext);
         } catch (e) {
-          processing = false;          
-          onProcessing({ processing, insId: fullInsId });
+          processing = false;
+          innerDebug(`Error in part %s - value %e`, part.id, e);
+          onEvent({ type: DebuggerEventType.PROCESSING_CHANGE, val: processing, insId, parentInsId });
           onError(e);
         }
 
@@ -391,6 +350,10 @@ const executeNative = (data: NativeExecutionData) => {
 
 export type ExecuteFn = (params: ExecuteParams) => CancelFn;
 
+export interface PartError extends Error {
+  insId: string;
+}
+
 export type ExecuteParams = {
   part: Part;
   partsRepo: PartRepo;
@@ -424,27 +387,26 @@ export const execute: ExecuteFn = ({
 }) => {
   const toCancel: Function[] = [];
 
-  const executionId = cuid();
-
   const codePartExtraContext = { ...extraContext, ENV: env };
 
   const processedRepo = customRepoToPartRepo(partsRepo, codePartExtraContext);
   
   const onError = (err: unknown) => {
     // this means "catch the error"
+    const error = err instanceof Error ? err : new Error(`Raw error: ${err.toString()}`);
+    error.message = `error in child instance ${insId}: ${error.message}`;
     if (outputs[ERROR_PIN_ID]) {
       outputs[ERROR_PIN_ID].next(err);
     } else {
-      const error = err instanceof Error ? err : new Error(`Raw error: ${err.toString()}`);      
-      error.message = `error in child instance ${insId}: ${error.message}`;
       (error as any).insId = insId;
       onBubbleError(error as PartError);
+      
+    }
+    if (_debugger.onEvent) {
+      const err: PartError = error as any;
+      err.insId = `${parentInsId}.${insId}`;
 
-      if (_debugger.onError) {
-        const err: PartError = error as any;
-        err.insId = `${parentInsId}.${insId}`;
-        _debugger.onError(err);
-      }
+      _debugger.onEvent({type: DebuggerEventType.ERROR, val: err, insId, parentInsId});
     }
   };
 
@@ -460,25 +422,21 @@ export const execute: ExecuteFn = ({
 
   const processedPart = processPart(part);
 
-  const onInput = _debugger.onInput || noop; // TODO - remove this for "production" mode
-  const onOutput = _debugger.onOutput || noop;
+  const onEvent = _debugger.onEvent || noop; // TODO - remove this for "production" mode
 
   const mediatedOutputs: PartOutputs = {};
   const mediatedInputs: OMap<PartInput> = {};
-
-  const fullInsId = `${parentInsId}.${insId}`;
 
   entries(inputs).forEach(([pinId, arg]) => {
     if (isDynamicInput(arg)) {
       const mediator = dynamicPartInput({ config: arg.config });
       const subscription = arg.subject.subscribe(async (val) => {
-        const res = onInput({
-          insId: fullInsId,
+        const res = onEvent({
+          type: DebuggerEventType.INPUT_CHANGE,
+          insId,
           pinId,
           val,
-          time: Date.now(),
-          partId: processedPart.id,
-          executionId,
+          parentInsId
         });
         if (res) {
           const interceptedValue = await res.valuePromise;
@@ -501,13 +459,12 @@ export const execute: ExecuteFn = ({
   entries(outputs).forEach(([pinId, sub]) => {
     const mediator = dynamicOutput();
     const subscription = mediator.subscribe(async (val) => {
-      const res = onOutput({
-        insId: fullInsId,
+      const res = onEvent({
+        type: DebuggerEventType.OUTPUT_CHANGE,
+        insId,
         pinId,
         val,
-        time: Date.now(),
-        partId: processedPart.id,
-        executionId,
+        parentInsId
       });
       if (res) {
         const interceptedValue = await res.valuePromise;

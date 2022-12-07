@@ -129,7 +129,7 @@ export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (props) => 
 
   const [outputReceived, setOutputReceived] = useState(false);
 
-  const runtimePlayerRef = useRef(createRuntimePlayer(props.flowProps.flow.part.id));
+  const runtimePlayerRef = useRef(createRuntimePlayer('root.' + props.flowProps.flow.part.id));
 
   const [resolvedFlow, setResolvedFlow] = useState<ResolvedFlydeRuntimeFlow>(
     props.flowProps.resolvedFlow
@@ -164,6 +164,7 @@ export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (props) => 
     hideTemplatingTips: true,
     onImportPart: noop,
     onExtractInlinePart: noop as any,
+    onQueryImportables: noop as any
   };
 
   useEffect(() => {
@@ -240,7 +241,7 @@ export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (props) => 
       <ul className="examples__menu">
         {EXAMPLES_LIST.map((ex) => {
           return (
-            <li>
+            <li key={ex.key}>
               <Link to={`/playground/${ex.key}`} className="button button--primary">
                 {ex.title}
               </Link>

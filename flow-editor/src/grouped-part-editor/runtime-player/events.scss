@@ -21,7 +21,8 @@ $blink-duration: 6s; // change also BLINK_TIMEOUT in play-event.ts
 //   transition: background-color ease-in-out 0.05s, box-shadow ease-in-out 0.2s;
 }
 
-.pin-inner[data-runtime='active'] {
+.pin-inner[data-runtime='active'],
+.part-io-view-inner[data-runtime='active'] {
     animation: blink-done $blink-duration;
     // transition: background-color ease-in-out 0.05s, box-shadow ease-in-out 0.2s;
     // background: #C1FF91 !important;
@@ -43,7 +44,7 @@ $blink-duration: 6s; // change also BLINK_TIMEOUT in play-event.ts
   0% {
     // background-color: $base-color;
   }
-  10% {
+  3% {
     background-color: #c1ff91;
     box-shadow: 0px 0px 10px 2px rgba(9, 114, 0, 0.429);
   }

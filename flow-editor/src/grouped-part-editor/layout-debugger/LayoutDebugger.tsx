@@ -1,11 +1,7 @@
-import { GroupedPart, values } from "@flyde/core";
+import { GroupedPart, values, Pos } from "@flyde/core";
 import React from "react";
-import { centerBoardPosOnTarget, logicalPosToRenderedPos, renderedPosToLogicalPos } from "../..";
-import { safeLocalstorage } from "../../lib/safe-ls";
-import { Pos, Size } from "../../utils";
+import { logicalPosToRenderedPos, Size } from "../..";
 import { ViewPort } from "../utils";
-
-// ;
 
 const PosView : React.FC<{pos: Pos}> = ({pos}) => {
   return <span>{pos.x.toFixed(1)}, {pos.y.toFixed(1)}</span>
