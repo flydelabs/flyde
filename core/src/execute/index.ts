@@ -451,6 +451,13 @@ export const execute: ExecuteFn = ({
       toCancel.push(() => subscription.unsubscribe());
       mediatedInputs[pinId] = mediator;
     } else {
+      onEvent({
+        type: DebuggerEventType.INPUT_CHANGE,
+        insId,
+        pinId,
+        val: arg.config.value,
+        parentInsId
+      });
       const mediator = staticPartInput(getStaticValue(arg.config.value, processedRepo, insId));
       mediatedInputs[pinId] = mediator;
     }

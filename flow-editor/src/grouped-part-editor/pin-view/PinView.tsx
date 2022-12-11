@@ -5,11 +5,11 @@ import { Menu, MenuItem, ContextMenu } from "@blueprintjs/core";
 
 import { isDefined, toString } from "../../utils";
 
-import { useState } from "react";
 import { getInputName, getOutputName, isEnvValue, PinType } from "@flyde/core";
 import { getPinDomId } from "../dom-ids";
 import { HistoryPayload, valuePreview } from "@flyde/remote-debugger";
 import CustomReactTooltip from "../../lib/tooltip";
+import { calcHistoryContent, useHistoryHelpers } from "./helpers";
 export const PIN_HEIGHT = 23;
 
 export type InputPinViewProps = {
@@ -58,7 +58,6 @@ export interface OptionalPinViewProps {
 
 const INSIGHTS_TOOLTIP_INTERVAL = 500;
 
-
 export const PinView: React.SFC<PinViewProps> = React.memo(function PinView(props) {
   const {
     selected,
@@ -72,7 +71,7 @@ export const PinView: React.SFC<PinViewProps> = React.memo(function PinView(prop
     onRequestHistory,
   } = props;
 
-  const [history, setHistory] = useState<HistoryPayload>();
+  const {history, resetHistory, refreshHistory} = useHistoryHelpers(onRequestHistory, id, pinType);
 
   const getContextMenu = () => {
     const logMenuItem = (
@@ -198,26 +197,10 @@ export const PinView: React.SFC<PinViewProps> = React.memo(function PinView(prop
   const maybeConstValue =
     props.type === "input" && isDefined(props.constValue) ? props.constValue : undefined;
 
-  const calcHistoryContent = () => {
-    if (history) {
-      const { total, lastSamples } = history;
 
-      const timesActivated = `<strong>Activated ${total} times this session</strong>`;
-      const lastValueData =  lastSamples.length > 0
-        ? `<div>Last value: <strong>${valuePreview(lastSamples[0].val).substr(
-            0,
-            200
-          )}</strong></div>`
-        : "";
-      return `${timesActivated } ${lastValueData}`
-    } else {
-      return 'Loading session data..'
-    }
-  }
-
-  const calcTooltipContent = (tip: any) => {
+  const calcTooltipContent = () => {
   
-    const historyContent = calcHistoryContent();
+    const historyContent = calcHistoryContent(history);
 
     const maybeDescription = props.description ? `<em>${props.description}</em>` : '';
     
@@ -248,35 +231,6 @@ export const PinView: React.SFC<PinViewProps> = React.memo(function PinView(prop
     }
   };
 
-  const historyTimer = React.useRef<any>();
-
-  const refreshHistory = React.useCallback(() => {
-    clearInterval(historyTimer.current);
-    onRequestHistory(id, type).then((val) => {
-      setHistory(val);
-    });
-    historyTimer.current = setInterval(() => {
-      onRequestHistory(id, type).then((val) => {
-        setHistory(val);
-      });
-    }, INSIGHTS_TOOLTIP_INTERVAL);
-  }, [onRequestHistory, id, type]);
-
-  const resetHistory = React.useCallback(() => {
-    clearInterval(historyTimer.current);
-    setHistory(undefined);
-  }, []);
-
-  const renderContent = () => {
-    return isDefined(maybeConstValue) ? (
-      <React.Fragment>
-        {displayName}: <span className="value">{toString(maybeConstValue)}</span>
-      </React.Fragment>
-    ) : (
-      displayName
-    );
-  };
-
   return (
     <div className={calcClassNames()} onContextMenu={showMenu} data-pin-id={id}>
       <CustomReactTooltip
@@ -290,8 +244,8 @@ export const PinView: React.SFC<PinViewProps> = React.memo(function PinView(prop
         onMouseOut={resetHistory}
         data-tip=""
         data-html={true}
-        id={getPinDomId(props.parentInsId, props.insId, id, type)}
         data-for={id + props.insId}
+        id={getPinDomId(props.parentInsId, props.insId, id, type)}
         data-place={tooltipDown ? "bottom" : null}
         onDoubleClick={(e) => props.onDoubleClick && props.onDoubleClick(id, e)}
         className={`pin-inner`}

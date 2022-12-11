@@ -101,6 +101,10 @@ export const setupRemoteDebuggerServer = (
     res.json({ ...payload, lastSamples: samples });
   });
 
+  app.get("/full-history", (req, res) => {
+    res.json(historyMap);
+  });
+
   app.delete("/history", (_, res) => {
     eventsTape = [];
     historyMap = new Map();

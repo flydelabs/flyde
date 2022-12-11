@@ -9,6 +9,7 @@ import {
   partInstance,
   dynamicPartInputs,
   stickyInputPinConfig,
+  staticPartInput,
 } from "../part";
 import { execute } from ".";
 import { Subject } from "rxjs";
@@ -600,6 +601,23 @@ describe("execute", () => {
 
         assert.equal(inputSpy.callCount, 4);
         assert.equal(inputSpy.calledWithMatch({ insId: "myIns", pinId: "n1", val: 5 }), true);
+        assert.equal(inputSpy.calledWithMatch({ insId: "myIns", pinId: "n2", val: 10 }), true);
+      });
+
+      it("emits input change msgs on static values", () => {
+        const n1 = staticPartInput(25);
+        const n2 = dynamicPartInput();
+        const r = new Subject();
+
+        const inputSpy = spy();
+        const onEvent = wrappedOnEvent(DebuggerEventType.INPUT_CHANGE, inputSpy);
+
+        execute({part: addGrouped, inputs: { n1, n2 }, outputs: { r }, partsRepo: testRepo, _debugger: { onEvent }, insId: "myIns"});
+        // n1.subject.next(5);
+        n2.subject.next(10);
+
+        assert.equal(inputSpy.callCount, 4);
+        assert.equal(inputSpy.calledWithMatch({ insId: "myIns", pinId: "n1", val: 25 }), true);
         assert.equal(inputSpy.calledWithMatch({ insId: "myIns", pinId: "n2", val: 10 }), true);
       });
 

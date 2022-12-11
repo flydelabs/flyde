@@ -1,12 +1,16 @@
 import * as React from "react";
 
 // ;
-import { InputMode, noop, Pos } from "@flyde/core";
+import { getOutputName, InputMode, noop, PinType, Pos } from "@flyde/core";
 import { BasePartView } from "../base-part-view";
 import { getMainPinDomId } from "../dom-ids";
 import classNames from "classnames";
 import { Menu, MenuItem, ContextMenu } from "@blueprintjs/core";
 import { usePrompt } from "../../flow-editor/ports";
+import { HistoryPayload } from "@flyde/remote-debugger";
+import { calcHistoryContent, useHistoryHelpers } from "../pin-view/helpers";
+import { getInputName } from "@flyde/core";
+import CustomReactTooltip from "../../lib/tooltip";
 
 export type PartIoType = "input" | "output";
 
@@ -35,7 +39,11 @@ interface PartIoViewProps {
 
   description: string;
   onSetDescription: (type: PartIoType, pin: string, description: string) => void;
+
+  onRequestHistory: (pinId: string, type: PinType) => Promise<HistoryPayload>;
 }
+
+const INSIGHTS_TOOLTIP_INTERVAL = 500;
 
 export const PartIoView: React.SFC<PartIoViewProps> = React.memo(function PartIoViewInner(props) {
   const {
@@ -52,8 +60,11 @@ export const PartIoView: React.SFC<PartIoViewProps> = React.memo(function PartIo
     onSelect,
     closest,
     onSetDescription,
-    description
+    description,
+    onRequestHistory
   } = props;
+
+  const {history, resetHistory, refreshHistory} = useHistoryHelpers(onRequestHistory, id, type);
 
   const onDragStart = (event: any, data: any) => {
     props.onDragStart(id, event, data);
@@ -121,7 +132,7 @@ export const PartIoView: React.SFC<PartIoViewProps> = React.memo(function PartIo
       ...(props.onRename ? [{ text: "Rename", onClick: onRenameInner }] : []),
       ...(props.onDelete ? [{ text: "Delete", onClick: onDeleteInner }] : []),
     ];
-  }, [inputMode, onChangeInputModeInner, onDeleteInner, onRenameInner, props.onDelete, props.onRename]);
+  }, [_onSetDescription, inputMode, onChangeInputModeInner, onDeleteInner, onRenameInner, props.onDelete, props.onRename]);
 
   const onDblClickInner = React.useCallback(
     (e: any) => {
@@ -156,6 +167,21 @@ export const PartIoView: React.SFC<PartIoViewProps> = React.memo(function PartIo
     [getContextMenu]
   );
 
+  const displayName = type === 'input' ? getInputName(id) : getOutputName(id);
+
+  const calcTooltipContent = () => {
+  
+    const historyContent = calcHistoryContent(history);
+
+    const maybeDescription = props.description ? `<em>${props.description}</em>` : '';
+    
+    return `<div><div><strong>${displayName}</strong> (${type}) </div>
+      ${maybeDescription}
+      <hr/>
+      ${historyContent}
+    `;
+  };
+
   return (
     <BasePartView
       className={classNames(`part-io-view`, type)}
@@ -165,7 +191,18 @@ export const PartIoView: React.SFC<PartIoViewProps> = React.memo(function PartIo
       onDragMove={onDragMove}
       viewPort={viewPort}
     >
+      <CustomReactTooltip
+        className="pin-info-tooltip"
+        html
+        id={id + props.insId}
+        getContent={[calcTooltipContent, INSIGHTS_TOOLTIP_INTERVAL / 20]}
+      />
         <div
+            onMouseEnter={refreshHistory}
+            onMouseOut={resetHistory}
+            data-tip=""
+            data-html={true}
+            data-for={id + props.insId}
             className={classNames('part-io-view-inner', { closest, selected })}
             id={getMainPinDomId(props.insId, id, type)}
             onClick={_onClick}

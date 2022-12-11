@@ -282,7 +282,7 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
       (insId, pinId, pinType) => {
         return onRequestHistory(insId, pinId, pinType);
       },
-      [onRequestHistory, thisInsId]
+      [onRequestHistory]
     );
 
     const _onInspectPin: GroupedPartEditorProps["onInspectPin"] = React.useCallback(
@@ -879,18 +879,7 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
         lastMousePos.current = posInBoard;
         onChangeBoardData({ lastMousePos: lastMousePos.current });
       },
-      [
-        part,
-        boardPos,
-        viewPort,
-        parentViewport,
-        selectionBox,
-        repo,
-        vpSize,
-        thisInsId,
-        closestPin,
-        onChangeBoardData,
-      ]
+      [part, boardPos, viewPort, parentViewport, selectionBox, repo, thisInsId, closestPin, onChangeBoardData]
     );
 
     const onMouseLeave: React.MouseEventHandler = React.useCallback(() => {
@@ -1122,6 +1111,11 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
       [part, onChange]
     );
 
+    const _onRequestPartIoHistory = React.useCallback((id, type) => {
+      const hackishlyGetInsId = thisInsId.split('.').reverse()[0];
+      return onRequestHistory(hackishlyGetInsId, id, type);
+    }, [onRequestHistory, thisInsId])
+
     const renderPartInputs = () => {
       const from = boardData.from;
 
@@ -1155,6 +1149,7 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
           onSetDescription={onPartIoSetDescription}
           selected={from?.pinId === k}
           description={v.description}
+          onRequestHistory={_onRequestPartIoHistory}
         />
       ));
     };
@@ -1188,6 +1183,7 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
           onSetDescription={onPartIoSetDescription}
           description={v.description}
           selected={to?.pinId === k}
+          onRequestHistory={_onRequestPartIoHistory}
         />
       ));
     };
