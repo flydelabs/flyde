@@ -1578,7 +1578,7 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
     const maybeGetFutureConnection = () => {
       if (
         from &&
-        (closestPin?.type === "input" ||
+        ((closestPin?.type === "input" && closestPin?.ins.id !== part.id) ||
           (closestPin?.ins.id === part.id && closestPin?.type === "output"))
       ) {
         const to: ConnectionNode =
@@ -1593,7 +1593,7 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
         return { from, to };
       } else if (
         to &&
-        (closestPin?.type === "output" ||
+        ((closestPin?.type === "output" && closestPin?.ins.id !== part.id) ||
           (closestPin?.ins.id === part.id && closestPin?.type === "input"))
       ) {
         const from: ConnectionNode =
@@ -1614,14 +1614,9 @@ export const GroupedPartEditor: React.FC<GroupedPartEditorProps & { ref?: any }>
       const maybeFutureConnection = maybeGetFutureConnection();
       if (maybeFutureConnection) {
         const { from, to } = maybeFutureConnection;
-        const existing = new Set(
-          connections.map((c) => `${c.from.insId}|${c.from.pinId}|${c.to.insId}|${c.to.pinId}`)
-        );
-        const cstr = `${from.insId}|${from.pinId}|${to.insId}|${to.pinId}`;
-
         return {
           connection: { from, to },
-          type: existing.has(cstr) ? "future-remove" : "future-add",
+          type: connections.some(conn => connectionDataEquals(conn, maybeFutureConnection)) ? 'future-remove' : 'future-add'
         };
       }
     };

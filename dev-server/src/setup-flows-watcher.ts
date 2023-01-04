@@ -11,8 +11,12 @@ export const setupFlowsWatcher = (rootDir: string, onFlowsChange: (map: FlowsMap
   const flows: FlowsMap = new Map<string, FlydeFlow | Corrupt>();
   // One-liner for current directory
   chokidar
-    .watch(["**/*.flyde"], { cwd: rootDir, ignored: "node_modules" })
+    .watch(["**/*.flyde"], { cwd: rootDir, ignored: path => path.endsWith('.flyde') && !path.includes('/node_modules'); })
     .on("all", (event, path) => {
+      // hacky fix for https://github.com/paulmillr/chokidar/issues/544 when working locally
+      if (!path.endsWith(".flyde")) {
+        return;
+      }
       switch (event) {
         case "add":
         case "change":

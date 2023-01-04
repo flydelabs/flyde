@@ -52,8 +52,9 @@ video {
   object-fit: cover;
   position: absolute;
   height: 100%;
-  filter: blur(3px);
-  opacity: 0.2;
+  filter: blur(2px);
+  opacity: 0.3;
+  display: flex;
 }
 
 

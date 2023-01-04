@@ -25,7 +25,10 @@ function HomepageHeader() {
   return (
     <header className={clsx("hero hero--primary", styles.heroBanner)}>
       <div className="videos-container">
-        <video className="videoTag" loop muted autoPlay>
+        <video loop muted autoPlay>
+          <source src={"/background.mp4"} type="video/mp4" />
+        </video>
+        <video loop muted autoPlay>
           <source src={"/background.mp4"} type="video/mp4" />
         </video>
       </div>
