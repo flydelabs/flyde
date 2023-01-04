@@ -15,6 +15,13 @@ export type LocatedFlowOrCorrupt = {
 };
 
 export const generateTypings = (locatedFlows: LocatedFlowOrCorrupt[]) => {
-  const template = readFileSync(join(__dirname, "../../src/service/typings.template.ejs"), "utf8");
-  return ejs.render(template, { locatedFlows, MODULE_NAME: RUNTIME_MODULE_NAME, FN_NAME: RUNTIME_MODULE_FN });
+  const template = readFileSync(
+    join(__dirname, "../../src/service/typings.template.ejs"),
+    "utf8"
+  );
+  return ejs.render(template, {
+    locatedFlows,
+    MODULE_NAME: RUNTIME_MODULE_NAME,
+    FN_NAME: RUNTIME_MODULE_FN,
+  });
 };

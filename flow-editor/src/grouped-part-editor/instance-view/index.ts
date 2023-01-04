@@ -1,1 +1,1 @@
-export * from './InstanceView';
+export * from "./InstanceView";

@@ -1,6 +1,5 @@
 import { InputPinsConfig, Part, PartDefinition, PartStyle, Pos } from "..";
 
-
 export interface PartInstanceConfig {
   inputConfig: InputPinsConfig;
   visibleInputs?: string[];
@@ -9,7 +8,7 @@ export interface PartInstanceConfig {
   style?: PartStyle;
 }
 
-export interface RefPartInstance extends PartInstanceConfig{
+export interface RefPartInstance extends PartInstanceConfig {
   id: string;
   partId: string;
   pos: Pos;
@@ -46,10 +45,13 @@ export const inlinePartInstance = (
   pos: pos || { x: 0, y: 0 },
 });
 
-export const isInlinePartInstance = (ins: PartInstance): ins is InlinePartInstance => {
+export const isInlinePartInstance = (
+  ins: PartInstance
+): ins is InlinePartInstance => {
   return !!(ins as any).part;
-}
-export const isRefPartInstance = (ins: PartInstance): ins is RefPartInstance => !isInlinePartInstance(ins);
+};
+export const isRefPartInstance = (ins: PartInstance): ins is RefPartInstance =>
+  !isInlinePartInstance(ins);
 
 export const PartInstance = (
   id: string,

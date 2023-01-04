@@ -53,8 +53,17 @@ export const MenuItem: React.FC<MenuItemProps> = (props) => {
   );
 };
 
-export const SideBar: React.FC<SideBarProps> = React.memo(function SideBarInner(props) {
-  const { selectedIds, onSelect, onDblClick, onFocusInput, onFocusOutput, part } = props;
+export const SideBar: React.FC<SideBarProps> = React.memo(function SideBarInner(
+  props
+) {
+  const {
+    selectedIds,
+    onSelect,
+    onDblClick,
+    onFocusInput,
+    onFocusOutput,
+    part,
+  } = props;
 
   const { instances } = part;
 

@@ -1,14 +1,14 @@
-import {
-  Project,
-  PartError,
-  debugLogger,
-  DebuggerEvent,
-} from "@flyde/core";
+import { Project, PartError, debugLogger, DebuggerEvent } from "@flyde/core";
 
 import axios from "axios";
 
 import io from "socket.io-client";
-import { RemoteDebuggerCallback, RemoteDebuggerCancelFn, enumToArray, DebuggerServerEventType } from "../common";
+import {
+  RemoteDebuggerCallback,
+  RemoteDebuggerCancelFn,
+  enumToArray,
+  DebuggerServerEventType,
+} from "../common";
 
 import { deserializeError } from "serialize-error";
 import { HistoryPayload } from "..";
@@ -20,8 +20,8 @@ export type GetPinHistoryDto = {
 };
 
 export type GetHistoryDto = {
-  pinId: string,
-  insId: string,
+  pinId: string;
+  insId: string;
   limit?: number;
 };
 
@@ -29,14 +29,20 @@ export type EditorDebuggerClient = {
   emitChange: (data: { project: Project }) => void;
   emitBreakpointsChange: (insIdsAndPins: string[]) => void;
 
-  onBatchedEvents: (cb: RemoteDebuggerCallback<DebuggerEvent[]>) => RemoteDebuggerCancelFn;
+  onBatchedEvents: (
+    cb: RemoteDebuggerCallback<DebuggerEvent[]>
+  ) => RemoteDebuggerCancelFn;
 
   onRuntimeReady: (cb: RemoteDebuggerCallback<void>) => RemoteDebuggerCancelFn;
   interceptInput: (value: DebuggerEvent) => void;
   interceptOutput: (value: DebuggerEvent) => void;
-  onChangeAwk: (cb: RemoteDebuggerCallback<{ hash: string }>) => RemoteDebuggerCancelFn;
+  onChangeAwk: (
+    cb: RemoteDebuggerCallback<{ hash: string }>
+  ) => RemoteDebuggerCancelFn;
   onChangeError: (cb: (error: any) => void) => RemoteDebuggerCancelFn;
-  onIsAlive: (cb: RemoteDebuggerCallback<{ time: number }>) => RemoteDebuggerCancelFn;
+  onIsAlive: (
+    cb: RemoteDebuggerCallback<{ time: number }>
+  ) => RemoteDebuggerCancelFn;
 
   emitInputValue: (pinId: string, value: any) => void;
 
@@ -51,11 +57,16 @@ export type EditorDebuggerClient = {
   triggerPart: (partId: string, inputs: Record<string, any>) => void;
 };
 
-export const createEditorClient = (url: string, deploymentId: string): EditorDebuggerClient => {
+export const createEditorClient = (
+  url: string,
+  deploymentId: string
+): EditorDebuggerClient => {
   const urlParts = new URL(url);
 
   const socket = io(urlParts.origin, {
-    path: `${urlParts.pathname === "/" ? "" : urlParts.pathname}/socket.io/editor`,
+    path: `${
+      urlParts.pathname === "/" ? "" : urlParts.pathname
+    }/socket.io/editor`,
   });
 
   socket.emit("join-room-editor", deploymentId);
@@ -127,7 +138,9 @@ export const createEditorClient = (url: string, deploymentId: string): EditorDeb
       return axios.delete(`${url}/history`).then(() => {});
     },
     triggerPart: (partId, inputs) => {
-      return axios.post(`${url}/trigger`, { partId, inputs }).then((r) => r.data);
+      return axios
+        .post(`${url}/trigger`, { partId, inputs })
+        .then((r) => r.data);
     },
   };
 };

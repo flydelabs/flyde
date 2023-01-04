@@ -2,25 +2,33 @@ import { CustomPart, isCodePart } from ".";
 import { CustomPartRepo, removeDupes } from "..";
 import { isRefPartInstance, RefPartInstance } from "./part-instance";
 
-export const getPartWithDependencies = (part: CustomPart, repo: CustomPartRepo, existingIds: string[] = []): CustomPart[] => {
-    if (isCodePart(part)) {
-      return [part];
-    }
+export const getPartWithDependencies = (
+  part: CustomPart,
+  repo: CustomPartRepo,
+  existingIds: string[] = []
+): CustomPart[] => {
+  if (isCodePart(part)) {
+    return [part];
+  }
 
-    if (existingIds.includes(part.id)) {
-      return [];
-    }
-    const deps = removeDupes(part.instances
-      .filter(i => isRefPartInstance(i))
+  if (existingIds.includes(part.id)) {
+    return [];
+  }
+  const deps = removeDupes(
+    part.instances
+      .filter((i) => isRefPartInstance(i))
       .map((i: RefPartInstance) => i.partId)
-      .filter(i => repo[i])
-    );
+      .filter((i) => repo[i])
+  );
 
-    const depsPartsWithDeps = deps
-      .map(id => repo[id])
-      .reduce((acc, curr: CustomPart) => {
-        return [...acc, ...getPartWithDependencies(curr, repo, [...existingIds, ...deps])];
-      }, []);
+  const depsPartsWithDeps = deps
+    .map((id) => repo[id])
+    .reduce((acc, curr: CustomPart) => {
+      return [
+        ...acc,
+        ...getPartWithDependencies(curr, repo, [...existingIds, ...deps]),
+      ];
+    }, []);
 
-    return [part, ...depsPartsWithDeps];
-  };
+  return [part, ...depsPartsWithDeps];
+};

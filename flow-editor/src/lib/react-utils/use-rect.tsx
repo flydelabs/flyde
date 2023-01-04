@@ -1,51 +1,51 @@
-import { useLayoutEffect, useCallback, useState } from 'react'
+import { useLayoutEffect, useCallback, useState } from "react";
 
-type Rect =  Omit<DOMRect, "toJSON">;
+type Rect = Omit<DOMRect, "toJSON">;
 
 export const useRect = (ref): Rect => {
-  const [rect, setRect] = useState(getRect(ref ? ref.current : null))
+  const [rect, setRect] = useState(getRect(ref ? ref.current : null));
 
   const handleResize = useCallback(() => {
     if (!ref.current) {
-      return
+      return;
     }
 
     // Update client rect
-    setRect(getRect(ref.current))
-  }, [ref])
+    setRect(getRect(ref.current));
+  }, [ref]);
 
   useLayoutEffect(() => {
-    const element = ref.current
+    const element = ref.current;
     if (!element) {
-      return
+      return;
     }
 
-    handleResize()
+    handleResize();
 
-    if (typeof ResizeObserver === 'function') {
-      let resizeObserver = new ResizeObserver(() => handleResize())
-      resizeObserver.observe(element)
+    if (typeof ResizeObserver === "function") {
+      let resizeObserver = new ResizeObserver(() => handleResize());
+      resizeObserver.observe(element);
 
       return () => {
         if (!resizeObserver) {
-          return
+          return;
         }
 
-        resizeObserver.disconnect()
-        resizeObserver = null
-      }
+        resizeObserver.disconnect();
+        resizeObserver = null;
+      };
     } else {
       // Browser support, remove freely
-      window.addEventListener('resize', handleResize)
+      window.addEventListener("resize", handleResize);
 
       return () => {
-        window.removeEventListener('resize', handleResize)
-      }
+        window.removeEventListener("resize", handleResize);
+      };
     }
-  }, [ref.current])
+  }, [ref.current]);
 
-  return rect
-}
+  return rect;
+};
 
 function getRect(element: HTMLElement): Rect {
   if (!element) {
@@ -57,9 +57,9 @@ function getRect(element: HTMLElement): Rect {
       top: 0,
       width: 0,
       x: 0,
-      y: 0
-    }
+      y: 0,
+    };
   }
 
-  return element.getBoundingClientRect()
+  return element.getBoundingClientRect();
 }

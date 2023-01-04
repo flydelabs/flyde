@@ -14,7 +14,10 @@ import { calcPartIoWidth } from "../part-io-view/utils";
 import { size } from "../../physics";
 import { calcPartWidth } from "../instance-view/utils";
 
-export const layoutToInstances = (ld: LayoutData, part: GroupedPart): GroupedPart => {
+export const layoutToInstances = (
+  ld: LayoutData,
+  part: GroupedPart
+): GroupedPart => {
   return produce(part, (draft) => {
     entries(ld.nodes).forEach(([id, node]) => {
       if (id.startsWith("ins-")) {

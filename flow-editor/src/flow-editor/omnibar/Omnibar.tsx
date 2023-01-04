@@ -1,7 +1,13 @@
 import * as React from "react";
 
 import { Omnibar as ExternalOmnibar, ItemRenderer } from "@blueprintjs/select";
-import { Part, PartDefRepo, keys, ImportablePart, FlydeFlow } from "@flyde/core";
+import {
+  Part,
+  PartDefRepo,
+  keys,
+  ImportablePart,
+  FlydeFlow,
+} from "@flyde/core";
 import { okeys } from "@flyde/core";
 import { MenuItem } from "@blueprintjs/core";
 import classNames from "classnames";
@@ -103,7 +109,12 @@ export const Omnibar: React.FC<OmnibarProps> = (props) => {
       },
     };
 
-    const items = [...SYSTEM_ITEMS, ...importableItems, addInlineValue, ...addItems];
+    const items = [
+      ...SYSTEM_ITEMS,
+      ...importableItems,
+      addInlineValue,
+      ...addItems,
+    ];
 
     setItems(items);
   }, [repo, importables]);
@@ -131,11 +142,20 @@ export const Omnibar: React.FC<OmnibarProps> = (props) => {
           // key={film.rank}
           onClick={handleClick}
           text={
-            <div className={classNames("omnibar-item", { active: modifiers.active })}>
+            <div
+              className={classNames("omnibar-item", {
+                active: modifiers.active,
+              })}
+            >
               <div className="title">
-                {text} {item.extra ? <span className="extra">{item.extra}</span> : null}
+                {text}{" "}
+                {item.extra ? (
+                  <span className="extra">{item.extra}</span>
+                ) : null}
               </div>
-              {item.description ? <div className="description">{item.description}</div> : null}
+              {item.description ? (
+                <div className="description">{item.description}</div>
+              ) : null}
             </div>
           }
         />

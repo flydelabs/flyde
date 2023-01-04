@@ -11,7 +11,16 @@ const IntegrationPoints = () => {
   return (
     <strong className="integration-points">
       <Typical
-        steps={["IDE", 2000, "CI/CD", 2000, "Version Control", 2000, "Testing Setup", 2000]}
+        steps={[
+          "IDE",
+          2000,
+          "CI/CD",
+          2000,
+          "Version Control",
+          2000,
+          "Testing Setup",
+          2000,
+        ]}
         loop={Infinity}
         wrapper="span"
       />
@@ -35,22 +44,31 @@ function HomepageHeader() {
       <div className="container">
         <h1 className="hero__title">{siteConfig.title}</h1>
         <p className="hero__subtitle">
-          Flyde is an <em>open source</em> flow-based, visual programming tool. <br />
+          Flyde is an <em>open source</em> flow-based, visual programming tool.{" "}
+          <br />
           Build visual flows using the{" "}
           <a
             href="https://marketplace.visualstudio.com/items?itemName=flyde.flyde-vscode"
             target="_blank"
           >
             VSCode extension
-          </a>.<br/>Integrate them to your JS/TS codebase using the runtime library.
+          </a>
+          .<br />
+          Integrate them to your JS/TS codebase using the runtime library.
           <br />
           Fully integrates with your <IntegrationPoints />
         </p>
         <div className={styles.buttons}>
-          <Link className="button button--secondary button--lg" to="/playground">
+          <Link
+            className="button button--secondary button--lg"
+            to="/playground"
+          >
             Online Playground
           </Link>
-          <Link className="button button--primary button--lg" to="/docs/hello-world-with-flyde/">
+          <Link
+            className="button button--primary button--lg"
+            to="/docs/hello-world-with-flyde/"
+          >
             Get Started
           </Link>
           <span className={styles["gh-stars-wrapper"]}>

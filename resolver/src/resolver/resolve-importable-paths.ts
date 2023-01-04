@@ -4,9 +4,14 @@ import * as glob from "glob";
 
 import * as resolveFrom from "resolve-from";
 
-export const resolveImportablePaths = (rootPath: string, importPath: string): string[] => {
-  
-  const resolvedModulePath = resolveFrom(rootPath, importPath + "/package.json");
+export const resolveImportablePaths = (
+  rootPath: string,
+  importPath: string
+): string[] => {
+  const resolvedModulePath = resolveFrom(
+    rootPath,
+    importPath + "/package.json"
+  );
 
   const { flyde } = require(resolvedModulePath);
 
@@ -16,7 +21,8 @@ export const resolveImportablePaths = (rootPath: string, importPath: string): st
     );
   }
 
-  const globs = typeof flyde.exposes === "string" ? [flyde.exposes] : flyde.exposes;
+  const globs =
+    typeof flyde.exposes === "string" ? [flyde.exposes] : flyde.exposes;
 
   const paths = globs.reduce((acc, pattern) => {
     const resolved = glob.sync(pattern, { cwd: dirname(resolvedModulePath) });

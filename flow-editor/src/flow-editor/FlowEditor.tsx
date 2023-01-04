@@ -26,12 +26,18 @@ import produce from "immer";
 import { useHotkeys } from "../lib/react-utils/use-hotkeys";
 
 // ;
-import { createNewPartInstance, domToViewPort } from "../grouped-part-editor/utils";
+import {
+  createNewPartInstance,
+  domToViewPort,
+} from "../grouped-part-editor/utils";
 
 import { HistoryPayload } from "@flyde/remote-debugger";
 import { AppToaster, toastMsg } from "../toaster";
 
-import { FlydeFlowChangeType, functionalChange } from "./flyde-flow-change-type";
+import {
+  FlydeFlowChangeType,
+  functionalChange,
+} from "./flyde-flow-change-type";
 import { Omnibar, OmniBarCmd, OmniBarCmdType } from "./omnibar/Omnibar";
 
 import { usePorts } from "./ports";
@@ -56,12 +62,19 @@ export type FlydeFlowEditorProps = {
 
   resolvedRepoWithDeps: ResolvedFlydeFlowDefinition;
 
-  onImportPart: (part: ImportablePart, target?: {pos: Pos,  connectTo?: {insId: string, outputId: string}} ) => void;
+  onImportPart: (
+    part: ImportablePart,
+    target?: { pos: Pos; connectTo?: { insId: string; outputId: string } }
+  ) => void;
   onQueryImportables?: (query: string) => Promise<ImportablePart[]>;
 
   onInspectPin: (insId: string, pinId: string, pinType: PinType) => void;
 
-  onRequestHistory: (insId: string, pinId: string, pinType: PinType) => Promise<HistoryPayload>;
+  onRequestHistory: (
+    insId: string,
+    pinId: string,
+    pinType: PinType
+  ) => Promise<HistoryPayload>;
 
   onNewEnvVar?: (name: string, val: any) => void;
 
@@ -94,10 +107,19 @@ const resolvedToRepo = (res: ResolvedFlydeFlowDefinition): PartDefRepo => ({
 
 export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
   React.forwardRef((props, ref) => {
-    const { state, resolvedRepoWithDeps: resolvedFlow, onChangeEditorState, onImportPart } = props;
+    const {
+      state,
+      resolvedRepoWithDeps: resolvedFlow,
+      onChangeEditorState,
+      onImportPart,
+    } = props;
 
-    const [undoStack, setUndoStack] = React.useState<Partial<FlowEditorState>[]>([]);
-    const [redoStack, setRedoStack] = React.useState<Partial<FlowEditorState>[]>([]);
+    const [undoStack, setUndoStack] = React.useState<
+      Partial<FlowEditorState>[]
+    >([]);
+    const [redoStack, setRedoStack] = React.useState<
+      Partial<FlowEditorState>[]
+    >([]);
 
     const { flow, boardData: editorBoardData } = state;
     const editedPart = state.flow.part;
@@ -109,7 +131,10 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
         console.log("onChangeFlow", changeType.type);
 
         if (changeType.type === "functional") {
-          setUndoStack([{ flow: newFlow }, ...undoStack.slice(0, maxUndoStackSize)]);
+          setUndoStack([
+            { flow: newFlow },
+            ...undoStack.slice(0, maxUndoStackSize),
+          ]);
           setRedoStack([]);
         }
         onChangeEditorState((state) => ({ ...state, flow: newFlow }));
@@ -170,7 +195,9 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
 
     const onChangePart = React.useCallback(
       (newPart: GroupedPart, changeType: FlydeFlowChangeType) => {
-        const shouldIgnore = ignoreUndoChangeTypes.some((str) => changeType.message.includes(str));
+        const shouldIgnore = ignoreUndoChangeTypes.some((str) =>
+          changeType.message.includes(str)
+        );
         if (!shouldIgnore) {
           setRedoStack([]);
         }
@@ -205,7 +232,9 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
           const valueChanged = produce(flow, (draft) => {
             const part = draft.part;
             if (!isGroupedPart(part)) {
-              throw new Error(`Impossible state, adding part to non grouped part`);
+              throw new Error(
+                `Impossible state, adding part to non grouped part`
+              );
             }
             part.instances.push(newPartIns);
           });
@@ -214,7 +243,13 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
           return newPartIns;
         }
       },
-      [editorBoardData.lastMousePos, flow, onChangeFlow, hideOmnibar, resolvedFlow]
+      [
+        editorBoardData.lastMousePos,
+        flow,
+        onChangeFlow,
+        hideOmnibar,
+        resolvedFlow,
+      ]
     );
 
     const onOmnibarCmd = React.useCallback(
@@ -240,7 +275,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
             // onCreateNewPart("grouped");
             break;
           case OmniBarCmdType.IMPORT: {
-            await onImportPart(cmd.data, {pos: editorBoardData.lastMousePos});
+            await onImportPart(cmd.data, { pos: editorBoardData.lastMousePos });
             const finalPos = vAdd({ x: 0, y: 0 }, editorBoardData.lastMousePos);
             const newPartIns = createNewPartInstance(
               cmd.data.part,
@@ -255,7 +290,10 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
             break;
           }
           default:
-            AppToaster.show({ intent: "warning", message: "Not supported yet" });
+            AppToaster.show({
+              intent: "warning",
+              message: "Not supported yet",
+            });
         }
         hideOmnibar();
       },

@@ -8,24 +8,26 @@ const DEFAULT_POS = {
   y: 99999,
 };
 
-const elemPos = (elem: Element | undefined, boardPos: Pos, id: string, viewPort: ViewPort) => {
+const elemPos = (
+  elem: Element | undefined,
+  boardPos: Pos,
+  id: string,
+  viewPort: ViewPort
+) => {
   if (!elem) {
     console.warn(`Cannot find element ${id} to render connection`);
     return DEFAULT_POS;
   }
   const { x, y, width, height } = elem.getBoundingClientRect();
 
-  
   const mx = x + width / 2;
   const my = y + height / 2;
 
   return {
     x: mx - boardPos.x,
-    y: my - boardPos.y
+    y: my - boardPos.y,
   };
-}
-
-
+};
 
 export const calcPinPosition = (
   parentInsId: string,

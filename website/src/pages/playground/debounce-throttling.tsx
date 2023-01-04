@@ -21,17 +21,15 @@ import {
 import example from "./_flows/debounce-throttle.flyde";
 import { OutputLogs } from "./_OutputLogs/OutputLogs";
 
-console.log({example});
-
+console.log({ example });
 
 const META_DATA = {
   title: "Debounce vs. Throttling",
-  description:
-    `This example takes Flyde's visual feedback to the next level by showing the difference between debouncing and throttling. Click on the buttons below to emit some Emojis.`,
+  description: `This example takes Flyde's visual feedback to the next level by showing the difference between debouncing and throttling. Click on the buttons below to emit some Emojis.`,
   key: "debounce-throttling",
 };
 
-const extraInfo = `Cool right? you can try duplicating parts by pressing shift+D. Connect parts together by clicking on the source part's output pin and then on a the targets part's input pin`
+const extraInfo = `Cool right? you can try duplicating parts by pressing shift+D. Connect parts together by clicking on the source part's output pin and then on a the targets part's input pin`;
 
 export default function DebounceThrottlingExample(): JSX.Element {
   const result = useRef(dynamicOutput());
@@ -43,7 +41,9 @@ export default function DebounceThrottlingExample(): JSX.Element {
   const [deb, setDeb] = useState(1500);
   const [thr, setThr] = useState(4000);
 
-  const [flowProps, setFlowProps] = useState<PlaygroundTemplateProps["flowProps"]>({
+  const [flowProps, setFlowProps] = useState<
+    PlaygroundTemplateProps["flowProps"]
+  >({
     flow: example.flow,
     resolvedFlow: example.resolvedFlow,
     inputs: inputs.current,
@@ -53,13 +53,17 @@ export default function DebounceThrottlingExample(): JSX.Element {
   useEffect(() => {
     setFlowProps(
       produce(flowProps, (draft) => {
-          const part = draft.flow.part;
-          if (isGroupedPart(part)) {
-            const debIns = part.instances.find((ins) => isRefPartInstance(ins) && ins.partId === "Debounce");
-            debIns.inputConfig.wait = staticInputPinConfig(deb);
-            const thrIns = part.instances.find((ins) => isRefPartInstance(ins) && ins.partId === "Throttle");
-            thrIns.inputConfig.threshold = staticInputPinConfig(thr);
-          }
+        const part = draft.flow.part;
+        if (isGroupedPart(part)) {
+          const debIns = part.instances.find(
+            (ins) => isRefPartInstance(ins) && ins.partId === "Debounce"
+          );
+          debIns.inputConfig.wait = staticInputPinConfig(deb);
+          const thrIns = part.instances.find(
+            (ins) => isRefPartInstance(ins) && ins.partId === "Throttle"
+          );
+          thrIns.inputConfig.threshold = staticInputPinConfig(thr);
+        }
       })
     );
   }, [deb, thr]);
@@ -70,8 +74,9 @@ export default function DebounceThrottlingExample(): JSX.Element {
     });
   }, []);
 
-  const controls = <Fragment>
-      <div style={{display: 'flex', justifyContent: 'center', gap: 5}}>
+  const controls = (
+    <Fragment>
+      <div style={{ display: "flex", justifyContent: "center", gap: 5 }}>
         <input
           type="range"
           id="deb"
@@ -84,7 +89,7 @@ export default function DebounceThrottlingExample(): JSX.Element {
         />
         <label htmlFor="deb">Debounce - {deb}ms</label>
       </div>
-      <div style={{display: 'flex', justifyContent: 'center', gap: 5}}>
+      <div style={{ display: "flex", justifyContent: "center", gap: 5 }}>
         <input
           type="range"
           id="thr"
@@ -97,15 +102,37 @@ export default function DebounceThrottlingExample(): JSX.Element {
         />
         <label htmlFor="thr">Throttle - {thr}ms</label>
       </div>
-      
-      <button className="emit-btn button button--outline button--primary" onClick={() => inputs.current.input.subject.next("🐶")}>Emit 🐶</button>
-      <button className="emit-btn button button--outline button--primary" onClick={() => inputs.current.input.subject.next("😸")}>Emit 😸</button>
-      <button className="emit-btn button button--outline button--primary" onClick={() => inputs.current.input.subject.next("🦄")}>Emit 🦄</button>
-  </Fragment>;
+
+      <button
+        className="emit-btn button button--outline button--primary"
+        onClick={() => inputs.current.input.subject.next("🐶")}
+      >
+        Emit 🐶
+      </button>
+      <button
+        className="emit-btn button button--outline button--primary"
+        onClick={() => inputs.current.input.subject.next("😸")}
+      >
+        Emit 😸
+      </button>
+      <button
+        className="emit-btn button button--outline button--primary"
+        onClick={() => inputs.current.input.subject.next("🦄")}
+      >
+        Emit 🦄
+      </button>
+    </Fragment>
+  );
 
   return (
-    <PlaygroundTemplate meta={META_DATA} flowProps={flowProps} prefixComponent={controls} hideDelay={true} extraInfo={extraInfo}>
-      <OutputLogs output={result.current}/>
+    <PlaygroundTemplate
+      meta={META_DATA}
+      flowProps={flowProps}
+      prefixComponent={controls}
+      hideDelay={true}
+      extraInfo={extraInfo}
+    >
+      <OutputLogs output={result.current} />
     </PlaygroundTemplate>
   );
 }

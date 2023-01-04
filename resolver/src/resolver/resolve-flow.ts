@@ -17,8 +17,12 @@ import { namespaceFlowImports } from "./namespace-flow-imports/namespace-flow-im
 export type ResolveMode = "implementation" | "definition" | "bundle";
 
 const getRefPartIds = (part: GroupedPart): string[] => {
-  const refPartIds = part.instances.filter(isRefPartInstance).map((ins) => ins.partId);
-  const inlineParts = part.instances.filter(isInlinePartInstance).map((ins) => ins.part);
+  const refPartIds = part.instances
+    .filter(isRefPartInstance)
+    .map((ins) => ins.partId);
+  const inlineParts = part.instances
+    .filter(isInlinePartInstance)
+    .map((ins) => ins.part);
 
   const idsFromInline = inlineParts.reduce((acc, part) => {
     if (isGroupedPart(part)) {
@@ -35,7 +39,10 @@ const _resolveFlow = (
   mode: ResolveMode = "definition",
   originalFlowPath: string = fullFlowPath
 ): ResolvedFlydeFlow => {
-  const flow = deserializeFlow(readFileSync(fullFlowPath, "utf8"), fullFlowPath);
+  const flow = deserializeFlow(
+    readFileSync(fullFlowPath, "utf8"),
+    fullFlowPath
+  );
 
   const part = flow.part;
 
@@ -44,7 +51,10 @@ const _resolveFlow = (
   const inverseImports = Object.entries(imports).reduce((acc, curr) => {
     const [module, parts] = curr;
 
-    const obj = parts.reduce((acc, curr) => ({ ...acc, [curr as string]: module }), {});
+    const obj = parts.reduce(
+      (acc, curr) => ({ ...acc, [curr as string]: module }),
+      {}
+    );
     return { ...acc, ...obj };
   }, {});
 
@@ -94,7 +104,10 @@ const _resolveFlow = (
 
       const resolvedImport = resolveFlow(path, mode, originalFlowPath);
 
-      const namespacedImport = namespaceFlowImports(resolvedImport, `${refPartId}__`);
+      const namespacedImport = namespaceFlowImports(
+        resolvedImport,
+        `${refPartId}__`
+      );
 
       deps = {
         ...deps,

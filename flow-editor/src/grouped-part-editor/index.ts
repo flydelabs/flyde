@@ -1,1 +1,1 @@
-export * from './GroupedPartEditor';
+export * from "./GroupedPartEditor";

@@ -5,7 +5,6 @@ import {
   PartDefinition,
   PartDefRepo,
   isCodePart,
-  
   Pos,
   isStaticInput,
   isStaticInputPinConfig,
@@ -14,7 +13,7 @@ import {
   ResolvedFlydeFlowDefinition,
 } from "@flyde/core";
 
-import * as ejs from 'ejs';
+import * as ejs from "ejs";
 
 import { isDefined } from "../../utils";
 
@@ -40,8 +39,11 @@ export const calcPartContent = (
     try {
       const inputs = Object.entries(instance.inputConfig)
         .filter(([, v]) => isStaticInputPinConfig(v))
-        .reduce((p, [k, v]) => ({ ...p, [k]:  (v as StaticInputPinConfig).value }), {});
-      
+        .reduce(
+          (p, [k, v]) => ({ ...p, [k]: (v as StaticInputPinConfig).value }),
+          {}
+        );
+
       return ejs.render(part.customViewCode, { inputs, isDefined }).trim(); // TODO: render with ejs or equivalent. Removed due to wp5 issues
 
       // // hack to render detached embedded parts correctly
@@ -59,10 +61,7 @@ export const calcPartContent = (
   return part.id;
 };
 
-export const calcPartWidth = (
-  instance: PartInstance,
-  part: PartDefinition
-) => {
+export const calcPartWidth = (instance: PartInstance, part: PartDefinition) => {
   const allInputKeys = okeys(part.inputs);
   const visibleInputs = allInputKeys.length;
   const minWidth = visibleInputs * MIN_WIDTH_PER_PIN;
@@ -79,7 +78,11 @@ export const calcPartWidth = (
   // return Math.max(minWidth, partContent.length * charWidth + PIECE_HORIZONTAL_PADDING * 2);
 };
 
-export const calcInstancePosition = (insId: string, parentInsId: string, boardPos: Pos) => {
+export const calcInstancePosition = (
+  insId: string,
+  parentInsId: string,
+  boardPos: Pos
+) => {
   const domId = getInstanceDomId(parentInsId, insId);
   const elem = document.getElementById(domId);
 

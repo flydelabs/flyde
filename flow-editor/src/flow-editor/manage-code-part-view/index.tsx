@@ -1,13 +1,7 @@
 import { CodePart, CustomPart } from "@flyde/core";
-import {
-  Button,
-  Classes,
-  Dialog,
-  Intent,
-  MenuItem,
-} from "@blueprintjs/core";
-import classNames from 'classnames';
-import React, {  } from "react";
+import { Button, Classes, Dialog, Intent, MenuItem } from "@blueprintjs/core";
+import classNames from "classnames";
+import React from "react";
 
 // ;
 
@@ -36,29 +30,46 @@ export const renderCreateIOOption = (
 );
 
 const defaultPart: CodePart = {
-  id: 'NewPart',
+  id: "NewPart",
   inputs: {},
   outputs: {},
-  fnCode: `// magic here`
-}
+  fnCode: `// magic here`,
+};
 
-export const ManageCodePartView: React.FC<ManageCodePartViewProps> = (props) => {
-  const {title } = props;
+export const ManageCodePartView: React.FC<ManageCodePartViewProps> = (
+  props
+) => {
+  const { title } = props;
 
-  const [draftPart, setDraftPart] = React.useState(defaultPart );
-  
+  const [draftPart, setDraftPart] = React.useState(defaultPart);
+
   return (
     <div className="manage-code-part-view">
-      <Dialog isOpen={true} title ={title} onClose={props.onCancel} canEscapeKeyClose={false}>
+      <Dialog
+        isOpen={true}
+        title={title}
+        onClose={props.onCancel}
+        canEscapeKeyClose={false}
+      >
         <main className={classNames(Classes.DIALOG_BODY)}>
-          <CodePartEditor part={draftPart} onChange={setDraftPart} editMode={false}/>
-          {props.externalModule ? <strong>External module, saving is disabled</strong> : null}
+          <CodePartEditor
+            part={draftPart}
+            onChange={setDraftPart}
+            editMode={false}
+          />
+          {props.externalModule ? (
+            <strong>External module, saving is disabled</strong>
+          ) : null}
         </main>
 
         <div className={Classes.DIALOG_FOOTER}>
           <div className={Classes.DIALOG_FOOTER_ACTIONS}>
             <Button onClick={props.onCancel}>Cancel</Button>
-            <Button onClick={() => props.onSave(draftPart)} intent={Intent.PRIMARY} disabled={props.externalModule}>
+            <Button
+              onClick={() => props.onSave(draftPart)}
+              intent={Intent.PRIMARY}
+              disabled={props.externalModule}
+            >
               Save
             </Button>
           </div>

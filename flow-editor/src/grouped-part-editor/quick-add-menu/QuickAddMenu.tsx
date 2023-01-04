@@ -7,7 +7,7 @@ import {
   PinType,
   ResolvedFlydeFlowDefinition,
   values,
-  Pos
+  Pos,
 } from "@flyde/core";
 // ;
 import { MenuDivider, MenuItem } from "@blueprintjs/core";
@@ -28,7 +28,10 @@ export type QuickMenuImportMatch = {
   importablePart: ImportablePart;
 };
 
-export type QuickMenuMatch = QuickMenuPartMatch | QuickMenuValueMatch | QuickMenuImportMatch;
+export type QuickMenuMatch =
+  | QuickMenuPartMatch
+  | QuickMenuValueMatch
+  | QuickMenuImportMatch;
 
 export type QuickAddMenuData = {
   pos: Pos;
@@ -63,7 +66,10 @@ const matchTitle = (match: QuickMenuMatch) => {
   }
 };
 
-const renderPart: ItemRenderer<QuickMenuMatch> = (match, { handleClick, modifiers, query }) => {
+const renderPart: ItemRenderer<QuickMenuMatch> = (
+  match,
+  { handleClick, modifiers, query }
+) => {
   if (!modifiers.matchesPredicate) {
     return null;
   }
@@ -95,7 +101,12 @@ const renderPart: ItemRenderer<QuickMenuMatch> = (match, { handleClick, modifier
   );
 };
 
-const partPredicate: ItemPredicate<QuickMenuMatch> = (query, match, _index, exactMatch) => {
+const partPredicate: ItemPredicate<QuickMenuMatch> = (
+  query,
+  match,
+  _index,
+  exactMatch
+) => {
   const normalizedTitle = matchTitle(match).toLocaleLowerCase();
   const normalizedQuery = query.toLowerCase();
 
@@ -121,34 +132,34 @@ export const QuickAddMenu: React.FC<QuickMenuProps> = (props) => {
     }
   }, [onRequestImportables]);
 
-  const availableParts =  values({
+  const availableParts = values({
     ...resolvedFlow.dependencies,
     [resolvedFlow.main.id]: resolvedFlow.main,
   });
 
-  const existingPartMatches = availableParts.map<QuickMenuMatch>(
-    (curr) => {
-      return {
-        type: "part",
-        part: curr as PartDefinition,
-      };
+  const existingPartMatches = availableParts.map<QuickMenuMatch>((curr) => {
+    return {
+      type: "part",
+      part: curr as PartDefinition,
+    };
   });
 
-  const existingIds = new Set(availableParts.map(p => p.id));  
+  const existingIds = new Set(availableParts.map((p) => p.id));
 
   const importableParts = importables
     ? importables
-      .filter(imp => !existingIds.has(imp.part.id))
-      .map<QuickMenuMatch>((curr) => {
-      return {
-          type: "import",
-          importablePart: curr,
-      }
-    }) : [];
+        .filter((imp) => !existingIds.has(imp.part.id))
+        .map<QuickMenuMatch>((curr) => {
+          return {
+            type: "import",
+            importablePart: curr,
+          };
+        })
+    : [];
 
   const matches: QuickMenuMatch[] = existingPartMatches
     .concat(importableParts)
-    .concat({type: 'value'})
+    .concat({ type: "value" });
 
   return (
     <div className="quick-add-menu" style={style}>

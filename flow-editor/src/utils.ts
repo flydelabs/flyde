@@ -1,5 +1,9 @@
 import { isJsxValue } from "./grouped-part-editor/utils";
-import { getEnvKeyFromValue, isEnvValue, isStaticValueGroupedPart } from "@flyde/core";
+import {
+  getEnvKeyFromValue,
+  isEnvValue,
+  isStaticValueGroupedPart,
+} from "@flyde/core";
 import moment from "moment";
 import React from "react";
 

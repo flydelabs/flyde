@@ -6,7 +6,16 @@ import { spy } from "sinon";
 import * as jg from "jsdom-global";
 
 import { Subject } from "rxjs";
-import { delay, eventually, isDefined, pickRandom, randomInt, randomInts, repeat, shuffle } from "./common";
+import {
+  delay,
+  eventually,
+  isDefined,
+  pickRandom,
+  randomInt,
+  randomInts,
+  repeat,
+  shuffle,
+} from "./common";
 import {
   connect,
   connectionNode,
@@ -65,7 +74,7 @@ import {
   callsFirstArgs,
   valuePart,
   spiedOutput,
-  wrappedOnEvent
+  wrappedOnEvent,
 } from "./test-utils";
 import { DebuggerEventType } from "./execute/debugger";
 
@@ -107,7 +116,12 @@ describe("main ", () => {
       const r = dynamicOutput();
 
       r.subscribe(s);
-      execute({part: part, inputs: { v }, outputs: { r }, partsRepo: testRepo});
+      execute({
+        part: part,
+        inputs: { v },
+        outputs: { r },
+        partsRepo: testRepo,
+      });
       v.subject.next(2);
       assert.equal(s.calledOnceWithExactly(2), true);
     });
@@ -131,7 +145,12 @@ describe("main ", () => {
       const r = dynamicOutput();
 
       r.subscribe(s);
-      execute({part: part, inputs: { v }, outputs: { r }, partsRepo: testRepo});
+      execute({
+        part: part,
+        inputs: { v },
+        outputs: { r },
+        partsRepo: testRepo,
+      });
       v.subject.next(2);
       assert.equal(s.calledOnceWithExactly(2), true);
     });
@@ -159,7 +178,12 @@ describe("main ", () => {
       const r = dynamicOutput();
 
       r.subscribe(s);
-      execute({part: part, inputs: { a, b }, outputs: { r }, partsRepo: testRepo});
+      execute({
+        part: part,
+        inputs: { a, b },
+        outputs: { r },
+        partsRepo: testRepo,
+      });
       a.subject.next(2);
       b.subject.next(3);
       assert.equal(s.calledOnceWithExactly(5), true);
@@ -177,7 +201,12 @@ describe("main ", () => {
       const r = new Subject();
       const s = spy();
       r.subscribe(s);
-      execute({part: addGrouped, inputs: { n1, n2 }, outputs: { r }, partsRepo: testRepo});
+      execute({
+        part: addGrouped,
+        inputs: { n1, n2 },
+        outputs: { r },
+        partsRepo: testRepo,
+      });
       const num1 = randomInt(1, 100);
       const num2 = randomInt(1, 100);
       n1.subject.next(num1);
@@ -189,7 +218,10 @@ describe("main ", () => {
     it("works with nested parts", () => {
       const add1mul2twice = {
         id: "a1m2x2",
-        instances: [partInstance("p1", add1mul2.id), partInstance("p2", add1mul2.id)],
+        instances: [
+          partInstance("p1", add1mul2.id),
+          partInstance("p2", add1mul2.id),
+        ],
         connections: [
           {
             from: connectionNode("p1", "r"),
@@ -211,7 +243,12 @@ describe("main ", () => {
       const fn = spy();
       const n = dynamicPartInput();
       const r = dynamicOutput();
-      execute({part: part, inputs: { n }, outputs: { r }, partsRepo: testRepo});
+      execute({
+        part: part,
+        inputs: { n },
+        outputs: { r },
+        partsRepo: testRepo,
+      });
       r.subscribe(fn);
 
       n.subject.next(20); // ((21 * 2) + 1) * 2
@@ -221,7 +258,7 @@ describe("main ", () => {
       assert.equal(fn.lastCall.args[0], 86);
     });
 
-    it('supports inline instance parts', () => {
+    it("supports inline instance parts", () => {
       const add1: GroupedPart = {
         id: "add1",
         inputs: {
@@ -232,7 +269,9 @@ describe("main ", () => {
         },
         inputsPosition: {},
         outputsPosition: {},
-        instances: [inlinePartInstance("a", add, {n1: staticInputPinConfig(1)})],
+        instances: [
+          inlinePartInstance("a", add, { n1: staticInputPinConfig(1) }),
+        ],
         connections: [
           {
             from: externalConnectionNode("n"),
@@ -248,12 +287,16 @@ describe("main ", () => {
       const n = dynamicPartInput();
       const [s, r] = spiedOutput();
 
-      execute({part: add1, inputs: { n }, outputs: { r }, partsRepo: testRepo});
+      execute({
+        part: add1,
+        inputs: { n },
+        outputs: { r },
+        partsRepo: testRepo,
+      });
 
       n.subject.next(2);
 
       assert.equal(s.lastCall.args[0], 3);
-
     });
 
     describe("optional inputs", () => {
@@ -262,7 +305,10 @@ describe("main ", () => {
           {
             id: "bob",
             instances: [partInstance("a", optAdd.id)],
-            connections: [connectionData("n1", "a.n1"), connectionData("a.r", "r")],
+            connections: [
+              connectionData("n1", "a.n1"),
+              connectionData("a.r", "r"),
+            ],
             inputs: {
               n1: partInput(),
             },
@@ -276,7 +322,12 @@ describe("main ", () => {
         const n1 = dynamicPartInput();
         const s = spy();
         const r = dynamicOutput();
-        execute({part: part, inputs: { n1 }, outputs: { r }, partsRepo: testRepo});
+        execute({
+          part: part,
+          inputs: { n1 },
+          outputs: { r },
+          partsRepo: testRepo,
+        });
         r.subscribe(s);
         n1.subject.next(42);
         assert.equal(s.lastCall.args[0], 84);
@@ -307,7 +358,12 @@ describe("main ", () => {
         const n2 = dynamicPartInput();
         const s = spy();
         const r = dynamicOutput();
-        execute({part: part, inputs: { n1, n2 }, outputs: { r }, partsRepo: testRepo});
+        execute({
+          part: part,
+          inputs: { n1, n2 },
+          outputs: { r },
+          partsRepo: testRepo,
+        });
         r.subscribe(s);
         n2.subject.next(1);
         n1.subject.next(2);
@@ -347,7 +403,7 @@ describe("main ", () => {
         const s = spy();
         const r = dynamicOutput();
         r.subscribe(s);
-        execute({part: part, inputs: {}, outputs: { r }, partsRepo: repo});
+        execute({ part: part, inputs: {}, outputs: { r }, partsRepo: repo });
         assert.equal(s.lastCall.args[0], 47);
       });
     });
@@ -364,7 +420,10 @@ describe("main ", () => {
             outputs: {
               r: partOutput(),
             },
-            connections: [connectionData("n", "a.n"), connectionData("a.r", "r")],
+            connections: [
+              connectionData("n", "a.n"),
+              connectionData("a.r", "r"),
+            ],
           },
           testRepo
         );
@@ -372,12 +431,22 @@ describe("main ", () => {
         const n = dynamicPartInput();
         const s1 = spy();
         const r1 = dynamicOutput();
-        execute({part: p1, inputs: { n }, outputs: { r: r1 }, partsRepo: testRepo});
+        execute({
+          part: p1,
+          inputs: { n },
+          outputs: { r: r1 },
+          partsRepo: testRepo,
+        });
         r1.subscribe(s1);
 
         const s2 = spy();
         const r2 = dynamicOutput();
-        execute({part: p1, inputs: { n }, outputs: { r: r2 }, partsRepo: testRepo});
+        execute({
+          part: p1,
+          inputs: { n },
+          outputs: { r: r2 },
+          partsRepo: testRepo,
+        });
         r2.subscribe(s2);
 
         n.subject.next(2);
@@ -427,7 +496,12 @@ describe("main ", () => {
 
         r.subscribe(fn);
 
-        execute({part: part, inputs: { n }, outputs: { r }, partsRepo: testRepo});
+        execute({
+          part: part,
+          inputs: { n },
+          outputs: { r },
+          partsRepo: testRepo,
+        });
 
         assert.equal(fn.callCount, 0);
         n.subject.next(2);
@@ -446,7 +520,10 @@ describe("main ", () => {
         const part = connect(
           {
             id: "test",
-            instances: [partInstance("v1", Value(n).id), partInstance("a", add1.id)],
+            instances: [
+              partInstance("v1", Value(n).id),
+              partInstance("a", add1.id),
+            ],
             connections: [
               {
                 from: connectionNode("v1", "r"),
@@ -465,7 +542,7 @@ describe("main ", () => {
         const r = new Subject();
         const s = spy();
         r.subscribe(s);
-        execute({part: part, inputs: {}, outputs: { r }, partsRepo: repo});
+        execute({ part: part, inputs: {}, outputs: { r }, partsRepo: repo });
 
         assert.equal(s.lastCall.args[0], n + 1);
       });
@@ -476,7 +553,10 @@ describe("main ", () => {
         const part = connect(
           {
             id: "test",
-            instances: [partInstance("v", Value(n).id), partInstance("a", add.id)],
+            instances: [
+              partInstance("v", Value(n).id),
+              partInstance("a", add.id),
+            ],
             connections: [
               {
                 from: connectionNode("v", "r"),
@@ -499,7 +579,7 @@ describe("main ", () => {
         const r = new Subject();
         const s = spy();
         r.subscribe(s);
-        execute({part: part, inputs: {}, outputs: { r }, partsRepo: repo});
+        execute({ part: part, inputs: {}, outputs: { r }, partsRepo: repo });
 
         r.subscribe(s);
 
@@ -509,7 +589,10 @@ describe("main ", () => {
       it("works regardless of the order of the instances and connections with 2 pieces", () => {
         const n = randomInt(99);
         const repo = testRepoWith(Value(n));
-        const instances = [partInstance("a", add1.id), partInstance("v", Value(n).id)];
+        const instances = [
+          partInstance("a", add1.id),
+          partInstance("v", Value(n).id),
+        ];
 
         for (let i = 0; i < 10; i++) {
           const part = connect(
@@ -534,7 +617,7 @@ describe("main ", () => {
           const r = new Subject();
           const s = spy();
           r.subscribe(s);
-          execute({part: part, inputs: {}, outputs: { r }, partsRepo: repo});
+          execute({ part: part, inputs: {}, outputs: { r }, partsRepo: repo });
 
           assert.equal(s.lastCall.args[0], n + 1);
         }
@@ -576,7 +659,7 @@ describe("main ", () => {
           const r = new Subject();
           const s = spy();
           r.subscribe(s);
-          execute({part: part, inputs: {}, outputs: { r }, partsRepo: repo});
+          execute({ part: part, inputs: {}, outputs: { r }, partsRepo: repo });
 
           assert.equal(s.lastCall.args[0], n + n);
         }
@@ -591,8 +674,14 @@ describe("main ", () => {
           outputs: {
             r: partOutput("number"),
           },
-          instances: [partInstance("v1", Value(n).id), partInstance("a", add1.id)],
-          connections: [connectionData("v1.r", "a.n"), connectionData("a.r", "r")],
+          instances: [
+            partInstance("v1", Value(n).id),
+            partInstance("a", add1.id),
+          ],
+          connections: [
+            connectionData("v1.r", "a.n"),
+            connectionData("a.r", "r"),
+          ],
           inputsPosition: {},
           outputsPosition: {},
         };
@@ -600,7 +689,7 @@ describe("main ", () => {
         const r = new Subject();
         const s = spy();
         r.subscribe(s);
-        execute({part: part, inputs: {}, outputs: { r }, partsRepo: repo});
+        execute({ part: part, inputs: {}, outputs: { r }, partsRepo: repo });
 
         assert.equal(s.callCount, 1);
         assert.equal(s.lastCall.args[0], n + 1);
@@ -632,13 +721,23 @@ describe("main ", () => {
       const r2 = new Subject();
 
       // normal
-      execute({part: add1, inputs: { n: n1 }, outputs: { r: r1 }, partsRepo: testRepo});
+      execute({
+        part: add1,
+        inputs: { n: n1 },
+        outputs: { r: r1 },
+        partsRepo: testRepo,
+      });
       r1.subscribe(s1);
       n1.subject.next(4);
       assert.equal(s1.lastCall.args[0], 5);
 
       // connected
-      execute({part: p, inputs: { n: n2 }, outputs: { r: r2 }, partsRepo: testRepo});
+      execute({
+        part: p,
+        inputs: { n: n2 },
+        outputs: { r: r2 },
+        partsRepo: testRepo,
+      });
       r2.subscribe(s2);
       n2.subject.next(4);
       assert.equal(s2.lastCall.args[0], 5);
@@ -648,7 +747,12 @@ describe("main ", () => {
       const n = dynamicPartInput();
       const bob = dynamicPartInput();
       const r = new Subject();
-      execute({part: add1, inputs: { n, bob }, outputs: { r }, partsRepo: testRepo});
+      execute({
+        part: add1,
+        inputs: { n, bob },
+        outputs: { r },
+        partsRepo: testRepo,
+      });
       const res = spy();
       r.subscribe(res);
 
@@ -662,7 +766,10 @@ describe("main ", () => {
       const part = connect(
         {
           id: "test",
-          instances: [partInstance("v", Value(7).id), partInstance("a", add.id)],
+          instances: [
+            partInstance("v", Value(7).id),
+            partInstance("a", add.id),
+          ],
           connections: [
             connectionData("v.r", "a.n1"),
             connectionData("n2", "a.n2"),
@@ -683,7 +790,7 @@ describe("main ", () => {
 
       const s = spy();
       assert.deepEqual(Object.keys(part.inputs), ["n2"]);
-      execute({part: part, inputs: { n2 }, outputs: { r }, partsRepo: repo});
+      execute({ part: part, inputs: { n2 }, outputs: { r }, partsRepo: repo });
 
       r.subscribe(s);
 
@@ -697,7 +804,10 @@ describe("main ", () => {
       const part = connect(
         {
           id: "test",
-          instances: [partInstance("v", Value(7).id), partInstance("a", transform.id)],
+          instances: [
+            partInstance("v", Value(7).id),
+            partInstance("a", transform.id),
+          ],
           connections: [
             connectionData("v.r", "a.to"),
             connectionData("from", "a.from"),
@@ -720,7 +830,12 @@ describe("main ", () => {
       assert.deepEqual(Object.keys(part.inputs), ["from"]);
 
       r.subscribe(s);
-      execute({part: part, inputs: { from }, outputs: { r }, partsRepo: repo});
+      execute({
+        part: part,
+        inputs: { from },
+        outputs: { r },
+        partsRepo: repo,
+      });
 
       from.subject.next(18);
       assert.equal(s.lastCall.args[0], 7);
@@ -733,7 +848,12 @@ describe("main ", () => {
         const v = dynamicPartInput();
         const r = dynamicOutput();
         const s = spy();
-        const cancel = execute({part: id, inputs: { v }, outputs: { r }, partsRepo: testRepo});
+        const cancel = execute({
+          part: id,
+          inputs: { v },
+          outputs: { r },
+          partsRepo: testRepo,
+        });
         r.subscribe(s);
         v.subject.next(5);
         assert.equal(s.lastCall.args[0], 5);
@@ -782,7 +902,12 @@ describe("main ", () => {
 
         const v = dynamicPartInput();
         const r = dynamicOutput();
-        const cancel = execute({part: part, inputs: { v }, outputs: { r }, partsRepo: repo});
+        const cancel = execute({
+          part: part,
+          inputs: { v },
+          outputs: { r },
+          partsRepo: repo,
+        });
         r.subscribe(s);
         v.subject.next(5);
         assert.equal(s.lastCall.args[0], 5);
@@ -819,7 +944,10 @@ describe("main ", () => {
         outputs: {
           a: partOutput("number"),
         },
-        instances: [partInstance("v", Value(1).id), partInstance("add", add.id)],
+        instances: [
+          partInstance("v", Value(1).id),
+          partInstance("add", add.id),
+        ],
         connections: [
           connectionData("v.r", "add.n2"),
           connection(externalConnectionNode("a"), connectionNode("add", "n1")),
@@ -833,7 +961,12 @@ describe("main ", () => {
       const outputA = dynamicOutput();
       const fn = spy();
       outputA.subscribe(fn);
-      execute({part: part, inputs: { a: inputA }, outputs: { a: outputA }, partsRepo: repo});
+      execute({
+        part: part,
+        inputs: { a: inputA },
+        outputs: { a: outputA },
+        partsRepo: repo,
+      });
       inputA.subject.next(2);
       assert.equal(fn.callCount, 1);
       assert.equal(fn.calledWith(3), true);
@@ -861,7 +994,12 @@ describe("main ", () => {
 
         const n = dynamicPartInput();
         const r = dynamicOutput();
-        execute({part: part, inputs: { n }, outputs: { r }, partsRepo: testRepo});
+        execute({
+          part: part,
+          inputs: { n },
+          outputs: { r },
+          partsRepo: testRepo,
+        });
 
         const fn = spy();
         r.subscribe(fn);
@@ -880,7 +1018,10 @@ describe("main ", () => {
           },
           inputsPosition: {},
           outputsPosition: {},
-          instances: [partInstance("a", Value(1).id), partInstance("b", Value(2).id)],
+          instances: [
+            partInstance("a", Value(1).id),
+            partInstance("b", Value(2).id),
+          ],
           connections: [
             connection(connectionNode("a", "r"), externalConnectionNode("r")),
             connection(connectionNode("b", "r"), externalConnectionNode("r")),
@@ -890,7 +1031,7 @@ describe("main ", () => {
         const r = dynamicOutput();
         const fn = spy();
         r.subscribe(fn);
-        execute({part: part, inputs: {}, outputs: { r }, partsRepo: repo});
+        execute({ part: part, inputs: {}, outputs: { r }, partsRepo: repo });
 
         await delay(200);
 
@@ -963,7 +1104,12 @@ describe("main ", () => {
         const fn = dynamicPartInput();
         const r = new Subject();
         r.subscribe(s);
-        execute({part: filter, inputs: { list, fn }, outputs: { r }, partsRepo: testRepo});
+        execute({
+          part: filter,
+          inputs: { list, fn },
+          outputs: { r },
+          partsRepo: testRepo,
+        });
         list.subject.next([1, 2, 3, 4, 5, 6]);
         fn.subject.next(isEven);
 
@@ -977,7 +1123,12 @@ describe("main ", () => {
         const fn = staticPartInput(`__part:${isEven.id}`);
         const r = new Subject();
         r.subscribe(s);
-        execute({part: filter, inputs: { list, fn }, outputs: { r }, partsRepo: testRepo});
+        execute({
+          part: filter,
+          inputs: { list, fn },
+          outputs: { r },
+          partsRepo: testRepo,
+        });
         list.subject.next([1, 2, 3, 4, 5, 6]);
 
         assert.equal(s.called, true);
@@ -1004,7 +1155,12 @@ describe("main ", () => {
         const v = dynamicPartInput();
         const r = new Subject();
         r.subscribe(s);
-        execute({part: part, inputs: { v }, outputs: { r }, partsRepo: testRepo});
+        execute({
+          part: part,
+          inputs: { v },
+          outputs: { r },
+          partsRepo: testRepo,
+        });
         v.subject.next(1);
         v.subject.next(2);
         v.subject.next(3);
@@ -1022,10 +1178,20 @@ describe("main ", () => {
         const r2 = new Subject();
         r1.subscribe(s);
         3;
-        execute({part: part, inputs: { v: v1 }, outputs: { r: r1 }, partsRepo: testRepo});
+        execute({
+          part: part,
+          inputs: { v: v1 },
+          outputs: { r: r1 },
+          partsRepo: testRepo,
+        });
         v1.subject.next(1);
         v1.subject.next(2);
-        execute({part: part, inputs: { v: v2 }, outputs: { r: r2 }, partsRepo: testRepo});
+        execute({
+          part: part,
+          inputs: { v: v2 },
+          outputs: { r: r2 },
+          partsRepo: testRepo,
+        });
         v2.subject.next(1);
         v2.subject.next(2);
 
@@ -1056,7 +1222,12 @@ describe("main ", () => {
         const r = dynamicOutput();
 
         r.subscribe(s);
-        execute({part: part, inputs: { n1, n2 }, outputs: { r }, partsRepo: testRepo});
+        execute({
+          part: part,
+          inputs: { n1, n2 },
+          outputs: { r },
+          partsRepo: testRepo,
+        });
 
         n1.subject.next(1);
         n2.subject.next(2);
@@ -1092,7 +1263,12 @@ describe("main ", () => {
         const r = dynamicOutput();
 
         r.subscribe(s);
-        execute({part: part, inputs: { n1, n2 }, outputs: { r }, partsRepo: testRepo});
+        execute({
+          part: part,
+          inputs: { n1, n2 },
+          outputs: { r },
+          partsRepo: testRepo,
+        });
 
         n1.subject.next(1);
         n2.subject.next(2);
@@ -1137,7 +1313,12 @@ describe("main ", () => {
         const s = spy();
         r.subscribe(s);
 
-        execute({part: counterWrapper, inputs: { v }, outputs: { r }, partsRepo: testRepoWith(counter)});
+        execute({
+          part: counterWrapper,
+          inputs: { v },
+          outputs: { r },
+          partsRepo: testRepoWith(counter),
+        });
         v.subject.next(1);
         v.subject.next(1);
         v.subject.next(1);
@@ -1171,7 +1352,10 @@ describe("main ", () => {
           completionOutputs: ["r2"],
           outputs: ["r", "r2"],
           reactiveInputs: ["v", "v2"],
-          instances: [partInstance("i1", counter.id), partInstance("i2", id.id)],
+          instances: [
+            partInstance("i1", counter.id),
+            partInstance("i2", id.id),
+          ],
           connections: [
             ["v", "i1.v"],
             ["i1.r", "r"],
@@ -1185,7 +1369,12 @@ describe("main ", () => {
         const s = spy();
         r.subscribe(s);
 
-        execute({part: counterWrapper, inputs: { v, v2 }, outputs: { r, r2 }, partsRepo: testRepoWith(counter)});
+        execute({
+          part: counterWrapper,
+          inputs: { v, v2 },
+          outputs: { r, r2 },
+          partsRepo: testRepoWith(counter),
+        });
         v.subject.next(1);
         v.subject.next(1);
 
@@ -1205,7 +1394,13 @@ describe("main ", () => {
         const r = new Subject();
         r.subscribe(s);
         const state = {};
-        execute({part: part, inputs: { v }, outputs: { r }, partsRepo: testRepo, mainState: state});
+        execute({
+          part: part,
+          inputs: { v },
+          outputs: { r },
+          partsRepo: testRepo,
+          mainState: state,
+        });
         v.subject.next(1);
         v.subject.next(2);
         v.subject.next(3);
@@ -1237,7 +1432,12 @@ describe("main ", () => {
 
       r.subscribe(s);
 
-      execute({part: part, inputs: { n }, outputs: { r }, partsRepo: testRepo});
+      execute({
+        part: part,
+        inputs: { n },
+        outputs: { r },
+        partsRepo: testRepo,
+      });
       n.subject.next(42);
 
       assert.equal(s.calledWith(42), true);
@@ -1260,7 +1460,12 @@ describe("main ", () => {
       const v = dynamicPartInput();
       const r = new Subject();
       r.subscribe(s);
-      execute({part: part, inputs: { v }, outputs: { r }, partsRepo: testRepo});
+      execute({
+        part: part,
+        inputs: { v },
+        outputs: { r },
+        partsRepo: testRepo,
+      });
       v.subject.next(1);
       v.subject.next(2);
       v.subject.next(3);
@@ -1301,7 +1506,7 @@ describe("main ", () => {
       const s = spy();
       r.subscribe(s);
 
-      execute({part: grouped, inputs: { n }, outputs: {}, partsRepo: repo});
+      execute({ part: grouped, inputs: { n }, outputs: {}, partsRepo: repo });
 
       assert.equal(innerSpy.callCount, 0);
 
@@ -1329,7 +1534,7 @@ describe("main ", () => {
 
       r.subscribe(s);
 
-      execute({part: part, inputs: {}, outputs: { r }, partsRepo: testRepo});
+      execute({ part: part, inputs: {}, outputs: { r }, partsRepo: testRepo });
       assert.equal(s.lastCall.args[0], "ok");
     });
 
@@ -1371,7 +1576,7 @@ describe("main ", () => {
 
       r.subscribe(s);
 
-      execute({part: addRec, inputs: { n }, outputs: { r }, partsRepo: repo});
+      execute({ part: addRec, inputs: { n }, outputs: { r }, partsRepo: repo });
 
       n.subject.next(1);
       assert.equal(s.called, true);
@@ -1436,7 +1641,7 @@ describe("main ", () => {
 
       r.subscribe(s);
 
-      execute({part: fact, inputs: { n }, outputs: { r }, partsRepo: repo});
+      execute({ part: fact, inputs: { n }, outputs: { r }, partsRepo: repo });
 
       n.subject.next(0);
       assert.equal(s.lastCall.args[0], 1);
@@ -1480,7 +1685,12 @@ describe("main ", () => {
       const r = dynamicOutput();
 
       r.subscribe(s);
-      execute({part: codePart, inputs: { v }, outputs: { r }, partsRepo: testRepo});
+      execute({
+        part: codePart,
+        inputs: { v },
+        outputs: { r },
+        partsRepo: testRepo,
+      });
       v.subject.next(2);
       assert.equal(s.calledOnceWithExactly(2), true);
     });
@@ -1512,7 +1722,12 @@ describe("main ", () => {
       const r = dynamicOutput();
 
       r.subscribe(s);
-      execute({part: part, inputs: { a, b }, outputs: { r }, partsRepo: testRepo});
+      execute({
+        part: part,
+        inputs: { a, b },
+        outputs: { r },
+        partsRepo: testRepo,
+      });
       assert.equal(innerSpy.callCount, 0);
       a.subject.next(2);
       b.subject.next(3);
@@ -1546,7 +1761,12 @@ describe("main ", () => {
       };
       const v = dynamicPartInput();
       const r = dynamicOutput();
-      const clean = execute({part: part, inputs: { v }, outputs: { r }, partsRepo: testRepo});
+      const clean = execute({
+        part: part,
+        inputs: { v },
+        outputs: { r },
+        partsRepo: testRepo,
+      });
       v.subject.next(2);
       assert.equal(spyFn.calledOnce, false);
       clean();
@@ -1570,7 +1790,12 @@ describe("main ", () => {
       const r = dynamicOutput();
       const s = spy();
       r.subscribe(s);
-      const clean = execute({part: part, inputs: {}, outputs: { r }, partsRepo: testRepo});
+      const clean = execute({
+        part: part,
+        inputs: {},
+        outputs: { r },
+        partsRepo: testRepo,
+      });
       await delay(5);
       assert.equal(s.callCount > 1, true);
       clean();
@@ -1597,17 +1822,20 @@ describe("main ", () => {
       };
       const v = dynamicPartInput();
       const r = dynamicOutput();
-      const clean = execute({part: part, inputs: { v }, outputs: { r }, partsRepo: testRepo});
+      const clean = execute({
+        part: part,
+        inputs: { v },
+        outputs: { r },
+        partsRepo: testRepo,
+      });
       v.subject.next(2);
       assert.equal(spyFn.calledOnce, false);
       clean();
       assert.equal(spyFn.calledOnce, true);
     });
-
   });
 
-  describe('extra context', () => {
-
+  describe("extra context", () => {
     it("passes external context forward when running code comps", async () => {
       const bobber = (n: number) => n + 42;
       const part: CodePart = {
@@ -1623,7 +1851,13 @@ describe("main ", () => {
       const r = dynamicOutput();
       const s = spy();
       r.subscribe(s);
-      execute({part: part, inputs: {}, outputs: { r }, partsRepo: testRepo, extraContext: { bobber }});
+      execute({
+        part: part,
+        inputs: {},
+        outputs: { r },
+        partsRepo: testRepo,
+        extraContext: { bobber },
+      });
       assert.equal(s.callCount, 1);
       assert.equal(s.lastCall.args[0], 54);
     });
@@ -1638,20 +1872,26 @@ describe("main ", () => {
         },
         fn: (i, o, adv) => {
           o.r.next(adv.context.bobber(12));
-        }
-      }
+        },
+      };
       const r = dynamicOutput();
       const s = spy();
       r.subscribe(s);
-      execute({part: part, inputs: {}, outputs: { r }, partsRepo: testRepo, extraContext: { bobber }});
+      execute({
+        part: part,
+        inputs: {},
+        outputs: { r },
+        partsRepo: testRepo,
+        extraContext: { bobber },
+      });
       assert.equal(s.callCount, 1);
       assert.equal(s.lastCall.args[0], 54);
     });
-    
+
     it.skip("passes external context forward to grouped parts", async () => {
       // TODO - write test
     });
-  })
+  });
 
   describe("const values", () => {
     it("supports const values on main execution", () => {
@@ -1662,7 +1902,12 @@ describe("main ", () => {
       const r = new Subject();
       const s = spy();
       r.subscribe(s);
-      execute({part: add, inputs: { n1, n2 }, outputs: { r }, partsRepo: testRepo});
+      execute({
+        part: add,
+        inputs: { n1, n2 },
+        outputs: { r },
+        partsRepo: testRepo,
+      });
       n1.subject.next(num1);
       n1.subject.next(num2);
       assert.equal(s.callCount, 2);
@@ -1680,7 +1925,12 @@ describe("main ", () => {
       const s = spy();
       r.subscribe(s);
 
-      execute({part: addGrouped, inputs: { n1, n2 }, outputs: { r }, partsRepo: testRepo});
+      execute({
+        part: addGrouped,
+        inputs: { n1, n2 },
+        outputs: { r },
+        partsRepo: testRepo,
+      });
       n1.subject.next(num1);
       assert.equal(s.callCount, 1);
       assert.equal(s.getCalls()[0].args[0], num1 + num2);
@@ -1698,14 +1948,21 @@ describe("main ", () => {
         id: "part",
         inputs: ["n1"],
         outputs: ["r"],
-        instances: [partInstance("a", add.id, { n2: staticInputPinConfig(n2) })],
+        instances: [
+          partInstance("a", add.id, { n2: staticInputPinConfig(n2) }),
+        ],
         connections: [
           ["n1", "a.n1"],
           ["a.r", "r"],
         ],
       });
 
-      execute({part: part, inputs: { n1 }, outputs: { r }, partsRepo: testRepo});
+      execute({
+        part: part,
+        inputs: { n1 },
+        outputs: { r },
+        partsRepo: testRepo,
+      });
       const num1 = randomInt(1, 100);
       n1.subject.next(num1);
       n1.subject.next(n2);
@@ -1726,14 +1983,21 @@ describe("main ", () => {
         id: "part",
         inputs: ["n1"],
         outputs: ["r"],
-        instances: [partInstance("a", add.id, { n2: staticInputPinConfig(n2) })],
+        instances: [
+          partInstance("a", add.id, { n2: staticInputPinConfig(n2) }),
+        ],
         connections: [
           ["n1", "a.n1"],
           ["a.r", "r"],
         ],
       });
 
-      execute({part: part, inputs: { n1 }, outputs: { r }, partsRepo: testRepo});
+      execute({
+        part: part,
+        inputs: { n1 },
+        outputs: { r },
+        partsRepo: testRepo,
+      });
       const num1 = randomInt(1, 100);
       n1.subject.next(num1);
       n1.subject.next(n2);
@@ -1758,7 +2022,12 @@ describe("main ", () => {
       const s = spy();
       r.subscribe(s);
 
-      execute({part: add, inputs: { n1, n2 }, outputs: { r }, partsRepo: testRepo});
+      execute({
+        part: add,
+        inputs: { n1, n2 },
+        outputs: { r },
+        partsRepo: testRepo,
+      });
 
       n1.subject.next(1);
       n1.subject.next(2);
@@ -1785,7 +2054,12 @@ describe("main ", () => {
       const s = spy();
       r.subscribe(s);
 
-      execute({part: addGroupedQueued, inputs: { n1, n2 }, outputs: { r }, partsRepo: testRepo});
+      execute({
+        part: addGroupedQueued,
+        inputs: { n1, n2 },
+        outputs: { r },
+        partsRepo: testRepo,
+      });
 
       n1.subject.next(1);
       n1.subject.next(2);
@@ -1818,7 +2092,12 @@ describe("main ", () => {
         completionOutputs: ["r"],
       });
 
-      execute({part: part, inputs: { a, b }, outputs: { r }, partsRepo: testRepo});
+      execute({
+        part: part,
+        inputs: { a, b },
+        outputs: { r },
+        partsRepo: testRepo,
+      });
 
       a.subject.next(1);
       a.subject.next(2);
@@ -1856,7 +2135,12 @@ describe("main ", () => {
         },
       };
 
-      execute({part: delayer, inputs: { item }, outputs: { r }, partsRepo: testRepo});
+      execute({
+        part: delayer,
+        inputs: { item },
+        outputs: { r },
+        partsRepo: testRepo,
+      });
 
       item.subject.next(10);
       item.subject.next(5);
@@ -1900,7 +2184,12 @@ describe("main ", () => {
           },
         };
 
-        execute({part: delayer, inputs: { item }, outputs: { r, final }, partsRepo: testRepo});
+        execute({
+          part: delayer,
+          inputs: { item },
+          outputs: { r, final },
+          partsRepo: testRepo,
+        });
 
         item.subject.next(1);
         item.subject.next(2);
@@ -1918,7 +2207,6 @@ describe("main ", () => {
       it("supports + as the AND operator for completion outputs", async () => {
         const item = dynamicPartInput({ config: queueInputPinConfig() });
 
-        
         const f1 = dynamicOutput();
         const f2 = dynamicOutput();
 
@@ -1952,7 +2240,12 @@ describe("main ", () => {
           },
         };
 
-        execute({part: delayer, inputs: { item }, outputs: { f1, f2, r }, partsRepo: testRepo});
+        execute({
+          part: delayer,
+          inputs: { item },
+          outputs: { f1, f2, r },
+          partsRepo: testRepo,
+        });
 
         item.subject.next(1);
         item.subject.next(2);
@@ -1970,7 +2263,11 @@ describe("main ", () => {
       it("re-runs parts only when one of the required outputs complete if there are more than 1", async () => {
         const item = dynamicPartInput({ config: queueInputPinConfig() });
 
-        const [r, final1, final2] = [dynamicOutput(), dynamicOutput(), dynamicOutput()];
+        const [r, final1, final2] = [
+          dynamicOutput(),
+          dynamicOutput(),
+          dynamicOutput(),
+        ];
 
         const s = spy();
         final1.subscribe((v) => s(`f1-${v}`));
@@ -2001,7 +2298,12 @@ describe("main ", () => {
           },
         };
 
-        execute({part: delayer, inputs: { item }, outputs: { r, final1, final2 }, partsRepo: testRepo});
+        execute({
+          part: delayer,
+          inputs: { item },
+          outputs: { r, final1, final2 },
+          partsRepo: testRepo,
+        });
 
         item.subject.next(0);
         item.subject.next(1);
@@ -2009,7 +2311,14 @@ describe("main ", () => {
 
         await eventually(
           () => {
-            assert.deepEqual(callsFirstArgs(s), ["r-0", "f2-0", "r-1", "f1-1", "r-0", "f2-0"]);
+            assert.deepEqual(callsFirstArgs(s), [
+              "r-0",
+              "f2-0",
+              "r-1",
+              "f1-1",
+              "r-0",
+              "f2-0",
+            ]);
           },
           200,
           5
@@ -2056,7 +2365,13 @@ describe("main ", () => {
           s(`e-${val}`);
         };
 
-        execute({part: delayer, inputs: { item }, outputs: { r, final1 }, partsRepo: testRepo, onBubbleError: onError});
+        execute({
+          part: delayer,
+          inputs: { item },
+          outputs: { r, final1 },
+          partsRepo: testRepo,
+          onBubbleError: onError,
+        });
 
         item.subject.next(0);
         item.subject.next(1);
@@ -2064,25 +2379,31 @@ describe("main ", () => {
 
         await eventually(
           () => {
-            assert.deepEqual(callsFirstArgs(s), ["r-0", "e-0", "r-1", "f1-1", "r-0", "e-0"]);
+            assert.deepEqual(callsFirstArgs(s), [
+              "r-0",
+              "e-0",
+              "r-1",
+              "f1-1",
+              "r-0",
+              "e-0",
+            ]);
           },
           200,
           5
         );
       });
 
-      it('triggers the completion callback with last values when completed', async () => {
+      it("triggers the completion callback with last values when completed", async () => {
         const simpleCompletion: NativePart = {
           id: "simpleCompletion",
           inputs: {},
           outputs: {
-            r: partOutput("number")
+            r: partOutput("number"),
           },
           completionOutputs: ["r"],
-          fn: ({ }, { r}) => {
-            
+          fn: ({}, { r }) => {
             setTimeout(() => {
-              r.next('bob');
+              r.next("bob");
             }, 10);
           },
         };
@@ -2090,14 +2411,24 @@ describe("main ", () => {
 
         const completionSpy = spy();
 
-        execute({part: simpleCompletion, inputs: { }, outputs: { r }, partsRepo: testRepo, onCompleted: completionSpy});
-        
+        execute({
+          part: simpleCompletion,
+          inputs: {},
+          outputs: { r },
+          partsRepo: testRepo,
+          onCompleted: completionSpy,
+        });
+
         assert.equal(completionSpy.called, false);
-        await eventually(() => {
-          assert.equal(completionSpy.called, true);
-        }, 100, 10);
+        await eventually(
+          () => {
+            assert.equal(completionSpy.called, true);
+          },
+          100,
+          10
+        );
         assert.equal(completionSpy.callCount, 1);
-        assert.deepEqual(completionSpy.lastCall.args[0], {r: 'bob'})
+        assert.deepEqual(completionSpy.lastCall.args[0], { r: "bob" });
       });
     });
 
@@ -2138,7 +2469,12 @@ describe("main ", () => {
         },
       };
 
-      const clean = execute({part: somePart, inputs: { item },  outputs: { r, final }, partsRepo: testRepo});
+      const clean = execute({
+        part: somePart,
+        inputs: { item },
+        outputs: { r, final },
+        partsRepo: testRepo,
+      });
 
       item.subject.next(23423); // call 0
       item.subject.next(124); // call 1
@@ -2188,7 +2524,12 @@ describe("main ", () => {
         const s = spy();
         r.subscribe(s);
 
-        const clean = execute({part: accumulate, inputs: { item, count }, outputs: { r }, partsRepo: testRepo});
+        const clean = execute({
+          part: accumulate,
+          inputs: { item, count },
+          outputs: { r },
+          partsRepo: testRepo,
+        });
 
         count.subject.next(1);
         item.subject.next(23423); // call 0
@@ -2207,7 +2548,12 @@ describe("main ", () => {
         const s = spy();
         r.subscribe(s);
 
-        execute({part: accumulate, inputs: { item, count }, outputs: { r }, partsRepo: testRepo});
+        execute({
+          part: accumulate,
+          inputs: { item, count },
+          outputs: { r },
+          partsRepo: testRepo,
+        });
 
         item.subject.next(1);
         count.subject.next(1);
@@ -2232,7 +2578,12 @@ describe("main ", () => {
         const s = spy();
         r.subscribe(s);
 
-        execute({part: accumulate, inputs: { item, count }, outputs: { r }, partsRepo: testRepo});
+        execute({
+          part: accumulate,
+          inputs: { item, count },
+          outputs: { r },
+          partsRepo: testRepo,
+        });
 
         item.subject.next(1);
         count.subject.next(1);
@@ -2256,7 +2607,11 @@ describe("main ", () => {
           outputs: ["r"],
           completionOutputs: ["r"],
           reactiveInputs: ["val"],
-          instances: [partInstance("i1", accumulate.id, { count: staticInputPinConfig(2) })],
+          instances: [
+            partInstance("i1", accumulate.id, {
+              count: staticInputPinConfig(2),
+            }),
+          ],
           connections: [
             ["val", "i1.item"],
             ["i1.r", "r"],
@@ -2308,7 +2663,7 @@ describe("main ", () => {
           part: groupedPart,
           inputs: { val, count },
           outputs: { r },
-          partsRepo: testRepoWith(accumulate)
+          partsRepo: testRepoWith(accumulate),
         });
 
         count.subject.next(2);
@@ -2358,7 +2713,12 @@ describe("main ", () => {
         const s = spy();
         r.subscribe(s);
 
-        execute({part: accUntil, inputs: { item, until }, outputs: { r }, partsRepo: testRepo});
+        execute({
+          part: accUntil,
+          inputs: { item, until },
+          outputs: { r },
+          partsRepo: testRepo,
+        });
 
         item.subject.next(22);
         item.subject.next(23);
@@ -2407,7 +2767,12 @@ describe("main ", () => {
       const s = spy();
       r.subscribe(s);
 
-      execute({part: groupedPart, inputs: { n1 }, outputs: { r }, partsRepo: testRepo});
+      execute({
+        part: groupedPart,
+        inputs: { n1 },
+        outputs: { r },
+        partsRepo: testRepo,
+      });
 
       assert.equal(s.getCalls()[0].args[0], num1 + num2);
       assert.equal(s.callCount, 1);
@@ -2441,7 +2806,12 @@ describe("main ", () => {
       const s = spy();
       r.subscribe(s);
 
-      execute({part: merge, inputs: { a, b }, outputs: { r }, partsRepo: testRepo});
+      execute({
+        part: merge,
+        inputs: { a, b },
+        outputs: { r },
+        partsRepo: testRepo,
+      });
 
       const numbers = randomInts(20);
 
@@ -2483,7 +2853,12 @@ describe("main ", () => {
       const s = spy();
       r.subscribe(s);
 
-      execute({part: mergeGrouped, inputs: { b, a }, outputs: { r }, partsRepo: testRepo});
+      execute({
+        part: mergeGrouped,
+        inputs: { b, a },
+        outputs: { r },
+        partsRepo: testRepo,
+      });
 
       const valuesCount = randomInt(10, 20);
 
@@ -2516,15 +2891,30 @@ describe("main ", () => {
         const [a, b] = [dynamicPartInput(), dynamicPartInput()];
 
         // execute({part: dummyPart, inputs: {}, outputs: {}, partsRepo: testRepo});
-        execute({part: dummyPart, inputs: { a }, outputs: {}, partsRepo: testRepo});
-        execute({part: dummyPart, inputs: { b }, outputs: {}, partsRepo: testRepo});
+        execute({
+          part: dummyPart,
+          inputs: { a },
+          outputs: {},
+          partsRepo: testRepo,
+        });
+        execute({
+          part: dummyPart,
+          inputs: { b },
+          outputs: {},
+          partsRepo: testRepo,
+        });
 
         a.subject.next(1);
         b.subject.next(2);
 
         assert.equal(s.callCount, 0);
 
-        execute({part: dummyPart, inputs: { a, b }, outputs: {}, partsRepo: testRepo});
+        execute({
+          part: dummyPart,
+          inputs: { a, b },
+          outputs: {},
+          partsRepo: testRepo,
+        });
 
         a.subject.next(1);
         b.subject.next(2);
@@ -2545,13 +2935,23 @@ describe("main ", () => {
         const [a, b] = [dynamicPartInput(), dynamicPartInput()];
 
         // execute({part: dummyPart, inputs: {}, outputs: {}, partsRepo: testRepo});
-        execute({part: dummyPart, inputs: { a, b }, outputs: {}, partsRepo: testRepo});
+        execute({
+          part: dummyPart,
+          inputs: { a, b },
+          outputs: {},
+          partsRepo: testRepo,
+        });
 
         a.subject.next(1);
 
         assert.equal(s.callCount, 0);
 
-        execute({part: dummyPart, inputs: { a }, outputs: {}, partsRepo: testRepo});
+        execute({
+          part: dummyPart,
+          inputs: { a },
+          outputs: {},
+          partsRepo: testRepo,
+        });
 
         a.subject.next(1);
 
@@ -2577,7 +2977,14 @@ describe("main ", () => {
       const s = spy();
       const a = dynamicPartInput();
 
-      execute({part: errorReportingPart, inputs: { a }, outputs: {}, partsRepo: testRepo, onBubbleError: s, insId: "someIns"});
+      execute({
+        part: errorReportingPart,
+        inputs: { a },
+        outputs: {},
+        partsRepo: testRepo,
+        onBubbleError: s,
+        insId: "someIns",
+      });
 
       assert.equal(s.callCount, 0);
 
@@ -2602,7 +3009,14 @@ describe("main ", () => {
 
       const onEvent = wrappedOnEvent(DebuggerEventType.ERROR, s);
 
-      execute({part: p2, inputs: { a }, outputs: {}, partsRepo: testRepo, _debugger: {onEvent}, insId: "someIns"});
+      execute({
+        part: p2,
+        inputs: { a },
+        outputs: {},
+        partsRepo: testRepo,
+        _debugger: { onEvent },
+        insId: "someIns",
+      });
 
       assert.equal(s.callCount, 0);
 
@@ -2636,18 +3050,28 @@ describe("main ", () => {
 
       const onEvent = wrappedOnEvent(DebuggerEventType.ERROR, s);
 
-      execute({part: badWrapper, inputs: { a }, outputs: {}, partsRepo: testRepoWith(p2), _debugger: {onEvent}, insId: "someIns"});
+      execute({
+        part: badWrapper,
+        inputs: { a },
+        outputs: {},
+        partsRepo: testRepoWith(p2),
+        _debugger: { onEvent },
+        insId: "someIns",
+      });
 
       assert.equal(s.callCount, 0);
 
       a.subject.next("bob");
 
-      assert.equal(s.callCount, 2);      
+      assert.equal(s.callCount, 2);
 
       assert.include(s.getCalls()[1].args[0].val.toString(), "blaft");
       assert.include(s.getCalls()[1].args[0].insId, "i1");
 
-      assert.include(s.getCalls()[0].args[0].val.toString(), "child instance i1");
+      assert.include(
+        s.getCalls()[0].args[0].val.toString(),
+        "child instance i1"
+      );
       assert.include(s.getCalls()[0].args[0].val.toString(), "blaft");
       assert.include(s.getCalls()[0].args[0].insId, "someIns");
     });
@@ -2666,7 +3090,14 @@ describe("main ", () => {
 
       const onEvent = wrappedOnEvent(DebuggerEventType.ERROR, s);
 
-      execute({part: badWrapper, inputs: { a }, outputs: {}, partsRepo: testRepoWith(errorReportingPart), _debugger: {onEvent}, insId: "someIns"});
+      execute({
+        part: badWrapper,
+        inputs: { a },
+        outputs: {},
+        partsRepo: testRepoWith(errorReportingPart),
+        _debugger: { onEvent },
+        insId: "someIns",
+      });
 
       assert.equal(s.callCount, 0);
 
@@ -2677,7 +3108,10 @@ describe("main ", () => {
       assert.include(s.getCalls()[1].args[0].val.toString(), "blah");
       assert.include(s.getCalls()[1].args[0].insId, "i1");
 
-      assert.include(s.getCalls()[0].args[0].val.toString(), "child instance i1");
+      assert.include(
+        s.getCalls()[0].args[0].val.toString(),
+        "child instance i1"
+      );
       assert.include(s.getCalls()[0].args[0].val.toString(), "blah");
       assert.include(s.getCalls()[0].args[0].insId, "someIns");
     });
@@ -2703,7 +3137,14 @@ describe("main ", () => {
 
       const onEvent = wrappedOnEvent(DebuggerEventType.ERROR, s1);
 
-      execute({part: badWrapper, inputs:{ a }, outputs: { r }, partsRepo: testRepoWith(errorReportingPart), _debugger: {onEvent}, insId: "someIns"});
+      execute({
+        part: badWrapper,
+        inputs: { a },
+        outputs: { r },
+        partsRepo: testRepoWith(errorReportingPart),
+        _debugger: { onEvent },
+        insId: "someIns",
+      });
 
       assert.equal(s1.callCount, 0);
 
@@ -2722,7 +3163,14 @@ describe("main ", () => {
       const errPin = dynamicOutput();
       errPin.subscribe(s2);
 
-      execute({part: errorReportingPart, inputs: { a }, outputs: { [ERROR_PIN_ID]: errPin }, partsRepo: testRepo, onBubbleError: s1, insId: "someIns"});
+      execute({
+        part: errorReportingPart,
+        inputs: { a },
+        outputs: { [ERROR_PIN_ID]: errPin },
+        partsRepo: testRepo,
+        onBubbleError: s1,
+        insId: "someIns",
+      });
 
       assert.equal(s1.callCount, 0);
       assert.equal(s2.callCount, 0);
@@ -2742,7 +3190,14 @@ describe("main ", () => {
 
       const errPin = dynamicOutput();
 
-      execute({part: errorReportingPart, inputs: { a }, outputs: { [ERROR_PIN_ID]: errPin }, partsRepo: testRepo, insId: "someIns", _debugger: {onEvent}});
+      execute({
+        part: errorReportingPart,
+        inputs: { a },
+        outputs: { [ERROR_PIN_ID]: errPin },
+        partsRepo: testRepo,
+        insId: "someIns",
+        _debugger: { onEvent },
+      });
 
       assert.equal(s.callCount, 0);
       a.subject.next("bob");
@@ -2752,28 +3207,33 @@ describe("main ", () => {
     });
   });
 
-  describe('async part function', () => {
-    it('works with async functions', async () => {
+  describe("async part function", () => {
+    it("works with async functions", async () => {
       const part = conciseNativePart({
-        id: 'Async',
+        id: "Async",
         inputs: [],
-        outputs: ['r'],
+        outputs: ["r"],
         fn: async (i, o) => {
           await delay(10);
-          o.r.next('ok');
-        }
+          o.r.next("ok");
+        },
       });
 
       const [s, r] = spiedOutput();
-      const clean = execute({part, partsRepo: {}, inputs: {}, outputs: {r}});
+      const clean = execute({
+        part,
+        partsRepo: {},
+        inputs: {},
+        outputs: { r },
+      });
       await eventually(() => {
         assert.equal(s.called, true);
-      })
+      });
 
       clean();
-      assert.isTrue(s.calledOnceWith('ok'));
-    })
-  })
+      assert.isTrue(s.calledOnceWith("ok"));
+    });
+  });
 
   describe("bugs found", () => {
     it("works with accumulate and a static input", () => {
@@ -2781,7 +3241,12 @@ describe("main ", () => {
       const [val] = dynamicPartInputs();
       const count = staticPartInput(1);
 
-      execute({part: accumulate, inputs: { val, count }, outputs: { r }, partsRepo: testRepo});
+      execute({
+        part: accumulate,
+        inputs: { val, count },
+        outputs: { r },
+        partsRepo: testRepo,
+      });
 
       assert.equal(s.callCount, 0);
 
@@ -2810,7 +3275,12 @@ describe("main ", () => {
         ],
       });
 
-      execute({part: part, inputs: { list }, outputs: { r }, partsRepo: testRepoWith(spreadList, accumulate)});
+      execute({
+        part: part,
+        inputs: { list },
+        outputs: { r },
+        partsRepo: testRepoWith(spreadList, accumulate),
+      });
 
       assert.equal(s.callCount, 0);
 
@@ -2820,29 +3290,34 @@ describe("main ", () => {
       assert.deepEqual(callsFirstArgs(s), [[1], [2], [3]]);
     });
 
-    it('does not get in a loop with a sticky input that got data', () => {
+    it("does not get in a loop with a sticky input that got data", () => {
       const part = concisePart({
         id: "test",
         inputs: [],
         outputs: ["r"],
         instances: [
-          partInstance("i1", id.id, {v: staticInputPinConfig('bob')}),
-          partInstance("i2", id.id, {v: stickyInputPinConfig()}),
+          partInstance("i1", id.id, { v: staticInputPinConfig("bob") }),
+          partInstance("i2", id.id, { v: stickyInputPinConfig() }),
         ],
         connections: [
-          ['i1.r', 'i2.v'],
-          ['i2.r', 'r']
-        ]
+          ["i1.r", "i2.v"],
+          ["i2.r", "r"],
+        ],
       });
 
       const [s, r] = spiedOutput();
 
-      execute({part: part, inputs: {  }, outputs: { r }, partsRepo: testRepoWith(id)});
+      execute({
+        part: part,
+        inputs: {},
+        outputs: { r },
+        partsRepo: testRepoWith(id),
+      });
 
       // a.subject.next(1);
 
       assert.equal(s.callCount, 1);
-    })
+    });
   });
 
   describe("environment vars", () => {
@@ -2894,7 +3369,7 @@ describe("main ", () => {
         inputs: { n1 },
         outputs: { r },
         partsRepo: testRepo,
-        env
+        env,
       });
 
       n1.subject.next(222);
@@ -2909,14 +3384,27 @@ describe("main ", () => {
         inputs: [],
         outputs: ["r"],
         connections: [["i1.r", "r"]],
-        instances: [partInstance("i1", id.id, { v: staticInputPinConfig("$ENV.aValue") })],
+        instances: [
+          partInstance("i1", id.id, { v: staticInputPinConfig("$ENV.aValue") }),
+        ],
       });
 
-      const values = [true, false, randomInt(999), { obj: { obj2: randomInt(99) } }];
+      const values = [
+        true,
+        false,
+        randomInt(999),
+        { obj: { obj2: randomInt(99) } },
+      ];
       values.forEach((val) => {
         const [s, r] = spiedOutput();
         const env = { aValue: val };
-        execute({part: groupedId, inputs: {}, outputs: { r }, partsRepo: testRepo, env});
+        execute({
+          part: groupedId,
+          inputs: {},
+          outputs: { r },
+          partsRepo: testRepo,
+          env,
+        });
         assert.deepEqual(callsFirstArgs(s), [val]);
       });
     });
@@ -2927,7 +3415,11 @@ describe("main ", () => {
         inputs: [],
         outputs: ["r"],
         connections: [["i1.r", "r"]],
-        instances: [partInstance("i1", id.id, { v: staticInputPinConfig("$ENV.myObj.student.name") })],
+        instances: [
+          partInstance("i1", id.id, {
+            v: staticInputPinConfig("$ENV.myObj.student.name"),
+          }),
+        ],
       });
 
       const env = {
@@ -2939,7 +3431,13 @@ describe("main ", () => {
       };
 
       const [s, r] = spiedOutput();
-      execute({part: groupedId, inputs: {}, outputs: { r }, partsRepo: testRepo, env});
+      execute({
+        part: groupedId,
+        inputs: {},
+        outputs: { r },
+        partsRepo: testRepo,
+        env,
+      });
       assert.deepEqual(callsFirstArgs(s), ["Albert"]);
     });
 
@@ -2949,7 +3447,11 @@ describe("main ", () => {
         inputs: [],
         outputs: ["r"],
         connections: [["i1.r", "r"]],
-        instances: [partInstance("i1", id.id, { v: staticInputPinConfig("$ENV.myObj.student.name") })],
+        instances: [
+          partInstance("i1", id.id, {
+            v: staticInputPinConfig("$ENV.myObj.student.name"),
+          }),
+        ],
       });
 
       const env = {};
@@ -2963,7 +3465,7 @@ describe("main ", () => {
         outputs: { r },
         partsRepo: testRepo,
         onBubbleError: onError,
-        env
+        env,
       });
       assert.equal(onError.callCount, 1);
       assert.include(onError.getCall(0).args[0].message, "myObj.student.name");
@@ -2991,7 +3493,13 @@ describe("main ", () => {
       const err = (e) => {
         throw e;
       };
-      execute({part: groupedPart, inputs: { a }, outputs: { r }, partsRepo: testRepoWith(v42), onBubbleError: err});
+      execute({
+        part: groupedPart,
+        inputs: { a },
+        outputs: { r },
+        partsRepo: testRepoWith(v42),
+        onBubbleError: err,
+      });
 
       assert.equal(s.callCount, 0);
 
@@ -3036,7 +3544,7 @@ describe("main ", () => {
         inputs: { a },
         outputs: { r },
         partsRepo: testRepoWith(addPart),
-        onBubbleError: err
+        onBubbleError: err,
       });
 
       assert.equal(s.callCount, 0);
@@ -3081,7 +3589,7 @@ describe("main ", () => {
         inputs: { a },
         outputs: { r },
         partsRepo: testRepoWith(addPart),
-        onBubbleError: errSpy
+        onBubbleError: errSpy,
       });
 
       assert.equal(s.callCount, 0);
@@ -3093,54 +3601,61 @@ describe("main ", () => {
     });
   });
 
-  describe('misc', () => {
-    it('does not clean state when reactive input is received', () => {
+  describe("misc", () => {
+    it("does not clean state when reactive input is received", () => {
       const part = conciseNativePart({
-        id: 'part',
-        inputs: ['a'],
-        outputs: ['r'],
-        reactiveInputs: ['a'],
+        id: "part",
+        inputs: ["a"],
+        outputs: ["r"],
+        reactiveInputs: ["a"],
         completionOutputs: [],
         fn: (inputs, outputs, adv) => {
-          const val = adv.state.get('bob') || 0;
-          const newVal = val  + 1;
-          adv.state.set('bob', newVal);
+          const val = adv.state.get("bob") || 0;
+          const newVal = val + 1;
+          adv.state.set("bob", newVal);
           outputs.r.next(val + 1);
-        }
+        },
       });
 
       const [s, r] = spiedOutput();
       const a = dynamicPartInput();
-      execute({part, inputs: {a}, outputs: {r}, partsRepo: testRepoWith(part)});
+      execute({
+        part,
+        inputs: { a },
+        outputs: { r },
+        partsRepo: testRepoWith(part),
+      });
 
       const timesToCall = randomInt(3, 10);
       for (let i = 0; i < timesToCall; i++) {
-        a.subject.next('some val');
+        a.subject.next("some val");
       }
 
       assert.equal(s.callCount, timesToCall);
       assert.equal(s.lastCall.args[0], timesToCall);
-  
-      
     });
 
-    it('does not enter a loop when static values are connected to a reactive input', () => {
+    it("does not enter a loop when static values are connected to a reactive input", () => {
       const part = conciseNativePart({
-        id: 'part',
-        inputs: ['a'],
-        outputs: ['r'],
-        reactiveInputs: ['a'],
+        id: "part",
+        inputs: ["a"],
+        outputs: ["r"],
+        reactiveInputs: ["a"],
         completionOutputs: [],
         fn: (inputs, outputs, adv) => {
           outputs.r.next(inputs.a);
-        }
+        },
       });
 
       const [s, r] = spiedOutput();
       const a = staticPartInput(5);
-      execute({part, inputs: {a}, outputs: {r}, partsRepo: testRepoWith(part)});
+      execute({
+        part,
+        inputs: { a },
+        outputs: { r },
+        partsRepo: testRepoWith(part),
+      });
       assert.equal(s.callCount, 1);
     });
-  })    
-
+  });
 });

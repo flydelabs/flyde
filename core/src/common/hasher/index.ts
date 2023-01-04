@@ -11,21 +11,22 @@ export const hashPart = (part: Part, ignorePos = true) => {
   const basePart = { id, completionOutputs, reactiveInputs, inputs, outputs };
 
   if (isGroupedPart(part)) {
-    const { instances, id, connections, inputsPosition, outputsPosition } = part;
+    const { instances, id, connections, inputsPosition, outputsPosition } =
+      part;
     // const cleanedInstances = ignorePos ? instances.map((ins) => {
     //     const { pos, ...rest } = ins;
     //     return rest;
     // }) : instances;
 
     const instancesWithoutPos = instances.map((ins) => {
-        const { pos, ...rest } = ins;
-        return rest;
+      const { pos, ...rest } = ins;
+      return rest;
     });
 
-    const maybeIoPos = ignorePos ? {} : {inputsPosition, outputsPosition};
+    const maybeIoPos = ignorePos ? {} : { inputsPosition, outputsPosition };
 
-    // const cleanedInstances = ignorePos 
-    const instancesToUse = ignorePos ? instancesWithoutPos : instances;    
+    // const cleanedInstances = ignorePos
+    const instancesToUse = ignorePos ? instancesWithoutPos : instances;
     instancesToUse.sort((a, b) => a.id.localeCompare(b.id));
 
     const conns = [...connections];
@@ -35,7 +36,13 @@ export const hashPart = (part: Part, ignorePos = true) => {
       return s1.localeCompare(s2);
     });
 
-    const str = JSON.stringify({ id, instancesToUse, conns, ...basePart, maybeIoPos });
+    const str = JSON.stringify({
+      id,
+      instancesToUse,
+      conns,
+      ...basePart,
+      maybeIoPos,
+    });
     return md5(str);
   } else if (isCodePart(part)) {
     const { fnCode, customViewCode } = part;
@@ -53,7 +60,7 @@ export const hashFlow = (flow: FlydeFlow, ignorePos = true) => {
   const orderedImports = Object.entries(imports)
     .sort(([k1], [k2]) => k1.localeCompare(k2))
     .map(([k, v]) => [k, v.sort()] as [string, string[]])
-    .reduce((acc, [k, v]) => ({...acc, [k]: v}), {})
+    .reduce((acc, [k, v]) => ({ ...acc, [k]: v }), {});
 
   const rest = JSON.stringify(orderedImports);
 

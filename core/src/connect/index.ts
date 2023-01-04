@@ -18,7 +18,15 @@ import {
   PartAdvancedContext,
 } from "../part";
 import { CancelFn, execute, Debugger, ExecuteEnv } from "../execute";
-import { DepGraph, isDefined, noop, okeys, OMap, randomInt, values } from "../common";
+import {
+  DepGraph,
+  isDefined,
+  noop,
+  okeys,
+  OMap,
+  randomInt,
+  values,
+} from "../common";
 import {
   ERROR_PIN_ID,
   isExternalConnection,
@@ -53,7 +61,10 @@ export type ConnectionNode = ExternalConnectionNode | InternalConnectionNode;
 
 export type PinList = Array<{ insId: string; pinId: string }>;
 
-type PositionlessGroupedPart = Omit<Omit<GroupedPart, "inputsPosition">, "outputsPosition">;
+type PositionlessGroupedPart = Omit<
+  Omit<GroupedPart, "inputsPosition">,
+  "outputsPosition"
+>;
 
 export const connect = (
   part: PositionlessGroupedPart,
@@ -110,7 +121,8 @@ export const connect = (
           outputs: PartOutputs = {};
 
         inputKeys.forEach((k) => {
-          const inputConfig = (instance.inputConfig || {})[k] || queueInputPinConfig();
+          const inputConfig =
+            (instance.inputConfig || {})[k] || queueInputPinConfig();
 
           if (isStaticInputPinConfig(inputConfig)) {
             args[k] = staticPartInput(inputConfig.value);
@@ -183,7 +195,9 @@ export const connect = (
           if (isExternalConnectionNode(from)) {
             const instanceInput = toInstanceArgs[to.pinId];
             if (!instanceInput) {
-              throw new Error(`Input ${to.pinId} of instance ${toInstanceId} not found`);
+              throw new Error(
+                `Input ${to.pinId} of instance ${toInstanceId} not found`
+              );
             }
             const currArr = externalInputConnections.get(from.pinId) || [];
             currArr.push(instanceInput);
@@ -191,7 +205,9 @@ export const connect = (
           } else {
             let instanceOutput = fromInstanceOutputs[from.pinId];
             if (!instanceOutput) {
-              throw new Error(`Output ${from.pinId} of instance ${fromInstanceId} not found`);
+              throw new Error(
+                `Output ${from.pinId} of instance ${fromInstanceId} not found`
+              );
             }
             const currArr = externalOutputConnections.get(to.pinId) || [];
             currArr.push(instanceOutput);
@@ -207,7 +223,9 @@ export const connect = (
 
         if (!toInstanceArgs) {
           if (!idToInstance.has(toInstanceId)) {
-            throw new Error(`Instance with id [${toInstanceId}] does not exist!`);
+            throw new Error(
+              `Instance with id [${toInstanceId}] does not exist!`
+            );
           } else {
             throw new Error(`No inputs found for instance [${toInstanceId}]`);
           }
@@ -216,7 +234,9 @@ export const connect = (
         const sourceOutput = fromInstanceOutputs[fromInstancePinId];
 
         if (!sourceOutput) {
-          throw new Error(`Output source - [${from}] not found in part [${partId}]`);
+          throw new Error(
+            `Output source - [${from}] not found in part [${partId}]`
+          );
         }
 
         const targetArg = toInstanceArgs[toInstancePinId];
@@ -229,10 +249,13 @@ export const connect = (
           );
         }
 
-        const sourcePart = sourceInstance ? getPart(sourceInstance, repo) : part;
+        const sourcePart = sourceInstance
+          ? getPart(sourceInstance, repo)
+          : part;
 
         const sourceOutputPin = sourcePart.outputs[fromInstancePinId];
-        const isDelayed = (sourceOutputPin && sourceOutputPin.delayed) || conn.delayed;
+        const isDelayed =
+          (sourceOutputPin && sourceOutputPin.delayed) || conn.delayed;
 
         if (!isDelayed) {
           if (fromInstanceId !== THIS_INS_ID && toInstanceId !== THIS_INS_ID) {
@@ -276,11 +299,15 @@ export const connect = (
 
           const part = getPart(instance, repo);
           if (!inputs) {
-            throw new Error(`Unexpected error - args not found when running ${instance}`);
+            throw new Error(
+              `Unexpected error - args not found when running ${instance}`
+            );
           }
 
           if (!outputs) {
-            throw new Error(`Unexpected error - outputs not found when running ${instance}`);
+            throw new Error(
+              `Unexpected error - outputs not found when running ${instance}`
+            );
           }
           // remove unusedInputs
 
@@ -326,7 +353,9 @@ export const connect = (
               // skipping emitting an undefined value. VERY UNSURE OF THIS, TRIGGER WAS VISUAL MERGE
             }
           } else {
-            throw new Error(`Unsure what to do with key ${key}, input: ${input} of ins ${parentInsId}`);
+            throw new Error(
+              `Unsure what to do with key ${key}, input: ${input} of ins ${parentInsId}`
+            );
           }
         });
       });

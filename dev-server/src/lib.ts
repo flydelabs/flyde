@@ -13,7 +13,9 @@ export type InitFlydeDevServerOptions = {
 };
 
 export const initFlydeDevServer = (options: InitFlydeDevServerOptions) => {
-  const root = isAbsolute(options.root) ? options.root : join(process.cwd(), options.root);
+  const root = isAbsolute(options.root)
+    ? options.root
+    : join(process.cwd(), options.root);
 
   console.log("running dev server on", options.port, "root", root);
 
@@ -28,7 +30,7 @@ export const initFlydeDevServer = (options: InitFlydeDevServerOptions) => {
     }));
 
     console.log(flowsArr);
-    
+
     const typings = generateTypings(flowsArr);
 
     writeFileSync(join(root, TYPINGS_TARGET), typings);

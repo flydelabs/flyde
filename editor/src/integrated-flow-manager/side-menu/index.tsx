@@ -60,17 +60,24 @@ const SideMenuBtn: React.FC<SideMenuBtnProps> = (props) => {
   const { icon, selected, type, onClick, badge } = props;
   const _onClick = useCallback(() => onClick(type), [type, onClick]);
 
-  const innerIcon = <div className="inner" dangerouslySetInnerHTML={{ __html: icon }} />;
+  const innerIcon = (
+    <div className="inner" dangerouslySetInnerHTML={{ __html: icon }} />
+  );
 
   return (
-    <div className={`menu-btn ${type} ${selected ? "selected" : ""}`} onClick={_onClick}>
+    <div
+      className={`menu-btn ${type} ${selected ? "selected" : ""}`}
+      onClick={_onClick}
+    >
       {innerIcon}
       {badge}
     </div>
   );
 };
 
-export const IntegratedFlowSideMenu: React.FC<IntegratedFlowSideMenuProps> = (props) => {
+export const IntegratedFlowSideMenu: React.FC<IntegratedFlowSideMenuProps> = (
+  props
+) => {
   const {
     selectedMenuItem: selectedItem,
     setSelectedMenuItem: setSelectedItem,
@@ -85,7 +92,10 @@ export const IntegratedFlowSideMenu: React.FC<IntegratedFlowSideMenuProps> = (pr
     }
   };
 
-  const [width, setWidth] = useResizePref(`side-bar.${selectedItem || "none"}`, 255);
+  const [width, setWidth] = useResizePref(
+    `side-bar.${selectedItem || "none"}`,
+    255
+  );
   const onResize = (_: any, data: ResizeCallbackData) => {
     setWidth(data.size.width);
   };

@@ -58,7 +58,9 @@ export interface OptionalPinViewProps {
 
 const INSIGHTS_TOOLTIP_INTERVAL = 500;
 
-export const PinView: React.SFC<PinViewProps> = React.memo(function PinView(props) {
+export const PinView: React.SFC<PinViewProps> = React.memo(function PinView(
+  props
+) {
   const {
     selected,
     type,
@@ -71,7 +73,11 @@ export const PinView: React.SFC<PinViewProps> = React.memo(function PinView(prop
     onRequestHistory,
   } = props;
 
-  const {history, resetHistory, refreshHistory} = useHistoryHelpers(onRequestHistory, id, pinType);
+  const { history, resetHistory, refreshHistory } = useHistoryHelpers(
+    onRequestHistory,
+    id,
+    pinType
+  );
 
   const getContextMenu = () => {
     const logMenuItem = (
@@ -83,7 +89,9 @@ export const PinView: React.SFC<PinViewProps> = React.memo(function PinView(prop
 
     const bpMenuItem = (
       <MenuItem
-        onClick={() => props.onToggleBreakpoint(props.insId, props.id, props.type)}
+        onClick={() =>
+          props.onToggleBreakpoint(props.insId, props.id, props.type)
+        }
         // text={breakpoint ? "Remove breakpoint" : "Add breakpoint"}
       />
     );
@@ -99,13 +107,25 @@ export const PinView: React.SFC<PinViewProps> = React.memo(function PinView(prop
       if (isDefined(maybeConstValue)) {
         return (
           <Menu>
-            <MenuItem onClick={() => props.onDetachConstValue(props.id)} text={"Detach value"} />
-            <MenuItem onClick={() => props.onCopyConstValue(props.id)} text={"Copy value"} />
+            <MenuItem
+              onClick={() => props.onDetachConstValue(props.id)}
+              text={"Detach value"}
+            />
+            <MenuItem
+              onClick={() => props.onCopyConstValue(props.id)}
+              text={"Copy value"}
+            />
             {isDefined(props.copiedConstValue) ? (
-              <MenuItem onClick={() => props.onPasteConstValue(props.id)} text="Paste value" />
+              <MenuItem
+                onClick={() => props.onPasteConstValue(props.id)}
+                text="Paste value"
+              />
             ) : null}
             {onConvertConstToEnv ? (
-              <MenuItem onClick={() => onConvertConstToEnv(props.id)} text="Convert to Env Var" />
+              <MenuItem
+                onClick={() => onConvertConstToEnv(props.id)}
+                text="Convert to Env Var"
+              />
             ) : null}
           </Menu>
         );
@@ -120,7 +140,10 @@ export const PinView: React.SFC<PinViewProps> = React.memo(function PinView(prop
             {bpMenuItem}
             {inspectMenuItem}
             {isDefined(props.copiedConstValue) ? (
-              <MenuItem onClick={() => props.onPasteConstValue(props.id)} text="Paste value" />
+              <MenuItem
+                onClick={() => props.onPasteConstValue(props.id)}
+                text="Paste value"
+              />
             ) : null}
           </Menu>
         );
@@ -152,7 +175,7 @@ export const PinView: React.SFC<PinViewProps> = React.memo(function PinView(prop
     }
   };
 
-  const displayName = type === 'input' ? getInputName(id) : getOutputName(id);
+  const displayName = type === "input" ? getInputName(id) : getOutputName(id);
 
   const calcClassNames = () => {
     if (props.type === "input") {
@@ -195,21 +218,28 @@ export const PinView: React.SFC<PinViewProps> = React.memo(function PinView(prop
   };
 
   const maybeConstValue =
-    props.type === "input" && isDefined(props.constValue) ? props.constValue : undefined;
-
+    props.type === "input" && isDefined(props.constValue)
+      ? props.constValue
+      : undefined;
 
   const calcTooltipContent = () => {
-  
     const historyContent = calcHistoryContent(history);
 
-    const maybeDescription = props.description ? `<em>${props.description}</em>` : '';
-    
+    const maybeDescription = props.description
+      ? `<em>${props.description}</em>`
+      : "";
+
     return `<div><div><strong>${displayName}</strong> (${type}) </div>
       ${maybeDescription}
       <hr/>
-      ${isDefined(maybeConstValue) ? `<div>Static value: <strong>${valuePreview(
-        maybeConstValue
-      ).substr(0, 200)}</strong></div>` : historyContent}
+      ${
+        isDefined(maybeConstValue)
+          ? `<div>Static value: <strong>${valuePreview(maybeConstValue).substr(
+              0,
+              200
+            )}</strong></div>`
+          : historyContent
+      }
     `;
   };
 
@@ -251,7 +281,13 @@ export const PinView: React.SFC<PinViewProps> = React.memo(function PinView(prop
         className={`pin-inner`}
         onClick={onClick}
       >
-        {displayName} {isDefined(maybeConstValue) ? (<React.Fragment>{':'}<span className="value">{toString(maybeConstValue)}</span></React.Fragment>) : null }
+        {displayName}{" "}
+        {isDefined(maybeConstValue) ? (
+          <React.Fragment>
+            {":"}
+            <span className="value">{toString(maybeConstValue)}</span>
+          </React.Fragment>
+        ) : null}
         {maybeStickyLabel()}
         {maybeQueueLabel()}
       </div>

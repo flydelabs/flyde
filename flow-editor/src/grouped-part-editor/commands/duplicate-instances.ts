@@ -2,14 +2,19 @@ import { GroupedPart } from "@flyde/core";
 import cuid from "cuid";
 import produce from "immer";
 
-export const handleDuplicateSelectedEditorCommand = (part: GroupedPart, selected: string[]) => {
-    const newInstances = [];
+export const handleDuplicateSelectedEditorCommand = (
+  part: GroupedPart,
+  selected: string[]
+) => {
+  const newInstances = [];
   const newPart = produce(part, (draft) => {
     const instances = draft.instances;
     selected.forEach((id) => {
       const ins = instances.find((ins) => ins.id === id);
       if (!ins) {
-        throw new Error(`impossible state duplicate selected no matching instance`);
+        throw new Error(
+          `impossible state duplicate selected no matching instance`
+        );
       }
 
       if (ins) {
@@ -24,5 +29,5 @@ export const handleDuplicateSelectedEditorCommand = (part: GroupedPart, selected
       }
     });
   });
-  return {newPart, newInstances};
+  return { newPart, newInstances };
 };

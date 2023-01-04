@@ -20,7 +20,12 @@ export const runAddTests = (add: Part, source: string, repo: PartRepo) => {
 
       const r = new Subject();
       r.subscribe(fn);
-      execute({part: add, inputs: { n1, n2 }, outputs: { r }, partsRepo: repo});
+      execute({
+        part: add,
+        inputs: { n1, n2 },
+        outputs: { r },
+        partsRepo: repo,
+      });
       n1.subject.next(1);
       n2.subject.next(2);
 
@@ -36,7 +41,12 @@ export const runAddTests = (add: Part, source: string, repo: PartRepo) => {
 
       const r = new Subject();
       r.subscribe(fn);
-      execute({part: add, inputs: { n1, n2 }, outputs: { r }, partsRepo: repo});
+      execute({
+        part: add,
+        inputs: { n1, n2 },
+        outputs: { r },
+        partsRepo: repo,
+      });
       assert.equal(fn.callCount, 0);
       n1.subject.next(1);
       assert.equal(fn.callCount, 0);
@@ -54,7 +64,12 @@ export const runAddTests = (add: Part, source: string, repo: PartRepo) => {
 
       const r = new Subject();
       r.subscribe(fn);
-      execute({part: add, inputs: { n1, n2 }, outputs: { r }, partsRepo: repo});
+      execute({
+        part: add,
+        inputs: { n1, n2 },
+        outputs: { r },
+        partsRepo: repo,
+      });
       n1.subject.next(1);
       n2.subject.next(2);
       n2.subject.next(3);
@@ -70,12 +85,17 @@ export const runAddTests = (add: Part, source: string, repo: PartRepo) => {
     it.skip("pins hold their value after usage by default", () => {
       const fn = spy();
 
-      const n1 = dynamicPartInput({config: stickyInputPinConfig()});
+      const n1 = dynamicPartInput({ config: stickyInputPinConfig() });
       const n2 = dynamicPartInput({ config: stickyInputPinConfig() });
 
       const r = new Subject();
       r.subscribe(fn);
-      execute({part: add, inputs: { n1, n2 }, outputs: { r }, partsRepo: repo});
+      execute({
+        part: add,
+        inputs: { n1, n2 },
+        outputs: { r },
+        partsRepo: repo,
+      });
       n1.subject.next(1);
       n2.subject.next(2);
       n2.subject.next(3);
@@ -96,7 +116,12 @@ export const runAddTests = (add: Part, source: string, repo: PartRepo) => {
 
       const r = new Subject();
       r.subscribe(fn);
-      execute({part: add, inputs: { n1, n2 }, outputs: { r }, partsRepo: repo});
+      execute({
+        part: add,
+        inputs: { n1, n2 },
+        outputs: { r },
+        partsRepo: repo,
+      });
       n1.subject.next(1);
       n2.subject.next(2);
 

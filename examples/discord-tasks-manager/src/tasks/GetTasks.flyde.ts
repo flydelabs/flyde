@@ -5,8 +5,7 @@ const servicePromise = createTasksService();
 
 const part: NativePart = {
   id: "Get Tasks",
-  inputs: {
-  },
+  inputs: {},
   outputs: {
     tasks: partOutput(),
   },

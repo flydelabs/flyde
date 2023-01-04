@@ -1,11 +1,25 @@
-import { OMap, OMapF, entries, isDefined, testDataCreator, noop } from "../common";
+import {
+  OMap,
+  OMapF,
+  entries,
+  isDefined,
+  testDataCreator,
+  noop,
+} from "../common";
 import { Subject } from "rxjs";
 
 import { CancelFn, InnerExecuteFn } from "../execute";
 import { ConnectionData } from "../connect";
 import { Pos, PartDefRepo, PartRepo, partInput, partOutput } from "..";
 import { isInlinePartInstance, PartInstance } from "./part-instance";
-import { InputPin, InputPinMap, OutputPin, OutputPinMap, PartInput, PartInputs } from "./part-pins";
+import {
+  InputPin,
+  InputPinMap,
+  OutputPin,
+  OutputPinMap,
+  PartInput,
+  PartInputs,
+} from "./part-pins";
 
 export * from "./part-instance";
 export * from "./part-pins";
@@ -107,7 +121,8 @@ export type PartModuleMetaData = {
   imported?: boolean;
 };
 
-export type PartDefinitionWithModuleMetaData = PartDefinition & PartModuleMetaData;
+export type PartDefinitionWithModuleMetaData = PartDefinition &
+  PartModuleMetaData;
 
 export const isNativePart = (p: Part | PartDefinition): p is NativePart => {
   return !isGroupedPart(p);
@@ -117,7 +132,9 @@ export const isGroupedPart = (p: Part | PartDefinition): p is GroupedPart => {
   return !!(p as GroupedPart).instances;
 };
 
-export const isCodePart = (p: Part | PartDefinition | undefined): p is CodePart => {
+export const isCodePart = (
+  p: Part | PartDefinition | undefined
+): p is CodePart => {
   return isDefined(p) && isDefined((p as CodePart).fnCode);
 };
 
@@ -179,14 +196,19 @@ export const staticPartRefence = (part: Part) => {
 };
 
 export const maybeGetStaticValuePartId = (value: string) => {
-  const maybePartMatch = typeof value === "string" && value.match(/^__part\:(.*)/);
+  const maybePartMatch =
+    typeof value === "string" && value.match(/^__part\:(.*)/);
   if (maybePartMatch) {
     const partId = maybePartMatch[1];
     return partId;
   }
   return null;
 };
-export const getStaticValue = (value: any, repo: PartDefRepo, calleeId: string) => {
+export const getStaticValue = (
+  value: any,
+  repo: PartDefRepo,
+  calleeId: string
+) => {
   const maybePartId = maybeGetStaticValuePartId(value);
   if (maybePartId) {
     const part = repo[maybePartId];
@@ -201,7 +223,10 @@ export const getStaticValue = (value: any, repo: PartDefRepo, calleeId: string) 
   }
 };
 
-export const getPart = (idOrIns: string | PartInstance, repo: PartRepo): Part => {
+export const getPart = (
+  idOrIns: string | PartInstance,
+  repo: PartRepo
+): Part => {
   if (typeof idOrIns !== "string" && isInlinePartInstance(idOrIns)) {
     return idOrIns.part;
   }
@@ -213,7 +238,10 @@ export const getPart = (idOrIns: string | PartInstance, repo: PartRepo): Part =>
   return part;
 };
 
-export const getPartDef = (idOrIns: string | PartInstance, repo: PartDefRepo): PartDefinition => {
+export const getPartDef = (
+  idOrIns: string | PartInstance,
+  repo: PartDefRepo
+): PartDefinition => {
   if (typeof idOrIns !== "string" && isInlinePartInstance(idOrIns)) {
     return idOrIns.part;
   }
@@ -243,7 +271,10 @@ export const nativeFromFunction = ({
 }: NativeFromFunctionParams): NativePart => {
   return {
     id,
-    inputs: inputNames.reduce((acc, k) => ({ ...acc, [k]: partInput("any") }), {}),
+    inputs: inputNames.reduce(
+      (acc, k) => ({ ...acc, [k]: partInput("any") }),
+      {}
+    ),
     outputs: { [outputName]: partOutput() },
     fn: (inputs, outputs) => {
       const args = inputNames.map((name) => inputs[name]);

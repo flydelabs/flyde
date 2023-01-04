@@ -12,9 +12,9 @@ import { Pos } from "@flyde/core";
 
 import { IMenuItemProps } from "@blueprintjs/core";
 
-
-export interface BasePartViewContextItem { 
-  label: string; callback: any
+export interface BasePartViewContextItem {
+  label: string;
+  callback: any;
 }
 
 export interface BasePartViewProps {
@@ -34,79 +34,82 @@ export interface BasePartViewProps {
   onDragMove: (ev: React.MouseEvent, pos: Pos) => void;
 }
 
-export const BasePartView: React.FC<BasePartViewProps> = function BasePartViewInner(props) {
-  const {
-    dragged,
-    viewPort,
-    pos,
-    onDragEnd,
-    onDragMove,
-    onDragStart,
-    displayMode,
-  } = props;
+export const BasePartView: React.FC<BasePartViewProps> =
+  function BasePartViewInner(props) {
+    const {
+      dragged,
+      viewPort,
+      pos,
+      onDragEnd,
+      onDragMove,
+      onDragStart,
+      displayMode,
+    } = props;
 
-  const _onDragStart = React.useCallback(
-    (event: any, data: any) => {
-      onDragStart(event, data);
-    },
-    [onDragStart]
-  );
+    const _onDragStart = React.useCallback(
+      (event: any, data: any) => {
+        onDragStart(event, data);
+      },
+      [onDragStart]
+    );
 
-  const _onDragEnd = React.useCallback(
-    (event: any, data: any) => {
-      const currPos = pos;
-      const dx = (data.x - currPos.x) / viewPort.zoom;
-      const dy = (data.y - currPos.y) / viewPort.zoom;
-      const newX = currPos.x + dx;
-      const newY = currPos.y + dy;
-      onDragEnd(event, { ...data, x: newX, y: newY });
-    },
-    [pos, onDragEnd, viewPort]
-  );
+    const _onDragEnd = React.useCallback(
+      (event: any, data: any) => {
+        const currPos = pos;
+        const dx = (data.x - currPos.x) / viewPort.zoom;
+        const dy = (data.y - currPos.y) / viewPort.zoom;
+        const newX = currPos.x + dx;
+        const newY = currPos.y + dy;
+        onDragEnd(event, { ...data, x: newX, y: newY });
+      },
+      [pos, onDragEnd, viewPort]
+    );
 
-  const _onDragMove = React.useCallback(
-    (event: any, data: any) => {
-      onDragMove(event, { x: data.x, y: data.y });
-    },
-    [onDragMove]
-  );
+    const _onDragMove = React.useCallback(
+      (event: any, data: any) => {
+        onDragMove(event, { x: data.x, y: data.y });
+      },
+      [onDragMove]
+    );
 
-  const zoomFixStyle = {
-    transform: `scale(${viewPort.zoom})`,
+    const zoomFixStyle = {
+      transform: `scale(${viewPort.zoom})`,
+    };
+
+    const cm = classNames("base-part-view", props.className, {
+      dragged,
+      "display-mode": displayMode,
+    });
+
+    const correctX = pos.x * viewPort.zoom - viewPort.pos.x * viewPort.zoom;
+    const correctY = pos.y * viewPort.zoom - viewPort.pos.y * viewPort.zoom;
+
+    const dx = correctX - pos.x;
+    const dy = correctY - pos.y;
+
+    const fixerStyle: any = {
+      transform: `translate(${dx}px, ${dy}px)`,
+    };
+
+    const outerCm = classNames("base-part-view-vp-fixer", {
+      "display-mode": displayMode,
+    });
+
+    return (
+      <div className={outerCm} style={fixerStyle}>
+        <Draggable
+          onStop={_onDragEnd}
+          onStart={_onDragStart}
+          onDrag={_onDragMove}
+          position={pos}
+          cancel=".no-drag"
+        >
+          <span className="base-part-view-wrapper">
+            <div className={cm} style={zoomFixStyle} id={props.domId}>
+              {props.children}
+            </div>
+          </span>
+        </Draggable>
+      </div>
+    );
   };
-
-  const cm = classNames("base-part-view", props.className, {
-    dragged,
-    "display-mode": displayMode,
-  });
-
-  const correctX = pos.x * viewPort.zoom - viewPort.pos.x * viewPort.zoom;
-  const correctY = pos.y * viewPort.zoom - viewPort.pos.y * viewPort.zoom;
-
-  const dx = correctX - pos.x;
-  const dy = correctY - pos.y;
-
-  const fixerStyle: any = {
-    transform: `translate(${dx}px, ${dy}px)`,
-  };
-
-  const outerCm = classNames("base-part-view-vp-fixer", { "display-mode": displayMode });
-
-  return (
-    <div className={outerCm} style={fixerStyle}>
-      <Draggable
-        onStop={_onDragEnd}
-        onStart={_onDragStart}
-        onDrag={_onDragMove}
-        position={pos}
-        cancel=".no-drag"
-      >
-        <span className="base-part-view-wrapper">
-          <div className={cm} style={zoomFixStyle} id={props.domId}>
-            {props.children}
-          </div>
-        </span>
-      </Draggable>
-    </div>
-  );
-};

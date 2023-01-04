@@ -34,25 +34,39 @@ describe("resolver", () => {
   });
 
   it("resolves a .flyde with dependency on an inline code part from another Flyde file ", async () => {
-    const data = resolveFlow(getFixturePath("a-imports-js-part-from-b/a.flyde"));
+    const data = resolveFlow(
+      getFixturePath("a-imports-js-part-from-b/a.flyde")
+    );
     const part = data.main;
 
     const repo = data.dependencies as PartRepo;
 
     const [s, r] = spiedOutput();
-    execute({part, partsRepo: repo, inputs: {n: staticPartInput(2)}, outputs: {r}});
+    execute({
+      part,
+      partsRepo: repo,
+      inputs: { n: staticPartInput(2) },
+      outputs: { r },
+    });
 
     assert.equal(s.lastCall.args[0], 3);
   }, 50);
 
   it("resolves flows with transitive dependencies", async () => {
-    const data = resolveFlow(getFixturePath("a-imports-b-imports-c/Container.flyde"));
+    const data = resolveFlow(
+      getFixturePath("a-imports-b-imports-c/Container.flyde")
+    );
 
     const part = data.main;
     const repo = data.dependencies as PartRepo;
 
     const [s, r] = spiedOutput();
-    execute({part, partsRepo: repo, inputs: {n: staticPartInput(2)}, outputs: {r}});
+    execute({
+      part,
+      partsRepo: repo,
+      inputs: { n: staticPartInput(2) },
+      outputs: { r },
+    });
 
     // const val = await simplifiedExecute(data.main, repo, { n: 2 });
 
@@ -60,7 +74,9 @@ describe("resolver", () => {
   });
 
   it("resolves flows with 2 levels of transitive dependencies and properly namespaces them", async () => {
-    const data = resolveFlow(getFixturePath("a-imports-b-imports-c-imports-d/Container.flyde"));
+    const data = resolveFlow(
+      getFixturePath("a-imports-b-imports-c-imports-d/Container.flyde")
+    );
 
     const repo = data.dependencies as PartRepo;
 
@@ -73,7 +89,12 @@ describe("resolver", () => {
     ]);
 
     const [s, r] = spiedOutput();
-    execute({part: data.main, partsRepo: repo, inputs: {n: staticPartInput(2)}, outputs: {r}});
+    execute({
+      part: data.main,
+      partsRepo: repo,
+      inputs: { n: staticPartInput(2) },
+      outputs: { r },
+    });
 
     assert.equal(s.lastCall.args[0], 3);
   });
@@ -123,10 +144,18 @@ describe("resolver", () => {
     );
 
     const repo = data.dependencies as PartRepo;
-    const [s, r] = spiedOutput()
-    execute({part: data.main, partsRepo: repo, inputs: { n: staticPartInput(2) }, outputs: {r}});
+    const [s, r] = spiedOutput();
+    execute({
+      part: data.main,
+      partsRepo: repo,
+      inputs: { n: staticPartInput(2) },
+      outputs: { r },
+    });
     assert.equal(s.lastCall.args[0], 3);
-    assert.match(data.dependencies.Add1.importPath, /@acme\/add1\/src\/add1\.flyde\.js$/);
+    assert.match(
+      data.dependencies.Add1.importPath,
+      /@acme\/add1\/src\/add1\.flyde\.js$/
+    );
   });
 
   it("resolves a .flyde with dependency on a grouped part from a different package", async () => {
@@ -137,7 +166,12 @@ describe("resolver", () => {
 
     const repo = data.dependencies as PartRepo;
     const [s, r] = spiedOutput();
-    execute({part: data.main, partsRepo: repo, inputs: {n: staticPartInput(2)}, outputs: {r}});
+    execute({
+      part: data.main,
+      partsRepo: repo,
+      inputs: { n: staticPartInput(2) },
+      outputs: { r },
+    });
 
     assert.equal(s.lastCall.args[0], 3);
 
@@ -183,17 +217,24 @@ describe("resolver", () => {
     const repo = flow.dependencies as PartRepo;
 
     const [s, r] = spiedOutput();
-    execute({part: flow.main, partsRepo: repo, inputs: {n: staticPartInput(2)}, outputs: {r}});
-  
-    assert.equal(s.lastCall.args[0], 2 + 1);
+    execute({
+      part: flow.main,
+      partsRepo: repo,
+      inputs: { n: staticPartInput(2) },
+      outputs: { r },
+    });
 
+    assert.equal(s.lastCall.args[0], 2 + 1);
   });
 
   it("bundles flows importing simple code based parts as expected", async () => {
     const path = getFixturePath("a-imports-js-part-from-b-with-dep/a.flyde");
     const flow = resolveFlow(path, "bundle");
 
-    assert.match((flow.dependencies.Add as any).fn, /__BUNDLE_FN:\[\[\Add\.flyde\.js\]\]/);
+    assert.match(
+      (flow.dependencies.Add as any).fn,
+      /__BUNDLE_FN:\[\[\Add\.flyde\.js\]\]/
+    );
   });
 
   it("throws error when importing part that has a missing dep transitively", async () => {
@@ -205,14 +246,18 @@ describe("resolver", () => {
 
   it("throws error when importing part that has a missing dep directly", async () => {
     // has a missing depen
-    const path = getFixturePath("a-imports-b-with-missing-deps/SpreadList3.flyde");
+    const path = getFixturePath(
+      "a-imports-b-with-missing-deps/SpreadList3.flyde"
+    );
     assert.throws(() => {
       resolveFlow(path);
     }, /GetListItem/);
   });
 
   it("only resolves imported parts, aka does not break if a package exports a broken part that is not imported", () => {
-    const path = getFixturePath("imports-ok-from-package-with-problematic.flyde");
+    const path = getFixturePath(
+      "imports-ok-from-package-with-problematic.flyde"
+    );
 
     const flow = resolveFlow(path);
     assert.exists(flow.dependencies.Ok);
@@ -226,7 +271,12 @@ describe("resolver", () => {
     const repo = flow.dependencies as PartRepo;
 
     const [s, r] = spiedOutput();
-    execute({part: flow.main, partsRepo: repo, inputs: {n: staticPartInput(2)}, outputs: {r}});
+    execute({
+      part: flow.main,
+      partsRepo: repo,
+      inputs: { n: staticPartInput(2) },
+      outputs: { r },
+    });
 
     assert.equal(s.lastCall.args[0], 2 + 1 + 2);
   }, 20);
@@ -244,17 +294,25 @@ describe("resolver", () => {
     Id's reference was bundled in relation to Merge, (i.e. "./Id.flyde.js") instead of the original flow ('../../../node_modules..) 
     Causing webpack not to be able to load it
     */
-    const data = resolveFlow(getFixturePath("a-imports-b-grouped-from-package/a.flyde"), "bundle");
+    const data = resolveFlow(
+      getFixturePath("a-imports-b-grouped-from-package/a.flyde"),
+      "bundle"
+    );
 
     const repo = data.dependencies as PartRepo;
     const Add1 = repo.Add1Wrapped__Add1 as ImportedPart & PreBundleNativePart;
 
     assert.match(Add1.importPath, /@acme\/add1-wrapped\/src\/Add1\.flyde\.js$/);
-    assert.equal(Add1.fn, "__BUNDLE_FN:[[../node_modules/@acme/add1-wrapped/src/Add1.flyde.js]]");
+    assert.equal(
+      Add1.fn,
+      "__BUNDLE_FN:[[../node_modules/@acme/add1-wrapped/src/Add1.flyde.js]]"
+    );
   });
 
   it("resolves dependencies of inline parts", async () => {
-    const flow = resolveFlow(getFixturePath("a-uses-inline-part-with-dependency/a.flyde"));
+    const flow = resolveFlow(
+      getFixturePath("a-uses-inline-part-with-dependency/a.flyde")
+    );
 
     const repo = flow.dependencies as PartRepo;
 
@@ -262,7 +320,12 @@ describe("resolver", () => {
     // const val = await simplifiedExecute(flow.main, repo, { n: 2 });
 
     const [s, r] = spiedOutput();
-    execute({part: flow.main, partsRepo: repo, inputs: {n: staticPartInput(2)}, outputs: {r}});
+    execute({
+      part: flow.main,
+      partsRepo: repo,
+      inputs: { n: staticPartInput(2) },
+      outputs: { r },
+    });
     assert.equal(s.lastCall.args[0], 2 + 1);
   });
 
@@ -276,21 +339,33 @@ describe("resolver", () => {
     assert.exists(repo.Add1Wrapper);
 
     const [s, r] = spiedOutput();
-    execute({part: flow.main, partsRepo: repo, inputs: {n: staticPartInput(2)}, outputs: {r}});
-  
+    execute({
+      part: flow.main,
+      partsRepo: repo,
+      inputs: { n: staticPartInput(2) },
+      outputs: { r },
+    });
+
     assert.equal(s.lastCall.args[0], 2 + 1);
   });
 
   describe("typescript", () => {
     it("runs code parts written in TS", async () => {
-      const data = resolveFlow(getFixturePath("a-imports-ts-part-from-b/a.flyde"));
+      const data = resolveFlow(
+        getFixturePath("a-imports-ts-part-from-b/a.flyde")
+      );
       const part = data.main;
 
       const repo = data.dependencies as PartRepo;
 
       const [s, r] = spiedOutput();
 
-      execute({part, partsRepo: repo, inputs: {n: staticPartInput(2)}, outputs: {r}});
+      execute({
+        part,
+        partsRepo: repo,
+        inputs: { n: staticPartInput(2) },
+        outputs: { r },
+      });
 
       assert.equal(s.lastCall.args[0], 1);
     });

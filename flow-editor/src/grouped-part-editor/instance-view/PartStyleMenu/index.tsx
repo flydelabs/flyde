@@ -1,1 +1,1 @@
-export * from './PartStyleMenu'
+export * from "./PartStyleMenu";

@@ -5,7 +5,7 @@ import {
   RestApiTrigger,
   ScheduledTrigger,
   WebAppTrigger,
-  randomInt
+  randomInt,
 } from "@flyde/core";
 
 import cuid from "cuid";
@@ -16,8 +16,8 @@ export const triggerPartId = () => `API Trigger ${randomInt(99999)}`;
 export const routeTriggerPart = (id: string = triggerPartId()) => {
   return {
     id,
-    ...defaultProjectRoutePart
-  }
+    ...defaultProjectRoutePart,
+  };
 };
 
 export const scheduledTriggerPart = (): GroupedPart => {
@@ -46,7 +46,11 @@ export const scheduledTriggerPart = (): GroupedPart => {
   };
 };
 
-export const restApiTrigger = (path: string, method: any, partId: string): RestApiTrigger => {
+export const restApiTrigger = (
+  path: string,
+  method: any,
+  partId: string
+): RestApiTrigger => {
   return {
     id: cuid(),
     type: "rest-api",
@@ -69,7 +73,10 @@ export const webAppTrigger = (path: string, partId: string): WebAppTrigger => {
   };
 };
 
-export const scheduledTrigger = (cronExpression: string, partId: string): ScheduledTrigger => {
+export const scheduledTrigger = (
+  cronExpression: string,
+  partId: string
+): ScheduledTrigger => {
   return {
     id: cuid(),
     type: "scheduled",

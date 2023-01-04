@@ -7,7 +7,10 @@ export type WebPortsConfig = {
   history: ReturnType<typeof useHistory>;
 };
 
-export const createWebPorts = ({ devServerClient, history }: WebPortsConfig): EditorPorts => {
+export const createWebPorts = ({
+  devServerClient,
+  history,
+}: WebPortsConfig): EditorPorts => {
   return {
     prompt: async ({ text, defaultValue }) => {
       return prompt(text, defaultValue);

@@ -7,7 +7,7 @@ export enum AppHotkeyCmd {
   SAVE_PROJECT = "save-project",
   TOGGLE_SIDE = "toggle-side",
   RUN = "run",
-  UNDO = "undo"
+  UNDO = "undo",
 }
 
 export enum EditorHotkeyCmd {
@@ -17,7 +17,7 @@ export enum EditorHotkeyCmd {
   DUPLICATE_COMP = "duplicate-comp",
   GROUP = "group",
   SELECT_ALL = "select-all",
-  SELECT_CLOSEST = "select-closest"
+  SELECT_CLOSEST = "select-closest",
 }
 
 export type AppHotkeysProps = {
@@ -40,5 +40,5 @@ export const appHotkeysConfig = [
   hotkey("cmd+shift+s", "Toggle side", AppHotkeyCmd.TOGGLE_SIDE, true, true),
   hotkey("cmd+s", "Toggle side", AppHotkeyCmd.SAVE_PROJECT, true, true),
   hotkey("shift+r", "Run", AppHotkeyCmd.RUN, true, true),
-  hotkey("cmd+z", "Undo", AppHotkeyCmd.UNDO, true, true)
+  hotkey("cmd+z", "Undo", AppHotkeyCmd.UNDO, true, true),
 ];

@@ -5,7 +5,13 @@ import { Subject } from "rxjs";
 import { spy } from "sinon";
 
 import { assert } from "chai";
-import { dynamicPartInput, NativePart, partInput, partInstance, partOutput } from "../part";
+import {
+  dynamicPartInput,
+  NativePart,
+  partInput,
+  partInstance,
+  partOutput,
+} from "../part";
 import { execute } from "../execute";
 import { runAddTests } from "../part/add-tests";
 import { add, optAdd, testRepo } from "../fixture";
@@ -14,7 +20,6 @@ import { connectionData } from "./helpers";
 describe("is connected", () => {});
 
 describe("connect", () => {
-
   describe("optional inputs", () => {
     it("allows not renaming an optional pin that is connected", () => {
       assert.doesNotThrow(() => {
@@ -24,7 +29,7 @@ describe("connect", () => {
             instances: [partInstance("a", optAdd.id)],
             connections: [],
             inputs: {},
-            outputs: {}
+            outputs: {},
           },
           testRepo
         );
@@ -37,14 +42,14 @@ describe("connect", () => {
           id: "bob",
           instances: [partInstance("a", optAdd.id)],
           connections: [
-            connectionData('n1', 'a.n1'),
-            connectionData('a.r', 'r')
+            connectionData("n1", "a.n1"),
+            connectionData("a.r", "r"),
           ],
           inputs: {
-            n1: partInput()
+            n1: partInput(),
           },
           outputs: {
-            r: partOutput()
+            r: partOutput(),
           },
         },
         testRepo
@@ -54,7 +59,12 @@ describe("connect", () => {
       const r = new Subject();
       const fn = spy();
       r.subscribe(fn);
-      execute({part: part, inputs: { n1 }, outputs: { r }, partsRepo: testRepo});
+      execute({
+        part: part,
+        inputs: { n1 },
+        outputs: { r },
+        partsRepo: testRepo,
+      });
       n1.subject.next(4);
       assert.equal(fn.callCount, 1);
       assert.equal(fn.lastCall.args[0], 46);
@@ -66,17 +76,17 @@ describe("connect", () => {
           id: "bob",
           instances: [partInstance("a", optAdd.id)],
           connections: [
-            connectionData('n1', 'a.n1'),
-            connectionData('n2', 'a.n2'),
-            connectionData('a.r', 'r'),
+            connectionData("n1", "a.n1"),
+            connectionData("n2", "a.n2"),
+            connectionData("a.r", "r"),
           ],
           inputs: {
             n1: partInput(),
             n2: partInput(),
           },
           outputs: {
-            r: partOutput()
-          }
+            r: partOutput(),
+          },
         },
         testRepo
       );
@@ -86,7 +96,12 @@ describe("connect", () => {
       const r = new Subject();
       const fn = spy();
       r.subscribe(fn);
-      execute({part: part, inputs: { n1, n2 }, outputs: { r }, partsRepo: testRepo});
+      execute({
+        part: part,
+        inputs: { n1, n2 },
+        outputs: { r },
+        partsRepo: testRepo,
+      });
       n2.subject.next(4);
       n1.subject.next(6);
       assert.equal(fn.callCount, 1);
@@ -149,13 +164,12 @@ describe("connect", () => {
               from: connectionNode("m", "r"),
               to: connectionNode("d", "n"),
             },
-            connectionData('m.r', 'r')
+            connectionData("m.r", "r"),
           ],
-          inputs: {
-          },
+          inputs: {},
           outputs: {
-            r: partOutput()
-          }
+            r: partOutput(),
+          },
         },
         testRepo
       );
@@ -164,8 +178,7 @@ describe("connect", () => {
       const r = new Subject();
       r.subscribe(fn);
 
-      execute({part: part, inputs: {}, outputs: { r }, partsRepo: testRepo});
-
+      execute({ part: part, inputs: {}, outputs: { r }, partsRepo: testRepo });
     });
   });
 
@@ -175,17 +188,17 @@ describe("connect", () => {
         id: "bob",
         instances: [partInstance("a", add.id)],
         connections: [
-          connectionData('n1', 'a.n1'),
-          connectionData('n2', 'a.n2'),
-          connectionData('a.r', 'r')
+          connectionData("n1", "a.n1"),
+          connectionData("n2", "a.n2"),
+          connectionData("a.r", "r"),
         ],
         inputs: {
-          "n1": partInput(),
-          "n2": partInput()
+          n1: partInput(),
+          n2: partInput(),
         },
         outputs: {
-          "r": partOutput()
-        }
+          r: partOutput(),
+        },
       },
       testRepo
     );

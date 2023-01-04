@@ -1,6 +1,13 @@
 import { spy } from "sinon";
 import Sinon = require("sinon");
-import { BasePart, InputPinMap, GroupedPart, CodePart, NativePart, PartInstance } from "./.";
+import {
+  BasePart,
+  InputPinMap,
+  GroupedPart,
+  CodePart,
+  NativePart,
+  PartInstance,
+} from "./.";
 
 import {
   DynamicOutput,
@@ -15,7 +22,8 @@ import { connectionNode, externalConnectionNode } from "./connect";
 
 import { DebuggerEventType, DebuggerEvent, Debugger } from "./execute/debugger";
 
-export interface ConciseBasePart extends Omit<Omit<BasePart, "inputs">, "outputs"> {
+export interface ConciseBasePart
+  extends Omit<Omit<BasePart, "inputs">, "outputs"> {
   inputs: string[];
   outputs: string[];
 }
@@ -38,7 +46,10 @@ export const conciseBasePart = (concise: ConciseBasePart): BasePart => {
     ...concise,
     inputs: concise.inputs.reduce<InputPinMap>((prev, curr) => {
       const [clean, mode] = curr.split("|");
-      if (mode && !["required", "required-if-connected", "optional"].includes(mode)) {
+      if (
+        mode &&
+        !["required", "required-if-connected", "optional"].includes(mode)
+      ) {
         throw new Error(`Bad mode ${mode} in concise part`);
       }
       return { ...prev, [clean]: partInput("any", mode as InputMode) };
@@ -105,7 +116,10 @@ export const callsFirstArgs = (s: Sinon.SinonSpy) => {
   return s.getCalls().map((c) => c.args[0]);
 };
 
-export const wrappedOnEvent = (type: DebuggerEventType, fn: Function): Debugger["onEvent"] => {
+export const wrappedOnEvent = (
+  type: DebuggerEventType,
+  fn: Function
+): Debugger["onEvent"] => {
   return (event: DebuggerEvent) => {
     if (event.type === type) {
       fn(event);

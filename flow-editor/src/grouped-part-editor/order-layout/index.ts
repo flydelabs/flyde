@@ -89,7 +89,10 @@ export const orderLayout = (
           const isE2PartOutput = e2.id.startsWith("part-output");
 
           // push aside those that are too close horizontally
-          if (dx < MIN_HORIZONTAL_DISTANCE && dy < MIN_VERTCIAL_DISTANCE_TO_APPLY_HOR_DISTANCE) {
+          if (
+            dx < MIN_HORIZONTAL_DISTANCE &&
+            dy < MIN_VERTCIAL_DISTANCE_TO_APPLY_HOR_DISTANCE
+          ) {
             const delta = MIN_HORIZONTAL_DISTANCE - dx;
             const force = delta * HORIZONTAL_PUSH_FORCE;
             e1.f = vAdd(e1.f, vec(force * 0.5, 0));
@@ -182,7 +185,8 @@ export const orderLayout = (
     // damp & cap speed
     ents = ents.map((ent) => {
       const damped = vMul(ent.v, DAMPING);
-      const vel = vLen(damped) > MAX_SPEED ? vMul(vNorm(damped), MAX_SPEED) : damped;
+      const vel =
+        vLen(damped) > MAX_SPEED ? vMul(vNorm(damped), MAX_SPEED) : damped;
       return { ...ent, v: vel };
     });
 

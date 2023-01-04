@@ -9,26 +9,26 @@ import {
 } from "@flyde/core";
 import _ = require("lodash");
 
-
-const namespaceGroupedPart = (part: GroupedPart, namespace: string): GroupedPart => {
-  const namespacedInstances = part.instances
-    .map(ins => {
-      if (isInlinePartInstance(ins)) {
-        if (isGroupedPart(ins.part)) {
-          return {...ins, part: namespaceGroupedPart(ins.part, namespace)}
-        } else {
-          return ins;
-        }
+const namespaceGroupedPart = (
+  part: GroupedPart,
+  namespace: string
+): GroupedPart => {
+  const namespacedInstances = part.instances.map((ins) => {
+    if (isInlinePartInstance(ins)) {
+      if (isGroupedPart(ins.part)) {
+        return { ...ins, part: namespaceGroupedPart(ins.part, namespace) };
       } else {
-        return {...ins, partId: `${namespace}${ins.partId}`}
+        return ins;
       }
-    })
+    } else {
+      return { ...ins, partId: `${namespace}${ins.partId}` };
+    }
+  });
   return {
     ...part,
-    instances: namespacedInstances
-  }
-}
-
+    instances: namespacedInstances,
+  };
+};
 
 export const namespaceFlowImports = (
   resolvedFlow: ResolvedFlydeFlow,

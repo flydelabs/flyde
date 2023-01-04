@@ -1,8 +1,15 @@
-import { CodePartTemplateTypeInline, partInput, partOutput, randomInt } from "@flyde/core";
+import {
+  CodePartTemplateTypeInline,
+  partInput,
+  partOutput,
+  randomInt,
+} from "@flyde/core";
 import { codePart } from "@flyde/core";
 
 export const getVariables = (code: string) => {
-  return (code.match(/inputs\.([a-zA-Z]\w*)/g) || []).map((v) => v.replace(/inputs\./, ""));
+  return (code.match(/inputs\.([a-zA-Z]\w*)/g) || []).map((v) =>
+    v.replace(/inputs\./, "")
+  );
 };
 
 export type InlineCodePartData = {
@@ -11,7 +18,12 @@ export type InlineCodePartData = {
   partId?: string;
   type: CodePartTemplateTypeInline;
 };
-export const createInlineCodePart = ({ code, customView, partId, type }: InlineCodePartData) => {
+export const createInlineCodePart = ({
+  code,
+  customView,
+  partId,
+  type,
+}: InlineCodePartData) => {
   const variables = getVariables(code);
 
   const inputs = variables.reduce((prev, curr) => {
@@ -40,13 +52,15 @@ export const createInlineCodePart = ({ code, customView, partId, type }: InlineC
     templateType: type,
     completionOutputs: ["value"],
     defaultStyle: {
-      size: 'regular',
-      icon: 'code',
+      size: "regular",
+      icon: "code",
       cssOverride: {
-        fontFamily: 'monospace',
-        fontWeight: '500'
-      }
+        fontFamily: "monospace",
+        fontWeight: "500",
+      },
     },
-    description: `Custom inline ${type === CodePartTemplateTypeInline.VALUE ? 'value' : 'function'}`
+    description: `Custom inline ${
+      type === CodePartTemplateTypeInline.VALUE ? "value" : "function"
+    }`,
   });
 };

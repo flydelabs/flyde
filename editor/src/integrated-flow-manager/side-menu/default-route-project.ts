@@ -1,11 +1,10 @@
 import { CustomPart, GroupedPart } from "@flyde/core";
 
-
-export const defaultProjectRoutePart: Omit<GroupedPart, 'id'> = {
+export const defaultProjectRoutePart: Omit<GroupedPart, "id"> = {
   inputs: {
     request: {
       type: "any",
-      mode: "optional"
+      mode: "optional",
     },
   },
   instances: [

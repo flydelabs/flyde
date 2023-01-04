@@ -7,8 +7,7 @@ const app = express();
 
 app.use(express.urlencoded());
 
-const execute = loadFlow('src/RequestLoan.flyde');
-
+const execute = loadFlow("src/RequestLoan.flyde");
 
 app.get("/", async (req, res) => {
   const invoiceFormHtml = readFileSync(__dirname + "/web/index.html", "utf8");
@@ -16,13 +15,15 @@ app.get("/", async (req, res) => {
 });
 
 app.post("/loan", async (req, res) => {
-
-  const {email, amount} = req.body;
-  execute({ email, amount}, {
-    onOutputs: (_, value) => {
-      res.send(`<center><h1>${value}</h1><a href="/">Back</a></center>`);
+  const { email, amount } = req.body;
+  execute(
+    { email, amount },
+    {
+      onOutputs: (_, value) => {
+        res.send(`<center><h1>${value}</h1><a href="/">Back</a></center>`);
+      },
     }
-  });
+  );
 });
 
 app.listen(PORT);

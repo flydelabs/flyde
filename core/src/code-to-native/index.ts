@@ -1,5 +1,11 @@
 import axios from "axios";
-import { CodePart, compileObjectTemplate, compileStringTemplate, debugLogger, PartRepo } from "..";
+import {
+  CodePart,
+  compileObjectTemplate,
+  compileStringTemplate,
+  debugLogger,
+  PartRepo,
+} from "..";
 
 import { isCodePart, NativePart, dynamicPartInput } from "../part";
 
@@ -8,8 +14,10 @@ import { getVM2Instance } from "./get-vm2";
 
 const vm2 = getVM2Instance();
 
-export const codePartToNative = (codePart: CodePart, extraContext: Record<string, any> = {}) => {
-  
+export const codePartToNative = (
+  codePart: CodePart,
+  extraContext: Record<string, any> = {}
+) => {
   const { fnCode, ...rest } = codePart;
 
   const logger = debugLogger(`code-part:${codePart.id}`);
@@ -67,7 +75,9 @@ export const customRepoToPartRepo = (
   const newRepo = {};
   for (let id in customPartRepo) {
     const part = customPartRepo[id];
-    newRepo[id] = isCodePart(part) ? codePartToNative(part, extraContext) : part;
+    newRepo[id] = isCodePart(part)
+      ? codePartToNative(part, extraContext)
+      : part;
   }
   return newRepo;
 };

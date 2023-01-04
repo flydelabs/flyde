@@ -1,6 +1,12 @@
 import { z } from "zod";
 import { PartDefRepo, PartStyle } from ".";
-import { CustomPart, GroupedPart, NativePart, Part, PartDefinition } from "./part";
+import {
+  CustomPart,
+  GroupedPart,
+  NativePart,
+  Part,
+  PartDefinition,
+} from "./part";
 
 const importSchema = z.record(z.string(), z.string().or(z.array(z.string())));
 const position = z.strictObject({ x: z.number(), y: z.number() });
@@ -46,7 +52,7 @@ const inputPinSchema = z.union([
     mode: z.enum(["required", "optional", "required-if-connected"]),
     type: z.string(),
     description: z.optional(z.string()),
-    defaultValue: z.optional(z.any())
+    defaultValue: z.optional(z.any()),
   }),
 ]);
 
@@ -54,16 +60,13 @@ const outputPinSchema = z.object({
   type: z.string(),
   optional: z.optional(z.boolean()),
   delayed: z.optional(z.boolean()),
-  description: z.optional(z.string())
-})
+  description: z.optional(z.string()),
+});
 
 const flydeBasePart = z.object({
   id: z.optional(z.string()),
   inputs: z.record(z.string(), inputPinSchema),
-  outputs: z.record(
-    z.string(),
-    outputPinSchema
-  ),
+  outputs: z.record(z.string(), outputPinSchema),
   inputsPosition: z.optional(z.record(z.string(), position)),
   outputsPosition: z.optional(z.record(z.string(), position)),
   customViewCode: z.optional(z.string()),
@@ -120,7 +123,9 @@ export type ResolvedFlydeRuntimeFlow = {
   dependencies: Record<string, ImportedPart>;
 };
 
-export type ResolvedFlydeFlow = ResolvedFlydeFlowDefinition | ResolvedFlydeRuntimeFlow;
+export type ResolvedFlydeFlow =
+  | ResolvedFlydeFlowDefinition
+  | ResolvedFlydeRuntimeFlow;
 
 export const flydeFlowSchema = z.strictObject({
   imports: z.optional(importSchema).default({}),

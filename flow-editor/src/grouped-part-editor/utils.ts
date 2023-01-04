@@ -18,7 +18,9 @@ import {
   InputMode,
   inlinePartInstance,
   staticInputPinConfig,
-  intersectRect, Rect, calcCenter
+  intersectRect,
+  Rect,
+  calcCenter,
 } from "@flyde/core";
 import {
   calcPinPosition,
@@ -78,15 +80,26 @@ export const findClosestPin = (
   insId: string,
   viewPort: ViewPort
 ) => {
-
   const rootInstance: PartInstance = partInstance(part.id, part.id);
   const mainInputsData = okeys(part.inputs).map((pinId) => {
-    const pos = calcMainInputPosition(pinId, insId, "input", boardPos, viewPort);
+    const pos = calcMainInputPosition(
+      pinId,
+      insId,
+      "input",
+      boardPos,
+      viewPort
+    );
     return { id: pinId, type: "input", pos, ins: rootInstance };
   });
 
   const mainOutputsData = okeys(part.outputs).map((pinId) => {
-    const pos = calcMainOutputPosition(pinId, insId, "output", boardPos, viewPort);
+    const pos = calcMainOutputPosition(
+      pinId,
+      insId,
+      "output",
+      boardPos,
+      viewPort
+    );
     return { id: pinId, type: "output", pos, ins: rootInstance };
   });
 
@@ -157,7 +170,8 @@ export const parsePromptValue = (raw: string | null) => {
 export const parseInputOutputTypes = (
   typeStr: string
 ): { inputs: OMap<InputPin>; outputs: OMap<OutputPin> } => {
-  const [, inputsRaw, outputsRaw] = (typeStr.match(/part\((.+)\|(.+)\)/) || []) as any;
+  const [, inputsRaw, outputsRaw] = (typeStr.match(/part\((.+)\|(.+)\)/) ||
+    []) as any;
 
   const inputsEntries = entries(JSON.parse(inputsRaw)).map(([key, type]) => {
     const optional = isOptionalType(key);
@@ -189,8 +203,12 @@ export const createNewInlinePartInstance = (
   offset: number = -1 * PART_HEIGHT * 1.5,
   lastMousePos: Pos
 ): PartInstance => {
-
-  const ins = inlinePartInstance(`${part.id}-${randomInt(999)}`, part as any, {}, { x: 0, y: 0 });
+  const ins = inlinePartInstance(
+    `${part.id}-${randomInt(999)}`,
+    part as any,
+    {},
+    { x: 0, y: 0 }
+  );
   const width = calcPartWidth(ins, part);
 
   const { x, y } = lastMousePos;
@@ -208,7 +226,10 @@ export const createNewPartInstance = (
   lastMousePos: Pos,
   repo: PartDefRepo
 ): PartInstance => {
-  const part = typeof partIdOrPart === 'string' ? getPartDef(partIdOrPart, repo) : partIdOrPart;
+  const part =
+    typeof partIdOrPart === "string"
+      ? getPartDef(partIdOrPart, repo)
+      : partIdOrPart;
 
   if (!part) {
     throw new Error(`${partIdOrPart} part not found in repo`);
@@ -220,12 +241,15 @@ export const createNewPartInstance = (
       acc[k] = staticInputPinConfig(v.defaultValue);
     }
     return acc;
-  }, {})
+  }, {});
 
-  const ins = partInstance(`${part.id}-${randomInt(999)}`, part.id, inputsConfig, { x: 0, y: 0 });
+  const ins = partInstance(
+    `${part.id}-${randomInt(999)}`,
+    part.id,
+    inputsConfig,
+    { x: 0, y: 0 }
+  );
   const width = calcPartWidth(ins, part);
-
-
 
   const { x, y } = lastMousePos;
   const pos = {
@@ -239,7 +263,11 @@ export const createNewPartInstance = (
 export type ViewPort = { pos: Pos; zoom: number };
 export const roundNumber = (v: number) => Math.round(v * 100) / 100;
 
-export const domToViewPort = (p: Pos, viewPort: ViewPort, parentVp: ViewPort): Pos => {
+export const domToViewPort = (
+  p: Pos,
+  viewPort: ViewPort,
+  parentVp: ViewPort
+): Pos => {
   return {
     x: roundNumber(viewPort.pos.x + p.x / viewPort.zoom / parentVp.zoom),
     y: roundNumber(viewPort.pos.y + p.y / viewPort.zoom / parentVp.zoom),
@@ -256,14 +284,19 @@ export const distance = (p1: Pos, p2: Pos) => {
   return Math.sqrt(dx * dx + dy * dy);
 };
 
-export const center = (rect: Rect, vpSize: { w: number; h: number }, { zoom }: ViewPort): Pos => {
+export const center = (
+  rect: Rect,
+  vpSize: { w: number; h: number },
+  { zoom }: ViewPort
+): Pos => {
   const ecx = rect.x + rect.w / 2;
   const ecy = rect.y + rect.h / 2;
   const { w, h } = vpSize;
   return { x: ecx - w / zoom / 2, y: ecy - h / zoom / 2 };
 };
 
-export const easeInOutQuad = (t: number) => (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t);
+export const easeInOutQuad = (t: number) =>
+  t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
 
 export const easeInOutPos = (
   p1: Pos,
@@ -300,7 +333,12 @@ export const easeInOutNum = (
   return n1 + d * m;
 };
 
-export const animateViewPort = (vp1: ViewPort, vp2: ViewPort, duration: number, cb: (vp: ViewPort) => void) => {
+export const animateViewPort = (
+  vp1: ViewPort,
+  vp2: ViewPort,
+  duration: number,
+  cb: (vp: ViewPort) => void
+) => {
   const dis = distance(vp1.pos, vp2.pos);
 
   const start = Date.now();
@@ -316,10 +354,10 @@ export const animateViewPort = (vp1: ViewPort, vp2: ViewPort, duration: number, 
     const pos = easeInOutPos(vp1.pos, vp2.pos, start, normDuration, now);
     const zoom = easeInOutNum(vp1.zoom, vp2.zoom, start, normDuration, now);
     if (now - start < normDuration) {
-      cb({pos, zoom});
+      cb({ pos, zoom });
       requestAnimationFrame(animate);
     } else {
-      cb({pos, zoom});
+      cb({ pos, zoom });
     }
   };
 
@@ -351,7 +389,10 @@ const calcPoints = (w: number, h: number, pos: Pos, tag: string): Points => {
   };
 };
 
-export const calcPartsPositions = (part: GroupedPart, repo: PartDefRepo): Points[] => {
+export const calcPartsPositions = (
+  part: GroupedPart,
+  repo: PartDefRepo
+): Points[] => {
   const insParts = part.instances.map((curr) => {
     const w = calcPartWidth(curr, getPartDef(curr, repo));
     const h = PART_HEIGHT;
@@ -380,9 +421,17 @@ export const calcPartsPositions = (part: GroupedPart, repo: PartDefRepo): Points
 //   return positions.reduce((acc, curr) => middlePos(acc, curr), positions[0] || { x: 0, y: 0 });
 // };
 
-export const getEffectivePartDimensions = (part: GroupedPart, repo: PartDefRepo) => {
+export const getEffectivePartDimensions = (
+  part: GroupedPart,
+  repo: PartDefRepo
+) => {
   const positions = calcPartsPositions(part, repo);
-  const firstPosition = positions[0] || { left: 0, right: 0, top: 0, bottom: 0 };
+  const firstPosition = positions[0] || {
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+  };
 
   const leftMost = positions.reduce(
     (acc, curr) => (curr.left < acc ? curr.left : acc),
@@ -416,35 +465,51 @@ export const getEffectivePartDimensions = (part: GroupedPart, repo: PartDefRepo)
 export const logicalPosToRenderedPos = (pos: Pos, vp: ViewPort) => {
   const diff = vSub(pos, vp.pos);
   return vMul(diff, vp.zoom);
-}
+};
 
 export const renderedPosToLogicalPos = (renderedPos: Pos, vp: ViewPort) => {
   const bob = vDiv(renderedPos, vp.zoom);
 
   return vAdd(vp.pos, bob);
-}
+};
 
-export const centerBoardPosOnTarget = (target: Pos, vpSize: Size, newZoom: number, prevVp: ViewPort) => {
+export const centerBoardPosOnTarget = (
+  target: Pos,
+  vpSize: Size,
+  newZoom: number,
+  prevVp: ViewPort
+) => {
   const renderedTargetPos = logicalPosToRenderedPos(target, prevVp);
 
-  const nextBoardPos = renderedPosToLogicalPos(renderedTargetPos, {...prevVp, zoom: newZoom });
+  const nextBoardPos = renderedPosToLogicalPos(renderedTargetPos, {
+    ...prevVp,
+    zoom: newZoom,
+  });
 
-  const deltaX = Math.max(target.x, nextBoardPos.x) - Math.min(target.x, nextBoardPos.x);
-  const deltaY = Math.max(target.y, nextBoardPos.y) - Math.min(target.y, nextBoardPos.y);
+  const deltaX =
+    Math.max(target.x, nextBoardPos.x) - Math.min(target.x, nextBoardPos.x);
+  const deltaY =
+    Math.max(target.y, nextBoardPos.y) - Math.min(target.y, nextBoardPos.y);
 
-  const newX = newZoom > prevVp.zoom ? prevVp.pos.x + deltaX : prevVp.pos.x - deltaX;
-  const newY = newZoom > prevVp.zoom ? prevVp.pos.y + deltaY : prevVp.pos.y - deltaY;
+  const newX =
+    newZoom > prevVp.zoom ? prevVp.pos.x + deltaX : prevVp.pos.x - deltaX;
+  const newY =
+    newZoom > prevVp.zoom ? prevVp.pos.y + deltaY : prevVp.pos.y - deltaY;
 
   return {
     x: newX,
-    y: newY
-  }
-}
+    y: newY,
+  };
+};
 
 const FIT_VIEWPORT_MIN_ZOOM = 0.3;
 const FIT_VIEWPORT_MAX_ZOOM = 1.2;
 
-export const fitViewPortToPart = (part: GroupedPart, repo: PartDefRepo, vpSize: Size): ViewPort => {
+export const fitViewPortToPart = (
+  part: GroupedPart,
+  repo: PartDefRepo,
+  vpSize: Size
+): ViewPort => {
   const { size, center } = getEffectivePartDimensions(part, repo);
 
   const horPadding = 0;
@@ -473,7 +538,8 @@ export const fitViewPortToPart = (part: GroupedPart, repo: PartDefRepo, vpSize: 
 };
 
 export const isJsxValue = (val: any): boolean => {
-  const isIt = (j: any) => isDefined(j.ref) && isDefined(j.type) && isDefined(j.props);
+  const isIt = (j: any) =>
+    isDefined(j.ref) && isDefined(j.type) && isDefined(j.props);
   try {
     const j = JSON.parse(val);
     return isIt(j) || (Array.isArray(j) && isIt(j[0]));
@@ -497,13 +563,17 @@ export const getInstancesInRect = (
   const toSelect = instances
     .filter((ins) => {
       const { pos } = ins;
-      const w = calcPartWidth(
-        ins,
-        getPartDef(ins, repo),
-      ) * viewPort.zoom * parentVp.zoom;
-      const rec2 = { ...pos, w, h: PART_HEIGHT * viewPort.zoom * parentVp.zoom };
-      console.log(ins.id, rec2, 'main', rect);
-      
+      const w =
+        calcPartWidth(ins, getPartDef(ins, repo)) *
+        viewPort.zoom *
+        parentVp.zoom;
+      const rec2 = {
+        ...pos,
+        w,
+        h: PART_HEIGHT * viewPort.zoom * parentVp.zoom,
+      };
+      console.log(ins.id, rec2, "main", rect);
+
       return intersectRect(rect, rec2) || intersectRect(rec2, rect);
     })
     .map((ins) => ins.id);
@@ -558,10 +628,15 @@ export const handleInstanceDrag = (
     }
   });
 
-  return {newValue, newSelected};
+  return { newValue, newSelected };
 };
 
-export const handleIoPinRename = (part: GroupedPart, type: PinType, pinId: string, newPinId: string) => {
+export const handleIoPinRename = (
+  part: GroupedPart,
+  type: PinType,
+  pinId: string,
+  newPinId: string
+) => {
   return immer.produce(part, (draft) => {
     if (type === "input") {
       draft.inputs[newPinId] = draft.inputs[pinId];
@@ -581,10 +656,10 @@ export const handleIoPinRename = (part: GroupedPart, type: PinType, pinId: strin
           : conn;
       });
 
-      draft.completionOutputs = (draft.completionOutputs || []).map(comp => {
-        const arr = comp.split('+'); // due to the r1+r1,r3 hack, see core tests
-        return arr.map(pin => pin === pinId ? newPinId : pinId).join('+')
-      })
+      draft.completionOutputs = (draft.completionOutputs || []).map((comp) => {
+        const arr = comp.split("+"); // due to the r1+r1,r3 hack, see core tests
+        return arr.map((pin) => (pin === pinId ? newPinId : pinId)).join("+");
+      });
       delete draft.outputs[pinId];
     }
   });
@@ -603,4 +678,3 @@ export const handleChangePartInputType = (
     input.mode = mode;
   });
 };
-

@@ -1,13 +1,7 @@
 import { BasePart, GroupedPart } from "@flyde/core";
-import {
-  Button,
-  Classes,
-  Dialog,
-  Intent,
-  MenuItem,
-} from "@blueprintjs/core";
-import classNames from 'classnames';
-import React, {  } from "react";
+import { Button, Classes, Dialog, Intent, MenuItem } from "@blueprintjs/core";
+import classNames from "classnames";
+import React from "react";
 
 // ;
 
@@ -36,36 +30,58 @@ export const renderCreateIOOption = (
 );
 
 const defaultPart: GroupedPart = {
-  id: 'NewPart',
+  id: "NewPart",
   inputs: {},
   outputs: {},
   instances: [],
   connections: [],
   inputsPosition: {},
-  outputsPosition: {}
-}
+  outputsPosition: {},
+};
 
-export const ManageGroupedPartView: React.FC<ManageGroupedPartViewProps> = (props) => {
-  const {title } = props;
+export const ManageGroupedPartView: React.FC<ManageGroupedPartViewProps> = (
+  props
+) => {
+  const { title } = props;
 
-  const [draftPart, setDraftPart] = React.useState(props.initialPart || defaultPart);
+  const [draftPart, setDraftPart] = React.useState(
+    props.initialPart || defaultPart
+  );
 
-  const onChangeBasePart = React.useCallback((base: BasePart) => {
-    setDraftPart({...draftPart, ...base });
-  }, [draftPart]);
-  
+  const onChangeBasePart = React.useCallback(
+    (base: BasePart) => {
+      setDraftPart({ ...draftPart, ...base });
+    },
+    [draftPart]
+  );
+
   return (
     <div className="manage-grouped-part-view">
-      <Dialog isOpen={true} title ={title} onClose={props.onCancel} canEscapeKeyClose={false}>
+      <Dialog
+        isOpen={true}
+        title={title}
+        onClose={props.onCancel}
+        canEscapeKeyClose={false}
+      >
         <main className={classNames(Classes.DIALOG_BODY)}>
-          <BasePartEditor part={draftPart} onChange={onChangeBasePart} idDisabled={false}/>
-          {props.externalModule ? <strong>External module, saving is disabled</strong> : null}
+          <BasePartEditor
+            part={draftPart}
+            onChange={onChangeBasePart}
+            idDisabled={false}
+          />
+          {props.externalModule ? (
+            <strong>External module, saving is disabled</strong>
+          ) : null}
         </main>
 
         <div className={Classes.DIALOG_FOOTER}>
           <div className={Classes.DIALOG_FOOTER_ACTIONS}>
             <Button onClick={props.onCancel}>Cancel</Button>
-            <Button onClick={() => props.onSave(draftPart)} intent={Intent.PRIMARY} disabled={props.externalModule}>
+            <Button
+              onClick={() => props.onSave(draftPart)}
+              intent={Intent.PRIMARY}
+              disabled={props.externalModule}
+            >
               Save
             </Button>
           </div>

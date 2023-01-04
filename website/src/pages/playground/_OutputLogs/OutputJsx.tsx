@@ -10,12 +10,8 @@ export interface OutputLogsProps {
 export const OutputJsx: React.FC<OutputLogsProps> = (props) => {
   return (
     <div className="output-jsx">
-      <header>
-        Output JSX{" "}
-      </header>
-      <main>
-        {props.element}
-      </main>
+      <header>Output JSX </header>
+      <main>{props.element}</main>
     </div>
   );
 };

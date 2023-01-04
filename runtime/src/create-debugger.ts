@@ -10,7 +10,7 @@ export const createDebugger = async (): Promise<Debugger> => {
       const _debugger: Debugger = {
         onEvent: (e) => {
           debugLogger(`Emitting event ${e.type} on ${e.insId}`);
-          client.emitEvent(e)
+          client.emitEvent(e);
         },
         destroy: () => {
           return client.destroy();

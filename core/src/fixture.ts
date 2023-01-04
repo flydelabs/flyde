@@ -78,12 +78,12 @@ export const mul2: Part = fromSimplified({
 
 export const id: Part = {
   id: "id",
-  inputs: { v: partInput('v') },
-  outputs: { r: partOutput('r') },
+  inputs: { v: partInput("v") },
+  outputs: { r: partOutput("r") },
   fn: ({ v }, { r }) => {
     r.next(v);
   },
-  completionOutputs: ['r']
+  completionOutputs: ["r"],
 };
 
 export const id2: NativePart = {
@@ -96,7 +96,7 @@ export const id2: NativePart = {
   },
   fn: ({ v }, { r }) => {
     r.next(v);
-  }
+  },
 };
 
 export const transform: Part = {
@@ -154,7 +154,11 @@ export const add1mul2add1: GroupedPart = {
   },
   inputsPosition: {},
   outputsPosition: {},
-  instances: [partInstance("a", add1.id), partInstance("b", mul2.id), partInstance("c", add1.id)],
+  instances: [
+    partInstance("a", add1.id),
+    partInstance("b", mul2.id),
+    partInstance("c", add1.id),
+  ],
   connections: [
     {
       from: externalConnectionNode("n"),
@@ -214,7 +218,12 @@ export const addGroupedQueued: GroupedPart = {
   outputs: {
     r: partOutput("number"),
   },
-  instances: [partInstance("a", add.id, { n1: queueInputPinConfig(), n2: queueInputPinConfig() })],
+  instances: [
+    partInstance("a", add.id, {
+      n1: queueInputPinConfig(),
+      n2: queueInputPinConfig(),
+    }),
+  ],
   connections: [
     {
       from: externalConnectionNode("n1"),
@@ -275,7 +284,12 @@ export const filter: Part = fromSimplified({
         (p, k) => ({ ...p, [k]: new Subject() }),
         {}
       );
-      const clean = execute({part: fn, inputs: { item: itemInput }, outputs: outputs, partsRepo: testRepo});
+      const clean = execute({
+        part: fn,
+        inputs: { item: itemInput },
+        outputs: outputs,
+        partsRepo: testRepo,
+      });
       outputs.r.subscribe((bool) => {
         if (bool) {
           newList.push(item);

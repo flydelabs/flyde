@@ -24,7 +24,10 @@ describe("data shaper", () => {
       DataShapeType.NUMBER,
       DataShapeType.NUMBER,
     ]);
-    assert.deepEqual(dataShaper([1, 2, 3], 5, 2), [DataShapeType.NUMBER, DataShapeType.NUMBER]);
+    assert.deepEqual(dataShaper([1, 2, 3], 5, 2), [
+      DataShapeType.NUMBER,
+      DataShapeType.NUMBER,
+    ]);
     assert.deepEqual(dataShaper([1, 2, 3], 5, 1), [DataShapeType.NUMBER]);
     assert.deepEqual(dataShaper([1, 2, 3], 5, 99), [
       DataShapeType.NUMBER,
@@ -47,12 +50,20 @@ describe("data shaper", () => {
     };
     const shape = dataShaper(data);
 
-    const aTriple: DataShape =  [DataShapeType.STRING, { name: DataShapeType.STRING }, DataShapeType.NUMBER];
+    const aTriple: DataShape = [
+      DataShapeType.STRING,
+      { name: DataShapeType.STRING },
+      DataShapeType.NUMBER,
+    ];
 
-    const expected: DataShape =  {
+    const expected: DataShape = {
       a: DataShapeType.NUMBER,
       aTuple: [DataShapeType.NUMBER, DataShapeType.STRING] as any,
-      aTriple: [DataShapeType.STRING, { name: DataShapeType.STRING }, DataShapeType.NUMBER] as any,
+      aTriple: [
+        DataShapeType.STRING,
+        { name: DataShapeType.STRING },
+        DataShapeType.NUMBER,
+      ] as any,
       name: DataShapeType.STRING,
       occupation: {
         name: DataShapeType.STRING,
@@ -69,7 +80,11 @@ describe("data shaper", () => {
     assert.deepEqual(shape, {
       a: DataShapeType.NUMBER,
       aTuple: [DataShapeType.NUMBER, DataShapeType.STRING],
-      aTriple: [DataShapeType.STRING, { name: DataShapeType.STRING }, DataShapeType.NUMBER],
+      aTriple: [
+        DataShapeType.STRING,
+        { name: DataShapeType.STRING },
+        DataShapeType.NUMBER,
+      ],
       name: DataShapeType.STRING,
       occupation: {
         name: DataShapeType.STRING,
@@ -82,10 +97,9 @@ describe("data shaper", () => {
         DataShapeType.NUMBER,
       ],
     } as DataShape);
-
   });
-  it('returns the shape keys in alphabetical order', () => {
-    const shape = dataShaper({b: 2, z: {dave: 2, alice: 7}, abbie: 5});
-    assert.deepEqual(Object.keys(shape), ['abbie', 'b', 'z']);
-  })
+  it("returns the shape keys in alphabetical order", () => {
+    const shape = dataShaper({ b: 2, z: { dave: 2, alice: 7 }, abbie: 5 });
+    assert.deepEqual(Object.keys(shape), ["abbie", "b", "z"]);
+  });
 });

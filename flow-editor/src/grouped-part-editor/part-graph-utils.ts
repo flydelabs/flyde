@@ -8,7 +8,10 @@ export const getLeafInstancesOfSelection = (
   const allConnected = selectedInstances.reduce<PartInstance[]>((acc, curr) => {
     const instancesConnectedToCurr = allConnections
       .filter((conn) => conn.to.insId === curr.id)
-      .map((conn) => allInstances.find((ins) => ins.id === conn.from.insId) as PartInstance)
+      .map(
+        (conn) =>
+          allInstances.find((ins) => ins.id === conn.from.insId) as PartInstance
+      )
       .filter((ins) => !!ins);
     return [...acc, ...instancesConnectedToCurr];
   }, []);
@@ -22,7 +25,10 @@ export const getLeafInstancesOfSelection = (
   });
 };
 
-export type InstanceWithConstPinMap = Map<string, Map<string, { val: any; insId: string }>>;
+export type InstanceWithConstPinMap = Map<
+  string,
+  Map<string, { val: any; insId: string }>
+>;
 
 export const calculateInstancesWithSingleConstPinsMap = (
   part: GroupedPart,

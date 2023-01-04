@@ -19,9 +19,13 @@ export type Rect = Pos & { w: number; h: number };
 export const intersectRect = (r1: Rect, r2: Rect) => {
   const r1Right = r1.x + r1.w;
   const r2Right = r2.x + r2.w;
-  return !(r2.x > r1Right || r2Right < r1.x || r2.y > r1.y + r1.h || r2.y + r2.h < r1.y);
+  return !(
+    r2.x > r1Right ||
+    r2Right < r1.x ||
+    r2.y > r1.y + r1.h ||
+    r2.y + r2.h < r1.y
+  );
 };
-
 
 export const calcCenter = ({ w, h, x, y }: Rect): Pos => {
   const mx = x + w / 2;
@@ -43,7 +47,10 @@ export const mapOMap = <T>(map: OMap<T>, cb: (key: string, item: T) => T) => {
     }, {});
 };
 
-export const filterOMap = <T>(map: OMap<T>, cb: (key: string, item: T) => boolean) => {
+export const filterOMap = <T>(
+  map: OMap<T>,
+  cb: (key: string, item: T) => boolean
+) => {
   return entries(map)
     .filter(([key, item]) => cb(key, item))
     .reduce<OMap<T>>((acc, [k, v]: any) => {
@@ -187,7 +194,9 @@ export const eventually = async (
         `${previousMessage}\n\t\t${idx + 1}. ${currentMessage}`,
       ""
     );
-    throw new Error(`[Eventually timeout exceeded after: timeout with error]: ${message}`);
+    throw new Error(
+      `[Eventually timeout exceeded after: timeout with error]: ${message}`
+    );
   }
   try {
     await callback();

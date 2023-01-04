@@ -6,14 +6,13 @@ import {
   partInput,
   connectionNodeEquals,
   GroupedPart,
-  middlePos
+  middlePos,
 } from "@flyde/core";
 import { rnd } from "../physics";
 import { PartInstance } from "@flyde/core";
 import { PromptFn } from "..";
 
-
-export const createGroup = async(
+export const createGroup = async (
   instances: PartInstance[],
   connections: ConnectionData[],
   name: string,
@@ -38,7 +37,9 @@ export const createGroup = async(
     .filter((conn, idx, arr) => {
       // filter dupes
       return (
-        arr.findIndex((existingConn) => connectionNodeEquals(existingConn.to, conn.to)) === idx
+        arr.findIndex((existingConn) =>
+          connectionNodeEquals(existingConn.to, conn.to)
+        ) === idx
       );
     });
 
@@ -53,7 +54,9 @@ export const createGroup = async(
     .filter((conn, idx, arr) => {
       // filter dupes
       return (
-        arr.findIndex((existingConn) => connectionNodeEquals(existingConn.from, conn.from)) === idx
+        arr.findIndex((existingConn) =>
+          connectionNodeEquals(existingConn.from, conn.from)
+        ) === idx
       );
     });
 
@@ -67,7 +70,6 @@ export const createGroup = async(
 
   const externalConnections: ConnectionData[] = [];
   // const inputIds = keys(looseInputs).map(k => k.split(".")[1]);
-
 
   const inputs = {};
   for (const conn of inputCandidates) {
@@ -85,8 +87,9 @@ export const createGroup = async(
     }
 
     const name = inputs[potential]
-      ? await prompt(`Name this input (${potential} of ${conn.to.insId}) is already taken:`) ||
-        `i${rnd()}`
+      ? (await prompt(
+          `Name this input (${potential} of ${conn.to.insId}) is already taken:`
+        )) || `i${rnd()}`
       : potential;
 
     renamedInputs[targetKey] = name;
@@ -98,7 +101,7 @@ export const createGroup = async(
       to: connectionNode(conn.to.insId, conn.to.pinId),
     });
 
-    inputs[name] = partInput('any');
+    inputs[name] = partInput("any");
   }
 
   const outputs = {};
@@ -117,8 +120,9 @@ export const createGroup = async(
     }
 
     const name = outputs[potential]
-      ? await prompt(`Name this output (${potential} of ${conn.from.insId} is already taken:`) ||
-        `i${rnd()}`
+      ? (await prompt(
+          `Name this output (${potential} of ${conn.from.insId} is already taken:`
+        )) || `i${rnd()}`
       : potential;
 
     renamedOutputs[sourceKey] = name;
@@ -130,7 +134,7 @@ export const createGroup = async(
       to: externalConnectionNode(name),
     });
 
-    outputs[name] = partOutput('any');
+    outputs[name] = partOutput("any");
   }
 
   // replace relevant parts with new part
@@ -139,7 +143,9 @@ export const createGroup = async(
   }, instances[0].pos);
 
   const internalConnections = connections.filter(
-    (conn) => instanceIds.includes(conn.from.insId) && instanceIds.includes(conn.to.insId)
+    (conn) =>
+      instanceIds.includes(conn.from.insId) &&
+      instanceIds.includes(conn.to.insId)
   );
 
   const groupedPart: GroupedPart = {
@@ -156,7 +162,7 @@ export const createGroup = async(
       {}
     ),
     connections: [...internalConnections, ...externalConnections],
-    completionOutputs: okeys(outputs)
+    completionOutputs: okeys(outputs),
   };
 
   return { groupedPart, renamedInputs, renamedOutputs };

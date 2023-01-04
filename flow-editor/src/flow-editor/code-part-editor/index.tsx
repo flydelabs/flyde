@@ -1,11 +1,6 @@
 import { BasePart, CodePart } from "@flyde/core";
-import {
-  Callout,
-  Code,
-  FormGroup,
-  MenuItem,
-} from "@blueprintjs/core";
-import React, {  } from "react";
+import { Callout, Code, FormGroup, MenuItem } from "@blueprintjs/core";
+import React from "react";
 
 import Editor from "@monaco-editor/react";
 
@@ -33,50 +28,63 @@ export const renderCreateIOOption = (
 );
 
 export const CodePartEditor: React.FC<CodePartEditorProps> = (props) => {
-  const {part, onChange } = props;
+  const { part, onChange } = props;
 
-  const onChangeFnCode = React.useCallback((fnCode) => {
-    onChange({...part, fnCode});
-  }, [part, onChange]);
+  const onChangeFnCode = React.useCallback(
+    (fnCode) => {
+      onChange({ ...part, fnCode });
+    },
+    [part, onChange]
+  );
 
-  const onChangeCustomView = React.useCallback((customViewCode) => {
-    onChange({...part, customViewCode});
-  }, [part, onChange]);
+  const onChangeCustomView = React.useCallback(
+    (customViewCode) => {
+      onChange({ ...part, customViewCode });
+    },
+    [part, onChange]
+  );
 
-  const onChangeBase = React.useCallback((base: BasePart) => {
-    onChange({...part, ...base, completionOutputs: base.completionOutputs});
-  }, [part, onChange]);
+  const onChangeBase = React.useCallback(
+    (base: BasePart) => {
+      onChange({ ...part, ...base, completionOutputs: base.completionOutputs });
+    },
+    [part, onChange]
+  );
   return (
     <div className="code-part-editor">
-          <BasePartEditor part={part} onChange={onChangeBase} idDisabled={props.editMode}/>
-          <FormGroup label="Code">
-            <Editor
-              height="200px"
-              theme="vs-dark"
-              defaultLanguage="javascript"
-              value={part.fnCode}
-              onChange={(e) => onChangeFnCode(e || "")}
-            />
-          </FormGroup>
+      <BasePartEditor
+        part={part}
+        onChange={onChangeBase}
+        idDisabled={props.editMode}
+      />
+      <FormGroup label="Code">
+        <Editor
+          height="200px"
+          theme="vs-dark"
+          defaultLanguage="javascript"
+          value={part.fnCode}
+          onChange={(e) => onChangeFnCode(e || "")}
+        />
+      </FormGroup>
 
-          <FormGroup label="Custom View">
-            <Editor
-              height="100px"
-              theme="vs-dark"
-              defaultLanguage="ejs"
-              value={part.customViewCode}
-              onChange={(e) => onChangeCustomView(e || "")}
-            />
-            <Callout>
-              Example: 
-              <Code>{`<% if (inputs.key) { %>
+      <FormGroup label="Custom View">
+        <Editor
+          height="100px"
+          theme="vs-dark"
+          defaultLanguage="ejs"
+          value={part.customViewCode}
+          onChange={(e) => onChangeCustomView(e || "")}
+        />
+        <Callout>
+          Example:
+          <Code>{`<% if (inputs.key) { %>
               Pick "<%- inputs.key %>"
               <% }  else { %>
                 Pick
               <% } %>
               `}</Code>
-            </Callout>
-          </FormGroup>
+        </Callout>
+      </FormGroup>
     </div>
   );
 };

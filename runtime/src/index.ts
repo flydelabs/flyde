@@ -21,7 +21,9 @@ export type PromiseWithEmitter<T> = Promise<T> & { on: EventEmitter["on"] };
 
 export type LoadedFlowExecuteFn<Inputs> = (
   inputs?: Inputs,
-  extraParams?: Partial<ExecuteParams & { onOutputs?: (key: string, data: any) => void }>
+  extraParams?: Partial<
+    ExecuteParams & { onOutputs?: (key: string, data: any) => void }
+  >
 ) => Promise<Record<string, any>>;
 
 const calcImplicitRoot = () => {
@@ -35,7 +37,10 @@ export const loadFlow = <Inputs>(
 ): LoadedFlowExecuteFn<Inputs> => {
   const _root = root || calcImplicitRoot();
   const flowPath = join(_root, relativePath);
-  const resFlow = resolveFlow(flowPath, "implementation") as ResolvedFlydeRuntimeFlow;
+  const resFlow = resolveFlow(
+    flowPath,
+    "implementation"
+  ) as ResolvedFlydeRuntimeFlow;
   const main = resFlow.main;
 
   if (!main) {
@@ -49,19 +54,25 @@ export const loadFlow = <Inputs>(
     // console.log(_debugger);
 
     const promise: any = new Promise(async (res, rej) => {
-      const clean = await simplifiedExecute(main, resFlow.dependencies, inputs || {}, onOutputs, {
-        _debugger: _debugger,
-        onCompleted: (data) => {
-          // allow debugger to finish it's thing
-          setImmediate(() => {
-            if (_debugger && _debugger.destroy) {
-              _debugger.destroy();
-            }
-            res(data);
-          });
-        },
-        ...otherParams,
-      });
+      const clean = await simplifiedExecute(
+        main,
+        resFlow.dependencies,
+        inputs || {},
+        onOutputs,
+        {
+          _debugger: _debugger,
+          onCompleted: (data) => {
+            // allow debugger to finish it's thing
+            setImmediate(() => {
+              if (_debugger && _debugger.destroy) {
+                _debugger.destroy();
+              }
+              res(data);
+            });
+          },
+          ...otherParams,
+        }
+      );
     }) as any;
     return promise;
   };

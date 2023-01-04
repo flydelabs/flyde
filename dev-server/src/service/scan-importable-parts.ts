@@ -12,7 +12,7 @@ const FLYDE_LIBRARY = /^flyde[-_](.*)/;
 export const getFlydeDependencies = async (rootPath: string) => {
   const pjsonPath = await pkgUp({ cwd: rootPath });
   const { dependencies, devDependencies } = require(pjsonPath);
-  const combinedDeps = {...dependencies, ...devDependencies};
+  const combinedDeps = { ...dependencies, ...devDependencies };
 
   const depKeys = Object.keys(combinedDeps) || [];
   return depKeys.filter((dep) => {
@@ -20,9 +20,11 @@ export const getFlydeDependencies = async (rootPath: string) => {
   });
 };
 
-export const resolveDependentPackages = async (rootPath: string, flydeDependencies: string[]) => {
+export const resolveDependentPackages = async (
+  rootPath: string,
+  flydeDependencies: string[]
+) => {
   return flydeDependencies.reduce<Record<string, PartDefRepo>>((acc, dep) => {
-
     try {
       const paths = resolveImportablePaths(rootPath, dep);
       const parts = paths.reduce((acc, filePath) => {
@@ -60,13 +62,14 @@ const getLocalFlydeFiles = (rootPath: string) => {
   return localFlydeFiles;
 };
 
-export const scanImportableParts = async (rootPath: string, filename: string) => {
-
-  
+export const scanImportableParts = async (
+  rootPath: string,
+  filename: string
+) => {
   const fileRoot = join(rootPath, filename);
 
   const localFiles = getLocalFlydeFiles(rootPath);
-  
+
   const depsNames = await getFlydeDependencies(rootPath);
 
   const depsParts = await resolveDependentPackages(rootPath, depsNames);
@@ -79,9 +82,9 @@ export const scanImportableParts = async (rootPath: string, filename: string) =>
       try {
         const { main } = resolveFlow(file.fullPath, "definition");
 
-      const relativePath = relative(join(fileRoot, ".."), file.fullPath);
+        const relativePath = relative(join(fileRoot, ".."), file.fullPath);
 
-      return { ...acc, [relativePath]: { [main.id]: main } };
+        return { ...acc, [relativePath]: { [main.id]: main } };
         // return { ...acc, [main.id]: main };
       } catch (e) {
         console.error(`Skipping corrupt flow at ${file.fullPath}, error: ${e}`);

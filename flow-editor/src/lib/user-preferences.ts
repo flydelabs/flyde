@@ -30,7 +30,10 @@ const createUserPreferences = () => {
 };
 
 // THIS HOOK
-export const useUserPref = <T>(key: string, initial: T): [T, (val: T) => void] => {
+export const useUserPref = <T>(
+  key: string,
+  initial: T
+): [T, (val: T) => void] => {
   const [val, setVal] = React.useState(() => {
     const existing = userPreferences.getItem(key);
     return isDefined(existing) ? existing : initial;
@@ -75,7 +78,10 @@ const safelyGetItem = (key: string) => {
   }
 };
 
-export const useLocalStorage = <T>(key: string, initial: T): [T, (val: T) => void] => {
+export const useLocalStorage = <T>(
+  key: string,
+  initial: T
+): [T, (val: T) => void] => {
   const [val, setVal] = React.useState(safelyGetItem(key) || initial);
 
   const setAndSave = React.useCallback(

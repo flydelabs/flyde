@@ -1,4 +1,10 @@
-import React, { Fragment, useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  Fragment,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import * as PubSub from "pubsub-js";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import Layout from "@theme/Layout";
@@ -98,7 +104,14 @@ export type PlaygroundFlowDto = {
   player: RuntimePlayer;
 };
 
-const runFlow = ({ flow, output, inputs, onError, debugDelay, player }: PlaygroundFlowDto) => {
+const runFlow = ({
+  flow,
+  output,
+  inputs,
+  onError,
+  debugDelay,
+  player,
+}: PlaygroundFlowDto) => {
   const localDebugger = createRuntimeClientDebugger(player, historyPlayer);
 
   localDebugger.debugDelay = debugDelay;
@@ -120,7 +133,9 @@ const runFlow = ({ flow, output, inputs, onError, debugDelay, player }: Playgrou
   });
 };
 
-export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (props) => {
+export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (
+  props
+) => {
   const { flow, inputs, output } = props.flowProps;
 
   const [childrenWidth, setChildrenWidth] = useState(props.initWidth || 500);
@@ -129,7 +144,9 @@ export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (props) => 
 
   const [outputReceived, setOutputReceived] = useState(false);
 
-  const runtimePlayerRef = useRef(createRuntimePlayer('root.' + props.flowProps.flow.part.id));
+  const runtimePlayerRef = useRef(
+    createRuntimePlayer("root." + props.flowProps.flow.part.id)
+  );
 
   const [resolvedFlow, setResolvedFlow] = useState<ResolvedFlydeRuntimeFlow>(
     props.flowProps.resolvedFlow
@@ -164,7 +181,7 @@ export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (props) => 
     hideTemplatingTips: true,
     onImportPart: noop,
     onExtractInlinePart: noop as any,
-    onQueryImportables: noop as any
+    onQueryImportables: noop as any,
   };
 
   useEffect(() => {
@@ -192,7 +209,9 @@ export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (props) => 
 
     setFlowEditorState((state) => {
       const container = document.querySelector(".flow-container"); // yack
-      const vpSize = container ? container.getBoundingClientRect() : { width: 500, height: 500 };
+      const vpSize = container
+        ? container.getBoundingClientRect()
+        : { width: 500, height: 500 };
       return produce(state, (draft) => {
         draft.boardData.viewPort = fitViewPortToPart(
           draft.flow.part as any,
@@ -228,12 +247,18 @@ export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (props) => 
       title={`${props.meta.title} | Playground`}
       description={`Flyde Playground - ${props.meta.title} example`}
     >
-      <header className={clsx("hero hero--primary", styles.heroBanner, "playground-hero")}>
+      <header
+        className={clsx(
+          "hero hero--primary",
+          styles.heroBanner,
+          "playground-hero"
+        )}
+      >
         <div className="container">
           <h1 className="hero__title">Welcome to Flyde's Online Playground</h1>
           <p className="hero__subtitle">
-            Choose one of the examples below to get started. Feel free to play around with the
-            canvas and see how your changes affect the result!
+            Choose one of the examples below to get started. Feel free to play
+            around with the canvas and see how your changes affect the result!
           </p>
         </div>
       </header>
@@ -242,7 +267,10 @@ export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (props) => 
         {EXAMPLES_LIST.map((ex) => {
           return (
             <li key={ex.key}>
-              <Link to={`/playground/${ex.key}`} className="button button--primary">
+              <Link
+                to={`/playground/${ex.key}`}
+                className="button button--primary"
+              >
                 {ex.title}
               </Link>
             </li>
@@ -257,7 +285,9 @@ export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (props) => 
           {outputReceived ? (
             <Fragment>
               <hr />
-              <div className="playground-extra">{props.extraInfo || props.meta.extraInfo}</div>
+              <div className="playground-extra">
+                {props.extraInfo || props.meta.extraInfo}
+              </div>
             </Fragment>
           ) : null}
           {props.prefixComponent}
@@ -265,7 +295,9 @@ export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (props) => 
         <div className="playground">
           <div className="flow-container">
             {props.hideDelay !== true ? debugDelayElem : null}
-            <BrowserOnly>{() => <FlowEditor {...flowEditorProps} />}</BrowserOnly>
+            <BrowserOnly>
+              {() => <FlowEditor {...flowEditorProps} />}
+            </BrowserOnly>
           </div>
           <Resizable
             height={0}
@@ -275,7 +307,10 @@ export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (props) => 
             handle={<div className="handle" />}
             resizeHandles={["w"]}
           >
-            <div className="output-container" style={{ flexBasis: childrenWidth }}>
+            <div
+              className="output-container"
+              style={{ flexBasis: childrenWidth }}
+            >
               {props.children}
             </div>
           </Resizable>
@@ -283,16 +318,26 @@ export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (props) => 
 
         <nav className="pagination-nav">
           <div className="pagination-nav__item">
-            {prevExample ? <a className="pagination-nav__link" href={`/playground/${prevExample.key}`}>
-              <div className="pagination-nav__sublabel">Previous Example</div>
-              <div className="pagination-nav__label">{prevExample.title}</div>
-            </a> : null }
+            {prevExample ? (
+              <a
+                className="pagination-nav__link"
+                href={`/playground/${prevExample.key}`}
+              >
+                <div className="pagination-nav__sublabel">Previous Example</div>
+                <div className="pagination-nav__label">{prevExample.title}</div>
+              </a>
+            ) : null}
           </div>
           <div className="pagination-nav__item pagination-nav__item--next">
-          {nextExample ? <a className="pagination-nav__link" href={`/playground/${nextExample.key}`}>
-              <div className="pagination-nav__sublabel">Next Example</div>
-              <div className="pagination-nav__label">{nextExample.title}</div>
-            </a> : null }
+            {nextExample ? (
+              <a
+                className="pagination-nav__link"
+                href={`/playground/${nextExample.key}`}
+              >
+                <div className="pagination-nav__sublabel">Next Example</div>
+                <div className="pagination-nav__label">{nextExample.title}</div>
+              </a>
+            ) : null}
           </div>
         </nav>
       </div>

@@ -26,7 +26,10 @@ export const OutputLogs: React.FC<OutputLogsProps> = (props) => {
 
   React.useEffect(() => {
     props.output.subscribe((rawValue) => {
-      const value = typeof rawValue === 'object' && React.isValidElement(rawValue)  ? rawValue : `${rawValue}`;
+      const value =
+        typeof rawValue === "object" && React.isValidElement(rawValue)
+          ? rawValue
+          : `${rawValue}`;
       setLog((logs) => [...logs, { value, time: Date.now() }]);
     });
   }, []);

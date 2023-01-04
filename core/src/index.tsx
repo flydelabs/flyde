@@ -10,15 +10,14 @@ import {
   PartDefinition,
 } from "./part";
 
-
 export * from "./connect";
 
 export * from "./execute";
-export * from './simplified-execute';
+export * from "./simplified-execute";
 
 export * from "./part";
 
-export * from './part/get-part-with-dependencies';
+export * from "./part/get-part-with-dependencies";
 
 // export * from "./serdes";
 
@@ -28,9 +27,8 @@ export * from "./code-to-native";
 
 export * from "./web-project";
 
-export * from './project';
-export * from './flow-schema';
-
+export * from "./project";
+export * from "./flow-schema";
 
 export type InputStaticValue = string | number | object | GroupedPart;
 

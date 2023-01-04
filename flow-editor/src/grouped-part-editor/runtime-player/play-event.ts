@@ -1,4 +1,10 @@
-import { DebuggerEvent, DebuggerEventType, debugLogger, entries, ERROR_PIN_ID } from "@flyde/core";
+import {
+  DebuggerEvent,
+  DebuggerEventType,
+  debugLogger,
+  entries,
+  ERROR_PIN_ID,
+} from "@flyde/core";
 import { getInstanceDomId, getMainPinDomId, getPinDomId } from "../dom-ids";
 
 const BLINK_TIMEOUT = 5000; // also change animation time in scss
@@ -10,11 +16,14 @@ const getCancelTimerKey = (event: DebuggerEvent) => {
       on inputs and outputs the id is the ins + pin, and on others it's ins
       this ensures that clearing timeouts work across relevant elements only
      */
-    if (event.type === DebuggerEventType.INPUT_CHANGE || event.type === DebuggerEventType.OUTPUT_CHANGE) {
-      return `${event.parentInsId}.${event.insId}.${event.pinId}`;
-    } else {
-      return `${event.parentInsId}.${event.insId}`;
-    }
+  if (
+    event.type === DebuggerEventType.INPUT_CHANGE ||
+    event.type === DebuggerEventType.OUTPUT_CHANGE
+  ) {
+    return `${event.parentInsId}.${event.insId}.${event.pinId}`;
+  } else {
+    return `${event.parentInsId}.${event.insId}`;
+  }
 };
 export const cancelTimers = new Map();
 
@@ -24,10 +33,14 @@ export const playEvent = (editorInsId: string, event: DebuggerEvent) => {
   switch (event.type) {
     case DebuggerEventType.INPUT_CHANGE:
     case DebuggerEventType.OUTPUT_CHANGE: {
-      const {pinId, insId, parentInsId} = event;
-      const pinType = event.type === DebuggerEventType.INPUT_CHANGE ? 'input' : 'output';
+      const { pinId, insId, parentInsId } = event;
+      const pinType =
+        event.type === DebuggerEventType.INPUT_CHANGE ? "input" : "output";
 
-      const domId = insId === editorInsId ? getMainPinDomId(insId, pinId, pinType) : getPinDomId(parentInsId, insId, pinId, pinType);
+      const domId =
+        insId === editorInsId
+          ? getMainPinDomId(insId, pinId, pinType)
+          : getPinDomId(parentInsId, insId, pinId, pinType);
       const element = document.getElementById(domId);
 
       const connDomIdAttr = `${insId}.${pinId}`;
@@ -45,13 +58,13 @@ export const playEvent = (editorInsId: string, event: DebuggerEvent) => {
         connectionElems.forEach((connElem: any) => {
           connElem.removeAttribute("data-runtime");
         });
-        
+
         setTimeout(() => {
           element.setAttribute("data-runtime", "active");
           connectionElems.forEach((connElem: any) => {
             connElem.setAttribute("data-runtime", "active");
           });
-        }, 0)
+        }, 0);
 
         const timer = setTimeout(() => {
           element.removeAttribute("data-runtime");
@@ -65,7 +78,7 @@ export const playEvent = (editorInsId: string, event: DebuggerEvent) => {
       break;
     }
     case DebuggerEventType.PROCESSING_CHANGE: {
-      const {insId, parentInsId} = event;
+      const { insId, parentInsId } = event;
 
       const domId = getInstanceDomId(parentInsId, insId);
       const element = document.getElementById(domId)?.parentElement;
@@ -78,8 +91,7 @@ export const playEvent = (editorInsId: string, event: DebuggerEvent) => {
         element.setAttribute("data-runtime", "processing");
         clearTimeout(cancelTimers.get(timerKey));
       } else {
-
-        element.removeAttribute('data-runtime');
+        element.removeAttribute("data-runtime");
         setTimeout(() => {
           element.setAttribute("data-runtime", "done");
         }, 0);
@@ -92,9 +104,7 @@ export const playEvent = (editorInsId: string, event: DebuggerEvent) => {
       break;
     }
     case DebuggerEventType.ERROR: {
-      const {insId, parentInsId} = event;
-
-      
+      const { insId, parentInsId } = event;
 
       const domId = getInstanceDomId(parentInsId, insId);
       const element = document.getElementById(domId)?.parentElement;
@@ -104,7 +114,7 @@ export const playEvent = (editorInsId: string, event: DebuggerEvent) => {
       }
 
       clearTimeout(cancelTimers.get(timerKey));
-      element.removeAttribute('data-runtime');
+      element.removeAttribute("data-runtime");
       setTimeout(() => {
         element.setAttribute("data-runtime", "error");
       });
@@ -117,15 +127,15 @@ export const playEvent = (editorInsId: string, event: DebuggerEvent) => {
       const fakeErrorPinEvent: DebuggerEvent = {
         ...event,
         type: DebuggerEventType.OUTPUT_CHANGE,
-        pinId: ERROR_PIN_ID
-      }
+        pinId: ERROR_PIN_ID,
+      };
 
-      playEvent(editorInsId, fakeErrorPinEvent)
+      playEvent(editorInsId, fakeErrorPinEvent);
       break;
     }
     case DebuggerEventType.INPUTS_STATE_CHANGE: {
       entries(event.val).forEach(([k, v]) => {
-        const {insId, parentInsId} = event;
+        const { insId, parentInsId } = event;
         const domId = getPinDomId(parentInsId, insId, k, "input");
         const element = document.getElementById(domId);
         if (!element) {

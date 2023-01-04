@@ -1,19 +1,21 @@
-import { CustomPart, FlydeFlow, flydeFlowSchema } from '@flyde/core';
-import * as yaml from 'yaml';
-import * as rfs from 'require-from-string';
-import _ = require('lodash');
-import * as path from 'path';
+import { CustomPart, FlydeFlow, flydeFlowSchema } from "@flyde/core";
+import * as yaml from "yaml";
+import * as rfs from "require-from-string";
+import _ = require("lodash");
+import * as path from "path";
 
-require('ts-node').register({ // Most ts-node options can be specified here using their programmatic names.
-transpileOnly: true
+require("ts-node").register({
+  // Most ts-node options can be specified here using their programmatic names.
+  transpileOnly: true,
   // It is faster to skip typechecking.
   // Remove if you want ts-node to do typechecking.
-// }
+  // }
 });
 
-
-export const deserializeCodeFlow = (contents: string, fileName: string): FlydeFlow => {
-
+export const deserializeCodeFlow = (
+  contents: string,
+  fileName: string
+): FlydeFlow => {
   let part = require(fileName);
 
   if (part.default) {
@@ -22,12 +24,14 @@ export const deserializeCodeFlow = (contents: string, fileName: string): FlydeFl
 
   return {
     part,
-    imports: {}
-  }
-}
+    imports: {},
+  };
+};
 
-export const deserializeVisualFlow = (flowContents: string, path: string): FlydeFlow => {
-
+export const deserializeVisualFlow = (
+  flowContents: string,
+  path: string
+): FlydeFlow => {
   const unsafeflow = yaml.parse(flowContents);
 
   const result = flydeFlowSchema.safeParse(unsafeflow);
@@ -38,16 +42,19 @@ export const deserializeVisualFlow = (flowContents: string, path: string): Flyde
   const data = result.data;
 
   const imports = _.mapValues(data.imports || {}, (value) => {
-    return typeof value === 'string' ? [value] : value;
+    return typeof value === "string" ? [value] : value;
   });
 
   data.imports = imports;
-  
-  return data as FlydeFlow;
-}
 
-export const deserializeFlow = (flowContents: string, fileName: string): FlydeFlow => {
-  if (fileName.endsWith('.flyde')) {
+  return data as FlydeFlow;
+};
+
+export const deserializeFlow = (
+  flowContents: string,
+  fileName: string
+): FlydeFlow => {
+  if (fileName.endsWith(".flyde")) {
     return deserializeVisualFlow(flowContents, fileName);
   } else {
     try {
@@ -57,4 +64,4 @@ export const deserializeFlow = (flowContents: string, fileName: string): FlydeFl
       throw e;
     }
   }
-}
+};

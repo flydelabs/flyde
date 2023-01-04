@@ -20,8 +20,12 @@ import {
 const debug = debugLogger("debugger-runtime-client");
 
 export type RuntimeDebuggerClient = {
-  onChange: (cb: RemoteDebuggerCallback<{ project: Project }>) => RemoteDebuggerCancelFn;
-  onInput: (cb: RemoteDebuggerCallback<{ pinId: string; value: any }>) => RemoteDebuggerCancelFn;
+  onChange: (
+    cb: RemoteDebuggerCallback<{ project: Project }>
+  ) => RemoteDebuggerCancelFn;
+  onInput: (
+    cb: RemoteDebuggerCallback<{ pinId: string; value: any }>
+  ) => RemoteDebuggerCancelFn;
 
   emitEvent: (event: DebuggerEvent) => DebuggerCommand;
 
@@ -43,7 +47,9 @@ export const createRuntimeClient = (
 ): Promise<RuntimeDebuggerClient> => {
   const urlParts = new URL(url);
   const socket = io(urlParts.origin, {
-    path: `${urlParts.pathname === "/" ? "" : urlParts.pathname}/socket.io/runtime`,
+    path: `${
+      urlParts.pathname === "/" ? "" : urlParts.pathname
+    }/socket.io/runtime`,
   });
 
   socket.emit("join-room-runtime", deploymentId);
