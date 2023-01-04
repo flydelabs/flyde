@@ -3123,6 +3123,24 @@ describe("main ", () => {
   
       
     });
+
+    it('does not enter a loop when static values are connected to a reactive input', () => {
+      const part = conciseNativePart({
+        id: 'part',
+        inputs: ['a'],
+        outputs: ['r'],
+        reactiveInputs: ['a'],
+        completionOutputs: [],
+        fn: (inputs, outputs, adv) => {
+          outputs.r.next(inputs.a);
+        }
+      });
+
+      const [s, r] = spiedOutput();
+      const a = staticPartInput(5);
+      execute({part, inputs: {a}, outputs: {r}, partsRepo: testRepoWith(part)});
+      assert.equal(s.callCount, 1);
+    });
   })    
 
 });

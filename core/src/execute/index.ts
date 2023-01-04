@@ -34,7 +34,7 @@ import {
 } from "../execution-values";
 import { delay, entries, isDefined, keys, OMap, OMapF } from "../common";
 import { debugLogger } from "../common/debug-logger";
-import { callFnOrFnPromise, codePartToNative, customRepoToPartRepo, PartFn, PartRepo } from "..";
+import { callFnOrFnPromise, codePartToNative, customRepoToPartRepo, isStaticInput, PartFn, PartRepo } from "..";
 import { Debugger, DebuggerEventType } from "./debugger";
 
 export type SubjectMap = OMapF<Subject<any>>;
@@ -162,7 +162,12 @@ const executeNative = (data: NativeExecutionData) => {
 
   let lastValues;
 
-  const reactiveInputs = part.reactiveInputs || [];
+  const reactiveInputs = (part.reactiveInputs || [])
+  /* 
+    Reactive inputs that are static shouldn't get a special treatment 
+  */
+  .filter(inp => !isStaticInput(inputs[inp]));
+
 
   const cleanState = () => {
     mainState[innerStateId].clear();
@@ -199,13 +204,13 @@ const executeNative = (data: NativeExecutionData) => {
           lastValues = argValues;
           reportInputStateChange();
         } else {
-          // this is a reactive input, use last non reactive values and push only the reactive one
           if (!input) {
             throw new Error(
               `Unexpected state,  got reactive part while not processing and not valid`
-            );
-          }
-
+              );
+            }
+            
+            // this is a reactive input, use last non reactive values and push only the reactive one
           const value = pullValueForExecution(input.key, inputs[input.key], inputsState, env);
           argValues = { ...lastValues, [input.key]: value };
           reportInputStateChange();
@@ -285,19 +290,19 @@ const executeNative = (data: NativeExecutionData) => {
           onError(e);
         }
 
-        const hasReactiveInputInPipe = reactiveInputs.find((key) => {
+        const maybeReactiveKey = reactiveInputs.find((key) => {
           return inputs[key] && peekValueForExecution(key, inputs[key], inputsState, env, part.id);
         });
 
-        if (hasReactiveInputInPipe) {
+        if (maybeReactiveKey) {
           const value = peekValueForExecution(
-            hasReactiveInputInPipe,
-            inputs[hasReactiveInputInPipe],
+            maybeReactiveKey,
+            inputs[maybeReactiveKey],
             inputsState,
             env,
             part.id
           );
-          maybeRunPart({ key: hasReactiveInputInPipe, value });
+          maybeRunPart({ key: maybeReactiveKey, value });
         } else {
           const hasStaticValuePending = entries(inputs).find(([k, input]) => {
             const isQueue = isQueueInputPinConfig((input as any).config, input);
