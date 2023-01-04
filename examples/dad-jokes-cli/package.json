@@ -1,12 +1,15 @@
 {
-  "name": "cli-chuck-norris-joke",
+  "name": "dad-jokes-cli",
+  "author": "Flyde",
+  "license": "MIT",
   "main": "dist/cli.ts",
+  "homepage": "https://github.com/FlydeHQ/flyde/tree/main/examples/dad-jokes-cli",
   "packageManager": "yarn@3.2.0",
   "bin": {
     "dad-joke": "dist/cli.js"
   },
   "scripts": {
-    "start": "ts-node-dev src/cli.ts",
+    "start": "ts-node-dev src/cli.ts --watch **/*.flyde",
     "joke": "ts-node src/cli.ts",
     "build": "tsc -p ."
   },
@@ -15,8 +18,7 @@
     "@flyde/runtime": "latest",
     "@flyde/stdlib": "latest",
     "axios": "^1.1.3",
-    "chalk": "^4.0.0",
-    "meow": "^9.0.0"
+    "chalk": "^4.0.0"
   },
   "devDependencies": {
     "ts-node": "^10.9.1",

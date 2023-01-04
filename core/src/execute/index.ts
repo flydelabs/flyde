@@ -38,7 +38,8 @@ import {
   callFnOrFnPromise,
   codePartToNative,
   customRepoToPartRepo,
-  isStaticInput,
+  isPromise,
+  isStaticInputPinConfig,
   PartFn,
   PartRepo,
 } from "..";
@@ -89,7 +90,9 @@ export type NativeExecutionData = {
   onError: (err: any) => void;
   onBubbleError: (err: any) => void;
   env: ExecuteEnv;
+  // TODO - think of combining these below + onEvent into one
   onCompleted?: (data: any) => void;
+  onStarted?: () => void;
 };
 
 export const INNER_STATE_SUFFIX = "_inner";
@@ -106,6 +109,7 @@ const executeNative = (data: NativeExecutionData) => {
     parentInsId,
     mainState,
     onError,
+    onStarted,
     onCompleted,
     env,
     extraContext,
@@ -126,6 +130,7 @@ const executeNative = (data: NativeExecutionData) => {
       _debugger,
       insId: id,
       onCompleted,
+      onStarted
     });
 
   const onEvent: Debugger["onEvent"] = _debugger.onEvent || noop;
@@ -187,7 +192,7 @@ const executeNative = (data: NativeExecutionData) => {
     /* 
     Reactive inputs that are static shouldn't get a special treatment 
   */
-    .filter((inp) => !isStaticInput(inputs[inp]));
+    .filter((inp) => !isStaticInputPinConfig(inputs[inp].config));
 
   const cleanState = () => {
     mainState[innerStateId].clear();
@@ -244,15 +249,15 @@ const executeNative = (data: NativeExecutionData) => {
         let completedOutputs = new Set();
         let completedOutputsValues = {};
 
-        if (part.completionOutputs) {
-          processing = true;
+        processing = true;
 
-          onEvent({
-            type: DebuggerEventType.PROCESSING_CHANGE,
-            val: processing,
-            insId,
-            parentInsId,
-          });
+        onEvent({
+          type: DebuggerEventType.PROCESSING_CHANGE,
+          val: processing,
+          insId,
+          parentInsId,
+        });
+        if (part.completionOutputs) {
 
           // completion outputs support the "AND" operator via "+" sign, i.e. "a+b,c" means "(a AND b) OR c)""
           const dependenciesArray = part.completionOutputs.map((k) =>
@@ -323,8 +328,40 @@ const executeNative = (data: NativeExecutionData) => {
         // magic happens here
         try {
           innerDebug(`Running part %s with values %o`, part.id, argValues);
+
+          if (onStarted) {
+            onStarted();
+          }
           partCleanupFn = fn(argValues as any, outputs, advPartContext);
+
+          if (isPromise(partCleanupFn)) {
+            partCleanupFn.then(() => {
+              if (part.completionOutputs === undefined && onCompleted) {
+                processing = false;
+                onEvent({
+                  type: DebuggerEventType.PROCESSING_CHANGE,
+                  val: processing,
+                  insId,
+                  parentInsId,
+                });
+                onCompleted(completedOutputsValues)
+              }
+            })
+          } else {            
+            if (part.completionOutputs === undefined && onCompleted) {
+              processing = false;
+              onEvent({
+                type: DebuggerEventType.PROCESSING_CHANGE,
+                val: processing,
+                insId,
+                parentInsId,
+              });
+              onCompleted(completedOutputsValues);
+            }
+          }
         } catch (e) {
+          console.log(e);
+          
           processing = false;
           innerDebug(`Error in part %s - value %e`, part.id, e);
           onEvent({
@@ -437,6 +474,7 @@ export type ExecuteParams = {
   extraContext?: Record<string, any>;
 
   onCompleted?: (data: any) => void;
+  onStarted?: () => void;
 };
 
 export const execute: ExecuteFn = ({
@@ -452,6 +490,7 @@ export const execute: ExecuteFn = ({
   onBubbleError = noop, // (err) => { throw err},
   env = {},
   onCompleted = noop,
+  onStarted = noop
 }) => {
   const toCancel: Function[] = [];
 
@@ -582,6 +621,7 @@ export const execute: ExecuteFn = ({
     env,
     extraContext,
     onCompleted,
+    onStarted
   });
 
   return () => {

@@ -72,14 +72,14 @@ export const runAddTests = (add: Part, source: string, repo: PartRepo) => {
       });
       n1.subject.next(1);
       n2.subject.next(2);
-      n2.subject.next(3);
+      n2.subject.next(10);
 
       assert.equal(fn.callCount, 1);
       assert.equal(fn.lastCall.args[0], 3);
 
-      n1.subject.next(2);
+      n1.subject.next(20);
       assert.equal(fn.callCount, 2);
-      assert.equal(fn.lastCall.args[0], 5);
+      assert.equal(fn.lastCall.args[0], 30);
     });
 
     it.skip("pins hold their value after usage by default", () => {

@@ -1,0 +1,171 @@
+imports:
+  "@flyde/runtime":
+    - HttpGet
+    - Pick
+    - Dot
+    - Delay
+part:
+  instances:
+    - pos:
+        x: -544.3686218261719
+        y: -819.7500732421875
+      id: HttpGet-770
+      inputConfig:
+        url:
+          mode: static
+          value: https://api.dadjokes.io/api/random/joke
+      visibleInputs:
+        - url
+      partId: HttpGet
+      style:
+        size: large
+        color: "#f15bb5"
+    - pos:
+        x: -582.6432055664063
+        y: -689.6667553710937
+      id: Dot-132
+      inputConfig:
+        key:
+          mode: static
+          value: body.0.setup
+      visibleInputs:
+        - obj
+      partId: Dot
+    - pos:
+        x: -430.3080004882813
+        y: -697.8059155273437
+      id: clchvfuoj000145662fwav020
+      inputConfig:
+        key:
+          mode: static
+          value: body.0.punchline
+      visibleInputs:
+        - obj
+      partId: Dot
+    - pos:
+        x: -713.0031958007812
+        y: -579.9225756835938
+      id: clchvh14u000b456647885f73
+      inputConfig: {}
+      part:
+        id: Inline-value-console.log(inp
+        inputs:
+          msg:
+            type: any
+            mode: required
+        outputs:
+          value:
+            type: any
+            delayed: false
+            optional: false
+        fnCode: |-
+          const result = (function() { console.log(inputs.msg)}());
+            Promise.resolve(result).then(val => outputs.value.next(val))
+        customViewCode: console.log(inputs.msg)
+        dataBuilderSource: Y29uc29sZS5sb2coaW5wdXRzLm1zZyk=
+        templateType: function
+        completionOutputs:
+          - value
+        defaultStyle:
+          size: regular
+          icon: code
+          cssOverride:
+            fontFamily: monospace
+            fontWeight: "500"
+        description: Custom inline function
+    - pos:
+        x: -327.00996337890626
+        y: -520.0626171875
+      id: Delay-561
+      inputConfig:
+        ms:
+          mode: queue
+      partId: Delay
+      style:
+        size: regular
+        color: "#fee440"
+    - pos:
+        x: -433.3416967773437
+        y: -373.6602465820313
+      id: clchvhf2p000r4566b49385jv
+      inputConfig: {}
+      part:
+        id: Inline-value-console.log(inp
+        inputs:
+          msg:
+            type: any
+            mode: required
+        outputs:
+          value:
+            type: any
+            delayed: false
+            optional: false
+        fnCode: |-
+          const result = (function() { console.log(inputs.msg)}());
+            Promise.resolve(result).then(val => outputs.value.next(val))
+        customViewCode: console.log(inputs.msg)
+        dataBuilderSource: Y29uc29sZS5sb2coaW5wdXRzLm1zZyk=
+        templateType: function
+        completionOutputs:
+          - value
+        defaultStyle:
+          size: regular
+          icon: code
+          cssOverride:
+            fontFamily: monospace
+            fontWeight: "500"
+        description: Custom inline function
+  connections:
+    - from:
+        insId: HttpGet-770
+        pinId: response
+      to:
+        insId: Dot-132
+        pinId: obj
+    - from:
+        insId: HttpGet-770
+        pinId: response
+      to:
+        insId: clchvfuoj000145662fwav020
+        pinId: obj
+    - from:
+        insId: Dot-132
+        pinId: value
+      to:
+        insId: clchvh14u000b456647885f73
+        pinId: msg
+    - from:
+        insId: clchvfuoj000145662fwav020
+        pinId: value
+      to:
+        insId: Delay-561
+        pinId: value
+    - from:
+        insId: Delay-561
+        pinId: r
+      to:
+        insId: clchvhf2p000r4566b49385jv
+        pinId: msg
+    - from:
+        insId: __this
+        pinId: punchDelay
+      to:
+        insId: Delay-561
+        pinId: ms
+  id: DadJoke
+  inputs:
+    punchDelay:
+      mode: required
+      type: any
+  outputs: {}
+  inputsPosition:
+    punchDelay:
+      x: -266.0287552679128
+      y: -884.2784519757015
+    test:
+      x: -182.5383681955638
+      y: -903.352979697288
+    punch delay:
+      x: -222.9
+      y: -816.63
+  outputsPosition: {}

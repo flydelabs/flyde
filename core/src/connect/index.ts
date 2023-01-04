@@ -102,6 +102,10 @@ export const connect = (
       const externalInputConnections = new Map<string, PartInput[]>();
       const externalOutputConnections = new Map<string, PartOutput[]>();
 
+      // holds status of each instance - if it is running or not, for implicit completion 
+      let resolveCompletionPromise: any;
+      const runningInstances = new Set();
+
       // build the inputs and outputs of the part itself
       // they will be then connected to fnArgs and fnOutputs and will run the part
 
@@ -290,6 +294,17 @@ export const connect = (
         });
       });
 
+      function onInstanceCompleted (insId: string) {
+         runningInstances.delete(insId);
+         if (runningInstances.size === 0 && resolveCompletionPromise) {
+          resolveCompletionPromise();
+         }
+      }
+
+      function onInstanceStarted (insId: string) {
+        runningInstances.add(insId);
+      }
+
       depGraph
         .overallOrder()
         .map((name: string) => idToInstance.get(name))
@@ -334,6 +349,8 @@ export const connect = (
             mainState,
             parentInsId,
             onBubbleError,
+            onCompleted: () => onInstanceCompleted(instance.id),
+            onStarted: () => onInstanceStarted(instance.id),
             env,
           });
           cancelFns.push(cancel);
@@ -359,6 +376,12 @@ export const connect = (
           }
         });
       });
+
+      if (part.completionOutputs === undefined && runningInstances.size > 0) {
+        return new Promise((res) => {
+          resolveCompletionPromise = res;
+        })
+      }
 
       return () =>
         cancelFns.forEach((fn) => {

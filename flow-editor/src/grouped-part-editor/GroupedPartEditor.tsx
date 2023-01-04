@@ -794,9 +794,15 @@ export const GroupedPartEditor: React.FC<
           }
         });
 
+        if (from.insId === THIS_INS_ID && from.pinId === pinId) {
+          onChangeBoardData({ from: undefined });
+        } else if (to.insId === THIS_INS_ID && to.pinId === pinId) {
+          onChangeBoardData({ to: undefined });
+        }
+
         onChange(newValue, functionalChange("remove io pin"));
       },
-      [part, onChange]
+      [part, from, to, onChange, onChangeBoardData]
     );
 
     const deleteSelection = React.useCallback(async () => {

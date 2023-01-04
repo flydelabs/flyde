@@ -133,7 +133,7 @@ export const isPromise = <T>(o: any): o is Promise<T> => {
 
 // helper for cleanup fn code. A simple "Promise.resolve" would have caused all cleanups to be async, which is better to avoid (is it?)
 export const callFnOrFnPromise = (
-  maybeFnOrFnPromise: void | Function | Promise<void> | Promise<Function>,
+  maybeFnOrFnPromise: void | Function | Promise<void | Function>,
   errorMsg: string
 ) => {
   if (!isDefined(maybeFnOrFnPromise)) {

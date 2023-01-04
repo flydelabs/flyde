@@ -23,9 +23,10 @@ import { connectionNode, externalConnectionNode } from "./connect";
 import { DebuggerEventType, DebuggerEvent, Debugger } from "./execute/debugger";
 
 export interface ConciseBasePart
-  extends Omit<Omit<BasePart, "inputs">, "outputs"> {
-  inputs: string[];
-  outputs: string[];
+  extends Omit<BasePart, "inputs" | "outputs" | "id"> {
+  inputs?: string[];
+  outputs?: string[];
+  id?: string
 }
 
 export interface ConciseGroupedPart extends ConciseBasePart {
@@ -43,8 +44,9 @@ export interface ConciseNativePart extends ConciseBasePart {
 
 export const conciseBasePart = (concise: ConciseBasePart): BasePart => {
   return {
+    id: 'a-part',
     ...concise,
-    inputs: concise.inputs.reduce<InputPinMap>((prev, curr) => {
+    inputs: (concise.inputs || []).reduce<InputPinMap>((prev, curr) => {
       const [clean, mode] = curr.split("|");
       if (
         mode &&
@@ -54,7 +56,7 @@ export const conciseBasePart = (concise: ConciseBasePart): BasePart => {
       }
       return { ...prev, [clean]: partInput("any", mode as InputMode) };
     }, {}),
-    outputs: concise.outputs.reduce<OutputPinMap>((prev, curr) => {
+    outputs: (concise.outputs || []).reduce<OutputPinMap>((prev, curr) => {
       const clean = curr.replace("?", "");
       return { ...prev, [clean]: partOutput("any", false, clean !== curr) };
     }, {}),

@@ -2,20 +2,36 @@
 
 ![Preview](preview.gif)
 
-CLI tool that tells dad jokes, with a slight delay between the joke's setup and punch-line.
+CLI tool that generates dad jokes, with a slight delay between the joke's setup and punch-line.
 Built using:
 
 - _Flyde_ ✨
 - [DadJokes.io](https://dadjokes.io/) for the jokes
-- [Meow](https://github.com/sindresorhus/meow) for parsing cli flags
 - Typescript
 
-`yarn joke --delay=300
+## Usage
+`dad-joke [delay]`
 
-## Running it
+`delay` is optional and specifies the number of milliseconds to wait before printing the punchline. If no delay is provided, the default delay of 2000 ms will be used.
+
+## Examples
+```
+$ dad-joke
+Why was the math book sad?
+(2000 ms delay)
+Because it had too many problems.
+
+$ dad-joke 5000
+Why couldn't the bicycle stand up by itself?
+(5000 ms delay)
+It was two-tired.
+```
+
+
+## Running locally
 
 1. `yarn`
-2. `yarn joke`
+2. `yarn joke [delay]`
 
 ## Prerequisites
 

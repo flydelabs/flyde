@@ -23,6 +23,7 @@ import {
   connection,
   connectionData,
   ERROR_PIN_ID,
+  TRIGGER_PIN_ID,
 } from "./connect";
 import {
   NativePart,
@@ -75,6 +76,7 @@ import {
   valuePart,
   spiedOutput,
   wrappedOnEvent,
+  conciseCodePart,
 } from "./test-utils";
 import { DebuggerEventType } from "./execute/debugger";
 
@@ -1198,7 +1200,7 @@ describe("main ", () => {
         assert.deepEqual(s.lastCall.args[0], 1 + 2); // if state was shared it would be 6
       });
 
-      it("cleans inner inputs state after part is executed - no completion", () => {
+      it("cleans inner inputs state after part is executed - no completion", async () => {
         // this test introduces a double connection to an add part, and tests that the inner state of the inputs isn't kept
         const s = spy();
         const part = concisePart({
@@ -1207,7 +1209,7 @@ describe("main ", () => {
           outputs: ["r"],
           instances: [
             partInstance("i1", add.id),
-            partInstance("i2", id.id), // id to simualte anot
+            partInstance("i2", id.id), // id to simulate another part
           ],
           connections: [
             ["n1", "i1.n1"],
@@ -1237,6 +1239,7 @@ describe("main ", () => {
         assert.equal(s.callCount, 2);
         assert.equal(s.getCalls()[0].args[0], 3);
         assert.equal(s.getCalls()[1].args[0], 7);
+
       });
 
       it("cleans inner inputs state after part is executed - with completion", () => {
@@ -1280,7 +1283,7 @@ describe("main ", () => {
         assert.equal(s.getCalls()[1].args[0], 7);
       });
 
-      it("cleans internal state of parts after execution", () => {
+      it("cleans internal state of parts after execution", async () => {
         /*
           internal part P will increase on each input received and return the current state
         */
@@ -1301,6 +1304,7 @@ describe("main ", () => {
           id: "cwrap",
           inputs: ["v"],
           outputs: ["r"],
+          completionOutputs: ['r'],
           instances: [partInstance("i1", counter.id)],
           connections: [
             ["v", "i1.v"],
@@ -2155,7 +2159,7 @@ describe("main ", () => {
       );
     });
 
-    describe("completion outputs", () => {
+    describe("part completion", () => {
       it("re-runs parts when one of the required outputs complete", async () => {
         const item = dynamicPartInput({ config: queueInputPinConfig() });
 
@@ -2430,6 +2434,65 @@ describe("main ", () => {
         assert.equal(completionSpy.callCount, 1);
         assert.deepEqual(completionSpy.lastCall.args[0], { r: "bob" });
       });
+
+      describe('implicit completion', () => {
+        describe('native parts', () => {
+          it('triggers an implicit completion when there are no explicit completion outputs', async () => {
+            const part = conciseNativePart({outputs: ['r'], fn: (_, o) => o.r.next('ok')});
+            const s = spy();
+            execute({part, partsRepo: testRepo, inputs: {}, outputs: {r: dynamicOutput()}, onCompleted: s});
+            assert.equal(s.callCount, 1);
+          })
+
+          it('waits for promises to resolve before triggering an implicit completion of code part with no explicit completion outputs', async () => {
+            const part = conciseNativePart({outputs: ['r'], fn: async (_, o) => {
+              await new Promise((r) => setTimeout(r, 10));
+              o.r.next('ok');
+            }});
+            
+            const s = spy();
+            const [sr, r] = spiedOutput()
+            execute({part, partsRepo: testRepo, inputs: {}, outputs: {r}, onCompleted: s});
+            await eventually(() => {
+              assert.isTrue(sr.calledWith('ok'));
+            })
+            assert.isTrue(s.calledAfter(sr));
+          });
+        });
+
+        describe('grouped parts', () => {
+          it('triggers implicit completion when parts "inside" stop running', async () => {
+
+            const delayPart = (ms: number) => conciseNativePart({outputs: ['r'], fn: async (_, o) => {
+              await new Promise((r) => setTimeout(r, ms));
+              o.r.next('ok');
+            }, id: `delay-${ms}`});
+
+            const delay10 = delayPart(10);
+            const delay5 = delayPart(5);
+
+            const wrapper = concisePart({
+              outputs: ['r'],
+              instances: [{id: 'a', part: delay5, pos: {x: 0, y: 0}, inputConfig: {}}, {id: 'b', part: delay10, pos: {x: 0, y: 0}, inputConfig: {}}],
+              connections: [
+                ['a.r', 'b.' +TRIGGER_PIN_ID],
+                ['b.r', 'r'],
+              ]
+            });
+
+            const [sr, r] = spiedOutput();
+            const onCompleted = spy();
+            execute({part: wrapper, partsRepo: testRepo, inputs: {}, outputs: {r}, onCompleted});
+            await eventually(() => {
+              assert.isTrue(sr.calledWith('ok'));
+            });
+            assert.equal(sr.callCount, 1);
+            assert.isTrue(onCompleted.called)
+            assert.isTrue(onCompleted.calledAfter(sr));
+          });
+        });
+      })
+
     });
 
     it("cleans up part only when the part is done", async () => {

@@ -7,10 +7,16 @@ import { loadFlow, LoadedFlowExecuteFn } from '@flyde/runtime'
 declare module '@flyde/runtime' {
 
     // generated flow typings
-    export function loadFlow(path: 'src/pages/playground/_flows/ApisCombination.flyde'): LoadedFlowExecuteFn<{}>;
-    export function loadFlow(path: 'src/pages/playground/_flows/bmi.flyde'): LoadedFlowExecuteFn<{}>;
-    export function loadFlow(path: 'src/pages/playground/_flows/debounce-throttle.flyde'): LoadedFlowExecuteFn<{input: any}>;
-    export function loadFlow(path: 'src/pages/playground/_flows/fibonacci.flyde'): LoadedFlowExecuteFn<{n: any}>;
-    export function loadFlow(path: 'src/pages/playground/_flows/hello-world.flyde'): LoadedFlowExecuteFn<{}>;
-    export function loadFlow(path: 'src/pages/playground/_flows/react-counter/react-counter.flyde'): LoadedFlowExecuteFn<{}>;
+    /**
+    * @deprecated Path "node_modules/.bin/concurrently"" is corrupt. Please fix it.
+    */
+    export function loadFlow(path: 'node_modules/.bin/concurrently'): never;
+    /**
+    * @deprecated Path "node_modules/.bin/upgrade-blueprint-2.0.0-rename"" is corrupt. Please fix it.
+    */
+    export function loadFlow(path: 'node_modules/.bin/upgrade-blueprint-2.0.0-rename'): never;
+    /**
+    * @deprecated Path "node_modules/.bin/upgrade-blueprint-3.0.0-rename"" is corrupt. Please fix it.
+    */
+    export function loadFlow(path: 'node_modules/.bin/upgrade-blueprint-3.0.0-rename'): never;
 }

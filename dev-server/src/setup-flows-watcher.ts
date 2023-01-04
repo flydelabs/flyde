@@ -17,13 +17,10 @@ export const setupFlowsWatcher = (
     .watch(["**/*.flyde"], {
       cwd: rootDir,
       ignored: (path) =>
-        path.endsWith(".flyde") && !path.includes("/node_modules"),
+      // hacky fix for https://github.com/paulmillr/chokidar/issues/544 when working locally
+       !path.endsWith(".flyde") || path.includes("/node_modules")
     })
     .on("all", (event, path) => {
-      // hacky fix for https://github.com/paulmillr/chokidar/issues/544 when working locally
-      if (!path.endsWith(".flyde")) {
-        return;
-      }
       switch (event) {
         case "add":
         case "change":

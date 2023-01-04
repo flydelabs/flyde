@@ -51,8 +51,8 @@ export const isStickyInputPinConfig = (
   return config && (config as StickyInputPinConfig).mode === "sticky";
 };
 
-export const isStaticInputPinConfig = (
+export function isStaticInputPinConfig (
   config: InputPinConfig | undefined
-): config is StaticInputPinConfig => {
+): config is StaticInputPinConfig {
   return config && (config as StaticInputPinConfig).mode === "static";
 };

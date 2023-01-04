@@ -40,7 +40,7 @@ export type PartFn = (
   args: OMapF<any>,
   o: OMapF<Subject<any>>,
   adv?: PartAdvancedContext
-) => void | CancelFn | Promise<void> | Promise<CancelFn>;
+) => void | CancelFn | Promise<void | CancelFn>;
 
 export type CustomPartViewFn = (
   instance: PartInstance,
