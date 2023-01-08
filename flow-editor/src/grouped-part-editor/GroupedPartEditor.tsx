@@ -27,8 +27,8 @@ import {
   inlinePartInstance,
   isInlinePartInstance,
   isRefPartInstance,
-  CodePartTemplateTypeInline,
-  isCodePart,
+  InlineValuePartType,
+  isInlineValuePart,
   InlinePartInstance,
   ResolvedFlydeFlowDefinition,
   connectionNode,
@@ -99,7 +99,7 @@ import {
   metaChange,
 } from "../flow-editor/flyde-flow-change-type";
 import { InlineCodeModal } from "../flow-editor/inline-code-modal";
-import { createInlineCodePart } from "../flow-editor/inline-code-modal/inline-code-to-part";
+import { createInlineValuePart } from "../flow-editor/inline-code-modal/inline-code-to-part";
 import _ from "lodash";
 import { groupSelected } from "../group-selected";
 import { useConfirm, usePrompt } from "../flow-editor/ports";
@@ -194,7 +194,7 @@ export type GroupedPartEditorProps = {
 type InlineValueTargetExisting = {
   insId: string;
   value: string;
-  templateType: CodePartTemplateTypeInline;
+  templateType: InlineValuePartType;
   type: "existing";
 };
 type InlineValueTargetNewStatic = {
@@ -1022,7 +1022,7 @@ export const GroupedPartEditor: React.FC<
             onEditPart(part as ImportedPartDef);
           } else {
             const part = ins.part;
-            if (!isCodePart(part)) {
+            if (!isInlineValuePart(part)) {
               if (isGroupedPart(part)) {
                 setOpenInlineInstance({ insId: ins.id, part });
               } else {
@@ -1921,14 +1921,14 @@ export const GroupedPartEditor: React.FC<
     //   return null;
     // };
 
-    const onSaveInlineCodePart = React.useCallback(
-      (type: CodePartTemplateTypeInline, code: string) => {
+    const onSaveInlineValuePart = React.useCallback(
+      (type: InlineValuePartType, code: string) => {
         const customView = code.trim().substr(0, 100);
         const partId = `Inline-value-${customView
           .substr(0, 15)
           .replace(/["'`]/g, "")}`;
 
-        const newPart = createInlineCodePart({
+        const newPart = createInlineValuePart({
           code,
           customView,
           partId,
@@ -2233,7 +2233,7 @@ export const GroupedPartEditor: React.FC<
                     : undefined
                 }
                 onCancel={() => setInlineCodeTarget(undefined)}
-                onSubmit={onSaveInlineCodePart}
+                onSubmit={onSaveInlineValuePart}
               />
             ) : null}
             <div className="inline-editor-portal-root" />

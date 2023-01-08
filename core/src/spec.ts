@@ -32,7 +32,7 @@ import {
   dynamicPartInput,
   dynamicOutput,
   partInstance,
-  CodePart,
+  InlineValuePart,
   PartInstance,
   partInput,
   partOutput,
@@ -68,15 +68,14 @@ import {
   spreadList,
 } from "./fixture";
 
-import { codePartToNative } from "./code-to-native";
+import { inlineValuePartToPart } from "./code-to-native";
 import {
   concisePart,
   conciseNativePart,
   callsFirstArgs,
   valuePart,
   spiedOutput,
-  wrappedOnEvent,
-  conciseCodePart,
+  wrappedOnEvent
 } from "./test-utils";
 import { DebuggerEventType } from "./execute/debugger";
 
@@ -1448,7 +1447,7 @@ describe("main ", () => {
     });
 
     it("allows state in code comp", async () => {
-      const part: CodePart = {
+      const part: InlineValuePart = {
         id: "fixture",
         inputs: { v: partInput("any") },
         outputs: { r: partOutput("any") },
@@ -1671,7 +1670,7 @@ describe("main ", () => {
 
   describe("code part support", () => {
     it("runs an Id native part properly", () => {
-      const codePart: CodePart = {
+      const inlineValuePart: InlineValuePart = {
         id: "id",
         inputs: {
           v: partInput("number"),
@@ -1682,7 +1681,7 @@ describe("main ", () => {
         fnCode: `outputs.r.next(inputs.v)`,
       };
 
-      // const part: NativePart = codePartToNative(codePart);
+      // const part: NativePart = inlineValuePartToPart(inlineValuePart);
 
       const s = spy();
       const v = dynamicPartInput();
@@ -1690,7 +1689,7 @@ describe("main ", () => {
 
       r.subscribe(s);
       execute({
-        part: codePart,
+        part: inlineValuePart,
         inputs: { v },
         outputs: { r },
         partsRepo: testRepo,
@@ -1701,7 +1700,7 @@ describe("main ", () => {
 
     it("runs ADD properly on code part", () => {
       const innerSpy = spy();
-      const codePart: CodePart = {
+      const inlineValuePart: InlineValuePart = {
         id: "add",
         inputs: {
           a: partInput("number"),
@@ -1716,7 +1715,7 @@ describe("main ", () => {
           `,
       };
 
-      const part = codePartToNative(codePart, {
+      const part = inlineValuePartToPart(inlineValuePart, {
         innerSpy,
       });
 
@@ -1778,7 +1777,7 @@ describe("main ", () => {
     });
 
     it("runs cleanup code of code parts", async () => {
-      const codePart: CodePart = {
+      const inlineValuePart: InlineValuePart = {
         id: "id",
         inputs: {},
         outputs: {
@@ -1790,7 +1789,7 @@ describe("main ", () => {
           `,
       };
 
-      const part = codePartToNative(codePart);
+      const part = inlineValuePartToPart(inlineValuePart);
       const r = dynamicOutput();
       const s = spy();
       r.subscribe(s);
@@ -1842,7 +1841,7 @@ describe("main ", () => {
   describe("extra context", () => {
     it("passes external context forward when running code comps", async () => {
       const bobber = (n: number) => n + 42;
-      const part: CodePart = {
+      const part: InlineValuePart = {
         id: "tester",
         inputs: {},
         outputs: {

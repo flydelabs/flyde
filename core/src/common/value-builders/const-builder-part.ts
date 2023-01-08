@@ -1,5 +1,5 @@
 import { randomInt } from "..";
-import { codePart, partInput, partOutput } from "../..";
+import { inlineValuePart, partInput, partOutput } from "../..";
 
 export const getConstValuePlaceholders = (v: any) => {
   const pattern = /\$\{([a-zA-Z \d.]*)\}/g;

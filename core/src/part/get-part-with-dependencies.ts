@@ -1,4 +1,4 @@
-import { CustomPart, isCodePart } from ".";
+import { CustomPart, isInlineValuePart } from ".";
 import { CustomPartRepo, removeDupes } from "..";
 import { isRefPartInstance, RefPartInstance } from "./part-instance";
 
@@ -7,7 +7,7 @@ export const getPartWithDependencies = (
   repo: CustomPartRepo,
   existingIds: string[] = []
 ): CustomPart[] => {
-  if (isCodePart(part)) {
+  if (isInlineValuePart(part)) {
     return [part];
   }
 

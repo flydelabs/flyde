@@ -27,7 +27,7 @@ import { FlowEditor } from "@flyde/flow-editor"; // ../../common/flow-editor/Flo
 import { useDebouncedCallback } from "use-debounce";
 
 import { IntegratedFlowSideMenu } from "./side-menu";
-import { CustomPart, isCodePart, PartDefinition } from "@flyde/core";
+import { CustomPart, isInlineValuePart, PartDefinition } from "@flyde/core";
 
 import { AppToaster, toastMsg } from "@flyde/flow-editor"; // ../../common/toaster
 
@@ -226,7 +226,7 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
     if (newPartIns) {
       const valueChanged = produce(flow, (draft) => {
         const part = draft.part;
-        if (isCodePart(part)) {
+        if (isInlineValuePart(part)) {
           AppToaster.show({ message: "cannot add part to code part" });
         } else {
           part.instances.push(newPartIns);

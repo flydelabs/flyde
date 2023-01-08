@@ -1,5 +1,5 @@
 import {
-  CodePartTemplateTypeInline,
+  InlineValuePartType,
   connectionData,
   GroupedPart,
   inlinePartInstance,
@@ -8,7 +8,7 @@ import {
   randomInt,
 } from "@flyde/core";
 import produce from "immer";
-import { createInlineCodePart } from "../../flow-editor/inline-code-modal/inline-code-to-part";
+import { createInlineValuePart } from "../../flow-editor/inline-code-modal/inline-code-to-part";
 
 export const handleDetachConstEditorCommand = (
   part: GroupedPart,
@@ -36,9 +36,9 @@ export const handleDetachConstEditorCommand = (
 
     const value = inputConfig.value;
 
-    const newPart = createInlineCodePart({
+    const newPart = createInlineValuePart({
       code: `${value}`,
-      type: CodePartTemplateTypeInline.VALUE,
+      type: InlineValuePartType.VALUE,
     });
 
     const newIns = inlinePartInstance(

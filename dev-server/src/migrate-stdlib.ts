@@ -1,4 +1,4 @@
-// import { CustomPart, CustomPartRepo, FlydeFlow, isCodePart, PartRepo } from "@flyde/core";
+// import { CustomPart, CustomPartRepo, FlydeFlow, isInlineValuePart, PartRepo } from "@flyde/core";
 // import { serializeFlow } from "@flyde/resolver";
 // import { writeFileSync } from "fs";
 // import { join } from "path";

@@ -1,10 +1,10 @@
 import {
-  CodePartTemplateTypeInline,
+  InlineValuePartType,
   partInput,
   partOutput,
   randomInt,
 } from "@flyde/core";
-import { codePart } from "@flyde/core";
+import { inlineValuePart } from "@flyde/core";
 
 export const getVariables = (code: string) => {
   return (code.match(/inputs\.([a-zA-Z]\w*)/g) || []).map((v) =>
@@ -12,18 +12,18 @@ export const getVariables = (code: string) => {
   );
 };
 
-export type InlineCodePartData = {
+export type InlineValuePartData = {
   code: string;
   customView?: string;
   partId?: string;
-  type: CodePartTemplateTypeInline;
+  type: InlineValuePartType;
 };
-export const createInlineCodePart = ({
+export const createInlineValuePart = ({
   code,
   customView,
   partId,
   type,
-}: InlineCodePartData) => {
+}: InlineValuePartData) => {
   const variables = getVariables(code);
 
   const inputs = variables.reduce((prev, curr) => {
@@ -35,14 +35,14 @@ export const createInlineCodePart = ({
   };
 
   const fnCode =
-    type === CodePartTemplateTypeInline.FUNCTION
+    type === InlineValuePartType.FUNCTION
       ? `const result = (function() { ${code}}());
   Promise.resolve(result).then(val => outputs.value.next(val))`
       : `const result = (${code}); Promise.resolve(result).then(val => outputs.value.next(val))`;
 
   const dataBuilderSource = btoa(code);
 
-  return codePart({
+  return inlineValuePart({
     id: partId || `Inline Code ${randomInt(99999)}`,
     inputs,
     outputs,
@@ -60,7 +60,7 @@ export const createInlineCodePart = ({
       },
     },
     description: `Custom inline ${
-      type === CodePartTemplateTypeInline.VALUE ? "value" : "function"
+      type === InlineValuePartType.VALUE ? "value" : "function"
     }`,
   });
 };

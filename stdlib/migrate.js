@@ -1,6 +1,6 @@
 
 
-const { isCodePart, keys, isGroupedPart, isInlinePartInstance, isRefPartInstance, flydeFlowSchema } = require('@flyde/core');
+const { isInlineValuePart, keys, isGroupedPart, isInlinePartInstance, isRefPartInstance, flydeFlowSchema } = require('@flyde/core');
 const { deserializeFlow, serializeFlow } = require('@flyde/runtime');
 const res = require('@flyde/runtime');
 const fs = require('fs');
@@ -65,7 +65,7 @@ for (const f of files) {
 
     // const firstPart = deser.parts[Object.keys(deser.parts)[0]];
 
-    // if (isCodePart(firstPart)) {
+    // if (isInlineValuePart(firstPart)) {
     //     if (Object.keys(deser.parts) > 1) {
     //         throw new Error('many parts in ' + f)
     //     }

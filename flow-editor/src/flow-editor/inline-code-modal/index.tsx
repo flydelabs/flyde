@@ -16,13 +16,13 @@ import {
 } from "@blueprintjs/core";
 import classNames from "classnames";
 import { getVariables } from "./inline-code-to-part";
-import { CodePartTemplateTypeInline, ExecuteEnv, isDefined } from "@flyde/core";
+import { InlineValuePartType, ExecuteEnv, isDefined } from "@flyde/core";
 import { Tooltip2 } from "@blueprintjs/popover2";
 
 export type InlineCodeModalProps = {
   initialValue?: string;
-  initialType?: CodePartTemplateTypeInline;
-  onSubmit: (type: CodePartTemplateTypeInline, code: string) => void;
+  initialType?: InlineValuePartType;
+  onSubmit: (type: InlineValuePartType, code: string) => void;
   onCancel: () => void;
   env?: ExecuteEnv;
 };
@@ -38,8 +38,8 @@ export const InlineCodeModal: React.FC<InlineCodeModalProps> = React.memo(
       isDefined(initialValue) ? initialValue : defaultValue
     );
 
-    const [type, setType] = React.useState<CodePartTemplateTypeInline>(
-      initialType || CodePartTemplateTypeInline.VALUE
+    const [type, setType] = React.useState<InlineValuePartType>(
+      initialType || InlineValuePartType.VALUE
     );
 
     const onMonacoMount: OnMount = (editor) => {
@@ -99,7 +99,7 @@ export const InlineCodeModal: React.FC<InlineCodeModalProps> = React.memo(
     const maybeWrongTypeWarning = () => {
       // very naive, TODO - use ast parser such as epsreema
       const hasReturn = value.includes("return");
-      if (hasReturn && type === CodePartTemplateTypeInline.VALUE) {
+      if (hasReturn && type === InlineValuePartType.VALUE) {
         return (
           <Callout intent={Intent.WARNING}>
             When using the "value" type you are not expected to return anything
@@ -107,7 +107,7 @@ export const InlineCodeModal: React.FC<InlineCodeModalProps> = React.memo(
         );
       }
 
-      if (!hasReturn && type === CodePartTemplateTypeInline.FUNCTION) {
+      if (!hasReturn && type === InlineValuePartType.FUNCTION) {
         return (
           <Callout intent={Intent.DANGER}>
             When using the "function" type you are expected to{" "}
@@ -123,13 +123,13 @@ export const InlineCodeModal: React.FC<InlineCodeModalProps> = React.memo(
     React.useEffect(() => {
       if (
         value === defaultValue &&
-        type === CodePartTemplateTypeInline.FUNCTION
+        type === InlineValuePartType.FUNCTION
       ) {
         setValue(`return ${defaultValue}`);
       }
       if (
         value === `return ${defaultValue}` &&
-        type === CodePartTemplateTypeInline.VALUE
+        type === InlineValuePartType.VALUE
       ) {
         setValue(defaultValue);
       }
@@ -162,7 +162,7 @@ export const InlineCodeModal: React.FC<InlineCodeModalProps> = React.memo(
                   </Tooltip2>
                 </React.Fragment>
               }
-              value={CodePartTemplateTypeInline.VALUE}
+              value={InlineValuePartType.VALUE}
             />
             <Radio
               labelElement={
@@ -173,7 +173,7 @@ export const InlineCodeModal: React.FC<InlineCodeModalProps> = React.memo(
                   </Tooltip2>
                 </React.Fragment>
               }
-              value={CodePartTemplateTypeInline.FUNCTION}
+              value={InlineValuePartType.FUNCTION}
             />
           </RadioGroup>
           <Editor

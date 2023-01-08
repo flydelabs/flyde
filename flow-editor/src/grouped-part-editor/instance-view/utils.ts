@@ -4,7 +4,7 @@ import {
   PartInstance,
   PartDefinition,
   PartDefRepo,
-  isCodePart,
+  isInlineValuePart,
   Pos,
   isStaticInput,
   isStaticInputPinConfig,

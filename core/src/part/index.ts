@@ -17,8 +17,6 @@ import {
   InputPinMap,
   OutputPin,
   OutputPinMap,
-  PartInput,
-  PartInputs,
 } from "./part-pins";
 
 export * from "./part-instance";
@@ -86,17 +84,15 @@ export interface NativePart extends BasePart {
   customView?: CustomPartViewFn;
 }
 
-export enum CodePartTemplateTypeInline {
+export enum InlineValuePartType {
   VALUE = "value",
   FUNCTION = "function",
 }
 
-export type CodePartType = "file-reference" | "inline";
-
-export interface CodePart extends BasePart {
+export interface InlineValuePart extends BasePart {
   fnCode: string;
   dataBuilderSource?: string; // quick solution for "Data builder iteration"
-  templateType?: CodePartTemplateTypeInline;
+  templateType?: InlineValuePartType;
 }
 
 export interface GroupedPart extends BasePart {
@@ -111,7 +107,7 @@ export type Part = NativePart | CustomPart;
 
 export type ImportablePart = { module: string; part: BasePart };
 
-export type CustomPart = GroupedPart | CodePart;
+export type CustomPart = GroupedPart | InlineValuePart;
 
 export type NativePartDefinition = Omit<NativePart, "fn">;
 
@@ -132,10 +128,10 @@ export const isGroupedPart = (p: Part | PartDefinition): p is GroupedPart => {
   return !!(p as GroupedPart).instances;
 };
 
-export const isCodePart = (
+export const isInlineValuePart = (
   p: Part | PartDefinition | undefined
-): p is CodePart => {
-  return isDefined(p) && isDefined((p as CodePart).fnCode);
+): p is InlineValuePart => {
+  return isDefined(p) && isDefined((p as InlineValuePart).fnCode);
 };
 
 export const groupedPart = testDataCreator<GroupedPart>({
@@ -155,7 +151,7 @@ export const nativePart = testDataCreator<NativePart>({
   fn: noop as any,
 });
 
-export const codePart = testDataCreator<CodePart>({
+export const inlineValuePart = testDataCreator<InlineValuePart>({
   id: "part",
   inputs: {},
   outputs: {},
@@ -189,10 +185,6 @@ export const fromSimplified = ({
     outputs,
     fn,
   };
-};
-
-export const staticPartRefence = (part: Part) => {
-  return `__part:${part.id}`;
 };
 
 export const maybeGetStaticValuePartId = (value: string) => {
@@ -280,9 +272,7 @@ export const nativeFromFunction = ({
       const args = inputNames.map((name) => inputs[name]);
       const output = outputs[outputName];
       const result = fn(...args);
-
-      // https://stackoverflow.com/a/27746324/1418407
-      Promise.resolve(result).then((val) => output.next(val));
+      return Promise.resolve(result).then((val) => output.next(val));
     },
     completionOutputs: [outputName],
     defaultStyle,

@@ -4,7 +4,7 @@ import {
   BasePart,
   InputPinMap,
   GroupedPart,
-  CodePart,
+  InlineValuePart,
   NativePart,
   PartInstance,
 } from "./.";
@@ -32,10 +32,6 @@ export interface ConciseBasePart
 export interface ConciseGroupedPart extends ConciseBasePart {
   connections: Array<[string, string]>;
   instances: PartInstance[];
-}
-
-export interface ConciseCodePart extends ConciseBasePart {
-  fnCode: string;
 }
 
 export interface ConciseNativePart extends ConciseBasePart {
@@ -80,14 +76,6 @@ export const concisePart = (concise: ConciseGroupedPart): GroupedPart => {
     instances: concise.instances,
     inputsPosition: {},
     outputsPosition: {},
-  };
-};
-
-export const conciseCodePart = (concise: ConciseCodePart): CodePart => {
-  const base = conciseBasePart(concise);
-  return {
-    ...base,
-    fnCode: concise.fnCode,
   };
 };
 

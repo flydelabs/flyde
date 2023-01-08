@@ -1,5 +1,5 @@
 import {
-  CodePart,
+  InlineValuePart,
   connectionData,
   connectionNode,
   GroupedPart,
@@ -155,7 +155,7 @@ describe("parts hasher", () => {
   });
 
   describe("code part", () => {
-    const base: CodePart = {
+    const base: InlineValuePart = {
       id: "bob2",
       fnCode: `some codez`,
       customViewCode: "bob",

@@ -4,16 +4,14 @@ import {
   isGroupedPart,
   Pos,
   GroupedPart,
-  CustomPart,
-  isCodePart,
+  isInlineValuePart,
   PartInstance,
   FlydeFlow,
   ResolvedFlydeFlowDefinition,
   ImportablePart,
   PartDefRepo,
   ImportedPartDef,
-  InlinePartInstance,
-  partInstance,
+  InlinePartInstance
 } from "@flyde/core";
 import {
   GroupedPartEditor,
@@ -310,9 +308,8 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
     );
 
     const renderInner = () => {
-      if (isCodePart(editedPart)) {
+      if (isInlineValuePart(editedPart)) {
         throw new Error("Impossible state");
-        // return <CodePartEditor part={editedPart} onChange={onChangeCodePart} editMode={true} />;
       } else {
         return (
           <React.Fragment>

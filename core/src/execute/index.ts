@@ -10,7 +10,7 @@ import {
   Part,
   getStaticValue,
   GroupedPart,
-  isCodePart,
+  isInlineValuePart,
   isGroupedPart,
   NativePart,
   PartInput,
@@ -36,7 +36,7 @@ import { delay, entries, isDefined, keys, OMap, OMapF } from "../common";
 import { debugLogger } from "../common/debug-logger";
 import {
   callFnOrFnPromise,
-  codePartToNative,
+  inlineValuePartToPart,
   customRepoToPartRepo,
   isPromise,
   isStaticInputPinConfig,
@@ -494,9 +494,9 @@ export const execute: ExecuteFn = ({
 }) => {
   const toCancel: Function[] = [];
 
-  const codePartExtraContext = { ...extraContext, ENV: env };
+  const inlineValuePartContext = { ...extraContext, ENV: env };
 
-  const processedRepo = customRepoToPartRepo(partsRepo, codePartExtraContext);
+  const processedRepo = customRepoToPartRepo(partsRepo, inlineValuePartContext);
 
   const onError = (err: unknown) => {
     // this means "catch the error"
@@ -534,8 +534,8 @@ export const execute: ExecuteFn = ({
         env,
         extraContext
       );
-    } else if (isCodePart(part)) {
-      return codePartToNative(part, codePartExtraContext);
+    } else if (isInlineValuePart(part)) {
+      return inlineValuePartToPart(part, inlineValuePartContext);
     } else {
       return part;
     }

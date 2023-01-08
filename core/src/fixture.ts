@@ -6,7 +6,7 @@ import {
   partOutput,
   NativePart,
   PartInstance,
-  CodePart,
+  InlineValuePart,
   partInstance,
   dynamicPartInput,
   queueInputPinConfig,
@@ -34,7 +34,7 @@ export const add: NativePart = {
   },
 };
 
-export const codeAdd: CodePart = {
+export const codeAdd: InlineValuePart = {
   id: "add",
   inputs: {
     n1: partInput("number"),

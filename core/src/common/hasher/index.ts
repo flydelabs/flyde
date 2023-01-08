@@ -1,5 +1,5 @@
 import * as _md5 from "md5";
-import { FlydeFlow, isCodePart, isGroupedPart, Part, Project } from "../..";
+import { FlydeFlow, isInlineValuePart, isGroupedPart, Part, Project } from "../..";
 
 const md5 = (str: string) => {
   return _md5(str);
@@ -44,7 +44,7 @@ export const hashPart = (part: Part, ignorePos = true) => {
       maybeIoPos,
     });
     return md5(str);
-  } else if (isCodePart(part)) {
+  } else if (isInlineValuePart(part)) {
     const { fnCode, customViewCode } = part;
     const str = JSON.stringify({ fnCode, customViewCode, ...basePart });
     return md5(str);

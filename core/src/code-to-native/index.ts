@@ -1,26 +1,26 @@
 import axios from "axios";
 import {
-  CodePart,
+  InlineValuePart,
   compileObjectTemplate,
   compileStringTemplate,
   debugLogger,
   PartRepo,
 } from "..";
 
-import { isCodePart, NativePart, dynamicPartInput } from "../part";
+import { isInlineValuePart, NativePart, dynamicPartInput } from "../part";
 
 import { dynamicOutput, isDefined } from "..";
 import { getVM2Instance } from "./get-vm2";
 
 const vm2 = getVM2Instance();
 
-export const codePartToNative = (
-  codePart: CodePart,
+export const inlineValuePartToPart = (
+  inlineValuePart: InlineValuePart,
   extraContext: Record<string, any> = {}
-) => {
-  const { fnCode, ...rest } = codePart;
+): NativePart => {
+  const { fnCode, ...rest } = inlineValuePart;
 
-  const logger = debugLogger(`code-part:${codePart.id}`);
+  const logger = debugLogger(`code-part:${inlineValuePart.id}`);
 
   const wrappedCode = `
   try {
@@ -35,7 +35,7 @@ export const codePartToNative = (
     ...rest,
     fn: (inputs, outputs, adv) => {
       const log = (...args: any[]) => {
-        logger(`Log from code part ${codePart.id} [${adv.insId}]`, ...args);
+        logger(`Log from code part ${inlineValuePart.id} [${adv.insId}]`, ...args);
       };
       const vm = new vm2.VM({
         sandbox: {
@@ -75,8 +75,8 @@ export const customRepoToPartRepo = (
   const newRepo = {};
   for (let id in customPartRepo) {
     const part = customPartRepo[id];
-    newRepo[id] = isCodePart(part)
-      ? codePartToNative(part, extraContext)
+    newRepo[id] = isInlineValuePart(part)
+      ? inlineValuePartToPart(part, extraContext)
       : part;
   }
   return newRepo;

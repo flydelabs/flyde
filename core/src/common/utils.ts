@@ -1,5 +1,5 @@
 import { CustomPartRepo } from "..";
-import { CustomPart, isCodePart } from "../part";
+import { CustomPart, isInlineValuePart } from "../part";
 
 export type Pos = {
   x: number;
