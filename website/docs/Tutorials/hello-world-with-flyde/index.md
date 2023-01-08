@@ -6,8 +6,11 @@ sidebar_position: 1
 
 This tutorial will guide you step-by-step into creating an "Hello world" program using Flyde. For simplicity, we will use vanilla JS. For TS support check any of the official examples.
 
+## What will you learn
+1
+
 This is how the end result should look like:
-![./hello-world-result.gif](./assets/hello-world-final-result.gif)
+![./hello-world-result.gif](./hello-world-final-result.gif)
 Resulting code can be in the [examples folder](https://github.com/FlydeHQ/flyde/tree/main/examples/hello-flyde).
 
 ## What you'll need
@@ -47,7 +50,7 @@ Now we're getting to the real deal, creating a visual flow! We're going to creat
 3. Now Flyde will ask you for the flow's inputs and outputs. Flyde accept multiple inputs and multiple outputs, but for this example we need no inputs and just 1 output named "message".
 4. You should now see a Flyde flow editor tab inside your IDE!
 
-![image](./assets/hello-world-new-flow.gif)
+![image](./hello-world-new-flow.gif)
 
 ### Quick intro the the visual flow, and terminology
 Before moving on, here's a quick intro to Flyde's terminology:  
@@ -58,7 +61,7 @@ Before moving on, here's a quick intro to Flyde's terminology:
 **A connection** - a connection connects a component's output pin to another's input pin, creating our control flow and logic  
 **Main flow input/output pin** - just like each component has it's inputs and outputs, so does the flow itself. Actually, a flow is just like any another component! Main inputs and outputs are the flow's API to the external world, while the components inside are it's implementation detail
 
-![board overview](./assets/hello-world-overview.png)
+![board overview](./hello-world-overview.png)
 
 
 ### Working with the flow editor
@@ -71,7 +74,7 @@ Now it's time to do some changes! We're gonna remove the default placeholder con
 4. Now connect the "r" output pin to the "result" flow's output pin by first clicking on the "r" pin and then on the result (or vice-versa)
 5. Don't forget to save (using regular VSCode controls)
 
-![image](./assets/hello-world-modification.gif)
+![image](./hello-world-modification.gif)
 
 ### Running your flow from the code
 
@@ -108,7 +111,7 @@ executeFlow({name: 'Your awesome name here'})
 ```
 7. In your terminal, run `node index.js` to see the changes live!
 
-![image](./assets/hello-world-new-input.gif)
+![image](./hello-world-new-input.gif)
 
 
 **Congratulations! You've just finished the first Flyde tutorial ✨**

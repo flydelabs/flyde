@@ -28,6 +28,36 @@ const IntegrationPoints = () => {
   );
 };
 
+
+const UseCases = () => {
+  return (
+    <strong className="integration-points">
+      <Typical
+        steps={[
+          "Discord Bots",
+          1200,
+          "Website Scrapers",
+          1200,
+          "Data Pipelines",
+          1200,
+          "APIs",
+          1200,
+          "CLI tools",
+          1200,
+          "Telegram Bots",
+          1200,
+          "Webhooks",
+          1200,
+          "The next big thing",
+          5000
+        ].map(s => typeof s === 'string' ? s + '.' : s)}
+        loop={Infinity}
+        wrapper="span"
+      />
+    </strong>
+  );
+};
+
 function HomepageHeader() {
   const { siteConfig } = useDocusaurusContext();
 
@@ -44,19 +74,16 @@ function HomepageHeader() {
       <div className="container">
         <h1 className="hero__title">{siteConfig.title}</h1>
         <p className="hero__subtitle">
-          Flyde is an <em>open source</em> flow-based, visual programming tool.{" "}
+          Flyde is <em>open source</em> visual, flow-based programming tool, batteries-included.
           <br />
-          Build visual flows using the{" "}
-          <a
+          Seamlessly integrates with traditional coding using the <a
             href="https://marketplace.visualstudio.com/items?itemName=flyde.flyde-vscode"
             target="_blank"
           >
             VSCode extension
-          </a>
-          .<br />
-          Integrate them to your JS/TS codebase using the runtime library.
-          <br />
-          Fully integrates with your <IntegrationPoints />
+          </a>.
+          <br/>
+          Build <UseCases/>
         </p>
         <div className={styles.buttons}>
           <Link
@@ -67,7 +94,7 @@ function HomepageHeader() {
           </Link>
           <Link
             className="button button--primary button--lg"
-            to="/docs/hello-world-with-flyde/"
+            to="/docs"
           >
             Get Started
           </Link>

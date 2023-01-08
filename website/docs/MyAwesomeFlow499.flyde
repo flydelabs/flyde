@@ -1,0 +1,35 @@
+imports: {}
+part:
+  instances:
+    - pos:
+        x: 25
+        y: 250
+      id: ins1
+      inputConfig: {}
+      part:
+        id: Inline Code 45177
+        inputs: {}
+        outputs:
+          value:
+            type: any
+            delayed: false
+            optional: false
+        fnCode: "const result = '(`Inputs received are: `)'"
+        customViewCode: "`Inputs received are: `"
+        dataBuilderSource: YElucHV0cyByZWNlaXZlZCBhcmU6IGA=
+        templateType: value
+        completionOutputs:
+          - value
+        defaultStyle:
+          size: regular
+          icon: code
+          cssOverride:
+            fontFamily: monospace
+            fontWeight: "500"
+  connections: []
+  id: MyAwesomeFlow499
+  inputs: {}
+  outputs: {}
+  inputsPosition: {}
+  outputsPosition: {}
+  completionOutputs: []

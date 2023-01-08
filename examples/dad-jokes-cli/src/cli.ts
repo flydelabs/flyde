@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import * as flyde from '@flyde/runtime';
 
 const punchDelay = process.argv

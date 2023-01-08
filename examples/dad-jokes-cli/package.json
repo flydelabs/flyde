@@ -1,6 +1,7 @@
 {
   "name": "dad-jokes-cli",
   "author": "Flyde",
+  "version": "1.0.2",
   "license": "MIT",
   "main": "dist/cli.ts",
   "homepage": "https://github.com/FlydeHQ/flyde/tree/main/examples/dad-jokes-cli",

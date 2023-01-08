@@ -8,7 +8,7 @@ tags: [flyde, intro]
 I'm thrilled to introduce the Alpha version of Flyde!  
 Flyde is a visual programming tool that helps developers build better software, faster. While it was built with backend projects in mind, it can used to build anything! From automation scripts, to backends, front-ends and even CLI tools!
 
-![./hello-world-result.gif](../../docs/assets/hello-world-final-result.gif)
+![./hello-world-result.gif](./hello-world-final-result.gif)
 
 ## Why Visual?
 
