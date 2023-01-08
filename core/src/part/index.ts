@@ -104,9 +104,9 @@ export type ImportablePart = { module: string; part: BasePart };
 
 export type CustomPart = GroupedPart | InlineValuePart;
 
-export type NativePartDefinition = Omit<CodePart, "fn">;
+export type CodePartDefinition = Omit<CodePart, "fn">;
 
-export type PartDefinition = CustomPart | NativePartDefinition;
+export type PartDefinition = CustomPart | CodePartDefinition;
 
 export type PartModuleMetaData = {
   imported?: boolean;
@@ -139,7 +139,7 @@ export const groupedPart = testDataCreator<GroupedPart>({
   inputsPosition: {},
 });
 
-export const nativePart = testDataCreator<CodePart>({
+export const codePart = testDataCreator<CodePart>({
   id: "part",
   inputs: {},
   outputs: {},
@@ -241,7 +241,7 @@ export const getPartDef = (
   return part;
 };
 
-export type NativeFromFunctionParams = {
+export type codeFromFunctionParams = {
   id: string;
   fn: Function;
   inputNames: string[];
@@ -249,13 +249,13 @@ export type NativeFromFunctionParams = {
   defaultStyle?: PartStyle;
 };
 
-export const nativeFromFunction = ({
+export const codeFromFunction = ({
   id,
   fn,
   inputNames,
   outputName,
   defaultStyle,
-}: NativeFromFunctionParams): CodePart => {
+}: codeFromFunctionParams): CodePart => {
   return {
     id,
     inputs: inputNames.reduce(

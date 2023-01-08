@@ -51,23 +51,6 @@ export type ExecutionState = Map<string, any>;
 
 export type CancelFn = () => void;
 
-export type ExecuteNativeFn = (
-  part: CodePart,
-  args: PartInputs,
-  outputs: PartOutputs,
-  repo: PartRepo,
-  _debugger: Debugger,
-  insId: string
-) => CancelFn;
-
-export type ExecuteGroupFn = (
-  part: GroupedPart,
-  args: PartInputs,
-  outputs: PartOutputs,
-  _debugger: Debugger,
-  indId: string
-) => CancelFn;
-
 export type ExecuteEnv = OMap<any>;
 
 export type InnerExecuteFn = (
@@ -77,7 +60,7 @@ export type InnerExecuteFn = (
   insId: string
 ) => CancelFn;
 
-export type NativeExecutionData = {
+export type CodeExecutionData = {
   part: CodePart;
   inputs: PartInputs;
   outputs: PartOutputs;
@@ -98,7 +81,7 @@ export type NativeExecutionData = {
 export const INNER_STATE_SUFFIX = "_inner";
 export const INPUTS_STATE_SUFFIX = "_inputs";
 
-const executeNative = (data: NativeExecutionData) => {
+const executeCodePart = (data: CodeExecutionData) => {
   const {
     part,
     inputs,
@@ -606,7 +589,7 @@ export const execute: ExecuteFn = ({
     mediatedOutputs[pinId] = mediator;
   });
 
-  const cancelFn = executeNative({
+  const cancelFn = executeCodePart({
     part: processedPart,
     inputs: mediatedInputs,
     outputs: mediatedOutputs,

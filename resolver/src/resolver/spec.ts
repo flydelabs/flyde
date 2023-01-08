@@ -3,9 +3,7 @@ import {
   execute,
   ImportedPart,
   PartRepo,
-  PreBundleNativePart,
   randomInt,
-  simplifiedExecute,
   staticPartInput,
   values,
 } from "@flyde/core";
@@ -300,7 +298,7 @@ describe("resolver", () => {
     );
 
     const repo = data.dependencies as PartRepo;
-    const Add1 = repo.Add1Wrapped__Add1 as ImportedPart & PreBundleNativePart;
+    const Add1 = repo.Add1Wrapped__Add1 as ImportedPart & { fn: string };
 
     assert.match(Add1.importPath, /@acme\/add1-wrapped\/src\/Add1\.flyde\.js$/);
     assert.equal(

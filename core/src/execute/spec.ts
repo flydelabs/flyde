@@ -39,7 +39,7 @@ import {
   delay5,
 } from "../fixture";
 
-import { conciseNativePart, wrappedOnEvent } from "../test-utils";
+import { conciseCodePart, wrappedOnEvent } from "../test-utils";
 import { Debugger, DebuggerEvent, DebuggerEventType } from "./debugger";
 
 describe("execute", () => {
@@ -702,7 +702,7 @@ describe("execute", () => {
               if (type === DebuggerEventType.INPUT_CHANGE) {
                 return {
                   cmd: "intercept",
-                  valuePromise: Promise.resolve(insId ? val * 2 : val), // intercept only inside
+                  valuePromise: Promise.resolve(insId ? Number(val) * 2 : val), // intercept only inside
                 };
               }
             },
@@ -718,7 +718,7 @@ describe("execute", () => {
         });
       });
 
-      it("emits input change msgs on main inputs as well - native", () => {
+      it("emits input change msgs on main inputs as well - code", () => {
         const n1 = dynamicPartInput();
         const n2 = dynamicPartInput();
         const r = new Subject();
@@ -842,7 +842,7 @@ describe("execute", () => {
               if (type === DebuggerEventType.INPUT_CHANGE) {
                 return {
                   cmd: "intercept",
-                  valuePromise: Promise.resolve(insId ? val * 2 : val), // intercept only inside
+                  valuePromise: Promise.resolve(insId ? Number(val) * 2 : val), // intercept only inside
                 };
               }
             },
@@ -858,7 +858,7 @@ describe("execute", () => {
         });
       });
 
-      it("intercepts input value on native part", async () => {
+      it("intercepts input value on code part", async () => {
         const n = dynamicPartInput();
         const r = dynamicOutput();
 
@@ -874,7 +874,7 @@ describe("execute", () => {
               if (type !== DebuggerEventType.INPUT_CHANGE) return;
               return {
                 cmd: "intercept",
-                valuePromise: Promise.resolve(val * 2), // intercept only inside
+                valuePromise: Promise.resolve(Number(val) * 2), // intercept only inside
               };
             },
           },
@@ -1022,7 +1022,7 @@ describe("execute", () => {
             onEvent: ({ val, insId, type }) => {
               if (type !== DebuggerEventType.OUTPUT_CHANGE) return;
               // return undefined;
-              const newVal = val * 2;
+              const newVal = Number(val) * 2;
               return {
                 cmd: "intercept",
                 valuePromise: Promise.resolve(newVal), // intercept only inside
@@ -1052,7 +1052,7 @@ describe("execute", () => {
           onProcessing
         );
 
-        const delay = conciseNativePart({
+        const delay = conciseCodePart({
           id: "delay5",
           inputs: ["item"],
           outputs: ["r"],

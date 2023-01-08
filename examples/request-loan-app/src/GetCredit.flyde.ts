@@ -1,7 +1,7 @@
-import { nativeFromFunction, CodePart } from "@flyde/core";
+import { codeFromFunction, CodePart } from "@flyde/core";
 import { creditService } from "./lib/credit-service";
 
-const GetCredit: CodePart = nativeFromFunction({
+const GetCredit: CodePart = codeFromFunction({
   id: "Get Credit By Id",
   fn: creditService.getCredit,
   inputNames: ["userId"],

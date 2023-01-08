@@ -24,7 +24,7 @@ export type SideBarProps = {
 };
 
 export enum MenuItemType {
-  NATIVE = "native",
+  CODE = "code",
   CONST = "const",
   GROUPED = "grouped",
   INPUT = "input",
@@ -99,7 +99,7 @@ export const SideBar: React.FC<SideBarProps> = React.memo(function SideBarInner(
     const type = isGroupedPart(part)
       ? MenuItemType.GROUPED
       : isCodePart(part)
-      ? MenuItemType.NATIVE
+      ? MenuItemType.CODE
       : MenuItemType.CONST;
     const selected = selectedIds.includes(ins.id);
 

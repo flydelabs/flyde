@@ -1,7 +1,7 @@
-import { nativeFromFunction } from "@flyde/core";
+import { codeFromFunction } from "@flyde/core";
 import { riskService } from "./lib/risk-service";
 
-export = nativeFromFunction({
+export = codeFromFunction({
   id: "Calculate Risk",
   inputNames: ["userId", "amount"],
   outputName: "risk",

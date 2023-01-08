@@ -18,7 +18,7 @@ import { execute, SubjectMap } from "./execute";
 import { isDefined, okeys } from "./common";
 import { Subject } from "rxjs";
 import { PartRepo } from ".";
-import { conciseNativePart } from "./test-utils";
+import { conciseCodePart } from "./test-utils";
 
 export const add: CodePart = {
   id: "add",
@@ -327,7 +327,7 @@ export const peq: CodePart = {
   },
 };
 
-export const delay5 = conciseNativePart({
+export const delay5 = conciseCodePart({
   id: "delay5",
   inputs: ["item"],
   outputs: ["r"],
@@ -339,7 +339,7 @@ export const delay5 = conciseNativePart({
   },
 });
 
-export const delay = conciseNativePart({
+export const delay = conciseCodePart({
   id: "delay5",
   inputs: ["item", "ms"],
   outputs: ["r"],
@@ -366,7 +366,7 @@ export const testRepo = {
   delay,
 };
 
-export const accumulate = conciseNativePart({
+export const accumulate = conciseCodePart({
   id: "accumulate",
   inputs: ["count|required", "val|optional"],
   outputs: ["r"],
@@ -422,7 +422,7 @@ export const accUntil: CodePart = {
   },
 };
 
-export const spreadList = conciseNativePart({
+export const spreadList = conciseCodePart({
   id: "SpreadList",
   inputs: ["list"],
   outputs: ["val", "idx", "length"],

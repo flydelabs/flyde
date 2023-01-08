@@ -23,7 +23,7 @@ export * from "./part/get-part-with-dependencies";
 
 export * from "./utils";
 
-export * from "./code-to-native";
+export * from "./inline-value-to-code-part";
 
 export * from "./web-project";
 

@@ -33,7 +33,6 @@ import {
   PartInstance,
   isGroupedPart,
   PartDefinition,
-  isCodePart,
   PinType,
   getPartInputs,
 } from "@flyde/core";
@@ -41,7 +40,6 @@ import { calcPartContent } from "./utils";
 import { BasePartView } from "../base-part-view";
 import { isStaticInputPinConfig } from "@flyde/core";
 
-import { debounce } from "lodash";
 import { getInstanceDomId } from "../dom-ids";
 import { HistoryPayload } from "@flyde/remote-debugger";
 import {
@@ -60,8 +58,6 @@ export const PIECE_CHAR_WIDTH = 11;
 export const MIN_WIDTH_PER_PIN = 40;
 export const MAX_INSTANCE_WIDTH = 400; // to change in CSS as well
 export const INSTANCE_INFO_TOOLTIP_DELAY = 400;
-
-const INLINE_GROUP_EDITOR_CENTER_DEBOUNCE = 100;
 
 export const getVisibleInputs = (
   instance: PartInstance,
@@ -230,13 +226,6 @@ export const InstanceView: React.FC<InstanceViewProps> =
 
     const { id } = instance;
 
-    const isCode = isCodePart(part);
-
-    const [inlineEditorSize, setInlineEditorSize] = React.useState({
-      w: 800,
-      h: 600,
-    });
-
     const theme = React.useMemo(() => {
       const icons = [["fab", "discord"], ["fab", "slack"], "bug", "cube"];
       const color = randomInt(6, 1);
@@ -248,7 +237,11 @@ export const InstanceView: React.FC<InstanceViewProps> =
 
     const inlineEditorRef = React.useRef();
 
-    const style = instance.style || part.defaultStyle || {};
+    const style = React.useMemo(
+      () => instance.style || part.defaultStyle || {},
+      [part, instance]
+    );
+
     const size = style.size || "regular";
 
     const connectedInputs = React.useMemo(() => {
@@ -421,8 +414,6 @@ export const InstanceView: React.FC<InstanceViewProps> =
       }
       return p;
     }, {});
-
-    let customView: any;
 
     try {
       // customView =
@@ -700,26 +691,6 @@ export const InstanceView: React.FC<InstanceViewProps> =
         ContextMenu.show(menu, { left: e.clientX, top: e.clientY });
       },
       [getContextMenu]
-    );
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    const debounceMaybeCenterInline = React.useCallback(
-      debounce(() => {
-        const currRef: any = inlineEditorRef.current;
-        if (currRef) {
-          currRef.centerViewPort();
-        }
-      }, INLINE_GROUP_EDITOR_CENTER_DEBOUNCE),
-      []
-    );
-
-    const onResizeInline = React.useCallback(
-      (e, { size }) => {
-        e.stopPropagation();
-        setInlineEditorSize({ w: size.width, h: size.height });
-        debounceMaybeCenterInline();
-      },
-      [debounceMaybeCenterInline]
     );
 
     const styleVarProp = {

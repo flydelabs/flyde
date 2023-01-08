@@ -34,7 +34,7 @@ export interface ConciseGroupedPart extends ConciseBasePart {
   instances: PartInstance[];
 }
 
-export interface ConciseNativePart extends ConciseBasePart {
+export interface ConciseCodePart extends ConciseBasePart {
   fn: CodePart["fn"];
 }
 
@@ -79,7 +79,7 @@ export const concisePart = (concise: ConciseGroupedPart): GroupedPart => {
   };
 };
 
-export const conciseNativePart = (concise: ConciseNativePart): CodePart => {
+export const conciseCodePart = (concise: ConciseCodePart): CodePart => {
   const base = conciseBasePart(concise);
   return {
     ...base,
@@ -88,7 +88,7 @@ export const conciseNativePart = (concise: ConciseNativePart): CodePart => {
 };
 
 export const valuePart = (name: string, value: any) =>
-  conciseNativePart({
+  conciseCodePart({
     id: name,
     inputs: [],
     outputs: ["r"],

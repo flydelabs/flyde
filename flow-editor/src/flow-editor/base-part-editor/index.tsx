@@ -8,12 +8,25 @@ import {
   partOutput,
 } from "@flyde/core";
 // ;
-import { Checkbox, Collapse, FormGroup, InputGroup } from "@blueprintjs/core";
+import { Checkbox, Collapse, FormGroup, InputGroup, MenuItem } from "@blueprintjs/core";
 import Editor from "@monaco-editor/react";
-import { renderCreateIOOption } from "../code-part-editor";
 import produce from "immer";
 import { MultiSelect } from "@blueprintjs/select";
 import { PartPreview } from "../../PartPreview/PartPreview";
+
+export const renderCreateIOOption = (
+  query: string,
+  active: boolean,
+  handleClick: React.MouseEventHandler<HTMLElement>
+) => (
+  <MenuItem
+    icon="add"
+    text={`Create "${query}"`}
+    active={active}
+    onClick={handleClick}
+    shouldDismissPopover={false}
+  />
+);
 
 const IOMultiSelect = MultiSelect.ofType<string>();
 

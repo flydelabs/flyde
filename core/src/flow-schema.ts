@@ -105,10 +105,6 @@ export type ImportedPart = Part & {
   importPath: string;
 };
 
-export type PreBundleNativePart = CodePart & {
-  fn: string;
-};
-
 export type ImportedPartDef = PartDefinition & {
   importPath: string;
 };

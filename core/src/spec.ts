@@ -68,10 +68,10 @@ import {
   spreadList,
 } from "./fixture";
 
-import { inlineValuePartToPart } from "./code-to-native";
+import { inlineValuePartToPart } from "./inline-value-to-code-part";
 import {
   concisePart,
-  conciseNativePart,
+  conciseCodePart,
   callsFirstArgs,
   valuePart,
   spiedOutput,
@@ -98,7 +98,7 @@ describe("main ", () => {
   // testRepo.add('add')
 
   describe("core", () => {
-    it("runs an Id native part properly", () => {
+    it("runs an Id code part properly", () => {
       const part: CodePart = {
         id: "id",
         inputs: {
@@ -127,7 +127,7 @@ describe("main ", () => {
       assert.equal(s.calledOnceWithExactly(2), true);
     });
 
-    it("runs an pure-like Id native part properly", () => {
+    it("runs an pure-like Id code part properly", () => {
       const part: CodePart = {
         id: "id",
         inputs: {
@@ -156,7 +156,7 @@ describe("main ", () => {
       assert.equal(s.calledOnceWithExactly(2), true);
     });
 
-    it("runs an ADD native part properly", () => {
+    it("runs an ADD code part properly", () => {
       const innerSpy = spy();
       const part: CodePart = {
         id: "add",
@@ -1285,7 +1285,7 @@ describe("main ", () => {
         /*
           internal part P will increase on each input received and return the current state
         */
-        const counter = conciseNativePart({
+        const counter = conciseCodePart({
           id: "counter",
           inputs: ["v"],
           outputs: ["r"],
@@ -1335,7 +1335,7 @@ describe("main ", () => {
         /*
           internal part P will increase on each input received and return the current state
         */
-        const counter = conciseNativePart({
+        const counter = conciseCodePart({
           id: "counter",
           inputs: ["v"],
           outputs: ["r"],
@@ -1668,7 +1668,7 @@ describe("main ", () => {
   });
 
   describe("code part support", () => {
-    it("runs an Id native part properly", () => {
+    it("runs an Id code part properly", () => {
       const inlineValuePart: InlineValuePart = {
         id: "id",
         inputs: {
@@ -1744,7 +1744,7 @@ describe("main ", () => {
   });
 
   describe("part cleanup", () => {
-    it("runs cleanup code after a a part finished running on native part", () => {
+    it("runs cleanup code after a a part finished running on code part", () => {
       const spyFn = spy();
       const part: CodePart = {
         id: "id",
@@ -1864,7 +1864,7 @@ describe("main ", () => {
       assert.equal(s.lastCall.args[0], 54);
     });
 
-    it("passes external context forward when running native comps", async () => {
+    it("passes external context forward when running code comps", async () => {
       const bobber = (n: number) => n + 42;
       const part: CodePart = {
         id: "tester",
@@ -2010,7 +2010,7 @@ describe("main ", () => {
   });
 
   describe("part v2 tests", () => {
-    it("queues values - native part", () => {
+    it("queues values - code part", () => {
       const [n1, n2] = [
         dynamicPartInput({
           // config: queueInputPinConfig(),
@@ -2074,7 +2074,7 @@ describe("main ", () => {
       assert.deepEqual(callsFirstArgs(s), [5, 7, 9]);
     });
 
-    it("sticky values work on simple native", () => {
+    it("sticky values work on simple code", () => {
       const a = dynamicPartInput({ config: queueInputPinConfig() });
       const b = dynamicPartInput({ config: stickyInputPinConfig() });
 
@@ -2084,7 +2084,7 @@ describe("main ", () => {
 
       r.subscribe(s);
 
-      const part = conciseNativePart({
+      const part = conciseCodePart({
         inputs: ["a", "b"],
         outputs: ["r"],
         id: "bob",
@@ -2434,9 +2434,9 @@ describe("main ", () => {
       });
 
       describe("implicit completion", () => {
-        describe("native parts", () => {
+        describe("code parts", () => {
           it("triggers an implicit completion when there are no explicit completion outputs", async () => {
-            const part = conciseNativePart({
+            const part = conciseCodePart({
               outputs: ["r"],
               fn: (_, o) => o.r.next("ok"),
             });
@@ -2452,7 +2452,7 @@ describe("main ", () => {
           });
 
           it("waits for promises to resolve before triggering an implicit completion of code part with no explicit completion outputs", async () => {
-            const part = conciseNativePart({
+            const part = conciseCodePart({
               outputs: ["r"],
               fn: async (_, o) => {
                 await new Promise((r) => setTimeout(r, 10));
@@ -2479,7 +2479,7 @@ describe("main ", () => {
         describe("grouped parts", () => {
           it('triggers implicit completion when parts "inside" stop running', async () => {
             const delayPart = (ms: number) =>
-              conciseNativePart({
+              conciseCodePart({
                 outputs: ["r"],
                 fn: async (_, o) => {
                   await new Promise((r) => setTimeout(r, ms));
@@ -2975,7 +2975,7 @@ describe("main ", () => {
     describe("input modes", () => {
       it("required - does not run a part before with required inputs if they do not existing", () => {
         const s = spy();
-        const dummyPart = conciseNativePart({
+        const dummyPart = conciseCodePart({
           id: "bob",
           inputs: ["a|required", "b|required"],
           outputs: ["r"],
@@ -3019,7 +3019,7 @@ describe("main ", () => {
 
       it("required if connected - runs if not connected, but does not run if connected", () => {
         const s = spy();
-        const dummyPart = conciseNativePart({
+        const dummyPart = conciseCodePart({
           id: "bob",
           inputs: ["a|required", "b|required-if-connected"],
           outputs: ["r"],
@@ -3060,7 +3060,7 @@ describe("main ", () => {
   });
 
   describe("error handling", () => {
-    const errorReportingPart = conciseNativePart({
+    const errorReportingPart = conciseCodePart({
       id: "bad",
       inputs: ["a"],
       outputs: ["r"],
@@ -3305,7 +3305,7 @@ describe("main ", () => {
 
   describe("async part function", () => {
     it("works with async functions", async () => {
-      const part = conciseNativePart({
+      const part = conciseCodePart({
         id: "Async",
         inputs: [],
         outputs: ["r"],
@@ -3606,7 +3606,7 @@ describe("main ", () => {
     });
 
     it("trigger input works in combination with static inputs", () => {
-      const addPart = conciseNativePart({
+      const addPart = conciseCodePart({
         id: "add",
         inputs: ["a", "b"],
         outputs: ["r"],
@@ -3652,7 +3652,7 @@ describe("main ", () => {
     });
 
     it("trigger input cannot be static", () => {
-      const addPart = conciseNativePart({
+      const addPart = conciseCodePart({
         id: "add",
         inputs: ["a", "b"],
         outputs: ["r"],
@@ -3699,7 +3699,7 @@ describe("main ", () => {
 
   describe("misc", () => {
     it("does not clean state when reactive input is received", () => {
-      const part = conciseNativePart({
+      const part = conciseCodePart({
         id: "part",
         inputs: ["a"],
         outputs: ["r"],
@@ -3732,7 +3732,7 @@ describe("main ", () => {
     });
 
     it("does not enter a loop when static values are connected to a reactive input", () => {
-      const part = conciseNativePart({
+      const part = conciseCodePart({
         id: "part",
         inputs: ["a"],
         outputs: ["r"],

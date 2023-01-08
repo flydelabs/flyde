@@ -49,7 +49,7 @@ export const hashPart = (part: Part, ignorePos = true) => {
     const str = JSON.stringify({ fnCode, customViewCode, ...basePart });
     return md5(str);
   }
-  throw new Error(`Hashing native parts unsupported`);
+  throw new Error(`Hashing code parts unsupported`);
 };
 
 export const hashFlow = (flow: FlydeFlow, ignorePos = true) => {
