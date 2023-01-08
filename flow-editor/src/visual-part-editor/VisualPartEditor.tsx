@@ -80,7 +80,7 @@ import {
   MenuDivider,
   Button,
 } from "@blueprintjs/core";
-import { PartIoView, PartIoType } from "./part-io-view";
+import { PartIoView } from "./part-io-view";
 
 import { vAdd, vec, vSub, vZero } from "../physics";
 import {
@@ -792,7 +792,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
       );
 
       const onRemoveIoPin = React.useCallback(
-        (type: PartIoType, pinId: string) => {
+        (type: PinType, pinId: string) => {
           const newValue = produce(part, (draft) => {
             if (type === "input") {
               delete draft.inputs[pinId];
@@ -1166,29 +1166,28 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
       );
 
       const onAddIoPin = React.useCallback(
-        async (type: PartIoType) => {
+        async (type: PinType) => {
           const newPinId = await _prompt("New name?");
 
           if (!newPinId) {
             // name selection dismissed, cancelling
             return;
           }
-          const newPinType = "any";
 
           const newValue = produce(part, (draft) => {
             if (type === "input") {
               if (!part.inputs) {
                 draft.inputs = {};
               }
-              draft.inputs[newPinId] = partInput(newPinType);
+              draft.inputs[newPinId] = partInput();
               draft.inputsPosition[newPinId] = lastMousePos.current;
             } else {
               if (!part.outputs) {
                 draft.outputs = {};
               }
-              draft.outputs[newPinId] = partOutput(newPinType, false, false);
+              draft.outputs[newPinId] = partOutput();
               draft.outputsPosition[newPinId] = lastMousePos.current;
-              // hackily add the new output as required for completion to an existing
+              // hackishly add the new output as required for completion to an existing
 
               const firstCompletionOutput = (draft.completionOutputs || [])[0];
               if (firstCompletionOutput) {
@@ -1251,7 +1250,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
       );
 
       const onRenameIoPin = React.useCallback(
-        async (type: PartIoType, pinId: string) => {
+        async (type: PinType, pinId: string) => {
           const newName = (await _prompt("New name?", pinId)) || pinId;
           const newValue = handleIoPinRename(part, type, pinId, newName);
           onChange(newValue, functionalChange("rename io pin"));
@@ -1303,7 +1302,6 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             onDragStart={onStartDraggingPartIo}
             onDragEnd={onDragEndPartIo}
             onDragMove={onDragMovePartIo}
-            pinType={v.type}
             onSelect={onPartIoPinClick}
             onSetDescription={onPartIoSetDescription}
             selected={from?.pinId === k}
@@ -1337,7 +1335,6 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             onDragStart={onStartDraggingPartIo}
             onDragEnd={onDragEndPartIo}
             onDragMove={onDragMovePartIo}
-            pinType={v.type}
             onSelect={onPartIoPinClick}
             onSetDescription={onPartIoSetDescription}
             description={v.description}

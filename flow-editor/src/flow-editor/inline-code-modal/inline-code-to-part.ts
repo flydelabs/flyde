@@ -27,11 +27,11 @@ export const createInlineValuePart = ({
   const variables = getVariables(code);
 
   const inputs = variables.reduce((prev, curr) => {
-    return { ...prev, [curr]: partInput("any", "required") };
+    return { ...prev, [curr]: partInput() };
   }, {});
 
   const outputs = {
-    value: partOutput("any"),
+    value: partOutput(),
   };
 
   const fnCode =

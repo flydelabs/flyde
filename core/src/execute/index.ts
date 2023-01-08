@@ -34,12 +34,12 @@ import {
 } from "../execution-values";
 import { delay, entries, isDefined, keys, OMap, OMapF } from "../common";
 import { debugLogger } from "../common/debug-logger";
+import {isStaticInputPinConfig } from '../part';
 import {
   callFnOrFnPromise,
   inlineValuePartToPart,
   customRepoToPartRepo,
   isPromise,
-  isStaticInputPinConfig,
   PartFn,
   PartRepo,
 } from "..";

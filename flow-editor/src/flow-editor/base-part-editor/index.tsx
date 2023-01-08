@@ -87,7 +87,7 @@ export const BasePartEditor: React.FC<BasePartEditorProps> = (props) => {
   const onAddInput = React.useCallback(
     (name: string, mode: InputMode) => {
       const newPart = produce(part, (draft) => {
-        draft.inputs[name] = partInput("any", mode);
+        draft.inputs[name] = partInput( mode);
       });
       onChange(newPart);
     },
@@ -107,7 +107,7 @@ export const BasePartEditor: React.FC<BasePartEditorProps> = (props) => {
   const onAddOutput = React.useCallback(
     (name: string) => {
       const newPart = produce(part, (draft) => {
-        draft.outputs[name] = partOutput("any");
+        draft.outputs[name] = partOutput();
       });
       onChange(newPart);
     },
@@ -133,9 +133,9 @@ export const BasePartEditor: React.FC<BasePartEditorProps> = (props) => {
             const input = draft.inputs[k];
             const output = draft.outputs[k];
             if (input) {
-              draft.inputs[k] = { ...input, type: v };
+              draft.inputs[k] = { ...input };
             } else if (output) {
-              draft.outputs[k] = { ...output, type: v };
+              draft.outputs[k] = { ...output };
             }
           });
         });
@@ -147,11 +147,6 @@ export const BasePartEditor: React.FC<BasePartEditorProps> = (props) => {
     [onChange, part]
   );
 
-  const types = [...entries(part.inputs), ...entries(part.outputs)]
-    .map(([k, v]) => {
-      return [k, v.type];
-    })
-    .reduce((acc, [k, t]) => ({ ...acc, [k]: t }), {});
 
   return (
     <div className="base-part-editor">
@@ -243,16 +238,6 @@ export const BasePartEditor: React.FC<BasePartEditorProps> = (props) => {
             createNewItemFromQuery={(t) => t}
             createNewItemRenderer={renderCreateIOOption}
             fill={true}
-          />
-        </FormGroup>
-
-        <FormGroup label="Types">
-          <Editor
-            height="100px"
-            theme="vs-dark"
-            defaultLanguage="json"
-            value={JSON.stringify(types, null, 4)}
-            onChange={(e) => onChangeTypes(e || "")}
           />
         </FormGroup>
 

@@ -11,7 +11,7 @@ export const ERROR_PIN_ID = "__error";
 export const TRIGGER_PIN_ID = "__trigger";
 
 export const getPartInputs = (part: PartDefinition) => {
-  return { ...part.inputs, [TRIGGER_PIN_ID]: partInput("any") };
+  return { ...part.inputs, [TRIGGER_PIN_ID]: partInput() };
 };
 
 export const getInputName = (pinId: string) => {
@@ -33,7 +33,7 @@ export const getOutputName = (pinId: string) => {
 };
 
 export const getPartOutputs = (part: PartDefinition) => {
-  return { ...part.outputs, [ERROR_PIN_ID]: partOutput("error") };
+  return { ...part.outputs, [ERROR_PIN_ID]: partOutput() };
 };
 
 export const isExternalConnectionNode = (

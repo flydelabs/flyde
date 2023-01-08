@@ -4,7 +4,7 @@ export const emptyWebUiProject: VisualPart = {
   id: "new-web-ui-project",
   inputs: {},
   outputs: {
-    jsx: partOutput("jsx"),
+    jsx: partOutput(),
   },
   inputsPosition: { mouse: { x: 0, y: 0 }, keyPress: { x: 200, y: 0 } },
   outputsPosition: { response: { x: 0, y: 400 } },
@@ -17,10 +17,10 @@ export const emptyWebUiProject: VisualPart = {
 export const emptyServerProject: VisualPart = {
   id: "new-server-project",
   inputs: {
-    request: partInput("any", "optional"),
+    request: partInput(),
   },
   outputs: {
-    response: partOutput("any"),
+    response: partOutput(),
   },
   inputsPosition: { request: { x: 0, y: 0 } },
   outputsPosition: { response: { x: 0, y: 400 } },
@@ -31,10 +31,10 @@ export const emptyServerProject: VisualPart = {
 export const emptyLambdaProject: VisualPart = {
   id: "new-lambda-project",
   inputs: {
-    context: partInput("obj", "optional"),
+    context: partInput(),
   },
   outputs: {
-    response: partOutput("any"),
+    response: partOutput(),
   },
   inputsPosition: { context: { x: 0, y: 0 } },
   outputsPosition: { response: { x: 0, y: 400 } },
@@ -46,7 +46,7 @@ export const emptyMobileProject: VisualPart = {
   id: "new-mobile-project",
   inputs: {},
   outputs: {
-    jsx: partOutput("jsx"),
+    jsx: partOutput(),
   },
   inputsPosition: { context: { x: 0, y: 0 } },
   outputsPosition: { response: { x: 0, y: 400 } },
@@ -57,12 +57,12 @@ export const emptyMobileProject: VisualPart = {
 export const emptyCliProject: VisualPart = {
   id: "new-cli-project",
   inputs: {
-    args: partInput("list", "optional"),
+    args: partInput(),
   },
   outputs: {
-    stdout: partOutput("any", true),
-    stderr: partOutput("any", true),
-    exit: partOutput("number", true),
+    stdout: partOutput( true),
+    stderr: partOutput( true),
+    exit: partOutput( true),
   },
   inputsPosition: { args: { x: 0, y: 0 } },
   outputsPosition: {

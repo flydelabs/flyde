@@ -23,11 +23,11 @@ import { conciseCodePart } from "./test-utils";
 export const add: CodePart = {
   id: "add",
   inputs: {
-    n1: partInput("number"),
-    n2: partInput("number"),
+    n1: partInput(),
+    n2: partInput(),
   },
   outputs: {
-    r: partOutput("number"),
+    r: partOutput(),
   },
   fn: ({ n1, n2 }, { r }) => {
     r.next(n1 + n2);
@@ -37,11 +37,11 @@ export const add: CodePart = {
 export const codeAdd: InlineValuePart = {
   id: "add",
   inputs: {
-    n1: partInput("number"),
-    n2: partInput("number"),
+    n1: partInput(),
+    n2: partInput(),
   },
   outputs: {
-    r: partOutput("number"),
+    r: partOutput(),
   },
   fnCode: `
   outputs.r.next(inputs.n1 + inputs.n2);
@@ -50,8 +50,8 @@ export const codeAdd: InlineValuePart = {
 
 export const add1: CodePart = {
   id: "add1",
-  inputs: { n: partInput("number") },
-  outputs: { r: partOutput("number") },
+  inputs: { n: partInput() },
+  outputs: { r: partOutput() },
   fn: ({ n }, { r }) => {
     r.next(n + 1);
   },
@@ -60,10 +60,10 @@ export const add1: CodePart = {
 export const mul: Part = {
   id: "mul",
   inputs: {
-    n1: partInput("number"),
-    n2: partInput("number"),
+    n1: partInput(),
+    n2: partInput(),
   },
-  outputs: { r: partOutput("number") },
+  outputs: { r: partOutput() },
   fn: ({ n1, n2 }, { r }) => r.next(n1 * n2),
 };
 
@@ -78,8 +78,8 @@ export const mul2: Part = fromSimplified({
 
 export const id: Part = {
   id: "id",
-  inputs: { v: partInput("v") },
-  outputs: { r: partOutput("r") },
+  inputs: { v: partInput() },
+  outputs: { r: partOutput() },
   fn: ({ v }, { r }) => {
     r.next(v);
   },
@@ -101,8 +101,8 @@ export const id2: CodePart = {
 
 export const transform: Part = {
   id: "transform",
-  inputs: { from: partInput("any"), to: partInput("any") },
-  outputs: { r: partOutput("any") },
+  inputs: { from: partInput(), to: partInput() },
+  outputs: { r: partOutput() },
   fn: ({ to }, { r }, { insId }) => {
     r.next(to);
   },
@@ -120,10 +120,10 @@ export const Value = (v: any): Part => {
 export const add1mul2: VisualPart = {
   id: "a1m2",
   inputs: {
-    n: partInput("number"),
+    n: partInput(),
   },
   outputs: {
-    r: partOutput("number"),
+    r: partOutput(),
   },
   inputsPosition: {},
   outputsPosition: {},
@@ -147,10 +147,10 @@ export const add1mul2: VisualPart = {
 export const add1mul2add1: VisualPart = {
   id: "a1m2a1",
   inputs: {
-    n: partInput("number"),
+    n: partInput(),
   },
   outputs: {
-    r: partOutput("number"),
+    r: partOutput(),
   },
   inputsPosition: {},
   outputsPosition: {},
@@ -184,11 +184,11 @@ export const addGrouped: VisualPart = {
   inputsPosition: {},
   outputsPosition: {},
   inputs: {
-    n1: partInput("number"),
-    n2: partInput("number"),
+    n1: partInput(),
+    n2: partInput(),
   },
   outputs: {
-    r: partOutput("number"),
+    r: partOutput(),
   },
   instances: [partInstance("a", add.id)],
   connections: [
@@ -212,11 +212,11 @@ export const addGroupedQueued: VisualPart = {
   inputsPosition: {},
   outputsPosition: {},
   inputs: {
-    n1: partInput("number"),
-    n2: partInput("number"),
+    n1: partInput(),
+    n2: partInput(),
   },
   outputs: {
-    r: partOutput("number"),
+    r: partOutput(),
   },
   instances: [
     partInstance("a", add.id, {
@@ -243,11 +243,11 @@ export const addGroupedQueued: VisualPart = {
 export const optAdd: CodePart = {
   id: "optAdd",
   inputs: {
-    n1: { type: "number" },
-    n2: { type: "number", mode: "required-if-connected" },
+    n1: { },
+    n2: { mode: "required-if-connected" },
   },
   outputs: {
-    r: { type: "number" },
+    r: { },
   },
   fn: ({ n1, n2 }, { r }) => {
     const n2Norm = typeof n2 === "undefined" ? 42 : n2;
@@ -258,11 +258,11 @@ export const optAdd: CodePart = {
 export const isEven: CodePart = {
   id: "is-even",
   inputs: {
-    item: { type: "any" },
-    idx: { type: "number", mode: "required-if-connected" },
+    item: { },
+    idx: { mode: "required-if-connected" },
   },
   outputs: {
-    r: { type: "boolean" },
+    r: { },
   },
   fn: ({ item }, { r }) => {
     r.next(item % 2 === 0);
@@ -316,8 +316,8 @@ export const filter: Part = fromSimplified({
 
 export const peq: CodePart = {
   id: "peq",
-  inputs: { val: partInput("any"), compare: partInput("string") },
-  outputs: { r: partOutput("any"), else: partOutput("any", false, true) },
+  inputs: { val: partInput(), compare: partInput() },
+  outputs: { r: partOutput(), else: partOutput() },
   fn: ({ val, compare }, o) => {
     if (val === compare) {
       o.r.next(val);
@@ -400,11 +400,11 @@ export const accumulate = conciseCodePart({
 export const accUntil: CodePart = {
   id: "accUntil",
   inputs: {
-    item: partInput("any", "optional"),
-    until: partInput("any", "optional"),
+    item: partInput('optional'),
+    until: partInput('optional'),
   },
   outputs: {
-    r: partOutput("number"),
+    r: partOutput(),
   },
   reactiveInputs: ["item", "until"],
   completionOutputs: ["r"],

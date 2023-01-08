@@ -20,10 +20,10 @@ import { FlydeFlow } from "../../flow-schema";
 const somePart: VisualPart = {
   id: "bob",
   inputs: {
-    a: partInput("bob"),
+    a: partInput(),
   },
   outputs: {
-    r: partOutput("r"),
+    r: partOutput(),
   },
   connections: [
     connectionData("i2.r", "i3.v"),
@@ -133,7 +133,7 @@ describe("parts hasher", () => {
 
     it("considers different inputs", () => {
       const p2 = produce(somePart, (draft) => {
-        draft.inputs.bob2 = partInput("string");
+        draft.inputs.bob2 = partInput();
       });
 
       const h1 = hashPart(somePart);
@@ -144,7 +144,7 @@ describe("parts hasher", () => {
 
     it("considers different outputs", () => {
       const p2 = produce(somePart, (draft) => {
-        draft.outputs.bob2 = partInput("string");
+        draft.outputs.bob2 = partInput();
       });
 
       const h1 = hashPart(somePart);

@@ -46,11 +46,11 @@ describe("execute", () => {
   const totalOptInput: CodePart = {
     id: "optAdd",
     inputs: {
-      n1: { type: "number", mode: "required-if-connected" },
-      n2: { type: "number", mode: "required-if-connected" },
+      n1: { mode: "required-if-connected" },
+      n2: { mode: "required-if-connected" },
     },
     outputs: {
-      r: { type: "number" },
+      r: {  },
     },
     fn: ({ n1, n2 }, { r }, {}) => {
       const a = isDefined(n1) ? n1 : 42;
@@ -62,11 +62,11 @@ describe("execute", () => {
   const groupedOptInput: VisualPart = {
     id: "groupedOptAdd",
     inputs: {
-      n1: partInput("number"),
-      n2: partInput("number", "optional"),
+      n1: partInput(),
+      n2: partInput("optional"),
     },
     outputs: {
-      r: partOutput("number"),
+      r: partOutput(),
     },
     inputsPosition: {},
     outputsPosition: {},
@@ -92,11 +92,11 @@ describe("execute", () => {
     inputsPosition: {},
     outputsPosition: {},
     inputs: {
-      n1: partInput("number"),
-      n2: partInput("number"),
+      n1: partInput(),
+      n2: partInput(),
     },
     outputs: {
-      r: partOutput("number"),
+      r: partOutput(),
     },
     instances: [partInstance("a", add.id)],
     connections: [
@@ -173,8 +173,8 @@ describe("execute", () => {
       const visualPart: VisualPart = {
         id: "apart",
         inputs: {
-          a: partInput("bob", "optional"),
-          b: partInput("bob2", "required"),
+          a: partInput("optional"),
+          b: partInput("required"),
         },
         outputs: { r: partOutput() },
         instances: [],
@@ -371,11 +371,11 @@ describe("execute", () => {
           inputsPosition: {},
           outputsPosition: {},
           inputs: {
-            a: partInput("number"),
-            b: partInput("number", "optional"),
+            a: partInput(),
+            b: partInput("optional"),
           },
           outputs: {
-            r: partOutput("number"),
+            r: partOutput(),
           },
           instances: [
             partInstance("a", id.id),
@@ -423,10 +423,10 @@ describe("execute", () => {
           inputsPosition: {},
           outputsPosition: {},
           inputs: {
-            a: partInput("number", "optional"),
+            a: partInput("optional"),
           },
           outputs: {
-            r: partOutput("number"),
+            r: partOutput(),
           },
           instances: [partInstance("v", Value(2).id), partInstance("a", id.id)],
           connections: [
@@ -446,11 +446,11 @@ describe("execute", () => {
       const optOutput: Part = {
         id: "dup",
         inputs: {
-          v: partInput("any"),
+          v: partInput(),
         },
         outputs: {
-          r1: { type: "number" },
-          r2: { type: "number" },
+          r1: { },
+          r2: { },
         },
         fn: ({ v }, { r1, r2 }, {}) => {
           r1.next(v);
@@ -511,11 +511,11 @@ describe("execute", () => {
       inputsPosition: {},
       outputsPosition: {},
       inputs: {
-        item: { type: "any" },
-        idx: { type: "number", mode: "optional" },
+        item: { },
+        idx: { mode: "optional" },
       },
       outputs: {
-        r: { type: "boolean" },
+        r: { },
       },
       instances: [partInstance("a", isEven.id)],
       connections: [

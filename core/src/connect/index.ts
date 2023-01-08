@@ -13,9 +13,7 @@ import {
   isStaticInputPinConfig,
   PartOutput,
   PartState,
-  isStickyInputPinConfig,
   getPart,
-  PartAdvancedContext,
 } from "../part";
 import { CancelFn, execute, Debugger, ExecuteEnv } from "../execute";
 import {
@@ -238,8 +236,10 @@ export const connect = (
         const sourceOutput = fromInstanceOutputs[fromInstancePinId];
 
         if (!sourceOutput) {
+          console.log(fromInstancePinId);
+          
           throw new Error(
-            `Output source - [${from}] not found in part [${partId}]`
+            `Output source - [${fromInstancePinId}] not found in part [${partId}]`
           );
         }
 

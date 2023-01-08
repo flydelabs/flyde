@@ -21,7 +21,6 @@ export type InputPinViewProps = {
   onConvertConstToEnv?: (id: string) => void;
   copiedConstValue?: any;
   isSticky: boolean;
-  isPart: boolean;
   constValue?: any;
   queueSize?: number;
 };
@@ -35,7 +34,6 @@ export type PinViewProps = {
   id: string;
   insId: string;
   parentInsId: string;
-  dataType: string;
   selected: boolean;
   connected: boolean;
   minimized: boolean;
@@ -68,7 +66,6 @@ export const PinView: React.SFC<PinViewProps> = React.memo(function PinView(
     rotate,
     optional,
     isClosestToMouse,
-    dataType: pinType,
     id,
     onRequestHistory,
   } = props;
@@ -76,7 +73,7 @@ export const PinView: React.SFC<PinViewProps> = React.memo(function PinView(
   const { history, resetHistory, refreshHistory } = useHistoryHelpers(
     onRequestHistory,
     id,
-    pinType
+    type
   );
 
   const getContextMenu = () => {
@@ -179,7 +176,7 @@ export const PinView: React.SFC<PinViewProps> = React.memo(function PinView(
 
   const calcClassNames = () => {
     if (props.type === "input") {
-      const { isSticky, isPart, constValue } = props;
+      const { isSticky, constValue } = props;
       return classNames(
         "pin",
         {
@@ -193,7 +190,6 @@ export const PinView: React.SFC<PinViewProps> = React.memo(function PinView(
           "env-value": isDefined(constValue) && isEnvValue(constValue),
           // "is-logged": logged,
           // "is-breakpoint": breakpoint,
-          "is-part": isPart,
           minimized: props.minimized,
         },
         type

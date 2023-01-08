@@ -11,8 +11,7 @@ import {
   StickyInputPinConfig,
 } from "./pin-config";
 
-export type PinType = string;
-
+export type PinType = 'input' | 'output';
 export type InputMode = "optional" | "required" | "required-if-connected";
 
 export interface BasePinData {
@@ -20,7 +19,6 @@ export interface BasePinData {
 }
 
 export interface InputPin extends BasePinData {
-  type: PinType;
   mode?: InputMode;
   defaultValue?: any;
 }
@@ -30,16 +28,12 @@ export type InputPinMap = OMap<InputPin>;
 export type OutputPinMap = OMap<OutputPin>;
 
 export interface OutputPin extends BasePinData {
-  type: PinType;
-  optional?: boolean;
   delayed?: boolean;
 }
 
 export const partInput = (
-  type: string = "any",
   mode: InputMode = "required"
 ): InputPin => ({
-  type,
   mode,
 });
 
@@ -49,22 +43,18 @@ export const isInputPinOptional = (input: InputPin) => {
 
 export const partInputs = (count: number, modes?: InputMode[]): InputPin[] =>
   repeat(count, (idx) => {
-    return partInput("any", modes[idx] || "required");
+    return partInput(modes[idx] || "required");
   });
 
 export const partOutput = (
-  type: string = "any",
   delayed = false,
-  optional = false
 ): OutputPin => ({
-  type,
   delayed,
-  optional,
 });
 
 export const partOutputs = (count: number): OutputPin[] =>
   repeat(count, () => {
-    return partOutput("any");
+    return partOutput();
   });
 
 export type DynamicPartInput = {

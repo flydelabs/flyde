@@ -1,4 +1,3 @@
-import { PinType } from "@flyde/core";
 import { HistoryPayload, valuePreview } from "@flyde/remote-debugger";
 import React from "react";
 import { useCallback, useRef, useState } from "react";
@@ -27,7 +26,7 @@ const INSIGHTS_TOOLTIP_INTERVAL = 500;
 export const useHistoryHelpers = (
   onRequestHistory: PinViewProps["onRequestHistory"],
   id: string,
-  type: PinType
+  type: 'input' | 'output'
 ) => {
   const historyTimer = useRef<any>();
 

@@ -24,21 +24,13 @@ export const scheduledTriggerPart = (): VisualPart => {
   return {
     id: triggerPartId(),
     inputs: {
-      context: {
-        type: "any",
-      },
+      context: {},
     },
     instances: [],
     connections: [],
     outputs: {
-      ok: {
-        type: "any",
-        optional: false,
-      },
-      error: {
-        type: "any",
-        optional: false,
-      },
+      ok: {},
+      error: {},
     },
 
     inputsPosition: {},
@@ -90,11 +82,11 @@ export const scheduledTrigger = (
 export const emptyWebUiProject: VisualPart = {
   id: "new-web-ui-project",
   inputs: {
-    mouse: partInput("obj", "optional"),
-    keyPress: partInput("obj", "optional"),
+    mouse: partInput(),
+    keyPress: partInput(),
   },
   outputs: {
-    jsx: partOutput("jsx"),
+    jsx: partOutput(),
   },
   inputsPosition: { mouse: { x: 0, y: 0 }, keyPress: { x: 200, y: 0 } },
   outputsPosition: { response: { x: 0, y: 400 } },

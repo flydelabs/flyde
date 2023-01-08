@@ -102,10 +102,10 @@ describe("main ", () => {
       const part: CodePart = {
         id: "id",
         inputs: {
-          v: partInput("number"),
+          v: partInput(),
         },
         outputs: {
-          r: partInput("number"),
+          r: partInput(),
         },
         fn: ({ v }, { r }) => {
           r.next(v);
@@ -131,10 +131,10 @@ describe("main ", () => {
       const part: CodePart = {
         id: "id",
         inputs: {
-          v: partInput("number"),
+          v: partInput(),
         },
         outputs: {
-          r: partInput("number"),
+          r: partInput(),
         },
         fn: ({ v }, { r }) => {
           r.next(v);
@@ -161,11 +161,11 @@ describe("main ", () => {
       const part: CodePart = {
         id: "add",
         inputs: {
-          a: partInput("number"),
-          b: partInput("number"),
+          a: partInput(),
+          b: partInput(),
         },
         outputs: {
-          r: partInput("number"),
+          r: partInput(),
         },
         fn: (args, { r }, {}) => {
           innerSpy();
@@ -263,10 +263,10 @@ describe("main ", () => {
       const add1: VisualPart = {
         id: "add1",
         inputs: {
-          n: partInput("number"),
+          n: partInput(),
         },
         outputs: {
-          r: partOutput("number"),
+          r: partOutput(),
         },
         inputsPosition: {},
         outputsPosition: {},
@@ -673,7 +673,7 @@ describe("main ", () => {
           id: "test",
           inputs: {},
           outputs: {
-            r: partOutput("number"),
+            r: partOutput(),
           },
           instances: [
             partInstance("v1", Value(n).id),
@@ -940,10 +940,10 @@ describe("main ", () => {
       const part: VisualPart = {
         id: "part",
         inputs: {
-          a: partOutput("number"),
+          a: partOutput(),
         },
         outputs: {
-          a: partOutput("number"),
+          a: partOutput(),
         },
         instances: [
           partInstance("v", Value(1).id),
@@ -978,10 +978,10 @@ describe("main ", () => {
         const part: VisualPart = {
           id: "part",
           inputs: {
-            n: partInput("number"),
+            n: partInput(),
           },
           outputs: {
-            r: partOutput("number"),
+            r: partOutput(),
           },
           instances: [partInstance("a", add.id)],
           connections: [
@@ -1015,7 +1015,7 @@ describe("main ", () => {
           id: "part",
           inputs: {},
           outputs: {
-            r: partOutput("number"),
+            r: partOutput(),
           },
           inputsPosition: {},
           outputsPosition: {},
@@ -1047,7 +1047,7 @@ describe("main ", () => {
     //   const leaf: CodePart = {
     //     id: "emit-1",
     //     inputs: {},
-    //     outputs: { r: partOutput("number") },
+    //     outputs: { r: partOutput() },
     //     fn: (_, o) => {
     //       innerLeafSpy();
     //       o.r.next(1);
@@ -1060,10 +1060,10 @@ describe("main ", () => {
     //     inputsPosition: {},
     //     outputsPosition: {},
     //     inputs: {
-    //       n: partInput("number")
+    //       n: partInput()
     //     },
     //     outputs: {
-    //       r: partOutput("number")
+    //       r: partOutput()
     //     },
     //     instances: [
     //       partInstance("a", leaf),
@@ -1140,8 +1140,8 @@ describe("main ", () => {
     describe("part state", () => {
       const part: CodePart = {
         id: "fixture",
-        inputs: { v: partInput("any") },
-        outputs: { r: partOutput("any") },
+        inputs: { v: partInput() },
+        outputs: { r: partOutput() },
         reactiveInputs: ["v"],
         completionOutputs: [],
         fn: (args, outs, { state }) => {
@@ -1419,10 +1419,10 @@ describe("main ", () => {
         inputsPosition: {},
         outputsPosition: {},
         inputs: {
-          n: partInput("number"),
+          n: partInput(),
         },
         outputs: {
-          r: partOutput("number"),
+          r: partOutput(),
         },
         instances: [partInstance("p1", id.id), partInstance("p2", add.id)],
         connections: [connectionData("n", "p1.v"), connectionData("p1.r", "r")],
@@ -1448,8 +1448,8 @@ describe("main ", () => {
     it("allows state in code comp", async () => {
       const part: InlineValuePart = {
         id: "fixture",
-        inputs: { v: partInput("any") },
-        outputs: { r: partOutput("any") },
+        inputs: { v: partInput() },
+        outputs: { r: partOutput() },
         fnCode: `
           const n = inputs.v + (adv.state.get("curr") || 0);
           outputs.r.next(n);
@@ -1492,7 +1492,7 @@ describe("main ", () => {
 
       const visual: VisualPart = {
         id: "bob",
-        inputs: { n: partInput("any") },
+        inputs: { n: partInput() },
         outputs: {},
         instances: [partInstance("i", innerPart.id)],
         connections: [],
@@ -1524,7 +1524,7 @@ describe("main ", () => {
         id: "part",
         inputs: {},
         outputs: {
-          r: partOutput("number"),
+          r: partOutput(),
         },
         fn: (_, { r }) => {
           r.next("ok");
@@ -1544,10 +1544,10 @@ describe("main ", () => {
       const addRec: VisualPart = {
         id: "add-rec",
         inputs: {
-          n: partInput("number"),
+          n: partInput(),
         },
         outputs: {
-          r: partOutput("number"),
+          r: partOutput(),
         },
         inputsPosition: {},
         outputsPosition: {},
@@ -1594,18 +1594,14 @@ describe("main ", () => {
       n.subject.next(1);
     });
 
-    it("support recursion based factorial calculation", () => {
-      // const zero = constPart(0, "zero");
-      // const one = constPart(1, "one");
-      // const mOne = constPart(-1, "mOne");
-
+    it("support recursion based factorial calculation", async () => {
       const fact: VisualPart = {
         id: "fact",
         inputs: {
-          n: partInput("number"),
+          n: partInput(),
         },
         outputs: {
-          r: partOutput("number"),
+          r: partOutput(),
         },
         inputsPosition: {},
         outputsPosition: {},
@@ -1646,6 +1642,7 @@ describe("main ", () => {
       execute({ part: fact, inputs: { n }, outputs: { r }, partsRepo: repo });
 
       n.subject.next(0);
+
       assert.equal(s.lastCall.args[0], 1);
 
       n.subject.next(1);
@@ -1672,10 +1669,10 @@ describe("main ", () => {
       const inlineValuePart: InlineValuePart = {
         id: "id",
         inputs: {
-          v: partInput("number"),
+          v: partInput(),
         },
         outputs: {
-          r: partInput("number"),
+          r: partInput(),
         },
         fnCode: `outputs.r.next(inputs.v)`,
       };
@@ -1702,11 +1699,11 @@ describe("main ", () => {
       const inlineValuePart: InlineValuePart = {
         id: "add",
         inputs: {
-          a: partInput("number"),
-          b: partInput("number"),
+          a: partInput(),
+          b: partInput(),
         },
         outputs: {
-          r: partInput("number"),
+          r: partInput(),
         },
         fnCode: `
         outputs.r.next(inputs.a + inputs.b);
@@ -1749,10 +1746,10 @@ describe("main ", () => {
       const part: CodePart = {
         id: "id",
         inputs: {
-          v: partInput("number"),
+          v: partInput(),
         },
         outputs: {
-          r: partInput("number"),
+          r: partInput(),
         },
         fn: ({ v }, { r }, { onCleanup: cleanup }) => {
           r.next(v);
@@ -1780,7 +1777,7 @@ describe("main ", () => {
         id: "id",
         inputs: {},
         outputs: {
-          r: partInput("number"),
+          r: partInput(),
         },
         fnCode: `
           const timer = setInterval(() => outputs.r.next(1), 1);
@@ -1810,10 +1807,10 @@ describe("main ", () => {
       const part: CodePart = {
         id: "id",
         inputs: {
-          v: partInput("number"),
+          v: partInput(),
         },
         outputs: {
-          r: partInput("number"),
+          r: partInput(),
         },
         fn: ({ v }, { r }, { onCleanup: cleanup }) => {
           r.next(v);
@@ -1844,7 +1841,7 @@ describe("main ", () => {
         id: "tester",
         inputs: {},
         outputs: {
-          r: partInput("number"),
+          r: partInput(),
         },
         fnCode: `
           outputs.r.next(bobber(12));
@@ -1870,7 +1867,7 @@ describe("main ", () => {
         id: "tester",
         inputs: {},
         outputs: {
-          r: partInput("number"),
+          r: partInput(),
         },
         fn: (i, o, adv) => {
           o.r.next(adv.context.bobber(12));
@@ -2124,10 +2121,10 @@ describe("main ", () => {
       const delayer: CodePart = {
         id: "delayer",
         inputs: {
-          item: partInput("number"),
+          item: partInput(),
         },
         outputs: {
-          r: partOutput("number"),
+          r: partOutput(),
         },
         completionOutputs: ["r"],
         fn: ({ item }, { r }) => {
@@ -2170,11 +2167,11 @@ describe("main ", () => {
         const delayer: CodePart = {
           id: "delayer",
           inputs: {
-            item: partInput("number"),
+            item: partInput(),
           },
           outputs: {
-            r: partOutput("number"),
-            final: partOutput("number"),
+            r: partOutput(),
+            final: partOutput(),
           },
           completionOutputs: ["final"],
           fn: ({ item }, { r, final }) => {
@@ -2221,12 +2218,12 @@ describe("main ", () => {
         const delayer: CodePart = {
           id: "delayer",
           inputs: {
-            item: partInput("number"),
+            item: partInput(),
           },
           outputs: {
-            r: partOutput("number"),
-            f1: partOutput("number"),
-            f2: partOutput("number"),
+            r: partOutput(),
+            f1: partOutput(),
+            f2: partOutput(),
           },
           completionOutputs: ["f1+f2"],
           fn: ({ item }, { r, f1, f2 }) => {
@@ -2279,12 +2276,12 @@ describe("main ", () => {
         const delayer: CodePart = {
           id: "delayer",
           inputs: {
-            item: partInput("number"),
+            item: partInput(),
           },
           outputs: {
-            r: partOutput("number"),
-            final1: partOutput("number"),
-            final2: partOutput("number"),
+            r: partOutput(),
+            final1: partOutput(),
+            final2: partOutput(),
           },
           completionOutputs: ["final1", "final2"],
           fn: ({ item }, { r, final1, final2 }) => {
@@ -2339,12 +2336,12 @@ describe("main ", () => {
         const delayer: CodePart = {
           id: "delayer",
           inputs: {
-            item: partInput("number"),
+            item: partInput(),
           },
           outputs: {
-            r: partOutput("number"),
-            final1: partOutput("number"),
-            final2: partOutput("number"),
+            r: partOutput(),
+            final1: partOutput(),
+            final2: partOutput(),
           },
           completionOutputs: ["final1", "final2"],
           fn: ({ item }, { r, final1 }, { onError }) => {
@@ -2400,7 +2397,7 @@ describe("main ", () => {
           id: "simpleCompletion",
           inputs: {},
           outputs: {
-            r: partOutput("number"),
+            r: partOutput(),
           },
           completionOutputs: ["r"],
           fn: ({}, { r }) => {
@@ -2541,11 +2538,11 @@ describe("main ", () => {
       const somePart: CodePart = {
         id: "somePart",
         inputs: {
-          item: partInput("number"),
+          item: partInput(),
         },
         outputs: {
-          r: partOutput("number"),
-          final: partOutput("number"),
+          r: partOutput(),
+          final: partOutput(),
         },
         reactiveInputs: ["item"],
         completionOutputs: ["final"],
@@ -2586,11 +2583,11 @@ describe("main ", () => {
       const accumulate: CodePart = {
         id: "acc",
         inputs: {
-          item: partInput("any"),
-          count: partInput("number"),
+          item: partInput(),
+          count: partInput(),
         },
         outputs: {
-          r: partOutput("number"),
+          r: partOutput(),
         },
         reactiveInputs: ["item"],
         completionOutputs: ["r"],
@@ -2780,11 +2777,11 @@ describe("main ", () => {
         const accUntil: CodePart = {
           id: "acc",
           inputs: {
-            item: partInput("any", "optional"),
-            until: partInput("any", "optional"),
+            item: partInput('optional'),
+            until: partInput('optional'),
           },
           outputs: {
-            r: partOutput("number"),
+            r: partOutput(),
           },
           reactiveInputs: ["item", "until"],
           completionOutputs: ["r"],
@@ -2837,7 +2834,7 @@ describe("main ", () => {
         outputsPosition: {},
         inputs: {},
         outputs: {
-          r: partOutput("number"),
+          r: partOutput(),
         },
         instances: [
           partInstance("a", add.id, {
@@ -2878,11 +2875,11 @@ describe("main ", () => {
       const merge: CodePart = {
         id: "merge",
         inputs: {
-          a: partInput("any", "optional"),
-          b: partInput("any", "optional"),
+          a: partInput('optional'),
+          b: partInput('optional'),
         },
         outputs: {
-          r: partOutput("any"),
+          r: partOutput(),
         },
         fn: ({ a, b }, { r }, { state }) => {
           if (isDefined(a)) {
@@ -2928,11 +2925,11 @@ describe("main ", () => {
         inputsPosition: {},
         outputsPosition: {},
         inputs: {
-          b: partInput("any", "optional"),
-          a: partInput("any", "optional"),
+          b: partInput('optional'),
+          a: partInput('optional'),
         },
         outputs: {
-          r: partOutput("number"),
+          r: partOutput(),
         },
         instances: [partInstance("id", id2.id)],
         connections: [
@@ -3433,10 +3430,10 @@ describe("main ", () => {
         inputsPosition: {},
         outputsPosition: {},
         inputs: {
-          n1: partInput("number", "required"),
+          n1: partInput(),
         },
         outputs: {
-          r: partOutput("number"),
+          r: partOutput(),
         },
         instances: [
           partInstance("a", add.id, {

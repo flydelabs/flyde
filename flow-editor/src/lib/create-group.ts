@@ -101,7 +101,7 @@ export const createGroup = async (
       to: connectionNode(conn.to.insId, conn.to.pinId),
     });
 
-    inputs[name] = partInput("any");
+    inputs[name] = partInput();
   }
 
   const outputs = {};
@@ -134,7 +134,7 @@ export const createGroup = async (
       to: externalConnectionNode(name),
     });
 
-    outputs[name] = partOutput("any");
+    outputs[name] = partOutput();
   }
 
   // replace relevant parts with new part

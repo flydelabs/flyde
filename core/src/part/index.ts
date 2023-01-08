@@ -167,11 +167,11 @@ export const fromSimplified = ({
   id,
 }: SimplifiedPartParams): CodePart => {
   const inputs: InputPinMap = entries(inputTypes).reduce<InputPinMap>(
-    (p, [k, v]) => ({ ...p, [k]: { type: v } }),
+    (p, [k, v]) => ({ ...p, [k]: {  } }),
     {}
   );
   const outputs: OutputPinMap = entries(outputTypes).reduce<InputPinMap>(
-    (p, [k, v]) => ({ ...p, [k]: { type: v } }),
+    (p, [k, v]) => ({ ...p, [k]: {  } }),
     {}
   );
   return {
@@ -259,7 +259,7 @@ export const codeFromFunction = ({
   return {
     id,
     inputs: inputNames.reduce(
-      (acc, k) => ({ ...acc, [k]: partInput("any") }),
+      (acc, k) => ({ ...acc, [k]: partInput() }),
       {}
     ),
     outputs: { [outputName]: partOutput() },

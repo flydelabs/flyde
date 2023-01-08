@@ -176,7 +176,7 @@ export const FoldersSection: React.FC<FoldersSectionProps> = (props) => {
   const onCreateFlow = useCallback(
     (basePart: BasePart) => {
       const part = visualPart(basePart);
-      part.outputs = { result: partOutput("any") };
+      part.outputs = { result: partOutput() };
       const path = newFlowTarget + "/" + part.id;
 
       part.id = "Main";

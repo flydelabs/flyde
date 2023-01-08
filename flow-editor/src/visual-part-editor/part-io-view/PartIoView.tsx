@@ -12,11 +12,9 @@ import { calcHistoryContent, useHistoryHelpers } from "../pin-view/helpers";
 import { getInputName } from "@flyde/core";
 import CustomReactTooltip from "../../lib/tooltip";
 
-export type PartIoType = "input" | "output";
-
 interface PartIoViewProps {
   id: string;
-  type: PartIoType;
+  type: PinType;
   pos: Pos;
   insId: string;
   connected: boolean;
@@ -24,22 +22,21 @@ interface PartIoViewProps {
   inputMode?: InputMode;
   closest: boolean;
   viewPort: { pos: Pos; zoom: number };
-  pinType: string;
   onDblClick?: (pinId: string, e: React.MouseEvent) => void;
-  onDelete?: (type: PartIoType, pin: string) => void;
-  onRename?: (type: PartIoType, pin: string) => void;
+  onDelete?: (type: PinType, pin: string) => void;
+  onRename?: (type: PinType, pin: string) => void;
   onChangeInputMode?: (pin: string, newMode: InputMode) => void;
-  onChange?: (type: PartIoType, pin: string) => void;
-  onDragEnd: (type: PartIoType, pin: string, ...data: any[]) => void;
+  onChange?: (type: PinType, pin: string) => void;
+  onDragEnd: (type: PinType, pin: string, ...data: any[]) => void;
   onDragStart: (pin: string, ...data: any[]) => void;
-  onDragMove: (type: PartIoType, pin: string, ...data: any[]) => void;
+  onDragMove: (type: PinType, pin: string, ...data: any[]) => void;
 
-  onSelect: (id: string, type: PartIoType) => void;
+  onSelect: (id: string, type: PinType) => void;
   selected: boolean;
 
   description: string;
   onSetDescription: (
-    type: PartIoType,
+    type: PinType,
     pin: string,
     description: string
   ) => void;

@@ -360,9 +360,9 @@ export const InstanceView: React.FC<InstanceViewProps> =
 
     const _visibleOutputs = getVisibleOutputs(instance, part, connections);
 
-    is.push([TRIGGER_PIN_ID, partInput("trigger")]);
+    is.push([TRIGGER_PIN_ID, partInput()]);
 
-    os.push([ERROR_PIN_ID, partOutput("error")]);
+    os.push([ERROR_PIN_ID, partOutput()]);
 
     const inputsToRender = is.filter(([k]) => {
       return (
@@ -507,7 +507,6 @@ export const InstanceView: React.FC<InstanceViewProps> =
               selected={k === selectedInput}
               onClick={onInputClick}
               onDoubleClick={onInputDblClick}
-              isPart={v.type.indexOf("part") === 0}
               isClosestToMouse={
                 !!closestPin &&
                 closestPin.type === "input" &&
@@ -518,7 +517,6 @@ export const InstanceView: React.FC<InstanceViewProps> =
               onInspect={props.onInspectPin}
               constValue={getStaticValue(k)}
               // constValue={constInputs && constInputs.get(k) && (constInputs.get(k) as any).val}
-              dataType={v.type}
               onRequestHistory={_onRequestHistory}
               onConvertConstToEnv={
                 props.onConvertConstToEnv ? _onConvertConstToEnv : undefined
@@ -542,7 +540,6 @@ export const InstanceView: React.FC<InstanceViewProps> =
               type="output"
               id={k}
               minimized={selected ? false : outputsToRender.length === 1}
-              optional={v.optional}
               isClosestToMouse={
                 !!closestPin &&
                 closestPin.type === "output" &&
@@ -553,7 +550,6 @@ export const InstanceView: React.FC<InstanceViewProps> =
               onDoubleClick={onOutputDblClick}
               onToggleLogged={onTogglePinLog}
               onToggleBreakpoint={onTogglePinBreakpoint}
-              dataType={v.type}
               onInspect={props.onInspectPin}
               onRequestHistory={_onRequestHistory}
               description={v.description}

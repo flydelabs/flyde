@@ -50,11 +50,11 @@ export const conciseBasePart = (concise: ConciseBasePart): BasePart => {
       ) {
         throw new Error(`Bad mode ${mode} in concise part`);
       }
-      return { ...prev, [clean]: partInput("any", mode as InputMode) };
+      return { ...prev, [clean]: partInput( mode as InputMode) };
     }, {}),
     outputs: (concise.outputs || []).reduce<OutputPinMap>((prev, curr) => {
       const clean = curr.replace("?", "");
-      return { ...prev, [clean]: partOutput("any", false, clean !== curr) };
+      return { ...prev, [clean]: partOutput( clean !== curr) };
     }, {}),
   };
 };

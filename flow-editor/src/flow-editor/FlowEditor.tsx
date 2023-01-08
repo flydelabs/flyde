@@ -1,6 +1,5 @@
 import * as React from "react";
 import {
-  PinType,
   isVisualPart,
   Pos,
   VisualPart,
@@ -12,6 +11,7 @@ import {
   PartDefRepo,
   ImportedPartDef,
   InlinePartInstance,
+  PinType,
 } from "@flyde/core";
 import {
   VisualPartEditor,

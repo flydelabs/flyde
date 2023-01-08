@@ -113,11 +113,11 @@ describe("connect", () => {
     const optOutput: CodePart = {
       id: "dup",
       inputs: {
-        v: { type: "any" },
+        v: {},
       },
       outputs: {
-        r1: { type: "number" },
-        r2: { type: "number", optional: true },
+        r1: { },
+        r2: { },
       },
       fn: ({ v }, { r1, r2 }) => {
         r1.next(v);
@@ -132,8 +132,8 @@ describe("connect", () => {
     it.skip("allows closing cyclic dependencies with delayed parts", () => {
       const delayedId: CodePart = {
         id: "d",
-        inputs: { n: { type: "any" } },
-        outputs: { r: { type: "any", delayed: true } },
+        inputs: { n: { } },
+        outputs: { r: { delayed: true } },
         fn: ({ n }, { r }) => {
           setInterval(() => {
             r.next(n);
