@@ -1,5 +1,5 @@
 import {
-  NativePart,
+  CodePart,
   isDynamicInput,
   PartInput,
   PartInputs,
@@ -75,7 +75,7 @@ export const connect = (
   onBubbleError: (err: any) => void = noop,
   env: ExecuteEnv = {},
   extraContext: Record<string, any> = {}
-): NativePart => {
+): CodePart => {
   const { id: maybeId, connections, instances } = part;
 
   const partId = maybeId || "connected-part" + randomInt(999);
@@ -102,7 +102,7 @@ export const connect = (
       const externalInputConnections = new Map<string, PartInput[]>();
       const externalOutputConnections = new Map<string, PartOutput[]>();
 
-      // holds status of each instance - if it is running or not, for implicit completion 
+      // holds status of each instance - if it is running or not, for implicit completion
       let resolveCompletionPromise: any;
       const runningInstances = new Set();
 
@@ -294,14 +294,14 @@ export const connect = (
         });
       });
 
-      function onInstanceCompleted (insId: string) {
-         runningInstances.delete(insId);
-         if (runningInstances.size === 0 && resolveCompletionPromise) {
+      function onInstanceCompleted(insId: string) {
+        runningInstances.delete(insId);
+        if (runningInstances.size === 0 && resolveCompletionPromise) {
           resolveCompletionPromise();
-         }
+        }
       }
 
-      function onInstanceStarted (insId: string) {
+      function onInstanceStarted(insId: string) {
         runningInstances.add(insId);
       }
 
@@ -380,7 +380,7 @@ export const connect = (
       if (part.completionOutputs === undefined && runningInstances.size > 0) {
         return new Promise((res) => {
           resolveCompletionPromise = res;
-        })
+        });
       }
 
       return () =>

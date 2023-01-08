@@ -7,7 +7,7 @@ import {
   PartRepo,
 } from "..";
 
-import { isInlineValuePart, NativePart, dynamicPartInput } from "../part";
+import { isInlineValuePart, CodePart, dynamicPartInput } from "../part";
 
 import { dynamicOutput, isDefined } from "..";
 import { getVM2Instance } from "./get-vm2";
@@ -17,7 +17,7 @@ const vm2 = getVM2Instance();
 export const inlineValuePartToPart = (
   inlineValuePart: InlineValuePart,
   extraContext: Record<string, any> = {}
-): NativePart => {
+): CodePart => {
   const { fnCode, ...rest } = inlineValuePart;
 
   const logger = debugLogger(`code-part:${inlineValuePart.id}`);
@@ -31,11 +31,14 @@ export const inlineValuePartToPart = (
   `;
 
   const script = new vm2.VMScript(wrappedCode);
-  const part: NativePart = {
+  const part: CodePart = {
     ...rest,
     fn: (inputs, outputs, adv) => {
       const log = (...args: any[]) => {
-        logger(`Log from code part ${inlineValuePart.id} [${adv.insId}]`, ...args);
+        logger(
+          `Log from code part ${inlineValuePart.id} [${adv.insId}]`,
+          ...args
+        );
       };
       const vm = new vm2.VM({
         sandbox: {

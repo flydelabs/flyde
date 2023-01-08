@@ -1,6 +1,6 @@
-import { NativePart, partOutput } from "@flyde/core";
+import { CodePart, partOutput } from "@flyde/core";
 
-const part: NativePart = {
+const part: CodePart = {
   id: "Sub",
   inputs: {
     a: { mode: "required", type: "number" },

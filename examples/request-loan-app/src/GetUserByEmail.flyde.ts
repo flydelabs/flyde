@@ -1,7 +1,7 @@
-import { nativeFromFunction, NativePart } from "@flyde/core";
+import { nativeFromFunction, CodePart } from "@flyde/core";
 import { crmService } from "./lib/crm-service";
 
-const GetUserByEmail: NativePart = nativeFromFunction({
+const GetUserByEmail: CodePart = nativeFromFunction({
   id: "Get User By Email",
   fn: crmService.getUser,
   inputNames: ["email"],

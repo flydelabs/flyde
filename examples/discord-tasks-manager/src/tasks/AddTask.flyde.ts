@@ -1,9 +1,9 @@
-import { GroupedPart, NativePart, partInput, partOutput } from "@flyde/core";
+import { GroupedPart, CodePart, partInput, partOutput } from "@flyde/core";
 import { createTasksService } from "./tasks";
 
 const servicePromise = createTasksService();
 
-const part: NativePart = {
+const part: CodePart = {
   id: "Add Task",
   inputs: {
     name: partInput(),

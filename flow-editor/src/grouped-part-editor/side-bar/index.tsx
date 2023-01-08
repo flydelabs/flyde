@@ -2,7 +2,7 @@ import * as React from "react";
 
 // ;
 import {
-  isNativePart,
+  isCodePart,
   isGroupedPart,
   PartInstance,
   keys,
@@ -98,7 +98,7 @@ export const SideBar: React.FC<SideBarProps> = React.memo(function SideBarInner(
     const part = getPartDef(ins, props.repo);
     const type = isGroupedPart(part)
       ? MenuItemType.GROUPED
-      : isNativePart(part)
+      : isCodePart(part)
       ? MenuItemType.NATIVE
       : MenuItemType.CONST;
     const selected = selectedIds.includes(ins.id);

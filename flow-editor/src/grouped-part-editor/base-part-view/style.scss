@@ -29,30 +29,6 @@
   will-change: transform, width;
 }
 
-// .base-part-view:not(.selected) .base-part-view-inner:hover {
-//   border: 2px solid #007ec6;
-// }
-
-// .base-part-view.selected .base-part-view-inner {
-//   border: 2px solid transparent;
-//   background: #007ec6;
-//   color: white;
-//   transition: background-color none;
-// }
-
-// .base-part-view:not(.native) {
-//   cursor: pointer;
-// }
-
 .base-part-view.dragged {
   opacity: 0.8;
 }
-
-// .base-part-view {
-//   padding-top: 15px;
-// }
-
-// .base-part-view {
-//   padding-bottom: 15px;
-// }
-

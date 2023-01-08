@@ -7,7 +7,7 @@ import { spy } from "sinon";
 import { assert } from "chai";
 import {
   dynamicPartInput,
-  NativePart,
+  CodePart,
   partInput,
   partInstance,
   partOutput,
@@ -110,7 +110,7 @@ describe("connect", () => {
   });
 
   describe("optional outputs", () => {
-    const optOutput: NativePart = {
+    const optOutput: CodePart = {
       id: "dup",
       inputs: {
         v: { type: "any" },
@@ -130,7 +130,7 @@ describe("connect", () => {
 
   describe("cyclic dependencies", () => {
     it.skip("allows closing cyclic dependencies with delayed parts", () => {
-      const delayedId: NativePart = {
+      const delayedId: CodePart = {
         id: "d",
         inputs: { n: { type: "any" } },
         outputs: { r: { type: "any", delayed: true } },

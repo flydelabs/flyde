@@ -5,7 +5,7 @@ import {
   InputPinMap,
   GroupedPart,
   InlineValuePart,
-  NativePart,
+  CodePart,
   PartInstance,
 } from "./.";
 
@@ -26,7 +26,7 @@ export interface ConciseBasePart
   extends Omit<BasePart, "inputs" | "outputs" | "id"> {
   inputs?: string[];
   outputs?: string[];
-  id?: string
+  id?: string;
 }
 
 export interface ConciseGroupedPart extends ConciseBasePart {
@@ -35,12 +35,12 @@ export interface ConciseGroupedPart extends ConciseBasePart {
 }
 
 export interface ConciseNativePart extends ConciseBasePart {
-  fn: NativePart["fn"];
+  fn: CodePart["fn"];
 }
 
 export const conciseBasePart = (concise: ConciseBasePart): BasePart => {
   return {
-    id: 'a-part',
+    id: "a-part",
     ...concise,
     inputs: (concise.inputs || []).reduce<InputPinMap>((prev, curr) => {
       const [clean, mode] = curr.split("|");
@@ -79,7 +79,7 @@ export const concisePart = (concise: ConciseGroupedPart): GroupedPart => {
   };
 };
 
-export const conciseNativePart = (concise: ConciseNativePart): NativePart => {
+export const conciseNativePart = (concise: ConciseNativePart): CodePart => {
   const base = conciseBasePart(concise);
   return {
     ...base,

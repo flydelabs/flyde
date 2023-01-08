@@ -2,7 +2,7 @@ import {
   isGroupedPart,
   ResolvedFlydeFlow,
   isRefPartInstance,
-  NativePart,
+  CodePart,
   ImportedPart,
   GroupedPart,
   isInlinePartInstance,
@@ -125,7 +125,7 @@ const _resolveFlow = (
 
       const originalFlowFolder = dirname(originalFlowPath);
       deps = _.mapValues(deps, (val: ImportedPart, key) => {
-        const part = val as NativePart;
+        const part = val as CodePart;
         if (typeof part.fn === "function" && mode === "bundle") {
           const requirePath = relative(originalFlowFolder, val.importPath);
 

@@ -3,7 +3,7 @@ import { PartDefRepo, PartStyle } from ".";
 import {
   CustomPart,
   GroupedPart,
-  NativePart,
+  CodePart,
   Part,
   PartDefinition,
 } from "./part";
@@ -105,7 +105,7 @@ export type ImportedPart = Part & {
   importPath: string;
 };
 
-export type PreBundleNativePart = NativePart & {
+export type PreBundleNativePart = CodePart & {
   fn: string;
 };
 

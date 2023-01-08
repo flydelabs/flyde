@@ -4,7 +4,7 @@ import {
   GroupedPart,
   partInput,
   partOutput,
-  NativePart,
+  CodePart,
   PartInstance,
   InlineValuePart,
   partInstance,
@@ -20,7 +20,7 @@ import { Subject } from "rxjs";
 import { PartRepo } from ".";
 import { conciseNativePart } from "./test-utils";
 
-export const add: NativePart = {
+export const add: CodePart = {
   id: "add",
   inputs: {
     n1: partInput("number"),
@@ -48,7 +48,7 @@ export const codeAdd: InlineValuePart = {
     `,
 };
 
-export const add1: NativePart = {
+export const add1: CodePart = {
   id: "add1",
   inputs: { n: partInput("number") },
   outputs: { r: partOutput("number") },
@@ -86,7 +86,7 @@ export const id: Part = {
   completionOutputs: ["r"],
 };
 
-export const id2: NativePart = {
+export const id2: CodePart = {
   id: "id2",
   inputs: {
     v: partInput(),
@@ -240,7 +240,7 @@ export const addGroupedQueued: GroupedPart = {
   ],
 };
 
-export const optAdd: NativePart = {
+export const optAdd: CodePart = {
   id: "optAdd",
   inputs: {
     n1: { type: "number" },
@@ -255,7 +255,7 @@ export const optAdd: NativePart = {
   },
 };
 
-export const isEven: NativePart = {
+export const isEven: CodePart = {
   id: "is-even",
   inputs: {
     item: { type: "any" },
@@ -314,7 +314,7 @@ export const filter: Part = fromSimplified({
   },
 });
 
-export const peq: NativePart = {
+export const peq: CodePart = {
   id: "peq",
   inputs: { val: partInput("any"), compare: partInput("string") },
   outputs: { r: partOutput("any"), else: partOutput("any", false, true) },
@@ -397,7 +397,7 @@ export const accumulate = conciseNativePart({
   },
 });
 
-export const accUntil: NativePart = {
+export const accUntil: CodePart = {
   id: "accUntil",
   inputs: {
     item: partInput("any", "optional"),

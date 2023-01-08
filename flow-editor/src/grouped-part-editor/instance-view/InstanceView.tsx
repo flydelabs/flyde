@@ -33,7 +33,7 @@ import {
   PartInstance,
   isGroupedPart,
   PartDefinition,
-  isNativePart,
+  isCodePart,
   PinType,
   getPartInputs,
 } from "@flyde/core";
@@ -50,13 +50,7 @@ import {
   GroupedPartEditorProps,
 } from "../GroupedPartEditor";
 import { usePrompt } from "../..";
-import {
-  ContextMenu,
-  IMenuItemProps,
-  Menu,
-  MenuDivider,
-  MenuItem,
-} from "@blueprintjs/core";
+import { ContextMenu, IMenuItemProps, Menu, MenuItem } from "@blueprintjs/core";
 import ReactDOM from "react-dom";
 import { PartStyleMenu } from "./PartStyleMenu";
 import CustomReactTooltip from "../../lib/tooltip";
@@ -236,7 +230,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
 
     const { id } = instance;
 
-    const isNative = isNativePart(part);
+    const isCode = isCodePart(part);
 
     const [inlineEditorSize, setInlineEditorSize] = React.useState({
       w: 800,
@@ -392,7 +386,6 @@ export const InstanceView: React.FC<InstanceViewProps> =
     });
 
     const cm = classNames("ins-view", {
-      native: isNative,
       "no-inputs": is.length === 0,
       "no-outputs": os.length === 0,
       "display-mode": displayMode,

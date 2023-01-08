@@ -1,5 +1,5 @@
 import {
-  NativePart,
+  CodePart,
   GroupedPart,
   partInput,
   partOutput,
@@ -43,7 +43,7 @@ import { conciseNativePart, wrappedOnEvent } from "../test-utils";
 import { Debugger, DebuggerEvent, DebuggerEventType } from "./debugger";
 
 describe("execute", () => {
-  const totalOptInput: NativePart = {
+  const totalOptInput: CodePart = {
     id: "optAdd",
     inputs: {
       n1: { type: "number", mode: "required-if-connected" },

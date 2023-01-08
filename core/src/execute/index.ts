@@ -12,7 +12,7 @@ import {
   GroupedPart,
   isInlineValuePart,
   isGroupedPart,
-  NativePart,
+  CodePart,
   PartInput,
   PartInputs,
   PartOutputs,
@@ -52,7 +52,7 @@ export type ExecutionState = Map<string, any>;
 export type CancelFn = () => void;
 
 export type ExecuteNativeFn = (
-  part: NativePart,
+  part: CodePart,
   args: PartInputs,
   outputs: PartOutputs,
   repo: PartRepo,
@@ -78,7 +78,7 @@ export type InnerExecuteFn = (
 ) => CancelFn;
 
 export type NativeExecutionData = {
-  part: NativePart;
+  part: CodePart;
   inputs: PartInputs;
   outputs: PartOutputs;
   repo: PartRepo;
@@ -130,7 +130,7 @@ const executeNative = (data: NativeExecutionData) => {
       _debugger,
       insId: id,
       onCompleted,
-      onStarted
+      onStarted,
     });
 
   const onEvent: Debugger["onEvent"] = _debugger.onEvent || noop;
@@ -258,7 +258,6 @@ const executeNative = (data: NativeExecutionData) => {
           parentInsId,
         });
         if (part.completionOutputs) {
-
           // completion outputs support the "AND" operator via "+" sign, i.e. "a+b,c" means "(a AND b) OR c)""
           const dependenciesArray = part.completionOutputs.map((k) =>
             k.split("+")
@@ -344,10 +343,10 @@ const executeNative = (data: NativeExecutionData) => {
                   insId,
                   parentInsId,
                 });
-                onCompleted(completedOutputsValues)
+                onCompleted(completedOutputsValues);
               }
-            })
-          } else {            
+            });
+          } else {
             if (part.completionOutputs === undefined && onCompleted) {
               processing = false;
               onEvent({
@@ -361,7 +360,7 @@ const executeNative = (data: NativeExecutionData) => {
           }
         } catch (e) {
           console.log(e);
-          
+
           processing = false;
           innerDebug(`Error in part %s - value %e`, part.id, e);
           onEvent({
@@ -490,7 +489,7 @@ export const execute: ExecuteFn = ({
   onBubbleError = noop, // (err) => { throw err},
   env = {},
   onCompleted = noop,
-  onStarted = noop
+  onStarted = noop,
 }) => {
   const toCancel: Function[] = [];
 
@@ -522,7 +521,7 @@ export const execute: ExecuteFn = ({
     }
   };
 
-  const processPart = (part: Part): NativePart => {
+  const processPart = (part: Part): CodePart => {
     if (isGroupedPart(part)) {
       return connect(
         part,
@@ -621,7 +620,7 @@ export const execute: ExecuteFn = ({
     env,
     extraContext,
     onCompleted,
-    onStarted
+    onStarted,
   });
 
   return () => {

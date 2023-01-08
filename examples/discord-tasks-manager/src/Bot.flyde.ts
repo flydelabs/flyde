@@ -1,7 +1,7 @@
-import { NativePart, partOutput } from "@flyde/core";
+import { CodePart, partOutput } from "@flyde/core";
 import { Client } from "eris";
 
-const part: NativePart = {
+const part: CodePart = {
   id: "Discord Bot",
   inputs: {},
   defaultStyle: {

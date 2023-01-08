@@ -12,12 +12,7 @@ import { CancelFn, InnerExecuteFn } from "../execute";
 import { ConnectionData } from "../connect";
 import { Pos, PartDefRepo, PartRepo, partInput, partOutput } from "..";
 import { isInlinePartInstance, PartInstance } from "./part-instance";
-import {
-  InputPin,
-  InputPinMap,
-  OutputPin,
-  OutputPinMap,
-} from "./part-pins";
+import { InputPin, InputPinMap, OutputPin, OutputPinMap } from "./part-pins";
 
 export * from "./part-instance";
 export * from "./part-pins";
@@ -79,7 +74,7 @@ export interface BasePart {
   defaultStyle?: PartStyle;
 }
 
-export interface NativePart extends BasePart {
+export interface CodePart extends BasePart {
   fn: PartFn;
   customView?: CustomPartViewFn;
 }
@@ -103,13 +98,13 @@ export interface GroupedPart extends BasePart {
   customView?: CustomPartViewFn;
 }
 
-export type Part = NativePart | CustomPart;
+export type Part = CodePart | CustomPart;
 
 export type ImportablePart = { module: string; part: BasePart };
 
 export type CustomPart = GroupedPart | InlineValuePart;
 
-export type NativePartDefinition = Omit<NativePart, "fn">;
+export type NativePartDefinition = Omit<CodePart, "fn">;
 
 export type PartDefinition = CustomPart | NativePartDefinition;
 
@@ -120,7 +115,7 @@ export type PartModuleMetaData = {
 export type PartDefinitionWithModuleMetaData = PartDefinition &
   PartModuleMetaData;
 
-export const isNativePart = (p: Part | PartDefinition): p is NativePart => {
+export const isCodePart = (p: Part | PartDefinition): p is CodePart => {
   return !isGroupedPart(p);
 };
 
@@ -144,7 +139,7 @@ export const groupedPart = testDataCreator<GroupedPart>({
   inputsPosition: {},
 });
 
-export const nativePart = testDataCreator<NativePart>({
+export const nativePart = testDataCreator<CodePart>({
   id: "part",
   inputs: {},
   outputs: {},
@@ -170,7 +165,7 @@ export const fromSimplified = ({
   inputTypes,
   outputTypes,
   id,
-}: SimplifiedPartParams): NativePart => {
+}: SimplifiedPartParams): CodePart => {
   const inputs: InputPinMap = entries(inputTypes).reduce<InputPinMap>(
     (p, [k, v]) => ({ ...p, [k]: { type: v } }),
     {}
@@ -260,7 +255,7 @@ export const nativeFromFunction = ({
   inputNames,
   outputName,
   defaultStyle,
-}: NativeFromFunctionParams): NativePart => {
+}: NativeFromFunctionParams): CodePart => {
   return {
     id,
     inputs: inputNames.reduce(
