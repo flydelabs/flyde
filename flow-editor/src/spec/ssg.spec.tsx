@@ -1,6 +1,6 @@
 import {
   connectionData,
-  groupedPart,
+  visualPart,
   partInput,
   partInstance,
   partOutput,
@@ -11,7 +11,7 @@ import * as ReactDOMServer from "react-dom/server";
 
 import { FlowEditor } from "..";
 import { FlydeFlowEditorProps } from "../flow-editor/FlowEditor";
-import { defaultViewPort } from "../grouped-part-editor";
+import { defaultViewPort } from "../visual-part-editor";
 
 describe("ssg/ssr support", () => {
   beforeEach(() => {
@@ -20,7 +20,7 @@ describe("ssg/ssr support", () => {
 
   it("renders into string without throwing in the absence of DOM", () => {
     const id = "part";
-    const part = groupedPart({
+    const part = visualPart({
       id,
       inputs: { a: partInput() },
       outputs: { r: partOutput() },

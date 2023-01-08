@@ -1,6 +1,6 @@
 import {
-  GroupedPart,
-  groupedPart,
+  VisualPart,
+  visualPart,
   partInstance,
   RefPartInstance,
   ResolvedFlydeFlow,
@@ -13,13 +13,13 @@ import { namespaceFlowImports } from "./namespace-flow-imports";
 describe("namespace flows", () => {
   it("namespaces refered part ids and their imports", () => {
     const flow: ResolvedFlydeFlowDefinition = {
-      main: groupedPart({
+      main: visualPart({
         id: "Bob",
         instances: [partInstance("i1", "Alice")],
       }),
       dependencies: {
         Alice: {
-          ...groupedPart({
+          ...visualPart({
             id: "Alice",
             instances: [partInstance("i2", "Dave")],
           }),
@@ -40,7 +40,7 @@ describe("namespace flows", () => {
 
     assert.equal(
       (
-        (namespaced.dependencies["NS__Alice"] as unknown as GroupedPart)
+        (namespaced.dependencies["NS__Alice"] as unknown as VisualPart)
           .instances[0] as RefPartInstance
       ).partId,
       "NS__Dave"

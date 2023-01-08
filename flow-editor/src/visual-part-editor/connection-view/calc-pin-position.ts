@@ -1,6 +1,5 @@
-import { Pos, PartDefinition } from "@flyde/core";
+import { Pos } from "@flyde/core";
 import { ViewPort } from "../..";
-import { Size } from "../../utils";
 import { getMainPinDomId, getPinDomId } from "../dom-ids";
 
 const DEFAULT_POS = {

@@ -31,7 +31,7 @@ import {
 } from "@flyde/core";
 import {
   PartInstance,
-  isGroupedPart,
+  isVisualPart,
   PartDefinition,
   PinType,
   getPartInputs,
@@ -44,9 +44,9 @@ import { getInstanceDomId } from "../dom-ids";
 import { HistoryPayload } from "@flyde/remote-debugger";
 import {
   ClosestPinData,
-  GroupedPartEditor,
-  GroupedPartEditorProps,
-} from "../GroupedPartEditor";
+  VisualPartEditor,
+  VisualPartEditorProps,
+} from "../VisualPartEditor";
 import { usePrompt } from "../..";
 import { ContextMenu, IMenuItemProps, Menu, MenuItem } from "@blueprintjs/core";
 import ReactDOM from "react-dom";
@@ -172,7 +172,7 @@ export interface InstanceViewProps {
 
   isConnectedInstanceSelected: boolean;
 
-  inlineGroupProps?: GroupedPartEditorProps;
+  inlineGroupProps?: VisualPartEditorProps;
   onCloseInlineEditor: () => void;
 
   onExtractInlinePart: (instance: InlinePartInstance) => Promise<void>;
@@ -621,7 +621,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
       const contextMenuItems: IMenuItemProps[] = [
         ...inputMenuItems,
         ...outputMenuItems,
-        ...(isInlinePartInstance(instance) && isGroupedPart(instance.part)
+        ...(isInlinePartInstance(instance) && isVisualPart(instance.part)
           ? [
               {
                 text: "Ungroup inline part",
@@ -713,7 +713,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
                 {content}{" "}
                 <button onClick={props.onCloseInlineEditor}>close</button>
               </header>
-              <GroupedPartEditor
+              <VisualPartEditor
                 {...props.inlineGroupProps}
                 className="no-drag"
                 ref={inlineEditorRef}

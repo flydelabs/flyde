@@ -90,7 +90,7 @@ export interface InlineValuePart extends BasePart {
   templateType?: InlineValuePartType;
 }
 
-export interface GroupedPart extends BasePart {
+export interface VisualPart extends BasePart {
   inputsPosition: OMap<Pos>;
   outputsPosition: OMap<Pos>;
   instances: PartInstance[];
@@ -102,7 +102,7 @@ export type Part = CodePart | CustomPart;
 
 export type ImportablePart = { module: string; part: BasePart };
 
-export type CustomPart = GroupedPart | InlineValuePart;
+export type CustomPart = VisualPart | InlineValuePart;
 
 export type CodePartDefinition = Omit<CodePart, "fn">;
 
@@ -116,11 +116,11 @@ export type PartDefinitionWithModuleMetaData = PartDefinition &
   PartModuleMetaData;
 
 export const isCodePart = (p: Part | PartDefinition): p is CodePart => {
-  return !isGroupedPart(p);
+  return !isVisualPart(p);
 };
 
-export const isGroupedPart = (p: Part | PartDefinition): p is GroupedPart => {
-  return !!(p as GroupedPart).instances;
+export const isVisualPart = (p: Part | PartDefinition): p is VisualPart => {
+  return !!(p as VisualPart).instances;
 };
 
 export const isInlineValuePart = (
@@ -129,8 +129,8 @@ export const isInlineValuePart = (
   return isDefined(p) && isDefined((p as InlineValuePart).fnCode);
 };
 
-export const groupedPart = testDataCreator<GroupedPart>({
-  id: "grouped-part",
+export const visualPart = testDataCreator<VisualPart>({
+  id: "visual-part",
   inputs: {},
   outputs: {},
   instances: [],

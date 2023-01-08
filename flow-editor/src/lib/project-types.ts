@@ -1,6 +1,6 @@
-import { partInput, partOutput, GroupedPart } from "@flyde/core";
+import { partInput, partOutput, VisualPart } from "@flyde/core";
 
-export const emptyWebUiProject: GroupedPart = {
+export const emptyWebUiProject: VisualPart = {
   id: "new-web-ui-project",
   inputs: {},
   outputs: {
@@ -14,7 +14,7 @@ export const emptyWebUiProject: GroupedPart = {
   reactiveInputs: [],
 };
 
-export const emptyServerProject: GroupedPart = {
+export const emptyServerProject: VisualPart = {
   id: "new-server-project",
   inputs: {
     request: partInput("any", "optional"),
@@ -28,7 +28,7 @@ export const emptyServerProject: GroupedPart = {
   instances: [],
 };
 
-export const emptyLambdaProject: GroupedPart = {
+export const emptyLambdaProject: VisualPart = {
   id: "new-lambda-project",
   inputs: {
     context: partInput("obj", "optional"),
@@ -42,7 +42,7 @@ export const emptyLambdaProject: GroupedPart = {
   instances: [],
 };
 
-export const emptyMobileProject: GroupedPart = {
+export const emptyMobileProject: VisualPart = {
   id: "new-mobile-project",
   inputs: {},
   outputs: {
@@ -54,7 +54,7 @@ export const emptyMobileProject: GroupedPart = {
   instances: [],
 };
 
-export const emptyCliProject: GroupedPart = {
+export const emptyCliProject: VisualPart = {
   id: "new-cli-project",
   inputs: {
     args: partInput("list", "optional"),
@@ -74,7 +74,7 @@ export const emptyCliProject: GroupedPart = {
   instances: [],
 };
 
-export const typeProjectMap: { [k: string]: GroupedPart } = {
+export const typeProjectMap: { [k: string]: VisualPart } = {
   server: emptyServerProject,
   "web-ui": emptyWebUiProject,
   lambda: emptyLambdaProject,

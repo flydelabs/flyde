@@ -1,7 +1,7 @@
-@import './base-part-editor/styles.scss';
-@import './inline-code-modal/style.scss';
-@import './manage-grouped-part-view/styles.scss';
-@import './omnibar/style.scss';
+@import "./base-part-editor/styles.scss";
+@import "./inline-code-modal/style.scss";
+@import "./manage-visual-part-view/styles.scss";
+@import "./omnibar/style.scss";
 
 .project-editor {
   display: flex;
@@ -10,7 +10,7 @@
   flex-direction: column;
   background-color: white;
 
-  > .grouped-part-editor {
+  > .visual-part-editor {
     height: 100%;
     flex: 1;
     // padding: 20px;
@@ -22,5 +22,3 @@
     // max-width: 90%;
   }
 }
-
-

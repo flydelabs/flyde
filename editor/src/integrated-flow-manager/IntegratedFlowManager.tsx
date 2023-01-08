@@ -19,7 +19,7 @@ import {
 } from "@flyde/remote-debugger/dist/client";
 
 import produce from "immer";
-import { createNewPartInstance, usePorts } from "@flyde/flow-editor"; // ../../common/grouped-part-editor/utils
+import { createNewPartInstance, usePorts } from "@flyde/flow-editor"; // ../../common/visual-part-editor/utils
 import { vAdd } from "@flyde/flow-editor"; // ../../common/physics
 
 import { FlowEditor } from "@flyde/flow-editor"; // ../../common/flow-editor/FlowEditor
@@ -34,12 +34,12 @@ import { AppToaster, toastMsg } from "@flyde/flow-editor"; // ../../common/toast
 import { useQueryParam, BooleanParam } from "use-query-params";
 import { values } from "@flyde/flow-editor"; // ../../common/utils
 import { PinType } from "@flyde/core";
-import { createRuntimePlayer, RuntimePlayer } from "@flyde/flow-editor"; // ../../common/grouped-part-editor/runtime-player
+import { createRuntimePlayer, RuntimePlayer } from "@flyde/flow-editor"; // ../../common/visual-part-editor/runtime-player
 
 // import { useDevServerApi } from "../api/dev-server-api";
 import { FlydeFlowChangeType, functionalChange } from "@flyde/flow-editor"; // ../../common/flow-editor/flyde-flow-change-type
 import { FlowEditorState } from "@flyde/flow-editor"; // ../../common/lib/react-utils/use-hotkeys
-import { defaultViewPort } from "@flyde/flow-editor/dist/grouped-part-editor/GroupedPartEditor";
+import { defaultViewPort } from "@flyde/flow-editor/dist/visual-part-editor/VisualPartEditor";
 // import { vscodePromptHandler } from "../vscode-ports";
 import { useState } from "react";
 import { useEffect } from "react";

@@ -8,7 +8,7 @@ import {
   dynamicOutput,
   dynamicPartInput,
   PartInstance,
-  GroupedPart,
+  VisualPart,
   queueInputPinConfig,
   isStaticInputPinConfig,
   PartOutput,
@@ -61,13 +61,13 @@ export type ConnectionNode = ExternalConnectionNode | InternalConnectionNode;
 
 export type PinList = Array<{ insId: string; pinId: string }>;
 
-type PositionlessGroupedPart = Omit<
-  Omit<GroupedPart, "inputsPosition">,
+type PositionlessVisualPart = Omit<
+  Omit<VisualPart, "inputsPosition">,
   "outputsPosition"
 >;
 
 export const connect = (
-  part: PositionlessGroupedPart,
+  part: PositionlessVisualPart,
   repo: PartRepo,
   _debugger: Debugger = {},
   parentInsId: string = "root",

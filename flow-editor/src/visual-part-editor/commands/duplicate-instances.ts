@@ -1,9 +1,9 @@
-import { GroupedPart } from "@flyde/core";
+import { VisualPart } from "@flyde/core";
 import cuid from "cuid";
 import produce from "immer";
 
 export const handleDuplicateSelectedEditorCommand = (
-  part: GroupedPart,
+  part: VisualPart,
   selected: string[]
 ) => {
   const newInstances = [];

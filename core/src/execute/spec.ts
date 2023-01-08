@@ -1,6 +1,6 @@
 import {
   CodePart,
-  GroupedPart,
+  VisualPart,
   partInput,
   partOutput,
   Part,
@@ -59,7 +59,7 @@ describe("execute", () => {
     },
   };
 
-  const groupedOptInput: GroupedPart = {
+  const groupedOptInput: VisualPart = {
     id: "groupedOptAdd",
     inputs: {
       n1: partInput("number"),
@@ -87,8 +87,8 @@ describe("execute", () => {
     ],
   };
 
-  const addGrouped: GroupedPart = {
-    id: "add-grouped",
+  const addGrouped: VisualPart = {
+    id: "add-visual",
     inputsPosition: {},
     outputsPosition: {},
     inputs: {
@@ -115,7 +115,7 @@ describe("execute", () => {
     ],
   };
 
-  describe("grouped parts", () => {
+  describe("visual parts", () => {
     it("works with a single piece inside", () => {
       const n1 = dynamicPartInput();
       const n2 = dynamicPartInput();
@@ -153,8 +153,8 @@ describe("execute", () => {
       assert.equal(s.lastCall.args[0], (num + 1) * 2);
     });
 
-    it("compiles grouped parts with the right inputs and outputs", () => {
-      const groupedPart: GroupedPart = {
+    it("compiles visual parts with the right inputs and outputs", () => {
+      const visualPart: VisualPart = {
         id: "apart",
         inputs: { a: partInput(), b: partInput() },
         outputs: { r: partOutput() },
@@ -164,13 +164,13 @@ describe("execute", () => {
         outputsPosition: {},
       };
 
-      const part = connect(groupedPart, testRepo, {} as any);
-      assert.deepEqual(keys(part.outputs), keys(groupedPart.outputs));
-      assert.deepEqual(keys(part.inputs), keys(groupedPart.inputs));
+      const part = connect(visualPart, testRepo, {} as any);
+      assert.deepEqual(keys(part.outputs), keys(visualPart.outputs));
+      assert.deepEqual(keys(part.inputs), keys(visualPart.inputs));
     });
 
-    it("compiles grouped parts with the right inputs and outputs when inputs have modes", () => {
-      const groupedPart: GroupedPart = {
+    it("compiles visual parts with the right inputs and outputs when inputs have modes", () => {
+      const visualPart: VisualPart = {
         id: "apart",
         inputs: {
           a: partInput("bob", "optional"),
@@ -183,7 +183,7 @@ describe("execute", () => {
         outputsPosition: {},
       };
 
-      const part = connect(groupedPart, testRepo, {} as any);
+      const part = connect(visualPart, testRepo, {} as any);
       assert.equal(part.inputs["a"].mode, "optional");
       assert.equal(part.inputs["b"].mode, "required");
     });
@@ -258,7 +258,7 @@ describe("execute", () => {
         equal(s.lastCall.args, 4);
       });
 
-      it("runs when optional inputs are absent- grouped opt input", () => {
+      it("runs when optional inputs are absent- visual opt input", () => {
         const n1 = dynamicPartInput();
         const r = new Subject();
 
@@ -366,7 +366,7 @@ describe("execute", () => {
         const s = spy();
         r.subscribe(s);
 
-        const part: GroupedPart = {
+        const part: VisualPart = {
           id: "bob",
           inputsPosition: {},
           outputsPosition: {},
@@ -409,7 +409,7 @@ describe("execute", () => {
         assert.equal(s.lastCall.args[0], 42);
       });
 
-      it("runs properly when given an unconnected grouped optional part", () => {
+      it("runs properly when given an unconnected visual optional part", () => {
         const r = new Subject();
 
         const s = spy();
@@ -418,7 +418,7 @@ describe("execute", () => {
         const val2 = Value(2);
         const repo = testRepoWith(val2);
 
-        const part: GroupedPart = {
+        const part: VisualPart = {
           id: "bob",
           inputsPosition: {},
           outputsPosition: {},
@@ -506,7 +506,7 @@ describe("execute", () => {
   });
 
   describe("part as args", () => {
-    const isOddPredicate: GroupedPart = {
+    const isOddPredicate: VisualPart = {
       id: "is-even",
       inputsPosition: {},
       outputsPosition: {},
@@ -546,7 +546,7 @@ describe("execute", () => {
       assert.deepEqual(s.lastCall.args[0], [2, 4, 6]);
     });
 
-    it("works with grouped components as parameters", () => {
+    it("works with visual components as parameters", () => {
       const s = spy();
       const list = dynamicPartInput();
       const fn = dynamicPartInput();
@@ -760,7 +760,7 @@ describe("execute", () => {
         );
       });
 
-      it("emits input change msgs on main inputs as well - grouped", () => {
+      it("emits input change msgs on main inputs as well - visual", () => {
         const n1 = dynamicPartInput();
         const n2 = dynamicPartInput();
         const r = new Subject();
@@ -826,7 +826,7 @@ describe("execute", () => {
         );
       });
 
-      it("intercepts input value on grouped part", async () => {
+      it("intercepts input value on visual part", async () => {
         const n = dynamicPartInput();
         const r = dynamicOutput();
 
@@ -976,7 +976,7 @@ describe("execute", () => {
         assert.equal(onOutput.callCount, 1);
       });
 
-      it("emits output change msgs on main output as well - grouped", () => {
+      it("emits output change msgs on main output as well - visual", () => {
         const n1 = dynamicPartInput();
         const n2 = dynamicPartInput();
         const r = new Subject();

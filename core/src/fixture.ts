@@ -1,7 +1,7 @@
 import {
   fromSimplified,
   Part,
-  GroupedPart,
+  VisualPart,
   partInput,
   partOutput,
   CodePart,
@@ -117,7 +117,7 @@ export const Value = (v: any): Part => {
   });
 };
 
-export const add1mul2: GroupedPart = {
+export const add1mul2: VisualPart = {
   id: "a1m2",
   inputs: {
     n: partInput("number"),
@@ -144,7 +144,7 @@ export const add1mul2: GroupedPart = {
   ],
 };
 
-export const add1mul2add1: GroupedPart = {
+export const add1mul2add1: VisualPart = {
   id: "a1m2a1",
   inputs: {
     n: partInput("number"),
@@ -179,8 +179,8 @@ export const add1mul2add1: GroupedPart = {
   ],
 };
 
-export const addGrouped: GroupedPart = {
-  id: "add-grouped",
+export const addGrouped: VisualPart = {
+  id: "add-visual",
   inputsPosition: {},
   outputsPosition: {},
   inputs: {
@@ -207,8 +207,8 @@ export const addGrouped: GroupedPart = {
   ],
 };
 
-export const addGroupedQueued: GroupedPart = {
-  id: "add-grouped-queued",
+export const addGroupedQueued: VisualPart = {
+  id: "add-visual-queued",
   inputsPosition: {},
   outputsPosition: {},
   inputs: {

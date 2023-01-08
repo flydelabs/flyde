@@ -1,9 +1,9 @@
-import { PART_HEIGHT } from "../GroupedPartEditor";
+import { PART_HEIGHT } from "../VisualPartEditor";
 import {
   okeys,
   isExternalConnectionNode,
   entries,
-  GroupedPart,
+  VisualPart,
   PartDefRepo,
   getPartDef,
   ResolvedFlydeFlowDefinition,
@@ -16,8 +16,8 @@ import { calcPartWidth } from "../instance-view/utils";
 
 export const layoutToInstances = (
   ld: LayoutData,
-  part: GroupedPart
-): GroupedPart => {
+  part: VisualPart
+): VisualPart => {
   return produce(part, (draft) => {
     entries(ld.nodes).forEach(([id, node]) => {
       if (id.startsWith("ins-")) {
@@ -43,11 +43,11 @@ export const layoutToInstances = (
   });
 };
 
-export const orderGroupedPart = (
-  part: GroupedPart,
+export const orderVisualPart = (
+  part: VisualPart,
   repo: PartDefRepo,
   itrs: number,
-  onStep?: (val: GroupedPart, idx: number) => void
+  onStep?: (val: VisualPart, idx: number) => void
 ) => {
   const { instances, connections } = part;
   const insNodes = instances.reduce((prev, curr) => {

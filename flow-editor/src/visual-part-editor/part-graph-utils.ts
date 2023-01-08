@@ -1,4 +1,4 @@
-import { PartInstance, ConnectionData, GroupedPart } from "@flyde/core";
+import { PartInstance, ConnectionData, VisualPart } from "@flyde/core";
 
 export const getLeafInstancesOfSelection = (
   selectedInstances: PartInstance[],
@@ -31,7 +31,7 @@ export type InstanceWithConstPinMap = Map<
 >;
 
 export const calculateInstancesWithSingleConstPinsMap = (
-  part: GroupedPart,
+  part: VisualPart,
   constSinglePinMap: Map<string, any>
 ): InstanceWithConstPinMap => {
   const { connections } = part;

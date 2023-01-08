@@ -156,9 +156,9 @@ describe("resolver", () => {
     );
   });
 
-  it("resolves a .flyde with dependency on a grouped part from a different package", async () => {
+  it("resolves a .flyde with dependency on a visual part from a different package", async () => {
     const data = resolveFlow(
-      getFixturePath("a-imports-b-grouped-from-package/a.flyde"),
+      getFixturePath("a-imports-b-visual-from-package/a.flyde"),
       "implementation"
     );
 
@@ -293,7 +293,7 @@ describe("resolver", () => {
     Causing webpack not to be able to load it
     */
     const data = resolveFlow(
-      getFixturePath("a-imports-b-grouped-from-package/a.flyde"),
+      getFixturePath("a-imports-b-visual-from-package/a.flyde"),
       "bundle"
     );
 

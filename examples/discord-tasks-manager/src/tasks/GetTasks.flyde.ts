@@ -1,4 +1,4 @@
-import { GroupedPart, CodePart, partInput, partOutput } from "@flyde/core";
+import { VisualPart, CodePart, partInput, partOutput } from "@flyde/core";
 import { createTasksService } from "./tasks";
 
 const servicePromise = createTasksService();

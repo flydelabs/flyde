@@ -5,7 +5,7 @@ import {
   connectionNode,
   partInput,
   connectionNodeEquals,
-  GroupedPart,
+  VisualPart,
   middlePos,
 } from "@flyde/core";
 import { rnd } from "../physics";
@@ -148,7 +148,7 @@ export const createGroup = async (
       instanceIds.includes(conn.to.insId)
   );
 
-  const groupedPart: GroupedPart = {
+  const visualPart: VisualPart = {
     id: name,
     inputs,
     outputs,
@@ -165,8 +165,8 @@ export const createGroup = async (
     completionOutputs: okeys(outputs),
   };
 
-  return { groupedPart, renamedInputs, renamedOutputs };
-  // const ordered = orderGroupedPart(groupedPart, 20);
+  return { visualPart, renamedInputs, renamedOutputs };
+  // const ordered = orderVisualPart(visualPart, 20);
 
-  // return partInstance(`${name}-ins`, groupedPart, {}, midPos);
+  // return partInstance(`${name}-ins`, visualPart, {}, midPos);
 };

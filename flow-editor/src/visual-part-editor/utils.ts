@@ -1,10 +1,10 @@
 import * as immer from "immer";
-import { PART_HEIGHT } from "./GroupedPartEditor";
+import { PART_HEIGHT } from "./VisualPartEditor";
 import {
   Pos,
   InputPin,
   OutputPin,
-  GroupedPart,
+  VisualPart,
   PartInstance,
   PartDefRepo,
   PartDefinition,
@@ -48,7 +48,7 @@ export const emptyObj = {}; // for immutability
 export const emptyList = []; // for immutability
 
 export const toggleStickyPin = (
-  value: GroupedPart,
+  value: VisualPart,
   insKey: string,
   pinId: string,
   forceValue?: boolean
@@ -73,7 +73,7 @@ export const toggleStickyPin = (
 };
 
 export const findClosestPin = (
-  part: GroupedPart,
+  part: VisualPart,
   repo: PartDefRepo,
   mousePos: Pos,
   boardPos: Pos,
@@ -390,7 +390,7 @@ const calcPoints = (w: number, h: number, pos: Pos, tag: string): Points => {
 };
 
 export const calcPartsPositions = (
-  part: GroupedPart,
+  part: VisualPart,
   repo: PartDefRepo
 ): Points[] => {
   const insParts = part.instances.map((curr) => {
@@ -416,13 +416,13 @@ export const calcPartsPositions = (
   return [...insParts, ...inputsCenter, ...outputsCenter];
 };
 
-// export const calcPartsCenter = (part: GroupedPart, repo: PartDefRepo): Pos => {
+// export const calcPartsCenter = (part: VisualPart, repo: PartDefRepo): Pos => {
 //   const positions = calcPartsPositions(part, repo);
 //   return positions.reduce((acc, curr) => middlePos(acc, curr), positions[0] || { x: 0, y: 0 });
 // };
 
 export const getEffectivePartDimensions = (
-  part: GroupedPart,
+  part: VisualPart,
   repo: PartDefRepo
 ) => {
   const positions = calcPartsPositions(part, repo);
@@ -506,7 +506,7 @@ const FIT_VIEWPORT_MIN_ZOOM = 0.3;
 const FIT_VIEWPORT_MAX_ZOOM = 1.2;
 
 export const fitViewPortToPart = (
-  part: GroupedPart,
+  part: VisualPart,
   repo: PartDefRepo,
   vpSize: Size
 ): ViewPort => {
@@ -582,7 +582,7 @@ export const getInstancesInRect = (
 };
 
 export const handleInstanceDrag = (
-  value: GroupedPart,
+  value: VisualPart,
   ins: PartInstance,
   pos: Pos,
   event: any,
@@ -632,7 +632,7 @@ export const handleInstanceDrag = (
 };
 
 export const handleIoPinRename = (
-  part: GroupedPart,
+  part: VisualPart,
   type: PinType,
   pinId: string,
   newPinId: string
@@ -666,7 +666,7 @@ export const handleIoPinRename = (
 };
 
 export const handleChangePartInputType = (
-  part: GroupedPart,
+  part: VisualPart,
   pinId: string,
   mode: InputMode
 ) => {

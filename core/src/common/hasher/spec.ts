@@ -2,7 +2,7 @@ import {
   InlineValuePart,
   connectionData,
   connectionNode,
-  GroupedPart,
+  VisualPart,
   Part,
   partInput,
   partInstance,
@@ -14,10 +14,10 @@ import { produce } from "immer";
 import { randomInt, randomPos, shuffle } from "..";
 import { assert } from "chai";
 import { hashFlow, hashPart } from ".";
-import { groupedPart } from "../../part";
+import { visualPart } from "../../part";
 import { FlydeFlow } from "../../flow-schema";
 
-const somePart: GroupedPart = {
+const somePart: VisualPart = {
   id: "bob",
   inputs: {
     a: partInput("bob"),
@@ -40,7 +40,7 @@ const somePart: GroupedPart = {
 };
 
 describe("parts hasher", () => {
-  describe("grouped part", () => {
+  describe("visual part", () => {
     it("creates difference hash for different id", () => {
       const p2 = produce(somePart, (d) => {
         d.id = `${d.id}-${randomInt}`;
@@ -194,7 +194,7 @@ describe("flow hasher", () => {
         a: ["b"],
         c: ["d"],
       },
-      part: groupedPart({ id: "bob" }),
+      part: visualPart({ id: "bob" }),
     };
 
     const f2: FlydeFlow = {
@@ -202,7 +202,7 @@ describe("flow hasher", () => {
         c: ["d"],
         a: ["b"],
       },
-      part: groupedPart({ id: "bob" }),
+      part: visualPart({ id: "bob" }),
     };
 
     assert.equal(hashFlow(f1), hashFlow(f2));
@@ -214,7 +214,7 @@ describe("flow hasher", () => {
         a: ["b"],
         c: ["d"],
       },
-      part: groupedPart({ id: "bob" }),
+      part: visualPart({ id: "bob" }),
     };
 
     const f2: FlydeFlow = {
@@ -222,7 +222,7 @@ describe("flow hasher", () => {
         c: ["d"],
         a: ["b"],
       },
-      part: groupedPart({ id: "bob2" }),
+      part: visualPart({ id: "bob2" }),
     };
 
     assert.notEqual(hashFlow(f1), hashFlow(f2));

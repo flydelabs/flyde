@@ -1,8 +1,8 @@
-import { isJsxValue } from "./grouped-part-editor/utils";
+import { isJsxValue } from "./visual-part-editor/utils";
 import {
   getEnvKeyFromValue,
   isEnvValue,
-  isStaticValueGroupedPart,
+  isStaticValueVisualPart,
 } from "@flyde/core";
 import moment from "moment";
 import React from "react";
@@ -65,7 +65,7 @@ export const toString = (v: any): string => {
     return "JSX Value";
   }
 
-  if (isStaticValueGroupedPart(v)) {
+  if (isStaticValueVisualPart(v)) {
     return "Embedded Part";
   }
 

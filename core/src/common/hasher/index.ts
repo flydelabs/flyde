@@ -1,5 +1,11 @@
 import * as _md5 from "md5";
-import { FlydeFlow, isInlineValuePart, isGroupedPart, Part, Project } from "../..";
+import {
+  FlydeFlow,
+  isInlineValuePart,
+  isVisualPart,
+  Part,
+  Project,
+} from "../..";
 
 const md5 = (str: string) => {
   return _md5(str);
@@ -10,7 +16,7 @@ export const hashPart = (part: Part, ignorePos = true) => {
 
   const basePart = { id, completionOutputs, reactiveInputs, inputs, outputs };
 
-  if (isGroupedPart(part)) {
+  if (isVisualPart(part)) {
     const { instances, id, connections, inputsPosition, outputsPosition } =
       part;
     // const cleanedInstances = ignorePos ? instances.map((ins) => {

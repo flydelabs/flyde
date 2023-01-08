@@ -9,9 +9,9 @@ import {
   dynamicOutput,
   Part,
   getStaticValue,
-  GroupedPart,
+  VisualPart,
   isInlineValuePart,
-  isGroupedPart,
+  isVisualPart,
   CodePart,
   PartInput,
   PartInputs,
@@ -505,7 +505,7 @@ export const execute: ExecuteFn = ({
   };
 
   const processPart = (part: Part): CodePart => {
-    if (isGroupedPart(part)) {
+    if (isVisualPart(part)) {
       return connect(
         part,
         processedRepo,

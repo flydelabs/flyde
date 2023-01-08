@@ -22,7 +22,7 @@ import {
   BasePart,
   CustomPart,
   FlydeFlow,
-  groupedPart,
+  visualPart,
   partOutput,
 } from "@flyde/core";
 
@@ -175,7 +175,7 @@ export const FoldersSection: React.FC<FoldersSectionProps> = (props) => {
 
   const onCreateFlow = useCallback(
     (basePart: BasePart) => {
-      const part = groupedPart(basePart);
+      const part = visualPart(basePart);
       part.outputs = { result: partOutput("any") };
       const path = newFlowTarget + "/" + part.id;
 

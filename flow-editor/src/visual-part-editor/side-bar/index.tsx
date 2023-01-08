@@ -3,10 +3,10 @@ import * as React from "react";
 // ;
 import {
   isCodePart,
-  isGroupedPart,
+  isVisualPart,
   PartInstance,
   keys,
-  GroupedPart,
+  VisualPart,
   PartDefRepo,
   getPartDef,
   noop,
@@ -14,7 +14,7 @@ import {
 import classNames from "classnames";
 
 export type SideBarProps = {
-  part: GroupedPart;
+  part: VisualPart;
   selectedIds: string[];
   repo: PartDefRepo;
   onSelect: (id: PartInstance, ev: React.MouseEvent) => void;
@@ -26,7 +26,7 @@ export type SideBarProps = {
 export enum MenuItemType {
   CODE = "code",
   CONST = "const",
-  GROUPED = "grouped",
+  VISUAL = "visual",
   INPUT = "input",
   OUTPUT = "output",
 }
@@ -96,8 +96,8 @@ export const SideBar: React.FC<SideBarProps> = React.memo(function SideBarInner(
 
   const items: MenuItemProps[] = instances.map((ins) => {
     const part = getPartDef(ins, props.repo);
-    const type = isGroupedPart(part)
-      ? MenuItemType.GROUPED
+    const type = isVisualPart(part)
+      ? MenuItemType.VISUAL
       : isCodePart(part)
       ? MenuItemType.CODE
       : MenuItemType.CONST;

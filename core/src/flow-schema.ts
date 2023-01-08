@@ -1,12 +1,6 @@
 import { z } from "zod";
 import { PartDefRepo, PartStyle } from ".";
-import {
-  CustomPart,
-  GroupedPart,
-  CodePart,
-  Part,
-  PartDefinition,
-} from "./part";
+import { CustomPart, VisualPart, CodePart, Part, PartDefinition } from "./part";
 
 const importSchema = z.record(z.string(), z.string().or(z.array(z.string())));
 const position = z.strictObject({ x: z.number(), y: z.number() });
@@ -78,7 +72,7 @@ const flydeBasePart = z.object({
   description: z.optional(z.string()),
 });
 
-const groupedPart = z
+const visualPart = z
   .object({
     instances: z.array(instance),
     connections: z.array(
@@ -94,7 +88,7 @@ const groupedPart = z
 
 export type FlydeFlow = {
   imports?: Record<string, String[]>;
-  part: GroupedPart;
+  part: VisualPart;
 };
 
 export type ImportedPartDefinition = PartDefinition & {
@@ -110,12 +104,12 @@ export type ImportedPartDef = PartDefinition & {
 };
 
 export type ResolvedFlydeFlowDefinition = {
-  main: GroupedPart;
+  main: VisualPart;
   dependencies: Record<string, ImportedPartDefinition>;
 };
 
 export type ResolvedFlydeRuntimeFlow = {
-  main: GroupedPart;
+  main: VisualPart;
   dependencies: Record<string, ImportedPart>;
 };
 
@@ -125,5 +119,5 @@ export type ResolvedFlydeFlow =
 
 export const flydeFlowSchema = z.strictObject({
   imports: z.optional(importSchema).default({}),
-  part: groupedPart,
+  part: visualPart,
 });

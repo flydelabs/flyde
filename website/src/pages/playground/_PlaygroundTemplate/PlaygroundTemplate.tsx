@@ -32,7 +32,7 @@ import {
   ResolvedFlydeFlow,
   ResolvedFlydeRuntimeFlow,
 } from "@flyde/core";
-import { defaultViewPort } from "@site/../flow-editor/dist/grouped-part-editor";
+import { defaultViewPort } from "@site/../flow-editor/dist/visual-part-editor";
 import { createHistoryPlayer } from "../_lib/createHistoryPlayer";
 import { createRuntimeClientDebugger } from "../_lib/createRuntimePlayerDebugger";
 import styles from "../../index.module.css";

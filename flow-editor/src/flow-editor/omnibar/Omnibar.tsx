@@ -25,7 +25,7 @@ export enum OmniBarCmdType {
   ADD = "add",
   ADD_VALUE = "add-value",
   CREATE_CODE_PART = "create-core-part",
-  CREATE_GROUPED_PART = "create-grouped-part",
+  CREATE_GROUPED_PART = "create-visual-part",
   IMPORT = "import",
 }
 
@@ -52,7 +52,7 @@ const SYSTEM_ITEMS: OmniBarItem[] = [
   //   cmd: {
   //     type: OmniBarCmdType.CREATE_GROUPED_PART,
   //   },
-  //   title: "Create new grouped part",
+  //   title: "Create new visual part",
   //   suggestOnEmpty: true,
   // },
   // {

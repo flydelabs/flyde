@@ -1,7 +1,7 @@
-import { GroupedPart, values, Pos } from "@flyde/core";
+import { VisualPart, values, Pos } from "@flyde/core";
 import React from "react";
-import { logicalPosToRenderedPos, Size } from "../..";
-import { ViewPort } from "../utils";
+import { Size } from "../../utils";
+import { logicalPosToRenderedPos, ViewPort } from "../utils";
 
 const PosView: React.FC<{ pos: Pos }> = ({ pos }) => {
   return (
@@ -72,7 +72,7 @@ export const LayoutDebuggerItem: React.FC<LayoutDebuggerItemProps> = (
 export interface LayoutDebuggerProps {
   extraDebug: LayoutDebuggerItemProps[];
   vp: ViewPort;
-  part: GroupedPart;
+  part: VisualPart;
   mousePos: Pos;
 }
 

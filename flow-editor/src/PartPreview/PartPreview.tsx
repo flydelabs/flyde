@@ -3,7 +3,7 @@ import React from "react";
 import {
   InstanceView,
   InstanceViewProps,
-} from "../grouped-part-editor/instance-view/InstanceView";
+} from "../visual-part-editor/instance-view/InstanceView";
 
 export const PartPreview: React.FC<{ part: PartDefinition }> = ({ part }) => {
   const ins = partInstance("bob", part.id, {});

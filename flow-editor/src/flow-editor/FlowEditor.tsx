@@ -1,9 +1,9 @@
 import * as React from "react";
 import {
   PinType,
-  isGroupedPart,
+  isVisualPart,
   Pos,
-  GroupedPart,
+  VisualPart,
   isInlineValuePart,
   PartInstance,
   FlydeFlow,
@@ -11,15 +11,15 @@ import {
   ImportablePart,
   PartDefRepo,
   ImportedPartDef,
-  InlinePartInstance
+  InlinePartInstance,
 } from "@flyde/core";
 import {
-  GroupedPartEditor,
+  VisualPartEditor,
   ClipboardData,
   defaultViewPort,
   GroupEditorBoardData,
   PART_HEIGHT,
-} from "../grouped-part-editor/GroupedPartEditor";
+} from "../visual-part-editor/VisualPartEditor";
 import produce from "immer";
 import { useHotkeys } from "../lib/react-utils/use-hotkeys";
 
@@ -27,7 +27,7 @@ import { useHotkeys } from "../lib/react-utils/use-hotkeys";
 import {
   createNewPartInstance,
   domToViewPort,
-} from "../grouped-part-editor/utils";
+} from "../visual-part-editor/utils";
 
 import { HistoryPayload } from "@flyde/remote-debugger";
 import { AppToaster, toastMsg } from "../toaster";
@@ -192,7 +192,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
     });
 
     const onChangePart = React.useCallback(
-      (newPart: GroupedPart, changeType: FlydeFlowChangeType) => {
+      (newPart: VisualPart, changeType: FlydeFlowChangeType) => {
         const shouldIgnore = ignoreUndoChangeTypes.some((str) =>
           changeType.message.includes(str)
         );
@@ -229,9 +229,9 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
         if (newPartIns) {
           const valueChanged = produce(flow, (draft) => {
             const part = draft.part;
-            if (!isGroupedPart(part)) {
+            if (!isVisualPart(part)) {
               throw new Error(
-                `Impossible state, adding part to non grouped part`
+                `Impossible state, adding part to non visual part`
               );
             }
             part.instances.push(newPartIns);
@@ -270,7 +270,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
             break;
           case OmniBarCmdType.CREATE_GROUPED_PART:
             toastMsg("TODO");
-            // onCreateNewPart("grouped");
+            // onCreateNewPart("visual");
             break;
           case OmniBarCmdType.IMPORT: {
             await onImportPart(cmd.data, { pos: editorBoardData.lastMousePos });
@@ -313,7 +313,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
       } else {
         return (
           <React.Fragment>
-            <GroupedPartEditor
+            <VisualPartEditor
               insId={`root.${editedPart.id}`}
               ref={ref}
               key={editedPart.id}

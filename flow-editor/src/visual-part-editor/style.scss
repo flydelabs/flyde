@@ -19,7 +19,7 @@ $background-gradient: linear-gradient(
   #ffffff 97.01%
 );
 
-.grouped-part-editor {
+.visual-part-editor {
   // background-image: url("https://www.transparenttextures.com/patterns/3px-tile.png");
   background: $background-gradient;
   // background: white;
@@ -168,7 +168,7 @@ $background-gradient: linear-gradient(
       padding: 10px 5px;
     }
 
-    .grouped-part-editor {
+    .visual-part-editor {
       display: flex;
       // overflow: hidden;
       flex: 1;

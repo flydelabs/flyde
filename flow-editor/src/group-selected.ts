@@ -1,5 +1,5 @@
 import {
-  GroupedPart,
+  VisualPart,
   middlePos,
   partInstance,
   ConnectionData,
@@ -11,11 +11,11 @@ import { PromptFn } from "./flow-editor/ports";
 
 export const groupSelected = async (
   selected: string[],
-  part: GroupedPart,
+  part: VisualPart,
   partName: string,
   type: "inline" | "ref",
   prompt: PromptFn
-): Promise<{ newPart: GroupedPart; currentPart: GroupedPart }> => {
+): Promise<{ newPart: VisualPart; currentPart: VisualPart }> => {
   const { instances, connections } = part;
   const relevantInstances = instances.filter((ins) =>
     selected.includes(ins.id)
@@ -28,10 +28,10 @@ export const groupSelected = async (
   });
 
   if (!relevantInstances.length) {
-    throw new Error("grouped without selections");
+    throw new Error("visual without selections");
   }
 
-  const { groupedPart, renamedInputs, renamedOutputs } = await createGroup(
+  const { visualPart, renamedInputs, renamedOutputs } = await createGroup(
     relevantInstances,
     relevantConnections,
     partName,
@@ -43,8 +43,8 @@ export const groupSelected = async (
   }, instances[0].pos);
   const newInstance =
     type === "ref"
-      ? partInstance(`${groupedPart.id}-ins`, groupedPart.id, {}, midPos)
-      : inlinePartInstance(`${groupedPart.id}-ins`, groupedPart, {}, midPos);
+      ? partInstance(`${visualPart.id}-ins`, visualPart.id, {}, midPos)
+      : inlinePartInstance(`${visualPart.id}-ins`, visualPart, {}, midPos);
 
   // replace relevant parts with new part
   const newInstancesArr = instances.filter((ins) => {
@@ -87,7 +87,7 @@ export const groupSelected = async (
     });
 
   return {
-    newPart: groupedPart,
+    newPart: visualPart,
     currentPart: produce(part, (draft) => {
       draft.instances = [...newInstancesArr, newInstance];
       draft.connections = newConnections;

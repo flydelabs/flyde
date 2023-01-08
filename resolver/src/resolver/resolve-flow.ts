@@ -1,10 +1,10 @@
 import {
-  isGroupedPart,
+  isVisualPart,
   ResolvedFlydeFlow,
   isRefPartInstance,
   CodePart,
   ImportedPart,
-  GroupedPart,
+  VisualPart,
   isInlinePartInstance,
 } from "@flyde/core";
 import { existsSync, readFileSync } from "fs";
@@ -16,7 +16,7 @@ import { namespaceFlowImports } from "./namespace-flow-imports/namespace-flow-im
 
 export type ResolveMode = "implementation" | "definition" | "bundle";
 
-const getRefPartIds = (part: GroupedPart): string[] => {
+const getRefPartIds = (part: VisualPart): string[] => {
   const refPartIds = part.instances
     .filter(isRefPartInstance)
     .map((ins) => ins.partId);
@@ -25,7 +25,7 @@ const getRefPartIds = (part: GroupedPart): string[] => {
     .map((ins) => ins.part);
 
   const idsFromInline = inlineParts.reduce((acc, part) => {
-    if (isGroupedPart(part)) {
+    if (isVisualPart(part)) {
       acc.push(...getRefPartIds(part));
     }
     return acc;
@@ -68,7 +68,7 @@ const _resolveFlow = (
     }
   };
 
-  if (isGroupedPart(part)) {
+  if (isVisualPart(part)) {
     const refPartIds = getRefPartIds(part);
 
     let deps: ResolvedFlydeFlow["dependencies"] = {};

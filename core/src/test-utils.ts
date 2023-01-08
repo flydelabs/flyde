@@ -3,7 +3,7 @@ import Sinon = require("sinon");
 import {
   BasePart,
   InputPinMap,
-  GroupedPart,
+  VisualPart,
   InlineValuePart,
   CodePart,
   PartInstance,
@@ -29,7 +29,7 @@ export interface ConciseBasePart
   id?: string;
 }
 
-export interface ConciseGroupedPart extends ConciseBasePart {
+export interface ConciseVisualPart extends ConciseBasePart {
   connections: Array<[string, string]>;
   instances: PartInstance[];
 }
@@ -59,7 +59,7 @@ export const conciseBasePart = (concise: ConciseBasePart): BasePart => {
   };
 };
 
-export const concisePart = (concise: ConciseGroupedPart): GroupedPart => {
+export const concisePart = (concise: ConciseVisualPart): VisualPart => {
   const base = conciseBasePart(concise);
 
   return {

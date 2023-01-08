@@ -8,9 +8,9 @@ By default, input pins are "sticky", meaning that each new input will replace th
 
 A code part's processing is determined by the logic implemented in its fn function. If the fn function returns a promise, the part will be considered "processing" until the promise is either resolved or rejected.
 
-A grouped part, on the other hand, is a group of other parts connected together in a "nodes and wires" style. The processing of a grouped part is determined by the processing of its child parts.
+A visual part, on the other hand, is a group of other parts connected together in a "nodes and wires" style. The processing of a visual part is determined by the processing of its child parts.
 
-Once a part has finished processing, it is considered completed. For code parts, completion is determined by the end of the fn function. For grouped parts, completion is determined by the completion of all its child parts.
+Once a part has finished processing, it is considered completed. For code parts, completion is determined by the end of the fn function. For visual parts, completion is determined by the completion of all its child parts.
 
 In addition to these states, parts can also have completion outputs and reactive inputs. Completion outputs are output pins that, when triggered, signify that the part has completed. If a part does not have any completion outputs, it will be considered completed as soon as no other parts are "processing".
 

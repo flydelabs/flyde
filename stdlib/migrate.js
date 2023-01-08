@@ -1,6 +1,6 @@
 
 
-const { isInlineValuePart, keys, isGroupedPart, isInlinePartInstance, isRefPartInstance, flydeFlowSchema } = require('@flyde/core');
+const { isInlineValuePart, keys, isVisualPart, isInlinePartInstance, isRefPartInstance, flydeFlowSchema } = require('@flyde/core');
 const { deserializeFlow, serializeFlow } = require('@flyde/runtime');
 const res = require('@flyde/runtime');
 const fs = require('fs');
@@ -29,7 +29,7 @@ for (const f of files) {
 
         const firstPart = parts[firstId];
 
-        if (!isGroupedPart(firstPart)) {
+        if (!isVisualPart(firstPart)) {
             throw 'wat';
         }
 

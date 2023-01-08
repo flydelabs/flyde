@@ -1,4 +1,4 @@
-import { BasePart, GroupedPart } from "@flyde/core";
+import { BasePart, VisualPart } from "@flyde/core";
 import { Button, Classes, Dialog, Intent, MenuItem } from "@blueprintjs/core";
 import classNames from "classnames";
 import React from "react";
@@ -7,11 +7,11 @@ import React from "react";
 
 import { BasePartEditor } from "../base-part-editor";
 
-export interface ManageGroupedPartViewProps {
+export interface ManageVisualPartViewProps {
   title: string;
-  initialPart?: GroupedPart;
+  initialPart?: VisualPart;
   externalModule?: boolean;
-  onSave: (part: GroupedPart) => Promise<void> | void;
+  onSave: (part: VisualPart) => Promise<void> | void;
   onCancel: () => void;
 }
 
@@ -29,7 +29,7 @@ export const renderCreateIOOption = (
   />
 );
 
-const defaultPart: GroupedPart = {
+const defaultPart: VisualPart = {
   id: "NewPart",
   inputs: {},
   outputs: {},
@@ -39,7 +39,7 @@ const defaultPart: GroupedPart = {
   outputsPosition: {},
 };
 
-export const ManageGroupedPartView: React.FC<ManageGroupedPartViewProps> = (
+export const ManageVisualPartView: React.FC<ManageVisualPartViewProps> = (
   props
 ) => {
   const { title } = props;
@@ -56,7 +56,7 @@ export const ManageGroupedPartView: React.FC<ManageGroupedPartViewProps> = (
   );
 
   return (
-    <div className="manage-grouped-part-view">
+    <div className="manage-visual-part-view">
       <Dialog
         isOpen={true}
         title={title}

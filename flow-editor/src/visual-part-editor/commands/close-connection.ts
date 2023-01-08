@@ -1,7 +1,7 @@
 import {
   ConnectionData,
   connectionNodeEquals,
-  GroupedPart,
+  VisualPart,
   isInternalConnectionNode,
   isStaticInputPinConfig,
 } from "@flyde/core";
@@ -9,7 +9,7 @@ import produce from "immer";
 import { handleDetachConstEditorCommand } from "./detach-const";
 
 export const handleConnectionCloseEditorCommand = (
-  part: GroupedPart,
+  part: VisualPart,
   { from, to }: ConnectionData
 ) => {
   return produce(part, (draft) => {

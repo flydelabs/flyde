@@ -1,4 +1,4 @@
-import { GroupedPart } from ".";
+import { VisualPart } from ".";
 import { assert } from "chai";
 
 import { spy } from "sinon";
@@ -41,7 +41,7 @@ import {
   partInputs,
   stickyInputPinConfig,
   dynamicPartInputs,
-  groupedPart,
+  visualPart,
   partOutputs,
   inlinePartInstance,
 } from "./part";
@@ -196,7 +196,7 @@ describe("main ", () => {
       assert.equal(s.calledWithExactly(7), true);
     });
 
-    it("works with a simple grouped part", () => {
+    it("works with a simple visual part", () => {
       const n1 = dynamicPartInput();
       const n2 = dynamicPartInput();
       const r = new Subject();
@@ -260,7 +260,7 @@ describe("main ", () => {
     });
 
     it("supports inline instance parts", () => {
-      const add1: GroupedPart = {
+      const add1: VisualPart = {
         id: "add1",
         inputs: {
           n: partInput("number"),
@@ -458,7 +458,7 @@ describe("main ", () => {
       });
 
       it("connects 2 pieces and runs it", () => {
-        const add1mul2: GroupedPart = {
+        const add1mul2: VisualPart = {
           id: "test",
           instances: [partInstance("a", add1.id), partInstance("b", mul2.id)],
           connections: [
@@ -669,7 +669,7 @@ describe("main ", () => {
       it("connects const inputs properly", () => {
         const n = randomInt(99);
         const repo = testRepoWith(Value(n));
-        const part: GroupedPart = {
+        const part: VisualPart = {
           id: "test",
           inputs: {},
           outputs: {
@@ -937,7 +937,7 @@ describe("main ", () => {
 
     it("allows same name for input and output", () => {
       const repo = testRepoWith(Value(1));
-      const part: GroupedPart = {
+      const part: VisualPart = {
         id: "part",
         inputs: {
           a: partOutput("number"),
@@ -975,7 +975,7 @@ describe("main ", () => {
 
     describe("more than 1 connection per pin", () => {
       it("is possible when connecting main input to 2 inputs inside it", () => {
-        const part: GroupedPart = {
+        const part: VisualPart = {
           id: "part",
           inputs: {
             n: partInput("number"),
@@ -1011,7 +1011,7 @@ describe("main ", () => {
 
       it("returns all given pulses to output", async () => {
         const repo = testRepoWith(Value(1), Value(2));
-        const part: GroupedPart = {
+        const part: VisualPart = {
           id: "part",
           inputs: {},
           outputs: {
@@ -1055,7 +1055,7 @@ describe("main ", () => {
     //   };
 
     //   const repo = testRepoWith(leaf);
-    //   const part: GroupedPart = {
+    //   const part: VisualPart = {
     //     id: "part",
     //     inputsPosition: {},
     //     outputsPosition: {},
@@ -1414,7 +1414,7 @@ describe("main ", () => {
     });
 
     it("runs parts that are not fully connected", () => {
-      const part: GroupedPart = {
+      const part: VisualPart = {
         id: "part",
         inputsPosition: {},
         outputsPosition: {},
@@ -1478,8 +1478,8 @@ describe("main ", () => {
     });
   });
 
-  describe("uncontrolled grouped parts", () => {
-    it("waits for all inputs when grouped part is uncontrolled", () => {
+  describe("uncontrolled visual parts", () => {
+    it("waits for all inputs when visual part is uncontrolled", () => {
       const innerSpy = spy();
       const innerPart: CodePart = {
         id: "inner",
@@ -1490,7 +1490,7 @@ describe("main ", () => {
         },
       };
 
-      const grouped: GroupedPart = {
+      const visual: VisualPart = {
         id: "bob",
         inputs: { n: partInput("any") },
         outputs: {},
@@ -1508,7 +1508,7 @@ describe("main ", () => {
       const s = spy();
       r.subscribe(s);
 
-      execute({ part: grouped, inputs: { n }, outputs: {}, partsRepo: repo });
+      execute({ part: visual, inputs: { n }, outputs: {}, partsRepo: repo });
 
       assert.equal(innerSpy.callCount, 0);
 
@@ -1541,7 +1541,7 @@ describe("main ", () => {
     });
 
     it('support recursive "add" calculation', () => {
-      const addRec: GroupedPart = {
+      const addRec: VisualPart = {
         id: "add-rec",
         inputs: {
           n: partInput("number"),
@@ -1599,7 +1599,7 @@ describe("main ", () => {
       // const one = constPart(1, "one");
       // const mOne = constPart(-1, "mOne");
 
-      const fact: GroupedPart = {
+      const fact: VisualPart = {
         id: "fact",
         inputs: {
           n: partInput("number"),
@@ -1890,7 +1890,7 @@ describe("main ", () => {
       assert.equal(s.lastCall.args[0], 54);
     });
 
-    it.skip("passes external context forward to grouped parts", async () => {
+    it.skip("passes external context forward to visual parts", async () => {
       // TODO - write test
     });
   });
@@ -1917,7 +1917,7 @@ describe("main ", () => {
       assert.equal(s.getCalls()[1].args[0], num2 + num2);
     });
 
-    it("supports const values with inner grouped parts", () => {
+    it("supports const values with inner visual parts", () => {
       const num1 = randomInt(1, 100);
       const num2 = randomInt(1, 100);
 
@@ -1938,7 +1938,7 @@ describe("main ", () => {
       assert.equal(s.getCalls()[0].args[0], num1 + num2);
     });
 
-    it("supports const values defined inside grouped parts", () => {
+    it("supports const values defined inside visual parts", () => {
       const n1 = dynamicPartInput();
       const r = new Subject();
       const s = spy();
@@ -1973,7 +1973,7 @@ describe("main ", () => {
       assert.equal(s.getCalls()[1].args[0], n2 + n2);
     });
 
-    it("supports const values on grouped part", () => {
+    it("supports const values on visual part", () => {
       const n1 = dynamicPartInput();
       const r = new Subject();
       const s = spy();
@@ -2042,7 +2042,7 @@ describe("main ", () => {
       assert.deepEqual(callsFirstArgs(s), [5, 7, 9]);
     });
 
-    it("queues values - grouped part", () => {
+    it("queues values - visual part", () => {
       const [n1, n2] = [
         dynamicPartInput({
           // config: queueInputPinConfig(),
@@ -2476,7 +2476,7 @@ describe("main ", () => {
           });
         });
 
-        describe("grouped parts", () => {
+        describe("visual parts", () => {
           it('triggers implicit completion when parts "inside" stop running', async () => {
             const delayPart = (ms: number) =>
               conciseCodePart({
@@ -2697,7 +2697,7 @@ describe("main ", () => {
       });
 
       it("allows creating accumulate2 visually (shared state)", () => {
-        const groupedPart = concisePart({
+        const visualPart = concisePart({
           id: "bob",
           inputs: ["val"],
           outputs: ["r"],
@@ -2721,7 +2721,7 @@ describe("main ", () => {
         r.subscribe(s);
 
         execute({
-          part: groupedPart,
+          part: visualPart,
           inputs: { val, count },
           outputs: { r },
           partsRepo: testRepoWith(accumulate),
@@ -2735,7 +2735,7 @@ describe("main ", () => {
       });
 
       it("accumulate2 visually cleans up state properly after it is done", () => {
-        const groupedPart = concisePart({
+        const visualPart = concisePart({
           id: "bob",
           inputs: ["val", "count"],
           outputs: ["r"],
@@ -2756,7 +2756,7 @@ describe("main ", () => {
         r.subscribe(s);
 
         execute({
-          part: groupedPart,
+          part: visualPart,
           inputs: { val, count },
           outputs: { r },
           partsRepo: testRepoWith(accumulate),
@@ -2831,8 +2831,8 @@ describe("main ", () => {
       const num1 = randomInt(100);
       const num2 = randomInt(100);
 
-      const groupedPart: GroupedPart = {
-        id: "grouped-part",
+      const visualPart: VisualPart = {
+        id: "visual-part",
         inputsPosition: {},
         outputsPosition: {},
         inputs: {},
@@ -2864,7 +2864,7 @@ describe("main ", () => {
       r.subscribe(s);
 
       execute({
-        part: groupedPart,
+        part: visualPart,
         inputs: { n1 },
         outputs: { r },
         partsRepo: testRepo,
@@ -2923,8 +2923,8 @@ describe("main ", () => {
     });
 
     it('supports creation of "merge" part - visual', () => {
-      const mergeGrouped: GroupedPart = {
-        id: "grouped-part",
+      const mergeGrouped: VisualPart = {
+        id: "visual-part",
         inputsPosition: {},
         outputsPosition: {},
         inputs: {
@@ -3124,7 +3124,7 @@ describe("main ", () => {
       assert.include(s.lastCall.args[0].insId, "someIns");
     });
 
-    it("reports uncaught thrown that happened on an grouped part", async () => {
+    it("reports uncaught thrown that happened on an visual part", async () => {
       const s = spy();
       const a = dynamicPartInput();
 
@@ -3428,8 +3428,8 @@ describe("main ", () => {
         [prop2Name]: prop2Value,
       };
 
-      const groupedPart: GroupedPart = {
-        id: "grouped-part",
+      const visualPart: VisualPart = {
+        id: "visual-part",
         inputsPosition: {},
         outputsPosition: {},
         inputs: {
@@ -3461,7 +3461,7 @@ describe("main ", () => {
       const [s, r] = spiedOutput();
 
       execute({
-        part: groupedPart,
+        part: visualPart,
         inputs: { n1 },
         outputs: { r },
         partsRepo: testRepo,
@@ -3569,11 +3569,11 @@ describe("main ", () => {
   });
 
   describe("part level trigger", () => {
-    it("waits for __trigger input inside grouped part", () => {
+    it("waits for __trigger input inside visual part", () => {
       const v42 = valuePart("val", 42);
 
-      const groupedPart = concisePart({
-        id: "grouped-part",
+      const visualPart = concisePart({
+        id: "visual-part",
         inputs: ["a|optional"],
         outputs: ["r"],
         instances: [partInstance("v1", v42.id)],
@@ -3590,7 +3590,7 @@ describe("main ", () => {
         throw e;
       };
       execute({
-        part: groupedPart,
+        part: visualPart,
         inputs: { a },
         outputs: { r },
         partsRepo: testRepoWith(v42),
@@ -3613,8 +3613,8 @@ describe("main ", () => {
         fn: (inputs, outputs) => outputs.r.next(inputs.a + inputs.b),
       });
 
-      const groupedPart = concisePart({
-        id: "grouped-part",
+      const visualPart = concisePart({
+        id: "visual-part",
         inputs: ["a|optional"],
         outputs: ["r"],
         instances: [
@@ -3636,7 +3636,7 @@ describe("main ", () => {
         throw e;
       };
       execute({
-        part: groupedPart,
+        part: visualPart,
         inputs: { a },
         outputs: { r },
         partsRepo: testRepoWith(addPart),
@@ -3659,8 +3659,8 @@ describe("main ", () => {
         fn: (inputs, outputs) => outputs.r.next(inputs.a + inputs.b),
       });
 
-      const groupedPart = concisePart({
-        id: "grouped-part",
+      const visualPart = concisePart({
+        id: "visual-part",
         inputs: ["a"],
         outputs: ["r"],
         instances: [
@@ -3681,7 +3681,7 @@ describe("main ", () => {
 
       const errSpy = spy();
       execute({
-        part: groupedPart,
+        part: visualPart,
         inputs: { a },
         outputs: { r },
         partsRepo: testRepoWith(addPart),

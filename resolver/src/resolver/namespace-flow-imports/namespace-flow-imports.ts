@@ -1,22 +1,22 @@
 import {
   Part,
-  isGroupedPart,
+  isVisualPart,
   ResolvedFlydeFlow,
   isRefPartInstance,
   RefPartInstance,
   isInlinePartInstance,
-  GroupedPart,
+  VisualPart,
 } from "@flyde/core";
 import _ = require("lodash");
 
-const namespaceGroupedPart = (
-  part: GroupedPart,
+const namespaceVisualPart = (
+  part: VisualPart,
   namespace: string
-): GroupedPart => {
+): VisualPart => {
   const namespacedInstances = part.instances.map((ins) => {
     if (isInlinePartInstance(ins)) {
-      if (isGroupedPart(ins.part)) {
-        return { ...ins, part: namespaceGroupedPart(ins.part, namespace) };
+      if (isVisualPart(ins.part)) {
+        return { ...ins, part: namespaceVisualPart(ins.part, namespace) };
       } else {
         return ins;
       }
@@ -35,13 +35,13 @@ export const namespaceFlowImports = (
   namespace: string = ""
 ): ResolvedFlydeFlow => {
   const part = resolvedFlow.main;
-  if (isGroupedPart(part)) {
-    const namespacedPart = namespaceGroupedPart(part, namespace);
+  if (isVisualPart(part)) {
+    const namespacedPart = namespaceVisualPart(part, namespace);
 
     const namespacedImports = _.chain(resolvedFlow.dependencies)
       .mapKeys((_, key) => `${namespace}${key}`)
       .mapValues((part) => {
-        const newPart = isGroupedPart(part)
+        const newPart = isVisualPart(part)
           ? {
               ...part,
               instances: part.instances.map((ins) => {

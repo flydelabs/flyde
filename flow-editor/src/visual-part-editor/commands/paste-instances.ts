@@ -1,10 +1,10 @@
-import { GroupedPart, Pos } from "@flyde/core";
+import { VisualPart, Pos } from "@flyde/core";
 import produce from "immer";
 import cuid from "cuid";
-import { ClipboardData } from "../GroupedPartEditor";
+import { ClipboardData } from "../VisualPartEditor";
 
 export const pasteInstancesCommand = (
-  _part: GroupedPart,
+  _part: VisualPart,
   mousePos: Pos,
   clipboardData: ClipboardData
 ) => {

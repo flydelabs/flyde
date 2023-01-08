@@ -1,7 +1,7 @@
 import * as React from "react";
 import classNames from "classnames";
 import {
-  GroupedPart,
+  VisualPart,
   Pos,
   PartDefRepo,
   getPartDef,
@@ -26,7 +26,7 @@ import { ContextMenu, Menu, MenuItem } from "@blueprintjs/core";
 
 export interface BaseConnectionViewProps {
   repo: PartDefRepo;
-  part: GroupedPart;
+  part: VisualPart;
   parentInsId: string;
   onDblClick: () => void;
   size: Size;
