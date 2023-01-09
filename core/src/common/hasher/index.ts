@@ -3,8 +3,7 @@ import {
   FlydeFlow,
   isInlineValuePart,
   isVisualPart,
-  Part,
-  Project,
+  Part
 } from "../..";
 
 const md5 = (str: string) => {

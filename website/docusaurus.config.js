@@ -79,6 +79,21 @@ const config = {
     locales: ["en"],
   },
   plugins: [
+    ["docusaurus-plugin-typedoc",
+    // Plugin / TypeDoc options
+    {
+      entryPoints: [
+        '../core/src/index.ts',
+      ],
+      tsconfig: '../core/tsconfig.json',
+      out: 'api-reference',
+      watch: process.env.TYPEDOC_WATCH,
+      sidebar: {
+          position: 10,
+          categoryLabel: 'API Reference',
+          fullNames: true
+      }
+    }],
     "docusaurus-plugin-sass",
     "docusaurus-plugin-hotjar",
     // @ts-ignore

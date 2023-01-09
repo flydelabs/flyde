@@ -6,11 +6,11 @@ Flyde is a visual functional reactive flow-based programming tool that can be us
 
 Checkout the official website at [flyde.dev](https://www.flyde.dev) or the [examples](/examples) folder for more information
 
-**Note:** Flyde is still WIP and is not intended for production use (_yet_)
+**Note:** Flyde is still in the early stages. Your feedback/bug report/idea/complaint is highly valuable.
 
 ---
 
-![A dad joke CLI tool built with Flyde](/examples/dad-jokes-cli/preview.gif)
+![A dad joke CLI tool built with Flyde](/dad-jokes-cli-preview.gif)
 
 ## License
 

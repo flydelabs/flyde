@@ -1,7 +1,6 @@
 # Flyde Example Project - Dad Jokes in your CLI
 
-![Preview](preview.gif)
-
+![Preview](./preview.gif)
 CLI tool that generates dad jokes, with a slight delay between the joke's setup and punch-line.
 Built using:
 
@@ -10,11 +9,13 @@ Built using:
 - Typescript
 
 ## Usage
+
 `dad-joke [delay]`
 
 `delay` is optional and specifies the number of milliseconds to wait before printing the punchline. If no delay is provided, the default delay of 2000 ms will be used.
 
 ## Examples
+
 ```
 $ dad-joke
 Why was the math book sad?
@@ -26,7 +27,6 @@ Why couldn't the bicycle stand up by itself?
 (5000 ms delay)
 It was two-tired.
 ```
-
 
 ## Running locally
 

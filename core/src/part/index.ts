@@ -58,23 +58,94 @@ export interface PartStyle {
   cssOverride?: Record<string, string>;
 }
 
+/**
+ * Extended by {@link VisualPart}, {@link CodePart} and {@link InlineValuePart}
+ */
 export interface BasePart {
+  /**
+   * Part's unique id. {@link VisualPart.instances }  refer use this to refer to the correct part
+   */
   id: string;
+  /**
+   * Is displayed in the visual editor and used to search for parts.
+   */
   description?: string;
+  /**
+   * A pin on a part that receives data. Each part can have zero or more input pins.
+   *
+   * Example for the inputs of a mathematical multiplier part:
+   * ```ts
+   * {
+   *  multiplicand: { description: "The number to be multiplied" },
+   *  multiplier: { description: "The number with which we multiply" },
+   * }
+   * ```
+   */
   inputs: Record<string, InputPin>;
+  /**
+   * A pin on a part that sends data. Each part can have zero or more output pins.
+   * For example, a "Split array" part might have one input pin for an array and two output pins for the first and second halves of the array:
+   *
+   * @example
+   * ```ts
+   * {
+   *  'first half': { description: "The first half of the array" },
+   *  'second half': { description: "The second half of the array" },
+   * }
+   * ```
+   */
   outputs: Record<string, OutputPin>;
-
+  /**
+   * TBD
+   */
   namespace?: string;
-
+  /**
+   * Instructs Flyde that the part is in "explicit completion" mode and describes which outputs trigger the part's completion. Receives a list of outputs that should trigger an explicit completion of the part when they emit a value. Any of the listed outputs will trigger a completion (i.e. completionOutput[0] `OR` completionOutput[1])
+   * Leave empty for implicit completion. This should work best for 99% of the case.
+   *
+   * To declare that 2 different outputs must emit a value in order to trigger a completion, different outputs can be joined together with a `+` sign as following:
+   * ``` ts
+   * {
+   * ...
+   *  completionOutputs: ["data+headers", "error"] // this means either data AND headers, OR "error" will trigger an explicit completion.
+   * ```
+   *
+   * See the [Parts lifecycle](/docs/lifecycle) for more info
+   */
   completionOutputs?: string[];
+  /**
+   * @deprecated - TBD
+   */
   reactiveInputs?: string[];
-
+  /**
+   * Supply a custom string template ([EJS](https://ejs.co/) format) to control how an instance of this part will be rendered in the visual editor.
+   * The template has access to static values, making it possible to expose valuable information in the instance itself:
+   * @example
+   * A "Delay" part has 2 inputs: value and a time. In many cases, the `time` input will be provided statically.
+   * It can be convenient to show the time input in the instance itself so it shows "Delay 500ms" instead of "Delay" (in the case 500 is the static value of `time`)
+   * 
+   * ```
+   * {
+   *   ...,
+   *   customViewCode: "<% if (inputs.time) { %> Delay <%- inputs.time %> ms <% } else { %> Delay <% } %>",
+   * }
+   * ```
+   *
+   */
   customViewCode?: string;
-
+  /**
+   * All instances of this part will inherit the default style if it is supplied.
+   * See {@link PartStyle} for the full options supported
+   */
   defaultStyle?: PartStyle;
 }
 
 export interface CodePart extends BasePart {
+  /**
+   * This function will run as soon as the part's inputs are satisfied.
+   * It has access to the parts inputs values, and output pins. See {@link PartFn} for more information.
+   * 
+   */
   fn: PartFn;
   customView?: CustomPartViewFn;
 }
@@ -84,17 +155,34 @@ export enum InlineValuePartType {
   FUNCTION = "function",
 }
 
+/**
+ * InlineValuePart is used by the editor to create inline values and function.
+ * @deprecated will turn into a "Macro Part" as soon as that is developed
+ */
+
 export interface InlineValuePart extends BasePart {
   fnCode: string;
   dataBuilderSource?: string; // quick solution for "Data builder iteration"
   templateType?: InlineValuePartType;
 }
 
+/**
+ * A visual part is what makes Flyde special. It represents a part created visually in the editor.
+ * It consists of part instances and connections. Each part instance will either refer to an imported part (by id), or include the part "inline".
+ * Each connection will represent a "wire" between 2 instances, or between an instance and a main input/output pin.
+ * Connecting to a main input or output is the way that a visual parts' internal implementation can communicate with its external API.
+ */
+
 export interface VisualPart extends BasePart {
+  /** a map holding the position for each main input. Used in the editor only. */
   inputsPosition: OMap<Pos>;
+  /** a map holding the position for each main output. Used in the editor only. */
   outputsPosition: OMap<Pos>;
+  /** the visual parts internal part instances, either referring to other parts by id or by value (inline) */
   instances: PartInstance[];
+  /** each connection represents a "wire" between 2 different instances, or between an instance and a main input/output*/
   connections: ConnectionData[];
+  /** TODO - either deprecate this or {@link BasePart.customViewCode} */
   customView?: CustomPartViewFn;
 }
 
@@ -167,11 +255,11 @@ export const fromSimplified = ({
   id,
 }: SimplifiedPartParams): CodePart => {
   const inputs: InputPinMap = entries(inputTypes).reduce<InputPinMap>(
-    (p, [k, v]) => ({ ...p, [k]: {  } }),
+    (p, [k, v]) => ({ ...p, [k]: {} }),
     {}
   );
   const outputs: OutputPinMap = entries(outputTypes).reduce<InputPinMap>(
-    (p, [k, v]) => ({ ...p, [k]: {  } }),
+    (p, [k, v]) => ({ ...p, [k]: {} }),
     {}
   );
   return {
@@ -258,10 +346,7 @@ export const codeFromFunction = ({
 }: codeFromFunctionParams): CodePart => {
   return {
     id,
-    inputs: inputNames.reduce(
-      (acc, k) => ({ ...acc, [k]: partInput() }),
-      {}
-    ),
+    inputs: inputNames.reduce((acc, k) => ({ ...acc, [k]: partInput() }), {}),
     outputs: { [outputName]: partOutput() },
     fn: (inputs, outputs) => {
       const args = inputNames.map((name) => inputs[name]);

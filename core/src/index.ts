@@ -27,7 +27,6 @@ export * from "./inline-value-to-code-part";
 
 export * from "./web-project";
 
-export * from "./project";
 export * from "./flow-schema";
 
 export type InputStaticValue = string | number | object | VisualPart;
@@ -35,13 +34,6 @@ export type InputStaticValue = string | number | object | VisualPart;
 export const isStaticValueVisualPart = (val: InputStaticValue): boolean => {
   return val && !!maybeGetStaticValuePartId(`${val}`);
 };
-
-export enum ProjectType {
-  WEB_UI = "web-ui",
-  SERVER = "server",
-  MOBILE = "mobile",
-  CLI = "cli",
-}
 
 export interface InstanceViewData {
   id: string;

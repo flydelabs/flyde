@@ -5253,7 +5253,6 @@ __metadata:
     rxjs: ^6.3.3
     sinon: ^7.2.2
     ts-node: ^10.8.0
-    typedoc: ^0.23.24
     typescript: ^4.9.4
     vm2: ^3.9.2
     zod: ^3.17.10
@@ -13098,6 +13097,16 @@ __metadata:
     "@docusaurus/core": ^2.0.0-beta
     sass: ^1.30.0
   checksum: e409c403fe0679ffbf5bd3e7738664fc95dae78b4152321b546fd5b04b5309566ad19d4b9ea90554d587b5647d20957d7024a2ae180cc708112227a66eca84d0
+  languageName: node
+  linkType: hard
+
+"docusaurus-plugin-typedoc@npm:^0.18.0":
+  version: 0.18.0
+  resolution: "docusaurus-plugin-typedoc@npm:0.18.0"
+  peerDependencies:
+    typedoc: ">=0.23.0"
+    typedoc-plugin-markdown: ">=3.13.0"
+  checksum: e5e8780888ad07e71e9c0a98024f4bee6e3e520c7a3417d6b4951aa91c0fb63caa19d1cd5e0712b75d0add7c1fabe2df36b910e3ecb6e4a914c679c0ff75fc16
   languageName: node
   linkType: hard
 
@@ -26814,6 +26823,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"typedoc-plugin-markdown@npm:^3.14.0":
+  version: 3.14.0
+  resolution: "typedoc-plugin-markdown@npm:3.14.0"
+  dependencies:
+    handlebars: ^4.7.7
+  peerDependencies:
+    typedoc: ">=0.23.0"
+  checksum: 6205600052185b4b193ab8a253d9df5ccbc95002c948a07f9024bcd26f0f23fbcc089fda4d6b4c8f4172f4eaca2bf9c32129989f6baaace7261cf4a0e41c976b
+  languageName: node
+  linkType: hard
+
 "typedoc@npm:^0.23.24":
   version: 0.23.24
   resolution: "typedoc@npm:0.23.24"
@@ -27991,6 +28011,7 @@ __metadata:
     concurrently: ^7.3.0
     docusaurus-plugin-hotjar: ^0.0.2
     docusaurus-plugin-sass: ^0.2.2
+    docusaurus-plugin-typedoc: ^0.18.0
     immer: ^9.0.15
     path-browserify: ^1.0.1
     prism-react-renderer: ^1.3.5
@@ -28001,6 +28022,8 @@ __metadata:
     react-resizable: ^3.0.4
     react-typical: ^0.1.3
     sass: ^1.54.0
+    typedoc: ^0.23.24
+    typedoc-plugin-markdown: ^3.14.0
     typescript: ^4.9.4
     vm-browserify: ^1.1.2
   languageName: unknown

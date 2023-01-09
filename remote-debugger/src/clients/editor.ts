@@ -1,4 +1,4 @@
-import { Project, PartError, debugLogger, DebuggerEvent } from "@flyde/core";
+import { debugLogger, DebuggerEvent } from "@flyde/core";
 
 import axios from "axios";
 
@@ -10,7 +10,6 @@ import {
   DebuggerServerEventType,
 } from "../common";
 
-import { deserializeError } from "serialize-error";
 import { HistoryPayload } from "..";
 
 const debug = debugLogger("runtime-editor-client");
@@ -26,7 +25,7 @@ export type GetHistoryDto = {
 };
 
 export type EditorDebuggerClient = {
-  emitChange: (data: { project: Project }) => void;
+  emitChange: (data: { }) => void;
   emitBreakpointsChange: (insIdsAndPins: string[]) => void;
 
   onBatchedEvents: (

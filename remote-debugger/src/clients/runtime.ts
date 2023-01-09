@@ -1,7 +1,6 @@
 import {
   DebuggerCommand,
   PartError,
-  Project,
   debugLogger,
   cappedArrayDebounce,
   DebuggerEvent,
@@ -21,7 +20,7 @@ const debug = debugLogger("debugger-runtime-client");
 
 export type RuntimeDebuggerClient = {
   onChange: (
-    cb: RemoteDebuggerCallback<{ project: Project }>
+    cb: RemoteDebuggerCallback<{ }>
   ) => RemoteDebuggerCancelFn;
   onInput: (
     cb: RemoteDebuggerCallback<{ pinId: string; value: any }>

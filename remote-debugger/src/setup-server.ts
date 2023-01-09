@@ -1,7 +1,6 @@
 import { Server as HttpServer } from "http";
 import { DebuggerServerEventType } from "./common";
 import {
-  Project,
   PartError,
   OMap,
   isDefined,
@@ -149,7 +148,7 @@ export const setupRemoteDebuggerServer = (
 
     socket.on(
       DebuggerServerEventType.CHANGE_EVENT_NAME,
-      (data: { project: Project }) => {
+      (data: { }) => {
         io.emit(DebuggerServerEventType.CHANGE_EVENT_NAME, data);
       }
     );
