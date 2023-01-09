@@ -1,14 +1,12 @@
 imports:
   "@flyde/stdlib":
     - ListFrom2
-    - Pick
     - Dot
     - Switch
     - Round
     - Boolean Split
     - Equals
     - PropertyEquals
-    - AssertProperties
   ./tasks/AddTask.flyde.ts:
     - Add Task
   ./tasks/GetTasks.flyde.ts:
@@ -95,7 +93,7 @@ part:
                 value: data.options.0
             visibleInputs:
               - obj
-            partId: Pick
+            partId: Dot
           - pos:
               x: -509.24797119140624
               y: -333.75165771484376

@@ -3,9 +3,6 @@ imports:
     - Equals
     - Subtract
     - Add
-    - Merge
-    - HtmlH1
-    - Boolean Split
 part:
   instances:
     - pos:

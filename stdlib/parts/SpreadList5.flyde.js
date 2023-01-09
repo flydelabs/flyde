@@ -1,10 +1,20 @@
-module.exports = {"id":"SpreadList5","inputs":{"list":{"mode":"required","type":"any"}},"outputs":{"first":{"type":"any"},"second":{"type":"any"},"rest":{"type":"any"}},"fn":function (inputs, outputs, adv) { const { list } = inputs;
-const { first, second, rest } = outputs;
-      
-const [f, s, r] = list;
+module.exports = {
+  id: "SpreadList5",
+  inputs: { list: { mode: "required", type: "any" } },
+  outputs: {
+    first: { type: "any" },
+    second: { type: "any" },
+    rest: { type: "any" },
+  },
+  fn: function (inputs, outputs, adv) {
+    const { list } = inputs;
+    const { first, second, rest } = outputs;
 
-f && first.next(f);
-s && second.next(s);
+    const [f, s, r] = list;
 
-r.length && rest.next(r)
-       }}
+    f && first.next(f);
+    s && second.next(s);
+
+    r.length && rest.next(r);
+  },
+};

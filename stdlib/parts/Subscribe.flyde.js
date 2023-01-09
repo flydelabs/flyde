@@ -2,7 +2,10 @@ const PubSub = require("pubsub-js");
 
 module.exports = {
   id: "Subscribe",
-  inputs: { key: { mode: "required", type: "any" }, initial: {mode: "required-if-connected", type: "any"} },
+  inputs: {
+    key: { mode: "required", type: "any" },
+    initial: { mode: "required-if-connected", type: "any" },
+  },
   outputs: { val: { type: "any" } },
   completionOutputs: ["never"],
   fn: function (inputs, outputs, adv) {
@@ -11,7 +14,7 @@ module.exports = {
       outputs.val.next(data);
     });
 
-    if (typeof inputs.initial !== 'undefined') {
+    if (typeof inputs.initial !== "undefined") {
       outputs.val.next(inputs.initial);
     }
 

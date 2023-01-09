@@ -1,7 +1,6 @@
 imports:
   "@flyde/runtime":
     - HttpGet
-    - Pick
     - Dot
     - Delay
 part:
