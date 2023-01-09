@@ -48,7 +48,7 @@
     "@simbathesailor/use-what-changed": "^2.0.0",
     "postinstall-postinstall": "^2.1.0",
     "sass": "^1.52.3",
-    "typescript": "^4.1.2"
+    "typescript": "^4.9.4"
   },
   "scripts": {
     "build": "PUBLIC_URL=/editor REACT_APP_FLYDE_MODE=production react-scripts build --debug --log --verbose",

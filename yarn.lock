@@ -5253,7 +5253,8 @@ __metadata:
     rxjs: ^6.3.3
     sinon: ^7.2.2
     ts-node: ^10.8.0
-    typescript: ^4.0.0
+    typedoc: ^0.23.24
+    typescript: ^4.9.4
     vm2: ^3.9.2
     zod: ^3.17.10
   languageName: unknown
@@ -5290,7 +5291,7 @@ __metadata:
     source-map-support: ^0.5.21
     toml: ^3.0.0
     ts-node-dev: ^1.0.0-pre.32
-    typescript: ^4.0.0
+    typescript: ^4.9.4
     walker: ^1.0.8
   bin:
     flyde: dist/cli.js
@@ -5333,7 +5334,7 @@ __metadata:
     react-router-dom: ^5.2.0
     react-scripts: 5.0.0
     sass: ^1.52.3
-    typescript: ^4.1.2
+    typescript: ^4.9.4
     use-debounce: ^8.0.1
     use-error-boundary: ^2.0.6
     use-query-params: ^1.2.3
@@ -5386,7 +5387,7 @@ __metadata:
     rooks: ^7.4.0
     sinon: ^14.0.0
     ts-node-dev: ^1.0.0-pre.32
-    typescript: ^4.1.2
+    typescript: ^4.9.4
     use-debounce: ^8.0.1
   peerDependencies:
     "@types/react": ^17.0.0
@@ -5411,7 +5412,7 @@ __metadata:
     socket.io: ^4.0.0
     socket.io-client: ^4.0.0
     ts-node-dev: ^1.0.0-pre.32
-    typescript: ^4.0.0
+    typescript: ^4.9.4
   languageName: unknown
   linkType: soft
 
@@ -5436,7 +5437,7 @@ __metadata:
     sinon: ^14.0.0
     ts-node: ^10.9.1
     ts-node-dev: ^1.0.0-pre.32
-    typescript: ^4.0.0
+    typescript: ^4.9.4
     yaml: ^2.1.1
     zod: ^3.17.10
   languageName: unknown
@@ -5488,7 +5489,7 @@ __metadata:
     sinon: ^14.0.0
     ts-node: ^10.9.1
     ts-node-dev: ^1.0.0-pre.32
-    typescript: ^4.0.0
+    typescript: ^4.9.4
     yaml: ^2.1.1
     zod: ^3.17.10
   languageName: unknown
@@ -5503,7 +5504,7 @@ __metadata:
     concurrently: ^7.3.0
     pubsub-js: ^1.9.4
     ts-node-dev: ^1.0.0-pre.32
-    typescript: ^4.0.0
+    typescript: ^4.9.4
   languageName: unknown
   linkType: soft
 
@@ -18420,6 +18421,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jsonc-parser@npm:^3.2.0":
+  version: 3.2.0
+  resolution: "jsonc-parser@npm:3.2.0"
+  checksum: 946dd9a5f326b745aa326d48a7257e3f4a4b62c5e98ec8e49fa2bdd8d96cef7e6febf1399f5c7016114fd1f68a1c62c6138826d5d90bc650448e3cf0951c53c7
+  languageName: node
+  linkType: hard
+
 "jsonfile@npm:^4.0.0":
   version: 4.0.0
   resolution: "jsonfile@npm:4.0.0"
@@ -19018,6 +19026,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lunr@npm:^2.3.9":
+  version: 2.3.9
+  resolution: "lunr@npm:2.3.9"
+  checksum: 176719e24fcce7d3cf1baccce9dd5633cd8bdc1f41ebe6a180112e5ee99d80373fe2454f5d4624d437e5a8319698ca6837b9950566e15d2cae5f2a543a3db4b8
+  languageName: node
+  linkType: hard
+
 "macos-release@npm:^3.0.1":
   version: 3.1.0
   resolution: "macos-release@npm:3.1.0"
@@ -19153,6 +19168,15 @@ __metadata:
   version: 1.0.4
   resolution: "markdown-escapes@npm:1.0.4"
   checksum: 6833a93d72d3f70a500658872312c6fa8015c20cc835a85ae6901fa232683fbc6ed7118ebe920fea7c80039a560f339c026597d96eee0e9de602a36921804997
+  languageName: node
+  linkType: hard
+
+"marked@npm:^4.2.5":
+  version: 4.2.5
+  resolution: "marked@npm:4.2.5"
+  bin:
+    marked: bin/marked.js
+  checksum: dd7da20a3983c66b516463fad5dc8d15dc70e137d20b6dc491e134f671e84bd2ed5f859e2c35f21e56830a122e4356b9e574bcde49b72b7ad6bc121a215a1a98
   languageName: node
   linkType: hard
 
@@ -19514,6 +19538,15 @@ __metadata:
   dependencies:
     brace-expansion: ^2.0.1
   checksum: 15ce53d31a06361e8b7a629501b5c75491bc2b59712d53e802b1987121d91b433d73fcc5be92974fde66b2b51d8fb28d75a9ae900d249feb792bb1ba2a4f0a90
+  languageName: node
+  linkType: hard
+
+"minimatch@npm:^5.1.2":
+  version: 5.1.2
+  resolution: "minimatch@npm:5.1.2"
+  dependencies:
+    brace-expansion: ^2.0.1
+  checksum: 32ffda25b9fb8270a1c1beafdb7489dc0e411af553495136509a945691f63c9b6b000eeeaaf8bffe3efa609c1d6d3bc0f5a106f6c3443b5c05da649100ded964
   languageName: node
   linkType: hard
 
@@ -24935,6 +24968,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"shiki@npm:^0.12.1":
+  version: 0.12.1
+  resolution: "shiki@npm:0.12.1"
+  dependencies:
+    jsonc-parser: ^3.2.0
+    vscode-oniguruma: ^1.7.0
+    vscode-textmate: ^8.0.0
+  checksum: a5d78a79d282f5c5168786980c66e82f075e91fa015097456486624fc5775688d685ad9b1972b0617d7f1ef50927d21b61dca476247a6f6c6b7042046e89a979
+  languageName: node
+  linkType: hard
+
 "side-channel@npm:^1.0.4":
   version: 1.0.4
   resolution: "side-channel@npm:1.0.4"
@@ -26770,6 +26814,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"typedoc@npm:^0.23.24":
+  version: 0.23.24
+  resolution: "typedoc@npm:0.23.24"
+  dependencies:
+    lunr: ^2.3.9
+    marked: ^4.2.5
+    minimatch: ^5.1.2
+    shiki: ^0.12.1
+  peerDependencies:
+    typescript: 4.6.x || 4.7.x || 4.8.x || 4.9.x
+  bin:
+    typedoc: bin/typedoc
+  checksum: b04f9afcba9a38d35631b08ca345f52700f9138f59b9729d7bfecf127c2a75dd6a053594db68f3141e4d7e63b701ffa5421cbdeb95f86b254257e05e240f4da0
+  languageName: node
+  linkType: hard
+
 "typescript@npm:^3 || ^4":
   version: 4.8.3
   resolution: "typescript@npm:4.8.3"
@@ -26780,13 +26840,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^4.0.0, typescript@npm:^4.1.2":
-  version: 4.2.4
-  resolution: "typescript@npm:4.2.4"
+"typescript@npm:^4.9.4":
+  version: 4.9.4
+  resolution: "typescript@npm:4.9.4"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 89c397df192f239359ad798b96d8e8d552e12c0c189ac5676cec4c20c410d6eec636b8e59a88f2aef0a56d961a9678d99c400099be9b7cae2f7b062eb4b7b171
+  checksum: e782fb9e0031cb258a80000f6c13530288c6d63f1177ed43f770533fdc15740d271554cdae86701c1dd2c83b082cea808b07e97fd68b38a172a83dbf9e0d0ef9
   languageName: node
   linkType: hard
 
@@ -26800,13 +26860,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@^4.0.0#~builtin<compat/typescript>, typescript@patch:typescript@^4.1.2#~builtin<compat/typescript>":
-  version: 4.2.4
-  resolution: "typescript@patch:typescript@npm%3A4.2.4#~builtin<compat/typescript>::version=4.2.4&hash=bda367"
+"typescript@patch:typescript@^4.9.4#~builtin<compat/typescript>":
+  version: 4.9.4
+  resolution: "typescript@patch:typescript@npm%3A4.9.4#~builtin<compat/typescript>::version=4.9.4&hash=bda367"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: eb86e0e8022e5297f7a7b871b6edfbf33b57049416ada8bf97c358760125c7c79f074fbebd1b8e8230f858ae05eb22ad0e805e8f6acd5eae1fa886681624c15e
+  checksum: 37f6e2c3c5e2aa5934b85b0fddbf32eeac8b1bacf3a5b51d01946936d03f5377fe86255d4e5a4ae628fd0cd553386355ad362c57f13b4635064400f3e8e05b9d
   languageName: node
   linkType: hard
 
@@ -27554,6 +27614,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"vscode-oniguruma@npm:^1.7.0":
+  version: 1.7.0
+  resolution: "vscode-oniguruma@npm:1.7.0"
+  checksum: 53519d91d90593e6fb080260892e87d447e9b200c4964d766772b5053f5699066539d92100f77f1302c91e8fc5d9c772fbe40fe4c90f3d411a96d5a9b1e63f42
+  languageName: node
+  linkType: hard
+
+"vscode-textmate@npm:^8.0.0":
+  version: 8.0.0
+  resolution: "vscode-textmate@npm:8.0.0"
+  checksum: 127780dfea89559d70b8326df6ec344cfd701312dd7f3f591a718693812b7852c30b6715e3cfc8b3200a4e2515b4c96f0843c0eacc0a3020969b5de262c2a4bb
+  languageName: node
+  linkType: hard
+
 "w3c-hr-time@npm:^1.0.1, w3c-hr-time@npm:^1.0.2":
   version: 1.0.2
   resolution: "w3c-hr-time@npm:1.0.2"
@@ -27927,7 +28001,7 @@ __metadata:
     react-resizable: ^3.0.4
     react-typical: ^0.1.3
     sass: ^1.54.0
-    typescript: ^4.0.0
+    typescript: ^4.9.4
     vm-browserify: ^1.1.2
   languageName: unknown
   linkType: soft

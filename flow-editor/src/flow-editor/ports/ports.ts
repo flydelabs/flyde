@@ -29,7 +29,7 @@ export interface EditorPorts {
   }) => Promise<Record<string, PartDefRepo>>;
 
   onFlowChange: (
-    cb: ({ flow: FlydeFlow, deps: ResolvedFlydeFlowDefinition }) => void
+    cb: (data: { flow: FlydeFlow; deps: ResolvedFlydeFlowDefinition }) => void
   ) => CancelFn;
 }
 
