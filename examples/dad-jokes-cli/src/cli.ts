@@ -8,7 +8,9 @@ const punchDelay = process.argv
 
 const execute = flyde.loadFlow('src/DadJokes.flyde');
 
-execute({punchDelay});
+flyde.loadFlow('src/Tester.flyde')()
+
+// execute({punchDelay});
 
 
 

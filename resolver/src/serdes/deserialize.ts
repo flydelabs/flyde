@@ -12,23 +12,8 @@ require("ts-node").register({
   // }
 });
 
-export const deserializeCodeFlow = (
-  contents: string,
-  fileName: string
-): FlydeFlow => {
-  let part = require(fileName);
 
-  if (part.default) {
-    part = part.default;
-  }
-
-  return {
-    part,
-    imports: {},
-  };
-};
-
-export const deserializeVisualFlow = (
+export const deserializeFlow = (
   flowContents: string,
   path: string
 ): FlydeFlow => {
@@ -48,20 +33,4 @@ export const deserializeVisualFlow = (
   data.imports = imports;
 
   return data as FlydeFlow;
-};
-
-export const deserializeFlow = (
-  flowContents: string,
-  fileName: string
-): FlydeFlow => {
-  if (fileName.endsWith(".flyde")) {
-    return deserializeVisualFlow(flowContents, fileName);
-  } else {
-    try {
-      return deserializeCodeFlow(flowContents, fileName);
-    } catch (e) {
-      console.error(e);
-      throw e;
-    }
-  }
 };

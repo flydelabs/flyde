@@ -1,13 +1,14 @@
 {
     "name": "@flyde/stdlib",
-    "version": "0.1.10",
+    "version": "0.1.12",
     "description": "Flyde's StdLib",
     "flyde": {
         "exposes": [
             "parts/*.flyde",
             "parts/*.flyde.js",
             "parts/**/*.flyde.js",
-            "parts/**/*.flyde"
+            "parts/**/*.flyde",
+            "src/**/*.flyde.ts"
         ],
         "typings": "flyde-typings.d.ts"
     },
@@ -23,7 +24,7 @@
     "author": "Flyde",
     "license": "ISC",
     "dependencies": {
-        "@flyde/core": "^0.1.10",
+        "@flyde/core": "^0.1.12",
         "axios": "^0.27.2",
         "pubsub-js": "^1.9.4"
     },

@@ -1,4 +1,5 @@
 import {
+  CodePart,
   dynamicPartInput,
   execute,
   ImportedPart,
@@ -158,7 +159,7 @@ describe("resolver", () => {
 
   it("resolves a .flyde with dependency on a visual part from a different package", async () => {
     const data = resolveFlow(
-      getFixturePath("a-imports-b-visual-from-package/a.flyde"),
+      getFixturePath("a-imports-b-grouped-from-package/a.flyde"),
       "implementation"
     );
 
@@ -199,15 +200,6 @@ describe("resolver", () => {
     }
   });
 
-  it("allows importing simple code based parts", async () => {
-    const path = getFixturePath("CompleteCodePart.flyde.js");
-    const flow = resolveFlow(path);
-
-    assert.exists(flow.main.customViewCode);
-    assert.deepEqual(flow.main.completionOutputs, ["r"]);
-    assert.deepEqual(flow.main.reactiveInputs, ["b"]);
-  });
-
   it("allows importing simple code based parts that require packages", async () => {
     const path = getFixturePath("a-imports-js-part-from-b-with-dep/a.flyde");
     const flow = resolveFlow(path);
@@ -223,16 +215,6 @@ describe("resolver", () => {
     });
 
     assert.equal(s.lastCall.args[0], 2 + 1);
-  });
-
-  it("bundles flows importing simple code based parts as expected", async () => {
-    const path = getFixturePath("a-imports-js-part-from-b-with-dep/a.flyde");
-    const flow = resolveFlow(path, "bundle");
-
-    assert.match(
-      (flow.dependencies.Add as any).fn,
-      /__BUNDLE_FN:\[\[\Add\.flyde\.js\]\]/
-    );
   });
 
   it("throws error when importing part that has a missing dep transitively", async () => {
@@ -287,26 +269,6 @@ describe("resolver", () => {
     });
   }, 20);
 
-  it("bundles a .flyde code dependencies from packages relative to the original flow", async () => {
-    /* this originated from the following bug: Fib playground example depended on "Merge" which depended on "Id"
-    Id's reference was bundled in relation to Merge, (i.e. "./Id.flyde.js") instead of the original flow ('../../../node_modules..) 
-    Causing webpack not to be able to load it
-    */
-    const data = resolveFlow(
-      getFixturePath("a-imports-b-visual-from-package/a.flyde"),
-      "bundle"
-    );
-
-    const repo = data.dependencies as PartRepo;
-    const Add1 = repo.Add1Wrapped__Add1 as ImportedPart & { fn: string };
-
-    assert.match(Add1.importPath, /@acme\/add1-wrapped\/src\/Add1\.flyde\.js$/);
-    assert.equal(
-      Add1.fn,
-      "__BUNDLE_FN:[[../node_modules/@acme/add1-wrapped/src/Add1.flyde.js]]"
-    );
-  });
-
   it("resolves dependencies of inline parts", async () => {
     const flow = resolveFlow(
       getFixturePath("a-uses-inline-part-with-dependency/a.flyde")
@@ -345,6 +307,28 @@ describe("resolver", () => {
     });
 
     assert.equal(s.lastCall.args[0], 2 + 1);
+  });
+
+  it('supports importing files that expose multiple parts under a single import', async () => {
+    const flow = resolveFlow(
+      getFixturePath("a-imports-multi-exposed-from-package/a.flyde")
+    );
+
+    const repo = flow.dependencies as PartRepo;
+
+    assert.exists((repo.Add as CodePart).fn);
+    assert.exists((repo.Sub as CodePart).fn);
+    console.log(flow.main);
+    
+    const [s, r] = spiedOutput();
+    execute({
+      part: flow.main,
+      partsRepo: repo,
+      inputs: { n: staticPartInput(5) },
+      outputs: { r },
+    });
+
+    assert.equal(s.lastCall.args[0], 5 + 1 - 2);
   });
 
   describe("typescript", () => {

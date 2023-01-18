@@ -3,6 +3,9 @@ imports:
     - HttpGet
     - Dot
     - Delay
+  "@flyde/stdlib":
+    - bob
+    - Rand
 part:
   instances:
     - pos:
@@ -114,6 +117,12 @@ part:
             fontFamily: monospace
             fontWeight: "500"
         description: Custom inline function
+    - pos:
+        x: -909.6289599609376
+        y: -699.6537329101562
+      id: Rand-98
+      inputConfig: {}
+      partId: Rand
   connections:
     - from:
         insId: HttpGet-770

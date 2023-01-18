@@ -1,0 +1,65 @@
+imports:
+  "@flyde/runtime":
+    - HttpGet
+    - Dot
+    - Delay
+  "@flyde/stdlib":
+    - bob
+    - Rand
+part:
+  instances:
+    - pos:
+        x: -643.3075927734375
+        y: -759.6378295898437
+      id: Rand-389
+      inputConfig: {}
+      partId: Rand
+    - pos:
+        x: -693.3075927734375
+        y: -609.6378295898437
+      id: cld1fi5n2000f45669yml3r1b
+      inputConfig: {}
+      part:
+        id: Inline-value-console.log(inp
+        inputs:
+          value:
+            mode: required
+        outputs:
+          value:
+            delayed: false
+        fnCode: |-
+          const result = (console.log(inputs.value)
+          ); Promise.resolve(result).then(val => outputs.value.next(val))
+        customViewCode: console.log(inputs.value)
+        dataBuilderSource: Y29uc29sZS5sb2coaW5wdXRzLnZhbHVlKQo=
+        templateType: value
+        completionOutputs:
+          - value
+        defaultStyle:
+          size: regular
+          icon: code
+          cssOverride:
+            fontFamily: monospace
+            fontWeight: "500"
+        description: Custom inline value
+  connections:
+    - from:
+        insId: Rand-389
+        pinId: num
+      to:
+        insId: cld1fi5n2000f45669yml3r1b
+        pinId: value
+  id: DadJoke
+  inputs: {}
+  outputs: {}
+  inputsPosition:
+    punchDelay:
+      x: -266.0287552679128
+      y: -884.2784519757015
+    test:
+      x: -182.5383681955638
+      y: -903.352979697288
+    punch delay:
+      x: -222.9
+      y: -816.63
+  outputsPosition: {}

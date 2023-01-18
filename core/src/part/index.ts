@@ -204,7 +204,7 @@ export type PartDefinitionWithModuleMetaData = PartDefinition &
   PartModuleMetaData;
 
 export const isCodePart = (p: Part | PartDefinition): p is CodePart => {
-  return !isVisualPart(p);
+  return p.id && p.inputs && p.outputs && typeof (p as CodePart).fn === 'function';
 };
 
 export const isVisualPart = (p: Part | PartDefinition): p is VisualPart => {

@@ -1,6 +1,5 @@
 import { z } from "zod";
-import { PartDefRepo, PartStyle } from ".";
-import { CustomPart, VisualPart, CodePart, Part, PartDefinition } from "./part";
+import { VisualPart, Part, PartDefinition } from "./part";
 
 const importSchema = z.record(z.string(), z.string().or(z.array(z.string())));
 const position = z.strictObject({ x: z.number(), y: z.number() });
@@ -44,14 +43,16 @@ const inputPinSchema = z.union([
   z.string(),
   z.object({
     mode: z.enum(["required", "optional", "required-if-connected"]),
-    type: z.string(),
+    /** @deprecated */
+    type: z.optional(z.string()),
     description: z.optional(z.string()),
     defaultValue: z.optional(z.any()),
   }),
 ]);
 
 const outputPinSchema = z.object({
-  type: z.string(),
+  /** @deprecated */
+  type: z.optional(z.string()),
   optional: z.optional(z.boolean()),
   delayed: z.optional(z.boolean()),
   description: z.optional(z.string()),
