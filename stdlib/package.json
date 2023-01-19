@@ -25,7 +25,10 @@
     "license": "ISC",
     "dependencies": {
         "@flyde/core": "^0.1.12",
+        "@types/pg": "^8.6.6",
         "axios": "^0.27.2",
+        "mongodb": "^4.13.0",
+        "pg": "^8.8.0",
         "pubsub-js": "^1.9.4"
     },
     "devDependencies": {
