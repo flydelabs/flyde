@@ -6,6 +6,7 @@ imports:
   "@flyde/stdlib":
     - bob
     - Rand
+    - Add
 part:
   instances:
     - pos:
@@ -42,6 +43,12 @@ part:
             fontFamily: monospace
             fontWeight: "500"
         description: Custom inline value
+    - pos:
+        x: -269.86444091796875
+        y: -717.7813415527344
+      id: Add-365
+      inputConfig: {}
+      partId: Add
   connections:
     - from:
         insId: Rand-389

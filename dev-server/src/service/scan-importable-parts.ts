@@ -1,5 +1,5 @@
 import { join, relative } from "path";
-import { resolveFlow, resolveImportablePaths } from "@flyde/resolver";
+import { resolveFlow, resolveImportablePaths, isCodePartPath, resolveCodePartDependencies } from "@flyde/resolver";
 
 import * as pkgUp from "pkg-up";
 import { PartDefRepo } from "@flyde/core";
@@ -28,6 +28,11 @@ export const resolveDependentPackages = async (
     try {
       const paths = resolveImportablePaths(rootPath, dep);
       const parts = paths.reduce((acc, filePath) => {
+
+        if (isCodePartPath(filePath))  {
+          const obj = resolveCodePartDependencies(filePath).reduce((obj, part) => ({...obj, [part.id]: part}), {});
+          return {...acc, ...obj}
+        }
         try {
           const { main } = resolveFlow(filePath, "definition");
           return { ...acc, [main.id]: main };

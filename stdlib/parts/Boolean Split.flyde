@@ -1,10 +1,11 @@
 imports:
-  ./Equals.flyde.js: Equals
+  ./Equals.flyde.js:
+    - Equals
 part:
   instances:
     - pos:
-        x: -55.038107910156256
-        y: 123.8628857421875
+        x: -122.50829223632813
+        y: 105.94033172607422
       id: Equals-530
       inputConfig:
         compare:
@@ -20,16 +21,16 @@ part:
         pinId: val
     - from:
         insId: Equals-530
-        pinId: r
-      to:
-        insId: __this
-        pinId: "true"
-    - from:
-        insId: Equals-530
-        pinId: else
+        pinId: "false"
       to:
         insId: __this
         pinId: "false"
+    - from:
+        insId: Equals-530
+        pinId: "true"
+      to:
+        insId: __this
+        pinId: "true"
   id: Boolean Split
   inputs:
     val:
@@ -46,8 +47,8 @@ part:
       y: -19.49542241235728
   outputsPosition:
     "true":
-      x: -107.53062440952482
-      y: 361.3771973987992
+      x: -106.47635644364404
+      y: 360.3229294329184
     "false":
       x: 75.17321928763755
       y: 350.95064554922453

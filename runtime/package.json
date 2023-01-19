@@ -8,17 +8,17 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsc -p . -w --incremental",
     "__publish": "npm version patch && npm publish",
-    "copy-stdlib": "mkdir -p dist/stdlib-copy &&  cp -r ../stdlib/parts dist/stdlib-copy",
+    "copy-stdlib": "mkdir -p dist/stdlib-copy &&  cp -r ../stdlib/parts dist/stdlib",
     "build": "rm -rf dist && tsc -p . && yarn run copy-stdlib",
     "prod": "node dist/index.js",
     "start": "concurrently 'ts-node-dev src/index.ts' 'npm run watch'"
   },
   "flyde": {
     "exposes": [
-      "dist/stdlib-copy/parts/*.flyde",
-      "dist/stdlib-copy/parts/*.flyde.js",
-      "dist/stdlib-copy/parts/**/*.flyde.js",
-      "dist/stdlib-copy/parts/**/*.flyde"
+      "dist/stdlib/parts/*.flyde",
+      "dist/stdlib/parts/*.flyde.js",
+      "dist/stdlib/parts/**/*.flyde.js",
+      "dist/stdlib/parts/**/*.flyde"
     ]
   },
   "files": [
