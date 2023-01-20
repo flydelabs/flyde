@@ -6,7 +6,7 @@
   "typings": "dist/index.d.ts",
   "scripts": {
     "build-ts": "tsc -p .",
-    "start": "concurrently 'ts-node-dev src/cli.ts' 'npm run watch'",
+    "start": "concurrently --kill-others 'ts-node-dev src/cli.ts' 'npm run watch'",
     "bts": "tsc -p .",
     "build": "rm -rf dist && tsc -p .",
     "watch": "tsc -p . -w --incremental"

@@ -1,11 +1,11 @@
 imports:
   "@flyde/stdlib":
-    - ListFrom3
     - Boolean Split
     - Publish
     - Subscribe
     - Add
     - HtmlBtn
+    - List From 3
   ./Button.flyde.js:
     - Button
   ./Span.flyde.js:
@@ -39,20 +39,6 @@ part:
       style:
         size: large
         color: "#9b5de5"
-    - pos:
-        x: -350.2094360351563
-        y: 412.6782791137695
-      id: ListFrom3-404
-      inputConfig:
-        item1:
-          mode: sticky
-        item3:
-          mode: sticky
-        item2:
-          mode: queue
-      partId: ListFrom3
-      style:
-        size: small
     - pos:
         x: -518.7030297851562
         y: 216.28152648925777
@@ -204,31 +190,19 @@ part:
           cssOverride:
             fontFamily: monospace
             fontWeight: "300"
+    - pos:
+        x: -344.7745190429688
+        y: 415.93806869506835
+      id: List From 3-388
+      inputConfig:
+        value3:
+          mode: sticky
+        value1:
+          mode: sticky
+        value2:
+          mode: sticky
+      partId: List From 3
   connections:
-    - from:
-        insId: Span-677
-        pinId: jsx
-      to:
-        insId: ListFrom3-404
-        pinId: item2
-    - from:
-        insId: Button-410
-        pinId: jsx
-      to:
-        insId: ListFrom3-404
-        pinId: item3
-    - from:
-        insId: Button-410-d44
-        pinId: jsx
-      to:
-        insId: ListFrom3-404
-        pinId: item1
-    - from:
-        insId: ListFrom3-404
-        pinId: list
-      to:
-        insId: __this
-        pinId: jsx
     - from:
         insId: Button-410
         pinId: click
@@ -277,6 +251,30 @@ part:
       to:
         insId: Publish-817-d15
         pinId: value
+    - from:
+        insId: Button-410-d44
+        pinId: jsx
+      to:
+        insId: List From 3-388
+        pinId: value1
+    - from:
+        insId: Span-677
+        pinId: jsx
+      to:
+        insId: List From 3-388
+        pinId: value2
+    - from:
+        insId: Button-410
+        pinId: jsx
+      to:
+        insId: List From 3-388
+        pinId: value3
+    - from:
+        insId: List From 3-388
+        pinId: list
+      to:
+        insId: __this
+        pinId: jsx
   id: Main
   inputs: {}
   outputs:

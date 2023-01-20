@@ -16,6 +16,7 @@ import {
   FlowEditorState,
   FlydeFlowEditorProps,
   RuntimePlayer,
+  useDebounce,
 } from "@flyde/flow-editor";
 import { fakeVm } from "@site/src/fake-vm";
 import Link from "@docusaurus/Link";
@@ -152,6 +153,8 @@ export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (
     props.flowProps.resolvedFlow
   );
 
+  const [debouncedFlow] = useDebounce(resolvedFlow, 500)
+
   const [editorState, setFlowEditorState] = useState<FlowEditorState>({
     flow,
     boardData: {
@@ -202,7 +205,7 @@ export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (
       clean();
       sub.unsubscribe();
     };
-  }, [debugDelay, resolvedFlow]);
+  }, [debugDelay, debouncedFlow]);
 
   const onResizeChildren = useCallback((_, { size }) => {
     setChildrenWidth(size.width);

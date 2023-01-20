@@ -21,12 +21,18 @@ export function partFromSimpleFunction (data: SimpleFnData): CodePart {
         defaultStyle: {
             icon: data.icon
         },
-        fn: function (inputs, outputs) {
-            const args = data.inputs.map(({name}) => inputs[name]);
-            const result = data.fn(...args);
-            if (data.output) {
-                outputs[data.output.name].next(result)
-            } 
+        fn: async function (inputs, outputs, adv) {
+            const args = (data.inputs ?? []).map(({name}) => inputs[name]);
+            try {
+                const result = await Promise.resolve(data.fn(...args));
+                if (data.output) {
+                    outputs[data.output.name].next(result)
+                } 
+            } catch (e) {
+                console.error('Error in part', e);
+                adv.onError(e);
+            }
+            
         }
     }
 }

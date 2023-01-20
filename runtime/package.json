@@ -6,12 +6,14 @@
   "typings": "dist/index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "tsc -p . -w --incremental",
+    "watch:ts": "tsc -p . -w --incremental",
+    "watch:copy-stdlib": "nodemon -w ../stdlib/dist -e js,ts --exec \"yarn run copy-stdlib\"",
+    "dev": "concurrently --kill-others 'yarn run watch:ts' 'yarn run watch:copy-stdlib'",
     "__publish": "npm version patch && npm publish",
-    "copy-stdlib": "mkdir -p dist/stdlib-copy &&  cp -r ../stdlib/parts dist/stdlib",
+    "copy-stdlib": "mkdir -p dist/stdlib-copy &&  cp -r ../stdlib/dist dist/stdlib",
     "build": "rm -rf dist && tsc -p . && yarn run copy-stdlib",
     "prod": "node dist/index.js",
-    "start": "concurrently 'ts-node-dev src/index.ts' 'npm run watch'"
+    "start": "concurrently  --kill-others 'ts-node-dev src/index.ts' 'npm run watch'"
   },
   "flyde": {
     "exposes": [
@@ -51,6 +53,7 @@
   "devDependencies": {
     "chai": "^4.3.6",
     "concurrently": "^5.2.0",
+    "nodemon": "^2.0.20",
     "sinon": "^14.0.0",
     "ts-node-dev": "^1.0.0-pre.32",
     "typescript": "^4.9.4"

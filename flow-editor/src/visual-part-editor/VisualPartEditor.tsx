@@ -37,6 +37,7 @@ import {
   PartStyle,
   getPartOutputs,
   Pos,
+  getPartInputs,
 } from "@flyde/core";
 import { InstanceView } from "./instance-view/InstanceView";
 import {
@@ -1474,7 +1475,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
         const validInputs = instances.reduce((acc, ins) => {
           const part = getPartDef(ins, repo);
           if (part) {
-            acc.set(ins.id, keys(part.inputs));
+            acc.set(ins.id, keys(getPartInputs(part)));
           }
           return acc;
         }, new Map<string, string[]>());
@@ -1482,7 +1483,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
         const validOutputs = instances.reduce((acc, ins) => {
           const part = getPartDef(ins, repo);
           if (part) {
-            acc.set(ins.id, keys(part.outputs));
+            acc.set(ins.id, keys(getPartOutputs(part)));
           }
           return acc;
         }, new Map<string, string[]>());
@@ -1493,16 +1494,10 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
         validOutputs.set(THIS_INS_ID, keys(part.inputs));
 
         const orphanConnections = connections.filter((conn) => {
-          if (
-            conn.to.pinId === TRIGGER_PIN_ID ||
-            conn.from.pinId === ERROR_PIN_ID
-          ) {
-            return false;
-          }
 
           const inputsExist =
-            validInputs.get(conn.to.insId) &&
-            validInputs.get(conn.to.insId).includes(conn.to.pinId);
+            (validInputs.get(conn.to.insId) &&
+            validInputs.get(conn.to.insId).includes(conn.to.pinId));
           const outputsExist =
             validOutputs.get(conn.from.insId) &&
             validOutputs.get(conn.from.insId).includes(conn.from.pinId);
@@ -2257,7 +2252,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
               ) : null}
               <div className="viewport-controls">
                 <Button small onClick={fitToScreen}>
-                  Reset view
+                  Center view
                 </Button>
                 <MemodSlider
                   min={0.05}

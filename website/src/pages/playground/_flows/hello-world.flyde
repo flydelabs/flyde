@@ -5,7 +5,7 @@ part:
   instances:
     - pos:
         x: -249.638056640625
-        y: -390.20183471679684
+        y: -391.20183471679684
       id: Inline-value-Hello World-673
       inputConfig: {}
       part:
@@ -36,22 +36,8 @@ part:
           fontFamily: monospace
           fontWeight: "500"
     - pos:
-        x: -70.14308349609377
-        y: -237.09693359375
-      id: Delay-560
-      inputConfig:
-        ms:
-          mode: static
-          value: 3000
-      visibleInputs:
-        - value
-        - ms
-      partId: Delay
-      style:
-        size: small
-    - pos:
-        x: -87.202294921875
-        y: -133.164609375
+        x: -92.58089599609374
+        y: -99.73132080078125
       id: clbdutwlh000c4664hu8g9uxd
       inputConfig: {}
       part:
@@ -81,6 +67,15 @@ part:
         cssOverride:
           fontFamily: monospace
           fontWeight: "500"
+    - pos:
+        x: -53.302717285156234
+        y: -233.93417114257812
+      id: Delay-621
+      inputConfig:
+        delay:
+          mode: static
+          value: 3000
+      partId: Delay
   connections:
     - from:
         insId: Inline-value-Hello World-673
@@ -89,20 +84,20 @@ part:
         insId: __this
         pinId: output
     - from:
-        insId: Inline-value-Hello World-673
-        pinId: value
-      to:
-        insId: Delay-560
-        pinId: value
-    - from:
         insId: clbdutwlh000c4664hu8g9uxd
         pinId: value
       to:
         insId: __this
         pinId: output
     - from:
-        insId: Delay-560
-        pinId: r
+        insId: Inline-value-Hello World-673
+        pinId: value
+      to:
+        insId: Delay-621
+        pinId: value
+    - from:
+        insId: Delay-621
+        pinId: delayedValue
       to:
         insId: clbdutwlh000c4664hu8g9uxd
         pinId: __trigger

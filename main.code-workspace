@@ -42,6 +42,9 @@
 		},
 		"cSpell.words": [
 			"Ungroup"
-		]
+		],
+		"files.exclude": {
+			"**/node_modules": true
+		}
 	}
 }

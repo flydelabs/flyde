@@ -152,8 +152,13 @@ describe("resolver", () => {
     });
     assert.equal(s.lastCall.args[0], 3);
     assert.match(
-      data.dependencies.Add1.importPath,
+      data.dependencies.Add1.source.path,
       /@acme\/add1\/src\/add1\.flyde\.js$/
+    );
+
+    assert.equal(
+      data.dependencies.Add1.source.export,
+      'default'
     );
   });
 
@@ -175,7 +180,7 @@ describe("resolver", () => {
     assert.equal(s.lastCall.args[0], 3);
 
     assert.match(
-      data.dependencies.Add1Wrapped.importPath,
+      data.dependencies.Add1Wrapped.source.path,
       /@acme\/add1-wrapped\/src\/add1-wrapped\.flyde$/
     );
   });
@@ -318,7 +323,9 @@ describe("resolver", () => {
 
     assert.exists((repo.Add as CodePart).fn);
     assert.exists((repo.Sub as CodePart).fn);
-    console.log(flow.main);
+
+    assert.match((repo.Add as ImportedPart).source.export, /add/);
+    assert.match((repo.Sub as ImportedPart).source.export, /sub/);
     
     const [s, r] = spiedOutput();
     execute({

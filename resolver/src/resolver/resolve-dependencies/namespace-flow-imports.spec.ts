@@ -23,7 +23,10 @@ describe("namespace flows", () => {
             id: "Alice",
             instances: [partInstance("i2", "Dave")],
           }),
-          importPath: "bob",
+          source: {
+            path: 'bob',
+            export: 'default'
+          }
         },
       },
     };

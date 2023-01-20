@@ -8,7 +8,7 @@
             "parts/*.flyde.js",
             "parts/**/*.flyde.js",
             "parts/**/*.flyde",
-            "src/**/*.flyde.ts"
+            "dist/**/*.flyde.js"
         ],
         "typings": "flyde-typings.d.ts"
     },
@@ -17,7 +17,11 @@
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "echo": "echo 'no watch'",
-        "build": "echo 'no build'",
+        "watch:ts": "tsc -p . -w --incremental",
+        "watch:docs-data": "nodemon --watch scripts --watch src -e ts --exec \"ts-node scripts/docs-data.ts\"",
+        "dev": "concurrently --kill-others \"yarn watch:ts\" \"yarn watch:docs-data\"",
+        "build": "tsc -p . && yarn build:docs-data",
+        "build:docs-data": "ts-node scripts/docs-data.ts",
         "prod": "node dist/index.js",
         "__publish": "npm version patch && npm publish"
     },
@@ -33,6 +37,8 @@
     },
     "devDependencies": {
         "concurrently": "^7.3.0",
+        "nodemon": "^2.0.20",
+        "ts-node": "^10.9.1",
         "ts-node-dev": "^1.0.0-pre.32",
         "typescript": "^4.9.4"
     },

@@ -5,19 +5,13 @@ imports:
     - Delay
   "@flyde/stdlib":
     - bob
-    - Rand
     - Add
+    - From Entries
 part:
   instances:
     - pos:
-        x: -643.3075927734375
-        y: -759.6378295898437
-      id: Rand-389
-      inputConfig: {}
-      partId: Rand
-    - pos:
-        x: -693.3075927734375
-        y: -609.6378295898437
+        x: -608.5583862304687
+        y: -549.981884765625
       id: cld1fi5n2000f45669yml3r1b
       inputConfig: {}
       part:
@@ -49,13 +43,20 @@ part:
       id: Add-365
       inputConfig: {}
       partId: Add
-  connections:
-    - from:
-        insId: Rand-389
-        pinId: num
-      to:
-        insId: cld1fi5n2000f45669yml3r1b
-        pinId: value
+    - pos:
+        x: -668.1
+        y: -703.39
+      id: From Entries-19
+      inputConfig:
+        entries:
+          mode: static
+          value:
+            - - 1
+              - 2
+            - - 3
+              - 4
+      partId: From Entries
+  connections: []
   id: DadJoke
   inputs: {}
   outputs: {}

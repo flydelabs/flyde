@@ -11,8 +11,8 @@ export const Get = partFromSimpleFunction({
     description: 'Performs a HTTP GET request to a URL and emits the response data',
     inputs: [
         {name: 'url', description: 'URL to fetch data from'},
-        {name: 'headers', description: 'Headers to send with the request', mode: 'optional'},
-        {name: 'params', description: 'Query parameters to send with the request', mode: 'optional'}
+        {name: 'headers', description: 'Headers to send with the request', mode: 'required-if-connected'},
+        {name: 'params', description: 'Query parameters to send with the request', mode: 'required-if-connected'}
     ],
     output: {name: 'data', description: 'The response data'},
     fn: (url) => {
@@ -27,9 +27,9 @@ export const Post = partFromSimpleFunction({
     description: 'Performs a HTTP POST request to a URL and emits the response data',
     inputs: [
         {name: 'url', description: 'URL to fetch data from'},
-        {name: 'headers', description: 'Headers to send with the request', mode: 'optional'},
-        {name: 'params', description: 'Query parameters to send with the request', mode: 'optional'},
-        {name: 'data', description: 'Data to send with the request', mode: 'optional'},
+        {name: 'headers', description: 'Headers to send with the request', mode: 'required-if-connected'},
+        {name: 'params', description: 'Query parameters to send with the request', mode: 'required-if-connected'},
+        {name: 'data', description: 'Data to send with the request', mode: 'required-if-connected'},
     ],
     output: {name: 'data', description: 'The response data'},
     fn: (url, headers, params, data) => {
@@ -44,9 +44,9 @@ export const Put = partFromSimpleFunction({
     description: 'Performs a HTTP PUT request to a URL and emits the response data',
     inputs: [
         {name: 'url', description: 'URL to fetch data from'},
-        {name: 'headers', description: 'Headers to send with the request', mode: 'optional'},
-        {name: 'params', description: 'Query parameters to send with the request', mode: 'optional'},
-        {name: 'data', description: 'Data to send with the request', mode: 'optional'},
+        {name: 'headers', description: 'Headers to send with the request', mode: 'required-if-connected'},
+        {name: 'params', description: 'Query parameters to send with the request', mode: 'required-if-connected'},
+        {name: 'data', description: 'Data to send with the request', mode: 'required-if-connected'},
     ],
     output: {name: 'data', description: 'The response data'},
     fn: (url, headers, params, data) => {
@@ -62,9 +62,9 @@ export const Request = partFromSimpleFunction({
     inputs: [
         {name: 'url', description: 'URL to fetch data from'},
         {name: 'method', description: 'HTTP method to use'},
-        {name: 'headers', description: 'Headers to send with the request', mode: 'optional'},
-        {name: 'params', description: 'Query parameters to send with the request', mode: 'optional'},
-        {name: 'data', description: 'Data to send with the request', mode: 'optional'},
+        {name: 'headers', description: 'Headers to send with the request', mode: 'required-if-connected'},
+        {name: 'params', description: 'Query parameters to send with the request', mode: 'required-if-connected'},
+        {name: 'data', description: 'Data to send with the request', mode: 'required-if-connected'},
     ],
     output: {name: 'data', description: 'The response data'},
     fn: (url, method, headers, params, data) => {

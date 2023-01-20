@@ -211,9 +211,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
 
     const onEditPart = React.useCallback(
       (part: ImportedPartDef) => {
-        openFile({ absPath: part.importPath });
-
-        // toastMsg('TODO');
+        openFile({ absPath: part.source.path });
       },
       [openFile]
     );

@@ -32,6 +32,9 @@ part:
         threshold:
           mode: static
           value: 4000
+        wait:
+          mode: static
+          value: 1500
       visibleOutputs:
         - result
         - available

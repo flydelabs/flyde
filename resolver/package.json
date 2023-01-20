@@ -7,10 +7,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsc -p . -w --incremental",
-    "__publish": "npm version patch && npm publish",
     "build": "rm -rf dist && tsc -p .",
     "prod": "node dist/index.js",
-    "start": "concurrently 'ts-node-dev src/index.ts' 'npm run watch'"
+    "start": "concurrently 'ts-node-dev src/index.ts' 'npm run dev'"
   },
   "files": [
     "dist/",

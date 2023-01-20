@@ -39,7 +39,7 @@ export const Join = partFromSimpleFunction({
     ],
     output: {name: 'value', description: 'Joined value'},
     fn: (array, separator) => array.join(separator)
-});
+}); 
 
 export const Replace = partFromSimpleFunction({
     id: 'Replace',
@@ -263,4 +263,29 @@ export const EndsWith = partFromSimpleFunction({
     ],
     output: {name: 'value', description: 'Result'},
     fn: (string, searchValue, fromIndex) => string.endsWith(searchValue, fromIndex)
+});
+
+export const IsEmpty = partFromSimpleFunction({
+    id: 'Is Empty',
+    namespace,
+    icon: 'fa-font',
+    description: 'Determines whether a string is empty',
+    inputs: [
+        {name: 'string', description: 'String to check'},
+    ],
+    output: {name: 'value', description: 'Result'},
+    fn: (string) => string.length === 0
+});
+
+export const MatchRegex = partFromSimpleFunction({
+    id: 'Match Regex',
+    namespace,
+    icon: 'fa-font',
+    description: 'Determines whether a string matches a regular expression',
+    inputs: [
+        {name: 'string', description: 'String to check'},
+        {name: 'regex', description: 'Regular expression to match'},
+    ],
+    output: {name: 'value', description: 'Result'},
+    fn: (string, regex) => string.match(regex)
 });

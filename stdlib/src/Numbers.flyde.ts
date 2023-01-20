@@ -1,6 +1,6 @@
 import { partFromSimpleFunction } from "./utils/partFromSimpleFunction";
 
-const namespace = 'Math';
+const namespace = 'Numbers';
 
 export const Add = partFromSimpleFunction({
     id: 'Add',
@@ -159,3 +159,93 @@ export const Max = partFromSimpleFunction({
     output: {name: 'max', description: 'The maximum of n1 and n2'},
     fn: (a, b) => Math.max(a, b)
 })
+
+export const ParseInt = partFromSimpleFunction({
+    id: 'Parse Int',
+    namespace,
+    description: 'Emits the integer value of a string',
+    inputs: [{name: 'str', description: 'String to parse'}],
+    output: {name: 'int', description: 'The integer value of str'},
+    fn: (str) => parseInt(str)
+})
+
+export const ParseFloat = partFromSimpleFunction({
+    id: 'Parse Float',
+    namespace,
+    description: 'Emits the float value of a string',
+    inputs: [{name: 'str', description: 'String to parse'}],
+    output: {name: 'float', description: 'The float value of str'},
+    fn: (str) => parseFloat(str)
+})
+
+export const ToFixed = partFromSimpleFunction({
+    id: 'To Fixed',
+    namespace,
+    description: 'Emits the specified number of decimal places of a number',
+    inputs: [{name: 'number', description: 'Number to format'},{name: 'places', description: 'Number of decimal places to format to'}],
+    output: {name: 'fixed', description: 'The number with the specified number of decimal places'},
+    fn: (number, places) => number.toFixed(places)
+})
+
+export const ToExponential = partFromSimpleFunction({
+    id: 'To Exponential',
+    namespace,
+    description: 'Emits the specified number of decimal places of a number in exponential notation',
+    inputs: [{name: 'number', description: 'Number to format'},{name: 'places', description: 'Number of decimal places to format to'}],
+    output: {name: 'exponential', description: 'The number with the specified number of decimal places in exponential notation'},
+    fn: (number, places) => number.toExponential(places)
+})
+
+export const ToPrecision = partFromSimpleFunction({
+    id: 'To Precision',
+    namespace,
+    description: 'Emits the specified number of significant figures of a number',
+    inputs: [{name: 'number', description: 'Number to format'},{name: 'places', description: 'Number of significant figures to format to'}],
+    output: {name: 'precision', description: 'The number with the specified number of significant figures'},
+    fn: (number, places) => number.toPrecision(places)
+});
+
+export const GreaterThan = partFromSimpleFunction({
+    id: 'Greater Than',
+    namespace,
+    description: 'Emits true if the first number is greater than the second',
+    inputs: [{name: 'n1', description: 'First number'},{name: 'n2', description: 'Second number'}],
+    output: {name: 'result', description: 'true if n1 is greater than n2'},
+    fn: (a, b) => a > b
+})
+
+export const GreaterThanOrEqual = partFromSimpleFunction({
+    id: 'Greater Than Or Equal',
+    namespace,
+    description: 'Emits true if the first number is greater than or equal to the second',
+    inputs: [{name: 'n1', description: 'First number'},{name: 'n2', description: 'Second number'}],
+    output: {name: 'result', description: 'true if n1 is greater than or equal to n2'},
+    fn: (a, b) => a >= b
+})
+
+export const LessThan = partFromSimpleFunction({
+    id: 'Less Than',
+    namespace,
+    description: 'Emits true if the first number is less than the second',
+    inputs: [{name: 'n1', description: 'First number'},{name: 'n2', description: 'Second number'}],
+    output: {name: 'result', description: 'true if n1 is less than n2'},
+    fn: (a, b) => a < b
+})
+
+export const LessThanOrEqual = partFromSimpleFunction({
+    id: 'Less Than Or Equal',
+    namespace,
+    description: 'Emits true if the first number is less than or equal to the second',
+    inputs: [{name: 'n1', description: 'First number'},{name: 'n2', description: 'Second number'}],
+    output: {name: 'result', description: 'true if n1 is less than or equal to n2'},
+    fn: (a, b) => a <= b
+})
+
+export const Equal = partFromSimpleFunction({
+    id: 'Equal',
+    namespace,
+    description: 'Emits true if the two numbers are equal',
+    inputs: [{name: 'n1', description: 'First number'},{name: 'n2', description: 'Second number'}],
+    output: {name: 'result', description: 'true if n1 is equal to n2'},
+    fn: (a, b) => a === b
+});

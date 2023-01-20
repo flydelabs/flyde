@@ -7,6 +7,7 @@ import {
   ResolvedFlydeFlow,
   isCodePart,
   CodePart,
+  ImportSource,
 } from "@flyde/core";
 import { existsSync, readFileSync } from "fs";
 import _ = require("lodash");
@@ -35,15 +36,17 @@ const getRefPartIds = (part: VisualPart): string[] => {
   return _.uniq([...refPartIds, ...idsFromInline]);
 };
 
-export function resolveCodePartDependencies(path: string): CodePart[] {
+export function resolveCodePartDependencies(path: string): {exportName: string, part: CodePart}[] {
   try {
-    let part = require(path);
+    let module = require(path);
 
-    if (isCodePart(part)) {
-      return [part];
+    if (isCodePart(module)) {
+      return [{exportName: 'default', part: module}];
     } else {
-      if (typeof part === "object") {
-        return Object.values(part).filter(isCodePart);
+      if (typeof module === "object") {
+        return Object.entries<CodePart>(module)
+          .filter(([_, value]) => isCodePart(value))
+          .map(([key, value]) => ({exportName: key, part: value}));
       }
     }
   } catch (e) {
@@ -104,20 +107,23 @@ export function resolveDependencies(
     const paths = getLocalOrExternalPaths(importPath);
 
     // TODO - refactor the code below. It is unnecessarily complex and inefficient
-    const result = paths
+    const result: {flow: FlydeFlow, source: ImportSource} = paths
       .reduce((acc, path) => {
         const contents = readFileSync(path, "utf-8");
 
         if (isCodePartPath(path)) {
           return [
             ...acc,
-            ...resolveCodePartDependencies(path).map((part) => ({
+            ...resolveCodePartDependencies(path).map(({part, exportName}) => ({
               flow: { part, imports: {} },
-              path,
+              source: {
+                path,
+                export: exportName
+              }
             })),
           ];
         } else {
-          return [...acc, { flow: deserializeFlow(contents, path), path }];
+          return [...acc, { flow: deserializeFlow(contents, path), source: { path, export: '__n/a__visual__' } }];
         }
       }, [])
       .filter((obj) => !!obj)
@@ -129,17 +135,16 @@ export function resolveDependencies(
       );
     }
 
-    const { flow, path } = result;
+    const { flow, source } = result;
 
     if (isCodePart(flow.part)) {
       deps[refPartId] = {
         ...flow.part,
-        importPath: path,
+        source
       };
     } else {
-      console.log(path);
 
-      const resolvedImport = resolveFlow(path, mode);
+      const resolvedImport = resolveFlow(source.path, mode);
 
       const namespacedImport = namespaceFlowImports(
         resolvedImport,
@@ -151,7 +156,7 @@ export function resolveDependencies(
         ...namespacedImport.dependencies,
         [refPartId]: {
           ...namespacedImport.main,
-          importPath: path,
+          source
         },
       };
     }

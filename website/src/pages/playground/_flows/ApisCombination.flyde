@@ -1,12 +1,8 @@
 imports:
   "@flyde/stdlib":
-    - HttpResponse
-    - HttpGet
-    - Pick
-    - HttpPost
+    - GET Request
+    - POST Request
     - Dot
-    - HtmlBtn
-    - Accumulate2
 part:
   instances:
     - pos:
@@ -61,9 +57,9 @@ part:
             optional: false
         instances:
           - pos:
-              x: -376.6389208984375
-              y: -180.36268857002256
-            id: HttpGet-907
+              x: -335.7258349609375
+              y: -194.68226864814756
+            id: GET Request-907
             inputConfig:
               url:
                 mode: static
@@ -75,7 +71,8 @@ part:
               - r
               - __error
               - response
-            partId: HttpGet
+              - data
+            partId: GET Request
           - id: "Inline-value-{iso2: ${input76"
             part:
               id: "Inline-value-{iso2: inputs.d"
@@ -115,17 +112,17 @@ part:
             y: 138.57280736180334
         connections:
           - from:
-              insId: HttpGet-907
-              pinId: response
-            to:
-              insId: "Inline-value-{iso2: ${input76"
-              pinId: data
-          - from:
               insId: "Inline-value-{iso2: ${input76"
               pinId: value
             to:
               pinId: country
               insId: __this
+          - from:
+              insId: GET Request-907
+              pinId: data
+            to:
+              insId: "Inline-value-{iso2: ${input76"
+              pinId: data
         completionOutputs:
           - country
       style:
@@ -158,7 +155,7 @@ part:
           - pos:
               x: -455.39787109375004
               y: 43.691497802734375
-            id: HttpPost-624
+            id: POST Request-624
             inputConfig:
               url:
                 mode: static
@@ -166,7 +163,8 @@ part:
             visibleInputs:
               - url
               - body
-            partId: HttpPost
+              - data
+            partId: POST Request
           - pos:
               x: -559.7825415039063
               y: 194.45557312011715
@@ -208,12 +206,6 @@ part:
             y: 348.1765805072715
         connections:
           - from:
-              insId: __this
-              pinId: body
-            to:
-              insId: HttpPost-624
-              pinId: body
-          - from:
               insId: Dot-286
               pinId: value
             to:
@@ -226,17 +218,23 @@ part:
               insId: __this
               pinId: capital
           - from:
-              insId: HttpPost-624
-              pinId: response
+              insId: POST Request-624
+              pinId: data
+            to:
+              insId: Dot-822
+              pinId: obj
+          - from:
+              insId: POST Request-624
+              pinId: data
             to:
               insId: Dot-286
               pinId: obj
           - from:
-              insId: HttpPost-624
-              pinId: response
+              pinId: body
+              insId: __this
             to:
-              insId: Dot-822
-              pinId: obj
+              insId: POST Request-624
+              pinId: data
         completionOutputs:
           - name+capital
       style:
@@ -333,7 +331,7 @@ part:
           - pos:
               x: -204.90311279296873
               y: 349.60314422607416
-            id: HttpPost-775
+            id: POST Request-775
             inputConfig:
               url:
                 mode: static
@@ -341,7 +339,8 @@ part:
             visibleInputs:
               - url
               - body
-            partId: HttpPost
+              - data
+            partId: POST Request
           - pos:
               x: -143.08780761718754
               y: 233.70198646545413
@@ -382,32 +381,32 @@ part:
         outputsPosition:
           value:
             x: -107.75930491072856
-            y: 617.5218613166921
+            y: 618.7675766483113
         connections:
+          - from:
+              pinId: city
+              insId: __this
+            to:
+              insId: "Inline-value-{city: inputs.c75"
+              pinId: city
           - from:
               insId: "Inline-value-{city: inputs.c75"
               pinId: r
             to:
-              insId: HttpPost-775
-              pinId: body
+              insId: POST Request-775
+              pinId: data
           - from:
-              insId: __this
-              pinId: city
-            to:
-              insId: "Inline-value-{city: inputs.c75"
-              pinId: city
-          - from:
-              insId: Dot-710
-              pinId: value
-            to:
-              pinId: value
-              insId: __this
-          - from:
-              insId: HttpPost-775
-              pinId: response
+              insId: POST Request-775
+              pinId: data
             to:
               insId: Dot-710
               pinId: obj
+          - from:
+              insId: Dot-710
+              pinId: value
+            to:
+              pinId: value
+              insId: __this
         completionOutputs:
           - value
       style:

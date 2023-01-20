@@ -110,3 +110,24 @@ export const SetAttribute = partFromSimpleFunction({
         return object;
     }
 });
+
+export const DeleteAttribute = partFromSimpleFunction({
+    id: 'Delete Attribute',
+    namespace,
+    icon: 'fa-box',
+    description: 'Deletes an attribute from an object',
+    inputs: [
+        {name: 'object', description: 'Object to delete attribute from'},
+        {name: 'attribute', description: 'Attribute to delete'}
+    ],
+    output: {name: 'object', description: 'The object with the attribute deleted'},
+    fn: (object, attribute) => {
+        // delete attribute from object while supporting dot notation
+        const attributes = attribute.split('.');
+        const last = attributes.pop();
+        const target = attributes.reduce((obj, i) => obj[i], object);
+        delete target[last];
+        return object;
+    }
+});
+

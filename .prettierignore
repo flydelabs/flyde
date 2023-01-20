@@ -6,3 +6,4 @@ out
 *.d.ts
 {{*}}.*
 !*.flyde.js
+*.ejs

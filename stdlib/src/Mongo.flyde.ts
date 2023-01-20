@@ -3,7 +3,7 @@ import { MongoClient } from 'mongodb';
 
 const namespace = 'MongoDB';
 
-export const Connect = partFromSimpleFunction({
+export const MongoConnect = partFromSimpleFunction({
     id: 'Connect',
     icon: 'fa-database',
     namespace,
@@ -57,7 +57,7 @@ export const FindOne = partFromSimpleFunction({
     }
 });
 
-export const Disconnect = partFromSimpleFunction({
+export const MongoDisconnect = partFromSimpleFunction({
     id: 'Disconnect',
     icon: 'fa-database',
     namespace,

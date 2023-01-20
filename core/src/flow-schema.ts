@@ -92,16 +92,21 @@ export type FlydeFlow = {
   part: VisualPart;
 };
 
+export interface ImportSource {
+  path: string;
+  export: string;
+}
+
 export type ImportedPartDefinition = PartDefinition & {
-  importPath: string;
+  source: ImportSource
 };
 
 export type ImportedPart = Part & {
-  importPath: string;
+  source: ImportSource
 };
 
 export type ImportedPartDef = PartDefinition & {
-  importPath: string;
+  source: ImportSource
 };
 
 export type ResolvedFlydeFlowDefinition = {

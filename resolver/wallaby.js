@@ -8,14 +8,14 @@ module.exports = function (w) {
 		'src/**/*.ts',
 		'src/**/*.tsx',
 		'src/**/*.js',
-		{pattern: 'src/**/spec.ts', ignore: true},
-		{pattern: 'src/**/spec.tsx', ignore: true},
+		{pattern: 'src/**/*.spec.ts', ignore: true},
+		{pattern: 'src/**/*.spec.tsx', ignore: true},
 		'fixture/**'
 	  ],
   
 	  tests: [
-		'src/**/spec.ts',
-		'src/**/spec.tsx',
+		'src/**/*.spec.ts',
+		'src/**/*.spec.tsx',
 	  ],
 	  env: {
 		type: 'node',
