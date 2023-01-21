@@ -3,6 +3,7 @@ imports:
     - GET Request
     - POST Request
     - Dot
+    - Get Attribute
 part:
   instances:
     - pos:
@@ -44,7 +45,7 @@ part:
             fontWeight: "500"
     - pos:
         x: -577.892123413086
-        y: -224.60953734636303
+        y: -223.60953734636303
       id: Get User's Country-ins
       inputConfig: {}
       part:
@@ -130,7 +131,7 @@ part:
         color: "#f15bb5"
     - pos:
         x: -636.9743029785157
-        y: -85.37110525846481
+        y: -84.37110525846481
       id: Get Country Name And Capital-ins
       inputConfig: {}
       visibleOutputs:
@@ -165,28 +166,6 @@ part:
               - body
               - data
             partId: POST Request
-          - pos:
-              x: -559.7825415039063
-              y: 194.45557312011715
-            id: Dot-286
-            inputConfig:
-              key:
-                mode: static
-                value: data.name
-            visibleInputs:
-              - obj
-            partId: Dot
-          - pos:
-              x: -400.3785717773437
-              y: 198.4349559259415
-            id: Dot-822
-            inputConfig:
-              key:
-                mode: static
-                value: data.capital
-            visibleInputs:
-              - obj
-            partId: Dot
         inputsPosition:
           body:
             x: -333.75691140339336
@@ -205,30 +184,6 @@ part:
             x: -537.398329068569
             y: 348.1765805072715
         connections:
-          - from:
-              insId: Dot-286
-              pinId: value
-            to:
-              insId: __this
-              pinId: name
-          - from:
-              insId: Dot-822
-              pinId: value
-            to:
-              insId: __this
-              pinId: capital
-          - from:
-              insId: POST Request-624
-              pinId: data
-            to:
-              insId: Dot-822
-              pinId: obj
-          - from:
-              insId: POST Request-624
-              pinId: data
-            to:
-              insId: Dot-286
-              pinId: obj
           - from:
               pinId: body
               insId: __this
@@ -363,17 +318,6 @@ part:
               templateType: value
               completionOutputs:
                 - r
-          - id: Dot-710
-            partId: Dot
-            inputConfig:
-              key:
-                mode: static
-                value: data.populationCounts.0.value
-            pos:
-              x: -206.3246728515625
-              y: 483.9902026367188
-            visibleInputs:
-              - obj
         inputsPosition:
           city:
             x: -59.242744173605615
@@ -395,18 +339,6 @@ part:
             to:
               insId: POST Request-775
               pinId: data
-          - from:
-              insId: POST Request-775
-              pinId: data
-            to:
-              insId: Dot-710
-              pinId: obj
-          - from:
-              insId: Dot-710
-              pinId: value
-            to:
-              pinId: value
-              insId: __this
         completionOutputs:
           - value
       style:

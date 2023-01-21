@@ -29,7 +29,7 @@
     "webpack-loader.js"
   ],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "@flyde/core": "^0.1.12",
     "@flyde/remote-debugger": "^0.2.11",

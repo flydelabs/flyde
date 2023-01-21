@@ -14,7 +14,7 @@
     "storybook": "start-storybook"
   },
   "author": "",
-  "license": "ISC",
+  "license": "agpl-3.0",
   "dependencies": {
     "@blueprintjs/core": "^3.11.0",
     "@blueprintjs/popover2": "^0.3.1",

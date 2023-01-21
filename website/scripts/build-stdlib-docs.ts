@@ -13,29 +13,33 @@ const groupedData = Object.values(data).reduce((acc, part) => {
     acc[ns] = [];
   }
 
+  if (!part.inputs || !part.outputs) {
+    console.error({part});
+    throw new Error("42424");
+  }
+
   acc[ns].push(part);
   return acc;
 }, {});
 
-console.log({groupedData: Object.keys(groupedData).length});
-
 const entries = Object.entries<CodePart[]>(groupedData);
-console.log(entries);
-
-console.log(entries.map);
-
-
 
 const groupAndTables = entries.map(([ns, parts]) => {
 
   const rows = [
     ["Id", "Description", "Inputs", "Outputs"],
     ...parts.map((part) => {
+
+      if (!part.inputs || !part.outputs) {
+        console.error({part});
+        throw new Error("Part is missing inputs or outputs");
+      }
+
       return [
         `**${part.id}**`,
         part.description,
-        Object.entries(part.inputs).map(([name, obj]) => `<div><strong>${name}</strong>: ${obj.description} (${obj.mode ?? 'required'}) ${obj.defaultValue ? `Default value - ${obj.defaultValue}` : ''}</div>`).join("") ?? '*None*',
-        Object.entries(part.outputs).map(([name, obj]) => `<div><strong>${name}</strong>: ${obj.description}</div>`).join("") ?? '*None*',
+        Object.entries(part.inputs).map(([name, obj]) => `<div><strong>${name}</strong>: ${obj.description} (${obj.mode ?? 'required'}) ${obj.defaultValue ? `Default value - ${obj.defaultValue}` : ''}</div>`).join("") || '*None*',
+        Object.entries(part.outputs).map(([name, obj]) => `<div><strong>${name}</strong>: ${obj.description}</div>`).join("") || '*None*',
       ];
     })
   ];
@@ -52,4 +56,5 @@ const groupAndTables = entries.map(([ns, parts]) => {
   );
 
   writeFileSync("docs/StdLib/index.md", contents);
+  console.log(`Done writing docs/StdLib/index.md`);
 })();

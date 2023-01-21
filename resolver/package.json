@@ -16,7 +16,7 @@
     "README.md"
   ],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "@flyde/core": "^0.1.12",
     "@types/cuid": "^1.3.0",

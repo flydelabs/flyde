@@ -2,6 +2,7 @@
   "name": "website",
   "version": "1.0.0",
   "private": true,
+  "license": "MIT",
   "scripts": {
     "docusaurus": "docusaurus",
     "start:docs": "concurrently 'yarn build && yarn serve' 'watch -p \"src/**/*\" -p \"../core/src/**/*\" -c \"yarn build && yarn serve\"'",

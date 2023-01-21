@@ -17,6 +17,7 @@ import { InputPin, InputPinMap, OutputPin, OutputPinMap } from "./part-pins";
 export * from "./part-instance";
 export * from "./part-pins";
 export * from "./pin-config";
+export * from "./partFromSimpleFunction";
 
 export type PartState = Map<string, any>;
 
@@ -123,7 +124,7 @@ export interface BasePart {
    * @example
    * A "Delay" part has 2 inputs: value and a time. In many cases, the `time` input will be provided statically.
    * It can be convenient to show the time input in the instance itself so it shows "Delay 500ms" instead of "Delay" (in the case 500 is the static value of `time`)
-   * 
+   *
    * ```
    * {
    *   ...,
@@ -144,7 +145,7 @@ export interface CodePart extends BasePart {
   /**
    * This function will run as soon as the part's inputs are satisfied.
    * It has access to the parts inputs values, and output pins. See {@link PartFn} for more information.
-   * 
+   *
    */
   fn: PartFn;
   customView?: CustomPartViewFn;
@@ -204,7 +205,9 @@ export type PartDefinitionWithModuleMetaData = PartDefinition &
   PartModuleMetaData;
 
 export const isCodePart = (p: Part | PartDefinition): p is CodePart => {
-  return p.id && p.inputs && p.outputs && typeof (p as CodePart).fn === 'function';
+  return (
+    p.id && p.inputs && p.outputs && typeof (p as CodePart).fn === "function"
+  );
 };
 
 export const isVisualPart = (p: Part | PartDefinition): p is VisualPart => {

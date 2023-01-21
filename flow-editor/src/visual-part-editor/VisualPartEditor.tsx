@@ -38,6 +38,7 @@ import {
   getPartOutputs,
   Pos,
   getPartInputs,
+  createInsId,
 } from "@flyde/core";
 import { InstanceView } from "./instance-view/InstanceView";
 import {
@@ -2033,7 +2034,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             }
             case "new-floating": {
               const ins = inlinePartInstance(
-                cuid(),
+                createInsId(newPart),
                 newPart,
                 {},
                 inlineCodeTarget.pos
@@ -2052,7 +2053,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
                 throw new Error(`Impossible state`);
               }
               const newIns = inlinePartInstance(
-                cuid(),
+                createInsId(newPart),
                 newPart,
                 {},
                 vAdd(existingIns.pos, { x: -50, y: 150 })

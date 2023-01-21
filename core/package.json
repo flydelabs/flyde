@@ -17,7 +17,7 @@
     "build": "rm -rf dist && (tsc -p . || true)"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "debug": "^4.3.2",
     "dependency-graph": "^0.8.0",

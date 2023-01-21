@@ -1,12 +1,13 @@
 import { CodePart } from "@flyde/core";
-import { partFromSimpleFunction } from "./utils/partFromSimpleFunction";
+import { partFromSimpleFunction } from "@flyde/core";
 
 const PubSub = require("pubsub-js");
 
-export const namespace = "Control Flow";
+const namespace = "Control Flow";
 
 export const LimitTimes: CodePart = {
-  id: "LimitTimes",
+  id: "Limit Times",
+  namespace,
   description: "Item will be emitted until the limit is reached",
   inputs: {
     item: { mode: "required", description: "The item to emit" },
@@ -43,6 +44,7 @@ export const LimitTimes: CodePart = {
 
 export const RoundRobin3: CodePart = {
   id: "Round Robin 3",
+  namespace,
   description:
     "Item will be emitted to one of the three outputs in a round robin fashion",
   inputs: { value: { mode: "required", description: "The value to emit" } },
@@ -77,6 +79,7 @@ export const RoundRobin3: CodePart = {
 };
 
 export const RoundRobin2: CodePart = {
+  namespace,
   id: "Round Robin 2",
   description:
     "Item will be emitted to one of the 2 outputs in a round robin fashion",
@@ -109,6 +112,7 @@ export const RoundRobin2: CodePart = {
 
 export const RoundRobin4: CodePart = {
   id: "Round Robin 4",
+  namespace,
   description:
     "Item will be emitted to one of the 4 outputs in a round robin fashion",
   inputs: { value: { mode: "required", description: "The value to emit" } },
@@ -148,6 +152,7 @@ export const RoundRobin4: CodePart = {
 
 export const Publish: CodePart = {
   id: "Publish",
+  namespace,
   description:
     "Publishes a value by a key to all listeners in the current flow. Use 'Subscribe' to listen to events.",
   inputs: {
@@ -167,6 +172,7 @@ export const Publish: CodePart = {
 
 export const Subscribe: CodePart = {
   id: "Subscribe",
+  namespace,
   description:
     "Subscribes to a value published by a key. Use 'Publish' to publish values.",
   inputs: {
@@ -195,6 +201,7 @@ export const Subscribe: CodePart = {
 };
 
 export const BooleanSplit: CodePart = {
+  namespace,
   id: "Boolean Split",
   description: "Splits a boolean value into two outputs",
   inputs: {
@@ -224,172 +231,272 @@ export const BooleanSplit: CodePart = {
 };
 
 export const EmitOnTrigger: CodePart = {
-    id: "Emit on Trigger",
-    description: "Emits the value when the trigger input receives any value",
-    inputs: {
-        value: { mode: "required", description: "The value to emit" },
-        trigger: { mode: "required", description: "The trigger to emit the value" },
-    },
-    outputs: {
-        result: { description: "The value emitted" },
-    },
-    fn: function (inputs, outputs, adv) {
-        const { result } = outputs;
-        const { value, trigger } = inputs;
-        if (trigger !== undefined) {
-            result.next(value);
-        }
+  namespace,
+  id: "Emit on Trigger",
+  description: "Emits the value when the trigger input receives any value",
+  inputs: {
+    value: { mode: "required", description: "The value to emit" },
+    trigger: { mode: "required", description: "The trigger to emit the value" },
+  },
+  outputs: {
+    result: { description: "The value emitted" },
+  },
+  fn: function (inputs, outputs, adv) {
+    const { result } = outputs;
+    const { value, trigger } = inputs;
+    if (trigger !== undefined) {
+      result.next(value);
     }
-}
+  },
+};
 
 export const Switch3: CodePart = {
-    id: "Switch 3",
-    description: "Switches between 3 outputs based on the input value. If the value is not equal to any of the cases, the default output is used.",
-    inputs: {
-        value: { mode: "required", description: "The value to switch on" },
-        firstCase: { mode: "required", description: "The value to switch on for the first output" },
-        secondCase: { mode: "required", description: "The value to switch on for the second output" },
-        thirdCase: { mode: "required", description: "The value to switch on for the third output" },
-        outputValue: { mode: "required-if-connected", description: "The value to emit on the output. Defaults to 'value'" }, 
+  namespace,
+  id: "Switch 3",
+  description:
+    "Switches between 3 outputs based on the input value. If the value is not equal to any of the cases, the default output is used.",
+  inputs: {
+    value: { mode: "required", description: "The value to switch on" },
+    firstCase: {
+      mode: "required",
+      description: "The value to switch on for the first output",
     },
-    outputs: {
-        first: { description: "The value emitted if the input value is equal to the first case" },
-        second: { description: "The value emitted if the input value is equal to the second case" },
-        third: { description: "The value emitted if the input value is equal to the third case" },
-        default: { description: "The value emitted if the input value is not equal to any of the cases" },
+    secondCase: {
+      mode: "required",
+      description: "The value to switch on for the second output",
     },
-    fn: function (inputs, outputs, adv) {
-        const { first, second, third, default: defaultOutput, outputValue } = outputs;
-        const { value, firstCase, secondCase, thirdCase } = inputs;
-        if (value === firstCase) {
-            first.next(outputValue ?? value);
-        } else if (value === secondCase) {
-            second.next(outputValue ?? value);
-        } else if (value === thirdCase) {
-            third.next(outputValue ?? value);
-        } else {
-            defaultOutput.next(outputValue ?? value);
-        }
+    thirdCase: {
+      mode: "required",
+      description: "The value to switch on for the third output",
+    },
+    outputValue: {
+      mode: "required-if-connected",
+      description: "The value to emit on the output. Defaults to 'value'",
+    },
+  },
+  outputs: {
+    first: {
+      description:
+        "The value emitted if the input value is equal to the first case",
+    },
+    second: {
+      description:
+        "The value emitted if the input value is equal to the second case",
+    },
+    third: {
+      description:
+        "The value emitted if the input value is equal to the third case",
+    },
+    default: {
+      description:
+        "The value emitted if the input value is not equal to any of the cases",
+    },
+  },
+  fn: function (inputs, outputs, adv) {
+    const {
+      first,
+      second,
+      third,
+      default: defaultOutput,
+      outputValue,
+    } = outputs;
+    const { value, firstCase, secondCase, thirdCase } = inputs;
+    if (value === firstCase) {
+      first.next(outputValue ?? value);
+    } else if (value === secondCase) {
+      second.next(outputValue ?? value);
+    } else if (value === thirdCase) {
+      third.next(outputValue ?? value);
+    } else {
+      defaultOutput.next(outputValue ?? value);
     }
+  },
 };
 
 export const Switch2: CodePart = {
-    id: "Switch 2",
-    description: "Switches between 2 outputs based on the input value. If the value is not equal to any of the cases, the default output is used.",
-    inputs: {
-        value: { mode: "required", description: "The value to switch on" },
-        firstCase: { mode: "required", description: "The value to switch on for the first output" },
-        secondCase: { mode: "required", description: "The value to switch on for the second output" },
-        outputValue: { mode: "required-if-connected", description: "The value to emit on the output. Defaults to 'value'" },
+  id: "Switch 2",
+  description:
+    "Switches between 2 outputs based on the input value. If the value is not equal to any of the cases, the default output is used.",
+  namespace,
+  inputs: {
+    value: { mode: "required", description: "The value to switch on" },
+    firstCase: {
+      mode: "required",
+      description: "The value to switch on for the first output",
     },
-    outputs: {
-        first: { description: "The value emitted if the input value is equal to the first case" },
-        second: { description: "The value emitted if the input value is equal to the second case" },
-        default: { description: "The value emitted if the input value is not equal to any of the cases" },
+    secondCase: {
+      mode: "required",
+      description: "The value to switch on for the second output",
     },
-    fn: function (inputs, outputs, adv) {
-        const { first, second, default: defaultOutput, outputValue } = outputs;
-        const { value, firstCase, secondCase, defaultCase } = inputs;
-        if (value === firstCase) {
-            first.next(outputValue ?? value);
-        } else if (value === secondCase) {
-            second.next(outputValue ?? value);
-        } else {
-            defaultOutput.next(outputValue ?? value);
-        }
+    outputValue: {
+      mode: "required-if-connected",
+      description: "The value to emit on the output. Defaults to 'value'",
+    },
+  },
+  outputs: {
+    first: {
+      description:
+        "The value emitted if the input value is equal to the first case",
+    },
+    second: {
+      description:
+        "The value emitted if the input value is equal to the second case",
+    },
+    default: {
+      description:
+        "The value emitted if the input value is not equal to any of the cases",
+    },
+  },
+  fn: function (inputs, outputs, adv) {
+    const { first, second, default: defaultOutput, outputValue } = outputs;
+    const { value, firstCase, secondCase, defaultCase } = inputs;
+    if (value === firstCase) {
+      first.next(outputValue ?? value);
+    } else if (value === secondCase) {
+      second.next(outputValue ?? value);
+    } else {
+      defaultOutput.next(outputValue ?? value);
     }
+  },
 };
 
 export const Switch4: CodePart = {
-    id: "Switch 4",
-    description: "Switches between 4 outputs based on the input value. If the value is not equal to any of the cases, the default output is used.",
-    inputs: {
-        value: { mode: "required", description: "The value to switch on" },
-        firstCase: { mode: "required", description: "The value to switch on for the first output" },
-        secondCase: { mode: "required", description: "The value to switch on for the second output" },
-        thirdCase: { mode: "required", description: "The value to switch on for the third output" },
-        fourthCase: { mode: "required", description: "The value to switch on for the fourth output" },
-        outputValue: { mode: "required-if-connected", description: "The value to emit on the output. Defaults to 'value'" },
+  id: "Switch 4",
+  description:
+    "Switches between 4 outputs based on the input value. If the value is not equal to any of the cases, the default output is used.",
+  namespace,
+  inputs: {
+    value: { mode: "required", description: "The value to switch on" },
+    firstCase: {
+      mode: "required",
+      description: "The value to switch on for the first output",
     },
-    outputs: {
-        first: { description: "The value emitted if the input value is equal to the first case" },
-        second: { description: "The value emitted if the input value is equal to the second case" },
-        third: { description: "The value emitted if the input value is equal to the third case" },
-        fourth: { description: "The value emitted if the input value is equal to the fourth case" },
-        default: { description: "The value emitted if the input value is not equal to any of the cases" },
+    secondCase: {
+      mode: "required",
+      description: "The value to switch on for the second output",
     },
-    fn: function (inputs, outputs, adv) {
-        const { first, second, third, fourth, default: defaultOutput, outputValue } = outputs;
-        const { value, firstCase, secondCase, thirdCase, fourthCase, defaultCase } = inputs;
-        if (value === firstCase) {
-            first.next(outputValue ?? value);
-        } else if (value === secondCase) {
-            second.next(outputValue ?? value);
-        } else if (value === thirdCase) {
-            third.next(outputValue ?? value);
-        } else if (value === fourthCase) {
-            fourth.next(outputValue ?? value);
-        } else {
-            defaultOutput.next(outputValue ?? value);
-        }
+    thirdCase: {
+      mode: "required",
+      description: "The value to switch on for the third output",
+    },
+    fourthCase: {
+      mode: "required",
+      description: "The value to switch on for the fourth output",
+    },
+    outputValue: {
+      mode: "required-if-connected",
+      description: "The value to emit on the output. Defaults to 'value'",
+    },
+  },
+  outputs: {
+    first: {
+      description:
+        "The value emitted if the input value is equal to the first case",
+    },
+    second: {
+      description:
+        "The value emitted if the input value is equal to the second case",
+    },
+    third: {
+      description:
+        "The value emitted if the input value is equal to the third case",
+    },
+    fourth: {
+      description:
+        "The value emitted if the input value is equal to the fourth case",
+    },
+    default: {
+      description:
+        "The value emitted if the input value is not equal to any of the cases",
+    },
+  },
+  fn: function (inputs, outputs, adv) {
+    const {
+      first,
+      second,
+      third,
+      fourth,
+      default: defaultOutput,
+      outputValue,
+    } = outputs;
+    const { value, firstCase, secondCase, thirdCase, fourthCase, defaultCase } =
+      inputs;
+    if (value === firstCase) {
+      first.next(outputValue ?? value);
+    } else if (value === secondCase) {
+      second.next(outputValue ?? value);
+    } else if (value === thirdCase) {
+      third.next(outputValue ?? value);
+    } else if (value === fourthCase) {
+      fourth.next(outputValue ?? value);
+    } else {
+      defaultOutput.next(outputValue ?? value);
     }
+  },
 };
 
-
 export const Delay = partFromSimpleFunction({
-    id: "Delay",
-    icon: "fa-clock",
-    namespace,
-    description: "Delays a value",
-    inputs: [
-        { name: "value", description: "Value to delay" },
-        { name: "delay", description: "Delay in milliseconds" },
-    ],
-    output: { name: "delayedValue", description: "Delayed value" },
-    fn: (value, delay) => new Promise((resolve) => setTimeout(() => resolve(value), delay)),
+  id: "Delay",
+  icon: "fa-clock",
+  namespace,
+  description: "Delays a value",
+  inputs: [
+    { name: "value", description: "Value to delay" },
+    { name: "delay", description: "Delay in milliseconds" },
+  ],
+  output: { name: "delayedValue", description: "Delayed value" },
+  fn: (value, delay) =>
+    new Promise((resolve) => setTimeout(() => resolve(value), delay)),
 });
 
 export const Interval: CodePart = {
-    id: "Interval",
-    defaultStyle: {
-        icon: "fa-clock",
-    },
-    namespace,
-    description: "Emits a value every interval",
-    inputs: {
-        value: { description: "Value to emit" },
-        interval: {description: "Interval in milliseconds" },
-    },
-    reactiveInputs: ['value', 'interval'],
-    outputs: {
-        value: { description: "Emitted value" },
-    },
-    completionOutputs: [],
-    fn: (inputs, outputs, adv) => {
-        
-        if (adv.state.get('timer')) {
-            clearInterval(adv.state.get('timer'));
-        }
+  id: "Interval",
+  namespace,
+  defaultStyle: {
+    icon: "fa-clock",
+  },
+  description: "Emits a value every interval",
+  inputs: {
+    value: { description: "Value to emit" },
+    interval: { description: "Interval in milliseconds" },
+  },
+  reactiveInputs: ["value", "interval"],
+  outputs: {
+    value: { description: "Emitted value" },
+  },
+  completionOutputs: [],
+  fn: (inputs, outputs, adv) => {
+    if (adv.state.get("timer")) {
+      clearInterval(adv.state.get("timer"));
+    }
 
-        const timer = setInterval(() => {
-            outputs.value.next(inputs.value);
-        }, inputs.interval);
+    const timer = setInterval(() => {
+      outputs.value.next(inputs.value);
+    }, inputs.interval);
 
-        adv.state.set('timer', timer);
+    adv.state.set("timer", timer);
 
-        adv.onCleanup(() => {
-            clearInterval(timer);
-        });
-    },
+    adv.onCleanup(() => {
+      clearInterval(timer);
+    });
+  },
 };
 
-export const Debounce = {
-   id: "Debounce",
+export const Debounce: CodePart = {
+  id: "Debounce",
+  namespace,
   inputs: {
-    value: { mode: "required", type: "any", description: "The data that needs to be debounced"},
-    wait: { mode: "required", type: "any", defaultValue: 250, description: "Time (in millis) to wait until 'value' is emitted"},
+    value: {
+      mode: "required",
+      description: "The data that needs to be debounced",
+    },
+    wait: {
+      mode: "required",
+      defaultValue: 250,
+      description: "Time (in millis) to wait until 'value' is emitted",
+    },
   },
-  outputs: { result: { type: "any", description: 'The debounced value' } },
+  outputs: { result: { description: "The debounced value" } },
   completionOutputs: ["result"],
   reactiveInputs: ["value"],
   description:
@@ -423,13 +530,21 @@ export class ThrottleError extends Error {
   }
 }
 
-export const Throttle = {
-      id: "Throttle",
+export const Throttle: CodePart = {
+  id: "Throttle",
+  namespace,
   inputs: {
-    value: { mode: "required", type: "any", description: "The data that needs to be throttled"},
-    wait: { mode: "required", type: "any", defaultValue: 250, description: "Time (in millis) to wait until 'value' is emitted"},
+    value: {
+      mode: "required",
+      description: "The data that needs to be throttled",
+    },
+    wait: {
+      mode: "required",
+      defaultValue: 250,
+      description: "Time (in millis) to wait until 'value' is emitted",
+    },
   },
-  outputs: { result: { type: "any", description: 'The throttled value' } },
+  outputs: { result: { description: "The throttled value" } },
   completionOutputs: ["result"],
   reactiveInputs: ["value"],
   description:
@@ -440,14 +555,27 @@ export const Throttle = {
 
     const timer = adv.state.get("timer");
     if (timer) {
-        adv.onError(new ThrottleError(value));
+      adv.onError(new ThrottleError(value));
       return;
     } else {
-        result.next(value);
-        const newTimer = setTimeout(() => {
-          adv.state.set("timer", null);
-        }, wait);
-        adv.state.set("timer", newTimer);
+      result.next(value);
+      const newTimer = setTimeout(() => {
+        adv.state.set("timer", null);
+      }, wait);
+      adv.state.set("timer", newTimer);
     }
   },
 };
+
+export const Equals = partFromSimpleFunction({
+  id: "Equals",
+  namespace,
+  description:
+    "Emits true if two values are equal (=== equality). Otherwise emits false.",
+  inputs: [
+    { name: "a", description: "First value" },
+    { name: "b", description: "Second value" },
+  ],
+  output: { name: "result", description: "true if a is equal to b" },
+  fn: (a, b) => a === b,
+});

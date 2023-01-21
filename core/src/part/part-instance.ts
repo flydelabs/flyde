@@ -1,4 +1,5 @@
 import { InputPinsConfig, Part, PartDefinition, PartStyle, Pos } from "..";
+import {slug} from 'cuid';
 
 export interface PartInstanceConfig {
   inputConfig: InputPinsConfig;
@@ -64,3 +65,7 @@ export const PartInstance = (
   inputConfig: config || {},
   pos: pos || { x: 0, y: 0 },
 });
+
+export const createInsId = (part: PartDefinition) => {
+  return `${part.id}-${slug()}`;
+}

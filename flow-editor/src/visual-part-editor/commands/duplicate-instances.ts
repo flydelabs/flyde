@@ -1,4 +1,4 @@
-import { VisualPart } from "@flyde/core";
+import { createInsId, VisualPart } from "@flyde/core";
 import cuid from "cuid";
 import produce from "immer";
 
@@ -22,7 +22,7 @@ export const handleDuplicateSelectedEditorCommand = (
         const newIns = {
           ...ins,
           pos: { x: pos.x + 20, y: pos.y + 20 },
-          id: cuid(),
+          id: createInsId(newPart),
         };
         instances.push(newIns);
         newInstances.push(newIns.id);

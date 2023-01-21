@@ -16,7 +16,6 @@
     "release": "yarn bump-all-patch && yarn publish-all"
   },
   "author": "",
-  "license": "ISC",
   "dependencies": {
     "@flyde/runtime": "workspace:^",
     "concurrently": "^4.1.0",

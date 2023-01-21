@@ -1,5 +1,5 @@
 import { EditorPorts } from "@flyde/flow-editor";
-import cuid from "cuid";
+import {slug} from "cuid";
 
 export type EditorPortType = keyof EditorPorts;
 
@@ -40,7 +40,7 @@ export const postMessageCallback = (
   type: string,
   params: any
 ): Promise<any> => {
-  const requestId = cuid();
+  const requestId = slug();
   const vscode = safelyAcquireApi();
   vscode.postMessage({ type, params, requestId, source: "app" }, "*");
   return new Promise((res) => {

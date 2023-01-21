@@ -16,7 +16,7 @@
     "README.md"
   ],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.8.4",
     "@flyde/core": "^0.1.12",

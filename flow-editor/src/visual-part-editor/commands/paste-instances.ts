@@ -1,6 +1,5 @@
-import { VisualPart, Pos } from "@flyde/core";
+import { VisualPart, Pos, createInsId } from "@flyde/core";
 import produce from "immer";
-import cuid from "cuid";
 import { ClipboardData } from "../VisualPartEditor";
 
 export const pasteInstancesCommand = (
@@ -12,7 +11,7 @@ export const pasteInstancesCommand = (
     return {
       ...ins,
       pos: mousePos,
-      id: cuid(),
+      id: createInsId(newPart),
     };
   });
 
