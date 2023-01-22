@@ -14,7 +14,7 @@ assert(
 // Create a Client instance with our bot token.
 const bot = new eris.Client(process.env.BOT_TOKEN);
 (async () => {
-  const execute = loadFlow("src/Main.flyde");
+  const execute = loadFlow("src/Logic.flyde");
 
   execute({}, { extraContext: { bot } });
 

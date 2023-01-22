@@ -1,18 +1,20 @@
 imports:
   "@flyde/stdlib":
     - ListFrom2
-    - Dot
+    - Get Attribute
     - Switch
     - Round
     - Boolean Split
     - Equals
-    - PropertyEquals
+    - Property Equals
   ./tasks/AddTask.flyde.ts:
     - Add Task
   ./tasks/GetTasks.flyde.ts:
     - Get Tasks
-  Bot.flyde.ts:
+  Discord.flyde.ts:
     - Discord Bot
+  "@flyde/runtime":
+    - Interval
 part:
   instances:
     - pos:
@@ -93,11 +95,11 @@ part:
                 value: data.options.0
             visibleInputs:
               - obj
-            partId: Dot
+            partId: Get Attribute
           - pos:
               x: -509.24797119140624
               y: -333.75165771484376
-            id: PropertyEquals-567
+            id: Property-Equals-567
             inputConfig:
               key:
                 mode: static
@@ -105,7 +107,7 @@ part:
               compare:
                 mode: static
                 value: list
-            partId: PropertyEquals
+            partId: Property Equals
           - pos:
               x: -286.7098242187499
               y: -159.91498779296876
@@ -117,7 +119,7 @@ part:
               compare:
                 mode: static
                 value: add
-            partId: PropertyEquals
+            partId: Property Equals
         inputsPosition:
           obj:
             x: -459.99183993828063
@@ -138,37 +140,7 @@ part:
           add:
             x: -280.2038449602285
             y: 79.68157116447972
-        connections:
-          - from:
-              insId: Pick-693
-              pinId: r
-            to:
-              insId: PropertyEquals-567
-              pinId: obj
-          - from:
-              insId: PropertyEquals-567
-              pinId: notEquals
-            to:
-              insId: cl9193aqh000u4666f7469ktv
-              pinId: obj
-          - from:
-              insId: __this
-              pinId: data
-            to:
-              insId: Pick-693
-              pinId: obj
-          - from:
-              insId: cl9193aqh000u4666f7469ktv
-              pinId: equals
-            to:
-              insId: __this
-              pinId: add
-          - from:
-              insId: PropertyEquals-567
-              pinId: equals
-            to:
-              insId: __this
-              pinId: list
+        connections: []
         completionOutputs:
           - list
           - add
@@ -186,7 +158,7 @@ part:
         color: "#f15bb5"
     - pos:
         x: -494.2280767822266
-        y: -709.5029061889649
+        y: -710.5029061889649
       id: Command Router-ins
       inputConfig: {}
       visibleOutputs:
@@ -209,9 +181,9 @@ part:
             optional: false
         instances:
           - pos:
-              x: -291.08235595703127
-              y: -532.7571630859375
-            id: PropertyEquals-828
+              x: -336.7831005859375
+              y: -586.1363745117187
+            id: Property-Equals-828
             inputConfig:
               key:
                 mode: static
@@ -219,14 +191,24 @@ part:
               compare:
                 mode: static
                 value: tasks
-            partId: PropertyEquals
+              attribute:
+                mode: static
+                value: data.name
+              value:
+                mode: static
+                value: tasks
+            partId: Property Equals
+            visibleOutputs:
+              - "true"
+              - "false"
+              - __error
         inputsPosition:
           obj:
             x: -275.5959656977121
             y: -638.8073894694614
           interaction:
-            x: -275.5959656977121
-            y: -638.8073894694614
+            x: -290.26203594550844
+            y: -716.327990544578
         outputsPosition:
           equals:
             x: -284.80696343789106
@@ -239,20 +221,20 @@ part:
             y: -313.77749701341213
         connections:
           - from:
-              insId: __this
               pinId: interaction
-            to:
-              insId: PropertyEquals-828
-              pinId: obj
-          - from:
-              insId: PropertyEquals-828
-              pinId: equals
-            to:
               insId: __this
-              pinId: tasks
+            to:
+              insId: Property-Equals-828
+              pinId: object
           - from:
-              insId: PropertyEquals-828
-              pinId: notEquals
+              insId: Property-Equals-828
+              pinId: "true"
+            to:
+              pinId: tasks
+              insId: __this
+          - from:
+              insId: Property-Equals-828
+              pinId: "false"
             to:
               pinId: other
               insId: __this
@@ -428,8 +410,8 @@ part:
       style:
         color: "#00f5d4"
     - pos:
-        x: -332.56988525390625
-        y: -405.06505615234374
+        x: -369.8402099609375
+        y: -410.20763427734374
       id: cl9483fov000j4666i5npj8p2
       inputConfig:
         name:
@@ -489,7 +471,7 @@ part:
               key:
                 mode: static
                 value: value
-            partId: Dot
+            partId: Get Attribute
         inputsPosition:
           cmd:
             x: -171.10925114704733
@@ -531,8 +513,8 @@ part:
         defaultStyle:
           size: small
     - pos:
-        x: -135.8602294921875
-        y: -413.2389453125
+        x: -162.8629150390625
+        y: -427.25304443359374
       id: cl9483sde000u46661deearov
       inputConfig:
         name:
@@ -592,7 +574,7 @@ part:
               key:
                 mode: static
                 value: value
-            partId: Dot
+            partId: Get Attribute
         inputsPosition:
           cmd:
             x: -175.72568778754993
@@ -634,8 +616,8 @@ part:
       style:
         size: small
     - pos:
-        x: -250.94019027709965
-        y: -686.2005346298217
+        x: -201.1461839294434
+        y: -716.902988243103
       id: Ping Pong Handler-ins
       inputConfig: {}
       part:
@@ -656,7 +638,7 @@ part:
                 value: content
             visibleOutputs:
               - value
-            partId: Dot
+            partId: Get Attribute
             visibleInputs:
               - obj
           - pos:
@@ -697,7 +679,7 @@ part:
               - channelId
               - __trigger
           - id: Dot-213
-            partId: Dot
+            partId: Get Attribute
             inputConfig:
               key:
                 mode: static
@@ -717,35 +699,11 @@ part:
         outputsPosition: {}
         connections:
           - from:
-              insId: Dot-19
-              pinId: value
-            to:
-              insId: Equals-380
-              pinId: val
-          - from:
               insId: Dot-213
               pinId: value
             to:
               insId: cl948hivp00004666tlhc3b4c
               pinId: channelId
-          - from:
-              insId: Equals-380
-              pinId: r
-            to:
-              insId: cl948hivp00004666tlhc3b4c
-              pinId: __trigger
-          - from:
-              insId: __this
-              pinId: message
-            to:
-              insId: Dot-19
-              pinId: obj
-          - from:
-              insId: __this
-              pinId: message
-            to:
-              insId: Dot-213
-              pinId: obj
         completionOutputs: []
       style:
         icon: table-tennis-paddle-ball

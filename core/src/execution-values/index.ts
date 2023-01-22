@@ -138,7 +138,7 @@ export const isPartStateValid = (
 
   const requiredInputs = keys(part.inputs).filter((k) => {
     const { mode } = part.inputs[k];
-    return mode === "required";
+    return !mode || mode === "required";
   });
 
   if (connectedKeys.includes(TRIGGER_PIN_ID)) {

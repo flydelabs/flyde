@@ -1,4 +1,4 @@
-import { partFromSimpleFunction } from "@flyde/core";
+import { CodePart, partFromSimpleFunction } from "@flyde/core";
 
 const namespace = "Objects";
 
@@ -141,3 +141,32 @@ export const DeleteAttribute = partFromSimpleFunction({
     return object;
   },
 });
+
+export const PropertyEquals: CodePart = {
+  id: "Property Equals",
+  namespace,
+  defaultStyle: {
+    icon: 'fa-equals'
+  },
+  description: "Emits the object to the \"true\" output if an object's property equals a value, otherwise emits to the \"false\" output",
+  inputs: {
+    object: { description: "Object to check property of" },
+    attribute: { description: "Attribute to check" },
+    value: { description: "Value to check attribute against" },
+  },
+  outputs: {
+    true: { description: "Emitted if the attribute equals the value" },
+    false: { description: "Emitted if the attribute does not equal the value" },
+  },
+  customViewCode: `<% if (inputs.attribute) { %> "<%- inputs.attribute %>" equals "<%- inputs.value %>"<% } else { %> Property Equals <% } %>`,
+  fn: (inputs, outputs) => {
+    // get attribute from object while supporting dot notation
+    const value = inputs.attribute.split(".").reduce((obj, i) => obj[i], inputs.object);
+    if (value === inputs.value) {
+      outputs.true.next(inputs.object);
+    } else {
+      outputs.false.next(inputs.object);
+    }
+  }
+    
+}

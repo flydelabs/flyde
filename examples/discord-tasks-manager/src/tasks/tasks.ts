@@ -1,4 +1,4 @@
-import loki from "lokijs";
+import Loki from "lokijs";
 
 const DB_COLLECTION_NAME = "tasks";
 const DB_AUTOSAVE_INTERVAL = 4000;
@@ -9,9 +9,9 @@ export type Task = {
 };
 
 export const createTasksService = async () => {
-  let collection: loki.Collection;
+  let collection: Loki.Collection;
 
-  const db = new loki("items.db", {
+  const db = new Loki("items.db", {
     autoload: true,
     autosave: true,
     autoloadCallback: () => {

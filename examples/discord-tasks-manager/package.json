@@ -2,7 +2,7 @@
   "name": "discord-tasks-manager",
   "packageManager": "yarn@3.2.0",
   "scripts": {
-    "dev": "ts-node-dev --watch src/**/*.flyde src/index.ts",
+    "start": "ts-node-dev --watch src/**/*.flyde src/index.ts",
     "build": "tsc -p .",
     "postinstall": "npm link @flyde/stdlib @flyde/runtime npm link @flyde/core @flyde/resolver"
   },

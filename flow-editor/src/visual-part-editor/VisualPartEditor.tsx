@@ -1771,6 +1771,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             parentBoardPos: boardPos,
             onExtractInlinePart: props.onExtractInlinePart,
             onImportPart: props.onImportPart,
+            queuedInputsData: props.queuedInputsData,
           };
         } else {
           return;

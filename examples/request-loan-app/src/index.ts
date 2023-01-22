@@ -27,4 +27,4 @@ app.post("/loan", async (req, res) => {
 });
 
 app.listen(PORT);
-console.log(`Example request loan app listening on port ${PORT}`);
+console.log(`Example request loan app listening on port ${PORT} - http://localhost:${PORT}`);
