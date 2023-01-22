@@ -165,7 +165,8 @@ export const Publish: CodePart = {
   outputs: {},
   fn: function (inputs, outputs, adv) {
     // magic here
-    const nsKey = `${adv.insId}__${inputs.key}`;
+    const nsKey = `${adv.parentInsId}__${inputs.key}`;
+  
     PubSub.publish(nsKey, inputs.value);
   },
 };
@@ -180,13 +181,14 @@ export const Subscribe: CodePart = {
       mode: "required",
       description: "A key to use to subscribe to values",
     },
-    initial: { mode: "required-if-connected" },
+    initial: { mode: "required-if-connected", description: "If passed will be published has the first value" },
   },
+  completionOutputs: [],
   outputs: { value: { description: "The value published by the key" } },
   fn: function (inputs, outputs, adv) {
     const { value } = outputs;
-    const nsKey = `${adv.insId}__${inputs.key}`;
-    const token = PubSub.subscribe(nsKey, (msg, data) => {
+    const nsKey = `${adv.parentInsId}__${inputs.key}`;
+    const token = PubSub.subscribe(nsKey, (_, data) => {
       value.next(data);
     });
 
@@ -567,8 +569,8 @@ export const Throttle: CodePart = {
   },
 };
 
-export const Equals = partFromSimpleFunction({
-  id: "Equals",
+export const EqualsBoolean = partFromSimpleFunction({
+  id: "Equals (Bool)",
   namespace,
   description:
     "Emits true if two values are equal (=== equality). Otherwise emits false.",
@@ -579,3 +581,39 @@ export const Equals = partFromSimpleFunction({
   output: { name: "result", description: "true if a is equal to b" },
   fn: (a, b) => a === b,
 });
+
+
+export const Equals: CodePart = {
+  id: "Equals",
+  namespace,
+  description: 'Emits the value of "a" to output "true" if "a" is equal to "b". Otherwise emits the value of "a" to output "false".',
+  inputs: {
+    a: {
+      mode: "required",
+      description: "First value",
+    },
+    b: {
+      mode: "required",
+      description: "Second value",
+    }
+  },
+  outputs: {
+    true: {
+      description: "Emits the value of a if a is equal to b",
+    },
+    false: {
+      description: "Emits the value of a if a is not equal to b",
+    },
+  },
+  fn: (inputs, outputs, adv) => {
+    const { a, b } = inputs;
+    const { true: trueOutput, false: falseOutput } = outputs;
+
+    if (a === b) {
+      trueOutput.next(a);
+    } else {
+      falseOutput.next(a);
+    }
+  }
+}
+

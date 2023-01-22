@@ -271,6 +271,7 @@ export const ConnectionView: React.FC<ConnectionViewProps> = (props) => {
         type={futureConnection.type}
         toggleHidden={toggleHidden}
         parentSelected={false}
+        key={'future'}
       />
     );
   }
@@ -279,8 +280,6 @@ export const ConnectionView: React.FC<ConnectionViewProps> = (props) => {
     <span
       className={"connections-view"}
       style={{ opacity: viewPort.zoom }}
-      // data-bob={renderTriggser}
-      // key={renderTrigger}
     >
       <svg style={{ width: "100%" }}>{connectionPaths}</svg>
     </span>

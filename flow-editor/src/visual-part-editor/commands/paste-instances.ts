@@ -11,7 +11,7 @@ export const pasteInstancesCommand = (
     return {
       ...ins,
       pos: mousePos,
-      id: createInsId(newPart),
+      id: createInsId(_part),
     };
   });
 

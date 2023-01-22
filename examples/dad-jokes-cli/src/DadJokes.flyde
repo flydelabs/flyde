@@ -1,16 +1,14 @@
 imports:
   "@flyde/runtime":
-    - HttpGet
-    - Dot
+    - GET Request
+    - Get Attribute
     - Delay
-  "@flyde/stdlib":
-    - bob
-    - Rand
+    - Log
 part:
   instances:
     - pos:
-        x: -544.3686218261719
-        y: -819.7500732421875
+        x: -610.0955505371094
+        y: -974.8859985351562
       id: HttpGet-770
       inputConfig:
         url:
@@ -18,66 +16,51 @@ part:
           value: https://api.dadjokes.io/api/random/joke
       visibleInputs:
         - url
-      partId: HttpGet
+      partId: GET Request
       style:
         size: large
         color: "#f15bb5"
     - pos:
-        x: -582.6432055664063
-        y: -689.6667553710937
+        x: -740.0385913085938
+        y: -782.100166015625
       id: Dot-132
       inputConfig:
         key:
           mode: static
           value: body.0.setup
+        attribute:
+          mode: static
+          value: body.0.setup
       visibleInputs:
         - obj
-      partId: Dot
+        - object
+        - attribute
+      partId: Get Attribute
+      style:
+        size: small
+        icon: magnifying-glass
     - pos:
-        x: -430.3080004882813
-        y: -697.8059155273437
+        x: -504.5772265625001
+        y: -731.59748046875
       id: clchvfuoj000145662fwav020
       inputConfig:
         key:
           mode: static
           value: body.0.punchline
+        attribute:
+          mode: static
+          value: body.0.punchline
       visibleInputs:
         - obj
-      partId: Dot
+        - object
+        - attribute
+      partId: Get Attribute
+      style:
+        size: small
+        icon: magnifying-glass
     - pos:
-        x: -713.0031958007812
-        y: -579.9225756835938
-      id: clchvh14u000b456647885f73
-      inputConfig: {}
-      part:
-        id: Inline-value-console.log(inp
-        inputs:
-          msg:
-            type: any
-            mode: required
-        outputs:
-          value:
-            type: any
-            delayed: false
-            optional: false
-        fnCode: |-
-          const result = (function() { console.log(inputs.msg)}());
-            Promise.resolve(result).then(val => outputs.value.next(val))
-        customViewCode: console.log(inputs.msg)
-        dataBuilderSource: Y29uc29sZS5sb2coaW5wdXRzLm1zZyk=
-        templateType: function
-        completionOutputs:
-          - value
-        defaultStyle:
-          size: regular
-          icon: code
-          cssOverride:
-            fontFamily: monospace
-            fontWeight: "500"
-        description: Custom inline function
-    - pos:
-        x: -327.00996337890626
-        y: -520.0626171875
+        x: -341.8737939453125
+        y: -597.5307568359375
       id: Delay-561
       inputConfig:
         ms:
@@ -87,79 +70,54 @@ part:
         size: regular
         color: "#fee440"
     - pos:
-        x: -433.3416967773437
-        y: -373.6602465820313
-      id: clchvhf2p000r4566b49385jv
+        x: -668.2125683593749
+        y: -603.1881127929687
+      id: Log-778
       inputConfig: {}
-      part:
-        id: Inline-value-console.log(inp
-        inputs:
-          msg:
-            type: any
-            mode: required
-        outputs:
-          value:
-            type: any
-            delayed: false
-            optional: false
-        fnCode: |-
-          const result = (function() { console.log(inputs.msg)}());
-            Promise.resolve(result).then(val => outputs.value.next(val))
-        customViewCode: console.log(inputs.msg)
-        dataBuilderSource: Y29uc29sZS5sb2coaW5wdXRzLm1zZyk=
-        templateType: function
-        completionOutputs:
-          - value
-        defaultStyle:
-          size: regular
-          icon: code
-          cssOverride:
-            fontFamily: monospace
-            fontWeight: "500"
-        description: Custom inline function
+      partId: Log
     - pos:
-        x: -909.6289599609376
-        y: -699.6537329101562
-      id: Rand-98
+        x: -354.2480908203124
+        y: -481.4751000976562
+      id: DadJoke-l0p46hh
       inputConfig: {}
-      partId: Rand
+      partId: Log
   connections:
     - from:
-        insId: HttpGet-770
-        pinId: response
-      to:
-        insId: Dot-132
-        pinId: obj
-    - from:
-        insId: HttpGet-770
-        pinId: response
-      to:
-        insId: clchvfuoj000145662fwav020
-        pinId: obj
-    - from:
-        insId: Dot-132
-        pinId: value
-      to:
-        insId: clchvh14u000b456647885f73
-        pinId: msg
-    - from:
         insId: clchvfuoj000145662fwav020
         pinId: value
       to:
         insId: Delay-561
         pinId: value
     - from:
-        insId: Delay-561
-        pinId: r
+        insId: HttpGet-770
+        pinId: data
       to:
-        insId: clchvhf2p000r4566b49385jv
-        pinId: msg
+        insId: Dot-132
+        pinId: object
+    - from:
+        insId: HttpGet-770
+        pinId: data
+      to:
+        insId: clchvfuoj000145662fwav020
+        pinId: object
     - from:
         insId: __this
         pinId: punchDelay
       to:
         insId: Delay-561
-        pinId: ms
+        pinId: delay
+    - from:
+        insId: Dot-132
+        pinId: value
+      to:
+        insId: Log-778
+        pinId: value
+    - from:
+        insId: Delay-561
+        pinId: delayedValue
+      to:
+        insId: DadJoke-l0p46hh
+        pinId: value
   id: DadJoke
   inputs:
     punchDelay:
@@ -168,8 +126,8 @@ part:
   outputs: {}
   inputsPosition:
     punchDelay:
-      x: -266.0287552679128
-      y: -884.2784519757015
+      x: -277.93354042425614
+      y: -954.5165545329929
     test:
       x: -182.5383681955638
       y: -903.352979697288

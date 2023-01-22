@@ -165,6 +165,7 @@ const executeCodePart = (data: CodeExecutionData) => {
       onError(err);
     },
     context: extraContext,
+    parentInsId
   };
 
   let processing = false;

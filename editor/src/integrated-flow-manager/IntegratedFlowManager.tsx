@@ -5,10 +5,7 @@ import {
   FlydeFlow,
   ResolvedFlydeFlowDefinition,
   ImportablePart,
-  hashFlow,
-  delay,
   Pos,
-  connectionData,
   TRIGGER_PIN_ID,
 } from "@flyde/core";
 
@@ -31,7 +28,6 @@ import { CustomPart, isInlineValuePart, PartDefinition } from "@flyde/core";
 
 import { AppToaster, toastMsg } from "@flyde/flow-editor"; // ../../common/toaster
 
-import { useQueryParam, BooleanParam } from "use-query-params";
 import { values } from "@flyde/flow-editor"; // ../../common/utils
 import { PinType } from "@flyde/core";
 import { createRuntimePlayer, RuntimePlayer } from "@flyde/flow-editor"; // ../../common/visual-part-editor/runtime-player
@@ -45,7 +41,6 @@ import { useState } from "react";
 import { useEffect } from "react";
 import _ from "lodash";
 import { useBootstrapData } from "./use-bootstrap-data";
-import { deflate } from "node:zlib";
 
 export const PIECE_HEIGHT = 28;
 
@@ -172,15 +167,18 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
         if (runtimePlayer.current) {
           console.info(`Batched events - ${events.length} into player`, events);
           runtimePlayer.current.addEvents(events);
+
         } else {
           console.info(
             `Batched events - ${events.length} but no player`,
             events
           );
         }
+
       });
     }
   }, [debuggerClient]);
+  
 
   const debouncedSaveFile = useDebouncedCallback((flow, src: string) => {
     ports.saveFlow({ absPath: src, flow });

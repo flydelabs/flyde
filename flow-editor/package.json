@@ -61,7 +61,7 @@
     "react": "^17.0.0",
     "react-dom": "^17.0.0",
     "sinon": "^14.0.0",
-    "ts-node-dev": "^1.0.0-pre.32"
+    "ts-node-dev": "^2.0.0"
   },
   "peerDependencies": {
     "@types/react": "^17.0.0",

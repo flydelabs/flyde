@@ -1,4 +1,5 @@
-# Flyde - Visual Programming in VSCode
+# Visual Programming for the Modern Web
+
 
 _"The world is asynchronous - don't try to force the systems we build into a synchronous framework!" - J. Paul Morisson RIP_
 

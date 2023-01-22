@@ -3,43 +3,54 @@ imports:
     - Equals
     - Subtract
     - Add
+    - Boolean Split
 part:
   instances:
     - pos:
-        x: -183.5922631835938
-        y: -91.88231903076172
+        x: -104.50461669921879
+        y: -75.81374603271485
       id: Equals-364
       inputConfig:
         compare:
           mode: static
           value: 0
+        b:
+          mode: static
+          value: 0
       visibleInputs:
         - val
+        - a
+        - b
       partId: Equals
       style:
         size: regular
     - pos:
-        x: -41.06736083984376
-        y: 25.66968292236328
+        x: 23.226157226562492
+        y: 75.29077667236328
       id: Equals-364-d95
       inputConfig:
         compare:
           mode: static
           value: 1
+        b:
+          mode: static
+          value: 1
       visibleInputs:
         - val
+        - a
+        - b
       partId: Equals
     - pos:
-        x: 113.69263305664063
-        y: 421.4117921447754
+        x: 159.85901489257813
+        y: 471.33189712524415
       id: Add-539
       inputConfig: {}
       partId: Add
       style:
         color: "#fee440"
     - pos:
-        x: 32.912535400390624
-        y: 186.91488006591794
+        x: 79.07891723632812
+        y: 236.8349850463867
       id: Subtract-210
       inputConfig:
         n2:
@@ -51,8 +62,8 @@ part:
       style:
         color: "#f15bb5"
     - pos:
-        x: 193.49395629882815
-        y: 180.67395523071286
+        x: 239.66033813476565
+        y: 230.5940602111816
       id: Subtract-210-d215
       inputConfig:
         n2:
@@ -64,24 +75,18 @@ part:
       style:
         color: "#f15bb5"
     - pos:
-        x: 34.080338134765626
-        y: 290.37925598144534
+        x: 80.24671997070313
+        y: 340.2993609619141
       id: Fibonacci-261
       inputConfig: {}
       partId: Fibonacci
     - pos:
-        x: 181.71063232421875
-        y: 290.6399155426025
+        x: 227.87701416015625
+        y: 340.5600205230713
       id: Fibonacci-379
       inputConfig: {}
       partId: Fibonacci
   connections:
-    - from:
-        insId: __this
-        pinId: n
-      to:
-        insId: Equals-364
-        pinId: val
     - from:
         insId: Fibonacci-261
         pinId: result
@@ -101,12 +106,6 @@ part:
         insId: __this
         pinId: result
     - from:
-        insId: Equals-364-d95
-        pinId: "false"
-      to:
-        insId: Subtract-210-d215
-        pinId: n1
-    - from:
         insId: Subtract-210
         pinId: difference
       to:
@@ -119,13 +118,25 @@ part:
         insId: Fibonacci-379
         pinId: n
     - from:
+        insId: __this
+        pinId: n
+      to:
+        insId: Equals-364
+        pinId: a
+    - from:
         insId: Equals-364
         pinId: "false"
       to:
         insId: Equals-364-d95
-        pinId: val
+        pinId: a
     - from:
         insId: Equals-364
+        pinId: "true"
+      to:
+        insId: __this
+        pinId: result
+    - from:
+        insId: Equals-364-d95
         pinId: "true"
       to:
         insId: __this
@@ -138,10 +149,10 @@ part:
         pinId: n1
     - from:
         insId: Equals-364-d95
-        pinId: "true"
+        pinId: "false"
       to:
-        insId: __this
-        pinId: result
+        insId: Subtract-210-d215
+        pinId: n1
   id: Fibonacci
   inputs:
     n:
@@ -154,8 +165,8 @@ part:
       delayed: false
   inputsPosition:
     n:
-      x: -147.94243817117712
-      y: -143.4378851898441
+      x: -102.20515091834108
+      y: -214.0353040325851
   outputsPosition:
     result:
       x: -73.24718891505835

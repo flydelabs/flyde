@@ -6,11 +6,9 @@ const punchDelay = process.argv
     .map(Number)
     .find(arg => !isNaN(arg)) ?? 2000; // lazy hack for it to work when running locally as well
 
-// const execute = flyde.loadFlow('src/DadJokes.flyde');
+const execute = flyde.loadFlow('src/DadJokes.flyde');
 
-flyde.loadFlow('src/Tester.flyde')()
-
-// execute({punchDelay});
+execute({punchDelay}).then(() => console.log('-- Powered by https://dadjokes.io --'));
 
 
 

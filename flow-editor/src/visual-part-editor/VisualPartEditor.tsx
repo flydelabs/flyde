@@ -192,6 +192,8 @@ export type VisualPartEditorProps = {
 
   parentViewport?: ViewPort;
   parentBoardPos?: Pos;
+
+  queuedInputsData?: Record<string, Record<string, number>>
 };
 
 type InlineValueTargetExisting = {
@@ -245,6 +247,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
         onShowOmnibar,
         resolvedFlow,
         onImportPart,
+        queuedInputsData: queueInputsData
       } = props;
 
       const parentViewport = props.parentViewport || defaultViewPort;
@@ -2203,7 +2206,8 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
                     closestPin && closestPin.ins.id === ins.id
                       ? closestPin
                       : undefined
-                  }
+                    }
+                  queuedInputsData={queueInputsData[ins.id] ?? emptyObj}
                   instance={ins}
                   connections={connections}
                   // was too lazy to remove/fix the breakpoint/log below

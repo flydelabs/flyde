@@ -82,13 +82,14 @@ export const ObjectAssign = partFromSimpleFunction({
 export const GetAttribute = partFromSimpleFunction({
   id: "Get Attribute",
   namespace,
-  icon: "fa-box",
+  icon: "fa-magnifying-glass",
   description: "Gets an attribute from an object",
   inputs: [
     { name: "object", description: "Object to get attribute from" },
     { name: "attribute", description: "Attribute to get" },
   ],
   output: { name: "value", description: "The value of the attribute" },
+  customViewCode: `<% if (inputs.attribute) { %> Get "<%- inputs.attribute %>"<% } else { %> Get Attribute <% } %>`,
   fn: (object, attribute) => {
     // get attribute from object while supporting dot notation
     return attribute.split(".").reduce((obj, i) => obj[i], object);
@@ -105,6 +106,7 @@ export const SetAttribute = partFromSimpleFunction({
     { name: "attribute", description: "Attribute to set" },
     { name: "value", description: "Value to set attribute to" },
   ],
+  customViewCode: `<% if (inputs.attribute) { %> Set "<%- inputs.attribute %>"<% } else { %> Set Attribute <% } %>`,
   output: { name: "object", description: "The object with the attribute set" },
   fn: (object, attribute, value) => {
     // set attribute on object while supporting dot notation
@@ -125,6 +127,7 @@ export const DeleteAttribute = partFromSimpleFunction({
     { name: "object", description: "Object to delete attribute from" },
     { name: "attribute", description: "Attribute to delete" },
   ],
+  customViewCode: `<% if (inputs.attribute) { %> Delete "<%- inputs.attribute %>"<% } else { %> Delete Attribute <% } %>`,
   output: {
     name: "object",
     description: "The object with the attribute deleted",

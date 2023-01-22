@@ -12,7 +12,8 @@
   "scripts": {
     "start": "ts-node-dev src/cli.ts --watch **/*.flyde",
     "joke": "ts-node src/cli.ts",
-    "build": "tsc -p ."
+    "build": "tsc -p .",
+    "postinstall": "npm link @flyde/stdlib @flyde/runtime npm link @flyde/core @flyde/resolver"
   },
   "dependencies": {
     "@flyde/resolver": "latest",

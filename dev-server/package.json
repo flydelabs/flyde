@@ -10,9 +10,9 @@
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "watch-ts": "tsc -p . -w --incremental",
-    "watch-flyde": "ts-node-dev src/cli.ts --root=../website",
-    "dev": "concurrently --kill-others 'ts-node-dev src/cli.ts --root=../website --port=8545' 'npm run watch-ts'",
+    "watch:ts": "tsc -p . -w --incremental",
+    "start": "ts-node-dev src/cli.ts --root=../website",
+    "dev": "concurrently --kill-others 'yarn run start' 'yarn run watch:ts'",
     "__publish": "npm version patch && npm publish",
     "build": "rm -rf dist && tsc -p .",
     "prod": "node dist/index.js"
@@ -53,7 +53,7 @@
   "devDependencies": {
     "@flyde/editor": "^0.1.0",
     "fs-extra": "^10.1.0",
-    "ts-node-dev": "^1.0.0-pre.32"
+    "ts-node-dev": "^2.0.0"
   },
   "gitHead": "5f06bd4a0f3da610e64d74c19cc84babc4557f56"
 }

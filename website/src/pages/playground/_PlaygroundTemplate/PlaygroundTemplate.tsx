@@ -44,6 +44,7 @@ import "@flyde/flow-editor/src/index.scss";
 import { Resizable } from "react-resizable";
 import produce from "immer";
 import BrowserOnly from "@docusaurus/BrowserOnly";
+import { EditorDebuggerClient } from "@site/../remote-debugger/dist";
 
 (global as any).vm2 = fakeVm;
 
@@ -119,7 +120,7 @@ const runFlow = ({
 
   const firstOutputName = keys(flow.main.outputs)[0];
 
-  return execute({
+  return {executeResult: execute({
     part: flow.main,
     inputs: inputs,
     outputs: { [firstOutputName]: output },
@@ -131,7 +132,7 @@ const runFlow = ({
     extraContext: {
       PubSub,
     },
-  });
+  }), localDebugger};
 };
 
 export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (
@@ -152,6 +153,8 @@ export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (
   const [resolvedFlow, setResolvedFlow] = useState<ResolvedFlydeRuntimeFlow>(
     props.flowProps.resolvedFlow
   );
+
+  const [localDebugger, setLocalDebugger] = useState<Pick<EditorDebuggerClient, 'onBatchedEvents'>>();
 
   const [debouncedFlow] = useDebounce(resolvedFlow, 500)
 
@@ -185,6 +188,7 @@ export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (
     onImportPart: noop,
     onExtractInlinePart: noop as any,
     onQueryImportables: noop as any,
+    debuggerClient: localDebugger as EditorDebuggerClient
   };
 
   useEffect(() => {
@@ -192,7 +196,7 @@ export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (
   }, []);
 
   useEffect(() => {
-    const clean = runFlow({
+    const {executeResult: clean, localDebugger} = runFlow({
       flow: resolvedFlow,
       output,
       inputs,
@@ -201,6 +205,7 @@ export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (
       player: runtimePlayerRef.current,
     });
     const sub = props.flowProps.output.subscribe(() => setOutputReceived(true));
+    setLocalDebugger(localDebugger)
     return () => {
       clean();
       sub.unsubscribe();

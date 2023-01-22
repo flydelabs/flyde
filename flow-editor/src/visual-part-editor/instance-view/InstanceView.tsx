@@ -125,6 +125,8 @@ export interface InstanceViewProps {
   connections: ConnectionData[];
   viewPort: { pos: Pos; zoom: number };
 
+  queuedInputsData: Record<string, number>;
+
   parentInsId: string;
 
   partDefRepo: PartDefRepo;
@@ -522,6 +524,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
                 props.onConvertConstToEnv ? _onConvertConstToEnv : undefined
               }
               description={v.description}
+              queuedValues={props.queuedInputsData[k] ?? 0}
             />
           ))}
         </div>

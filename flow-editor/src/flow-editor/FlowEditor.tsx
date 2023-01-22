@@ -12,6 +12,8 @@ import {
   ImportedPartDef,
   InlinePartInstance,
   PinType,
+  DebuggerEventType,
+  Debugger,
 } from "@flyde/core";
 import {
   VisualPartEditor,
@@ -29,7 +31,7 @@ import {
   domToViewPort,
 } from "../visual-part-editor/utils";
 
-import { HistoryPayload } from "@flyde/remote-debugger";
+import { EditorDebuggerClient, HistoryPayload, RuntimeDebuggerClient } from "@flyde/remote-debugger";
 import { AppToaster, toastMsg } from "../toaster";
 
 import {
@@ -43,8 +45,7 @@ import { usePorts } from "./ports";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fab } from "@fortawesome/free-brands-svg-icons";
 import { fas } from "@fortawesome/free-solid-svg-icons";
-import { vAdd } from "..";
-
+import { vAdd } from "../physics";
 export * from "./ports";
 
 library.add(fab, fas);
@@ -73,6 +74,8 @@ export type FlydeFlowEditorProps = {
     pinId: string,
     pinType: PinType
   ) => Promise<HistoryPayload>;
+
+  debuggerClient?: Pick<EditorDebuggerClient, 'onBatchedEvents'>;
 
   onNewEnvVar?: (name: string, val: any) => void;
 
@@ -110,6 +113,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
       resolvedRepoWithDeps: resolvedFlow,
       onChangeEditorState,
       onImportPart,
+      debuggerClient,
     } = props;
 
     const [undoStack, setUndoStack] = React.useState<
@@ -121,6 +125,28 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
 
     const { flow, boardData: editorBoardData } = state;
     const editedPart = state.flow.part;
+
+    const [queuedInputsData, setQueuedInputsData] = React.useState<Record<string, Record<string, number>>>({});
+
+    React.useEffect(() => {
+      if (debuggerClient) {
+        return debuggerClient.onBatchedEvents((events) => {
+          events.forEach(event => {
+            console.log({event});
+            
+            if (event.type === DebuggerEventType.INPUTS_STATE_CHANGE) {
+              console.log("INPUTS_STATE_CHANGE", event.insId, event.val);
+              setQueuedInputsData(obj => {
+                return {...obj, [event.insId]: event.val};
+              });
+            }
+          })
+        })
+      }
+    }, [debuggerClient])
+
+    
+
 
     const { openFile } = usePorts();
 
@@ -335,6 +361,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
               onImportPart={props.onImportPart}
               onShowOmnibar={showOmnibar}
               onExtractInlinePart={props.onExtractInlinePart}
+              queuedInputsData={queuedInputsData}
             />
 
             {omnibarVisible ? (

@@ -23,6 +23,7 @@ export type InputPinViewProps = {
   isSticky: boolean;
   constValue?: any;
   queueSize?: number;
+  queuedValues: number;
 };
 
 export type OutputPinViewProps = {
@@ -219,7 +220,7 @@ export const PinView: React.SFC<PinViewProps> = React.memo(function PinView(
       : undefined;
 
   const calcTooltipContent = () => {
-    const historyContent = calcHistoryContent(history);
+    const historyContent = calcHistoryContent(history, type === "input" ? props.queuedValues : undefined);
 
     const maybeDescription = props.description
       ? `<em>${props.description}</em>`
@@ -258,7 +259,7 @@ export const PinView: React.SFC<PinViewProps> = React.memo(function PinView(
   };
 
   return (
-    <div className={calcClassNames()} onContextMenu={showMenu} data-pin-id={id}>
+    <div className={calcClassNames()} data-pin-id={id}>
       <CustomReactTooltip
         className="pin-info-tooltip"
         html

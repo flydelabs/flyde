@@ -44,7 +44,7 @@ part:
             fontFamily: monospace
             fontWeight: "500"
     - pos:
-        x: -577.892123413086
+        x: -578.892123413086
         y: -223.60953734636303
       id: Get User's Country-ins
       inputConfig: {}
@@ -130,7 +130,7 @@ part:
         size: large
         color: "#f15bb5"
     - pos:
-        x: -636.9743029785157
+        x: -637.9743029785157
         y: -84.37110525846481
       id: Get Country Name And Capital-ins
       inputConfig: {}
@@ -166,6 +166,24 @@ part:
               - body
               - data
             partId: POST Request
+          - id: Get Attribute-217
+            partId: Get Attribute
+            inputConfig:
+              attribute:
+                mode: static
+                value: data.capital
+            pos:
+              x: -285.6922900390625
+              y: 219.88888122558592
+          - id: Get Country Name And Capital-srp46ei
+            partId: Get Attribute
+            inputConfig:
+              attribute:
+                mode: static
+                value: data.name
+            pos:
+              x: -608.0307299804688
+              y: 225.56220581054686
         inputsPosition:
           body:
             x: -333.75691140339336
@@ -178,11 +196,11 @@ part:
             x: -280.88783057750686
             y: 411.581705357324
           capital:
-            x: -373.87585887717984
-            y: 347.90184574177306
+            x: -214.78486673798952
+            y: 473.65942918140723
           name:
-            x: -537.398329068569
-            y: 348.1765805072715
+            x: -523.761854810908
+            y: 479.9947571097377
         connections:
           - from:
               pinId: body
@@ -190,14 +208,38 @@ part:
             to:
               insId: POST Request-624
               pinId: data
+          - from:
+              insId: Get Attribute-217
+              pinId: value
+            to:
+              pinId: capital
+              insId: __this
+          - from:
+              insId: POST Request-624
+              pinId: data
+            to:
+              insId: Get Country Name And Capital-srp46ei
+              pinId: object
+          - from:
+              insId: Get Country Name And Capital-srp46ei
+              pinId: value
+            to:
+              pinId: name
+              insId: __this
+          - from:
+              insId: POST Request-624
+              pinId: data
+            to:
+              insId: Get Attribute-217
+              pinId: object
         completionOutputs:
           - name+capital
       style:
         size: large
         color: "#9b5de5"
     - pos:
-        x: -264.4149328613281
-        y: 175.11608734130857
+        x: -266.7627111816406
+        y: 205.0337203979492
       id: Format Number-ins
       inputConfig: {}
       part:
@@ -267,8 +309,8 @@ part:
         size: regular
         color: "#fee440"
     - pos:
-        x: -318.75787109375
-        y: 32.73055236816407
+        x: -305.335751953125
+        y: 65.09392517089844
       id: cl8x5r4qp00074666lb382z1c
       inputConfig: {}
       part:
@@ -318,14 +360,26 @@ part:
               templateType: value
               completionOutputs:
                 - r
+          - id: Get Attribute-893
+            partId: Get Attribute
+            inputConfig:
+              attribute:
+                mode: static
+                value: data.populationCounts.0.value
+            pos:
+              x: -196.82018798828125
+              y: 535.9137713623047
+            style:
+              icon: fa-box
+              size: small
         inputsPosition:
           city:
             x: -59.242744173605615
             y: 192.73141904118035
         outputsPosition:
           value:
-            x: -107.75930491072856
-            y: 618.7675766483113
+            x: -116.77230284586054
+            y: 698.5630767231784
         connections:
           - from:
               pinId: city
@@ -339,6 +393,18 @@ part:
             to:
               insId: POST Request-775
               pinId: data
+          - from:
+              insId: Get Attribute-893
+              pinId: value
+            to:
+              pinId: value
+              insId: __this
+          - from:
+              insId: POST Request-775
+              pinId: data
+            to:
+              insId: Get Attribute-893
+              pinId: object
         completionOutputs:
           - value
       style:

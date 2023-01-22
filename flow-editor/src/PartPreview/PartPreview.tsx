@@ -45,6 +45,7 @@ export const PartPreview: React.FC<{ part: PartDefinition }> = ({ part }) => {
     onDeleteInstance: noop,
     onGroupSelected: noop,
     onSetDisplayName: noop,
+    queuedInputsData: {}
   };
 
   return (

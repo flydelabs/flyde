@@ -3,7 +3,7 @@ import React from "react";
 import { useCallback, useRef, useState } from "react";
 import { PinViewProps } from ".";
 
-export const calcHistoryContent = (history?: HistoryPayload) => {
+export const calcHistoryContent = (history?: HistoryPayload, queuedValues?: number) => {
   if (history) {
     const { total, lastSamples } = history;
 
@@ -15,7 +15,8 @@ export const calcHistoryContent = (history?: HistoryPayload) => {
             200
           )}</strong></div>`
         : "";
-    return `${timesActivated} ${lastValueData}`;
+    const queuedValuesData = queuedValues ? `<hr/><div>Queued values: <strong>${queuedValues}</strong></div>` : "";
+    return `${timesActivated} ${lastValueData}${queuedValuesData}`;
   } else {
     return "Loading session data..";
   }

@@ -1,7 +1,7 @@
 import { PinType } from "@flyde/core";
 
 export const getInstanceDomId = (parentInsId: string, insId: string) => {
-  return `ins-view-${parentInsId}.${insId}`.replace(/\s+/g, "-");
+  return `ins:${parentInsId}:${insId}`.replace(/\s+/g, "-");
 };
 
 export const getPinDomId = (
@@ -10,7 +10,7 @@ export const getPinDomId = (
   pinId: string,
   type: PinType
 ) => {
-  return `pin-${parentInsId}.${insId}-${pinId}-${type}`.replace(/\s+/g, "-");
+  return `pin:${type}:${parentInsId}:${insId}:${pinId}`.replace(/\s+/g, "-");
 };
 
 export const getMainPinDomId = (
@@ -18,5 +18,5 @@ export const getMainPinDomId = (
   pinId: string,
   type: PinType
 ) => {
-  return `pin-${insId}-${pinId}-${type}`.replace(/\s+/g, "-");
+  return `main-pin:${insId}:${pinId}:${type}`.replace(/\s+/g, "-");
 };

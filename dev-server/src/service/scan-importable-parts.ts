@@ -84,6 +84,11 @@ export const scanImportableParts = async (
     .reduce<Record<string, PartDefRepo>>((acc, file) => {
       // const flowContents = readFileSync(file.fullPath, "utf8");
 
+      if (isCodePartPath(file.fullPath))  {
+        const obj = resolveCodePartDependencies(file.fullPath).reduce((obj, {part}) => ({...obj, [part.id]: part}), {});
+        return {...acc, ...obj}
+      }
+
       try {
         const { main } = resolveFlow(file.fullPath, "definition");
 
