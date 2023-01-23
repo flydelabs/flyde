@@ -8,7 +8,7 @@ part:
   instances:
     - pos:
         x: -610.0955505371094
-        y: -974.8859985351562
+        y: -975.8859985351562
       id: HttpGet-770
       inputConfig:
         url:
@@ -21,7 +21,7 @@ part:
         size: large
         color: "#f15bb5"
     - pos:
-        x: -740.0385913085938
+        x: -739.0385913085938
         y: -782.100166015625
       id: Dot-132
       inputConfig:

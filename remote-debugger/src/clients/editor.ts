@@ -1,4 +1,4 @@
-import { debugLogger, DebuggerEvent } from "@flyde/core";
+import { debugLogger, DebuggerEvent, PinType } from "@flyde/core";
 
 import axios from "axios";
 
@@ -19,7 +19,8 @@ export type GetPinHistoryDto = {
 };
 
 export type GetHistoryDto = {
-  pinId: string;
+  pinId?: string;
+  type?: PinType;
   insId: string;
   limit?: number;
 };

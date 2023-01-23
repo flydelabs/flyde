@@ -26,7 +26,7 @@ export type RuntimeDebuggerClient = {
     cb: RemoteDebuggerCallback<{ pinId: string; value: any }>
   ) => RemoteDebuggerCancelFn;
 
-  emitEvent: (event: DebuggerEvent) => DebuggerCommand;
+  emitEvent: (event: Omit<DebuggerEvent, 'time'>) => DebuggerCommand;
 
   emitChangeAwk: () => void;
   emitChangeError: (error: Error) => void;
@@ -62,13 +62,6 @@ export const createRuntimeClient = (
   const EMIT_DEBOUNCE_TIMEOUT = 100;
   const EMIT_DEBOUNCE_LIMIT = 200;
 
-  const start = Date.now();
-
-  const dt = () => {
-    const d = Date.now() - start;
-    return Math.round(d / DEFAULT_DT_SCALE);
-  };
-
   const debouncedSendBatchedEvent = cappedArrayDebounce<DebuggerEvent>(
     (events) => {
       debug(`Emitting debounced batched events - ${events.length}`);
@@ -89,12 +82,16 @@ export const createRuntimeClient = (
 
       return () => socket.off(DebuggerServerEventType.PUSH_INPUT_VALUE, cb);
     },
-    emitEvent: (event) => {
+    emitEvent: (event: DebuggerEvent) => {
       debug(`Emitting event ${event.type} change event of ${event.insId}`);
 
-      debouncedSendBatchedEvent.addItem(event);
+      if (typeof event.val === 'object') {
+        // hack to avoid toJSON overrides (i.e. in discord bot)
+        event.val = {...event.val};
+      }
+
+      debouncedSendBatchedEvent.addItem({...event, time: Date.now()});
     },
-    // onProcessingChange: () => {},
     emitRuntimeReady: () => {
       socket.emit(DebuggerServerEventType.RUNTIME_READY, {});
     },

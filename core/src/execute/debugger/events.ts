@@ -24,6 +24,7 @@ export type BaseDebuggerEvent<T extends DebuggerEventType> = {
   insId: string;
   parentInsId: string;
   val: DebuggerEventTypeData[T];
+  time: number;
 };
 
 export type PinDebuggerEvent<T extends DebuggerEventType> = {

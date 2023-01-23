@@ -15,6 +15,8 @@ imports:
     - Discord Bot
   "@flyde/runtime":
     - Interval
+    - Log
+    - Empty String
 part:
   instances:
     - pos:
@@ -24,17 +26,20 @@ part:
       inputConfig: {}
       partId: Discord Bot
     - pos:
-        x: -263.01300781249984
-        y: -304.44172485351555
+        x: -266.47919433593734
+        y: -259.11201293945305
       id: Add Task-676
       inputConfig: {}
+      visibleOutputs:
+        - task
+        - __error
       partId: Add Task
       style:
         size: regular
         color: "#f15bb5"
     - pos:
-        x: -325.1449755859376
-        y: -173.33627212524414
+        x: -340.5728930664063
+        y: -158.24935806274414
       id: Inline-value-inputs.interact17
       inputConfig: {}
       part:
@@ -65,8 +70,8 @@ part:
         icon: code
         color: "#f15bb5"
     - pos:
-        x: -563.9905137634277
-        y: -562.0356966400146
+        x: -560.9028062438964
+        y: -568.9275423431396
       id: Tasks Command Router-ins
       inputConfig: {}
       part:
@@ -84,21 +89,12 @@ part:
             type: any
             delayed: false
             optional: false
+          other:
+            delayed: false
         instances:
           - pos:
-              x: -515.7888037109375
-              y: -497.1356201171875
-            id: Pick-693
-            inputConfig:
-              key:
-                mode: static
-                value: data.options.0
-            visibleInputs:
-              - obj
-            partId: Get Attribute
-          - pos:
-              x: -509.24797119140624
-              y: -333.75165771484376
+              x: -531.6315771484375
+              y: -309.22773193359376
             id: Property-Equals-567
             inputConfig:
               key:
@@ -107,10 +103,16 @@ part:
               compare:
                 mode: static
                 value: list
+              attribute:
+                mode: static
+                value: name
+              value:
+                mode: static
+                value: list
             partId: Property Equals
           - pos:
-              x: -286.7098242187499
-              y: -159.91498779296876
+              x: -271.0569311523436
+              y: -143.07026123046876
             id: cl9193aqh000u4666f7469ktv
             inputConfig:
               key:
@@ -119,7 +121,22 @@ part:
               compare:
                 mode: static
                 value: add
+              attribute:
+                mode: static
+                value: name
+              value:
+                mode: static
+                value: add
             partId: Property Equals
+          - id: Get Attribute-728
+            partId: Get Attribute
+            inputConfig:
+              attribute:
+                mode: static
+                value: data.options.0
+            pos:
+              x: -511.97193115234376
+              y: -525.39220703125
         inputsPosition:
           obj:
             x: -459.99183993828063
@@ -140,10 +157,49 @@ part:
           add:
             x: -280.2038449602285
             y: 79.68157116447972
-        connections: []
-        completionOutputs:
-          - list
-          - add
+          output:
+            x: -101.7430859637544
+            y: 57.79510369558925
+          other:
+            x: -101.7430859637544
+            y: 57.79510369558925
+        connections:
+          - from:
+              insId: Property-Equals-567
+              pinId: "true"
+            to:
+              pinId: list
+              insId: __this
+          - from:
+              insId: Property-Equals-567
+              pinId: "false"
+            to:
+              insId: cl9193aqh000u4666f7469ktv
+              pinId: object
+          - from:
+              pinId: data
+              insId: __this
+            to:
+              insId: Get Attribute-728
+              pinId: object
+          - from:
+              insId: Get Attribute-728
+              pinId: value
+            to:
+              insId: Property-Equals-567
+              pinId: object
+          - from:
+              insId: cl9193aqh000u4666f7469ktv
+              pinId: "true"
+            to:
+              pinId: add
+              insId: __this
+          - from:
+              insId: cl9193aqh000u4666f7469ktv
+              pinId: "false"
+            to:
+              pinId: other
+              insId: __this
       style:
         size: regular
         color: "#fee440"
@@ -342,8 +398,8 @@ part:
       style:
         color: "#00f5d4"
     - pos:
-        x: -661.1897149658204
-        y: -157.64039161682132
+        x: -657.1069512939454
+        y: -111.59229591369632
       id: cl935tkuj000g46665ec7pbyf
       inputConfig:
         interaction:
@@ -410,8 +466,8 @@ part:
       style:
         color: "#00f5d4"
     - pos:
-        x: -369.8402099609375
-        y: -410.20763427734374
+        x: -376.14501953125
+        y: -391.6343310546875
       id: cl9483fov000j4666i5npj8p2
       inputConfig:
         name:
@@ -465,10 +521,13 @@ part:
                 - r
           - pos:
               x: -51.828081054687345
-              y: -48.03347961425777
+              y: -43.75760070800777
             id: cl919hcpq000y4666jczcn5lb
             inputConfig:
               key:
+                mode: static
+                value: value
+              attribute:
                 mode: static
                 value: value
             partId: Get Attribute
@@ -485,36 +544,36 @@ part:
             y: 132.6009054659386
         connections:
           - from:
+              insId: __this
+              pinId: cmd
+            to:
+              insId: InlineValueBob
+              pinId: cmd
+          - from:
+              insId: __this
+              pinId: name
+            to:
+              insId: InlineValueBob
+              pinId: name
+          - from:
+              insId: cl919hcpq000y4666jczcn5lb
+              pinId: value
+            to:
+              insId: __this
+              pinId: value
+          - from:
               insId: InlineValueBob
               pinId: r
             to:
               insId: cl919hcpq000y4666jczcn5lb
-              pinId: obj
-          - from:
-              insId: __this
-              pinId: cmd
-            to:
-              insId: InlineValueBob
-              pinId: cmd
-          - from:
-              insId: __this
-              pinId: name
-            to:
-              insId: InlineValueBob
-              pinId: name
-          - from:
-              insId: cl919hcpq000y4666jczcn5lb
-              pinId: value
-            to:
-              insId: __this
-              pinId: value
+              pinId: object
         completionOutputs:
           - value
         defaultStyle:
           size: small
     - pos:
-        x: -162.8629150390625
-        y: -427.25304443359374
+        x: -171.196533203125
+        y: -397.48680908203124
       id: cl9483sde000u46661deearov
       inputConfig:
         name:
@@ -523,6 +582,9 @@ part:
       visibleInputs:
         - cmd
         - name
+      visibleOutputs:
+        - value
+        - __error
       part:
         id: Option Extractor
         inputs:
@@ -567,14 +629,26 @@ part:
               completionOutputs:
                 - r
           - pos:
-              x: -121.4868334960936
-              y: -9.532075805664022
+              x: -127.1721362304686
+              y: -52.124376220703084
             id: cl919hcpq000y4666jczcn5lb
             inputConfig:
               key:
                 mode: static
                 value: value
+              attribute:
+                mode: static
+                value: value
             partId: Get Attribute
+            visibleOutputs:
+              - value
+              - __error
+          - id: Empty String-745
+            partId: Empty String
+            inputConfig: {}
+            pos:
+              x: -41.41132324218751
+              y: 73.50713195800782
         inputsPosition:
           cmd:
             x: -175.72568778754993
@@ -584,40 +658,52 @@ part:
             y: -283.3058207596764
         outputsPosition:
           value:
-            x: -83.19532029587972
-            y: 162.74064002202232
+            x: -72.12110492931679
+            y: 219.53430976578642
         connections:
+          - from:
+              insId: __this
+              pinId: cmd
+            to:
+              insId: InlineValueBob
+              pinId: cmd
+          - from:
+              insId: __this
+              pinId: name
+            to:
+              insId: InlineValueBob
+              pinId: name
+          - from:
+              insId: cl919hcpq000y4666jczcn5lb
+              pinId: value
+            to:
+              insId: __this
+              pinId: value
           - from:
               insId: InlineValueBob
               pinId: r
             to:
               insId: cl919hcpq000y4666jczcn5lb
-              pinId: obj
-          - from:
-              insId: __this
-              pinId: cmd
-            to:
-              insId: InlineValueBob
-              pinId: cmd
-          - from:
-              insId: __this
-              pinId: name
-            to:
-              insId: InlineValueBob
-              pinId: name
+              pinId: object
           - from:
               insId: cl919hcpq000y4666jczcn5lb
-              pinId: value
+              pinId: __error
             to:
-              insId: __this
+              insId: Empty String-745
+              pinId: __trigger
+          - from:
+              insId: Empty String-745
+              pinId: string
+            to:
               pinId: value
+              insId: __this
         completionOutputs:
           - value
       style:
         size: small
     - pos:
-        x: -201.1461839294434
-        y: -716.902988243103
+        x: -217.85364242553715
+        y: -713.5735204696655
       id: Ping Pong Handler-ins
       inputConfig: {}
       part:
@@ -778,12 +864,6 @@ part:
         insId: cl9483fov000j4666i5npj8p2
         pinId: cmd
     - from:
-        insId: Tasks Command Router-ins
-        pinId: add
-      to:
-        insId: cl9483sde000u46661deearov
-        pinId: cmd
-    - from:
         insId: cl9483sde000u46661deearov
         pinId: value
       to:
@@ -795,6 +875,12 @@ part:
       to:
         insId: Ping Pong Handler-ins
         pinId: message
+    - from:
+        insId: Tasks Command Router-ins
+        pinId: add
+      to:
+        insId: cl9483sde000u46661deearov
+        pinId: cmd
   id: Test
   inputs: {}
   outputs: {}

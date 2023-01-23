@@ -12,12 +12,12 @@ export const createRuntimeClientDebugger = (
 
   return {
     onEvent: (e) => {
+      const fullEvent = { ...e, time: Date.now() } as DebuggerEvent;
       console.info(`Got debugger event`, e);
+      historyPlayer.addEvents([fullEvent]);
+      runtimePlayer.addEvents([fullEvent]);
 
-      historyPlayer.addEvents([e]);
-      runtimePlayer.addEvents([e]);
-
-      listeners.forEach((cb) => cb([e]));
+      listeners.forEach((cb) => cb([fullEvent]));
     },
     onBatchedEvents: (cb :(events: DebuggerEvent[]) => void) => {
       listeners.add(cb);

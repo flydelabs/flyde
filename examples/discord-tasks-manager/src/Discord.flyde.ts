@@ -13,6 +13,7 @@ const part: CodePart = {
     interaction: partOutput(),
     message: partOutput(),
   },
+  completionOutputs: [],
   fn: (inputs, outputs, adv) => {
     const bot: Client = adv?.context.bot;
 
@@ -21,10 +22,12 @@ const part: CodePart = {
     });
 
     bot.on("messageCreate", async (msg) => {
+      // eris overrides the toJSON method of their objects, so we need to do this to get the raw data
       outputs.message.next(msg);
     });
 
     bot.on("interactionCreate", async (interaction) => {
+      // eris overrides the toJSON method of their objects, so we need to do this to get the raw data
       outputs.interaction.next(interaction);
     });
   },

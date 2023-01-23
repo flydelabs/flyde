@@ -1,4 +1,4 @@
-import { CodePart } from ".";
+import { CodePart, PartStyleSize } from ".";
 import { InputMode } from "./part-pins";
 
 export type SimpleFnData = {
@@ -10,6 +10,7 @@ export type SimpleFnData = {
   fn: (...args: any[]) => any;
   symbol?: string;
   icon?: string;
+  size?: PartStyleSize;
   customViewCode?: string;
 }
 
@@ -32,6 +33,7 @@ export function partFromSimpleFunction(data: SimpleFnData): CodePart {
       : {},
     defaultStyle: {
       icon: data.icon,
+      size: data.size,
     },
     fn: async function (inputs, outputs, adv) {
       const args = (data.inputs ?? []).map(({ name }) => inputs[name]);

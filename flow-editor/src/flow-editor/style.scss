@@ -2,6 +2,8 @@
 @import "./inline-code-modal/style.scss";
 @import "./manage-visual-part-view/styles.scss";
 @import "./omnibar/style.scss";
+@import "./ActionsMenu/ActionsMenu.scss";
+@import "./DataInspectionModal/DataInspectionModal.scss";
 
 .project-editor {
   display: flex;
@@ -13,12 +15,9 @@
   > .visual-part-editor {
     height: 100%;
     flex: 1;
-    // padding: 20px;
   }
 
   > .breadcrumbs {
     flex-shrink: 0;
-
-    // max-width: 90%;
   }
 }

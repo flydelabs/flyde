@@ -5,11 +5,11 @@
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "scripts": {
-    "build-ts": "tsc -p .",
-    "start": "concurrently --kill-others 'ts-node-dev src/cli.ts' 'npm run watch'",
+    "build:ts": "tsc -p .",
+    "dev": "yarn run watch:ts",
     "bts": "tsc -p .",
-    "build": "rm -rf dist && tsc -p .",
-    "watch": "tsc -p . -w --incremental"
+    "build": "rm -rf dist && yarn run build:ts",
+    "watch:ts": "tsc -p . -w --incremental"
   },
   "files": [
     "dist/",

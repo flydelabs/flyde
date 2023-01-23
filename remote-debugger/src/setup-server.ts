@@ -25,11 +25,13 @@ type DebugHistoryMap = Map<
   { total: number; lastSamples: DebuggerEvent[] }
 >;
 
-export type HistoryKey = { insId: string; pinId: string };
+export type HistoryKey = { insId: string; pinId?: string };
 
 const historyKeyMap = <T extends HistoryKey>(dto: T) => {
   return `${dto.insId}.${dto.pinId || "__no_pin"}`;
 };
+
+const emptyHistory = {total: 0, lastSamples: []};
 
 export const setupRemoteDebuggerServer = (
   httpServer: HttpServer,
@@ -47,7 +49,14 @@ export const setupRemoteDebuggerServer = (
 
   let eventsTape: DebuggerEvent[] = [];
 
-  let historyMap: DebugHistoryMap = new Map();
+  let pinHistoryMap: DebugHistoryMap = new Map();
+  let insHistoryMap: DebugHistoryMap = new Map();
+
+  const getHistory = (dto: HistoryKey) => {
+    const key = historyKeyMap(dto);
+    const map = dto.pinId ? pinHistoryMap : insHistoryMap;
+    return map.get(key) ?? emptyHistory;
+  };
 
   app.post("/trigger", (req, res) => {
     const { partId, inputs } = req.body;
@@ -89,29 +98,36 @@ export const setupRemoteDebuggerServer = (
   });
 
   app.get("/history", (req, res) => {
-    const { insId, pinId, limit } = req.query;
+    const { insId, pinId, limit, pinType } = req.query;
 
     const _limit = parseInt(limit as string) || 100;
 
-    if (typeof insId !== "string" || typeof pinId !== "string") {
-      res.status(400).send("bad insId or pinId");
+    if (typeof insId !== "string") {
+      res.status(400).send("bad insId");
       return;
     }
 
-    const payload: HistoryPayload = historyMap.get(
-      historyKeyMap({ insId, pinId })
-    ) || { total: 0, lastSamples: [] };
+    if (typeof pinId !== "string" && typeof pinId !== "undefined") {
+      res.status(400).send("bad pinId");
+      return;
+    }
+
+    const payload: HistoryPayload = getHistory({insId, pinId})
     const samples = payload.lastSamples.slice(0, _limit);
     res.json({ ...payload, lastSamples: samples });
   });
 
   app.get("/full-history", (req, res) => {
-    res.json(historyMap);
+    const mapToObj = (map: DebugHistoryMap) => Array.from(map.entries()).reduce((acc, [k, v]) => {
+      return {...acc, [k]: v}
+    }, {});
+
+    res.json({pinHistoryMap: mapToObj(pinHistoryMap), insHistoryMap: mapToObj(insHistoryMap)});
   });
 
   app.delete("/history", (_, res) => {
     eventsTape = [];
-    historyMap = new Map();
+    pinHistoryMap = new Map();
     res.send("ok");
   });
 
@@ -211,17 +227,22 @@ export const setupRemoteDebuggerServer = (
           event.type === DebuggerEventType.INPUT_CHANGE ||
           event.type === DebuggerEventType.OUTPUT_CHANGE
         ) {
-          const mapKey = historyKeyMap(event);
-          const curr = historyMap.get(mapKey) || { total: 0, lastSamples: [] };
-          curr.lastSamples.unshift(event);
-          if (curr.lastSamples.length > MAX_LAST_EVENTS) {
-            curr.lastSamples.splice(
-              MAX_LAST_EVENTS,
-              curr.lastSamples.length - MAX_LAST_EVENTS
-            );
-          }
-          curr.total++;
-          historyMap.set(mapKey, curr);
+          const pinMapKey = historyKeyMap(event);
+          const insMapKey = historyKeyMap({insId: event.insId})
+          const pinHistory = pinHistoryMap.get(pinMapKey) ?? {total: 0, lastSamples: []};
+          const insHistory = insHistoryMap.get(insMapKey) ?? {total: 0, lastSamples: []};
+          [pinHistory, insHistory].forEach((curr) => {
+            curr.lastSamples.unshift(event);
+            if (curr.lastSamples.length > MAX_LAST_EVENTS) {
+              curr.lastSamples.splice(
+                MAX_LAST_EVENTS,
+                curr.lastSamples.length - MAX_LAST_EVENTS
+              );
+            }
+            curr.total++;
+          });
+          pinHistoryMap.set(pinMapKey, pinHistory);
+          insHistoryMap.set(insMapKey, insHistory);
         }
       });
 

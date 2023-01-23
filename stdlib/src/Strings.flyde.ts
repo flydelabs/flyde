@@ -297,3 +297,15 @@ export const MatchRegex = partFromSimpleFunction({
   output: { name: "value", description: "Result" },
   fn: (string, regex) => string.match(regex),
 });
+
+export const EmptyString = partFromSimpleFunction({
+  id: "Empty String",
+  namespace,
+  icon: "fa-font",
+  description: "Creates an empty string",
+  inputs: [],
+  output: { name: "string", description: "The empty string" },
+  fn: () => "",
+  size: 'small'
+  
+});

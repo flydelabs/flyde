@@ -43,7 +43,7 @@ import {
   PartFn,
   PartRepo,
 } from "..";
-import { Debugger, DebuggerEventType } from "./debugger";
+import { Debugger, DebuggerEvent, DebuggerEventType } from "./debugger";
 
 export type SubjectMap = OMapF<Subject<any>>;
 
@@ -541,7 +541,7 @@ export const execute: ExecuteFn = ({
           pinId,
           val,
           parentInsId,
-        });
+        } as DebuggerEvent);
         if (res) {
           const interceptedValue = await res.valuePromise;
           mediator.subject.next(interceptedValue);
@@ -561,7 +561,7 @@ export const execute: ExecuteFn = ({
         pinId,
         val: arg.config.value,
         parentInsId,
-      });
+      } as DebuggerEvent);
       const mediator = staticPartInput(
         getStaticValue(arg.config.value, processedRepo, insId)
       );
@@ -578,7 +578,7 @@ export const execute: ExecuteFn = ({
         pinId,
         val,
         parentInsId,
-      });
+      } as DebuggerEvent);
       if (res) {
         const interceptedValue = await res.valuePromise;
         sub.next(interceptedValue);

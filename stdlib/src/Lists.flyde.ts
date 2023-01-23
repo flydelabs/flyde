@@ -153,12 +153,14 @@ export const LoopList: CodePart = {
   },
   outputs: {
     item: { description: "Will emit a value for each item in the list" },
+    index: { description: "Will emit the index of the item" },
   },
   fn: (inputs, outputs) => {
     const { list } = inputs;
-    const { item } = outputs;
+    const { item, index } = outputs;
     for (const i of list) {
       item.next(i);
+      index.next(list.indexOf(i));
     }
   },
 };
@@ -308,6 +310,7 @@ export const AccumulateValuesByTime: CodePart = {
     time: {
       description:
         "Time to wait before emitting the accumulated values. Default is 500ms",
+      defaultValue: 500,
       mode: "optional",
     },
   },
@@ -316,14 +319,14 @@ export const AccumulateValuesByTime: CodePart = {
     accumulated: { description: "The accumulated values" },
   },
   fn: (inputs, outputs, adv) => {
-    const { item, time } = inputs;
-    const { r } = outputs;
+    const { value, time } = inputs;
+    const { accumulated } = outputs;
     const { state } = adv;
 
     let list = state.get("list") || [];
 
-    if (typeof item !== "undefined") {
-      list.push(item);
+    if (typeof value !== "undefined") {
+      list.push(value);
       state.set("list", list);
     }
 
@@ -331,12 +334,25 @@ export const AccumulateValuesByTime: CodePart = {
       clearTimeout(state.get("timeout"));
     }
 
+    const promise = new Promise<void>((resolve) => {
+      state.set("resolve", resolve);
+    });
+
     state.set(
       "timeout",
       setTimeout(() => {
-        r.next(list);
-      }, time || 500)
+        accumulated.next(list);
+
+        state.set("list", []);
+        const resolve = state.get("resolve");
+        if (!resolve) {
+          throw new Error("resolve is undefined");
+        }       
+        resolve();
+      }, time ?? 500)
     );
+
+    return promise;
   },
 };
 
@@ -359,19 +375,19 @@ export const AccumulateValuesByCount: CodePart = {
     accumulated: { description: "The accumulated values" },
   },
   fn: (inputs, outputs, adv) => {
-    const { item, count } = inputs;
-    const { r } = outputs;
+    const { value, count } = inputs;
+    const { accumulated } = outputs;
     const { state } = adv;
 
     let list = state.get("list") || [];
 
-    if (typeof item !== "undefined") {
-      list.push(item);
+    if (typeof value !== "undefined") {
+      list.push(value);
       state.set("list", list);
     }
 
     if (list.length >= count) {
-      r.next(list);
+      accumulated.next(list);
     }
   },
 };
@@ -398,11 +414,11 @@ export const AccumulateSomeValuesByCount: CodePart = {
   },
   fn: (inputs, outputs, adv) => {
     const { accept, ignore, count } = inputs;
-    const { r, i } = outputs;
+    const { accumulated, ignored } = outputs;
     const { state } = adv;
 
     let list = state.get("list") || [];
-    let ignored = state.get("ignored") || [];
+    let ignoredList = state.get("ignored") || [];
 
     if (typeof accept !== "undefined") {
       list.push(accept);
@@ -410,13 +426,13 @@ export const AccumulateSomeValuesByCount: CodePart = {
     }
 
     if (typeof ignore !== "undefined") {
-      ignored.push(ignore);
+      ignoredList.push(ignore);
       state.set("ignored", ignored);
     }
 
-    if (list.length + ignored.length >= count) {
-      r.next(list);
-      i.next(ignored);
+    if (list.length + ignoredList.length >= count) {
+      accumulated.next(list);
+      ignored.next(ignored);
     }
   },
 };

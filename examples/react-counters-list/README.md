@@ -2,9 +2,11 @@
 
 ![preview](preview.gif)
 
-An app that manages a list of counters. The main component is build using Flyde and integrates with an existing React code-base.
+This is an experimental example of how to use Flyde to build a React app. It's not meant to be used in production, but rather to showcase the capabilities of Flyde.
 
-This example shows how Flyde can be used to build functional-reactive interfaces. It's far from intuitive right now, and suffers from sub-par performance. But hey, it works!
+An app that manages a list of counters. The main component is built using Flyde and integrates with an existing React code-base.
+
+This example shows how Flyde can be used to build functional-reactive interfaces. It's far from intuitive right now and suffers from sub-par performance. But hey, it works!
 
 ## Where's the state?
 

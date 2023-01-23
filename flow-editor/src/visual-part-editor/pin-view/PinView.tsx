@@ -276,6 +276,7 @@ export const PinView: React.SFC<PinViewProps> = React.memo(function PinView(
         data-place={tooltipDown ? "bottom" : null}
         onDoubleClick={(e) => props.onDoubleClick && props.onDoubleClick(id, e)}
         className={`pin-inner`}
+        onContextMenu={showMenu}
         onClick={onClick}
       >
         {displayName}{" "}

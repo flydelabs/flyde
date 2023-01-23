@@ -1,0 +1,44 @@
+.data-inspection-modal {
+	width: 80%;
+	
+	
+
+	header {
+		input {
+			margin: 10px 0;
+		}
+	}
+
+	> main {
+		
+	}
+
+	
+
+	.main-wrapper {
+		display: flex;
+		flex-direction: row;
+		max-height: 80%;
+
+		gap: 10px;
+
+		.samples-menu {
+			flex: 0;
+			max-height: 80vh;
+			overflow: auto;
+		}
+
+		.content-wrapper {
+			overflow: auto;
+			flex: 1;
+			max-height: 80vh;
+
+			.info {
+				margin-bottom: 10px;
+			}
+		}
+
+	}
+
+
+}

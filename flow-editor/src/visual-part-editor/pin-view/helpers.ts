@@ -10,10 +10,10 @@ export const calcHistoryContent = (history?: HistoryPayload, queuedValues?: numb
     const timesActivated = `<strong>Activated ${total} times this session</strong>`;
     const lastValueData =
       lastSamples.length > 0
-        ? `<div>Last value: <strong>${valuePreview(lastSamples[0].val).substr(
+        ? `<div>Last value: <strong>${valuePreview(lastSamples[0].val).substring(
             0,
             200
-          )}</strong></div>`
+          )}</strong></div><em>Inspect instance for the full value</em>`
         : "";
     const queuedValuesData = queuedValues ? `<hr/><div>Queued values: <strong>${queuedValues}</strong></div>` : "";
     return `${timesActivated} ${lastValueData}${queuedValuesData}`;

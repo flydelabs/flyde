@@ -26,7 +26,8 @@ export type HistoryPlayer = {
 };
 
 export const createHistoryPlayer = (): HistoryPlayer => {
-  const historyMap: DebugHistoryMap = new Map();
+  const pinHistoryMap: DebugHistoryMap = new Map();
+  const insHistoryMap: DebugHistoryMap = new Map();
 
   return {
     requestHistory: async (insId: string, pinId: string, pinType: PinType) => {
@@ -36,13 +37,22 @@ export const createHistoryPlayer = (): HistoryPlayer => {
           : DebuggerEventType.OUTPUT_CHANGE;
       console.log({ insId, pinId, type });
 
-      const id = `${insId}.${pinId}.${type}`;
-      const payload: HistoryPayload = historyMap.get(id) || {
-        total: 0,
-        lastSamples: [],
-      };
-      const samples = payload.lastSamples.slice(0, MAX_EVENTS_HISTORY_LIMIT);
-      return { ...payload, lastSamples: samples };
+      if (pinId) {
+        const id = `${insId}.${pinId}.${type}`;
+        const payload: HistoryPayload = pinHistoryMap.get(id) || {
+          total: 0,
+          lastSamples: [],
+        };
+        const samples = payload.lastSamples.slice(0, MAX_EVENTS_HISTORY_LIMIT);
+        return { ...payload, lastSamples: samples };
+      } else {
+        const payload: HistoryPayload = insHistoryMap.get(insId) || {
+          total: 0,
+          lastSamples: [],
+        };
+        const samples = payload.lastSamples.slice(0, MAX_EVENTS_HISTORY_LIMIT);
+        return { ...payload, lastSamples: samples };
+      }
     },
     addEvents: (events) => {
       events.forEach((event) => {
@@ -59,17 +69,33 @@ export const createHistoryPlayer = (): HistoryPlayer => {
           event.type === DebuggerEventType.OUTPUT_CHANGE
         ) {
           const { insId, type, pinId } = event;
-          const id = `${insId}.${pinId}.${type}`;
-          const curr = historyMap.get(id) || { total: 0, lastSamples: [] };
-          curr.lastSamples.unshift(event);
-          if (curr.lastSamples.length > MAX_EVENTS_HISTORY_LIMIT) {
-            curr.lastSamples.splice(
-              MAX_EVENTS_HISTORY_LIMIT,
-              curr.lastSamples.length - MAX_EVENTS_HISTORY_LIMIT
-            );
+          {
+            const id = `${insId}.${pinId}.${type}`;
+            const curr = pinHistoryMap.get(id) || { total: 0, lastSamples: [] };
+            curr.lastSamples.unshift(event);
+            if (curr.lastSamples.length > MAX_EVENTS_HISTORY_LIMIT) {
+              curr.lastSamples.splice(
+                MAX_EVENTS_HISTORY_LIMIT,
+                curr.lastSamples.length - MAX_EVENTS_HISTORY_LIMIT
+              );
+            }
+            curr.total++;
+            pinHistoryMap.set(id, curr);
           }
-          curr.total++;
-          historyMap.set(id, curr);
+
+          {
+            const curr = insHistoryMap.get(insId) || { total: 0, lastSamples: [] };
+            curr.lastSamples.unshift(event);
+            if (curr.lastSamples.length > MAX_EVENTS_HISTORY_LIMIT) {
+              curr.lastSamples.splice(
+                MAX_EVENTS_HISTORY_LIMIT,
+                curr.lastSamples.length - MAX_EVENTS_HISTORY_LIMIT
+              );
+            }
+            curr.total++;
+            pinHistoryMap.set(insId, curr);
+          }
+          
         }
       });
     },

@@ -18,7 +18,7 @@ export interface BaseDebuggerData {
 }
 
 export type Debugger = {
-  onEvent?: <T>(event: DebuggerEvent) => DebuggerCommand;
+  onEvent?: <T extends DebuggerEvent>(event: Omit<T, 'time'>) => DebuggerCommand;
   debugDelay?: number;
   destroy?: () => void;
 };

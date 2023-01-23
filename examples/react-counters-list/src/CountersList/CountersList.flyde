@@ -1,16 +1,11 @@
 imports:
   "@flyde/stdlib":
-    - EachMs
-    - HtmlSpan
-    - HtmlTag
-    - ListFrom3
+    - List From 3
     - Publish
     - Subscribe
-    - SpreadList
-    - Accumulate
-    - Id
-    - GetListItem
-    - ListFrom2
+    - Loop List
+    - Accumulate Values by Time
+    - List From 2
   Button.flyde.js:
     - Button
   Span.flyde.js:
@@ -20,8 +15,8 @@ imports:
 part:
   instances:
     - pos:
-        x: -18.84346069335939
-        y: -121.53852340698239
+        x: -67.42527832031251
+        y: -197.3009745788574
       id: Subscribe-922
       inputConfig:
         key:
@@ -67,27 +62,32 @@ part:
       style:
         size: small
     - pos:
-        x: -176.51234863281252
-        y: -10.621599731445315
-      id: SpreadList-386
+        x: -117.31901977539064
+        y: -43.95060974121094
+      id: Loop List-386
       inputConfig: {}
-      partId: SpreadList
+      partId: Loop List
       style:
         color: "#9b5de5"
     - pos:
-        x: -217.24702636718752
-        y: 375.4634265136719
-      id: Accumulate-699
-      inputConfig: {}
+        x: -310.0479296875
+        y: 369.0403308105469
+      id: Accumulate Values by Time-699
+      inputConfig:
+        time:
+          mode: static
+          value: 1000
       visibleInputs:
         - count
         - val
-      partId: Accumulate
+        - value
+        - time
+      partId: Accumulate Values by Time
       style:
         color: "#9b5de5"
     - pos:
-        x: -92.84986114501953
-        y: 154.18505942404272
+        x: -109.47891998291016
+        y: 134.53325736105444
       id: IndexedCounter-ins
       inputConfig: {}
       visibleInputs:
@@ -164,9 +164,9 @@ part:
                 - pos:
                     x: -36.912857666015626
                     y: 463.0896810913086
-                  id: ListFrom3-643
+                  id: List From 3-643
                   inputConfig: {}
-                  partId: ListFrom3
+                  partId: List From 3
                 - id: cl9n5gsim000y4666mlmovgh1
                   part:
                     id: "Inline-value-inputs.value + "
@@ -249,25 +249,7 @@ part:
                   y: 759.5560703555487
               connections:
                 - from:
-                    insId: cl9n4cmtg000c46660tbva923
-                    pinId: jsx
-                  to:
-                    insId: ListFrom3-643
-                    pinId: item1
-                - from:
-                    insId: Span-59
-                    pinId: jsx
-                  to:
-                    insId: ListFrom3-643
-                    pinId: item2
-                - from:
-                    insId: Button-687
-                    pinId: jsx
-                  to:
-                    insId: ListFrom3-643
-                    pinId: item3
-                - from:
-                    insId: ListFrom3-643
+                    insId: List From 3-643
                     pinId: list
                   to:
                     insId: __this
@@ -315,6 +297,24 @@ part:
                   to:
                     pinId: newValue
                     insId: __this
+                - from:
+                    insId: Span-59
+                    pinId: jsx
+                  to:
+                    insId: List From 3-643
+                    pinId: value2
+                - from:
+                    insId: Button-687
+                    pinId: jsx
+                  to:
+                    insId: List From 3-643
+                    pinId: value3
+                - from:
+                    insId: cl9n4cmtg000c46660tbva923
+                    pinId: jsx
+                  to:
+                    insId: List From 3-643
+                    pinId: value1
               completionOutputs:
                 - list
               reactiveInputs:
@@ -422,12 +422,14 @@ part:
             to:
               insId: cl9n77e3g00124666kcquy0k0
               pinId: key
+        completionOutputs:
+          - never
       style:
         size: large
         color: "#f15bb5"
     - pos:
-        x: 4.3748016357421875
-        y: 311.14535232543943
+        x: 42.69230651855469
+        y: 291.8547486877441
       id: cl9n7di8k000e4666bwkr6hmc
       inputConfig:
         values:
@@ -466,18 +468,20 @@ part:
     - pos:
         x: -127.01887451171876
         y: 644.0976359558106
-      id: ListFrom2-841
+      id: List From 2-841
       inputConfig:
         item1:
           mode: queue
         item2:
           mode: sticky
-      partId: ListFrom2
+        value2:
+          mode: sticky
+      partId: List From 2
       style:
         size: small
     - pos:
-        x: -19.970456542968748
-        y: 384.83860809326177
+        x: 1.6041284179687523
+        y: 396.8518679809571
       id: Button-524
       inputConfig:
         children:
@@ -527,42 +531,6 @@ part:
         insId: Publish-806
         pinId: value
     - from:
-        insId: Subscribe-922
-        pinId: val
-      to:
-        insId: SpreadList-386
-        pinId: list
-    - from:
-        insId: SpreadList-386
-        pinId: length
-      to:
-        insId: Accumulate-699
-        pinId: count
-    - from:
-        insId: IndexedCounter-ins
-        pinId: jsx
-      to:
-        insId: Accumulate-699
-        pinId: val
-    - from:
-        insId: SpreadList-386
-        pinId: val
-      to:
-        insId: IndexedCounter-ins
-        pinId: value
-    - from:
-        insId: SpreadList-386
-        pinId: idx
-      to:
-        insId: IndexedCounter-ins
-        pinId: index
-    - from:
-        insId: Subscribe-922
-        pinId: val
-      to:
-        insId: cl9n7di8k000e4666bwkr6hmc
-        pinId: values
-    - from:
         insId: IndexedCounter-ins
         pinId: indexedValue
       to:
@@ -575,30 +543,11 @@ part:
         insId: Publish-806
         pinId: value
     - from:
-        insId: Accumulate-699
-        pinId: r
-      to:
-        insId: ListFrom2-841
-        pinId: item1
-    - from:
-        insId: Button-524
-        pinId: jsx
-      to:
-        insId: ListFrom2-841
-        pinId: item2
-    - from:
-        insId: ListFrom2-841
+        insId: List From 2-841
         pinId: list
       to:
         insId: __this
         pinId: jsx
-    - from:
-        insId: Subscribe-922
-        pinId: val
-      to:
-        insId: cl9n7hd4i001946665d10kzk4
-        pinId: vals
-      hidden: true
     - from:
         insId: Button-524
         pinId: click
@@ -611,6 +560,42 @@ part:
       to:
         insId: Publish-806
         pinId: value
+    - from:
+        insId: Subscribe-922
+        pinId: value
+      to:
+        insId: Loop List-386
+        pinId: list
+    - from:
+        insId: Loop List-386
+        pinId: index
+      to:
+        insId: IndexedCounter-ins
+        pinId: index
+    - from:
+        insId: Loop List-386
+        pinId: item
+      to:
+        insId: IndexedCounter-ins
+        pinId: value
+    - from:
+        insId: IndexedCounter-ins
+        pinId: jsx
+      to:
+        insId: Accumulate Values by Time-699
+        pinId: value
+    - from:
+        insId: Button-524
+        pinId: jsx
+      to:
+        insId: List From 2-841
+        pinId: value2
+    - from:
+        insId: Accumulate Values by Time-699
+        pinId: accumulated
+      to:
+        insId: List From 2-841
+        pinId: value1
   id: CountersList
   inputs: {}
   outputs:
