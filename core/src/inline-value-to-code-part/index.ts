@@ -1,15 +1,8 @@
 import axios from "axios";
-import {
-  InlineValuePart,
-  compileObjectTemplate,
-  compileStringTemplate,
-  debugLogger,
-  PartRepo,
-} from "..";
+import { compileObjectTemplate, compileStringTemplate, debugLogger, isDefined } from "../common";
 
-import { isInlineValuePart, CodePart, dynamicPartInput } from "../part";
+import { isInlineValuePart, CodePart, dynamicPartInput, InlineValuePart, dynamicOutput, PartRepo } from "../part";
 
-import { dynamicOutput, isDefined } from "..";
 import { getVM2Instance } from "./get-vm2";
 
 const vm2 = getVM2Instance();

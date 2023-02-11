@@ -6,7 +6,7 @@ import { Publish, Subscribe } from './ControlFlow.flyde';
 
 describe('ControlFlow', () => {
     describe('Publish & Subscribe', () => {
-        it('should publish and subscribe to a key', async () => {
+        it('publishes and subscribes to a key', async () => {
 
             const key = 'bla';
             const value = randomInt(42);

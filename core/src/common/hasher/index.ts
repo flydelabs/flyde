@@ -1,10 +1,7 @@
 import * as _md5 from "md5";
-import {
-  FlydeFlow,
-  isInlineValuePart,
-  isVisualPart,
-  Part
-} from "../..";
+import { FlydeFlow } from "../../flow-schema";
+import { isInlineValuePart, isVisualPart, Part } from "../../part";
+
 
 const md5 = (str: string) => {
   return _md5(str);

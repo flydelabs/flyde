@@ -40,6 +40,9 @@ export type RuntimeDebuggerClient = {
 
 export const DEFAULT_DT_SCALE = 1;
 
+console.log({customParser: require('../custom-parser')});
+
+
 export const createRuntimeClient = (
   url: string,
   deploymentId: string
@@ -49,6 +52,7 @@ export const createRuntimeClient = (
     path: `${
       urlParts.pathname === "/" ? "" : urlParts.pathname
     }/socket.io/runtime`,
+    parser: require('../custom-parser')
   });
 
   socket.emit("join-room-runtime", deploymentId);
@@ -89,6 +93,7 @@ export const createRuntimeClient = (
         // hack to avoid toJSON overrides (i.e. in discord bot)
         event.val = {...event.val};
       }
+
 
       debouncedSendBatchedEvent.addItem({...event, time: Date.now()});
     },

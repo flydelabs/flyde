@@ -5,19 +5,25 @@ import {
   isDefined,
   testDataCreator,
   noop,
+  Pos,
 } from "../common";
 import { Subject } from "rxjs";
 
 import { CancelFn, InnerExecuteFn } from "../execute";
 import { ConnectionData } from "../connect";
-import { Pos, PartDefRepo, PartRepo, partInput, partOutput } from "..";
 import { isInlinePartInstance, PartInstance } from "./part-instance";
-import { InputPin, InputPinMap, OutputPin, OutputPinMap } from "./part-pins";
+import { InputPin, InputPinMap, OutputPin, OutputPinMap, partInput, partOutput } from "./part-pins";
 
 export * from "./part-instance";
 export * from "./part-pins";
 export * from "./pin-config";
 export * from "./partFromSimpleFunction";
+
+export type PartRepo = OMap<Part>;
+
+export type PartDefRepo = OMap<PartDefinition>;
+
+export type CustomPartRepo = OMap<CustomPart>;
 
 export type PartState = Map<string, any>;
 

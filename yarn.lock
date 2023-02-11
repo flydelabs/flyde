@@ -6288,8 +6288,11 @@ __metadata:
     "@socket.io/admin-ui": ^0.2.0
     "@types/express": ^4.16.1
     "@types/node": ^11.10.5
+    "@ungap/structured-clone": ^1.0.1
+    component-emitter: ^1.3.0
     concurrently: ^4.1.0
     express: ^4.16.4
+    flatted: ^3.2.7
     serialize-error: ^8.1.0
     socket.io: ^4.0.0
     socket.io-client: ^4.0.0
@@ -9838,6 +9841,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ungap/structured-clone@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "@ungap/structured-clone@npm:1.0.1"
+  checksum: cd614e038fa63dcd5da0070d9ed5214d74d1f72b04d88e884d5a6563bb77d52a566fdd26b889f09c534fb72ab1d6ad8efe6bb678a56a5ccd3f0d6946234d1113
+  languageName: node
+  linkType: hard
+
 "@webassemblyjs/ast@npm:1.11.1":
   version: 1.11.1
   resolution: "@webassemblyjs/ast@npm:1.11.1"
@@ -12503,7 +12513,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"component-emitter@npm:~1.3.0":
+"component-emitter@npm:^1.3.0, component-emitter@npm:~1.3.0":
   version: 1.3.0
   resolution: "component-emitter@npm:1.3.0"
   checksum: b3c46de38ffd35c57d1c02488355be9f218e582aec72d72d1b8bbec95a3ac1b38c96cd6e03ff015577e68f550fbb361a3bfdbd9bb248be9390b7b3745691be6b
@@ -15887,6 +15897,13 @@ __metadata:
   version: 3.1.1
   resolution: "flatted@npm:3.1.1"
   checksum: 508935e3366d95444131f0aaa801a4301f24ea5bcb900d12764e7335b46b910730cc1b5bcfcfb8eccb7c8db261ba0671c6a7ca30d10870ff7a7756dc7e731a7a
+  languageName: node
+  linkType: hard
+
+"flatted@npm:^3.2.7":
+  version: 3.2.7
+  resolution: "flatted@npm:3.2.7"
+  checksum: 427633049d55bdb80201c68f7eb1cbd533e03eac541f97d3aecab8c5526f12a20ccecaeede08b57503e772c769e7f8680b37e8d482d1e5f8d7e2194687f9ea35
   languageName: node
   linkType: hard
 

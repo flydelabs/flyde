@@ -4,7 +4,7 @@ import {
   InternalConnectionNode,
   ConnectionData,
 } from ".";
-import { PartDefinition, partInput, partOutput } from "..";
+import { PartDefinition, partInput, partOutput } from "../part";
 
 export const THIS_INS_ID = "__this";
 export const ERROR_PIN_ID = "__error";

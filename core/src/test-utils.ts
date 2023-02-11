@@ -110,7 +110,7 @@ export const wrappedOnEvent = (
   type: DebuggerEventType,
   fn: Function
 ): Debugger["onEvent"] => {
-  return (event: DebuggerEvent) => {
+  return (event: Omit<DebuggerEvent, 'time'>) => {
     if (event.type === type) {
       fn(event);
     }

@@ -3,7 +3,8 @@
     in client projects as there is not real risk
 */
 
-import { okeys } from "..";
+import { okeys } from "../common";
+
 
 export class VMScript {
   script: string;

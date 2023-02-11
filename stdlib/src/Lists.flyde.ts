@@ -1,4 +1,4 @@
-import { CodePart, partFromSimpleFunction } from "@flyde/core";
+import { CodePart, partFromSimpleFunction, randomInt } from "@flyde/core";
 
 const namespace = "Lists";
 
@@ -311,7 +311,7 @@ export const AccumulateValuesByTime: CodePart = {
       description:
         "Time to wait before emitting the accumulated values. Default is 500ms",
       defaultValue: 500,
-      mode: "optional",
+      mode: "required-if-connected",
     },
   },
   reactiveInputs: ["value"],
@@ -324,6 +324,13 @@ export const AccumulateValuesByTime: CodePart = {
     const { state } = adv;
 
     let list = state.get("list") || [];
+
+    const bob = Date.now() % 1000
+    console.log('called', inputs.value, inputs.time, bob);
+    state.set('bob', 2)
+    console.log(Array.from(state.entries()))
+
+    
 
     if (typeof value !== "undefined") {
       list.push(value);
@@ -341,16 +348,18 @@ export const AccumulateValuesByTime: CodePart = {
     state.set(
       "timeout",
       setTimeout(() => {
+        console.log('emitting', list, bob, Date.now() % 1000);
         accumulated.next(list);
 
         state.set("list", []);
         const resolve = state.get("resolve");
         if (!resolve) {
           throw new Error("resolve is undefined");
-        }       
+        }
         resolve();
-      }, time ?? 500)
+      }, time)
     );
+
 
     return promise;
   },
@@ -374,6 +383,7 @@ export const AccumulateValuesByCount: CodePart = {
   outputs: {
     accumulated: { description: "The accumulated values" },
   },
+  completionOutputs: ["accumulated"],
   fn: (inputs, outputs, adv) => {
     const { value, count } = inputs;
     const { accumulated } = outputs;

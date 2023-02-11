@@ -67,6 +67,7 @@ export const createEditorClient = (
     path: `${
       urlParts.pathname === "/" ? "" : urlParts.pathname
     }/socket.io/editor`,
+    parser: require('../custom-parser')
   });
 
   socket.emit("join-room-editor", deploymentId);

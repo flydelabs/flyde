@@ -571,10 +571,8 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
       }, [part.id, closestPin, onPartIoPinClick, onPinClick]);
 
       const onZoom = React.useCallback(
-        (newZoom: number, source?: "hotkey" | "mouse") => {
-          // const pos = vDiv(viewPort.pos, (newZoom - viewPort.zoom));
-          // console.log({viewPort, pos});
-
+        (_newZoom: number, source?: "hotkey" | "mouse") => {
+          const newZoom = Math.min(Math.max(_newZoom, 0.1), 3);
           const targetPos =
             source === "mouse"
               ? lastMousePos.current
@@ -2261,7 +2259,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
                   Center view
                 </Button>
                 <MemodSlider
-                  min={0.05}
+                  min={0.15}
                   max={3}
                   stepSize={0.05}
                   labelStepSize={10}

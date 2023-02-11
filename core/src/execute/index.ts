@@ -20,6 +20,8 @@ import {
   PartAdvancedContext,
   isQueueInputPinConfig,
   PartState,
+  PartFn,
+  PartRepo,
 } from "../part";
 
 import { connect, ERROR_PIN_ID } from "../connect";
@@ -32,18 +34,11 @@ import {
   pullValuesForExecution,
   subscribeInputsToState,
 } from "../execution-values";
-import { delay, entries, isDefined, keys, OMap, OMapF } from "../common";
+import { callFnOrFnPromise, delay, entries, isDefined, isPromise, keys, OMap, OMapF } from "../common";
 import { debugLogger } from "../common/debug-logger";
 import {isStaticInputPinConfig } from '../part';
-import {
-  callFnOrFnPromise,
-  inlineValuePartToPart,
-  customRepoToPartRepo,
-  isPromise,
-  PartFn,
-  PartRepo,
-} from "..";
 import { Debugger, DebuggerEvent, DebuggerEventType } from "./debugger";
+import { customRepoToPartRepo, inlineValuePartToPart } from "../inline-value-to-code-part";
 
 export type SubjectMap = OMapF<Subject<any>>;
 
@@ -301,11 +296,6 @@ const executeCodePart = (data: CodeExecutionData) => {
               }
             });
           });
-        } else {
-          // processing = false;
-          // runs = 0
-          // onProcessing({ processing, insId: stateId });
-          cleanState();
         }
 
         // magic happens here
@@ -328,6 +318,7 @@ const executeCodePart = (data: CodeExecutionData) => {
                   parentInsId,
                 });
                 onCompleted(completedOutputsValues);
+                cleanState();
               }
             });
           } else {
@@ -340,6 +331,7 @@ const executeCodePart = (data: CodeExecutionData) => {
                 parentInsId,
               });
               onCompleted(completedOutputsValues);
+              cleanState();
             }
           }
         } catch (e) {

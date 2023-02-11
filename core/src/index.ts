@@ -41,8 +41,4 @@ export interface InstanceViewData {
   inputConfig: InputPinsConfig;
 }
 
-export type PartRepo = OMap<Part>;
 
-export type PartDefRepo = OMap<PartDefinition>;
-
-export type CustomPartRepo = OMap<CustomPart>;

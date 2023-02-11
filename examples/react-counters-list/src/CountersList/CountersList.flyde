@@ -4,7 +4,6 @@ imports:
     - Publish
     - Subscribe
     - Loop List
-    - Accumulate Values by Time
     - List From 2
   Button.flyde.js:
     - Button
@@ -12,47 +11,29 @@ imports:
     - Span
   Div.flyde.js:
     - Div
+  "@flyde/runtime":
+    - Accumulate Values by Count
+    - List Length
 part:
   instances:
     - pos:
-        x: -67.42527832031251
-        y: -197.3009745788574
+        x: -68.42527832031251
+        y: -195.3009745788574
       id: Subscribe-922
       inputConfig:
         key:
           mode: static
           value: values
+        initial:
+          mode: static
+          value:
+            - 4
       partId: Subscribe
       style:
         size: small
     - pos:
-        x: 267.08017303466795
-        y: 470.34846185684205
-      id: value-464
-      inputConfig: {}
-      part:
-        id: "Inline-value-[4, 8, 15, 16, "
-        inputs: {}
-        outputs:
-          r:
-            type: any
-            delayed: false
-            optional: false
-        fnCode: outputs.r.next(([4, 8, 15, 16, 23, 42]))
-        customViewCode: "[4, 8, 15, 16, 23, 42]"
-        dataBuilderSource: WzQsIDgsIDE1LCAxNiwgMjMsIDQyXQ==
-        templateType: value
-        completionOutputs:
-          - r
-        defaultStyle:
-          size: small
-          icon: code
-          cssOverride:
-            fontFamily: monospace
-            fontWeight: "300"
-    - pos:
-        x: 140.72340728759764
-        y: 683.8112676239014
+        x: 171.467883605957
+        y: 716.5325505828857
       id: Publish-806
       inputConfig:
         key:
@@ -62,27 +43,11 @@ part:
       style:
         size: small
     - pos:
-        x: -117.31901977539064
-        y: -43.95060974121094
+        x: -72.05925415039064
+        y: -35.00316101074219
       id: Loop List-386
       inputConfig: {}
       partId: Loop List
-      style:
-        color: "#9b5de5"
-    - pos:
-        x: -310.0479296875
-        y: 369.0403308105469
-      id: Accumulate Values by Time-699
-      inputConfig:
-        time:
-          mode: static
-          value: 1000
-      visibleInputs:
-        - count
-        - val
-        - value
-        - time
-      partId: Accumulate Values by Time
       style:
         color: "#9b5de5"
     - pos:
@@ -316,7 +281,7 @@ part:
                     insId: List From 3-643
                     pinId: value1
               completionOutputs:
-                - list
+                - jsx
               reactiveInputs:
                 - value
           - id: cl9n70wv6001n46666vy9x4ks
@@ -346,7 +311,9 @@ part:
                 cssOverride:
                   fontFamily: monospace
                   fontWeight: "300"
-            inputConfig: {}
+            inputConfig:
+              idx:
+                mode: sticky
             pos:
               x: -17.44830322265625
               y: 367.75258544921877
@@ -357,7 +324,7 @@ part:
             partId: Div
             inputConfig:
               key:
-                mode: sticky
+                mode: queue
             pos:
               x: -188.12181884765624
               y: 396.5864727783203
@@ -423,13 +390,16 @@ part:
               insId: cl9n77e3g00124666kcquy0k0
               pinId: key
         completionOutputs:
-          - never
+          - jsx
+        reactiveInputs:
+          - value
+          - index
       style:
         size: large
         color: "#f15bb5"
     - pos:
-        x: 42.69230651855469
-        y: 291.8547486877441
+        x: 152.09999084472656
+        y: 323.6291608428955
       id: cl9n7di8k000e4666bwkr6hmc
       inputConfig:
         values:
@@ -480,8 +450,8 @@ part:
       style:
         size: small
     - pos:
-        x: 1.6041284179687523
-        y: 396.8518679809571
+        x: -13.815762939453123
+        y: 395.13763362884526
       id: Button-524
       inputConfig:
         children:
@@ -491,8 +461,8 @@ part:
       style:
         color: "#00f5d4"
     - pos:
-        x: 37.39548461914063
-        y: 569.1734301757813
+        x: 59.78086059570313
+        y: 562.9679248046875
       id: cl9n7hd4i001946665d10kzk4
       inputConfig:
         vals:
@@ -523,13 +493,21 @@ part:
           cssOverride:
             fontFamily: monospace
             fontWeight: "300"
+    - pos:
+        x: -318.78999999999996
+        y: 446.49
+      id: Accumulate Values by Count-183
+      inputConfig:
+        count:
+          mode: sticky
+      partId: Accumulate Values by Count
+    - pos:
+        x: -467.64607421875
+        y: 60.77903717041016
+      id: List Length-285
+      inputConfig: {}
+      partId: List Length
   connections:
-    - from:
-        insId: value-464
-        pinId: r
-      to:
-        insId: Publish-806
-        pinId: value
     - from:
         insId: IndexedCounter-ins
         pinId: indexedValue
@@ -579,23 +557,48 @@ part:
         insId: IndexedCounter-ins
         pinId: value
     - from:
-        insId: IndexedCounter-ins
-        pinId: jsx
-      to:
-        insId: Accumulate Values by Time-699
-        pinId: value
-    - from:
         insId: Button-524
         pinId: jsx
       to:
         insId: List From 2-841
         pinId: value2
     - from:
-        insId: Accumulate Values by Time-699
+        insId: Subscribe-922
+        pinId: value
+      to:
+        insId: cl9n7di8k000e4666bwkr6hmc
+        pinId: values
+    - from:
+        insId: Subscribe-922
+        pinId: value
+      to:
+        insId: cl9n7hd4i001946665d10kzk4
+        pinId: vals
+      hidden: true
+    - from:
+        insId: IndexedCounter-ins
+        pinId: jsx
+      to:
+        insId: Accumulate Values by Count-183
+        pinId: value
+    - from:
+        insId: List Length-285
+        pinId: length
+      to:
+        insId: Accumulate Values by Count-183
+        pinId: count
+    - from:
+        insId: Accumulate Values by Count-183
         pinId: accumulated
       to:
         insId: List From 2-841
         pinId: value1
+    - from:
+        insId: Subscribe-922
+        pinId: value
+      to:
+        insId: List Length-285
+        pinId: list
   id: CountersList
   inputs: {}
   outputs:

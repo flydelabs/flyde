@@ -2471,6 +2471,39 @@ describe("main ", () => {
             });
             assert.isTrue(s.calledAfter(sr));
           });
+
+          it('keeps state of a an implicitly running part', async () => {
+            const part = conciseCodePart({
+              inputs: ['a'],
+              outputs: ["r"],
+              reactiveInputs: ['a'],
+              fn: async (_, o, adv) => {
+                const s = adv.state.get('s') ?? 0;
+                adv.state.set('s', s + 1);
+                await new Promise((r) => setTimeout(r, 10));
+                o.r.next(s);
+              },
+            });
+
+            const s = spy();
+            const [sr, r] = spiedOutput();
+            const input = dynamicPartInput();
+            execute({
+              part,
+              partsRepo: testRepo,
+              inputs: {a: input},
+              outputs: { r },
+              onCompleted: s,
+            });
+            input.subject.next();
+            input.subject.next();
+            input.subject.next();
+            await eventually(() => {
+              assert.equal(sr.callCount, 3);
+              assert.deepEqual(sr.getCalls().map(c => c.args[0]), [0, 1, 2]);
+            });
+            assert.isTrue(s.calledAfter(sr));
+          });
         });
 
         describe("visual parts", () => {

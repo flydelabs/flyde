@@ -1,21 +1,10 @@
-import {
-  InlineValuePart,
-  connectionData,
-  connectionNode,
-  VisualPart,
-  Part,
-  partInput,
-  partInstance,
-  partOutput,
-} from "../..";
-import { concisePart } from "../../test-utils";
-
 import { produce } from "immer";
-import { randomInt, randomPos, shuffle } from "..";
+import { randomInt, randomPos, shuffle } from "../../common";
 import { assert } from "chai";
 import { hashFlow, hashPart } from ".";
-import { visualPart } from "../../part";
+import { InlineValuePart, partInput, partInstance, partOutput, VisualPart, visualPart } from "../../part";
 import { FlydeFlow } from "../../flow-schema";
+import { connectionData } from "../../connect";
 
 const somePart: VisualPart = {
   id: "bob",
