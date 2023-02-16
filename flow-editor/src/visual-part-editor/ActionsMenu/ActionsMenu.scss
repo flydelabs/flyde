@@ -1,3 +1,5 @@
+@import './AddPartMenu/AddPartMenu.scss';
+
 .actions-menu {
 	display:flex;
 	flex-direction: row;
@@ -13,7 +15,7 @@
 	transition: opacity 0.05s ease-in-out, transform 0.05s ease-in-out;
 
 	&:not(:hover) {
-		opacity: 0.3;
+		opacity: 0.6;
 		// transform: translateX(-50%) translateY(40px);
 		transform-origin: center;
 	}

@@ -1,7 +1,5 @@
 import React from 'react';
 
-import './{{compName}}.scss';
-
 export interface {{compName}}Props { 
 
 }

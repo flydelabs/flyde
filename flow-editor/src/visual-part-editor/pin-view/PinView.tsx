@@ -46,7 +46,7 @@ export type PinViewProps = {
   description?: string;
   onToggleLogged: (insId: string, pinId: string, type: PinType) => void;
   onToggleBreakpoint: (insId: string, pinId: string, type: PinType) => void;
-  onInspect: (insId: string, pinId: string, type: PinType) => void;
+  onInspect: (insId: string, pin: {id: string, type: PinType}) => void;
   onRequestHistory: (pinId: string, type: PinType) => Promise<HistoryPayload>;
 } & (InputPinViewProps | OutputPinViewProps);
 
@@ -96,7 +96,7 @@ export const PinView: React.SFC<PinViewProps> = React.memo(function PinView(
 
     const inspectMenuItem = (
       <MenuItem
-        onClick={() => props.onInspect(props.insId, props.id, props.type)}
+        onClick={() => props.onInspect(props.insId, {id: props.id, type: props.type})}
         text={"Inspect"}
       />
     );

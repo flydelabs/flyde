@@ -2,9 +2,9 @@ import { toastMsg } from "../../toaster";
 import { createContext, useContext } from "react";
 import {
   FlydeFlow,
-  PartDefRepo,
   ResolvedFlydeFlowDefinition,
 } from "@flyde/core";
+import { Importables } from "@flyde/dev-server";
 
 export type CancelFn = () => void;
 
@@ -26,7 +26,7 @@ export interface EditorPorts {
   getImportables: (dto: {
     rootFolder: string;
     flowPath: string;
-  }) => Promise<Record<string, PartDefRepo>>;
+  }) => Promise<Importables>;
 
   onFlowChange: (
     cb: (data: { flow: FlydeFlow; deps: ResolvedFlydeFlowDefinition }) => void

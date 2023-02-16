@@ -146,7 +146,7 @@ export interface InstanceViewProps {
   onTogglePinLog: (insId: string, pinId: string, type: PinType) => void;
   onTogglePinBreakpoint: (insId: string, pinId: string, type: PinType) => void;
 
-  onInspectPin: (insId: string, pinId: string, type: PinType) => void;
+  onInspectPin: (insId: string, pin: {id: string, type: PinType}) => void;
 
   onUngroup: (ins: PartInstance) => void;
   onDetachConstValue: (ins: PartInstance, pinId: string) => void;

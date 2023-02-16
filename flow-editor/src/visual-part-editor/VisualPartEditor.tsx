@@ -115,6 +115,7 @@ import { handleDetachConstEditorCommand } from "./commands/detach-const";
 import { handleDuplicateSelectedEditorCommand } from "./commands/duplicate-instances";
 import { PartStyleMenu } from "./instance-view/PartStyleMenu";
 import { FlydeFlowEditorProps } from "../flow-editor/FlowEditor";
+import { Action, ActionsMenu, ActionType } from "./ActionsMenu/ActionsMenu";
 
 const MemodSlider = React.memo(Slider);
 
@@ -170,7 +171,7 @@ export type VisualPartEditorProps = {
   onChangePart: (val: VisualPart, type: FlydeFlowChangeType) => void;
 
   onCopy: (data: ClipboardData) => void;
-  onInspectPin: (insId: string, pinId: string, type: PinType) => void;
+  onInspectPin: (insId: string, pin: { id: string; type: PinType }) => void;
 
   onGoToPartDef: (part: ImportedPartDef) => void;
 
@@ -180,7 +181,7 @@ export type VisualPartEditorProps = {
     pinId: string,
     pinType: PinType
   ) => Promise<HistoryPayload>;
-  onRequestImportables?: (query: string) => Promise<ImportablePart[]>;
+  onRequestImportables: () => Promise<ImportablePart[]>;
 
   onImportPart: FlydeFlowEditorProps["onImportPart"];
 
@@ -193,7 +194,7 @@ export type VisualPartEditorProps = {
   parentViewport?: ViewPort;
   parentBoardPos?: Pos;
 
-  queuedInputsData?: Record<string, Record<string, number>>
+  queuedInputsData?: Record<string, Record<string, number>>;
 };
 
 type InlineValueTargetExisting = {
@@ -247,7 +248,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
         onShowOmnibar,
         resolvedFlow,
         onImportPart,
-        queuedInputsData: queueInputsData
+        queuedInputsData: queueInputsData,
       } = props;
 
       const parentViewport = props.parentViewport || defaultViewPort;
@@ -330,13 +331,14 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
           [onRequestHistory]
         );
 
-      const _onInspectPin: VisualPartEditorProps["onInspectPin"] =
-        React.useCallback(
-          (insId, pinId, pinType) => {
-            return onInspectPin(`${thisInsId}.${insId}`, pinId, pinType);
-          },
-          [onInspectPin, thisInsId]
-        );
+      const _onInspectPin = React.useCallback<
+        VisualPartEditorProps["onInspectPin"]
+      >(
+        (insId, pin) => {
+          return onInspectPin(`${thisInsId}.${insId}`, pin);
+        },
+        [onInspectPin, thisInsId]
+      );
 
       const onConnectionClose = React.useCallback(
         (from: ConnectionNode, to: ConnectionNode) => {
@@ -1109,7 +1111,6 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
           } else {
             const visualPart = getPartDef(groupPartIns.partId, repo);
 
-            // const imports =
             if (!isVisualPart(visualPart)) {
               toastMsg("Not supported", "warning");
               return;
@@ -1275,6 +1276,80 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
           return onRequestHistory(hackishlyGetInsId, id, type);
         },
         [onRequestHistory, thisInsId]
+      );
+
+      const onAction = React.useCallback(
+        (action: Action) => {
+          switch (action.type) {
+            case ActionType.RemovePart: {
+              const newValue = produce(part, (draft) => {
+                if (!isVisualPart(part)) {
+                  throw new Error(
+                    `Impossible state, deleting instances opf non visual part`
+                  );
+                }
+                part.instances = part.instances.filter(
+                  (ins) => !selected.includes(ins.id)
+                );
+                part.connections = part.connections.filter(
+                  (conn) =>
+                    !selected.includes(conn.from.insId) &&
+                    !selected.includes(conn.to.insId)
+                );
+              });
+              onChange(newValue, functionalChange("remove-instances"));
+              toastMsg(`Removed ${selected.length} instances(s)`);
+              break;
+            }
+            case ActionType.Inspect: {
+              if (selected.length === 1 || from || to) {
+                const insId = selected[0] || from?.insId || to?.insId;
+                const pinId = from?.pinId || to?.pinId;
+                onInspectPin(insId, {
+                  type: from ? "output" : "input",
+                  id: pinId,
+                });
+              }
+              break;
+            }
+            case ActionType.Group: {
+              void (async () => {
+                await onGroupSelectedInternal();
+              })();
+              break;
+            }
+            case ActionType.Ungroup: {
+              const instance = part.instances.find(
+                (ins) => ins.id === selected[0]
+              );
+              onUngroup(instance);
+              const insPart = getPartDef(instance, repo);
+              toastMsg(`Ungrouped inline part ${insPart.id}`);
+              break;
+            }
+            case ActionType.AddInlineValue: {
+              setInlineCodeTarget({
+                type: "new-floating",
+                pos: lastMousePos.current,
+              });
+              break;
+            }
+            case ActionType.AddPart: {
+
+              void (async function(){ 
+                await onImportPart(action.data.importablePart, {
+                  pos: lastMousePos.current,
+                });
+
+              })();
+              break;
+            }
+            default: {
+              toastMsg(`${action} not supported yet`);
+            }
+          }
+        },
+        [from, onChange, onGroupSelectedInternal, onImportPart, onInspectPin, onUngroup, part, repo, selected, to]
       );
 
       const renderPartInputs = () => {
@@ -1496,10 +1571,9 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
         validOutputs.set(THIS_INS_ID, keys(part.inputs));
 
         const orphanConnections = connections.filter((conn) => {
-
           const inputsExist =
-            (validInputs.get(conn.to.insId) &&
-            validInputs.get(conn.to.insId).includes(conn.to.pinId));
+            validInputs.get(conn.to.insId) &&
+            validInputs.get(conn.to.insId).includes(conn.to.pinId);
           const outputsExist =
             validOutputs.get(conn.from.insId) &&
             validOutputs.get(conn.from.insId).includes(conn.from.pinId);
@@ -1676,7 +1750,19 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             </Menu>
           );
         },
-        [partIoEditable, copyPartToClipboard, part.completionOutputs, part.reactiveInputs, part.defaultStyle, onChangeDefaultStyle, _prompt, onAddIoPin, editCompletionOutputs, editReactiveInputs, editPartDescription]
+        [
+          partIoEditable,
+          copyPartToClipboard,
+          part.completionOutputs,
+          part.reactiveInputs,
+          part.defaultStyle,
+          onChangeDefaultStyle,
+          _prompt,
+          onAddIoPin,
+          editCompletionOutputs,
+          editReactiveInputs,
+          editPartDescription,
+        ]
       );
 
       const showContextMenu = React.useCallback(
@@ -1770,6 +1856,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             onExtractInlinePart: props.onExtractInlinePart,
             onImportPart: props.onImportPart,
             queuedInputsData: props.queuedInputsData,
+            onRequestImportables: props.onRequestImportables,
           };
         } else {
           return;
@@ -2205,7 +2292,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
                     closestPin && closestPin.ins.id === ins.id
                       ? closestPin
                       : undefined
-                    }
+                  }
                   queuedInputsData={queueInputsData[ins.id] ?? emptyObj}
                   instance={ins}
                   connections={connections}
@@ -2283,8 +2370,14 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
               ) : null}
               <div className="inline-editor-portal-root" />
             </main>
-            {/* {maybeRenderInlinePartInstance()} */}
-            {/* {maybeRenderInstancePanel()} */}
+            <ActionsMenu
+              onAction={onAction}
+              selectedInstances={selected}
+              flow={resolvedFlow}
+              to={to}
+              from={from}
+              onRequestImportables={props.onRequestImportables}
+            />
           </div>
         );
       } catch (e) {

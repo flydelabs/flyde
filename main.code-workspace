@@ -41,6 +41,7 @@
 			"**/dist": true
 		},
 		"cSpell.words": [
+			"Importables",
 			"Ungroup"
 		],
 		"files.exclude": {

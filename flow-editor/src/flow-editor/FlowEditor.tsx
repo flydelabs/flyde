@@ -13,7 +13,6 @@ import {
   InlinePartInstance,
   PinType,
   DebuggerEventType,
-  Debugger,
 } from "@flyde/core";
 import {
   VisualPartEditor,
@@ -31,7 +30,7 @@ import {
   domToViewPort,
 } from "../visual-part-editor/utils";
 
-import { EditorDebuggerClient, HistoryPayload, RuntimeDebuggerClient } from "@flyde/remote-debugger";
+import { EditorDebuggerClient, HistoryPayload } from "@flyde/remote-debugger";
 import { AppToaster, toastMsg } from "../toaster";
 
 import {
@@ -46,10 +45,8 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { fab } from "@fortawesome/free-brands-svg-icons";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { vAdd } from "../physics";
-import { ActionsMenu, ActionType } from "./ActionsMenu";
+import { ActionType } from "../visual-part-editor/ActionsMenu";
 import { DataInspectionModal } from "./DataInspectionModal";
-import { stringify } from "querystring";
-import { inspect } from "util";
 export * from "./ports";
 
 library.add(fab, fas);
@@ -364,6 +361,9 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
           }
           break;
         }
+        default: {
+          toastMsg(`${action} not supported yet`);
+        }
       }
     }, [editorBoardData.from, editorBoardData.selected, editorBoardData.to, flow, onChangeFlow]);
 
@@ -371,13 +371,16 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
 
     const onCloseInspectedItemModal = React.useCallback(() => setInspectedItem(undefined), []);
 
+    const onInspectPin = React.useCallback((insId: string, pin: {type: PinType, id: string}) => {
+      setInspectedItem({insId, pin});
+    }, []);
+
     const renderInner = () => {
       if (isInlineValuePart(editedPart)) {
         throw new Error("Impossible state");
       } else {
         return (
           <React.Fragment>
-            <ActionsMenu onAction={onAction} selectedInstances={editorBoardData.selected} flow={resolvedFlow} to={editorBoardData.to} from={editorBoardData.from}/>
             {inspectedItem ? <DataInspectionModal onRequestHistory={props.onRequestHistory} item={inspectedItem} onClose={onCloseInspectedItemModal}/> : null}
             <VisualPartEditor
               insId={`root.${editedPart.id}`}
@@ -397,7 +400,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
               clipboardData={clipboardData}
               onCopy={setClipboardData}
               partIoEditable={!editedPart.id.startsWith("Trigger")}
-              onInspectPin={props.onInspectPin}
+              onInspectPin={onInspectPin}
               onRequestHistory={props.onRequestHistory}
               onRequestImportables={props.onQueryImportables}
               onImportPart={props.onImportPart}

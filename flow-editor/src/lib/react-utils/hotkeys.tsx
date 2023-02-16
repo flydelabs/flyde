@@ -40,5 +40,5 @@ export const appHotkeysConfig = [
   hotkey("cmd+shift+s", "Toggle side", AppHotkeyCmd.TOGGLE_SIDE, true, true),
   hotkey("cmd+s", "Toggle side", AppHotkeyCmd.SAVE_PROJECT, true, true),
   hotkey("shift+r", "Run", AppHotkeyCmd.RUN, true, true),
-  hotkey("cmd+z", "Undo", AppHotkeyCmd.UNDO, true, true),
+  // hotkey("cmd+z", "Undo", AppHotkeyCmd.UNDO, true, true),
 ];

@@ -1,0 +1,66 @@
+.add-part-menu-list-item {
+	background: white;
+	padding: 5px 10px;
+
+	&:not(:last-of-type) {
+		border-bottom: 1px solid #ddd;
+	}
+	// cursor: pointer;
+
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+
+	.content {
+		flex: 1;
+
+		> header {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			justify-content: space-between;
+
+			.id {
+				font-weight: 600;
+				font-size: 1.1em;
+				flex: 1;
+			}
+
+			.bp3-tag {
+				margin-left: 5px;
+			}
+	
+			.source {
+				// font-size: 0.8rem;
+				// flex: 0;
+				// color: #666;
+			}
+
+		}
+	}
+	
+	aside {
+		flex: 0;
+		visibility: hidden;
+		margin-left: 20px;
+	}
+	
+
+	&.selected:not(:hover) {
+		background: #015C8F;
+		color: white;
+
+		.source {
+			color: white;
+		}
+	}
+
+	&:hover {
+		background: #0082cd;
+		color: white;
+
+		aside {
+			visibility: visible;
+		}
+	}
+}

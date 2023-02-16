@@ -1,10 +1,15 @@
 import axios from "axios";
 import {
+  BasePart,
   FlydeFlow,
+  ImportablePart,
+  PartDefinition,
   PartDefRepo,
   ResolvedFlydeFlowDefinition,
 } from "@flyde/core";
 import { FolderStructure } from "./fs-helper/shared";
+
+export type Importables = Record<string, Record<string, BasePart>>;
 
 export const createDevServerClient = (baseUrl: string) => {
   return {
@@ -28,7 +33,7 @@ export const createDevServerClient = (baseUrl: string) => {
     },
     getImportables: (
       filename: string
-    ): Promise<Record<string, PartDefRepo>> => {
+    ): Promise<Importables> => {
       return axios
         .get(`${baseUrl}/importables?filename=${filename}`)
         .then((res) => res.data);

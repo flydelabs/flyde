@@ -2,13 +2,15 @@ imports:
   "@flyde/stdlib":
     - GET Request
     - POST Request
-    - Dot
     - Get Attribute
+    - Log
+    - Limit Times
+    - Round Robin 3
 part:
   instances:
     - pos:
         x: -656.1905053710938
-        y: 326.03946411132813
+        y: 325.03946411132813
       id: Inline-value-Hello from ${i76
       inputConfig: {}
       part:
@@ -410,6 +412,24 @@ part:
       style:
         size: large
         color: "#00bbf9"
+    - pos:
+        x: -71.1502685546875
+        y: 302.57459259033203
+      id: Log-755
+      inputConfig: {}
+      partId: Log
+    - pos:
+        x: -453.15
+        y: 594.75
+      id: Limit Times-729
+      inputConfig: {}
+      partId: Limit Times
+    - pos:
+        x: -720.739296875
+        y: 535.200754699707
+      id: Round Robin 3-48
+      inputConfig: {}
+      partId: Round Robin 3
   connections:
     - from:
         insId: Get Country Name And Capital-ins
