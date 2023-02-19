@@ -39,7 +39,7 @@ export const getPartOutputs = (part: PartDefinition) => {
 export const isExternalConnectionNode = (
   node: ConnectionNode
 ): node is ExternalConnectionNode => {
-  return node.insId === THIS_INS_ID;
+  return node && node.insId === THIS_INS_ID;
 };
 
 export const isInternalConnectionNode = (

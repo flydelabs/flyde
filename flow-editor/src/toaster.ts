@@ -16,8 +16,8 @@ const createToaster = () => {
 export const AppToaster = createToaster();
 
 export const toastMsg = (
-  message: string,
-  intent?: "danger" | "success" | "warning",
+  message: string | JSX.Element,
+  intent?: "danger" | "success" | "warning" | "info",
   timeout?: number
 ) => {
   return AppToaster.show({ message, intent, timeout });

@@ -1,11 +1,5 @@
-export * from './Http.flyde';
-export * from './Objects.flyde';
-export * from './Numbers.flyde';
-export * from './Strings.flyde';
-export * from './FileSystem.flyde';
-export * from './ControlFlow.flyde';
-export * from './Lists.flyde';
-export * from './Console.flyde';
-export * from './Dates.flyde';
+// consumed by the website playground
+export * from './all-browser';
 export * from './Mongo.flyde';
+export * from './FileSystem.flyde';
 export * from './Postgres.flyde';

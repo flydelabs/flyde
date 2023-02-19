@@ -3,5 +3,6 @@
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	height: var(--heading-height);
+	min-height: var(--heading-height);
+	flex-wrap: wrap;
 }

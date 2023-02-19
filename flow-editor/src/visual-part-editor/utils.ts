@@ -1,4 +1,5 @@
 import * as immer from "immer";
+import cuid from 'cuid';
 import { PART_HEIGHT } from "./VisualPartEditor";
 import {
   Pos,
@@ -244,7 +245,7 @@ export const createNewPartInstance = (
   }, {});
 
   const ins = partInstance(
-    `${part.id}-${randomInt(999)}`,
+    cuid(),
     part.id,
     inputsConfig,
     { x: 0, y: 0 }
@@ -512,14 +513,14 @@ export const fitViewPortToPart = (
 ): ViewPort => {
   const { size, center } = getEffectivePartDimensions(part, repo);
 
-  const horPadding = 0;
-  const verPadding = 0;
+  const horPadding = 20;
+  const verPadding = 150;
 
   const width = size.width + horPadding;
   const height = size.height + verPadding;
 
   const widthFit = vpSize.width / width; // i.e 2 if viewPort is twice as large, 0.5 is viewPort is half
-  const heightFit = vpSize.height / height;
+  const heightFit = vpSize.height / height;  
 
   const fitToGoBy = Math.min(widthFit, heightFit);
 
@@ -535,6 +536,15 @@ export const fitViewPortToPart = (
     zoom,
     pos: { x: vpX, y: vpY },
   };
+};
+
+export const getMiddleOfViewPort = (vp: ViewPort, vpSize: Size) => {
+  const renderedPos = {
+    x: vpSize.width / 2,
+    y: vpSize.height / 2,
+  };
+
+  return renderedPosToLogicalPos(renderedPos, vp);
 };
 
 export const isJsxValue = (val: any): boolean => {

@@ -140,7 +140,6 @@ export const InlineCodeModal: React.FC<InlineCodeModalProps> = React.memo(
         isOpen={true}
         title={"Inline Value / Code"}
         onClose={props.onCancel}
-        canEscapeKeyClose={false}
         className="inline-code-modal"
       >
         <main

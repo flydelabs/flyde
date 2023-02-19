@@ -49,4 +49,32 @@
 			transform: scale(0.95);
 		}
 	}
+
+	@at-root {
+		.action-button-tooltip {
+			
+				.hotkey {
+					// keyboard shortcut indicator
+					display: inline-block;
+					
+
+				}
+
+				
+
+		}
+
+	}
+}
+
+kbd {
+	// keyboard shortcut indicator
+	display: inline-block;
+	margin: 0 5px;
+	font-size: 0.8em;
+	background: #dedede;
+	color: #333;
+	border-radius: 3px;
+	padding: 2px 5px;
+	box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px 1px rgba(0, 0, 0, 0.1);
 }

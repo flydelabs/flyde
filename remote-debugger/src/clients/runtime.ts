@@ -40,9 +40,6 @@ export type RuntimeDebuggerClient = {
 
 export const DEFAULT_DT_SCALE = 1;
 
-console.log({customParser: require('../custom-parser')});
-
-
 export const createRuntimeClient = (
   url: string,
   deploymentId: string

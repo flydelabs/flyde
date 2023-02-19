@@ -149,8 +149,8 @@ export const PinView: React.SFC<PinViewProps> = React.memo(function PinView(
     } else {
       return (
         <Menu>
-          {logMenuItem}
-          {bpMenuItem}
+          {/* {logMenuItem} */}
+          {/* {bpMenuItem} */}
           {inspectMenuItem}
         </Menu>
       );

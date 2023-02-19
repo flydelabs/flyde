@@ -299,6 +299,7 @@ export const AddPartMenu: React.FC<AddPartMenuProps> = (props) => {
               type="search"
               placeholder="Search input"
               dir="auto"
+              autoFocus
               onChange={(e) => setQuery(e.target.value)}
               value={query}
               onKeyDown={onSearchKeyDown}

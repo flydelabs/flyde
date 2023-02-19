@@ -7,26 +7,7 @@ import Layout from "@theme/Layout";
 import HomepageFeatures from "@site/src/components/HomepageFeatures";
 import styles from "./index.module.css";
 
-const IntegrationPoints = () => {
-  return (
-    <strong className="integration-points">
-      <Typical
-        steps={[
-          "IDE",
-          2000,
-          "CI/CD",
-          2000,
-          "Version Control",
-          2000,
-          "Testing Setup",
-          2000,
-        ]}
-        loop={Infinity}
-        wrapper="span"
-      />
-    </strong>
-  );
-};
+import "../css/global.scss";
 
 
 const UseCases = () => {

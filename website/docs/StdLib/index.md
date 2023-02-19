@@ -14,8 +14,6 @@ For simplicity, all parts of Flyde's standard library reside in the same package
 
 - [Strings](#Strings)
 
-- [File System](#File-System)
-
 - [Control Flow](#Control-Flow)
 
 - [Lists](#Lists)
@@ -25,6 +23,8 @@ For simplicity, all parts of Flyde's standard library reside in the same package
 - [Dates](#Dates)
 
 - [MongoDB](#MongoDB)
+
+- [File System](#File-System)
 
 - [Postgres](#Postgres)
 
@@ -112,16 +112,6 @@ For simplicity, all parts of Flyde's standard library reside in the same package
 | **Is Empty**       | Determines whether a string is empty                                                                                                                                                 | <div><strong>string</strong>: String to check (required) </div>                                                                                                                                                             | <div><strong>value</strong>: Result</div>             |
 | **Match Regex**    | Determines whether a string matches a regular expression                                                                                                                             | <div><strong>string</strong>: String to check (required) </div><div><strong>regex</strong>: Regular expression to match (required) </div>                                                                                   | <div><strong>value</strong>: Result</div>             |
 | **Empty String**   | Creates an empty string                                                                                                                                                              | *None*                                                                                                                                                                                                                      | <div><strong>string</strong>: The empty string</div>  |
-
-## File System
-
-| Id              | Description                         | Inputs                                                                                                                                                                                                     | Outputs                                                     |
-| --------------- | ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
-| **Read File**   | Reads a file from the file system   | <div><strong>path</strong>: Path to the file (required) </div><div><strong>encoding</strong>: Encoding of the file (optional) </div>                                                                       | <div><strong>contents</strong>: Contents of the file</div>  |
-| **Write File**  | Writes a file to the file system    | <div><strong>path</strong>: Path to the file (required) </div><div><strong>contents</strong>: Contents of the file (required) </div><div><strong>encoding</strong>: Encoding of the file (optional) </div> | *None*                                                      |
-| **Append File** | Appends a file to the file system   | <div><strong>path</strong>: Path to the file (required) </div><div><strong>contents</strong>: Contents of the file (required) </div><div><strong>encoding</strong>: Encoding of the file (optional) </div> | *None*                                                      |
-| **Delete File** | Deletes a file from the file system | <div><strong>path</strong>: Path to the file (required) </div>                                                                                                                                             | *None*                                                      |
-| **Exists**      | Checks if a file exists             | <div><strong>path</strong>: Path to the file (required) </div>                                                                                                                                             | <div><strong>exists</strong>: Whether the file exists</div> |
 
 ## Control Flow
 
@@ -223,6 +213,16 @@ For simplicity, all parts of Flyde's standard library reside in the same package
 | **CountDocuments** | Counts documents in a Mongo database. CountDocuments receives a valid "mongodb" CountDocumentsOptions object. | <div><strong>connection</strong>: Mongo connection (required) </div><div><strong>collection</strong>: Collection (required) </div><div><strong>query</strong>: Query (required) </div><div><strong>options</strong>: Options (required) </div>                                                         | <div><strong>result</strong>: </div>                           |
 | **CreateIndex**    | Creates an index in a Mongo database. CreateIndex receives a valid "mongodb" CreateIndexesOptions object.     | <div><strong>connection</strong>: Mongo connection (required) </div><div><strong>collection</strong>: Collection (required) </div><div><strong>fieldOrSpec</strong>: Field or spec (required) </div><div><strong>options</strong>: Options (required) </div>                                           | <div><strong>result</strong>: </div>                           |
 | **CreateIndexes**  | Creates indexes in a Mongo database. CreateIndexes receives a valid "mongodb" CreateIndexesOptions object.    | <div><strong>connection</strong>: Mongo connection (required) </div><div><strong>collection</strong>: Collection (required) </div><div><strong>indexes</strong>: Indexes (required) </div><div><strong>options</strong>: Options (required) </div>                                                     | <div><strong>result</strong>: </div>                           |
+
+## File System
+
+| Id              | Description                         | Inputs                                                                                                                                                                                                     | Outputs                                                     |
+| --------------- | ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| **Read File**   | Reads a file from the file system   | <div><strong>path</strong>: Path to the file (required) </div><div><strong>encoding</strong>: Encoding of the file (optional) </div>                                                                       | <div><strong>contents</strong>: Contents of the file</div>  |
+| **Write File**  | Writes a file to the file system    | <div><strong>path</strong>: Path to the file (required) </div><div><strong>contents</strong>: Contents of the file (required) </div><div><strong>encoding</strong>: Encoding of the file (optional) </div> | *None*                                                      |
+| **Append File** | Appends a file to the file system   | <div><strong>path</strong>: Path to the file (required) </div><div><strong>contents</strong>: Contents of the file (required) </div><div><strong>encoding</strong>: Encoding of the file (optional) </div> | *None*                                                      |
+| **Delete File** | Deletes a file from the file system | <div><strong>path</strong>: Path to the file (required) </div>                                                                                                                                             | *None*                                                      |
+| **Exists**      | Checks if a file exists             | <div><strong>path</strong>: Path to the file (required) </div>                                                                                                                                             | <div><strong>exists</strong>: Whether the file exists</div> |
 
 ## Postgres
 

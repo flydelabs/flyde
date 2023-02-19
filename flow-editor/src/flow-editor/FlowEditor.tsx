@@ -64,9 +64,9 @@ export type FlydeFlowEditorProps = {
 
   onImportPart: (
     part: ImportablePart,
-    target?: { pos: Pos; connectTo?: { insId: string; outputId: string } }
-  ) => void;
-  onQueryImportables?: (query: string) => Promise<ImportablePart[]>;
+    target?: { pos: Pos; selectAfterAdding?: boolean, connectTo?: { insId: string; outputId: string } }
+  ) => Promise<PartInstance | undefined>;
+  onQueryImportables?: () => Promise<ImportablePart[]>;
 
   onInspectPin: (insId: string, pinId: string, pinType: PinType) => void;
 
@@ -209,11 +209,6 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
       undefined,
       [state, undoStack, redoStack]
     );
-
-    useHotkeys("a", (e) => {
-      e.preventDefault();
-      showOmnibar();
-    });
 
     const onChangePart = React.useCallback(
       (newPart: VisualPart, changeType: FlydeFlowChangeType) => {

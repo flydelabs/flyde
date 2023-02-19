@@ -40,8 +40,8 @@ part:
         size: small
         icon: magnifying-glass
     - pos:
-        x: -504.5772265625001
-        y: -731.59748046875
+        x: -506.0347460937501
+        y: -756.374580078125
       id: clchvfuoj000145662fwav020
       inputConfig:
         key:
@@ -76,8 +76,8 @@ part:
       inputConfig: {}
       partId: Log
     - pos:
-        x: -354.2480908203124
-        y: -481.4751000976562
+        x: -336.7432690429687
+        y: -471.2675805664062
       id: DadJoke-l0p46hh
       inputConfig: {}
       partId: Log
@@ -126,8 +126,8 @@ part:
   outputs: {}
   inputsPosition:
     punchDelay:
-      x: -277.93354042425614
-      y: -954.5165545329929
+      x: -302.7343200487989
+      y: -948.6811052496844
     test:
       x: -182.5383681955638
       y: -903.352979697288

@@ -33,7 +33,7 @@ import {
   ResolvedFlydeFlowDefinition,
   connectionNode,
   ImportedPartDef,
-  ERROR_PIN_ID,
+
   PartStyle,
   getPartOutputs,
   Pos,
@@ -67,6 +67,7 @@ import {
   emptyList,
   animateViewPort,
   logicalPosToRenderedPos,
+  getMiddleOfViewPort,
 } from "./utils";
 
 import { produce } from "immer";
@@ -366,6 +367,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
 
       const onGroupSelectedInternal = React.useCallback(async () => {
         const name = await _prompt("New visual part name?");
+        if (!name) return;
         const { currentPart } = await groupSelected(
           boardData.selected,
           part,
@@ -375,7 +377,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
         );
         onChange(currentPart, functionalChange("group part"));
 
-        toastMsg("Part visual!");
+        toastMsg("Part grouped");
       }, [_prompt, boardData.selected, onChange, part]);
 
       useEffect(() => {
@@ -783,8 +785,8 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             );
           });
 
-          onChange(newValue, functionalChange("delete-ins"));
           onChangeBoardData({ selected: [] });
+          onChange(newValue, functionalChange("delete-ins"));
         },
         [connections, onChange, onChangeBoardData, part]
       );
@@ -839,7 +841,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
       const deleteSelection = React.useCallback(async () => {
         const { selected, from, to } = boardData;
         if (selected.length === 0) {
-          if (isExternalConnectionNode(from)) {
+          if (from && isExternalConnectionNode(from)) {
             if (
               await _confirm(
                 `Are you sure you want to remove main input ${from.pinId}?`
@@ -847,7 +849,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             ) {
               onRemoveIoPin("input", from.pinId);
             }
-          } else if (isExternalConnectionNode(to)) {
+          } else if (to && isExternalConnectionNode(to)) {
             if (
               await _confirm(
                 `Are you sure you want to remove main output ${to.pinId}?`
@@ -1288,16 +1290,18 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
                     `Impossible state, deleting instances opf non visual part`
                   );
                 }
-                part.instances = part.instances.filter(
+                draft.instances = draft.instances.filter(
                   (ins) => !selected.includes(ins.id)
                 );
-                part.connections = part.connections.filter(
+                draft.connections = draft.connections.filter(
                   (conn) =>
                     !selected.includes(conn.from.insId) &&
                     !selected.includes(conn.to.insId)
                 );
               });
+              onChangeBoardData({selected: []})
               onChange(newValue, functionalChange("remove-instances"));
+              
               toastMsg(`Removed ${selected.length} instances(s)`);
               break;
             }
@@ -1336,11 +1340,15 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             }
             case ActionType.AddPart: {
 
-              void (async function(){ 
-                await onImportPart(action.data.importablePart, {
-                  pos: lastMousePos.current,
-                });
 
+              void (async function(){ 
+
+                const pos = getMiddleOfViewPort(viewPort, vpSize);
+                await onImportPart(action.data.importablePart, {
+                  selectAfterAdding: true,
+                  pos: vSub(pos, {x: 0, y: 50 * viewPort.zoom}) // to account for part
+                  
+                });
               })();
               break;
             }
@@ -1349,7 +1357,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             }
           }
         },
-        [from, onChange, onGroupSelectedInternal, onImportPart, onInspectPin, onUngroup, part, repo, selected, to]
+        [from, onChange, onGroupSelectedInternal, onImportPart, onInspectPin, onUngroup, part, repo, selected, to, viewPort, vpSize]
       );
 
       const renderPartInputs = () => {
@@ -1788,7 +1796,6 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
       useHotkeys("cmd+v", onPaste, isBoardInFocus);
       useHotkeys("esc", clearSelections, isBoardInFocus);
       useHotkeys("backspace", deleteSelection, isBoardInFocus);
-      useHotkeys("shift+g", onGroupSelectedInternal, isBoardInFocus);
       useHotkeys("shift+d", duplicate, isBoardInFocus);
       useHotkeys("cmd+a", selectAll, isBoardInFocus);
       useHotkeys("s", selectClosest, isBoardInFocus);
@@ -2373,9 +2380,11 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             <ActionsMenu
               onAction={onAction}
               selectedInstances={selected}
-              flow={resolvedFlow}
+              part={part}
+              repo={repo}
               to={to}
               from={from}
+              hotkeysEnabled={isBoardInFocus}
               onRequestImportables={props.onRequestImportables}
             />
           </div>

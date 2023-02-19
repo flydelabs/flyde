@@ -6,34 +6,39 @@ import React, {
   useState,
 } from "react";
 import * as PubSub from "pubsub-js";
-import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import Layout from "@theme/Layout";
 import clsx from "clsx";
 import {
+  createNewPartInstance,
   createRuntimePlayer,
   fitViewPortToPart,
   FlowEditor,
   FlowEditorState,
+  FlydeFlowChangeType,
   FlydeFlowEditorProps,
+  functionalChange,
   RuntimePlayer,
+  toastMsg,
   useDebounce,
+  vAdd,
 } from "@flyde/flow-editor";
 import { fakeVm } from "@site/src/fake-vm";
 import Link from "@docusaurus/Link";
 import {
+  BasePart,
   DynamicPartInput,
   execute,
   FlydeFlow,
+  isBasePart,
   keys,
   noop,
-  PartDefRepo,
+  Part,
   PartInputs,
+  PartInstance,
   PartOutput,
-  PartRepo,
-  ResolvedFlydeFlow,
   ResolvedFlydeRuntimeFlow,
+  TRIGGER_PIN_ID,
 } from "@flyde/core";
-import { defaultViewPort } from "@site/../flow-editor/dist/visual-part-editor";
 import { createHistoryPlayer } from "../_lib/createHistoryPlayer";
 import { createRuntimeClientDebugger } from "../_lib/createRuntimePlayerDebugger";
 import styles from "../../index.module.css";
@@ -120,19 +125,22 @@ const runFlow = ({
 
   const firstOutputName = keys(flow.main.outputs)[0];
 
-  return {executeResult: execute({
-    part: flow.main,
-    inputs: inputs,
-    outputs: { [firstOutputName]: output },
-    partsRepo: { ...flow.dependencies, [flow.main.id]: flow.main },
-    _debugger: localDebugger,
-    onBubbleError: (e) => {
-      onError(e);
-    },
-    extraContext: {
-      PubSub,
-    },
-  }), localDebugger};
+  return {
+    executeResult: execute({
+      part: flow.main,
+      inputs: inputs,
+      outputs: { [firstOutputName]: output },
+      partsRepo: { ...flow.dependencies, [flow.main.id]: flow.main },
+      _debugger: localDebugger,
+      onBubbleError: (e) => {
+        onError(e);
+      },
+      extraContext: {
+        PubSub,
+      },
+    }),
+    localDebugger,
+  };
 };
 
 export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (
@@ -154,9 +162,12 @@ export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (
     props.flowProps.resolvedFlow
   );
 
-  const [localDebugger, setLocalDebugger] = useState<Pick<EditorDebuggerClient, 'onBatchedEvents'>>();
+  const [localDebugger, setLocalDebugger] =
+    useState<Pick<EditorDebuggerClient, "onBatchedEvents">>();
 
-  const [debouncedFlow] = useDebounce(resolvedFlow, 500)
+  const [debouncedFlow] = useDebounce(resolvedFlow, 500);
+
+  const [mobileWarningDismissed, setMobileWarningDismissed] = useState(false);
 
   const [editorState, setFlowEditorState] = useState<FlowEditorState>({
     flow,
@@ -170,10 +181,6 @@ export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (
     },
   });
 
-  // useEffect(() => {
-  //   setResolvedFlow((f) => ({...f, main: flow.part}))
-  // }, [flow]);
-
   useEffect(() => {
     setResolvedFlow((f) => ({ ...f, main: editorState.flow.part }));
   }, [editorState.flow.part]);
@@ -185,10 +192,81 @@ export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (
     onInspectPin: noop,
     onRequestHistory: historyPlayer.requestHistory,
     hideTemplatingTips: true,
-    onImportPart: noop,
+    onImportPart: async (importedPart, target) => {
+      const { part } = importedPart;
+    
+      const depPart = Object.values(
+        await import("@flyde/stdlib/dist/all-browser")
+      ).find((p) => isBasePart(p) && p.id === part.id) as Part;
+
+      setResolvedFlow((flow) => {
+        return {
+          ...flow,
+          dependencies: {
+            ...flow.dependencies,
+            [depPart.id]: {
+              ...depPart,
+              source: {
+                path: "@flyde/stdlib/dist/all-browser",
+                export: depPart.id,
+              }, // fake, for playground
+            },
+          },
+        };
+      });
+
+      let newPartIns: PartInstance | undefined = undefined;
+
+      const newFlow = produce(flow, (draft) => {
+        if (target) {
+          const finalPos = vAdd({ x: 0, y: 0 }, target.pos);
+          newPartIns = createNewPartInstance(
+            importedPart.part,
+            0,
+            finalPos,
+            resolvedFlow.dependencies
+          );
+          draft.part.instances.push(newPartIns);
+
+          if (target.connectTo) {
+            const { insId, outputId } = target.connectTo;
+            draft.part.connections.push({
+              from: {
+                insId,
+                pinId: outputId,
+              },
+              to: {
+                insId: newPartIns.id,
+                pinId: TRIGGER_PIN_ID,
+              },
+            });
+          }
+        }
+      });
+
+      // yacky hack to make sure flow is only rerendered when the new part exists
+      await new Promise((resolve) => setTimeout(resolve, 10));
+
+      const newState = produce(editorState, (draft) => {
+        draft.flow = newFlow;
+        if (target?.selectAfterAdding && newPartIns) {
+          draft.boardData.selected = [newPartIns?.id];
+        }
+      });
+
+      setFlowEditorState(newState);
+
+      toastMsg(`Part ${part.id} successfully imported from ${importedPart.module}`);
+      return newPartIns;
+    },
     onExtractInlinePart: noop as any,
-    onQueryImportables: noop as any,
-    debuggerClient: localDebugger as EditorDebuggerClient
+    onQueryImportables: async () => {
+      const parts = Object.values(
+        await import("@flyde/stdlib/dist/all-browser")
+      ).filter(isBasePart) as BasePart[];
+      return parts.map((b) => ({ part: b, module: "@flyde/stdlib" }));
+    },
+    debuggerClient: localDebugger as EditorDebuggerClient,
   };
 
   useEffect(() => {
@@ -196,7 +274,7 @@ export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (
   }, []);
 
   useEffect(() => {
-    const {executeResult: clean, localDebugger} = runFlow({
+    const { executeResult: clean, localDebugger } = runFlow({
       flow: resolvedFlow,
       output,
       inputs,
@@ -205,7 +283,7 @@ export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (
       player: runtimePlayerRef.current,
     });
     const sub = props.flowProps.output.subscribe(() => setOutputReceived(true));
-    setLocalDebugger(localDebugger)
+    setLocalDebugger(localDebugger);
     return () => {
       clean();
       sub.unsubscribe();
@@ -271,6 +349,11 @@ export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (
         </div>
       </header>
 
+      <div className='mobile-warning'>
+        Flyde is currently not optimized for mobile devices.
+        Please <strong>use a desktop computer for the best experience</strong>.
+      </div>
+
       <ul className="examples__menu">
         {EXAMPLES_LIST.map((ex) => {
           return (
@@ -285,6 +368,8 @@ export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (
           );
         })}
       </ul>
+
+
 
       <div className="playground-container">
         <header>

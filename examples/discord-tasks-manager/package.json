@@ -1,5 +1,5 @@
 {
-  "name": "discord-tasks-manager",
+  "name": "flyde-example-discord-tasks-manager",
   "packageManager": "yarn@3.2.0",
   "scripts": {
     "start": "ts-node-dev --watch src/**/*.flyde src/index.ts",

@@ -14,7 +14,7 @@ import { OutputLogs } from "./_OutputLogs/OutputLogs";
 
 const META_DATA = {
   title: "Hello World",
-  description: `The mandatory "Hello, World!" example. This flow will first output "Hello", wait 3 seconds and output "World!". Click on the "Run" button bellow to run see for yourself!.\n This demonstrates one of the most powerful features of Flyde - the ability to view it running live! PS: The delay part is there just to make the flow longer `,
+  description: `This is the "Hello, World!" example for Flyde. When you run this flow, it will output "Hello", wait for 3 seconds, and then output "World!". Click the "Run" button below to see it in action. This example highlights one of the key strengths of Flyde: the ability to view your program running in real-time. Note that the delay in the flow is intentional and added to make the example longer.`,
   key: "hello-world",
 };
 

@@ -56,8 +56,6 @@ function isDataValid (decoded) {
 
 Decoder.prototype.add = function (obj) {
   var decoded = parse(obj);
-  console.log({decoded});
-  
 
   var isTypeValid = isInteger(decoded.type) && decoded.type >= PacketType.CONNECT && decoded.type <= PacketType.CONNECT_ERROR;
   if (!isTypeValid) {
