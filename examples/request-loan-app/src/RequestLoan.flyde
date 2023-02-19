@@ -4,8 +4,9 @@ imports:
   GetCredit.flyde.ts:
     - Get Credit By Id
   "@flyde/stdlib":
-    - Dot
+    - Get Attribute
     - Boolean Split
+    - Equals (Bool)
   CalculateRisk.flyde.ts:
     - Calculate Risk
 part:
@@ -31,16 +32,21 @@ part:
         icon: dollar
         color: "#00f5d4"
     - pos:
-        x: 41.36167480468748
-        y: 182.37955390930176
+        x: 37.08607055664061
+        y: 210.87974941253663
       id: Dot-748
       inputConfig:
         key:
           mode: static
           value: id
+        attribute:
+          mode: static
+          value: id
       visibleInputs:
         - obj
-      partId: Dot
+        - object
+        - attribute
+      partId: Get Attribute
       style:
         size: regular
     - pos:
@@ -57,8 +63,8 @@ part:
         icon: warning
         color: "#fee440"
     - pos:
-        x: -128.39114990234376
-        y: 465.4783494567871
+        x: -148.18689575195313
+        y: 488.6315782165527
       id: cl9l9t9gb000b4666ckct55oy
       inputConfig: {}
       part:
@@ -93,12 +99,6 @@ part:
         cssOverride:
           fontFamily: monospace
           fontWeight: "300"
-    - pos:
-        x: 4.424071044921874
-        y: 579.3847015380859
-      id: Boolean Split-226
-      inputConfig: {}
-      partId: Boolean Split
     - pos:
         x: -126.08520629882813
         y: 716.1647003173828
@@ -163,6 +163,12 @@ part:
         cssOverride:
           fontFamily: monospace
           fontWeight: "300"
+    - pos:
+        x: -12.756809082031253
+        y: 604.5701513671875
+      id: Boolean Split-483
+      inputConfig: {}
+      partId: Boolean Split
   connections:
     - from:
         insId: __this
@@ -171,12 +177,6 @@ part:
         insId: Get User By Email-516
         pinId: email
     - from:
-        insId: Get User By Email-516
-        pinId: user
-      to:
-        insId: Dot-748
-        pinId: obj
-    - from:
         insId: Dot-748
         pinId: value
       to:
@@ -207,35 +207,41 @@ part:
         insId: cl9l9t9gb000b4666ckct55oy
         pinId: credit
     - from:
+        insId: cl9l9uq6i001a46661ezsuxk5
+        pinId: r
+      to:
+        insId: __this
+        pinId: result
+    - from:
+        insId: cl9l9uuxb001g4666zyaqbluw
+        pinId: r
+      to:
+        insId: __this
+        pinId: result
+    - from:
         insId: cl9l9t9gb000b4666ckct55oy
         pinId: r
       to:
-        insId: Boolean Split-226
-        pinId: val
+        insId: Boolean Split-483
+        pinId: value
     - from:
-        insId: Boolean Split-226
+        insId: Boolean Split-483
         pinId: "true"
       to:
         insId: cl9l9uq6i001a46661ezsuxk5
         pinId: __trigger
     - from:
-        insId: cl9l9uq6i001a46661ezsuxk5
-        pinId: r
-      to:
-        insId: __this
-        pinId: result
-    - from:
-        insId: Boolean Split-226
+        insId: Boolean Split-483
         pinId: "false"
       to:
         insId: cl9l9uuxb001g4666zyaqbluw
         pinId: __trigger
     - from:
-        insId: cl9l9uuxb001g4666zyaqbluw
-        pinId: r
+        insId: Get User By Email-516
+        pinId: user
       to:
-        insId: __this
-        pinId: result
+        insId: Dot-748
+        pinId: object
   id: RequestLoan
   inputs:
     email:

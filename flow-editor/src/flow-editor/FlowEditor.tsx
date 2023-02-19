@@ -1,11 +1,9 @@
 import * as React from "react";
 import {
-  PinType,
-  isGroupedPart,
+  isVisualPart,
   Pos,
-  GroupedPart,
-  CustomPart,
-  isCodePart,
+  VisualPart,
+  isInlineValuePart,
   PartInstance,
   FlydeFlow,
   ResolvedFlydeFlowDefinition,
@@ -13,25 +11,32 @@ import {
   PartDefRepo,
   ImportedPartDef,
   InlinePartInstance,
-  partInstance,
+  PinType,
+  DebuggerEventType,
 } from "@flyde/core";
 import {
-  GroupedPartEditor,
+  VisualPartEditor,
   ClipboardData,
   defaultViewPort,
   GroupEditorBoardData,
   PART_HEIGHT,
-} from "../grouped-part-editor/GroupedPartEditor";
+} from "../visual-part-editor/VisualPartEditor";
 import produce from "immer";
 import { useHotkeys } from "../lib/react-utils/use-hotkeys";
 
 // ;
-import { createNewPartInstance, domToViewPort } from "../grouped-part-editor/utils";
+import {
+  createNewPartInstance,
+  domToViewPort,
+} from "../visual-part-editor/utils";
 
-import { HistoryPayload } from "@flyde/remote-debugger";
+import { EditorDebuggerClient, HistoryPayload } from "@flyde/remote-debugger";
 import { AppToaster, toastMsg } from "../toaster";
 
-import { FlydeFlowChangeType, functionalChange } from "./flyde-flow-change-type";
+import {
+  FlydeFlowChangeType,
+  functionalChange,
+} from "./flyde-flow-change-type";
 import { Omnibar, OmniBarCmd, OmniBarCmdType } from "./omnibar/Omnibar";
 
 import { usePorts } from "./ports";
@@ -39,8 +44,9 @@ import { usePorts } from "./ports";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fab } from "@fortawesome/free-brands-svg-icons";
 import { fas } from "@fortawesome/free-solid-svg-icons";
-import { vAdd } from "..";
-
+import { vAdd } from "../physics";
+import { ActionType } from "../visual-part-editor/ActionsMenu";
+import { DataInspectionModal } from "./DataInspectionModal";
 export * from "./ports";
 
 library.add(fab, fas);
@@ -56,12 +62,21 @@ export type FlydeFlowEditorProps = {
 
   resolvedRepoWithDeps: ResolvedFlydeFlowDefinition;
 
-  onImportPart: (part: ImportablePart, target?: {pos: Pos,  connectTo?: {insId: string, outputId: string}} ) => void;
-  onQueryImportables?: (query: string) => Promise<ImportablePart[]>;
+  onImportPart: (
+    part: ImportablePart,
+    target?: { pos: Pos; selectAfterAdding?: boolean, connectTo?: { insId: string; outputId: string } }
+  ) => Promise<PartInstance | undefined>;
+  onQueryImportables?: () => Promise<ImportablePart[]>;
 
   onInspectPin: (insId: string, pinId: string, pinType: PinType) => void;
 
-  onRequestHistory: (insId: string, pinId: string, pinType: PinType) => Promise<HistoryPayload>;
+  onRequestHistory: (
+    insId: string,
+    pinId?: string,
+    pinType?: PinType
+  ) => Promise<HistoryPayload>;
+
+  debuggerClient?: Pick<EditorDebuggerClient, 'onBatchedEvents'>;
 
   onNewEnvVar?: (name: string, val: any) => void;
 
@@ -94,13 +109,42 @@ const resolvedToRepo = (res: ResolvedFlydeFlowDefinition): PartDefRepo => ({
 
 export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
   React.forwardRef((props, ref) => {
-    const { state, resolvedRepoWithDeps: resolvedFlow, onChangeEditorState, onImportPart } = props;
+    const {
+      state,
+      resolvedRepoWithDeps: resolvedFlow,
+      onChangeEditorState,
+      onImportPart,
+      debuggerClient,
+    } = props;
 
-    const [undoStack, setUndoStack] = React.useState<Partial<FlowEditorState>[]>([]);
-    const [redoStack, setRedoStack] = React.useState<Partial<FlowEditorState>[]>([]);
+    const [undoStack, setUndoStack] = React.useState<
+      Partial<FlowEditorState>[]
+    >([]);
+    const [redoStack, setRedoStack] = React.useState<
+      Partial<FlowEditorState>[]
+    >([]);
 
     const { flow, boardData: editorBoardData } = state;
     const editedPart = state.flow.part;
+
+    const [queuedInputsData, setQueuedInputsData] = React.useState<Record<string, Record<string, number>>>({});
+
+    React.useEffect(() => {
+      if (debuggerClient) {
+        return debuggerClient.onBatchedEvents((events) => {
+          events.forEach(event => {
+            console.log({event});
+            
+            if (event.type === DebuggerEventType.INPUTS_STATE_CHANGE) {
+              console.log("INPUTS_STATE_CHANGE", event.insId, event.val);
+              setQueuedInputsData(obj => {
+                return {...obj, [event.insId]: event.val};
+              });
+            }
+          })
+        })
+      }
+    }, [debuggerClient])
 
     const { openFile } = usePorts();
 
@@ -109,7 +153,10 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
         console.log("onChangeFlow", changeType.type);
 
         if (changeType.type === "functional") {
-          setUndoStack([{ flow: newFlow }, ...undoStack.slice(0, maxUndoStackSize)]);
+          setUndoStack([
+            { flow: newFlow },
+            ...undoStack.slice(0, maxUndoStackSize),
+          ]);
           setRedoStack([]);
         }
         onChangeEditorState((state) => ({ ...state, flow: newFlow }));
@@ -163,14 +210,11 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
       [state, undoStack, redoStack]
     );
 
-    useHotkeys("a", (e) => {
-      e.preventDefault();
-      showOmnibar();
-    });
-
     const onChangePart = React.useCallback(
-      (newPart: GroupedPart, changeType: FlydeFlowChangeType) => {
-        const shouldIgnore = ignoreUndoChangeTypes.some((str) => changeType.message.includes(str));
+      (newPart: VisualPart, changeType: FlydeFlowChangeType) => {
+        const shouldIgnore = ignoreUndoChangeTypes.some((str) =>
+          changeType.message.includes(str)
+        );
         if (!shouldIgnore) {
           setRedoStack([]);
         }
@@ -186,9 +230,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
 
     const onEditPart = React.useCallback(
       (part: ImportedPartDef) => {
-        openFile({ absPath: part.importPath });
-
-        // toastMsg('TODO');
+        openFile({ absPath: part.source.path });
       },
       [openFile]
     );
@@ -204,8 +246,10 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
         if (newPartIns) {
           const valueChanged = produce(flow, (draft) => {
             const part = draft.part;
-            if (!isGroupedPart(part)) {
-              throw new Error(`Impossible state, adding part to non grouped part`);
+            if (!isVisualPart(part)) {
+              throw new Error(
+                `Impossible state, adding part to non visual part`
+              );
             }
             part.instances.push(newPartIns);
           });
@@ -214,7 +258,13 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
           return newPartIns;
         }
       },
-      [editorBoardData.lastMousePos, flow, onChangeFlow, hideOmnibar, resolvedFlow]
+      [
+        editorBoardData.lastMousePos,
+        flow,
+        onChangeFlow,
+        hideOmnibar,
+        resolvedFlow,
+      ]
     );
 
     const onOmnibarCmd = React.useCallback(
@@ -237,10 +287,10 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
             break;
           case OmniBarCmdType.CREATE_GROUPED_PART:
             toastMsg("TODO");
-            // onCreateNewPart("grouped");
+            // onCreateNewPart("visual");
             break;
           case OmniBarCmdType.IMPORT: {
-            await onImportPart(cmd.data, {pos: editorBoardData.lastMousePos});
+            await onImportPart(cmd.data, { pos: editorBoardData.lastMousePos });
             const finalPos = vAdd({ x: 0, y: 0 }, editorBoardData.lastMousePos);
             const newPartIns = createNewPartInstance(
               cmd.data.part,
@@ -255,7 +305,10 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
             break;
           }
           default:
-            AppToaster.show({ intent: "warning", message: "Not supported yet" });
+            AppToaster.show({
+              intent: "warning",
+              message: "Not supported yet",
+            });
         }
         hideOmnibar();
       },
@@ -271,14 +324,60 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
       ]
     );
 
+    const onAction = React.useCallback((action: ActionType) => {
+      switch (action) {
+        case ActionType.RemovePart: {
+          const newValue = produce(flow, (draft) => {
+            const part = draft.part;
+            if (!isVisualPart(part)) {
+              throw new Error(
+                `Impossible state, deleting instances opf non visual part`
+              );
+            }
+            part.instances = part.instances.filter(
+              (ins) => !editorBoardData.selected.includes(ins.id)
+            );
+            part.connections = part.connections.filter(
+              (conn) =>
+                !editorBoardData.selected.includes(conn.from.insId) &&
+                !editorBoardData.selected.includes(conn.to.insId)
+            );
+          });
+          onChangeFlow(newValue, functionalChange("remove-instances"));
+          toastMsg(`Removed ${editorBoardData.selected.length} instances(s)`);
+          break;
+        }
+        case ActionType.Inspect: {
+          if (editorBoardData.selected.length === 1 || editorBoardData.from || editorBoardData.to) {
+
+            const insId = editorBoardData.selected[0] || editorBoardData.from?.insId || editorBoardData.to?.insId;
+            const pinId = editorBoardData.from?.pinId || editorBoardData.to?.pinId;
+            setInspectedItem({insId, pin: {type: editorBoardData.from ? 'output' : 'input', id: pinId}});
+          }
+          break;
+        }
+        default: {
+          toastMsg(`${action} not supported yet`);
+        }
+      }
+    }, [editorBoardData.from, editorBoardData.selected, editorBoardData.to, flow, onChangeFlow]);
+
+    const [inspectedItem, setInspectedItem] = React.useState<{insId: string, pin?: {type: PinType, id: string}}>();
+
+    const onCloseInspectedItemModal = React.useCallback(() => setInspectedItem(undefined), []);
+
+    const onInspectPin = React.useCallback((insId: string, pin: {type: PinType, id: string}) => {
+      setInspectedItem({insId, pin});
+    }, []);
+
     const renderInner = () => {
-      if (isCodePart(editedPart)) {
+      if (isInlineValuePart(editedPart)) {
         throw new Error("Impossible state");
-        // return <CodePartEditor part={editedPart} onChange={onChangeCodePart} editMode={true} />;
       } else {
         return (
           <React.Fragment>
-            <GroupedPartEditor
+            {inspectedItem ? <DataInspectionModal onRequestHistory={props.onRequestHistory} item={inspectedItem} onClose={onCloseInspectedItemModal}/> : null}
+            <VisualPartEditor
               insId={`root.${editedPart.id}`}
               ref={ref}
               key={editedPart.id}
@@ -296,12 +395,13 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
               clipboardData={clipboardData}
               onCopy={setClipboardData}
               partIoEditable={!editedPart.id.startsWith("Trigger")}
-              onInspectPin={props.onInspectPin}
+              onInspectPin={onInspectPin}
               onRequestHistory={props.onRequestHistory}
               onRequestImportables={props.onQueryImportables}
               onImportPart={props.onImportPart}
               onShowOmnibar={showOmnibar}
               onExtractInlinePart={props.onExtractInlinePart}
+              queuedInputsData={queuedInputsData}
             />
 
             {omnibarVisible ? (

@@ -1,4 +1,4 @@
-// import { GroupedPart, partInput, partOutput } from "../part";
+// import { VisualPart, partInput, partOutput } from "../part";
 
 // import { connectionData } from "..";
 // import { Button, Txt, container, listFrom, merge, add, transform } from "../lib";
@@ -6,7 +6,7 @@
 // import { connectionNode, externalConnectionNode } from "../connect";
 // // import { connectionNode } from "../connect";
 
-// export const Counter: GroupedPart = {
+// export const Counter: VisualPart = {
 // 	id: 'Counter',
 // 	inputs: {
 // 		val: partInput('number')
@@ -47,7 +47,7 @@
 // 	]
 // };
 
-// export const ControlledCounter: GroupedPart = {
+// export const ControlledCounter: VisualPart = {
 // 	id: 'ControllerCounter',
 // 	inputs: {},
 // 	outputs: {

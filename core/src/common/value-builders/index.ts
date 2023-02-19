@@ -41,7 +41,10 @@ export const compileObjectTemplate = (template: string, inputs: OMap<any>) => {
           })
         : rawVal;
 
-    val = val.replace(valuesPattern, inpVal).replace(stringPattern, fixedRaw).replace(/\n/g, "\\n");
+    val = val
+      .replace(valuesPattern, inpVal)
+      .replace(stringPattern, fixedRaw)
+      .replace(/\n/g, "\\n");
   });
 
   return JSON.parse(val);

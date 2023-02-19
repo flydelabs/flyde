@@ -1,11 +1,9 @@
-import { CustomPart, GroupedPart } from "@flyde/core";
+import { VisualPart } from "@flyde/core";
 
-
-export const defaultProjectRoutePart: Omit<GroupedPart, 'id'> = {
+export const defaultProjectRoutePart: Omit<VisualPart, "id"> = {
   inputs: {
     request: {
-      type: "any",
-      mode: "optional"
+      mode: "optional",
     },
   },
   instances: [
@@ -48,8 +46,6 @@ export const defaultProjectRoutePart: Omit<GroupedPart, 'id'> = {
   ],
   outputs: {
     response: {
-      type: "any",
-      optional: false,
     },
   },
   inputsPosition: {

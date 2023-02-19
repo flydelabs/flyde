@@ -1,4 +1,4 @@
-import { GroupedPart } from ".";
+import { VisualPart } from ".";
 import { assert } from "chai";
 
 import { spy } from "sinon";
@@ -6,7 +6,16 @@ import { spy } from "sinon";
 import * as jg from "jsdom-global";
 
 import { Subject } from "rxjs";
-import { delay, eventually, isDefined, pickRandom, randomInt, randomInts, repeat, shuffle } from "./common";
+import {
+  delay,
+  eventually,
+  isDefined,
+  pickRandom,
+  randomInt,
+  randomInts,
+  repeat,
+  shuffle,
+} from "./common";
 import {
   connect,
   connectionNode,
@@ -14,15 +23,16 @@ import {
   connection,
   connectionData,
   ERROR_PIN_ID,
+  TRIGGER_PIN_ID,
 } from "./connect";
 import {
-  NativePart,
+  CodePart,
   fromSimplified,
   staticPartInput,
   dynamicPartInput,
   dynamicOutput,
   partInstance,
-  CodePart,
+  InlineValuePart,
   PartInstance,
   partInput,
   partOutput,
@@ -31,7 +41,7 @@ import {
   partInputs,
   stickyInputPinConfig,
   dynamicPartInputs,
-  groupedPart,
+  visualPart,
   partOutputs,
   inlinePartInstance,
 } from "./part";
@@ -58,14 +68,16 @@ import {
   spreadList,
 } from "./fixture";
 
-import { codePartToNative } from "./code-to-native";
+import { inlineValuePartToPart } from "./inline-value-to-code-part";
 import {
   concisePart,
-  conciseNativePart,
+  conciseCodePart,
   callsFirstArgs,
   valuePart,
-  spiedOutput
+  spiedOutput,
+  wrappedOnEvent,
 } from "./test-utils";
+import { DebuggerEventType } from "./execute/debugger";
 
 describe("main ", () => {
   let cleanups: any[] = [];
@@ -86,14 +98,14 @@ describe("main ", () => {
   // testRepo.add('add')
 
   describe("core", () => {
-    it("runs an Id native part properly", () => {
-      const part: NativePart = {
+    it("runs an Id code part properly", () => {
+      const part: CodePart = {
         id: "id",
         inputs: {
-          v: partInput("number"),
+          v: partInput(),
         },
         outputs: {
-          r: partInput("number"),
+          r: partInput(),
         },
         fn: ({ v }, { r }) => {
           r.next(v);
@@ -105,19 +117,24 @@ describe("main ", () => {
       const r = dynamicOutput();
 
       r.subscribe(s);
-      execute({part: part, inputs: { v }, outputs: { r }, partsRepo: testRepo});
+      execute({
+        part: part,
+        inputs: { v },
+        outputs: { r },
+        partsRepo: testRepo,
+      });
       v.subject.next(2);
       assert.equal(s.calledOnceWithExactly(2), true);
     });
 
-    it("runs an pure-like Id native part properly", () => {
-      const part: NativePart = {
+    it("runs an pure-like Id code part properly", () => {
+      const part: CodePart = {
         id: "id",
         inputs: {
-          v: partInput("number"),
+          v: partInput(),
         },
         outputs: {
-          r: partInput("number"),
+          r: partInput(),
         },
         fn: ({ v }, { r }) => {
           r.next(v);
@@ -129,21 +146,26 @@ describe("main ", () => {
       const r = dynamicOutput();
 
       r.subscribe(s);
-      execute({part: part, inputs: { v }, outputs: { r }, partsRepo: testRepo});
+      execute({
+        part: part,
+        inputs: { v },
+        outputs: { r },
+        partsRepo: testRepo,
+      });
       v.subject.next(2);
       assert.equal(s.calledOnceWithExactly(2), true);
     });
 
-    it("runs an ADD native part properly", () => {
+    it("runs an ADD code part properly", () => {
       const innerSpy = spy();
-      const part: NativePart = {
+      const part: CodePart = {
         id: "add",
         inputs: {
-          a: partInput("number"),
-          b: partInput("number"),
+          a: partInput(),
+          b: partInput(),
         },
         outputs: {
-          r: partInput("number"),
+          r: partInput(),
         },
         fn: (args, { r }, {}) => {
           innerSpy();
@@ -157,7 +179,12 @@ describe("main ", () => {
       const r = dynamicOutput();
 
       r.subscribe(s);
-      execute({part: part, inputs: { a, b }, outputs: { r }, partsRepo: testRepo});
+      execute({
+        part: part,
+        inputs: { a, b },
+        outputs: { r },
+        partsRepo: testRepo,
+      });
       a.subject.next(2);
       b.subject.next(3);
       assert.equal(s.calledOnceWithExactly(5), true);
@@ -169,13 +196,18 @@ describe("main ", () => {
       assert.equal(s.calledWithExactly(7), true);
     });
 
-    it("works with a simple grouped part", () => {
+    it("works with a simple visual part", () => {
       const n1 = dynamicPartInput();
       const n2 = dynamicPartInput();
       const r = new Subject();
       const s = spy();
       r.subscribe(s);
-      execute({part: addGrouped, inputs: { n1, n2 }, outputs: { r }, partsRepo: testRepo});
+      execute({
+        part: addGrouped,
+        inputs: { n1, n2 },
+        outputs: { r },
+        partsRepo: testRepo,
+      });
       const num1 = randomInt(1, 100);
       const num2 = randomInt(1, 100);
       n1.subject.next(num1);
@@ -187,7 +219,10 @@ describe("main ", () => {
     it("works with nested parts", () => {
       const add1mul2twice = {
         id: "a1m2x2",
-        instances: [partInstance("p1", add1mul2.id), partInstance("p2", add1mul2.id)],
+        instances: [
+          partInstance("p1", add1mul2.id),
+          partInstance("p2", add1mul2.id),
+        ],
         connections: [
           {
             from: connectionNode("p1", "r"),
@@ -209,7 +244,12 @@ describe("main ", () => {
       const fn = spy();
       const n = dynamicPartInput();
       const r = dynamicOutput();
-      execute({part: part, inputs: { n }, outputs: { r }, partsRepo: testRepo});
+      execute({
+        part: part,
+        inputs: { n },
+        outputs: { r },
+        partsRepo: testRepo,
+      });
       r.subscribe(fn);
 
       n.subject.next(20); // ((21 * 2) + 1) * 2
@@ -219,18 +259,20 @@ describe("main ", () => {
       assert.equal(fn.lastCall.args[0], 86);
     });
 
-    it('supports inline instance parts', () => {
-      const add1: GroupedPart = {
+    it("supports inline instance parts", () => {
+      const add1: VisualPart = {
         id: "add1",
         inputs: {
-          n: partInput("number"),
+          n: partInput(),
         },
         outputs: {
-          r: partOutput("number"),
+          r: partOutput(),
         },
         inputsPosition: {},
         outputsPosition: {},
-        instances: [inlinePartInstance("a", add, {n1: staticInputPinConfig(1)})],
+        instances: [
+          inlinePartInstance("a", add, { n1: staticInputPinConfig(1) }),
+        ],
         connections: [
           {
             from: externalConnectionNode("n"),
@@ -246,12 +288,16 @@ describe("main ", () => {
       const n = dynamicPartInput();
       const [s, r] = spiedOutput();
 
-      execute({part: add1, inputs: { n }, outputs: { r }, partsRepo: testRepo});
+      execute({
+        part: add1,
+        inputs: { n },
+        outputs: { r },
+        partsRepo: testRepo,
+      });
 
       n.subject.next(2);
 
       assert.equal(s.lastCall.args[0], 3);
-
     });
 
     describe("optional inputs", () => {
@@ -260,7 +306,10 @@ describe("main ", () => {
           {
             id: "bob",
             instances: [partInstance("a", optAdd.id)],
-            connections: [connectionData("n1", "a.n1"), connectionData("a.r", "r")],
+            connections: [
+              connectionData("n1", "a.n1"),
+              connectionData("a.r", "r"),
+            ],
             inputs: {
               n1: partInput(),
             },
@@ -274,7 +323,12 @@ describe("main ", () => {
         const n1 = dynamicPartInput();
         const s = spy();
         const r = dynamicOutput();
-        execute({part: part, inputs: { n1 }, outputs: { r }, partsRepo: testRepo});
+        execute({
+          part: part,
+          inputs: { n1 },
+          outputs: { r },
+          partsRepo: testRepo,
+        });
         r.subscribe(s);
         n1.subject.next(42);
         assert.equal(s.lastCall.args[0], 84);
@@ -305,7 +359,12 @@ describe("main ", () => {
         const n2 = dynamicPartInput();
         const s = spy();
         const r = dynamicOutput();
-        execute({part: part, inputs: { n1, n2 }, outputs: { r }, partsRepo: testRepo});
+        execute({
+          part: part,
+          inputs: { n1, n2 },
+          outputs: { r },
+          partsRepo: testRepo,
+        });
         r.subscribe(s);
         n2.subject.next(1);
         n1.subject.next(2);
@@ -345,7 +404,7 @@ describe("main ", () => {
         const s = spy();
         const r = dynamicOutput();
         r.subscribe(s);
-        execute({part: part, inputs: {}, outputs: { r }, partsRepo: repo});
+        execute({ part: part, inputs: {}, outputs: { r }, partsRepo: repo });
         assert.equal(s.lastCall.args[0], 47);
       });
     });
@@ -362,7 +421,10 @@ describe("main ", () => {
             outputs: {
               r: partOutput(),
             },
-            connections: [connectionData("n", "a.n"), connectionData("a.r", "r")],
+            connections: [
+              connectionData("n", "a.n"),
+              connectionData("a.r", "r"),
+            ],
           },
           testRepo
         );
@@ -370,12 +432,22 @@ describe("main ", () => {
         const n = dynamicPartInput();
         const s1 = spy();
         const r1 = dynamicOutput();
-        execute({part: p1, inputs: { n }, outputs: { r: r1 }, partsRepo: testRepo});
+        execute({
+          part: p1,
+          inputs: { n },
+          outputs: { r: r1 },
+          partsRepo: testRepo,
+        });
         r1.subscribe(s1);
 
         const s2 = spy();
         const r2 = dynamicOutput();
-        execute({part: p1, inputs: { n }, outputs: { r: r2 }, partsRepo: testRepo});
+        execute({
+          part: p1,
+          inputs: { n },
+          outputs: { r: r2 },
+          partsRepo: testRepo,
+        });
         r2.subscribe(s2);
 
         n.subject.next(2);
@@ -386,7 +458,7 @@ describe("main ", () => {
       });
 
       it("connects 2 pieces and runs it", () => {
-        const add1mul2: GroupedPart = {
+        const add1mul2: VisualPart = {
           id: "test",
           instances: [partInstance("a", add1.id), partInstance("b", mul2.id)],
           connections: [
@@ -425,7 +497,12 @@ describe("main ", () => {
 
         r.subscribe(fn);
 
-        execute({part: part, inputs: { n }, outputs: { r }, partsRepo: testRepo});
+        execute({
+          part: part,
+          inputs: { n },
+          outputs: { r },
+          partsRepo: testRepo,
+        });
 
         assert.equal(fn.callCount, 0);
         n.subject.next(2);
@@ -444,7 +521,10 @@ describe("main ", () => {
         const part = connect(
           {
             id: "test",
-            instances: [partInstance("v1", Value(n).id), partInstance("a", add1.id)],
+            instances: [
+              partInstance("v1", Value(n).id),
+              partInstance("a", add1.id),
+            ],
             connections: [
               {
                 from: connectionNode("v1", "r"),
@@ -463,7 +543,7 @@ describe("main ", () => {
         const r = new Subject();
         const s = spy();
         r.subscribe(s);
-        execute({part: part, inputs: {}, outputs: { r }, partsRepo: repo});
+        execute({ part: part, inputs: {}, outputs: { r }, partsRepo: repo });
 
         assert.equal(s.lastCall.args[0], n + 1);
       });
@@ -474,7 +554,10 @@ describe("main ", () => {
         const part = connect(
           {
             id: "test",
-            instances: [partInstance("v", Value(n).id), partInstance("a", add.id)],
+            instances: [
+              partInstance("v", Value(n).id),
+              partInstance("a", add.id),
+            ],
             connections: [
               {
                 from: connectionNode("v", "r"),
@@ -497,7 +580,7 @@ describe("main ", () => {
         const r = new Subject();
         const s = spy();
         r.subscribe(s);
-        execute({part: part, inputs: {}, outputs: { r }, partsRepo: repo});
+        execute({ part: part, inputs: {}, outputs: { r }, partsRepo: repo });
 
         r.subscribe(s);
 
@@ -507,7 +590,10 @@ describe("main ", () => {
       it("works regardless of the order of the instances and connections with 2 pieces", () => {
         const n = randomInt(99);
         const repo = testRepoWith(Value(n));
-        const instances = [partInstance("a", add1.id), partInstance("v", Value(n).id)];
+        const instances = [
+          partInstance("a", add1.id),
+          partInstance("v", Value(n).id),
+        ];
 
         for (let i = 0; i < 10; i++) {
           const part = connect(
@@ -532,7 +618,7 @@ describe("main ", () => {
           const r = new Subject();
           const s = spy();
           r.subscribe(s);
-          execute({part: part, inputs: {}, outputs: { r }, partsRepo: repo});
+          execute({ part: part, inputs: {}, outputs: { r }, partsRepo: repo });
 
           assert.equal(s.lastCall.args[0], n + 1);
         }
@@ -574,7 +660,7 @@ describe("main ", () => {
           const r = new Subject();
           const s = spy();
           r.subscribe(s);
-          execute({part: part, inputs: {}, outputs: { r }, partsRepo: repo});
+          execute({ part: part, inputs: {}, outputs: { r }, partsRepo: repo });
 
           assert.equal(s.lastCall.args[0], n + n);
         }
@@ -583,14 +669,20 @@ describe("main ", () => {
       it("connects const inputs properly", () => {
         const n = randomInt(99);
         const repo = testRepoWith(Value(n));
-        const part: GroupedPart = {
+        const part: VisualPart = {
           id: "test",
           inputs: {},
           outputs: {
-            r: partOutput("number"),
+            r: partOutput(),
           },
-          instances: [partInstance("v1", Value(n).id), partInstance("a", add1.id)],
-          connections: [connectionData("v1.r", "a.n"), connectionData("a.r", "r")],
+          instances: [
+            partInstance("v1", Value(n).id),
+            partInstance("a", add1.id),
+          ],
+          connections: [
+            connectionData("v1.r", "a.n"),
+            connectionData("a.r", "r"),
+          ],
           inputsPosition: {},
           outputsPosition: {},
         };
@@ -598,7 +690,7 @@ describe("main ", () => {
         const r = new Subject();
         const s = spy();
         r.subscribe(s);
-        execute({part: part, inputs: {}, outputs: { r }, partsRepo: repo});
+        execute({ part: part, inputs: {}, outputs: { r }, partsRepo: repo });
 
         assert.equal(s.callCount, 1);
         assert.equal(s.lastCall.args[0], n + 1);
@@ -630,13 +722,23 @@ describe("main ", () => {
       const r2 = new Subject();
 
       // normal
-      execute({part: add1, inputs: { n: n1 }, outputs: { r: r1 }, partsRepo: testRepo});
+      execute({
+        part: add1,
+        inputs: { n: n1 },
+        outputs: { r: r1 },
+        partsRepo: testRepo,
+      });
       r1.subscribe(s1);
       n1.subject.next(4);
       assert.equal(s1.lastCall.args[0], 5);
 
       // connected
-      execute({part: p, inputs: { n: n2 }, outputs: { r: r2 }, partsRepo: testRepo});
+      execute({
+        part: p,
+        inputs: { n: n2 },
+        outputs: { r: r2 },
+        partsRepo: testRepo,
+      });
       r2.subscribe(s2);
       n2.subject.next(4);
       assert.equal(s2.lastCall.args[0], 5);
@@ -646,7 +748,12 @@ describe("main ", () => {
       const n = dynamicPartInput();
       const bob = dynamicPartInput();
       const r = new Subject();
-      execute({part: add1, inputs: { n, bob }, outputs: { r }, partsRepo: testRepo});
+      execute({
+        part: add1,
+        inputs: { n, bob },
+        outputs: { r },
+        partsRepo: testRepo,
+      });
       const res = spy();
       r.subscribe(res);
 
@@ -660,7 +767,10 @@ describe("main ", () => {
       const part = connect(
         {
           id: "test",
-          instances: [partInstance("v", Value(7).id), partInstance("a", add.id)],
+          instances: [
+            partInstance("v", Value(7).id),
+            partInstance("a", add.id),
+          ],
           connections: [
             connectionData("v.r", "a.n1"),
             connectionData("n2", "a.n2"),
@@ -681,7 +791,7 @@ describe("main ", () => {
 
       const s = spy();
       assert.deepEqual(Object.keys(part.inputs), ["n2"]);
-      execute({part: part, inputs: { n2 }, outputs: { r }, partsRepo: repo});
+      execute({ part: part, inputs: { n2 }, outputs: { r }, partsRepo: repo });
 
       r.subscribe(s);
 
@@ -695,7 +805,10 @@ describe("main ", () => {
       const part = connect(
         {
           id: "test",
-          instances: [partInstance("v", Value(7).id), partInstance("a", transform.id)],
+          instances: [
+            partInstance("v", Value(7).id),
+            partInstance("a", transform.id),
+          ],
           connections: [
             connectionData("v.r", "a.to"),
             connectionData("from", "a.from"),
@@ -718,7 +831,12 @@ describe("main ", () => {
       assert.deepEqual(Object.keys(part.inputs), ["from"]);
 
       r.subscribe(s);
-      execute({part: part, inputs: { from }, outputs: { r }, partsRepo: repo});
+      execute({
+        part: part,
+        inputs: { from },
+        outputs: { r },
+        partsRepo: repo,
+      });
 
       from.subject.next(18);
       assert.equal(s.lastCall.args[0], 7);
@@ -731,7 +849,12 @@ describe("main ", () => {
         const v = dynamicPartInput();
         const r = dynamicOutput();
         const s = spy();
-        const cancel = execute({part: id, inputs: { v }, outputs: { r }, partsRepo: testRepo});
+        const cancel = execute({
+          part: id,
+          inputs: { v },
+          outputs: { r },
+          partsRepo: testRepo,
+        });
         r.subscribe(s);
         v.subject.next(5);
         assert.equal(s.lastCall.args[0], 5);
@@ -744,7 +867,7 @@ describe("main ", () => {
       it("stops running connected components", () => {
         const internalSpy = spy();
         const s = spy();
-        const ids: NativePart = fromSimplified({
+        const ids: CodePart = fromSimplified({
           id: "test",
           inputTypes: { v: "any" },
           outputTypes: { r: "any" },
@@ -780,7 +903,12 @@ describe("main ", () => {
 
         const v = dynamicPartInput();
         const r = dynamicOutput();
-        const cancel = execute({part: part, inputs: { v }, outputs: { r }, partsRepo: repo});
+        const cancel = execute({
+          part: part,
+          inputs: { v },
+          outputs: { r },
+          partsRepo: repo,
+        });
         r.subscribe(s);
         v.subject.next(5);
         assert.equal(s.lastCall.args[0], 5);
@@ -809,15 +937,18 @@ describe("main ", () => {
 
     it("allows same name for input and output", () => {
       const repo = testRepoWith(Value(1));
-      const part: GroupedPart = {
+      const part: VisualPart = {
         id: "part",
         inputs: {
-          a: partOutput("number"),
+          a: partOutput(),
         },
         outputs: {
-          a: partOutput("number"),
+          a: partOutput(),
         },
-        instances: [partInstance("v", Value(1).id), partInstance("add", add.id)],
+        instances: [
+          partInstance("v", Value(1).id),
+          partInstance("add", add.id),
+        ],
         connections: [
           connectionData("v.r", "add.n2"),
           connection(externalConnectionNode("a"), connectionNode("add", "n1")),
@@ -831,7 +962,12 @@ describe("main ", () => {
       const outputA = dynamicOutput();
       const fn = spy();
       outputA.subscribe(fn);
-      execute({part: part, inputs: { a: inputA }, outputs: { a: outputA }, partsRepo: repo});
+      execute({
+        part: part,
+        inputs: { a: inputA },
+        outputs: { a: outputA },
+        partsRepo: repo,
+      });
       inputA.subject.next(2);
       assert.equal(fn.callCount, 1);
       assert.equal(fn.calledWith(3), true);
@@ -839,13 +975,13 @@ describe("main ", () => {
 
     describe("more than 1 connection per pin", () => {
       it("is possible when connecting main input to 2 inputs inside it", () => {
-        const part: GroupedPart = {
+        const part: VisualPart = {
           id: "part",
           inputs: {
-            n: partInput("number"),
+            n: partInput(),
           },
           outputs: {
-            r: partOutput("number"),
+            r: partOutput(),
           },
           instances: [partInstance("a", add.id)],
           connections: [
@@ -859,7 +995,12 @@ describe("main ", () => {
 
         const n = dynamicPartInput();
         const r = dynamicOutput();
-        execute({part: part, inputs: { n }, outputs: { r }, partsRepo: testRepo});
+        execute({
+          part: part,
+          inputs: { n },
+          outputs: { r },
+          partsRepo: testRepo,
+        });
 
         const fn = spy();
         r.subscribe(fn);
@@ -870,15 +1011,18 @@ describe("main ", () => {
 
       it("returns all given pulses to output", async () => {
         const repo = testRepoWith(Value(1), Value(2));
-        const part: GroupedPart = {
+        const part: VisualPart = {
           id: "part",
           inputs: {},
           outputs: {
-            r: partOutput("number"),
+            r: partOutput(),
           },
           inputsPosition: {},
           outputsPosition: {},
-          instances: [partInstance("a", Value(1).id), partInstance("b", Value(2).id)],
+          instances: [
+            partInstance("a", Value(1).id),
+            partInstance("b", Value(2).id),
+          ],
           connections: [
             connection(connectionNode("a", "r"), externalConnectionNode("r")),
             connection(connectionNode("b", "r"), externalConnectionNode("r")),
@@ -888,7 +1032,7 @@ describe("main ", () => {
         const r = dynamicOutput();
         const fn = spy();
         r.subscribe(fn);
-        execute({part: part, inputs: {}, outputs: { r }, partsRepo: repo});
+        execute({ part: part, inputs: {}, outputs: { r }, partsRepo: repo });
 
         await delay(200);
 
@@ -900,10 +1044,10 @@ describe("main ", () => {
 
     // it('runs "leaf" parts without waiting for external inputs', () => {
     //   const innerLeafSpy = spy();
-    //   const leaf: NativePart = {
+    //   const leaf: CodePart = {
     //     id: "emit-1",
     //     inputs: {},
-    //     outputs: { r: partOutput("number") },
+    //     outputs: { r: partOutput() },
     //     fn: (_, o) => {
     //       innerLeafSpy();
     //       o.r.next(1);
@@ -911,15 +1055,15 @@ describe("main ", () => {
     //   };
 
     //   const repo = testRepoWith(leaf);
-    //   const part: GroupedPart = {
+    //   const part: VisualPart = {
     //     id: "part",
     //     inputsPosition: {},
     //     outputsPosition: {},
     //     inputs: {
-    //       n: partInput("number")
+    //       n: partInput()
     //     },
     //     outputs: {
-    //       r: partOutput("number")
+    //       r: partOutput()
     //     },
     //     instances: [
     //       partInstance("a", leaf),
@@ -961,7 +1105,12 @@ describe("main ", () => {
         const fn = dynamicPartInput();
         const r = new Subject();
         r.subscribe(s);
-        execute({part: filter, inputs: { list, fn }, outputs: { r }, partsRepo: testRepo});
+        execute({
+          part: filter,
+          inputs: { list, fn },
+          outputs: { r },
+          partsRepo: testRepo,
+        });
         list.subject.next([1, 2, 3, 4, 5, 6]);
         fn.subject.next(isEven);
 
@@ -975,7 +1124,12 @@ describe("main ", () => {
         const fn = staticPartInput(`__part:${isEven.id}`);
         const r = new Subject();
         r.subscribe(s);
-        execute({part: filter, inputs: { list, fn }, outputs: { r }, partsRepo: testRepo});
+        execute({
+          part: filter,
+          inputs: { list, fn },
+          outputs: { r },
+          partsRepo: testRepo,
+        });
         list.subject.next([1, 2, 3, 4, 5, 6]);
 
         assert.equal(s.called, true);
@@ -984,10 +1138,10 @@ describe("main ", () => {
     });
 
     describe("part state", () => {
-      const part: NativePart = {
+      const part: CodePart = {
         id: "fixture",
-        inputs: { v: partInput("any") },
-        outputs: { r: partOutput("any") },
+        inputs: { v: partInput() },
+        outputs: { r: partOutput() },
         reactiveInputs: ["v"],
         completionOutputs: [],
         fn: (args, outs, { state }) => {
@@ -1002,7 +1156,12 @@ describe("main ", () => {
         const v = dynamicPartInput();
         const r = new Subject();
         r.subscribe(s);
-        execute({part: part, inputs: { v }, outputs: { r }, partsRepo: testRepo});
+        execute({
+          part: part,
+          inputs: { v },
+          outputs: { r },
+          partsRepo: testRepo,
+        });
         v.subject.next(1);
         v.subject.next(2);
         v.subject.next(3);
@@ -1020,17 +1179,27 @@ describe("main ", () => {
         const r2 = new Subject();
         r1.subscribe(s);
         3;
-        execute({part: part, inputs: { v: v1 }, outputs: { r: r1 }, partsRepo: testRepo});
+        execute({
+          part: part,
+          inputs: { v: v1 },
+          outputs: { r: r1 },
+          partsRepo: testRepo,
+        });
         v1.subject.next(1);
         v1.subject.next(2);
-        execute({part: part, inputs: { v: v2 }, outputs: { r: r2 }, partsRepo: testRepo});
+        execute({
+          part: part,
+          inputs: { v: v2 },
+          outputs: { r: r2 },
+          partsRepo: testRepo,
+        });
         v2.subject.next(1);
         v2.subject.next(2);
 
         assert.deepEqual(s.lastCall.args[0], 1 + 2); // if state was shared it would be 6
       });
 
-      it("cleans inner inputs state after part is executed - no completion", () => {
+      it("cleans inner inputs state after part is executed - no completion", async () => {
         // this test introduces a double connection to an add part, and tests that the inner state of the inputs isn't kept
         const s = spy();
         const part = concisePart({
@@ -1039,7 +1208,7 @@ describe("main ", () => {
           outputs: ["r"],
           instances: [
             partInstance("i1", add.id),
-            partInstance("i2", id.id), // id to simualte anot
+            partInstance("i2", id.id), // id to simulate another part
           ],
           connections: [
             ["n1", "i1.n1"],
@@ -1054,7 +1223,12 @@ describe("main ", () => {
         const r = dynamicOutput();
 
         r.subscribe(s);
-        execute({part: part, inputs: { n1, n2 }, outputs: { r }, partsRepo: testRepo});
+        execute({
+          part: part,
+          inputs: { n1, n2 },
+          outputs: { r },
+          partsRepo: testRepo,
+        });
 
         n1.subject.next(1);
         n2.subject.next(2);
@@ -1090,7 +1264,12 @@ describe("main ", () => {
         const r = dynamicOutput();
 
         r.subscribe(s);
-        execute({part: part, inputs: { n1, n2 }, outputs: { r }, partsRepo: testRepo});
+        execute({
+          part: part,
+          inputs: { n1, n2 },
+          outputs: { r },
+          partsRepo: testRepo,
+        });
 
         n1.subject.next(1);
         n2.subject.next(2);
@@ -1102,11 +1281,11 @@ describe("main ", () => {
         assert.equal(s.getCalls()[1].args[0], 7);
       });
 
-      it("cleans internal state of parts after execution", () => {
+      it("cleans internal state of parts after execution", async () => {
         /*
           internal part P will increase on each input received and return the current state
         */
-        const counter = conciseNativePart({
+        const counter = conciseCodePart({
           id: "counter",
           inputs: ["v"],
           outputs: ["r"],
@@ -1123,6 +1302,7 @@ describe("main ", () => {
           id: "cwrap",
           inputs: ["v"],
           outputs: ["r"],
+          completionOutputs: ["r"],
           instances: [partInstance("i1", counter.id)],
           connections: [
             ["v", "i1.v"],
@@ -1135,7 +1315,12 @@ describe("main ", () => {
         const s = spy();
         r.subscribe(s);
 
-        execute({part: counterWrapper, inputs: { v }, outputs: { r }, partsRepo: testRepoWith(counter)});
+        execute({
+          part: counterWrapper,
+          inputs: { v },
+          outputs: { r },
+          partsRepo: testRepoWith(counter),
+        });
         v.subject.next(1);
         v.subject.next(1);
         v.subject.next(1);
@@ -1150,7 +1335,7 @@ describe("main ", () => {
         /*
           internal part P will increase on each input received and return the current state
         */
-        const counter = conciseNativePart({
+        const counter = conciseCodePart({
           id: "counter",
           inputs: ["v"],
           outputs: ["r"],
@@ -1169,7 +1354,10 @@ describe("main ", () => {
           completionOutputs: ["r2"],
           outputs: ["r", "r2"],
           reactiveInputs: ["v", "v2"],
-          instances: [partInstance("i1", counter.id), partInstance("i2", id.id)],
+          instances: [
+            partInstance("i1", counter.id),
+            partInstance("i2", id.id),
+          ],
           connections: [
             ["v", "i1.v"],
             ["i1.r", "r"],
@@ -1183,7 +1371,12 @@ describe("main ", () => {
         const s = spy();
         r.subscribe(s);
 
-        execute({part: counterWrapper, inputs: { v, v2 }, outputs: { r, r2 }, partsRepo: testRepoWith(counter)});
+        execute({
+          part: counterWrapper,
+          inputs: { v, v2 },
+          outputs: { r, r2 },
+          partsRepo: testRepoWith(counter),
+        });
         v.subject.next(1);
         v.subject.next(1);
 
@@ -1203,7 +1396,13 @@ describe("main ", () => {
         const r = new Subject();
         r.subscribe(s);
         const state = {};
-        execute({part: part, inputs: { v }, outputs: { r }, partsRepo: testRepo, mainState: state});
+        execute({
+          part: part,
+          inputs: { v },
+          outputs: { r },
+          partsRepo: testRepo,
+          mainState: state,
+        });
         v.subject.next(1);
         v.subject.next(2);
         v.subject.next(3);
@@ -1215,15 +1414,15 @@ describe("main ", () => {
     });
 
     it("runs parts that are not fully connected", () => {
-      const part: GroupedPart = {
+      const part: VisualPart = {
         id: "part",
         inputsPosition: {},
         outputsPosition: {},
         inputs: {
-          n: partInput("number"),
+          n: partInput(),
         },
         outputs: {
-          r: partOutput("number"),
+          r: partOutput(),
         },
         instances: [partInstance("p1", id.id), partInstance("p2", add.id)],
         connections: [connectionData("n", "p1.v"), connectionData("p1.r", "r")],
@@ -1235,17 +1434,22 @@ describe("main ", () => {
 
       r.subscribe(s);
 
-      execute({part: part, inputs: { n }, outputs: { r }, partsRepo: testRepo});
+      execute({
+        part: part,
+        inputs: { n },
+        outputs: { r },
+        partsRepo: testRepo,
+      });
       n.subject.next(42);
 
       assert.equal(s.calledWith(42), true);
     });
 
     it("allows state in code comp", async () => {
-      const part: CodePart = {
+      const part: InlineValuePart = {
         id: "fixture",
-        inputs: { v: partInput("any") },
-        outputs: { r: partOutput("any") },
+        inputs: { v: partInput() },
+        outputs: { r: partOutput() },
         fnCode: `
           const n = inputs.v + (adv.state.get("curr") || 0);
           outputs.r.next(n);
@@ -1258,7 +1462,12 @@ describe("main ", () => {
       const v = dynamicPartInput();
       const r = new Subject();
       r.subscribe(s);
-      execute({part: part, inputs: { v }, outputs: { r }, partsRepo: testRepo});
+      execute({
+        part: part,
+        inputs: { v },
+        outputs: { r },
+        partsRepo: testRepo,
+      });
       v.subject.next(1);
       v.subject.next(2);
       v.subject.next(3);
@@ -1269,10 +1478,10 @@ describe("main ", () => {
     });
   });
 
-  describe("uncontrolled grouped parts", () => {
-    it("waits for all inputs when grouped part is uncontrolled", () => {
+  describe("uncontrolled visual parts", () => {
+    it("waits for all inputs when visual part is uncontrolled", () => {
       const innerSpy = spy();
-      const innerPart: NativePart = {
+      const innerPart: CodePart = {
         id: "inner",
         inputs: {},
         outputs: {},
@@ -1281,9 +1490,9 @@ describe("main ", () => {
         },
       };
 
-      const grouped: GroupedPart = {
+      const visual: VisualPart = {
         id: "bob",
-        inputs: { n: partInput("any") },
+        inputs: { n: partInput() },
         outputs: {},
         instances: [partInstance("i", innerPart.id)],
         connections: [],
@@ -1299,7 +1508,7 @@ describe("main ", () => {
       const s = spy();
       r.subscribe(s);
 
-      execute({part: grouped, inputs: { n }, outputs: {}, partsRepo: repo});
+      execute({ part: visual, inputs: { n }, outputs: {}, partsRepo: repo });
 
       assert.equal(innerSpy.callCount, 0);
 
@@ -1311,11 +1520,11 @@ describe("main ", () => {
 
   describe("recursion support", () => {
     it("does run parts that have no args", () => {
-      const part: NativePart = {
+      const part: CodePart = {
         id: "part",
         inputs: {},
         outputs: {
-          r: partOutput("number"),
+          r: partOutput(),
         },
         fn: (_, { r }) => {
           r.next("ok");
@@ -1327,18 +1536,18 @@ describe("main ", () => {
 
       r.subscribe(s);
 
-      execute({part: part, inputs: {}, outputs: { r }, partsRepo: testRepo});
+      execute({ part: part, inputs: {}, outputs: { r }, partsRepo: testRepo });
       assert.equal(s.lastCall.args[0], "ok");
     });
 
     it('support recursive "add" calculation', () => {
-      const addRec: GroupedPart = {
+      const addRec: VisualPart = {
         id: "add-rec",
         inputs: {
-          n: partInput("number"),
+          n: partInput(),
         },
         outputs: {
-          r: partOutput("number"),
+          r: partOutput(),
         },
         inputsPosition: {},
         outputsPosition: {},
@@ -1369,7 +1578,7 @@ describe("main ", () => {
 
       r.subscribe(s);
 
-      execute({part: addRec, inputs: { n }, outputs: { r }, partsRepo: repo});
+      execute({ part: addRec, inputs: { n }, outputs: { r }, partsRepo: repo });
 
       n.subject.next(1);
       assert.equal(s.called, true);
@@ -1385,18 +1594,14 @@ describe("main ", () => {
       n.subject.next(1);
     });
 
-    it("support recursion based factorial calculation", () => {
-      // const zero = constPart(0, "zero");
-      // const one = constPart(1, "one");
-      // const mOne = constPart(-1, "mOne");
-
-      const fact: GroupedPart = {
+    it("support recursion based factorial calculation", async () => {
+      const fact: VisualPart = {
         id: "fact",
         inputs: {
-          n: partInput("number"),
+          n: partInput(),
         },
         outputs: {
-          r: partOutput("number"),
+          r: partOutput(),
         },
         inputsPosition: {},
         outputsPosition: {},
@@ -1434,9 +1639,10 @@ describe("main ", () => {
 
       r.subscribe(s);
 
-      execute({part: fact, inputs: { n }, outputs: { r }, partsRepo: repo});
+      execute({ part: fact, inputs: { n }, outputs: { r }, partsRepo: repo });
 
       n.subject.next(0);
+
       assert.equal(s.lastCall.args[0], 1);
 
       n.subject.next(1);
@@ -1459,40 +1665,45 @@ describe("main ", () => {
   });
 
   describe("code part support", () => {
-    it("runs an Id native part properly", () => {
-      const codePart: CodePart = {
+    it("runs an Id code part properly", () => {
+      const inlineValuePart: InlineValuePart = {
         id: "id",
         inputs: {
-          v: partInput("number"),
+          v: partInput(),
         },
         outputs: {
-          r: partInput("number"),
+          r: partInput(),
         },
         fnCode: `outputs.r.next(inputs.v)`,
       };
 
-      // const part: NativePart = codePartToNative(codePart);
+      // const part: CodePart = inlineValuePartToPart(inlineValuePart);
 
       const s = spy();
       const v = dynamicPartInput();
       const r = dynamicOutput();
 
       r.subscribe(s);
-      execute({part: codePart, inputs: { v }, outputs: { r }, partsRepo: testRepo});
+      execute({
+        part: inlineValuePart,
+        inputs: { v },
+        outputs: { r },
+        partsRepo: testRepo,
+      });
       v.subject.next(2);
       assert.equal(s.calledOnceWithExactly(2), true);
     });
 
     it("runs ADD properly on code part", () => {
       const innerSpy = spy();
-      const codePart: CodePart = {
+      const inlineValuePart: InlineValuePart = {
         id: "add",
         inputs: {
-          a: partInput("number"),
-          b: partInput("number"),
+          a: partInput(),
+          b: partInput(),
         },
         outputs: {
-          r: partInput("number"),
+          r: partInput(),
         },
         fnCode: `
         outputs.r.next(inputs.a + inputs.b);
@@ -1500,7 +1711,7 @@ describe("main ", () => {
           `,
       };
 
-      const part = codePartToNative(codePart, {
+      const part = inlineValuePartToPart(inlineValuePart, {
         innerSpy,
       });
 
@@ -1510,7 +1721,12 @@ describe("main ", () => {
       const r = dynamicOutput();
 
       r.subscribe(s);
-      execute({part: part, inputs: { a, b }, outputs: { r }, partsRepo: testRepo});
+      execute({
+        part: part,
+        inputs: { a, b },
+        outputs: { r },
+        partsRepo: testRepo,
+      });
       assert.equal(innerSpy.callCount, 0);
       a.subject.next(2);
       b.subject.next(3);
@@ -1525,15 +1741,15 @@ describe("main ", () => {
   });
 
   describe("part cleanup", () => {
-    it("runs cleanup code after a a part finished running on native part", () => {
+    it("runs cleanup code after a a part finished running on code part", () => {
       const spyFn = spy();
-      const part: NativePart = {
+      const part: CodePart = {
         id: "id",
         inputs: {
-          v: partInput("number"),
+          v: partInput(),
         },
         outputs: {
-          r: partInput("number"),
+          r: partInput(),
         },
         fn: ({ v }, { r }, { onCleanup: cleanup }) => {
           r.next(v);
@@ -1544,7 +1760,12 @@ describe("main ", () => {
       };
       const v = dynamicPartInput();
       const r = dynamicOutput();
-      const clean = execute({part: part, inputs: { v }, outputs: { r }, partsRepo: testRepo});
+      const clean = execute({
+        part: part,
+        inputs: { v },
+        outputs: { r },
+        partsRepo: testRepo,
+      });
       v.subject.next(2);
       assert.equal(spyFn.calledOnce, false);
       clean();
@@ -1552,11 +1773,11 @@ describe("main ", () => {
     });
 
     it("runs cleanup code of code parts", async () => {
-      const codePart: CodePart = {
+      const inlineValuePart: InlineValuePart = {
         id: "id",
         inputs: {},
         outputs: {
-          r: partInput("number"),
+          r: partInput(),
         },
         fnCode: `
           const timer = setInterval(() => outputs.r.next(1), 1);
@@ -1564,11 +1785,16 @@ describe("main ", () => {
           `,
       };
 
-      const part = codePartToNative(codePart);
+      const part = inlineValuePartToPart(inlineValuePart);
       const r = dynamicOutput();
       const s = spy();
       r.subscribe(s);
-      const clean = execute({part: part, inputs: {}, outputs: { r }, partsRepo: testRepo});
+      const clean = execute({
+        part: part,
+        inputs: {},
+        outputs: { r },
+        partsRepo: testRepo,
+      });
       await delay(5);
       assert.equal(s.callCount > 1, true);
       clean();
@@ -1578,13 +1804,13 @@ describe("main ", () => {
 
     it("calls destroy fn of debugger when cleaning up", () => {
       const spyFn = spy();
-      const part: NativePart = {
+      const part: CodePart = {
         id: "id",
         inputs: {
-          v: partInput("number"),
+          v: partInput(),
         },
         outputs: {
-          r: partInput("number"),
+          r: partInput(),
         },
         fn: ({ v }, { r }, { onCleanup: cleanup }) => {
           r.next(v);
@@ -1595,24 +1821,27 @@ describe("main ", () => {
       };
       const v = dynamicPartInput();
       const r = dynamicOutput();
-      const clean = execute({part: part, inputs: { v }, outputs: { r }, partsRepo: testRepo});
+      const clean = execute({
+        part: part,
+        inputs: { v },
+        outputs: { r },
+        partsRepo: testRepo,
+      });
       v.subject.next(2);
       assert.equal(spyFn.calledOnce, false);
       clean();
       assert.equal(spyFn.calledOnce, true);
     });
-
   });
 
-  describe('extra context', () => {
-
+  describe("extra context", () => {
     it("passes external context forward when running code comps", async () => {
       const bobber = (n: number) => n + 42;
-      const part: CodePart = {
+      const part: InlineValuePart = {
         id: "tester",
         inputs: {},
         outputs: {
-          r: partInput("number"),
+          r: partInput(),
         },
         fnCode: `
           outputs.r.next(bobber(12));
@@ -1621,35 +1850,47 @@ describe("main ", () => {
       const r = dynamicOutput();
       const s = spy();
       r.subscribe(s);
-      execute({part: part, inputs: {}, outputs: { r }, partsRepo: testRepo, extraContext: { bobber }});
+      execute({
+        part: part,
+        inputs: {},
+        outputs: { r },
+        partsRepo: testRepo,
+        extraContext: { bobber },
+      });
       assert.equal(s.callCount, 1);
       assert.equal(s.lastCall.args[0], 54);
     });
 
-    it("passes external context forward when running native comps", async () => {
+    it("passes external context forward when running code comps", async () => {
       const bobber = (n: number) => n + 42;
-      const part: NativePart = {
+      const part: CodePart = {
         id: "tester",
         inputs: {},
         outputs: {
-          r: partInput("number"),
+          r: partInput(),
         },
         fn: (i, o, adv) => {
           o.r.next(adv.context.bobber(12));
-        }
-      }
+        },
+      };
       const r = dynamicOutput();
       const s = spy();
       r.subscribe(s);
-      execute({part: part, inputs: {}, outputs: { r }, partsRepo: testRepo, extraContext: { bobber }});
+      execute({
+        part: part,
+        inputs: {},
+        outputs: { r },
+        partsRepo: testRepo,
+        extraContext: { bobber },
+      });
       assert.equal(s.callCount, 1);
       assert.equal(s.lastCall.args[0], 54);
     });
-    
-    it.skip("passes external context forward to grouped parts", async () => {
+
+    it.skip("passes external context forward to visual parts", async () => {
       // TODO - write test
     });
-  })
+  });
 
   describe("const values", () => {
     it("supports const values on main execution", () => {
@@ -1660,7 +1901,12 @@ describe("main ", () => {
       const r = new Subject();
       const s = spy();
       r.subscribe(s);
-      execute({part: add, inputs: { n1, n2 }, outputs: { r }, partsRepo: testRepo});
+      execute({
+        part: add,
+        inputs: { n1, n2 },
+        outputs: { r },
+        partsRepo: testRepo,
+      });
       n1.subject.next(num1);
       n1.subject.next(num2);
       assert.equal(s.callCount, 2);
@@ -1668,7 +1914,7 @@ describe("main ", () => {
       assert.equal(s.getCalls()[1].args[0], num2 + num2);
     });
 
-    it("supports const values with inner grouped parts", () => {
+    it("supports const values with inner visual parts", () => {
       const num1 = randomInt(1, 100);
       const num2 = randomInt(1, 100);
 
@@ -1678,13 +1924,18 @@ describe("main ", () => {
       const s = spy();
       r.subscribe(s);
 
-      execute({part: addGrouped, inputs: { n1, n2 }, outputs: { r }, partsRepo: testRepo});
+      execute({
+        part: addGrouped,
+        inputs: { n1, n2 },
+        outputs: { r },
+        partsRepo: testRepo,
+      });
       n1.subject.next(num1);
       assert.equal(s.callCount, 1);
       assert.equal(s.getCalls()[0].args[0], num1 + num2);
     });
 
-    it("supports const values defined inside grouped parts", () => {
+    it("supports const values defined inside visual parts", () => {
       const n1 = dynamicPartInput();
       const r = new Subject();
       const s = spy();
@@ -1696,14 +1947,21 @@ describe("main ", () => {
         id: "part",
         inputs: ["n1"],
         outputs: ["r"],
-        instances: [partInstance("a", add.id, { n2: staticInputPinConfig(n2) })],
+        instances: [
+          partInstance("a", add.id, { n2: staticInputPinConfig(n2) }),
+        ],
         connections: [
           ["n1", "a.n1"],
           ["a.r", "r"],
         ],
       });
 
-      execute({part: part, inputs: { n1 }, outputs: { r }, partsRepo: testRepo});
+      execute({
+        part: part,
+        inputs: { n1 },
+        outputs: { r },
+        partsRepo: testRepo,
+      });
       const num1 = randomInt(1, 100);
       n1.subject.next(num1);
       n1.subject.next(n2);
@@ -1712,7 +1970,7 @@ describe("main ", () => {
       assert.equal(s.getCalls()[1].args[0], n2 + n2);
     });
 
-    it("supports const values on grouped part", () => {
+    it("supports const values on visual part", () => {
       const n1 = dynamicPartInput();
       const r = new Subject();
       const s = spy();
@@ -1724,14 +1982,21 @@ describe("main ", () => {
         id: "part",
         inputs: ["n1"],
         outputs: ["r"],
-        instances: [partInstance("a", add.id, { n2: staticInputPinConfig(n2) })],
+        instances: [
+          partInstance("a", add.id, { n2: staticInputPinConfig(n2) }),
+        ],
         connections: [
           ["n1", "a.n1"],
           ["a.r", "r"],
         ],
       });
 
-      execute({part: part, inputs: { n1 }, outputs: { r }, partsRepo: testRepo});
+      execute({
+        part: part,
+        inputs: { n1 },
+        outputs: { r },
+        partsRepo: testRepo,
+      });
       const num1 = randomInt(1, 100);
       n1.subject.next(num1);
       n1.subject.next(n2);
@@ -1742,7 +2007,7 @@ describe("main ", () => {
   });
 
   describe("part v2 tests", () => {
-    it("queues values - native part", () => {
+    it("queues values - code part", () => {
       const [n1, n2] = [
         dynamicPartInput({
           // config: queueInputPinConfig(),
@@ -1756,7 +2021,12 @@ describe("main ", () => {
       const s = spy();
       r.subscribe(s);
 
-      execute({part: add, inputs: { n1, n2 }, outputs: { r }, partsRepo: testRepo});
+      execute({
+        part: add,
+        inputs: { n1, n2 },
+        outputs: { r },
+        partsRepo: testRepo,
+      });
 
       n1.subject.next(1);
       n1.subject.next(2);
@@ -1769,7 +2039,7 @@ describe("main ", () => {
       assert.deepEqual(callsFirstArgs(s), [5, 7, 9]);
     });
 
-    it("queues values - grouped part", () => {
+    it("queues values - visual part", () => {
       const [n1, n2] = [
         dynamicPartInput({
           // config: queueInputPinConfig(),
@@ -1783,7 +2053,12 @@ describe("main ", () => {
       const s = spy();
       r.subscribe(s);
 
-      execute({part: addGroupedQueued, inputs: { n1, n2 }, outputs: { r }, partsRepo: testRepo});
+      execute({
+        part: addGroupedQueued,
+        inputs: { n1, n2 },
+        outputs: { r },
+        partsRepo: testRepo,
+      });
 
       n1.subject.next(1);
       n1.subject.next(2);
@@ -1796,7 +2071,7 @@ describe("main ", () => {
       assert.deepEqual(callsFirstArgs(s), [5, 7, 9]);
     });
 
-    it("sticky values work on simple native", () => {
+    it("sticky values work on simple code", () => {
       const a = dynamicPartInput({ config: queueInputPinConfig() });
       const b = dynamicPartInput({ config: stickyInputPinConfig() });
 
@@ -1806,7 +2081,7 @@ describe("main ", () => {
 
       r.subscribe(s);
 
-      const part = conciseNativePart({
+      const part = conciseCodePart({
         inputs: ["a", "b"],
         outputs: ["r"],
         id: "bob",
@@ -1816,7 +2091,12 @@ describe("main ", () => {
         completionOutputs: ["r"],
       });
 
-      execute({part: part, inputs: { a, b }, outputs: { r }, partsRepo: testRepo});
+      execute({
+        part: part,
+        inputs: { a, b },
+        outputs: { r },
+        partsRepo: testRepo,
+      });
 
       a.subject.next(1);
       a.subject.next(2);
@@ -1838,13 +2118,13 @@ describe("main ", () => {
       const s = spy();
       r.subscribe(s);
 
-      const delayer: NativePart = {
+      const delayer: CodePart = {
         id: "delayer",
         inputs: {
-          item: partInput("number"),
+          item: partInput(),
         },
         outputs: {
-          r: partOutput("number"),
+          r: partOutput(),
         },
         completionOutputs: ["r"],
         fn: ({ item }, { r }) => {
@@ -1854,7 +2134,12 @@ describe("main ", () => {
         },
       };
 
-      execute({part: delayer, inputs: { item }, outputs: { r }, partsRepo: testRepo});
+      execute({
+        part: delayer,
+        inputs: { item },
+        outputs: { r },
+        partsRepo: testRepo,
+      });
 
       item.subject.next(10);
       item.subject.next(5);
@@ -1869,7 +2154,7 @@ describe("main ", () => {
       );
     });
 
-    describe("completion outputs", () => {
+    describe("part completion", () => {
       it("re-runs parts when one of the required outputs complete", async () => {
         const item = dynamicPartInput({ config: queueInputPinConfig() });
 
@@ -1879,14 +2164,14 @@ describe("main ", () => {
         r.subscribe(s);
         final.subscribe(s);
 
-        const delayer: NativePart = {
+        const delayer: CodePart = {
           id: "delayer",
           inputs: {
-            item: partInput("number"),
+            item: partInput(),
           },
           outputs: {
-            r: partOutput("number"),
-            final: partOutput("number"),
+            r: partOutput(),
+            final: partOutput(),
           },
           completionOutputs: ["final"],
           fn: ({ item }, { r, final }) => {
@@ -1898,7 +2183,12 @@ describe("main ", () => {
           },
         };
 
-        execute({part: delayer, inputs: { item }, outputs: { r, final }, partsRepo: testRepo});
+        execute({
+          part: delayer,
+          inputs: { item },
+          outputs: { r, final },
+          partsRepo: testRepo,
+        });
 
         item.subject.next(1);
         item.subject.next(2);
@@ -1916,7 +2206,6 @@ describe("main ", () => {
       it("supports + as the AND operator for completion outputs", async () => {
         const item = dynamicPartInput({ config: queueInputPinConfig() });
 
-        
         const f1 = dynamicOutput();
         const f2 = dynamicOutput();
 
@@ -1926,15 +2215,15 @@ describe("main ", () => {
 
         const [sr, r] = spiedOutput();
 
-        const delayer: NativePart = {
+        const delayer: CodePart = {
           id: "delayer",
           inputs: {
-            item: partInput("number"),
+            item: partInput(),
           },
           outputs: {
-            r: partOutput("number"),
-            f1: partOutput("number"),
-            f2: partOutput("number"),
+            r: partOutput(),
+            f1: partOutput(),
+            f2: partOutput(),
           },
           completionOutputs: ["f1+f2"],
           fn: ({ item }, { r, f1, f2 }) => {
@@ -1950,7 +2239,12 @@ describe("main ", () => {
           },
         };
 
-        execute({part: delayer, inputs: { item }, outputs: { f1, f2, r }, partsRepo: testRepo});
+        execute({
+          part: delayer,
+          inputs: { item },
+          outputs: { f1, f2, r },
+          partsRepo: testRepo,
+        });
 
         item.subject.next(1);
         item.subject.next(2);
@@ -1968,22 +2262,26 @@ describe("main ", () => {
       it("re-runs parts only when one of the required outputs complete if there are more than 1", async () => {
         const item = dynamicPartInput({ config: queueInputPinConfig() });
 
-        const [r, final1, final2] = [dynamicOutput(), dynamicOutput(), dynamicOutput()];
+        const [r, final1, final2] = [
+          dynamicOutput(),
+          dynamicOutput(),
+          dynamicOutput(),
+        ];
 
         const s = spy();
         final1.subscribe((v) => s(`f1-${v}`));
         final2.subscribe((v) => s(`f2-${v}`));
         r.subscribe((v) => s(`r-${v}`));
 
-        const delayer: NativePart = {
+        const delayer: CodePart = {
           id: "delayer",
           inputs: {
-            item: partInput("number"),
+            item: partInput(),
           },
           outputs: {
-            r: partOutput("number"),
-            final1: partOutput("number"),
-            final2: partOutput("number"),
+            r: partOutput(),
+            final1: partOutput(),
+            final2: partOutput(),
           },
           completionOutputs: ["final1", "final2"],
           fn: ({ item }, { r, final1, final2 }) => {
@@ -1999,7 +2297,12 @@ describe("main ", () => {
           },
         };
 
-        execute({part: delayer, inputs: { item }, outputs: { r, final1, final2 }, partsRepo: testRepo});
+        execute({
+          part: delayer,
+          inputs: { item },
+          outputs: { r, final1, final2 },
+          partsRepo: testRepo,
+        });
 
         item.subject.next(0);
         item.subject.next(1);
@@ -2007,7 +2310,14 @@ describe("main ", () => {
 
         await eventually(
           () => {
-            assert.deepEqual(callsFirstArgs(s), ["r-0", "f2-0", "r-1", "f1-1", "r-0", "f2-0"]);
+            assert.deepEqual(callsFirstArgs(s), [
+              "r-0",
+              "f2-0",
+              "r-1",
+              "f1-1",
+              "r-0",
+              "f2-0",
+            ]);
           },
           200,
           5
@@ -2023,15 +2333,15 @@ describe("main ", () => {
         final1.subscribe((v) => s(`f1-${v}`));
         r.subscribe((v) => s(`r-${v}`));
 
-        const delayer: NativePart = {
+        const delayer: CodePart = {
           id: "delayer",
           inputs: {
-            item: partInput("number"),
+            item: partInput(),
           },
           outputs: {
-            r: partOutput("number"),
-            final1: partOutput("number"),
-            final2: partOutput("number"),
+            r: partOutput(),
+            final1: partOutput(),
+            final2: partOutput(),
           },
           completionOutputs: ["final1", "final2"],
           fn: ({ item }, { r, final1 }, { onError }) => {
@@ -2054,7 +2364,13 @@ describe("main ", () => {
           s(`e-${val}`);
         };
 
-        execute({part: delayer, inputs: { item }, outputs: { r, final1 }, partsRepo: testRepo, onBubbleError: onError});
+        execute({
+          part: delayer,
+          inputs: { item },
+          outputs: { r, final1 },
+          partsRepo: testRepo,
+          onBubbleError: onError,
+        });
 
         item.subject.next(0);
         item.subject.next(1);
@@ -2062,25 +2378,31 @@ describe("main ", () => {
 
         await eventually(
           () => {
-            assert.deepEqual(callsFirstArgs(s), ["r-0", "e-0", "r-1", "f1-1", "r-0", "e-0"]);
+            assert.deepEqual(callsFirstArgs(s), [
+              "r-0",
+              "e-0",
+              "r-1",
+              "f1-1",
+              "r-0",
+              "e-0",
+            ]);
           },
           200,
           5
         );
       });
 
-      it('triggers the completion callback with last values when completed', async () => {
-        const simpleCompletion: NativePart = {
+      it("triggers the completion callback with last values when completed", async () => {
+        const simpleCompletion: CodePart = {
           id: "simpleCompletion",
           inputs: {},
           outputs: {
-            r: partOutput("number")
+            r: partOutput(),
           },
           completionOutputs: ["r"],
-          fn: ({ }, { r}) => {
-            
+          fn: ({}, { r }) => {
             setTimeout(() => {
-              r.next('bob');
+              r.next("bob");
             }, 10);
           },
         };
@@ -2088,14 +2410,151 @@ describe("main ", () => {
 
         const completionSpy = spy();
 
-        execute({part: simpleCompletion, inputs: { }, outputs: { r }, partsRepo: testRepo, onCompleted: completionSpy});
-        
+        execute({
+          part: simpleCompletion,
+          inputs: {},
+          outputs: { r },
+          partsRepo: testRepo,
+          onCompleted: completionSpy,
+        });
+
         assert.equal(completionSpy.called, false);
-        await eventually(() => {
-          assert.equal(completionSpy.called, true);
-        }, 100, 10);
+        await eventually(
+          () => {
+            assert.equal(completionSpy.called, true);
+          },
+          100,
+          10
+        );
         assert.equal(completionSpy.callCount, 1);
-        assert.deepEqual(completionSpy.lastCall.args[0], {r: 'bob'})
+        assert.deepEqual(completionSpy.lastCall.args[0], { r: "bob" });
+      });
+
+      describe("implicit completion", () => {
+        describe("code parts", () => {
+          it("triggers an implicit completion when there are no explicit completion outputs", async () => {
+            const part = conciseCodePart({
+              outputs: ["r"],
+              fn: (_, o) => o.r.next("ok"),
+            });
+            const s = spy();
+            execute({
+              part,
+              partsRepo: testRepo,
+              inputs: {},
+              outputs: { r: dynamicOutput() },
+              onCompleted: s,
+            });
+            assert.equal(s.callCount, 1);
+          });
+
+          it("waits for promises to resolve before triggering an implicit completion of code part with no explicit completion outputs", async () => {
+            const part = conciseCodePart({
+              outputs: ["r"],
+              fn: async (_, o) => {
+                await new Promise((r) => setTimeout(r, 10));
+                o.r.next("ok");
+              },
+            });
+
+            const s = spy();
+            const [sr, r] = spiedOutput();
+            execute({
+              part,
+              partsRepo: testRepo,
+              inputs: {},
+              outputs: { r },
+              onCompleted: s,
+            });
+            await eventually(() => {
+              assert.isTrue(sr.calledWith("ok"));
+            });
+            assert.isTrue(s.calledAfter(sr));
+          });
+
+          it('keeps state of a an implicitly running part', async () => {
+            const part = conciseCodePart({
+              inputs: ['a'],
+              outputs: ["r"],
+              reactiveInputs: ['a'],
+              fn: async (_, o, adv) => {
+                const s = adv.state.get('s') ?? 0;
+                adv.state.set('s', s + 1);
+                await new Promise((r) => setTimeout(r, 10));
+                o.r.next(s);
+              },
+            });
+
+            const s = spy();
+            const [sr, r] = spiedOutput();
+            const input = dynamicPartInput();
+            execute({
+              part,
+              partsRepo: testRepo,
+              inputs: {a: input},
+              outputs: { r },
+              onCompleted: s,
+            });
+            input.subject.next();
+            input.subject.next();
+            input.subject.next();
+            await eventually(() => {
+              assert.equal(sr.callCount, 3);
+              assert.deepEqual(sr.getCalls().map(c => c.args[0]), [0, 1, 2]);
+            });
+            assert.isTrue(s.calledAfter(sr));
+          });
+        });
+
+        describe("visual parts", () => {
+          it('triggers implicit completion when parts "inside" stop running', async () => {
+            const delayPart = (ms: number) =>
+              conciseCodePart({
+                outputs: ["r"],
+                fn: async (_, o) => {
+                  await new Promise((r) => setTimeout(r, ms));
+                  o.r.next("ok");
+                },
+                id: `delay-${ms}`,
+              });
+
+            const delay10 = delayPart(10);
+            const delay5 = delayPart(5);
+
+            const wrapper = concisePart({
+              outputs: ["r"],
+              instances: [
+                { id: "a", part: delay5, pos: { x: 0, y: 0 }, inputConfig: {} },
+                {
+                  id: "b",
+                  part: delay10,
+                  pos: { x: 0, y: 0 },
+                  inputConfig: {},
+                },
+              ],
+              connections: [
+                ["a.r", "b." + TRIGGER_PIN_ID],
+                ["b.r", "r"],
+              ],
+            });
+
+            const [sr, r] = spiedOutput();
+            const onCompleted = spy();
+            execute({
+              part: wrapper,
+              partsRepo: testRepo,
+              inputs: {},
+              outputs: { r },
+              onCompleted,
+            });
+            await eventually(() => {
+              assert.isTrue(sr.calledWith("ok"));
+            });
+            assert.equal(sr.callCount, 1);
+            assert.isTrue(onCompleted.called);
+            assert.isTrue(onCompleted.calledAfter(sr));
+          });
+        });
       });
     });
 
@@ -2109,14 +2568,14 @@ describe("main ", () => {
       r.subscribe(s);
       final.subscribe(s);
 
-      const somePart: NativePart = {
+      const somePart: CodePart = {
         id: "somePart",
         inputs: {
-          item: partInput("number"),
+          item: partInput(),
         },
         outputs: {
-          r: partOutput("number"),
-          final: partOutput("number"),
+          r: partOutput(),
+          final: partOutput(),
         },
         reactiveInputs: ["item"],
         completionOutputs: ["final"],
@@ -2136,7 +2595,12 @@ describe("main ", () => {
         },
       };
 
-      const clean = execute({part: somePart, inputs: { item },  outputs: { r, final }, partsRepo: testRepo});
+      const clean = execute({
+        part: somePart,
+        inputs: { item },
+        outputs: { r, final },
+        partsRepo: testRepo,
+      });
 
       item.subject.next(23423); // call 0
       item.subject.next(124); // call 1
@@ -2149,14 +2613,14 @@ describe("main ", () => {
     });
 
     describe("accumulate", () => {
-      const accumulate: NativePart = {
+      const accumulate: CodePart = {
         id: "acc",
         inputs: {
-          item: partInput("any"),
-          count: partInput("number"),
+          item: partInput(),
+          count: partInput(),
         },
         outputs: {
-          r: partOutput("number"),
+          r: partOutput(),
         },
         reactiveInputs: ["item"],
         completionOutputs: ["r"],
@@ -2186,7 +2650,12 @@ describe("main ", () => {
         const s = spy();
         r.subscribe(s);
 
-        const clean = execute({part: accumulate, inputs: { item, count }, outputs: { r }, partsRepo: testRepo});
+        const clean = execute({
+          part: accumulate,
+          inputs: { item, count },
+          outputs: { r },
+          partsRepo: testRepo,
+        });
 
         count.subject.next(1);
         item.subject.next(23423); // call 0
@@ -2205,7 +2674,12 @@ describe("main ", () => {
         const s = spy();
         r.subscribe(s);
 
-        execute({part: accumulate, inputs: { item, count }, outputs: { r }, partsRepo: testRepo});
+        execute({
+          part: accumulate,
+          inputs: { item, count },
+          outputs: { r },
+          partsRepo: testRepo,
+        });
 
         item.subject.next(1);
         count.subject.next(1);
@@ -2230,7 +2704,12 @@ describe("main ", () => {
         const s = spy();
         r.subscribe(s);
 
-        execute({part: accumulate, inputs: { item, count }, outputs: { r }, partsRepo: testRepo});
+        execute({
+          part: accumulate,
+          inputs: { item, count },
+          outputs: { r },
+          partsRepo: testRepo,
+        });
 
         item.subject.next(1);
         count.subject.next(1);
@@ -2248,13 +2727,17 @@ describe("main ", () => {
       });
 
       it("allows creating accumulate2 visually (shared state)", () => {
-        const groupedPart = concisePart({
+        const visualPart = concisePart({
           id: "bob",
           inputs: ["val"],
           outputs: ["r"],
           completionOutputs: ["r"],
           reactiveInputs: ["val"],
-          instances: [partInstance("i1", accumulate.id, { count: staticInputPinConfig(2) })],
+          instances: [
+            partInstance("i1", accumulate.id, {
+              count: staticInputPinConfig(2),
+            }),
+          ],
           connections: [
             ["val", "i1.item"],
             ["i1.r", "r"],
@@ -2268,7 +2751,7 @@ describe("main ", () => {
         r.subscribe(s);
 
         execute({
-          part: groupedPart,
+          part: visualPart,
           inputs: { val, count },
           outputs: { r },
           partsRepo: testRepoWith(accumulate),
@@ -2282,7 +2765,7 @@ describe("main ", () => {
       });
 
       it("accumulate2 visually cleans up state properly after it is done", () => {
-        const groupedPart = concisePart({
+        const visualPart = concisePart({
           id: "bob",
           inputs: ["val", "count"],
           outputs: ["r"],
@@ -2303,10 +2786,10 @@ describe("main ", () => {
         r.subscribe(s);
 
         execute({
-          part: groupedPart,
+          part: visualPart,
           inputs: { val, count },
           outputs: { r },
-          partsRepo: testRepoWith(accumulate)
+          partsRepo: testRepoWith(accumulate),
         });
 
         count.subject.next(2);
@@ -2324,14 +2807,14 @@ describe("main ", () => {
       });
 
       it('supports creation of "accumulate until"', () => {
-        const accUntil: NativePart = {
+        const accUntil: CodePart = {
           id: "acc",
           inputs: {
-            item: partInput("any", "optional"),
-            until: partInput("any", "optional"),
+            item: partInput('optional'),
+            until: partInput('optional'),
           },
           outputs: {
-            r: partOutput("number"),
+            r: partOutput(),
           },
           reactiveInputs: ["item", "until"],
           completionOutputs: ["r"],
@@ -2356,7 +2839,12 @@ describe("main ", () => {
         const s = spy();
         r.subscribe(s);
 
-        execute({part: accUntil, inputs: { item, until }, outputs: { r }, partsRepo: testRepo});
+        execute({
+          part: accUntil,
+          inputs: { item, until },
+          outputs: { r },
+          partsRepo: testRepo,
+        });
 
         item.subject.next(22);
         item.subject.next(23);
@@ -2373,13 +2861,13 @@ describe("main ", () => {
       const num1 = randomInt(100);
       const num2 = randomInt(100);
 
-      const groupedPart: GroupedPart = {
-        id: "grouped-part",
+      const visualPart: VisualPart = {
+        id: "visual-part",
         inputsPosition: {},
         outputsPosition: {},
         inputs: {},
         outputs: {
-          r: partOutput("number"),
+          r: partOutput(),
         },
         instances: [
           partInstance("a", add.id, {
@@ -2405,21 +2893,26 @@ describe("main ", () => {
       const s = spy();
       r.subscribe(s);
 
-      execute({part: groupedPart, inputs: { n1 }, outputs: { r }, partsRepo: testRepo});
+      execute({
+        part: visualPart,
+        inputs: { n1 },
+        outputs: { r },
+        partsRepo: testRepo,
+      });
 
       assert.equal(s.getCalls()[0].args[0], num1 + num2);
       assert.equal(s.callCount, 1);
     });
 
     it('supports creation of "merge" part - code', () => {
-      const merge: NativePart = {
+      const merge: CodePart = {
         id: "merge",
         inputs: {
-          a: partInput("any", "optional"),
-          b: partInput("any", "optional"),
+          a: partInput('optional'),
+          b: partInput('optional'),
         },
         outputs: {
-          r: partOutput("any"),
+          r: partOutput(),
         },
         fn: ({ a, b }, { r }, { state }) => {
           if (isDefined(a)) {
@@ -2439,7 +2932,12 @@ describe("main ", () => {
       const s = spy();
       r.subscribe(s);
 
-      execute({part: merge, inputs: { a, b }, outputs: { r }, partsRepo: testRepo});
+      execute({
+        part: merge,
+        inputs: { a, b },
+        outputs: { r },
+        partsRepo: testRepo,
+      });
 
       const numbers = randomInts(20);
 
@@ -2455,16 +2953,16 @@ describe("main ", () => {
     });
 
     it('supports creation of "merge" part - visual', () => {
-      const mergeGrouped: GroupedPart = {
-        id: "grouped-part",
+      const mergeGrouped: VisualPart = {
+        id: "visual-part",
         inputsPosition: {},
         outputsPosition: {},
         inputs: {
-          b: partInput("any", "optional"),
-          a: partInput("any", "optional"),
+          b: partInput('optional'),
+          a: partInput('optional'),
         },
         outputs: {
-          r: partOutput("number"),
+          r: partOutput(),
         },
         instances: [partInstance("id", id2.id)],
         connections: [
@@ -2481,7 +2979,12 @@ describe("main ", () => {
       const s = spy();
       r.subscribe(s);
 
-      execute({part: mergeGrouped, inputs: { b, a }, outputs: { r }, partsRepo: testRepo});
+      execute({
+        part: mergeGrouped,
+        inputs: { b, a },
+        outputs: { r },
+        partsRepo: testRepo,
+      });
 
       const valuesCount = randomInt(10, 20);
 
@@ -2502,7 +3005,7 @@ describe("main ", () => {
     describe("input modes", () => {
       it("required - does not run a part before with required inputs if they do not existing", () => {
         const s = spy();
-        const dummyPart = conciseNativePart({
+        const dummyPart = conciseCodePart({
           id: "bob",
           inputs: ["a|required", "b|required"],
           outputs: ["r"],
@@ -2514,15 +3017,30 @@ describe("main ", () => {
         const [a, b] = [dynamicPartInput(), dynamicPartInput()];
 
         // execute({part: dummyPart, inputs: {}, outputs: {}, partsRepo: testRepo});
-        execute({part: dummyPart, inputs: { a }, outputs: {}, partsRepo: testRepo});
-        execute({part: dummyPart, inputs: { b }, outputs: {}, partsRepo: testRepo});
+        execute({
+          part: dummyPart,
+          inputs: { a },
+          outputs: {},
+          partsRepo: testRepo,
+        });
+        execute({
+          part: dummyPart,
+          inputs: { b },
+          outputs: {},
+          partsRepo: testRepo,
+        });
 
         a.subject.next(1);
         b.subject.next(2);
 
         assert.equal(s.callCount, 0);
 
-        execute({part: dummyPart, inputs: { a, b }, outputs: {}, partsRepo: testRepo});
+        execute({
+          part: dummyPart,
+          inputs: { a, b },
+          outputs: {},
+          partsRepo: testRepo,
+        });
 
         a.subject.next(1);
         b.subject.next(2);
@@ -2531,7 +3049,7 @@ describe("main ", () => {
 
       it("required if connected - runs if not connected, but does not run if connected", () => {
         const s = spy();
-        const dummyPart = conciseNativePart({
+        const dummyPart = conciseCodePart({
           id: "bob",
           inputs: ["a|required", "b|required-if-connected"],
           outputs: ["r"],
@@ -2543,13 +3061,23 @@ describe("main ", () => {
         const [a, b] = [dynamicPartInput(), dynamicPartInput()];
 
         // execute({part: dummyPart, inputs: {}, outputs: {}, partsRepo: testRepo});
-        execute({part: dummyPart, inputs: { a, b }, outputs: {}, partsRepo: testRepo});
+        execute({
+          part: dummyPart,
+          inputs: { a, b },
+          outputs: {},
+          partsRepo: testRepo,
+        });
 
         a.subject.next(1);
 
         assert.equal(s.callCount, 0);
 
-        execute({part: dummyPart, inputs: { a }, outputs: {}, partsRepo: testRepo});
+        execute({
+          part: dummyPart,
+          inputs: { a },
+          outputs: {},
+          partsRepo: testRepo,
+        });
 
         a.subject.next(1);
 
@@ -2562,7 +3090,7 @@ describe("main ", () => {
   });
 
   describe("error handling", () => {
-    const errorReportingPart = conciseNativePart({
+    const errorReportingPart = conciseCodePart({
       id: "bad",
       inputs: ["a"],
       outputs: ["r"],
@@ -2575,7 +3103,14 @@ describe("main ", () => {
       const s = spy();
       const a = dynamicPartInput();
 
-      execute({part: errorReportingPart, inputs: { a }, outputs: {}, partsRepo: testRepo, onBubbleError: s, insId: "someIns"});
+      execute({
+        part: errorReportingPart,
+        inputs: { a },
+        outputs: {},
+        partsRepo: testRepo,
+        onBubbleError: s,
+        insId: "someIns",
+      });
 
       assert.equal(s.callCount, 0);
 
@@ -2597,7 +3132,17 @@ describe("main ", () => {
           throw new Error("blaft");
         },
       };
-      execute({part: p2, inputs: { a }, outputs: {}, partsRepo: testRepo, _debugger: {onError: s}, insId: "someIns"});
+
+      const onEvent = wrappedOnEvent(DebuggerEventType.ERROR, s);
+
+      execute({
+        part: p2,
+        inputs: { a },
+        outputs: {},
+        partsRepo: testRepo,
+        _debugger: { onEvent },
+        insId: "someIns",
+      });
 
       assert.equal(s.callCount, 0);
 
@@ -2605,11 +3150,11 @@ describe("main ", () => {
 
       assert.equal(s.callCount, 1);
 
-      assert.include(s.lastCall.args[0].toString(), "blaft");
+      assert.include(s.lastCall.args[0].val.toString(), "blaft");
       assert.include(s.lastCall.args[0].insId, "someIns");
     });
 
-    it("reports uncaught thrown that happened on an internal part", async () => {
+    it("reports uncaught thrown that happened on an visual part", async () => {
       const s = spy();
       const a = dynamicPartInput();
 
@@ -2629,7 +3174,16 @@ describe("main ", () => {
         connections: [["a", "i1.a"]],
       });
 
-      execute({part: badWrapper, inputs: { a }, outputs: {}, partsRepo: testRepoWith(p2), _debugger: {onError: s}, insId: "someIns"});
+      const onEvent = wrappedOnEvent(DebuggerEventType.ERROR, s);
+
+      execute({
+        part: badWrapper,
+        inputs: { a },
+        outputs: {},
+        partsRepo: testRepoWith(p2),
+        _debugger: { onEvent },
+        insId: "someIns",
+      });
 
       assert.equal(s.callCount, 0);
 
@@ -2637,12 +3191,15 @@ describe("main ", () => {
 
       assert.equal(s.callCount, 2);
 
-      assert.include(s.getCalls()[0].args[0].toString(), "blaft");
-      assert.include(s.getCalls()[0].args[0].insId, "someIns.i1");
+      assert.include(s.getCalls()[1].args[0].val.toString(), "blaft");
+      assert.include(s.getCalls()[1].args[0].insId, "i1");
 
-      assert.include(s.getCalls()[1].args[0].toString(), "child instance i1");
-      assert.include(s.getCalls()[1].args[0].toString(), "blaft");
-      assert.include(s.getCalls()[1].args[0].insId, "someIns");
+      assert.include(
+        s.getCalls()[0].args[0].val.toString(),
+        "child instance i1"
+      );
+      assert.include(s.getCalls()[0].args[0].val.toString(), "blaft");
+      assert.include(s.getCalls()[0].args[0].insId, "someIns");
     });
 
     it("reports uncaught errors that happened on an internal part", async () => {
@@ -2657,7 +3214,16 @@ describe("main ", () => {
         connections: [["a", "i1.a"]],
       });
 
-      execute({part: badWrapper, inputs: { a }, outputs: {}, partsRepo: testRepoWith(errorReportingPart), _debugger: {onError: s}, insId: "someIns"});
+      const onEvent = wrappedOnEvent(DebuggerEventType.ERROR, s);
+
+      execute({
+        part: badWrapper,
+        inputs: { a },
+        outputs: {},
+        partsRepo: testRepoWith(errorReportingPart),
+        _debugger: { onEvent },
+        insId: "someIns",
+      });
 
       assert.equal(s.callCount, 0);
 
@@ -2665,12 +3231,15 @@ describe("main ", () => {
 
       assert.equal(s.callCount, 2);
 
-      assert.include(s.getCalls()[0].args[0].toString(), "blah");
-      assert.include(s.getCalls()[0].args[0].insId, "someIns.i1");
+      assert.include(s.getCalls()[1].args[0].val.toString(), "blah");
+      assert.include(s.getCalls()[1].args[0].insId, "i1");
 
-      assert.include(s.getCalls()[1].args[0].toString(), "child instance i1");
-      assert.include(s.getCalls()[1].args[0].toString(), "blah");
-      assert.include(s.getCalls()[1].args[0].insId, "someIns");
+      assert.include(
+        s.getCalls()[0].args[0].val.toString(),
+        "child instance i1"
+      );
+      assert.include(s.getCalls()[0].args[0].val.toString(), "blah");
+      assert.include(s.getCalls()[0].args[0].insId, "someIns");
     });
 
     it('allows to catch errors in any part using the "error" pin', async () => {
@@ -2692,13 +3261,21 @@ describe("main ", () => {
         ],
       });
 
-      execute({part: badWrapper, inputs:{ a }, outputs: { r }, partsRepo: testRepoWith(errorReportingPart), _debugger: {onError: s1}, insId: "someIns"});
+      const onEvent = wrappedOnEvent(DebuggerEventType.ERROR, s1);
+
+      execute({
+        part: badWrapper,
+        inputs: { a },
+        outputs: { r },
+        partsRepo: testRepoWith(errorReportingPart),
+        _debugger: { onEvent },
+        insId: "someIns",
+      });
 
       assert.equal(s1.callCount, 0);
 
       a.subject.next("bob");
 
-      assert.equal(s1.callCount, 0);
       assert.equal(s2.callCount, 1);
 
       assert.include(s2.getCalls()[0].args[0].toString(), "blah");
@@ -2712,7 +3289,14 @@ describe("main ", () => {
       const errPin = dynamicOutput();
       errPin.subscribe(s2);
 
-      execute({part: errorReportingPart, inputs: { a }, outputs: { [ERROR_PIN_ID]: errPin }, partsRepo: testRepo, onBubbleError: s1, insId: "someIns"});
+      execute({
+        part: errorReportingPart,
+        inputs: { a },
+        outputs: { [ERROR_PIN_ID]: errPin },
+        partsRepo: testRepo,
+        onBubbleError: s1,
+        insId: "someIns",
+      });
 
       assert.equal(s1.callCount, 0);
       assert.equal(s2.callCount, 0);
@@ -2724,30 +3308,58 @@ describe("main ", () => {
 
       assert.include(s2.lastCall.args[0].toString(), "blah");
     });
+
+    it("does report errors caught errors via debugger", async () => {
+      const s = spy();
+      const onEvent = wrappedOnEvent(DebuggerEventType.ERROR, s);
+      const a = dynamicPartInput();
+
+      const errPin = dynamicOutput();
+
+      execute({
+        part: errorReportingPart,
+        inputs: { a },
+        outputs: { [ERROR_PIN_ID]: errPin },
+        partsRepo: testRepo,
+        insId: "someIns",
+        _debugger: { onEvent },
+      });
+
+      assert.equal(s.callCount, 0);
+      a.subject.next("bob");
+      assert.include(s.getCalls()[0].args[0].val.toString(), "blah");
+      assert.include(s.getCalls()[0].args[0].insId, "someIns");
+      assert.equal(s.callCount, 1);
+    });
   });
 
-  describe('async part function', () => {
-    it('works with async functions', async () => {
-      const part = conciseNativePart({
-        id: 'Async',
+  describe("async part function", () => {
+    it("works with async functions", async () => {
+      const part = conciseCodePart({
+        id: "Async",
         inputs: [],
-        outputs: ['r'],
+        outputs: ["r"],
         fn: async (i, o) => {
           await delay(10);
-          o.r.next('ok');
-        }
+          o.r.next("ok");
+        },
       });
 
       const [s, r] = spiedOutput();
-      const clean = execute({part, partsRepo: {}, inputs: {}, outputs: {r}});
+      const clean = execute({
+        part,
+        partsRepo: {},
+        inputs: {},
+        outputs: { r },
+      });
       await eventually(() => {
         assert.equal(s.called, true);
-      })
+      });
 
       clean();
-      assert.isTrue(s.calledOnceWith('ok'));
-    })
-  })
+      assert.isTrue(s.calledOnceWith("ok"));
+    });
+  });
 
   describe("bugs found", () => {
     it("works with accumulate and a static input", () => {
@@ -2755,7 +3367,12 @@ describe("main ", () => {
       const [val] = dynamicPartInputs();
       const count = staticPartInput(1);
 
-      execute({part: accumulate, inputs: { val, count }, outputs: { r }, partsRepo: testRepo});
+      execute({
+        part: accumulate,
+        inputs: { val, count },
+        outputs: { r },
+        partsRepo: testRepo,
+      });
 
       assert.equal(s.callCount, 0);
 
@@ -2784,7 +3401,12 @@ describe("main ", () => {
         ],
       });
 
-      execute({part: part, inputs: { list }, outputs: { r }, partsRepo: testRepoWith(spreadList, accumulate)});
+      execute({
+        part: part,
+        inputs: { list },
+        outputs: { r },
+        partsRepo: testRepoWith(spreadList, accumulate),
+      });
 
       assert.equal(s.callCount, 0);
 
@@ -2794,29 +3416,34 @@ describe("main ", () => {
       assert.deepEqual(callsFirstArgs(s), [[1], [2], [3]]);
     });
 
-    it('does not get in a loop with a sticky input that got data', () => {
+    it("does not get in a loop with a sticky input that got data", () => {
       const part = concisePart({
         id: "test",
         inputs: [],
         outputs: ["r"],
         instances: [
-          partInstance("i1", id.id, {v: staticInputPinConfig('bob')}),
-          partInstance("i2", id.id, {v: stickyInputPinConfig()}),
+          partInstance("i1", id.id, { v: staticInputPinConfig("bob") }),
+          partInstance("i2", id.id, { v: stickyInputPinConfig() }),
         ],
         connections: [
-          ['i1.r', 'i2.v'],
-          ['i2.r', 'r']
-        ]
+          ["i1.r", "i2.v"],
+          ["i2.r", "r"],
+        ],
       });
 
       const [s, r] = spiedOutput();
 
-      execute({part: part, inputs: {  }, outputs: { r }, partsRepo: testRepoWith(id)});
+      execute({
+        part: part,
+        inputs: {},
+        outputs: { r },
+        partsRepo: testRepoWith(id),
+      });
 
       // a.subject.next(1);
 
       assert.equal(s.callCount, 1);
-    })
+    });
   });
 
   describe("environment vars", () => {
@@ -2831,15 +3458,15 @@ describe("main ", () => {
         [prop2Name]: prop2Value,
       };
 
-      const groupedPart: GroupedPart = {
-        id: "grouped-part",
+      const visualPart: VisualPart = {
+        id: "visual-part",
         inputsPosition: {},
         outputsPosition: {},
         inputs: {
-          n1: partInput("number", "required"),
+          n1: partInput(),
         },
         outputs: {
-          r: partOutput("number"),
+          r: partOutput(),
         },
         instances: [
           partInstance("a", add.id, {
@@ -2864,11 +3491,11 @@ describe("main ", () => {
       const [s, r] = spiedOutput();
 
       execute({
-        part: groupedPart,
+        part: visualPart,
         inputs: { n1 },
         outputs: { r },
         partsRepo: testRepo,
-        env
+        env,
       });
 
       n1.subject.next(222);
@@ -2883,14 +3510,27 @@ describe("main ", () => {
         inputs: [],
         outputs: ["r"],
         connections: [["i1.r", "r"]],
-        instances: [partInstance("i1", id.id, { v: staticInputPinConfig("$ENV.aValue") })],
+        instances: [
+          partInstance("i1", id.id, { v: staticInputPinConfig("$ENV.aValue") }),
+        ],
       });
 
-      const values = [true, false, randomInt(999), { obj: { obj2: randomInt(99) } }];
+      const values = [
+        true,
+        false,
+        randomInt(999),
+        { obj: { obj2: randomInt(99) } },
+      ];
       values.forEach((val) => {
         const [s, r] = spiedOutput();
         const env = { aValue: val };
-        execute({part: groupedId, inputs: {}, outputs: { r }, partsRepo: testRepo, env});
+        execute({
+          part: groupedId,
+          inputs: {},
+          outputs: { r },
+          partsRepo: testRepo,
+          env,
+        });
         assert.deepEqual(callsFirstArgs(s), [val]);
       });
     });
@@ -2901,7 +3541,11 @@ describe("main ", () => {
         inputs: [],
         outputs: ["r"],
         connections: [["i1.r", "r"]],
-        instances: [partInstance("i1", id.id, { v: staticInputPinConfig("$ENV.myObj.student.name") })],
+        instances: [
+          partInstance("i1", id.id, {
+            v: staticInputPinConfig("$ENV.myObj.student.name"),
+          }),
+        ],
       });
 
       const env = {
@@ -2913,7 +3557,13 @@ describe("main ", () => {
       };
 
       const [s, r] = spiedOutput();
-      execute({part: groupedId, inputs: {}, outputs: { r }, partsRepo: testRepo, env});
+      execute({
+        part: groupedId,
+        inputs: {},
+        outputs: { r },
+        partsRepo: testRepo,
+        env,
+      });
       assert.deepEqual(callsFirstArgs(s), ["Albert"]);
     });
 
@@ -2923,7 +3573,11 @@ describe("main ", () => {
         inputs: [],
         outputs: ["r"],
         connections: [["i1.r", "r"]],
-        instances: [partInstance("i1", id.id, { v: staticInputPinConfig("$ENV.myObj.student.name") })],
+        instances: [
+          partInstance("i1", id.id, {
+            v: staticInputPinConfig("$ENV.myObj.student.name"),
+          }),
+        ],
       });
 
       const env = {};
@@ -2937,7 +3591,7 @@ describe("main ", () => {
         outputs: { r },
         partsRepo: testRepo,
         onBubbleError: onError,
-        env
+        env,
       });
       assert.equal(onError.callCount, 1);
       assert.include(onError.getCall(0).args[0].message, "myObj.student.name");
@@ -2945,11 +3599,11 @@ describe("main ", () => {
   });
 
   describe("part level trigger", () => {
-    it("waits for __trigger input inside grouped part", () => {
+    it("waits for __trigger input inside visual part", () => {
       const v42 = valuePart("val", 42);
 
-      const groupedPart = concisePart({
-        id: "grouped-part",
+      const visualPart = concisePart({
+        id: "visual-part",
         inputs: ["a|optional"],
         outputs: ["r"],
         instances: [partInstance("v1", v42.id)],
@@ -2965,7 +3619,13 @@ describe("main ", () => {
       const err = (e) => {
         throw e;
       };
-      execute({part: groupedPart, inputs: { a }, outputs: { r }, partsRepo: testRepoWith(v42), onBubbleError: err});
+      execute({
+        part: visualPart,
+        inputs: { a },
+        outputs: { r },
+        partsRepo: testRepoWith(v42),
+        onBubbleError: err,
+      });
 
       assert.equal(s.callCount, 0);
 
@@ -2976,15 +3636,15 @@ describe("main ", () => {
     });
 
     it("trigger input works in combination with static inputs", () => {
-      const addPart = conciseNativePart({
+      const addPart = conciseCodePart({
         id: "add",
         inputs: ["a", "b"],
         outputs: ["r"],
         fn: (inputs, outputs) => outputs.r.next(inputs.a + inputs.b),
       });
 
-      const groupedPart = concisePart({
-        id: "grouped-part",
+      const visualPart = concisePart({
+        id: "visual-part",
         inputs: ["a|optional"],
         outputs: ["r"],
         instances: [
@@ -3006,11 +3666,11 @@ describe("main ", () => {
         throw e;
       };
       execute({
-        part: groupedPart,
+        part: visualPart,
         inputs: { a },
         outputs: { r },
         partsRepo: testRepoWith(addPart),
-        onBubbleError: err
+        onBubbleError: err,
       });
 
       assert.equal(s.callCount, 0);
@@ -3022,15 +3682,15 @@ describe("main ", () => {
     });
 
     it("trigger input cannot be static", () => {
-      const addPart = conciseNativePart({
+      const addPart = conciseCodePart({
         id: "add",
         inputs: ["a", "b"],
         outputs: ["r"],
         fn: (inputs, outputs) => outputs.r.next(inputs.a + inputs.b),
       });
 
-      const groupedPart = concisePart({
-        id: "grouped-part",
+      const visualPart = concisePart({
+        id: "visual-part",
         inputs: ["a"],
         outputs: ["r"],
         instances: [
@@ -3051,11 +3711,11 @@ describe("main ", () => {
 
       const errSpy = spy();
       execute({
-        part: groupedPart,
+        part: visualPart,
         inputs: { a },
         outputs: { r },
         partsRepo: testRepoWith(addPart),
-        onBubbleError: errSpy
+        onBubbleError: errSpy,
       });
 
       assert.equal(s.callCount, 0);
@@ -3067,36 +3727,61 @@ describe("main ", () => {
     });
   });
 
-  describe('misc', () => {
-    it('does not clean state when reactive input is received', () => {
-      const part = conciseNativePart({
-        id: 'part',
-        inputs: ['a'],
-        outputs: ['r'],
-        reactiveInputs: ['a'],
+  describe("misc", () => {
+    it("does not clean state when reactive input is received", () => {
+      const part = conciseCodePart({
+        id: "part",
+        inputs: ["a"],
+        outputs: ["r"],
+        reactiveInputs: ["a"],
         completionOutputs: [],
         fn: (inputs, outputs, adv) => {
-          const val = adv.state.get('bob') || 0;
-          const newVal = val  + 1;
-          adv.state.set('bob', newVal);
+          const val = adv.state.get("bob") || 0;
+          const newVal = val + 1;
+          adv.state.set("bob", newVal);
           outputs.r.next(val + 1);
-        }
+        },
       });
 
       const [s, r] = spiedOutput();
       const a = dynamicPartInput();
-      execute({part, inputs: {a}, outputs: {r}, partsRepo: testRepoWith(part)});
+      execute({
+        part,
+        inputs: { a },
+        outputs: { r },
+        partsRepo: testRepoWith(part),
+      });
 
       const timesToCall = randomInt(3, 10);
       for (let i = 0; i < timesToCall; i++) {
-        a.subject.next('some val');
+        a.subject.next("some val");
       }
 
       assert.equal(s.callCount, timesToCall);
       assert.equal(s.lastCall.args[0], timesToCall);
-  
-      
     });
-  })    
 
+    it("does not enter a loop when static values are connected to a reactive input", () => {
+      const part = conciseCodePart({
+        id: "part",
+        inputs: ["a"],
+        outputs: ["r"],
+        reactiveInputs: ["a"],
+        completionOutputs: [],
+        fn: (inputs, outputs, adv) => {
+          outputs.r.next(inputs.a);
+        },
+      });
+
+      const [s, r] = spiedOutput();
+      const a = staticPartInput(5);
+      execute({
+        part,
+        inputs: { a },
+        outputs: { r },
+        partsRepo: testRepoWith(part),
+      });
+      assert.equal(s.callCount, 1);
+    });
+  });
 });

@@ -1,5 +1,13 @@
 import EventEmitter = require("events");
-import { Part, PartRepo, dynamicOutput, keys, staticPartInput, partOutput } from ".";
+import {
+  Part,
+  PartRepo,
+  dynamicOutput,
+  keys,
+  staticPartInput,
+  partOutput,
+  isDynamicInput,
+} from ".";
 import { execute, ExecuteParams } from "./execute";
 
 export const simplifiedExecute = (
@@ -12,9 +20,10 @@ export const simplifiedExecute = (
   const outputKeys = keys(partToRun.outputs);
 
   const _inputs = Object.keys(inputs).reduce((acc, curr) => {
+    const input = inputs[curr];
     return {
       ...acc,
-      [curr]: staticPartInput(inputs[curr]),
+      [curr]: isDynamicInput(input) ? input : staticPartInput(input),
     };
   }, {});
 

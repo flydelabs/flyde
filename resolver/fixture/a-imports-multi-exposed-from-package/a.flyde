@@ -1,0 +1,51 @@
+imports:
+  "@acme/multiple-exports":
+    - Add
+    - Sub
+part:
+  id: MultiWrapper
+  inputs:
+    n:
+      type: number
+      mode: required
+  outputs:
+    r:
+      type: number
+  instances:
+    - id: ins1
+      partId: Add
+      pos: 
+        x: 0
+        y: 0
+      inputConfig:
+        b:
+          mode: static
+          value: 1
+    - id: ins2
+      partId: Sub
+      pos: 
+        x: 0
+        y: 0
+      inputConfig:
+        b:
+          mode: static
+          value: 2
+  connections:
+    - from:
+        insId: __this
+        pinId: n
+      to:
+        insId: ins1
+        pinId: a
+    - from:
+        insId: ins1
+        pinId: r
+      to:
+        insId: ins2
+        pinId: a
+    - from:
+        insId: ins2
+        pinId: r
+      to:
+        insId: __this
+        pinId: r

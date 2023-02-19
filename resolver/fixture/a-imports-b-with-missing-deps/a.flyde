@@ -7,7 +7,8 @@ part:
   inputs:
     n1: "number"
   outputs:
-    result: number
+    result:
+      type: "bob"
   instances:
     - id: ins1
       partId: SpreadList3

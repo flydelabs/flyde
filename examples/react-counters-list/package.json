@@ -1,13 +1,12 @@
 {
-  "name": "react-counters-list",
+  "name": "flyde-example-react-counters-list",
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "node scripts/start.js",
+    "start": "yes | node scripts/start.js",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js",
-    "link-all": "npm link @flyde/runtime && npm link @flyde/stdlib && npm link @flyde/resolver && npm link @flyde/core",
-    "postinstall": "yarn link-all"
+    "postinstall": "npm link @flyde/stdlib @flyde/runtime @flyde/resolver @flyde/core @flyde/remote-debugger"
   },
   "dependencies": {
     "@babel/core": "^7.16.0",

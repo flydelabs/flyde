@@ -29,6 +29,9 @@
 		},
 		{
 			"path": "remote-debugger"
+		},
+		{
+			"path": "resolver"
 		}
 	],
 	"settings": {
@@ -38,7 +41,11 @@
 			"**/dist": true
 		},
 		"cSpell.words": [
+			"Importables",
 			"Ungroup"
-		]
+		],
+		"files.exclude": {
+			"**/node_modules": true
+		}
 	}
 }

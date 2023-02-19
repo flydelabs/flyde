@@ -5,18 +5,19 @@ import {
   FlydeFlow,
   ResolvedFlydeFlowDefinition,
   ImportablePart,
-  hashFlow,
-  delay,
   Pos,
-  connectionData,
   TRIGGER_PIN_ID,
+  PartInstance,
 } from "@flyde/core";
 
 import classNames from "classnames";
-import { createEditorClient, EditorDebuggerClient } from "@flyde/remote-debugger/dist/client";
+import {
+  createEditorClient,
+  EditorDebuggerClient,
+} from "@flyde/remote-debugger/dist/client";
 
 import produce from "immer";
-import { createNewPartInstance, usePorts } from "@flyde/flow-editor"; // ../../common/grouped-part-editor/utils
+import { createNewPartInstance, FlydeFlowEditorProps, usePorts } from "@flyde/flow-editor"; // ../../common/visual-part-editor/utils
 import { vAdd } from "@flyde/flow-editor"; // ../../common/physics
 
 import { FlowEditor } from "@flyde/flow-editor"; // ../../common/flow-editor/FlowEditor
@@ -24,25 +25,23 @@ import { FlowEditor } from "@flyde/flow-editor"; // ../../common/flow-editor/Flo
 import { useDebouncedCallback } from "use-debounce";
 
 import { IntegratedFlowSideMenu } from "./side-menu";
-import { CustomPart, isCodePart, PartDefinition } from "@flyde/core";
+import { CustomPart, isInlineValuePart, PartDefinition } from "@flyde/core";
 
 import { AppToaster, toastMsg } from "@flyde/flow-editor"; // ../../common/toaster
 
-import { useQueryParam, BooleanParam } from "use-query-params";
 import { values } from "@flyde/flow-editor"; // ../../common/utils
 import { PinType } from "@flyde/core";
-import { createRuntimePlayer, RuntimePlayer } from "@flyde/flow-editor"; // ../../common/grouped-part-editor/runtime-player
+import { createRuntimePlayer, RuntimePlayer } from "@flyde/flow-editor"; // ../../common/visual-part-editor/runtime-player
 
 // import { useDevServerApi } from "../api/dev-server-api";
 import { FlydeFlowChangeType, functionalChange } from "@flyde/flow-editor"; // ../../common/flow-editor/flyde-flow-change-type
 import { FlowEditorState } from "@flyde/flow-editor"; // ../../common/lib/react-utils/use-hotkeys
-import { defaultViewPort } from "@flyde/flow-editor/dist/grouped-part-editor/GroupedPartEditor";
+import { defaultViewPort } from "@flyde/flow-editor/dist/visual-part-editor/VisualPartEditor";
 // import { vscodePromptHandler } from "../vscode-ports";
 import { useState } from "react";
 import { useEffect } from "react";
 import _ from "lodash";
 import { useBootstrapData } from "./use-bootstrap-data";
-import { deflate } from "node:zlib";
 
 export const PIECE_HEIGHT = 28;
 
@@ -55,7 +54,9 @@ export type IntegratedFlowManagerProps = {
   port: number;
 };
 
-export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (props) => {
+export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
+  props
+) => {
   const { flow: initialFlow, resolvedDefinitions } = props;
   const boardRef = React.useRef<any>();
 
@@ -65,7 +66,8 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (prop
   const bootstrapData = useBootstrapData();
   const isEmbedded = !!bootstrapData;
 
-  const [currentResolvedDefs, setCurrentResolvedDefs] = useState(resolvedDefinitions);
+  const [currentResolvedDefs, setCurrentResolvedDefs] =
+    useState(resolvedDefinitions);
 
   const lastChangeReason = React.useRef("");
 
@@ -80,7 +82,8 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (prop
 
   const { flow } = editorState;
 
-  const [debuggerClient, setDebuggerClient] = React.useState<EditorDebuggerClient>();
+  const [debuggerClient, setDebuggerClient] =
+    React.useState<EditorDebuggerClient>();
 
   const runtimePlayer = React.useRef<RuntimePlayer>();
 
@@ -93,7 +96,9 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (prop
   const [menuSelectedItem, setMenuSelectedItem] = React.useState<string>();
 
   // to avoid re-resolving imported flows, this holds parts that were imported in the current session
-  const [importedParts, setImportedParts] = React.useState<ImportablePart[]>([]);
+  const [importedParts, setImportedParts] = React.useState<ImportablePart[]>(
+    []
+  );
 
   const [repo, setRepo] = useState({
     ...currentResolvedDefs.dependencies,
@@ -164,7 +169,10 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (prop
           console.info(`Batched events - ${events.length} into player`, events);
           runtimePlayer.current.addEvents(events);
         } else {
-          console.info(`Batched events - ${events.length} but no player`, events);
+          console.info(
+            `Batched events - ${events.length} but no player`,
+            events
+          );
         }
       });
     }
@@ -174,9 +182,20 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (prop
     ports.saveFlow({ absPath: src, flow });
   }, 500);
 
+  const onChangeState = React.useCallback(
+    (changedState: FlowEditorState, type: FlydeFlowChangeType) => {
+      console.log("onChangeState", type, changedState);
+      lastChangeReason.current = type.message;
+      setEditorState(changedState);
+      debouncedSaveFile(changedState.flow, props.integratedSource);
+    },
+    [props.integratedSource, debouncedSaveFile]
+  );
+
+
   const onChangeFlow = React.useCallback(
     (changedFlow: FlydeFlow, type: FlydeFlowChangeType) => {
-      console.log("project change", type);
+      console.log("onChangeFlow", type);
       lastChangeReason.current = type.message;
       setEditorState((state) => ({ ...state, flow: changedFlow }));
       debouncedSaveFile(changedFlow, props.integratedSource);
@@ -193,12 +212,20 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (prop
         lastChangeReason.current = "n/a";
       }
     }
-  }, [onChangeFlow, editorState.flow, debouncedSaveFile, props.integratedSource]);
+  }, [
+    onChangeFlow,
+    editorState.flow,
+    debouncedSaveFile,
+    props.integratedSource,
+  ]);
 
-  const onInspectPin = React.useCallback((insId: string, pinId: string, pinType: PinType) => {
-    setMenuSelectedItem("analytics");
-    setInspectPin({ insId, pinId, pinType });
-  }, []);
+  const onInspectPin = React.useCallback(
+    (insId: string, pinId: string, pinType: PinType) => {
+      setMenuSelectedItem("analytics");
+      setInspectPin({ insId, pinId, pinType });
+    },
+    []
+  );
 
   const onAddPartToStage = (part: PartDefinition) => {
     const finalPos = vAdd({ x: 100, y: 0 }, editorState.boardData.lastMousePos);
@@ -206,7 +233,7 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (prop
     if (newPartIns) {
       const valueChanged = produce(flow, (draft) => {
         const part = draft.part;
-        if (isCodePart(part)) {
+        if (isInlineValuePart(part)) {
           AppToaster.show({ message: "cannot add part to code part" });
         } else {
           part.instances.push(newPartIns);
@@ -225,47 +252,54 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (prop
   }, []);
 
   const _onRequestHistory = React.useCallback(
-    (fullInsId: string, pinId: string, pinType: PinType) => {
+    (insId: string, pinId?: string, pinType?: PinType) => {
       if (!debuggerClient) {
         return Promise.resolve({ total: 0, lastSamples: [] });
       }
-      return debuggerClient.getHistory({ id: `${fullInsId}.${pinId}.${pinType}`, limit: 1 });
+      return debuggerClient.getHistory({
+        insId,
+        pinId,
+        type: pinType,
+        limit: 10,
+      });
     },
     [debuggerClient]
   );
 
-  const queryImportables = React.useCallback(
-    async (query): Promise<ImportablePart[]> => {
-      const importables = await ports
-        .getImportables({ rootFolder: props.integratedSource, flowPath: props.integratedSource })
-        .then((imps) => {
-          return Object.entries(imps).reduce<any[]>((acc, [module, partsMap]) => {
-            const parts = values(partsMap);
-            const partAndModule = parts.map((part) => ({ module, part }));
-            return acc.concat(partAndModule);
-          }, []);
-        });
+  const queryImportables = React.useCallback(async (): Promise<
+    ImportablePart[]
+  > => {
+    const importables = await ports
+      .getImportables({
+        rootFolder: props.integratedSource,
+        flowPath: props.integratedSource,
+      })
+      .then((imps) => {
+        return Object.entries(imps).reduce<any[]>((acc, [module, partsMap]) => {
+          const parts = values(partsMap);
+          const partAndModule = parts.map((part) => ({ module, part }));
+          return acc.concat(partAndModule);
+        }, []);
+      });
 
-      return [...importables];
-    },
-    [ports, props.integratedSource]
-  );
+    return [...importables];
+  }, [ports, props.integratedSource]);
 
-  const onImportPart = React.useCallback(
+  const onImportPart = React.useCallback<FlydeFlowEditorProps['onImportPart']>(
     async (
-      { part: importedPart, module }: ImportablePart,
-      target?: { pos: Pos; connectTo?: { insId: string; outputId: string } }
-    ) => {
+      { part: importedPart, module },
+      target
+    ): Promise<PartInstance | undefined> => {
       const existingModuleImports = (flow.imports || {})[module] || [];
-      // const finalPos = vAdd({ x: 0, y: 0 }, editorState.boardData.lastMousePos);
-      // const newPartIns = createNewPartInstance(importedPart, 0, finalPos, repo);
 
       setImportedParts((parts) => [...parts, { part: importedPart, module }]);
+
+      let newPartIns: PartInstance | undefined = undefined;
 
       const newFlow = produce(flow, (draft) => {
         if (target) {
           const finalPos = vAdd({ x: 0, y: 0 }, target.pos);
-          const newPartIns = createNewPartInstance(importedPart, 0, finalPos, repo);
+          newPartIns = createNewPartInstance(importedPart, 0, finalPos, repo);
           draft.part.instances.push(newPartIns);
 
           if (target.connectTo) {
@@ -294,25 +328,40 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (prop
         draft.imports = imports;
       });
 
+
       // yacky hack to make sure flow is only rerendered when the new part exists
-      setTimeout(() => {
-        onChangeFlow(newFlow, functionalChange("imported-part"));
-      }, 10);
+      await new Promise((resolve) => setTimeout(resolve, 10));
+
+      const newState = produce(editorState, (draft) => {
+        draft.flow = newFlow;
+        if (target?.selectAfterAdding && newPartIns) {
+          draft.boardData.selected = [newPartIns?.id];
+        }
+      });
+
+      onChangeState(newState, functionalChange("imported-part"));
 
       toastMsg(`Part ${importedPart.id} successfully imported from ${module}`);
+      return newPartIns;
     },
-    [flow, onChangeFlow, repo]
+    [editorState, flow, onChangeState, repo]
   );
 
   const onExtractInlinePart = React.useCallback(async () => {}, []);
 
   React.useEffect(() => {
     const importedPartsRepo = importedParts.reduce((acc, curr) => {
-      return { ...acc, [curr.part.id]: { ...curr.part, importPath: curr.module } };
+      return {
+        ...acc,
+        [curr.part.id]: { ...curr.part, importPath: curr.module },
+      };
     }, {});
 
     setCurrentResolvedDefs((def) => {
-      return { ...def, dependencies: { ...def.dependencies, ...importedPartsRepo } };
+      return {
+        ...def,
+        dependencies: { ...def.dependencies, ...importedPartsRepo },
+      };
     });
   }, [importedParts]);
 

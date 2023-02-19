@@ -1,5 +1,5 @@
 export const disableCookieAccessForVscode = () => {
-    const cookieDesc: any =
+  const cookieDesc: any =
     Object.getOwnPropertyDescriptor(Document.prototype, "cookie") ||
     Object.getOwnPropertyDescriptor(HTMLDocument.prototype, "cookie");
   if (cookieDesc && cookieDesc.configurable) {
@@ -16,5 +16,4 @@ export const disableCookieAccessForVscode = () => {
       },
     });
   }
-}
-
+};

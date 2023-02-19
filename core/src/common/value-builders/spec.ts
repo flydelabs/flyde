@@ -16,13 +16,16 @@ describe("value builder", () => {
     };
 
     const inputs = { inner: { age: 8 }, name: "hi" };
-    const result = compileObjectTemplate(encodeURIComponent(JSON.stringify(template)), inputs);
+    const result = compileObjectTemplate(
+      encodeURIComponent(JSON.stringify(template)),
+      inputs
+    );
 
     assert.equal(result.bob.age, 8);
     assert.equal(result.name, "hi");
   });
 
-  it('works with line breaks in objects', () => {
+  it("works with line breaks in objects", () => {
     const template = {
       a: "${a}",
       b: "${b}",
@@ -33,42 +36,46 @@ describe("value builder", () => {
     hi
     `;
 
-    const b = 'bob\nbob';
+    const b = "bob\nbob";
 
-    const inputs = {
-      a,
-      b
-    };
-
-    const result = compileObjectTemplate(encodeURIComponent(JSON.stringify(template)), inputs);
-
-    assert.equal(result.a, a);
-    assert.equal(result.b, b);
-  })
-
-  it('works with double quotes', () => {
-    const template = {
-      a: "${a}",
-      b: "${b}",
-      c: "${c}"
-    };
-
-    const a = `"bob"`;
-    const b = "\"bob\"";
-    const c = '\"bob\"';
-
-  
     const inputs = {
       a,
       b,
-      c
     };
 
-    const result = compileObjectTemplate(encodeURIComponent(JSON.stringify(template)), inputs);
+    const result = compileObjectTemplate(
+      encodeURIComponent(JSON.stringify(template)),
+      inputs
+    );
+
+    assert.equal(result.a, a);
+    assert.equal(result.b, b);
+  });
+
+  it("works with double quotes", () => {
+    const template = {
+      a: "${a}",
+      b: "${b}",
+      c: "${c}",
+    };
+
+    const a = `"bob"`;
+    const b = '"bob"';
+    const c = '"bob"';
+
+    const inputs = {
+      a,
+      b,
+      c,
+    };
+
+    const result = compileObjectTemplate(
+      encodeURIComponent(JSON.stringify(template)),
+      inputs
+    );
 
     assert.equal(result.a, a);
     assert.equal(result.b, b);
     assert.equal(result.c, c);
-  })
+  });
 });
-

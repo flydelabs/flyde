@@ -8,6 +8,6 @@ export const preloadMonaco = () => {
   }
   loader.init().then(() => {
     logger("monaco preloaded");
-    preloaded = true
+    preloaded = true;
   });
 };

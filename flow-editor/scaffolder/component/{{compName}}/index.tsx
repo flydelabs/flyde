@@ -1,1 +1,1 @@
-export * from './{{compName}}'
+export * from "./{{compName}}";

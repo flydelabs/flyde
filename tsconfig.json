@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "module": "commonjs",
-        "target": "es5",
+        "target": "es2019",
         "strict": false,
         "noImplicitAny": false,
         "noImplicitReturns": false,
@@ -14,7 +14,7 @@
         "moduleResolution": "node",
         "lib": [
             "dom",
-            "es2017"
+            "es2019"
         ],
         "jsx": "react",
         "declaration": true,

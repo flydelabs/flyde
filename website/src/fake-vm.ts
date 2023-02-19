@@ -6,26 +6,26 @@
 import { okeys } from "@flyde/core";
 
 class VMScript {
-    script: string
-    constructor(s: string) {
-      this.script = s;
-    }
+  script: string;
+  constructor(s: string) {
+    this.script = s;
   }
-  
-  class VM {
-    context: any;
-    constructor(context: any) {
-      this.context = context;
-    }
-  
-    run(script: VMScript) {
-      const args = okeys(this.context.sandbox);
-      const values = Object.values(this.context.sandbox)
-      const fn = Function(...args, script.script);
-      fn(...values);
-    }
+}
+
+class VM {
+  context: any;
+  constructor(context: any) {
+    this.context = context;
   }
-  export const fakeVm = {
-    VMScript,
-    VM
+
+  run(script: VMScript) {
+    const args = okeys(this.context.sandbox);
+    const values = Object.values(this.context.sandbox);
+    const fn = Function(...args, script.script);
+    fn(...values);
   }
+}
+export const fakeVm = {
+  VMScript,
+  VM,
+};

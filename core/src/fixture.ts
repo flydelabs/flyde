@@ -1,12 +1,12 @@
 import {
   fromSimplified,
   Part,
-  GroupedPart,
+  VisualPart,
   partInput,
   partOutput,
-  NativePart,
-  PartInstance,
   CodePart,
+  PartInstance,
+  InlineValuePart,
   partInstance,
   dynamicPartInput,
   queueInputPinConfig,
@@ -18,40 +18,40 @@ import { execute, SubjectMap } from "./execute";
 import { isDefined, okeys } from "./common";
 import { Subject } from "rxjs";
 import { PartRepo } from ".";
-import { conciseNativePart } from "./test-utils";
+import { conciseCodePart } from "./test-utils";
 
-export const add: NativePart = {
+export const add: CodePart = {
   id: "add",
   inputs: {
-    n1: partInput("number"),
-    n2: partInput("number"),
+    n1: partInput(),
+    n2: partInput(),
   },
   outputs: {
-    r: partOutput("number"),
+    r: partOutput(),
   },
   fn: ({ n1, n2 }, { r }) => {
     r.next(n1 + n2);
   },
 };
 
-export const codeAdd: CodePart = {
+export const codeAdd: InlineValuePart = {
   id: "add",
   inputs: {
-    n1: partInput("number"),
-    n2: partInput("number"),
+    n1: partInput(),
+    n2: partInput(),
   },
   outputs: {
-    r: partOutput("number"),
+    r: partOutput(),
   },
   fnCode: `
   outputs.r.next(inputs.n1 + inputs.n2);
     `,
 };
 
-export const add1: NativePart = {
+export const add1: CodePart = {
   id: "add1",
-  inputs: { n: partInput("number") },
-  outputs: { r: partOutput("number") },
+  inputs: { n: partInput() },
+  outputs: { r: partOutput() },
   fn: ({ n }, { r }) => {
     r.next(n + 1);
   },
@@ -60,10 +60,10 @@ export const add1: NativePart = {
 export const mul: Part = {
   id: "mul",
   inputs: {
-    n1: partInput("number"),
-    n2: partInput("number"),
+    n1: partInput(),
+    n2: partInput(),
   },
-  outputs: { r: partOutput("number") },
+  outputs: { r: partOutput() },
   fn: ({ n1, n2 }, { r }) => r.next(n1 * n2),
 };
 
@@ -78,15 +78,15 @@ export const mul2: Part = fromSimplified({
 
 export const id: Part = {
   id: "id",
-  inputs: { v: partInput('v') },
-  outputs: { r: partOutput('r') },
+  inputs: { v: partInput() },
+  outputs: { r: partOutput() },
   fn: ({ v }, { r }) => {
     r.next(v);
   },
-  completionOutputs: ['r']
+  completionOutputs: ["r"],
 };
 
-export const id2: NativePart = {
+export const id2: CodePart = {
   id: "id2",
   inputs: {
     v: partInput(),
@@ -96,13 +96,13 @@ export const id2: NativePart = {
   },
   fn: ({ v }, { r }) => {
     r.next(v);
-  }
+  },
 };
 
 export const transform: Part = {
   id: "transform",
-  inputs: { from: partInput("any"), to: partInput("any") },
-  outputs: { r: partOutput("any") },
+  inputs: { from: partInput(), to: partInput() },
+  outputs: { r: partOutput() },
   fn: ({ to }, { r }, { insId }) => {
     r.next(to);
   },
@@ -117,13 +117,13 @@ export const Value = (v: any): Part => {
   });
 };
 
-export const add1mul2: GroupedPart = {
+export const add1mul2: VisualPart = {
   id: "a1m2",
   inputs: {
-    n: partInput("number"),
+    n: partInput(),
   },
   outputs: {
-    r: partOutput("number"),
+    r: partOutput(),
   },
   inputsPosition: {},
   outputsPosition: {},
@@ -144,17 +144,21 @@ export const add1mul2: GroupedPart = {
   ],
 };
 
-export const add1mul2add1: GroupedPart = {
+export const add1mul2add1: VisualPart = {
   id: "a1m2a1",
   inputs: {
-    n: partInput("number"),
+    n: partInput(),
   },
   outputs: {
-    r: partOutput("number"),
+    r: partOutput(),
   },
   inputsPosition: {},
   outputsPosition: {},
-  instances: [partInstance("a", add1.id), partInstance("b", mul2.id), partInstance("c", add1.id)],
+  instances: [
+    partInstance("a", add1.id),
+    partInstance("b", mul2.id),
+    partInstance("c", add1.id),
+  ],
   connections: [
     {
       from: externalConnectionNode("n"),
@@ -175,16 +179,16 @@ export const add1mul2add1: GroupedPart = {
   ],
 };
 
-export const addGrouped: GroupedPart = {
-  id: "add-grouped",
+export const addGrouped: VisualPart = {
+  id: "add-visual",
   inputsPosition: {},
   outputsPosition: {},
   inputs: {
-    n1: partInput("number"),
-    n2: partInput("number"),
+    n1: partInput(),
+    n2: partInput(),
   },
   outputs: {
-    r: partOutput("number"),
+    r: partOutput(),
   },
   instances: [partInstance("a", add.id)],
   connections: [
@@ -203,18 +207,23 @@ export const addGrouped: GroupedPart = {
   ],
 };
 
-export const addGroupedQueued: GroupedPart = {
-  id: "add-grouped-queued",
+export const addGroupedQueued: VisualPart = {
+  id: "add-visual-queued",
   inputsPosition: {},
   outputsPosition: {},
   inputs: {
-    n1: partInput("number"),
-    n2: partInput("number"),
+    n1: partInput(),
+    n2: partInput(),
   },
   outputs: {
-    r: partOutput("number"),
+    r: partOutput(),
   },
-  instances: [partInstance("a", add.id, { n1: queueInputPinConfig(), n2: queueInputPinConfig() })],
+  instances: [
+    partInstance("a", add.id, {
+      n1: queueInputPinConfig(),
+      n2: queueInputPinConfig(),
+    }),
+  ],
   connections: [
     {
       from: externalConnectionNode("n1"),
@@ -231,14 +240,14 @@ export const addGroupedQueued: GroupedPart = {
   ],
 };
 
-export const optAdd: NativePart = {
+export const optAdd: CodePart = {
   id: "optAdd",
   inputs: {
-    n1: { type: "number" },
-    n2: { type: "number", mode: "required-if-connected" },
+    n1: { },
+    n2: { mode: "required-if-connected" },
   },
   outputs: {
-    r: { type: "number" },
+    r: { },
   },
   fn: ({ n1, n2 }, { r }) => {
     const n2Norm = typeof n2 === "undefined" ? 42 : n2;
@@ -246,14 +255,14 @@ export const optAdd: NativePart = {
   },
 };
 
-export const isEven: NativePart = {
+export const isEven: CodePart = {
   id: "is-even",
   inputs: {
-    item: { type: "any" },
-    idx: { type: "number", mode: "required-if-connected" },
+    item: { },
+    idx: { mode: "required-if-connected" },
   },
   outputs: {
-    r: { type: "boolean" },
+    r: { },
   },
   fn: ({ item }, { r }) => {
     r.next(item % 2 === 0);
@@ -275,7 +284,12 @@ export const filter: Part = fromSimplified({
         (p, k) => ({ ...p, [k]: new Subject() }),
         {}
       );
-      const clean = execute({part: fn, inputs: { item: itemInput }, outputs: outputs, partsRepo: testRepo});
+      const clean = execute({
+        part: fn,
+        inputs: { item: itemInput },
+        outputs: outputs,
+        partsRepo: testRepo,
+      });
       outputs.r.subscribe((bool) => {
         if (bool) {
           newList.push(item);
@@ -300,10 +314,10 @@ export const filter: Part = fromSimplified({
   },
 });
 
-export const peq: NativePart = {
+export const peq: CodePart = {
   id: "peq",
-  inputs: { val: partInput("any"), compare: partInput("string") },
-  outputs: { r: partOutput("any"), else: partOutput("any", false, true) },
+  inputs: { val: partInput(), compare: partInput() },
+  outputs: { r: partOutput(), else: partOutput() },
   fn: ({ val, compare }, o) => {
     if (val === compare) {
       o.r.next(val);
@@ -313,7 +327,7 @@ export const peq: NativePart = {
   },
 };
 
-export const delay5 = conciseNativePart({
+export const delay5 = conciseCodePart({
   id: "delay5",
   inputs: ["item"],
   outputs: ["r"],
@@ -325,7 +339,7 @@ export const delay5 = conciseNativePart({
   },
 });
 
-export const delay = conciseNativePart({
+export const delay = conciseCodePart({
   id: "delay5",
   inputs: ["item", "ms"],
   outputs: ["r"],
@@ -352,7 +366,7 @@ export const testRepo = {
   delay,
 };
 
-export const accumulate = conciseNativePart({
+export const accumulate = conciseCodePart({
   id: "accumulate",
   inputs: ["count|required", "val|optional"],
   outputs: ["r"],
@@ -383,14 +397,14 @@ export const accumulate = conciseNativePart({
   },
 });
 
-export const accUntil: NativePart = {
+export const accUntil: CodePart = {
   id: "accUntil",
   inputs: {
-    item: partInput("any", "optional"),
-    until: partInput("any", "optional"),
+    item: partInput('optional'),
+    until: partInput('optional'),
   },
   outputs: {
-    r: partOutput("number"),
+    r: partOutput(),
   },
   reactiveInputs: ["item", "until"],
   completionOutputs: ["r"],
@@ -408,7 +422,7 @@ export const accUntil: NativePart = {
   },
 };
 
-export const spreadList = conciseNativePart({
+export const spreadList = conciseCodePart({
   id: "SpreadList",
   inputs: ["list"],
   outputs: ["val", "idx", "length"],

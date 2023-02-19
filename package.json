@@ -10,12 +10,12 @@
     "watch-all-integrated": "yarn workspaces foreach -piAv -j 999 --exclude @flyde/managed-editor --exclude flyde-vscode run dev",
     "build": "yarn workspaces foreach -Avit run build",
     "clean": "yarn workspaces foreach clean -y",
+    "clean-dist": "yarn workspaces foreach exec \"rm -rf dist\"",
     "bump-all-patch": "yarn workspaces foreach -Avit --no-private version patch",
     "publish-all": "yarn workspaces foreach -Avit --no-private npm publish --access public --tolerate-republish",
     "release": "yarn bump-all-patch && yarn publish-all"
   },
   "author": "",
-  "license": "ISC",
   "dependencies": {
     "@flyde/runtime": "workspace:^",
     "concurrently": "^4.1.0",

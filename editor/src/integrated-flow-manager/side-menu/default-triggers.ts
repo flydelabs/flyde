@@ -1,11 +1,11 @@
 import {
-  GroupedPart,
+  VisualPart,
   partInput,
   partOutput,
   RestApiTrigger,
   ScheduledTrigger,
   WebAppTrigger,
-  randomInt
+  randomInt,
 } from "@flyde/core";
 
 import cuid from "cuid";
@@ -16,29 +16,21 @@ export const triggerPartId = () => `API Trigger ${randomInt(99999)}`;
 export const routeTriggerPart = (id: string = triggerPartId()) => {
   return {
     id,
-    ...defaultProjectRoutePart
-  }
+    ...defaultProjectRoutePart,
+  };
 };
 
-export const scheduledTriggerPart = (): GroupedPart => {
+export const scheduledTriggerPart = (): VisualPart => {
   return {
     id: triggerPartId(),
     inputs: {
-      context: {
-        type: "any",
-      },
+      context: {},
     },
     instances: [],
     connections: [],
     outputs: {
-      ok: {
-        type: "any",
-        optional: false,
-      },
-      error: {
-        type: "any",
-        optional: false,
-      },
+      ok: {},
+      error: {},
     },
 
     inputsPosition: {},
@@ -46,7 +38,11 @@ export const scheduledTriggerPart = (): GroupedPart => {
   };
 };
 
-export const restApiTrigger = (path: string, method: any, partId: string): RestApiTrigger => {
+export const restApiTrigger = (
+  path: string,
+  method: any,
+  partId: string
+): RestApiTrigger => {
   return {
     id: cuid(),
     type: "rest-api",
@@ -69,7 +65,10 @@ export const webAppTrigger = (path: string, partId: string): WebAppTrigger => {
   };
 };
 
-export const scheduledTrigger = (cronExpression: string, partId: string): ScheduledTrigger => {
+export const scheduledTrigger = (
+  cronExpression: string,
+  partId: string
+): ScheduledTrigger => {
   return {
     id: cuid(),
     type: "scheduled",
@@ -80,14 +79,14 @@ export const scheduledTrigger = (cronExpression: string, partId: string): Schedu
   };
 };
 
-export const emptyWebUiProject: GroupedPart = {
+export const emptyWebUiProject: VisualPart = {
   id: "new-web-ui-project",
   inputs: {
-    mouse: partInput("obj", "optional"),
-    keyPress: partInput("obj", "optional"),
+    mouse: partInput(),
+    keyPress: partInput(),
   },
   outputs: {
-    jsx: partOutput("jsx"),
+    jsx: partOutput(),
   },
   inputsPosition: { mouse: { x: 0, y: 0 }, keyPress: { x: 200, y: 0 } },
   outputsPosition: { response: { x: 0, y: 400 } },

@@ -1,36 +1,48 @@
-import { CodePartTemplateTypeInline, partInput, partOutput, randomInt } from "@flyde/core";
-import { codePart } from "@flyde/core";
+import {
+  InlineValuePartType,
+  partInput,
+  partOutput,
+  randomInt,
+} from "@flyde/core";
+import { inlineValuePart } from "@flyde/core";
 
 export const getVariables = (code: string) => {
-  return (code.match(/inputs\.([a-zA-Z]\w*)/g) || []).map((v) => v.replace(/inputs\./, ""));
+  return (code.match(/inputs\.([a-zA-Z]\w*)/g) || []).map((v) =>
+    v.replace(/inputs\./, "")
+  );
 };
 
-export type InlineCodePartData = {
+export type InlineValuePartData = {
   code: string;
   customView?: string;
   partId?: string;
-  type: CodePartTemplateTypeInline;
+  type: InlineValuePartType;
 };
-export const createInlineCodePart = ({ code, customView, partId, type }: InlineCodePartData) => {
+export const createInlineValuePart = ({
+  code,
+  customView,
+  partId,
+  type,
+}: InlineValuePartData) => {
   const variables = getVariables(code);
 
   const inputs = variables.reduce((prev, curr) => {
-    return { ...prev, [curr]: partInput("any", "required") };
+    return { ...prev, [curr]: partInput() };
   }, {});
 
   const outputs = {
-    value: partOutput("any"),
+    value: partOutput(),
   };
 
   const fnCode =
-    type === CodePartTemplateTypeInline.FUNCTION
+    type === InlineValuePartType.FUNCTION
       ? `const result = (function() { ${code}}());
   Promise.resolve(result).then(val => outputs.value.next(val))`
       : `const result = (${code}); Promise.resolve(result).then(val => outputs.value.next(val))`;
 
   const dataBuilderSource = btoa(code);
 
-  return codePart({
+  return inlineValuePart({
     id: partId || `Inline Code ${randomInt(99999)}`,
     inputs,
     outputs,
@@ -40,12 +52,15 @@ export const createInlineCodePart = ({ code, customView, partId, type }: InlineC
     templateType: type,
     completionOutputs: ["value"],
     defaultStyle: {
-      size: 'regular',
-      icon: 'code',
+      size: "regular",
+      icon: "code",
       cssOverride: {
-        fontFamily: 'monospace',
-        fontWeight: '500'
-      }
-    }
+        fontFamily: "monospace",
+        fontWeight: "500",
+      },
+    },
+    description: `Custom inline ${
+      type === InlineValuePartType.VALUE ? "value" : "function"
+    }`,
   });
 };

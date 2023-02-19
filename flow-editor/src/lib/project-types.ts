@@ -1,10 +1,10 @@
-import { partInput, partOutput, GroupedPart } from "@flyde/core";
+import { partInput, partOutput, VisualPart } from "@flyde/core";
 
-export const emptyWebUiProject: GroupedPart = {
+export const emptyWebUiProject: VisualPart = {
   id: "new-web-ui-project",
   inputs: {},
   outputs: {
-    jsx: partOutput("jsx"),
+    jsx: partOutput(),
   },
   inputsPosition: { mouse: { x: 0, y: 0 }, keyPress: { x: 200, y: 0 } },
   outputsPosition: { response: { x: 0, y: 400 } },
@@ -14,13 +14,13 @@ export const emptyWebUiProject: GroupedPart = {
   reactiveInputs: [],
 };
 
-export const emptyServerProject: GroupedPart = {
+export const emptyServerProject: VisualPart = {
   id: "new-server-project",
   inputs: {
-    request: partInput("any", "optional"),
+    request: partInput(),
   },
   outputs: {
-    response: partOutput("any"),
+    response: partOutput(),
   },
   inputsPosition: { request: { x: 0, y: 0 } },
   outputsPosition: { response: { x: 0, y: 400 } },
@@ -28,13 +28,13 @@ export const emptyServerProject: GroupedPart = {
   instances: [],
 };
 
-export const emptyLambdaProject: GroupedPart = {
+export const emptyLambdaProject: VisualPart = {
   id: "new-lambda-project",
   inputs: {
-    context: partInput("obj", "optional"),
+    context: partInput(),
   },
   outputs: {
-    response: partOutput("any"),
+    response: partOutput(),
   },
   inputsPosition: { context: { x: 0, y: 0 } },
   outputsPosition: { response: { x: 0, y: 400 } },
@@ -42,11 +42,11 @@ export const emptyLambdaProject: GroupedPart = {
   instances: [],
 };
 
-export const emptyMobileProject: GroupedPart = {
+export const emptyMobileProject: VisualPart = {
   id: "new-mobile-project",
   inputs: {},
   outputs: {
-    jsx: partOutput("jsx"),
+    jsx: partOutput(),
   },
   inputsPosition: { context: { x: 0, y: 0 } },
   outputsPosition: { response: { x: 0, y: 400 } },
@@ -54,15 +54,15 @@ export const emptyMobileProject: GroupedPart = {
   instances: [],
 };
 
-export const emptyCliProject: GroupedPart = {
+export const emptyCliProject: VisualPart = {
   id: "new-cli-project",
   inputs: {
-    args: partInput("list", "optional"),
+    args: partInput(),
   },
   outputs: {
-    stdout: partOutput("any", true),
-    stderr: partOutput("any", true),
-    exit: partOutput("number", true),
+    stdout: partOutput( true),
+    stderr: partOutput( true),
+    exit: partOutput( true),
   },
   inputsPosition: { args: { x: 0, y: 0 } },
   outputsPosition: {
@@ -74,7 +74,7 @@ export const emptyCliProject: GroupedPart = {
   instances: [],
 };
 
-export const typeProjectMap: { [k: string]: GroupedPart } = {
+export const typeProjectMap: { [k: string]: VisualPart } = {
   server: emptyServerProject,
   "web-ui": emptyWebUiProject,
   lambda: emptyLambdaProject,

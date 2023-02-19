@@ -3,51 +3,41 @@ import { Pos, OMap } from "./common";
 import { ExecuteEnv } from "./execute";
 import {
   CustomPart,
-  GroupedPart,
+  VisualPart,
   InputPinsConfig,
   maybeGetStaticValuePartId,
   Part,
   PartDefinition,
 } from "./part";
 
-
 export * from "./connect";
 
 export * from "./execute";
-export * from './simplified-execute';
+export * from "./simplified-execute";
 
 export * from "./part";
 
-export * from './part/get-part-with-dependencies';
+export * from "./part/get-part-with-dependencies";
 
 // export * from "./serdes";
 
 export * from "./utils";
 
-export * from "./code-to-native";
+export * from "./inline-value-to-code-part";
 
 export * from "./web-project";
 
-export * from './project';
-export * from './flow-schema';
+export * from "./flow-schema";
 
+export type InputStaticValue = string | number | object | VisualPart;
 
-export type InputStaticValue = string | number | object | GroupedPart;
-
-export const isStaticValueGroupedPart = (val: InputStaticValue): boolean => {
-  return val && !!maybeGetStaticValuePartId(`${val}`);
+export const isStaticValueVisualPart = (val: InputStaticValue): boolean => {
+  return !!val && !!maybeGetStaticValuePartId(`${val}`);
 };
-
-export enum ProjectType {
-  WEB_UI = "web-ui",
-  SERVER = "server",
-  MOBILE = "mobile",
-  CLI = "cli",
-}
 
 export interface InstanceViewData {
   id: string;
-  partIdOrGroup: string | GroupedPart;
+  partIdOrGroup: string | VisualPart;
   pos: Pos;
   visibleOptionalInputs?: string[];
   inputConfig: InputPinsConfig;

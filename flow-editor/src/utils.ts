@@ -1,5 +1,9 @@
-import { isJsxValue } from "./grouped-part-editor/utils";
-import { getEnvKeyFromValue, isEnvValue, isStaticValueGroupedPart } from "@flyde/core";
+import { isJsxValue } from "./visual-part-editor/utils";
+import {
+  getEnvKeyFromValue,
+  isEnvValue,
+  isStaticValueVisualPart,
+} from "@flyde/core";
 import moment from "moment";
 import React from "react";
 
@@ -50,19 +54,6 @@ export const isDefined = <T>(o: T | undefined): o is T => {
 
 export type Size = { width: number; height: number };
 
-export interface Pos {
-  x: number;
-  y: number;
-}
-
-export type Rect = Pos & { w: number; h: number };
-
-export const intersectRect = (r1: Rect, r2: Rect) => {
-  const r1Right = r1.x + r1.w;
-  const r2Right = r2.x + r2.w;
-  return !(r2.x > r1Right || r2Right < r1.x || r2.y > r1.y + r1.h || r2.y + r2.h < r1.y);
-};
-
 export const toString = (v: any): string => {
   const type = typeof v;
 
@@ -74,7 +65,7 @@ export const toString = (v: any): string => {
     return "JSX Value";
   }
 
-  if (isStaticValueGroupedPart(v)) {
+  if (isStaticValueVisualPart(v)) {
     return "Embedded Part";
   }
 

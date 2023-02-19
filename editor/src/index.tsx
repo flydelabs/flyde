@@ -10,7 +10,7 @@ import { QueryParamProvider } from "use-query-params";
 
 import { FlowLoader } from "./integrated-flow-manager/flow-loader";
 
-import {disableCookieAccessForVscode} from './disable-cookie-access-for-vscode';
+import { disableCookieAccessForVscode } from "./disable-cookie-access-for-vscode";
 
 import "./index.scss";
 

@@ -14,7 +14,11 @@ import { join } from "path";
 import { entries } from "@flyde/core";
 import resolveFrom = require("resolve-from");
 
-export const runDevServer = (port: number, rootDir: string, editorStaticRoot: string) => {
+export const runDevServer = (
+  port: number,
+  rootDir: string,
+  editorStaticRoot: string
+) => {
   const service = createService(rootDir);
 
   const app = express();
@@ -103,7 +107,6 @@ export const runDevServer = (port: number, rootDir: string, editorStaticRoot: st
     }, {});
     res.send(combined);
   });
-
 
   app.use("/editor", express.static(editorStaticRoot));
 

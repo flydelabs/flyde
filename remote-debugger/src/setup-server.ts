@@ -1,44 +1,63 @@
 import { Server as HttpServer } from "http";
-import { EventType } from "./common";
+import { DebuggerServerEventType } from "./common";
 import {
-  Project,
-  DebuggerValue,
-  ProcessingChangeData,
-  InputsStateChangeData,
   PartError,
   OMap,
   isDefined,
   debugLogger,
+  DebuggerEvent,
+  DebuggerEventType,
+  ERROR_PIN_ID,
+  PinDebuggerEvent,
 } from "@flyde/core";
 
 import { Server } from "socket.io";
 import { Express } from "express";
-import { HistoryPayload, RuntimeEvent, RuntimeEvents } from ".";
+import { HistoryPayload } from ".";
 
 const debug = debugLogger(`runtime-server`);
 
 const MAX_LAST_EVENTS = 100;
 const MAX_LAST_EVENTS_TAPE_SIZE = 10000;
 
-type DebugHistoryMap = Map<string, { total: number; lastSamples: RuntimeEvent[] }>;
+type DebugHistoryMap = Map<
+  string,
+  { total: number; lastSamples: DebuggerEvent[] }
+>;
+
+export type HistoryKey = { insId: string; pinId?: string };
+
+const historyKeyMap = <T extends HistoryKey>(dto: T) => {
+  return `${dto.insId}.${dto.pinId || "__no_pin"}`;
+};
+
+const emptyHistory = {total: 0, lastSamples: []};
 
 export const setupRemoteDebuggerServer = (
   httpServer: HttpServer,
   app: Express,
   stateRequester: () => OMap<Map<string, any>>,
   triggerPart: (partId: string, inputs: any) => any,
-  onBatchedEvents?: (events: RuntimeEvents) => void
+  onBatchedEvents?: (events: DebuggerEvent[]) => void
 ) => {
   const io = new Server(httpServer, {
     cors: {
       origin: (origin, cb) => cb(undefined, origin),
       credentials: true,
     },
+    parser: require('./custom-parser')
   });
 
-  let eventsTape: RuntimeEvents = [];
+  let eventsTape: DebuggerEvent[] = [];
 
-  let historyMap: DebugHistoryMap = new Map();
+  let pinHistoryMap: DebugHistoryMap = new Map();
+  let insHistoryMap: DebugHistoryMap = new Map();
+
+  const getHistory = (dto: HistoryKey) => {
+    const key = historyKeyMap(dto);
+    const map = dto.pinId ? pinHistoryMap : insHistoryMap;
+    return map.get(key) ?? emptyHistory;
+  };
 
   app.post("/trigger", (req, res) => {
     const { partId, inputs } = req.body;
@@ -48,7 +67,7 @@ export const setupRemoteDebuggerServer = (
     } catch (e) {
       debug(`Error triggering part: %e`, e);
       console.log(e);
-      
+
       res.status(400).send(e.message);
     }
   });
@@ -80,45 +99,36 @@ export const setupRemoteDebuggerServer = (
   });
 
   app.get("/history", (req, res) => {
-    const { id, limit } = req.query;
+    const { insId, pinId, limit, pinType } = req.query;
 
     const _limit = parseInt(limit as string) || 100;
 
-    if (!id) {
-      const partial = eventsTape.slice(0, _limit);
-      res.json({ total: eventsTape.length, lastSamples: partial });
-    } else {
-      const payload: HistoryPayload = historyMap.get(id as string) || { total: 0, lastSamples: [] };
-      const samples = payload.lastSamples.slice(0, _limit);
-      res.json({ ...payload, lastSamples: samples });
+    if (typeof insId !== "string") {
+      res.status(400).send("bad insId");
+      return;
     }
 
-    // const _types: string[] = (types as string[]) || [];
-    // const _limit = parseInt(limit as string) || 100;
-    // const _id = (id as string) || "";
+    if (typeof pinId !== "string" && typeof pinId !== "undefined") {
+      res.status(400).send("bad pinId");
+      return;
+    }
 
-    // const filtered = eventsTape.filter((event) => {
-    //   return (
-    //     event.id.toLowerCase().includes(_id.toLocaleLowerCase()) &&
-    //     (!_types.length || _types.includes(event.type))
-    //   );
-    // });
+    const payload: HistoryPayload = getHistory({insId, pinId})
+    const samples = payload.lastSamples.slice(0, _limit);
+    res.json({ ...payload, lastSamples: samples });
+  });
 
-    // const total = filtered.length;
+  app.get("/full-history", (req, res) => {
+    const mapToObj = (map: DebugHistoryMap) => Array.from(map.entries()).reduce((acc, [k, v]) => {
+      return {...acc, [k]: v}
+    }, {});
 
-    // const lastSamples = filtered.reverse().slice(0, _limit);
-
-    // const payload: HistoryPayload = {
-    //   total,
-    //   lastSamples,
-    // };
-
-    // res.json(payload);
+    res.json({pinHistoryMap: mapToObj(pinHistoryMap), insHistoryMap: mapToObj(insHistoryMap)});
   });
 
   app.delete("/history", (_, res) => {
     eventsTape = [];
-    historyMap = new Map();
+    pinHistoryMap = new Map();
     res.send("ok");
   });
 
@@ -126,12 +136,18 @@ export const setupRemoteDebuggerServer = (
   io.on("connect", function (socket) {
     connections.push(socket.id);
 
-    debug(`+ New connection! now on ${connections} - ${socket.id}, %o`, socket.data);
+    debug(
+      `+ New connection! now on ${connections} - ${socket.id}, %o`,
+      socket.data
+    );
   });
 
   io.on("disconnect", function (socket) {
     connections = connections.filter((s) => s !== socket.id);
-    debug(`- New disconnection! now on ${connections} - ${socket.id} %o`, socket.data);
+    debug(
+      `- New disconnection! now on ${connections} - ${socket.id} %o`,
+      socket.data
+    );
   });
 
   app.get("/connections", (_, res) => {
@@ -147,46 +163,88 @@ export const setupRemoteDebuggerServer = (
     //   socket.join(roomId);
     // })
 
-    socket.on(EventType.CHANGE_EVENT_NAME, (data: {project: Project}) => {
-      io.emit(EventType.CHANGE_EVENT_NAME, data);
+    socket.on(
+      DebuggerServerEventType.CHANGE_EVENT_NAME,
+      (data: { }) => {
+        io.emit(DebuggerServerEventType.CHANGE_EVENT_NAME, data);
+      }
+    );
+
+    socket.on(
+      DebuggerServerEventType.INPUT_VALUE_CHANGE,
+      (data: DebuggerEvent[]) => {
+        io.emit(DebuggerServerEventType.INPUT_VALUE_CHANGE, data);
+      }
+    );
+
+    socket.on(
+      DebuggerServerEventType.PUSH_INPUT_VALUE,
+      (data: { pinId: string; value: any }) => {
+        debug(
+          `Emitting PUSH_INPUT_VALUE to ${data.pinId} with value: %o`,
+          data.value
+        );
+        io.emit(DebuggerServerEventType.PUSH_INPUT_VALUE, data);
+      }
+    );
+
+    socket.on(
+      DebuggerServerEventType.OUTPUT_VALUE_CHANGE,
+      (data: DebuggerEvent[]) => {
+        io.emit(DebuggerServerEventType.OUTPUT_VALUE_CHANGE, data);
+      }
+    );
+
+    socket.on(
+      DebuggerServerEventType.PROCESSING_CHANGE,
+      (data: DebuggerEvent) => {
+        io.emit(DebuggerServerEventType.PROCESSING_CHANGE, data);
+      }
+    );
+
+    socket.on(DebuggerServerEventType.PART_ERROR, (data: PartError) => {
+      io.emit(DebuggerServerEventType.PART_ERROR, data);
     });
 
-    socket.on(EventType.INPUT_VALUE_CHANGE, (data: DebuggerValue[]) => {
-      io.emit(EventType.INPUT_VALUE_CHANGE, data);
-    });
+    socket.on(
+      DebuggerServerEventType.INPUTS_STATE_CHANGE,
+      (data: DebuggerEvent) => {
+        io.emit(DebuggerServerEventType.INPUTS_STATE_CHANGE, data);
+      }
+    );
 
-    socket.on(EventType.PUSH_INPUT_VALUE, (data: { pinId: string; value: any }) => {
-      debug(`Emitting PUSH_INPUT_VALUE to ${data.pinId} with value: %o`, data.value);
-      io.emit(EventType.PUSH_INPUT_VALUE, data);
-    });
-
-    socket.on(EventType.OUTPUT_VALUE_CHANGE, (data: DebuggerValue[]) => {
-      io.emit(EventType.OUTPUT_VALUE_CHANGE, data);
-    });
-
-    socket.on(EventType.PROCESSING_CHANGE, (data: ProcessingChangeData) => {
-      io.emit(EventType.PROCESSING_CHANGE, data);
-    });
-
-    socket.on(EventType.PART_ERROR, (data: PartError) => {
-      io.emit(EventType.PART_ERROR, data);
-    });
-
-    socket.on(EventType.INPUTS_STATE_CHANGE, (data: InputsStateChangeData) => {
-      io.emit(EventType.INPUTS_STATE_CHANGE, data);
-    });
-
-    socket.on(EventType.EVENTS_BATCH, (data: RuntimeEvents) => {
-      io.emit(EventType.EVENTS_BATCH, data);
+    socket.on(DebuggerServerEventType.EVENTS_BATCH, (data: DebuggerEvent[]) => {
+      io.emit(DebuggerServerEventType.EVENTS_BATCH, data);
 
       data.forEach((event) => {
-        const curr = historyMap.get(event.id) || { total: 0, lastSamples: [] };
-        curr.lastSamples.unshift(event);
-        if (curr.lastSamples.length > MAX_LAST_EVENTS) {
-          curr.lastSamples.splice(MAX_LAST_EVENTS, curr.lastSamples.length - MAX_LAST_EVENTS);
+        if (event.type === DebuggerEventType.ERROR) {
+          const ev: PinDebuggerEvent<DebuggerEventType.OUTPUT_CHANGE> =
+            event as any;
+          ev.type = DebuggerEventType.OUTPUT_CHANGE;
+          ev.pinId = ERROR_PIN_ID;
         }
-        curr.total++;
-        historyMap.set(event.id, curr);
+
+        if (
+          event.type === DebuggerEventType.INPUT_CHANGE ||
+          event.type === DebuggerEventType.OUTPUT_CHANGE
+        ) {
+          const pinMapKey = historyKeyMap(event);
+          const insMapKey = historyKeyMap({insId: event.insId})
+          const pinHistory = pinHistoryMap.get(pinMapKey) ?? {total: 0, lastSamples: []};
+          const insHistory = insHistoryMap.get(insMapKey) ?? {total: 0, lastSamples: []};
+          [pinHistory, insHistory].forEach((curr) => {
+            curr.lastSamples.unshift(event);
+            if (curr.lastSamples.length > MAX_LAST_EVENTS) {
+              curr.lastSamples.splice(
+                MAX_LAST_EVENTS,
+                curr.lastSamples.length - MAX_LAST_EVENTS
+              );
+            }
+            curr.total++;
+          });
+          pinHistoryMap.set(pinMapKey, pinHistory);
+          insHistoryMap.set(insMapKey, insHistory);
+        }
       });
 
       eventsTape.unshift(...data);
@@ -200,32 +258,38 @@ export const setupRemoteDebuggerServer = (
       }
     });
 
-    socket.on(EventType.INPUT_VALUE_OVERRIDE, (data: DebuggerValue) => {
-      io.emit(EventType.INPUT_VALUE_OVERRIDE, data);
+    socket.on(
+      DebuggerServerEventType.INPUT_VALUE_OVERRIDE,
+      (data: DebuggerEvent) => {
+        io.emit(DebuggerServerEventType.INPUT_VALUE_OVERRIDE, data);
+      }
+    );
+
+    socket.on(
+      DebuggerServerEventType.OUTPUT_VALUE_OVERRIDE,
+      (data: DebuggerEvent) => {
+        io.emit(DebuggerServerEventType.OUTPUT_VALUE_OVERRIDE, data);
+      }
+    );
+
+    socket.on(DebuggerServerEventType.CHANGE_AWK, () => {
+      io.emit(DebuggerServerEventType.CHANGE_AWK, {});
     });
 
-    socket.on(EventType.OUTPUT_VALUE_OVERRIDE, (data: DebuggerValue) => {
-      io.emit(EventType.OUTPUT_VALUE_OVERRIDE, data);
+    socket.on(DebuggerServerEventType.CHANGE_ERROR, () => {
+      io.emit(DebuggerServerEventType.CHANGE_ERROR, {});
     });
 
-    socket.on(EventType.CHANGE_AWK, () => {
-      io.emit(EventType.CHANGE_AWK, {});
+    socket.on(DebuggerServerEventType.RUNTIME_READY, () => {
+      io.emit(DebuggerServerEventType.RUNTIME_READY, {});
     });
 
-    socket.on(EventType.CHANGE_ERROR, () => {
-      io.emit(EventType.CHANGE_ERROR, {});
+    socket.on(DebuggerServerEventType.UPDATE_BREAKPOINTS, (data: string[]) => {
+      io.emit(DebuggerServerEventType.UPDATE_BREAKPOINTS, data);
     });
 
-    socket.on(EventType.RUNTIME_READY, () => {
-      io.emit(EventType.RUNTIME_READY, {});
-    });
-
-    socket.on(EventType.UPDATE_BREAKPOINTS, (data: string[]) => {
-      io.emit(EventType.UPDATE_BREAKPOINTS, data);
-    });
-
-    socket.on(EventType.IS_ALIVE, (data: { time: number }) => {
-      io.emit(EventType.IS_ALIVE, data);
+    socket.on(DebuggerServerEventType.IS_ALIVE, (data: { time: number }) => {
+      io.emit(DebuggerServerEventType.IS_ALIVE, data);
     });
   });
 

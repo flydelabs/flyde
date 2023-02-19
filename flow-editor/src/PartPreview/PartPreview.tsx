@@ -1,6 +1,9 @@
 import { noop, PartDefinition, partInstance } from "@flyde/core";
 import React from "react";
-import { InstanceView, InstanceViewProps } from "../grouped-part-editor/instance-view/InstanceView";
+import {
+  InstanceView,
+  InstanceViewProps,
+} from "../visual-part-editor/instance-view/InstanceView";
 
 export const PartPreview: React.FC<{ part: PartDefinition }> = ({ part }) => {
   const ins = partInstance("bob", part.id, {});
@@ -39,6 +42,10 @@ export const PartPreview: React.FC<{ part: PartDefinition }> = ({ part }) => {
     isConnectedInstanceSelected: false,
     inlineEditorPortalDomNode: null as any,
     onChangeStyle: noop,
+    onDeleteInstance: noop,
+    onGroupSelected: noop,
+    onSetDisplayName: noop,
+    queuedInputsData: {}
   };
 
   return (

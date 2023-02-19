@@ -1,6 +1,6 @@
 {
   "name": "@flyde/dev-server",
-  "version": "0.4.3",
+  "version": "0.4.8",
   "description": "",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -10,9 +10,9 @@
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "watch-ts": "tsc -p . -w --incremental",
-    "watch-flyde": "ts-node-dev src/cli.ts --root=../website",
-    "dev": "concurrently 'ts-node-dev src/cli.ts --root=../website --port=8545' 'npm run watch-ts'",
+    "watch:ts": "tsc -p . -w --incremental",
+    "start": "ts-node-dev src/cli.ts --root=../website",
+    "dev": "concurrently --kill-others 'yarn run start' 'yarn run watch:ts'",
     "__publish": "npm version patch && npm publish",
     "build": "rm -rf dist && tsc -p .",
     "prod": "node dist/index.js"
@@ -21,12 +21,12 @@
     "flyde": "dist/cli.js"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
-    "@flyde/core": "^0.1.8",
-    "@flyde/remote-debugger": "^0.2.7",
-    "@flyde/resolver": "^0.1.1",
-    "@flyde/runtime": "^0.4.3",
+    "@flyde/core": "^0.1.12",
+    "@flyde/remote-debugger": "^0.2.11",
+    "@flyde/resolver": "^0.3.12",
+    "@flyde/runtime": "^0.4.7",
     "@types/args": "^5.0.0",
     "@types/cuid": "^1.3.0",
     "@types/express": "^4.16.1",
@@ -47,13 +47,13 @@
     "resolve-from": "^5.0.0",
     "source-map-support": "^0.5.21",
     "toml": "^3.0.0",
-    "typescript": "^4.0.0",
+    "typescript": "^4.9.4",
     "walker": "^1.0.8"
   },
   "devDependencies": {
     "@flyde/editor": "^0.1.0",
     "fs-extra": "^10.1.0",
-    "ts-node-dev": "^1.0.0-pre.32"
+    "ts-node-dev": "^2.0.0"
   },
   "gitHead": "5f06bd4a0f3da610e64d74c19cc84babc4557f56"
 }

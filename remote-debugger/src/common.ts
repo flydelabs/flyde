@@ -2,7 +2,7 @@
 EVENTS NEED HANDLING IN SERVER AS WELL!
 */
 
-import { OMap } from "@flyde/core";
+import { DebuggerEvent } from "@flyde/core";
 import { serializeError } from "serialize-error";
 
 const STRING_LIMIT = 250;
@@ -45,7 +45,7 @@ export function enumToArray(aEnum: any) {
 export type RemoteDebuggerCallback<T> = (data: T) => void;
 export type RemoteDebuggerCancelFn = () => void;
 
-export enum EventType {
+export enum DebuggerServerEventType {
   RUNTIME_READY = "runtime-ready",
   CHANGE_EVENT_NAME = "change",
   PUSH_INPUT_VALUE = "push-input-value",
@@ -69,55 +69,7 @@ export enum EventType {
   EVENTS_BATCH = "events-batch",
 }
 
-export enum RuntimeEventType {
-  INPUT_CHANGE = "i",
-  OUTPUT_CHANGE = "o",
-  PROCESSING_CHANGE = "pc",
-  ERROR = "err",
-  INPUTS_STATE_CHANGE = "isc",
-}
-
-export const MAJOR_EVENT_TYPES: RuntimeEventType[] = [
-  RuntimeEventType.INPUT_CHANGE,
-  RuntimeEventType.OUTPUT_CHANGE,
-  RuntimeEventType.ERROR,
-];
-
-export const MINOR_EVENT_TYPES: RuntimeEventType[] = [
-  RuntimeEventType.PROCESSING_CHANGE,
-  RuntimeEventType.INPUTS_STATE_CHANGE,
-];
-
-export type RuntimeEventTypeData = {
-  [RuntimeEventType.INPUTS_STATE_CHANGE]: OMap<number>;
-  [RuntimeEventType.PROCESSING_CHANGE]: boolean;
-  [RuntimeEventType.ERROR]: any;
-  [RuntimeEventType.INPUT_CHANGE]: string;
-  [RuntimeEventType.OUTPUT_CHANGE]: string;
-};
-
-export type BaseRuntimeEvent<T extends RuntimeEventType> = {
-  type: T;
-  id: string;
-  dt: number;
-  val: RuntimeEventTypeData[T];
-  t: number;
-};
-
-export type MajorRuntimeEvent =
-  | BaseRuntimeEvent<RuntimeEventType.OUTPUT_CHANGE>
-  | BaseRuntimeEvent<RuntimeEventType.INPUT_CHANGE>
-  | BaseRuntimeEvent<RuntimeEventType.ERROR>;
-
-export type MinorRuntimeEvent =
-  | BaseRuntimeEvent<RuntimeEventType.INPUTS_STATE_CHANGE>
-  | BaseRuntimeEvent<RuntimeEventType.PROCESSING_CHANGE>;
-
-export type RuntimeEvent = MajorRuntimeEvent | MinorRuntimeEvent;
-
-export type RuntimeEvents = Array<RuntimeEvent>;
-
 export type HistoryPayload = {
   total: number;
-  lastSamples: RuntimeEvents;
+  lastSamples: DebuggerEvent[];
 };

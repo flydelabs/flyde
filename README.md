@@ -1,4 +1,5 @@
-# Flyde - Visual Programming in VSCode
+# Visual Programming for the Modern Web
+
 
 _"The world is asynchronous - don't try to force the systems we build into a synchronous framework!" - J. Paul Morisson RIP_
 
@@ -6,7 +7,7 @@ Flyde is a visual functional reactive flow-based programming tool that can be us
 
 Checkout the official website at [flyde.dev](https://www.flyde.dev) or the [examples](/examples) folder for more information
 
-**Note:** Flyde is still WIP and is not intended for production use (_yet_)
+**Note:** Flyde is still in the early stages. Your feedback/bug report/idea/complaint is highly valuable.
 
 ---
 

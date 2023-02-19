@@ -1,17 +1,13 @@
 imports:
   "@flyde/stdlib":
-    - HttpResponse
-    - HttpGet
-    - Pick
-    - HttpPost
-    - Dot
-    - HtmlBtn
-    - Accumulate2
+    - GET Request
+    - POST Request
+    - Get Attribute
 part:
   instances:
     - pos:
-        x: -699.7832788085938
-        y: 290.22256958007813
+        x: -656.1905053710938
+        y: 325.03946411132813
       id: Inline-value-Hello from ${i76
       inputConfig: {}
       part:
@@ -27,48 +23,43 @@ part:
             type: any
             mode: required
         outputs:
-          r:
+          value:
             type: any
             delayed: false
             optional: false
-        fnCode: outputs.r.next((`Hello from ${inputs.country}! It's capital is
-          ${inputs.capital} (population of ${inputs.population})`))
+        fnCode: const result = (`Hello from ${inputs.country}! It's capital is
+          ${inputs.capital} (population of ${inputs.population})`);
+          Promise.resolve(result).then(val => outputs.value.next(val))
         customViewCode: "`Hello from ${inputs.country}! It's capital is
           ${inputs.capital} (population of ${inputs.population}"
         dataBuilderSource: YEhlbGxvIGZyb20gJHtpbnB1dHMuY291bnRyeX0hIEl0J3MgY2FwaXRhbCBpcyAke2lucHV0cy5jYXBpdGFsfSAocG9wdWxhdGlvbiBvZiAke2lucHV0cy5wb3B1bGF0aW9ufSlg
         templateType: value
         completionOutputs:
-          - r
+          - value
         defaultStyle:
-          size: small
+          size: regular
           icon: code
           cssOverride:
             fontFamily: monospace
             fontWeight: "500"
-      style:
-        size: regular
-        icon: code
-        cssOverride:
-          fontFamily: monospace
-          fontWeight: "500"
     - pos:
-        x: -587.805941772461
-        y: -218.61628173112865
+        x: -578.892123413086
+        y: -223.60953734636303
       id: Get User's Country-ins
       inputConfig: {}
       part:
         id: Get User's Country
         inputs: {}
         outputs:
-          r:
+          country:
             type: any
             delayed: false
             optional: false
         instances:
           - pos:
-              x: -341.654423828125
-              y: -135.189943819046
-            id: HttpGet-907
+              x: -335.7258349609375
+              y: -194.68226864814756
+            id: GET Request-907
             inputConfig:
               url:
                 mode: static
@@ -79,12 +70,10 @@ part:
             visibleOutputs:
               - r
               - __error
-            partId: HttpGet
-          - pos:
-              x: -454.35468749999995
-              y: -35.96441955566405
-            id: "Inline-value-{iso2: ${input76"
-            inputConfig: {}
+              - response
+              - data
+            partId: GET Request
+          - id: "Inline-value-{iso2: ${input76"
             part:
               id: "Inline-value-{iso2: inputs.d"
               inputs:
@@ -92,42 +81,56 @@ part:
                   type: any
                   mode: required
               outputs:
-                r:
+                value:
                   type: any
                   delayed: false
                   optional: false
-              fnCode: "outputs.r.next(({iso2: inputs.data.country}))"
+              fnCode: "const result = ({iso2: inputs.data.country});
+                Promise.resolve(result).then(val => outputs.value.next(val))"
               customViewCode: "{iso2: inputs.data.country}"
               dataBuilderSource: e2lzbzI6IGlucHV0cy5kYXRhLmNvdW50cnl9
               templateType: value
               completionOutputs:
-                - r
+                - value
+              defaultStyle:
+                size: regular
+                icon: code
+                cssOverride:
+                  fontFamily: monospace
+                  fontWeight: "500"
+            inputConfig: {}
+            pos:
+              x: -468.5056274414062
+              y: -39.30523986816405
         inputsPosition: {}
         outputsPosition:
           r:
-            x: -313.78723630742843
-            y: 123.50129731187559
+            x: -363.42401672132144
+            y: 105.34149194113161
+          country:
+            x: -322.5739794922268
+            y: 138.57280736180334
         connections:
           - from:
-              insId: HttpGet-907
-              pinId: r
+              insId: "Inline-value-{iso2: ${input76"
+              pinId: value
+            to:
+              pinId: country
+              insId: __this
+          - from:
+              insId: GET Request-907
+              pinId: data
             to:
               insId: "Inline-value-{iso2: ${input76"
               pinId: data
-          - from:
-              insId: "Inline-value-{iso2: ${input76"
-              pinId: r
-            to:
-              insId: __this
-              pinId: r
         completionOutputs:
-          - r
+          - country
       style:
         size: large
         color: "#f15bb5"
     - pos:
-        x: -636.9743029785157
-        y: -85.37110525846481
+        x: -637.9743029785157
+        y: -84.37110525846481
       id: Get Country Name And Capital-ins
       inputConfig: {}
       visibleOutputs:
@@ -152,7 +155,7 @@ part:
           - pos:
               x: -455.39787109375004
               y: 43.691497802734375
-            id: HttpPost-624
+            id: POST Request-624
             inputConfig:
               url:
                 mode: static
@@ -160,29 +163,26 @@ part:
             visibleInputs:
               - url
               - body
-            partId: HttpPost
-          - pos:
-              x: -559.7825415039063
-              y: 194.45557312011715
-            id: Dot-286
+              - data
+            partId: POST Request
+          - id: Get Attribute-217
+            partId: Get Attribute
             inputConfig:
-              key:
-                mode: static
-                value: data.name
-            visibleInputs:
-              - obj
-            partId: Dot
-          - pos:
-              x: -400.3785717773437
-              y: 198.4349559259415
-            id: Dot-822
-            inputConfig:
-              key:
+              attribute:
                 mode: static
                 value: data.capital
-            visibleInputs:
-              - obj
-            partId: Dot
+            pos:
+              x: -285.6922900390625
+              y: 219.88888122558592
+          - id: Get Country Name And Capital-srp46ei
+            partId: Get Attribute
+            inputConfig:
+              attribute:
+                mode: static
+                value: data.name
+            pos:
+              x: -608.0307299804688
+              y: 225.56220581054686
         inputsPosition:
           body:
             x: -333.75691140339336
@@ -195,50 +195,50 @@ part:
             x: -280.88783057750686
             y: 411.581705357324
           capital:
-            x: -373.87585887717984
-            y: 347.90184574177306
+            x: -214.78486673798952
+            y: 473.65942918140723
           name:
-            x: -537.398329068569
-            y: 348.1765805072715
+            x: -523.761854810908
+            y: 479.9947571097377
         connections:
           - from:
-              insId: HttpPost-624
-              pinId: r
-            to:
-              insId: Dot-286
-              pinId: obj
-          - from:
-              insId: HttpPost-624
-              pinId: r
-            to:
-              insId: Dot-822
-              pinId: obj
-          - from:
+              pinId: body
               insId: __this
-              pinId: body
             to:
-              insId: HttpPost-624
-              pinId: body
+              insId: POST Request-624
+              pinId: data
           - from:
-              insId: Dot-286
+              insId: Get Attribute-217
               pinId: value
             to:
-              insId: __this
-              pinId: name
-          - from:
-              insId: Dot-822
-              pinId: value
-            to:
-              insId: __this
               pinId: capital
+              insId: __this
+          - from:
+              insId: POST Request-624
+              pinId: data
+            to:
+              insId: Get Country Name And Capital-srp46ei
+              pinId: object
+          - from:
+              insId: Get Country Name And Capital-srp46ei
+              pinId: value
+            to:
+              pinId: name
+              insId: __this
+          - from:
+              insId: POST Request-624
+              pinId: data
+            to:
+              insId: Get Attribute-217
+              pinId: object
         completionOutputs:
           - name+capital
       style:
         size: large
         color: "#9b5de5"
     - pos:
-        x: -264.4149328613281
-        y: 175.11608734130857
+        x: -266.7627111816406
+        y: 205.0337203979492
       id: Format Number-ins
       inputConfig: {}
       part:
@@ -308,8 +308,8 @@ part:
         size: regular
         color: "#fee440"
     - pos:
-        x: -319.75787109375
-        y: 32.73055236816407
+        x: -305.335751953125
+        y: 65.09392517089844
       id: cl8x5r4qp00074666lb382z1c
       inputConfig: {}
       part:
@@ -327,7 +327,7 @@ part:
           - pos:
               x: -204.90311279296873
               y: 349.60314422607416
-            id: HttpPost-775
+            id: POST Request-775
             inputConfig:
               url:
                 mode: static
@@ -335,7 +335,8 @@ part:
             visibleInputs:
               - url
               - body
-            partId: HttpPost
+              - data
+            partId: POST Request
           - pos:
               x: -143.08780761718754
               y: 233.70198646545413
@@ -358,74 +359,57 @@ part:
               templateType: value
               completionOutputs:
                 - r
-          - id: Dot-710
-            partId: Dot
+          - id: Get Attribute-893
+            partId: Get Attribute
             inputConfig:
-              key:
+              attribute:
                 mode: static
                 value: data.populationCounts.0.value
             pos:
-              x: -206.3246728515625
-              y: 483.9902026367188
-            visibleInputs:
-              - obj
+              x: -196.82018798828125
+              y: 535.9137713623047
+            style:
+              icon: fa-box
+              size: small
         inputsPosition:
           city:
             x: -59.242744173605615
             y: 192.73141904118035
         outputsPosition:
           value:
-            x: -107.75930491072856
-            y: 617.5218613166921
+            x: -116.77230284586054
+            y: 698.5630767231784
         connections:
           - from:
-              insId: "Inline-value-{city: inputs.c75"
-              pinId: r
-            to:
-              insId: HttpPost-775
-              pinId: body
-          - from:
-              insId: __this
               pinId: city
+              insId: __this
             to:
               insId: "Inline-value-{city: inputs.c75"
               pinId: city
           - from:
-              insId: HttpPost-775
+              insId: "Inline-value-{city: inputs.c75"
               pinId: r
             to:
-              insId: Dot-710
-              pinId: obj
+              insId: POST Request-775
+              pinId: data
           - from:
-              insId: Dot-710
+              insId: Get Attribute-893
               pinId: value
             to:
               pinId: value
               insId: __this
+          - from:
+              insId: POST Request-775
+              pinId: data
+            to:
+              insId: Get Attribute-893
+              pinId: object
         completionOutputs:
           - value
       style:
         size: large
         color: "#00bbf9"
-    - pos:
-        x: -225.01
-        y: 237.48
-      id: HtmlBtn-32
-      inputConfig: {}
-      partId: HtmlBtn
   connections:
-    - from:
-        insId: Inline-value-Hello from ${i76
-        pinId: r
-      to:
-        insId: __this
-        pinId: output
-    - from:
-        insId: Get User's Country-ins
-        pinId: r
-      to:
-        insId: Get Country Name And Capital-ins
-        pinId: body
     - from:
         insId: Get Country Name And Capital-ins
         pinId: name
@@ -457,15 +441,21 @@ part:
         insId: cl8x5r4qp00074666lb382z1c
         pinId: city
     - from:
-        insId: Format Number-ins
-        pinId: string
+        insId: Get User's Country-ins
+        pinId: country
       to:
-        insId: HtmlBtn-32
-        pinId: __trigger
+        insId: Get Country Name And Capital-ins
+        pinId: body
+    - from:
+        insId: Inline-value-Hello from ${i76
+        pinId: value
+      to:
+        insId: __this
+        pinId: response
   id: ApisCombination
   inputs: {}
   outputs:
-    output:
+    response:
       type: any
       optional: false
       delayed: false
@@ -486,3 +476,8 @@ part:
     output:
       x: -474.64252250807056
       y: 437.71313745088565
+    response:
+      x: -506.3386688159596
+      y: 488.67302443385125
+  completionOutputs:
+    - response

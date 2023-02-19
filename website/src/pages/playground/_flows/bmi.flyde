@@ -12,16 +12,17 @@ part:
         id: Inline-value-prompt(What is
         inputs: {}
         outputs:
-          r:
+          value:
             type: any
             delayed: false
             optional: false
-        fnCode: outputs.r.next((prompt('What is your weight (in kilograms)?')))
+        fnCode: const result = (prompt('What is your weight (in kilograms)?'));
+          Promise.resolve(result).then(val => outputs.value.next(val))
         customViewCode: prompt('What is your weight (in kilograms)?')
         dataBuilderSource: cHJvbXB0KCdXaGF0IGlzIHlvdXIgd2VpZ2h0IChpbiBraWxvZ3JhbXMpPycp
         templateType: value
         completionOutputs:
-          - r
+          - value
         defaultStyle:
           size: regular
           icon: code
@@ -37,16 +38,17 @@ part:
         id: Inline-value-prompt(What is
         inputs: {}
         outputs:
-          r:
+          value:
             type: any
             delayed: false
             optional: false
-        fnCode: outputs.r.next((prompt('What is your height (in cm)?')))
+        fnCode: const result = (prompt('What is your height (in cm)?'));
+          Promise.resolve(result).then(val => outputs.value.next(val))
         customViewCode: prompt('What is your height (in cm)?')
         dataBuilderSource: cHJvbXB0KCdXaGF0IGlzIHlvdXIgaGVpZ2h0IChpbiBjbSk/Jyk=
         templateType: value
         completionOutputs:
-          - r
+          - value
         defaultStyle:
           size: regular
           icon: code
@@ -68,16 +70,17 @@ part:
             type: any
             mode: required
         outputs:
-          r:
+          value:
             type: any
             delayed: false
             optional: false
-        fnCode: outputs.r.next(((inputs.weight / inputs.height**2)  * 10000))
+        fnCode: const result = ((inputs.weight / inputs.height**2)  * 10000);
+          Promise.resolve(result).then(val => outputs.value.next(val))
         customViewCode: (inputs.weight / inputs.height**2)  * 10000
         dataBuilderSource: KGlucHV0cy53ZWlnaHQgLyBpbnB1dHMuaGVpZ2h0KioyKSAgKiAxMDAwMA==
         templateType: value
         completionOutputs:
-          - r
+          - value
         defaultStyle:
           size: regular
           icon: code
@@ -85,8 +88,8 @@ part:
             fontFamily: monospace
             fontWeight: "500"
     - pos:
-        x: -66.90457885742188
-        y: 23.413818359375
+        x: -122.89145629882813
+        y: 6.26922607421875
       id: clal91glf00024664mfh47zbj
       inputConfig: {}
       part:
@@ -98,7 +101,7 @@ part:
             type: any
             mode: required
         outputs:
-          r:
+          value:
             type: any
             delayed: false
             optional: false
@@ -115,44 +118,52 @@ part:
           }
 
           return `You are in the ${range} range`}());
-            outputs.r.next(result)
-        customViewCode: Format BMI range string
+            Promise.resolve(result).then(val => outputs.value.next(val))
+        customViewCode: |-
+          let range;
+          if (inputs.bmi < 18.5) 
+              range = 'overweight'
+          else if (inputs.bmi < 25) {
+              range = 
         dataBuilderSource: bGV0IHJhbmdlOwppZiAoaW5wdXRzLmJtaSA8IDE4LjUpIAogICAgcmFuZ2UgPSAnb3ZlcndlaWdodCcKZWxzZSBpZiAoaW5wdXRzLmJtaSA8IDI1KSB7CiAgICByYW5nZSA9ICdub3JtYWwnOwp9IGVsc2UgaWYgKGlucHV0cy5ibWkgPCAzMCkgewogICAgcmFuZ2UgPSAnb3ZlcndlaWdodCc7Cn0gZWxzZSB7CiAgICByYW5nZSA9ICdvYmVzZSc7Cn0KCnJldHVybiBgWW91IGFyZSBpbiB0aGUgJHtyYW5nZX0gcmFuZ2Vg
         templateType: function
         completionOutputs:
-          - r
+          - value
         defaultStyle:
           size: regular
           icon: code
+          cssOverride:
+            fontFamily: monospace
+            fontWeight: "500"
   connections:
     - from:
-        insId: clal8cm19000b4664u3iz2pbb
-        pinId: r
-      to:
-        insId: clal8dus5000j4664s9pwujgy
-        pinId: height
-    - from:
         insId: clal8c6ws00054664pn7mxwak
-        pinId: r
+        pinId: value
       to:
         insId: clal8dus5000j4664s9pwujgy
         pinId: weight
     - from:
+        insId: clal8cm19000b4664u3iz2pbb
+        pinId: value
+      to:
         insId: clal8dus5000j4664s9pwujgy
-        pinId: r
+        pinId: height
+    - from:
+        insId: clal8dus5000j4664s9pwujgy
+        pinId: value
       to:
         insId: clal91glf00024664mfh47zbj
         pinId: bmi
     - from:
         insId: clal91glf00024664mfh47zbj
-        pinId: r
+        pinId: value
       to:
         insId: __this
-        pinId: result
+        pinId: rename
   id: BMI
   inputs: {}
   outputs:
-    result:
+    rename:
       type: any
       optional: false
       delayed: false
@@ -161,5 +172,11 @@ part:
     result:
       x: 24.354419059198683
       y: 165.7657006221402
+    r:
+      x: 24.354419059198683
+      y: 165.7657006221402
+    rename:
+      x: 33.925163537262904
+      y: 163.67737650172523
   completionOutputs:
-    - result
+    - rename

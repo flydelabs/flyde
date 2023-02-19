@@ -1,0 +1,184 @@
+imports:
+  "@flyde/runtime":
+    - GET Request
+    - Get Attribute
+    - POST Request
+  HistoryLog.flyde.ts: []
+  Log.flyde.ts: []
+  LogService.flyde.ts:
+    - Log Service
+part:
+  instances:
+    - pos:
+        x: -722.2921796694441
+        y: -1111.6284500450715
+      id: clebg7bwv00044566r0h1hc4f
+      inputConfig:
+        url:
+          mode: static
+          value: https://api.country.is
+      partId: GET Request
+    - pos:
+        x: -691.1979223632812
+        y: -851.6750952148437
+      id: Inline-value-New user from -tt246wl
+      inputConfig: {}
+      part:
+        id: "Inline-value-New user from "
+        inputs:
+          country:
+            mode: required
+        outputs:
+          value:
+            delayed: false
+        fnCode: const result = (`New user from **${inputs.country}**`);
+          Promise.resolve(result).then(val => outputs.value.next(val))
+        customViewCode: "`New user from **${inputs.country}**`"
+        dataBuilderSource: YE5ldyB1c2VyIGZyb20gKioke2lucHV0cy5jb3VudHJ5fSoqYA==
+        templateType: value
+        completionOutputs:
+          - value
+        defaultStyle:
+          size: regular
+          icon: code
+          cssOverride:
+            fontFamily: monospace
+            fontWeight: "500"
+        description: Custom inline value
+    - pos:
+        x: -596.6848217773438
+        y: -958.917099609375
+      id: clebgaweb00074566ku067ivu
+      inputConfig:
+        attribute:
+          mode: static
+          value: country
+      partId: Get Attribute
+    - pos:
+        x: -613.7169503422748
+        y: -714.9907348538907
+      id: Send to Discord-ins
+      inputConfig: {}
+      part:
+        id: Send to Discord
+        inputs:
+          content:
+            mode: required
+        outputs:
+          response:
+            delayed: false
+        instances:
+          - id: clebgbl8k000m4566572u3pxz
+            partId: POST Request
+            inputConfig:
+              url:
+                mode: static
+                value: https://discord.com/api/webhooks/1076854921799925790/kE8p5jgtJSdHqvTBAt7vci_x_QAakeftge6JasN9A-ZtNs0aeelrO6Y24fQu4AkbwPCq
+            pos:
+              x: -646.0132755082489
+              y: -513.0880977689285
+          - id: "Inline-value-{content: input-flt46yc"
+            part:
+              id: "Inline-value-{content: input"
+              inputs:
+                content:
+                  mode: required
+              outputs:
+                value:
+                  delayed: false
+              fnCode: "const result = ({content: inputs.content});
+                Promise.resolve(result).then(val => outputs.value.next(val))"
+              customViewCode: "{content: inputs.content}"
+              dataBuilderSource: e2NvbnRlbnQ6IGlucHV0cy5jb250ZW50fQ==
+              templateType: value
+              completionOutputs:
+                - value
+              defaultStyle:
+                size: regular
+                icon: code
+                cssOverride:
+                  fontFamily: monospace
+                  fontWeight: "500"
+              description: Custom inline value
+            inputConfig: {}
+            pos:
+              x: -580.8666528320313
+              y: -706.1538354492188
+        inputsPosition:
+          content:
+            x: -460.87177622150085
+            y: -825.3179946343679
+        outputsPosition:
+          response:
+            x: -515.3319905233571
+            y: -320.1738309225469
+        connections:
+          - from:
+              insId: "Inline-value-{content: input-flt46yc"
+              pinId: value
+            to:
+              insId: clebgbl8k000m4566572u3pxz
+              pinId: data
+          - from:
+              insId: __this
+              pinId: content
+            to:
+              insId: "Inline-value-{content: input-flt46yc"
+              pinId: content
+          - from:
+              insId: clebgbl8k000m4566572u3pxz
+              pinId: data
+            to:
+              pinId: response
+              insId: __this
+        completionOutputs:
+          - response
+      style:
+        size: large
+        icon: fa-brands fa-discord
+        color: "#9b5de5"
+    - pos:
+        x: -320.0510887234868
+        y: -719.9468875395694
+      id: clebvggud00014566t4ddj3cr
+      inputConfig: {}
+      partId: Log Service
+  connections:
+    - from:
+        insId: clebg7bwv00044566r0h1hc4f
+        pinId: data
+      to:
+        insId: clebgaweb00074566ku067ivu
+        pinId: object
+    - from:
+        insId: clebgaweb00074566ku067ivu
+        pinId: value
+      to:
+        insId: Inline-value-New user from -tt246wl
+        pinId: country
+    - from:
+        insId: Inline-value-New user from -tt246wl
+        pinId: value
+      to:
+        insId: Send to Discord-ins
+        pinId: content
+    - from:
+        insId: Inline-value-New user from -tt246wl
+        pinId: value
+      to:
+        insId: clebvggud00014566t4ddj3cr
+        pinId: data
+  id: DadJoke
+  inputs: {}
+  outputs: {}
+  inputsPosition:
+    punchDelay:
+      x: -302.7343200487989
+      y: -948.6811052496844
+    test:
+      x: -182.5383681955638
+      y: -903.352979697288
+    punch delay:
+      x: -222.9
+      y: -816.63
+  outputsPosition: {}

@@ -1,0 +1,137 @@
+imports:
+  "@flyde/runtime":
+    - GET Request
+    - Get Attribute
+    - Delay
+    - Log
+part:
+  instances:
+    - pos:
+        x: -610.0955505371094
+        y: -975.8859985351562
+      id: HttpGet-770
+      inputConfig:
+        url:
+          mode: static
+          value: https://api.dadjokes.io/api/random/joke
+      visibleInputs:
+        - url
+      partId: GET Request
+      style:
+        size: large
+        color: "#f15bb5"
+    - pos:
+        x: -739.0385913085938
+        y: -782.100166015625
+      id: Dot-132
+      inputConfig:
+        key:
+          mode: static
+          value: body.0.setup
+        attribute:
+          mode: static
+          value: body.0.setup
+      visibleInputs:
+        - obj
+        - object
+        - attribute
+      partId: Get Attribute
+      style:
+        size: small
+        icon: magnifying-glass
+    - pos:
+        x: -506.0347460937501
+        y: -756.374580078125
+      id: clchvfuoj000145662fwav020
+      inputConfig:
+        key:
+          mode: static
+          value: body.0.punchline
+        attribute:
+          mode: static
+          value: body.0.punchline
+      visibleInputs:
+        - obj
+        - object
+        - attribute
+      partId: Get Attribute
+      style:
+        size: small
+        icon: magnifying-glass
+    - pos:
+        x: -341.8737939453125
+        y: -597.5307568359375
+      id: Delay-561
+      inputConfig:
+        ms:
+          mode: queue
+      partId: Delay
+      style:
+        size: regular
+        color: "#fee440"
+    - pos:
+        x: -668.2125683593749
+        y: -603.1881127929687
+      id: Log-778
+      inputConfig: {}
+      partId: Log
+    - pos:
+        x: -336.7432690429687
+        y: -471.2675805664062
+      id: DadJoke-l0p46hh
+      inputConfig: {}
+      partId: Log
+  connections:
+    - from:
+        insId: clchvfuoj000145662fwav020
+        pinId: value
+      to:
+        insId: Delay-561
+        pinId: value
+    - from:
+        insId: HttpGet-770
+        pinId: data
+      to:
+        insId: Dot-132
+        pinId: object
+    - from:
+        insId: HttpGet-770
+        pinId: data
+      to:
+        insId: clchvfuoj000145662fwav020
+        pinId: object
+    - from:
+        insId: __this
+        pinId: punchDelay
+      to:
+        insId: Delay-561
+        pinId: delay
+    - from:
+        insId: Dot-132
+        pinId: value
+      to:
+        insId: Log-778
+        pinId: value
+    - from:
+        insId: Delay-561
+        pinId: delayedValue
+      to:
+        insId: DadJoke-l0p46hh
+        pinId: value
+  id: DadJoke
+  inputs:
+    punchDelay:
+      mode: required
+      type: any
+  outputs: {}
+  inputsPosition:
+    punchDelay:
+      x: -302.7343200487989
+      y: -948.6811052496844
+    test:
+      x: -182.5383681955638
+      y: -903.352979697288
+    punch delay:
+      x: -222.9
+      y: -816.63
+  outputsPosition: {}

@@ -13,8 +13,13 @@ part:
         ms:
           mode: static
           value: 1500
+        wait:
+          mode: static
+          value: 2000
       visibleInputs:
         - i
+        - value
+        - wait
       partId: Debounce
       style:
         size: large
@@ -27,6 +32,9 @@ part:
         threshold:
           mode: static
           value: 4000
+        wait:
+          mode: static
+          value: 1500
       visibleOutputs:
         - result
         - available
@@ -136,18 +144,6 @@ part:
           fontWeight: "300"
   connections:
     - from:
-        insId: __this
-        pinId: input
-      to:
-        insId: Throttle-652
-        pinId: value
-    - from:
-        insId: __this
-        pinId: input
-      to:
-        insId: Debounce-194-d108
-        pinId: i
-    - from:
         insId: Inline-value-Value was thro-555
         pinId: r
       to:
@@ -165,12 +161,6 @@ part:
       to:
         insId: __this
         pinId: result
-    - from:
-        insId: Debounce-194-d108
-        pinId: r
-      to:
-        insId: Inline-value-Debounce out-720
-        pinId: val
     - from:
         insId: Inline-value-Debounce out-720
         pinId: r
@@ -183,6 +173,24 @@ part:
       to:
         insId: Inline-value-Value was thro-555
         pinId: __trigger
+    - from:
+        insId: __this
+        pinId: input
+      to:
+        insId: Throttle-652
+        pinId: value
+    - from:
+        insId: __this
+        pinId: input
+      to:
+        insId: Debounce-194-d108
+        pinId: value
+    - from:
+        insId: Debounce-194-d108
+        pinId: result
+      to:
+        insId: Inline-value-Debounce out-720
+        pinId: val
   id: Main
   inputs:
     input:
@@ -205,8 +213,8 @@ part:
       x: 485.56077831498897
       y: 225.21610416222086
     input:
-      x: 485.56077831498897
-      y: 225.21610416222086
+      x: 466.16074863066945
+      y: 179.24732213758483
   outputsPosition:
     result:
       x: 533.2714674326223

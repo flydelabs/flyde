@@ -12,22 +12,21 @@ import {
   PartState,
 } from "../part";
 
-import { containsAll, entries, isDefined, keys, OMap, OMapF } from '../common';
+import { containsAll, entries, isDefined, keys, OMap, OMapF } from "../common";
 import { TRIGGER_PIN_ID } from "../connect";
 
 const pickFromObject = (key: string, obj: OMap<any>) => {
-
-const path = key.split(".");
-let o = { ...obj };
-for (let p of path) {
-  if (o && isDefined(o[p]) && o[p] !== null) {
-    o = o[p];
-  } else {
-    throw new Error(`Cannot find key ${key} inside obj ${obj}`);
+  const path = key.split(".");
+  let o = { ...obj };
+  for (let p of path) {
+    if (o && isDefined(o[p]) && o[p] !== null) {
+      o = o[p];
+    } else {
+      throw new Error(`Cannot find key ${key} inside obj ${obj}`);
+    }
   }
-}
-return o;
-}
+  return o;
+};
 
 const getFinalStaticValue = (input: PartInput, env: ExecuteEnv) => {
   const value = extractStaticValue(input);
@@ -37,13 +36,21 @@ const getFinalStaticValue = (input: PartInput, env: ExecuteEnv) => {
   } else {
     return value;
   }
-}
+};
 
-export const peekValueForExecution = (key: string, input: PartInput, state: PartState, env: ExecuteEnv, partId: string) => {
+export const peekValueForExecution = (
+  key: string,
+  input: PartInput,
+  state: PartState,
+  env: ExecuteEnv,
+  partId: string
+) => {
   const stateItem = state.get(key);
   let val;
   if (!input) {
-    throw new Error(`Trying to peek value of inexsting input in key "${key}" in part "${partId}"`);
+    throw new Error(
+      `Trying to peek value of inexsting input in key "${key}" in part "${partId}"`
+    );
   }
   if (isStaticInput(input)) {
     val = getFinalStaticValue(input, env);
@@ -52,11 +59,16 @@ export const peekValueForExecution = (key: string, input: PartInput, state: Part
   } else {
     val = stateItem;
   }
-  
+
   return val;
 };
 
-export const pullValueForExecution = (key: string, input: PartInput, state: PartState, env: ExecuteEnv) => {
+export const pullValueForExecution = (
+  key: string,
+  input: PartInput,
+  state: PartState,
+  env: ExecuteEnv
+) => {
   const stateItem = state.get(key);
   let val;
 
@@ -76,7 +88,11 @@ export const pullValueForExecution = (key: string, input: PartInput, state: Part
   return val;
 };
 
-export const pullValuesForExecution = (partInputs: PartInputs, state: PartState, env: ExecuteEnv) => {
+export const pullValuesForExecution = (
+  partInputs: PartInputs,
+  state: PartState,
+  env: ExecuteEnv
+) => {
   const data = entries(partInputs).reduce((acc, [key, input]) => {
     acc[key] = pullValueForExecution(key, input, state, env);
     return acc;
@@ -85,7 +101,12 @@ export const pullValuesForExecution = (partInputs: PartInputs, state: PartState,
   return data;
 };
 
-export const peekValuesForExecution = (partInputs: PartInputs, state: PartState, env: ExecuteEnv, partId: string) => {
+export const peekValuesForExecution = (
+  partInputs: PartInputs,
+  state: PartState,
+  env: ExecuteEnv,
+  partId: string
+) => {
   const data = entries(partInputs).reduce((acc, [key, input]) => {
     acc[key] = peekValueForExecution(key, input, state, env, partId);
     return acc;
@@ -94,23 +115,30 @@ export const peekValuesForExecution = (partInputs: PartInputs, state: PartState,
   return data;
 };
 
-export const hasNewSignificantValues = (partInputs: PartInputs, state: PartState, env: ExecuteEnv, partId: string) => {
-  return entries(partInputs)
-    .some(([k, i]) => {
-      const isQueue = isQueueInputPinConfig(i.config, i);
-      const value = peekValueForExecution(k, i, state, env, partId);
+export const hasNewSignificantValues = (
+  partInputs: PartInputs,
+  state: PartState,
+  env: ExecuteEnv,
+  partId: string
+) => {
+  return entries(partInputs).some(([k, i]) => {
+    const isQueue = isQueueInputPinConfig(i.config, i);
+    const value = peekValueForExecution(k, i, state, env, partId);
 
-      return isDefined(value) && isQueue;
-    })
-}
+    return isDefined(value) && isQueue;
+  });
+};
 
-export const isPartStateValid = (partInputs: PartInputs, state: PartState, part: Part) => {
-
-  const connectedKeys = keys(partInputs);  
+export const isPartStateValid = (
+  partInputs: PartInputs,
+  state: PartState,
+  part: Part
+) => {
+  const connectedKeys = keys(partInputs);
 
   const requiredInputs = keys(part.inputs).filter((k) => {
     const { mode } = part.inputs[k];
-    return mode === "required";
+    return !mode || mode === "required";
   });
 
   if (connectedKeys.includes(TRIGGER_PIN_ID)) {
@@ -122,7 +150,7 @@ export const isPartStateValid = (partInputs: PartInputs, state: PartState, part:
   if (!hasAllRequired) {
     return false;
   }
-  
+
   return (
     entries(partInputs)
       .filter(([key]) => !!part.inputs[key] || key === TRIGGER_PIN_ID) // filter irrelevant inputs
@@ -171,7 +199,9 @@ export const subscribeInputsToState = (
         const queue = state.get(key) || [];
 
         if (!Array.isArray(queue)) {
-          throw new Error(`impossible state - state of key ${key} is set but not an array`);
+          throw new Error(
+            `impossible state - state of key ${key} is set but not an array`
+          );
         }
         queue.push(val);
         state.set(key, queue);

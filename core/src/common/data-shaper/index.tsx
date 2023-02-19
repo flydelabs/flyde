@@ -30,9 +30,16 @@ const sortObject = (o) =>
     .sort()
     .reduce((r, k) => ((r[k] = o[k]), r), {});
 
-export type DataShape = DataShapeType | DataShape[] | {[key: string]: DataShape};
+export type DataShape =
+  | DataShapeType
+  | DataShape[]
+  | { [key: string]: DataShape };
 
-export const dataShaper = (data: any, maxDepth = 5, maxArrayCheckIdx = 5): DataShape => {
+export const dataShaper = (
+  data: any,
+  maxDepth = 5,
+  maxArrayCheckIdx = 5
+): DataShape => {
   const type = typeofWithNull(data);
   if (type === "object") {
     // if data is an array

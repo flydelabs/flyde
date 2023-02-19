@@ -1,5 +1,5 @@
 import {
-  NativePart,
+  CodePart,
   isDynamicInput,
   PartInput,
   PartInputs,
@@ -8,17 +8,23 @@ import {
   dynamicOutput,
   dynamicPartInput,
   PartInstance,
-  GroupedPart,
+  VisualPart,
   queueInputPinConfig,
   isStaticInputPinConfig,
   PartOutput,
   PartState,
-  isStickyInputPinConfig,
   getPart,
-  PartAdvancedContext,
 } from "../part";
 import { CancelFn, execute, Debugger, ExecuteEnv } from "../execute";
-import { DepGraph, isDefined, noop, okeys, OMap, randomInt, values } from "../common";
+import {
+  DepGraph,
+  isDefined,
+  noop,
+  okeys,
+  OMap,
+  randomInt,
+  values,
+} from "../common";
 import {
   ERROR_PIN_ID,
   isExternalConnection,
@@ -53,10 +59,13 @@ export type ConnectionNode = ExternalConnectionNode | InternalConnectionNode;
 
 export type PinList = Array<{ insId: string; pinId: string }>;
 
-type PositionlessGroupedPart = Omit<Omit<GroupedPart, "inputsPosition">, "outputsPosition">;
+type PositionlessVisualPart = Omit<
+  Omit<VisualPart, "inputsPosition">,
+  "outputsPosition"
+>;
 
 export const connect = (
-  part: PositionlessGroupedPart,
+  part: PositionlessVisualPart,
   repo: PartRepo,
   _debugger: Debugger = {},
   parentInsId: string = "root",
@@ -64,7 +73,7 @@ export const connect = (
   onBubbleError: (err: any) => void = noop,
   env: ExecuteEnv = {},
   extraContext: Record<string, any> = {}
-): NativePart => {
+): CodePart => {
   const { id: maybeId, connections, instances } = part;
 
   const partId = maybeId || "connected-part" + randomInt(999);
@@ -91,6 +100,10 @@ export const connect = (
       const externalInputConnections = new Map<string, PartInput[]>();
       const externalOutputConnections = new Map<string, PartOutput[]>();
 
+      // holds status of each instance - if it is running or not, for implicit completion
+      let resolveCompletionPromise: any;
+      const runningInstances = new Set();
+
       // build the inputs and outputs of the part itself
       // they will be then connected to fnArgs and fnOutputs and will run the part
 
@@ -110,7 +123,8 @@ export const connect = (
           outputs: PartOutputs = {};
 
         inputKeys.forEach((k) => {
-          const inputConfig = (instance.inputConfig || {})[k] || queueInputPinConfig();
+          const inputConfig =
+            (instance.inputConfig || {})[k] || queueInputPinConfig();
 
           if (isStaticInputPinConfig(inputConfig)) {
             args[k] = staticPartInput(inputConfig.value);
@@ -183,7 +197,9 @@ export const connect = (
           if (isExternalConnectionNode(from)) {
             const instanceInput = toInstanceArgs[to.pinId];
             if (!instanceInput) {
-              throw new Error(`Input ${to.pinId} of instance ${toInstanceId} not found`);
+              throw new Error(
+                `Input ${to.pinId} of instance ${toInstanceId} not found`
+              );
             }
             const currArr = externalInputConnections.get(from.pinId) || [];
             currArr.push(instanceInput);
@@ -191,7 +207,9 @@ export const connect = (
           } else {
             let instanceOutput = fromInstanceOutputs[from.pinId];
             if (!instanceOutput) {
-              throw new Error(`Output ${from.pinId} of instance ${fromInstanceId} not found`);
+              throw new Error(
+                `Output ${from.pinId} of instance ${fromInstanceId} not found`
+              );
             }
             const currArr = externalOutputConnections.get(to.pinId) || [];
             currArr.push(instanceOutput);
@@ -207,7 +225,9 @@ export const connect = (
 
         if (!toInstanceArgs) {
           if (!idToInstance.has(toInstanceId)) {
-            throw new Error(`Instance with id [${toInstanceId}] does not exist!`);
+            throw new Error(
+              `Instance with id [${toInstanceId}] does not exist!`
+            );
           } else {
             throw new Error(`No inputs found for instance [${toInstanceId}]`);
           }
@@ -216,7 +236,11 @@ export const connect = (
         const sourceOutput = fromInstanceOutputs[fromInstancePinId];
 
         if (!sourceOutput) {
-          throw new Error(`Output source - [${from}] not found in part [${partId}]`);
+          console.log(fromInstancePinId);
+          
+          throw new Error(
+            `Output source - [${fromInstancePinId}] not found in part [${partId}]`
+          );
         }
 
         const targetArg = toInstanceArgs[toInstancePinId];
@@ -229,10 +253,13 @@ export const connect = (
           );
         }
 
-        const sourcePart = sourceInstance ? getPart(sourceInstance, repo) : part;
+        const sourcePart = sourceInstance
+          ? getPart(sourceInstance, repo)
+          : part;
 
         const sourceOutputPin = sourcePart.outputs[fromInstancePinId];
-        const isDelayed = (sourceOutputPin && sourceOutputPin.delayed) || conn.delayed;
+        const isDelayed =
+          (sourceOutputPin && sourceOutputPin.delayed) || conn.delayed;
 
         if (!isDelayed) {
           if (fromInstanceId !== THIS_INS_ID && toInstanceId !== THIS_INS_ID) {
@@ -267,6 +294,17 @@ export const connect = (
         });
       });
 
+      function onInstanceCompleted(insId: string) {
+        runningInstances.delete(insId);
+        if (runningInstances.size === 0 && resolveCompletionPromise) {
+          resolveCompletionPromise();
+        }
+      }
+
+      function onInstanceStarted(insId: string) {
+        runningInstances.add(insId);
+      }
+
       depGraph
         .overallOrder()
         .map((name: string) => idToInstance.get(name))
@@ -276,11 +314,15 @@ export const connect = (
 
           const part = getPart(instance, repo);
           if (!inputs) {
-            throw new Error(`Unexpected error - args not found when running ${instance}`);
+            throw new Error(
+              `Unexpected error - args not found when running ${instance}`
+            );
           }
 
           if (!outputs) {
-            throw new Error(`Unexpected error - outputs not found when running ${instance}`);
+            throw new Error(
+              `Unexpected error - outputs not found when running ${instance}`
+            );
           }
           // remove unusedInputs
 
@@ -307,6 +349,8 @@ export const connect = (
             mainState,
             parentInsId,
             onBubbleError,
+            onCompleted: () => onInstanceCompleted(instance.id),
+            onStarted: () => onInstanceStarted(instance.id),
             env,
           });
           cancelFns.push(cancel);
@@ -326,10 +370,18 @@ export const connect = (
               // skipping emitting an undefined value. VERY UNSURE OF THIS, TRIGGER WAS VISUAL MERGE
             }
           } else {
-            throw new Error(`Unsure what to do with key ${key}, input: ${input} of ins ${parentInsId}`);
+            throw new Error(
+              `Unsure what to do with key ${key}, input: ${input} of ins ${parentInsId}`
+            );
           }
         });
       });
+
+      if (part.completionOutputs === undefined && runningInstances.size > 0) {
+        return new Promise((res) => {
+          resolveCompletionPromise = res;
+        });
+      }
 
       return () =>
         cancelFns.forEach((fn) => {

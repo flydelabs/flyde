@@ -6,12 +6,34 @@ import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import Layout from "@theme/Layout";
 import HomepageFeatures from "@site/src/components/HomepageFeatures";
 import styles from "./index.module.css";
+import YouTube from 'react-player/youtube'
 
-const IntegrationPoints = () => {
+
+import "../css/global.scss";
+
+
+const UseCases = () => {
   return (
     <strong className="integration-points">
       <Typical
-        steps={["IDE", 2000, "CI/CD", 2000, "Version Control", 2000, "Testing Setup", 2000]}
+        steps={[
+          "Discord Bots",
+          1200,
+          "Website Scrapers",
+          1200,
+          "Data Pipelines",
+          1200,
+          "APIs",
+          1200,
+          "CLI tools",
+          1200,
+          "Telegram Bots",
+          1200,
+          "Webhooks",
+          1200,
+          "The next big thing",
+          5000
+        ].map(s => typeof s === 'string' ? s + '.' : s)}
         loop={Infinity}
         wrapper="span"
       />
@@ -25,29 +47,38 @@ function HomepageHeader() {
   return (
     <header className={clsx("hero hero--primary", styles.heroBanner)}>
       <div className="videos-container">
-        <video className="videoTag" loop muted autoPlay>
+        <video loop muted autoPlay>
+          <source src={"/background.mp4"} type="video/mp4" />
+        </video>
+        <video loop muted autoPlay>
           <source src={"/background.mp4"} type="video/mp4" />
         </video>
       </div>
       <div className="container">
         <h1 className="hero__title">{siteConfig.title}</h1>
         <p className="hero__subtitle">
-          Flyde is an <em>open source</em> flow-based, visual programming tool. <br />
-          Build visual flows using the{" "}
-          <a
+          Flyde is <em>open source</em> visual, flow-based programming tool, batteries-included.
+          <br />
+          Seamlessly integrates with traditional coding using the <a
             href="https://marketplace.visualstudio.com/items?itemName=flyde.flyde-vscode"
             target="_blank"
           >
             VSCode extension
-          </a>.<br/>Integrate them to your JS/TS codebase using the runtime library.
-          <br />
-          Fully integrates with your <IntegrationPoints />
+          </a>.
+          <br/>
+          Build <UseCases/>
         </p>
         <div className={styles.buttons}>
-          <Link className="button button--secondary button--lg" to="/playground">
+          <Link
+            className="button button--secondary button--lg"
+            to="/playground"
+          >
             Online Playground
           </Link>
-          <Link className="button button--primary button--lg" to="/docs/hello-world-with-flyde/">
+          <Link
+            className="button button--primary button--lg"
+            to="/docs"
+          >
             Get Started
           </Link>
           <span className={styles["gh-stars-wrapper"]}>
@@ -60,6 +91,7 @@ function HomepageHeader() {
             />
           </span>
         </div>
+        
       </div>
     </header>
   );
@@ -73,7 +105,21 @@ export default function Home(): JSX.Element {
       description="Flyde is a modern visual programming tool that fully integrates with your codebase"
     >
       <HomepageHeader />
-      <main>
+      <div className='video-container'>
+          <YouTube
+            url="https://www.youtube.com/watch?v=rFS7tm3_ptU"
+            width='320px'
+            height='195px'
+            light={true}
+            controls={true}
+            config= {
+              {
+                playerVars: { autoplay: 1 }
+              }
+            }
+          />
+          </div>
+      <main className="home-page-main-content">
         <HomepageFeatures />
       </main>
     </Layout>

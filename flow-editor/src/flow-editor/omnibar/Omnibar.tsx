@@ -1,9 +1,16 @@
 import * as React from "react";
 
 import { Omnibar as ExternalOmnibar, ItemRenderer } from "@blueprintjs/select";
-import { Part, PartDefRepo, keys, ImportablePart, FlydeFlow } from "@flyde/core";
+import {
+  Part,
+  PartDefRepo,
+  keys,
+  ImportablePart,
+  FlydeFlow,
+} from "@flyde/core";
 import { okeys } from "@flyde/core";
 import { MenuItem } from "@blueprintjs/core";
+import classNames from "classnames";
 
 export interface OmnibarProps {
   visible: boolean;
@@ -17,9 +24,9 @@ export interface OmnibarProps {
 export enum OmniBarCmdType {
   ADD = "add",
   ADD_VALUE = "add-value",
-  CREATE_CODE_PART = 'create-core-part',
-  CREATE_GROUPED_PART = 'create-grouped-part',
-  IMPORT = 'import'
+  CREATE_CODE_PART = "create-core-part",
+  CREATE_GROUPED_PART = "create-visual-part",
+  IMPORT = "import",
 }
 
 export type OmniBarCmd = {
@@ -27,7 +34,13 @@ export type OmniBarCmd = {
   data?: any;
 };
 
-export type OmniBarItem = { cmd: OmniBarCmd; title: string; extra?: string, suggestOnEmpty?: boolean };
+export type OmniBarItem = {
+  cmd: OmniBarCmd;
+  title: string;
+  description?: string;
+  extra?: string;
+  suggestOnEmpty?: boolean;
+};
 
 export type OmniBarState = {
   items: OmniBarItem[];
@@ -35,27 +48,25 @@ export type OmniBarState = {
 };
 
 const SYSTEM_ITEMS: OmniBarItem[] = [
-  {
-    cmd: {
-      type: OmniBarCmdType.CREATE_GROUPED_PART,
-    },
-    title: 'Create new grouped part',
-    suggestOnEmpty: true
-  },
-  {
-    cmd: {
-      type: OmniBarCmdType.CREATE_CODE_PART,
-    },
-    title: 'Create new code part',
-    suggestOnEmpty: true
-  }
-]
-
+  // {
+  //   cmd: {
+  //     type: OmniBarCmdType.CREATE_GROUPED_PART,
+  //   },
+  //   title: "Create new visual part",
+  //   suggestOnEmpty: true,
+  // },
+  // {
+  //   cmd: {
+  //     type: OmniBarCmdType.CREATE_CODE_PART,
+  //   },
+  //   title: "Create new code part",
+  //   suggestOnEmpty: true,
+  // },
+];
 
 const escapeQuery = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
 export const Omnibar: React.FC<OmnibarProps> = (props) => {
-
-  const {repo} = props;
+  const { repo } = props;
 
   const [searchValue, setSearchValue] = React.useState("");
   const [items, setItems] = React.useState<OmniBarItem[] | null>(null);
@@ -63,30 +74,30 @@ export const Omnibar: React.FC<OmnibarProps> = (props) => {
   const [importables, setImportables] = React.useState<ImportablePart[]>([]);
 
   React.useEffect(() => {
-
     const all = keys(repo);
     const addItems = all
       // .filter((k) => k.includes(query))
       .map((k) => {
         const part: Part = repo[k] as Part;
         return {
-          title: `Add - ${part.id}`,
+          title: `${part.id}`,
           cmd: {
             type: OmniBarCmdType.ADD,
             data: k,
           },
-          extra: `${okeys(part.inputs)} | ${okeys(part.outputs)}`,
+          extra: `current flow`,
         };
       });
 
     const importableItems = importables.map((i) => {
       return {
-        title: `Add - ${i.part.id}`,
+        title: `${i.part.id}`,
+        description: i.part.description,
         cmd: {
           type: OmniBarCmdType.IMPORT,
-          data: i
+          data: i,
         },
-        extra: `(import from ${i.module})`
+        extra: `${i.module}`,
       };
     });
 
@@ -98,7 +109,12 @@ export const Omnibar: React.FC<OmnibarProps> = (props) => {
       },
     };
 
-    const items = [...SYSTEM_ITEMS, ...importableItems, addInlineValue, ...addItems];
+    const items = [
+      ...SYSTEM_ITEMS,
+      ...importableItems,
+      addInlineValue,
+      ...addItems,
+    ];
 
     setItems(items);
   }, [repo, importables]);
@@ -110,29 +126,48 @@ export const Omnibar: React.FC<OmnibarProps> = (props) => {
       });
     }
   }, [props, searchValue]);
-  
-  const renderItem: ItemRenderer<any> = React.useCallback((item: OmniBarItem, { handleClick, modifiers, query, index }) => {
-    if (!modifiers.matchesPredicate) {
-      return null;
-    }
-    const text = `${item.title}`;
-    return (
-      <MenuItem
-        key={index}
-        active={modifiers.active}
-        disabled={modifiers.disabled}
-        label={item.extra}
-        // key={film.rank}
-        onClick={handleClick}
-        text={text}
-      />
-    );
-  }, []);
+
+  const renderItem: ItemRenderer<any> = React.useCallback(
+    (item: OmniBarItem, { handleClick, modifiers, query, index }) => {
+      if (!modifiers.matchesPredicate) {
+        return null;
+      }
+      const text = `${item.title}`;
+      return (
+        <MenuItem
+          key={index}
+          active={modifiers.active}
+          disabled={modifiers.disabled}
+          // label={item.extra}
+          // key={film.rank}
+          onClick={handleClick}
+          text={
+            <div
+              className={classNames("omnibar-item", {
+                active: modifiers.active,
+              })}
+            >
+              <div className="title">
+                {text}{" "}
+                {item.extra ? (
+                  <span className="extra">{item.extra}</span>
+                ) : null}
+              </div>
+              {item.description ? (
+                <div className="description">{item.description}</div>
+              ) : null}
+            </div>
+          }
+        />
+      );
+    },
+    []
+  );
 
   const predicate = React.useCallback((query: string, item: OmniBarItem) => {
-    if (!query) {
-      return !!item.suggestOnEmpty;
-    }
+    // if (!query) {
+    //   // return !!item.suggestOnEmpty;
+    // }
 
     const regex = query
       .toLowerCase()
@@ -143,10 +178,13 @@ export const Omnibar: React.FC<OmnibarProps> = (props) => {
     return !!item.title.toLowerCase().match(pattern);
   }, []);
 
-  const onSelect = React.useCallback((item: OmniBarItem) => {
-    props.onCommand(item.cmd);
-    props.onClose();
-  }, [props]);
+  const onSelect = React.useCallback(
+    (item: OmniBarItem) => {
+      props.onCommand(item.cmd);
+      props.onClose();
+    },
+    [props]
+  );
 
   return items ? (
     <ExternalOmnibar
@@ -160,7 +198,7 @@ export const Omnibar: React.FC<OmnibarProps> = (props) => {
       initialContent={undefined}
       onItemSelect={onSelect as any}
       itemRenderer={renderItem}
-      inputProps={{placeholder: 'Search for parts or commands..'}}
+      inputProps={{ placeholder: "Search for parts or commands.." }}
     />
   ) : null;
-}
+};

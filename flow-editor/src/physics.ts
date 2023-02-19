@@ -19,19 +19,23 @@ export interface Entity extends Object {
   s: Size;
 }
 
-export const rnd = (top = 100, min = 0) => Math.floor(Math.random() * (top - min)) + min;
+export const rnd = (top = 100, min = 0) =>
+  Math.floor(Math.random() * (top - min)) + min;
 
+export const vZero: Vector = { x: 0, y: 0 };
 
-export const vZero: Vector = {x: 0, y: 0};
-
-export const vMul = ({ x, y }: Vector, s: number): Vector => ({ x: x * s, y: y * s });
-export const vDiv = ({ x, y }: Vector, s: number): Vector => vMul({ x, y }, 1 / s);
+export const vMul = ({ x, y }: Vector, s: number): Vector => ({
+  x: x * s,
+  y: y * s,
+});
+export const vDiv = ({ x, y }: Vector, s: number): Vector =>
+  vMul({ x, y }, 1 / s);
 export const vAdd = (a: Vector, b: Vector) => ({ x: a.x + b.x, y: a.y + b.y });
 export const vSub = (a: Vector, b: Vector) => vAdd(a, vMul(b, -1));
 export const vLen = ({ x, y }: Vector): number => Math.sqrt(x * x + y * y);
 export const vNorm = (a: Vector) => vDiv(a, vLen(a) || 1);
 
-export const vToStr = ({x,y}: Vector) => `${x.toFixed(1)},${y.toFixed(1)}`;
+export const vToStr = ({ x, y }: Vector) => `${x.toFixed(1)},${y.toFixed(1)}`;
 
 export const coulombs = (e1: Entity, e2: Entity, rep: number): Vector => {
   const distance = vLen(vSub(e1.p, e2.p));

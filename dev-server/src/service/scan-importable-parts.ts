@@ -1,5 +1,5 @@
 import { join, relative } from "path";
-import { resolveFlow, resolveImportablePaths } from "@flyde/resolver";
+import { resolveFlow, resolveImportablePaths, isCodePartPath, resolveCodePartDependencies } from "@flyde/resolver";
 
 import * as pkgUp from "pkg-up";
 import { PartDefRepo } from "@flyde/core";
@@ -12,7 +12,7 @@ const FLYDE_LIBRARY = /^flyde[-_](.*)/;
 export const getFlydeDependencies = async (rootPath: string) => {
   const pjsonPath = await pkgUp({ cwd: rootPath });
   const { dependencies, devDependencies } = require(pjsonPath);
-  const combinedDeps = {...dependencies, ...devDependencies};
+  const combinedDeps = { ...dependencies, ...devDependencies };
 
   const depKeys = Object.keys(combinedDeps) || [];
   return depKeys.filter((dep) => {
@@ -20,12 +20,19 @@ export const getFlydeDependencies = async (rootPath: string) => {
   });
 };
 
-export const resolveDependentPackages = async (rootPath: string, flydeDependencies: string[]) => {
+export const resolveDependentPackages = async (
+  rootPath: string,
+  flydeDependencies: string[]
+) => {
   return flydeDependencies.reduce<Record<string, PartDefRepo>>((acc, dep) => {
-
     try {
       const paths = resolveImportablePaths(rootPath, dep);
       const parts = paths.reduce((acc, filePath) => {
+
+        if (isCodePartPath(filePath))  {
+          const obj = resolveCodePartDependencies(filePath).reduce((obj, {part}) => ({...obj, [part.id]: part}), {});
+          return {...acc, ...obj}
+        }
         try {
           const { main } = resolveFlow(filePath, "definition");
           return { ...acc, [main.id]: main };
@@ -60,13 +67,14 @@ const getLocalFlydeFiles = (rootPath: string) => {
   return localFlydeFiles;
 };
 
-export const scanImportableParts = async (rootPath: string, filename: string) => {
-
-  
+export const scanImportableParts = async (
+  rootPath: string,
+  filename: string
+) => {
   const fileRoot = join(rootPath, filename);
 
   const localFiles = getLocalFlydeFiles(rootPath);
-  
+
   const depsNames = await getFlydeDependencies(rootPath);
 
   const depsParts = await resolveDependentPackages(rootPath, depsNames);
@@ -74,15 +82,21 @@ export const scanImportableParts = async (rootPath: string, filename: string) =>
   const localParts = localFiles
     .filter((file) => !file.relativePath.endsWith(filename))
     .reduce<Record<string, PartDefRepo>>((acc, file) => {
-      // const flowContents = readFileSync(file.fullPath, "utf8");
+
+      if (isCodePartPath(file.fullPath)) {
+
+
+        const obj = resolveCodePartDependencies(file.fullPath).reduce((obj, {part}) => ({...obj, [part.id]: part}), {});
+        const relativePath = relative(join(fileRoot, ".."), file.fullPath);
+        return {...acc, [relativePath]: obj}
+      }
 
       try {
         const { main } = resolveFlow(file.fullPath, "definition");
 
-      const relativePath = relative(join(fileRoot, ".."), file.fullPath);
+        const relativePath = relative(join(fileRoot, ".."), file.fullPath);
 
-      return { ...acc, [relativePath]: { [main.id]: main } };
-        // return { ...acc, [main.id]: main };
+        return { ...acc, [relativePath]: { [main.id]: main } };
       } catch (e) {
         console.error(`Skipping corrupt flow at ${file.fullPath}, error: ${e}`);
         return acc;

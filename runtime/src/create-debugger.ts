@@ -1,26 +1,16 @@
 import { Debugger } from "@flyde/core";
 import { createRuntimeClient } from "@flyde/remote-debugger/dist/clients/runtime";
+import { debugLogger } from "./logger";
 
 const url = "http://localhost:8545";
 
 export const createDebugger = async (): Promise<Debugger> => {
-  return createRuntimeClient(url, "bob")
+  return createRuntimeClient(url, "n/a")
     .then((client) => {
       const _debugger: Debugger = {
-        onInput: (wrappedValue) => {
-          return client.emitInputChange(wrappedValue);
-        },
-        onOutput: (val) => {
-          return client.emitOutputChange(val);
-        },
-        onProcessing: (val) => {
-          return client.emitProcessing(val);
-        },
-        onInputsStateChange: (val) => {
-          return client.emitInputsStateChange(val);
-        },
-        onError: (data) => {
-          return client.emitPartError(data);
+        onEvent: (e) => {
+          debugLogger(`Emitting event ${e.type} on ${e.insId}`);
+          client.emitEvent(e );
         },
         destroy: () => {
           return client.destroy();

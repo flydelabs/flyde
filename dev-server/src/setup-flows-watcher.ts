@@ -7,11 +7,19 @@ import { deserializeFlow } from "@flyde/resolver";
 export type Corrupt = "corrupt";
 
 export type FlowsMap = Map<string, FlydeFlow | Corrupt>;
-export const setupFlowsWatcher = (rootDir: string, onFlowsChange: (map: FlowsMap) => void) => {
+export const setupFlowsWatcher = (
+  rootDir: string,
+  onFlowsChange: (map: FlowsMap) => void
+) => {
   const flows: FlowsMap = new Map<string, FlydeFlow | Corrupt>();
   // One-liner for current directory
   chokidar
-    .watch(["**/*.flyde"], { cwd: rootDir, ignored: "node_modules" })
+    .watch(["**/*.flyde"], {
+      cwd: rootDir,
+      ignored: (path) =>
+      // hacky fix for https://github.com/paulmillr/chokidar/issues/544 when working locally
+       !path.endsWith(".flyde") || path.includes("/node_modules")
+    })
     .on("all", (event, path) => {
       switch (event) {
         case "add":
@@ -39,8 +47,8 @@ export const setupFlowsWatcher = (rootDir: string, onFlowsChange: (map: FlowsMap
           break;
         }
         case "unlinkDir": {
-          const matchingFlows = Array.from(flows.entries()).filter(([key, value]) =>
-            key.startsWith(path)
+          const matchingFlows = Array.from(flows.entries()).filter(
+            ([key, value]) => key.startsWith(path)
           );
           matchingFlows.forEach(([key, value]) => flows.delete(key));
           onFlowsChange(flows);

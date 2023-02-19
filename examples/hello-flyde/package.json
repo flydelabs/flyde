@@ -1,10 +1,11 @@
 {
-  "name": "hello-flyde",
+  "name": "flyde-example-hello-world",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js",
+    "postinstall": "npm link @flyde/stdlib @flyde/runtime npm link @flyde/core @flyde/resolver"
   },
   "author": "",
   "license": "ISC",

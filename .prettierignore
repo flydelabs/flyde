@@ -1,0 +1,9 @@
+dist
+node_modules
+build
+out
+*.js
+*.d.ts
+{{*}}.*
+!*.flyde.js
+*.ejs

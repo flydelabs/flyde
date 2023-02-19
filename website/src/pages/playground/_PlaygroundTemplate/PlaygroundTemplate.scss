@@ -1,7 +1,14 @@
+@at-root .bp3-overlay {
+  z-index: 201;
+}
+
 .examples__menu {
-  display: inline-flex;
+  display: flex;
   list-style: none;
-  margin-top: 10px;
+  margin-top: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
 
   > li {
     font-size: 18px;
@@ -11,10 +18,10 @@
       color: white;
     }
 
-    &:not(:last-of-type):after {
-      content: "•";
-      margin: 0 10px;
-    }
+    // &:not(:last-of-type) {
+    //   // content: "•";
+    //   margin: 0 10px;
+    // }
   }
 }
 
@@ -56,6 +63,7 @@
 
   .playground-extra {
     margin-bottom: 10px;
+    padding: 1rem;
     font-size: 1.25rem;
   }
 
@@ -66,6 +74,8 @@
   .playground-description {
     font-size: 1.25rem;
     margin-bottom: 10px;
+    padding: 1rem;
+
   }
 
   .emit-btn {
@@ -81,7 +91,7 @@
   .playground {
     display: flex;
     flex-direction: row;
-    margin: 10px 50px;
+    margin: 10px 0px;
     border: 1px solid rgb(204, 204, 204);
     max-height: 500px;
 
@@ -131,4 +141,11 @@
     font-size: 1.25rem;
     margin-bottom: 5px;
   }
+}
+
+.mobile-warning {
+  padding: 15px 10px;
+  // yellowish background
+  background: #fff3cd;
+  text-align: center;
 }

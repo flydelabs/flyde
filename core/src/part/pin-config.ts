@@ -1,7 +1,7 @@
 import { OMap } from "..";
 import { PartInput } from "./part-pins";
 
-export const INPUT_MODES: InputPinMode[] = ['queue', 'sticky', 'static']
+export const INPUT_MODES: InputPinMode[] = ["queue", "sticky", "static"];
 
 export type InputPinMode = "queue" | "sticky" | "static";
 
@@ -42,17 +42,17 @@ export const isQueueInputPinConfig = (
   config: InputPinConfig | undefined,
   input: PartInput
 ): config is QueueInputPinConfig => {
-    return (config as QueueInputPinConfig).mode === "queue";
+  return (config as QueueInputPinConfig).mode === "queue";
 };
 
 export const isStickyInputPinConfig = (
   config: InputPinConfig | undefined
 ): config is StickyInputPinConfig => {
-    return config && (config as StickyInputPinConfig).mode === "sticky";
+  return config && (config as StickyInputPinConfig).mode === "sticky";
 };
 
-export const isStaticInputPinConfig = (
+export function isStaticInputPinConfig (
   config: InputPinConfig | undefined
-): config is StaticInputPinConfig => {
-    return config && (config as StaticInputPinConfig).mode === "static";
+): config is StaticInputPinConfig {
+  return config && (config as StaticInputPinConfig).mode === "static";
 };

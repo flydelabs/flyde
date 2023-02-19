@@ -1,63 +1,39 @@
 imports:
   "@flyde/stdlib":
-    - EachMs
-    - HtmlSpan
-    - HtmlTag
-    - ListFrom3
+    - List From 3
     - Publish
     - Subscribe
-    - SpreadList
-    - Accumulate
-    - Id
-    - GetListItem
-    - ListFrom2
+    - Loop List
+    - List From 2
   Button.flyde.js:
     - Button
   Span.flyde.js:
     - Span
   Div.flyde.js:
     - Div
+  "@flyde/runtime":
+    - Accumulate Values by Count
+    - List Length
 part:
   instances:
     - pos:
-        x: -18.84346069335939
-        y: -121.53852340698239
+        x: -68.42527832031251
+        y: -195.3009745788574
       id: Subscribe-922
       inputConfig:
         key:
           mode: static
           value: values
+        initial:
+          mode: static
+          value:
+            - 4
       partId: Subscribe
       style:
         size: small
     - pos:
-        x: 267.08017303466795
-        y: 470.34846185684205
-      id: value-464
-      inputConfig: {}
-      part:
-        id: "Inline-value-[4, 8, 15, 16, "
-        inputs: {}
-        outputs:
-          r:
-            type: any
-            delayed: false
-            optional: false
-        fnCode: outputs.r.next(([4, 8, 15, 16, 23, 42]))
-        customViewCode: "[4, 8, 15, 16, 23, 42]"
-        dataBuilderSource: WzQsIDgsIDE1LCAxNiwgMjMsIDQyXQ==
-        templateType: value
-        completionOutputs:
-          - r
-        defaultStyle:
-          size: small
-          icon: code
-          cssOverride:
-            fontFamily: monospace
-            fontWeight: "300"
-    - pos:
-        x: 140.72340728759764
-        y: 683.8112676239014
+        x: 171.467883605957
+        y: 716.5325505828857
       id: Publish-806
       inputConfig:
         key:
@@ -67,367 +43,16 @@ part:
       style:
         size: small
     - pos:
-        x: -176.51234863281252
-        y: -10.621599731445315
-      id: SpreadList-386
+        x: -72.05925415039064
+        y: -35.00316101074219
+      id: Loop List-386
       inputConfig: {}
-      partId: SpreadList
+      partId: Loop List
       style:
         color: "#9b5de5"
     - pos:
-        x: -217.24702636718752
-        y: 375.4634265136719
-      id: Accumulate-699
-      inputConfig: {}
-      visibleInputs:
-        - count
-        - val
-      partId: Accumulate
-      style:
-        color: "#9b5de5"
-    - pos:
-        x: -92.84986114501953
-        y: 154.18505942404272
-      id: IndexedCounter-ins
-      inputConfig: {}
-      visibleInputs:
-        - index
-        - value
-      part:
-        id: IndexedCounter
-        inputs:
-          value:
-            type: any
-            mode: required
-          index:
-            type: any
-            mode: required
-        outputs:
-          jsx:
-            type: any
-            delayed: false
-            optional: false
-          indexedValue:
-            type: any
-            delayed: false
-            optional: false
-        instances:
-          - pos:
-              x: -191.2879022216797
-              y: 122.18738981366158
-            id: cl9n6lx0g00104666prpw63w3
-            inputConfig:
-              value:
-                mode: queue
-            part:
-              id: Counter
-              inputs:
-                value:
-                  type: any
-                  mode: required
-              outputs:
-                jsx:
-                  type: any
-                  delayed: false
-                  optional: false
-                newValue:
-                  type: any
-                  delayed: false
-                  optional: false
-              instances:
-                - pos:
-                    x: 220.2205810546875
-                    y: 267.5966883134842
-                  id: Button-687
-                  inputConfig:
-                    children:
-                      mode: static
-                      value: +
-                  partId: Button
-                - pos:
-                    x: -210.8126220703125
-                    y: 275.0645151567459
-                  id: cl9n4cmtg000c46660tbva923
-                  inputConfig:
-                    children:
-                      mode: static
-                      value: "-"
-                  partId: Button
-                - pos:
-                    x: 30.04846557617188
-                    y: 279.52244750976564
-                  id: Span-59
-                  inputConfig:
-                    children:
-                      mode: queue
-                  partId: Span
-                - pos:
-                    x: -36.912857666015626
-                    y: 463.0896810913086
-                  id: ListFrom3-643
-                  inputConfig: {}
-                  partId: ListFrom3
-                - id: cl9n5gsim000y4666mlmovgh1
-                  part:
-                    id: "Inline-value-inputs.value + "
-                    inputs:
-                      value:
-                        type: any
-                        mode: required
-                    outputs:
-                      r:
-                        type: any
-                        delayed: false
-                        optional: false
-                    fnCode: outputs.r.next((inputs.value + 1))
-                    customViewCode: inputs.value + 1
-                    dataBuilderSource: aW5wdXRzLnZhbHVlICsgMQ==
-                    templateType: value
-                    completionOutputs:
-                      - r
-                    defaultStyle:
-                      size: small
-                      icon: code
-                      cssOverride:
-                        fontFamily: monospace
-                        fontWeight: "300"
-                  inputConfig:
-                    value:
-                      mode: sticky
-                  pos:
-                    x: 185.48343872070313
-                    y: 548.9948611450195
-                  visibleInputs:
-                    - value
-                    - __trigger
-                - id: cl9n5hluc00054666sk1dk39h
-                  part:
-                    id: "Inline-value-inputs.value - "
-                    inputs:
-                      value:
-                        type: any
-                        mode: required
-                    outputs:
-                      r:
-                        type: any
-                        delayed: false
-                        optional: false
-                    fnCode: outputs.r.next((inputs.value - 1))
-                    customViewCode: inputs.value - 1
-                    dataBuilderSource: aW5wdXRzLnZhbHVlIC0gMQ==
-                    templateType: value
-                    completionOutputs:
-                      - r
-                    defaultStyle:
-                      size: small
-                      icon: code
-                      cssOverride:
-                        fontFamily: monospace
-                        fontWeight: "300"
-                  inputConfig:
-                    value:
-                      mode: sticky
-                  pos:
-                    x: -245.93623901367187
-                    y: 537.5751223754883
-                  visibleInputs:
-                    - value
-                    - __trigger
-              inputsPosition:
-                value:
-                  x: 34.22
-                  y: 155.93
-              outputsPosition:
-                list:
-                  x: 27.724642457478197
-                  y: 651.43403372181
-                jsx:
-                  x: -35.68391001688302
-                  y: 751.9305921375689
-                newValue:
-                  x: 114.24477908672438
-                  y: 759.5560703555487
-              connections:
-                - from:
-                    insId: cl9n4cmtg000c46660tbva923
-                    pinId: jsx
-                  to:
-                    insId: ListFrom3-643
-                    pinId: item1
-                - from:
-                    insId: Span-59
-                    pinId: jsx
-                  to:
-                    insId: ListFrom3-643
-                    pinId: item2
-                - from:
-                    insId: Button-687
-                    pinId: jsx
-                  to:
-                    insId: ListFrom3-643
-                    pinId: item3
-                - from:
-                    insId: ListFrom3-643
-                    pinId: list
-                  to:
-                    insId: __this
-                    pinId: jsx
-                - from:
-                    pinId: value
-                    insId: __this
-                  to:
-                    insId: Span-59
-                    pinId: children
-                - from:
-                    pinId: value
-                    insId: __this
-                  to:
-                    insId: cl9n5gsim000y4666mlmovgh1
-                    pinId: value
-                  hidden: false
-                - from:
-                    insId: Button-687
-                    pinId: click
-                  to:
-                    insId: cl9n5gsim000y4666mlmovgh1
-                    pinId: __trigger
-                - from:
-                    pinId: value
-                    insId: __this
-                  to:
-                    insId: cl9n5hluc00054666sk1dk39h
-                    pinId: value
-                - from:
-                    insId: cl9n4cmtg000c46660tbva923
-                    pinId: click
-                  to:
-                    insId: cl9n5hluc00054666sk1dk39h
-                    pinId: __trigger
-                - from:
-                    insId: cl9n5hluc00054666sk1dk39h
-                    pinId: r
-                  to:
-                    pinId: newValue
-                    insId: __this
-                - from:
-                    insId: cl9n5gsim000y4666mlmovgh1
-                    pinId: r
-                  to:
-                    pinId: newValue
-                    insId: __this
-              completionOutputs:
-                - list
-              reactiveInputs:
-                - value
-          - id: cl9n70wv6001n46666vy9x4ks
-            part:
-              id: Inline-value-[inputs.idx, in
-              inputs:
-                idx:
-                  type: any
-                  mode: required
-                val:
-                  type: any
-                  mode: required
-              outputs:
-                r:
-                  type: any
-                  delayed: false
-                  optional: false
-              fnCode: outputs.r.next(([inputs.idx, inputs.val]))
-              customViewCode: "[inputs.idx, inputs.val]"
-              dataBuilderSource: W2lucHV0cy5pZHgsIGlucHV0cy52YWxd
-              templateType: value
-              completionOutputs:
-                - r
-              defaultStyle:
-                size: small
-                icon: code
-                cssOverride:
-                  fontFamily: monospace
-                  fontWeight: "300"
-            inputConfig: {}
-            pos:
-              x: -17.44830322265625
-              y: 367.75258544921877
-            visibleInputs:
-              - val
-              - idx
-          - id: cl9n77e3g00124666kcquy0k0
-            partId: Div
-            inputConfig:
-              key:
-                mode: sticky
-            pos:
-              x: -188.12181884765624
-              y: 396.5864727783203
-            visibleInputs:
-              - children
-              - k
-              - key
-        inputsPosition:
-          value:
-            x: -161.49536251238354
-            y: -25.862005435970406
-          index:
-            x: 142.1468610206309
-            y: -88.52006637448669
-        outputsPosition:
-          jsx:
-            x: -86.07782789666744
-            y: 601.5584317635003
-          indexedValue:
-            x: 34.58070639058965
-            y: 599.1918617262536
-        connections:
-          - from:
-              insId: __this
-              pinId: value
-            to:
-              insId: cl9n6lx0g00104666prpw63w3
-              pinId: value
-          - from:
-              pinId: index
-              insId: __this
-            to:
-              insId: cl9n70wv6001n46666vy9x4ks
-              pinId: idx
-          - from:
-              insId: cl9n6lx0g00104666prpw63w3
-              pinId: newValue
-            to:
-              insId: cl9n70wv6001n46666vy9x4ks
-              pinId: val
-          - from:
-              insId: cl9n70wv6001n46666vy9x4ks
-              pinId: r
-            to:
-              pinId: indexedValue
-              insId: __this
-          - from:
-              insId: cl9n6lx0g00104666prpw63w3
-              pinId: jsx
-            to:
-              insId: cl9n77e3g00124666kcquy0k0
-              pinId: children
-          - from:
-              insId: cl9n77e3g00124666kcquy0k0
-              pinId: jsx
-            to:
-              pinId: jsx
-              insId: __this
-          - from:
-              pinId: index
-              insId: __this
-            to:
-              insId: cl9n77e3g00124666kcquy0k0
-              pinId: key
-      style:
-        size: large
-        color: "#f15bb5"
-    - pos:
-        x: 4.3748016357421875
-        y: 311.14535232543943
+        x: 152.09999084472656
+        y: 323.6291608428955
       id: cl9n7di8k000e4666bwkr6hmc
       inputConfig:
         values:
@@ -466,18 +91,20 @@ part:
     - pos:
         x: -127.01887451171876
         y: 644.0976359558106
-      id: ListFrom2-841
+      id: List From 2-841
       inputConfig:
         item1:
           mode: queue
         item2:
           mode: sticky
-      partId: ListFrom2
+        value2:
+          mode: sticky
+      partId: List From 2
       style:
         size: small
     - pos:
-        x: -19.970456542968748
-        y: 384.83860809326177
+        x: -13.815762939453123
+        y: 395.13763362884526
       id: Button-524
       inputConfig:
         children:
@@ -487,8 +114,8 @@ part:
       style:
         color: "#00f5d4"
     - pos:
-        x: 37.39548461914063
-        y: 569.1734301757813
+        x: 59.78086059570313
+        y: 562.9679248046875
       id: cl9n7hd4i001946665d10kzk4
       inputConfig:
         vals:
@@ -519,86 +146,317 @@ part:
           cssOverride:
             fontFamily: monospace
             fontWeight: "300"
+    - pos:
+        x: -318.78999999999996
+        y: 446.49
+      id: Accumulate Values by Count-183
+      inputConfig:
+        count:
+          mode: sticky
+      partId: Accumulate Values by Count
+    - pos:
+        x: -467.64607421875
+        y: 60.77903717041016
+      id: List Length-285
+      inputConfig: {}
+      partId: List Length
+    - pos:
+        x: -191.2879022216797
+        y: 122.18738981366158
+      id: cl9n6lx0g00104666prpw63w3
+      inputConfig:
+        value:
+          mode: queue
+      part:
+        id: Counter
+        inputs:
+          value:
+            type: any
+            mode: required
+        outputs:
+          jsx:
+            type: any
+            delayed: false
+            optional: false
+          newValue:
+            type: any
+            delayed: false
+            optional: false
+        instances:
+          - pos:
+              x: 220.2205810546875
+              y: 267.5966883134842
+            id: Button-687
+            inputConfig:
+              children:
+                mode: static
+                value: +
+            partId: Button
+          - pos:
+              x: -210.8126220703125
+              y: 275.0645151567459
+            id: cl9n4cmtg000c46660tbva923
+            inputConfig:
+              children:
+                mode: static
+                value: "-"
+            partId: Button
+          - pos:
+              x: 30.04846557617188
+              y: 279.52244750976564
+            id: Span-59
+            inputConfig:
+              children:
+                mode: queue
+            partId: Span
+          - pos:
+              x: -36.912857666015626
+              y: 463.0896810913086
+            id: List From 3-643
+            inputConfig: {}
+            partId: List From 3
+          - id: cl9n5gsim000y4666mlmovgh1
+            part:
+              id: "Inline-value-inputs.value + "
+              inputs:
+                value:
+                  type: any
+                  mode: required
+              outputs:
+                r:
+                  type: any
+                  delayed: false
+                  optional: false
+              fnCode: outputs.r.next((inputs.value + 1))
+              customViewCode: inputs.value + 1
+              dataBuilderSource: aW5wdXRzLnZhbHVlICsgMQ==
+              templateType: value
+              completionOutputs:
+                - r
+              defaultStyle:
+                size: small
+                icon: code
+                cssOverride:
+                  fontFamily: monospace
+                  fontWeight: "300"
+            inputConfig:
+              value:
+                mode: sticky
+            pos:
+              x: 185.48343872070313
+              y: 548.9948611450195
+            visibleInputs:
+              - value
+              - __trigger
+          - id: cl9n5hluc00054666sk1dk39h
+            part:
+              id: "Inline-value-inputs.value - "
+              inputs:
+                value:
+                  type: any
+                  mode: required
+              outputs:
+                r:
+                  type: any
+                  delayed: false
+                  optional: false
+              fnCode: outputs.r.next((inputs.value - 1))
+              customViewCode: inputs.value - 1
+              dataBuilderSource: aW5wdXRzLnZhbHVlIC0gMQ==
+              templateType: value
+              completionOutputs:
+                - r
+              defaultStyle:
+                size: small
+                icon: code
+                cssOverride:
+                  fontFamily: monospace
+                  fontWeight: "300"
+            inputConfig:
+              value:
+                mode: sticky
+            pos:
+              x: -245.93623901367187
+              y: 537.5751223754883
+            visibleInputs:
+              - value
+              - __trigger
+        inputsPosition:
+          value:
+            x: 34.22
+            y: 155.93
+        outputsPosition:
+          list:
+            x: 27.724642457478197
+            y: 651.43403372181
+          jsx:
+            x: -35.68391001688302
+            y: 751.9305921375689
+          newValue:
+            x: 114.24477908672438
+            y: 759.5560703555487
+        connections:
+          - from:
+              insId: List From 3-643
+              pinId: list
+            to:
+              insId: __this
+              pinId: jsx
+          - from:
+              pinId: value
+              insId: __this
+            to:
+              insId: Span-59
+              pinId: children
+          - from:
+              pinId: value
+              insId: __this
+            to:
+              insId: cl9n5gsim000y4666mlmovgh1
+              pinId: value
+            hidden: false
+          - from:
+              insId: Button-687
+              pinId: click
+            to:
+              insId: cl9n5gsim000y4666mlmovgh1
+              pinId: __trigger
+          - from:
+              pinId: value
+              insId: __this
+            to:
+              insId: cl9n5hluc00054666sk1dk39h
+              pinId: value
+          - from:
+              insId: cl9n4cmtg000c46660tbva923
+              pinId: click
+            to:
+              insId: cl9n5hluc00054666sk1dk39h
+              pinId: __trigger
+          - from:
+              insId: cl9n5hluc00054666sk1dk39h
+              pinId: r
+            to:
+              pinId: newValue
+              insId: __this
+          - from:
+              insId: cl9n5gsim000y4666mlmovgh1
+              pinId: r
+            to:
+              pinId: newValue
+              insId: __this
+          - from:
+              insId: Span-59
+              pinId: jsx
+            to:
+              insId: List From 3-643
+              pinId: value2
+          - from:
+              insId: Button-687
+              pinId: jsx
+            to:
+              insId: List From 3-643
+              pinId: value3
+          - from:
+              insId: cl9n4cmtg000c46660tbva923
+              pinId: jsx
+            to:
+              insId: List From 3-643
+              pinId: value1
+        completionOutputs:
+          - jsx
+        reactiveInputs:
+          - value
+    - pos:
+        x: -29.8336181640625
+        y: 223.77600006103518
+      id: cl9n70wv6001n46666vy9x4ks
+      inputConfig:
+        idx:
+          mode: sticky
+      visibleInputs:
+        - val
+        - idx
+      part:
+        id: Inline-value-[inputs.idx, in
+        inputs:
+          idx:
+            type: any
+            mode: required
+          val:
+            type: any
+            mode: required
+        outputs:
+          r:
+            type: any
+            delayed: false
+            optional: false
+        fnCode: outputs.r.next(([inputs.idx, inputs.val]))
+        customViewCode: "[inputs.idx, inputs.val]"
+        dataBuilderSource: W2lucHV0cy5pZHgsIGlucHV0cy52YWxd
+        templateType: value
+        completionOutputs:
+          - r
+        defaultStyle:
+          size: small
+          icon: code
+          cssOverride:
+            fontFamily: monospace
+            fontWeight: "300"
+    - pos:
+        x: -188.12181884765624
+        y: 396.5864727783203
+      id: cl9n77e3g00124666kcquy0k0
+      inputConfig:
+        key:
+          mode: queue
+      visibleInputs:
+        - children
+        - k
+        - key
+      partId: Div
+    - pos:
+        x: 33.72
+        y: 805.23
+      id: Inline-value-Result is ${in-pd03cnj
+      inputConfig: {}
+      part:
+        id: Inline-value-Result is ${in
+        inputs:
+          a:
+            mode: required
+          b:
+            mode: required
+        outputs:
+          value:
+            delayed: false
+        fnCode: const result = (`Result is ${inputs.a + inputs.b}`);
+          Promise.resolve(result).then(val => outputs.value.next(val))
+        customViewCode: "`Result is ${inputs.a + inputs.b}`"
+        dataBuilderSource: YFJlc3VsdCBpcyAke2lucHV0cy5hICsgaW5wdXRzLmJ9YA==
+        templateType: value
+        completionOutputs:
+          - value
+        defaultStyle:
+          size: regular
+          icon: code
+          cssOverride:
+            fontFamily: monospace
+            fontWeight: "500"
+        description: Custom inline value
   connections:
     - from:
-        insId: value-464
-        pinId: r
-      to:
-        insId: Publish-806
-        pinId: value
-    - from:
-        insId: Subscribe-922
-        pinId: val
-      to:
-        insId: SpreadList-386
-        pinId: list
-    - from:
-        insId: SpreadList-386
-        pinId: length
-      to:
-        insId: Accumulate-699
-        pinId: count
-    - from:
-        insId: IndexedCounter-ins
-        pinId: jsx
-      to:
-        insId: Accumulate-699
-        pinId: val
-    - from:
-        insId: SpreadList-386
-        pinId: val
-      to:
-        insId: IndexedCounter-ins
-        pinId: value
-    - from:
-        insId: SpreadList-386
-        pinId: idx
-      to:
-        insId: IndexedCounter-ins
-        pinId: index
-    - from:
-        insId: Subscribe-922
-        pinId: val
-      to:
-        insId: cl9n7di8k000e4666bwkr6hmc
-        pinId: values
-    - from:
-        insId: IndexedCounter-ins
-        pinId: indexedValue
-      to:
-        insId: cl9n7di8k000e4666bwkr6hmc
-        pinId: tup
-    - from:
         insId: cl9n7di8k000e4666bwkr6hmc
         pinId: r
       to:
         insId: Publish-806
         pinId: value
     - from:
-        insId: Accumulate-699
-        pinId: r
-      to:
-        insId: ListFrom2-841
-        pinId: item1
-    - from:
-        insId: Button-524
-        pinId: jsx
-      to:
-        insId: ListFrom2-841
-        pinId: item2
-    - from:
-        insId: ListFrom2-841
+        insId: List From 2-841
         pinId: list
       to:
         insId: __this
         pinId: jsx
-    - from:
-        insId: Subscribe-922
-        pinId: val
-      to:
-        insId: cl9n7hd4i001946665d10kzk4
-        pinId: vals
-      hidden: true
     - from:
         insId: Button-524
         pinId: click
@@ -611,6 +469,61 @@ part:
       to:
         insId: Publish-806
         pinId: value
+    - from:
+        insId: Subscribe-922
+        pinId: value
+      to:
+        insId: Loop List-386
+        pinId: list
+    - from:
+        insId: Button-524
+        pinId: jsx
+      to:
+        insId: List From 2-841
+        pinId: value2
+    - from:
+        insId: Subscribe-922
+        pinId: value
+      to:
+        insId: cl9n7di8k000e4666bwkr6hmc
+        pinId: values
+    - from:
+        insId: Subscribe-922
+        pinId: value
+      to:
+        insId: cl9n7hd4i001946665d10kzk4
+        pinId: vals
+      hidden: true
+    - from:
+        insId: List Length-285
+        pinId: length
+      to:
+        insId: Accumulate Values by Count-183
+        pinId: count
+    - from:
+        insId: Accumulate Values by Count-183
+        pinId: accumulated
+      to:
+        insId: List From 2-841
+        pinId: value1
+    - from:
+        insId: Subscribe-922
+        pinId: value
+      to:
+        insId: List Length-285
+        pinId: list
+    - from:
+        insId: cl9n6lx0g00104666prpw63w3
+        pinId: newValue
+      to:
+        insId: cl9n70wv6001n46666vy9x4ks
+        pinId: val
+    - from:
+        insId: cl9n6lx0g00104666prpw63w3
+        pinId: jsx
+      to:
+        insId: cl9n77e3g00124666kcquy0k0
+        pinId: children
   id: CountersList
   inputs: {}
   outputs:

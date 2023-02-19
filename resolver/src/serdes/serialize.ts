@@ -1,9 +1,9 @@
-import { FlydeFlow, flydeFlowSchema } from '@flyde/core';
-import * as yaml from 'yaml';
+import { FlydeFlow, flydeFlowSchema } from "@flyde/core";
+import * as yaml from "yaml";
+import { cleanUnusedImports } from "./cleanUnusedImports";
 
 export const serializeFlow = (flow: FlydeFlow) => {
+  let parsed = flydeFlowSchema.parse(cleanUnusedImports(flow));
 
-  let parsed = flydeFlowSchema.parse(flow);
-  
-  return yaml.stringify(parsed, {aliasDuplicateObjects: false});
-}
+  return yaml.stringify(parsed, { aliasDuplicateObjects: false });
+};

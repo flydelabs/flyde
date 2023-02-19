@@ -1,49 +1,61 @@
-import React from 'react';
-import clsx from 'clsx';
-import styles from './styles.module.css';
+import React from "react";
+import clsx from "clsx";
+import styles from "./styles.module.css";
 
 type FeatureItem = {
   title: string;
-  Svg: React.ComponentType<React.ComponentProps<'svg'>>;
+  Svg: React.ComponentType<React.ComponentProps<"svg">>;
   description: JSX.Element;
 };
 
 const FeatureList: FeatureItem[] = [
   {
-    title: 'Fully Integrable',
-    Svg: require('@site/static/img/undraw_vcs.svg').default,
+    Svg: require("@site/static/img/undraw_vcs.svg").default,
+    title: "Fully Integrable",
     description: (
       <>
-        Flyde fully integrates into your <mark>existing codebase, version control system and CI/CD</mark> pipeline.
-        Enjoy the benefits of visual programming without sacrificing modern engineering practices. Flyde flows are saved as files in your project's folder just like any other file. Using the runtime library, it integrates with your code. Write code-based components, write inline code snippets when necessary and even pass extra runtime context to your visual flow to achieve almost anything imaginable.
+        Flyde is a runtime library that integrates seamlessly with your existing
+        code and workflows. It's easy to manage and version control your flows
+        alongside your other code, making it simple to integrate Flyde into any
+        project.{" "}
+          With Flyde, you can leverage its powerful features and benefits
+          without sacrificing <mark>your existing CI/CD, testing, and version control</mark> 
+         {" "}systems
       </>
     ),
   },
   {
-    title: 'Easy and Fun To Use and Learn',
-    Svg: require('@site/static/img/undraw_collab.svg').default,
+    Svg: require("@site/static/img/undraw_powerful.svg").default,
+    title: "Build Complex Programs Faster and Easier",
     description: (
       <>
-        For new programmers, Flyde provides another layer of abstraction that makes it <mark>much easier</mark> to build async and parallel flows without worrying about complex syntax.
-        For experienced programmers, Flyde can help build high-level async heavy flows <mark>much faster</mark> then using only textual-coding.
+        Flyde's visual, flow-based approach and modular design make it easy for
+        developers of all skill levels to build complex programs <mark>quickly and
+        efficiently.</mark>{" "}
+          Whether you're a novice developer looking to learn more, or an
+          experienced developer looking for a powerful tool to streamline your
+          workflow
+        , Flyde can help you get more done, faster.
       </>
     ),
   },
   {
-    title: 'Visual Feedback and Debugging',
-    Svg: require('@site/static/img/undraw_visionary_tech.svg').default,
+    title: "Visual Feedback and Debugging",
+    Svg: require("@site/static/img/undraw_visionary_tech.svg").default,
     description: (
       <>
-        Flyde not only allows you to build flows visually, but also provides live visual feedback of the program running.
-        Components light up as data pass through them. Runtime values can be inspected live. <mark>No more tedious console logging!</mark>
+        Flyde's visual approach and <mark>real-time visual feedback</mark> make
+        it easy to understand and debug programs. This can be especially helpful
+        for novice developers, but can also be a valuable tool for experienced
+        developers looking to optimize their workflow.
       </>
     ),
   },
 ];
 
-function Feature({title, Svg, description}: FeatureItem) {
+function Feature({ title, Svg, description }: FeatureItem) {
   return (
-    <div className={clsx('col col--4')}>
+    <div className={clsx("col col--4")}>
       <div className="text--center">
         <Svg className={styles.featureSvg} role="img" />
       </div>
