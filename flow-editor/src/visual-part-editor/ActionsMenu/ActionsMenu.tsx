@@ -108,7 +108,7 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
     (type: ActionType, e: MouseEvent | KeyboardEvent) => {
 		
 	  if (e.type === 'click' && actionsMetaData[type].hotkey) {
-		toastMsg(<>Did you know? you can also use the hotkey <kbd className='hotkey'>{actionsMetaData[type].hotkey}</kbd> to {actionsMetaData[type].text.replace(/^[A-Z]/, (c) => c.toLowerCase())}</>, 'info');
+		toastMsg(<>Did you know? you can also use the hotkey <kbd className='hotkey'>{actionsMetaData[type].hotkey}</kbd> to {actionsMetaData[type].text.replace(/^[A-Z]/, (c) => c.toLowerCase())}</>, 'info', 4000);
 	  }
 		
 

@@ -4,6 +4,9 @@ imports:
     - Get Attribute
     - POST Request
   HistoryLog.flyde.ts: []
+  Log.flyde.ts: []
+  LogService.flyde.ts:
+    - Log Service
 part:
   instances:
     - pos:
@@ -52,8 +55,8 @@ part:
           value: country
       partId: Get Attribute
     - pos:
-        x: -605.5273751469623
-        y: -646.5980956937344
+        x: -613.7169503422748
+        y: -714.9907348538907
       id: Send to Discord-ins
       inputConfig: {}
       part:
@@ -134,6 +137,12 @@ part:
         size: large
         icon: fa-brands fa-discord
         color: "#9b5de5"
+    - pos:
+        x: -320.0510887234868
+        y: -719.9468875395694
+      id: clebvggud00014566t4ddj3cr
+      inputConfig: {}
+      partId: Log Service
   connections:
     - from:
         insId: clebg7bwv00044566r0h1hc4f
@@ -153,6 +162,12 @@ part:
       to:
         insId: Send to Discord-ins
         pinId: content
+    - from:
+        insId: Inline-value-New user from -tt246wl
+        pinId: value
+      to:
+        insId: clebvggud00014566t4ddj3cr
+        pinId: data
   id: DadJoke
   inputs: {}
   outputs: {}

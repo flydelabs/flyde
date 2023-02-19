@@ -293,7 +293,7 @@ export const AddPartMenu: React.FC<AddPartMenuProps> = (props) => {
       <main className={classNames(Classes.DIALOG_BODY)}>
         <header>
           <div className="bp3-input-group">
-            <span className="bp3-icon bp3-icon-search"></span>
+            <Icon icon='search'/>
             <input
               className="bp3-input"
               type="search"

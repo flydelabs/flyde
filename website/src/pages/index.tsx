@@ -107,7 +107,7 @@ export default function Home(): JSX.Element {
       <HomepageHeader />
       <div className='video-container'>
           <YouTube
-            url="https://www.youtube.com/watch?v=aKWXXjLwWrA"
+            url="https://www.youtube.com/watch?v=rFS7tm3_ptU"
             width='320px'
             height='195px'
             light={true}
