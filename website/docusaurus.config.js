@@ -89,7 +89,7 @@ const config = {
       out: 'api-reference',
       watch: process.env.TYPEDOC_WATCH,
       sidebar: {
-          position: 10,
+          position: 20,
           categoryLabel: 'API Reference',
           fullNames: true
       }

@@ -52,7 +52,7 @@ video {
   object-fit: cover;
   position: absolute;
   height: 100%;
-  filter: blur(2px);
+  filter: blur(1px);
   opacity: 0.1;
   display: flex;
 }

@@ -1,3 +1,7 @@
+---
+sidebar_position: 2
+---
+
 # Flyde Quick Start Guide
 Welcome to Flyde! This quick start guide will help you get up and running with Flyde in no time.
 

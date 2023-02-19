@@ -3,8 +3,7 @@ imports:
     - GET Request
     - Get Attribute
     - POST Request
-  HistoryLog.flyde.ts:
-    - History Log
+  HistoryLog.flyde.ts: []
 part:
   instances:
     - pos:
@@ -135,12 +134,6 @@ part:
         size: large
         icon: fa-brands fa-discord
         color: "#9b5de5"
-    - pos:
-        x: -266.43712697629894
-        y: -736.454940564212
-      id: clebi3fwk00014566awo5au4t
-      inputConfig: {}
-      partId: History Log
   connections:
     - from:
         insId: clebg7bwv00044566r0h1hc4f
@@ -160,12 +153,6 @@ part:
       to:
         insId: Send to Discord-ins
         pinId: content
-    - from:
-        insId: Inline-value-New user from -tt246wl
-        pinId: value
-      to:
-        insId: clebi3fwk00014566awo5au4t
-        pinId: data
   id: DadJoke
   inputs: {}
   outputs: {}

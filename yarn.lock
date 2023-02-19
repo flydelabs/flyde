@@ -13682,6 +13682,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"deepmerge@npm:^4.0.0":
+  version: 4.3.0
+  resolution: "deepmerge@npm:4.3.0"
+  checksum: c7980eb5c5be040b371f1df0d566473875cfabed9f672ccc177b81ba8eee5686ce2478de2f1d0076391621cbe729e5eacda397179a59ef0f68901849647db126
+  languageName: node
+  linkType: hard
+
 "deepmerge@npm:^4.2.2":
   version: 4.2.2
   resolution: "deepmerge@npm:4.2.2"
@@ -19690,6 +19697,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"load-script@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "load-script@npm:1.0.0"
+  checksum: 8458e3f07b4a86f8d9d66e47a987811491a5d013af23ba7b371c6d3c9dc899885b072ccf65abf7874c10cb197d4975eacd8a7a125bfb38dbbcb267539f5dc1e9
+  languageName: node
+  linkType: hard
+
 "loader-runner@npm:^4.2.0":
   version: 4.3.0
   resolution: "loader-runner@npm:4.3.0"
@@ -20218,6 +20232,13 @@ __metadata:
   dependencies:
     fs-monkey: ^1.0.3
   checksum: fab88266dc576dc4999e38bdf531d703fb798affac2e0dd3fc17470878486844027b2766008ba80c0103b443f52cf9068a5c00f4e1ecf04106f4b29c11855822
+  languageName: node
+  linkType: hard
+
+"memoize-one@npm:^5.1.1":
+  version: 5.2.1
+  resolution: "memoize-one@npm:5.2.1"
+  checksum: a3cba7b824ebcf24cdfcd234aa7f86f3ad6394b8d9be4c96ff756dafb8b51c7f71320785fbc2304f1af48a0467cbbd2a409efc9333025700ed523f254cb52e3d
   languageName: node
   linkType: hard
 
@@ -24202,6 +24223,21 @@ __metadata:
     prop-types: ">=15.6.0"
     react: ">=15"
   checksum: 0530e1c077f485305cf1c71eab65b78d04f4612394eddc012f0cbfcd09858086a99b665fe1c4c69a920b961e2584b6ac7c3d4649c7dd7de80f2b3c80cfd8c5b9
+  languageName: node
+  linkType: hard
+
+"react-player@npm:^2.11.2":
+  version: 2.11.2
+  resolution: "react-player@npm:2.11.2"
+  dependencies:
+    deepmerge: ^4.0.0
+    load-script: ^1.0.0
+    memoize-one: ^5.1.1
+    prop-types: ^15.7.2
+    react-fast-compare: ^3.0.1
+  peerDependencies:
+    react: ">=16.6.0"
+  checksum: 003bfcfb00692f3b5e8dd831411a26a66474b7cb8003284ea835c50f7e9ca831895f8557c9ceafdb29ab9915a3ce0f5ba655c8c88fbff6acae3d4554de9986ee
   languageName: node
   linkType: hard
 
@@ -29115,6 +29151,7 @@ __metadata:
     pubsub-js: ^1.9.4
     react: ^17.0.2
     react-dom: ^17.0.2
+    react-player: ^2.11.2
     react-resizable: ^3.0.4
     react-typical: ^0.1.3
     sass: ^1.54.0

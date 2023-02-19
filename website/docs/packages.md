@@ -1,3 +1,7 @@
+---
+sidebar_position: 7
+---
+
 # Installing and Publishing Flyde Packages
 
 ## Installing Flyde packages

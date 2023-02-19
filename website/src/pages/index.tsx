@@ -6,6 +6,8 @@ import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import Layout from "@theme/Layout";
 import HomepageFeatures from "@site/src/components/HomepageFeatures";
 import styles from "./index.module.css";
+import YouTube from 'react-player/youtube'
+
 
 import "../css/global.scss";
 
@@ -89,6 +91,7 @@ function HomepageHeader() {
             />
           </span>
         </div>
+        
       </div>
     </header>
   );
@@ -102,7 +105,21 @@ export default function Home(): JSX.Element {
       description="Flyde is a modern visual programming tool that fully integrates with your codebase"
     >
       <HomepageHeader />
-      <main>
+      <div className='video-container'>
+          <YouTube
+            url="https://www.youtube.com/watch?v=aKWXXjLwWrA"
+            width='320px'
+            height='195px'
+            light={true}
+            controls={true}
+            config= {
+              {
+                playerVars: { autoplay: 1 }
+              }
+            }
+          />
+          </div>
+      <main className="home-page-main-content">
         <HomepageFeatures />
       </main>
     </Layout>
