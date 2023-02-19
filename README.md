@@ -11,7 +11,7 @@ Checkout the official website at [flyde.dev](https://www.flyde.dev) or the [exam
 
 ---
 
-![A dad joke CLI tool built with Flyde](/dad-jokes-cli-preview.gif)
+![A dad joke CLI tool built with Flyde](https://raw.githubusercontent.com/FlydeHQ/flyde/main/examples/dad-jokes-cli/preview.gif)
 
 ## License
 
