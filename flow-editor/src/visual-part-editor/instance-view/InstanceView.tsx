@@ -183,6 +183,9 @@ export interface InstanceViewProps {
 
   onChangeStyle: (instance: PartInstance, style: PartStyle) => void;
   onGroupSelected: () => void;
+
+  onPinMouseDown: (ins: PartInstance, pinId: string, type: PinType) => void;
+  onPinMouseUp: (ins: PartInstance, pinId: string, type: PinType) => void;
 }
 
 export const InstanceView: React.FC<InstanceViewProps> =
@@ -224,6 +227,8 @@ export const InstanceView: React.FC<InstanceViewProps> =
       onChangeStyle,
       onDeleteInstance,
       onSetDisplayName,
+      onPinMouseUp,
+      onPinMouseDown
     } = props;
 
     const { id } = instance;
@@ -487,6 +492,22 @@ export const InstanceView: React.FC<InstanceViewProps> =
       [instance, onConvertConstToEnv]
     );
 
+    const _onPinMouseUp = React.useCallback(
+      (pinId: string, pinType: PinType) => {
+        if (onPinMouseUp) {
+          onPinMouseUp(instance, pinId, pinType);
+        }
+      },
+      [instance, onPinMouseUp])
+    
+    const _onPinMouseDown = React.useCallback(
+      (pinId: string, pinType: PinType) => {
+        if (onPinMouseDown) {
+          onPinMouseDown(instance, pinId, pinType);
+        }
+      },
+      [instance, onPinMouseDown])
+
     const renderInputs = () => {
       return (
         <div className="inputs no-drag">
@@ -525,6 +546,8 @@ export const InstanceView: React.FC<InstanceViewProps> =
               }
               description={v.description}
               queuedValues={props.queuedInputsData[k] ?? 0}
+              onMouseUp={_onPinMouseUp}
+              onMouseDown={_onPinMouseDown}
             />
           ))}
         </div>
@@ -539,7 +562,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
               insId={instance.id}
               parentInsId={props.parentInsId}
               connected={connectedOutputs.has(k)}
-              key={k}
+            key={k}
               type="output"
               id={k}
               minimized={selected ? false : outputsToRender.length === 1}
@@ -556,6 +579,8 @@ export const InstanceView: React.FC<InstanceViewProps> =
               onInspect={props.onInspectPin}
               onRequestHistory={_onRequestHistory}
               description={v.description}
+              onMouseUp={_onPinMouseUp}
+              onMouseDown={_onPinMouseDown}
             />
           ))}
         </div>

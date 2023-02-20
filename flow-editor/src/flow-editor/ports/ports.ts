@@ -40,7 +40,7 @@ const throwsNotImplemented: any = async () => {
 export const defaultPorts: EditorPorts = {
   prompt: async ({ text, defaultValue }) => prompt(`${text}`, defaultValue),
   openFile: async (path) => {
-    toastMsg(`Open ${path}`);
+    // toastMsg(`Open ${path}`);
   },
   confirm: async ({ text }) => confirm(text),
   readFlow: throwsNotImplemented,

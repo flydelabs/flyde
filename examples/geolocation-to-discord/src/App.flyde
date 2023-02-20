@@ -19,8 +19,8 @@ part:
           value: https://api.country.is
       partId: GET Request
     - pos:
-        x: -691.1979223632812
-        y: -851.6750952148437
+        x: -719.726181640625
+        y: -803.7675024414062
       id: Inline-value-New user from -tt246wl
       inputConfig: {}
       part:
@@ -55,8 +55,8 @@ part:
           value: country
       partId: Get Attribute
     - pos:
-        x: -613.7169503422748
-        y: -714.9907348538907
+        x: -648.8890694828998
+        y: -553.3733032132657
       id: Send to Discord-ins
       inputConfig: {}
       part:
@@ -138,8 +138,8 @@ part:
         icon: fa-brands fa-discord
         color: "#9b5de5"
     - pos:
-        x: -320.0510887234868
-        y: -719.9468875395694
+        x: -350.8659080594243
+        y: -645.2228885161319
       id: clebvggud00014566t4ddj3cr
       inputConfig: {}
       partId: Log Service

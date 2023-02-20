@@ -12,7 +12,7 @@ import { calcHistoryContent, useHistoryHelpers } from "../pin-view/helpers";
 import { getInputName } from "@flyde/core";
 import CustomReactTooltip from "../../lib/tooltip";
 
-interface PartIoViewProps {
+export interface PartIoViewProps {
   id: string;
   type: PinType;
   pos: Pos;
@@ -30,6 +30,9 @@ interface PartIoViewProps {
   onDragEnd: (type: PinType, pin: string, ...data: any[]) => void;
   onDragStart: (pin: string, ...data: any[]) => void;
   onDragMove: (type: PinType, pin: string, ...data: any[]) => void;
+
+  onMouseUp: (id: string, type: PinType, e: React.MouseEvent) => void;
+  onMouseDown: (id: string, type: PinType, e: React.MouseEvent) => void;
 
   onSelect: (id: string, type: PinType) => void;
   selected: boolean;
@@ -64,6 +67,8 @@ export const PartIoView: React.SFC<PartIoViewProps> = React.memo(
       onSetDescription,
       description,
       onRequestHistory,
+      onMouseUp,
+      onMouseDown
     } = props;
 
     const { history, resetHistory, refreshHistory } = useHistoryHelpers(
@@ -203,6 +208,18 @@ export const PartIoView: React.SFC<PartIoViewProps> = React.memo(
     `;
     };
 
+    const _onMouseUp = React.useCallback(
+      (e: React.MouseEvent) => {
+        onMouseUp(id, type, e);
+      }, [id, onMouseUp, type] 
+    );
+
+    const _onMouseDown = React.useCallback(
+      (e: React.MouseEvent) => {
+        onMouseDown(id, type, e);
+      }, [id, onMouseDown, type]
+    );
+
     return (
       <BasePartView
         className={classNames(`part-io-view`, type)}
@@ -221,6 +238,8 @@ export const PartIoView: React.SFC<PartIoViewProps> = React.memo(
         <div
           onMouseEnter={refreshHistory}
           onMouseOut={resetHistory}
+          onMouseUp={_onMouseUp}
+          onMouseDown={_onMouseDown}
           data-tip=""
           data-html={true}
           data-for={id + props.insId}

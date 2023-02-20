@@ -86,10 +86,9 @@
     }
 
     path {
-      fill: none;
       stroke-width: 1.5;
       stroke-linecap: round;
-      stroke: #6c6c6c;
+      stroke: url(#gradient);
 
       &.future-add {
         stroke: #007dc6a5;
@@ -99,6 +98,17 @@
         stroke: #c60000a5;
       }
       
+    }
+
+    linearGradient#gradient {
+      stop:nth-child(2) {
+        stop-color: #999999;
+      }
+
+      stop:nth-child(1) {
+        stop-color: #6c6c6c;
+      }
+
     }
 
     text.label {

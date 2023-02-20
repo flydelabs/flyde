@@ -48,6 +48,10 @@ export type PinViewProps = {
   onToggleBreakpoint: (insId: string, pinId: string, type: PinType) => void;
   onInspect: (insId: string, pin: {id: string, type: PinType}) => void;
   onRequestHistory: (pinId: string, type: PinType) => Promise<HistoryPayload>;
+
+  onMouseUp: (id: string, type: PinType, e: React.MouseEvent) => void;
+  onMouseDown: (id: string, type: PinType, e: React.MouseEvent) => void;
+
 } & (InputPinViewProps | OutputPinViewProps);
 
 export interface OptionalPinViewProps {
@@ -69,6 +73,8 @@ export const PinView: React.SFC<PinViewProps> = React.memo(function PinView(
     isClosestToMouse,
     id,
     onRequestHistory,
+    onMouseDown,
+    onMouseUp
   } = props;
 
   const { history, resetHistory, refreshHistory } = useHistoryHelpers(
@@ -258,6 +264,19 @@ export const PinView: React.SFC<PinViewProps> = React.memo(function PinView(
     }
   };
 
+  const _onMouseDown = React.useCallback((e: React.MouseEvent) => {
+    if (e.button === 0) {
+      onMouseDown(id, type, e);
+    }
+  }, [id, type, onMouseDown]);
+
+  const _onMouseUp = React.useCallback((e: React.MouseEvent) => {
+    if (e.button === 0) {
+      onMouseUp(id, type, e);
+    }
+  }, [id, type, onMouseUp]);
+
+
   return (
     <div className={calcClassNames()} data-pin-id={id}>
       <CustomReactTooltip
@@ -269,6 +288,8 @@ export const PinView: React.SFC<PinViewProps> = React.memo(function PinView(
       <div
         onMouseEnter={refreshHistory}
         onMouseOut={resetHistory}
+        onMouseDown={_onMouseDown}
+        onMouseUp={_onMouseUp}
         data-tip=""
         data-html={true}
         data-for={id + props.insId}

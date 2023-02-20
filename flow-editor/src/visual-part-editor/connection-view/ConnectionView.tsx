@@ -9,6 +9,7 @@ import {
   isInternalConnectionNode,
   isExternalConnectionNode,
   ConnectionData,
+  ConnectionNode,
 } from "@flyde/core";
 import {
   calcPinPosition,
@@ -17,12 +18,12 @@ import {
 } from "./calc-pin-position";
 import { Size } from "../../utils";
 // ;
-import { calcBezierPath } from "./bezier";
 
 import { useSsr } from "usehooks-ts";
-import { ViewPort } from "../..";
+import { logicalPosToRenderedPos, ViewPort } from "../..";
 import { vDiv } from "../../physics";
 import { ContextMenu, Menu, MenuItem } from "@blueprintjs/core";
+import { ConnectionViewPath } from "./ConnectionViewPath/ConnectionViewPath";
 
 export interface BaseConnectionViewProps {
   repo: PartDefRepo;
@@ -43,6 +44,11 @@ export interface ConnectionViewProps extends BaseConnectionViewProps {
     type: "future-add" | "future-remove";
   };
   selectedInstances: string[];
+  lastMousePos: Pos;
+  draggedSource:
+    | null
+    | { from: ConnectionNode; to: undefined }
+    | { to: ConnectionNode; from: undefined };
   toggleHidden: (connection: ConnectionData) => void;
   removeConnection: (connection: ConnectionData) => void;
 }
@@ -55,13 +61,17 @@ export interface ConnectionItemViewProps extends BaseConnectionViewProps {
   parentSelected: boolean;
 }
 
-const calcStartPos = (props: ConnectionItemViewProps): Pos => {
-  const { connection, boardPos, parentInsId, viewPort } = props;
-  const { from } = connection;
+const calcStartPos = (props: {
+  connectionNode: ConnectionNode;
+  boardPos: Pos;
+  parentInsId: string;
+  viewPort: ViewPort;
+}): Pos => {
+  const { connectionNode, boardPos, parentInsId, viewPort } = props;
 
-  if (isExternalConnectionNode(from)) {
+  if (isExternalConnectionNode(connectionNode)) {
     return calcMainInputPosition(
-      from.pinId,
+      connectionNode.pinId,
       parentInsId,
       "input",
       boardPos,
@@ -70,8 +80,8 @@ const calcStartPos = (props: ConnectionItemViewProps): Pos => {
   } else {
     return calcPinPosition(
       parentInsId,
-      from.insId,
-      from.pinId,
+      connectionNode.insId,
+      connectionNode.pinId,
       "output",
       boardPos,
       viewPort
@@ -79,13 +89,16 @@ const calcStartPos = (props: ConnectionItemViewProps): Pos => {
   }
 };
 
-const calcTargetPos = (props: ConnectionItemViewProps): Pos => {
-  const { connection, boardPos, parentInsId, viewPort } = props;
-  const { to } = connection;
+const calcTargetPos = (
+  props: Omit<ConnectionItemViewProps, "connection"> & {
+    connectionNode: ConnectionNode;
+  }
+): Pos => {
+  const { connectionNode, boardPos, parentInsId, viewPort } = props;
 
-  if (isExternalConnectionNode(to)) {
+  if (isExternalConnectionNode(connectionNode)) {
     return calcMainOutputPosition(
-      to.pinId,
+      connectionNode.pinId,
       parentInsId,
       "output",
       boardPos,
@@ -94,8 +107,8 @@ const calcTargetPos = (props: ConnectionItemViewProps): Pos => {
   } else {
     return calcPinPosition(
       parentInsId,
-      to.insId,
-      to.pinId,
+      connectionNode.insId,
+      connectionNode.pinId,
       "input",
       boardPos,
       viewPort
@@ -139,31 +152,20 @@ export const SingleConnectionView: React.FC<ConnectionItemViewProps> = (
   const sourcePin = fromPart.outputs[from.pinId];
   const delayed = sourcePin && sourcePin.delayed;
 
-  const startPos = isBrowser ? calcStartPos(props) : { x: 0, y: 0 };
-  const endPos = isBrowser ? calcTargetPos(props) : { x: 0, y: 0 };
+  const startPos = isBrowser
+    ? calcStartPos({ ...props, connectionNode: from })
+    : { x: 0, y: 0 };
+  const endPos = isBrowser
+    ? calcTargetPos({ ...props, connectionNode: connection.to })
+    : { x: 0, y: 0 };
 
   const { x: x1, y: y1 } = vDiv(startPos, props.parentVp.zoom);
   const { x: x2, y: y2 } = vDiv(endPos, props.parentVp.zoom);
 
   const cm = classNames(
-    "connection",
     { delayed, hidden: connection.hidden, "parent-selected": parentSelected },
     type
   );
-
-  const bob = calcBezierPath({
-    sourceX: x1,
-    sourceY: y1,
-    targetX: x2,
-    targetY: y2,
-    curvature: 0.15,
-  });
-
-  const strokeWidth = 2 * viewPort.zoom;
-  const strokeDasharray = type === "regular" ? undefined : 6 * viewPort.zoom;
-
-  const middleX = (x1 + x2) / 2;
-  const middleY = (y1 + y2) / 2;
 
   const showMenu = React.useCallback(
     (e: React.MouseEvent) => {
@@ -187,29 +189,25 @@ export const SingleConnectionView: React.FC<ConnectionItemViewProps> = (
   );
 
   return (
-    <React.Fragment>
-      <path
-        d={bob}
-        className={cm}
-        style={{ strokeWidth, strokeDasharray }}
-        onContextMenu={showMenu}
-      />
-      {type === "future-add" ? (
-        <text className="label" x={middleX} y={middleY} fontSize="12px">
-          Add connection
-        </text>
-      ) : null}
-      {type === "future-remove" ? (
-        <text className="label" x={middleX} y={middleY} fontSize="12">
-          Remove connection
-        </text>
-      ) : null}
-    </React.Fragment>
+    <ConnectionViewPath
+      className={cm}
+      from={{ x: x1, y: y1 }}
+      to={{ x: x2, y: y2 }}
+      dashed={type !== "regular"}
+      zoom={viewPort.zoom}
+      onContextMenu={showMenu}
+    />
   );
 };
 
 export const ConnectionView: React.FC<ConnectionViewProps> = (props) => {
-  const { viewPort, futureConnection, toggleHidden, selectedInstances } = props;
+  const {
+    viewPort,
+    futureConnection,
+    toggleHidden,
+    selectedInstances,
+    draggedSource,
+  } = props;
 
   const [renderTrigger, setRenderTrigger] = React.useState(0);
 
@@ -271,16 +269,33 @@ export const ConnectionView: React.FC<ConnectionViewProps> = (props) => {
         type={futureConnection.type}
         toggleHidden={toggleHidden}
         parentSelected={false}
-        key={'future'}
+        key={"future"}
+      />
+    );
+  }
+
+  if (draggedSource) {
+    const fn = draggedSource.from ? calcStartPos : calcTargetPos;
+    const pos = fn({
+      connectionNode: draggedSource.from ?? draggedSource.to,
+      viewPort,
+      boardPos: props.boardPos,
+      parentInsId: props.parentInsId,
+    });
+
+    connectionPaths.push(
+      <ConnectionViewPath
+        className="dragged"
+        from={pos}
+        to={logicalPosToRenderedPos(props.lastMousePos, viewPort)}
+        zoom={viewPort.zoom}
+        key={"dragged"}
       />
     );
   }
 
   return (
-    <span
-      className={"connections-view"}
-      style={{ opacity: viewPort.zoom }}
-    >
+    <span className={"connections-view"} style={{ opacity: viewPort.zoom }}>
       <svg style={{ width: "100%" }}>{connectionPaths}</svg>
     </span>
   );

@@ -33,14 +33,14 @@ import {
   ResolvedFlydeFlowDefinition,
   connectionNode,
   ImportedPartDef,
-
   PartStyle,
   getPartOutputs,
   Pos,
   getPartInputs,
   createInsId,
+  externalConnectionNode,
 } from "@flyde/core";
-import { InstanceView } from "./instance-view/InstanceView";
+import { InstanceView, InstanceViewProps } from "./instance-view/InstanceView";
 import {
   ConnectionView,
   ConnectionViewProps,
@@ -83,7 +83,7 @@ import {
   MenuDivider,
   Button,
 } from "@blueprintjs/core";
-import { PartIoView } from "./part-io-view";
+import { PartIoView, PartIoViewProps } from "./part-io-view";
 
 import { vAdd, vec, vSub, vZero } from "../physics";
 import {
@@ -316,6 +316,10 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
       const viewPort = boardData.viewPort;
 
       const isBoardInFocus = useRef(true);
+
+      const [draggedConnection, setDraggedConnection] = useState<
+        null | { from: ConnectionNode, to: undefined } | { to: ConnectionNode, from: undefined }
+      >(null);
 
       const setViewPort = React.useCallback(
         (viewPort) => {
@@ -661,7 +665,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
         });
       };
 
-      const onStartDragging = React.useCallback(
+      const onStartDraggingInstance = React.useCallback(
         (ins: PartInstance, event: React.MouseEvent) => {
           // event.preventDefault();
           // event.stopPropagation();
@@ -671,7 +675,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
         [onChange, part]
       );
 
-      const onDragMove = React.useCallback(
+      const onInstanceDragMove = React.useCallback(
         (ins: PartInstance, event: any, pos: Pos) => {
           const { newValue, newSelected } = handleInstanceDrag(
             part,
@@ -689,7 +693,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
         [draggingId, onChange, onChangeBoardData, selected, part]
       );
 
-      const onDragEnd = React.useCallback((_, event) => {
+      const onInstanceDragEnd = React.useCallback((_, event) => {
         event.preventDefault();
         event.stopPropagation();
         setDraggingId(undefined);
@@ -925,6 +929,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
 
       const onMouseUp: React.MouseEventHandler = React.useCallback(
         (e) => {
+          setDraggedConnection(null);
           if (!isEventOnCurrentBoard(e.nativeEvent, part.id)) {
             return;
           }
@@ -1299,9 +1304,9 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
                     !selected.includes(conn.to.insId)
                 );
               });
-              onChangeBoardData({selected: []})
+              onChangeBoardData({ selected: [] });
               onChange(newValue, functionalChange("remove-instances"));
-              
+
               toastMsg(`Removed ${selected.length} instances(s)`);
               break;
             }
@@ -1339,15 +1344,11 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
               break;
             }
             case ActionType.AddPart: {
-
-
-              void (async function(){ 
-
+              void (async function () {
                 const pos = getMiddleOfViewPort(viewPort, vpSize);
                 await onImportPart(action.data.importablePart, {
                   selectAfterAdding: true,
-                  pos: vSub(pos, {x: 0, y: 50 * viewPort.zoom}) // to account for part
-                  
+                  pos: vSub(pos, { x: 0, y: 50 * viewPort.zoom }), // to account for part
                 });
               })();
               break;
@@ -1357,7 +1358,21 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             }
           }
         },
-        [from, onChange, onGroupSelectedInternal, onImportPart, onInspectPin, onUngroup, part, repo, selected, to, viewPort, vpSize]
+        [
+          from,
+          onChange,
+          onChangeBoardData,
+          onGroupSelectedInternal,
+          onImportPart,
+          onInspectPin,
+          onUngroup,
+          part,
+          repo,
+          selected,
+          to,
+          viewPort,
+          vpSize,
+        ]
       );
 
       const renderPartInputs = () => {
@@ -1393,6 +1408,8 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             selected={from?.pinId === k}
             description={v.description}
             onRequestHistory={_onRequestPartIoHistory}
+            onMouseUp={onPartIoMouseUp}
+            onMouseDown={onPartIoMouseDown}
           />
         ));
       };
@@ -1426,6 +1443,8 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             description={v.description}
             selected={to?.pinId === k}
             onRequestHistory={_onRequestPartIoHistory}
+            onMouseUp={onPartIoMouseUp}
+            onMouseDown={onPartIoMouseDown}
           />
         ));
       };
@@ -2026,34 +2045,6 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
         Array<Omit<LayoutDebuggerProps, "viewPort">>
       >([]);
 
-      // const maybeRenderInstancePanel = () => {
-      //   if (selected.length === 1) {
-      //     const instance = part.instances.find((ins) => ins.id === selected[0]);
-      //     if (!instance) {
-      //       throw new Error("Selected instance not found");
-      //     }
-      //     const insPart = getPartDef(instance, repo);
-      //     if (!insPart) {
-      //       throw new Error("Selected instance part not found");
-      //     }
-
-      //     const connections = part.connections.filter(
-      //       (c) => c.from.insId === instance.id || c.to.insId === instance.id
-      //     );
-
-      //     return (
-      //       <InstancePanel
-      //         instance={instance}
-      //         part={insPart}
-      //         connections={connections}
-      //         onChangeInstanceConfig={onChangeInstanceConfig}
-      //       />
-      //     );
-      //   }
-
-      //   return null;
-      // };
-
       const onSaveInlineValuePart = React.useCallback(
         (type: InlineValuePartType, code: string) => {
           const customView = code.trim().substr(0, 100);
@@ -2211,6 +2202,48 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
         [onChange, part]
       );
 
+      const onPinMouseDown = React.useCallback<
+        InstanceViewProps["onPinMouseDown"]
+      >((ins, pinId, pinType) => {
+        
+        if (pinType === 'input') {
+          console.log(ins.id, pinId);
+          setDraggedConnection({to: connectionNode(ins.id, pinId), from: undefined});
+        } else {
+          setDraggedConnection({from: connectionNode(ins.id, pinId), to: undefined});
+        }
+      }, []);
+
+      const onPinMouseUp = React.useCallback<InstanceViewProps["onPinMouseUp"]>(
+        (ins, pinId, pinType) => {
+
+          if (draggedConnection) {
+            if (draggedConnection.from && pinType === 'input') {
+              onConnectionClose(draggedConnection.from, connectionNode(ins.id, pinId));
+            } else if (draggedConnection.to && pinType === 'output') {
+              onConnectionClose(connectionNode(ins.id, pinId), draggedConnection.to);
+            }
+          }
+          setDraggedConnection(null);
+        },
+        [draggedConnection, onConnectionClose]
+      );
+
+      const onPartIoMouseDown = React.useCallback<PartIoViewProps['onMouseDown']> ((id, type) => {
+        // drag to connect disabled in part io pins as they conflict with the drag to move
+        // whole concept of "Part IO" probably needs to be rethought
+      }, []);
+
+      const onPartIoMouseUp = React.useCallback<PartIoViewProps['onMouseUp']> ((id, type) => {
+        if (draggedConnection) {
+          if (draggedConnection.from && type === 'output') {
+            onConnectionClose(draggedConnection.from, externalConnectionNode(id));
+          } else if (draggedConnection.to && type === 'input') {
+            onConnectionClose(externalConnectionNode(id), draggedConnection.to);
+          }
+        }
+      }, [draggedConnection, onConnectionClose]);
+
       try {
         return (
           <div
@@ -2255,6 +2288,8 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
                 selectedInstances={selected}
                 toggleHidden={toggleConnectionHidden}
                 removeConnection={removeConnection}
+                lastMousePos={lastMousePos.current}
+                draggedSource={draggedConnection}
               />
               {renderPartInputs()}
               {instances.map((ins) => (
@@ -2273,10 +2308,10 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
                   parentInsId={thisInsId}
                   onPinClick={onPinClick}
                   onPinDblClick={onPinDblClick}
-                  onDragStart={onStartDragging}
-                  onDragEnd={onDragEnd}
+                  onDragStart={onStartDraggingInstance}
+                  onDragEnd={onInstanceDragEnd}
                   partDefRepo={repo}
-                  onDragMove={onDragMove}
+                  onDragMove={onInstanceDragMove}
                   onDblClick={onDblClickInstance}
                   onSelect={onSelectInstance}
                   onToggleSticky={onToggleSticky}
@@ -2316,7 +2351,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
                   onDeleteInstance={onDeleteInstance}
                   key={ins.id}
                   forceShowMinimized={
-                    from ? "input" : to ? "output" : undefined
+                    from || draggedConnection?.to?.insId  ===  ins.id ? "input" : to || draggedConnection?.from?.insId === ins.id ? "output" : undefined
                   }
                   isConnectedInstanceSelected={selected.some((selInsId) =>
                     connections.some(({ from, to }) => {
@@ -2331,6 +2366,8 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
                   inlineEditorPortalDomNode={inlineEditorPortalRootRef.current}
                   onChangeStyle={onChangeInstanceStyle}
                   onGroupSelected={onGroupSelectedInternal}
+                  onPinMouseDown={onPinMouseDown}
+                  onPinMouseUp={onPinMouseUp}
                 />
               ))}
               {maybeRenderSelectionBox()}
