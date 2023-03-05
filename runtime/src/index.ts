@@ -1,12 +1,9 @@
 import {
   ExecuteParams,
-  FlydeFlow,
-  noop,
   ResolvedFlydeRuntimeFlow,
   simplifiedExecute,
 } from "@flyde/core";
 import { resolveFlow } from "@flyde/resolver";
-import { create } from "domain";
 import EventEmitter = require("events");
 
 import * as findRoot from "find-root";

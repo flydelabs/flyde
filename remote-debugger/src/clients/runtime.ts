@@ -6,15 +6,14 @@ import {
   DebuggerEvent,
 } from "@flyde/core";
 
-import { serializeError } from "serialize-error";
 import { io } from "socket.io-client";
 import {
   RemoteDebuggerCallback,
   RemoteDebuggerCancelFn,
   enumToArray,
   DebuggerServerEventType,
-  toString,
 } from "../common";
+import { normalizeData } from "./normalize-data";
 
 const debug = debugLogger("debugger-runtime-client");
 
@@ -36,6 +35,7 @@ export type RuntimeDebuggerClient = {
 
   destroy: () => void;
   onDisconnect: (cb: () => void) => void;
+  waitForConnection: () => Promise<void>;
 };
 
 export const DEFAULT_DT_SCALE = 1;
@@ -43,13 +43,14 @@ export const DEFAULT_DT_SCALE = 1;
 export const createRuntimeClient = (
   url: string,
   deploymentId: string
-): Promise<RuntimeDebuggerClient> => {
+): RuntimeDebuggerClient => {
   const urlParts = new URL(url);
   const socket = io(urlParts.origin, {
     path: `${
       urlParts.pathname === "/" ? "" : urlParts.pathname
     }/socket.io/runtime`,
-    parser: require('../custom-parser')
+    timeout: 1000,
+    reconnectionAttempts: 3,
   });
 
   socket.emit("join-room-runtime", deploymentId);
@@ -86,12 +87,7 @@ export const createRuntimeClient = (
     emitEvent: (event: DebuggerEvent) => {
       debug(`Emitting event ${event.type} change event of ${event.insId}`);
 
-      if (typeof event.val === 'object') {
-        // hack to avoid toJSON overrides (i.e. in discord bot)
-        event.val = {...event.val};
-      }
-
-
+      event.val = normalizeData(event.val);
       debouncedSendBatchedEvent.addItem({...event, time: Date.now()});
     },
     emitRuntimeReady: () => {
@@ -115,19 +111,21 @@ export const createRuntimeClient = (
       socket.on("disconnect", cb);
       return () => socket.off("disconnect", cb);
     },
+    waitForConnection: (): Promise<void> => new Promise((res, rej) =>{
+      if (socket.connected) {
+        res();
+      } else {
+        socket.on("connect_error", (error: any) => {
+          rej(`Socket connect error: ${error}`);
+        });
+  
+        socket.on("connect", () => {
+          res();
+        });
+      }
+    })
   };
 
-  return new Promise((res, rej) => {
-    if (socket.connected) {
-      res(client);
-    } else {
-      socket.on("connect_error", (error: any) => {
-        rej(`Socket connect error: ${error}`);
-      });
+  return client;
 
-      socket.on("connect", () => {
-        res(client);
-      });
-    }
-  });
 };

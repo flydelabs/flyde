@@ -2,7 +2,7 @@ import { debugLogger, DebuggerEvent, PinType } from "@flyde/core";
 
 import axios from "axios";
 
-import io from "socket.io-client";
+import { io } from "socket.io-client";
 import {
   RemoteDebuggerCallback,
   RemoteDebuggerCancelFn,
@@ -67,7 +67,7 @@ export const createEditorClient = (
     path: `${
       urlParts.pathname === "/" ? "" : urlParts.pathname
     }/socket.io/editor`,
-    parser: require('../custom-parser')
+    timeout: 30000
   });
 
   socket.emit("join-room-editor", deploymentId);

@@ -45,7 +45,6 @@ export const setupRemoteDebuggerServer = (
       origin: (origin, cb) => cb(undefined, origin),
       credentials: true,
     },
-    parser: require('./custom-parser')
   });
 
   let eventsTape: DebuggerEvent[] = [];

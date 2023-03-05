@@ -196,6 +196,8 @@ export type VisualPartEditorProps = {
   parentBoardPos?: Pos;
 
   queuedInputsData?: Record<string, Record<string, number>>;
+
+  initialPadding?: [number, number];
 };
 
 type InlineValueTargetExisting = {
@@ -250,6 +252,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
         resolvedFlow,
         onImportPart,
         queuedInputsData: queueInputsData,
+        initialPadding
       } = props;
 
       const parentViewport = props.parentViewport || defaultViewPort;
@@ -508,14 +511,14 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
 
       useEffect(() => {
         if (!didCenterInitially && vpSize.width) {
-          const vp = fitViewPortToPart(part, repo, vpSize);
+          const vp = fitViewPortToPart(part, repo, vpSize, initialPadding);
           if (!props.thumbnailMode) {
             // hack to make project view work nicely
             setViewPort(vp);
           }
           // hackidy hack
           const timer = setTimeout(() => {
-            const vp = fitViewPortToPart(part, repo, vpSize);
+            const vp = fitViewPortToPart(part, repo, vpSize, initialPadding);
             if (!props.thumbnailMode) {
               // hack to make project view work nicely
               setViewPort(vp);
@@ -526,6 +529,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
         }
       }, [
         part,
+        initialPadding,
         vpSize,
         props.thumbnailMode,
         didCenterInitially,

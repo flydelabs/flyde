@@ -407,6 +407,7 @@ export const calcPartsPositions = (
     return calcPoints(w, h, pos, "input_" + curr);
   });
 
+
   const outputsCenter = okeys(part.outputs).map((curr) => {
     const w = calcIoPartWidth(curr);
     const h = PART_HEIGHT;
@@ -509,12 +510,13 @@ const FIT_VIEWPORT_MAX_ZOOM = 1.2;
 export const fitViewPortToPart = (
   part: VisualPart,
   repo: PartDefRepo,
-  vpSize: Size
+  vpSize: Size,
+  padding: [number, number] = [20, 150]
 ): ViewPort => {
   const { size, center } = getEffectivePartDimensions(part, repo);
 
-  const horPadding = 20;
-  const verPadding = 150;
+  const horPadding = padding[0];
+  const verPadding = padding[1];
 
   const width = size.width + horPadding;
   const height = size.height + verPadding;
@@ -530,7 +532,7 @@ export const fitViewPortToPart = (
   const zoom = clamp(FIT_VIEWPORT_MIN_ZOOM, FIT_VIEWPORT_MAX_ZOOM, idealZoom);
 
   const vpX = center.x - vpSize.width / 2 / zoom;
-  const vpY = center.y - vpSize.height / 2 / zoom;
+  const vpY = center.y - vpSize.height / 2 / zoom + 40; // TODO - find out why "+40" is needed
 
   return {
     zoom,

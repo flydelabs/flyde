@@ -4,12 +4,12 @@
     position: relative;
 
     .container {
-        padding: 2rem 2rem 4rem 2rem;
+        padding: 2rem 2rem 6rem 2rem;
         text-align: center;
         position: relative;
     }
-
-    padding-bottom: 20px; // for video
+    // padding-bottom: 20px; // for video
+    
 }
 
 .mobile-warning {
@@ -18,6 +18,7 @@
 
 .home-page-main-content {
     padding-top: 80px;
+    margin-top: -224px
 }
 
 .video-container {
@@ -97,8 +98,6 @@
     //     padding: 1rem;
     // }
 }
-
-
 
 
 

@@ -1,0 +1,139 @@
+.hero-example {
+
+
+    position: relative;
+    margin: 10px auto;
+    max-width: 800px;
+    top: -120px;
+    z-index: 1;
+
+    .buttons-container {
+        z-index: 1;
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        align-items: center;
+        margin: 20px 0px;
+
+        .gh-stars-wrapper {
+            display: flex;
+          }
+    }
+
+    .terminal-emulator {
+        background: #161616;
+        color: white;
+        // font-family: monospace;
+        flex: 0.5;
+        font-size: .8rem;
+        padding: 3px 8px;
+    }
+
+    .flyde-hero-example-wrapper {
+        flex-direction: row;
+        display: flex;
+        max-width: 100%;
+        border: 1px solid #d9d9d9;
+        border-radius: 5px;
+        overflow: hidden;
+        box-shadow: -1px 1px 12px 3px rgb(125 125 125 / 17%);
+    }
+
+    .flow-wrapper {
+        flex: 1;
+        flex-shrink: 0;
+        max-height: 320px;
+        min-width: 340px;
+
+        .flyde-flow-editor {
+            max-height: 100%;
+        }
+
+        .file-tag {
+            border-right: 1px solid #4f4f4f;
+        }
+    }
+
+    .code-wrapper {
+        flex: 0;
+        flex-shrink: 0;
+        min-width: 340px;
+
+        display: flex;
+        flex-direction: column;
+
+         > span {
+            // code example (has no className)
+            flex: 1;
+            border-radius: 0 !important;
+
+
+            code {
+                background-color: inherit;
+                font-family: inherit;
+                font-size: inherit;
+                padding: inherit;
+                border-radius: 0;
+            }
+
+         }
+    }
+
+
+    .flyde-flow-editor {
+        flex: 1;
+        flex-shrink: 0;
+    }
+
+    .code-example {
+        // display: flex;   
+        flex: 1;
+        font-size: 14px;
+    }
+
+
+
+    .viewport-controls {
+        display: none;
+    }
+
+    .actions-menu {
+        display: none;
+    }
+
+    .file-tag {
+        flex: 0;
+        // css for a file name tag like in vscode
+        background-color: #383838;
+        color: #cccccc;
+        padding: 0 5px;
+        font-size: 12px;
+        // margin-right: 5px;
+        width: 100%;
+        text-align: center;
+        display: block;
+    }
+
+    @media only screen and (max-width: 700px) {
+        margin: 0;
+
+
+        .flyde-hero-example-wrapper { 
+            flex-direction: column ;
+
+            .flow-wrapper, .flyde-flow-editor {
+                max-height: 300px;
+            }
+
+            .code-wrapper {
+                height: 200px;
+            }
+
+            .terminal-emulator {
+                min-height: 100px;
+            }
+        }
+    }
+
+
+}

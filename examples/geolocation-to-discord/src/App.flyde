@@ -10,8 +10,8 @@ imports:
 part:
   instances:
     - pos:
-        x: -722.2921796694441
-        y: -1111.6284500450715
+        x: -761.8734174624128
+        y: -1117.0881668419465
       id: clebg7bwv00044566r0h1hc4f
       inputConfig:
         url:
@@ -46,8 +46,8 @@ part:
             fontWeight: "500"
         description: Custom inline value
     - pos:
-        x: -596.6848217773438
-        y: -958.917099609375
+        x: -636.2660595703126
+        y: -964.37681640625
       id: clebgaweb00074566ku067ivu
       inputConfig:
         attribute:
@@ -138,8 +138,8 @@ part:
         icon: fa-brands fa-discord
         color: "#9b5de5"
     - pos:
-        x: -350.8659080594243
-        y: -645.2228885161319
+        x: -400.7157615750493
+        y: -684.7819095122256
       id: clebvggud00014566t4ddj3cr
       inputConfig: {}
       partId: Log Service

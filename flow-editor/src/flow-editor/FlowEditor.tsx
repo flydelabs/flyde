@@ -85,6 +85,8 @@ export type FlydeFlowEditorProps = {
   ref?: React.Ref<any>;
 
   hideTemplatingTips?: boolean;
+
+  initialPadding?: [number, number];
 };
 
 const maxUndoStackSize = 50;
@@ -402,6 +404,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
               onShowOmnibar={showOmnibar}
               onExtractInlinePart={props.onExtractInlinePart}
               queuedInputsData={queuedInputsData}
+              initialPadding={props.initialPadding}
             />
 
             {omnibarVisible ? (
@@ -419,6 +422,6 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
       }
     };
 
-    return <div className="project-editor">{renderInner()}</div>;
+    return <div className="flyde-flow-editor">{renderInner()}</div>;
   })
 );

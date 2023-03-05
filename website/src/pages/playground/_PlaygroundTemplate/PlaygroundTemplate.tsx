@@ -39,8 +39,8 @@ import {
   ResolvedFlydeRuntimeFlow,
   TRIGGER_PIN_ID,
 } from "@flyde/core";
-import { createHistoryPlayer } from "../_lib/createHistoryPlayer";
-import { createRuntimeClientDebugger } from "../_lib/createRuntimePlayerDebugger";
+import { createHistoryPlayer } from "../../../components/EmbeddedFlyde/createHistoryPlayer";
+import { createRuntimeClientDebugger } from "../../../components/EmbeddedFlyde/createRuntimePlayerDebugger";
 import styles from "../../index.module.css";
 
 import "./PlaygroundTemplate.scss";
@@ -50,6 +50,7 @@ import { Resizable } from "react-resizable";
 import produce from "immer";
 import BrowserOnly from "@docusaurus/BrowserOnly";
 import { EditorDebuggerClient } from "@site/../remote-debugger/dist";
+import { EmbeddedFlyde } from "@site/src/components/EmbeddedFlyde";
 
 (global as any).vm2 = fakeVm;
 
@@ -146,7 +147,6 @@ const runFlow = ({
 export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (
   props
 ) => {
-  const { flow, inputs, output } = props.flowProps;
 
   const [childrenWidth, setChildrenWidth] = useState(props.initWidth || 500);
 
@@ -154,158 +154,22 @@ export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (
 
   const [outputReceived, setOutputReceived] = useState(false);
 
-  const runtimePlayerRef = useRef(
-    createRuntimePlayer("root." + props.flowProps.flow.part.id)
-  );
-
-  const [resolvedFlow, setResolvedFlow] = useState<ResolvedFlydeRuntimeFlow>(
-    props.flowProps.resolvedFlow
-  );
-
-  const [localDebugger, setLocalDebugger] =
-    useState<Pick<EditorDebuggerClient, "onBatchedEvents">>();
-
-  const [debouncedFlow] = useDebounce(resolvedFlow, 500);
-
-  const [mobileWarningDismissed, setMobileWarningDismissed] = useState(false);
-
-  const [editorState, setFlowEditorState] = useState<FlowEditorState>({
-    flow,
-    boardData: {
-      viewPort: {
-        pos: { x: 0, y: 0 },
-        zoom: 1,
-      },
-      lastMousePos: { x: 0, y: 0 },
-      selected: [],
-    },
-  });
-
-  useEffect(() => {
-    setResolvedFlow((f) => ({ ...f, main: editorState.flow.part }));
-  }, [editorState.flow.part]);
-
-  const flowEditorProps: FlydeFlowEditorProps = {
-    state: editorState,
-    resolvedRepoWithDeps: resolvedFlow,
-    onChangeEditorState: setFlowEditorState,
-    onInspectPin: noop,
-    onRequestHistory: historyPlayer.requestHistory,
-    hideTemplatingTips: true,
-    onImportPart: async (importedPart, target) => {
-      const { part } = importedPart;
-    
-      const depPart = Object.values(
-        await import("@flyde/stdlib/dist/all-browser")
-      ).find((p) => isBasePart(p) && p.id === part.id) as Part;
-
-      setResolvedFlow((flow) => {
-        return {
-          ...flow,
-          dependencies: {
-            ...flow.dependencies,
-            [depPart.id]: {
-              ...depPart,
-              source: {
-                path: "@flyde/stdlib/dist/all-browser",
-                export: depPart.id,
-              }, // fake, for playground
-            },
-          },
-        };
-      });
-
-      let newPartIns: PartInstance | undefined = undefined;
-
-      const newFlow = produce(flow, (draft) => {
-        if (target) {
-          const finalPos = vAdd({ x: 0, y: 0 }, target.pos);
-          newPartIns = createNewPartInstance(
-            importedPart.part,
-            0,
-            finalPos,
-            resolvedFlow.dependencies
-          );
-          draft.part.instances.push(newPartIns);
-
-          if (target.connectTo) {
-            const { insId, outputId } = target.connectTo;
-            draft.part.connections.push({
-              from: {
-                insId,
-                pinId: outputId,
-              },
-              to: {
-                insId: newPartIns.id,
-                pinId: TRIGGER_PIN_ID,
-              },
-            });
-          }
-        }
-      });
-
-      // yacky hack to make sure flow is only rerendered when the new part exists
-      await new Promise((resolve) => setTimeout(resolve, 10));
-
-      const newState = produce(editorState, (draft) => {
-        draft.flow = newFlow;
-        if (target?.selectAfterAdding && newPartIns) {
-          draft.boardData.selected = [newPartIns?.id];
-        }
-      });
-
-      setFlowEditorState(newState);
-
-      toastMsg(`Part ${part.id} successfully imported from ${importedPart.module}`);
-      return newPartIns;
-    },
-    onExtractInlinePart: noop as any,
-    onQueryImportables: async () => {
-      const parts = Object.values(
-        await import("@flyde/stdlib/dist/all-browser")
-      ).filter(isBasePart) as BasePart[];
-      return parts.map((b) => ({ part: b, module: "@flyde/stdlib" }));
-    },
-    debuggerClient: localDebugger as EditorDebuggerClient,
-  };
-
-  useEffect(() => {
-    runtimePlayerRef.current.start();
-  }, []);
-
-  useEffect(() => {
-    const { executeResult: clean, localDebugger } = runFlow({
-      flow: resolvedFlow,
-      output,
-      inputs,
-      onError: noop,
-      debugDelay,
-      player: runtimePlayerRef.current,
-    });
-    const sub = props.flowProps.output.subscribe(() => setOutputReceived(true));
-    setLocalDebugger(localDebugger);
-    return () => {
-      clean();
-      sub.unsubscribe();
-    };
-  }, [debugDelay, debouncedFlow]);
-
   const onResizeChildren = useCallback((_, { size }) => {
     setChildrenWidth(size.width);
 
-    setFlowEditorState((state) => {
-      const container = document.querySelector(".flow-container"); // yack
-      const vpSize = container
-        ? container.getBoundingClientRect()
-        : { width: 500, height: 500 };
-      return produce(state, (draft) => {
-        draft.boardData.viewPort = fitViewPortToPart(
-          draft.flow.part as any,
-          resolvedFlow.dependencies,
-          vpSize
-        );
-      });
-    });
+    // setFlowEditorState((state) => {
+    //   const container = document.querySelector(".flow-container"); // yack
+    //   const vpSize = container
+    //     ? container.getBoundingClientRect()
+    //     : { width: 500, height: 500 };
+    //   return produce(state, (draft) => {
+    //     draft.boardData.viewPort = fitViewPortToPart(
+    //       draft.flow.part as any,
+    //       resolvedFlow.dependencies,
+    //       vpSize
+    //     );
+    //   });
+    // });
   }, []);
 
   const debugDelayElem = (
@@ -379,8 +243,20 @@ export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (
             <Fragment>
               <hr />
               <div className="playground-extra">
-                {props.extraInfo || props.meta.extraInfo}
+                {props.extraInfo || props.meta.extraInfo} 
+              <div className='star-hint'>
+                <span>&nbsp; PS: Did you like this example?</span> 
+                Please consider giving a ⭐️ to the project <span className='star-wrapper'>
+              <iframe
+                className="gh-stars-frame"
+                src="https://ghbtns.com/github-btn.html?user=flydehq&amp;repo=flyde&amp;type=star&amp;count=true&amp;size=small"
+                width={100}
+                height={20}
+                title="GitHub Stars"
+              /></span>
+          </div>
               </div>
+
             </Fragment>
           ) : null}
           {props.prefixComponent}
@@ -388,9 +264,7 @@ export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (
         <div className="playground">
           <div className="flow-container">
             {props.hideDelay !== true ? debugDelayElem : null}
-            <BrowserOnly>
-              {() => <FlowEditor {...flowEditorProps} />}
-            </BrowserOnly>
+            <EmbeddedFlyde flowProps={props.flowProps} debugDelay={debugDelay} onOutput={() => setOutputReceived(true)}/>
           </div>
           <Resizable
             height={0}

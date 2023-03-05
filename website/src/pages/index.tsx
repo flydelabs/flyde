@@ -10,6 +10,7 @@ import YouTube from 'react-player/youtube'
 
 
 import "../css/global.scss";
+import { HeroExample } from "./hero-example/HeroExample";
 
 
 const UseCases = () => {
@@ -68,29 +69,7 @@ function HomepageHeader() {
           <br/>
           Build <UseCases/>
         </p>
-        <div className={styles.buttons}>
-          <Link
-            className="button button--secondary button--lg"
-            to="/playground"
-          >
-            Online Playground
-          </Link>
-          <Link
-            className="button button--primary button--lg"
-            to="/docs"
-          >
-            Get Started
-          </Link>
-          <span className={styles["gh-stars-wrapper"]}>
-            <iframe
-              className="gh-stars-frame"
-              src="https://ghbtns.com/github-btn.html?user=flydehq&amp;repo=flyde&amp;type=star&amp;count=true&amp;size=large"
-              width={160}
-              height={30}
-              title="GitHub Stars"
-            />
-          </span>
-        </div>
+        
         
       </div>
     </header>
@@ -105,7 +84,8 @@ export default function Home(): JSX.Element {
       description="Flyde is a modern visual programming tool that fully integrates with your codebase"
     >
       <HomepageHeader />
-      <div className='video-container'>
+      <HeroExample />
+      {/* <div className='video-container'>
           <YouTube
             url="https://www.youtube.com/watch?v=rFS7tm3_ptU"
             width='320px'
@@ -118,7 +98,7 @@ export default function Home(): JSX.Element {
               }
             }
           />
-          </div>
+          </div> */}
       <main className="home-page-main-content">
         <HomepageFeatures />
       </main>

@@ -52,7 +52,9 @@ export const inlineValuePartToPart = (
           isDefined,
           compileStringTemplate,
           compileObjectTemplate,
-          __FLYDE_MODE: process.env.NODE_ENV,
+          process: {
+            env: process.env
+          },
           ...extraContext,
         },
       });

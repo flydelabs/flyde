@@ -5,11 +5,9 @@
   "license": "MIT",
   "main": "dist/cli.ts",
   "packageManager": "yarn@3.2.0",
-  "bin": {
-    "dad-joke": "dist/cli.js"
-  },
   "scripts": {
     "start": "ts-node-dev src/index.ts --watch **/*.flyde",
+    "once": "ts-node src/index.ts",
     "build": "tsc -p .",
     "postinstall": "npm link @flyde/stdlib @flyde/runtime npm link @flyde/core @flyde/resolver"
   },

@@ -5,15 +5,14 @@ imports:
     - Subscribe
     - Loop List
     - List From 2
+    - List Length
+    - Accumulate Values by Count
   Button.flyde.js:
     - Button
   Span.flyde.js:
     - Span
   Div.flyde.js:
     - Div
-  "@flyde/runtime":
-    - Accumulate Values by Count
-    - List Length
 part:
   instances:
     - pos:

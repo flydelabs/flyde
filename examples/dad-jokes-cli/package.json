@@ -13,14 +13,15 @@
     "start": "ts-node-dev src/cli.ts --watch **/*.flyde",
     "joke": "ts-node src/cli.ts",
     "build": "tsc -p .",
-    "postinstall": "npm link @flyde/stdlib @flyde/runtime npm link @flyde/core @flyde/resolver"
+    "postinstall": "npm link @flyde/stdlib @flyde/runtime @flyde/core @flyde/resolver @flyde/remote-debugger"
   },
   "dependencies": {
     "@flyde/resolver": "latest",
     "@flyde/runtime": "latest",
     "@flyde/stdlib": "latest",
     "axios": "^1.1.3",
-    "chalk": "^4.0.0"
+    "chalk": "^4.0.0",
+    "wtfnode": "^0.9.1"
   },
   "devDependencies": {
     "ts-node": "^10.9.1",

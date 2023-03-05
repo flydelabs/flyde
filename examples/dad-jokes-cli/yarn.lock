@@ -9,7 +9,7 @@
 
 "@flyde/core@file:../../core":
   "resolved" "file:../../core"
-  "version" "0.1.12"
+  "version" "0.1.13"
   dependencies:
     "debug" "^4.3.2"
     "dependency-graph" "^0.8.0"
@@ -18,11 +18,28 @@
     "vm2" "^3.9.2"
     "zod" "^3.17.10"
 
+"@flyde/remote-debugger@file:../../../../.nvm/versions/node/v16.15.1/lib/node_modules/@flyde/remote-debugger":
+  "resolved" "file:../../../../.nvm/versions/node/v16.15.1/lib/node_modules/@flyde/remote-debugger"
+  "version" "0.2.1"
+  dependencies:
+    "@babel/runtime" "^7.8.4"
+    "@flyde/core" "^0.1.2"
+    "@socket.io/admin-ui" "^0.2.0"
+    "@types/express" "^4.16.1"
+    "@types/node" "^11.10.5"
+    "concurrently" "^4.1.0"
+    "express" "^4.16.4"
+    "serialize-error" "^8.1.0"
+    "socket.io" "^4.0.0"
+    "socket.io-client" "^4.0.0"
+    "ts-node-dev" "^1.0.0-pre.32"
+    "typescript" "^4.0.0"
+
 "@flyde/resolver@file:../../resolver":
   "resolved" "file:../../resolver"
-  "version" "0.3.12"
+  "version" "0.3.13"
   dependencies:
-    "@flyde/core" "^0.1.12"
+    "@flyde/core" "^0.1.13"
     "@types/cuid" "^1.3.0"
     "@types/node" "^11.10.5"
     "axios" "^0.21.1"
@@ -40,12 +57,12 @@
 
 "@flyde/runtime@file:../../runtime":
   "resolved" "file:../../runtime"
-  "version" "0.4.7"
+  "version" "0.4.8"
   dependencies:
-    "@flyde/core" "^0.1.12"
-    "@flyde/remote-debugger" "^0.2.11"
-    "@flyde/resolver" "^0.3.12"
-    "@flyde/stdlib" "^0.1.12"
+    "@flyde/core" "^0.1.13"
+    "@flyde/remote-debugger" "^0.2.12"
+    "@flyde/resolver" "^0.3.13"
+    "@flyde/stdlib" "^0.1.13"
     "@types/cuid" "^1.3.0"
     "@types/node" "^11.10.5"
     "axios" "^0.21.1"
@@ -63,9 +80,9 @@
 
 "@flyde/stdlib@file:../../stdlib":
   "resolved" "file:../../stdlib"
-  "version" "0.1.12"
+  "version" "0.1.13"
   dependencies:
-    "@flyde/core" "^0.1.12"
+    "@flyde/core" "^0.1.13"
     "@types/pg" "^8.6.6"
     "axios" "^0.27.2"
     "mongodb" "^4.13.0"
@@ -285,10 +302,6 @@
 "is-number@^7.0.0":
   "version" "7.0.0"
 
-"link@file:../../../../.nvm/versions/node/v16.15.1/lib/node_modules/link":
-  "resolved" "file:../../../../.nvm/versions/node/v16.15.1/lib/node_modules/link"
-  "version" "1.5.1"
-
 "make-error@^1.1.1":
   "version" "1.3.6"
 
@@ -315,81 +328,6 @@
 
 "normalize-path@^3.0.0", "normalize-path@~3.0.0":
   "version" "3.0.0"
-
-"npm@file:../../../../.nvm/versions/node/v16.15.1/lib/node_modules/npm":
-  "resolved" "file:../../../../.nvm/versions/node/v16.15.1/lib/node_modules/npm"
-  "version" "8.11.0"
-  dependencies:
-    "@isaacs/string-locale-compare" "^1.1.0"
-    "@npmcli/arborist" "^5.0.4"
-    "@npmcli/ci-detect" "^2.0.0"
-    "@npmcli/config" "^4.1.0"
-    "@npmcli/fs" "^2.1.0"
-    "@npmcli/map-workspaces" "^2.0.3"
-    "@npmcli/package-json" "^2.0.0"
-    "@npmcli/run-script" "^3.0.1"
-    "abbrev" "~1.1.1"
-    "archy" "~1.0.0"
-    "cacache" "^16.1.0"
-    "chalk" "^4.1.2"
-    "chownr" "^2.0.0"
-    "cli-columns" "^4.0.0"
-    "cli-table3" "^0.6.2"
-    "columnify" "^1.6.0"
-    "fastest-levenshtein" "^1.0.12"
-    "glob" "^8.0.1"
-    "graceful-fs" "^4.2.10"
-    "hosted-git-info" "^5.0.0"
-    "ini" "^3.0.0"
-    "init-package-json" "^3.0.2"
-    "is-cidr" "^4.0.2"
-    "json-parse-even-better-errors" "^2.3.1"
-    "libnpmaccess" "^6.0.2"
-    "libnpmdiff" "^4.0.2"
-    "libnpmexec" "^4.0.2"
-    "libnpmfund" "^3.0.1"
-    "libnpmhook" "^8.0.2"
-    "libnpmorg" "^4.0.2"
-    "libnpmpack" "^4.0.2"
-    "libnpmpublish" "^6.0.2"
-    "libnpmsearch" "^5.0.2"
-    "libnpmteam" "^4.0.2"
-    "libnpmversion" "^3.0.1"
-    "make-fetch-happen" "^10.1.5"
-    "minipass" "^3.1.6"
-    "minipass-pipeline" "^1.2.4"
-    "mkdirp" "^1.0.4"
-    "mkdirp-infer-owner" "^2.0.0"
-    "ms" "^2.1.2"
-    "node-gyp" "^9.0.0"
-    "nopt" "^5.0.0"
-    "npm-audit-report" "^3.0.0"
-    "npm-install-checks" "^5.0.0"
-    "npm-package-arg" "^9.0.2"
-    "npm-pick-manifest" "^7.0.1"
-    "npm-profile" "^6.0.3"
-    "npm-registry-fetch" "^13.1.1"
-    "npm-user-validate" "^1.0.1"
-    "npmlog" "^6.0.2"
-    "opener" "^1.5.2"
-    "pacote" "^13.4.1"
-    "parse-conflict-json" "^2.0.2"
-    "proc-log" "^2.0.1"
-    "qrcode-terminal" "^0.12.0"
-    "read" "~1.0.7"
-    "read-package-json" "^5.0.1"
-    "read-package-json-fast" "^2.0.3"
-    "readdir-scoped-modules" "^1.1.0"
-    "rimraf" "^3.0.2"
-    "semver" "^7.3.7"
-    "ssri" "^9.0.1"
-    "tar" "^6.1.11"
-    "text-table" "~0.2.0"
-    "tiny-relative-date" "^1.3.0"
-    "treeverse" "^2.0.0"
-    "validate-npm-package-name" "^4.0.0"
-    "which" "^2.0.2"
-    "write-file-atomic" "^4.0.1"
 
 "once@^1.3.0":
   "version" "1.4.0"
@@ -505,6 +443,11 @@
 
 "wrappy@1":
   "version" "1.0.2"
+
+"wtfnode@^0.9.1":
+  "integrity" "sha512-Ip6C2KeQPl/F3aP1EfOnPoQk14Udd9lffpoqWDNH3Xt78svxPbv53ngtmtfI0q2Te3oTq79XKTnRNXVIn/GsPA=="
+  "resolved" "https://registry.npmjs.org/wtfnode/-/wtfnode-0.9.1.tgz"
+  "version" "0.9.1"
 
 "xtend@^4.0.0":
   "version" "4.0.2"
