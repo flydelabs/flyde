@@ -8,7 +8,7 @@ import { CodeBlock, dracula } from "react-code-blocks";
 
 const code = `import {loadFlow} from '@flyde/runtime';
 
-const executeFlow = loadFlow('Hero.flyde');
+const executeFlow = loadFlow('Greet.flyde');
 
 const {output} = await executeFlow();
 console.log(\`Output: \$\{output\}\`);`
@@ -34,7 +34,7 @@ export const HeroExample: React.FC = () => {
     };
 
     const onRunExample = () => {
-      setLastOutput('');
+      setLastOutput(' ');
       inputs.current.__trigger.subject.next('run');
     }
 
@@ -65,18 +65,23 @@ export const HeroExample: React.FC = () => {
         </div>
         <div className='flyde-hero-example-wrapper'>
         <div className='flow-wrapper'>
-            <div className='file-tag'>Hero.flyde</div>
+            <div className='file-tag'>Greet.flyde</div>
             <EmbeddedFlyde flowProps={flowProps} debugDelay={100} onOutput={(output) => {
               setLastOutput(output);
             }}/>
         </div>
-        <div className='code-wrapper'>
+        <div className='code-terminal-wrapper'>
+
+          <div className='code-wrapper'>
           
             <div className='file-tag'>index.ts</div>
             <CodeBlock className='code-example' showLineNumbers={false} text={code} language="typescript" theme={dracula} codeBlock/>
+            </div>
+            <div className='terminal-wrapper'>
             <div className='file-tag'>Terminal</div>
             <div className='terminal-emulator'>
               {lastOutput ? <span>{lastOutput}</span> : <em>Run example to show output</em>}
+            </div>
             </div>
 
         </div>

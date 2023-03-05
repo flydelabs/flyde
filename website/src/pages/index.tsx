@@ -10,7 +10,7 @@ import YouTube from 'react-player/youtube'
 
 
 import "../css/global.scss";
-import { HeroExample } from "./hero-example/HeroExample";
+import { HeroExample } from "./_hero-example/HeroExample";
 
 
 const UseCases = () => {

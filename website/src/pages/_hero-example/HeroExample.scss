@@ -24,7 +24,7 @@
         background: #161616;
         color: white;
         // font-family: monospace;
-        flex: 0.5;
+        flex: 1;
         font-size: .8rem;
         padding: 3px 8px;
     }
@@ -54,10 +54,17 @@
         }
     }
 
+    .code-terminal-wrapper {
+        flex: 0;
+        min-width: 340px;
+        display: flex;
+        flex-direction: column;
+    }
+
     .code-wrapper {
         flex: 0;
         flex-shrink: 0;
-        min-width: 340px;
+        // min-width: 340px;
 
         display: flex;
         flex-direction: column;
@@ -79,6 +86,13 @@
          }
     }
 
+    .terminal-wrapper {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+
+    } 
+
 
     .flyde-flow-editor {
         flex: 1;
@@ -94,7 +108,7 @@
 
 
     .viewport-controls {
-        display: none;
+        display: none !important;
     }
 
     .actions-menu {
@@ -116,13 +130,19 @@
 
     @media only screen and (max-width: 700px) {
         margin: 0;
+        top: -140px;
 
 
         .flyde-hero-example-wrapper { 
             flex-direction: column ;
 
-            .flow-wrapper, .flyde-flow-editor {
-                max-height: 300px;
+            .flow-wrapper {
+                max-height: 320px;
+
+                .flyde-flow-editor {
+                    height: 300px;
+                    max-height: 300px;
+                }
             }
 
             .code-wrapper {
@@ -132,6 +152,17 @@
             .terminal-emulator {
                 min-height: 100px;
             }
+        }
+
+        .code-wrapper {
+            > span {
+                min-height: 170px !important;
+            }
+        }
+
+        .buttons-container {
+            flex-wrap: wrap;
+            margin-top: 42px;
         }
     }
 

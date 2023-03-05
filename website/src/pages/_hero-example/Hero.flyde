@@ -22,12 +22,12 @@ part:
         outputs:
           value:
             delayed: false
-        fnCode: const result = (`Looks like you're from ${inputs.country}! It's capital
+        fnCode: const result = (`Looks like you're from ${inputs.country}! The capital
           is ${inputs.capital} (population of ${inputs.population})`);
           Promise.resolve(result).then(val => outputs.value.next(val))
-        customViewCode: "`Looks like you're from ${inputs.country}! It's capital is
-          ${inputs.capital} (population of ${inputs"
-        dataBuilderSource: YExvb2tzIGxpa2UgeW91J3JlIGZyb20gJHtpbnB1dHMuY291bnRyeX0hIEl0J3MgY2FwaXRhbCBpcyAke2lucHV0cy5jYXBpdGFsfSAocG9wdWxhdGlvbiBvZiAke2lucHV0cy5wb3B1bGF0aW9ufSlg
+        customViewCode: "`Looks like you're from ${inputs.country}! The capital is
+          ${inputs.capital} (population of ${inputs."
+        dataBuilderSource: YExvb2tzIGxpa2UgeW91J3JlIGZyb20gJHtpbnB1dHMuY291bnRyeX0hIFRoZSBjYXBpdGFsIGlzICR7aW5wdXRzLmNhcGl0YWx9IChwb3B1bGF0aW9uIG9mICR7aW5wdXRzLnBvcHVsYXRpb259KWA=
         templateType: value
         completionOutputs:
           - value
