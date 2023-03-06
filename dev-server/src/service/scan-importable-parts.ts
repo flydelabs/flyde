@@ -11,6 +11,11 @@ const FLYDE_LIBRARY = /^flyde[-_](.*)/;
 
 export const getFlydeDependencies = async (rootPath: string) => {
   const pjsonPath = await pkgUp({ cwd: rootPath });
+
+  if (!pjsonPath) {
+    return []; // no package.json found
+  }
+  
   const { dependencies, devDependencies } = require(pjsonPath);
   const combinedDeps = { ...dependencies, ...devDependencies };
 
@@ -74,7 +79,7 @@ export const scanImportableParts = async (
   const fileRoot = join(rootPath, filename);
 
   const localFiles = getLocalFlydeFiles(rootPath);
-
+  
   const depsNames = await getFlydeDependencies(rootPath);
 
   const depsParts = await resolveDependentPackages(rootPath, depsNames);
@@ -84,8 +89,6 @@ export const scanImportableParts = async (
     .reduce<Record<string, PartDefRepo>>((acc, file) => {
 
       if (isCodePartPath(file.fullPath)) {
-
-
         const obj = resolveCodePartDependencies(file.fullPath).reduce((obj, {part}) => ({...obj, [part.id]: part}), {});
         const relativePath = relative(join(fileRoot, ".."), file.fullPath);
         return {...acc, [relativePath]: obj}

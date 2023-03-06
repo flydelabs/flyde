@@ -31,6 +31,8 @@ export interface EditorPorts {
   onFlowChange: (
     cb: (data: { flow: FlydeFlow; deps: ResolvedFlydeFlowDefinition }) => void
   ) => CancelFn;
+
+  onInstallRuntimeRequest: () => Promise<void>;
 }
 
 const throwsNotImplemented: any = async () => {
@@ -48,6 +50,7 @@ export const defaultPorts: EditorPorts = {
   resolveDeps: throwsNotImplemented,
   getImportables: throwsNotImplemented,
   onFlowChange: throwsNotImplemented,
+  onInstallRuntimeRequest: throwsNotImplemented,
 };
 
 export const PortsContext = createContext<EditorPorts>(defaultPorts);

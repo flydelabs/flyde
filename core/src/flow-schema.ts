@@ -71,6 +71,7 @@ const flydeBasePart = z.object({
   reactiveInputs: z.optional(z.array(z.string())),
   defaultStyle: z.optional(partStyle),
   description: z.optional(z.string()),
+  searchKeywords: z.optional(z.array(z.string())),
 });
 
 const visualPart = z

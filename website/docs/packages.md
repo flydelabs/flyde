@@ -2,7 +2,7 @@
 sidebar_position: 7
 ---
 
-# Installing and Publishing Flyde Packages
+# Installing/Publishing Packages
 
 ## Installing Flyde packages
 Flyde packages are published to npm, and can be installed using the standard npm install command. To install a Flyde package, run the following command: `npm install flyde-mypackage` or `yarn add flyde-mypackage`.

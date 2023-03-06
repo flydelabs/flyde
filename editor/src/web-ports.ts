@@ -41,5 +41,8 @@ export const createWebPorts = ({
       console.log("Not implemented");
       return () => {};
     },
+    onInstallRuntimeRequest: async () => {
+      alert('Not implemented');
+    },
   };
 };

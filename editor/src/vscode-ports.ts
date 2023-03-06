@@ -78,6 +78,9 @@ export const createVsCodePorts = (): EditorPorts => {
     getImportables: async (dto) => {
       return postMessageCallback("getImportables", dto);
     },
+    onInstallRuntimeRequest: async () => {
+      return postMessageCallback("onInstallRuntimeRequest", {});
+    },
     onFlowChange: (cb) => {
       const handler = (event: MessageEvent) => {
         const { data } = event;

@@ -2,7 +2,7 @@
 sidebar_position: 2
 ---
 
-# Flyde Quick Start Guide
+# Quick Start Guide
 Welcome to Flyde! This quick start guide will help you get up and running with Flyde in no time.
 
 Note: this guide is meant to cater to the impatient! Checking out the in-depth [hello world](/docs/Tutorials/hello-world-with-flyde) guide is highly recommended.

@@ -1,7 +1,7 @@
-import { CodePart, PartStyleSize } from ".";
+import { BasePart, CodePart, PartStyleSize } from ".";
 import { InputMode } from "./part-pins";
 
-export type SimpleFnData = {
+export type SimpleFnData = Omit<BasePart, 'inputs' | 'outputs' | 'fn'> & {
   id: string;
   description: string;
   namespace: string;
@@ -16,6 +16,7 @@ export type SimpleFnData = {
 
 export function partFromSimpleFunction(data: SimpleFnData): CodePart {
   return {
+    ...data,
     id: data.id,
     description: data.description,
     namespace: data.namespace,

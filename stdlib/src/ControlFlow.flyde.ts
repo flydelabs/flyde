@@ -440,6 +440,7 @@ export const Switch4: CodePart = {
 export const Delay = partFromSimpleFunction({
   id: "Delay",
   icon: "fa-clock",
+  searchKeywords: ["timeout", "wait", "setTimeout"],
   namespace,
   description: "Delays a value",
   inputs: [

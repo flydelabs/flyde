@@ -1,8 +1,10 @@
 import {
+  Button,
   Callout,
   Classes,
   Dialog,
   Icon,
+  Intent,
   ITreeNode,
   Tree,
 } from "@blueprintjs/core";
@@ -10,6 +12,7 @@ import { Tooltip2 } from "@blueprintjs/popover2";
 import { ImportablePart, noop } from "@flyde/core";
 import classNames from "classnames";
 import React, { useCallback, useEffect } from "react";
+import { usePorts } from "../../../flow-editor/ports";
 import { Loader } from "../../../lib/loader";
 import { AddPartMenuListItem } from "./AddPartMenuListItem";
 import { AddPartMenuResultsSummary } from "./AddPartMenuResultsSummary";
@@ -76,10 +79,12 @@ export const AddPartMenu: React.FC<AddPartMenuProps> = (props) => {
     [onAddPart, onClose]
   );
 
+  const {onInstallRuntimeRequest} = usePorts();
+
 
   useEffect(() => {
     setVisibleImportables(
-      importables?.filter((importable) => {
+      importables?.flatMap((importable) => {
         if (filter) {
           if (filter.type === "external") {
             if (
@@ -87,25 +92,29 @@ export const AddPartMenu: React.FC<AddPartMenuProps> = (props) => {
                 ? importable.part.namespace !== filter.namespace
                 : false
             ) {
-              return false;
+              return [];
             }
           } else if (filter.type === "internal") {
             if (
               !isInternal(importable) ||
               (filter.file && importable.module !== filter.file)
             ) {
-              return false;
+              return [];
             }
           }
         }
         if (query) {
-          const content = `${importable.part.id} ${
+          const content = `${importable.part.searchKeywords?.join(' ') ?? []} ${importable.part.id} ${
             importable.part.namespace ?? ""
           } ${importable.part.description}`;
-          return content.toLowerCase().includes(query.toLowerCase());
+          const score = content.toLowerCase().indexOf(query.toLowerCase());
+          if (score === -1) {
+            return [];
+          }
+          return [{importable, score}];
         }
-        return true;
-      })
+        return [{importable, score: 1}];
+      }).sort((a, b) => a.score - b.score).map(({importable}) => importable)
     );
   }, [importables, filter, query]);
 
@@ -197,6 +206,13 @@ export const AddPartMenu: React.FC<AddPartMenuProps> = (props) => {
         setFilter(nodeData);
       }
   }, [filter]);
+
+  const stdLibInstalled = importables ? importables.some((importable) => ['stdlib', 'runtime'].some(p => importable.module.includes(`@flyde/${p}`))) : true;
+
+  const onInstallRuntime = useCallback(() => {
+    onInstallRuntimeRequest();
+    onClose();
+  }, [onClose, onInstallRuntimeRequest]);
 
   function renderItems() {
     if (!visibleImportables) {
@@ -305,6 +321,9 @@ export const AddPartMenu: React.FC<AddPartMenuProps> = (props) => {
               onKeyDown={onSearchKeyDown}
             />
           </div>
+          {stdLibInstalled ? null : <Callout intent={Intent.WARNING} title='Could not find @flyde/runtime installed' style={{marginTop: 10}}>
+            Please install `@flyde/runtime` to access the standard library. <Button minimal small intent={Intent.PRIMARY} onClick={onInstallRuntime}>Click here to install it using npm/yarn</Button>
+          </Callout>} 
         </header>
         <div className="content-wrapper">{renderContent()}</div>
       </main>

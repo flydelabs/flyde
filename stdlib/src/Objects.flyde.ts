@@ -81,6 +81,7 @@ export const ObjectAssign = partFromSimpleFunction({
 
 export const GetAttribute = partFromSimpleFunction({
   id: "Get Attribute",
+  searchKeywords: ['pick', 'dot'],
   namespace,
   icon: "fa-magnifying-glass",
   description: "Gets an attribute from an object",
@@ -98,6 +99,7 @@ export const GetAttribute = partFromSimpleFunction({
 
 export const SetAttribute = partFromSimpleFunction({
   id: "Set Attribute",
+  searchKeywords: ['dot'],
   namespace,
   icon: "fa-box",
   description: "Sets an attribute on an object",
@@ -120,6 +122,7 @@ export const SetAttribute = partFromSimpleFunction({
 
 export const DeleteAttribute = partFromSimpleFunction({
   id: "Delete Attribute",
+  searchKeywords: ['remove'],
   namespace,
   icon: "fa-box",
   description: "Deletes an attribute from an object",

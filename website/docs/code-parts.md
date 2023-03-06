@@ -2,7 +2,7 @@
 sidebar_position: 6
 ---
 
-# Creating new Code Parts
+# Creating New Code Parts
 
 While Flyde is a great tool for creating flows, sometimes you need to do something that is not possible with the built-in components.
 Code parts allow you to create custom components using TypeScript or JavaScript. Inside Code parts you can use any library you want.
