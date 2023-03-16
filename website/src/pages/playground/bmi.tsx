@@ -31,7 +31,7 @@ export default function Home(): JSX.Element {
     PlaygroundTemplateProps["flowProps"]
   >({
     flow: helloWorldExample.flow,
-    resolvedFlow: helloWorldExample.resolvedFlow,
+    dependencies: helloWorldExample.dependencies,
     inputs: inputs.current,
     output: result.current,
   });

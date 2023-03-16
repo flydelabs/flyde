@@ -39,6 +39,44 @@
         box-shadow: -1px 1px 12px 3px rgb(125 125 125 / 17%);
     }
 
+    /* animate button.nudge so it will shake a bit on the X axis every 3 seconds */
+    .nudge {
+        animation: nudge 4s infinite;
+        transform-origin: center center;
+        animation-delay: -2s;
+    }
+
+    @keyframes nudge {
+        0% {
+            transform: translateY(0);
+            background-color: var(--ifm-color-success);
+        }
+        46% {
+            transform: translateY(0);
+            background-color: var(--ifm-color-success);
+        }
+        48% {
+            transform: translateY(0px) rotate(3deg);
+            background: var(--ifm-color-success-light);
+        }
+        50% {
+            transform: translateY(0) rotate((0deg));
+            background: var(--ifm-color-success-light);
+        }
+        52% {
+            transform: translateY(0px) rotate(-3deg);
+            background: var(--ifm-color-success-light);
+        }
+        54% {
+            transform: translateY(0) rotate(0deg);
+            background-color: var(--ifm-color-success);
+        }
+        100% {
+            transform: translateY(0);
+            background-color: var(--ifm-color-success);
+        }
+    }
+
     .flow-wrapper {
         flex: 1;
         flex-shrink: 0;

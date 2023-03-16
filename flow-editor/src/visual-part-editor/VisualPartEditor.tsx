@@ -39,6 +39,7 @@ import {
   getPartInputs,
   createInsId,
   externalConnectionNode,
+  ResolvedDependenciesDefinitions,
 } from "@flyde/core";
 import { InstanceView, InstanceViewProps } from "./instance-view/InstanceView";
 import {
@@ -160,7 +161,7 @@ export type VisualPartEditorProps = {
   insId: string;
 
   clipboardData: ClipboardData;
-  resolvedFlow: ResolvedFlydeFlowDefinition;
+  resolvedDependencies: ResolvedDependenciesDefinitions;
 
   partIoEditable: boolean;
   thumbnailMode?: true;
@@ -249,7 +250,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
         insId: thisInsId,
         part,
         onShowOmnibar,
-        resolvedFlow,
+        resolvedDependencies,
         onImportPart,
         queuedInputsData: queueInputsData,
         initialPadding
@@ -258,16 +259,16 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
       const parentViewport = props.parentViewport || defaultViewPort;
 
       const [repo, setRepo] = useState({
-        ...resolvedFlow.dependencies,
-        [resolvedFlow.main.id]: resolvedFlow.main,
+        ...resolvedDependencies,
+        [part.id]: part,
       });
 
       useEffect(() => {
         setRepo({
-          ...resolvedFlow.dependencies,
-          [resolvedFlow.main.id]: resolvedFlow.main,
+          ...resolvedDependencies,
+          [part.id]: part,
         });
-      }, [resolvedFlow]);
+      }, [resolvedDependencies, part]);
 
       const { selected, from, to } = boardData;
       const {
@@ -648,7 +649,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
           })();
         },
         isBoardInFocus,
-        [onChange, part, resolvedFlow]
+        [onChange, part, resolvedDependencies]
       );
 
       useHotkeys(
@@ -1506,7 +1507,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             setQuickAddMenuVisible({
               pos: { x: e.clientX, y: e.clientY },
               ins,
-              part,
+              targetPart: part,
               pinId,
               pinType: type,
             });
@@ -1527,7 +1528,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             pos: { x: e.clientX, y: e.clientY },
             pinId,
             pinType: "input",
-            part,
+            targetPart: part,
           });
         },
         [part]
@@ -1628,7 +1629,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
           });
           onChange(newPart, functionalChange("prune orphan connections"));
         }
-      }, [instances, onChange, connections, resolvedFlow, part, repo]);
+      }, [instances, onChange, connections, part, repo]);
 
       useEffect(() => {
         const instanceMap = new Map(instances.map((ins) => [ins.id, ins]));
@@ -1870,7 +1871,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             insId: `${thisInsId}.${openInlineInstance.insId}`,
             boardData: inspectedBoardData,
             onChangeBoardData: onChangeInspectedBoardData,
-            resolvedFlow: resolvedFlow,
+            resolvedDependencies,
             onCopy: onCopy,
             clipboardData: props.clipboardData,
             onInspectPin: props.onInspectPin,
@@ -2379,11 +2380,12 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
               {renderPartOutputs()}
               {quickAddMenuVisible ? (
                 <QuickAddMenu
-                  part={quickAddMenuVisible.part}
+                  targetPart={quickAddMenuVisible.targetPart}
                   pinId={quickAddMenuVisible.pinId}
                   pinType={quickAddMenuVisible.pinType}
                   pos={quickAddMenuVisible.pos}
-                  resolvedFlow={resolvedFlow}
+                  resolvedDependencies={resolvedDependencies}
+                  part={part}
                   onRequestImportables={props.onRequestImportables}
                   onAdd={onQuickAdd}
                   onClose={onCloseQuickAdd}

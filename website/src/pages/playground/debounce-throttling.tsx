@@ -45,7 +45,7 @@ export default function DebounceThrottlingExample(): JSX.Element {
     PlaygroundTemplateProps["flowProps"]
   >({
     flow: example.flow,
-    resolvedFlow: example.resolvedFlow,
+    dependencies: example.dependencies,
     inputs: inputs.current,
     output: result.current,
   });

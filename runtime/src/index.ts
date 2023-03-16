@@ -1,16 +1,19 @@
 import {
   ExecuteParams,
-  ResolvedFlydeRuntimeFlow,
+  FlydeFlow,
+  ResolvedDependencies,
   simplifiedExecute,
 } from "@flyde/core";
-import { resolveFlow } from "@flyde/resolver";
+import { deserializeFlowByPath, resolveDependencies, resolveFlowDependencies, resolveFlowDependenciesByPath } from "@flyde/resolver";
 import EventEmitter = require("events");
 
 import * as findRoot from "find-root";
+import { readFileSync } from "fs";
 import { join } from "path";
 import { createDebugger } from "./create-debugger";
 // import { EventPromise } from "./events-promise";
 import { getCallPath } from "./get-call-path";
+import { debugLogger } from "./logger";
 
 export type PromiseWithEmitter<T> = Promise<T> & { on: EventEmitter["on"] };
 
@@ -21,39 +24,31 @@ export type LoadedFlowExecuteFn<Inputs> = (
   extraParams?: Partial<
     ExecuteParams & { onOutputs?: (key: string, data: any) => void }
   >
-) => Promise<Record<string, any>>;
+) => {
+  result: Promise<Record<string, any>>;
+  destroy: () => void;
+};
 
 const calcImplicitRoot = () => {
   const callPath = getCallPath();
   return findRoot(callPath);
 };
 
-export const loadFlow = <Inputs>(
-  relativePath: string,
-  root?: string
-): LoadedFlowExecuteFn<Inputs> => {
-  const _root = root || calcImplicitRoot();
-  const flowPath = join(_root, relativePath);
-  const resFlow = resolveFlow(
-    flowPath,
-    "implementation"
-  ) as ResolvedFlydeRuntimeFlow;
-  const main = resFlow.main;
+export function loadFlow<Inputs>(flow: FlydeFlow, fullFlowPath: string): LoadedFlowExecuteFn<Inputs> {
+  const deps = resolveDependencies(flow, "implementation", fullFlowPath) as ResolvedDependencies;
 
-  if (!main) {
-    throw new Error("No Main part found");
-  }
-
-  return async (inputs, params = {}) => {
+  return (inputs, params = {}) => {
     const { onOutputs, ...otherParams } = params;
+    debugLogger("Executing flow %s", params)
 
-    const _debugger = otherParams._debugger || (await createDebugger());
-    // console.log(_debugger);
-
+    let destroy;
     const promise: any = new Promise(async (res, rej) => {
-      const clean = await simplifiedExecute(
-        main,
-        resFlow.dependencies,
+      const _debugger = otherParams._debugger || (await createDebugger());
+    
+      debugLogger("Using debugger %o", _debugger);
+      destroy = await simplifiedExecute(
+        flow.part,
+        deps,
         inputs || {},
         onOutputs,
         {
@@ -71,6 +66,18 @@ export const loadFlow = <Inputs>(
         }
       );
     }) as any;
-    return promise;
+    return {result: promise, destroy};
   };
+
+}
+
+export function loadFlowByPath<Inputs>(
+  relativePath: string,
+  root?: string
+): LoadedFlowExecuteFn<Inputs> {
+  const _root = root || calcImplicitRoot();
+  const flowPath = join(_root, relativePath);
+  const flow = deserializeFlowByPath(flowPath);
+
+  return loadFlow(flow, flowPath);
 };

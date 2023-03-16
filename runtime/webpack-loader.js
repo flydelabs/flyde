@@ -1,18 +1,17 @@
 const { readFileSync } = require("fs");
-const { resolveFlow, deserializeFlow } = require("@flyde/resolver");
+const { resolveDependencies, deserializeFlow } = require("@flyde/resolver");
 
 const {relative, dirname} = require('path');
-
 
 module.exports = async function loader() {
 
   const contents = readFileSync(this.resourcePath, 'utf-8');
 
-  const resolved = await resolveFlow(this.resourcePath, "implementation");
-  const raw = await deserializeFlow(contents, this.resourcePath);
+  const flow = await deserializeFlow(contents, this.resourcePath);
+  let dependencies = await resolveDependencies(flow,"implementation", this.resourcePath);
 
   const originalFlowFolder = dirname(this.resourcePath);
-  resolved.dependencies = Object.entries(resolved.dependencies).reduce((acc, [key, part]) => {
+  dependencies = Object.entries(dependencies).reduce((acc, [key, part]) => {
 
         if (typeof part.fn === "function") {
           const requirePath = relative(originalFlowFolder, part.source.path);
@@ -26,7 +25,7 @@ module.exports = async function loader() {
         return acc;
   }, []);
 
-  const output = {resolvedFlow: resolved, flow: raw};
+  const output = {dependencies, flow};
 
   const stringified = JSON.stringify(output);
 

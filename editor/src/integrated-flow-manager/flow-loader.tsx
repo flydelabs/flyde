@@ -1,9 +1,9 @@
-import { FlydeFlow, ResolvedFlydeFlowDefinition } from "@flyde/core";
+import { FlydeFlow, ResolvedDependenciesDefinitions } from "@flyde/core";
 import { File, FolderStructure } from "@flyde/dev-server";
 import React, { useCallback, useEffect, useRef } from "react";
 
 import { useHistory, useLocation } from "react-router-dom";
-import { BooleanParam, useQueryParam } from "use-query-params";
+import { useQueryParam } from "use-query-params";
 import { useDevServerApi } from "../api/dev-server-api";
 import { Loader, PortsContext } from "@flyde/flow-editor"; // ../../common/lib/loader
 import { IntegratedFlowManager } from "./IntegratedFlowManager";
@@ -18,8 +18,8 @@ export const FlowLoader: React.FC = (props) => {
   const isEmbedded = !!bootstrapData;
 
   const [flow, setFlow] = React.useState<FlydeFlow>();
-  const [resolvedDefinitions, setResolvedDefinitions] =
-    React.useState<ResolvedFlydeFlowDefinition>();
+  const [resolvedDependencies, setResolvedDependencies] =
+    React.useState<ResolvedDependenciesDefinitions>();
 
   const history = useHistory();
   const { search } = useLocation();
@@ -36,7 +36,7 @@ export const FlowLoader: React.FC = (props) => {
     if (bootstrapData) {
       const { initialFlow, dependencies } = bootstrapData;
 
-      setResolvedDefinitions(dependencies);
+      setResolvedDependencies(dependencies);
       setFlow(initialFlow);
       setFileName("n/a");
     } else {
@@ -72,16 +72,16 @@ export const FlowLoader: React.FC = (props) => {
       if (!file) {
         throw new Error("No .flyde file found in project");
       }
-      const resolvedDefinitions = await ports.current.resolveDeps({
+      const resolvedDeps = await ports.current.resolveDeps({
         absPath: file.fullPath,
       });
-      setResolvedDefinitions(resolvedDefinitions);
+      setResolvedDependencies(resolvedDeps);
 
       const flow = await ports.current.readFlow({ absPath: file.fullPath });
       setFlow(flow);
       setFileName(file.relativePath);
     }
-  }, [devServerClient, fileName, isEmbedded, setFileName]);
+  }, [bootstrapData, devServerClient, fileName, setFileName]);
 
   React.useEffect(() => {}, [
     history,
@@ -93,12 +93,12 @@ export const FlowLoader: React.FC = (props) => {
 
   useEffect(() => {
     setFlow(undefined);
-    setResolvedDefinitions(undefined);
+    setResolvedDependencies(undefined);
     loadData();
   }, [fileName, loadData]);
 
   // eslint-disable-next-line no-constant-condition
-  if (flow && resolvedDefinitions) {
+  if (flow && resolvedDependencies) {
     const params = new URLSearchParams(window.location.search);
     const locationPortIfNot3000 =
       location.port === "3000" ? null : location.port;
@@ -111,7 +111,7 @@ export const FlowLoader: React.FC = (props) => {
         <IntegratedFlowManager
           key={fileName}
           flow={flow}
-          resolvedDefinitions={resolvedDefinitions}
+          resolvedDependencies={resolvedDependencies}
           initialPart={flow.part}
           integratedSource={fileName}
           port={port}

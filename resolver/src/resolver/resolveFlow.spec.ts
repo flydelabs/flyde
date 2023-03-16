@@ -11,8 +11,8 @@ import {
 import { assert } from "chai";
 import { readdirSync, readFileSync } from "fs";
 import { join } from "path";
-import { deserializeFlow } from "../serdes";
-import { resolveFlow } from "./resolve-flow";
+import { deserializeFlow, deserializeFlowByPath } from "../serdes";
+import { resolveFlowDependenciesByPath, resolveFlowDependencies } from "./resolve-flow";
 
 import { spiedOutput } from "@flyde/core/dist/test-utils";
 import _ = require("lodash");
@@ -25,7 +25,7 @@ describe("resolver", () => {
   });
 
   it("resolves a simple .flyde file without any dependencies", () => {
-    const data = resolveFlow(getFixturePath("simple.flyde"));
+    const data = resolveFlowDependenciesByPath(getFixturePath("simple.flyde"));
 
     assert.equal(data.main.id, "Simple");
     assert.exists(data.main.instances);
@@ -33,7 +33,7 @@ describe("resolver", () => {
   });
 
   it("resolves a .flyde with dependency on an inline code part from another Flyde file ", async () => {
-    const data = resolveFlow(
+    const data = resolveFlowDependenciesByPath(
       getFixturePath("a-imports-js-part-from-b/a.flyde")
     );
     const part = data.main;
@@ -52,7 +52,7 @@ describe("resolver", () => {
   }, 50);
 
   it("resolves flows with transitive dependencies", async () => {
-    const data = resolveFlow(
+    const data = resolveFlowDependenciesByPath(
       getFixturePath("a-imports-b-imports-c/Container.flyde")
     );
 
@@ -73,7 +73,7 @@ describe("resolver", () => {
   });
 
   it("resolves flows with 2 levels of transitive dependencies and properly namespaces them", async () => {
-    const data = resolveFlow(
+    const data = resolveFlowDependenciesByPath(
       getFixturePath("a-imports-b-imports-c-imports-d/Container.flyde")
     );
 
@@ -103,7 +103,7 @@ describe("resolver", () => {
        part Container will import 2 parts, each importing a part 
        named "Special" but with a different content (one does +1, the other does -1)
     */
-    const data = resolveFlow(
+    const data = resolveFlowDependenciesByPath(
       getFixturePath("a-imports-b-and-c-potential-ambiguity/Container.flyde")
     );
     const repo = data.dependencies as PartRepo;
@@ -137,7 +137,7 @@ describe("resolver", () => {
   });
 
   it("resolves a .flyde with dependency on a code part from a different package", async () => {
-    const data = resolveFlow(
+    const data = resolveFlowDependenciesByPath(
       getFixturePath("a-imports-b-code-from-package/a.flyde"),
       "implementation"
     );
@@ -163,7 +163,7 @@ describe("resolver", () => {
   });
 
   it("resolves a .flyde with dependency on a visual part from a different package", async () => {
-    const data = resolveFlow(
+    const data = resolveFlowDependenciesByPath(
       getFixturePath("a-imports-b-grouped-from-package/a.flyde"),
       "implementation"
     );
@@ -193,11 +193,10 @@ describe("resolver", () => {
         break;
       }
       const path = join(invalidsRoot, invalid);
-      const contents = readFileSync(path, "utf-8");
 
       assert.throws(
         () => {
-          deserializeFlow(contents, path);
+          deserializeFlowByPath(path);
         },
         /Error parsing/,
         `File ${invalid} should have failed schema validation`
@@ -207,7 +206,7 @@ describe("resolver", () => {
 
   it("allows importing simple code based parts that require packages", async () => {
     const path = getFixturePath("a-imports-js-part-from-b-with-dep/a.flyde");
-    const flow = resolveFlow(path);
+    const flow = resolveFlowDependenciesByPath(path);
 
     const repo = flow.dependencies as PartRepo;
 
@@ -225,7 +224,7 @@ describe("resolver", () => {
   it("throws error when importing part that has a missing dep transitively", async () => {
     const path = getFixturePath("a-imports-b-with-missing-deps/a.flyde");
     assert.throws(() => {
-      resolveFlow(path);
+      resolveFlowDependenciesByPath(path);
     }, /not imported/);
   });
 
@@ -235,7 +234,7 @@ describe("resolver", () => {
       "a-imports-b-with-missing-deps/SpreadList3.flyde"
     );
     assert.throws(() => {
-      resolveFlow(path);
+      resolveFlowDependenciesByPath(path);
     }, /GetListItem/);
   });
 
@@ -244,7 +243,7 @@ describe("resolver", () => {
       "imports-ok-from-package-with-problematic.flyde"
     );
 
-    const flow = resolveFlow(path);
+    const flow = resolveFlowDependenciesByPath(path);
     assert.exists(flow.dependencies.Ok);
     assert.notExists(flow.dependencies.Problematic);
   });
@@ -252,7 +251,7 @@ describe("resolver", () => {
   it("imports multiple parts from the same package", async () => {
     const path = getFixturePath("imports-2-parts-from-package.flyde");
 
-    const flow = resolveFlow(path);
+    const flow = resolveFlowDependenciesByPath(path);
     const repo = flow.dependencies as PartRepo;
 
     const [s, r] = spiedOutput();
@@ -270,12 +269,12 @@ describe("resolver", () => {
     const path = getFixturePath("recursive.flyde");
 
     assert.doesNotThrow(() => {
-      resolveFlow(path);
+      resolveFlowDependenciesByPath(path);
     });
   }, 20);
 
   it("resolves dependencies of inline parts", async () => {
-    const flow = resolveFlow(
+    const flow = resolveFlowDependenciesByPath(
       getFixturePath("a-uses-inline-part-with-dependency/a.flyde")
     );
 
@@ -295,7 +294,7 @@ describe("resolver", () => {
   });
 
   it("resolves dependencies of imported inline parts", async () => {
-    const flow = resolveFlow(
+    const flow = resolveFlowDependenciesByPath(
       getFixturePath("a-uses-inline-part-with-dependency/b-imports-a.flyde")
     );
 
@@ -315,7 +314,7 @@ describe("resolver", () => {
   });
 
   it('supports importing files that expose multiple parts under a single import', async () => {
-    const flow = resolveFlow(
+    const flow = resolveFlowDependenciesByPath(
       getFixturePath("a-imports-multi-exposed-from-package/a.flyde")
     );
 
@@ -338,9 +337,29 @@ describe("resolver", () => {
     assert.equal(s.lastCall.args[0], 5 + 1 - 2);
   });
 
+  it('resolves flow by content', async () => {
+
+    const path = getFixturePath('a-imports-js-part-from-b/a.flyde');
+    const flow = deserializeFlowByPath(getFixturePath('a-imports-js-part-from-b/a.flyde'));
+    const resolvedFlow = resolveFlowDependencies(flow, path);
+    const part = resolvedFlow.main;
+
+    const repo = resolvedFlow.dependencies as PartRepo;
+
+    const [s, r] = spiedOutput();
+    execute({
+      part,
+      partsRepo: repo,
+      inputs: { n: staticPartInput(2) },
+      outputs: { r },
+    });
+
+    assert.equal(s.lastCall.args[0], 3);
+  });
+
   describe("typescript", () => {
     it("runs code parts written in TS", async () => {
-      const data = resolveFlow(
+      const data = resolveFlowDependenciesByPath(
         getFixturePath("a-imports-ts-part-from-b/a.flyde")
       );
       const part = data.main;

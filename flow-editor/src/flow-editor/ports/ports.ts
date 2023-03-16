@@ -2,9 +2,10 @@ import { toastMsg } from "../../toaster";
 import { createContext, useContext } from "react";
 import {
   FlydeFlow,
+  ResolvedDependenciesDefinitions,
   ResolvedFlydeFlowDefinition,
 } from "@flyde/core";
-import { Importables } from "@flyde/dev-server";
+import { Importables, FlowJob } from "@flyde/dev-server";
 
 export type CancelFn = () => void;
 
@@ -18,21 +19,24 @@ export interface EditorPorts {
   openFile: (dto: { absPath: string }) => Promise<void>;
 
   readFlow: (dto: { absPath: string }) => Promise<FlydeFlow>;
-  saveFlow: (dto: { absPath: string; flow: FlydeFlow }) => Promise<void>;
+  setFlow: (dto: { absPath: string; flow: FlydeFlow }) => Promise<void>;
 
   resolveDeps: (dto: {
     absPath: string;
-  }) => Promise<ResolvedFlydeFlowDefinition>;
+  }) => Promise<ResolvedDependenciesDefinitions>;
   getImportables: (dto: {
     rootFolder: string;
     flowPath: string;
   }) => Promise<Importables>;
 
-  onFlowChange: (
-    cb: (data: { flow: FlydeFlow; deps: ResolvedFlydeFlowDefinition }) => void
+  onExternalFlowChange: (
+    cb: (data: { flow: FlydeFlow; deps: ResolvedDependenciesDefinitions }) => void
   ) => CancelFn;
 
   onInstallRuntimeRequest: () => Promise<void>;
+
+  onRunFlow: () => Promise<FlowJob>;
+  onStopFlow: () => Promise<void>;
 }
 
 const throwsNotImplemented: any = async () => {
@@ -46,11 +50,13 @@ export const defaultPorts: EditorPorts = {
   },
   confirm: async ({ text }) => confirm(text),
   readFlow: throwsNotImplemented,
-  saveFlow: throwsNotImplemented,
+  setFlow: throwsNotImplemented,
   resolveDeps: throwsNotImplemented,
   getImportables: throwsNotImplemented,
-  onFlowChange: throwsNotImplemented,
+  onExternalFlowChange: throwsNotImplemented,
   onInstallRuntimeRequest: throwsNotImplemented,
+  onRunFlow: throwsNotImplemented,
+  onStopFlow: throwsNotImplemented,
 };
 
 export const PortsContext = createContext<EditorPorts>(defaultPorts);

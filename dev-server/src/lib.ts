@@ -29,8 +29,6 @@ export const initFlydeDevServer = (options: InitFlydeDevServerOptions) => {
       fileName: k.split("/").pop(),
     }));
 
-    console.log(flowsArr);
-
     const typings = generateTypings(flowsArr);
 
     writeFileSync(join(root, TYPINGS_TARGET), typings);

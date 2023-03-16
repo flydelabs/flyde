@@ -4,7 +4,7 @@
   "scripts": {
     "start": "ts-node-dev --watch src/**/*.flyde src/index.ts",
     "build": "tsc -p .",
-    "postinstall": "npm link @flyde/stdlib @flyde/runtime npm link @flyde/core @flyde/resolver"
+    "postinstall": "npm link @flyde/stdlib @flyde/runtime @flyde/core @flyde/resolver"
   },
   "dependencies": {
     "@flyde/core": "latest",

@@ -37,7 +37,7 @@ export default function ReactCounterExample(): JSX.Element {
     PlaygroundTemplateProps["flowProps"]
   >({
     flow: counterFlow.flow,
-    resolvedFlow: counterFlow.resolvedFlow,
+    dependencies: counterFlow.dependencies,
     inputs: inputs.current,
     output: result.current,
   });

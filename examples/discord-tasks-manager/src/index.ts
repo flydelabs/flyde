@@ -1,6 +1,6 @@
 require("dotenv").config();
 
-import { loadFlow } from "@flyde/runtime";
+import { loadFlowByPath } from "@flyde/runtime";
 import eris from "eris";
 import { initCommands } from "./commands";
 
@@ -8,13 +8,13 @@ import assert from "assert";
 
 assert(
   process.env.BOT_TOKEN,
-  `BOT_TOKEN env variable missing. Please add a ".env" file in the project's root containing "BOT_TOKEN=yourtokenhere")`
+  `BOT_TOKEN env variable missing. Please add a ".env" file in the project's root containing "BOT_TOKEN=your-token-here")`
 );
 
 // Create a Client instance with our bot token.
 const bot = new eris.Client(process.env.BOT_TOKEN);
 (async () => {
-  const execute = loadFlow("src/Logic.flyde");
+  const execute = loadFlowByPath("src/Logic.flyde");
 
   execute({}, { extraContext: { bot } });
 
@@ -28,3 +28,5 @@ const bot = new eris.Client(process.env.BOT_TOKEN);
 
   bot.connect();
 })();
+
+

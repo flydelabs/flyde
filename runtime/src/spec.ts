@@ -2,22 +2,22 @@ import { assert } from "chai";
 import EventEmitter = require("events");
 import { dirname, join } from "path";
 import Sinon = require("sinon");
-import { loadFlow } from ".";
+import { loadFlowByPath } from ".";
 
 const loadFixture = (name: string) => {
-  return loadFlow(`./src/fixture/${name}.flyde`, join(__dirname, ".."));
+  return loadFlowByPath(`./src/fixture/${name}.flyde`, join(__dirname, ".."));
 };
 describe("runtime", () => {
   describe("loadFlow", () => {
     it("resolves promise with completed values - simple case", async () => {
       const execute = loadFixture("HelloWorld");
-      const { result } = await execute();
+      const { result } = await execute().result;
       assert.equal(result, "Hello World");
     });
 
     it("resolves promise with multiple completed values", async () => {
       const execute = loadFixture("DblHelloWorld");
-      const { res1, res2 } = await execute();
+      const { res1, res2 } = await execute().result;
       assert.equal(res1, "Hello");
       assert.equal(res2, "World");
     });
@@ -25,7 +25,7 @@ describe("runtime", () => {
     it("allows listening to values before promise is completed", async () => {
       const execute = loadFixture("HelloWorldWithProgression");
       const spy = Sinon.spy();
-      const { result } = await execute({}, { onOutputs: spy });
+      const { result } = await execute({}, { onOutputs: spy }).result;
 
       assert.equal(spy.callCount, 4);
       assert.deepEqual(
@@ -45,7 +45,7 @@ describe("runtime", () => {
       const execute = loadFixture("PartWithCleanupWrapper");
       const spy = Sinon.spy();
 
-      const { res } = await execute({}, { extraContext: { cleanupSpy: spy } });
+      const { res } = await execute({}, { extraContext: { cleanupSpy: spy } }).result;
 
       assert.equal(spy.callCount, 1);
     });

@@ -1,5 +1,5 @@
 import { Debugger } from "@flyde/core";
-import { createRuntimeClient } from "@flyde/remote-debugger/dist/clients/runtime";
+import { createRuntimeClient, RuntimeDebuggerClient } from "@flyde/remote-debugger/dist/clients/runtime";
 import { debugLogger } from "./logger";
 
 const url = "http://localhost:8545";
@@ -13,15 +13,17 @@ const withTimeout = <T>(promise: Promise<T>, timeout: number): Promise<T> => {
     promise.then((data) => {
       clearTimeout(timeoutId);
       res(data);
-    });
+    }, e => rej(e));
   });
 };
 
 export const createDebugger = async (): Promise<Debugger> => {
 
-  const client = createRuntimeClient(url, "n/a");
+  debugLogger("Creating runtime debugger")
+  let client: RuntimeDebuggerClient;
   try {
 
+    client = createRuntimeClient(url, "n/a");
     await withTimeout(client.waitForConnection(), 1000);
     
     const _debugger: Debugger = {
@@ -36,7 +38,7 @@ export const createDebugger = async (): Promise<Debugger> => {
 
     return _debugger;
   } catch (e) {
-    client.destroy();
+    client?.destroy();
     debugLogger("Error: Failed to create debugger %o", e);
     return undefined;
   }

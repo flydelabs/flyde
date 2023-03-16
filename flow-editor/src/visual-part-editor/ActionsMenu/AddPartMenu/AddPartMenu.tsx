@@ -207,7 +207,7 @@ export const AddPartMenu: React.FC<AddPartMenuProps> = (props) => {
       }
   }, [filter]);
 
-  const stdLibInstalled = importables ? importables.some((importable) => ['stdlib', 'runtime'].some(p => importable.module.includes(`@flyde/${p}`))) : true;
+  const stdLibInstalled = importables ? importables.some((importable) => importable.module.includes(`@flyde/stdlib`)) : true;
 
   const onInstallRuntime = useCallback(() => {
     onInstallRuntimeRequest();
@@ -321,8 +321,8 @@ export const AddPartMenu: React.FC<AddPartMenuProps> = (props) => {
               onKeyDown={onSearchKeyDown}
             />
           </div>
-          {stdLibInstalled ? null : <Callout intent={Intent.WARNING} title='Could not find @flyde/runtime installed' style={{marginTop: 10}}>
-            Please install `@flyde/runtime` to access the standard library. <Button minimal small intent={Intent.PRIMARY} onClick={onInstallRuntime}>Click here to install it using npm/yarn</Button>
+          {stdLibInstalled ? null : <Callout intent={Intent.NONE} style={{marginTop: 10}}>
+            Using built-in @flyde/stdlib. It's recommended to explicitly install it instead. <Button minimal small intent={Intent.PRIMARY} onClick={onInstallRuntime}>Click here to install it using npm/yarn</Button>
           </Callout>} 
         </header>
         <div className="content-wrapper">{renderContent()}</div>

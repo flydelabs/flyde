@@ -7,13 +7,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch:ts": "tsc -p . -w --incremental",
-    "watch:copy-stdlib": "nodemon -w ../stdlib/dist -e js,ts --exec \"yarn run copy-stdlib\"",
-    "dev": "concurrently --kill-others 'yarn run watch:ts' 'yarn run watch:copy-stdlib'",
-    "__publish": "npm version patch && npm publish",
-    "copy-stdlib": "mkdir -p dist/stdlib &&  cp -r ../stdlib/dist dist/stdlib",
-    "build": "rm -rf dist && tsc -p . && yarn run copy-stdlib",
+    "dev": "concurrently --kill-others 'yarn run watch:ts'",
+    "build": "rm -rf dist && tsc -p . ",
     "prod": "node dist/index.js",
-    "start": "concurrently  --kill-others 'yarn run watch:copy-stdlib' 'yarn run watch:ts'"
+    "start": "concurrently  --kill-others 'yarn run watch:ts'"
   },
   "flyde": {
     "exposes": [

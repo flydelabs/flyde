@@ -1,26 +1,24 @@
 import {
-  isVisualPart,
+  FlydeFlow,
   ResolvedFlydeFlow
 } from "@flyde/core";
-import { readFileSync } from "fs";
 import _ = require("lodash");
-import { deserializeFlow } from "../serdes/deserialize";
+import { deserializeFlowByPath } from "../serdes/deserialize";
 import { resolveDependencies } from "./resolve-dependencies/resolve-dependencies";
 
 export type ResolveMode = "implementation" | "definition";
 
+export function resolveFlowDependencies(flow: FlydeFlow, flowPath: string, mode: ResolveMode = "definition"): ResolvedFlydeFlow {
+  return { main: flow.part, dependencies: resolveDependencies(flow, mode, flowPath) };
+}
 
-const _resolveFlow = (
+function _resolveFlow (
   fullFlowPath: string,
   mode: ResolveMode = "definition"
-): ResolvedFlydeFlow => {
-  const flow = deserializeFlow(
-    readFileSync(fullFlowPath, "utf8"),
-    fullFlowPath
-  );
+): ResolvedFlydeFlow {
 
-  const part = flow.part;
-  return { main: part, dependencies: resolveDependencies(flow, mode, fullFlowPath) };
+  const flow = deserializeFlowByPath(fullFlowPath);
+  return resolveFlowDependencies(flow, fullFlowPath, mode);
 };
 
-export const resolveFlow = _resolveFlow;
+export const resolveFlowDependenciesByPath = _resolveFlow;

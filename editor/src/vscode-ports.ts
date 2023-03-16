@@ -69,8 +69,8 @@ export const createVsCodePorts = (): EditorPorts => {
     readFlow: async (dto) => {
       return postMessageCallback("readFlow", dto);
     },
-    saveFlow: async (dto) => {
-      return postMessageCallback("saveFlow", dto);
+    setFlow: async (dto) => {
+      return postMessageCallback("setFlow", dto);
     },
     resolveDeps: async (dto) => {
       return postMessageCallback("resolveDeps", dto);
@@ -81,10 +81,10 @@ export const createVsCodePorts = (): EditorPorts => {
     onInstallRuntimeRequest: async () => {
       return postMessageCallback("onInstallRuntimeRequest", {});
     },
-    onFlowChange: (cb) => {
+    onExternalFlowChange: (cb) => {
       const handler = (event: MessageEvent) => {
         const { data } = event;
-        if (data.type === "onFlowChange") {
+        if (data.type === "onExternalFlowChange") {
           cb(data.params);
         }
       };
@@ -94,5 +94,11 @@ export const createVsCodePorts = (): EditorPorts => {
         window.removeEventListener("message", handler);
       };
     },
+    onRunFlow: async () => {
+      return postMessageCallback("onRunFlow", {});
+    },
+    onStopFlow: async () => {
+      return postMessageCallback("onStopFlow", {});
+    }
   };
 };

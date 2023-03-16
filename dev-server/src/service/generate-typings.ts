@@ -6,7 +6,7 @@ import { readFileSync } from "fs";
 import { join } from "path";
 
 const RUNTIME_MODULE_NAME = "@flyde/runtime";
-const RUNTIME_MODULE_FN = "loadFlow";
+const RUNTIME_MODULE_FN = "loadFlowByPath";
 
 export type LocatedFlowOrCorrupt = {
   relativePath: string;

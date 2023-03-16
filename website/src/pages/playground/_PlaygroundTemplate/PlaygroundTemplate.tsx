@@ -36,6 +36,7 @@ import {
   PartInputs,
   PartInstance,
   PartOutput,
+  ResolvedDependencies,
   ResolvedFlydeRuntimeFlow,
   TRIGGER_PIN_ID,
 } from "@flyde/core";
@@ -93,7 +94,7 @@ export interface PlaygroundTemplateProps {
   flowProps: {
     inputs: Record<string, DynamicPartInput>;
     flow: FlydeFlow;
-    resolvedFlow: ResolvedFlydeRuntimeFlow;
+    dependencies: ResolvedDependencies;
     output: PartOutput;
   };
   prefixComponent?: JSX.Element;

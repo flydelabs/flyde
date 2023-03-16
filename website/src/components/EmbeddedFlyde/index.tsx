@@ -21,6 +21,8 @@ import React, {
     DynamicPartInput,
     execute,
     FlydeFlow,
+    ImportedPart,
+    ImportedPartDef,
     isBasePart,
     keys,
     noop,
@@ -28,6 +30,8 @@ import React, {
     PartInputs,
     PartInstance,
     PartOutput,
+    ResolvedDependencies,
+    ResolvedDependenciesDefinitions,
     ResolvedFlydeRuntimeFlow,
     TRIGGER_PIN_ID,
   } from "@flyde/core";
@@ -50,7 +54,7 @@ import React, {
     flowProps: {
       inputs: Record<string, DynamicPartInput>;
       flow: FlydeFlow;
-      resolvedFlow: ResolvedFlydeRuntimeFlow;
+      dependencies: ResolvedDependencies;
       output: PartOutput;
     };
     debugDelay: number;
@@ -58,7 +62,8 @@ import React, {
   }
   
   export type PlaygroundFlowDto = {
-    flow: ResolvedFlydeRuntimeFlow;
+    flow: FlydeFlow;
+    dependencies: ResolvedDependencies;
     output: PartOutput;
     inputs: PartInputs;
     onError: any;
@@ -72,20 +77,21 @@ import React, {
     inputs,
     onError,
     debugDelay,
+    dependencies,
     player,
   }: PlaygroundFlowDto) => {
     const localDebugger = createRuntimeClientDebugger(player, historyPlayer);
   
     localDebugger.debugDelay = debugDelay;
   
-    const firstOutputName = keys(flow.main.outputs)[0];
+    const firstOutputName = keys(flow.part.outputs)[0];
   
     return {
       executeResult: execute({
-        part: flow.main,
+        part: flow.part,
         inputs: inputs,
         outputs: { [firstOutputName]: output },
-        partsRepo: { ...flow.dependencies, [flow.main.id]: flow.main },
+        partsRepo: { ...dependencies, [flow.part.id]: flow.part },
         _debugger: localDebugger,
         onBubbleError: (e) => {
           onError(e);
@@ -108,14 +114,14 @@ import React, {
       createRuntimePlayer("root." + props.flowProps.flow.part.id)
     );
   
-    const [resolvedFlow, setResolvedFlow] = useState<ResolvedFlydeRuntimeFlow>(
-      props.flowProps.resolvedFlow
+    const [resolvedDeps, setResolvedDeps] = useState<ResolvedDependencies>(
+      props.flowProps.dependencies
     );
   
     const [localDebugger, setLocalDebugger] =
       useState<Pick<EditorDebuggerClient, "onBatchedEvents">>();
   
-    const [debouncedFlow] = useDebounce(resolvedFlow, 500);
+    const [debouncedFlow] = useDebounce(resolvedDeps, 500);
   
     const [editorState, setFlowEditorState] = useState<FlowEditorState>({
       flow,
@@ -130,12 +136,12 @@ import React, {
     });
   
     useEffect(() => {
-      setResolvedFlow((f) => ({ ...f, main: editorState.flow.part }));
+      setResolvedDeps((f) => ({ ...f, main: editorState.flow.part as ImportedPart }));
     }, [editorState.flow.part]);
   
     const flowEditorProps: FlydeFlowEditorProps = {
       state: editorState,
-      resolvedRepoWithDeps: resolvedFlow,
+      resolvedDependencies: resolvedDeps,
       onChangeEditorState: setFlowEditorState,
       onInspectPin: noop,
       onRequestHistory: historyPlayer.requestHistory,
@@ -148,7 +154,7 @@ import React, {
           await import("@flyde/stdlib/dist/all-browser")
         ).find((p) => isBasePart(p) && p.id === part.id) as Part;
   
-        setResolvedFlow((flow) => {
+        setResolvedDeps((flow) => {
           return {
             ...flow,
             dependencies: {
@@ -173,7 +179,7 @@ import React, {
               importedPart.part,
               0,
               finalPos,
-              resolvedFlow.dependencies
+              resolvedDeps
             );
             draft.part.instances.push(newPartIns);
   
@@ -224,7 +230,8 @@ import React, {
   
     useEffect(() => {
       const { executeResult: clean, localDebugger } = runFlow({
-        flow: resolvedFlow,
+        flow,
+        dependencies: resolvedDeps,
         output,
         inputs,
         onError: noop,

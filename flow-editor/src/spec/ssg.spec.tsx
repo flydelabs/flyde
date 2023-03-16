@@ -41,7 +41,7 @@ describe("ssg/ssr support", () => {
       },
       onChangeEditorState: noop,
       onImportPart: noop,
-      resolvedRepoWithDeps: {
+      resolvedDependencies: {
         main: part,
         dependencies: { [part.id]: part as any },
       },

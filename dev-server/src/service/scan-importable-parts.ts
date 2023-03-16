@@ -1,61 +1,65 @@
 import { join, relative } from "path";
-import { resolveFlow, resolveImportablePaths, isCodePartPath, resolveCodePartDependencies } from "@flyde/resolver";
+import { isCodePartPath, resolveCodePartDependencies, deserializeFlow } from "@flyde/resolver";
 
-import * as pkgUp from "pkg-up";
-import { PartDefRepo } from "@flyde/core";
+import { BasePart, debugLogger, isBasePart, PartDefRepo } from "@flyde/core";
 import { scanFolderStructure } from "./scan-folders-structure";
 import { FlydeFile } from "../fs-helper/shared";
+import { getFlydeDependencies } from "./get-flyde-dependencies";
+import { resolveDependentPackages } from "./resolve-dependent-packages";
+import * as StdLib from '@flyde/stdlib/dist/all';
+import { readFileSync } from "fs";
 
-const FLYDE_PACKAGE_PATTERN = /^\@flyde\/(.*)/;
-const FLYDE_LIBRARY = /^flyde[-_](.*)/;
-
-export const getFlydeDependencies = async (rootPath: string) => {
-  const pjsonPath = await pkgUp({ cwd: rootPath });
-
-  if (!pjsonPath) {
-    return []; // no package.json found
-  }
-  
-  const { dependencies, devDependencies } = require(pjsonPath);
-  const combinedDeps = { ...dependencies, ...devDependencies };
-
-  const depKeys = Object.keys(combinedDeps) || [];
-  return depKeys.filter((dep) => {
-    return dep.match(FLYDE_PACKAGE_PATTERN) || dep.match(FLYDE_LIBRARY);
-  });
-};
-
-export const resolveDependentPackages = async (
+export async function scanImportableParts(
   rootPath: string,
-  flydeDependencies: string[]
-) => {
-  return flydeDependencies.reduce<Record<string, PartDefRepo>>((acc, dep) => {
-    try {
-      const paths = resolveImportablePaths(rootPath, dep);
-      const parts = paths.reduce((acc, filePath) => {
+  filename: string
+): Promise<Record<string, PartDefRepo>> {
+  const fileRoot = join(rootPath, filename);
 
-        if (isCodePartPath(filePath))  {
-          const obj = resolveCodePartDependencies(filePath).reduce((obj, {part}) => ({...obj, [part.id]: part}), {});
-          return {...acc, ...obj}
-        }
-        try {
-          const { main } = resolveFlow(filePath, "definition");
-          return { ...acc, [main.id]: main };
-        } catch (e) {
-          console.error(`Skipping corrupt flow at ${filePath}, error: ${e}`);
-          return acc;
-        }
-      }, {});
-      return { ...acc, [dep]: parts };
-    } catch (e) {
-      console.log(`skipping invalid dependency ${dep}`);
-      return acc;
+  const localFiles = getLocalFlydeFiles(rootPath);
+  
+  const depsNames = await getFlydeDependencies(rootPath);
+
+  const depsParts = await resolveDependentPackages(rootPath, depsNames);
+
+
+  let builtInStdLib = {};
+  if (!depsNames.includes('@flyde/stdlib')) {
+    debugLogger('Using built-in stdlib');
+    
+    const parts = Object.values(StdLib)
+    .filter(isBasePart) as BasePart[];
+    builtInStdLib = {
+      '@flyde/stdlib': parts
     }
-    // return acc;
-  }, {});
+  }
+
+  const localParts = localFiles
+    .filter((file) => !file.relativePath.endsWith(filename))
+    .reduce<Record<string, PartDefRepo>>((acc, file) => {
+
+      if (isCodePartPath(file.fullPath)) {
+        const obj = resolveCodePartDependencies(file.fullPath).reduce((obj, {part}) => ({...obj, [part.id]: part}), {});
+        const relativePath = relative(join(fileRoot, ".."), file.fullPath);
+        return {...acc, [relativePath]: obj}
+      }
+
+      try {
+        const flow = deserializeFlow(readFileSync(file.fullPath, "utf8"), file.fullPath);
+
+        const relativePath = relative(join(fileRoot, ".."), file.fullPath);
+
+        return { ...acc, [relativePath]: { [flow.part.id]: flow.part } };
+      } catch (e) {
+        console.error(`Skipping corrupt flow at ${file.fullPath}, error: ${e}`);
+        return acc;
+      }
+    }, {});
+
+  return { ...builtInStdLib, ...depsParts, ...localParts };
 };
 
-const getLocalFlydeFiles = (rootPath: string) => {
+
+function getLocalFlydeFiles(rootPath: string) {
   const structure = scanFolderStructure(rootPath);
 
   const localFlydeFiles: FlydeFile[] = [];
@@ -70,41 +74,4 @@ const getLocalFlydeFiles = (rootPath: string) => {
   }
 
   return localFlydeFiles;
-};
-
-export const scanImportableParts = async (
-  rootPath: string,
-  filename: string
-) => {
-  const fileRoot = join(rootPath, filename);
-
-  const localFiles = getLocalFlydeFiles(rootPath);
-  
-  const depsNames = await getFlydeDependencies(rootPath);
-
-  const depsParts = await resolveDependentPackages(rootPath, depsNames);
-
-  const localParts = localFiles
-    .filter((file) => !file.relativePath.endsWith(filename))
-    .reduce<Record<string, PartDefRepo>>((acc, file) => {
-
-      if (isCodePartPath(file.fullPath)) {
-        const obj = resolveCodePartDependencies(file.fullPath).reduce((obj, {part}) => ({...obj, [part.id]: part}), {});
-        const relativePath = relative(join(fileRoot, ".."), file.fullPath);
-        return {...acc, [relativePath]: obj}
-      }
-
-      try {
-        const { main } = resolveFlow(file.fullPath, "definition");
-
-        const relativePath = relative(join(fileRoot, ".."), file.fullPath);
-
-        return { ...acc, [relativePath]: { [main.id]: main } };
-      } catch (e) {
-        console.error(`Skipping corrupt flow at ${file.fullPath}, error: ${e}`);
-        return acc;
-      }
-    }, {});
-
-  return { ...depsParts, ...localParts };
 };

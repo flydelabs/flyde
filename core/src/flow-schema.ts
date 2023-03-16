@@ -110,14 +110,18 @@ export type ImportedPartDef = PartDefinition & {
   source: ImportSource
 };
 
+export type ResolvedDependenciesDefinitions = Record<string, ImportedPartDefinition>;
+
 export type ResolvedFlydeFlowDefinition = {
   main: VisualPart;
-  dependencies: Record<string, ImportedPartDefinition>;
+  dependencies: ResolvedDependenciesDefinitions;
 };
+
+export type ResolvedDependencies = Record<string, ImportedPart>;
 
 export type ResolvedFlydeRuntimeFlow = {
   main: VisualPart;
-  dependencies: Record<string, ImportedPart>;
+  dependencies: ResolvedDependencies;
 };
 
 export type ResolvedFlydeFlow =

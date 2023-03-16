@@ -1,9 +1,12 @@
-imports: {}
+imports:
+  "@flyde/stdlib":
+    - Trim
+    - Request
 part:
   instances:
     - pos:
-        x: -152.2423840332031
-        y: 312.0960006713867
+        x: -210.6530285644531
+        y: 314.3049545288086
       id: clacz9qa700034664mecvv1ga
       inputConfig: {}
       part:
@@ -32,6 +35,18 @@ part:
         cssOverride:
           fontFamily: monospace
           fontWeight: "500"
+    - pos:
+        x: -349.60151489257794
+        y: 421.16241290638254
+      id: clfb6eplk000246660v31uhjz
+      inputConfig: {}
+      partId: Trim
+    - pos:
+        x: 115.93972106933597
+        y: 380.3970756530762
+      id: clfb6gvv80003466687j2evs4
+      inputConfig: {}
+      partId: Request
   connections:
     - from:
         insId: clacz9qa700034664mecvv1ga

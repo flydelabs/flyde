@@ -3,11 +3,11 @@ import "./App.scss";
 
 import {
   FlydeFlow,
-  ResolvedFlydeFlowDefinition,
   ImportablePart,
-  Pos,
   TRIGGER_PIN_ID,
   PartInstance,
+  ResolvedDependenciesDefinitions,
+  PartDefRepo,
 } from "@flyde/core";
 
 import classNames from "classnames";
@@ -50,14 +50,14 @@ export type IntegratedFlowManagerProps = {
   flow: FlydeFlow;
   initialPart: CustomPart;
   integratedSource: string;
-  resolvedDefinitions: ResolvedFlydeFlowDefinition;
+  resolvedDependencies: ResolvedDependenciesDefinitions;
   port: number;
 };
 
 export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
   props
 ) => {
-  const { flow: initialFlow, resolvedDefinitions } = props;
+  const { flow: initialFlow, resolvedDependencies } = props;
   const boardRef = React.useRef<any>();
 
   const ports = usePorts();
@@ -66,8 +66,8 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
   const bootstrapData = useBootstrapData();
   const isEmbedded = !!bootstrapData;
 
-  const [currentResolvedDefs, setCurrentResolvedDefs] =
-    useState(resolvedDefinitions);
+  const [currentResolvedDeps, setCurrentResolvedDeps] =
+    useState(resolvedDependencies);
 
   const lastChangeReason = React.useRef("");
 
@@ -100,27 +100,27 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
     []
   );
 
-  const [repo, setRepo] = useState({
-    ...currentResolvedDefs.dependencies,
-    [currentResolvedDefs.main.id]: currentResolvedDefs.main,
+  const [repo, setRepo] = useState<PartDefRepo>({
+    ...currentResolvedDeps,
+    [flow.part.id]: flow.part,
   });
 
   const didMount = React.useRef(false);
 
   useEffect(() => {
     setRepo({
-      ...currentResolvedDefs.dependencies,
-      [currentResolvedDefs.main.id]: currentResolvedDefs.main,
+      ...currentResolvedDeps,
+      [flow.part.id]: flow.part,
     });
-  }, [currentResolvedDefs]);
+  }, [currentResolvedDeps, flow.part]);
 
   useEffect(() => {
-    return ports.onFlowChange(({ flow, deps }) => {
+    return ports.onExternalFlowChange(({ flow, deps }) => {
       /*
        this is triggered from either vscode or in the future from  filesystem watcher when outside of an IDE
       */
       if (_.isEqual(flow, editorState.flow) === false) {
-        setCurrentResolvedDefs(deps);
+        setCurrentResolvedDeps(deps);
         setEditorState((state) => ({ ...state, flow }));
 
         lastChangeReason.current = "external-changes";
@@ -179,7 +179,7 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
   }, [debuggerClient]);
 
   const debouncedSaveFile = useDebouncedCallback((flow, src: string) => {
-    ports.saveFlow({ absPath: src, flow });
+    ports.setFlow({ absPath: src, flow });
   }, 500);
 
   const onChangeState = React.useCallback(
@@ -357,7 +357,7 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
       };
     }, {});
 
-    setCurrentResolvedDefs((def) => {
+    setCurrentResolvedDeps((def) => {
       return {
         ...def,
         dependencies: { ...def.dependencies, ...importedPartsRepo },
@@ -393,7 +393,7 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
             hideTemplatingTips={false}
             onInspectPin={onInspectPin}
             onRequestHistory={_onRequestHistory}
-            resolvedRepoWithDeps={currentResolvedDefs}
+            resolvedDependencies={currentResolvedDeps}
             onQueryImportables={queryImportables}
             onImportPart={onImportPart}
             onExtractInlinePart={onExtractInlinePart}

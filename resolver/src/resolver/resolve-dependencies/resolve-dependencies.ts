@@ -8,14 +8,18 @@ import {
   isCodePart,
   CodePart,
   ImportSource,
+  isBasePart,
+  BasePart,
 } from "@flyde/core";
 import { existsSync, readFileSync } from "fs";
 import _ = require("lodash");
 import { join } from "path";
-import { deserializeFlow } from "../../serdes";
-import { ResolveMode, resolveFlow } from "../resolve-flow";
+import { deserializeFlow, deserializeFlowByPath } from "../../serdes";
+import { ResolveMode, resolveFlowDependenciesByPath } from "../resolve-flow";
 import { resolveImportablePaths } from "./resolve-importable-paths";
 import { namespaceFlowImports } from "./namespace-flow-imports";
+
+import * as StdLib from '@flyde/stdlib/dist/all';
 
 
 const getRefPartIds = (part: VisualPart): string[] => {
@@ -84,7 +88,14 @@ export function resolveDependencies(
     if (existsSync(fullImportPath)) {
       return [fullImportPath];
     } else {
-      return resolveImportablePaths(fullFlowPath, importPath);
+      try {
+        return resolveImportablePaths(fullFlowPath, importPath);
+      } catch (e) {
+        if (importPath !== '@flyde/stdlib') {
+          throw new Error(`Cannot find module ${importPath} in ${fullFlowPath}`);
+        }
+        return [];
+      }
     }
   };
   const refPartIds = getRefPartIds(part);
@@ -107,10 +118,8 @@ export function resolveDependencies(
     const paths = getLocalOrExternalPaths(importPath);
 
     // TODO - refactor the code below. It is unnecessarily complex and inefficient
-    const result: {flow: FlydeFlow, source: ImportSource} = paths
+    let result: {flow: FlydeFlow, source: ImportSource} = paths
       .reduce((acc, path) => {
-        const contents = readFileSync(path, "utf-8");
-
         if (isCodePartPath(path)) {
           return [
             ...acc,
@@ -123,43 +132,67 @@ export function resolveDependencies(
             })),
           ];
         } else {
-          return [...acc, { flow: deserializeFlow(contents, path), source: { path, export: '__n/a__visual__' } }];
+          const flow = deserializeFlowByPath(path);
+          return [...acc, { flow, source: { path, export: '__n/a__visual__' } }];
         }
       }, [])
       .filter((obj) => !!obj)
       .find((obj) => obj.flow.part.id === refPartId);
 
     if (!result) {
-      throw new Error(
-        `Cannot find part ${refPartId} in ${importPath}. It is imported by ${part.id} (${fullFlowPath})`
-      );
-    }
 
-    const { flow, source } = result;
+      if (importPath === '@flyde/stdlib') {
+        const maybePartAndExport = Object.entries(StdLib)
+          .filter(([key, value]) => isBasePart(value))
+          .map(([key, value]) => ({part: value as CodePart, exportPath: key}))
+          .find(({part}) => part.id === refPartId);
+        if (!maybePartAndExport) {
+          throw new Error(
+            `Cannot find part ${refPartId} in ${importPath} (both external and built-in). It is imported by ${part.id} (${fullFlowPath})`
+          );
+        }
 
-    if (isCodePart(flow.part)) {
-      deps[refPartId] = {
-        ...flow.part,
-        source
-      };
+        deps[refPartId] = {
+          ...maybePartAndExport.part,
+          source: {
+            path: importPath,
+            export: maybePartAndExport.exportPath
+          }
+        };
+
+      } else {
+        throw new Error(
+          `Cannot find part ${refPartId} in ${importPath}. It is imported by ${part.id} (${fullFlowPath})`
+        );
+      }
     } else {
+      const { flow, source } = result;
 
-      const resolvedImport = resolveFlow(source.path, mode);
-
-      const namespacedImport = namespaceFlowImports(
-        resolvedImport,
-        `${refPartId}__`
-      );
-
-      deps = {
-        ...deps,
-        ...namespacedImport.dependencies,
-        [refPartId]: {
-          ...namespacedImport.main,
+      if (isCodePart(flow.part)) {
+        deps[refPartId] = {
+          ...flow.part,
           source
-        },
-      };
+        };
+      } else {
+  
+        const resolvedImport = resolveFlowDependenciesByPath(source.path, mode);
+  
+        const namespacedImport = namespaceFlowImports(
+          resolvedImport,
+          `${refPartId}__`
+        );
+  
+        deps = {
+          ...deps,
+          ...namespacedImport.dependencies,
+          [refPartId]: {
+            ...namespacedImport.main,
+            source
+          },
+        };
+      }
     }
+
   }
 
   return deps;

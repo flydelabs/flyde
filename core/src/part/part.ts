@@ -195,7 +195,7 @@ export interface VisualPart extends BasePart {
 
 export type Part = CodePart | CustomPart;
 
-export type ImportablePart = { module: string; part: BasePart };
+export type ImportablePart = { module: string; part: BasePart, implicit?: boolean };
 
 export type CustomPart = VisualPart | InlineValuePart;
 

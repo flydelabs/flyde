@@ -8,9 +8,9 @@ import { CodeBlock, dracula } from "react-code-blocks";
 
 const code = `import {loadFlow} from '@flyde/runtime';
 
-const executeFlow = loadFlow('Greet.flyde');
-
-const {output} = await executeFlow();
+const executeFlow = loadFlowByPath('Greet.flyde');
+const {results} = executeFlow();
+const {output} = await results;
 console.log(\`Output: \$\{output\}\`);`;
 
 import "./HeroExample.scss";
@@ -27,14 +27,17 @@ export const HeroExample: React.FC = () => {
   const result = useRef(dynamicOutput());
   const flowProps = {
     flow: helloWorldExample.flow,
-    resolvedFlow: helloWorldExample.resolvedFlow,
+    dependencies: helloWorldExample.dependencies,
     inputs: inputs.current,
     output: result.current,
   };
 
+  const [didRun, setDidRun] = React.useState(false);
+
   const onRunExample = () => {
     setLogs(["› ts-node index.ts"]);
     inputs.current.__trigger.subject.next("run");
+    setDidRun(true);
   };
 
   return (
@@ -44,7 +47,7 @@ export const HeroExample: React.FC = () => {
           Online Playground
         </Link>
         <Button
-          className="button button--success button"
+          className={`button button--success button${!didRun && ' nudge'}`}
           onClick={onRunExample}
         >
           Run Example 👇

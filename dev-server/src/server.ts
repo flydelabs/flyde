@@ -4,15 +4,14 @@ import { createService } from "./service/service";
 import { setupRemoteDebuggerServer } from "@flyde/remote-debugger/dist/setup-server";
 import { createServer } from "http";
 import {
-  getFlydeDependencies,
-  resolveDependentPackages,
   scanImportableParts,
 } from "./service/scan-importable-parts";
-import { resolveFlow } from "@flyde/resolver";
+import { deserializeFlow, resolveDependencies } from "@flyde/resolver";
 import { join } from "path";
 
 import { entries } from "@flyde/core";
 import resolveFrom = require("resolve-from");
+import { readFileSync } from "fs";
 
 export const runDevServer = (
   port: number,
@@ -78,34 +77,17 @@ export const runDevServer = (
         res.status(400).send("missing filename");
         return;
       }
-      const data = await resolveFlow(filename);
-      res.send({ ...data });
+
+      const fullPath = resolveFrom(rootDir, filename);
+      const flow = deserializeFlow(readFileSync(fullPath, "utf-8"), fullPath);
+      const deps = await resolveDependencies(flow, 'definition', fullPath);
+      res.send({ ...deps, [flow.part.id]: flow.part });
     } catch (e) {
       console.error(e);
       res.status(400).send(e);
     }
 
     // res.send({...STDLIB_BACKUP, ...data});
-  });
-
-  app.get("/bundle", async (req, res) => {
-    const { name } = req.query;
-    try {
-      const path = join(rootDir, name as string);
-      res.json(resolveFlow(path));
-    } catch (e) {
-      res.status(400).send(e);
-    }
-  });
-
-  app.get("/bundle-deps", async (req, res) => {
-    const depsNames = await getFlydeDependencies(rootDir);
-    const depsParts = await resolveDependentPackages(rootDir, depsNames);
-
-    const combined = entries(depsParts).reduce((acc, [name, parts]) => {
-      return { ...acc, ...parts };
-    }, {});
-    res.send(combined);
   });
 
   app.use("/editor", express.static(editorStaticRoot));

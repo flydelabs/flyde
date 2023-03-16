@@ -2,14 +2,14 @@ import axios from "axios";
 import {
   BasePart,
   FlydeFlow,
-  ImportablePart,
-  PartDefinition,
-  PartDefRepo,
+  ResolvedDependenciesDefinitions,
   ResolvedFlydeFlowDefinition,
 } from "@flyde/core";
 import { FolderStructure } from "./fs-helper/shared";
 
 export type Importables = Record<string, Record<string, BasePart>>;
+
+export * from './runner/shared';
 
 export const createDevServerClient = (baseUrl: string) => {
   return {
@@ -26,7 +26,7 @@ export const createDevServerClient = (baseUrl: string) => {
     },
     resolveDefinitions: (
       filename: string
-    ): Promise<ResolvedFlydeFlowDefinition> => {
+    ): Promise<ResolvedDependenciesDefinitions> => {
       return axios
         .get(`${baseUrl}/resolveDefinitions?filename=${filename}`)
         .then((res) => res.data);

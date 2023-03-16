@@ -6,13 +6,13 @@ import {
   isInlineValuePart,
   PartInstance,
   FlydeFlow,
-  ResolvedFlydeFlowDefinition,
   ImportablePart,
   PartDefRepo,
   ImportedPartDef,
   InlinePartInstance,
   PinType,
   DebuggerEventType,
+  ResolvedDependenciesDefinitions,
 } from "@flyde/core";
 import {
   VisualPartEditor,
@@ -27,7 +27,6 @@ import { useHotkeys } from "../lib/react-utils/use-hotkeys";
 // ;
 import {
   createNewPartInstance,
-  domToViewPort,
 } from "../visual-part-editor/utils";
 
 import { EditorDebuggerClient, HistoryPayload } from "@flyde/remote-debugger";
@@ -60,7 +59,7 @@ export type FlydeFlowEditorProps = {
   state: FlowEditorState;
   onChangeEditorState: React.Dispatch<React.SetStateAction<FlowEditorState>>;
 
-  resolvedRepoWithDeps: ResolvedFlydeFlowDefinition;
+  resolvedDependencies: ResolvedDependenciesDefinitions;
 
   onImportPart: (
     part: ImportablePart,
@@ -104,16 +103,16 @@ export type DataBuilderTarget = {
 
 const ignoreUndoChangeTypes = ["select", "drag-move", "order-step"];
 
-const resolvedToRepo = (res: ResolvedFlydeFlowDefinition): PartDefRepo => ({
-  ...res.dependencies,
-  [res.main.id]: res.main,
+const resolvedToRepo = (flow: FlydeFlow, deps: ResolvedDependenciesDefinitions): PartDefRepo => ({
+  ...deps,
+  [flow.part.id]: flow.part,
 });
 
 export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
   React.forwardRef((props, ref) => {
     const {
       state,
-      resolvedRepoWithDeps: resolvedFlow,
+      resolvedDependencies,
       onChangeEditorState,
       onImportPart,
       debuggerClient,
@@ -243,7 +242,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
           partId,
           offset,
           editorBoardData.lastMousePos,
-          resolvedToRepo(resolvedFlow)
+          resolvedToRepo(flow, resolvedDependencies)
         );
         if (newPartIns) {
           const valueChanged = produce(flow, (draft) => {
@@ -265,7 +264,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
         flow,
         onChangeFlow,
         hideOmnibar,
-        resolvedFlow,
+        resolvedDependencies,
       ]
     );
 
@@ -275,11 +274,11 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
           case OmniBarCmdType.ADD:
             return onAddPartInstance(cmd.data);
           case OmniBarCmdType.ADD_VALUE:
-            const pos = domToViewPort(
-              editorBoardData.lastMousePos,
-              editorBoardData.viewPort,
-              defaultViewPort
-            );
+            // const pos = domToViewPort(
+            //   editorBoardData.lastMousePos,
+            //   editorBoardData.viewPort,
+            //   defaultViewPort
+            // );
             toastMsg("TODO");
             // return requestNewConstValue(pos);
             break;
@@ -298,7 +297,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
               cmd.data.part,
               0,
               finalPos,
-              resolvedToRepo(resolvedFlow)
+              resolvedToRepo(flow, resolvedDependencies)
             );
             const newValue = produce(flow, (draft) => {
               draft.part.instances.push(newPartIns);
@@ -320,7 +319,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
         editorBoardData.lastMousePos,
         editorBoardData.viewPort,
         onImportPart,
-        resolvedFlow,
+        resolvedDependencies,
         flow,
         onChangeFlow,
       ]
@@ -391,7 +390,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
               // requestNewConstValue={requestNewConstValue}
               // onGroupSelected={onGroupPart}
               onChangePart={onChangePart}
-              resolvedFlow={resolvedFlow}
+              resolvedDependencies={resolvedDependencies}
               // onToggleLog={props.onToggleLog}
               // onToggleBreakpoint={props.onToggleBreakpoint}
               clipboardData={clipboardData}
@@ -410,7 +409,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
             {omnibarVisible ? (
               <Omnibar
                 flow={flow}
-                repo={resolvedFlow.dependencies}
+                repo={resolvedDependencies}
                 onCommand={onOmnibarCmd}
                 visible={omnibarVisible}
                 onClose={hideOmnibar}

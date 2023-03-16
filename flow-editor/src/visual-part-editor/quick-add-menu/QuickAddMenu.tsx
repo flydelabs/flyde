@@ -5,9 +5,10 @@ import {
   PartDefinition,
   PartInstance,
   PinType,
-  ResolvedFlydeFlowDefinition,
   values,
   Pos,
+  ResolvedDependenciesDefinitions,
+  VisualPart,
 } from "@flyde/core";
 // ;
 import { MenuDivider, MenuItem } from "@blueprintjs/core";
@@ -36,7 +37,7 @@ export type QuickMenuMatch =
 export type QuickAddMenuData = {
   pos: Pos;
   ins?: PartInstance;
-  part: PartDefinition;
+  targetPart: PartDefinition;
   pinId: string;
   pinType: PinType;
 };
@@ -45,7 +46,8 @@ export type QuickMenuProps = QuickAddMenuData & {
   onAdd: (match: QuickMenuMatch) => void;
   onClose: () => void;
   onRequestImportables?: (query: string) => Promise<ImportablePart[]>;
-  resolvedFlow: ResolvedFlydeFlowDefinition;
+  part: VisualPart;
+  resolvedDependencies: ResolvedDependenciesDefinitions;
 };
 
 // Select<T> is a generic component to work with your data types.
@@ -118,7 +120,7 @@ const partPredicate: ItemPredicate<QuickMenuMatch> = (
 };
 
 export const QuickAddMenu: React.FC<QuickMenuProps> = (props) => {
-  const { resolvedFlow, onRequestImportables } = props;
+  const { resolvedDependencies, onRequestImportables, targetPart: part } = props;
   const style = {
     left: props.pos.x,
     top: props.pos.y,
@@ -133,8 +135,8 @@ export const QuickAddMenu: React.FC<QuickMenuProps> = (props) => {
   }, [onRequestImportables]);
 
   const availableParts = values({
-    ...resolvedFlow.dependencies,
-    [resolvedFlow.main.id]: resolvedFlow.main,
+    ...resolvedDependencies,
+    [part.id]: part,
   });
 
   const existingPartMatches = availableParts.map<QuickMenuMatch>((curr) => {

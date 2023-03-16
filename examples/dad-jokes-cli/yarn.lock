@@ -9,7 +9,7 @@
 
 "@flyde/core@file:../../core":
   "resolved" "file:../../core"
-  "version" "0.1.13"
+  "version" "0.1.14"
   dependencies:
     "debug" "^4.3.2"
     "dependency-graph" "^0.8.0"
@@ -37,9 +37,9 @@
 
 "@flyde/resolver@file:../../resolver":
   "resolved" "file:../../resolver"
-  "version" "0.3.13"
+  "version" "0.3.14"
   dependencies:
-    "@flyde/core" "^0.1.13"
+    "@flyde/core" "^0.1.14"
     "@types/cuid" "^1.3.0"
     "@types/node" "^11.10.5"
     "axios" "^0.21.1"
@@ -57,12 +57,12 @@
 
 "@flyde/runtime@file:../../runtime":
   "resolved" "file:../../runtime"
-  "version" "0.4.8"
+  "version" "0.4.9"
   dependencies:
-    "@flyde/core" "^0.1.13"
-    "@flyde/remote-debugger" "^0.2.12"
-    "@flyde/resolver" "^0.3.13"
-    "@flyde/stdlib" "^0.1.13"
+    "@flyde/core" "^0.1.14"
+    "@flyde/remote-debugger" "^0.2.13"
+    "@flyde/resolver" "^0.3.14"
+    "@flyde/stdlib" "^0.1.14"
     "@types/cuid" "^1.3.0"
     "@types/node" "^11.10.5"
     "axios" "^0.21.1"
@@ -80,9 +80,9 @@
 
 "@flyde/stdlib@file:../../stdlib":
   "resolved" "file:../../stdlib"
-  "version" "0.1.13"
+  "version" "0.1.14"
   dependencies:
-    "@flyde/core" "^0.1.13"
+    "@flyde/core" "^0.1.14"
     "@types/pg" "^8.6.6"
     "axios" "^0.27.2"
     "mongodb" "^4.13.0"

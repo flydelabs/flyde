@@ -3,7 +3,7 @@ import { useSsr } from "usehooks-ts";
 
 export type BootstrapData = {
   initialFlow: FlydeFlow;
-  dependencies: ResolvedFlydeFlowDefinition;
+  dependencies: ResolvedFlydeFlowDefinition['dependencies'];
   port: number;
 };
 

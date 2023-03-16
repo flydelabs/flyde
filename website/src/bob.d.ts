@@ -1,8 +1,7 @@
-
 declare module '*.flyde' {
     type FlydeFlow = import('@flyde/core').FlydeFlow;
-    type ResolvedFlydeRuntimeFlow = import('@flyde/core').ResolvedFlydeRuntimeFlow;
+    type ResolvedDependencies = import('@flyde/core').ResolvedDependencies;
 
-    const classes: {resolvedFlow: ResolvedFlydeRuntimeFlow, flow: FlydeFlow};
+    const classes: {dependencies: ResolvedDependencies, flow: FlydeFlow};
     export default classes;
   }
