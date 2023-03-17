@@ -391,7 +391,12 @@ export const accumulate = conciseCodePart({
 
     state.set("list", list);
 
+    console.log('called', val, state);
+    
+
     if (list.length === state.get("count")) {
+      console.log(list);
+      
       r.next(list);
     }
   },

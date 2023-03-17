@@ -81,6 +81,31 @@ part:
       id: DadJoke-l0p46hh
       inputConfig: {}
       partId: Log
+    - pos:
+        x: -602.436328125
+        y: -647.9378515625
+      id: Inline-value-internet + 7-vq046dz
+      inputConfig: {}
+      part:
+        id: Inline-value-internet + 7
+        inputs: {}
+        outputs:
+          value:
+            delayed: false
+        fnCode: const result = (internet + 7); Promise.resolve(result).then(val =>
+          outputs.value.next(val))
+        customViewCode: internet + 7
+        dataBuilderSource: aW50ZXJuZXQgKyA3
+        templateType: value
+        completionOutputs:
+          - value
+        defaultStyle:
+          size: regular
+          icon: code
+          cssOverride:
+            fontFamily: monospace
+            fontWeight: "500"
+        description: Custom inline value
   connections:
     - from:
         insId: clchvfuoj000145662fwav020
@@ -126,12 +151,21 @@ part:
   outputs: {}
   inputsPosition:
     punchDelay:
-      x: -302.7343200487989
-      y: -948.6811052496844
+      x: -324.37367302609465
+      y: -1082.4516813081284
     test:
       x: -182.5383681955638
       y: -903.352979697288
     punch delay:
       x: -222.9
       y: -816.63
+    tester:
+      x: -762.45
+      y: -974.72
+    optional:
+      x: -858.99
+      y: -978.49
+    some input:
+      x: -860.9572148961508
+      y: -1108.3261643139242
   outputsPosition: {}

@@ -18,7 +18,6 @@ import {
   connectionDataEquals,
   ConnectionNode,
   staticInputPinConfig,
-  PartInstanceConfig,
   delay,
   noop,
   keys,
@@ -30,7 +29,6 @@ import {
   InlineValuePartType,
   isInlineValuePart,
   InlinePartInstance,
-  ResolvedFlydeFlowDefinition,
   connectionNode,
   ImportedPartDef,
   PartStyle,
@@ -159,6 +157,7 @@ export type GroupEditorBoardData = {
 export type VisualPartEditorProps = {
   part: VisualPart;
   insId: string;
+  parentInsId: string;
 
   clipboardData: ClipboardData;
   resolvedDependencies: ResolvedDependenciesDefinitions;
@@ -248,6 +247,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
         boardData,
         onChangeBoardData,
         insId: thisInsId,
+        parentInsId,
         part,
         onShowOmnibar,
         resolvedDependencies,
@@ -1868,7 +1868,8 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
       ): VisualPartEditorProps => {
         if (openInlineInstance && openInlineInstance.insId === ins.id) {
           return {
-            insId: `${thisInsId}.${openInlineInstance.insId}`,
+            insId: openInlineInstance.insId,
+            parentInsId: `${parentInsId}.${thisInsId}`,
             boardData: inspectedBoardData,
             onChangeBoardData: onChangeInspectedBoardData,
             resolvedDependencies,
@@ -2022,27 +2023,6 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
           clearSelections();
         },
       }));
-
-      const onChangeInstanceConfig = React.useCallback(
-        (instance: PartInstance, comment: string) => {
-          const config: PartInstanceConfig = {
-            visibleInputs: instance.visibleInputs,
-            visibleOutputs: instance.visibleOutputs,
-            inputConfig: instance.inputConfig,
-            displayName: instance.displayName,
-          };
-          const newPart = produce(part, (draft) => {
-            draft.instances = draft.instances.map((i) => {
-              return i.id === instance.id ? { ...i, ...config } : i;
-            });
-          });
-          onChange(
-            newPart,
-            functionalChange("change instance config - " + comment)
-          );
-        },
-        [onChange, part]
-      );
 
       // use this to debug positioning/layout related stuff
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -2280,7 +2260,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             </div> */}
               <ConnectionView
                 repo={repo}
-                parentInsId={thisInsId}
+                parentInsId={`${parentInsId}.${thisInsId}`}
                 size={vpSize}
                 part={part}
                 boardPos={boardPos}
@@ -2310,7 +2290,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
                   }
                   connectionsPerOutput={emptyObj}
                   part={getPartDef(ins, repo)}
-                  parentInsId={thisInsId}
+                  parentInsId={`${parentInsId}.${thisInsId}`}
                   onPinClick={onPinClick}
                   onPinDblClick={onPinDblClick}
                   onDragStart={onStartDraggingInstance}

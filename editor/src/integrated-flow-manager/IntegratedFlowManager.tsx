@@ -48,7 +48,6 @@ export const PIECE_HEIGHT = 28;
 export type IntegratedFlowManagerProps = {
   // user: string;
   flow: FlydeFlow;
-  initialPart: CustomPart;
   integratedSource: string;
   resolvedDependencies: ResolvedDependenciesDefinitions;
   port: number;
@@ -140,7 +139,7 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
       if (runtimePlayer.current) {
         runtimePlayer.current.destroy();
       }
-      const newPlayer = createRuntimePlayer(`root.${flow.part.id}`);
+      const newPlayer = createRuntimePlayer(`${flow.part.id}`);
       runtimePlayer.current = newPlayer;
 
       (window as any).__runtimePlayer = runtimePlayer;
@@ -357,10 +356,10 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
       };
     }, {});
 
-    setCurrentResolvedDeps((def) => {
+    setCurrentResolvedDeps((deps) => {
       return {
-        ...def,
-        dependencies: { ...def.dependencies, ...importedPartsRepo },
+        ...deps,
+        ...importedPartsRepo,
       };
     });
   }, [importedParts]);

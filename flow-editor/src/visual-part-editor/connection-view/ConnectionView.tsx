@@ -29,6 +29,7 @@ export interface BaseConnectionViewProps {
   repo: PartDefRepo;
   part: VisualPart;
   parentInsId: string;
+  insId: string;
   onDblClick: () => void;
   size: Size;
   boardPos: Pos;
@@ -66,16 +67,18 @@ const calcStartPos = (props: {
   boardPos: Pos;
   parentInsId: string;
   viewPort: ViewPort;
+  insId: string;
 }): Pos => {
-  const { connectionNode, boardPos, parentInsId, viewPort } = props;
+  const { connectionNode, boardPos, parentInsId, viewPort, insId } = props;
 
   if (isExternalConnectionNode(connectionNode)) {
     return calcMainInputPosition(
       connectionNode.pinId,
-      parentInsId,
+      insId,
       "input",
       boardPos,
-      viewPort
+      viewPort,
+      parentInsId
     );
   } else {
     return calcPinPosition(
@@ -94,15 +97,16 @@ const calcTargetPos = (
     connectionNode: ConnectionNode;
   }
 ): Pos => {
-  const { connectionNode, boardPos, parentInsId, viewPort } = props;
+  const { connectionNode, boardPos, parentInsId, viewPort, insId } = props;
 
   if (isExternalConnectionNode(connectionNode)) {
     return calcMainOutputPosition(
       connectionNode.pinId,
-      parentInsId,
+      insId,
       "output",
       boardPos,
-      viewPort
+      viewPort,
+      parentInsId
     );
   } else {
     return calcPinPosition(
@@ -281,6 +285,7 @@ export const ConnectionView: React.FC<ConnectionViewProps> = (props) => {
       viewPort,
       boardPos: props.boardPos,
       parentInsId: props.parentInsId,
+      insId: props.insId
     });
 
     connectionPaths.push(

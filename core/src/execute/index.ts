@@ -118,6 +118,7 @@ const executeCodePart = (data: CodeExecutionData) => {
   const inputsStateId = `${fullInsId}${INPUTS_STATE_SUFFIX}`;
 
   const innerDebug = debug.extend(fullInsId);
+  
 
   if (!mainState[innerStateId]) {
     mainState[innerStateId] = new Map();
@@ -127,7 +128,6 @@ const executeCodePart = (data: CodeExecutionData) => {
     mainState[inputsStateId] = new Map();
   }
 
-  let innerState = mainState[innerStateId];
   let inputsState = mainState[inputsStateId];
 
   const cleanupSetter = (cb: Function) => {
@@ -148,6 +148,7 @@ const executeCodePart = (data: CodeExecutionData) => {
       val: obj,
       insId,
       parentInsId,
+      partId: part.id,
     });
   };
 
@@ -174,6 +175,9 @@ const executeCodePart = (data: CodeExecutionData) => {
     .filter((inp) => !isStaticInputPinConfig(inputs[inp].config));
 
   const cleanState = () => {
+
+    console.log('cleaning state', innerStateId);
+    
     mainState[innerStateId].clear();
 
     // removes all internal state from child parts.
@@ -235,6 +239,7 @@ const executeCodePart = (data: CodeExecutionData) => {
           val: processing,
           insId,
           parentInsId,
+          partId: part.id,
         });
         if (part.completionOutputs) {
           // completion outputs support the "AND" operator via "+" sign, i.e. "a+b,c" means "(a AND b) OR c)""
@@ -270,11 +275,13 @@ const executeCodePart = (data: CodeExecutionData) => {
                   val: processing,
                   insId,
                   parentInsId,
+                  partId: part.id,
                 });
 
                 if (onCompleted) {
                   onCompleted(completedOutputsValues);
                 }
+                
 
                 cleanState();
 
@@ -316,6 +323,7 @@ const executeCodePart = (data: CodeExecutionData) => {
                   val: processing,
                   insId,
                   parentInsId,
+                  partId: part.id,
                 });
                 onCompleted(completedOutputsValues);
                 cleanState();
@@ -329,6 +337,7 @@ const executeCodePart = (data: CodeExecutionData) => {
                 val: processing,
                 insId,
                 parentInsId,
+                partId: part.id,
               });
               onCompleted(completedOutputsValues);
               cleanState();
@@ -344,6 +353,7 @@ const executeCodePart = (data: CodeExecutionData) => {
             val: processing,
             insId,
             parentInsId,
+            partId: part.id,
           });
           onError(e);
         }
@@ -493,6 +503,7 @@ export const execute: ExecuteFn = ({
         val: err,
         insId,
         parentInsId,
+        partId: part.id,
       });
     }
   };
@@ -533,6 +544,7 @@ export const execute: ExecuteFn = ({
           pinId,
           val,
           parentInsId,
+          partId: part.id,
         } as DebuggerEvent);
         if (res) {
           const interceptedValue = await res.valuePromise;
@@ -553,6 +565,7 @@ export const execute: ExecuteFn = ({
         pinId,
         val: arg.config.value,
         parentInsId,
+        partId: part.id,
       } as DebuggerEvent);
       const mediator = staticPartInput(
         getStaticValue(arg.config.value, processedRepo, insId)
@@ -570,6 +583,7 @@ export const execute: ExecuteFn = ({
         pinId,
         val,
         parentInsId,
+        partId: part.id,
       } as DebuggerEvent);
       if (res) {
         const interceptedValue = await res.valuePromise;

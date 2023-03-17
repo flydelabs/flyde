@@ -68,7 +68,7 @@ export const connect = (
   part: PositionlessVisualPart,
   repo: PartRepo,
   _debugger: Debugger = {},
-  parentInsId: string = "root",
+  ancestorsInsIds: string = "root",
   mainState: OMap<PartState> = { bob: new Map() },
   onBubbleError: (err: any) => void = noop,
   env: ExecuteEnv = {},
@@ -347,7 +347,7 @@ export const connect = (
             insId: instance.id,
             extraContext,
             mainState,
-            parentInsId,
+            parentInsId: ancestorsInsIds,
             onBubbleError,
             onCompleted: () => onInstanceCompleted(instance.id),
             onStarted: () => onInstanceStarted(instance.id),
@@ -371,7 +371,7 @@ export const connect = (
             }
           } else {
             throw new Error(
-              `Unsure what to do with key ${key}, input: ${input} of ins ${parentInsId}`
+              `Unsure what to do with key ${key}, input: ${input} of ins ${ancestorsInsIds}`
             );
           }
         });

@@ -27,7 +27,7 @@ const getCancelTimerKey = (event: DebuggerEvent) => {
 };
 export const cancelTimers = new Map();
 
-export const playEvent = (editorInsId: string, event: DebuggerEvent) => {
+export const playEvent = (mainInsId: string, event: DebuggerEvent) => {
   const timerKey = getCancelTimerKey(event);
 
   switch (event.type) {
@@ -38,8 +38,8 @@ export const playEvent = (editorInsId: string, event: DebuggerEvent) => {
         event.type === DebuggerEventType.INPUT_CHANGE ? "input" : "output";
 
       const domId =
-        insId === editorInsId
-          ? getMainPinDomId(insId, pinId, pinType)
+        insId === mainInsId
+          ? getMainPinDomId(insId, pinId, pinType, parentInsId)
           : getPinDomId(parentInsId, insId, pinId, pinType);
       const element = document.getElementById(domId);
 
@@ -130,7 +130,7 @@ export const playEvent = (editorInsId: string, event: DebuggerEvent) => {
         pinId: ERROR_PIN_ID,
       };
 
-      playEvent(editorInsId, fakeErrorPinEvent);
+      playEvent(mainInsId, fakeErrorPinEvent);
       break;
     }
     case DebuggerEventType.INPUTS_STATE_CHANGE: {

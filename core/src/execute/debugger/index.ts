@@ -1,7 +1,7 @@
-import { fromEventPattern } from "rxjs";
 import { DebuggerEvent } from "./events";
 
 export * from "./events";
+export * from './format-event';
 
 export type DebuggerInterceptCommand = {
   cmd: "intercept";

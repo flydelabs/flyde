@@ -1,4 +1,5 @@
 import { FlydeFlow, ResolvedFlydeFlowDefinition } from "@flyde/core";
+import { useState } from "react";
 import { useSsr } from "usehooks-ts";
 
 export type BootstrapData = {
@@ -10,10 +11,18 @@ export type BootstrapData = {
 export const useBootstrapData = (): BootstrapData | undefined => {
   const { isBrowser } = useSsr();
 
+  const [cachedData, setCachedData] = useState<BootstrapData>();
+
+  if (cachedData) {
+    return cachedData;
+  }
+
   if (isBrowser) {
     try {
-      const data = (window as any).__bootstrapData;
-      return JSON.parse(atob(data));
+      const rawData = (window as any).__bootstrapData;
+      const parsedData = JSON.parse(atob(rawData));
+      setCachedData(parsedData);
+      return parsedData;
     } catch {
       return undefined;
     }

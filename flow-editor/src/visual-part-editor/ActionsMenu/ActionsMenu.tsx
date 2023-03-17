@@ -23,6 +23,7 @@ import {
   stopIcon,
   ungroupIcon,
 } from "./icons/icons";
+import { RunFlowModal } from "./RunFlowModal";
 
 export enum ActionType {
   AddPart = "add-part",
@@ -64,12 +65,18 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
     props;
 
   const [showAddPartMenu, setShowAddPartMenu] = React.useState(false);
+  const [showRunFlowModal, setShowRunFlowModal] = React.useState(false);
 
   const closeAddPartMenu = useCallback(() => {
     setShowAddPartMenu(false);
   }, []);
 
   const {onRunFlow, onStopFlow} = usePorts();
+
+  const _runFlow = useCallback<typeof onRunFlow>((inputs) => {
+    setShowRunFlowModal(false);
+    return onRunFlow(inputs);
+  }, [onRunFlow]);
 
   const types: ActionType[] = [];
 
@@ -133,7 +140,7 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
           break;
         case ActionType.Run:
           void (async function () {
-            onRunFlow();
+            setShowRunFlowModal(true);
           })()
           break;
         case ActionType.Stop:
@@ -145,7 +152,7 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
           onAction({ type, data: undefined });
       }
     },
-    [onAction, onRunFlow, onStopFlow]
+    [onAction, onStopFlow]
   );
 
   Object.entries(actionsMetaData).forEach(
@@ -186,6 +193,7 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
           onClose={closeAddPartMenu}
         />
       ) : null}
+      {showRunFlowModal ?  (<RunFlowModal onClose={() => setShowRunFlowModal(false)} onRun={_runFlow} part={part}/> ) : null } 
     </div>
   );
 };

@@ -7,10 +7,10 @@ import { loadFlow } from "@flyde/runtime";
 
 const jobsMap = new Map<string, FlowJob & {destroy: Function}>();
 
-export async function runFlow(flow: FlydeFlow, flowPath: string, inputs: Record<string, any> = {}): Promise<FlowJob> {
+export async function runFlow(flow: FlydeFlow, flowPath: string, inputs: Record<string, any> = {}, port: number): Promise<FlowJob> {
     const id = cuid();
 
-    const execute = loadFlow(flow, flowPath);
+    const execute = loadFlow(flow, flowPath, `http://localhost:${port}`);
 
     const data = execute(inputs);
 

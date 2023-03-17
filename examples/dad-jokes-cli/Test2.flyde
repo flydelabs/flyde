@@ -1,0 +1,48 @@
+imports: {}
+part:
+  instances:
+    - pos:
+        x: -134.13567626953125
+        y: 232.27089904785157
+      id: Inline-value-dfgdfgfdg-tk046t3
+      inputConfig: {}
+      part:
+        id: Inline-value-return window /
+        inputs: {}
+        outputs:
+          value:
+            delayed: false
+        fnCode: |-
+          const result = (function() { return window / 7}());
+            Promise.resolve(result).then(val => outputs.value.next(val))
+        customViewCode: return window / 7
+        dataBuilderSource: cmV0dXJuIHdpbmRvdyAvIDc=
+        templateType: function
+        completionOutputs:
+          - value
+        defaultStyle:
+          size: regular
+          icon: code
+          cssOverride:
+            fontFamily: monospace
+            fontWeight: "500"
+        description: Custom inline function
+  connections:
+    - from:
+        insId: Inline-value-dfgdfgfdg-tk046t3
+        pinId: value
+      to:
+        insId: __this
+        pinId: res
+  id: Test2
+  inputs: {}
+  outputs:
+    res:
+      delayed: false
+  inputsPosition: {}
+  outputsPosition:
+    res:
+      x: -58.147644255403634
+      y: 610.7572956720204
+  completionOutputs:
+    - res

@@ -34,7 +34,7 @@ const calcImplicitRoot = () => {
   return findRoot(callPath);
 };
 
-export function loadFlow<Inputs>(flow: FlydeFlow, fullFlowPath: string): LoadedFlowExecuteFn<Inputs> {
+export function loadFlow<Inputs>(flow: FlydeFlow, fullFlowPath: string, debuggerUrl: string): LoadedFlowExecuteFn<Inputs> {
   const deps = resolveDependencies(flow, "implementation", fullFlowPath) as ResolvedDependencies;
 
   return (inputs, params = {}) => {
@@ -43,7 +43,7 @@ export function loadFlow<Inputs>(flow: FlydeFlow, fullFlowPath: string): LoadedF
 
     let destroy;
     const promise: any = new Promise(async (res, rej) => {
-      const _debugger = otherParams._debugger || (await createDebugger());
+      const _debugger = otherParams._debugger || (await createDebugger(debuggerUrl));
     
       debugLogger("Using debugger %o", _debugger);
       destroy = await simplifiedExecute(
@@ -79,5 +79,5 @@ export function loadFlowByPath<Inputs>(
   const flowPath = join(_root, relativePath);
   const flow = deserializeFlowByPath(flowPath);
 
-  return loadFlow(flow, flowPath);
+  return loadFlow(flow, flowPath, "http://localhost:8545");
 };

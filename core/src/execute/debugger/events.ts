@@ -23,6 +23,7 @@ export type BaseDebuggerEvent<T extends DebuggerEventType> = {
   type: T;
   insId: string;
   parentInsId: string;
+  partId: string;
   val: DebuggerEventTypeData[T];
   time: number;
 };

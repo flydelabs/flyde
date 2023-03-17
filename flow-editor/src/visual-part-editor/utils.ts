@@ -78,17 +78,18 @@ export const findClosestPin = (
   repo: PartDefRepo,
   mousePos: Pos,
   boardPos: Pos,
-  insId: string,
+  parentInsId: string,
   viewPort: ViewPort
 ) => {
   const rootInstance: PartInstance = partInstance(part.id, part.id);
   const mainInputsData = okeys(part.inputs).map((pinId) => {
     const pos = calcMainInputPosition(
       pinId,
-      insId,
+      parentInsId,
       "input",
       boardPos,
-      viewPort
+      viewPort,
+      parentInsId
     );
     return { id: pinId, type: "input", pos, ins: rootInstance };
   });
@@ -96,7 +97,7 @@ export const findClosestPin = (
   const mainOutputsData = okeys(part.outputs).map((pinId) => {
     const pos = calcMainOutputPosition(
       pinId,
-      insId,
+      parentInsId,
       "output",
       boardPos,
       viewPort
@@ -113,13 +114,13 @@ export const findClosestPin = (
     const ips = visibleInputs.map((id) => ({
       ins,
       type: "input",
-      pos: calcPinPosition(insId, ins.id, id, "input", boardPos, viewPort),
+      pos: calcPinPosition(parentInsId, ins.id, id, "input", boardPos, viewPort),
       id,
     }));
     const ops = visibleOutputs.map((id) => ({
       ins,
       type: "output",
-      pos: calcPinPosition(insId, ins.id, id, "output", boardPos, viewPort),
+      pos: calcPinPosition(parentInsId, ins.id, id, "output", boardPos, viewPort),
       id,
     }));
 

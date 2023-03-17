@@ -17,6 +17,7 @@ export interface PartIoViewProps {
   type: PinType;
   pos: Pos;
   insId: string;
+  parentInsId: string;
   connected: boolean;
   dragged?: boolean;
   inputMode?: InputMode;
@@ -244,7 +245,7 @@ export const PartIoView: React.SFC<PartIoViewProps> = React.memo(
           data-html={true}
           data-for={id + props.insId}
           className={classNames("part-io-view-inner", { closest, selected })}
-          id={getMainPinDomId(props.insId, id, type)}
+          id={getMainPinDomId(props.insId, id, type, props.parentInsId)}
           onClick={_onClick}
           onDoubleClick={onDblClickInner}
           onContextMenu={showMenu}

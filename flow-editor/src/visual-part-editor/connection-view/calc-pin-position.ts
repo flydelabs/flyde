@@ -46,9 +46,10 @@ export const calcMainInputPosition = (
   insId: string,
   type: "output" | "input",
   boardPos: Pos,
-  viewPort: ViewPort
+  viewPort: ViewPort,
+  parentInsId: string
 ) => {
-  const domId = getMainPinDomId(insId, pinId, type);
+  const domId = getMainPinDomId(insId, pinId, type, parentInsId);
   const elem = document.getElementById(domId);
 
   return elemPos(elem, boardPos, domId, viewPort);
@@ -59,9 +60,10 @@ export const calcMainOutputPosition = (
   insId: string,
   type: "input" | "output",
   boardPos: Pos,
-  viewPort: ViewPort
+  viewPort: ViewPort,
+  parentInsId: string
 ) => {
-  const domId = getMainPinDomId(insId, pinId, type);
+  const domId = getMainPinDomId(insId, pinId, type, parentInsId);
   const elem = document.getElementById(domId);
   return elemPos(elem, boardPos, domId, viewPort);
 };

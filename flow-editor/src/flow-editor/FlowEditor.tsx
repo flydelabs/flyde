@@ -379,7 +379,8 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
           <React.Fragment>
             {inspectedItem ? <DataInspectionModal onRequestHistory={props.onRequestHistory} item={inspectedItem} onClose={onCloseInspectedItemModal}/> : null}
             <VisualPartEditor
-              insId={`root.${editedPart.id}`}
+              parentInsId='root'
+              insId={editedPart.id}
               ref={ref}
               key={editedPart.id}
               boardData={editorBoardData}
