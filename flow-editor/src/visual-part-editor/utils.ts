@@ -22,11 +22,10 @@ import {
   intersectRect,
   Rect,
   calcCenter,
+  fullInsIdPath,
 } from "@flyde/core";
 import {
   calcPinPosition,
-  calcMainInputPosition,
-  calcMainOutputPosition,
 } from "./connection-view/calc-pin-position";
 import { Size } from "../utils";
 import {
@@ -78,30 +77,34 @@ export const findClosestPin = (
   repo: PartDefRepo,
   mousePos: Pos,
   boardPos: Pos,
-  parentInsId: string,
+  currentInsId: string,
+  ancestorsInsIds: string,
   viewPort: ViewPort
 ) => {
   const rootInstance: PartInstance = partInstance(part.id, part.id);
   const mainInputsData = okeys(part.inputs).map((pinId) => {
-    const pos = calcMainInputPosition(
+    const pos = calcPinPosition({
+      insId: currentInsId,
+      ancestorsInsIds,
       pinId,
-      parentInsId,
-      "input",
+      pinType: "input",
       boardPos,
       viewPort,
-      parentInsId
-    );
+      isMain: true
+    })
     return { id: pinId, type: "input", pos, ins: rootInstance };
   });
 
   const mainOutputsData = okeys(part.outputs).map((pinId) => {
-    const pos = calcMainOutputPosition(
+    const pos = calcPinPosition({
+      insId: currentInsId,
+      ancestorsInsIds,
       pinId,
-      parentInsId,
-      "output",
+      pinType: "output",
       boardPos,
-      viewPort
-    );
+      viewPort,
+      isMain: true
+    })
     return { id: pinId, type: "output", pos, ins: rootInstance };
   });
 
@@ -114,13 +117,29 @@ export const findClosestPin = (
     const ips = visibleInputs.map((id) => ({
       ins,
       type: "input",
-      pos: calcPinPosition(parentInsId, ins.id, id, "input", boardPos, viewPort),
+      pos: calcPinPosition({
+        insId: ins.id,
+        ancestorsInsIds: fullInsIdPath(currentInsId, ancestorsInsIds),
+        pinId: id,
+        pinType: "input",
+        boardPos,
+        viewPort,
+        isMain: false
+      }),
       id,
     }));
     const ops = visibleOutputs.map((id) => ({
       ins,
       type: "output",
-      pos: calcPinPosition(parentInsId, ins.id, id, "output", boardPos, viewPort),
+      pos: calcPinPosition({
+        insId: ins.id,
+        ancestorsInsIds: fullInsIdPath(currentInsId, ancestorsInsIds),
+        pinId: id,
+        pinType: "output",
+        boardPos,
+        viewPort,
+        isMain: false
+      }),
       id,
     }));
 

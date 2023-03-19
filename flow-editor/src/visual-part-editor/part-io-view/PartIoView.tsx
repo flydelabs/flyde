@@ -1,9 +1,8 @@
 import * as React from "react";
 
 // ;
-import { getOutputName, InputMode, noop, PinType, Pos } from "@flyde/core";
+import { fullInsIdPath, getOutputName, InputMode, noop, PinType, Pos } from "@flyde/core";
 import { BasePartView } from "../base-part-view";
-import { getMainPinDomId } from "../dom-ids";
 import classNames from "classnames";
 import { Menu, MenuItem, ContextMenu } from "@blueprintjs/core";
 import { usePrompt } from "../../flow-editor/ports";
@@ -11,13 +10,14 @@ import { HistoryPayload } from "@flyde/remote-debugger";
 import { calcHistoryContent, useHistoryHelpers } from "../pin-view/helpers";
 import { getInputName } from "@flyde/core";
 import CustomReactTooltip from "../../lib/tooltip";
+import { getPinDomId } from "../dom-ids";
 
 export interface PartIoViewProps {
   id: string;
   type: PinType;
   pos: Pos;
-  insId: string;
-  parentInsId: string;
+  currentInsId: string;
+  ancestorInsIds: string;
   connected: boolean;
   dragged?: boolean;
   inputMode?: InputMode;
@@ -233,7 +233,7 @@ export const PartIoView: React.SFC<PartIoViewProps> = React.memo(
         <CustomReactTooltip
           className="pin-info-tooltip"
           html
-          id={id + props.insId}
+          id={id + props.currentInsId}
           getContent={[calcTooltipContent, INSIGHTS_TOOLTIP_INTERVAL / 20]}
         />
         <div
@@ -243,9 +243,9 @@ export const PartIoView: React.SFC<PartIoViewProps> = React.memo(
           onMouseDown={_onMouseDown}
           data-tip=""
           data-html={true}
-          data-for={id + props.insId}
+          data-for={id + props.currentInsId}
           className={classNames("part-io-view-inner", { closest, selected })}
-          id={getMainPinDomId(props.insId, id, type, props.parentInsId)}
+          id={getPinDomId({fullInsIdPath: fullInsIdPath(props.currentInsId, props.ancestorInsIds), pinId: id, pinType: type, isMain: true})}
           onClick={_onClick}
           onDoubleClick={onDblClickInner}
           onContextMenu={showMenu}

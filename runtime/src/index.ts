@@ -54,13 +54,12 @@ export function loadFlow<Inputs>(flow: FlydeFlow, fullFlowPath: string, debugger
         {
           _debugger: _debugger,
           onCompleted: (data) => {
-            // allow debugger to finish it's thing
-            setImmediate(() => {
+            void (async function () {
               if (_debugger && _debugger.destroy) {
-                _debugger.destroy();
+                await _debugger.destroy();
               }
               res(data);
-            });
+            })();
           },
           ...otherParams,
         }

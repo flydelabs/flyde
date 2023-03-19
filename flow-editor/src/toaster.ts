@@ -1,9 +1,9 @@
-import { Position, Toaster } from "@blueprintjs/core";
+import { Intent, IToaster, Position, Toaster } from "@blueprintjs/core";
 
 /** Singleton toaster instance. Create separate instances for different options. */
 
 // Toaster triggers document as a side effect,
-const createToaster = () => {
+const createToaster = (): IToaster => {
   try {
     return Toaster.create({
       className: "app-toaster",
@@ -17,7 +17,7 @@ export const AppToaster = createToaster();
 
 export const toastMsg = (
   message: string | JSX.Element,
-  intent?: "danger" | "success" | "warning" | "info",
+  intent?: Intent,
   timeout?: number
 ) => {
   return AppToaster.show({ message, intent, timeout });

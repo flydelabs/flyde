@@ -21,8 +21,8 @@ part:
         size: large
         color: "#f15bb5"
     - pos:
-        x: -799.9807299804688
-        y: -771.0583569335937
+        x: -929.7663134765626
+        y: -771.054755859375
       id: Dot-132
       inputConfig:
         key:
@@ -32,16 +32,16 @@ part:
           mode: static
           value: body.0.setup
       visibleInputs:
-        - obj
         - object
         - attribute
+        - __trigger
       partId: Get Attribute
       style:
         size: small
         icon: magnifying-glass
     - pos:
-        x: -506.0347460937501
-        y: -756.374580078125
+        x: -567.0469531250001
+        y: -787.0935131835937
       id: clchvfuoj000145662fwav020
       inputConfig:
         key:
@@ -51,16 +51,16 @@ part:
           mode: static
           value: body.0.punchline
       visibleInputs:
-        - obj
         - object
         - attribute
+        - __trigger
       partId: Get Attribute
       style:
         size: small
         icon: magnifying-glass
     - pos:
-        x: -341.8737939453125
-        y: -597.5307568359375
+        x: -313.47883544921876
+        y: -665.4288891601562
       id: Delay-561
       inputConfig:
         ms:
@@ -76,36 +76,11 @@ part:
       inputConfig: {}
       partId: Log
     - pos:
-        x: -336.7432690429687
-        y: -471.2675805664062
+        x: -309.6312084960937
+        y: -539.9351831054687
       id: DadJoke-l0p46hh
       inputConfig: {}
       partId: Log
-    - pos:
-        x: -602.436328125
-        y: -647.9378515625
-      id: Inline-value-internet + 7-vq046dz
-      inputConfig: {}
-      part:
-        id: Inline-value-internet + 7
-        inputs: {}
-        outputs:
-          value:
-            delayed: false
-        fnCode: const result = (internet + 7); Promise.resolve(result).then(val =>
-          outputs.value.next(val))
-        customViewCode: internet + 7
-        dataBuilderSource: aW50ZXJuZXQgKyA3
-        templateType: value
-        completionOutputs:
-          - value
-        defaultStyle:
-          size: regular
-          icon: code
-          cssOverride:
-            fontFamily: monospace
-            fontWeight: "500"
-        description: Custom inline value
   connections:
     - from:
         insId: clchvfuoj000145662fwav020
@@ -151,8 +126,8 @@ part:
   outputs: {}
   inputsPosition:
     punchDelay:
-      x: -324.37367302609465
-      y: -1082.4516813081284
+      x: -166.33271785931728
+      y: -977.6126745337394
     test:
       x: -182.5383681955638
       y: -903.352979697288

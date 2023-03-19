@@ -12,7 +12,7 @@ export interface RuntimePlayer {
   status: () => void;
 }
 
-export const createRuntimePlayer = (mainInsId: string): RuntimePlayer => {
+export const createRuntimePlayer = (): RuntimePlayer => {
   let currDt = 0;
 
   let queue: DebuggerEvent[] = [];
@@ -29,7 +29,7 @@ export const createRuntimePlayer = (mainInsId: string): RuntimePlayer => {
 
     toPlay.forEach((e) => {
       debug(`Playing event`, e);
-      playEvent(mainInsId, e);
+      playEvent(e);
     });
   };
 

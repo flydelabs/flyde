@@ -22,32 +22,6 @@
     }
   }
 
-  // &.output:not(.selected) {
-  //   .base-part-view-inner {
-  //     background: #E7F8FF;
-  // }
-
-  // &:hover .base-part-view-inner {
-  //   border: 4px solid#007EC6;
-  //   opacity: 0.85;
-  // }
-
-  // &.closest .base-part-view-inner {
-  //   border: 2px dashed #007EC6;
-  // }
-
-
-
-
-    // &.selected { 
-    //   .base-part-view-inner {
-    //     color: #000000;
-    //     background: #45F4FF;
-    //   }
-    // }
-
-
-
   &.active .part-io-view-inner {
     background: #c8ffc7;
   }

@@ -22,7 +22,7 @@ export const MINOR_DEBUGGER_EVENT_TYPES: DebuggerEventType[] = [
 export type BaseDebuggerEvent<T extends DebuggerEventType> = {
   type: T;
   insId: string;
-  parentInsId: string;
+  ancestorsInsIds: string;
   partId: string;
   val: DebuggerEventTypeData[T];
   time: number;

@@ -17,6 +17,6 @@ function eventBody(event: DebuggerEvent) {
 }
 
 export function formatEvent (event: DebuggerEvent) {
-    const prefix = `Part <${event.partId}> (ins. ${event.insId} -> ${event.parentInsId})`;
+    const prefix = `Part <${event.partId}> (ins. ${event.insId} -> ${event.ancestorsInsIds})`;
     return `${prefix} - ${eventBody(event)}`;
 }

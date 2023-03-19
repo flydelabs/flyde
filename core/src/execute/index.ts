@@ -34,7 +34,7 @@ import {
   pullValuesForExecution,
   subscribeInputsToState,
 } from "../execution-values";
-import { callFnOrFnPromise, delay, entries, isDefined, isPromise, keys, OMap, OMapF } from "../common";
+import { callFnOrFnPromise, delay, entries, fullInsIdPath, isDefined, isPromise, keys, OMap, OMapF } from "../common";
 import { debugLogger } from "../common/debug-logger";
 import {isStaticInputPinConfig } from '../part';
 import { Debugger, DebuggerEvent, DebuggerEventType } from "./debugger";
@@ -61,8 +61,17 @@ export type CodeExecutionData = {
   outputs: PartOutputs;
   repo: PartRepo;
   _debugger?: Debugger;
+  /**
+   * If the part is an instance of another part, this is the id of the instance.
+   * If the part is the root part, this is "__root".
+   * Used for debugger events and state namespacing
+   */
   insId: string;
-  parentInsId?: string;
+  /**
+   * A full path of ancestor insIds, separated by dots.
+   * Used for debugger events and state namespacing
+   */
+  ancestorsInsIds?: string;
   extraContext?: Record<string, any>;
   mainState: OMap<PartState>;
   onError: (err: any) => void;
@@ -84,7 +93,7 @@ const executeCodePart = (data: CodeExecutionData) => {
     repo,
     _debugger,
     insId,
-    parentInsId,
+    ancestorsInsIds,
     mainState,
     onError,
     onStarted,
@@ -113,13 +122,12 @@ const executeCodePart = (data: CodeExecutionData) => {
 
   const onEvent: Debugger["onEvent"] = _debugger.onEvent || noop;
 
-  const fullInsId = `${parentInsId || "root"}.${insId}`;
+  const fullInsId = fullInsIdPath(insId, ancestorsInsIds);
   const innerStateId = `${fullInsId}${INNER_STATE_SUFFIX}`;
   const inputsStateId = `${fullInsId}${INPUTS_STATE_SUFFIX}`;
 
   const innerDebug = debug.extend(fullInsId);
   
-
   if (!mainState[innerStateId]) {
     mainState[innerStateId] = new Map();
   }
@@ -147,7 +155,7 @@ const executeCodePart = (data: CodeExecutionData) => {
       type: DebuggerEventType.INPUTS_STATE_CHANGE,
       val: obj,
       insId,
-      parentInsId,
+      ancestorsInsIds: ancestorsInsIds,
       partId: part.id,
     });
   };
@@ -161,7 +169,7 @@ const executeCodePart = (data: CodeExecutionData) => {
       onError(err);
     },
     context: extraContext,
-    parentInsId
+    ancestorsInsIds: ancestorsInsIds
   };
 
   let processing = false;
@@ -175,9 +183,6 @@ const executeCodePart = (data: CodeExecutionData) => {
     .filter((inp) => !isStaticInputPinConfig(inputs[inp].config));
 
   const cleanState = () => {
-
-    console.log('cleaning state', innerStateId);
-    
     mainState[innerStateId].clear();
 
     // removes all internal state from child parts.
@@ -238,7 +243,7 @@ const executeCodePart = (data: CodeExecutionData) => {
           type: DebuggerEventType.PROCESSING_CHANGE,
           val: processing,
           insId,
-          parentInsId,
+          ancestorsInsIds: ancestorsInsIds,
           partId: part.id,
         });
         if (part.completionOutputs) {
@@ -274,7 +279,7 @@ const executeCodePart = (data: CodeExecutionData) => {
                   type: DebuggerEventType.PROCESSING_CHANGE,
                   val: processing,
                   insId,
-                  parentInsId,
+                  ancestorsInsIds: ancestorsInsIds,
                   partId: part.id,
                 });
 
@@ -322,7 +327,7 @@ const executeCodePart = (data: CodeExecutionData) => {
                   type: DebuggerEventType.PROCESSING_CHANGE,
                   val: processing,
                   insId,
-                  parentInsId,
+                  ancestorsInsIds: ancestorsInsIds,
                   partId: part.id,
                 });
                 onCompleted(completedOutputsValues);
@@ -336,7 +341,7 @@ const executeCodePart = (data: CodeExecutionData) => {
                 type: DebuggerEventType.PROCESSING_CHANGE,
                 val: processing,
                 insId,
-                parentInsId,
+                ancestorsInsIds: ancestorsInsIds,
                 partId: part.id,
               });
               onCompleted(completedOutputsValues);
@@ -344,15 +349,13 @@ const executeCodePart = (data: CodeExecutionData) => {
             }
           }
         } catch (e) {
-          console.log(e);
-
           processing = false;
           innerDebug(`Error in part %s - value %e`, part.id, e);
           onEvent({
             type: DebuggerEventType.PROCESSING_CHANGE,
             val: processing,
             insId,
-            parentInsId,
+            ancestorsInsIds: ancestorsInsIds,
             partId: part.id,
           });
           onError(e);
@@ -442,7 +445,8 @@ const executeCodePart = (data: CodeExecutionData) => {
 export type ExecuteFn = (params: ExecuteParams) => CancelFn;
 
 export interface PartError extends Error {
-  insId: string;
+  fullInsIdPath: string;
+  partId: string;
 }
 
 export type ExecuteParams = {
@@ -452,7 +456,7 @@ export type ExecuteParams = {
   outputs: PartOutputs;
   _debugger?: Debugger;
   insId?: string;
-  parentInsId?: string;
+  ancestorsInsIds?: string;
   mainState?: OMap<PartState>;
   onBubbleError?: <Err extends PartError>(err: Err) => void;
   env?: ExecuteEnv;
@@ -462,16 +466,18 @@ export type ExecuteParams = {
   onStarted?: () => void;
 };
 
+export const ROOT_INS_ID = '__root';
+
 export const execute: ExecuteFn = ({
   part,
   inputs,
   outputs,
   partsRepo,
   _debugger = {},
-  insId = part.id,
+  insId = ROOT_INS_ID,
   extraContext = {},
   mainState = {},
-  parentInsId = "root",
+  ancestorsInsIds,
   onBubbleError = noop, // (err) => { throw err},
   env = {},
   onCompleted = noop,
@@ -487,7 +493,7 @@ export const execute: ExecuteFn = ({
     // this means "catch the error"
     const error =
       err instanceof Error ? err : new Error(`Raw error: ${err.toString()}`);
-    error.message = `error in child instance ${insId}: ${error.message}`;
+    error.message = `error in part ${part.id}, fullInsIdPath: ${fullInsIdPath(insId, ancestorsInsIds)}: ${error.message}`;
     if (outputs[ERROR_PIN_ID]) {
       outputs[ERROR_PIN_ID].next(err);
     } else {
@@ -496,13 +502,14 @@ export const execute: ExecuteFn = ({
     }
     if (_debugger.onEvent) {
       const err: PartError = error as any;
-      err.insId = `${parentInsId}.${insId}`;
+      err.fullInsIdPath = fullInsIdPath(insId, ancestorsInsIds);
+      err.partId = part.id;
 
       _debugger.onEvent({
         type: DebuggerEventType.ERROR,
         val: err,
         insId,
-        parentInsId,
+        ancestorsInsIds,
         partId: part.id,
       });
     }
@@ -514,7 +521,7 @@ export const execute: ExecuteFn = ({
         part,
         processedRepo,
         _debugger,
-        `${parentInsId}.${insId}`,
+        fullInsIdPath(insId, ancestorsInsIds),
         mainState,
         onError,
         env,
@@ -543,7 +550,7 @@ export const execute: ExecuteFn = ({
           insId,
           pinId,
           val,
-          parentInsId,
+          ancestorsInsIds,
           partId: part.id,
         } as DebuggerEvent);
         if (res) {
@@ -564,7 +571,7 @@ export const execute: ExecuteFn = ({
         insId,
         pinId,
         val: arg.config.value,
-        parentInsId,
+        ancestorsInsIds,
         partId: part.id,
       } as DebuggerEvent);
       const mediator = staticPartInput(
@@ -582,7 +589,7 @@ export const execute: ExecuteFn = ({
         insId,
         pinId,
         val,
-        parentInsId,
+        ancestorsInsIds: ancestorsInsIds,
         partId: part.id,
       } as DebuggerEvent);
       if (res) {
@@ -604,7 +611,7 @@ export const execute: ExecuteFn = ({
     _debugger,
     insId,
     mainState,
-    parentInsId,
+    ancestorsInsIds: ancestorsInsIds,
     onError,
     onBubbleError,
     env,

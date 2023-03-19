@@ -10,13 +10,6 @@ export type DebuggerInterceptCommand = {
 
 export type DebuggerCommand = DebuggerInterceptCommand | void;
 
-export interface BaseDebuggerData {
-  pinId?: string;
-  insId: string;
-  parentInsId: string;
-  time: number;
-}
-
 export type Debugger = {
   onEvent?: <T extends DebuggerEvent>(event: Omit<T, 'time'>) => DebuggerCommand;
   debugDelay?: number;

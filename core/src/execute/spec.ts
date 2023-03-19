@@ -595,11 +595,12 @@ describe("execute", () => {
         n.subject.next(2);
 
         assert.equal(s.callCount, 3);
+        
         assert.equal(
           s.calledWithMatch({
             type: DebuggerEventType.INPUT_CHANGE,
             insId: "b",
-            parentInsId: "root.a1m2",
+            ancestorsInsIds: "__root",
             pinId: "n",
             val: 3,
           }),
@@ -608,7 +609,7 @@ describe("execute", () => {
         assert.equal(
           s.calledWithMatch({
             type: DebuggerEventType.INPUT_CHANGE,
-            parentInsId: "root.a1m2",
+            ancestorsInsIds: "__root",
             insId: "a",
             pinId: "n",
             val: 2,
@@ -618,8 +619,7 @@ describe("execute", () => {
         assert.equal(
           s.calledWithMatch({
             type: DebuggerEventType.INPUT_CHANGE,
-            parentInsId: "root",
-            insId: "a1m2",
+            insId: "__root",
             pinId: "n",
             val: 2,
           }),
@@ -647,9 +647,12 @@ describe("execute", () => {
 
         assert.equal(s.callCount, 4);
 
+        console.log(s.getCalls()[1].args[0]);
+        
+
         assert.equal(
           s.calledWithMatch({
-            parentInsId: "root.a1m2a1",
+            ancestorsInsIds: "__root",
             insId: "b",
             pinId: "n",
             val: 3,
@@ -658,7 +661,7 @@ describe("execute", () => {
         );
         assert.equal(
           s.calledWithMatch({
-            parentInsId: "root.a1m2a1",
+            ancestorsInsIds: "__root",
             insId: "c",
             pinId: "n",
             val: 6,
@@ -667,7 +670,7 @@ describe("execute", () => {
         );
         assert.equal(
           s.calledWithMatch({
-            parentInsId: "root.a1m2a1",
+            ancestorsInsIds: "__root",
             insId: "a",
             pinId: "n",
             val: 2,
@@ -676,8 +679,7 @@ describe("execute", () => {
         );
         assert.equal(
           s.calledWithMatch({
-            insId: "a1m2a1",
-            parentInsId: "root",
+            insId: "__root",
             pinId: "n",
             val: 2,
           }),
@@ -743,7 +745,6 @@ describe("execute", () => {
         assert.equal(
           inputSpy.calledWithMatch({
             insId: "myIns",
-            parentInsId: "root",
             pinId: "n1",
             val: 5,
           }),
@@ -752,7 +753,6 @@ describe("execute", () => {
         assert.equal(
           inputSpy.calledWithMatch({
             insId: "myIns",
-            parentInsId: "root",
             pinId: "n2",
             val: 10,
           }),
@@ -923,7 +923,6 @@ describe("execute", () => {
         assert.equal(
           s.calledWithMatch({
             insId: "b",
-            parentInsId: "root.myIns",
             pinId: "r",
             val: 6,
           }),
@@ -932,7 +931,6 @@ describe("execute", () => {
         assert.equal(
           s.calledWithMatch({
             insId: "a",
-            parentInsId: "root.myIns",
             pinId: "r",
             val: 3,
           }),
@@ -1004,7 +1002,7 @@ describe("execute", () => {
         assert.equal(lastCallArg.pinId, "r");
         assert.equal(lastCallArg.val, 15);
         assert.equal(lastCallArg.insId, "myIns");
-        assert.equal(lastCallArg.parentInsId, "root");
+        assert.equal(lastCallArg.ancestorsInsIds, undefined);
       });
 
       it("intercepts returned value", async () => {
@@ -1078,7 +1076,8 @@ describe("execute", () => {
 
         assert.equal(onProcessing.called, true);
         assert.equal(onProcessing.lastCall.args[0].val, true);
-        assert.equal(onProcessing.lastCall.args[0].insId, "delay5");
+        assert.equal(onProcessing.lastCall.args[0].insId, "__root");
+        assert.equal(onProcessing.lastCall.args[0].partId, "delay5");
       });
 
       it("notifies when part ends processing", async () => {
@@ -1105,7 +1104,7 @@ describe("execute", () => {
 
         return eventually(() => {
           assert.equal(onProcessing.lastCall.args[0].val, false);
-          assert.equal(onProcessing.lastCall.args[0].insId, "delay5");
+          assert.equal(onProcessing.lastCall.args[0].partId, "delay5");
           assert.equal(onProcessing.callCount, 2);
         }, 200);
       });
@@ -1137,7 +1136,7 @@ describe("execute", () => {
         assert.equal(onInputsStateChange.callCount, 3);
 
         assert.equal(onInputsStateChange.lastCall.args[0].val.item, 1);
-        assert.equal(onInputsStateChange.lastCall.args[0].insId, "delay5");
+        assert.equal(onInputsStateChange.lastCall.args[0].partId, "delay5");
 
         item.subject.next("c");
         assert.equal(onInputsStateChange.lastCall.args[0].val.item, 2);

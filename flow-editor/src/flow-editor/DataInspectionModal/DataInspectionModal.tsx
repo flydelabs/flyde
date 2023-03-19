@@ -81,7 +81,7 @@ export const DataInspectionModal: React.FC<DataInspectionModalProps> = (
         </Callout>
       );
     }
-    return <Callout intent="warning">No events captured for instance {item.insId} {item.pin? `and ${item.pin.id}` :''}. Make sure debugger is running and your program was triggered.</Callout>;
+    return <Callout intent="warning">No events captured for instance {item.insId} {item.pin? `and ${item.pin.id}` :''}. Make sure a debugger is connected and your program was triggered.</Callout>;
   }
 
   const itemName = `"${item.insId}" ${item.pin?.id ? `(${item.pin.id})` : ""}`;

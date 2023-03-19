@@ -139,7 +139,7 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
       if (runtimePlayer.current) {
         runtimePlayer.current.destroy();
       }
-      const newPlayer = createRuntimePlayer(`${flow.part.id}`);
+      const newPlayer = createRuntimePlayer();
       runtimePlayer.current = newPlayer;
 
       (window as any).__runtimePlayer = runtimePlayer;
@@ -147,7 +147,7 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
       const dt = 0;
       runtimePlayer.current.start(dt);
     },
-    [debuggerClient, flow]
+    [debuggerClient]
   );
 
   React.useEffect(() => {

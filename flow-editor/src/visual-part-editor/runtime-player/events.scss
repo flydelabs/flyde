@@ -1,6 +1,9 @@
 
 $blink-duration: 6s; // change also BLINK_TIMEOUT in play-event.ts
 
+$runtime-processing-color: #88f8ff;
+$runtime-active-color: #c8ffc7;
+
 .base-part-view-wrapper[data-runtime="processing"] .ins-view-inner {
   background: #88f8ff !important; //88F8FF
   box-shadow: 0px 0px 10px 2px #007dc6aa;
@@ -21,6 +24,31 @@ $blink-duration: 6s; // change also BLINK_TIMEOUT in play-event.ts
 //   transition: background-color ease-in-out 0.05s, box-shadow ease-in-out 0.2s;
 }
 
+.main-instance-events-indicator[data-runtime="processing"] {
+  animation: pulse 1.5s infinite;
+  background: $runtime-processing-color;
+
+  .status-text:after{ 
+    content: "Processing";
+  }
+}
+
+.main-instance-events-indicator[data-runtime="error"] {
+  animation: blink-error $blink-duration * 2;
+
+  .status-text:after{ 
+    content: "Error";
+  }
+}
+
+.main-instance-events-indicator[data-runtime="done"] {
+  animation: blink-done $blink-duration * 2;
+
+  .status-text:after {
+    content: "Completed";
+  }
+}
+
 .pin-inner[data-runtime='active'],
 .part-io-view-inner[data-runtime='active'] {
     animation: blink-done $blink-duration;
@@ -29,7 +57,7 @@ $blink-duration: 6s; // change also BLINK_TIMEOUT in play-event.ts
     // box-shadow: 0px 0px 10px 2px rgba(10, 126, 0, 0.5);
   }
 
-  .part-io-view-inner[data-runtime],
+  .part-io-view-inner[data-runtime-queue],
   .pin-inner[data-runtime-queue] {
     background: #efc7ff !important; //88F8FF
     animation: pulse 1.5s infinite;
@@ -53,11 +81,17 @@ $blink-duration: 6s; // change also BLINK_TIMEOUT in play-event.ts
 }
 
 @keyframes blink-error {
+  
     0% {
       // background-color: $base-color;
     }
-    8% {
+    3% {
       background-color: #ff9999;
+      box-shadow: 0px 0px 10px 2px rgba(114, 0, 0, 0.429);
+    }
+    30% {
+      background-color: #ffa7a7;
+      box-shadow: 0px 0px 10px 2px rgba(242, 55, 49, 0.429);
     }
     100% {
       // background-color: $base-color;

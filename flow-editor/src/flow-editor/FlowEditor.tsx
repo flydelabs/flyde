@@ -13,6 +13,7 @@ import {
   PinType,
   DebuggerEventType,
   ResolvedDependenciesDefinitions,
+  ROOT_INS_ID,
 } from "@flyde/core";
 import {
   VisualPartEditor,
@@ -379,8 +380,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
           <React.Fragment>
             {inspectedItem ? <DataInspectionModal onRequestHistory={props.onRequestHistory} item={inspectedItem} onClose={onCloseInspectedItemModal}/> : null}
             <VisualPartEditor
-              parentInsId='root'
-              insId={editedPart.id}
+              currentInsId={ROOT_INS_ID}
               ref={ref}
               key={editedPart.id}
               boardData={editorBoardData}

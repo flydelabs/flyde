@@ -1,3 +1,4 @@
+import { Button } from "@blueprintjs/core";
 import { Tooltip2 } from "@blueprintjs/popover2";
 import {
   ConnectionNode,
@@ -10,8 +11,9 @@ import {
 import React, { MouseEvent, MutableRefObject, useCallback } from "react";
 import { usePorts } from "../../flow-editor/ports";
 import { useHotkeys } from "../../lib/react-utils/use-hotkeys";
+import { useLocalStorage } from "../../lib/user-preferences";
 
-import { toastMsg } from "../../toaster";
+import { AppToaster, toastMsg } from "../../toaster";
 import { AddPartMenu } from "./AddPartMenu";
 import {
   addPartIcon,
@@ -67,6 +69,8 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
   const [showAddPartMenu, setShowAddPartMenu] = React.useState(false);
   const [showRunFlowModal, setShowRunFlowModal] = React.useState(false);
 
+  const [hideHotkeyHintMap, setHideHotkeyHintMap] = useLocalStorage('hideHotkeyHintMap', {});
+
   const closeAddPartMenu = useCallback(() => {
     setShowAddPartMenu(false);
   }, []);
@@ -118,19 +122,26 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
     types.push(ActionType.RemovePart);
   }
 
+  const onDismissHotkeyHint = useCallback((hotkey: string, toastId: string) => {
+    setHideHotkeyHintMap({...hideHotkeyHintMap, [hotkey]: true});
+    AppToaster.dismiss(toastId);
+  }, [hideHotkeyHintMap, setHideHotkeyHintMap]);
+
   const internalOnAction = useCallback(
     (type: ActionType, e: MouseEvent | KeyboardEvent) => {
-      if (e.type === "click" && actionsMetaData[type].hotkey) {
-        toastMsg(
+      const {hotkey} = actionsMetaData[type];
+      if (e.type === "click" && hotkey && !hideHotkeyHintMap[hotkey]) {
+        const toastId = toastMsg(
           <>
             Did you know? you can also use the hotkey{" "}
-            <kbd className="hotkey">{actionsMetaData[type].hotkey}</kbd> to{" "}
+            <kbd className="hotkey">{hotkey}</kbd> to{" "}
             {actionsMetaData[type].text.replace(/^[A-Z]/, (c) =>
               c.toLowerCase()
             )}
+            <Button minimal small  onClick={() => onDismissHotkeyHint(hotkey, toastId)} > Don't show again </Button>
           </>,
-          "info",
-          4000
+          'none',
+          3000
         );
       }
 
@@ -152,7 +163,7 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
           onAction({ type, data: undefined });
       }
     },
-    [onAction, onStopFlow]
+    [hideHotkeyHintMap, onAction, onStopFlow, setHideHotkeyHintMap]
   );
 
   Object.entries(actionsMetaData).forEach(
@@ -165,6 +176,7 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
             e.preventDefault();
             if (types.includes(action)) {
               internalOnAction(action, e as any);
+              setHideHotkeyHintMap({...hideHotkeyHintMap, [data.hotkey]: true})
             }
           },
           hotkeysEnabled,
@@ -243,8 +255,7 @@ const actionsMetaData: Record<
   },
   [ActionType.Stop]: {
     icon: stopIcon,
-    text: "Stop",
-    hotkey: "s",
+    text: "Stop"
   },
 };
 

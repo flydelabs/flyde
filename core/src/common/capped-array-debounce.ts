@@ -43,5 +43,6 @@ export const cappedArrayDebounce = <T>(
         clearTimeout(maxTimeoutTimer);
       }
     },
+    pendingItems: () => arr.length,
   };
 };
