@@ -1,9 +1,7 @@
-import { toastMsg } from "../../toaster";
 import { createContext, useContext } from "react";
 import {
   FlydeFlow,
   ResolvedDependenciesDefinitions,
-  ResolvedFlydeFlowDefinition,
 } from "@flyde/core";
 import { Importables, FlowJob } from "@flyde/dev-server";
 
@@ -35,7 +33,7 @@ export interface EditorPorts {
 
   onInstallRuntimeRequest: () => Promise<void>;
 
-  onRunFlow: () => Promise<FlowJob>;
+  onRunFlow: (inputs: Record<string, any>) => Promise<FlowJob>;
   onStopFlow: () => Promise<void>;
 }
 

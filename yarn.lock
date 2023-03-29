@@ -6251,6 +6251,7 @@ __metadata:
     "@types/node": ^10.12.24
     "@types/sinon": ^7.0.3
     chai: ^4.2.0
+    cuid: ^3.0.0
     debug: ^4.3.2
     dependency-graph: ^0.8.0
     jsdom: ^13.1.0
@@ -6300,6 +6301,8 @@ __metadata:
     ts-node-dev: ^2.0.0
     typescript: ^4.9.4
     walker: ^1.0.8
+  peerDependencies:
+    "@flyde/stdlib": ^0.1.14
   bin:
     flyde: dist/cli.js
   languageName: unknown
@@ -6452,7 +6455,7 @@ __metadata:
     yaml: ^2.1.1
     zod: ^3.17.10
   peerDependencies:
-    "@flyde/stdlib": "workspace:^"
+    "@flyde/stdlib": ^0.1.14
   languageName: unknown
   linkType: soft
 
@@ -13616,6 +13619,13 @@ __metadata:
   version: 2.1.8
   resolution: "cuid@npm:2.1.8"
   checksum: 12b85b3f5150a6f0b9e4f345c8d98299d74647419151751fa1132f6702fe2b5388ceceb1c9b49bad7cab1b3ac033c7cedea8ffc034930f90005b8a4345025288
+  languageName: node
+  linkType: hard
+
+"cuid@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "cuid@npm:3.0.0"
+  checksum: f9a344bd90e26b62f75a86b616ad717bad88b20b02df25c6e4008dd2c0948b081bd72ad8075b25ae644dce7fc367a43c622954e88aed972b72b1f132416faa4e
   languageName: node
   linkType: hard
 

@@ -19,6 +19,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "cuid": "^3.0.0",
     "debug": "^4.3.2",
     "dependency-graph": "^0.8.0",
     "md5": "^2.3.0",

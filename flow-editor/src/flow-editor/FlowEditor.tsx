@@ -13,6 +13,7 @@ import {
   PinType,
   DebuggerEventType,
   ResolvedDependenciesDefinitions,
+  ROOT_INS_ID,
 } from "@flyde/core";
 import {
   VisualPartEditor,
@@ -44,8 +45,8 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { fab } from "@fortawesome/free-brands-svg-icons";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { vAdd } from "../physics";
-import { ActionType } from "../visual-part-editor/ActionsMenu";
 import { DataInspectionModal } from "./DataInspectionModal";
+import { DebuggerContextProvider } from "./DebuggerContext";
 export * from "./ports";
 
 library.add(fab, fas);
@@ -207,8 +208,8 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
         }
         e.preventDefault();
       },
-      undefined,
-      [state, undoStack, redoStack]
+      { text: 'Undo last change', group: 'Editing'},
+      [state, undoStack, redoStack],
     );
 
     const onChangePart = React.useCallback(
@@ -313,55 +314,8 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
         }
         hideOmnibar();
       },
-      [
-        hideOmnibar,
-        onAddPartInstance,
-        editorBoardData.lastMousePos,
-        editorBoardData.viewPort,
-        onImportPart,
-        resolvedDependencies,
-        flow,
-        onChangeFlow,
-      ]
+      [hideOmnibar, onAddPartInstance, editorBoardData.lastMousePos, onImportPart, resolvedDependencies, flow, onChangeFlow]
     );
-
-    const onAction = React.useCallback((action: ActionType) => {
-      switch (action) {
-        case ActionType.RemovePart: {
-          const newValue = produce(flow, (draft) => {
-            const part = draft.part;
-            if (!isVisualPart(part)) {
-              throw new Error(
-                `Impossible state, deleting instances opf non visual part`
-              );
-            }
-            part.instances = part.instances.filter(
-              (ins) => !editorBoardData.selected.includes(ins.id)
-            );
-            part.connections = part.connections.filter(
-              (conn) =>
-                !editorBoardData.selected.includes(conn.from.insId) &&
-                !editorBoardData.selected.includes(conn.to.insId)
-            );
-          });
-          onChangeFlow(newValue, functionalChange("remove-instances"));
-          toastMsg(`Removed ${editorBoardData.selected.length} instances(s)`);
-          break;
-        }
-        case ActionType.Inspect: {
-          if (editorBoardData.selected.length === 1 || editorBoardData.from || editorBoardData.to) {
-
-            const insId = editorBoardData.selected[0] || editorBoardData.from?.insId || editorBoardData.to?.insId;
-            const pinId = editorBoardData.from?.pinId || editorBoardData.to?.pinId;
-            setInspectedItem({insId, pin: {type: editorBoardData.from ? 'output' : 'input', id: pinId}});
-          }
-          break;
-        }
-        default: {
-          toastMsg(`${action} not supported yet`);
-        }
-      }
-    }, [editorBoardData.from, editorBoardData.selected, editorBoardData.to, flow, onChangeFlow]);
 
     const [inspectedItem, setInspectedItem] = React.useState<{insId: string, pin?: {type: PinType, id: string}}>();
 
@@ -371,15 +325,17 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
       setInspectedItem({insId, pin});
     }, []);
 
+    const debuggerContextValue = React.useMemo(() => ({onRequestHistory: props.onRequestHistory}), [props.onRequestHistory]);
+
     const renderInner = () => {
       if (isInlineValuePart(editedPart)) {
         throw new Error("Impossible state");
       } else {
         return (
-          <React.Fragment>
+          <DebuggerContextProvider value={debuggerContextValue}>
             {inspectedItem ? <DataInspectionModal onRequestHistory={props.onRequestHistory} item={inspectedItem} onClose={onCloseInspectedItemModal}/> : null}
             <VisualPartEditor
-              insId={`root.${editedPart.id}`}
+              currentInsId={ROOT_INS_ID}
               ref={ref}
               key={editedPart.id}
               boardData={editorBoardData}
@@ -416,7 +372,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
                 onRequestImportables={props.onQueryImportables}
               />
             ) : null}
-          </React.Fragment>
+          </DebuggerContextProvider>
         );
       }
     };

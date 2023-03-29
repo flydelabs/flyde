@@ -94,8 +94,8 @@ export const createVsCodePorts = (): EditorPorts => {
         window.removeEventListener("message", handler);
       };
     },
-    onRunFlow: async () => {
-      return postMessageCallback("onRunFlow", {});
+    onRunFlow: async (inputs) => {
+      return postMessageCallback("onRunFlow", {inputs});
     },
     onStopFlow: async () => {
       return postMessageCallback("onStopFlow", {});

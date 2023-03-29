@@ -4,6 +4,7 @@ import {
   debugLogger,
   cappedArrayDebounce,
   DebuggerEvent,
+  delay,
 } from "@flyde/core";
 
 import { io } from "socket.io-client";
@@ -33,7 +34,7 @@ export type RuntimeDebuggerClient = {
   // emitIsAlive: ({time: number, hash: string}) => void;
   emitIsAlive: (bob: { time: number; hash: string } | number) => void;
 
-  destroy: () => void;
+  destroy: () => Promise<void>;
   onDisconnect: (cb: () => void) => void;
   waitForConnection: () => Promise<void>;
 };
@@ -102,8 +103,12 @@ export const createRuntimeClient = (
     emitIsAlive: (time) => {
       socket.emit(DebuggerServerEventType.IS_ALIVE, { time });
     },
-    destroy: () => {
-      debouncedSendBatchedEvent.flush();
+    destroy: async () => {
+      if (debouncedSendBatchedEvent.pendingItems()) {
+        debouncedSendBatchedEvent.flush();
+        // wait for socket to finish sending
+        await delay(100);
+      }
       enumToArray(DebuggerServerEventType).forEach((type) => socket.off(type));
       socket.disconnect();
     },

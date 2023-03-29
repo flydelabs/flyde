@@ -2,7 +2,7 @@ import { Debugger } from "@flyde/core";
 import { createRuntimeClient, RuntimeDebuggerClient } from "@flyde/remote-debugger/dist/clients/runtime";
 import { debugLogger } from "./logger";
 
-const url = "http://localhost:8545";
+const defaultUrl = "http://localhost:8545";
 
 const withTimeout = <T>(promise: Promise<T>, timeout: number): Promise<T> => {
   return new Promise((res, rej) => {
@@ -17,13 +17,13 @@ const withTimeout = <T>(promise: Promise<T>, timeout: number): Promise<T> => {
   });
 };
 
-export const createDebugger = async (): Promise<Debugger> => {
+export const createDebugger = async (debuggerUrl: string): Promise<Debugger> => {
 
   debugLogger("Creating runtime debugger")
   let client: RuntimeDebuggerClient;
   try {
 
-    client = createRuntimeClient(url, "n/a");
+    client = createRuntimeClient(debuggerUrl, "n/a");
     await withTimeout(client.waitForConnection(), 1000);
     
     const _debugger: Debugger = {

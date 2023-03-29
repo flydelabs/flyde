@@ -1,4 +1,4 @@
-export const safeLocalstorage: Pick<Storage, "setItem"> &
+export const safeLocalStorage: Pick<Storage, "setItem"> &
   Pick<Storage, "getItem"> = {
   getItem: (...args) => {
     try {

@@ -7,14 +7,11 @@ import {
   getPartDef,
   PartInstance,
   isInternalConnectionNode,
-  isExternalConnectionNode,
   ConnectionData,
   ConnectionNode,
 } from "@flyde/core";
 import {
-  calcPinPosition,
-  calcMainInputPosition,
-  calcMainOutputPosition,
+  calcStartPos, calcTargetPos,
 } from "./calc-pin-position";
 import { Size } from "../../utils";
 // ;
@@ -28,7 +25,8 @@ import { ConnectionViewPath } from "./ConnectionViewPath/ConnectionViewPath";
 export interface BaseConnectionViewProps {
   repo: PartDefRepo;
   part: VisualPart;
-  parentInsId: string;
+  ancestorsInsIds?: string;
+  currentInsId: string;
   onDblClick: () => void;
   size: Size;
   boardPos: Pos;
@@ -60,61 +58,6 @@ export interface ConnectionItemViewProps extends BaseConnectionViewProps {
   removeConnection: (connection: ConnectionData) => void;
   parentSelected: boolean;
 }
-
-const calcStartPos = (props: {
-  connectionNode: ConnectionNode;
-  boardPos: Pos;
-  parentInsId: string;
-  viewPort: ViewPort;
-}): Pos => {
-  const { connectionNode, boardPos, parentInsId, viewPort } = props;
-
-  if (isExternalConnectionNode(connectionNode)) {
-    return calcMainInputPosition(
-      connectionNode.pinId,
-      parentInsId,
-      "input",
-      boardPos,
-      viewPort
-    );
-  } else {
-    return calcPinPosition(
-      parentInsId,
-      connectionNode.insId,
-      connectionNode.pinId,
-      "output",
-      boardPos,
-      viewPort
-    );
-  }
-};
-
-const calcTargetPos = (
-  props: Omit<ConnectionItemViewProps, "connection"> & {
-    connectionNode: ConnectionNode;
-  }
-): Pos => {
-  const { connectionNode, boardPos, parentInsId, viewPort } = props;
-
-  if (isExternalConnectionNode(connectionNode)) {
-    return calcMainOutputPosition(
-      connectionNode.pinId,
-      parentInsId,
-      "output",
-      boardPos,
-      viewPort
-    );
-  } else {
-    return calcPinPosition(
-      parentInsId,
-      connectionNode.insId,
-      connectionNode.pinId,
-      "input",
-      boardPos,
-      viewPort
-    );
-  }
-};
 
 export const SingleConnectionView: React.FC<ConnectionItemViewProps> = (
   props
@@ -280,7 +223,8 @@ export const ConnectionView: React.FC<ConnectionViewProps> = (props) => {
       connectionNode: draggedSource.from ?? draggedSource.to,
       viewPort,
       boardPos: props.boardPos,
-      parentInsId: props.parentInsId,
+      ancestorsInsIds: props.ancestorsInsIds,
+      currentInsId: props.currentInsId
     });
 
     connectionPaths.push(

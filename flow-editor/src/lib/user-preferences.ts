@@ -1,12 +1,12 @@
 import * as React from "react";
 import { isDefined } from "../utils";
-import { safeLocalstorage, safeSessionStorage } from "./safe-ls";
+import { safeLocalStorage, safeSessionStorage } from "./safe-ls";
 
 const createUserPreferences = () => {
   const prefixedKey = (k: string) => `up.${k}`;
   return {
     getItem: (key: string) => {
-      const strLs = safeLocalstorage.getItem(prefixedKey(key)) || "";
+      const strLs = safeLocalStorage.getItem(prefixedKey(key)) || "";
       const strSs = safeSessionStorage.getItem(prefixedKey(key)) || "";
       try {
         const obj = JSON.parse(strSs || strLs);
@@ -16,7 +16,7 @@ const createUserPreferences = () => {
       }
     },
     setItem: (key: string, value: any, sessionOnly: boolean = false) => {
-      const storage = sessionOnly ? sessionStorage : safeLocalstorage;
+      const storage = sessionOnly ? sessionStorage : safeLocalStorage;
       try {
         const str = JSON.stringify({ value });
         storage.setItem(prefixedKey(key), str);
@@ -67,7 +67,7 @@ export const useResizePref = (
 };
 
 const safelyGetItem = (key: string) => {
-  const val = safeLocalstorage.getItem(key);
+  const val = safeLocalStorage.getItem(key);
   if (!val) {
     return null;
   }
@@ -86,7 +86,7 @@ export const useLocalStorage = <T>(
 
   const setAndSave = React.useCallback(
     (value: T) => {
-      safeLocalstorage.setItem(key, JSON.stringify({ value }));
+      safeLocalStorage.setItem(key, JSON.stringify({ value }));
       setVal(value);
     },
     [key]
@@ -95,7 +95,7 @@ export const useLocalStorage = <T>(
   React.useEffect(() => {
     const existing = safelyGetItem(key);
     if (!existing) {
-      safeLocalstorage.setItem(key, JSON.stringify({ value: initial }));
+      safeLocalStorage.setItem(key, JSON.stringify({ value: initial }));
     }
   }, [key, initial, setAndSave]);
 

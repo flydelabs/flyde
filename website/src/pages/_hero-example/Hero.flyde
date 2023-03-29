@@ -234,7 +234,7 @@ part:
         color: "#9b5de5"
     - pos:
         x: -399.57580322265625
-        y: 172.876044921875
+        y: 171.876044921875
       id: cl8x5r4qp00074666lb382z1c
       inputConfig: {}
       part:
@@ -259,8 +259,10 @@ part:
                 value: https://countriesnow.space/api/v0.1/countries/population/cities
             visibleInputs:
               - url
-              - body
+              - headers
+              - params
               - data
+              - __trigger
             partId: POST Request
           - pos:
               x: -222.03287597656254
@@ -459,6 +461,9 @@ part:
     city:
       x: -187.27285824815934
       y: -14.13215209416181
+    Bob:
+      x: -464.39225613814307
+      y: -267.86263932413937
   outputsPosition:
     json:
       x: -441.98276309426666
@@ -470,8 +475,8 @@ part:
       x: -499.82438378976735
       y: 706.7650396699393
     output:
-      x: -493.81529235111964
-      y: 465.0177662443657
+      x: -473.1328093808214
+      y: 524.8819285153778
     response:
       x: -506.3386688159596
       y: 488.67302443385125

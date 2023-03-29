@@ -25,7 +25,7 @@ export type PartState = Map<string, any>;
 export type PartAdvancedContext = {
   execute: InnerExecuteFn;
   insId: string;
-  parentInsId: string;
+  ancestorsInsIds: string;
   state: PartState;
   onCleanup: (cb: Function) => void;
   onError: (e: any) => void;

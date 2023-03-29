@@ -1,6 +1,6 @@
-import { Pos } from "@flyde/core";
+import { ConnectionNode, fullInsIdPath, isExternalConnectionNode, PinType, Pos } from "@flyde/core";
 import { ViewPort } from "../..";
-import { getMainPinDomId, getPinDomId } from "../dom-ids";
+import { getPinDomId } from "../dom-ids";
 
 const DEFAULT_POS = {
   x: 99999,
@@ -14,7 +14,7 @@ const elemPos = (
   viewPort: ViewPort
 ) => {
   if (!elem) {
-    console.warn(`Cannot find element ${id} to render connection`);
+    console.warn(`Cannot find element ${id} to calculate position.`);
     return DEFAULT_POS;
   }
   const { x, y, width, height } = elem.getBoundingClientRect();
@@ -28,40 +28,82 @@ const elemPos = (
   };
 };
 
-export const calcPinPosition = (
-  parentInsId: string,
-  insId: string,
-  pinId: string,
-  type: "output" | "input",
-  boardPos: Pos,
-  viewPort: ViewPort
-) => {
-  const domId = getPinDomId(parentInsId, insId, pinId, type);
+export function calcPinPosition (params: {
+  insId: string;
+  ancestorsInsIds?: string;
+  pinId: string;
+  pinType: PinType;
+  isMain: boolean;
+  boardPos: Pos;
+  viewPort: ViewPort;
+}) {
+  const domId = getPinDomId({fullInsIdPath: fullInsIdPath(params.insId, params.ancestorsInsIds), pinId: params.pinId, pinType: params.pinType, isMain: params.isMain});
   const elem = document.getElementById(domId);
-  return elemPos(elem, boardPos, domId, viewPort);
+  return elemPos(elem, params.boardPos, domId, params.viewPort);
 };
 
-export const calcMainInputPosition = (
-  pinId: string,
-  insId: string,
-  type: "output" | "input",
-  boardPos: Pos,
-  viewPort: ViewPort
-) => {
-  const domId = getMainPinDomId(insId, pinId, type);
-  const elem = document.getElementById(domId);
 
-  return elemPos(elem, boardPos, domId, viewPort);
+export const calcStartPos = (props: {
+  connectionNode: ConnectionNode;
+  boardPos: Pos;
+  ancestorsInsIds?: string;
+  viewPort: ViewPort;
+  currentInsId: string;
+}): Pos => {
+  const { connectionNode, boardPos, ancestorsInsIds, viewPort, currentInsId } = props;
+
+  if (isExternalConnectionNode(connectionNode)) {
+    return calcPinPosition({
+      pinId: connectionNode.pinId,
+      insId: currentInsId,
+      ancestorsInsIds: ancestorsInsIds,
+      isMain: true,
+      pinType: 'input',
+      boardPos,
+      viewPort,
+    })
+  } else {
+    return calcPinPosition({
+      pinId: connectionNode.pinId,
+      insId: connectionNode.insId,
+      ancestorsInsIds: fullInsIdPath(currentInsId, ancestorsInsIds),
+      isMain: false,
+      pinType: 'output',
+      boardPos,
+      viewPort,
+    })
+  }
+
 };
 
-export const calcMainOutputPosition = (
-  pinId: string,
-  insId: string,
-  type: "input" | "output",
-  boardPos: Pos,
-  viewPort: ViewPort
-) => {
-  const domId = getMainPinDomId(insId, pinId, type);
-  const elem = document.getElementById(domId);
-  return elemPos(elem, boardPos, domId, viewPort);
+export const calcTargetPos = (props: {
+  connectionNode: ConnectionNode;
+  boardPos: Pos;
+  ancestorsInsIds?: string;
+  viewPort: ViewPort;
+  currentInsId: string;
+}): Pos  => {
+  const { connectionNode, boardPos, ancestorsInsIds, viewPort, currentInsId } = props;
+  
+  if (isExternalConnectionNode(connectionNode)) {
+    return calcPinPosition({
+      pinId: connectionNode.pinId,
+      insId: currentInsId,
+      ancestorsInsIds: ancestorsInsIds,
+      isMain: true,
+      pinType: 'output',
+      boardPos,
+      viewPort,
+    })
+  } else {
+    return calcPinPosition({
+      pinId: connectionNode.pinId,
+      insId: connectionNode.insId,
+      ancestorsInsIds: fullInsIdPath(currentInsId, ancestorsInsIds),
+      isMain: false,
+      pinType: 'input',
+      boardPos,
+      viewPort,
+    })
+  }
 };

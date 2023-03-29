@@ -1,61 +1,71 @@
 imports:
-  "@flyde/runtime":
-    - HttpGet
-    - Dot
-    - Delay
+  "@flyde/runtime": []
   "@flyde/stdlib":
-    - bob
     - Add
     - From Entries
 part:
   instances:
     - pos:
-        x: -608.5583862304687
-        y: -549.981884765625
-      id: cld1fi5n2000f45669yml3r1b
+        x: -520.8290466308594
+        y: -654.3076205444336
+      id: םנ-ins
       inputConfig: {}
       part:
-        id: Inline-value-console.log(inp
-        inputs:
-          value:
-            mode: required
-        outputs:
-          value:
-            delayed: false
-        fnCode: |-
-          const result = (console.log(inputs.value)
-          ); Promise.resolve(result).then(val => outputs.value.next(val))
-        customViewCode: console.log(inputs.value)
-        dataBuilderSource: Y29uc29sZS5sb2coaW5wdXRzLnZhbHVlKQo=
-        templateType: value
-        completionOutputs:
-          - value
-        defaultStyle:
-          size: regular
-          icon: code
-          cssOverride:
-            fontFamily: monospace
-            fontWeight: "500"
-        description: Custom inline value
-    - pos:
-        x: -269.86444091796875
-        y: -717.7813415527344
-      id: Add-365
-      inputConfig: {}
-      partId: Add
-    - pos:
-        x: -668.1
-        y: -703.39
-      id: From Entries-19
-      inputConfig:
-        entries:
-          mode: static
-          value:
-            - - 1
-              - 2
-            - - 3
-              - 4
-      partId: From Entries
+        id: םנ
+        inputs: {}
+        outputs: {}
+        instances:
+          - pos:
+              x: -608.5583862304687
+              y: -549.981884765625
+            id: cld1fi5n2000f45669yml3r1b
+            inputConfig: {}
+            part:
+              id: Inline-value-console.log(inp
+              inputs:
+                value:
+                  mode: required
+              outputs:
+                value:
+                  delayed: false
+              fnCode: |-
+                const result = (console.log(inputs.value)
+                ); Promise.resolve(result).then(val => outputs.value.next(val))
+              customViewCode: console.log(inputs.value)
+              dataBuilderSource: Y29uc29sZS5sb2coaW5wdXRzLnZhbHVlKQo=
+              templateType: value
+              completionOutputs:
+                - value
+              defaultStyle:
+                size: regular
+                icon: code
+                cssOverride:
+                  fontFamily: monospace
+                  fontWeight: "500"
+              description: Custom inline value
+          - pos:
+              x: -269.86444091796875
+              y: -717.7813415527344
+            id: Add-365
+            inputConfig: {}
+            partId: Add
+          - pos:
+              x: -668.1
+              y: -703.39
+            id: From Entries-19
+            inputConfig:
+              entries:
+                mode: static
+                value:
+                  - - 1
+                    - 2
+                  - - 3
+                    - 4
+            partId: From Entries
+        inputsPosition: {}
+        outputsPosition: {}
+        connections: []
+        completionOutputs: []
   connections: []
   id: DadJoke
   inputs: {}

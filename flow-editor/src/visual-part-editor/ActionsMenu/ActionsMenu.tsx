@@ -1,3 +1,4 @@
+import { Button } from "@blueprintjs/core";
 import { Tooltip2 } from "@blueprintjs/popover2";
 import {
   ConnectionNode,
@@ -10,8 +11,9 @@ import {
 import React, { MouseEvent, MutableRefObject, useCallback } from "react";
 import { usePorts } from "../../flow-editor/ports";
 import { useHotkeys } from "../../lib/react-utils/use-hotkeys";
+import { useLocalStorage } from "../../lib/user-preferences";
 
-import { toastMsg } from "../../toaster";
+import { AppToaster, toastMsg } from "../../toaster";
 import { AddPartMenu } from "./AddPartMenu";
 import {
   addPartIcon,
@@ -20,9 +22,9 @@ import {
   pencilIcon,
   playIcon,
   removePartIcon,
-  stopIcon,
   ungroupIcon,
 } from "./icons/icons";
+import { RunFlowModal } from "./RunFlowModal";
 
 export enum ActionType {
   AddPart = "add-part",
@@ -31,8 +33,7 @@ export enum ActionType {
   Ungroup = "ungroup",
   AddInlineValue = "add-inline-value",
   Inspect = "inspect",
-  Run = "run",
-  Stop = "stop",
+  Run = "run"
 }
 
 export type ActionData = {
@@ -55,21 +56,31 @@ export interface ActionsMenuProps {
   to?: ConnectionNode;
   hotkeysEnabled: MutableRefObject<boolean>;
 
+  showRunFlowOptions: boolean;
+
   onAction: (action: Action) => void;
   onRequestImportables: () => Promise<ImportablePart[]>;
 }
 
 export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
-  const { onAction, selectedInstances, repo, part, from, to, hotkeysEnabled } =
+  const { onAction, selectedInstances, repo, part, from, to, hotkeysEnabled, showRunFlowOptions } =
     props;
 
   const [showAddPartMenu, setShowAddPartMenu] = React.useState(false);
+  const [showRunFlowModal, setShowRunFlowModal] = React.useState(false);
+
+  const [hideHotkeyHintMap, setHideHotkeyHintMap] = useLocalStorage('hideHotkeyHintMap', {});
 
   const closeAddPartMenu = useCallback(() => {
     setShowAddPartMenu(false);
   }, []);
 
-  const {onRunFlow, onStopFlow} = usePorts();
+  const {onRunFlow} = usePorts();
+
+  const _runFlow = useCallback<typeof onRunFlow>((inputs) => {
+    setShowRunFlowModal(false);
+    return onRunFlow(inputs);
+  }, [onRunFlow]);
 
   const types: ActionType[] = [];
 
@@ -96,8 +107,11 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
     }
   }
 
-  types.push(ActionType.Run);
-  types.push(ActionType.Stop);
+
+  if (showRunFlowOptions) {
+    types.push(ActionType.Run);
+  }
+
 
   if (selectedInstances.length > 0) {
     types.push(ActionType.Group);
@@ -111,19 +125,26 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
     types.push(ActionType.RemovePart);
   }
 
+  const onDismissHotkeyHint = useCallback((hotkey: string, toastId: string) => {
+    setHideHotkeyHintMap({...hideHotkeyHintMap, [hotkey]: true});
+    AppToaster.dismiss(toastId);
+  }, [hideHotkeyHintMap, setHideHotkeyHintMap]);
+
   const internalOnAction = useCallback(
     (type: ActionType, e: MouseEvent | KeyboardEvent) => {
-      if (e.type === "click" && actionsMetaData[type].hotkey) {
-        toastMsg(
+      const {hotkey} = actionsMetaData[type];
+      if (e.type === "click" && hotkey && !hideHotkeyHintMap[hotkey]) {
+        const toastId = toastMsg(
           <>
             Did you know? you can also use the hotkey{" "}
-            <kbd className="hotkey">{actionsMetaData[type].hotkey}</kbd> to{" "}
+            <kbd className="hotkey">{hotkey}</kbd> to{" "}
             {actionsMetaData[type].text.replace(/^[A-Z]/, (c) =>
               c.toLowerCase()
             )}
+            <Button minimal small  onClick={() => onDismissHotkeyHint(hotkey, toastId)} > Don't show again </Button>
           </>,
-          "info",
-          4000
+          'none',
+          3000
         );
       }
 
@@ -133,19 +154,14 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
           break;
         case ActionType.Run:
           void (async function () {
-            onRunFlow();
-          })()
-          break;
-        case ActionType.Stop:
-          void (async function () {
-            onStopFlow();
+            setShowRunFlowModal(true);
           })()
           break;
         default:
           onAction({ type, data: undefined });
       }
     },
-    [onAction, onRunFlow, onStopFlow]
+    [hideHotkeyHintMap, onAction, onDismissHotkeyHint]
   );
 
   Object.entries(actionsMetaData).forEach(
@@ -158,10 +174,12 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
             e.preventDefault();
             if (types.includes(action)) {
               internalOnAction(action, e as any);
+              setHideHotkeyHintMap({...hideHotkeyHintMap, [data.hotkey]: true})
             }
           },
+          { text: data.text, group: 'Action menu hotkeys'},
+          [types],
           hotkeysEnabled,
-          [types]
         );
       }
     }
@@ -186,6 +204,7 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
           onClose={closeAddPartMenu}
         />
       ) : null}
+      {showRunFlowModal ?  (<RunFlowModal onClose={() => setShowRunFlowModal(false)} onRun={_runFlow} part={part}/> ) : null } 
     </div>
   );
 };
@@ -230,14 +249,9 @@ const actionsMetaData: Record<
   },
   [ActionType.Run]: {
     icon: playIcon,
-    text: "Run",
+    text: "Run flow",
     hotkey: "r",
-  },
-  [ActionType.Stop]: {
-    icon: stopIcon,
-    text: "Stop",
-    hotkey: "s",
-  },
+  }
 };
 
 const emptyMeta = { icon: "", text: "N/A", hotkey: undefined };

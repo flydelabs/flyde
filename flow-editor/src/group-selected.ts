@@ -4,6 +4,7 @@ import {
   partInstance,
   ConnectionData,
   inlinePartInstance,
+  createInsId,
 } from "@flyde/core";
 import produce from "immer";
 import { createGroup } from "./lib/create-group";
@@ -43,8 +44,8 @@ export const groupSelected = async (
   }, instances[0].pos);
   const newInstance =
     type === "ref"
-      ? partInstance(`${visualPart.id}-ins`, visualPart.id, {}, midPos)
-      : inlinePartInstance(`${visualPart.id}-ins`, visualPart, {}, midPos);
+      ? partInstance(createInsId(visualPart), visualPart.id, {}, midPos)
+      : inlinePartInstance(createInsId(visualPart), visualPart, {}, midPos);
 
   // replace relevant parts with new part
   const newInstancesArr = instances.filter((ins) => {

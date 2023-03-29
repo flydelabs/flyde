@@ -5,7 +5,7 @@ import { Menu, MenuItem, ContextMenu } from "@blueprintjs/core";
 
 import { isDefined, toString } from "../../utils";
 
-import { getInputName, getOutputName, isEnvValue, PinType } from "@flyde/core";
+import { fullInsIdPath, getInputName, getOutputName, isEnvValue, PinType } from "@flyde/core";
 import { getPinDomId } from "../dom-ids";
 import { HistoryPayload, valuePreview } from "@flyde/remote-debugger";
 import CustomReactTooltip from "../../lib/tooltip";
@@ -33,8 +33,8 @@ export type OutputPinViewProps = {
 export type PinViewProps = {
   optional?: boolean;
   id: string;
-  insId: string;
-  parentInsId: string;
+  currentInsId: string;
+  ancestorsInsIds?: string;
   selected: boolean;
   connected: boolean;
   minimized: boolean;
@@ -47,7 +47,6 @@ export type PinViewProps = {
   onToggleLogged: (insId: string, pinId: string, type: PinType) => void;
   onToggleBreakpoint: (insId: string, pinId: string, type: PinType) => void;
   onInspect: (insId: string, pin: {id: string, type: PinType}) => void;
-  onRequestHistory: (pinId: string, type: PinType) => Promise<HistoryPayload>;
 
   onMouseUp: (id: string, type: PinType, e: React.MouseEvent) => void;
   onMouseDown: (id: string, type: PinType, e: React.MouseEvent) => void;
@@ -70,15 +69,14 @@ export const PinView: React.SFC<PinViewProps> = React.memo(function PinView(
     connected,
     rotate,
     optional,
+    currentInsId,
     isClosestToMouse,
     id,
-    onRequestHistory,
     onMouseDown,
     onMouseUp
   } = props;
 
-  const { history, resetHistory, refreshHistory } = useHistoryHelpers(
-    onRequestHistory,
+  const { history, resetHistory, refreshHistory } = useHistoryHelpers(currentInsId,
     id,
     type
   );
@@ -86,7 +84,7 @@ export const PinView: React.SFC<PinViewProps> = React.memo(function PinView(
   const getContextMenu = () => {
     const logMenuItem = (
       <MenuItem
-        onClick={() => props.onToggleLogged(props.insId, props.id, props.type)}
+        onClick={() => props.onToggleLogged(props.currentInsId, props.id, props.type)}
         // text={logged ? "Stop logging" : "Start logging"}
       />
     );
@@ -94,7 +92,7 @@ export const PinView: React.SFC<PinViewProps> = React.memo(function PinView(
     const bpMenuItem = (
       <MenuItem
         onClick={() =>
-          props.onToggleBreakpoint(props.insId, props.id, props.type)
+          props.onToggleBreakpoint(props.currentInsId, props.id, props.type)
         }
         // text={breakpoint ? "Remove breakpoint" : "Add breakpoint"}
       />
@@ -102,7 +100,7 @@ export const PinView: React.SFC<PinViewProps> = React.memo(function PinView(
 
     const inspectMenuItem = (
       <MenuItem
-        onClick={() => props.onInspect(props.insId, {id: props.id, type: props.type})}
+        onClick={() => props.onInspect(props.currentInsId, {id: props.id, type: props.type})}
         text={"Inspect"}
       />
     );
@@ -282,7 +280,7 @@ export const PinView: React.SFC<PinViewProps> = React.memo(function PinView(
       <CustomReactTooltip
         className="pin-info-tooltip"
         html
-        id={id + props.insId}
+        id={id + props.currentInsId}
         getContent={[calcTooltipContent, INSIGHTS_TOOLTIP_INTERVAL / 20]}
       />
       <div
@@ -292,8 +290,8 @@ export const PinView: React.SFC<PinViewProps> = React.memo(function PinView(
         onMouseUp={_onMouseUp}
         data-tip=""
         data-html={true}
-        data-for={id + props.insId}
-        id={getPinDomId(props.parentInsId, props.insId, id, type)}
+        data-for={id + props.currentInsId}
+        id={getPinDomId({ fullInsIdPath: fullInsIdPath(props.currentInsId, props.ancestorsInsIds), pinId: id, pinType: type, isMain: false})}
         data-place={tooltipDown ? "bottom" : null}
         onDoubleClick={(e) => props.onDoubleClick && props.onDoubleClick(id, e)}
         className={`pin-inner`}

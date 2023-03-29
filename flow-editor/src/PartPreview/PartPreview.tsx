@@ -32,7 +32,7 @@ export const PartPreview: React.FC<{ part: PartDefinition }> = ({ part }) => {
     onCopyConstValue: noop,
     onPasteConstValue: noop,
     onRequestHistory: noop as any,
-    parentInsId: "",
+    ancestorsInsIds: "",
     onChangeVisibleInputs: noop,
     onChangeVisibleOutputs: noop,
     onConvertConstToEnv: noop,

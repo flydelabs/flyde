@@ -111,7 +111,7 @@ import React, {
     const { flow, inputs, output } = flowProps;
 
     const runtimePlayerRef = useRef(
-      createRuntimePlayer("root." + props.flowProps.flow.part.id)
+      createRuntimePlayer()
     );
   
     const [resolvedDeps, setResolvedDeps] = useState<ResolvedDependencies>(
@@ -224,7 +224,7 @@ import React, {
       debuggerClient: localDebugger as EditorDebuggerClient,
     };
   
-    useEffect(() => {
+    useEffect(() => { 
       runtimePlayerRef.current.start();
     }, []);
   

@@ -19,8 +19,6 @@ export * from "./part";
 
 export * from "./part/get-part-with-dependencies";
 
-export * from "./utils";
-
 export * from "./inline-value-to-code-part";
 
 export * from "./web-project";

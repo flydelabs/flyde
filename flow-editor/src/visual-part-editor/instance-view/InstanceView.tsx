@@ -52,6 +52,7 @@ import { ContextMenu, IMenuItemProps, Menu, MenuItem } from "@blueprintjs/core";
 import ReactDOM from "react-dom";
 import { PartStyleMenu } from "./PartStyleMenu";
 import CustomReactTooltip from "../../lib/tooltip";
+import { useDebuggerContext } from "../../flow-editor/DebuggerContext";
 
 export const PIECE_HORIZONTAL_PADDING = 25;
 export const PIECE_CHAR_WIDTH = 11;
@@ -127,7 +128,7 @@ export interface InstanceViewProps {
 
   queuedInputsData: Record<string, number>;
 
-  parentInsId: string;
+  ancestorsInsIds?: string;
 
   partDefRepo: PartDefRepo;
   onPinClick: (v: PartInstance, k: string, type: PinType) => void;
@@ -153,12 +154,6 @@ export interface InstanceViewProps {
   onCopyConstValue: (ins: PartInstance, pinId: string) => void;
   onPasteConstValue: (ins: PartInstance, pinId: string) => void;
   onConvertConstToEnv?: (ins: PartInstance, pinId: string) => void;
-
-  onRequestHistory: (
-    insId: string,
-    pinId: string,
-    type: PinType
-  ) => Promise<HistoryPayload>;
 
   onChangeVisibleInputs: (ins: PartInstance, inputs: string[]) => void;
   onChangeVisibleOutputs: (ins: PartInstance, outputs: string[]) => void;
@@ -209,7 +204,6 @@ export const InstanceView: React.FC<InstanceViewProps> =
       onPinClick,
       onPinDblClick,
       onDragStart,
-      onRequestHistory,
       onDragEnd,
       onDragMove,
       onToggleSticky,
@@ -232,6 +226,9 @@ export const InstanceView: React.FC<InstanceViewProps> =
     } = props;
 
     const { id } = instance;
+
+    const {onRequestHistory} = useDebuggerContext()
+
 
     const theme = React.useMemo(() => {
       const icons = [["fab", "discord"], ["fab", "slack"], "bug", "cube"];
@@ -476,13 +473,6 @@ export const InstanceView: React.FC<InstanceViewProps> =
     const inputKeys = Object.keys(getPartInputs(part));
     const outputKeys = Object.keys(getPartOutputs(part));
 
-    const _onRequestHistory = React.useCallback(
-      (pinId: string, pinType: PinType) => {
-        return onRequestHistory(instance.id, pinId, pinType);
-      },
-      [instance, onRequestHistory]
-    );
-
     const _onConvertConstToEnv = React.useCallback(
       (pinId: string) => {
         if (onConvertConstToEnv) {
@@ -514,8 +504,8 @@ export const InstanceView: React.FC<InstanceViewProps> =
           {inputsToRender.map(([k, v]) => (
             <PinView
               type="input"
-              insId={instance.id}
-              parentInsId={props.parentInsId}
+              currentInsId={instance.id}
+              ancestorsInsIds={props.ancestorsInsIds}
               id={k}
               key={k}
               optional={optionalInputs.has(k)}
@@ -540,7 +530,6 @@ export const InstanceView: React.FC<InstanceViewProps> =
               onInspect={props.onInspectPin}
               constValue={getStaticValue(k)}
               // constValue={constInputs && constInputs.get(k) && (constInputs.get(k) as any).val}
-              onRequestHistory={_onRequestHistory}
               onConvertConstToEnv={
                 props.onConvertConstToEnv ? _onConvertConstToEnv : undefined
               }
@@ -559,8 +548,8 @@ export const InstanceView: React.FC<InstanceViewProps> =
         <div className="outputs no-drag">
           {outputsToRender.map(([k, v]) => (
             <PinView
-              insId={instance.id}
-              parentInsId={props.parentInsId}
+              currentInsId={instance.id}
+              ancestorsInsIds={props.ancestorsInsIds}
               connected={connectedOutputs.has(k)}
             key={k}
               type="output"
@@ -577,7 +566,6 @@ export const InstanceView: React.FC<InstanceViewProps> =
               onToggleLogged={onTogglePinLog}
               onToggleBreakpoint={onTogglePinBreakpoint}
               onInspect={props.onInspectPin}
-              onRequestHistory={_onRequestHistory}
               description={v.description}
               onMouseUp={_onPinMouseUp}
               onMouseDown={_onPinMouseDown}
@@ -722,7 +710,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
       ...(style.cssOverride || {}),
     } as React.CSSProperties;
 
-    const instanceDomId = getInstanceDomId(props.parentInsId, instance.id);
+    const instanceDomId = getInstanceDomId(instance.id, props.ancestorsInsIds);
 
     const renderContent = () => {
       if (inlineGroupProps) {

@@ -1,0 +1,17 @@
+.help-bubble {
+	cursor: pointer;
+	color: #0b70af;
+	
+
+	&:hover {
+		color: #008cdd;
+	}
+
+
+
+	svg {
+		width: 40px;
+		height: 40px;
+		fill: currentColor;
+	}
+}

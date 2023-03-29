@@ -84,7 +84,7 @@
         min-width: 340px;
 
         .flyde-flow-editor {
-            max-height: 100%;
+            max-height: calc(100% - 20px);
         }
 
         .file-tag {
@@ -145,7 +145,7 @@
 
 
 
-    .viewport-controls {
+    .viewport-controls-and-help {
         display: none !important;
     }
 

@@ -1,22 +1,20 @@
-import { PinType } from "@flyde/core";
+import { fullInsIdPath, PinType } from "@flyde/core";
 
-export const getInstanceDomId = (parentInsId: string, insId: string) => {
-  return `ins:${parentInsId}:${insId}`.replace(/\s+/g, "-");
+export const getInstanceDomId = (insId: string, ancestorsInsIds?: string) => {
+  return `ins:${fullInsIdPath(insId, ancestorsInsIds)}`.replace(/\s+/g, "-");
 };
 
-export const getPinDomId = (
-  parentInsId: string,
-  insId: string,
-  pinId: string,
-  type: PinType
-) => {
-  return `pin:${type}:${parentInsId}:${insId}:${pinId}`.replace(/\s+/g, "-");
+export const getMainInstanceIndicatorDomId = (insId: string, ancestorsInsIds?: string) => {
+  return `main-ins:${fullInsIdPath(insId, ancestorsInsIds)}`.replace(/\s+/g, "-");
 };
 
-export const getMainPinDomId = (
-  insId: string,
-  pinId: string,
-  type: PinType
-) => {
-  return `main-pin:${insId}:${pinId}:${type}`.replace(/\s+/g, "-");
+export interface GetPinDomIdParams {
+  fullInsIdPath: string;
+  pinId: string;
+  pinType: PinType;
+  isMain: boolean;
+}
+
+export const getPinDomId = ({pinType, fullInsIdPath, pinId, isMain}: GetPinDomIdParams) => {
+  return `${isMain ? 'main-' : ''}pin:${pinType}:${fullInsIdPath}:${pinId}`.replace(/\s+/g, "-");
 };

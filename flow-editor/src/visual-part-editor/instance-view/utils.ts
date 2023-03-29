@@ -83,7 +83,7 @@ export const calcInstancePosition = (
   parentInsId: string,
   boardPos: Pos
 ) => {
-  const domId = getInstanceDomId(parentInsId, insId);
+  const domId = getInstanceDomId(insId, parentInsId);
   const elem = document.getElementById(domId);
 
   if (elem) {

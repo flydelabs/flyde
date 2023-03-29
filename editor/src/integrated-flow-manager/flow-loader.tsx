@@ -83,26 +83,35 @@ export const FlowLoader: React.FC = (props) => {
     }
   }, [bootstrapData, devServerClient, fileName, setFileName]);
 
-  React.useEffect(() => {}, [
-    history,
-    devServerClient,
-    fileName,
-    setFileName,
-    search,
-  ]);
-
   useEffect(() => {
     setFlow(undefined);
     setResolvedDependencies(undefined);
-    loadData();
+      loadData();
   }, [fileName, loadData]);
+
+  useEffect(() => {
+    console.log("flow changed");
+  },[flow])
+
+  useEffect(() => {
+    console.log("resolvedDependencies changed");
+  },[resolvedDependencies])
+
+  useEffect(() => {
+    console.log("fileName changed");
+  },[fileName])
+
+  useEffect(() => {
+    console.log("search changed");
+  },[search])
+  
 
   // eslint-disable-next-line no-constant-condition
   if (flow && resolvedDependencies) {
     const params = new URLSearchParams(window.location.search);
     const locationPortIfNot3000 =
       location.port === "3000" ? null : location.port;
-    const port = Number(params.get("port") || locationPortIfNot3000 || 8545);
+    const port = Number(params.get("port") || locationPortIfNot3000) || (bootstrapData?.port ?? 8545);
 
     console.log("Rendering", fileName, flow.part);
 
@@ -112,7 +121,6 @@ export const FlowLoader: React.FC = (props) => {
           key={fileName}
           flow={flow}
           resolvedDependencies={resolvedDependencies}
-          initialPart={flow.part}
           integratedSource={fileName}
           port={port}
         />

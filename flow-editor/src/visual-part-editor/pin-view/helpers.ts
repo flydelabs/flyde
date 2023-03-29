@@ -2,6 +2,7 @@ import { HistoryPayload, valuePreview } from "@flyde/remote-debugger";
 import React from "react";
 import { useCallback, useRef, useState } from "react";
 import { PinViewProps } from ".";
+import { useDebuggerContext } from "../../flow-editor/DebuggerContext";
 
 export const calcHistoryContent = (history?: HistoryPayload, queuedValues?: number) => {
   if (history) {
@@ -25,25 +26,27 @@ export const calcHistoryContent = (history?: HistoryPayload, queuedValues?: numb
 const INSIGHTS_TOOLTIP_INTERVAL = 500;
 
 export const useHistoryHelpers = (
-  onRequestHistory: PinViewProps["onRequestHistory"],
-  id: string,
-  type: 'input' | 'output'
+  instanceId: string,
+  pinId?: string,
+  type?: 'input' | 'output'
 ) => {
   const historyTimer = useRef<any>();
+
+  const {onRequestHistory} = useDebuggerContext();
 
   const [history, setHistory] = useState<HistoryPayload>();
 
   const refreshHistory = useCallback(() => {
     clearInterval(historyTimer.current);
-    onRequestHistory(id, type).then((val) => {
+    onRequestHistory(instanceId, pinId, type).then((val) => {
       setHistory(val);
     });
     historyTimer.current = setInterval(() => {
-      onRequestHistory(id, type).then((val) => {
+      onRequestHistory(instanceId, pinId, type).then((val) => {
         setHistory(val);
       });
     }, INSIGHTS_TOOLTIP_INTERVAL);
-  }, [onRequestHistory, id, type]);
+  }, [instanceId, onRequestHistory, pinId, type]);
 
   const resetHistory = React.useCallback(() => {
     clearInterval(historyTimer.current);

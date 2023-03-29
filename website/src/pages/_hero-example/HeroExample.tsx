@@ -8,7 +8,7 @@ import { CodeBlock, dracula } from "react-code-blocks";
 
 const code = `import {loadFlow} from '@flyde/runtime';
 
-const executeFlow = loadFlowByPath('Greet.flyde');
+const executeFlow = loadFlow('Greet.flyde');
 const {results} = executeFlow();
 const {output} = await results;
 console.log(\`Output: \$\{output\}\`);`;
@@ -97,7 +97,7 @@ export const HeroExample: React.FC = () => {
               {logs.length ? (
                 logs.map((log, i) => <div>{log}</div>)
               ) : (
-                <em>Run example to show output</em>
+                <em>Waiting for the example to run..</em>
               )}
             </div>
           </div>

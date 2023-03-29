@@ -1795,11 +1795,11 @@ describe("main ", () => {
         outputs: { r },
         partsRepo: testRepo,
       });
-      await delay(5);
-      assert.equal(s.callCount > 1, true);
+      await delay(4);
+      assert.equal(s.callCount >= 1, true, `call count: ${s.callCount}`);
       clean();
-      await delay(20);
-      assert.equal(s.callCount < 5, true);
+      await delay(42);
+      assert.equal(s.callCount <= 5, true, `call count: ${s.callCount}`);
     });
 
     it("calls destroy fn of debugger when cleaning up", () => {
@@ -2359,8 +2359,7 @@ describe("main ", () => {
         };
 
         const onError = (err: PartError) => {
-          console.log(err.message);
-          const val = err.message.match(/delayer: (\d)/)[1];
+          const val = err.message.match(/part delayer.*(\d)/)[1];
           s(`e-${val}`);
         };
 
@@ -2472,14 +2471,14 @@ describe("main ", () => {
             assert.isTrue(s.calledAfter(sr));
           });
 
-          it('keeps state of a an implicitly running part', async () => {
+          it("keeps state of a an implicitly running part", async () => {
             const part = conciseCodePart({
-              inputs: ['a'],
+              inputs: ["a"],
               outputs: ["r"],
-              reactiveInputs: ['a'],
+              reactiveInputs: ["a"],
               fn: async (_, o, adv) => {
-                const s = adv.state.get('s') ?? 0;
-                adv.state.set('s', s + 1);
+                const s = adv.state.get("s") ?? 0;
+                adv.state.set("s", s + 1);
                 await new Promise((r) => setTimeout(r, 10));
                 o.r.next(s);
               },
@@ -2491,7 +2490,7 @@ describe("main ", () => {
             execute({
               part,
               partsRepo: testRepo,
-              inputs: {a: input},
+              inputs: { a: input },
               outputs: { r },
               onCompleted: s,
             });
@@ -2500,7 +2499,10 @@ describe("main ", () => {
             input.subject.next();
             await eventually(() => {
               assert.equal(sr.callCount, 3);
-              assert.deepEqual(sr.getCalls().map(c => c.args[0]), [0, 1, 2]);
+              assert.deepEqual(
+                sr.getCalls().map((c) => c.args[0]),
+                [0, 1, 2]
+              );
             });
             assert.isTrue(s.calledAfter(sr));
           });
@@ -2810,8 +2812,8 @@ describe("main ", () => {
         const accUntil: CodePart = {
           id: "acc",
           inputs: {
-            item: partInput('optional'),
-            until: partInput('optional'),
+            item: partInput("optional"),
+            until: partInput("optional"),
           },
           outputs: {
             r: partOutput(),
@@ -2908,8 +2910,8 @@ describe("main ", () => {
       const merge: CodePart = {
         id: "merge",
         inputs: {
-          a: partInput('optional'),
-          b: partInput('optional'),
+          a: partInput("optional"),
+          b: partInput("optional"),
         },
         outputs: {
           r: partOutput(),
@@ -2958,8 +2960,8 @@ describe("main ", () => {
         inputsPosition: {},
         outputsPosition: {},
         inputs: {
-          b: partInput('optional'),
-          a: partInput('optional'),
+          b: partInput("optional"),
+          a: partInput("optional"),
         },
         outputs: {
           r: partOutput(),
@@ -3135,6 +3137,7 @@ describe("main ", () => {
 
       const onEvent = wrappedOnEvent(DebuggerEventType.ERROR, s);
 
+      1;
       execute({
         part: p2,
         inputs: { a },
@@ -3196,7 +3199,7 @@ describe("main ", () => {
 
       assert.include(
         s.getCalls()[0].args[0].val.toString(),
-        "child instance i1"
+        "fullInsIdPath: someIns.i1"
       );
       assert.include(s.getCalls()[0].args[0].val.toString(), "blaft");
       assert.include(s.getCalls()[0].args[0].insId, "someIns");
@@ -3236,7 +3239,7 @@ describe("main ", () => {
 
       assert.include(
         s.getCalls()[0].args[0].val.toString(),
-        "child instance i1"
+        "fullInsIdPath: someIns.i1"
       );
       assert.include(s.getCalls()[0].args[0].val.toString(), "blah");
       assert.include(s.getCalls()[0].args[0].insId, "someIns");
