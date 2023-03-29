@@ -1,5 +1,5 @@
 import { sep } from "path";
-import * as callsite from "callsite";
+import callsite from "callsite";
 
 export const getCallPath = () => {
   // Very hacky.. might need a refactor

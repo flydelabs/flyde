@@ -25,7 +25,7 @@ type DebugHistoryMap = Map<
   { total: number; lastSamples: DebuggerEvent[] }
 >;
 
-export type HistoryKey = { insId: string; pinId?: string };
+export type HistoryKey = { insId: string; pinId?: string | undefined };
 
 const historyKeyMap = <T extends HistoryKey>(dto: T) => {
   return `${dto.insId}.${dto.pinId || "__no_pin"}`;
@@ -42,7 +42,7 @@ export const setupRemoteDebuggerServer = (
 ) => {
   const io = new Server(httpServer, {
     cors: {
-      origin: (origin, cb) => cb(undefined, origin),
+      origin: (origin, cb) => cb(null, origin),
       credentials: true,
     },
   });
@@ -75,7 +75,7 @@ export const setupRemoteDebuggerServer = (
     const state = stateRequester();
     const objectifiedState = {};
     for (const key in state) {
-      const m = state[key];
+      const m = state[key] ?? new Map();
       const obj = Array.from(m.entries()).reduce((acc, [k, v]) => {
         if (typeof k !== "string") {
           throw new Error(
@@ -131,26 +131,26 @@ export const setupRemoteDebuggerServer = (
     res.send("ok");
   });
 
-  let connections = [];
+  let connectionIds: string[] = [];
   io.on("connect", function (socket) {
-    connections.push(socket.id);
+    connectionIds.push(socket.id);
 
     debug(
-      `+ New connection! now on ${connections} - ${socket.id}, %o`,
+      `+ New connection! now on ${connectionIds} - ${socket.id}, %o`,
       socket.data
     );
   });
 
   io.on("disconnect", function (socket) {
-    connections = connections.filter((s) => s !== socket.id);
+    connectionIds = connectionIds.filter((s) => s !== socket.id);
     debug(
-      `- New disconnection! now on ${connections} - ${socket.id} %o`,
+      `- New disconnection! now on ${connectionIds} - ${socket.id} %o`,
       socket.data
     );
   });
 
   app.get("/connections", (_, res) => {
-    res.json({ connections });
+    res.json({ connections: connectionIds });
   });
 
   io.on("connection", (socket: any) => {

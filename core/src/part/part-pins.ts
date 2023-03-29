@@ -1,5 +1,5 @@
 import { Subject } from "rxjs";
-import { OMap, OMapF } from "..";
+import { OMapF } from "..";
 
 import { isStaticInputPinConfig } from ".";
 import { repeat, testDataCreator } from "../common";
@@ -23,9 +23,9 @@ export interface InputPin extends BasePinData {
   defaultValue?: any;
 }
 
-export type InputPinMap = OMap<InputPin>;
+export type InputPinMap = Record<string, InputPin>;
 
-export type OutputPinMap = OMap<OutputPin>;
+export type OutputPinMap = Record<string, OutputPin>;
 
 export interface OutputPin extends BasePinData {
   delayed?: boolean;
@@ -43,7 +43,7 @@ export const isInputPinOptional = (input: InputPin) => {
 
 export const partInputs = (count: number, modes?: InputMode[]): InputPin[] =>
   repeat(count, (idx) => {
-    return partInput(modes[idx] || "required");
+    return partInput(modes?.[idx] || "required");
   });
 
 export const partOutput = (
@@ -109,7 +109,7 @@ export const isDynamicInput = (
 export const isStaticInput = (
   arg: PartInput | undefined
 ): arg is StaticPartInput => {
-  return isStaticInputPinConfig(arg.config);
+  return isStaticInputPinConfig(arg?.config);
 };
 
 export const extractStaticValue = (arg: PartInput) => {

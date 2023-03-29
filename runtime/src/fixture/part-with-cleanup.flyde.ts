@@ -1,10 +1,12 @@
-const part = {
+import { CodePart } from "@flyde/core";
+
+const part: CodePart = {
   id: "IdWithCleanup",
   inputs: {
-    n: { mode: "required", type: "number" },
+    n: { mode: "required"},
   },
   outputs: {
-    r: "runtime",
+    r: {},
   },
   fn: ({ n }, { r }, adv) => {
     adv.onCleanup(() => {

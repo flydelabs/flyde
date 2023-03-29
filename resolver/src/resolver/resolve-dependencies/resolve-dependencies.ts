@@ -9,12 +9,12 @@ import {
   CodePart,
   ImportSource,
   isBasePart,
-  BasePart,
+  Part,
 } from "@flyde/core";
-import { existsSync, readFileSync } from "fs";
+import { existsSync } from "fs";
 import _ = require("lodash");
 import { join } from "path";
-import { deserializeFlow, deserializeFlowByPath } from "../../serdes";
+import { deserializeFlowByPath } from "../../serdes";
 import { ResolveMode, resolveFlowDependenciesByPath } from "../resolve-flow";
 import { resolveImportablePaths } from "./resolve-importable-paths";
 import { namespaceFlowImports } from "./namespace-flow-imports";
@@ -30,7 +30,7 @@ const getRefPartIds = (part: VisualPart): string[] => {
     .filter(isInlinePartInstance)
     .map((ins) => ins.part);
 
-  const idsFromInline = inlineParts.reduce((acc, part) => {
+  const idsFromInline = inlineParts.reduce<string[]>((acc, part) => {
     if (isVisualPart(part)) {
       acc.push(...getRefPartIds(part));
     }
@@ -51,6 +51,8 @@ export function resolveCodePartDependencies(path: string): {exportName: string, 
         return Object.entries<CodePart>(module)
           .filter(([_, value]) => isCodePart(value))
           .map(([key, value]) => ({exportName: key, part: value}));
+      } else {
+        throw new Error(`Error loading code part at ${path} - module does not export a CodePart`);
       }
     }
   } catch (e) {
@@ -72,7 +74,7 @@ export function resolveDependencies(
 
   const imports = flow.imports;
 
-  const inverseImports = Object.entries(imports).reduce((acc, curr) => {
+  const inverseImports = Object.entries(imports ?? {}).reduce((acc, curr) => {
     const [module, parts] = curr;
 
     const obj = parts.reduce(
@@ -118,13 +120,13 @@ export function resolveDependencies(
     const paths = getLocalOrExternalPaths(importPath);
 
     // TODO - refactor the code below. It is unnecessarily complex and inefficient
-    let result: {flow: FlydeFlow, source: ImportSource} = paths
-      .reduce((acc, path) => {
+    let result: {part: Part, source: ImportSource}| undefined = paths
+      .reduce<{part: Part, source: ImportSource}[]>((acc, path) => {
         if (isCodePartPath(path)) {
           return [
             ...acc,
             ...resolveCodePartDependencies(path).map(({part, exportName}) => ({
-              flow: { part, imports: {} },
+              part,
               source: {
                 path,
                 export: exportName
@@ -133,17 +135,17 @@ export function resolveDependencies(
           ];
         } else {
           const flow = deserializeFlowByPath(path);
-          return [...acc, { flow, source: { path, export: '__n/a__visual__' } }];
+          return [...acc, { part: flow.part, source: { path, export: '__n/a__visual__' } }];
         }
       }, [])
       .filter((obj) => !!obj)
-      .find((obj) => obj.flow.part.id === refPartId);
+      .find((obj) => obj.part.id === refPartId);
 
     if (!result) {
 
       if (importPath === '@flyde/stdlib') {
         const maybePartAndExport = Object.entries(StdLib)
-          .filter(([key, value]) => isBasePart(value))
+          .filter(([_, value]) => isBasePart(value))
           .map(([key, value]) => ({part: value as CodePart, exportPath: key}))
           .find(({part}) => part.id === refPartId);
         if (!maybePartAndExport) {
@@ -166,11 +168,11 @@ export function resolveDependencies(
         );
       }
     } else {
-      const { flow, source } = result;
+      const { part, source } = result;
 
-      if (isCodePart(flow.part)) {
+      if (isCodePart(part)) {
         deps[refPartId] = {
-          ...flow.part,
+          ...part,
           source
         };
       } else {

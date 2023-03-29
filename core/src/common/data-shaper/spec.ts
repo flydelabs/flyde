@@ -50,33 +50,6 @@ describe("data shaper", () => {
     };
     const shape = dataShaper(data);
 
-    const aTriple: DataShape = [
-      DataShapeType.STRING,
-      { name: DataShapeType.STRING },
-      DataShapeType.NUMBER,
-    ];
-
-    const expected: DataShape = {
-      a: DataShapeType.NUMBER,
-      aTuple: [DataShapeType.NUMBER, DataShapeType.STRING] as any,
-      aTriple: [
-        DataShapeType.STRING,
-        { name: DataShapeType.STRING },
-        DataShapeType.NUMBER,
-      ] as any,
-      name: DataShapeType.STRING,
-      occupation: {
-        name: DataShapeType.STRING,
-        company: DataShapeType.STRING,
-      },
-      favoriteNumbers: [
-        DataShapeType.NUMBER,
-        DataShapeType.NUMBER,
-        DataShapeType.NULL,
-        DataShapeType.NUMBER,
-      ],
-    };
-
     assert.deepEqual(shape, {
       a: DataShapeType.NUMBER,
       aTuple: [DataShapeType.NUMBER, DataShapeType.STRING],

@@ -41,7 +41,7 @@ export function partFromSimpleFunction(data: SimpleFnData): CodePart {
       try {
         const result = await Promise.resolve(data.fn(...args));
         if (data.output) {
-          outputs[data.output.name].next(result);
+          outputs[data.output.name]?.next(result);
         }
       } catch (e) {
         console.error("Error in part", e);

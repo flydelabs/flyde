@@ -1,4 +1,4 @@
-import { ExecuteEnv, PartRepo } from "..";
+import { ExecuteEnv } from "..";
 import {
   extractStaticValue,
   getEnvKeyFromValue,
@@ -12,7 +12,7 @@ import {
   PartState,
 } from "../part";
 
-import { containsAll, entries, isDefined, keys, OMap, OMapF } from "../common";
+import { containsAll, entries, isDefined, keys, OMap } from "../common";
 import { TRIGGER_PIN_ID } from "../connect";
 
 const pickFromObject = (key: string, obj: OMap<any>) => {
@@ -54,7 +54,7 @@ export const peekValueForExecution = (
   }
   if (isStaticInput(input)) {
     val = getFinalStaticValue(input, env);
-  } else if (isQueueInputPinConfig(input.config, input)) {
+  } else if (isQueueInputPinConfig(input.config)) {
     val = stateItem ? [...stateItem].shift() : undefined;
   } else {
     val = stateItem;
@@ -68,13 +68,13 @@ export const pullValueForExecution = (
   input: PartInput,
   state: PartState,
   env: ExecuteEnv
-) => {
+): unknown => {
   const stateItem = state.get(key);
   let val;
 
   if (isStaticInput(input)) {
     val = getFinalStaticValue(input, env);
-  } else if (isQueueInputPinConfig(input.config, input)) {
+  } else if (isQueueInputPinConfig(input.config)) {
     val = (stateItem || []).shift();
     state.set(key, stateItem);
   } else {
@@ -93,7 +93,7 @@ export const pullValuesForExecution = (
   state: PartState,
   env: ExecuteEnv
 ) => {
-  const data = entries(partInputs).reduce((acc, [key, input]) => {
+  const data = entries(partInputs).reduce<Record<string, unknown>>((acc, [key, input]) => {
     acc[key] = pullValueForExecution(key, input, state, env);
     return acc;
   }, {});
@@ -107,7 +107,7 @@ export const peekValuesForExecution = (
   env: ExecuteEnv,
   partId: string
 ) => {
-  const data = entries(partInputs).reduce((acc, [key, input]) => {
+  const data = entries(partInputs).reduce<Record<string, unknown>>((acc, [key, input]) => {
     acc[key] = peekValueForExecution(key, input, state, env, partId);
     return acc;
   }, {});
@@ -122,7 +122,7 @@ export const hasNewSignificantValues = (
   partId: string
 ) => {
   return entries(partInputs).some(([k, i]) => {
-    const isQueue = isQueueInputPinConfig(i.config, i);
+    const isQueue = isQueueInputPinConfig(i.config);
     const value = peekValueForExecution(k, i, state, env, partId);
 
     return isDefined(value) && isQueue;
@@ -137,7 +137,7 @@ export const isPartStateValid = (
   const connectedKeys = keys(partInputs);
 
   const requiredInputs = keys(part.inputs).filter((k) => {
-    const { mode } = part.inputs[k];
+    const mode = part.inputs[k]?.mode;
     return !mode || mode === "required";
   });
 
@@ -166,7 +166,7 @@ export const isPartStateValid = (
 
         if (isStaticInput(input)) {
           return true;
-        } else if (isQueueInputPinConfig(input.config, input)) {
+        } else if (isQueueInputPinConfig(input.config)) {
           return isDefined(stateItem) && stateItem.length > 0;
         } else {
           return isDefined(stateItem);
@@ -178,11 +178,9 @@ export const isPartStateValid = (
 export const subscribeInputsToState = (
   partInputs: PartInputs,
   state: PartState,
-  repo: PartRepo,
-  insId: string,
-  onInput: (key, val) => void
+  onInput: (key: string, val: unknown) => void
 ) => {
-  const cleanups = [];
+  const cleanups: Function[] = [];
 
   entries(partInputs).forEach(([key, arg]) => {
     if (!arg) {
@@ -195,7 +193,7 @@ export const subscribeInputsToState = (
     }
 
     const subscription = arg.subject.subscribe((val) => {
-      if (isQueueInputPinConfig(arg.config, arg)) {
+      if (isQueueInputPinConfig(arg.config)) {
         const queue = state.get(key) || [];
 
         if (!Array.isArray(queue)) {

@@ -165,7 +165,7 @@ export const Publish: CodePart = {
   outputs: {},
   fn: function (inputs, outputs, adv) {
     // magic here
-    const nsKey = `${adv.parentInsId}__${inputs.key}`;
+    const nsKey = `${adv.ancestorsInsIds}__${inputs.key}`;
   
     PubSub.publish(nsKey, inputs.value);
   },
@@ -187,7 +187,7 @@ export const Subscribe: CodePart = {
   outputs: { value: { description: "The value published by the key" } },
   fn: function (inputs, outputs, adv) {
     const { value } = outputs;
-    const nsKey = `${adv.parentInsId}__${inputs.key}`;
+    const nsKey = `${adv.ancestorsInsIds}__${inputs.key}`;
     const token = PubSub.subscribe(nsKey, (_, data) => {
       value.next(data);
     });

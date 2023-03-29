@@ -70,7 +70,7 @@ export const customRepoToPartRepo = (
   customPartRepo: PartRepo,
   extraContext: Record<string, any> = {}
 ): PartRepo => {
-  const newRepo = {};
+  const newRepo: PartRepo = {};
   for (let id in customPartRepo) {
     const part = customPartRepo[id];
     newRepo[id] = isInlineValuePart(part)

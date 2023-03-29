@@ -17,13 +17,13 @@ export const getPartWithDependencies = (
   const deps = removeDupes(
     part.instances
       .filter((i) => isRefPartInstance(i))
-      .map((i: RefPartInstance) => i.partId)
+      .map((i) => (i as RefPartInstance).partId)
       .filter((i) => repo[i])
   );
 
   const depsPartsWithDeps = deps
-    .map((id) => repo[id])
-    .reduce((acc, curr: CustomPart) => {
+    .flatMap((id) => repo[id] ?? [])
+    .reduce<CustomPart[]>((acc, curr) => {
       return [
         ...acc,
         ...getPartWithDependencies(curr, repo, [...existingIds, ...deps]),

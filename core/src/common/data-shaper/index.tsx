@@ -5,6 +5,7 @@ export enum DataShapeType {
   ARRAY = 3,
   OBJECT = 4,
   NULL = 5,
+  UNSUPPORTED = 6,
 }
 
 const typeToShaperType = {
@@ -14,6 +15,10 @@ const typeToShaperType = {
   object: DataShapeType.OBJECT,
   array: DataShapeType.ARRAY,
   null: DataShapeType.NULL,
+  symbol: DataShapeType.UNSUPPORTED,
+  undefined: DataShapeType.UNSUPPORTED,
+  function: DataShapeType.UNSUPPORTED,
+  bigint: DataShapeType.UNSUPPORTED
 };
 
 const typeofWithNull = (v: any) => {
@@ -25,10 +30,10 @@ export type DataShaperOptions = {
   maxArrayCheckIdx: number;
 };
 
-const sortObject = (o) =>
+const sortObject = (o: any) =>
   Object.keys(o)
     .sort()
-    .reduce((r, k) => ((r[k] = o[k]), r), {});
+    .reduce<any>((r, k) => ((r[k] = o[k]), r), {});
 
 export type DataShape =
   | DataShapeType

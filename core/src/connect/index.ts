@@ -22,8 +22,7 @@ import {
   noop,
   okeys,
   OMap,
-  randomInt,
-  values,
+  randomInt
 } from "../common";
 import {
   ERROR_PIN_ID,
@@ -195,7 +194,7 @@ export const connect = (
         if (isExternalConnection(conn)) {
           // from an input
           if (isExternalConnectionNode(from)) {
-            const instanceInput = toInstanceArgs[to.pinId];
+            const instanceInput = toInstanceArgs?.[to.pinId];
             if (!instanceInput) {
               throw new Error(
                 `Input ${to.pinId} of instance ${toInstanceId} not found`
@@ -205,7 +204,7 @@ export const connect = (
             currArr.push(instanceInput);
             externalInputConnections.set(from.pinId, currArr);
           } else {
-            let instanceOutput = fromInstanceOutputs[from.pinId];
+            let instanceOutput = fromInstanceOutputs?.[from.pinId];
             if (!instanceOutput) {
               throw new Error(
                 `Output ${from.pinId} of instance ${fromInstanceId} not found`
@@ -288,7 +287,12 @@ export const connect = (
         const outputs = externalOutputConnections.get(key) || [];
         outputs.forEach((output) => {
           const sub = output.subscribe(async (val: any) => {
-            fnOutputs[key].next(val);
+            if (!fnOutputs[key]) {
+              throw new Error(
+                `Impossible state - output ${key} does not exist`
+              );
+            }
+            fnOutputs[key]!.next(val);
           });
           cancelFns.push(() => sub.unsubscribe());
         });

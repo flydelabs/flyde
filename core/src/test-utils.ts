@@ -4,7 +4,6 @@ import {
   BasePart,
   InputPinMap,
   VisualPart,
-  InlineValuePart,
   CodePart,
   PartInstance,
 } from "./.";
@@ -50,6 +49,10 @@ export const conciseBasePart = (concise: ConciseBasePart): BasePart => {
       ) {
         throw new Error(`Bad mode ${mode} in concise part`);
       }
+      if (!clean) {
+        throw new Error(`Bad input ${curr} in concise part`);
+      }
+
       return { ...prev, [clean]: partInput( mode as InputMode) };
     }, {}),
     outputs: (concise.outputs || []).reduce<OutputPinMap>((prev, curr) => {
@@ -67,6 +70,14 @@ export const concisePart = (concise: ConciseVisualPart): VisualPart => {
     connections: concise.connections.map(([from, to]) => {
       const [f1, f2] = from.split(".");
       const [t1, t2] = to.split(".");
+
+      if (!f1) {
+        throw new Error(`Bad source connection ${from} in concise part`);
+      }
+
+      if (!t1) {
+        throw new Error(`Bad target connection ${to} in concise part`);
+      }
 
       return {
         from: f2 ? connectionNode(f1, f2) : externalConnectionNode(f1),
@@ -92,7 +103,7 @@ export const valuePart = (name: string, value: any) =>
     id: name,
     inputs: [],
     outputs: ["r"],
-    fn: (_, outputs) => outputs.r.next(value),
+    fn: (_, outputs) => outputs.r?.next(value),
   });
 
 export const spiedOutput = (): [Sinon.SinonSpy, DynamicOutput] => {

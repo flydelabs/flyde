@@ -54,7 +54,7 @@ describe("parts hasher", () => {
 
     it("creates difference hash for different connections", () => {
       const p2 = produce(somePart, (d) => {
-        d.connections.push(d.connections[0]);
+        d.connections.push(d.connections[0]!);
       });
 
       const h1 = hashPart(somePart);
@@ -77,7 +77,7 @@ describe("parts hasher", () => {
 
     it("hashes parts disregarding instance position when ignore enabled", () => {
       const part2 = produce(somePart, (draft) => {
-        draft.instances[0].pos = randomPos();
+        draft.instances[0]!.pos = randomPos();
       });
 
       const h1 = hashPart(somePart);

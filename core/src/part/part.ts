@@ -25,7 +25,7 @@ export type PartState = Map<string, any>;
 export type PartAdvancedContext = {
   execute: InnerExecuteFn;
   insId: string;
-  ancestorsInsIds: string;
+  ancestorsInsIds?: string;
   state: PartState;
   onCleanup: (cb: Function) => void;
   onError: (e: any) => void;
@@ -35,7 +35,7 @@ export type PartAdvancedContext = {
 export type PartFn = (
   args: OMapF<any>,
   o: OMapF<Subject<any>>,
-  adv?: PartAdvancedContext
+  adv: PartAdvancedContext
 ) => void | CancelFn | Promise<void | CancelFn>;
 
 export type CustomPartViewFn = (
@@ -266,11 +266,11 @@ export const fromSimplified = ({
   id,
 }: SimplifiedPartParams): CodePart => {
   const inputs: InputPinMap = entries(inputTypes).reduce<InputPinMap>(
-    (p, [k, v]) => ({ ...p, [k]: {} }),
+    (p, [k]) => ({ ...p, [k]: {} }),
     {}
   );
   const outputs: OutputPinMap = entries(outputTypes).reduce<InputPinMap>(
-    (p, [k, v]) => ({ ...p, [k]: {} }),
+    (p, [k]) => ({ ...p, [k]: {} }),
     {}
   );
   return {
@@ -363,7 +363,7 @@ export const codeFromFunction = ({
       const args = inputNames.map((name) => inputs[name]);
       const output = outputs[outputName];
       const result = fn(...args);
-      return Promise.resolve(result).then((val) => output.next(val));
+      return Promise.resolve(result).then((val) => output?.next(val));
     },
     completionOutputs: [outputName],
     defaultStyle,

@@ -32,7 +32,7 @@ export const compileObjectTemplate = (template: string, inputs: OMap<any>) => {
 
     const fixedRaw =
       typeof rawVal === "string"
-        ? rawVal.replace(/"/g, (match, idx, str) => {
+        ? rawVal.replace(/"/g, (_, idx, str) => {
             if (str[idx - 1] !== "\\") {
               return '\\"';
             } else {

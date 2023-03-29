@@ -1,12 +1,12 @@
 imports:
   "@flyde/stdlib":
     - Delay
-    - SpreadList
+    - Loop List
 part:
   instances:
     - pos:
-        x: -85.87788574218752
-        y: 156.3703155517578
+        x: -130.47068969726564
+        y: 147.54583740234375
       id: clacauk7q00024664dvk97m72
       inputConfig: {}
       part:
@@ -36,8 +36,8 @@ part:
           fontFamily: monospace
           fontWeight: "500"
     - pos:
-        x: -46.2890625
-        y: 333.7032241821289
+        x: -82.05752563476562
+        y: 304.64137268066406
       id: Delay-121
       inputConfig:
         ms:
@@ -45,9 +45,9 @@ part:
           value: 200
       partId: Delay
     - pos:
-        x: -269.9860852050781
-        y: 275.5933905029297
-      id: SpreadList-488
+        x: -277.5184206378922
+        y: 229.63619359090376
+      id: clfu1wn1r00014664c1gznmll
       inputConfig:
         list:
           mode: static
@@ -55,14 +55,8 @@ part:
             - 1
             - 2
             - 3
-      partId: SpreadList
+      partId: Loop List
   connections:
-    - from:
-        insId: Delay-121
-        pinId: r
-      to:
-        insId: __this
-        pinId: result
     - from:
         insId: clacauk7q00024664dvk97m72
         pinId: r
@@ -70,11 +64,17 @@ part:
         insId: Delay-121
         pinId: value
     - from:
-        insId: SpreadList-488
-        pinId: val
+        insId: clfu1wn1r00014664c1gznmll
+        pinId: item
       to:
         insId: __this
         pinId: progress
+    - from:
+        insId: Delay-121
+        pinId: delayedValue
+      to:
+        insId: __this
+        pinId: result
   id: HelloWorld
   inputs: {}
   outputs:
@@ -92,7 +92,7 @@ part:
       x: -51.4720688772742
       y: 546.1127729808873
     progress:
-      x: -198.3146503281974
-      y: 558.3407733753525
+      x: -220.03340024714967
+      y: 523.8462817985612
   completionOutputs:
     - result

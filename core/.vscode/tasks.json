@@ -1,0 +1,14 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "npm",
+			"script": "bts",
+			"problemMatcher": [
+				"$tsc"
+			],
+			"label": "npm: bts",
+			"detail": "tsc -p ."
+		}
+	]
+}

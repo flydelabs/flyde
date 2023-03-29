@@ -154,14 +154,19 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
           break;
         case ActionType.Run:
           void (async function () {
-            setShowRunFlowModal(true);
+            if (Object.keys(part.inputs).length > 0) {
+              setShowRunFlowModal(true);
+            } else {
+              onRunFlow({});
+            }
+              
           })()
           break;
         default:
           onAction({ type, data: undefined });
       }
     },
-    [hideHotkeyHintMap, onAction, onDismissHotkeyHint]
+    [hideHotkeyHintMap, onAction, onDismissHotkeyHint, onRunFlow, part.inputs]
   );
 
   Object.entries(actionsMetaData).forEach(

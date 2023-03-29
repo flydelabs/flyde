@@ -9,11 +9,9 @@ import {
   dynamicOutput,
   Part,
   getStaticValue,
-  VisualPart,
   isInlineValuePart,
   isVisualPart,
   CodePart,
-  PartInput,
   PartInputs,
   PartOutputs,
   staticPartInput,
@@ -120,7 +118,7 @@ const executeCodePart = (data: CodeExecutionData) => {
       onStarted,
     });
 
-  const onEvent: Debugger["onEvent"] = _debugger.onEvent || noop;
+  const onEvent: Debugger["onEvent"] = _debugger?.onEvent || noop;
 
   const fullInsId = fullInsIdPath(insId, ancestorsInsIds);
   const innerStateId = `${fullInsId}${INNER_STATE_SUFFIX}`;
@@ -136,7 +134,7 @@ const executeCodePart = (data: CodeExecutionData) => {
     mainState[inputsStateId] = new Map();
   }
 
-  let inputsState = mainState[inputsStateId];
+  let inputsState = mainState[inputsStateId] ?? new Map();
 
   const cleanupSetter = (cb: Function) => {
     cleanUps.push(cb);
@@ -145,8 +143,7 @@ const executeCodePart = (data: CodeExecutionData) => {
   const reportInputStateChange = () => {
     const obj = Array.from(inputsState.entries()).reduce((acc, [k, v]) => {
       const isQueue = isQueueInputPinConfig(
-        (inputs[k] as any).config,
-        inputs[k]
+        (inputs[k] as any).config
       );
       return { ...acc, [k]: isQueue ? v?.length : 1 };
     }, {});
@@ -163,27 +160,27 @@ const executeCodePart = (data: CodeExecutionData) => {
   const advPartContext: PartAdvancedContext = {
     execute: innerExec,
     insId,
-    state: mainState[innerStateId],
+    state: mainState[innerStateId] ?? new Map(),
     onCleanup: cleanupSetter,
     onError: (err: any) => {
       onError(err);
     },
-    context: extraContext,
+    context: extraContext ?? {}, 
     ancestorsInsIds: ancestorsInsIds
   };
 
   let processing = false;
 
-  let lastValues;
+  let lastValues: Record<string, unknown>;
 
   const reactiveInputs = (part.reactiveInputs || [])
     /* 
     Reactive inputs that are static shouldn't get a special treatment 
   */
-    .filter((inp) => !isStaticInputPinConfig(inputs[inp].config));
+    .filter((inp) => !isStaticInputPinConfig(inputs[inp]?.config));
 
   const cleanState = () => {
-    mainState[innerStateId].clear();
+    mainState[innerStateId]?.clear();
 
     // removes all internal state from child parts.
     // TODO - use a better data structure on mainState so this becomes a O(1) operation
@@ -198,7 +195,7 @@ const executeCodePart = (data: CodeExecutionData) => {
   // we'll run the part, otherwise, we'll wait for it to be valid
 
   const maybeRunPart = (input?: { key: string; value: any }) => {
-    const isReactiveInput = reactiveInputs.includes(input?.key);
+    const isReactiveInput = input?.key && reactiveInputs.includes(input?.key);
 
     if (processing && !isReactiveInput) {
       // got input that will be considered only on next run
@@ -226,7 +223,7 @@ const executeCodePart = (data: CodeExecutionData) => {
           // this is a reactive input, use last non reactive values and push only the reactive one
           const value = pullValueForExecution(
             input.key,
-            inputs[input.key],
+            inputs[input.key]!,
             inputsState,
             env
           );
@@ -235,7 +232,7 @@ const executeCodePart = (data: CodeExecutionData) => {
         }
 
         let completedOutputs = new Set();
-        let completedOutputsValues = {};
+        let completedOutputsValues: Record<string, unknown> = {};
 
         processing = true;
 
@@ -364,14 +361,14 @@ const executeCodePart = (data: CodeExecutionData) => {
         const maybeReactiveKey = reactiveInputs.find((key) => {
           return (
             inputs[key] &&
-            peekValueForExecution(key, inputs[key], inputsState, env, part.id)
+            peekValueForExecution(key, inputs[key]!, inputsState, env, part.id)
           );
         });
 
         if (maybeReactiveKey) {
           const value = peekValueForExecution(
             maybeReactiveKey,
-            inputs[maybeReactiveKey],
+            inputs[maybeReactiveKey]!,
             inputsState,
             env,
             part.id
@@ -379,7 +376,7 @@ const executeCodePart = (data: CodeExecutionData) => {
           maybeRunPart({ key: maybeReactiveKey, value });
         } else {
           const hasStaticValuePending = entries(inputs).find(([k, input]) => {
-            const isQueue = isQueueInputPinConfig((input as any).config, input);
+            const isQueue = isQueueInputPinConfig((input as any).config);
             // const isNotOptional = !isInputPinOptional(part.inputs[k]);
             const value = peekValueForExecution(
               k,
@@ -391,6 +388,7 @@ const executeCodePart = (data: CodeExecutionData) => {
             if (isQueue) {
               return isDefined(value);
             }
+            return false;
           });
 
           if (hasStaticValuePending) {
@@ -417,8 +415,6 @@ const executeCodePart = (data: CodeExecutionData) => {
   const cleanSubscriptions = subscribeInputsToState(
     inputs,
     inputsState,
-    repo,
-    insId,
     (key, value) => {
       debug(`Got input %s - value is [%o]`, key, value);
       reportInputStateChange();
@@ -492,7 +488,7 @@ export const execute: ExecuteFn = ({
   const onError = (err: unknown) => {
     // this means "catch the error"
     const error =
-      err instanceof Error ? err : new Error(`Raw error: ${err.toString()}`);
+      err instanceof Error ? err : new Error(`Raw error: ${err?.toString()}`);
     error.message = `error in part ${part.id}, fullInsIdPath: ${fullInsIdPath(insId, ancestorsInsIds)}: ${error.message}`;
     if (outputs[ERROR_PIN_ID]) {
       outputs[ERROR_PIN_ID].next(err);
@@ -539,7 +535,7 @@ export const execute: ExecuteFn = ({
   const onEvent = _debugger.onEvent || noop; // TODO - remove this for "production" mode
 
   const mediatedOutputs: PartOutputs = {};
-  const mediatedInputs: OMap<PartInput> = {};
+  const mediatedInputs: PartInputs = {};
 
   entries(inputs).forEach(([pinId, arg]) => {
     if (isDynamicInput(arg)) {

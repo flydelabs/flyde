@@ -1,11 +1,9 @@
-import EventEmitter = require("events");
 import {
   Part,
   PartRepo,
   dynamicOutput,
   keys,
   staticPartInput,
-  partOutput,
   isDynamicInput,
 } from ".";
 import { execute, ExecuteParams } from "./execute";

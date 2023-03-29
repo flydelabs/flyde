@@ -1,6 +1,3 @@
-import { CustomPartRepo } from "..";
-import { CustomPart, isInlineValuePart } from "../part";
-
 export type Pos = {
   x: number;
   y: number;
@@ -63,7 +60,7 @@ export const keys = <V>(map: OMap<V>): string[] => {
 };
 
 export const values = <V>(map: OMap<V>): V[] => {
-  return Object.values(map);
+  return Object.values(map) as V[];
 };
 
 export const okeys = keys;
@@ -86,7 +83,7 @@ export type RandomFunction = {
   (max: number, min: number): number;
 };
 
-export const randomInt: RandomFunction = (to: number, from = 0) => {
+export const randomInt: RandomFunction = (to: number, from: number = 0) => {
   const rnd = Math.random();
   return from + Math.floor((to - from) * rnd);
 };
@@ -97,7 +94,7 @@ export const randomPos = (to = 1000, from = 0): Pos => {
   return { x, y };
 };
 
-export const pickRandom = <K>(v: K[]): K => v[randomInt(v.length)];
+export const pickRandom = <K>(v: K[]): K => v[randomInt(v.length)] as K;
 
 export const repeat = <T>(count: number, fn: (idx: number) => T) => {
   return "x"
@@ -144,7 +141,7 @@ export const callFnOrFnPromise = (
     try {
       fn();
     } catch (e) {
-      console.error(e);
+      console.error(errorMsg, e);
     }
   };
   if (typeof maybeFnOrFnPromise === "function") {
@@ -200,11 +197,11 @@ export const eventually = async (
   }
   try {
     await callback();
-  } catch (e) {
+  } catch (e: any) {
     const now = Date.now();
     await delay(retryDelay);
     const delta = Date.now() - now;
-    errorSet.add(e.message);
+    errorSet.add(e?.message);
     return eventually(callback, timeout - delta, retryDelay, errorSet);
   }
 };

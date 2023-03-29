@@ -1,9 +1,9 @@
-import { VisualPart } from ".";
+import { DynamicPartInput, VisualPart } from ".";
 import { assert } from "chai";
 
 import { spy } from "sinon";
 
-import * as jg from "jsdom-global";
+import jg from "jsdom-global";
 
 import { Subject } from "rxjs";
 import {
@@ -38,11 +38,8 @@ import {
   partOutput,
   queueInputPinConfig,
   staticInputPinConfig,
-  partInputs,
   stickyInputPinConfig,
   dynamicPartInputs,
-  visualPart,
-  partOutputs,
   inlinePartInstance,
 } from "./part";
 import { execute, PartError } from "./execute";
@@ -108,7 +105,7 @@ describe("main ", () => {
           r: partInput(),
         },
         fn: ({ v }, { r }) => {
-          r.next(v);
+          r?.next(v);
         },
       };
 
@@ -137,7 +134,7 @@ describe("main ", () => {
           r: partInput(),
         },
         fn: ({ v }, { r }) => {
-          r.next(v);
+          r?.next(v);
         },
       };
 
@@ -169,7 +166,7 @@ describe("main ", () => {
         },
         fn: (args, { r }, {}) => {
           innerSpy();
-          r.next(args.a + args.b);
+          r?.next(args.a + args.b);
         },
       };
 
@@ -873,7 +870,7 @@ describe("main ", () => {
           outputTypes: { r: "any" },
           fn: (args, { r }) => {
             internalSpy();
-            r.next(args.v);
+            r?.next(args.v);
           },
         });
 
@@ -1050,7 +1047,7 @@ describe("main ", () => {
     //     outputs: { r: partOutput() },
     //     fn: (_, o) => {
     //       innerLeafSpy();
-    //       o.r.next(1);
+    //       o.r?.next(1);
     //     }
     //   };
 
@@ -1146,7 +1143,7 @@ describe("main ", () => {
         completionOutputs: [],
         fn: (args, outs, { state }) => {
           const n = args.v + (state.get("curr") || 0);
-          outs.r.next(n);
+          outs.r?.next(n);
           state.set("curr", n);
         },
       };
@@ -1236,8 +1233,8 @@ describe("main ", () => {
         n2.subject.next(4);
 
         assert.equal(s.callCount, 2);
-        assert.equal(s.getCalls()[0].args[0], 3);
-        assert.equal(s.getCalls()[1].args[0], 7);
+        assert.equal(s.getCalls()[0]?.args[0], 3);
+        assert.equal(s.getCalls()[1]?.args[0], 7);
       });
 
       it("cleans inner inputs state after part is executed - with completion", () => {
@@ -1277,8 +1274,8 @@ describe("main ", () => {
         n2.subject.next(4);
 
         assert.equal(s.callCount, 2);
-        assert.equal(s.getCalls()[0].args[0], 3);
-        assert.equal(s.getCalls()[1].args[0], 7);
+        assert.equal(s.getCalls()[0]?.args[0], 3);
+        assert.equal(s.getCalls()[1]?.args[0], 7);
       });
 
       it("cleans internal state of parts after execution", async () => {
@@ -1294,7 +1291,7 @@ describe("main ", () => {
           fn: (_, { r }, { state }) => {
             const c = state.get("c") || 0;
             state.set("c", c + 1);
-            r.next(c);
+            r?.next(c);
           },
         });
 
@@ -1326,9 +1323,9 @@ describe("main ", () => {
         v.subject.next(1);
 
         assert.equal(s.callCount, 3);
-        assert.equal(s.getCalls()[0].args[0], 0);
-        assert.equal(s.getCalls()[1].args[0], 0);
-        assert.equal(s.getCalls()[2].args[0], 0);
+        assert.equal(s.getCalls()[0]?.args[0], 0);
+        assert.equal(s.getCalls()[1]?.args[0], 0);
+        assert.equal(s.getCalls()[2]?.args[0], 0);
       });
 
       it("does not clean internal of parts after execution until parent is not done", () => {
@@ -1341,10 +1338,10 @@ describe("main ", () => {
           outputs: ["r"],
           reactiveInputs: ["v"],
           completionOutputs: [],
-          fn: ({ v }, { r }, { state }) => {
+          fn: (_, { r }, { state }) => {
             const c = state.get("c") || 0;
             state.set("c", c + 1);
-            r.next(c);
+            r?.next(c);
           },
         });
 
@@ -1381,13 +1378,13 @@ describe("main ", () => {
         v.subject.next(1);
 
         assert.equal(s.callCount, 2);
-        assert.equal(s.getCalls()[0].args[0], 0);
-        assert.equal(s.getCalls()[1].args[0], 1);
+        assert.equal(s.getCalls()[0]?.args[0], 0);
+        assert.equal(s.getCalls()[1]?.args[0], 1);
 
         v2.subject.next("bob");
         v.subject.next("bob");
         assert.equal(s.callCount, 4);
-        assert.equal(s.getCalls()[3].args[0], 0);
+        assert.equal(s.getCalls()[3]?.args[0], 0);
       });
 
       it("uses shared global state to allow for hot reloading, and more", async () => {
@@ -1452,7 +1449,7 @@ describe("main ", () => {
         outputs: { r: partOutput() },
         fnCode: `
           const n = inputs.v + (adv.state.get("curr") || 0);
-          outputs.r.next(n);
+          outputs.r?.next(n);
           adv.state.set("curr", n);
           `,
         completionOutputs: [],
@@ -1527,7 +1524,7 @@ describe("main ", () => {
           r: partOutput(),
         },
         fn: (_, { r }) => {
-          r.next("ok");
+          r?.next("ok");
         },
       };
 
@@ -1674,7 +1671,7 @@ describe("main ", () => {
         outputs: {
           r: partInput(),
         },
-        fnCode: `outputs.r.next(inputs.v)`,
+        fnCode: `outputs.r?.next(inputs.v)`,
       };
 
       // const part: CodePart = inlineValuePartToPart(inlineValuePart);
@@ -1706,7 +1703,7 @@ describe("main ", () => {
           r: partInput(),
         },
         fnCode: `
-        outputs.r.next(inputs.a + inputs.b);
+        outputs.r?.next(inputs.a + inputs.b);
         innerSpy();
           `,
       };
@@ -1752,7 +1749,7 @@ describe("main ", () => {
           r: partInput(),
         },
         fn: ({ v }, { r }, { onCleanup: cleanup }) => {
-          r.next(v);
+          r?.next(v);
           cleanup(() => {
             spyFn();
           });
@@ -1780,7 +1777,7 @@ describe("main ", () => {
           r: partInput(),
         },
         fnCode: `
-          const timer = setInterval(() => outputs.r.next(1), 1);
+          const timer = setInterval(() => outputs.r?.next(1), 1);
           adv.onCleanup(() => clearInterval(timer));
           `,
       };
@@ -1813,7 +1810,7 @@ describe("main ", () => {
           r: partInput(),
         },
         fn: ({ v }, { r }, { onCleanup: cleanup }) => {
-          r.next(v);
+          r?.next(v);
           cleanup(() => {
             spyFn();
           });
@@ -1844,7 +1841,7 @@ describe("main ", () => {
           r: partInput(),
         },
         fnCode: `
-          outputs.r.next(bobber(12));
+          outputs.r?.next(bobber(12));
           `,
       };
       const r = dynamicOutput();
@@ -1869,8 +1866,8 @@ describe("main ", () => {
         outputs: {
           r: partInput(),
         },
-        fn: (i, o, adv) => {
-          o.r.next(adv.context.bobber(12));
+        fn: (_, o, adv) => {
+          o.r?.next(adv.context.bobber(12));
         },
       };
       const r = dynamicOutput();
@@ -1910,8 +1907,8 @@ describe("main ", () => {
       n1.subject.next(num1);
       n1.subject.next(num2);
       assert.equal(s.callCount, 2);
-      assert.equal(s.getCalls()[0].args[0], num1 + num2);
-      assert.equal(s.getCalls()[1].args[0], num2 + num2);
+      assert.equal(s.getCalls()[0]?.args[0], num1 + num2);
+      assert.equal(s.getCalls()[1]?.args[0], num2 + num2);
     });
 
     it("supports const values with inner visual parts", () => {
@@ -1932,7 +1929,7 @@ describe("main ", () => {
       });
       n1.subject.next(num1);
       assert.equal(s.callCount, 1);
-      assert.equal(s.getCalls()[0].args[0], num1 + num2);
+      assert.equal(s.getCalls()[0]?.args[0], num1 + num2);
     });
 
     it("supports const values defined inside visual parts", () => {
@@ -1966,8 +1963,8 @@ describe("main ", () => {
       n1.subject.next(num1);
       n1.subject.next(n2);
       assert.equal(s.callCount, 2);
-      assert.equal(s.getCalls()[0].args[0], num1 + n2);
-      assert.equal(s.getCalls()[1].args[0], n2 + n2);
+      assert.equal(s.getCalls()[0]?.args[0], num1 + n2);
+      assert.equal(s.getCalls()[1]?.args[0], n2 + n2);
     });
 
     it("supports const values on visual part", () => {
@@ -2001,8 +1998,8 @@ describe("main ", () => {
       n1.subject.next(num1);
       n1.subject.next(n2);
       assert.equal(s.callCount, 2);
-      assert.equal(s.getCalls()[0].args[0], num1 + n2);
-      assert.equal(s.getCalls()[1].args[0], n2 + n2);
+      assert.equal(s.getCalls()[0]?.args[0], num1 + n2);
+      assert.equal(s.getCalls()[1]?.args[0], n2 + n2);
     });
   });
 
@@ -2086,7 +2083,7 @@ describe("main ", () => {
         outputs: ["r"],
         id: "bob",
         fn: ({ a, b }, { r }) => {
-          r.next([a, b]);
+          r?.next([a, b]);
         },
         completionOutputs: ["r"],
       });
@@ -2129,7 +2126,7 @@ describe("main ", () => {
         completionOutputs: ["r"],
         fn: ({ item }, { r }) => {
           setTimeout(() => {
-            r.next(item);
+            r?.next(item);
           }, item as any);
         },
       };
@@ -2175,10 +2172,10 @@ describe("main ", () => {
           },
           completionOutputs: ["final"],
           fn: ({ item }, { r, final }) => {
-            r.next(item);
+            r?.next(item);
 
             setTimeout(() => {
-              final.next(item);
+              final?.next(item);
             }, 10);
           },
         };
@@ -2213,7 +2210,7 @@ describe("main ", () => {
         f1.subscribe(s);
         f2.subscribe(s);
 
-        const [sr, r] = spiedOutput();
+        const [_, r] = spiedOutput();
 
         const delayer: CodePart = {
           id: "delayer",
@@ -2227,14 +2224,14 @@ describe("main ", () => {
           },
           completionOutputs: ["f1+f2"],
           fn: ({ item }, { r, f1, f2 }) => {
-            r.next(item);
+            r?.next(item);
 
             setTimeout(() => {
-              f1.next(item);
+              f1?.next(item);
             }, 5);
 
             setTimeout(() => {
-              f2.next(item);
+              f2?.next(item);
             }, 10);
           },
         };
@@ -2285,13 +2282,13 @@ describe("main ", () => {
           },
           completionOutputs: ["final1", "final2"],
           fn: ({ item }, { r, final1, final2 }) => {
-            r.next(item);
+            r?.next(item);
 
             setTimeout(() => {
               if (item) {
-                final1.next(item);
+                final1?.next(item);
               } else {
-                final2.next(item);
+                final2?.next(item);
               }
             }, 10);
           },
@@ -2344,22 +2341,22 @@ describe("main ", () => {
             final2: partOutput(),
           },
           completionOutputs: ["final1", "final2"],
-          fn: ({ item }, { r, final1 }, { onError }) => {
-            r.next(item);
+          fn: ({ item }, { r, final1 }) => {
+            r?.next(item);
 
             if (!item) {
               throw new Error(`${item}`);
             }
             setTimeout(() => {
               if (item) {
-                final1.next(item);
+                final1?.next(item);
               }
             }, 10);
           },
         };
 
         const onError = (err: PartError) => {
-          const val = err.message.match(/part delayer.*(\d)/)[1];
+          const val = err.message?.match(/part delayer.*(\d)/)?.[1];
           s(`e-${val}`);
         };
 
@@ -2401,7 +2398,7 @@ describe("main ", () => {
           completionOutputs: ["r"],
           fn: ({}, { r }) => {
             setTimeout(() => {
-              r.next("bob");
+              r?.next("bob");
             }, 10);
           },
         };
@@ -2434,7 +2431,7 @@ describe("main ", () => {
           it("triggers an implicit completion when there are no explicit completion outputs", async () => {
             const part = conciseCodePart({
               outputs: ["r"],
-              fn: (_, o) => o.r.next("ok"),
+              fn: (_, o) => o.r?.next("ok"),
             });
             const s = spy();
             execute({
@@ -2452,7 +2449,7 @@ describe("main ", () => {
               outputs: ["r"],
               fn: async (_, o) => {
                 await new Promise((r) => setTimeout(r, 10));
-                o.r.next("ok");
+                o.r?.next("ok");
               },
             });
 
@@ -2480,7 +2477,7 @@ describe("main ", () => {
                 const s = adv.state.get("s") ?? 0;
                 adv.state.set("s", s + 1);
                 await new Promise((r) => setTimeout(r, 10));
-                o.r.next(s);
+                o.r?.next(s);
               },
             });
 
@@ -2515,7 +2512,7 @@ describe("main ", () => {
                 outputs: ["r"],
                 fn: async (_, o) => {
                   await new Promise((r) => setTimeout(r, ms));
-                  o.r.next("ok");
+                  o.r?.next("ok");
                 },
                 id: `delay-${ms}`,
               });
@@ -2586,9 +2583,9 @@ describe("main ", () => {
           state.set("val", s);
 
           if ((item as any) === 42) {
-            final.next(s);
+            final?.next(s);
           } else {
-            r.next(s);
+            r?.next(s);
           }
 
           return () => {
@@ -2639,7 +2636,7 @@ describe("main ", () => {
           state.set("list", list);
 
           if (list.length === state.get("count")) {
-            r.next(list);
+            r?.next(list);
           }
         },
       };
@@ -2652,7 +2649,7 @@ describe("main ", () => {
         const s = spy();
         r.subscribe(s);
 
-        const clean = execute({
+        execute({
           part: accumulate,
           inputs: { item, count },
           outputs: { r },
@@ -2664,8 +2661,8 @@ describe("main ", () => {
         count.subject.next(2);
         item.subject.next(12); // call 0
         item.subject.next(23); // call 0
-        assert.deepEqual(s.getCalls()[0].args[0], [23423]);
-        assert.deepEqual(s.getCalls()[1].args[0], [12, 23]);
+        assert.deepEqual(s.getCalls()[0]?.args[0], [23423]);
+        assert.deepEqual(s.getCalls()[1]?.args[0], [12, 23]);
       });
 
       it("supports creation of an accumulate, another variation of input order", () => {
@@ -2693,9 +2690,9 @@ describe("main ", () => {
         item.subject.next(6);
         count.subject.next(3);
 
-        assert.deepEqual(s.getCalls()[0].args[0], [1]);
-        assert.deepEqual(s.getCalls()[1].args[0], [2, 3]);
-        assert.deepEqual(s.getCalls()[2].args[0], [4, 5, 6]);
+        assert.deepEqual(s.getCalls()[0]?.args[0], [1]);
+        assert.deepEqual(s.getCalls()[1]?.args[0], [2, 3]);
+        assert.deepEqual(s.getCalls()[2]?.args[0], [4, 5, 6]);
       });
 
       it("supports creation of an accumulate, third variation of input order", () => {
@@ -2723,9 +2720,9 @@ describe("main ", () => {
         item.subject.next(5);
         item.subject.next(6);
 
-        assert.deepEqual(s.getCalls()[0].args[0], [1]);
-        assert.deepEqual(s.getCalls()[1].args[0], [2, 3]);
-        assert.deepEqual(s.getCalls()[2].args[0], [4, 5, 6]);
+        assert.deepEqual(s.getCalls()[0]?.args[0], [1]);
+        assert.deepEqual(s.getCalls()[1]?.args[0], [2, 3]);
+        assert.deepEqual(s.getCalls()[2]?.args[0], [4, 5, 6]);
       });
 
       it("allows creating accumulate2 visually (shared state)", () => {
@@ -2804,8 +2801,8 @@ describe("main ", () => {
         val.subject.next(5);
 
         assert.equal(s.callCount, 2);
-        assert.deepEqual(s.getCalls()[0].args[0], [1, 2]);
-        assert.deepEqual(s.getCalls()[1].args[0], [3, 4, 5]);
+        assert.deepEqual(s.getCalls()[0]?.args[0], [1, 2]);
+        assert.deepEqual(s.getCalls()[1]?.args[0], [3, 4, 5]);
       });
 
       it('supports creation of "accumulate until"', () => {
@@ -2829,7 +2826,7 @@ describe("main ", () => {
             }
 
             if (isDefined(until)) {
-              r.next(list);
+              r?.next(list);
             }
           },
         };
@@ -2853,9 +2850,9 @@ describe("main ", () => {
         until.subject.next(2);
         // until.subject.next();
 
-        assert.deepEqual(s.getCalls()[0].args[0], [22, 23]);
-        // assert.deepEqual(s.getCalls()[1].args[0], [2, 3]);
-        // assert.deepEqual(s.getCalls()[2].args[0], [4, 5, 6]);
+        assert.deepEqual(s.getCalls()[0]?.args[0], [22, 23]);
+        // assert.deepEqual(s.getCalls()[1]?.args[0], [2, 3]);
+        // assert.deepEqual(s.getCalls()[2]?.args[0], [4, 5, 6]);
       });
     });
 
@@ -2902,7 +2899,7 @@ describe("main ", () => {
         partsRepo: testRepo,
       });
 
-      assert.equal(s.getCalls()[0].args[0], num1 + num2);
+      assert.equal(s.getCalls()[0]?.args[0], num1 + num2);
       assert.equal(s.callCount, 1);
     });
 
@@ -2916,13 +2913,13 @@ describe("main ", () => {
         outputs: {
           r: partOutput(),
         },
-        fn: ({ a, b }, { r }, { state }) => {
+        fn: ({ a, b }, { r }) => {
           if (isDefined(a)) {
-            r.next(a);
+            r?.next(a);
           }
 
           if (isDefined(b)) {
-            r.next(b);
+            r?.next(b);
           }
         },
       };
@@ -2946,11 +2943,11 @@ describe("main ", () => {
       const inputsToUse = repeat(20, () => pickRandom([a, b]));
 
       numbers.forEach((n, idx) => {
-        inputsToUse[idx].subject.next(n);
+        inputsToUse[idx]?.subject.next(n);
       });
 
       numbers.forEach((n, idx) => {
-        assert.deepEqual(s.getCalls()[idx].args[0], n);
+        assert.deepEqual(s.getCalls()[idx]?.args[0], n);
       });
     });
 
@@ -3000,7 +2997,7 @@ describe("main ", () => {
       assert.equal(s.callCount, valuesCount);
 
       values.forEach((val, idx) => {
-        assert.equal(s.getCalls()[idx].args[0], val);
+        assert.equal(s.getCalls()[idx]?.args[0], val);
       });
     });
 
@@ -3194,15 +3191,15 @@ describe("main ", () => {
 
       assert.equal(s.callCount, 2);
 
-      assert.include(s.getCalls()[1].args[0].val.toString(), "blaft");
-      assert.include(s.getCalls()[1].args[0].insId, "i1");
+      assert.include(s.getCalls()[1]?.args[0].val.toString(), "blaft");
+      assert.include(s.getCalls()[1]?.args[0].insId, "i1");
 
       assert.include(
-        s.getCalls()[0].args[0].val.toString(),
+        s.getCalls()[0]?.args[0].val.toString(),
         "fullInsIdPath: someIns.i1"
       );
-      assert.include(s.getCalls()[0].args[0].val.toString(), "blaft");
-      assert.include(s.getCalls()[0].args[0].insId, "someIns");
+      assert.include(s.getCalls()[0]?.args[0].val.toString(), "blaft");
+      assert.include(s.getCalls()[0]?.args[0].insId, "someIns");
     });
 
     it("reports uncaught errors that happened on an internal part", async () => {
@@ -3234,15 +3231,15 @@ describe("main ", () => {
 
       assert.equal(s.callCount, 2);
 
-      assert.include(s.getCalls()[1].args[0].val.toString(), "blah");
-      assert.include(s.getCalls()[1].args[0].insId, "i1");
+      assert.include(s.getCalls()[1]?.args[0].val.toString(), "blah");
+      assert.include(s.getCalls()[1]?.args[0].insId, "i1");
 
       assert.include(
-        s.getCalls()[0].args[0].val.toString(),
+        s.getCalls()[0]?.args[0].val.toString(),
         "fullInsIdPath: someIns.i1"
       );
-      assert.include(s.getCalls()[0].args[0].val.toString(), "blah");
-      assert.include(s.getCalls()[0].args[0].insId, "someIns");
+      assert.include(s.getCalls()[0]?.args[0].val.toString(), "blah");
+      assert.include(s.getCalls()[0]?.args[0].insId, "someIns");
     });
 
     it('allows to catch errors in any part using the "error" pin', async () => {
@@ -3281,7 +3278,7 @@ describe("main ", () => {
 
       assert.equal(s2.callCount, 1);
 
-      assert.include(s2.getCalls()[0].args[0].toString(), "blah");
+      assert.include(s2.getCalls()[0]?.args[0].toString(), "blah");
     });
 
     it("does not bubble up caught errors", async () => {
@@ -3330,8 +3327,8 @@ describe("main ", () => {
 
       assert.equal(s.callCount, 0);
       a.subject.next("bob");
-      assert.include(s.getCalls()[0].args[0].val.toString(), "blah");
-      assert.include(s.getCalls()[0].args[0].insId, "someIns");
+      assert.include(s.getCalls()[0]?.args[0].val.toString(), "blah");
+      assert.include(s.getCalls()[0]?.args[0].insId, "someIns");
       assert.equal(s.callCount, 1);
     });
   });
@@ -3342,9 +3339,9 @@ describe("main ", () => {
         id: "Async",
         inputs: [],
         outputs: ["r"],
-        fn: async (i, o) => {
+        fn: async (_, o) => {
           await delay(10);
-          o.r.next("ok");
+          o.r?.next("ok");
         },
       });
 
@@ -3367,7 +3364,7 @@ describe("main ", () => {
   describe("bugs found", () => {
     it("works with accumulate and a static input", () => {
       const [s, r] = spiedOutput();
-      const [val] = dynamicPartInputs();
+      const [val] = dynamicPartInputs() as [DynamicPartInput];
       const count = staticPartInput(1);
 
       execute({
@@ -3387,7 +3384,7 @@ describe("main ", () => {
 
     it("works with spreading a 3 arrayed list into an accumulate 1", () => {
       const [s, r] = spiedOutput();
-      const [list] = dynamicPartInputs();
+      const [list] = dynamicPartInputs() as [DynamicPartInput];
 
       const part = concisePart({
         id: "merger",
@@ -3503,7 +3500,7 @@ describe("main ", () => {
 
       n1.subject.next(222);
 
-      assert.equal(s.getCalls()[0].args[0], prop1Value + prop2Value);
+      assert.equal(s.getCalls()[0]?.args[0], prop1Value + prop2Value);
       assert.equal(s.callCount, 1);
     });
 
@@ -3586,7 +3583,7 @@ describe("main ", () => {
       const env = {};
       const onError = spy();
 
-      const [s, r] = spiedOutput();
+      const [_, r] = spiedOutput();
 
       execute({
         part: groupedId,
@@ -3619,7 +3616,7 @@ describe("main ", () => {
       const [s, r] = spiedOutput();
       const a = dynamicPartInput();
 
-      const err = (e) => {
+      const err = (e: Error) => {
         throw e;
       };
       execute({
@@ -3643,7 +3640,7 @@ describe("main ", () => {
         id: "add",
         inputs: ["a", "b"],
         outputs: ["r"],
-        fn: (inputs, outputs) => outputs.r.next(inputs.a + inputs.b),
+        fn: (inputs, outputs) => outputs.r?.next(inputs.a + inputs.b),
       });
 
       const visualPart = concisePart({
@@ -3665,7 +3662,7 @@ describe("main ", () => {
       const [s, r] = spiedOutput();
       const a = dynamicPartInput();
 
-      const err = (e) => {
+      const err = (e: Error) => {
         throw e;
       };
       execute({
@@ -3689,7 +3686,7 @@ describe("main ", () => {
         id: "add",
         inputs: ["a", "b"],
         outputs: ["r"],
-        fn: (inputs, outputs) => outputs.r.next(inputs.a + inputs.b),
+        fn: (inputs, outputs) => outputs.r?.next(inputs.a + inputs.b),
       });
 
       const visualPart = concisePart({
@@ -3738,11 +3735,11 @@ describe("main ", () => {
         outputs: ["r"],
         reactiveInputs: ["a"],
         completionOutputs: [],
-        fn: (inputs, outputs, adv) => {
+        fn: (_, outputs, adv) => {
           const val = adv.state.get("bob") || 0;
           const newVal = val + 1;
           adv.state.set("bob", newVal);
-          outputs.r.next(val + 1);
+          outputs.r?.next(val + 1);
         },
       });
 
@@ -3771,8 +3768,8 @@ describe("main ", () => {
         outputs: ["r"],
         reactiveInputs: ["a"],
         completionOutputs: [],
-        fn: (inputs, outputs, adv) => {
-          outputs.r.next(inputs.a);
+        fn: (inputs, outputs) => {
+          outputs.r?.next(inputs.a);
         },
       });
 

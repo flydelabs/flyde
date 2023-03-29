@@ -152,12 +152,12 @@ describe("resolver", () => {
     });
     assert.equal(s.lastCall.args[0], 3);
     assert.match(
-      data.dependencies.Add1.source.path,
+      data.dependencies.Add1?.source.path ?? '',
       /@acme\/add1\/src\/add1\.flyde\.js$/
     );
 
     assert.equal(
-      data.dependencies.Add1.source.export,
+      data.dependencies.Add1?.source.export ?? '',
       'default'
     );
   });
@@ -180,7 +180,7 @@ describe("resolver", () => {
     assert.equal(s.lastCall.args[0], 3);
 
     assert.match(
-      data.dependencies.Add1Wrapped.source.path,
+      data.dependencies.Add1Wrapped?.source.path ?? '',
       /@acme\/add1-wrapped\/src\/add1-wrapped\.flyde$/
     );
   });

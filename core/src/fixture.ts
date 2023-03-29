@@ -5,12 +5,10 @@ import {
   partInput,
   partOutput,
   CodePart,
-  PartInstance,
   InlineValuePart,
   partInstance,
   dynamicPartInput,
   queueInputPinConfig,
-  BasePart,
 } from "./part";
 import { externalConnectionNode, connectionNode } from "./connect";
 import { execute, SubjectMap } from "./execute";
@@ -30,7 +28,7 @@ export const add: CodePart = {
     r: partOutput(),
   },
   fn: ({ n1, n2 }, { r }) => {
-    r.next(n1 + n2);
+    r?.next(n1 + n2);
   },
 };
 
@@ -44,7 +42,7 @@ export const codeAdd: InlineValuePart = {
     r: partOutput(),
   },
   fnCode: `
-  outputs.r.next(inputs.n1 + inputs.n2);
+  outputs.r?.next(inputs.n1 + inputs.n2);
     `,
 };
 
@@ -53,7 +51,7 @@ export const add1: CodePart = {
   inputs: { n: partInput() },
   outputs: { r: partOutput() },
   fn: ({ n }, { r }) => {
-    r.next(n + 1);
+    r?.next(n + 1);
   },
 };
 
@@ -64,7 +62,7 @@ export const mul: Part = {
     n2: partInput(),
   },
   outputs: { r: partOutput() },
-  fn: ({ n1, n2 }, { r }) => r.next(n1 * n2),
+  fn: ({ n1, n2 }, { r }) => r?.next(n1 * n2),
 };
 
 export const mul2: Part = fromSimplified({
@@ -72,7 +70,7 @@ export const mul2: Part = fromSimplified({
   inputTypes: { n: "number" },
   outputTypes: { r: "number" },
   fn: ({ n }, { r }) => {
-    r.next(n * 2);
+    r?.next(n * 2);
   },
 });
 
@@ -81,7 +79,7 @@ export const id: Part = {
   inputs: { v: partInput() },
   outputs: { r: partOutput() },
   fn: ({ v }, { r }) => {
-    r.next(v);
+    r?.next(v);
   },
   completionOutputs: ["r"],
 };
@@ -95,7 +93,7 @@ export const id2: CodePart = {
     r: partOutput(),
   },
   fn: ({ v }, { r }) => {
-    r.next(v);
+    r?.next(v);
   },
 };
 
@@ -103,8 +101,8 @@ export const transform: Part = {
   id: "transform",
   inputs: { from: partInput(), to: partInput() },
   outputs: { r: partOutput() },
-  fn: ({ to }, { r }, { insId }) => {
-    r.next(to);
+  fn: ({ to }, { r }) => {
+    r?.next(to);
   },
 };
 
@@ -113,7 +111,7 @@ export const Value = (v: any): Part => {
     id: `val-${v}`,
     inputTypes: {},
     outputTypes: { r: "any" },
-    fn: ({}, { r }) => r.next(v),
+    fn: ({}, { r }) => r?.next(v),
   });
 };
 
@@ -251,7 +249,7 @@ export const optAdd: CodePart = {
   },
   fn: ({ n1, n2 }, { r }) => {
     const n2Norm = typeof n2 === "undefined" ? 42 : n2;
-    r.next(n1 + n2Norm);
+    r?.next(n1 + n2Norm);
   },
 };
 
@@ -265,7 +263,7 @@ export const isEven: CodePart = {
     r: { },
   },
   fn: ({ item }, { r }) => {
-    r.next(item % 2 === 0);
+    r?.next(item % 2 === 0);
   },
 };
 
@@ -290,7 +288,7 @@ export const filter: Part = fromSimplified({
         outputs: outputs,
         partsRepo: testRepo,
       });
-      outputs.r.subscribe((bool) => {
+      outputs.r?.subscribe((bool) => {
         if (bool) {
           newList.push(item);
         }
@@ -299,8 +297,8 @@ export const filter: Part = fromSimplified({
       okeys(outputs)
         .filter((k) => k !== "r")
         .forEach((k) => {
-          outputs[k].subscribe(() => {
-            o.rs.next({ key: k, v: item, idx });
+          outputs[k]?.subscribe(() => {
+            o.rs?.next({ key: k, v: item, idx });
           });
         });
 
@@ -308,7 +306,7 @@ export const filter: Part = fromSimplified({
       uns.push(clean);
     });
 
-    o.r.next(newList);
+    o.r?.next(newList);
 
     return () => uns.forEach((fn) => fn());
   },
@@ -320,9 +318,9 @@ export const peq: CodePart = {
   outputs: { r: partOutput(), else: partOutput() },
   fn: ({ val, compare }, o) => {
     if (val === compare) {
-      o.r.next(val);
+      o.r?.next(val);
     } else {
-      o.else.next(val);
+      o.else?.next(val);
     }
   },
 };
@@ -334,7 +332,7 @@ export const delay5 = conciseCodePart({
   completionOutputs: ["r"],
   fn: ({ item }, { r }) => {
     setTimeout(() => {
-      r.next(item);
+      r?.next(item);
     }, 5);
   },
 });
@@ -346,7 +344,7 @@ export const delay = conciseCodePart({
   completionOutputs: ["r"],
   fn: ({ item, ms }, { r }) => {
     setTimeout(() => {
-      r.next(item);
+      r?.next(item);
     }, ms);
   },
 });
@@ -397,7 +395,7 @@ export const accumulate = conciseCodePart({
     if (list.length === state.get("count")) {
       console.log(list);
       
-      r.next(list);
+      r?.next(list);
     }
   },
 });
@@ -422,7 +420,7 @@ export const accUntil: CodePart = {
     }
 
     if (isDefined(until)) {
-      r.next(list);
+      r?.next(list);
     }
   },
 };
@@ -435,11 +433,11 @@ export const spreadList = conciseCodePart({
     // magic here
     const { list } = inputs;
     const { val, idx, length } = outputs;
-    list.forEach((v, i) => {
-      val.next(v);
-      idx.next(i);
+    list.forEach((v: any, i: any) => {
+      val?.next(v);
+      idx?.next(i);
     });
-    length.next(list.length);
+    length?.next(list.length);
   },
 });
 

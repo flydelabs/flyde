@@ -1,4 +1,4 @@
-import * as _md5 from "md5";
+import _md5 from "md5";
 import { FlydeFlow } from "../../flow-schema";
 import { isInlineValuePart, isVisualPart, Part } from "../../part";
 
@@ -13,7 +13,7 @@ export const hashPart = (part: Part, ignorePos = true) => {
   const basePart = { id, completionOutputs, reactiveInputs, inputs, outputs };
 
   if (isVisualPart(part)) {
-    const { instances, id, connections, inputsPosition, outputsPosition } =
+    const { instances, connections, inputsPosition, outputsPosition } =
       part;
     // const cleanedInstances = ignorePos ? instances.map((ins) => {
     //     const { pos, ...rest } = ins;
@@ -39,7 +39,6 @@ export const hashPart = (part: Part, ignorePos = true) => {
     });
 
     const str = JSON.stringify({
-      id,
       instancesToUse,
       conns,
       ...basePart,
@@ -54,12 +53,12 @@ export const hashPart = (part: Part, ignorePos = true) => {
   throw new Error(`Hashing code parts unsupported`);
 };
 
-export const hashFlow = (flow: FlydeFlow, ignorePos = true) => {
+export const hashFlow = (flow: FlydeFlow) => {
   const { part, imports } = flow;
 
   const partHash = hashPart(part, false);
 
-  const orderedImports = Object.entries(imports)
+  const orderedImports = Object.entries(imports ?? {})
     .sort(([k1], [k2]) => k1.localeCompare(k2))
     .map(([k, v]) => [k, v.sort()] as [string, string[]])
     .reduce((acc, [k, v]) => ({ ...acc, [k]: v }), {});

@@ -1,6 +1,5 @@
 import { runAddTests } from "./add-tests";
-import { add, codeAdd, testRepo } from "../fixture";
-import { inlineValuePartToPart } from "../inline-value-to-code-part";
+import { add, codeAdd } from "../fixture";
 
 describe("add tests", () => {
   describe("normal", () => {

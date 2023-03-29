@@ -109,25 +109,6 @@ describe("connect", () => {
     });
   });
 
-  describe("optional outputs", () => {
-    const optOutput: CodePart = {
-      id: "dup",
-      inputs: {
-        v: {},
-      },
-      outputs: {
-        r1: { },
-        r2: { },
-      },
-      fn: ({ v }, { r1, r2 }) => {
-        r1.next(v);
-        if (r2) {
-          r2.next(v);
-        }
-      },
-    };
-  });
-
   describe("cyclic dependencies", () => {
     it.skip("allows closing cyclic dependencies with delayed parts", () => {
       const delayedId: CodePart = {
@@ -136,7 +117,7 @@ describe("connect", () => {
         outputs: { r: { delayed: true } },
         fn: ({ n }, { r }) => {
           setInterval(() => {
-            r.next(n);
+            r?.next(n);
           });
         },
       };

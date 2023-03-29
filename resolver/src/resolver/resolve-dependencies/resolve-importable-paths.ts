@@ -2,7 +2,7 @@ import { existsSync } from "fs";
 import { join, dirname } from "path";
 import * as glob from "glob";
 
-import * as resolveFrom from "resolve-from";
+import resolveFrom from "resolve-from";
 
 export const resolveImportablePaths = (
   rootPath: string,
@@ -21,7 +21,7 @@ export const resolveImportablePaths = (
     );
   }
 
-  const globs =
+  const globs: string[] =
     typeof flyde.exposes === "string" ? [flyde.exposes] : flyde.exposes;
 
   const paths = globs.reduce((acc, pattern) => {

@@ -39,7 +39,7 @@ describe("namespace flows", () => {
     );
 
     assert.deepEqual(_.keys(namespaced.dependencies), ["NS__Alice"]);
-    assert.equal(namespaced.dependencies["NS__Alice"].id, "NS__Alice");
+    assert.equal(namespaced.dependencies["NS__Alice"]?.id, "NS__Alice");
 
     assert.equal(
       (

@@ -7,8 +7,7 @@ import {
 import { deserializeFlowByPath, resolveDependencies, resolveFlowDependencies, resolveFlowDependenciesByPath } from "@flyde/resolver";
 import EventEmitter = require("events");
 
-import * as findRoot from "find-root";
-import { readFileSync } from "fs";
+import findRoot from "find-root";
 import { join } from "path";
 import { createDebugger } from "./create-debugger";
 // import { EventPromise } from "./events-promise";

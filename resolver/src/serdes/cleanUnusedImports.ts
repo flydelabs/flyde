@@ -1,7 +1,7 @@
 import { Part, isVisualPart, isRefPartInstance, isInlinePartInstance, FlydeFlow } from "@flyde/core";
 
   const getPartIds = (part?: Part) => {
-    if (isVisualPart(part)) {
+    if (part && isVisualPart(part)) {
       const refIds = part.instances.filter((ins: any) => isRefPartInstance(ins)).map((ins: any) => ins.partId);
 
       const innerIds = part.instances.filter((ins: any) => isInlinePartInstance(ins)).flatMap((ins: any) => getPartIds(ins.part));

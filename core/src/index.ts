@@ -1,13 +1,9 @@
 export * from "./common";
-import { Pos, OMap } from "./common";
-import { ExecuteEnv } from "./execute";
+import { Pos } from "./common";
 import {
-  CustomPart,
   VisualPart,
   InputPinsConfig,
   maybeGetStaticValuePartId,
-  Part,
-  PartDefinition,
 } from "./part";
 
 export * from "./connect";
@@ -28,7 +24,7 @@ export * from "./flow-schema";
 export type InputStaticValue = string | number | object | VisualPart;
 
 export const isStaticValueVisualPart = (val: InputStaticValue): boolean => {
-  return val && !!maybeGetStaticValuePartId(`${val}`);
+  return val ? !!maybeGetStaticValuePartId(`${val}`) : false;
 };
 
 export interface InstanceViewData {

@@ -29,7 +29,7 @@ describe('ControlFlow', () => {
 
             const input = dynamicPartInput();
 
-            execute({part: visualPart, outputs: {b}, inputs: {a: input}, partsRepo: {}, parentInsId: 'bob'});
+            execute({part: visualPart, outputs: {b}, inputs: {a: input}, partsRepo: {}, ancestorsInsIds: 'bob'});
 
             input.subject.next(value);
 

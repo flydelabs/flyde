@@ -10,6 +10,7 @@ import {
   dynamicPartInputs,
   stickyInputPinConfig,
   staticPartInput,
+  DynamicPartInput,
 } from "../part";
 import { execute } from ".";
 import { Subject } from "rxjs";
@@ -40,7 +41,7 @@ import {
 } from "../fixture";
 
 import { conciseCodePart, wrappedOnEvent } from "../test-utils";
-import { Debugger, DebuggerEvent, DebuggerEventType } from "./debugger";
+import { DebuggerEventType } from "./debugger";
 
 describe("execute", () => {
   const totalOptInput: CodePart = {
@@ -55,7 +56,7 @@ describe("execute", () => {
     fn: ({ n1, n2 }, { r }, {}) => {
       const a = isDefined(n1) ? n1 : 42;
       const b = isDefined(n2) ? n2 : 42;
-      r.next(a + b);
+      r?.next(a + b);
     },
   };
 
@@ -184,8 +185,8 @@ describe("execute", () => {
       };
 
       const part = connect(visualPart, testRepo, {} as any);
-      assert.equal(part.inputs["a"].mode, "optional");
-      assert.equal(part.inputs["b"].mode, "required");
+      assert.equal(part.inputs["a"]?.mode, "optional");
+      assert.equal(part.inputs["b"]?.mode, "required");
     });
   });
 
@@ -453,7 +454,7 @@ describe("execute", () => {
           r2: { },
         },
         fn: ({ v }, { r1, r2 }, {}) => {
-          r1.next(v);
+          r1?.next(v);
           if (isDefined(r2)) {
             r2.next(v);
           }
@@ -647,7 +648,7 @@ describe("execute", () => {
 
         assert.equal(s.callCount, 4);
 
-        console.log(s.getCalls()[1].args[0]);
+        console.log(s.getCalls()[1]?.args[0]);
         
 
         assert.equal(
@@ -707,6 +708,7 @@ describe("execute", () => {
                   valuePromise: Promise.resolve(insId ? Number(val) * 2 : val), // intercept only inside
                 };
               }
+              return;
             },
           },
         });
@@ -845,6 +847,7 @@ describe("execute", () => {
                   valuePromise: Promise.resolve(insId ? Number(val) * 2 : val), // intercept only inside
                 };
               }
+              return;
             },
           },
         });
@@ -1017,7 +1020,7 @@ describe("execute", () => {
           outputs: { r },
           partsRepo: testRepo,
           _debugger: {
-            onEvent: ({ val, insId, type }) => {
+            onEvent: ({ val, type }) => {
               if (type !== DebuggerEventType.OUTPUT_CHANGE) return;
               // return undefined;
               const newVal = Number(val) * 2;
@@ -1041,7 +1044,7 @@ describe("execute", () => {
 
     describe("processing event", () => {
       it("notifies when part starts processing", async () => {
-        const [item] = dynamicPartInputs(1);
+        const [item] = dynamicPartInputs(1) as [DynamicPartInput];
         const r = dynamicOutput();
 
         const onProcessing = spy();
@@ -1057,7 +1060,7 @@ describe("execute", () => {
           completionOutputs: ["r"],
           fn: ({ item }, { r }) => {
             setTimeout(() => {
-              r.next(item);
+              r?.next(item);
             }, 5);
           },
         });
@@ -1081,7 +1084,7 @@ describe("execute", () => {
       });
 
       it("notifies when part ends processing", async () => {
-        const [item] = dynamicPartInputs(1);
+        const [item] = dynamicPartInputs(1) as [DynamicPartInput];
         const r = dynamicOutput();
 
         const onProcessing = spy();
@@ -1110,7 +1113,7 @@ describe("execute", () => {
       });
 
       it("notifies with state count when inputs state is changed", async () => {
-        const [item] = dynamicPartInputs(1);
+        const [item] = dynamicPartInputs(1) as [DynamicPartInput];
         const r = dynamicOutput();
 
         const onInputsStateChange = spy();
@@ -1147,7 +1150,7 @@ describe("execute", () => {
       });
 
       it("notifies with state count when inputs state is changed on sticky inputs", async () => {
-        const [item, ms] = dynamicPartInputs(2);
+        const [item, ms] = dynamicPartInputs(2) as [DynamicPartInput, DynamicPartInput];
         const r = dynamicOutput();
 
         ms.config = stickyInputPinConfig();
