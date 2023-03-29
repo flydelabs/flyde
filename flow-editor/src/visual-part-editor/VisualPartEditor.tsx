@@ -38,6 +38,7 @@ import {
   externalConnectionNode,
   ResolvedDependenciesDefinitions,
   fullInsIdPath,
+  ROOT_INS_ID,
 } from "@flyde/core";
 import { InstanceView, InstanceViewProps } from "./instance-view/InstanceView";
 import {
@@ -116,8 +117,8 @@ import { handleDuplicateSelectedEditorCommand } from "./commands/duplicate-insta
 import { PartStyleMenu } from "./instance-view/PartStyleMenu";
 import { FlydeFlowEditorProps } from "../flow-editor/FlowEditor";
 import { Action, ActionsMenu, ActionType } from "./ActionsMenu/ActionsMenu";
-import { getMainInstanceIndicatorDomId } from "./dom-ids";
 import { MainInstanceEventsIndicator } from "./MainInstanceEventsIndicator";
+import { HelpBubble } from "./HelpBubble";
 
 const MemodSlider = React.memo(Slider);
 
@@ -288,6 +289,8 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
         to: Pos;
       }>();
 
+      const isRootInstance = ancestorsInsIds === undefined;
+
       const [lastBoardClickTime, setLastBoardClickTime] = useState<number>(0);
 
       const [lastSelectedId, setLastSelectedId] = useState<string>(); // to avoid it disappearing when doubling clicking to edit
@@ -332,14 +335,6 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
         },
         [onChangeBoardData]
       );
-
-      const _onRequestHistory: VisualPartEditorProps["onRequestHistory"] =
-        React.useCallback(
-          (insId, pinId, pinType) => {
-            return onRequestHistory(insId, pinId, pinType);
-          },
-          [onRequestHistory]
-        );
 
       const _onInspectPin = React.useCallback<
         VisualPartEditorProps["onInspectPin"]
@@ -613,8 +608,9 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
           onZoom(viewPort.zoom + 0.1, "hotkey");
           e.preventDefault();
         },
+        { text: 'Zoom in board', group: 'Viewport Controls'},
+        [viewPort, onZoom],
         isBoardInFocus,
-        [viewPort, onZoom]
       );
 
       useHotkeys(
@@ -623,8 +619,9 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
           onZoom(viewPort.zoom - 0.1, "hotkey");
           e.preventDefault();
         },
+        { text: 'Zoom out board', group: 'Viewport Controls'},
+        [onZoom, viewPort.zoom],
         isBoardInFocus,
-        [onZoom, viewPort.zoom]
       );
 
       useHotkeys(
@@ -649,8 +646,9 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             }
           })();
         },
+        { text: 'Auto-layout (experimental)', group: 'Misc.'},
+        [onChange, part, resolvedDependencies],
         isBoardInFocus,
-        [onChange, part, resolvedDependencies]
       );
 
       useHotkeys(
@@ -659,8 +657,9 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
           onZoom(1);
           e.preventDefault();
         },
+        { text: 'Reset zoom', group: 'Viewport Controls'},
+        [viewPort, onZoom],
         isBoardInFocus,
-        [viewPort, onZoom]
       );
 
       const clearSelections = () => {
@@ -1854,15 +1853,15 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
         [getContextMenu, parentViewport, viewPort]
       );
 
-      useHotkeys("shift+c", fitToScreen, isBoardInFocus);
+      useHotkeys("shift+c", fitToScreen, { text: 'Center viewport', group: 'Viewport Controls'}, [], isBoardInFocus);
 
-      useHotkeys("cmd+c", onCopyInner, isBoardInFocus);
-      useHotkeys("cmd+v", onPaste, isBoardInFocus);
-      useHotkeys("esc", clearSelections, isBoardInFocus);
-      useHotkeys("backspace", deleteSelection, isBoardInFocus);
-      useHotkeys("shift+d", duplicate, isBoardInFocus);
-      useHotkeys("cmd+a", selectAll, isBoardInFocus);
-      useHotkeys("s", selectClosest, isBoardInFocus);
+      useHotkeys("cmd+c", onCopyInner,{ text: 'Copy instances', group: 'Editing'}, [],  isBoardInFocus);
+      useHotkeys("cmd+v", onPaste,{ text: 'Paste instances', group: 'Editing'}, [],  isBoardInFocus);
+      useHotkeys("esc", clearSelections,{ text: 'Clear selections', group: 'Selection'}, [],  isBoardInFocus);
+      useHotkeys("backspace", deleteSelection,{ text: 'Delete instances', group: 'Editing'}, [],  isBoardInFocus);
+      useHotkeys("shift+d", duplicate,{ text: 'Duplicate selected instances', group: 'Editing'}, [],  isBoardInFocus);
+      useHotkeys("cmd+a", selectAll,{ text: 'Select all', group: 'Selection'}, [],  isBoardInFocus);
+      useHotkeys("s", selectClosest,{ text: 'Select pin closest to mouse', group: 'Selection'}, [],  isBoardInFocus);
 
       const onChangeInspected: VisualPartEditorProps["onChangePart"] =
         React.useCallback(
@@ -2371,7 +2370,6 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
                   // onTogglePinLog={onToggleLog}
                   // onTogglePinBreakpoint={onToggleBreakpoint}
                   viewPort={viewPort}
-                  onRequestHistory={_onRequestHistory}
                   onChangeVisibleInputs={onChangeVisibleInputs}
                   onChangeVisibleOutputs={onChangeVisibleOutputs}
                   onSetDisplayName={onChangeInstanceDisplayName}
@@ -2400,7 +2398,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
               {maybeRenderSelectionBox()}
               {/* {maybeRenderEditGroupModal()} */}
               {renderPartOutputs()}
-              <MainInstanceEventsIndicator currentInsId={currentInsId} ancestorsInsIds={ancestorsInsIds}/>
+              <MainInstanceEventsIndicator currentInsId={currentInsId} ancestorsInsIds={ancestorsInsIds} viewPort={viewPort}/>
               {quickAddMenuVisible ? (
                 <QuickAddMenu
                   targetPart={quickAddMenuVisible.targetPart}
@@ -2414,7 +2412,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
                   onClose={onCloseQuickAdd}
                 />
               ) : null}
-              <div className="viewport-controls">
+              <div className="viewport-controls-and-help">
                 <Button small onClick={fitToScreen} minimal intent='primary'>
                   Center
                 </Button>
@@ -2426,7 +2424,8 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
                   labelRenderer={sliderRenderer}
                   onChange={onZoom}
                   value={viewPort.zoom}
-                />
+                  />
+                {isRootInstance ? <HelpBubble /> : null}
               </div>
               {inlineCodeTarget ? (
                 <InlineCodeModal
@@ -2444,6 +2443,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
               <div className="inline-editor-portal-root" />
             </main>
             <ActionsMenu
+              showRunFlowOptions={isRootInstance}
               onAction={onAction}
               selectedInstances={selected}
               part={part}

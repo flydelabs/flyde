@@ -67,13 +67,13 @@ export const PartIoView: React.SFC<PartIoViewProps> = React.memo(
       closest,
       onSetDescription,
       description,
-      onRequestHistory,
       onMouseUp,
-      onMouseDown
+      onMouseDown,
+      currentInsId
     } = props;
 
     const { history, resetHistory, refreshHistory } = useHistoryHelpers(
-      onRequestHistory,
+      currentInsId,
       id,
       type
     );

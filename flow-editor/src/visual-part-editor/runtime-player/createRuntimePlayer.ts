@@ -1,4 +1,4 @@
-import { DebuggerEvent, debugLogger } from "@flyde/core";
+import { DebuggerEvent, DebuggerEventType, debugLogger, ROOT_INS_ID } from "@flyde/core";
 import { playEvent } from "./play-event";
 
 const debug = debugLogger("runtime-player");
@@ -30,6 +30,11 @@ export const createRuntimePlayer = (): RuntimePlayer => {
     toPlay.forEach((e) => {
       debug(`Playing event`, e);
       playEvent(e);
+
+      if (e.insId === ROOT_INS_ID && e.type === DebuggerEventType.PROCESSING_CHANGE && e.val === false) {
+        debug(`Main instance is done processing, clearing runtime UI`, e);
+        clear();
+      }
     });
   };
 

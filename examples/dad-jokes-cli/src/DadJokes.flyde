@@ -7,8 +7,8 @@ imports:
 part:
   instances:
     - pos:
-        x: -610.0955505371094
-        y: -975.8859985351562
+        x: -730.6186218261719
+        y: -1097.3514526367187
       id: HttpGet-770
       inputConfig:
         url:
@@ -40,8 +40,8 @@ part:
         size: small
         icon: magnifying-glass
     - pos:
-        x: -567.0469531250001
-        y: -787.0935131835937
+        x: -536.6016406250001
+        y: -837.8376538085937
       id: clchvfuoj000145662fwav020
       inputConfig:
         key:
@@ -126,8 +126,8 @@ part:
   outputs: {}
   inputsPosition:
     punchDelay:
-      x: -166.33271785931728
-      y: -977.6126745337394
+      x: -104.1678615364372
+      y: -991.567996807138
     test:
       x: -182.5383681955638
       y: -903.352979697288

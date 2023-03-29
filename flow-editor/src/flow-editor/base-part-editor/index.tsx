@@ -9,7 +9,6 @@ import {
 } from "@flyde/core";
 // ;
 import { Checkbox, Collapse, FormGroup, InputGroup, MenuItem } from "@blueprintjs/core";
-import Editor from "@monaco-editor/react";
 import produce from "immer";
 import { MultiSelect } from "@blueprintjs/select";
 import { PartPreview } from "../../PartPreview/PartPreview";

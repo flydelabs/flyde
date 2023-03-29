@@ -3,26 +3,39 @@ import { useCallback, useEffect } from "react";
 
 type CallbackFn = (event: KeyboardEvent, handler: HotkeysEvent) => void;
 
+export interface HotkeysMenuData {
+  text: string;
+  order?: number;
+  group: string;
+}
+
+export let currentHotkeys = new Map<string, HotkeysMenuData>();
+
 export function useHotkeys(
   keys: string,
   callback: CallbackFn,
-  controlRef?: React.MutableRefObject<boolean>,
+  menuData: HotkeysMenuData,
   deps: any[] = [],
-  opts = {}
+  controlRef?: React.MutableRefObject<boolean>,
+  
 ) {
   const memoisedCallback = useCallback<CallbackFn>(
     (...args) => {
       if (!controlRef || controlRef.current) {
         callback(...args);
       }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [...deps, callback]
   );
 
   useEffect(() => {
-    hotkeys(keys, opts, memoisedCallback);
+    hotkeys(keys, {}, memoisedCallback);
+    currentHotkeys.set(keys, menuData);
 
-    return () => hotkeys.unbind(keys, memoisedCallback);
-  }, [keys, memoisedCallback, opts]);
+    return () => {
+      currentHotkeys.delete(keys);
+      hotkeys.unbind(keys, memoisedCallback)
+    };
+  }, [keys, memoisedCallback, menuData]);
 }

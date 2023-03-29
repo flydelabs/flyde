@@ -36,7 +36,7 @@ $runtime-active-color: #c8ffc7;
 .main-instance-events-indicator[data-runtime="error"] {
   animation: blink-error $blink-duration * 2;
 
-  .status-text:after{ 
+  .status-text:after { 
     content: "Error";
   }
 }

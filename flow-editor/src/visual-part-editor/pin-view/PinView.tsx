@@ -47,7 +47,6 @@ export type PinViewProps = {
   onToggleLogged: (insId: string, pinId: string, type: PinType) => void;
   onToggleBreakpoint: (insId: string, pinId: string, type: PinType) => void;
   onInspect: (insId: string, pin: {id: string, type: PinType}) => void;
-  onRequestHistory: (pinId: string, type: PinType) => Promise<HistoryPayload>;
 
   onMouseUp: (id: string, type: PinType, e: React.MouseEvent) => void;
   onMouseDown: (id: string, type: PinType, e: React.MouseEvent) => void;
@@ -70,15 +69,14 @@ export const PinView: React.SFC<PinViewProps> = React.memo(function PinView(
     connected,
     rotate,
     optional,
+    currentInsId,
     isClosestToMouse,
     id,
-    onRequestHistory,
     onMouseDown,
     onMouseUp
   } = props;
 
-  const { history, resetHistory, refreshHistory } = useHistoryHelpers(
-    onRequestHistory,
+  const { history, resetHistory, refreshHistory } = useHistoryHelpers(currentInsId,
     id,
     type
   );

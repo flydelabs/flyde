@@ -17,7 +17,7 @@ export const CustomReactTooltip: React.FC<TooltipProps> = (props) => {
   }, []);
   return domNode.current ? (
     <BodyPortal domNode={domNode.current}>
-      <ReactTooltip {...props} />
+      <ReactTooltip effect='solid' {...props} />
     </BodyPortal>
   ) : null;
 };

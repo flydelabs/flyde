@@ -10,6 +10,7 @@
 @import "./runtime-player/events.scss";
 @import "./ActionsMenu/ActionsMenu.scss";
 @import "./MainInstanceEventsIndicator/MainInstanceEventsIndicator.scss";
+@import './HelpBubble/HelpBubble.scss';
 
 
 // $background-gradient: linear-gradient(249.43deg, #E8F0EC 3.24%, #EDF2F2 26.19%, #E5EDF2 49.64%, #E8F3F4 70.64%, #F1F1F1 97.01%);
@@ -129,7 +130,7 @@ $background-gradient: linear-gradient(
     outline: none;
   }
 
-  .viewport-controls {
+  .viewport-controls-and-help {
     position: absolute;
     bottom: 10px;
     right: 20px;
@@ -143,7 +144,7 @@ $background-gradient: linear-gradient(
 
     .bp3-slider {
       width: 150px;
-      height: 20px;
+      height: 16px;
     }
   }
 

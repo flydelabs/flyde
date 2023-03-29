@@ -22,7 +22,6 @@ import {
   pencilIcon,
   playIcon,
   removePartIcon,
-  stopIcon,
   ungroupIcon,
 } from "./icons/icons";
 import { RunFlowModal } from "./RunFlowModal";
@@ -34,8 +33,7 @@ export enum ActionType {
   Ungroup = "ungroup",
   AddInlineValue = "add-inline-value",
   Inspect = "inspect",
-  Run = "run",
-  Stop = "stop",
+  Run = "run"
 }
 
 export type ActionData = {
@@ -58,12 +56,14 @@ export interface ActionsMenuProps {
   to?: ConnectionNode;
   hotkeysEnabled: MutableRefObject<boolean>;
 
+  showRunFlowOptions: boolean;
+
   onAction: (action: Action) => void;
   onRequestImportables: () => Promise<ImportablePart[]>;
 }
 
 export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
-  const { onAction, selectedInstances, repo, part, from, to, hotkeysEnabled } =
+  const { onAction, selectedInstances, repo, part, from, to, hotkeysEnabled, showRunFlowOptions } =
     props;
 
   const [showAddPartMenu, setShowAddPartMenu] = React.useState(false);
@@ -75,7 +75,7 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
     setShowAddPartMenu(false);
   }, []);
 
-  const {onRunFlow, onStopFlow} = usePorts();
+  const {onRunFlow} = usePorts();
 
   const _runFlow = useCallback<typeof onRunFlow>((inputs) => {
     setShowRunFlowModal(false);
@@ -107,8 +107,11 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
     }
   }
 
-  types.push(ActionType.Run);
-  types.push(ActionType.Stop);
+
+  if (showRunFlowOptions) {
+    types.push(ActionType.Run);
+  }
+
 
   if (selectedInstances.length > 0) {
     types.push(ActionType.Group);
@@ -154,16 +157,11 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
             setShowRunFlowModal(true);
           })()
           break;
-        case ActionType.Stop:
-          void (async function () {
-            onStopFlow();
-          })()
-          break;
         default:
           onAction({ type, data: undefined });
       }
     },
-    [hideHotkeyHintMap, onAction, onStopFlow, setHideHotkeyHintMap]
+    [hideHotkeyHintMap, onAction, onDismissHotkeyHint]
   );
 
   Object.entries(actionsMetaData).forEach(
@@ -179,8 +177,9 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
               setHideHotkeyHintMap({...hideHotkeyHintMap, [data.hotkey]: true})
             }
           },
+          { text: data.text, group: 'Action menu hotkeys'},
+          [types],
           hotkeysEnabled,
-          [types]
         );
       }
     }
@@ -250,13 +249,9 @@ const actionsMetaData: Record<
   },
   [ActionType.Run]: {
     icon: playIcon,
-    text: "Run",
+    text: "Run flow",
     hotkey: "r",
-  },
-  [ActionType.Stop]: {
-    icon: stopIcon,
-    text: "Stop"
-  },
+  }
 };
 
 const emptyMeta = { icon: "", text: "N/A", hotkey: undefined };
