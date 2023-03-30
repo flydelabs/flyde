@@ -181,7 +181,7 @@ export const delay = (ms: number) => {
 
 export const eventually = async (
   callback: () => void,
-  timeout = 3000,
+  timeout = 1000,
   retryDelay = 100,
   errorSet: Set<string> = new Set()
 ): Promise<void> => {

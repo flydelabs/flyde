@@ -1,11 +1,9 @@
-import * as express from "express";
+import express from "express";
 import { createService } from "./service/service";
 
 import { setupRemoteDebuggerServer } from "@flyde/remote-debugger/dist/setup-server";
 import { createServer } from "http";
-import {
-  scanImportableParts,
-} from "./service/scan-importable-parts";
+import { scanImportableParts } from "./service/scan-importable-parts";
 import { deserializeFlow, resolveDependencies } from "@flyde/resolver";
 import { join } from "path";
 
@@ -80,7 +78,7 @@ export const runDevServer = (
 
       const fullPath = resolveFrom(rootDir, filename);
       const flow = deserializeFlow(readFileSync(fullPath, "utf-8"), fullPath);
-      const deps = await resolveDependencies(flow, 'definition', fullPath);
+      const deps = await resolveDependencies(flow, "definition", fullPath);
       res.send({ ...deps, [flow.part.id]: flow.part });
     } catch (e) {
       console.error(e);

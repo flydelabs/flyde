@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 require("source-map-support").install();
 
-import * as args from "args";
+import args from "args";
 import { join } from "path";
 import { initFlydeDevServer, InitFlydeDevServerOptions } from "./lib";
 

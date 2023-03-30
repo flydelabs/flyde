@@ -1148,7 +1148,84 @@ describe("main ", () => {
         },
       };
 
-      it("allows parts to access shared part state", () => {
+
+      describe('global state', () => {
+        
+        it("allows parts to access global state", () => {
+          const s = spy();
+          const v = dynamicPartInput();
+          const r = new Subject();
+  
+          const part1: CodePart = {
+            id: "p1",
+            inputs: { },
+            outputs: { r: partOutput() },
+            reactiveInputs: ["v"],
+            fn: (_, outs, { globalState }) => {
+              const n = (globalState.get("curr") || 0) + 1;
+              globalState.set("curr", n);
+              outs.r?.next(n);
+            },
+          };
+          const part2: CodePart = {
+            id: "p2",
+            inputs: { },
+            outputs: { r: partOutput() },
+            reactiveInputs: ["v"],
+            fn: (_, outs, { globalState }) => {
+              const n = (globalState.get("curr") || 0) + 1;
+              globalState.set("curr", n);
+              outs.r?.next(n);
+            },
+          };
+
+          const wrappedP2 = concisePart({
+            id: 'wrappedP2',
+            inputs: [],
+            outputs: ['r'],
+            instances: [
+              partInstance('p2', part2.id),
+            ],
+            connections: [
+              ['__trigger', 'p2.__trigger'],
+              ['p2.r', 'r']
+            ]
+          });
+  
+          const wrapper = concisePart({
+            id: 'wrapper',
+            inputs: ['v'],
+            outputs: ['r'],
+            instances: [
+              partInstance('p1', part1.id),
+              partInstance('p2', wrappedP2.id),
+            ],
+            connections: [
+              ['v', 'p1.__trigger'],
+              ['p1.r', 'p2.__trigger'],
+              ['p2.r', 'r']
+            ],
+          })
+  
+          r.subscribe(s);
+          execute({
+            part: wrapper,
+            inputs: { v },
+            outputs: { r },
+            partsRepo: testRepoWith(part1, part2, wrappedP2),
+          });
+          v.subject.next('');
+          assert.deepEqual(s.lastCall.args[0], 2);
+          v.subject.next('');
+          assert.deepEqual(s.lastCall.args[0], 4);
+          v.subject.next('');
+          assert.deepEqual(s.lastCall.args[0], 6);
+        });
+      })
+
+      
+
+      it("allows parts to access execution state", () => {
         const s = spy();
         const v = dynamicPartInput();
         const r = new Subject();
@@ -3443,6 +3520,57 @@ describe("main ", () => {
       // a.subject.next(1);
 
       assert.equal(s.callCount, 1);
+    });
+
+    // todo - add this to the implicit completion test suite
+    it('queues values properly when inputs are received in a synchronous order in an async function', async () => {
+      const loopValuesPart = conciseCodePart({
+        id: "loopValues",
+        inputs: [],
+        outputs: ["r"],
+        fn: (_, o) => {
+          [1, 2, 3].map(v => o.r?.next(v));
+        }
+      });
+
+      const asyncId = conciseCodePart({
+        id: "asyncId",
+        inputs: ["v"],
+        outputs: ["r"],
+        fn: async (i, o) => {
+          o.r?.next(i.v);
+        }
+      });
+
+      const wrapperPart = concisePart({
+        id: "wrapper",
+        inputs: [],
+        outputs: ["r"],
+        instances: [
+          partInstance("i1", loopValuesPart.id),
+          partInstance("i2", asyncId.id),
+        ],
+        connections: [
+          ["i1.r", "i2.v"],
+          ["i2.r", "r"],
+        ]
+      });
+
+      const [s, r] = spiedOutput();
+
+      execute({
+        part: wrapperPart,
+        inputs: {},
+        outputs: { r },
+        partsRepo: testRepoWith(loopValuesPart, asyncId),
+      });
+
+      
+      await eventually(() => {
+        assert.equal(s.callCount, 3);
+      })
+      console.log(s.getCalls().map(c => c.args[0]));
+      
     });
   });
 

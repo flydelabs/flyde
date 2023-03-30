@@ -40,7 +40,7 @@ export default function ReactCounterExample(): JSX.Element {
     PlaygroundTemplateProps["flowProps"]
   >({
     flow: fiboFlow.flow,
-    resolvedFlow: fiboFlow.resolvedFlow,
+    dependencies: fiboFlow.dependencies,
     inputs: inputs.current,
     output: result.current,
   });

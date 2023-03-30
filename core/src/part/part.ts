@@ -27,6 +27,7 @@ export type PartAdvancedContext = {
   insId: string;
   ancestorsInsIds?: string;
   state: PartState;
+  globalState: PartState;
   onCleanup: (cb: Function) => void;
   onError: (e: any) => void;
   context: Record<string, any>;

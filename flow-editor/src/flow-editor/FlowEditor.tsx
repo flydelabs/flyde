@@ -26,9 +26,7 @@ import produce from "immer";
 import { useHotkeys } from "../lib/react-utils/use-hotkeys";
 
 // ;
-import {
-  createNewPartInstance,
-} from "../visual-part-editor/utils";
+import { createNewPartInstance } from "../visual-part-editor/utils";
 
 import { EditorDebuggerClient, HistoryPayload } from "@flyde/remote-debugger";
 import { AppToaster, toastMsg } from "../toaster";
@@ -64,7 +62,11 @@ export type FlydeFlowEditorProps = {
 
   onImportPart: (
     part: ImportablePart,
-    target?: { pos: Pos; selectAfterAdding?: boolean, connectTo?: { insId: string; outputId: string } }
+    target?: {
+      pos: Pos;
+      selectAfterAdding?: boolean;
+      connectTo?: { insId: string; outputId: string };
+    }
   ) => Promise<PartInstance | undefined>;
   onQueryImportables?: () => Promise<ImportablePart[]>;
 
@@ -76,7 +78,7 @@ export type FlydeFlowEditorProps = {
     pinType?: PinType
   ) => Promise<HistoryPayload>;
 
-  debuggerClient?: Pick<EditorDebuggerClient, 'onBatchedEvents'>;
+  debuggerClient?: Pick<EditorDebuggerClient, "onBatchedEvents">;
 
   onNewEnvVar?: (name: string, val: any) => void;
 
@@ -104,7 +106,10 @@ export type DataBuilderTarget = {
 
 const ignoreUndoChangeTypes = ["select", "drag-move", "order-step"];
 
-const resolvedToRepo = (flow: FlydeFlow, deps: ResolvedDependenciesDefinitions): PartDefRepo => ({
+const resolvedToRepo = (
+  flow: FlydeFlow,
+  deps: ResolvedDependenciesDefinitions
+): PartDefRepo => ({
   ...deps,
   [flow.part.id]: flow.part,
 });
@@ -129,24 +134,26 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
     const { flow, boardData: editorBoardData } = state;
     const editedPart = state.flow.part;
 
-    const [queuedInputsData, setQueuedInputsData] = React.useState<Record<string, Record<string, number>>>({});
+    const [queuedInputsData, setQueuedInputsData] = React.useState<
+      Record<string, Record<string, number>>
+    >({});
 
     React.useEffect(() => {
       if (debuggerClient) {
         return debuggerClient.onBatchedEvents((events) => {
-          events.forEach(event => {
-            console.log({event});
-            
+          events.forEach((event) => {
+            console.log({ event });
+
             if (event.type === DebuggerEventType.INPUTS_STATE_CHANGE) {
               console.log("INPUTS_STATE_CHANGE", event.insId, event.val);
-              setQueuedInputsData(obj => {
-                return {...obj, [event.insId]: event.val};
+              setQueuedInputsData((obj) => {
+                return { ...obj, [event.insId]: event.val };
               });
             }
-          })
-        })
+          });
+        });
       }
-    }, [debuggerClient])
+    }, [debuggerClient]);
 
     const { openFile } = usePorts();
 
@@ -208,8 +215,8 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
         }
         e.preventDefault();
       },
-      { text: 'Undo last change', group: 'Editing'},
-      [state, undoStack, redoStack],
+      { text: "Undo last change", group: "Editing" },
+      [state, undoStack, redoStack]
     );
 
     const onChangePart = React.useCallback(
@@ -314,18 +321,38 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
         }
         hideOmnibar();
       },
-      [hideOmnibar, onAddPartInstance, editorBoardData.lastMousePos, onImportPart, resolvedDependencies, flow, onChangeFlow]
+      [
+        hideOmnibar,
+        onAddPartInstance,
+        editorBoardData.lastMousePos,
+        onImportPart,
+        resolvedDependencies,
+        flow,
+        onChangeFlow,
+      ]
     );
 
-    const [inspectedItem, setInspectedItem] = React.useState<{insId: string, pin?: {type: PinType, id: string}}>();
+    const [inspectedItem, setInspectedItem] = React.useState<{
+      insId: string;
+      pin?: { type: PinType; id: string };
+    }>();
 
-    const onCloseInspectedItemModal = React.useCallback(() => setInspectedItem(undefined), []);
+    const onCloseInspectedItemModal = React.useCallback(
+      () => setInspectedItem(undefined),
+      []
+    );
 
-    const onInspectPin = React.useCallback((insId: string, pin: {type: PinType, id: string}) => {
-      setInspectedItem({insId, pin});
-    }, []);
+    const onInspectPin = React.useCallback(
+      (insId: string, pin: { type: PinType; id: string }) => {
+        setInspectedItem({ insId, pin });
+      },
+      []
+    );
 
-    const debuggerContextValue = React.useMemo(() => ({onRequestHistory: props.onRequestHistory}), [props.onRequestHistory]);
+    const debuggerContextValue = React.useMemo(
+      () => ({ onRequestHistory: props.onRequestHistory }),
+      [props.onRequestHistory]
+    );
 
     const renderInner = () => {
       if (isInlineValuePart(editedPart)) {
@@ -333,7 +360,13 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
       } else {
         return (
           <DebuggerContextProvider value={debuggerContextValue}>
-            {inspectedItem ? <DataInspectionModal onRequestHistory={props.onRequestHistory} item={inspectedItem} onClose={onCloseInspectedItemModal}/> : null}
+            {inspectedItem ? (
+              <DataInspectionModal
+                onRequestHistory={props.onRequestHistory}
+                item={inspectedItem}
+                onClose={onCloseInspectedItemModal}
+              />
+            ) : null}
             <VisualPartEditor
               currentInsId={ROOT_INS_ID}
               ref={ref}

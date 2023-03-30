@@ -7,7 +7,6 @@ export * from "./flow-editor/flyde-flow-change-type";
 export * from "./PartPreview/PartPreview";
 export * from "./visual-part-editor/use-debounce";
 export * from "./lib/highlight-text";
-export * from "./lib/react-utils/hotkeys";
 export * from "./lib/react-utils/use-hotkeys";
 export * from "./lib/analytics-value-renderer";
 export * from "./visual-part-editor/runtime-player/createRuntimePlayer";

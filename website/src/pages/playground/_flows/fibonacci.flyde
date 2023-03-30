@@ -3,7 +3,6 @@ imports:
     - Equals
     - Subtract
     - Add
-    - Boolean Split
 part:
   instances:
     - pos:
@@ -169,8 +168,8 @@ part:
       y: -214.0353040325851
   outputsPosition:
     result:
-      x: -73.24718891505835
-      y: 601.5018248987091
+      x: -78.51037029153346
+      y: 661.1509464285166
   completionOutputs:
     - result
   defaultStyle:

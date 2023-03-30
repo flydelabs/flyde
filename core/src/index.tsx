@@ -21,8 +21,6 @@ export * from "./part/get-part-with-dependencies";
 
 // export * from "./serdes";
 
-export * from "./utils";
-
 export * from "./inline-value-to-code-part";
 
 export * from "./web-project";

@@ -79,42 +79,46 @@ export const AddPartMenu: React.FC<AddPartMenuProps> = (props) => {
     [onAddPart, onClose]
   );
 
-  const {onInstallRuntimeRequest} = usePorts();
-
+  const { onInstallRuntimeRequest } = usePorts();
 
   useEffect(() => {
     setVisibleImportables(
-      importables?.flatMap((importable) => {
-        if (filter) {
-          if (filter.type === "external") {
-            if (
-              importable.module !== filter.module || filter.namespace
-                ? importable.part.namespace !== filter.namespace
-                : false
-            ) {
-              return [];
-            }
-          } else if (filter.type === "internal") {
-            if (
-              !isInternal(importable) ||
-              (filter.file && importable.module !== filter.file)
-            ) {
-              return [];
+      importables
+        ?.flatMap((importable) => {
+          if (filter) {
+            if (filter.type === "external") {
+              if (
+                importable.module !== filter.module || filter.namespace
+                  ? importable.part.namespace !== filter.namespace
+                  : false
+              ) {
+                return [];
+              }
+            } else if (filter.type === "internal") {
+              if (
+                !isInternal(importable) ||
+                (filter.file && importable.module !== filter.file)
+              ) {
+                return [];
+              }
             }
           }
-        }
-        if (query) {
-          const content = `${importable.part.searchKeywords?.join(' ') ?? []} ${importable.part.id} ${
-            importable.part.namespace ?? ""
-          } ${importable.part.description}`;
-          const score = content.toLowerCase().indexOf(query.toLowerCase());
-          if (score === -1) {
-            return [];
+          if (query) {
+            const content = `${
+              importable.part.searchKeywords?.join(" ") ?? []
+            } ${importable.part.id} ${importable.part.namespace ?? ""} ${
+              importable.part.description
+            }`;
+            const score = content.toLowerCase().indexOf(query.toLowerCase());
+            if (score === -1) {
+              return [];
+            }
+            return [{ importable, score }];
           }
-          return [{importable, score}];
-        }
-        return [{importable, score: 1}];
-      }).sort((a, b) => a.score - b.score).map(({importable}) => importable)
+          return [{ importable, score: 1 }];
+        })
+        .sort((a, b) => a.score - b.score)
+        .map(({ importable }) => importable)
     );
   }, [importables, filter, query]);
 
@@ -183,31 +187,37 @@ export const AddPartMenu: React.FC<AddPartMenuProps> = (props) => {
         }
       }
     },
-    [visibleImportables, selectedPart,_onAddPart]
+    [visibleImportables, selectedPart, _onAddPart]
   );
 
   const onNodeClick = useCallback(
-    ({nodeData}: ITreeNode<AddPartMenuFilter>) => {
+    ({ nodeData }: ITreeNode<AddPartMenuFilter>) => {
       if (JSON.stringify(nodeData) === JSON.stringify(filter)) {
-        if (nodeData.type === 'external') {
+        if (nodeData.type === "external") {
           if (nodeData.namespace) {
-            setFilter({type: 'external', module: nodeData.module})
+            setFilter({ type: "external", module: nodeData.module });
           } else {
-            setFilter({type: 'all'})
+            setFilter({ type: "all" });
           }
-        } else if (nodeData.type === 'internal') {
+        } else if (nodeData.type === "internal") {
           if (nodeData.file) {
-            setFilter({type: 'internal'})
+            setFilter({ type: "internal" });
           } else {
-            setFilter({type: 'all'})
+            setFilter({ type: "all" });
           }
         }
       } else {
         setFilter(nodeData);
       }
-  }, [filter]);
+    },
+    [filter]
+  );
 
-  const stdLibInstalled = importables ? importables.some((importable) => importable.module.includes(`@flyde/stdlib`)) : true;
+  const stdLibInstalled = importables
+    ? importables.some((importable) =>
+        importable.module.includes(`@flyde/stdlib`)
+      )
+    : true;
 
   const onInstallRuntime = useCallback(() => {
     onInstallRuntimeRequest();
@@ -219,16 +229,27 @@ export const AddPartMenu: React.FC<AddPartMenuProps> = (props) => {
       return <Loader />;
     }
     if (visibleImportables.length === 0) {
-      return <div className="no-results">
-        <AddPartMenuResultsSummary
-          filter={filter}
-          onChangeFilter={setFilter}
-          query={query}
-          onChangeQuery={setQuery}
-          resultsCount={visibleImportables.length}
-        />
-        <Callout className='callout' intent='primary'>Can't find a suitable part? Create one yourself! <a href="https://www.flyde.dev/docs/code-parts" target="_blank" rel="noreferrer">Learn more</a></Callout>
-      </div>;
+      return (
+        <div className="no-results">
+          <AddPartMenuResultsSummary
+            filter={filter}
+            onChangeFilter={setFilter}
+            query={query}
+            onChangeQuery={setQuery}
+            resultsCount={visibleImportables.length}
+          />
+          <Callout className="callout" intent="primary">
+            Can't find a suitable part? Create one yourself!{" "}
+            <a
+              href="https://www.flyde.dev/docs/code-parts"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Learn more
+            </a>
+          </Callout>
+        </div>
+      );
     }
 
     return (
@@ -244,7 +265,11 @@ export const AddPartMenu: React.FC<AddPartMenuProps> = (props) => {
           {visibleImportables.map((importablePart) => (
             <AddPartMenuListItem
               importablePart={importablePart}
-              key={importablePart.part.id + importablePart.module}
+              key={
+                importablePart.part.id +
+                importablePart.part.namespace +
+                importablePart.module
+              }
               onAdd={_onAddPart}
               selected={selectedPart?.part === importablePart.part}
               onSelect={setSelectedPart}
@@ -309,7 +334,7 @@ export const AddPartMenu: React.FC<AddPartMenuProps> = (props) => {
       <main className={classNames(Classes.DIALOG_BODY)}>
         <header>
           <div className="bp3-input-group">
-            <Icon icon='search'/>
+            <Icon icon="search" />
             <input
               className="bp3-input"
               type="search"
@@ -321,9 +346,20 @@ export const AddPartMenu: React.FC<AddPartMenuProps> = (props) => {
               onKeyDown={onSearchKeyDown}
             />
           </div>
-          {stdLibInstalled ? null : <Callout intent={Intent.NONE} style={{marginTop: 10}}>
-            Using built-in @flyde/stdlib. It's recommended to explicitly install it instead. <Button minimal small intent={Intent.PRIMARY} onClick={onInstallRuntime}>Click here to install it using npm/yarn</Button>
-          </Callout>} 
+          {stdLibInstalled ? null : (
+            <Callout intent={Intent.NONE} style={{ marginTop: 10 }}>
+              Using built-in @flyde/stdlib. It's recommended to explicitly
+              install it instead.{" "}
+              <Button
+                minimal
+                small
+                intent={Intent.PRIMARY}
+                onClick={onInstallRuntime}
+              >
+                Click here to install it using npm/yarn
+              </Button>
+            </Callout>
+          )}
         </header>
         <div className="content-wrapper">{renderContent()}</div>
       </main>

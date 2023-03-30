@@ -307,3 +307,13 @@ export const LessThanOrEqual = partFromSimpleFunction({
   },
   fn: (a, b) => a <= b,
 });
+
+export const SumList = partFromSimpleFunction({
+  id: "Sum List",
+  namespace,
+  icon: "sum",
+  description: "Emits the sum of a list of numbers",
+  inputs: [{ name: "list", description: "List of numbers" }],
+  output: { name: "sum", description: "The sum of the numbers in list" },
+  fn: (list) => list.reduce((a, b) => a + b, 0),
+});

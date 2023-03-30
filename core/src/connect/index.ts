@@ -16,14 +16,7 @@ import {
   getPart,
 } from "../part";
 import { CancelFn, execute, Debugger, ExecuteEnv } from "../execute";
-import {
-  DepGraph,
-  isDefined,
-  noop,
-  okeys,
-  OMap,
-  randomInt
-} from "../common";
+import { DepGraph, isDefined, noop, okeys, OMap, randomInt } from "../common";
 import {
   ERROR_PIN_ID,
   isExternalConnection,
@@ -68,7 +61,7 @@ export const connect = (
   repo: PartRepo,
   _debugger: Debugger = {},
   ancestorsInsIds?: string,
-  mainState: OMap<PartState> = { bob: new Map() },
+  mainState: OMap<PartState> = {},
   onBubbleError: (err: any) => void = noop,
   env: ExecuteEnv = {},
   extraContext: Record<string, any> = {}
@@ -236,7 +229,7 @@ export const connect = (
 
         if (!sourceOutput) {
           console.log(fromInstancePinId);
-          
+
           throw new Error(
             `Output source - [${fromInstancePinId}] not found in part [${partId}]`
           );

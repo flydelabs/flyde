@@ -1,10 +1,11 @@
 import {
   ExecuteParams,
   FlydeFlow,
+  ImportedPart,
   ResolvedDependencies,
   simplifiedExecute,
 } from "@flyde/core";
-import { deserializeFlowByPath, resolveDependencies, resolveFlowDependencies, resolveFlowDependenciesByPath } from "@flyde/resolver";
+import { deserializeFlowByPath, resolveDependencies } from "@flyde/resolver";
 import EventEmitter = require("events");
 
 import findRoot from "find-root";
@@ -33,17 +34,33 @@ const calcImplicitRoot = () => {
   return findRoot(callPath);
 };
 
-export function loadFlow<Inputs>(flow: FlydeFlow, fullFlowPath: string, debuggerUrl: string): LoadedFlowExecuteFn<Inputs> {
-  const deps = resolveDependencies(flow, "implementation", fullFlowPath) as ResolvedDependencies;
+export function loadFlow<Inputs>(
+  flow: FlydeFlow,
+  fullFlowPath: string,
+  debuggerUrl: string
+): LoadedFlowExecuteFn<Inputs> {
+  const deps = resolveDependencies(
+    flow,
+    "implementation",
+    fullFlowPath
+  ) as ResolvedDependencies;
+
+  const mainPart: ImportedPart = {
+    ...flow.part,
+    source: { path: fullFlowPath, export: "n/a" },
+  }; // TODO - fix the need for imported visual parts to declare an export source.
+
+  deps[mainPart.id] = mainPart;
 
   return (inputs, params = {}) => {
     const { onOutputs, ...otherParams } = params;
-    debugLogger("Executing flow %s", params)
+    debugLogger("Executing flow %s", params);
 
     let destroy;
     const promise: any = new Promise(async (res, rej) => {
-      const _debugger = otherParams._debugger || (await createDebugger(debuggerUrl));
-    
+      const _debugger =
+        otherParams._debugger || (await createDebugger(debuggerUrl));
+
       debugLogger("Using debugger %o", _debugger);
       destroy = await simplifiedExecute(
         flow.part,
@@ -64,9 +81,8 @@ export function loadFlow<Inputs>(flow: FlydeFlow, fullFlowPath: string, debugger
         }
       );
     }) as any;
-    return {result: promise, destroy};
+    return { result: promise, destroy };
   };
-
 }
 
 export function loadFlowByPath<Inputs>(
@@ -78,4 +94,4 @@ export function loadFlowByPath<Inputs>(
   const flow = deserializeFlowByPath(flowPath);
 
   return loadFlow(flow, flowPath, "http://localhost:8545");
-};
+}

@@ -11,7 +11,12 @@ export const ReadFile = partFromSimpleFunction({
   description: "Reads a file from the file system",
   inputs: [
     { name: "path", description: "Path to the file" },
-    { name: "encoding", description: "Encoding of the file", mode: "optional" },
+    {
+      name: "encoding",
+      description: "Encoding of the file",
+      mode: "optional",
+      defaultValue: "utf8",
+    },
   ],
   output: { name: "contents", description: "Contents of the file" },
   fn: (path, encoding) => {
@@ -27,7 +32,12 @@ export const WriteFile = partFromSimpleFunction({
   inputs: [
     { name: "path", description: "Path to the file" },
     { name: "contents", description: "Contents of the file" },
-    { name: "encoding", description: "Encoding of the file", mode: "optional" },
+    {
+      name: "encoding",
+      description: "Encoding of the file",
+      mode: "optional",
+      defaultValue: "utf8",
+    },
   ],
   fn: (path, contents, encoding) => {
     return fs.promises.writeFile(path, contents, encoding);
@@ -42,7 +52,12 @@ export const AppendFile = partFromSimpleFunction({
   inputs: [
     { name: "path", description: "Path to the file" },
     { name: "contents", description: "Contents of the file" },
-    { name: "encoding", description: "Encoding of the file", mode: "optional" },
+    {
+      name: "encoding",
+      description: "Encoding of the file",
+      mode: "optional",
+      defaultValue: "utf8",
+    },
   ],
   fn: (path, contents, encoding) => {
     return fs.promises.appendFile(path, contents, encoding);

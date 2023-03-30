@@ -147,6 +147,7 @@ export const LoopList: CodePart = {
     icon: "fa-list",
   },
   namespace,
+  searchKeywords: ["each", "spread"],
   description: "Emits all values in a list",
   inputs: {
     list: { description: "The list to loop" },
@@ -154,6 +155,7 @@ export const LoopList: CodePart = {
   outputs: {
     item: { description: "Will emit a value for each item in the list" },
     index: { description: "Will emit the index of the item" },
+    length: { description: "Will emit the length of the list" },
   },
   fn: (inputs, outputs) => {
     const { list } = inputs;
@@ -162,6 +164,7 @@ export const LoopList: CodePart = {
       item.next(i);
       index.next(list.indexOf(i));
     }
+    outputs.length.next(list.length);
   },
 };
 
@@ -309,8 +312,8 @@ export const AccumulateValuesByTime: CodePart = {
     value: { description: "The value to accumulate" },
     time: {
       description:
-        "Time to wait before emitting the accumulated values. Default is 500ms",
-      defaultValue: 500,
+        "Time to wait before emitting the accumulated values. Default is 200ms",
+      defaultValue: 200,
       mode: "required-if-connected",
     },
   },
@@ -325,12 +328,10 @@ export const AccumulateValuesByTime: CodePart = {
 
     let list = state.get("list") || [];
 
-    const bob = Date.now() % 1000
-    console.log('called', inputs.value, inputs.time, bob);
-    state.set('bob', 2)
-    console.log(Array.from(state.entries()))
-
-    
+    const bob = Date.now() % 1000;
+    console.log("called", inputs.value, inputs.time, bob);
+    state.set("bob", 2);
+    console.log(Array.from(state.entries()));
 
     if (typeof value !== "undefined") {
       list.push(value);
@@ -348,7 +349,7 @@ export const AccumulateValuesByTime: CodePart = {
     state.set(
       "timeout",
       setTimeout(() => {
-        console.log('emitting', list, bob, Date.now() % 1000);
+        console.log("emitting", list, bob, Date.now() % 1000);
         accumulated.next(list);
 
         state.set("list", []);
@@ -359,7 +360,6 @@ export const AccumulateValuesByTime: CodePart = {
         resolve();
       }, time)
     );
-
 
     return promise;
   },

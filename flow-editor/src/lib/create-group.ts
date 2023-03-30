@@ -1,4 +1,4 @@
-import { OMap, okeys, partOutput } from "@flyde/core";
+import { OMap, okeys, partOutput, pickRandom } from "@flyde/core";
 import {
   ConnectionData,
   externalConnectionNode,
@@ -11,6 +11,7 @@ import {
 import { rnd } from "../physics";
 import { PartInstance } from "@flyde/core";
 import { PromptFn } from "..";
+import { partStylePresetColors } from "../visual-part-editor/instance-view/PartStyleMenu";
 
 export const createGroup = async (
   instances: PartInstance[],
@@ -153,6 +154,10 @@ export const createGroup = async (
     inputs,
     outputs,
     instances,
+    defaultStyle: {
+      size: "large",
+      color: pickRandom(partStylePresetColors.map((c) => c.color)),
+    },
     inputsPosition: okeys(inputs).reduce(
       (acc, curr, idx) => ({ ...acc, [curr]: { x: 0 + 100 * idx, y: 0 } }),
       {}

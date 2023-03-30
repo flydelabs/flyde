@@ -10,6 +10,15 @@ export interface PartStyleMenuProps {
   promptFn: PromptFn;
 }
 
+export const partStylePresetColors: { name: string; color: string }[] = [
+  { name: "Amethyst", color: "#9b5de5" },
+  { name: "Magenta", color: "#f15bb5" },
+  { name: "Yellow", color: "#fee440" },
+  { name: "Capri", color: "#00bbf9" },
+  { name: "Sea Green", color: "#00f5d4" },
+  { name: "Orange", color: "#ff7f00" },
+];
+
 const defaultStyle: PartStyle = { size: "regular" };
 export const PartStyleMenu: React.FC<PartStyleMenuProps> = (props) => {
   const { onChange, style: _style } = props;
@@ -57,33 +66,20 @@ export const PartStyleMenu: React.FC<PartStyleMenuProps> = (props) => {
   return (
     <React.Fragment>
       <MenuItem text="Color">
-        <MenuItem
-          text="Amethyst"
-          onClick={() => onChangeStyleProp("color", "#9b5de5")}
-        />
-        <MenuItem
-          text="Magenta"
-          onClick={() => onChangeStyleProp("color", "#f15bb5")}
-        />
-        <MenuItem
-          text="Yellow"
-          onClick={() => onChangeStyleProp("color", "#fee440")}
-        />
-        <MenuItem
-          text="Capri"
-          onClick={() => onChangeStyleProp("color", "#00bbf9")}
-        />
-        <MenuItem
-          text="Sea Green"
-          onClick={() => onChangeStyleProp("color", "#00f5d4")}
-        />
+        {partStylePresetColors.map((c) => (
+          <MenuItem
+            key={c.name}
+            text={c.name}
+            onClick={() => onChangeStyleProp("color", c.color)}
+          />
+        ))}
         <MenuDivider />
         <MenuItem
           text="Remove Color"
           onClick={() => onChangeStyleProp("color", undefined)}
         />
       </MenuItem>
-      <MenuItem text={`Size (${style.size})`}>
+      <MenuItem text={`Size (${style.size ?? "regular"})`}>
         <MenuItem
           text="Small"
           onClick={() => onChangeStyleProp("size", "small")}

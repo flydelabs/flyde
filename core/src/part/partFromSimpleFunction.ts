@@ -1,18 +1,23 @@
 import { BasePart, CodePart, PartStyleSize } from ".";
 import { InputMode } from "./part-pins";
 
-export type SimpleFnData = Omit<BasePart, 'inputs' | 'outputs' | 'fn'> & {
+export type SimpleFnData = Omit<BasePart, "inputs" | "outputs" | "fn"> & {
   id: string;
   description: string;
   namespace: string;
-  inputs?: { name: string; description: string; mode?: InputMode }[];
+  inputs?: {
+    name: string;
+    description: string;
+    mode?: InputMode;
+    defaultValue?: any;
+  }[];
   output?: { name: string; description: string };
   fn: (...args: any[]) => any;
   symbol?: string;
   icon?: string;
   size?: PartStyleSize;
   customViewCode?: string;
-}
+};
 
 export function partFromSimpleFunction(data: SimpleFnData): CodePart {
   return {
@@ -22,9 +27,9 @@ export function partFromSimpleFunction(data: SimpleFnData): CodePart {
     namespace: data.namespace,
     inputs: data.inputs
       ? data.inputs.reduce(
-          (obj, { name, description, mode }) => ({
+          (obj, { name, description, mode, defaultValue }) => ({
             ...obj,
-            [name]: { description, mode: mode ?? 'required' },
+            [name]: { description, mode: mode ?? "required", defaultValue },
           }),
           {}
         )

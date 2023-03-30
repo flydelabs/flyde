@@ -12,7 +12,7 @@ const part: CodePart = {
     adv.onCleanup(() => {
       adv.context.cleanupSpy();
     });
-    r.next(n);
+    r?.next(n);
   },
 };
 

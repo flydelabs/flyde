@@ -32,11 +32,24 @@ import {
   pullValuesForExecution,
   subscribeInputsToState,
 } from "../execution-values";
-import { callFnOrFnPromise, delay, entries, fullInsIdPath, isDefined, isPromise, keys, OMap, OMapF } from "../common";
+import {
+  callFnOrFnPromise,
+  delay,
+  entries,
+  fullInsIdPath,
+  isDefined,
+  isPromise,
+  keys,
+  OMap,
+  OMapF,
+} from "../common";
 import { debugLogger } from "../common/debug-logger";
-import {isStaticInputPinConfig } from '../part';
+import { isStaticInputPinConfig } from "../part";
 import { Debugger, DebuggerEvent, DebuggerEventType } from "./debugger";
-import { customRepoToPartRepo, inlineValuePartToPart } from "../inline-value-to-code-part";
+import {
+  customRepoToPartRepo,
+  inlineValuePartToPart,
+} from "../inline-value-to-code-part";
 
 export type SubjectMap = OMapF<Subject<any>>;
 
@@ -125,7 +138,9 @@ const executeCodePart = (data: CodeExecutionData) => {
   const inputsStateId = `${fullInsId}${INPUTS_STATE_SUFFIX}`;
 
   const innerDebug = debug.extend(fullInsId);
-  
+
+  const globalState = mainState[GLOBAL_STATE_NS];
+
   if (!mainState[innerStateId]) {
     mainState[innerStateId] = new Map();
   }
@@ -142,9 +157,7 @@ const executeCodePart = (data: CodeExecutionData) => {
 
   const reportInputStateChange = () => {
     const obj = Array.from(inputsState.entries()).reduce((acc, [k, v]) => {
-      const isQueue = isQueueInputPinConfig(
-        (inputs[k] as any).config
-      );
+      const isQueue = isQueueInputPinConfig((inputs[k] as any).config);
       return { ...acc, [k]: isQueue ? v?.length : 1 };
     }, {});
 
@@ -165,8 +178,9 @@ const executeCodePart = (data: CodeExecutionData) => {
     onError: (err: any) => {
       onError(err);
     },
-    context: extraContext ?? {}, 
-    ancestorsInsIds: ancestorsInsIds
+    context: extraContext ?? {},
+    ancestorsInsIds: ancestorsInsIds,
+    globalState
   };
 
   let processing = false;
@@ -186,7 +200,7 @@ const executeCodePart = (data: CodeExecutionData) => {
     // TODO - use a better data structure on mainState so this becomes a O(1) operation
     keys(mainState)
       .filter((k) => k.startsWith(`${fullInsId}.`))
-      .forEach((k) => {
+      .forEach((k) => {        
         mainState[k] = new Map();
       });
   };
@@ -283,7 +297,6 @@ const executeCodePart = (data: CodeExecutionData) => {
                 if (onCompleted) {
                   onCompleted(completedOutputsValues);
                 }
-                
 
                 cleanState();
 
@@ -327,8 +340,15 @@ const executeCodePart = (data: CodeExecutionData) => {
                   ancestorsInsIds: ancestorsInsIds,
                   partId: part.id,
                 });
+
                 onCompleted(completedOutputsValues);
                 cleanState();
+
+                if (
+                  hasNewSignificantValues(inputs, inputsState, env, part.id)
+                ) {
+                  maybeRunPart();
+                }
               }
             });
           } else {
@@ -462,7 +482,9 @@ export type ExecuteParams = {
   onStarted?: () => void;
 };
 
-export const ROOT_INS_ID = '__root';
+export const ROOT_INS_ID = "__root";
+
+export const GLOBAL_STATE_NS = "____global";
 
 export const execute: ExecuteFn = ({
   part,
@@ -481,6 +503,11 @@ export const execute: ExecuteFn = ({
 }) => {
   const toCancel: Function[] = [];
 
+
+  if (!mainState[GLOBAL_STATE_NS]) {
+    mainState[GLOBAL_STATE_NS] = new Map();
+  }
+
   const inlineValuePartContext = { ...extraContext, ENV: env };
 
   const processedRepo = customRepoToPartRepo(partsRepo, inlineValuePartContext);
@@ -489,7 +516,10 @@ export const execute: ExecuteFn = ({
     // this means "catch the error"
     const error =
       err instanceof Error ? err : new Error(`Raw error: ${err?.toString()}`);
-    error.message = `error in part ${part.id}, fullInsIdPath: ${fullInsIdPath(insId, ancestorsInsIds)}: ${error.message}`;
+    error.message = `error in part ${part.id}, fullInsIdPath: ${fullInsIdPath(
+      insId,
+      ancestorsInsIds
+    )}: ${error.message}`;
     if (outputs[ERROR_PIN_ID]) {
       outputs[ERROR_PIN_ID].next(err);
     } else {

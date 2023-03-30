@@ -132,7 +132,7 @@ const runFlow = ({
       part: flow.main,
       inputs: inputs,
       outputs: { [firstOutputName]: output },
-      partsRepo: { ...flow.dependencies, [flow.main.id]: flow.main },
+      partsRepo: flow.dependencies,
       _debugger: localDebugger,
       onBubbleError: (e) => {
         onError(e);
@@ -148,7 +148,6 @@ const runFlow = ({
 export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (
   props
 ) => {
-
   const [childrenWidth, setChildrenWidth] = useState(props.initWidth || 500);
 
   const [debugDelay, setDebugDelay] = useState(props.defaultDelay || 0);
@@ -214,9 +213,9 @@ export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (
         </div>
       </header>
 
-      <div className='mobile-warning'>
-        Flyde is currently not optimized for mobile devices.
-        Please <strong>use a desktop computer for the best experience</strong>.
+      <div className="mobile-warning">
+        Flyde is currently not optimized for mobile devices. Please{" "}
+        <strong>use a desktop computer for the best experience</strong>.
       </div>
 
       <ul className="examples__menu">
@@ -234,8 +233,6 @@ export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (
         })}
       </ul>
 
-
-
       <div className="playground-container">
         <header>
           <h2 className="playground-title">{props.meta.title}</h2>
@@ -244,20 +241,21 @@ export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (
             <Fragment>
               <hr />
               <div className="playground-extra">
-                {props.extraInfo || props.meta.extraInfo} 
-              <div className='star-hint'>
-                <span>&nbsp; PS: Did you like this example?</span> 
-                Please consider giving a ⭐️ to the project <span className='star-wrapper'>
-              <iframe
-                className="gh-stars-frame"
-                src="https://ghbtns.com/github-btn.html?user=flydehq&amp;repo=flyde&amp;type=star&amp;count=true&amp;size=small"
-                width={100}
-                height={20}
-                title="GitHub Stars"
-              /></span>
-          </div>
+                {props.extraInfo || props.meta.extraInfo}
+                <div className="star-hint">
+                  <span>&nbsp; PS: Did you like this example?</span>
+                  Please consider giving a ⭐️ to the project{" "}
+                  <span className="star-wrapper">
+                    <iframe
+                      className="gh-stars-frame"
+                      src="https://ghbtns.com/github-btn.html?user=flydehq&amp;repo=flyde&amp;type=star&amp;count=true&amp;size=small"
+                      width={100}
+                      height={20}
+                      title="GitHub Stars"
+                    />
+                  </span>
+                </div>
               </div>
-
             </Fragment>
           ) : null}
           {props.prefixComponent}
@@ -265,7 +263,11 @@ export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (
         <div className="playground">
           <div className="flow-container">
             {props.hideDelay !== true ? debugDelayElem : null}
-            <EmbeddedFlyde flowProps={props.flowProps} debugDelay={debugDelay} onOutput={() => setOutputReceived(true)}/>
+            <EmbeddedFlyde
+              flowProps={props.flowProps}
+              debugDelay={debugDelay}
+              onOutput={() => setOutputReceived(true)}
+            />
           </div>
           <Resizable
             height={0}
