@@ -1,52 +1,57 @@
 {
-	"folders": [
-		{
-			"path": "core"
-		},
-		{
-			"path": "editor"
-		},
-		{
-			"path": "dev-server"
-		},
-		{
-			"path": "runtime"
-		},
-		{
-			"path": "website"
-		},
-		{
-			"path": "flow-editor"
-		},
-		{
-			"path": "stdlib"
-		},
-		{
-			"path": "../flyde-vscode"
-		},
-		{
-			"path": "examples/discord-tasks-manager"
-		},
-		{
-			"path": "remote-debugger"
-		},
-		{
-			"path": "resolver"
-		}
-	],
-	"settings": {
-		"search.useGlobalIgnoreFiles": true,
-		"search.useParentIgnoreFiles": true,
-		"search.exclude": {
-			"**/dist": true
-		},
-		"cSpell.words": [
-			"Importables",
-			"Ungroup"
-		],
-		"files.exclude": {
-			"**/node_modules": true
-		},
-		"editor.formatOnSave": true
-	}
+  "folders": [
+    {
+      "path": "core"
+    },
+    {
+      "path": "editor"
+    },
+    {
+      "path": "dev-server"
+    },
+    {
+      "path": "runtime"
+    },
+    {
+      "path": "website"
+    },
+    {
+      "path": "flow-editor"
+    },
+    {
+      "path": "stdlib"
+    },
+    {
+      "path": "../flyde-vscode"
+    },
+    {
+      "path": "examples/discord-tasks-manager"
+    },
+    {
+      "path": "remote-debugger"
+    },
+    {
+      "path": "resolver"
+    }
+  ],
+  "settings": {
+    "search.useGlobalIgnoreFiles": true,
+    "search.useParentIgnoreFiles": true,
+    "search.exclude": {
+      "**/dist": true
+    },
+    "cSpell.words": [
+      "Importables",
+      "Templating",
+      "Ungroup"
+    ],
+    "files.exclude": {
+      "**/node_modules": true
+    },
+    "editor.formatOnSave": true,
+    "grammarly.selectors": [
+
+     
+    ]
+  }
 }

@@ -3,7 +3,7 @@ import "./App.scss";
 
 import {
   FlydeFlow,
-  ImportablePart,
+  ImportableSource,
   TRIGGER_PIN_ID,
   PartInstance,
   ResolvedDependenciesDefinitions,
@@ -102,7 +102,7 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
   const [menuSelectedItem, setMenuSelectedItem] = React.useState<string>();
 
   // to avoid re-resolving imported flows, this holds parts that were imported in the current session
-  const [importedParts, setImportedParts] = React.useState<ImportablePart[]>(
+  const [importedParts, setImportedParts] = React.useState<ImportableSource[]>(
     []
   );
 
@@ -272,7 +272,7 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
   );
 
   const queryImportables = React.useCallback(async (): Promise<
-    ImportablePart[]
+    ImportableSource[]
   > => {
     const importables = await ports
       .getImportables({
@@ -293,20 +293,23 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
   const onImportPart = React.useCallback<
     DependenciesContextData["onImportPart"]
   >(
-    async (
-      { part: importedPart, module },
-      target
-    ): Promise<PartInstance | undefined> => {
-      const existingModuleImports = (flow.imports || {})[module] || [];
+    async (importablePart, target) => {
+      const existingModuleImports =
+        (flow.imports || {})[importablePart.module] || [];
 
-      setImportedParts((parts) => [...parts, { part: importedPart, module }]);
+      setImportedParts((parts) => [...parts, importablePart]);
 
       let newPartIns: PartInstance | undefined = undefined;
 
       const newFlow = produce(flow, (draft) => {
         if (target) {
           const finalPos = vAdd({ x: 0, y: 0 }, target.pos);
-          newPartIns = createNewPartInstance(importedPart, 0, finalPos, repo);
+          newPartIns = createNewPartInstance(
+            importablePart.part,
+            0,
+            finalPos,
+            repo
+          );
           draft.part.instances.push(newPartIns);
 
           if (target.connectTo) {
@@ -325,13 +328,13 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
         }
 
         const imports = draft.imports || {};
-        const modImports = imports[module] || [];
+        const modImports = imports[importablePart.module] || [];
 
-        if (!existingModuleImports.includes(importedPart.id)) {
-          modImports.push(importedPart.id);
+        if (!existingModuleImports.includes(importablePart.part.id)) {
+          modImports.push(importablePart.part.id);
         }
 
-        imports[module] = modImports;
+        imports[importablePart.module] = modImports;
         draft.imports = imports;
       });
 
@@ -347,10 +350,15 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
 
       onChangeState(newState, functionalChange("imported-part"));
 
-      toastMsg(`Part ${importedPart.id} successfully imported from ${module}`);
-      return newPartIns;
+      toastMsg(
+        `Part ${importablePart.part.id} successfully imported from ${module}`
+      );
+      return {
+        ...resolvedDependencies,
+        [importablePart.part.id]: importablePart.part,
+      };
     },
-    [editorState, flow, onChangeState, repo]
+    [editorState, flow, onChangeState, repo, resolvedDependencies]
   );
 
   const onExtractInlinePart = React.useCallback(async () => {}, []);

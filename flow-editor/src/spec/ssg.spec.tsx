@@ -40,15 +40,9 @@ describe("ssg/ssr support", () => {
         },
       },
       onChangeEditorState: noop,
-      onImportPart: noop,
-      resolvedDependencies: {
-        main: part,
-        dependencies: { [part.id]: part as any },
-      },
       onInspectPin: noop,
-      onRequestHistory: noop as any,
       hideTemplatingTips: false,
-      onExtractInlinePart: noop as any
+      onExtractInlinePart: noop as any,
     };
 
     let s = "";

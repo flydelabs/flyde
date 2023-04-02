@@ -1079,7 +1079,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
         [onEditPart, repo, currentInsId]
       );
 
-      const onUngroup = React.useCallback(
+      const onUnGroup = React.useCallback(
         (groupPartIns: PartInstance) => {
           if (isInlinePartInstance(groupPartIns)) {
             const visualPart = groupPartIns.part;
@@ -1317,7 +1317,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
               const instance = part.instances.find(
                 (ins) => ins.id === selected[0]
               );
-              onUngroup(instance);
+              onUnGroup(instance);
               const insPart = getPartDef(instance, repo);
               toastMsg(`Ungrouped inline part ${insPart.id}`);
               break;
@@ -1332,10 +1332,36 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             case ActionType.AddPart: {
               void (async function () {
                 const pos = getMiddleOfViewPort(viewPort, vpSize);
-                await onImportPart(action.data.importablePart, {
+
+                const { importablePart } = action.data;
+                const depsWithImport = await onImportPart(importablePart);
+
+                const target = {
                   selectAfterAdding: true,
                   pos: vSub(pos, { x: 0, y: 50 * viewPort.zoom }), // to account for part
+                };
+
+                const newPartIns = createNewPartInstance(
+                  importablePart.part.id,
+                  0,
+                  target.pos,
+                  depsWithImport
+                );
+                const newPart = produce(part, (draft) => {
+                  draft.instances.push(newPartIns);
                 });
+
+                const newState = produce(boardData, (draft) => {
+                  draft.selected = [newPartIns.id];
+                });
+
+                onChange(newPart, functionalChange("add new instance"));
+
+                onChangeBoardData(newState);
+
+                toastMsg(
+                  `Part ${importablePart.part.id} successfully imported from ${importablePart.module}`
+                );
               })();
               break;
             }
@@ -1345,15 +1371,17 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
           }
         },
         [
+          boardData,
           from,
           onChange,
           onChangeBoardData,
           onGroupSelectedInternal,
           onImportPart,
           onInspectPin,
-          onUngroup,
+          onUnGroup,
           part,
           repo,
+          resolvedDependencies,
           selected,
           to,
           viewPort,
@@ -2377,7 +2405,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
               {renderPartInputs()}
               {instances.map((ins) => (
                 <InstanceView
-                  onUngroup={onUngroup}
+                  onUngroup={onUnGroup}
                   onExtractInlinePart={onExtractInlinePart}
                   onDetachConstValue={onDetachConstValue}
                   onCopyConstValue={onCopyConstValue}

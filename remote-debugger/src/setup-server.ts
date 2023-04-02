@@ -1,7 +1,6 @@
 import { Server as HttpServer } from "http";
 import { DebuggerServerEventType } from "./common";
 import {
-  PartError,
   OMap,
   isDefined,
   debugLogger,
@@ -31,7 +30,7 @@ const historyKeyMap = <T extends HistoryKey>(dto: T) => {
   return `${dto.insId}.${dto.pinId || "__no_pin"}`;
 };
 
-const emptyHistory = {total: 0, lastSamples: []};
+const emptyHistory = { total: 0, lastSamples: [] };
 
 export const setupRemoteDebuggerServer = (
   httpServer: HttpServer,
@@ -112,17 +111,21 @@ export const setupRemoteDebuggerServer = (
       return;
     }
 
-    const payload: HistoryPayload = getHistory({insId, pinId})
+    const payload: HistoryPayload = getHistory({ insId, pinId });
     const samples = payload.lastSamples.slice(0, _limit);
     res.json({ ...payload, lastSamples: samples });
   });
 
   app.get("/full-history", (req, res) => {
-    const mapToObj = (map: DebugHistoryMap) => Array.from(map.entries()).reduce((acc, [k, v]) => {
-      return {...acc, [k]: v}
-    }, {});
+    const mapToObj = (map: DebugHistoryMap) =>
+      Array.from(map.entries()).reduce((acc, [k, v]) => {
+        return { ...acc, [k]: v };
+      }, {});
 
-    res.json({pinHistoryMap: mapToObj(pinHistoryMap), insHistoryMap: mapToObj(insHistoryMap)});
+    res.json({
+      pinHistoryMap: mapToObj(pinHistoryMap),
+      insHistoryMap: mapToObj(insHistoryMap),
+    });
   });
 
   app.delete("/history", (_, res) => {
@@ -162,12 +165,9 @@ export const setupRemoteDebuggerServer = (
     //   socket.join(roomId);
     // })
 
-    socket.on(
-      DebuggerServerEventType.CHANGE_EVENT_NAME,
-      (data: { }) => {
-        io.emit(DebuggerServerEventType.CHANGE_EVENT_NAME, data);
-      }
-    );
+    socket.on(DebuggerServerEventType.CHANGE_EVENT_NAME, (data: {}) => {
+      io.emit(DebuggerServerEventType.CHANGE_EVENT_NAME, data);
+    });
 
     socket.on(
       DebuggerServerEventType.INPUT_VALUE_CHANGE,
@@ -201,10 +201,6 @@ export const setupRemoteDebuggerServer = (
       }
     );
 
-    socket.on(DebuggerServerEventType.PART_ERROR, (data: PartError) => {
-      io.emit(DebuggerServerEventType.PART_ERROR, data);
-    });
-
     socket.on(
       DebuggerServerEventType.INPUTS_STATE_CHANGE,
       (data: DebuggerEvent) => {
@@ -228,9 +224,15 @@ export const setupRemoteDebuggerServer = (
           event.type === DebuggerEventType.OUTPUT_CHANGE
         ) {
           const pinMapKey = historyKeyMap(event);
-          const insMapKey = historyKeyMap({insId: event.insId})
-          const pinHistory = pinHistoryMap.get(pinMapKey) ?? {total: 0, lastSamples: []};
-          const insHistory = insHistoryMap.get(insMapKey) ?? {total: 0, lastSamples: []};
+          const insMapKey = historyKeyMap({ insId: event.insId });
+          const pinHistory = pinHistoryMap.get(pinMapKey) ?? {
+            total: 0,
+            lastSamples: [],
+          };
+          const insHistory = insHistoryMap.get(insMapKey) ?? {
+            total: 0,
+            lastSamples: [],
+          };
           [pinHistory, insHistory].forEach((curr) => {
             curr.lastSamples.unshift(event);
             if (curr.lastSamples.length > MAX_LAST_EVENTS) {

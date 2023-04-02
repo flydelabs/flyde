@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import {
-  ImportablePart,
+  ImportableSource,
   PartDefinition,
   PartInstance,
   PinType,
@@ -27,7 +27,7 @@ export type QuickMenuValueMatch = {
 
 export type QuickMenuImportMatch = {
   type: "import";
-  importablePart: ImportablePart;
+  importablePart: ImportableSource;
 };
 
 export type QuickMenuMatch =
@@ -128,7 +128,7 @@ export const QuickAddMenu: React.FC<QuickMenuProps> = (props) => {
 
   const { onRequestImportables: onQueryImportables } = useDependenciesContext();
 
-  const [importables, setImportables] = React.useState<ImportablePart[]>();
+  const [importables, setImportables] = React.useState<ImportableSource[]>();
 
   React.useEffect(() => {
     onQueryImportables().then(setImportables);

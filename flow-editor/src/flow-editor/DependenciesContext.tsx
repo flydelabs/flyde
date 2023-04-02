@@ -1,22 +1,21 @@
 import {
   ResolvedDependenciesDefinitions,
-  ImportablePart,
+  ImportableSource,
   Pos,
-  PartInstance,
 } from "@flyde/core";
 import { createContext, useContext } from "react";
 
 export interface DependenciesContextData {
   resolvedDependencies: ResolvedDependenciesDefinitions;
   onImportPart: (
-    part: ImportablePart,
+    part: ImportableSource,
     target?: {
       pos: Pos;
       selectAfterAdding?: boolean;
       connectTo?: { insId: string; outputId: string };
     }
-  ) => Promise<PartInstance | undefined>;
-  onRequestImportables: () => Promise<ImportablePart[]>;
+  ) => Promise<ResolvedDependenciesDefinitions>;
+  onRequestImportables: () => Promise<ImportableSource[]>;
 }
 
 const DependenciesContext = createContext<DependenciesContextData>({

@@ -9,7 +9,7 @@ import {
   Tree,
 } from "@blueprintjs/core";
 import { Tooltip2 } from "@blueprintjs/popover2";
-import { ImportablePart, noop } from "@flyde/core";
+import { ImportableSource, noop } from "@flyde/core";
 import classNames from "classnames";
 import React, { useCallback, useEffect } from "react";
 import { usePorts } from "../../../flow-editor/ports";
@@ -18,8 +18,8 @@ import { AddPartMenuListItem } from "./AddPartMenuListItem";
 import { AddPartMenuResultsSummary } from "./AddPartMenuResultsSummary";
 
 export interface AddPartMenuProps {
-  onRequestImportables: () => Promise<ImportablePart[]>;
-  onAddPart: (part: ImportablePart) => void;
+  onRequestImportables: () => Promise<ImportableSource[]>;
+  onAddPart: (part: ImportableSource) => void;
   onClose: () => void;
 }
 
@@ -37,7 +37,7 @@ export type AddPartMenuFilterStructure = {
 export const AddPartMenu: React.FC<AddPartMenuProps> = (props) => {
   const { onRequestImportables, onAddPart, onClose } = props;
 
-  const [importables, setImportables] = React.useState<ImportablePart[]>();
+  const [importables, setImportables] = React.useState<ImportableSource[]>();
   const [openNodes, setOpenNodes] = React.useState<Set<ITreeNode["id"]>>(
     new Set()
   );
@@ -50,10 +50,11 @@ export const AddPartMenu: React.FC<AddPartMenuProps> = (props) => {
     React.useState<AddPartMenuFilterStructure>(null);
 
   const [visibleImportables, setVisibleImportables] = React.useState<
-    ImportablePart[] | null
+    ImportableSource[] | null
   >(null);
 
-  const [selectedPart, setSelectedPart] = React.useState<ImportablePart>(null);
+  const [selectedPart, setSelectedPart] =
+    React.useState<ImportableSource>(null);
 
   const onNodeExpand = useCallback(
     (node: ITreeNode) => {
@@ -72,7 +73,7 @@ export const AddPartMenu: React.FC<AddPartMenuProps> = (props) => {
   );
 
   const _onAddPart = useCallback(
-    (part: ImportablePart) => {
+    (part: ImportableSource) => {
       onAddPart(part);
       onClose();
     },
@@ -424,6 +425,6 @@ function renderTreeNodes(
   return [...externals, internals];
 }
 
-function isInternal(importable: ImportablePart) {
+function isInternal(importable: ImportableSource) {
   return /\.flyde(\.[jt]s)?$/.test(importable.module);
 }

@@ -3,7 +3,7 @@ import { Tooltip2 } from "@blueprintjs/popover2";
 import {
   ConnectionNode,
   getPartDef,
-  ImportablePart,
+  ImportableSource,
   isVisualPart,
   PartDefRepo,
   VisualPart,
@@ -38,7 +38,7 @@ export enum ActionType {
 }
 
 export type ActionData = {
-  [ActionType.AddPart]: { importablePart: ImportablePart };
+  [ActionType.AddPart]: { importablePart: ImportableSource };
 };
 
 export type BaseAction<T extends ActionType> = {
@@ -217,7 +217,7 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
   );
 
   const onAddPart = useCallback(
-    (importablePart: ImportablePart) => {
+    (importablePart: ImportableSource) => {
       onAction({ type: ActionType.AddPart, data: { importablePart } });
     },
     [onAction]

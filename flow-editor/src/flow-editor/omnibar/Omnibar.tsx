@@ -5,7 +5,7 @@ import {
   Part,
   PartDefRepo,
   keys,
-  ImportablePart,
+  ImportableSource,
   FlydeFlow,
 } from "@flyde/core";
 import { okeys } from "@flyde/core";
@@ -16,7 +16,7 @@ export interface OmnibarProps {
   visible: boolean;
   onClose: () => void;
   onCommand: (cmd: OmniBarCmd) => void;
-  onRequestImportables?: (query: string) => Promise<ImportablePart[]>;
+  onRequestImportables?: (query: string) => Promise<ImportableSource[]>;
   repo: PartDefRepo;
   flow: FlydeFlow;
 }
@@ -71,7 +71,7 @@ export const Omnibar: React.FC<OmnibarProps> = (props) => {
   const [searchValue, setSearchValue] = React.useState("");
   const [items, setItems] = React.useState<OmniBarItem[] | null>(null);
 
-  const [importables, setImportables] = React.useState<ImportablePart[]>([]);
+  const [importables, setImportables] = React.useState<ImportableSource[]>([]);
 
   React.useEffect(() => {
     const all = keys(repo);

@@ -12,7 +12,15 @@ import { Subject } from "rxjs";
 import { CancelFn, InnerExecuteFn } from "../execute";
 import { ConnectionData } from "../connect";
 import { isInlinePartInstance, PartInstance } from "./part-instance";
-import { InputPin, InputPinMap, OutputPin, OutputPinMap, partInput, partOutput } from "./part-pins";
+import {
+  InputPin,
+  InputPinMap,
+  OutputPin,
+  OutputPinMap,
+  partInput,
+  partOutput,
+} from "./part-pins";
+import { ImportedPart } from "../flow-schema";
 
 export type PartRepo = OMap<Part>;
 
@@ -76,7 +84,7 @@ export interface BasePart {
   description?: string;
   /**
    * A list of keywords that can be used to search for the part. Useful for parts that users might search using different words.
-  */
+   */
   searchKeywords?: string[];
   /**
    * A pin on a part that receives data. Each part can have zero or more input pins.
@@ -196,7 +204,11 @@ export interface VisualPart extends BasePart {
 
 export type Part = CodePart | CustomPart;
 
-export type ImportablePart = { module: string; part: BasePart, implicit?: boolean };
+export type ImportableSource = {
+  module: string;
+  part: ImportedPart;
+  implicit?: boolean;
+};
 
 export type CustomPart = VisualPart | InlineValuePart;
 
@@ -213,10 +225,10 @@ export type PartDefinitionWithModuleMetaData = PartDefinition &
 
 export const isBasePart = (p: any): p is BasePart => {
   return p && p.id && p.inputs && p.outputs;
-}
+};
 
 export const isCodePart = (p: Part | PartDefinition): p is CodePart => {
-  return isBasePart(p) && typeof (p as CodePart).fn === "function"
+  return isBasePart(p) && typeof (p as CodePart).fn === "function";
 };
 
 export const isVisualPart = (p: Part | PartDefinition): p is VisualPart => {
