@@ -1,11 +1,9 @@
-import { entries, PartDefinition, PartDefRepo } from "@flyde/core";
+import { entries, PartDefinition } from "@flyde/core";
 import React, { useCallback, useState } from "react";
 import { useDebounce } from "usehooks-ts";
-import { PartPreview } from "@flyde/flow-editor"; // ../../../../common/PartPreview/PartPreview
+import { PartPreview, useDependenciesContext } from "@flyde/flow-editor"; // ../../../../common/PartPreview/PartPreview
 
 export interface MenuAddSectionProps {
-  repo: PartDefRepo;
-
   onAdd: (part: PartDefinition) => void;
 }
 
@@ -13,7 +11,8 @@ const SEARCH_DEBOUNCE = 400;
 
 export const MenuAddSection: React.FC<MenuAddSectionProps> = (props) => {
   const [searchTerm, setSearchTerm] = useState("");
-  const allParts = entries(props.repo);
+  const { resolvedDependencies } = useDependenciesContext();
+  const allParts = entries(resolvedDependencies);
   const debouncedSearch = useDebounce(searchTerm, SEARCH_DEBOUNCE);
 
   const visibleParts = allParts.filter(([k]) => {

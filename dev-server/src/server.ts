@@ -103,5 +103,5 @@ export const runDevServer = (
   );
 
   server.listen(port);
-  return app;
+  return server;
 };

@@ -31,7 +31,6 @@ export const PartPreview: React.FC<{ part: PartDefinition }> = ({ part }) => {
     onDetachConstValue: noop,
     onCopyConstValue: noop,
     onPasteConstValue: noop,
-    onRequestHistory: noop as any,
     ancestorsInsIds: "",
     onChangeVisibleInputs: noop,
     onChangeVisibleOutputs: noop,
@@ -45,7 +44,10 @@ export const PartPreview: React.FC<{ part: PartDefinition }> = ({ part }) => {
     onDeleteInstance: noop,
     onGroupSelected: noop,
     onSetDisplayName: noop,
-    queuedInputsData: {}
+    hadError: false,
+    queuedInputsData: {},
+    onPinMouseDown: noop,
+    onPinMouseUp: noop,
   };
 
   return (

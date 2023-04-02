@@ -10,6 +10,8 @@ import {
   ImportSource,
   isBasePart,
   Part,
+  ImportedPart,
+  ImportedPartDef,
 } from "@flyde/core";
 import { existsSync } from "fs";
 import _ = require("lodash");
@@ -19,8 +21,7 @@ import { ResolveMode, resolveFlowDependenciesByPath } from "../resolve-flow";
 import { resolveImportablePaths } from "./resolve-importable-paths";
 import { namespaceFlowImports } from "./namespace-flow-imports";
 
-import * as StdLib from '@flyde/stdlib/dist/all';
-
+import * as StdLib from "@flyde/stdlib/dist/all";
 
 const getRefPartIds = (part: VisualPart): string[] => {
   const refPartIds = part.instances
@@ -40,19 +41,23 @@ const getRefPartIds = (part: VisualPart): string[] => {
   return _.uniq([...refPartIds, ...idsFromInline]);
 };
 
-export function resolveCodePartDependencies(path: string): {exportName: string, part: CodePart}[] {
+export function resolveCodePartDependencies(
+  path: string
+): { exportName: string; part: CodePart }[] {
   try {
     let module = require(path);
 
     if (isCodePart(module)) {
-      return [{exportName: 'default', part: module}];
+      return [{ exportName: "default", part: module }];
     } else {
       if (typeof module === "object") {
         return Object.entries<CodePart>(module)
           .filter(([_, value]) => isCodePart(value))
-          .map(([key, value]) => ({exportName: key, part: value}));
+          .map(([key, value]) => ({ exportName: key, part: value }));
       } else {
-        throw new Error(`Error loading code part at ${path} - module does not export a CodePart`);
+        throw new Error(
+          `Error loading code part at ${path} - module does not export a CodePart`
+        );
       }
     }
   } catch (e) {
@@ -61,8 +66,8 @@ export function resolveCodePartDependencies(path: string): {exportName: string, 
   }
 }
 
-export function isCodePartPath (path: string): boolean {
-  return /.(js|ts)x?$/.test(path)
+export function isCodePartPath(path: string): boolean {
+  return /.(js|ts)x?$/.test(path);
 }
 
 export function resolveDependencies(
@@ -93,8 +98,10 @@ export function resolveDependencies(
       try {
         return resolveImportablePaths(fullFlowPath, importPath);
       } catch (e) {
-        if (importPath !== '@flyde/stdlib') {
-          throw new Error(`Cannot find module ${importPath} in ${fullFlowPath}`);
+        if (importPath !== "@flyde/stdlib") {
+          throw new Error(
+            `Cannot find module ${importPath} in ${fullFlowPath}`
+          );
         }
         return [];
       }
@@ -120,34 +127,38 @@ export function resolveDependencies(
     const paths = getLocalOrExternalPaths(importPath);
 
     // TODO - refactor the code below. It is unnecessarily complex and inefficient
-    let result: {part: Part, source: ImportSource}| undefined = paths
-      .reduce<{part: Part, source: ImportSource}[]>((acc, path) => {
+    let result: { part: Part; source: ImportSource } | undefined = paths
+      .reduce<{ part: Part; source: ImportSource }[]>((acc, path) => {
         if (isCodePartPath(path)) {
           return [
             ...acc,
-            ...resolveCodePartDependencies(path).map(({part, exportName}) => ({
-              part,
-              source: {
-                path,
-                export: exportName
-              }
-            })),
+            ...resolveCodePartDependencies(path).map(
+              ({ part, exportName }) => ({
+                part,
+                source: {
+                  path,
+                  export: exportName,
+                },
+              })
+            ),
           ];
         } else {
           const flow = deserializeFlowByPath(path);
-          return [...acc, { part: flow.part, source: { path, export: '__n/a__visual__' } }];
+          return [
+            ...acc,
+            { part: flow.part, source: { path, export: "__n/a__visual__" } },
+          ];
         }
       }, [])
       .filter((obj) => !!obj)
       .find((obj) => obj.part.id === refPartId);
 
     if (!result) {
-
-      if (importPath === '@flyde/stdlib') {
+      if (importPath === "@flyde/stdlib") {
         const maybePartAndExport = Object.entries(StdLib)
           .filter(([_, value]) => isBasePart(value))
-          .map(([key, value]) => ({part: value as CodePart, exportPath: key}))
-          .find(({part}) => part.id === refPartId);
+          .map(([key, value]) => ({ part: value as CodePart, exportPath: key }))
+          .find(({ part }) => part.id === refPartId);
         if (!maybePartAndExport) {
           throw new Error(
             `Cannot find part ${refPartId} in ${importPath} (both external and built-in). It is imported by ${part.id} (${fullFlowPath})`
@@ -158,10 +169,9 @@ export function resolveDependencies(
           ...maybePartAndExport.part,
           source: {
             path: importPath,
-            export: maybePartAndExport.exportPath
-          }
+            export: maybePartAndExport.exportPath,
+          },
         };
-
       } else {
         throw new Error(
           `Cannot find part ${refPartId} in ${importPath}. It is imported by ${part.id} (${fullFlowPath})`
@@ -173,29 +183,32 @@ export function resolveDependencies(
       if (isCodePart(part)) {
         deps[refPartId] = {
           ...part,
-          source
+          source,
         };
       } else {
-  
         const resolvedImport = resolveFlowDependenciesByPath(source.path, mode);
-  
+
         const namespacedImport = namespaceFlowImports(
           resolvedImport,
           `${refPartId}__`
         );
-  
+
         deps = {
           ...deps,
           ...namespacedImport.dependencies,
           [refPartId]: {
             ...namespacedImport.main,
-            source
+            source,
           },
         };
       }
     }
-
   }
 
-  return deps;
+  const mainPart: ImportedPartDef = {
+    ...flow.part,
+    source: { path: fullFlowPath, export: "n/a" },
+  }; // TODO - fix the need for imported visual parts to declare an export source.
+
+  return { ...deps, [mainPart.id]: mainPart };
 }

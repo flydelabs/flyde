@@ -10,15 +10,15 @@ export type FlowsMap = Map<string, FlydeFlow | Corrupt>;
 export const setupFlowsWatcher = (
   rootDir: string,
   onFlowsChange: (map: FlowsMap) => void
-) => {
+): chokidar.FSWatcher => {
   const flows: FlowsMap = new Map<string, FlydeFlow | Corrupt>();
   // One-liner for current directory
-  chokidar
+  const watcher = chokidar
     .watch(["**/*.flyde"], {
       cwd: rootDir,
       ignored: (path) =>
-      // hacky fix for https://github.com/paulmillr/chokidar/issues/544 when working locally
-       !path.endsWith(".flyde") || path.includes("/node_modules")
+        // hacky fix for https://github.com/paulmillr/chokidar/issues/544 when working locally
+        !path.endsWith(".flyde") || path.includes("/node_modules"),
     })
     .on("all", (event, path) => {
       switch (event) {
@@ -55,4 +55,6 @@ export const setupFlowsWatcher = (
         }
       }
     });
+
+  return watcher;
 };

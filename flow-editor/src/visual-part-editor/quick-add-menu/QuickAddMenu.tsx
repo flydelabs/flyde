@@ -14,6 +14,7 @@ import {
 import { MenuDivider, MenuItem } from "@blueprintjs/core";
 import { Select, ItemRenderer, ItemPredicate } from "@blueprintjs/select";
 import { highlightText } from "../../lib/highlight-text";
+import { useDependenciesContext } from "../../flow-editor/DependenciesContext";
 
 export type QuickMenuPartMatch = {
   part: PartDefinition;
@@ -45,7 +46,6 @@ export type QuickAddMenuData = {
 export type QuickMenuProps = QuickAddMenuData & {
   onAdd: (match: QuickMenuMatch) => void;
   onClose: () => void;
-  onRequestImportables?: (query: string) => Promise<ImportablePart[]>;
   part: VisualPart;
   resolvedDependencies: ResolvedDependenciesDefinitions;
 };
@@ -120,19 +120,19 @@ const partPredicate: ItemPredicate<QuickMenuMatch> = (
 };
 
 export const QuickAddMenu: React.FC<QuickMenuProps> = (props) => {
-  const { resolvedDependencies, onRequestImportables, targetPart: part } = props;
+  const { resolvedDependencies, targetPart: part } = props;
   const style = {
     left: props.pos.x,
     top: props.pos.y,
   };
 
+  const { onRequestImportables: onQueryImportables } = useDependenciesContext();
+
   const [importables, setImportables] = React.useState<ImportablePart[]>();
 
   React.useEffect(() => {
-    if (onRequestImportables) {
-      onRequestImportables("").then(setImportables);
-    }
-  }, [onRequestImportables]);
+    onQueryImportables().then(setImportables);
+  }, [onQueryImportables]);
 
   const availableParts = values({
     ...resolvedDependencies,

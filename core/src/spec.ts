@@ -1,4 +1,4 @@
-import { DynamicPartInput, VisualPart } from ".";
+import { DynamicPartInput, PartInstanceError, VisualPart } from ".";
 import { assert } from "chai";
 
 import { spy } from "sinon";
@@ -42,7 +42,7 @@ import {
   dynamicPartInputs,
   inlinePartInstance,
 } from "./part";
-import { execute, PartError } from "./execute";
+import { execute } from "./execute";
 import {
   add1,
   mul2,
@@ -1148,17 +1148,15 @@ describe("main ", () => {
         },
       };
 
-
-      describe('global state', () => {
-        
+      describe("global state", () => {
         it("allows parts to access global state", () => {
           const s = spy();
           const v = dynamicPartInput();
           const r = new Subject();
-  
+
           const part1: CodePart = {
             id: "p1",
-            inputs: { },
+            inputs: {},
             outputs: { r: partOutput() },
             reactiveInputs: ["v"],
             fn: (_, outs, { globalState }) => {
@@ -1169,7 +1167,7 @@ describe("main ", () => {
           };
           const part2: CodePart = {
             id: "p2",
-            inputs: { },
+            inputs: {},
             outputs: { r: partOutput() },
             reactiveInputs: ["v"],
             fn: (_, outs, { globalState }) => {
@@ -1180,33 +1178,31 @@ describe("main ", () => {
           };
 
           const wrappedP2 = concisePart({
-            id: 'wrappedP2',
+            id: "wrappedP2",
             inputs: [],
-            outputs: ['r'],
-            instances: [
-              partInstance('p2', part2.id),
-            ],
+            outputs: ["r"],
+            instances: [partInstance("p2", part2.id)],
             connections: [
-              ['__trigger', 'p2.__trigger'],
-              ['p2.r', 'r']
-            ]
+              ["__trigger", "p2.__trigger"],
+              ["p2.r", "r"],
+            ],
           });
-  
+
           const wrapper = concisePart({
-            id: 'wrapper',
-            inputs: ['v'],
-            outputs: ['r'],
+            id: "wrapper",
+            inputs: ["v"],
+            outputs: ["r"],
             instances: [
-              partInstance('p1', part1.id),
-              partInstance('p2', wrappedP2.id),
+              partInstance("p1", part1.id),
+              partInstance("p2", wrappedP2.id),
             ],
             connections: [
-              ['v', 'p1.__trigger'],
-              ['p1.r', 'p2.__trigger'],
-              ['p2.r', 'r']
+              ["v", "p1.__trigger"],
+              ["p1.r", "p2.__trigger"],
+              ["p2.r", "r"],
             ],
-          })
-  
+          });
+
           r.subscribe(s);
           execute({
             part: wrapper,
@@ -1214,16 +1210,14 @@ describe("main ", () => {
             outputs: { r },
             partsRepo: testRepoWith(part1, part2, wrappedP2),
           });
-          v.subject.next('');
+          v.subject.next("");
           assert.deepEqual(s.lastCall.args[0], 2);
-          v.subject.next('');
+          v.subject.next("");
           assert.deepEqual(s.lastCall.args[0], 4);
-          v.subject.next('');
+          v.subject.next("");
           assert.deepEqual(s.lastCall.args[0], 6);
         });
-      })
-
-      
+      });
 
       it("allows parts to access execution state", () => {
         const s = spy();
@@ -2432,8 +2426,8 @@ describe("main ", () => {
           },
         };
 
-        const onError = (err: PartError) => {
-          const val = err.message?.match(/part delayer.*(\d)/)?.[1];
+        const onError = (err: PartInstanceError) => {
+          const val = err.message?.match(/(\d)/)?.[1];
           s(`e-${val}`);
         };
 
@@ -3179,6 +3173,9 @@ describe("main ", () => {
       const s = spy();
       const a = dynamicPartInput();
 
+      const debuggerSpy = spy();
+      const onEvent = wrappedOnEvent(DebuggerEventType.ERROR, debuggerSpy);
+
       execute({
         part: errorReportingPart,
         inputs: { a },
@@ -3186,6 +3183,7 @@ describe("main ", () => {
         partsRepo: testRepo,
         onBubbleError: s,
         insId: "someIns",
+        _debugger: { onEvent },
       });
 
       assert.equal(s.callCount, 0);
@@ -3194,8 +3192,12 @@ describe("main ", () => {
 
       assert.equal(s.callCount, 1);
 
-      assert.include(s.lastCall.args[0].toString(), "blah");
-      assert.include(s.lastCall.args[0].insId, "someIns");
+      const lastError = (): PartInstanceError => s.lastCall.args[0];
+      assert.include(lastError().toString(), "blah");
+      assert.include(lastError().fullInsIdsPath, "someIns");
+
+      assert.equal(debuggerSpy.callCount, 1);
+      assert.include(s.lastCall.args[0].message, "partId: bad");
     });
 
     it("reports errors that were thrown inside a direct part", async () => {
@@ -3229,6 +3231,80 @@ describe("main ", () => {
 
       assert.include(s.lastCall.args[0].val.toString(), "blaft");
       assert.include(s.lastCall.args[0].insId, "someIns");
+    });
+
+    it("reports async errors that were thrown inside a direct part", async () => {
+      const s = spy();
+      const a = dynamicPartInput();
+
+      const p2 = {
+        ...errorReportingPart,
+        fn: async () => {
+          throw new Error("blaft");
+        },
+      };
+
+      const onEvent = wrappedOnEvent(DebuggerEventType.ERROR, s);
+
+      execute({
+        part: p2,
+        inputs: { a },
+        outputs: {},
+        partsRepo: testRepo,
+        _debugger: { onEvent },
+        insId: "someIns",
+      });
+
+      assert.equal(s.callCount, 0);
+
+      a.subject.next("bob");
+
+      await eventually(() => {
+        assert.equal(s.callCount, 1);
+
+        assert.include(s.lastCall.args[0].val.toString(), "blaft");
+        assert.include(s.lastCall.args[0].insId, "someIns");
+      });
+    });
+
+    it("reports async errors that were reported inside a direct part", async () => {
+      const s = spy();
+      const a = dynamicPartInput();
+
+      const p2 = {
+        ...errorReportingPart,
+        fn: async (_, __, { onError }) => {
+          onError(new Error("blaft"));
+        },
+      };
+
+      const onEvent = wrappedOnEvent(DebuggerEventType.ERROR, s);
+
+      try {
+        execute({
+          part: p2,
+          inputs: { a },
+          outputs: {},
+          partsRepo: testRepo,
+          _debugger: { onEvent },
+          insId: "someIns",
+          // onBubbleError: (e) => {
+          //   // throw e;
+          // },
+        });
+
+        assert.equal(s.callCount, 0);
+        a.subject.next("bob");
+      } catch (e) {
+        console.log("bob", e);
+      }
+
+      await eventually(() => {
+        assert.equal(s.callCount, 1);
+
+        assert.include(s.lastCall.args[0].val.toString(), "blaft");
+        assert.include(s.lastCall.args[0].insId, "someIns");
+      });
     });
 
     it("reports uncaught thrown that happened on an visual part", async () => {
@@ -3268,15 +3344,65 @@ describe("main ", () => {
 
       assert.equal(s.callCount, 2);
 
-      assert.include(s.getCalls()[1]?.args[0].val.toString(), "blaft");
-      assert.include(s.getCalls()[1]?.args[0].insId, "i1");
+      assert.include(s.getCalls()[0]?.args[0].val.toString(), "blaft");
+      assert.include(s.getCalls()[0]?.args[0].insId, "i1");
 
       assert.include(
         s.getCalls()[0]?.args[0].val.toString(),
-        "fullInsIdPath: someIns.i1"
+        "insId: someIns.i1"
       );
-      assert.include(s.getCalls()[0]?.args[0].val.toString(), "blaft");
-      assert.include(s.getCalls()[0]?.args[0].insId, "someIns");
+      assert.include(s.getCalls()[1]?.args[0].val.toString(), "blaft");
+      assert.include(s.getCalls()[1]?.args[0].insId, "someIns");
+    });
+
+    it("reports uncaught async error that happened on an visual part", async () => {
+      const s = spy();
+      const a = dynamicPartInput();
+
+      const p2 = {
+        ...errorReportingPart,
+        id: "partPart2",
+        fn: async () => {
+          throw new Error("blaft");
+        },
+      };
+
+      const badWrapper = concisePart({
+        id: "badWrap",
+        inputs: ["a"],
+        outputs: ["r"],
+        instances: [partInstance("i1", p2.id)],
+        connections: [["a", "i1.a"]],
+      });
+
+      const onEvent = wrappedOnEvent(DebuggerEventType.ERROR, s);
+
+      execute({
+        part: badWrapper,
+        inputs: { a },
+        outputs: {},
+        partsRepo: testRepoWith(p2),
+        _debugger: { onEvent },
+        insId: "someIns",
+      });
+
+      assert.equal(s.callCount, 0);
+
+      a.subject.next("bob");
+
+      await eventually(() => {
+        assert.equal(s.callCount, 2);
+
+        assert.include(s.getCalls()[0]?.args[0].val.toString(), "blaft");
+        assert.include(s.getCalls()[0]?.args[0].insId, "i1");
+
+        assert.include(
+          s.getCalls()[0]?.args[0].val.toString(),
+          "insId: someIns.i1"
+        );
+        assert.include(s.getCalls()[1]?.args[0].val.toString(), "blaft");
+        assert.include(s.getCalls()[1]?.args[0].insId, "someIns");
+      });
     });
 
     it("reports uncaught errors that happened on an internal part", async () => {
@@ -3308,15 +3434,15 @@ describe("main ", () => {
 
       assert.equal(s.callCount, 2);
 
-      assert.include(s.getCalls()[1]?.args[0].val.toString(), "blah");
-      assert.include(s.getCalls()[1]?.args[0].insId, "i1");
+      assert.include(s.getCalls()[0]?.args[0].val.toString(), "blah");
+      assert.include(s.getCalls()[0]?.args[0].insId, "i1");
 
       assert.include(
         s.getCalls()[0]?.args[0].val.toString(),
-        "fullInsIdPath: someIns.i1"
+        "insId: someIns.i1"
       );
-      assert.include(s.getCalls()[0]?.args[0].val.toString(), "blah");
-      assert.include(s.getCalls()[0]?.args[0].insId, "someIns");
+      assert.include(s.getCalls()[1]?.args[0].val.toString(), "blah");
+      assert.include(s.getCalls()[1]?.args[0].insId, "someIns");
     });
 
     it('allows to catch errors in any part using the "error" pin', async () => {
@@ -3523,14 +3649,14 @@ describe("main ", () => {
     });
 
     // todo - add this to the implicit completion test suite
-    it('queues values properly when inputs are received in a synchronous order in an async function', async () => {
+    it("queues values properly when inputs are received in a synchronous order in an async function", async () => {
       const loopValuesPart = conciseCodePart({
         id: "loopValues",
         inputs: [],
         outputs: ["r"],
         fn: (_, o) => {
-          [1, 2, 3].map(v => o.r?.next(v));
-        }
+          [1, 2, 3].map((v) => o.r?.next(v));
+        },
       });
 
       const asyncId = conciseCodePart({
@@ -3539,7 +3665,7 @@ describe("main ", () => {
         outputs: ["r"],
         fn: async (i, o) => {
           o.r?.next(i.v);
-        }
+        },
       });
 
       const wrapperPart = concisePart({
@@ -3553,7 +3679,7 @@ describe("main ", () => {
         connections: [
           ["i1.r", "i2.v"],
           ["i2.r", "r"],
-        ]
+        ],
       });
 
       const [s, r] = spiedOutput();
@@ -3565,12 +3691,10 @@ describe("main ", () => {
         partsRepo: testRepoWith(loopValuesPart, asyncId),
       });
 
-      
       await eventually(() => {
         assert.equal(s.callCount, 3);
-      })
-      console.log(s.getCalls().map(c => c.args[0]));
-      
+      });
+      console.log(s.getCalls().map((c) => c.args[0]));
     });
   });
 

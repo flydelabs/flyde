@@ -7,7 +7,11 @@ import {
   fullInsIdPath,
   ROOT_INS_ID,
 } from "@flyde/core";
-import { getInstanceDomId, getMainInstanceIndicatorDomId, getPinDomId } from "../dom-ids";
+import {
+  getInstanceDomId,
+  getMainInstanceIndicatorDomId,
+  getPinDomId,
+} from "../dom-ids";
 
 const BLINK_TIMEOUT = 5000; // also change animation time in scss
 
@@ -22,7 +26,9 @@ const getCancelTimerKey = (event: DebuggerEvent, suffix?: string) => {
     event.type === DebuggerEventType.INPUT_CHANGE ||
     event.type === DebuggerEventType.OUTPUT_CHANGE
   ) {
-    return `${fullInsIdPath(event.insId, event.ancestorsInsIds)}.${event.pinId}`;
+    return `${fullInsIdPath(event.insId, event.ancestorsInsIds)}.${
+      event.pinId
+    }`;
   } else {
     return fullInsIdPath(event.insId, event.ancestorsInsIds);
   }
@@ -42,9 +48,9 @@ export const playEvent = (event: DebuggerEvent) => {
           fullInsIdPath: fullInsIdPath(insId, ancestorsInsIds),
           pinId,
           pinType,
-          isMain: true
-        })
-      ]
+          isMain: true,
+        }),
+      ];
 
       /* events from the root instance are not shown on "regular" pins but just on "main" ones */
 
@@ -54,7 +60,7 @@ export const playEvent = (event: DebuggerEvent) => {
             fullInsIdPath: fullInsIdPath(insId, ancestorsInsIds),
             pinId,
             pinType,
-            isMain: false
+            isMain: false,
           })
         );
       }
@@ -63,7 +69,7 @@ export const playEvent = (event: DebuggerEvent) => {
         const cancelTimerKey = getCancelTimerKey(event, `${idx}`);
         clearTimeout(cancelTimers.get(cancelTimerKey));
         const element = document.getElementById(domId);
-  
+
         const connDomIdAttr = `${insId}.${pinId}`;
         const connectionElems =
           event.type === DebuggerEventType.OUTPUT_CHANGE
@@ -74,19 +80,19 @@ export const playEvent = (event: DebuggerEvent) => {
           debug(`No DOM element with Id [${domId}] found to play event`, event);
         } else {
           clearTimeout(cancelTimers.get(cancelTimerKey));
-  
+
           element.removeAttribute("data-runtime");
           connectionElems.forEach((connElem: any) => {
             connElem.removeAttribute("data-runtime");
           });
-  
+
           setTimeout(() => {
             element.setAttribute("data-runtime", "active");
             connectionElems.forEach((connElem: any) => {
               connElem.setAttribute("data-runtime", "active");
             });
           }, 0);
-  
+
           const timer = setTimeout(() => {
             element.removeAttribute("data-runtime");
             connectionElems.forEach((connElem: any) => {
@@ -96,16 +102,14 @@ export const playEvent = (event: DebuggerEvent) => {
           }, BLINK_TIMEOUT);
           cancelTimers.set(getCancelTimerKey(event), timer);
         }
-      })
-        
+      });
+
       break;
     }
     case DebuggerEventType.PROCESSING_CHANGE: {
       const { insId, ancestorsInsIds } = event;
 
-      const domIds = [
-        getMainInstanceIndicatorDomId(insId, ancestorsInsIds),
-      ];
+      const domIds = [getMainInstanceIndicatorDomId(insId, ancestorsInsIds)];
 
       if (insId !== ROOT_INS_ID) {
         domIds.push(getInstanceDomId(insId, ancestorsInsIds));
@@ -118,13 +122,17 @@ export const playEvent = (event: DebuggerEvent) => {
           debug(`No DOM element with Id [${domId}] found to play event`, event);
           return;
         }
-  
+
         if (event.val === true) {
           element.setAttribute("data-runtime", "processing");
           clearTimeout(cancelTimers.get(timerKey));
         } else {
+          // if the processing is done, but there was an error, don't remove the error indication
           element.removeAttribute("data-runtime");
           setTimeout(() => {
+            if (element.getAttribute("data-runtime") === "error") {
+              return;
+            }
             element.setAttribute("data-runtime", "done");
           }, 0);
           const timer = setTimeout(() => {
@@ -135,16 +143,12 @@ export const playEvent = (event: DebuggerEvent) => {
         }
       });
 
-      
       break;
     }
     case DebuggerEventType.ERROR: {
       const { insId, ancestorsInsIds } = event;
 
-
-      const domIds = [
-        getMainInstanceIndicatorDomId(insId, ancestorsInsIds),
-      ];
+      const domIds = [getMainInstanceIndicatorDomId(insId, ancestorsInsIds)];
 
       if (insId !== ROOT_INS_ID) {
         domIds.push(getInstanceDomId(insId, ancestorsInsIds));
@@ -157,7 +161,7 @@ export const playEvent = (event: DebuggerEvent) => {
           debug(`No DOM element with Id [${domId}] found to play event`, event);
           return;
         }
-  
+
         clearTimeout(cancelTimers.get(timerKey));
         element.removeAttribute("data-runtime");
         setTimeout(() => {
@@ -168,9 +172,8 @@ export const playEvent = (event: DebuggerEvent) => {
           cancelTimers.delete(timerKey);
         }, BLINK_TIMEOUT);
         cancelTimers.set(timerKey, timer);
-  
       });
-      
+
       const fakeErrorPinEvent: DebuggerEvent = {
         ...event,
         type: DebuggerEventType.OUTPUT_CHANGE,
@@ -183,7 +186,12 @@ export const playEvent = (event: DebuggerEvent) => {
     case DebuggerEventType.INPUTS_STATE_CHANGE: {
       entries(event.val).forEach(([k, v]) => {
         const { insId, ancestorsInsIds } = event;
-        const domId = getPinDomId({fullInsIdPath: fullInsIdPath(insId, ancestorsInsIds), pinId: k, pinType: "input", isMain: false});
+        const domId = getPinDomId({
+          fullInsIdPath: fullInsIdPath(insId, ancestorsInsIds),
+          pinId: k,
+          pinType: "input",
+          isMain: false,
+        });
         const element = document.getElementById(domId);
         if (!element) {
           debug(`No DOM element with Id [${domId}] found to play event`, event);

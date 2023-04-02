@@ -17,6 +17,7 @@ import {
   staticPartInput,
   PartAdvancedContext,
   isQueueInputPinConfig,
+  PartInstanceError,
   PartState,
   PartFn,
   PartRepo,
@@ -180,7 +181,7 @@ const executeCodePart = (data: CodeExecutionData) => {
     },
     context: extraContext ?? {},
     ancestorsInsIds: ancestorsInsIds,
-    globalState
+    globalState,
   };
 
   let processing = false;
@@ -200,7 +201,7 @@ const executeCodePart = (data: CodeExecutionData) => {
     // TODO - use a better data structure on mainState so this becomes a O(1) operation
     keys(mainState)
       .filter((k) => k.startsWith(`${fullInsId}.`))
-      .forEach((k) => {        
+      .forEach((k) => {
         mainState[k] = new Map();
       });
   };
@@ -330,9 +331,32 @@ const executeCodePart = (data: CodeExecutionData) => {
           partCleanupFn = fn(argValues as any, outputs, advPartContext);
 
           if (isPromise(partCleanupFn)) {
-            partCleanupFn.then(() => {
-              if (part.completionOutputs === undefined && onCompleted) {
+            partCleanupFn
+              .then(() => {
+                if (part.completionOutputs === undefined && onCompleted) {
+                  processing = false;
+                  onEvent({
+                    type: DebuggerEventType.PROCESSING_CHANGE,
+                    val: processing,
+                    insId,
+                    ancestorsInsIds: ancestorsInsIds,
+                    partId: part.id,
+                  });
+
+                  onCompleted(completedOutputsValues);
+                  cleanState();
+
+                  if (
+                    hasNewSignificantValues(inputs, inputsState, env, part.id)
+                  ) {
+                    maybeRunPart();
+                  }
+                }
+              })
+              .catch((err) => {
+                onError(err);
                 processing = false;
+                innerDebug(`Error in part %s - value %e`, part.id, err);
                 onEvent({
                   type: DebuggerEventType.PROCESSING_CHANGE,
                   val: processing,
@@ -340,17 +364,7 @@ const executeCodePart = (data: CodeExecutionData) => {
                   ancestorsInsIds: ancestorsInsIds,
                   partId: part.id,
                 });
-
-                onCompleted(completedOutputsValues);
-                cleanState();
-
-                if (
-                  hasNewSignificantValues(inputs, inputsState, env, part.id)
-                ) {
-                  maybeRunPart();
-                }
-              }
-            });
+              });
           } else {
             if (part.completionOutputs === undefined && onCompleted) {
               processing = false;
@@ -366,6 +380,7 @@ const executeCodePart = (data: CodeExecutionData) => {
             }
           }
         } catch (e) {
+          onError(e);
           processing = false;
           innerDebug(`Error in part %s - value %e`, part.id, e);
           onEvent({
@@ -375,7 +390,6 @@ const executeCodePart = (data: CodeExecutionData) => {
             ancestorsInsIds: ancestorsInsIds,
             partId: part.id,
           });
-          onError(e);
         }
 
         const maybeReactiveKey = reactiveInputs.find((key) => {
@@ -460,11 +474,6 @@ const executeCodePart = (data: CodeExecutionData) => {
 
 export type ExecuteFn = (params: ExecuteParams) => CancelFn;
 
-export interface PartError extends Error {
-  fullInsIdPath: string;
-  partId: string;
-}
-
 export type ExecuteParams = {
   part: Part;
   partsRepo: PartRepo;
@@ -474,7 +483,7 @@ export type ExecuteParams = {
   insId?: string;
   ancestorsInsIds?: string;
   mainState?: OMap<PartState>;
-  onBubbleError?: <Err extends PartError>(err: Err) => void;
+  onBubbleError?: (err: PartInstanceError) => void;
   env?: ExecuteEnv;
   extraContext?: Record<string, any>;
 
@@ -503,7 +512,6 @@ export const execute: ExecuteFn = ({
 }) => {
   const toCancel: Function[] = [];
 
-
   if (!mainState[GLOBAL_STATE_NS]) {
     mainState[GLOBAL_STATE_NS] = new Map();
   }
@@ -515,29 +523,27 @@ export const execute: ExecuteFn = ({
   const onError = (err: unknown) => {
     // this means "catch the error"
     const error =
-      err instanceof Error ? err : new Error(`Raw error: ${err?.toString()}`);
-    error.message = `error in part ${part.id}, fullInsIdPath: ${fullInsIdPath(
-      insId,
-      ancestorsInsIds
-    )}: ${error.message}`;
-    if (outputs[ERROR_PIN_ID]) {
-      outputs[ERROR_PIN_ID].next(err);
-    } else {
-      (error as any).insId = insId;
-      onBubbleError(error as PartError);
-    }
-    if (_debugger.onEvent) {
-      const err: PartError = error as any;
-      err.fullInsIdPath = fullInsIdPath(insId, ancestorsInsIds);
-      err.partId = part.id;
+      err instanceof PartInstanceError
+        ? err
+        : new PartInstanceError(
+            err,
+            fullInsIdPath(insId, ancestorsInsIds),
+            part.id
+          );
 
+    if (_debugger.onEvent) {
       _debugger.onEvent({
         type: DebuggerEventType.ERROR,
-        val: err,
+        val: error,
         insId,
         ancestorsInsIds,
         partId: part.id,
       });
+    }
+    if (outputs[ERROR_PIN_ID]) {
+      outputs[ERROR_PIN_ID].next(error);
+    } else {
+      onBubbleError(error);
     }
   };
 

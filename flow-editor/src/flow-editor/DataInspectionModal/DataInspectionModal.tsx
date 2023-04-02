@@ -14,10 +14,9 @@ import React, { useEffect } from "react";
 import { timeAgo, useDebounce } from "../..";
 import { BrowserOnlyReactJson } from "../../lib/analytics-value-renderer/BrowserJsonView";
 import { Loader } from "../../lib/loader";
-import { FlydeFlowEditorProps } from "../FlowEditor";
+import { useDebuggerContext } from "../DebuggerContext";
 
 export interface DataInspectionModalProps {
-  onRequestHistory: FlydeFlowEditorProps["onRequestHistory"];
   onClose: () => void;
   item: { insId: string; pin?: { id: string; type: PinType } };
 }
@@ -25,7 +24,8 @@ export interface DataInspectionModalProps {
 export const DataInspectionModal: React.FC<DataInspectionModalProps> = (
   props
 ) => {
-  const { onRequestHistory, item } = props;
+  const { onRequestHistory } = useDebuggerContext();
+  const { item } = props;
 
   const [data, setData] = React.useState<HistoryPayload>();
 
@@ -72,7 +72,7 @@ export const DataInspectionModal: React.FC<DataInspectionModalProps> = (
 
     return <Code>{val}</Code>;
   };
-  
+
   const renderEmptyState = () => {
     if (data.lastSamples.length > 0 && search.length > 0) {
       return (
@@ -81,8 +81,14 @@ export const DataInspectionModal: React.FC<DataInspectionModalProps> = (
         </Callout>
       );
     }
-    return <Callout intent="warning">No events captured for instance {item.insId} {item.pin? `and ${item.pin.id}` :''}. Make sure a debugger is connected and your program was triggered.</Callout>;
-  }
+    return (
+      <Callout intent="warning">
+        No events captured for instance {item.insId}{" "}
+        {item.pin ? `and ${item.pin.id}` : ""}. Make sure a debugger is
+        connected and your program was triggered.
+      </Callout>
+    );
+  };
 
   const itemName = `"${item.insId}" ${item.pin?.id ? `(${item.pin.id})` : ""}`;
 
@@ -92,7 +98,17 @@ export const DataInspectionModal: React.FC<DataInspectionModalProps> = (
     }
 
     if (data.total === 0) {
-      return <Callout intent="warning">No events captured for instance <em>{item.insId}</em> {item.pin? <React.Fragment>and pin <em>{item.pin.id}</em></React.Fragment> : null}. Make sure debugger is running and your program was triggered.</Callout>;
+      return (
+        <Callout intent="warning">
+          No events captured for instance <em>{item.insId}</em>{" "}
+          {item.pin ? (
+            <React.Fragment>
+              and pin <em>{item.pin.id}</em>
+            </React.Fragment>
+          ) : null}
+          . Make sure debugger is running and your program was triggered.
+        </Callout>
+      );
     }
 
     const currEvent = filteredValue?.[currIdx] as PinDebuggerEvent<any>;
@@ -103,33 +119,32 @@ export const DataInspectionModal: React.FC<DataInspectionModalProps> = (
 
     return (
       <>
-          <Card className="content-wrapper">
-            {currEvent ? (
-              <div className="info">
-                <div>
-                  Showing sample {currIdx} of event from{" "}
-                  <strong>{timeAgo(currEvent.time)}</strong> (
-                  {new Date(currEvent.time).toLocaleString()})
-                </div>
-                <div>
-                  Instance: <strong>{currEvent.insId}</strong>, Pin id:{" "}
-                  <strong>{currEvent.pinId}</strong>{" "}
-                </div>
-				<div>Value:</div>
+        <Card className="content-wrapper">
+          {currEvent ? (
+            <div className="info">
+              <div>
+                Showing sample {currIdx} of event from{" "}
+                <strong>{timeAgo(currEvent.time)}</strong> (
+                {new Date(currEvent.time).toLocaleString()})
               </div>
-            ) : null}
-            {renderValue(currEvent)}
-          </Card>
-          <Menu className="samples-menu">
-            {filteredValue.map((sample, i) => {
-              const pinId =
-                (sample as PinDebuggerEvent<any>).pinId;
-              const label = `${data.total - i}. from pin "${pinId}"`;
-              return (
-                <MenuItem key={i} text={label} onClick={() => setCurrIdx(i)} />
-              );
-            })}
-          </Menu>
+              <div>
+                Instance: <strong>{currEvent.insId}</strong>, Pin id:{" "}
+                <strong>{currEvent.pinId}</strong>{" "}
+              </div>
+              <div>Value:</div>
+            </div>
+          ) : null}
+          {renderValue(currEvent)}
+        </Card>
+        <Menu className="samples-menu">
+          {filteredValue.map((sample, i) => {
+            const pinId = (sample as PinDebuggerEvent<any>).pinId;
+            const label = `${data.total - i}. from pin "${pinId}"`;
+            return (
+              <MenuItem key={i} text={label} onClick={() => setCurrIdx(i)} />
+            );
+          })}
+        </Menu>
       </>
     );
   };
@@ -143,32 +158,33 @@ export const DataInspectionModal: React.FC<DataInspectionModalProps> = (
       className="data-inspection-modal"
     >
       <main className={classNames(Classes.DIALOG_BODY)} tabIndex={0}>
-        
-      <div>
-        <header>
-          {data ? <><em>
-            {itemName} called {data.total} time(s)
-          </em>
-          {data.total > 10 && <span>Showing last 10 samples</span>}</> : null}
-          <input
-            className="bp3-input bp3-small bp3-fill"
-            type="search"
-            placeholder="Search for values"
-            dir="auto"
-            onChange={(e) => setSearch(e.target.value)}
-            value={search}
-          />
-          {debouncedSearch.length > 0 && (
-            <span>
-              Showing {filteredValue?.length} of {data.lastSamples.length}{" "}
-              samples matching query "{debouncedSearch}"
-            </span>
-          )}
-        </header>
-        <main className="main-wrapper">
-          {renderInner()}
-        </main>
-      </div>
+        <div>
+          <header>
+            {data ? (
+              <>
+                <em>
+                  {itemName} called {data.total} time(s)
+                </em>
+                {data.total > 10 && <span>Showing last 10 samples</span>}
+              </>
+            ) : null}
+            <input
+              className="bp3-input bp3-small bp3-fill"
+              type="search"
+              placeholder="Search for values"
+              dir="auto"
+              onChange={(e) => setSearch(e.target.value)}
+              value={search}
+            />
+            {debouncedSearch.length > 0 && (
+              <span>
+                Showing {filteredValue?.length} of {data.lastSamples.length}{" "}
+                samples matching query "{debouncedSearch}"
+              </span>
+            )}
+          </header>
+          <main className="main-wrapper">{renderInner()}</main>
+        </div>
       </main>
 
       {/* <div className={Classes.DIALOG_FOOTER}>

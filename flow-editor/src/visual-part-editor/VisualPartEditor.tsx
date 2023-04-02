@@ -21,7 +21,6 @@ import {
   noop,
   keys,
   TRIGGER_PIN_ID,
-  ImportablePart,
   inlinePartInstance,
   isInlinePartInstance,
   isRefPartInstance,
@@ -38,7 +37,6 @@ import {
   externalConnectionNode,
   ResolvedDependenciesDefinitions,
   fullInsIdPath,
-  ROOT_INS_ID,
 } from "@flyde/core";
 import { InstanceView, InstanceViewProps } from "./instance-view/InstanceView";
 import {
@@ -92,7 +90,6 @@ import {
   QuickMenuMatch,
 } from "./quick-add-menu";
 import { queueInputPinConfig } from "@flyde/core";
-import { HistoryPayload } from "@flyde/remote-debugger";
 import { orderVisualPart } from "./order-layout/cmd";
 import { LayoutDebugger, LayoutDebuggerProps } from "./layout-debugger";
 import { preloadMonaco } from "../lib/preload-monaco";
@@ -115,14 +112,14 @@ import { handleConnectionCloseEditorCommand } from "./commands/close-connection"
 import { handleDetachConstEditorCommand } from "./commands/detach-const";
 import { handleDuplicateSelectedEditorCommand } from "./commands/duplicate-instances";
 import { PartStyleMenu } from "./instance-view/PartStyleMenu";
-import { FlydeFlowEditorProps } from "../flow-editor/FlowEditor";
+import { useDependenciesContext } from "../flow-editor/FlowEditor";
 import { Action, ActionsMenu, ActionType } from "./ActionsMenu/ActionsMenu";
 import { MainInstanceEventsIndicator } from "./MainInstanceEventsIndicator";
 import { HelpBubble } from "./HelpBubble";
 
 const MemodSlider = React.memo(Slider);
 
-const sliderRenderer = (p: any) => null;
+const sliderRenderer = () => null;
 
 export const PART_HEIGHT = 28;
 const DBL_CLICK_TIME = 300;
@@ -178,16 +175,6 @@ export type VisualPartEditorProps = {
   onInspectPin: (insId: string, pin: { id: string; type: PinType }) => void;
 
   onGoToPartDef: (part: ImportedPartDef) => void;
-
-  onRequestHistory: (
-    insId: string,
-    pinId: string,
-    pinType: PinType
-  ) => Promise<HistoryPayload>;
-  onRequestImportables: () => Promise<ImportablePart[]>;
-
-  onImportPart: FlydeFlowEditorProps["onImportPart"];
-
   onExtractInlinePart: (instance: InlinePartInstance) => Promise<void>;
 
   onShowOmnibar: (e: any) => void;
@@ -198,6 +185,7 @@ export type VisualPartEditorProps = {
   parentBoardPos?: Pos;
 
   queuedInputsData?: Record<string, Record<string, number>>;
+  instancesWithErrors?: Set<string>;
 
   initialPadding?: [number, number];
 };
@@ -244,7 +232,6 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
         onGoToPartDef: onEditPart,
         // editOrCreateConstValue,
         // requestNewConstValue,
-        onRequestHistory,
         onInspectPin,
         boardData,
         onChangeBoardData,
@@ -253,10 +240,11 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
         part,
         onShowOmnibar,
         resolvedDependencies,
-        onImportPart,
         queuedInputsData: queueInputsData,
-        initialPadding
+        initialPadding,
       } = props;
+
+      const { onImportPart } = useDependenciesContext();
 
       const parentViewport = props.parentViewport || defaultViewPort;
 
@@ -326,7 +314,9 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
       const isBoardInFocus = useRef(true);
 
       const [draggedConnection, setDraggedConnection] = useState<
-        null | { from: ConnectionNode, to: undefined } | { to: ConnectionNode, from: undefined }
+        | null
+        | { from: ConnectionNode; to: undefined }
+        | { to: ConnectionNode; from: undefined }
       >(null);
 
       const setViewPort = React.useCallback(
@@ -608,9 +598,9 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
           onZoom(viewPort.zoom + 0.1, "hotkey");
           e.preventDefault();
         },
-        { text: 'Zoom in board', group: 'Viewport Controls'},
+        { text: "Zoom in board", group: "Viewport Controls" },
         [viewPort, onZoom],
-        isBoardInFocus,
+        isBoardInFocus
       );
 
       useHotkeys(
@@ -619,9 +609,9 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
           onZoom(viewPort.zoom - 0.1, "hotkey");
           e.preventDefault();
         },
-        { text: 'Zoom out board', group: 'Viewport Controls'},
+        { text: "Zoom out board", group: "Viewport Controls" },
         [onZoom, viewPort.zoom],
-        isBoardInFocus,
+        isBoardInFocus
       );
 
       useHotkeys(
@@ -646,9 +636,9 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             }
           })();
         },
-        { text: 'Auto-layout (experimental)', group: 'Misc.'},
+        { text: "Auto-layout (experimental)", group: "Misc." },
         [onChange, part, resolvedDependencies],
-        isBoardInFocus,
+        isBoardInFocus
       );
 
       useHotkeys(
@@ -657,9 +647,9 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
           onZoom(1);
           e.preventDefault();
         },
-        { text: 'Reset zoom', group: 'Viewport Controls'},
+        { text: "Reset zoom", group: "Viewport Controls" },
         [viewPort, onZoom],
-        isBoardInFocus,
+        isBoardInFocus
       );
 
       const clearSelections = () => {
@@ -1033,6 +1023,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
           selectionBox,
           repo,
           currentInsId,
+          ancestorsInsIds,
           closestPin,
           onChangeBoardData,
         ]
@@ -1206,7 +1197,9 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
               draft.outputsPosition[newPinId] = lastMousePos.current;
 
               if (draft.completionOutputs?.length) {
-                toastMsg('Note that this part has explicit completion outputs set. You may need to update them.')
+                toastMsg(
+                  "Note that this part has explicit completion outputs set. You may need to update them."
+                );
               }
             }
           });
@@ -1278,14 +1271,6 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
         [part, onChange]
       );
 
-      const _onRequestPartIoHistory = React.useCallback(
-        (id, type) => {
-          const hackishlyGetInsId = currentInsId.split(".").reverse()[0];
-          return onRequestHistory(hackishlyGetInsId, id, type);
-        },
-        [onRequestHistory, currentInsId]
-      );
-
       const onAction = React.useCallback(
         (action: Action) => {
           switch (action.type) {
@@ -1328,7 +1313,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
               })();
               break;
             }
-            case ActionType.Ungroup: {
+            case ActionType.UnGroup: {
               const instance = part.instances.find(
                 (ins) => ins.id === selected[0]
               );
@@ -1409,7 +1394,6 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             onSetDescription={onPartIoSetDescription}
             selected={from?.pinId === k}
             description={v.description}
-            onRequestHistory={_onRequestPartIoHistory}
             onMouseUp={onPartIoMouseUp}
             onMouseDown={onPartIoMouseDown}
           />
@@ -1445,7 +1429,6 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             onSetDescription={onPartIoSetDescription}
             description={v.description}
             selected={to?.pinId === k}
-            onRequestHistory={_onRequestPartIoHistory}
             onMouseUp={onPartIoMouseUp}
             onMouseDown={onPartIoMouseDown}
           />
@@ -1631,7 +1614,6 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
 
       // for each instance, if there's a visible input or output that doesn't exist, reset the visible inputs/outputs to be the full list
       React.useEffect(() => {
-
         let invalids = [];
         const newPart = produce(part, (draft) => {
           draft.instances = draft.instances.map((ins) => {
@@ -1664,11 +1646,20 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
           });
         });
         if (invalids.length > 0) {
-          toastMsg(`Found ${invalids.length} invalid visible inputs/outputs: ${invalids.join(", ")}. Reset them`, "warning");
-          onChange(newPart, functionalChange("reset corrupt visible inputs/outputs"));
+          toastMsg(
+            `Found ${
+              invalids.length
+            } invalid visible inputs/outputs: ${invalids.join(
+              ", "
+            )}. Reset them`,
+            "warning"
+          );
+          onChange(
+            newPart,
+            functionalChange("reset corrupt visible inputs/outputs")
+          );
         }
       }, [instances, onChange, part, repo]);
-
 
       useEffect(() => {
         const instanceMap = new Map(instances.map((ins) => [ins.id, ins]));
@@ -1853,15 +1844,63 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
         [getContextMenu, parentViewport, viewPort]
       );
 
-      useHotkeys("shift+c", fitToScreen, { text: 'Center viewport', group: 'Viewport Controls'}, [], isBoardInFocus);
+      useHotkeys(
+        "shift+c",
+        fitToScreen,
+        { text: "Center viewport", group: "Viewport Controls" },
+        [],
+        isBoardInFocus
+      );
 
-      useHotkeys("cmd+c", onCopyInner,{ text: 'Copy instances', group: 'Editing'}, [],  isBoardInFocus);
-      useHotkeys("cmd+v", onPaste,{ text: 'Paste instances', group: 'Editing'}, [],  isBoardInFocus);
-      useHotkeys("esc", clearSelections,{ text: 'Clear selections', group: 'Selection'}, [],  isBoardInFocus);
-      useHotkeys("backspace", deleteSelection,{ text: 'Delete instances', group: 'Editing'}, [],  isBoardInFocus);
-      useHotkeys("shift+d", duplicate,{ text: 'Duplicate selected instances', group: 'Editing'}, [],  isBoardInFocus);
-      useHotkeys("cmd+a", selectAll,{ text: 'Select all', group: 'Selection'}, [],  isBoardInFocus);
-      useHotkeys("s", selectClosest,{ text: 'Select pin closest to mouse', group: 'Selection'}, [],  isBoardInFocus);
+      useHotkeys(
+        "cmd+c",
+        onCopyInner,
+        { text: "Copy instances", group: "Editing" },
+        [],
+        isBoardInFocus
+      );
+      useHotkeys(
+        "cmd+v",
+        onPaste,
+        { text: "Paste instances", group: "Editing" },
+        [],
+        isBoardInFocus
+      );
+      useHotkeys(
+        "esc",
+        clearSelections,
+        { text: "Clear selections", group: "Selection" },
+        [],
+        isBoardInFocus
+      );
+      useHotkeys(
+        "backspace",
+        deleteSelection,
+        { text: "Delete instances", group: "Editing" },
+        [],
+        isBoardInFocus
+      );
+      useHotkeys(
+        "shift+d",
+        duplicate,
+        { text: "Duplicate selected instances", group: "Editing" },
+        [],
+        isBoardInFocus
+      );
+      useHotkeys(
+        "cmd+a",
+        selectAll,
+        { text: "Select all", group: "Selection" },
+        [],
+        isBoardInFocus
+      );
+      useHotkeys(
+        "s",
+        selectClosest,
+        { text: "Select pin closest to mouse", group: "Selection" },
+        [],
+        isBoardInFocus
+      );
 
       const onChangeInspected: VisualPartEditorProps["onChangePart"] =
         React.useCallback(
@@ -1917,7 +1956,6 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             onInspectPin: props.onInspectPin,
             onGoToPartDef: props.onGoToPartDef,
             partIoEditable: props.partIoEditable,
-            onRequestHistory: onRequestHistory,
             part: openInlineInstance.part,
             onChangePart: onChangeInspected,
             onShowOmnibar: onShowOmnibar,
@@ -1925,12 +1963,10 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             // parentViewport: viewPort, // this was needed when I rendered it completely inline
             parentBoardPos: boardPos,
             onExtractInlinePart: props.onExtractInlinePart,
-            onImportPart: props.onImportPart,
             queuedInputsData: props.queuedInputsData,
-            onRequestImportables: props.onRequestImportables,
           };
         } else {
-          return;
+          return undefined;
         }
       };
 
@@ -1950,7 +1986,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             !isInternalConnectionNode(from)
           ) {
             // hack to fix the fact main output / main input could connect to each other
-            return;
+            return undefined;
           }
           return { from, to };
         } else if (
@@ -1968,7 +2004,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             !isInternalConnectionNode(from)
           ) {
             // hack to fix the fact main output / main input could connect to each other
-            return;
+            return undefined;
           }
 
           return { from, to };
@@ -2229,23 +2265,33 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
       const onPinMouseDown = React.useCallback<
         InstanceViewProps["onPinMouseDown"]
       >((ins, pinId, pinType) => {
-        
-        if (pinType === 'input') {
+        if (pinType === "input") {
           console.log(ins.id, pinId);
-          setDraggedConnection({to: connectionNode(ins.id, pinId), from: undefined});
+          setDraggedConnection({
+            to: connectionNode(ins.id, pinId),
+            from: undefined,
+          });
         } else {
-          setDraggedConnection({from: connectionNode(ins.id, pinId), to: undefined});
+          setDraggedConnection({
+            from: connectionNode(ins.id, pinId),
+            to: undefined,
+          });
         }
       }, []);
 
       const onPinMouseUp = React.useCallback<InstanceViewProps["onPinMouseUp"]>(
         (ins, pinId, pinType) => {
-
           if (draggedConnection) {
-            if (draggedConnection.from && pinType === 'input') {
-              onConnectionClose(draggedConnection.from, connectionNode(ins.id, pinId));
-            } else if (draggedConnection.to && pinType === 'output') {
-              onConnectionClose(connectionNode(ins.id, pinId), draggedConnection.to);
+            if (draggedConnection.from && pinType === "input") {
+              onConnectionClose(
+                draggedConnection.from,
+                connectionNode(ins.id, pinId)
+              );
+            } else if (draggedConnection.to && pinType === "output") {
+              onConnectionClose(
+                connectionNode(ins.id, pinId),
+                draggedConnection.to
+              );
             }
           }
           setDraggedConnection(null);
@@ -2253,20 +2299,31 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
         [draggedConnection, onConnectionClose]
       );
 
-      const onPartIoMouseDown = React.useCallback<PartIoViewProps['onMouseDown']> ((id, type) => {
+      const onPartIoMouseDown = React.useCallback<
+        PartIoViewProps["onMouseDown"]
+      >((id, type) => {
         // drag to connect disabled in part io pins as they conflict with the drag to move
         // whole concept of "Part IO" probably needs to be rethought
       }, []);
 
-      const onPartIoMouseUp = React.useCallback<PartIoViewProps['onMouseUp']> ((id, type) => {
-        if (draggedConnection) {
-          if (draggedConnection.from && type === 'output') {
-            onConnectionClose(draggedConnection.from, externalConnectionNode(id));
-          } else if (draggedConnection.to && type === 'input') {
-            onConnectionClose(externalConnectionNode(id), draggedConnection.to);
+      const onPartIoMouseUp = React.useCallback<PartIoViewProps["onMouseUp"]>(
+        (id, type) => {
+          if (draggedConnection) {
+            if (draggedConnection.from && type === "output") {
+              onConnectionClose(
+                draggedConnection.from,
+                externalConnectionNode(id)
+              );
+            } else if (draggedConnection.to && type === "input") {
+              onConnectionClose(
+                externalConnectionNode(id),
+                draggedConnection.to
+              );
+            }
           }
-        }
-      }, [draggedConnection, onConnectionClose]);
+        },
+        [draggedConnection, onConnectionClose]
+      );
 
       try {
         return (
@@ -2376,7 +2433,11 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
                   onDeleteInstance={onDeleteInstance}
                   key={ins.id}
                   forceShowMinimized={
-                    from || draggedConnection?.to?.insId  ===  ins.id ? "input" : to || draggedConnection?.from?.insId === ins.id ? "output" : undefined
+                    from || draggedConnection?.to?.insId === ins.id
+                      ? "input"
+                      : to || draggedConnection?.from?.insId === ins.id
+                      ? "output"
+                      : undefined
                   }
                   isConnectedInstanceSelected={selected.some((selInsId) =>
                     connections.some(({ from, to }) => {
@@ -2393,12 +2454,20 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
                   onGroupSelected={onGroupSelectedInternal}
                   onPinMouseDown={onPinMouseDown}
                   onPinMouseUp={onPinMouseUp}
+                  hadError={
+                    props.instancesWithErrors?.has(fullInsIdPath(ins.id)) ??
+                    false
+                  }
                 />
               ))}
               {maybeRenderSelectionBox()}
               {/* {maybeRenderEditGroupModal()} */}
               {renderPartOutputs()}
-              <MainInstanceEventsIndicator currentInsId={currentInsId} ancestorsInsIds={ancestorsInsIds} viewPort={viewPort}/>
+              <MainInstanceEventsIndicator
+                currentInsId={currentInsId}
+                ancestorsInsIds={ancestorsInsIds}
+                viewPort={viewPort}
+              />
               {quickAddMenuVisible ? (
                 <QuickAddMenu
                   targetPart={quickAddMenuVisible.targetPart}
@@ -2407,13 +2476,12 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
                   pos={quickAddMenuVisible.pos}
                   resolvedDependencies={resolvedDependencies}
                   part={part}
-                  onRequestImportables={props.onRequestImportables}
                   onAdd={onQuickAdd}
                   onClose={onCloseQuickAdd}
                 />
               ) : null}
               <div className="viewport-controls-and-help">
-                <Button small onClick={fitToScreen} minimal intent='primary'>
+                <Button small onClick={fitToScreen} minimal intent="primary">
                   Center
                 </Button>
                 <MemodSlider
@@ -2424,7 +2492,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
                   labelRenderer={sliderRenderer}
                   onChange={onZoom}
                   value={viewPort.zoom}
-                  />
+                />
                 {isRootInstance ? <HelpBubble /> : null}
               </div>
               {inlineCodeTarget ? (
@@ -2451,7 +2519,6 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
               to={to}
               from={from}
               hotkeysEnabled={isBoardInFocus}
-              onRequestImportables={props.onRequestImportables}
             />
           </div>
         );

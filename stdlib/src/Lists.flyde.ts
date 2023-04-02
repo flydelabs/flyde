@@ -1,4 +1,4 @@
-import { CodePart, partFromSimpleFunction, randomInt } from "@flyde/core";
+import { CodePart, partFromSimpleFunction } from "@flyde/core";
 
 const namespace = "Lists";
 
@@ -499,7 +499,7 @@ export const RemoveAt = partFromSimpleFunction({
   ],
   output: { name: "list", description: "The resulting list" },
   fn: (list, index) => {
-    return list.filter((i, idx) => idx !== index);
+    return list.filter((_, idx) => idx !== index);
   },
 });
 

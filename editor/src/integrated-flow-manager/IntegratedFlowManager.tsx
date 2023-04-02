@@ -17,7 +17,14 @@ import {
 } from "@flyde/remote-debugger/dist/client";
 
 import produce from "immer";
-import { createNewPartInstance, FlydeFlowEditorProps, usePorts } from "@flyde/flow-editor"; // ../../common/visual-part-editor/utils
+import {
+  createNewPartInstance,
+  DebuggerContextData,
+  DebuggerContextProvider,
+  DependenciesContextData,
+  DependenciesContextProvider,
+  usePorts,
+} from "@flyde/flow-editor"; // ../../common/visual-part-editor/utils
 import { vAdd } from "@flyde/flow-editor"; // ../../common/physics
 
 import { FlowEditor } from "@flyde/flow-editor"; // ../../common/flow-editor/FlowEditor
@@ -25,7 +32,7 @@ import { FlowEditor } from "@flyde/flow-editor"; // ../../common/flow-editor/Flo
 import { useDebouncedCallback } from "use-debounce";
 
 import { IntegratedFlowSideMenu } from "./side-menu";
-import { CustomPart, isInlineValuePart, PartDefinition } from "@flyde/core";
+import { isInlineValuePart, PartDefinition } from "@flyde/core";
 
 import { AppToaster, toastMsg } from "@flyde/flow-editor"; // ../../common/toaster
 
@@ -191,7 +198,6 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
     [props.integratedSource, debouncedSaveFile]
   );
 
-
   const onChangeFlow = React.useCallback(
     (changedFlow: FlydeFlow, type: FlydeFlowChangeType) => {
       console.log("onChangeFlow", type);
@@ -284,7 +290,9 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
     return [...importables];
   }, [ports, props.integratedSource]);
 
-  const onImportPart = React.useCallback<FlydeFlowEditorProps['onImportPart']>(
+  const onImportPart = React.useCallback<
+    DependenciesContextData["onImportPart"]
+  >(
     async (
       { part: importedPart, module },
       target
@@ -327,7 +335,6 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
         draft.imports = imports;
       });
 
-
       // yacky hack to make sure flow is only rerendered when the new part exists
       await new Promise((resolve) => setTimeout(resolve, 10));
 
@@ -364,42 +371,57 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
     });
   }, [importedParts]);
 
+  const debuggerContextValue = React.useMemo<DebuggerContextData>(
+    () => ({
+      onRequestHistory: _onRequestHistory,
+      debuggerClient,
+    }),
+    [_onRequestHistory, debuggerClient]
+  );
+
+  const dependenciesContextValue = React.useMemo<DependenciesContextData>(
+    () => ({
+      resolvedDependencies: currentResolvedDeps,
+      onImportPart,
+      onRequestImportables: queryImportables,
+    }),
+    [currentResolvedDeps, onImportPart, queryImportables]
+  );
+
   return (
     <div className={classNames("app", { embedded: isEmbedded })}>
-      <main>
-        <IntegratedFlowSideMenu
-          flowPath={props.integratedSource}
-          // editedPart={editedPart}
-          repo={repo}
-          flow={flow}
-          resolvedParts={repo}
-          // onDeletePart={onDeleteCustomPart}
-          onAdd={onAddPartToStage}
-          // onAddPart={onAddPart}
-          // onRenamePart={onRenamePart}
-          inspectedPin={inspectedPin}
-          selectedMenuItem={menuSelectedItem}
-          setSelectedMenuItem={setMenuSelectedItem}
-          editorDebugger={debuggerClient}
-          onFocusInstance={onFocusInstance}
-          onChangeFlow={onChangeFlow}
-        />
-        <div className={classNames("stage-wrapper", { running: false })}>
-          <FlowEditor
-            key={props.integratedSource}
-            state={editorState}
-            onChangeEditorState={setEditorState}
-            hideTemplatingTips={false}
-            onInspectPin={onInspectPin}
-            onRequestHistory={_onRequestHistory}
-            resolvedDependencies={currentResolvedDeps}
-            onQueryImportables={queryImportables}
-            onImportPart={onImportPart}
-            onExtractInlinePart={onExtractInlinePart}
-            ref={boardRef}
+      <DependenciesContextProvider value={dependenciesContextValue}>
+        <main>
+          <IntegratedFlowSideMenu
+            flowPath={props.integratedSource}
+            // editedPart={editedPart}
+            flow={flow}
+            // onDeletePart={onDeleteCustomPart}
+            onAdd={onAddPartToStage}
+            // onAddPart={onAddPart}
+            // onRenamePart={onRenamePart}
+            inspectedPin={inspectedPin}
+            selectedMenuItem={menuSelectedItem}
+            setSelectedMenuItem={setMenuSelectedItem}
+            editorDebugger={debuggerClient}
+            onFocusInstance={onFocusInstance}
+            onChangeFlow={onChangeFlow}
           />
-        </div>
-      </main>
+          <div className={classNames("stage-wrapper", { running: false })}>
+            <DebuggerContextProvider value={debuggerContextValue}>
+              <FlowEditor
+                key={props.integratedSource}
+                state={editorState}
+                onChangeEditorState={setEditorState}
+                hideTemplatingTips={false}
+                onInspectPin={onInspectPin}
+                onExtractInlinePart={onExtractInlinePart}
+                ref={boardRef}
+              />
+            </DebuggerContextProvider>
+          </div>
+        </main>
+      </DependenciesContextProvider>
     </div>
   );
 };

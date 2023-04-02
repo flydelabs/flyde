@@ -33,7 +33,12 @@ export const GetGlobalState: CodePart = {
   outputs: {
     value: { description: "Value of the key" },
   },
-  fn: ({ key, defaultValue }, { value }, { globalState }) => {
-    value.next(globalState.get(key) ?? defaultValue);
+  fn: ({ key, defaultValue }, { value }, { globalState, onError }) => {
+    const val = globalState.get(key);
+    if (val === undefined && defaultValue === undefined) {
+      onError(new Error(`Key ${key} is not set`));
+    } else {
+      value.next(globalState.get(key) ?? defaultValue);
+    }
   },
 };

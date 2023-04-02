@@ -241,11 +241,11 @@ export const addGroupedQueued: VisualPart = {
 export const optAdd: CodePart = {
   id: "optAdd",
   inputs: {
-    n1: { },
+    n1: {},
     n2: { mode: "required-if-connected" },
   },
   outputs: {
-    r: { },
+    r: {},
   },
   fn: ({ n1, n2 }, { r }) => {
     const n2Norm = typeof n2 === "undefined" ? 42 : n2;
@@ -256,11 +256,11 @@ export const optAdd: CodePart = {
 export const isEven: CodePart = {
   id: "is-even",
   inputs: {
-    item: { },
+    item: {},
     idx: { mode: "required-if-connected" },
   },
   outputs: {
-    r: { },
+    r: {},
   },
   fn: ({ item }, { r }) => {
     r?.next(item % 2 === 0);
@@ -388,13 +388,9 @@ export const accumulate = conciseCodePart({
     }
 
     state.set("list", list);
-
-    console.log('called', val, state);
-    
-
     if (list.length === state.get("count")) {
       console.log(list);
-      
+
       r?.next(list);
     }
   },
@@ -403,8 +399,8 @@ export const accumulate = conciseCodePart({
 export const accUntil: CodePart = {
   id: "accUntil",
   inputs: {
-    item: partInput('optional'),
-    until: partInput('optional'),
+    item: partInput("optional"),
+    until: partInput("optional"),
   },
   outputs: {
     r: partOutput(),

@@ -1,4 +1,3 @@
-
 $blink-duration: 6s; // change also BLINK_TIMEOUT in play-event.ts
 
 $runtime-processing-color: #88f8ff;
@@ -19,16 +18,16 @@ $runtime-active-color: #c8ffc7;
 }
 
 .base-part-view-wrapper[data-runtime="error"] .ins-view-inner {
-    animation: blink-error $blink-duration;
-//   box-shadow: 0px 0px 10px 2px rgba(99, 38, 24, 0.5);
-//   transition: background-color ease-in-out 0.05s, box-shadow ease-in-out 0.2s;
+  animation: blink-error $blink-duration;
+  //   box-shadow: 0px 0px 10px 2px rgba(99, 38, 24, 0.5);
+  //   transition: background-color ease-in-out 0.05s, box-shadow ease-in-out 0.2s;
 }
 
 .main-instance-events-indicator[data-runtime="processing"] {
   animation: pulse 1.5s infinite;
   background: $runtime-processing-color;
 
-  .status-text:after{ 
+  .status-text:after {
     content: "Processing";
   }
 }
@@ -36,7 +35,7 @@ $runtime-active-color: #c8ffc7;
 .main-instance-events-indicator[data-runtime="error"] {
   animation: blink-error $blink-duration * 2;
 
-  .status-text:after { 
+  .status-text:after {
     content: "Error";
   }
 }
@@ -49,19 +48,31 @@ $runtime-active-color: #c8ffc7;
   }
 }
 
-.pin-inner[data-runtime='active'],
-.part-io-view-inner[data-runtime='active'] {
+.pin:not(.error-pin) {
+  .pin-inner[data-runtime="active"],
+  .part-io-view-inner[data-runtime="active"] {
     animation: blink-done $blink-duration;
     // transition: background-color ease-in-out 0.05s, box-shadow ease-in-out 0.2s;
     // background: #C1FF91 !important;
     // box-shadow: 0px 0px 10px 2px rgba(10, 126, 0, 0.5);
   }
+}
 
-  .part-io-view-inner[data-runtime-queue],
-  .pin-inner[data-runtime-queue] {
-    background: #efc7ff !important; //88F8FF
-    animation: pulse 1.5s infinite;
+.pin.error-pin {
+  .pin-inner[data-runtime="active"],
+  .part-io-view-inner[data-runtime="active"] {
+    animation: blink-error $blink-duration * 2;
+    // transition: background-color ease-in-out 0.05s, box-shadow ease-in-out 0.2s;
+    // background: #C1FF91 !important;
+    // box-shadow: 0px 0px 10px 2px rgba(10, 126, 0, 0.5);
   }
+}
+
+.part-io-view-inner[data-runtime-queue],
+.pin-inner[data-runtime-queue] {
+  background: #efc7ff !important; //88F8FF
+  animation: pulse 1.5s infinite;
+}
 
 @keyframes blink-done {
   0% {
@@ -81,28 +92,26 @@ $runtime-active-color: #c8ffc7;
 }
 
 @keyframes blink-error {
-  
-    0% {
-      // background-color: $base-color;
-    }
-    3% {
-      background-color: #ff9999;
-      box-shadow: 0px 0px 10px 2px rgba(114, 0, 0, 0.429);
-    }
-    30% {
-      background-color: #ffa7a7;
-      box-shadow: 0px 0px 10px 2px rgba(242, 55, 49, 0.429);
-    }
-    100% {
-      // background-color: $base-color;
-    }
+  0% {
+    // background-color: $base-color;
   }
-
+  3% {
+    background-color: #ff9999;
+    box-shadow: 0px 0px 10px 2px rgba(114, 0, 0, 0.429);
+  }
+  30% {
+    background-color: #ffa7a7;
+    box-shadow: 0px 0px 10px 2px rgba(242, 55, 49, 0.429);
+  }
+  100% {
+    // background-color: $base-color;
+  }
+}
 
 @keyframes pulse {
   0% {
     transform: scale(0.98);
-    background-color: var(--pulse-color-1, #defdff), !important;
+    background-color: var(--pulse-color-1, #defdff) !important;
     box-shadow: 0px 0px 10px 2px rgba(0, 125, 198, 0.7);
 
     // box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.7);

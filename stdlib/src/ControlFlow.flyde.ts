@@ -163,7 +163,7 @@ export const Publish: CodePart = {
     value: { mode: "required" },
   },
   outputs: {},
-  fn: function (inputs, outputs, adv) {
+  fn: function (inputs, _, adv) {
     // magic here
     const nsKey = `${adv.ancestorsInsIds}__${inputs.key}`;
   
@@ -221,7 +221,7 @@ export const BooleanSplit: CodePart = {
     true: { description: "The value is true" },
     false: { description: "The value is false" },
   },
-  fn: function (inputs, outputs, adv) {
+  fn: function (inputs, outputs) {
     const { true: trueOutput, false: falseOutput } = outputs;
     const { value, trueValue, falseValue } = inputs;
     if (value) {
@@ -243,7 +243,7 @@ export const EmitOnTrigger: CodePart = {
   outputs: {
     result: { description: "The value emitted" },
   },
-  fn: function (inputs, outputs, adv) {
+  fn: function (inputs, outputs) {
     const { result } = outputs;
     const { value, trigger } = inputs;
     if (trigger !== undefined) {
@@ -294,7 +294,7 @@ export const Switch3: CodePart = {
         "The value emitted if the input value is not equal to any of the cases",
     },
   },
-  fn: function (inputs, outputs, adv) {
+  fn: function (inputs, outputs) {
     const {
       first,
       second,
@@ -349,9 +349,9 @@ export const Switch2: CodePart = {
         "The value emitted if the input value is not equal to any of the cases",
     },
   },
-  fn: function (inputs, outputs, adv) {
+  fn: function (inputs, outputs) {
     const { first, second, default: defaultOutput, outputValue } = outputs;
-    const { value, firstCase, secondCase, defaultCase } = inputs;
+    const { value, firstCase, secondCase } = inputs;
     if (value === firstCase) {
       first.next(outputValue ?? value);
     } else if (value === secondCase) {
@@ -412,7 +412,7 @@ export const Switch4: CodePart = {
         "The value emitted if the input value is not equal to any of the cases",
     },
   },
-  fn: function (inputs, outputs, adv) {
+  fn: function (inputs, outputs) {
     const {
       first,
       second,
@@ -421,7 +421,7 @@ export const Switch4: CodePart = {
       default: defaultOutput,
       outputValue,
     } = outputs;
-    const { value, firstCase, secondCase, thirdCase, fourthCase, defaultCase } =
+    const { value, firstCase, secondCase, thirdCase, fourthCase } =
       inputs;
     if (value === firstCase) {
       first.next(outputValue ?? value);
@@ -606,7 +606,7 @@ export const Equals: CodePart = {
       description: "Emits the value of a if a is not equal to b",
     },
   },
-  fn: (inputs, outputs, adv) => {
+  fn: (inputs, outputs) => {
     const { a, b } = inputs;
     const { true: trueOutput, false: falseOutput } = outputs;
 

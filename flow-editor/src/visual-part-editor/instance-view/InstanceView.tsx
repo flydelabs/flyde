@@ -147,7 +147,7 @@ export interface InstanceViewProps {
   onTogglePinLog: (insId: string, pinId: string, type: PinType) => void;
   onTogglePinBreakpoint: (insId: string, pinId: string, type: PinType) => void;
 
-  onInspectPin: (insId: string, pin: {id: string, type: PinType}) => void;
+  onInspectPin: (insId: string, pin: { id: string; type: PinType }) => void;
 
   onUngroup: (ins: PartInstance) => void;
   onDetachConstValue: (ins: PartInstance, pinId: string) => void;
@@ -181,6 +181,8 @@ export interface InstanceViewProps {
 
   onPinMouseDown: (ins: PartInstance, pinId: string, type: PinType) => void;
   onPinMouseUp: (ins: PartInstance, pinId: string, type: PinType) => void;
+
+  hadError: boolean;
 }
 
 export const InstanceView: React.FC<InstanceViewProps> =
@@ -222,13 +224,12 @@ export const InstanceView: React.FC<InstanceViewProps> =
       onDeleteInstance,
       onSetDisplayName,
       onPinMouseUp,
-      onPinMouseDown
+      onPinMouseDown,
     } = props;
 
     const { id } = instance;
 
-    const {onRequestHistory} = useDebuggerContext()
-
+    const { onRequestHistory } = useDebuggerContext();
 
     const theme = React.useMemo(() => {
       const icons = [["fab", "discord"], ["fab", "slack"], "bug", "cube"];
@@ -378,7 +379,9 @@ export const InstanceView: React.FC<InstanceViewProps> =
     const outputsToRender = os.filter(([k]) => {
       return (
         _visibleOutputs.includes(k) ||
-        ((selected || isConnectedInstanceSelected) && connectedOutputs.has(k))
+        ((selected || isConnectedInstanceSelected) &&
+          connectedOutputs.has(k)) ||
+        (k === ERROR_PIN_ID && props.hadError)
       );
     });
 
@@ -488,15 +491,17 @@ export const InstanceView: React.FC<InstanceViewProps> =
           onPinMouseUp(instance, pinId, pinType);
         }
       },
-      [instance, onPinMouseUp])
-    
+      [instance, onPinMouseUp]
+    );
+
     const _onPinMouseDown = React.useCallback(
       (pinId: string, pinType: PinType) => {
         if (onPinMouseDown) {
           onPinMouseDown(instance, pinId, pinType);
         }
       },
-      [instance, onPinMouseDown])
+      [instance, onPinMouseDown]
+    );
 
     const renderInputs = () => {
       return (
@@ -551,7 +556,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
               currentInsId={instance.id}
               ancestorsInsIds={props.ancestorsInsIds}
               connected={connectedOutputs.has(k)}
-            key={k}
+              key={k}
               type="output"
               id={k}
               minimized={selected ? false : outputsToRender.length === 1}

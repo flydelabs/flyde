@@ -10,15 +10,11 @@ export function resolveFlowDependencies(
   flowPath: string,
   mode: ResolveMode = "definition"
 ): ResolvedFlydeFlow {
-  const deps = resolveDependencies(flow, mode, flowPath);
+  const dependencies = resolveDependencies(flow, mode, flowPath);
 
-  const mainPart: ImportedPart = {
-    ...flow.part,
-    source: { path: flowPath, export: "n/a" },
-  }; // TODO - fix the need for imported visual parts to declare an export source.
   return {
     main: flow.part,
-    dependencies: { ...deps, [mainPart.id]: mainPart },
+    dependencies,
   };
 }
 

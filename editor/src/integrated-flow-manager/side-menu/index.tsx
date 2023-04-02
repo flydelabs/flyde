@@ -1,9 +1,4 @@
-import {
-
-  FlydeFlow,
-  PartDefinition,
-  PartDefRepo,
-} from "@flyde/core";
+import { FlydeFlow, PartDefinition } from "@flyde/core";
 import classNames from "classnames";
 import React, { useCallback } from "react";
 import { Resizable, ResizeCallbackData } from "react-resizable";
@@ -22,16 +17,10 @@ import { FoldersSection } from "./FoldersSection";
 import { FlydeFlowChangeType } from "@flyde/flow-editor"; // ../../../common/flow-editor/flyde-flow-change-type
 
 export interface IntegratedFlowSideMenuProps {
-  repo: PartDefRepo;
-
   flow: FlydeFlow;
   flowPath: string;
 
   onAdd: (part: PartDefinition) => void;
-  // onEditPart: (part: CustomPart) => void;
-  // onAddPart: (part: CustomPart) => void;
-  // onDeletePart: (part: CustomPart) => void;
-  // onRenamePart: (part: CustomPart) => void;
 
   onChangeFlow: (flow: FlydeFlow, type: FlydeFlowChangeType) => void;
 
@@ -44,7 +33,6 @@ export interface IntegratedFlowSideMenuProps {
 
   // onChangeDeployments: (data: RunningDeploymentData[]) => void;
   editorDebugger?: EditorDebuggerClient;
-  resolvedParts: PartDefRepo;
 }
 
 interface SideMenuBtnProps {
@@ -107,7 +95,7 @@ export const IntegratedFlowSideMenu: React.FC<IntegratedFlowSideMenuProps> = (
         return (
           <div className="menu-section add" style={{ width: `${width}px` }}>
             <div className="title">Add part</div>
-            <MenuAddSection onAdd={props.onAdd} repo={props.repo} />
+            <MenuAddSection onAdd={props.onAdd} />
           </div>
         );
       }

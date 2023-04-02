@@ -1,9 +1,12 @@
 export * from "./common";
-import { Pos } from "./common";
+import { Pos, OMap } from "./common";
 import {
+  CustomPart,
   VisualPart,
   InputPinsConfig,
   maybeGetStaticValuePartId,
+  Part,
+  PartDefinition,
 } from "./part";
 
 export * from "./connect";
@@ -15,6 +18,8 @@ export * from "./part";
 
 export * from "./part/get-part-with-dependencies";
 
+// export * from "./serdes";
+
 export * from "./inline-value-to-code-part";
 
 export * from "./web-project";
@@ -24,7 +29,7 @@ export * from "./flow-schema";
 export type InputStaticValue = string | number | object | VisualPart;
 
 export const isStaticValueVisualPart = (val: InputStaticValue): boolean => {
-  return val ? !!maybeGetStaticValuePartId(`${val}`) : false;
+  return !!val && !!maybeGetStaticValuePartId(`${val}`);
 };
 
 export interface InstanceViewData {
@@ -35,4 +40,8 @@ export interface InstanceViewData {
   inputConfig: InputPinsConfig;
 }
 
+export type PartRepo = OMap<Part>;
 
+export type PartDefRepo = OMap<PartDefinition>;
+
+export type CustomPartRepo = OMap<CustomPart>;

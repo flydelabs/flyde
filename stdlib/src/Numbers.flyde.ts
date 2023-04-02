@@ -311,7 +311,7 @@ export const LessThanOrEqual = partFromSimpleFunction({
 export const SumList = partFromSimpleFunction({
   id: "Sum List",
   namespace,
-  icon: "sum",
+  icon: "fa-plus",
   description: "Emits the sum of a list of numbers",
   inputs: [{ name: "list", description: "List of numbers" }],
   output: { name: "sum", description: "The sum of the numbers in list" },

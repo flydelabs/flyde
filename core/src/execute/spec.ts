@@ -51,7 +51,7 @@ describe("execute", () => {
       n2: { mode: "required-if-connected" },
     },
     outputs: {
-      r: {  },
+      r: {},
     },
     fn: ({ n1, n2 }, { r }, {}) => {
       const a = isDefined(n1) ? n1 : 42;
@@ -450,8 +450,8 @@ describe("execute", () => {
           v: partInput(),
         },
         outputs: {
-          r1: { },
-          r2: { },
+          r1: {},
+          r2: {},
         },
         fn: ({ v }, { r1, r2 }, {}) => {
           r1?.next(v);
@@ -512,11 +512,11 @@ describe("execute", () => {
       inputsPosition: {},
       outputsPosition: {},
       inputs: {
-        item: { },
+        item: {},
         idx: { mode: "optional" },
       },
       outputs: {
-        r: { },
+        r: {},
       },
       instances: [partInstance("a", isEven.id)],
       connections: [
@@ -596,7 +596,7 @@ describe("execute", () => {
         n.subject.next(2);
 
         assert.equal(s.callCount, 3);
-        
+
         assert.equal(
           s.calledWithMatch({
             type: DebuggerEventType.INPUT_CHANGE,
@@ -649,7 +649,6 @@ describe("execute", () => {
         assert.equal(s.callCount, 4);
 
         console.log(s.getCalls()[1]?.args[0]);
-        
 
         assert.equal(
           s.calledWithMatch({
@@ -708,7 +707,7 @@ describe("execute", () => {
                   valuePromise: Promise.resolve(insId ? Number(val) * 2 : val), // intercept only inside
                 };
               }
-              return;
+              return undefined;
             },
           },
         });
@@ -847,7 +846,7 @@ describe("execute", () => {
                   valuePromise: Promise.resolve(insId ? Number(val) * 2 : val), // intercept only inside
                 };
               }
-              return;
+              return undefined;
             },
           },
         });
@@ -874,7 +873,7 @@ describe("execute", () => {
           partsRepo: testRepo,
           _debugger: {
             onEvent: ({ val, type }) => {
-              if (type !== DebuggerEventType.INPUT_CHANGE) return;
+              if (type !== DebuggerEventType.INPUT_CHANGE) return undefined;
               return {
                 cmd: "intercept",
                 valuePromise: Promise.resolve(Number(val) * 2), // intercept only inside
@@ -1021,7 +1020,7 @@ describe("execute", () => {
           partsRepo: testRepo,
           _debugger: {
             onEvent: ({ val, type }) => {
-              if (type !== DebuggerEventType.OUTPUT_CHANGE) return;
+              if (type !== DebuggerEventType.OUTPUT_CHANGE) return undefined;
               // return undefined;
               const newVal = Number(val) * 2;
               return {
@@ -1150,7 +1149,10 @@ describe("execute", () => {
       });
 
       it("notifies with state count when inputs state is changed on sticky inputs", async () => {
-        const [item, ms] = dynamicPartInputs(2) as [DynamicPartInput, DynamicPartInput];
+        const [item, ms] = dynamicPartInputs(2) as [
+          DynamicPartInput,
+          DynamicPartInput
+        ];
         const r = dynamicOutput();
 
         ms.config = stickyInputPinConfig();

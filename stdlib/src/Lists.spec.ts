@@ -1,8 +1,7 @@
-import { delay, dynamicPartInput, eventually, execute, inlinePartInstance, randomInt, staticInputPinConfig, staticPartInput, VisualPart } from '@flyde/core';
-import {assert, expect} from 'chai'
+import { delay, dynamicPartInput, eventually, execute, staticPartInput } from '@flyde/core';
+import {assert} from 'chai'
 
-import { concisePart, spiedOutput } from '@flyde/core/dist/test-utils';
-import { Publish, Subscribe } from './ControlFlow.flyde';
+import { spiedOutput } from '@flyde/core/dist/test-utils';
 import { AccumulateValuesByCount, AccumulateValuesByTime } from './Lists.flyde';
 
 describe('Lists', () => {
@@ -45,7 +44,7 @@ describe('Lists', () => {
 
             const input = dynamicPartInput();
 
-            execute({part: AccumulateValuesByTime, outputs: {accumulated}, inputs: {value: input, time: staticPartInput(timeout)}, partsRepo: {}, parentInsId: 'bob'});
+            execute({part: AccumulateValuesByTime, outputs: {accumulated}, inputs: {value: input, time: staticPartInput(timeout)}, partsRepo: {}, ancestorsInsIds: 'bob'});
 
             // enters the list
             input.subject.next(1);

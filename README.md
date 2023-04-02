@@ -1,17 +1,41 @@
-# Visual Programming for the Modern Web
+# Flyde: Visual Flow-Based Programming
 
+[Flyde](https://flyde.dev) is a powerful visual flow-based programming toolkit that enables you to create and edit code using a visual flow-based programming interface. With Flyde, you can build applications quickly and intuitively, making it ideal for novice developers, non-developer technical teams, and experienced developers who want to prototype and test ideas fast.
 
-_"The world is asynchronous - don't try to force the systems we build into a synchronous framework!" - J. Paul Morisson RIP_
+![Flyde example](https://github.com/FlydeHQ/flyde-vscode/raw/main/media/walkthrough/run-flow.gif)
 
-Flyde is a visual functional reactive flow-based programming tool that can be used to build anything from CLI tools to bots and web apps built. It comes with a [VSCode extension](https://marketplace.visualstudio.com/items?itemName=flyde.flyde-vscode) that allows you to create Flyde flows from within your editor, and integrate them into your codebase using the runtime library.
+## Features
 
-Checkout the official website at [flyde.dev](https://www.flyde.dev) or the [examples](/examples) folder for more information
+- Intuitive flow-based programming interface for creating and editing programs
+- Real-time visual debugger for easy error handling and debugging
+- Integrates with your existing codebase and workflows
+- Supports TypeScript and JavaScript
+- Build custom parts visually, or use custom code
+- Pre-built templates to help you get started quickly
+- Split complex flows into sub-flows for better readability and maintainability
+- A rich standard library of parts for common tasks
 
-**Note:** Flyde is still in the early stages. Your feedback/bug report/idea/complaint is highly valuable.
+## Getting Started
 
----
+- Install the Flyde extension from the Visual Studio Code marketplace
+- Right-click on a folder in the Explorer and select "Flyde: New Visual Flow"
+- Choose a template and name your flow
+- Start creating your flow by adding parts, connecting them together, and writing code
 
-![A dad joke CLI tool built with Flyde](https://raw.githubusercontent.com/FlydeHQ/flyde/main/examples/dad-jokes-cli/preview.gif)
+## Use-cases
+
+Flyde is versatile and can be used for a wide range of applications. Some example use cases include:
+
+- Building an internal Slack bot
+- Creating a simple web scraper
+- Connecting several APIs together
+- Building CLI tools
+
+And many more!
+
+## Learn More
+
+Check out the official website at [https://flyde.dev](https://flyde.dev) for more information.
 
 ## License
 
@@ -28,24 +52,26 @@ In other words, using Flyde flows in your software is permitted without any limi
 
 ## FAQ
 
-### Is this production ready?
+### Is Flyde Production-Ready?
 
-No. Not yet. Flyde hasn't been truly battle-tested other than some internal use cases. However, if interest and usage grow there is absolutely no reason for Flyde to stay an experimental tool. If you're using Flyde for anything that is in production / has real traffic, please let me know!
+Flyde hasn't been extensively battle-tested beyond a few internal use cases. However, if interest and usage grow, there's no reason why Flyde should remain an experimental tool. If you're using Flyde for anything in production or with real traffic, please let me know!
 
-### Does it replace normal coding?
+### Does Flyde Replace Traditional Coding?
 
-No. There are many things textual coding shines at. Algorithms for example would be a nightmare to build using Flyde.
-However, orchestrating 3 async APIs with a bit of transformation logic using Flyde feels just natural.
-Flyde is built to integrate with your existing code, not replace it.
+No. Textual coding excels in many areas, such as implementing algorithms, which would be challenging to create using Flyde. However, orchestrating multiple async APIs with transformation logic feels natural with Flyde. Flyde is designed to integrate with your existing code, not replace it.
 
-### What about performance?
+### How is Flyde's Performance?
 
-Flyde is not optimized yet for runtime performance, nor was benchmarked. This means it should be slower than writing regular code. Just like JS is slower than C. That's the cost of abstractions. However, there are many possible ideas to improve its performance, so it's safe to say performance will improve drastically in the future.
+Flyde hasn't been optimized for runtime performance or benchmarked yet, so it should be slower than writing regular code. Just as JavaScript is slower than C, abstractions come at a cost. However, numerous ideas can improve performance, so it's safe to say performance will improve significantly in the future.
 
-### What languages are supported?
+### Which Languages are Supported?
 
-Currently, only JavaScript and TypeScript are supported. However, because Flyde's a higher-level abstraction, I see no real logical barrier in adding support for other languages in the future.
+Currently, only JavaScript and TypeScript are supported. However, since Flyde is a higher-level abstraction, there's no real logical barrier preventing support for other languages in the future.
 
-### Why did you build this?
+### What Inspired You to Build Flyde?
 
-Spending several years drawing and reviewing software design on whiteboards caused me to start dreaming of a small "run" button on the corner of the whiteboard. Modern development consisted of a lot of "glue" code, lots of concurrencies, asynchronicity, and third-party APIs. I find it hard to believe that developers will code the same way in 10 years, and I'm sure we're ready for the next abstraction. Flyde is my attempt to make that happen, and lower the barrier for developers to write complex software, just like Assembly did to [punched cards programming](https://en.wikipedia.org/wiki/Computer_programming_in_the_punched_card_era), and C did to Assembly.
+Years of drawing and reviewing software designs on whiteboards led me to dream of a "run" button in the corner of the whiteboard. Modern development involves a lot of "glue" code, concurrency, asynchronicity, and third-party APIs. I find it hard to believe that developers will continue coding the same way in 10 years, and I think we're ready for the next abstraction. Flyde is my attempt to make that happen and lower the barrier for developers to create complex software, just as Assembly did for punched card programming, and C did for Assembly.
+
+---
+
+_"The world is asynchronous - don't try to force the systems we build into a synchronous framework!" - [J. Paul Morisson](https://www.jpaulmorrison.com/) RIP_

@@ -1,5 +1,5 @@
 import { dynamicPartInput, eventually, execute, inlinePartInstance, randomInt, staticInputPinConfig, VisualPart } from '@flyde/core';
-import {assert, expect} from 'chai'
+import {assert} from 'chai'
 
 import { concisePart, spiedOutput } from '@flyde/core/dist/test-utils';
 import { Publish, Subscribe } from './ControlFlow.flyde';

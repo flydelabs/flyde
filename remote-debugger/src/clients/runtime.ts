@@ -1,6 +1,5 @@
 import {
   DebuggerCommand,
-  PartError,
   debugLogger,
   cappedArrayDebounce,
   DebuggerEvent,
@@ -19,14 +18,12 @@ import { normalizeData } from "./normalize-data";
 const debug = debugLogger("debugger-runtime-client");
 
 export type RuntimeDebuggerClient = {
-  onChange: (
-    cb: RemoteDebuggerCallback<{ }>
-  ) => RemoteDebuggerCancelFn;
+  onChange: (cb: RemoteDebuggerCallback<{}>) => RemoteDebuggerCancelFn;
   onInput: (
     cb: RemoteDebuggerCallback<{ pinId: string; value: any }>
   ) => RemoteDebuggerCancelFn;
 
-  emitEvent: (event: Omit<DebuggerEvent, 'time'>) => DebuggerCommand;
+  emitEvent: (event: Omit<DebuggerEvent, "time">) => DebuggerCommand;
 
   emitChangeAwk: () => void;
   emitChangeError: (error: Error) => void;
@@ -89,7 +86,7 @@ export const createRuntimeClient = (
       debug(`Emitting event ${event.type} change event of ${event.insId}`);
 
       event.val = normalizeData(event.val);
-      debouncedSendBatchedEvent.addItem({...event, time: Date.now()});
+      debouncedSendBatchedEvent.addItem({ ...event, time: Date.now() });
     },
     emitRuntimeReady: () => {
       socket.emit(DebuggerServerEventType.RUNTIME_READY, {});
@@ -116,21 +113,21 @@ export const createRuntimeClient = (
       socket.on("disconnect", cb);
       return () => socket.off("disconnect", cb);
     },
-    waitForConnection: (): Promise<void> => new Promise((res, rej) =>{
-      if (socket.connected) {
-        res();
-      } else {
-        socket.on("connect_error", (error: any) => {
-          rej(`Socket connect error: ${error}`);
-        });
-  
-        socket.on("connect", () => {
+    waitForConnection: (): Promise<void> =>
+      new Promise((res, rej) => {
+        if (socket.connected) {
           res();
-        });
-      }
-    })
+        } else {
+          socket.on("connect_error", (error: any) => {
+            rej(`Socket connect error: ${error}`);
+          });
+
+          socket.on("connect", () => {
+            res();
+          });
+        }
+      }),
   };
 
   return client;
-
 };

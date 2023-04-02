@@ -12,17 +12,23 @@ export type InitFlydeDevServerOptions = {
   editorStaticsRoot: string;
 };
 
-export const initFlydeDevServer = (options: InitFlydeDevServerOptions) => {
+export const initFlydeDevServer = (
+  options: InitFlydeDevServerOptions
+): (() => void) => {
   const root = isAbsolute(options.root)
     ? options.root
     : join(process.cwd(), options.root);
 
   console.log("running dev server on", options.port, "root", root);
 
-  runDevServer(Number(options.port), root, options.editorStaticsRoot);
+  const server = runDevServer(
+    Number(options.port),
+    root,
+    options.editorStaticsRoot
+  );
   console.log("running dev server on", options.port, "root", root);
 
-  setupFlowsWatcher(root, (flows) => {
+  const watcher = setupFlowsWatcher(root, (flows) => {
     const flowsArr = Array.from(flows.entries()).map(([k, v]) => ({
       relativePath: k,
       flow: v,
@@ -33,4 +39,9 @@ export const initFlydeDevServer = (options: InitFlydeDevServerOptions) => {
 
     writeFileSync(join(root, TYPINGS_TARGET), typings);
   });
+
+  return async function cleanDevServer() {
+    await server.close();
+    await watcher.close();
+  };
 };

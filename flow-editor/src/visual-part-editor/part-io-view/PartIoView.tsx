@@ -1,12 +1,18 @@
 import * as React from "react";
 
 // ;
-import { fullInsIdPath, getOutputName, InputMode, noop, PinType, Pos } from "@flyde/core";
+import {
+  fullInsIdPath,
+  getOutputName,
+  InputMode,
+  noop,
+  PinType,
+  Pos,
+} from "@flyde/core";
 import { BasePartView } from "../base-part-view";
 import classNames from "classnames";
 import { Menu, MenuItem, ContextMenu } from "@blueprintjs/core";
 import { usePrompt } from "../../flow-editor/ports";
-import { HistoryPayload } from "@flyde/remote-debugger";
 import { calcHistoryContent, useHistoryHelpers } from "../pin-view/helpers";
 import { getInputName } from "@flyde/core";
 import CustomReactTooltip from "../../lib/tooltip";
@@ -39,13 +45,9 @@ export interface PartIoViewProps {
   selected: boolean;
 
   description: string;
-  onSetDescription: (
-    type: PinType,
-    pin: string,
-    description: string
-  ) => void;
+  onSetDescription: (type: PinType, pin: string, description: string) => void;
 
-  onRequestHistory: (pinId: string, type: PinType) => Promise<HistoryPayload>;
+  // onRequestHistory: (pinId: string, type: PinType) => Promise<HistoryPayload>;
 }
 
 const INSIGHTS_TOOLTIP_INTERVAL = 500;
@@ -69,7 +71,7 @@ export const PartIoView: React.SFC<PartIoViewProps> = React.memo(
       description,
       onMouseUp,
       onMouseDown,
-      currentInsId
+      currentInsId,
     } = props;
 
     const { history, resetHistory, refreshHistory } = useHistoryHelpers(
@@ -212,13 +214,15 @@ export const PartIoView: React.SFC<PartIoViewProps> = React.memo(
     const _onMouseUp = React.useCallback(
       (e: React.MouseEvent) => {
         onMouseUp(id, type, e);
-      }, [id, onMouseUp, type] 
+      },
+      [id, onMouseUp, type]
     );
 
     const _onMouseDown = React.useCallback(
       (e: React.MouseEvent) => {
         onMouseDown(id, type, e);
-      }, [id, onMouseDown, type]
+      },
+      [id, onMouseDown, type]
     );
 
     return (
@@ -245,7 +249,15 @@ export const PartIoView: React.SFC<PartIoViewProps> = React.memo(
           data-html={true}
           data-for={id + props.currentInsId}
           className={classNames("part-io-view-inner", { closest, selected })}
-          id={getPinDomId({fullInsIdPath: fullInsIdPath(props.currentInsId, props.ancestorInsIds), pinId: id, pinType: type, isMain: true})}
+          id={getPinDomId({
+            fullInsIdPath: fullInsIdPath(
+              props.currentInsId,
+              props.ancestorInsIds
+            ),
+            pinId: id,
+            pinType: type,
+            isMain: true,
+          })}
           onClick={_onClick}
           onDoubleClick={onDblClickInner}
           onContextMenu={showMenu}

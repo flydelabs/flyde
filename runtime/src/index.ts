@@ -77,6 +77,9 @@ export function loadFlow<Inputs>(
               res(data);
             })();
           },
+          onBubbleError: (err) => {
+            rej(err);
+          },
           ...otherParams,
         }
       );
