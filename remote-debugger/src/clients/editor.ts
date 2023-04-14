@@ -2,7 +2,7 @@ import { debugLogger, DebuggerEvent, PinType } from "@flyde/core";
 
 import axios from "axios";
 
-import { io } from "socket.io-client";
+import { io as _io } from "socket.io-client";
 import {
   RemoteDebuggerCallback,
   RemoteDebuggerCancelFn,
@@ -23,10 +23,11 @@ export type GetHistoryDto = {
   type?: PinType;
   insId: string;
   limit?: number;
+  executionId: string;
 };
 
 export type EditorDebuggerClient = {
-  emitChange: (data: { }) => void;
+  emitChange: (data: {}) => void;
   emitBreakpointsChange: (insIdsAndPins: string[]) => void;
 
   onBatchedEvents: (
@@ -59,18 +60,18 @@ export type EditorDebuggerClient = {
 
 export const createEditorClient = (
   url: string,
-  deploymentId: string
+  executionId: string
 ): EditorDebuggerClient => {
   const urlParts = new URL(url);
 
-  const socket = io(urlParts.origin, {
+  const socket = _io(urlParts.origin, {
     path: `${
       urlParts.pathname === "/" ? "" : urlParts.pathname
     }/socket.io/editor`,
-    timeout: 30000
+    timeout: 30000,
   });
 
-  socket.emit("join-room-editor", deploymentId);
+  socket.emit("join-room-editor", executionId);
 
   return {
     emitChange: (data) => {
@@ -131,6 +132,7 @@ export const createEditorClient = (
             insId: dto.insId,
             pinId: dto.pinId,
             limit: dto.limit,
+            executionId,
           },
         })
         .then((r) => r.data);

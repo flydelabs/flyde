@@ -13,7 +13,7 @@
     "clean": "yarn workspaces foreach clean -y",
     "clean-dist": "yarn workspaces foreach exec \"rm -rf dist\"",
     "bump-all-patch": "yarn workspaces foreach -Avit --no-private version patch",
-    "publish-all": "yarn workspaces foreach -Avit --no-private npm publish --access public --tolerate-republish",
+    "publish-all": "./publish-all-with-otp.sh",
     "release": "yarn bump-all-patch && yarn publish-all"
   },
   "author": "",

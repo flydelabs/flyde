@@ -24,10 +24,14 @@ type DebugHistoryMap = Map<
   { total: number; lastSamples: DebuggerEvent[] }
 >;
 
-export type HistoryKey = { insId: string; pinId?: string | undefined };
+export type HistoryKey = {
+  executionId: string;
+  insId: string;
+  pinId?: string | undefined;
+};
 
 const historyKeyMap = <T extends HistoryKey>(dto: T) => {
-  return `${dto.insId}.${dto.pinId || "__no_pin"}`;
+  return `${dto.executionId}.${dto.insId}.${dto.pinId || "__no_pin"}`;
 };
 
 const emptyHistory = { total: 0, lastSamples: [] };
@@ -97,7 +101,7 @@ export const setupRemoteDebuggerServer = (
   });
 
   app.get("/history", (req, res) => {
-    const { insId, pinId, limit, pinType } = req.query;
+    const { insId, pinId, limit, executionId: _executionId } = req.query;
 
     const _limit = parseInt(limit as string) || 100;
 
@@ -111,7 +115,14 @@ export const setupRemoteDebuggerServer = (
       return;
     }
 
-    const payload: HistoryPayload = getHistory({ insId, pinId });
+    if (typeof _executionId !== "string") {
+      res.status(400).send("bad executionId");
+      return;
+    }
+
+    const executionId = decodeURIComponent(_executionId);
+
+    const payload: HistoryPayload = getHistory({ insId, pinId, executionId });
     const samples = payload.lastSamples.slice(0, _limit);
     res.json({ ...payload, lastSamples: samples });
   });
@@ -157,13 +168,13 @@ export const setupRemoteDebuggerServer = (
   });
 
   io.on("connection", (socket: any) => {
-    // socket.on("join-room-runtime", (roomId: string) => {
-    //   socket.join(roomId);
-    // })
+    socket.on("join-room-runtime", (roomId: string) => {
+      socket.join(roomId);
+    });
 
-    // socket.on("join-room-editor", (roomId: string) => {
-    //   socket.join(roomId);
-    // })
+    socket.on("join-room-editor", (roomId: string) => {
+      socket.join(roomId);
+    });
 
     socket.on(DebuggerServerEventType.CHANGE_EVENT_NAME, (data: {}) => {
       io.emit(DebuggerServerEventType.CHANGE_EVENT_NAME, data);
@@ -209,7 +220,8 @@ export const setupRemoteDebuggerServer = (
     );
 
     socket.on(DebuggerServerEventType.EVENTS_BATCH, (data: DebuggerEvent[]) => {
-      io.emit(DebuggerServerEventType.EVENTS_BATCH, data);
+      const executionId = data[0].executionId; // this assumes all events in the batch are from the same execution. TODO - check this assumption
+      io.to(executionId).emit(DebuggerServerEventType.EVENTS_BATCH, data);
 
       data.forEach((event) => {
         if (event.type === DebuggerEventType.ERROR) {
@@ -224,7 +236,7 @@ export const setupRemoteDebuggerServer = (
           event.type === DebuggerEventType.OUTPUT_CHANGE
         ) {
           const pinMapKey = historyKeyMap(event);
-          const insMapKey = historyKeyMap({ insId: event.insId });
+          const insMapKey = historyKeyMap({ ...event, pinId: undefined });
           const pinHistory = pinHistoryMap.get(pinMapKey) ?? {
             total: 0,
             lastSamples: [],

@@ -41,7 +41,6 @@ import { BasePartView } from "../base-part-view";
 import { isStaticInputPinConfig } from "@flyde/core";
 
 import { getInstanceDomId } from "../dom-ids";
-import { HistoryPayload } from "@flyde/remote-debugger";
 import {
   ClosestPinData,
   VisualPartEditor,
@@ -52,7 +51,6 @@ import { ContextMenu, IMenuItemProps, Menu, MenuItem } from "@blueprintjs/core";
 import ReactDOM from "react-dom";
 import { PartStyleMenu } from "./PartStyleMenu";
 import CustomReactTooltip from "../../lib/tooltip";
-import { useDebuggerContext } from "../../flow-editor/DebuggerContext";
 
 export const PIECE_HORIZONTAL_PADDING = 25;
 export const PIECE_CHAR_WIDTH = 11;
@@ -228,8 +226,6 @@ export const InstanceView: React.FC<InstanceViewProps> =
     } = props;
 
     const { id } = instance;
-
-    const { onRequestHistory } = useDebuggerContext();
 
     const theme = React.useMemo(() => {
       const icons = [["fab", "discord"], ["fab", "slack"], "bug", "cube"];

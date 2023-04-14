@@ -17,9 +17,9 @@ part:
           mode: static
           value: 0
       visibleInputs:
-        - val
         - a
         - b
+        - __trigger
       partId: Equals
       style:
         size: regular
@@ -35,9 +35,9 @@ part:
           mode: static
           value: 1
       visibleInputs:
-        - val
         - a
         - b
+        - __trigger
       partId: Equals
     - pos:
         x: 159.85901489257813
@@ -164,8 +164,8 @@ part:
       delayed: false
   inputsPosition:
     n:
-      x: -102.20515091834108
-      y: -214.0353040325851
+      x: -106.9362911466256
+      y: -160.41603410030714
   outputsPosition:
     result:
       x: -78.51037029153346

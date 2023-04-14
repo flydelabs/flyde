@@ -12,6 +12,7 @@
   "scripts": {
     "start": "ts-node-dev src/cli.ts --watch **/*.flyde",
     "joke": "ts-node src/cli.ts",
+    "test": "ts-node src/tester.ts",
     "build": "tsc -p .",
     "postinstall": "npm link @flyde/stdlib @flyde/runtime @flyde/core @flyde/resolver @flyde/remote-debugger"
   },

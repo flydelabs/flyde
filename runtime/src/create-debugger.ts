@@ -1,8 +1,9 @@
 import { Debugger } from "@flyde/core";
-import { createRuntimeClient, RuntimeDebuggerClient } from "@flyde/remote-debugger/dist/clients/runtime";
+import {
+  createRuntimeClient,
+  RuntimeDebuggerClient,
+} from "@flyde/remote-debugger/dist/clients/runtime";
 import { debugLogger } from "./logger";
-
-const defaultUrl = "http://localhost:8545";
 
 const withTimeout = <T>(promise: Promise<T>, timeout: number): Promise<T> => {
   return new Promise((res, rej) => {
@@ -10,26 +11,30 @@ const withTimeout = <T>(promise: Promise<T>, timeout: number): Promise<T> => {
       rej(new Error("Timeout"));
     }, timeout);
 
-    promise.then((data) => {
-      clearTimeout(timeoutId);
-      res(data);
-    }, e => rej(e));
+    promise.then(
+      (data) => {
+        clearTimeout(timeoutId);
+        res(data);
+      },
+      (e) => rej(e)
+    );
   });
 };
 
-export const createDebugger = async (debuggerUrl: string): Promise<Debugger> => {
-
-  debugLogger("Creating runtime debugger")
+export const createDebugger = async (
+  debuggerUrl: string,
+  executionId: string
+): Promise<Debugger> => {
+  debugLogger("Creating runtime debugger");
   let client: RuntimeDebuggerClient;
   try {
-
-    client = createRuntimeClient(debuggerUrl, "n/a");
+    client = createRuntimeClient(debuggerUrl, executionId);
     await withTimeout(client.waitForConnection(), 1000);
-    
+
     const _debugger: Debugger = {
       onEvent: (e) => {
         debugLogger(`Emitting event ${e.type} on ${e.insId}`);
-        client.emitEvent(e);
+        client.emitEvent({ ...e, executionId });
       },
       destroy: () => {
         return client.destroy();
@@ -42,5 +47,4 @@ export const createDebugger = async (debuggerUrl: string): Promise<Debugger> => 
     debugLogger("Error: Failed to create debugger %o", e);
     return undefined;
   }
-  
 };

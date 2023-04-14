@@ -21,6 +21,8 @@ export const FlowLoader: React.FC = (props) => {
   const [resolvedDependencies, setResolvedDependencies] =
     React.useState<ResolvedDependenciesDefinitions>();
 
+  const [executionId, setExecutionId] = React.useState<string>("n/a");
+
   const history = useHistory();
   const { search } = useLocation();
 
@@ -34,11 +36,12 @@ export const FlowLoader: React.FC = (props) => {
 
   const loadData = useCallback(async () => {
     if (bootstrapData) {
-      const { initialFlow, dependencies } = bootstrapData;
+      const { initialFlow, dependencies, executionId } = bootstrapData;
 
       setResolvedDependencies(dependencies);
       setFlow(initialFlow);
       setFileName("n/a");
+      setExecutionId(executionId);
     } else {
       const structure = await devServerClient.fileStructure();
 
@@ -80,38 +83,40 @@ export const FlowLoader: React.FC = (props) => {
       const flow = await ports.current.readFlow({ absPath: file.fullPath });
       setFlow(flow);
       setFileName(file.relativePath);
+      setExecutionId(file.fullPath);
     }
   }, [bootstrapData, devServerClient, fileName, setFileName]);
 
   useEffect(() => {
     setFlow(undefined);
     setResolvedDependencies(undefined);
-      loadData();
+    loadData();
   }, [fileName, loadData]);
 
   useEffect(() => {
     console.log("flow changed");
-  },[flow])
+  }, [flow]);
 
   useEffect(() => {
     console.log("resolvedDependencies changed");
-  },[resolvedDependencies])
+  }, [resolvedDependencies]);
 
   useEffect(() => {
     console.log("fileName changed");
-  },[fileName])
+  }, [fileName]);
 
   useEffect(() => {
     console.log("search changed");
-  },[search])
-  
+  }, [search]);
 
   // eslint-disable-next-line no-constant-condition
   if (flow && resolvedDependencies) {
     const params = new URLSearchParams(window.location.search);
     const locationPortIfNot3000 =
       location.port === "3000" ? null : location.port;
-    const port = Number(params.get("port") || locationPortIfNot3000) || (bootstrapData?.port ?? 8545);
+    const port =
+      Number(params.get("port") || locationPortIfNot3000) ||
+      (bootstrapData?.port ?? 8545);
 
     console.log("Rendering", fileName, flow.part);
 
@@ -123,6 +128,7 @@ export const FlowLoader: React.FC = (props) => {
           resolvedDependencies={resolvedDependencies}
           integratedSource={fileName}
           port={port}
+          executionId={executionId}
         />
       </PortsContext.Provider>
     );

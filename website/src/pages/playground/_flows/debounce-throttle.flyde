@@ -2,7 +2,6 @@ imports:
   "@flyde/stdlib":
     - Debounce
     - Throttle
-    - Merge
 part:
   instances:
     - pos:
@@ -17,9 +16,9 @@ part:
           mode: static
           value: 2000
       visibleInputs:
-        - i
         - value
         - wait
+        - __trigger
       partId: Debounce
       style:
         size: large
@@ -37,7 +36,6 @@ part:
           value: 1500
       visibleOutputs:
         - result
-        - available
         - __error
       partId: Throttle
       style:

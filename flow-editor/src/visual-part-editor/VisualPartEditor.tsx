@@ -330,9 +330,9 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
         VisualPartEditorProps["onInspectPin"]
       >(
         (insId, pin) => {
-          return onInspectPin(`${currentInsId}.${insId}`, pin);
+          return onInspectPin(insId, pin);
         },
-        [onInspectPin, currentInsId]
+        [onInspectPin]
       );
 
       const onConnectionClose = React.useCallback(
@@ -1381,7 +1381,6 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
           onUnGroup,
           part,
           repo,
-          resolvedDependencies,
           selected,
           to,
           viewPort,

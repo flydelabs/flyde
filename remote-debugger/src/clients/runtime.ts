@@ -40,7 +40,7 @@ export const DEFAULT_DT_SCALE = 1;
 
 export const createRuntimeClient = (
   url: string,
-  deploymentId: string
+  executionId: string
 ): RuntimeDebuggerClient => {
   const urlParts = new URL(url);
   const socket = io(urlParts.origin, {
@@ -51,7 +51,11 @@ export const createRuntimeClient = (
     reconnectionAttempts: 3,
   });
 
-  socket.emit("join-room-runtime", deploymentId);
+  socket.emit("join-room-runtime", executionId);
+
+  socket.on("connection", (socket) => {
+    socket.join(executionId);
+  });
 
   let breakpoints = new Set<string>();
 

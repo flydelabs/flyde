@@ -59,7 +59,8 @@ export function loadFlow<Inputs>(
     let destroy;
     const promise: any = new Promise(async (res, rej) => {
       const _debugger =
-        otherParams._debugger || (await createDebugger(debuggerUrl));
+        otherParams._debugger ||
+        (await createDebugger(debuggerUrl, fullFlowPath));
 
       debugLogger("Using debugger %o", _debugger);
       destroy = await simplifiedExecute(

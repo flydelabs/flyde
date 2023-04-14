@@ -58,8 +58,6 @@ export type FlydeFlowEditorProps = {
   state: FlowEditorState;
   onChangeEditorState: React.Dispatch<React.SetStateAction<FlowEditorState>>;
 
-  onInspectPin: (insId: string, pinId: string, pinType: PinType) => void;
-
   onNewEnvVar?: (name: string, val: any) => void;
 
   onExtractInlinePart: (ins: InlinePartInstance) => Promise<void>;
@@ -139,19 +137,22 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
     const { openFile } = usePorts();
 
     const onChangeFlow = React.useCallback(
-      (newFlow: FlydeFlow, changeType: FlydeFlowChangeType) => {
-        console.log("onChangeFlow", changeType.type);
+      (newFlow: Partial<FlydeFlow>, changeType: FlydeFlowChangeType) => {
+        console.info("onChangeFlow", changeType.type);
 
         if (changeType.type === "functional") {
           setUndoStack([
-            { flow: newFlow },
+            { flow: { ...state.flow, ...newFlow } },
             ...undoStack.slice(0, maxUndoStackSize),
           ]);
           setRedoStack([]);
         }
-        onChangeEditorState((state) => ({ ...state, flow: newFlow }));
+        onChangeEditorState((state) => ({
+          ...state,
+          flow: { ...state.flow, ...newFlow },
+        }));
       },
-      [onChangeEditorState, undoStack]
+      [onChangeEditorState, state.flow, undoStack]
     );
 
     const [clipboardData, setClipboardData] = React.useState<ClipboardData>({
@@ -209,13 +210,9 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
           setRedoStack([]);
         }
 
-        const changedProject = produce(flow, (draft) => {
-          draft.part = newPart;
-        });
-
-        onChangeFlow(changedProject, changeType);
+        onChangeFlow({ part: newPart }, changeType);
       },
-      [flow, onChangeFlow]
+      [onChangeFlow]
     );
 
     const onEditPart = React.useCallback(

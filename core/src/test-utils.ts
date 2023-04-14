@@ -1,12 +1,6 @@
 import { spy } from "sinon";
 import Sinon = require("sinon");
-import {
-  BasePart,
-  InputPinMap,
-  VisualPart,
-  CodePart,
-  PartInstance,
-} from "./.";
+import { BasePart, InputPinMap, VisualPart, CodePart, PartInstance } from "./.";
 
 import {
   DynamicOutput,
@@ -53,11 +47,11 @@ export const conciseBasePart = (concise: ConciseBasePart): BasePart => {
         throw new Error(`Bad input ${curr} in concise part`);
       }
 
-      return { ...prev, [clean]: partInput( mode as InputMode) };
+      return { ...prev, [clean]: partInput(mode as InputMode) };
     }, {}),
     outputs: (concise.outputs || []).reduce<OutputPinMap>((prev, curr) => {
       const clean = curr.replace("?", "");
-      return { ...prev, [clean]: partOutput( clean !== curr) };
+      return { ...prev, [clean]: partOutput(clean !== curr) };
     }, {}),
   };
 };
@@ -121,7 +115,7 @@ export const wrappedOnEvent = (
   type: DebuggerEventType,
   fn: Function
 ): Debugger["onEvent"] => {
-  return (event: Omit<DebuggerEvent, 'time'>) => {
+  return (event: Omit<DebuggerEvent, "time" | "executionId">) => {
     if (event.type === type) {
       fn(event);
     }

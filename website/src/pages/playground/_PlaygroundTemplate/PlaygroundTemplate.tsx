@@ -51,7 +51,7 @@ import { Resizable } from "react-resizable";
 import produce from "immer";
 import BrowserOnly from "@docusaurus/BrowserOnly";
 import { EditorDebuggerClient } from "@site/../remote-debugger/dist";
-import { EmbeddedFlyde } from "@site/src/components/EmbeddedFlyde";
+import { EmbeddedFlyde } from "@site/src/components/EmbeddedFlyde/EmbeddedFlyde";
 
 (global as any).vm2 = fakeVm;
 

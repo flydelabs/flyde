@@ -58,12 +58,13 @@ export type IntegratedFlowManagerProps = {
   integratedSource: string;
   resolvedDependencies: ResolvedDependenciesDefinitions;
   port: number;
+  executionId: string;
 };
 
 export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
   props
 ) => {
-  const { flow: initialFlow, resolvedDependencies } = props;
+  const { flow: initialFlow, resolvedDependencies, executionId } = props;
   const boardRef = React.useRef<any>();
 
   const ports = usePorts();
@@ -92,12 +93,6 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
     React.useState<EditorDebuggerClient>();
 
   const runtimePlayer = React.useRef<RuntimePlayer>();
-
-  const [inspectedPin, setInspectPin] = React.useState<{
-    insId: string;
-    pinId: string;
-    pinType: PinType;
-  }>();
 
   const [menuSelectedItem, setMenuSelectedItem] = React.useState<string>();
 
@@ -136,7 +131,7 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
 
   const connectToRemoteDebugger = React.useCallback(
     (url: string) => {
-      const newClient = createEditorClient(url, "integrated-mode");
+      const newClient = createEditorClient(url, executionId);
 
       if (debuggerClient) {
         debuggerClient.destroy();
@@ -224,14 +219,6 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
     props.integratedSource,
   ]);
 
-  const onInspectPin = React.useCallback(
-    (insId: string, pinId: string, pinType: PinType) => {
-      setMenuSelectedItem("analytics");
-      setInspectPin({ insId, pinId, pinType });
-    },
-    []
-  );
-
   const onAddPartToStage = (part: PartDefinition) => {
     const finalPos = vAdd({ x: 100, y: 0 }, editorState.boardData.lastMousePos);
     const newPartIns = createNewPartInstance(part.id, 0, finalPos, repo);
@@ -266,9 +253,10 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
         pinId,
         type: pinType,
         limit: 10,
+        executionId,
       });
     },
-    [debuggerClient]
+    [debuggerClient, executionId]
   );
 
   const queryImportables = React.useCallback(async (): Promise<
@@ -338,9 +326,6 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
         draft.imports = imports;
       });
 
-      // yacky hack to make sure flow is only rerendered when the new part exists
-      await new Promise((resolve) => setTimeout(resolve, 10));
-
       const newState = produce(editorState, (draft) => {
         draft.flow = newFlow;
         if (target?.selectAfterAdding && newPartIns) {
@@ -351,7 +336,7 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
       onChangeState(newState, functionalChange("imported-part"));
 
       toastMsg(
-        `Part ${importablePart.part.id} successfully imported from ${module}`
+        `Part ${importablePart.part.id} successfully imported from ${importablePart.module}`
       );
       return {
         ...resolvedDependencies,
@@ -408,7 +393,6 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
             onAdd={onAddPartToStage}
             // onAddPart={onAddPart}
             // onRenamePart={onRenamePart}
-            inspectedPin={inspectedPin}
             selectedMenuItem={menuSelectedItem}
             setSelectedMenuItem={setMenuSelectedItem}
             editorDebugger={debuggerClient}
@@ -422,7 +406,6 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
                 state={editorState}
                 onChangeEditorState={setEditorState}
                 hideTemplatingTips={false}
-                onInspectPin={onInspectPin}
                 onExtractInlinePart={onExtractInlinePart}
                 ref={boardRef}
               />

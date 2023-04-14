@@ -4,8 +4,9 @@ import { useSsr } from "usehooks-ts";
 
 export type BootstrapData = {
   initialFlow: FlydeFlow;
-  dependencies: ResolvedFlydeFlowDefinition['dependencies'];
+  dependencies: ResolvedFlydeFlowDefinition["dependencies"];
   port: number;
+  executionId: string;
 };
 
 export const useBootstrapData = (): BootstrapData | undefined => {

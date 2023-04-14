@@ -14,7 +14,7 @@ import {
   PinType,
 } from "@flyde/core";
 import { getPinDomId } from "../dom-ids";
-import { HistoryPayload, valuePreview } from "@flyde/remote-debugger";
+import { valuePreview } from "@flyde/remote-debugger";
 import CustomReactTooltip from "../../lib/tooltip";
 import { calcHistoryContent, useHistoryHelpers } from "./helpers";
 export const PIN_HEIGHT = 23;

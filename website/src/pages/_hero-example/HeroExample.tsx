@@ -1,5 +1,5 @@
 import { dynamicOutput, dynamicPartInput, noop } from "@site/../core/dist";
-import { EmbeddedFlyde } from "@site/src/components/EmbeddedFlyde";
+import { EmbeddedFlyde } from "@site/src/components/EmbeddedFlyde/EmbeddedFlyde";
 import React, { useRef } from "react";
 
 import helloWorldExample from "./Hero.flyde";
@@ -47,14 +47,14 @@ export const HeroExample: React.FC = () => {
           Online Playground
         </Link>
         <Button
-          className={`button button--success button${!didRun && ' nudge'}`}
+          className={`button button--success button${!didRun && " nudge"}`}
           onClick={onRunExample}
         >
           Run Example 👇
         </Button>
         <Link
           className="button button--primary"
-          href="https://marketplace.visualstudio.com/items?itemName=flydehq.flyde"
+          href="https://marketplace.visualstudio.com/items?itemName=flyde.flyde-vscode"
         >
           VSCode Extension
         </Link>
