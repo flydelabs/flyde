@@ -6,8 +6,7 @@ import { EditorDebuggerClient } from "@site/../remote-debugger/dist";
 export const createRuntimeClientDebugger = (
   runtimePlayer: RuntimePlayer,
   historyPlayer: HistoryPlayer
-): Debugger & Pick<EditorDebuggerClient, 'onBatchedEvents'> => {
-
+): Debugger & Pick<EditorDebuggerClient, "onBatchedEvents"> => {
   const listeners = new Set<(events: DebuggerEvent[]) => void>();
 
   return {
@@ -19,9 +18,9 @@ export const createRuntimeClientDebugger = (
 
       listeners.forEach((cb) => cb([fullEvent]));
     },
-    onBatchedEvents: (cb :(events: DebuggerEvent[]) => void) => {
+    onBatchedEvents: (cb: (events: DebuggerEvent[]) => void) => {
       listeners.add(cb);
       return () => listeners.delete(cb);
-    }
-  }
+    },
+  };
 };

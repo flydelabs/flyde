@@ -134,7 +134,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
       return undefined;
     }, [debuggerClient]);
 
-    const { openFile } = usePorts();
+    const { openFile, reportEvent } = usePorts();
 
     const onChangeFlow = React.useCallback(
       (newFlow: Partial<FlydeFlow>, changeType: FlydeFlowChangeType) => {
@@ -258,6 +258,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
       async (cmd: OmniBarCmd) => {
         switch (cmd.type) {
           case OmniBarCmdType.ADD:
+            reportEvent("addPart", { partId: cmd.data, source: "omnibar" });
             return onAddPartInstance(cmd.data);
           case OmniBarCmdType.ADD_VALUE:
             // const pos = domToViewPort(
@@ -289,6 +290,10 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
               draft.part.instances.push(newPartIns);
             });
             onChangeFlow(newValue, functionalChange("add-imported-part"));
+            reportEvent("addPart", {
+              partId: cmd.data.part.id,
+              source: "omnibar",
+            });
             break;
           }
           default:
@@ -301,9 +306,10 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
       },
       [
         hideOmnibar,
+        reportEvent,
         onAddPartInstance,
-        editorBoardData.lastMousePos,
         onImportPart,
+        editorBoardData.lastMousePos,
         resolvedDependencies,
         flow,
         onChangeFlow,

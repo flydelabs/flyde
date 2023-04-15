@@ -80,7 +80,11 @@ export const AddPartMenu: React.FC<AddPartMenuProps> = (props) => {
     [onAddPart, onClose]
   );
 
-  const { onInstallRuntimeRequest } = usePorts();
+  const { onInstallRuntimeRequest, reportEvent } = usePorts();
+
+  useEffect(() => {
+    reportEvent("addPartMenuOpen", {});
+  }, [reportEvent]);
 
   useEffect(() => {
     setVisibleImportables(

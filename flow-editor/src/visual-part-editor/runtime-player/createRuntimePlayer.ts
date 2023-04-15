@@ -1,4 +1,9 @@
-import { DebuggerEvent, DebuggerEventType, debugLogger, ROOT_INS_ID } from "@flyde/core";
+import {
+  DebuggerEvent,
+  DebuggerEventType,
+  debugLogger,
+  ROOT_INS_ID,
+} from "@flyde/core";
 import { playEvent } from "./play-event";
 
 const debug = debugLogger("runtime-player");
@@ -31,7 +36,11 @@ export const createRuntimePlayer = (): RuntimePlayer => {
       debug(`Playing event`, e);
       playEvent(e);
 
-      if (e.insId === ROOT_INS_ID && e.type === DebuggerEventType.PROCESSING_CHANGE && e.val === false) {
+      if (
+        e.insId === ROOT_INS_ID &&
+        e.type === DebuggerEventType.PROCESSING_CHANGE &&
+        e.val === false
+      ) {
         debug(`Main instance is done processing, clearing runtime UI`, e);
         clear();
       }
@@ -62,8 +71,6 @@ export const createRuntimePlayer = (): RuntimePlayer => {
   };
 
   const clear = () => {
-    queue = [];
-
     document.querySelectorAll("[data-runtime]").forEach((elem) => {
       elem.removeAttribute("data-runtime");
     });
@@ -71,6 +78,7 @@ export const createRuntimePlayer = (): RuntimePlayer => {
     document.querySelectorAll("[data-runtime-queue]").forEach((elem) => {
       elem.removeAttribute("data-runtime-queue");
     });
+    queue = [];
   };
 
   return {

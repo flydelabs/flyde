@@ -1,9 +1,9 @@
 import { createContext, useContext } from "react";
-import {
-  FlydeFlow,
-  ResolvedDependenciesDefinitions,
-} from "@flyde/core";
+import { FlydeFlow, ResolvedDependenciesDefinitions } from "@flyde/core";
 import { Importables, FlowJob } from "@flyde/dev-server";
+import { ReportEvent } from "./analytics";
+
+export * from "./analytics";
 
 export type CancelFn = () => void;
 
@@ -28,13 +28,18 @@ export interface EditorPorts {
   }) => Promise<Importables>;
 
   onExternalFlowChange: (
-    cb: (data: { flow: FlydeFlow; deps: ResolvedDependenciesDefinitions }) => void
+    cb: (data: {
+      flow: FlydeFlow;
+      deps: ResolvedDependenciesDefinitions;
+    }) => void
   ) => CancelFn;
 
   onInstallRuntimeRequest: () => Promise<void>;
 
   onRunFlow: (inputs: Record<string, any>) => Promise<FlowJob>;
   onStopFlow: () => Promise<void>;
+
+  reportEvent: ReportEvent;
 }
 
 const throwsNotImplemented: any = async () => {
@@ -55,6 +60,7 @@ export const defaultPorts: EditorPorts = {
   onInstallRuntimeRequest: throwsNotImplemented,
   onRunFlow: throwsNotImplemented,
   onStopFlow: throwsNotImplemented,
+  reportEvent: throwsNotImplemented,
 };
 
 export const PortsContext = createContext<EditorPorts>(defaultPorts);

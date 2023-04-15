@@ -1,23 +1,7 @@
 import { EditorPorts } from "@flyde/flow-editor";
-import {slug} from "cuid";
+import { slug } from "cuid";
 
 export type EditorPortType = keyof EditorPorts;
-
-type Awaited<T> = T extends PromiseLike<infer U> ? U : T;
-
-type EmitterFn = (...params: any) => Promise<any>;
-type ListenerFn = (cb: (...params: any) => Promise<any>) => void;
-
-type PortFn = EmitterFn | ListenerFn;
-
-type PortConfig<T extends PortFn> = {
-  request: Parameters<T>;
-  response: ReturnType<Awaited<T>>;
-};
-
-type PostMsgConfig = {
-  [Property in keyof EditorPorts]: PortConfig<EditorPorts[Property]>;
-};
 
 let vscodeApi: any;
 
@@ -95,10 +79,13 @@ export const createVsCodePorts = (): EditorPorts => {
       };
     },
     onRunFlow: async (inputs) => {
-      return postMessageCallback("onRunFlow", {inputs});
+      return postMessageCallback("onRunFlow", { inputs });
     },
     onStopFlow: async () => {
       return postMessageCallback("onStopFlow", {});
-    }
+    },
+    reportEvent: (name, data) => {
+      return postMessageCallback("reportEvent", { name, data });
+    },
   };
 };

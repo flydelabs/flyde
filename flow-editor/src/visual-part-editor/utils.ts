@@ -1,5 +1,5 @@
 import * as immer from "immer";
-import cuid from 'cuid';
+import cuid from "cuid";
 import { PART_HEIGHT } from "./VisualPartEditor";
 import {
   Pos,
@@ -23,10 +23,9 @@ import {
   Rect,
   calcCenter,
   fullInsIdPath,
+  InputPinConfig,
 } from "@flyde/core";
-import {
-  calcPinPosition,
-} from "./connection-view/calc-pin-position";
+import { calcPinPosition } from "./connection-view/calc-pin-position";
 import { Size } from "../utils";
 import {
   isOptionalType,
@@ -47,11 +46,24 @@ import { getVisibleInputs, getVisibleOutputs } from "./instance-view";
 export const emptyObj = {}; // for immutability
 export const emptyList = []; // for immutability
 
-export const toggleStickyPin = (
+export function getInstancePinConfig(
+  part: VisualPart,
+  insId: string,
+  pinId: string
+): InputPinConfig {
+  const ins = part.instances.find((ins) => ins.id === insId);
+  if (!ins) {
+    throw new Error(`Instance ${insId} not found`);
+  }
+  const config = ins.inputConfig || emptyObj;
+  return config[pinId] ?? queueInputPinConfig();
+}
+
+export const changePinConfig = (
   value: VisualPart,
   insKey: string,
   pinId: string,
-  forceValue?: boolean
+  newConfig: InputPinConfig
 ) => {
   return immer.produce(value, (draft) => {
     const { instances } = draft;
@@ -59,13 +71,9 @@ export const toggleStickyPin = (
     if (!instance) {
       throw new Error("blah");
     }
-    const config = instance.inputConfig || {};
-    const currConfig = config[pinId] || queueInputPinConfig();
-    if (isStickyInputPinConfig(currConfig)) {
-      config[pinId] = queueInputPinConfig();
-    } else {
-      config[pinId] = stickyInputPinConfig();
-    }
+    const config = instance.inputConfig ?? {};
+    config[pinId] = newConfig;
+
     draft.instances = instances.map((itrIns) =>
       itrIns === instance ? { ...instance, inputConfig: config } : itrIns
     );
@@ -90,8 +98,8 @@ export const findClosestPin = (
       pinType: "input",
       boardPos,
       viewPort,
-      isMain: true
-    })
+      isMain: true,
+    });
     return { id: pinId, type: "input", pos, ins: rootInstance };
   });
 
@@ -103,8 +111,8 @@ export const findClosestPin = (
       pinType: "output",
       boardPos,
       viewPort,
-      isMain: true
-    })
+      isMain: true,
+    });
     return { id: pinId, type: "output", pos, ins: rootInstance };
   });
 
@@ -124,7 +132,7 @@ export const findClosestPin = (
         pinType: "input",
         boardPos,
         viewPort,
-        isMain: false
+        isMain: false,
       }),
       id,
     }));
@@ -138,7 +146,7 @@ export const findClosestPin = (
         pinType: "output",
         boardPos,
         viewPort,
-        isMain: false
+        isMain: false,
       }),
       id,
     }));
@@ -264,12 +272,7 @@ export const createNewPartInstance = (
     return acc;
   }, {});
 
-  const ins = partInstance(
-    cuid(),
-    part.id,
-    inputsConfig,
-    { x: 0, y: 0 }
-  );
+  const ins = partInstance(cuid(), part.id, inputsConfig, { x: 0, y: 0 });
   const width = calcPartWidth(ins, part);
 
   const { x, y } = lastMousePos;
@@ -427,7 +430,6 @@ export const calcPartsPositions = (
     return calcPoints(w, h, pos, "input_" + curr);
   });
 
-
   const outputsCenter = okeys(part.outputs).map((curr) => {
     const w = calcIoPartWidth(curr);
     const h = PART_HEIGHT;
@@ -542,7 +544,7 @@ export const fitViewPortToPart = (
   const height = size.height + verPadding;
 
   const widthFit = vpSize.width / width; // i.e 2 if viewPort is twice as large, 0.5 is viewPort is half
-  const heightFit = vpSize.height / height;  
+  const heightFit = vpSize.height / height;
 
   const fitToGoBy = Math.min(widthFit, heightFit);
 

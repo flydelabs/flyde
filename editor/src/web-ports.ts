@@ -42,15 +42,18 @@ export const createWebPorts = ({
       return () => {};
     },
     onInstallRuntimeRequest: async () => {
-      alert('Not implemented');
+      alert("Not implemented");
     },
     onRunFlow: async () => {
-      alert('Not implemented');
+      alert("Not implemented");
       return {} as any;
     },
     onStopFlow: async () => {
-      alert('Not implemented');
+      alert("Not implemented");
       return {} as any;
-    }
+    },
+    reportEvent: (name, data) => {
+      console.info(`Analytics event: ${name}`, data);
+    },
   };
 };

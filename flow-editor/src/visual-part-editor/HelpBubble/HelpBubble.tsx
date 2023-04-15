@@ -2,18 +2,14 @@ import {
   Classes,
   Dialog,
   H4,
-  HotkeysDialog2,
-  IHotkeysDialogProps,
   Menu,
   MenuDivider,
   MenuItem,
-  setHotkeysDialogProps,
 } from "@blueprintjs/core";
 import { HotkeysDialog2Props } from "@blueprintjs/core/lib/esm/components/hotkeys/hotkeysDialog2";
 import { Hotkey } from "@blueprintjs/core/lib/esm/components/hotkeys/hotkey";
 
 import { IPopover2Props, Popover2 } from "@blueprintjs/popover2";
-import classNames from "classnames";
 
 import React from "react";
 import {
@@ -23,6 +19,7 @@ import {
 
 import CustomReactTooltip from "../../lib/tooltip";
 import { helpIcon } from "./icon";
+import { usePorts } from "../../flow-editor/ports";
 
 export interface HelpBubbleProps {}
 
@@ -63,6 +60,8 @@ export const HelpBubble: React.FC<HelpBubbleProps> = () => {
     return groupsOrder.indexOf(b[0]) - groupsOrder.indexOf(a[0]);
   });
 
+  const { reportEvent } = usePorts();
+
   const hotkeysModal = (
     <Dialog
       isOpen={hotkeysModalOpen}
@@ -83,15 +82,23 @@ export const HelpBubble: React.FC<HelpBubbleProps> = () => {
 
   const menu = (
     <Menu>
-      <MenuItem text="Hotkeys" onClick={() => setHotkeysModalOpen(true)} />
+      <MenuItem
+        text="Hotkeys"
+        onClick={() => {
+          setHotkeysModalOpen(true);
+          reportEvent("helpMenuItem", { item: "hotkeys" });
+        }}
+      />
       <MenuItem
         text="Documentation"
+        onClick={() => reportEvent("helpMenuItem", { item: "documentation" })}
         href="https://www.flyde.dev/docs"
         target="_blank"
       />
       <MenuDivider />
       <MenuItem
         text="Discord"
+        onClick={() => reportEvent("helpMenuItem", { item: "discord" })}
         href="https://discord.gg/x7t4tjZQP8"
         target="_blank"
       />
@@ -100,7 +107,11 @@ export const HelpBubble: React.FC<HelpBubbleProps> = () => {
   return (
     <div className="help-bubble" data-tip="Help">
       <CustomReactTooltip />
-      <Popover2 content={menu} modifiers={popperModifiers}>
+      <Popover2
+        content={menu}
+        modifiers={popperModifiers}
+        onOpened={() => reportEvent("helpMenuOpen", {})}
+      >
         <div dangerouslySetInnerHTML={{ __html: helpIcon }} />
       </Popover2>
       {hotkeysModal}

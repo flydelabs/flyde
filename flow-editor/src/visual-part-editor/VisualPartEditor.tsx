@@ -37,6 +37,8 @@ import {
   externalConnectionNode,
   ResolvedDependenciesDefinitions,
   fullInsIdPath,
+  isStickyInputPinConfig,
+  stickyInputPinConfig,
 } from "@flyde/core";
 import { InstanceView, InstanceViewProps } from "./instance-view/InstanceView";
 import {
@@ -47,7 +49,6 @@ import { entries, isDefined, preventDefaultAnd, Size } from "../utils";
 import { useBoundingclientrect, useDidMount } from "rooks";
 
 import {
-  toggleStickyPin,
   findClosestPin,
   getSelectionBoxRect,
   emptyObj,
@@ -66,6 +67,8 @@ import {
   animateViewPort,
   logicalPosToRenderedPos,
   getMiddleOfViewPort,
+  getInstancePinConfig,
+  changePinConfig,
 } from "./utils";
 
 import { produce } from "immer";
@@ -104,7 +107,7 @@ import { InlineCodeModal } from "../flow-editor/inline-code-modal";
 import { createInlineValuePart } from "../flow-editor/inline-code-modal/inline-code-to-part";
 import _ from "lodash";
 import { groupSelected } from "../group-selected";
-import { useConfirm, usePrompt } from "../flow-editor/ports";
+import { useConfirm, usePorts, usePrompt } from "../flow-editor/ports";
 import classNames from "classnames";
 import { pasteInstancesCommand } from "./commands/paste-instances";
 
@@ -246,6 +249,8 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
 
       const { onImportPart } = useDependenciesContext();
 
+      const { reportEvent } = usePorts();
+
       const parentViewport = props.parentViewport || defaultViewPort;
 
       const [repo, setRepo] = useState({
@@ -336,7 +341,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
       );
 
       const onConnectionClose = React.useCallback(
-        (from: ConnectionNode, to: ConnectionNode) => {
+        (from: ConnectionNode, to: ConnectionNode, source: string) => {
           const newPart = handleConnectionCloseEditorCommand(part, {
             from,
             to,
@@ -355,8 +360,9 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
 
           onChange(maybeDetachedPart, functionalChange("close-connection"));
           onChangeBoardData({ from: undefined, to: undefined });
+          reportEvent("createConnection", { source });
         },
-        [instances, onChange, onChangeBoardData, part]
+        [instances, onChange, onChangeBoardData, part, reportEvent]
       );
 
       const onGroupSelectedInternal = React.useCallback(async () => {
@@ -372,7 +378,9 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
         onChange(currentPart, functionalChange("group part"));
 
         toastMsg("Part grouped");
-      }, [_prompt, boardData.selected, onChange, part]);
+
+        reportEvent("groupSelected", { count: boardData.selected.length });
+      }, [_prompt, boardData.selected, onChange, part, reportEvent]);
 
       useEffect(() => {
         if (lastSelectedId) {
@@ -428,9 +436,9 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
           } else {
             //close the connection if we have a target match
             if (type === "input" && currTo) {
-              onConnectionClose(newPin, currTo);
+              onConnectionClose(newPin, currTo, "partIoClick");
             } else if (currFrom) {
-              onConnectionClose(currFrom, newPin);
+              onConnectionClose(currFrom, newPin, "partIoClick");
             }
           }
         },
@@ -471,7 +479,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             ) {
               onChangeBoardData({ to: undefined });
             } else if (from) {
-              onConnectionClose(from, to);
+              onConnectionClose(from, to, "pinClick");
             } else {
               onChangeBoardData({ to, selected: [] });
             }
@@ -487,7 +495,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             ) {
               onChangeBoardData({ from: undefined });
             } else if (to) {
-              onConnectionClose(from, to);
+              onConnectionClose(from, to, "pinClick");
             } else {
               onChangeBoardData({ from, selected: [] });
             }
@@ -864,12 +872,20 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
 
       const onToggleSticky = React.useCallback(
         (ins: PartInstance, pinId: string, forceValue?: boolean) => {
+          const currConfig = getInstancePinConfig(part, ins.id, pinId);
+          const newConfig = isStickyInputPinConfig(currConfig)
+            ? queueInputPinConfig()
+            : stickyInputPinConfig();
           onChange(
-            toggleStickyPin(part, ins.id, pinId, forceValue),
+            changePinConfig(part, ins.id, pinId, newConfig),
             functionalChange("toggle-sticky")
           );
+          reportEvent("togglePinSticky", {
+            isSticky: isStickyInputPinConfig(newConfig),
+          });
         },
-        [onChange, part]
+
+        [onChange, part, reportEvent]
       );
 
       const duplicate = React.useCallback(() => {
@@ -1205,8 +1221,9 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
           });
 
           onChange(newValue, functionalChange("add new io pin"));
+          reportEvent("addIoPin", { type });
         },
-        [_prompt, part, onChange]
+        [_prompt, part, onChange, reportEvent]
       );
 
       const editCompletionOutputs = React.useCallback(async () => {
@@ -1219,8 +1236,11 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
           });
 
           onChange(newValue, functionalChange("change part completions"));
+          reportEvent("editCompletionOutputs", {
+            count: newVal ? newVal.split(",").length : 0,
+          });
         }
-      }, [_prompt, onChange, part]);
+      }, [_prompt, onChange, part, reportEvent]);
 
       const editReactiveInputs = React.useCallback(async () => {
         const curr = part.reactiveInputs?.join(",");
@@ -1232,8 +1252,11 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
           });
 
           onChange(newValue, functionalChange("change reactive inputs"));
+          reportEvent("editReactiveInputs", {
+            count: newVal ? newVal.split(",").length : 0,
+          });
         }
-      }, [_prompt, onChange, part]);
+      }, [_prompt, onChange, part, reportEvent]);
 
       const editPartDescription = React.useCallback(async () => {
         const description = await _prompt(`Description?`, part.description);
@@ -1250,8 +1273,9 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             draft.defaultStyle = style;
           });
           onChange(newPart, functionalChange("change default style"));
+          reportEvent("changeStyle", { isDefault: true });
         },
-        [onChange, part]
+        [onChange, part, reportEvent]
       );
 
       const onRenameIoPin = React.useCallback(
@@ -1294,6 +1318,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
               onChange(newValue, functionalChange("remove-instances"));
 
               toastMsg(`Removed ${selected.length} instances(s)`);
+              reportEvent("deleteInstances", { count: selected.length });
               break;
             }
             case ActionType.Inspect: {
@@ -1305,6 +1330,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
                   id: pinId,
                 });
               }
+              reportEvent("openInspectMenu", { source: "actionMenu" });
               break;
             }
             case ActionType.Group: {
@@ -1318,8 +1344,11 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
                 (ins) => ins.id === selected[0]
               );
               onUnGroup(instance);
-              const insPart = getPartDef(instance, repo);
+              const insPart = getPartDef(instance, repo) as VisualPart;
               toastMsg(`Ungrouped inline part ${insPart.id}`);
+              reportEvent("unGroupPart", {
+                instancesCount: insPart.instances.length,
+              });
               break;
             }
             case ActionType.AddInlineValue: {
@@ -1327,6 +1356,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
                 type: "new-floating",
                 pos: lastMousePos.current,
               });
+              reportEvent("addValueModalOpen", { source: "actionMenu" });
               break;
             }
             case ActionType.AddPart: {
@@ -1362,6 +1392,10 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
                 toastMsg(
                   `Part ${importablePart.part.id} successfully imported from ${importablePart.module}`
                 );
+                reportEvent("addPart", {
+                  partId: importablePart.part.id,
+                  source: "actionMenu",
+                });
               })();
               break;
             }
@@ -1381,6 +1415,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
           onUnGroup,
           part,
           repo,
+          reportEvent,
           selected,
           to,
           viewPort,
@@ -1503,6 +1538,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
               pinId,
               value: normalizedValue,
             });
+            reportEvent("addValueModalOpen", { source: "dblClickPin" });
           } else {
             const part = getPartDef(ins, repo);
             const partOutputs = getPartOutputs(part);
@@ -1738,6 +1774,10 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
                 onChange(newValue, functionalChange("add-item-quick-menu"));
                 onCloseQuickAdd();
               }
+              reportEvent("addPart", {
+                partId: match.part.id,
+                source: "quickAdd",
+              });
               break;
             }
             case "import": {
@@ -1746,6 +1786,10 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
                 connectTo: { insId: ins.id, outputId: pinId },
               });
               onCloseQuickAdd();
+              reportEvent("addPart", {
+                partId: match.importablePart.part.id,
+                source: "quickAdd",
+              });
               break;
             }
             case "value": {
@@ -1754,12 +1798,14 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
                 return;
               }
               setInlineCodeTarget({ type: "new-output", insId: ins.id, pinId });
+              reportEvent("addValueModalOpen", { source: "quickAdd" });
             }
           }
         },
         [
           quickAddMenuVisible,
           repo,
+          reportEvent,
           part,
           onChange,
           onCloseQuickAdd,
@@ -1784,12 +1830,13 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
               <MenuItem
                 onMouseDown={(e) => e.stopPropagation()}
                 text={"New Value"}
-                onClick={preventDefaultAnd(() =>
+                onClick={preventDefaultAnd(() => {
                   setInlineCodeTarget({
                     type: "new-floating",
                     pos: lastMousePos.current,
-                  })
-                )}
+                  });
+                  reportEvent("addValueModalOpen", { source: "contextMenu" });
+                })}
               />
               <MenuItem
                 text={`New input ${maybeDisabledLabel}`}
@@ -2074,8 +2121,9 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             });
           });
           onChange(newPart, functionalChange("change instance style"));
+          reportEvent("changeStyle", { isDefault: false });
         },
-        [onChange, part]
+        [onChange, part, reportEvent]
       );
 
       const onChangeVisibleOutputs = React.useCallback(
@@ -2246,8 +2294,13 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
               setInlineCodeTarget(undefined);
             }
           }
+
+          reportEvent("addValue", {
+            type,
+            placeholdersCount: keys(newPart.inputs).length,
+          });
         },
-        [inlineCodeTarget, onChange, part]
+        [inlineCodeTarget, onChange, part, reportEvent]
       );
 
       const connectionsToRender = connections.filter((conn) => {
@@ -2312,12 +2365,14 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             if (draggedConnection.from && pinType === "input") {
               onConnectionClose(
                 draggedConnection.from,
-                connectionNode(ins.id, pinId)
+                connectionNode(ins.id, pinId),
+                "pinDrag"
               );
             } else if (draggedConnection.to && pinType === "output") {
               onConnectionClose(
                 connectionNode(ins.id, pinId),
-                draggedConnection.to
+                draggedConnection.to,
+                "pinDrag"
               );
             }
           }
@@ -2339,12 +2394,14 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             if (draggedConnection.from && type === "output") {
               onConnectionClose(
                 draggedConnection.from,
-                externalConnectionNode(id)
+                externalConnectionNode(id),
+                "partIoPinDrag"
               );
             } else if (draggedConnection.to && type === "input") {
               onConnectionClose(
                 externalConnectionNode(id),
-                draggedConnection.to
+                draggedConnection.to,
+                "partIoPinDrag"
               );
             }
           }
