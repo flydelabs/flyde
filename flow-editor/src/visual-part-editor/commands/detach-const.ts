@@ -34,7 +34,7 @@ export const handleDetachConstEditorCommand = (
       throw new Error("impossible state detaching const with no value");
     }
 
-    const value = inputConfig.value;
+    const value = JSON.stringify(inputConfig.value);
 
     const newPart = createInlineValuePart({
       code: `${value}`,
@@ -58,7 +58,7 @@ export const handleDetachConstEditorCommand = (
 
     draft.instances.push(newIns);
     draft.connections.push(
-      connectionData(`${newIns.id}.r`, `${instance.id}.${pinId}`)
+      connectionData(`${newIns.id}.value`, `${instance.id}.${pinId}`)
     );
   });
 };

@@ -21,6 +21,9 @@ export function forkRunFlow(...params: Parameters<typeof runFlow>): Promise<{
     });
 
     runFlowProcess.stderr.on("data", (data) => {
+      if (data.includes("Starting inspector")) {
+        return; // TODO - try fixing this issue with VSCode debugger and forked process
+      }
       console.error(`stderr: ${data}`);
       reject(new Error(data));
     });

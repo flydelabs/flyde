@@ -18,6 +18,7 @@ import {
   defaultViewPort,
   GroupEditorBoardData,
   PART_HEIGHT,
+  VisualPartEditorHandle,
 } from "../visual-part-editor/VisualPartEditor";
 import produce from "immer";
 import { useHotkeys } from "../lib/react-utils/use-hotkeys";
@@ -85,7 +86,7 @@ export type DataBuilderTarget = {
 const ignoreUndoChangeTypes = ["select", "drag-move", "order-step"];
 
 export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
-  React.forwardRef((props, ref) => {
+  React.forwardRef((props, visualEditorRef) => {
     const { state, onChangeEditorState } = props;
 
     const { resolvedDependencies, onImportPart } = useDependenciesContext();
@@ -260,23 +261,14 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
           case OmniBarCmdType.ADD:
             reportEvent("addPart", { partId: cmd.data, source: "omnibar" });
             return onAddPartInstance(cmd.data);
-          case OmniBarCmdType.ADD_VALUE:
-            // const pos = domToViewPort(
-            //   editorBoardData.lastMousePos,
-            //   editorBoardData.viewPort,
-            //   defaultViewPort
-            // );
-            toastMsg("TODO");
-            // return requestNewConstValue(pos);
+          case OmniBarCmdType.ADD_VALUE: {
+            const ref: VisualPartEditorHandle | undefined = (
+              visualEditorRef as any
+            ).current;
+            ref?.requestNewInlineValue();
+
             break;
-          case OmniBarCmdType.CREATE_CODE_PART:
-            toastMsg("TODO");
-            // onCreateNewPart("code");
-            break;
-          case OmniBarCmdType.CREATE_GROUPED_PART:
-            toastMsg("TODO");
-            // onCreateNewPart("visual");
-            break;
+          }
           case OmniBarCmdType.IMPORT: {
             await onImportPart(cmd.data, { pos: editorBoardData.lastMousePos });
             const finalPos = vAdd({ x: 0, y: 0 }, editorBoardData.lastMousePos);
@@ -347,7 +339,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
             ) : null}
             <VisualPartEditor
               currentInsId={ROOT_INS_ID}
-              ref={ref}
+              ref={visualEditorRef}
               key={editedPart.id}
               boardData={editorBoardData}
               onChangeBoardData={onChangeEditorBoardData}

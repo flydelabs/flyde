@@ -14,7 +14,7 @@
     "clean-dist": "yarn workspaces foreach exec \"rm -rf dist\"",
     "bump-all-patch": "yarn workspaces foreach -Avit --no-private version patch",
     "publish-all": "./publish-all-with-otp.sh",
-    "release": "yarn bump-all-patch && yarn publish-all"
+    "release": "yarn run build && yarn bump-all-patch && yarn publish-all"
   },
   "author": "",
   "dependencies": {

@@ -24,8 +24,6 @@ export interface OmnibarProps {
 export enum OmniBarCmdType {
   ADD = "add",
   ADD_VALUE = "add-value",
-  CREATE_CODE_PART = "create-core-part",
-  CREATE_GROUPED_PART = "create-visual-part",
   IMPORT = "import",
 }
 

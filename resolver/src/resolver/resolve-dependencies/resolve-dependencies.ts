@@ -21,6 +21,8 @@ import { ResolveMode, resolveFlowDependenciesByPath } from "../resolve-flow";
 import { resolveImportablePaths } from "./resolve-importable-paths";
 import { namespaceFlowImports } from "./namespace-flow-imports";
 
+import requireReload from "require-reload";
+
 import * as StdLib from "@flyde/stdlib/dist/all";
 
 const getRefPartIds = (part: VisualPart): string[] => {
@@ -45,7 +47,7 @@ export function resolveCodePartDependencies(
   path: string
 ): { exportName: string; part: CodePart }[] {
   try {
-    let module = require(path);
+    let module = requireReload(path);
 
     if (isCodePart(module)) {
       return [{ exportName: "default", part: module }];

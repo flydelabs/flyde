@@ -281,40 +281,18 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
   const onImportPart = React.useCallback<
     DependenciesContextData["onImportPart"]
   >(
-    async (importablePart, target) => {
+    async (importablePart) => {
       const existingModuleImports =
         (flow.imports || {})[importablePart.module] || [];
 
       setImportedParts((parts) => [...parts, importablePart]);
 
-      let newPartIns: PartInstance | undefined = undefined;
+      const newDeps = {
+        ...resolvedDependencies,
+        [importablePart.part.id]: importablePart.part,
+      };
 
       const newFlow = produce(flow, (draft) => {
-        if (target) {
-          const finalPos = vAdd({ x: 0, y: 0 }, target.pos);
-          newPartIns = createNewPartInstance(
-            importablePart.part,
-            0,
-            finalPos,
-            repo
-          );
-          draft.part.instances.push(newPartIns);
-
-          if (target.connectTo) {
-            const { insId, outputId } = target.connectTo;
-            draft.part.connections.push({
-              from: {
-                insId,
-                pinId: outputId,
-              },
-              to: {
-                insId: newPartIns.id,
-                pinId: TRIGGER_PIN_ID,
-              },
-            });
-          }
-        }
-
         const imports = draft.imports || {};
         const modImports = imports[importablePart.module] || [];
 
@@ -328,22 +306,13 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
 
       const newState = produce(editorState, (draft) => {
         draft.flow = newFlow;
-        if (target?.selectAfterAdding && newPartIns) {
-          draft.boardData.selected = [newPartIns?.id];
-        }
       });
 
       onChangeState(newState, functionalChange("imported-part"));
 
-      toastMsg(
-        `Part ${importablePart.part.id} successfully imported from ${importablePart.module}`
-      );
-      return {
-        ...resolvedDependencies,
-        [importablePart.part.id]: importablePart.part,
-      };
+      return newDeps;
     },
-    [editorState, flow, onChangeState, repo, resolvedDependencies]
+    [editorState, flow, onChangeState, resolvedDependencies]
   );
 
   const onExtractInlinePart = React.useCallback(async () => {}, []);

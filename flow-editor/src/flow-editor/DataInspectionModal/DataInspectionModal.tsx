@@ -70,7 +70,7 @@ export const DataInspectionModal: React.FC<DataInspectionModalProps> = (
       return <BrowserOnlyReactJson src={val} name={null} />;
     }
 
-    return <Code>{val}</Code>;
+    return <Code>{val.toString()}</Code>;
   };
 
   const renderEmptyState = () => {

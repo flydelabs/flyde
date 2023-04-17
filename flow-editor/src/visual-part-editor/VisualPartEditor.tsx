@@ -223,6 +223,14 @@ type InlineValueTarget =
   | InlineValueTargetNewFloating
   | InlineValueTargetNewOutput;
 
+export interface VisualPartEditorHandle {
+  centerInstance(insId: string): void;
+  centerViewPort(): void;
+  getViewPort(): ViewPort;
+  clearSelection(): void;
+  requestNewInlineValue(): void;
+}
+
 export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
   React.memo(
     React.forwardRef((props, thisRef) => {
@@ -230,11 +238,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
         onChangePart: onChange,
         partIoEditable,
         onCopy,
-        // onToggleLog,
-        // onToggleBreakpoint,
         onGoToPartDef: onEditPart,
-        // editOrCreateConstValue,
-        // requestNewConstValue,
         onInspectPin,
         boardData,
         onChangeBoardData,
@@ -1366,15 +1370,12 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
                 const { importablePart } = action.data;
                 const depsWithImport = await onImportPart(importablePart);
 
-                const target = {
-                  selectAfterAdding: true,
-                  pos: vSub(pos, { x: 0, y: 50 * viewPort.zoom }), // to account for part
-                };
+                const targetPos = vSub(pos, { x: 0, y: 50 * viewPort.zoom }); // to account for part
 
                 const newPartIns = createNewPartInstance(
                   importablePart.part.id,
                   0,
-                  target.pos,
+                  targetPos,
                   depsWithImport
                 );
                 const newPart = produce(part, (draft) => {
@@ -1536,7 +1537,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
               type: "static-input",
               insId: ins.id,
               pinId,
-              value: normalizedValue,
+              value: normalizedValue ?? JSON.stringify("Some static value"),
             });
             reportEvent("addValueModalOpen", { source: "dblClickPin" });
           } else {
@@ -1557,7 +1558,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             });
           }
         },
-        [repo]
+        [repo, reportEvent]
       );
 
       const onMainInputDblClick = React.useCallback(
@@ -1754,12 +1755,22 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
           const { ins, pinId } = quickAddMenuVisible;
 
           switch (match.type) {
+            case "import":
             case "part": {
+              const deps =
+                match.type === "import"
+                  ? await onImportPart(match.importablePart)
+                  : repo;
+
+              const partToAdd =
+                match.type === "import"
+                  ? match.importablePart.part
+                  : match.part;
               const newPartIns = createNewPartInstance(
-                match.part.id,
+                partToAdd.id,
                 100,
                 lastMousePos.current,
-                repo
+                deps
               );
 
               if (newPartIns) {
@@ -1775,23 +1786,37 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
                 onCloseQuickAdd();
               }
               reportEvent("addPart", {
-                partId: match.part.id,
+                partId: partToAdd.id,
                 source: "quickAdd",
               });
               break;
             }
-            case "import": {
-              await onImportPart(match.importablePart, {
-                pos: lastMousePos.current,
-                connectTo: { insId: ins.id, outputId: pinId },
-              });
-              onCloseQuickAdd();
-              reportEvent("addPart", {
-                partId: match.importablePart.part.id,
-                source: "quickAdd",
-              });
-              break;
-            }
+            // case "import": {
+            //   const deps = await onImportPart(match.importablePart);
+            //   const newPartIns = createNewPartInstance(
+            //     match.importablePart.part,
+            //     100,
+            //     lastMousePos.current,
+            //     deps
+            //   );
+
+            //   const newValue = produce(part, (draft) => {
+            //     draft.instances.push(newPartIns);
+            //     draft.connections.push({
+            //       from: { insId: ins ? ins.id : THIS_INS_ID, pinId },
+            //       to: { insId: newPartIns.id, pinId: TRIGGER_PIN_ID },
+            //     });
+            //   });
+
+            //   onChange(newValue, functionalChange("import-part-quick-menu"));
+
+            //   onCloseQuickAdd();
+            //   reportEvent("addPart", {
+            //     partId: match.importablePart.part.id,
+            //     source: "quickAdd",
+            //   });
+            //   break;
+            // }
             case "value": {
               if (!ins) {
                 toastMsg("Cannot add value to main input");
@@ -1894,6 +1919,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
           part.defaultStyle,
           onChangeDefaultStyle,
           _prompt,
+          reportEvent,
           onAddIoPin,
           editCompletionOutputs,
           editReactiveInputs,
@@ -2152,27 +2178,37 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
         },
         [part, onChange]
       );
-      // The component instance will be extended
-      // with whatever you return from the callback passed
-      // as the second argument
-      React.useImperativeHandle(thisRef, () => ({
-        centerInstance(insId: string) {
-          const ins = part.instances.find((ins) => ins.id === insId);
-          if (ins) {
-            const pos = vSub(ins.pos, vec(vpSize.width / 2, vpSize.height / 2));
-            setViewPort({ ...viewPort, pos });
-          }
-        },
-        centerViewPort() {
-          fitToScreen();
-        },
-        getViewPort() {
-          return viewPort;
-        },
-        clearSelection: () => {
-          clearSelections();
-        },
-      }));
+
+      React.useImperativeHandle(thisRef, () => {
+        const ref: VisualPartEditorHandle = {
+          centerInstance(insId: string) {
+            const ins = part.instances.find((ins) => ins.id === insId);
+            if (ins) {
+              const pos = vSub(
+                ins.pos,
+                vec(vpSize.width / 2, vpSize.height / 2)
+              );
+              setViewPort({ ...viewPort, pos });
+            }
+          },
+          centerViewPort() {
+            fitToScreen();
+          },
+          getViewPort() {
+            return viewPort;
+          },
+          clearSelection: () => {
+            clearSelections();
+          },
+          requestNewInlineValue: () => {
+            setInlineCodeTarget({
+              type: "new-floating",
+              pos: lastMousePos.current,
+            });
+          },
+        };
+        return ref;
+      });
 
       // use this to debug positioning/layout related stuff
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
