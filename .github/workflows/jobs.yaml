@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout & Dependencies
-        uses: ./.github/workflows/prepare.yml
+        uses: ./.github/workflows/prepare.yaml
       - name: Build
         run: yarn run build
 
