@@ -34,10 +34,8 @@ jobs:
         run: yarn install --immutable
       - name: Build
         run: yarn run build
-
       - name: Test
         run: yarn run test
-
       - name: Lint
         run: yarn run lint
 
@@ -55,7 +53,6 @@ jobs:
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
-
       - name: Cache yarn dependencies
         uses: actions/cache@v2
         id: yarn-cache
