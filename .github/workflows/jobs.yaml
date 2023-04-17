@@ -31,8 +31,6 @@ jobs:
             ${{ runner.os }}-yarn-
       - name: Install dependencies
         run: yarn install --immutable
-      - name: Debugging with ssh
-        uses: lhotari/action-upterm@v1
       - name: Build
         run: yarn run build
       - name: Test
