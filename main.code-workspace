@@ -32,6 +32,9 @@
     },
     {
       "path": "resolver"
+    },
+    {
+      "path": "examples"
     }
   ],
   "settings": {
@@ -40,18 +43,42 @@
     "search.exclude": {
       "**/dist": true
     },
-    "cSpell.words": [
-      "Importables",
-      "Templating",
-      "Ungroup"
-    ],
+    "cSpell.words": ["Importables", "Templating", "Ungroup"],
     "files.exclude": {
       "**/node_modules": true
     },
     "editor.formatOnSave": true,
-    "grammarly.selectors": [
-
-     
+    "grammarly.selectors": [],
+    "typescript.tsc.autoDetect": "off",
+    "auto-run-command.rules": [
+      {
+        "condition": "always",
+        "command": "workbench.action.debug.start",
+        "message": "Starting the extension"
+      }
+    ]
+  },
+  "tasks": {
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "Flyde - watch all",
+        "type": "shell",
+        "command": "npm",
+        "args": ["run", "watch-all-integrated"],
+        "options": {
+          "cwd": ".."
+        },
+        "runOptions": {
+          "runOn": "folderOpen"
+        },
+        "presentation": {
+          "focus": true,
+          "panel": "dedicated",
+          "showReuseMessage": false,
+          "clear": true
+        }
+      }
     ]
   }
 }

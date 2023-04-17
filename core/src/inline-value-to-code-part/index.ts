@@ -1,7 +1,19 @@
 import axios from "axios";
-import { compileObjectTemplate, compileStringTemplate, debugLogger, isDefined } from "../common";
+import {
+  compileObjectTemplate,
+  compileStringTemplate,
+  debugLogger,
+  isDefined,
+} from "../common";
 
-import { isInlineValuePart, CodePart, dynamicPartInput, InlineValuePart, dynamicOutput, PartRepo } from "../part";
+import {
+  isInlineValuePart,
+  CodePart,
+  dynamicPartInput,
+  InlineValuePart,
+  dynamicOutput,
+  PartRepo,
+} from "../part";
 
 import { getVM2Instance } from "./get-vm2";
 
@@ -53,7 +65,7 @@ export const inlineValuePartToPart = (
           compileStringTemplate,
           compileObjectTemplate,
           process: {
-            env: process.env
+            env: process.env,
           },
           ...extraContext,
         },
