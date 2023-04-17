@@ -12,6 +12,8 @@ jobs:
   build-test-lint:
     runs-on: ubuntu-latest
     steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
       - name: Checkout & Dependencies
         uses: ./.github/workflows/prepare.yaml
       - name: Build
@@ -28,6 +30,8 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
       - name: Checkout & Dependencies
         uses: ./.github/workflows/prepare.yml
       - name: Build
