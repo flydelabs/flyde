@@ -24,13 +24,13 @@ jobs:
         run: yarn install --frozen-lockfile
 
       - name: Build
-        run: yarn workspaces run build
+        run: yarn run build
 
       - name: Test
-        run: yarn workspaces run test
+        run: yarn run test
 
       - name: Lint
-        run: yarn workspaces run lint
+        run: yarn run lint
 
   publish:
     needs: build-test-lint
@@ -48,7 +48,8 @@ jobs:
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
-
+      - name: Build
+        run: yarn run build
       - name: Bump patch version, Publish to NPM (excluding private packages), and Commit changes
         run: |
           git config --global user.name "GitHub Actions"
