@@ -5,7 +5,6 @@ import * as ReactDOM from "react-dom";
 import { FocusStyleManager } from "@blueprintjs/core";
 import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
 
-import { Loader } from "@flyde/flow-editor"; // ../common/lib/loader
 import { QueryParamProvider } from "use-query-params";
 
 import { FlowLoader } from "./integrated-flow-manager/flow-loader";
@@ -25,28 +24,15 @@ export enum AppState {
 }
 
 const RoutedApp = () => {
-  const [appState, setAppState] = React.useState(AppState.LOADED);
-
-  const renderInnerApp = () => {
-    switch (appState) {
-      case AppState.LOADING:
-        return <Loader />;
-      case AppState.LOADED:
-        return (
-          <Switch>
-            <Route path="/files">
-              <FlowLoader />
-            </Route>
-            <Redirect to="/files" />
-          </Switch>
-        );
-    }
-  };
-
   return (
     <BrowserRouter basename={baseName}>
       <QueryParamProvider ReactRouterRoute={Route}>
-        {renderInnerApp()}
+        <Switch>
+          <Route path="/files">
+            <FlowLoader />
+          </Route>
+          <Redirect to="/files" />
+        </Switch>
       </QueryParamProvider>
     </BrowserRouter>
   );
