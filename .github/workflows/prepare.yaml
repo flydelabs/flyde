@@ -1,5 +1,8 @@
 name: Checkout & Dependencies
 
+on:
+  workflow_call:
+
 jobs:
   cache-install-deps:
     runs-on: ubuntu-latest
