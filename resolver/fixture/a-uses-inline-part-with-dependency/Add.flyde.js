@@ -1,14 +1,13 @@
 module.exports = {
-  id: 'Add',
+  id: "Add",
   inputs: {
-    a: {mode: 'required', type: 'number'},
-    b: {mode: 'required', type: 'number'}
+    a: { mode: "required", type: "number" },
+    b: { mode: "required", type: "number" },
   },
   outputs: {
-    r: 'number'
+    r: "number",
   },
-  fn: (inputs, outputs) => {
-    outputs.r.next(inputs.a +  inputs.b);
-  }
-}
-  
+  run: (inputs, outputs) => {
+    outputs.r.next(inputs.a + inputs.b);
+  },
+};

@@ -14,7 +14,7 @@ import {
 } from "../part";
 import { execute } from "../execute";
 import { runAddTests } from "../part/add-tests";
-import { add, optAdd, testRepo } from "../fixture";
+import { add, optAdd, testPartsCollection } from "../fixture";
 import { connectionData } from "./helpers";
 
 describe("is connected", () => {});
@@ -31,7 +31,7 @@ describe("connect", () => {
             inputs: {},
             outputs: {},
           },
-          testRepo
+          testPartsCollection
         );
       });
     });
@@ -52,7 +52,7 @@ describe("connect", () => {
             r: partOutput(),
           },
         },
-        testRepo
+        testPartsCollection
       );
 
       const n1 = dynamicPartInput();
@@ -63,7 +63,7 @@ describe("connect", () => {
         part: part,
         inputs: { n1 },
         outputs: { r },
-        partsRepo: testRepo,
+        resolvedDeps: testPartsCollection,
       });
       n1.subject.next(4);
       assert.equal(fn.callCount, 1);
@@ -88,7 +88,7 @@ describe("connect", () => {
             r: partOutput(),
           },
         },
-        testRepo
+        testPartsCollection
       );
 
       const n1 = dynamicPartInput();
@@ -100,7 +100,7 @@ describe("connect", () => {
         part: part,
         inputs: { n1, n2 },
         outputs: { r },
-        partsRepo: testRepo,
+        resolvedDeps: testPartsCollection,
       });
       n2.subject.next(4);
       n1.subject.next(6);
@@ -113,9 +113,9 @@ describe("connect", () => {
     it.skip("allows closing cyclic dependencies with delayed parts", () => {
       const delayedId: CodePart = {
         id: "d",
-        inputs: { n: { } },
+        inputs: { n: {} },
         outputs: { r: { delayed: true } },
-        fn: ({ n }, { r }) => {
+        run: ({ n }, { r }) => {
           setInterval(() => {
             r?.next(n);
           });
@@ -152,14 +152,19 @@ describe("connect", () => {
             r: partOutput(),
           },
         },
-        testRepo
+        testPartsCollection
       );
 
       const fn = spy();
       const r = new Subject();
       r.subscribe(fn);
 
-      execute({ part: part, inputs: {}, outputs: { r }, partsRepo: testRepo });
+      execute({
+        part: part,
+        inputs: {},
+        outputs: { r },
+        resolvedDeps: testPartsCollection,
+      });
     });
   });
 
@@ -181,9 +186,9 @@ describe("connect", () => {
           r: partOutput(),
         },
       },
-      testRepo
+      testPartsCollection
     );
 
-    runAddTests(part, "connect", testRepo);
+    runAddTests(part, "connect", testPartsCollection);
   });
 });

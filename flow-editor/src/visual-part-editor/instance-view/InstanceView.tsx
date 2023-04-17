@@ -22,7 +22,7 @@ import { PinView } from "../pin-view/PinView";
 import {
   ConnectionData,
   Pos,
-  PartDefRepo,
+  PartsDefCollection,
   isStickyInputPinConfig,
   ERROR_PIN_ID,
   TRIGGER_PIN_ID,
@@ -128,7 +128,7 @@ export interface InstanceViewProps {
 
   ancestorsInsIds?: string;
 
-  partDefRepo: PartDefRepo;
+  resolvedDeps: PartsDefCollection;
   onPinClick: (v: PartInstance, k: string, type: PinType) => void;
   onPinDblClick: (
     v: PartInstance,
@@ -421,7 +421,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
     try {
       // customView =
       //   part.customView &&
-      //   part.customView(instance, connectionsPerInput, connectionsPerOutput, partDefRepo);
+      //   part.customView(instance, connectionsPerInput, connectionsPerOutput);
     } catch (e) {
       console.error(`Error rendering custom view for part ${part.id}`);
     }

@@ -12,7 +12,7 @@ export const Concat = partFromSimpleFunction({
     { name: "b", description: "String b" },
   ],
   output: { name: "value", description: "Concatenated value" },
-  fn: (a, b) => a + b,
+  run: (a, b) => a + b,
 });
 
 export const Split = partFromSimpleFunction({
@@ -25,7 +25,7 @@ export const Split = partFromSimpleFunction({
     { name: "separator", description: "Separator" },
   ],
   output: { name: "value", description: "Splitted value" },
-  fn: (string, separator) => string.split(separator),
+  run: (string, separator) => string.split(separator),
 });
 
 export const Join = partFromSimpleFunction({
@@ -38,7 +38,7 @@ export const Join = partFromSimpleFunction({
     { name: "separator", description: "Separator" },
   ],
   output: { name: "value", description: "Joined value" },
-  fn: (array, separator) => array.join(separator),
+  run: (array, separator) => array.join(separator),
 });
 
 export const Replace = partFromSimpleFunction({
@@ -52,7 +52,7 @@ export const Replace = partFromSimpleFunction({
     { name: "replaceValue", description: "Value to replace with" },
   ],
   output: { name: "value", description: "Replaced value" },
-  fn: (string, searchValue, replaceValue) =>
+  run: (string, searchValue, replaceValue) =>
     string.replace(searchValue, replaceValue),
 });
 
@@ -63,7 +63,7 @@ export const Trim = partFromSimpleFunction({
   description: "Trims a string",
   inputs: [{ name: "string", description: "String to trim" }],
   output: { name: "value", description: "Trimmed value" },
-  fn: (string) => string.trim(),
+  run: (string) => string.trim(),
 });
 
 export const ToLowerCase = partFromSimpleFunction({
@@ -73,7 +73,7 @@ export const ToLowerCase = partFromSimpleFunction({
   description: "Converts a string to lower case",
   inputs: [{ name: "string", description: "String to convert to lower case" }],
   output: { name: "value", description: "Converted value" },
-  fn: (string) => string.toLowerCase(),
+  run: (string) => string.toLowerCase(),
 });
 
 export const ToUpperCase = partFromSimpleFunction({
@@ -83,7 +83,7 @@ export const ToUpperCase = partFromSimpleFunction({
   description: "Converts a string to upper case",
   inputs: [{ name: "string", description: "String to convert to upper case" }],
   output: { name: "value", description: "Converted value" },
-  fn: (string) => string.toUpperCase(),
+  run: (string) => string.toUpperCase(),
 });
 
 export const Substring = partFromSimpleFunction({
@@ -98,7 +98,7 @@ export const Substring = partFromSimpleFunction({
     { name: "end", description: "End index" },
   ],
   output: { name: "value", description: "Substring" },
-  fn: (string, start, end) => string.substring(start, end),
+  run: (string, start, end) => string.substring(start, end),
 });
 
 export const Length = partFromSimpleFunction({
@@ -108,7 +108,7 @@ export const Length = partFromSimpleFunction({
   description: "Returns the length of a string",
   inputs: [{ name: "string", description: "String to get length from" }],
   output: { name: "value", description: "Length" },
-  fn: (string) => string.length,
+  run: (string) => string.length,
 });
 
 export const IndexOf = partFromSimpleFunction({
@@ -123,7 +123,7 @@ export const IndexOf = partFromSimpleFunction({
     { name: "fromIndex", description: "Index to start searching from" },
   ],
   output: { name: "value", description: "Index" },
-  fn: (string, searchValue, fromIndex) =>
+  run: (string, searchValue, fromIndex) =>
     string.indexOf(searchValue, fromIndex),
 });
 
@@ -139,7 +139,7 @@ export const LastIndexOf = partFromSimpleFunction({
     { name: "fromIndex", description: "Index to start searching from" },
   ],
   output: { name: "value", description: "Index" },
-  fn: (string, searchValue, fromIndex) =>
+  run: (string, searchValue, fromIndex) =>
     string.lastIndexOf(searchValue, fromIndex),
 });
 
@@ -153,7 +153,7 @@ export const CharAt = partFromSimpleFunction({
     { name: "index", description: "Index to get character from" },
   ],
   output: { name: "value", description: "Character" },
-  fn: (string, index) => string.charAt(index),
+  run: (string, index) => string.charAt(index),
 });
 
 export const ToKebabCase = partFromSimpleFunction({
@@ -163,7 +163,7 @@ export const ToKebabCase = partFromSimpleFunction({
   description: "Converts a string to kebab case",
   inputs: [{ name: "string", description: "String to convert to kebab case" }],
   output: { name: "value", description: "Converted value" },
-  fn: (string) =>
+  run: (string) =>
     string
       .replace(/([a-z])([A-Z])/g, "$1-$2")
       .replace(/\s+/g, "-")
@@ -177,7 +177,7 @@ export const ToCamelCase = partFromSimpleFunction({
   description: "Converts a string to camel case",
   inputs: [{ name: "string", description: "String to convert to camel case" }],
   output: { name: "value", description: "Converted value" },
-  fn: (string) =>
+  run: (string) =>
     string.replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, (match, index) => {
       if (+match === 0) return "";
       return index === 0 ? match.toLowerCase() : match.toUpperCase();
@@ -191,7 +191,7 @@ export const ToPascalCase = partFromSimpleFunction({
   description: "Converts a string to pascal case",
   inputs: [{ name: "string", description: "String to convert to pascal case" }],
   output: { name: "value", description: "Converted value" },
-  fn: (string) =>
+  run: (string) =>
     string
       .replace(/(?:^\w|[A-Z]|\b\w)/g, (match, index) => {
         return index === 0 ? match.toUpperCase() : match.toLowerCase();
@@ -206,7 +206,7 @@ export const ToSnakeCase = partFromSimpleFunction({
   description: "Converts a string to snake case",
   inputs: [{ name: "string", description: "String to convert to snake case" }],
   output: { name: "value", description: "Converted value" },
-  fn: (string) =>
+  run: (string) =>
     string
       .replace(/([a-z])([A-Z])/g, "$1_$2")
       .replace(/\s+/g, "_")
@@ -220,7 +220,7 @@ export const ToTitleCase = partFromSimpleFunction({
   description: "Converts a string to title case",
   inputs: [{ name: "string", description: "String to convert to title case" }],
   output: { name: "value", description: "Converted value" },
-  fn: (string) =>
+  run: (string) =>
     string.replace(
       /\w\S*/g,
       (match) => match.charAt(0).toUpperCase() + match.substr(1).toLowerCase()
@@ -239,7 +239,7 @@ export const Includes = partFromSimpleFunction({
     { name: "fromIndex", description: "Index to start searching from" },
   ],
   output: { name: "value", description: "Result" },
-  fn: (string, searchValue, fromIndex) =>
+  run: (string, searchValue, fromIndex) =>
     string.includes(searchValue, fromIndex),
 });
 
@@ -255,7 +255,7 @@ export const StartsWith = partFromSimpleFunction({
     { name: "fromIndex", description: "Index to start searching from" },
   ],
   output: { name: "value", description: "Result" },
-  fn: (string, searchValue, fromIndex) =>
+  run: (string, searchValue, fromIndex) =>
     string.startsWith(searchValue, fromIndex),
 });
 
@@ -271,7 +271,7 @@ export const EndsWith = partFromSimpleFunction({
     { name: "fromIndex", description: "Index to start searching from" },
   ],
   output: { name: "value", description: "Result" },
-  fn: (string, searchValue, fromIndex) =>
+  run: (string, searchValue, fromIndex) =>
     string.endsWith(searchValue, fromIndex),
 });
 
@@ -282,7 +282,7 @@ export const IsEmpty = partFromSimpleFunction({
   description: "Determines whether a string is empty",
   inputs: [{ name: "string", description: "String to check" }],
   output: { name: "value", description: "Result" },
-  fn: (string) => string.length === 0,
+  run: (string) => string.length === 0,
 });
 
 export const MatchRegex = partFromSimpleFunction({
@@ -295,7 +295,7 @@ export const MatchRegex = partFromSimpleFunction({
     { name: "regex", description: "Regular expression to match" },
   ],
   output: { name: "value", description: "Result" },
-  fn: (string, regex) => string.match(regex),
+  run: (string, regex) => string.match(regex),
 });
 
 export const EmptyString = partFromSimpleFunction({
@@ -305,7 +305,6 @@ export const EmptyString = partFromSimpleFunction({
   description: "Creates an empty string",
   inputs: [],
   output: { name: "string", description: "The empty string" },
-  fn: () => "",
-  size: 'small'
-  
+  run: () => "",
+  size: "small",
 });

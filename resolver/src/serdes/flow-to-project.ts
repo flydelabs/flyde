@@ -2,16 +2,16 @@
 
 // export const flowToProject = (flow: FlydeFlow): Project => {
 //     // begin normalization to conventional project
-//     let repo: any = {};
+//     let resolvedParts: any = {};
 //     if (flow.main) {
-//         repo.Main = flow.main;
+//         resolvedParts.Main = flow.main;
 //     }
 //     if (flow.parts) {
-//         repo = {...repo, ...flow.parts};
+//         resolvedParts = {...resolvedParts, ...flow.parts};
 //     }
 
-//     for (const key in repo) {
-//         repo[key].id = key;
+//     for (const key in resolvedParts) {
+//         resolvedParts[key].id = key;
 //     }
 
 //     const fakeTriggersToSatisfyCurrentEditor: Trigger[] = [
@@ -33,7 +33,7 @@
 //         updated: Date.now(),
 //         name: 'pseudo-proj',
 //         slug: '/pseudo-proj',
-//         customRepo: repo,
+//         resolvedParts: resolvedParts,
 //         triggers: fakeTriggersToSatisfyCurrentEditor
 //     }
 //     // throw 'bob'

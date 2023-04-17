@@ -153,7 +153,7 @@ part:
             type: any
             delayed: false
             optional: false
-        fnCode: outputs.r.next((`${inputs.count}`))
+        runFnRawCode: outputs.r.next((`${inputs.count}`))
         customViewCode: "`${inputs.count}`"
         dataBuilderSource: YCR7aW5wdXRzLmNvdW50fWA=
         templateType: value
@@ -178,7 +178,7 @@ part:
             type: any
             delayed: false
             optional: false
-        fnCode: outputs.r.next((0))
+        runFnRawCode: outputs.r.next((0))
         customViewCode: "0"
         dataBuilderSource: MA==
         templateType: value

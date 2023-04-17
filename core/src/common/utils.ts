@@ -96,11 +96,11 @@ export const randomPos = (to = 1000, from = 0): Pos => {
 
 export const pickRandom = <K>(v: K[]): K => v[randomInt(v.length)] as K;
 
-export const repeat = <T>(count: number, fn: (idx: number) => T) => {
+export const repeat = <T>(count: number, run: (idx: number) => T) => {
   return "x"
     .repeat(count)
     .split("")
-    .map((_, idx) => fn(idx));
+    .map((_, idx) => run(idx));
 };
 
 export const randomInts = (count: number, to = 100, from = 0) => {

@@ -1,71 +1,85 @@
-import { delay, dynamicPartInput, eventually, execute, staticPartInput } from '@flyde/core';
-import {assert} from 'chai'
+import {
+  delay,
+  dynamicPartInput,
+  eventually,
+  execute,
+  staticPartInput,
+} from "@flyde/core";
+import { assert } from "chai";
 
-import { spiedOutput } from '@flyde/core/dist/test-utils';
-import { AccumulateValuesByCount, AccumulateValuesByTime } from './Lists.flyde';
+import { spiedOutput } from "@flyde/core/dist/test-utils";
+import { AccumulateValuesByCount, AccumulateValuesByTime } from "./Lists.flyde";
 
-describe('Lists', () => {
+describe("Lists", () => {
+  describe("Accumulate values by count", () => {
+    it("emits values received until specified count has been reached", async () => {
+      const [s, accumulated] = spiedOutput();
 
-    describe('Accumulate values by count', () => {
-        it('emits values received until specified count has been reached', async () => {
-            const [s, accumulated] = spiedOutput();
+      const input = dynamicPartInput();
 
-            const input = dynamicPartInput();
+      execute({
+        part: AccumulateValuesByCount,
+        outputs: { accumulated },
+        inputs: { value: input, count: staticPartInput(3) },
+        resolvedDeps: {},
+      });
 
-            execute({part: AccumulateValuesByCount, outputs: {accumulated}, inputs: {value: input, count: staticPartInput(3)}, partsRepo: {}});
+      input.subject.next(1);
+      input.subject.next(2);
+      input.subject.next(3);
 
-            input.subject.next(1);
-            input.subject.next(2);
-            input.subject.next(3);
+      // does not enter the first list
+      input.subject.next(4);
+      input.subject.next(5);
+      input.subject.next(6);
 
-            // does not enter the first list
-            input.subject.next(4);
-            input.subject.next(5);
-            input.subject.next(6);
+      // does not enter the second list
+      input.subject.next(7);
 
-            // does not enter the second list
-            input.subject.next(7);
+      await eventually(() => {
+        console.log(s.getCalls());
 
-            await eventually(() => {
-                console.log(s.getCalls());
-                
-                assert.equal(s.callCount, 2);
-                assert.deepEqual(s.firstCall.args[0], [1,2,3]);
-                assert.deepEqual(s.secondCall.args[0], [4,5,6]);
-            });
-        });
-    })
+        assert.equal(s.callCount, 2);
+        assert.deepEqual(s.firstCall.args[0], [1, 2, 3]);
+        assert.deepEqual(s.secondCall.args[0], [4, 5, 6]);
+      });
+    });
+  });
 
-    describe('Accumulate Values by Time', () => {
-        it('emits values received until specified time has passed', async () => {
-            const timeout = 100;
+  describe("Accumulate Values by Time", () => {
+    it("emits values received until specified time has passed", async () => {
+      const timeout = 100;
 
-            const [s, accumulated] = spiedOutput();
+      const [s, accumulated] = spiedOutput();
 
-            const input = dynamicPartInput();
+      const input = dynamicPartInput();
 
-            execute({part: AccumulateValuesByTime, outputs: {accumulated}, inputs: {value: input, time: staticPartInput(timeout)}, partsRepo: {}, ancestorsInsIds: 'bob'});
+      execute({
+        part: AccumulateValuesByTime,
+        outputs: { accumulated },
+        inputs: { value: input, time: staticPartInput(timeout) },
+        resolvedDeps: {},
+        ancestorsInsIds: "bob",
+      });
 
-            // enters the list
-            input.subject.next(1);
-            await delay(timeout / 3);
-            // // enters the list
-            input.subject.next(2);
-            await delay(timeout / 3);
-            // //enters the list
-            input.subject.next(3);
-            await delay(timeout);
+      // enters the list
+      input.subject.next(1);
+      await delay(timeout / 3);
+      // // enters the list
+      input.subject.next(2);
+      await delay(timeout / 3);
+      // //enters the list
+      input.subject.next(3);
+      await delay(timeout);
 
-            // does not enter the first list
-            input.subject.next(4);
+      // does not enter the first list
+      input.subject.next(4);
 
-            await eventually(() => {
-                assert.equal(s.callCount, 2);
-                assert.deepEqual(s.firstCall.args[0], [1,2,3]);
-                assert.deepEqual(s.secondCall.args[0], [4]);
-            })
-
-        });
-
-    })
-})
+      await eventually(() => {
+        assert.equal(s.callCount, 2);
+        assert.deepEqual(s.firstCall.args[0], [1, 2, 3]);
+        assert.deepEqual(s.secondCall.args[0], [4]);
+      });
+    });
+  });
+});

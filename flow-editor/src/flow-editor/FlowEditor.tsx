@@ -361,7 +361,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
             {omniBarVisible ? (
               <Omnibar
                 flow={flow}
-                repo={resolvedDependencies}
+                resolvedParts={resolvedDependencies}
                 onCommand={onOmnibarCmd}
                 visible={omniBarVisible}
                 onClose={hideOmnibar}

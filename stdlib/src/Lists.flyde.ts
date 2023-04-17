@@ -9,7 +9,7 @@ export const ListLength = partFromSimpleFunction({
   description: "Returns the length of a list",
   inputs: [{ name: "list", description: "List" }],
   output: { name: "length", description: "Length" },
-  fn: (list) => list.length,
+  run: (list) => list.length,
 });
 
 export const ListIsEmpty = partFromSimpleFunction({
@@ -19,7 +19,7 @@ export const ListIsEmpty = partFromSimpleFunction({
   description: "Returns true if the list is empty",
   inputs: [{ name: "list", description: "List" }],
   output: { name: "isEmpty", description: "Is empty" },
-  fn: (list) => list.length === 0,
+  run: (list) => list.length === 0,
 });
 
 export const GetListElement = partFromSimpleFunction({
@@ -32,7 +32,7 @@ export const GetListElement = partFromSimpleFunction({
     { name: "index", description: "Index" },
   ],
   output: { name: "element", description: "Element" },
-  fn: (list, index) => list[index],
+  run: (list, index) => list[index],
 });
 
 export const Repeat = partFromSimpleFunction({
@@ -45,7 +45,7 @@ export const Repeat = partFromSimpleFunction({
     { name: "times", description: "How many times will the value be repeated" },
   ],
   output: { name: "list", description: "List" },
-  fn: (value, times) => {
+  run: (value, times) => {
     const list = [];
     for (let i = 0; i < times; i++) {
       list.push(value);
@@ -64,7 +64,7 @@ export const ListFrom2 = partFromSimpleFunction({
     { name: "value2", description: "Second value" },
   ],
   output: { name: "list", description: "List containing the 2 values" },
-  fn: (value1, value2) => [value1, value2],
+  run: (value1, value2) => [value1, value2],
 });
 
 export const ListFrom3 = partFromSimpleFunction({
@@ -78,7 +78,7 @@ export const ListFrom3 = partFromSimpleFunction({
     { name: "value3", description: "Third value" },
   ],
   output: { name: "list", description: "List containing all 3 values" },
-  fn: (value1, value2, value3) => [value1, value2, value3],
+  run: (value1, value2, value3) => [value1, value2, value3],
 });
 
 export const ListFrom4 = partFromSimpleFunction({
@@ -93,7 +93,7 @@ export const ListFrom4 = partFromSimpleFunction({
     { name: "value4", description: "Fourth value" },
   ],
   output: { name: "list", description: "List containing all 4 values" },
-  fn: (value1, value2, value3, value4) => [value1, value2, value3, value4],
+  run: (value1, value2, value3, value4) => [value1, value2, value3, value4],
 });
 
 export const ListFrom5 = partFromSimpleFunction({
@@ -109,7 +109,7 @@ export const ListFrom5 = partFromSimpleFunction({
     { name: "value5", description: "Fifth value" },
   ],
   output: { name: "list", description: "List containing all 5 values" },
-  fn: (value1, value2, value3, value4, value5) => [
+  run: (value1, value2, value3, value4, value5) => [
     value1,
     value2,
     value3,
@@ -128,7 +128,7 @@ export const ConcatLists = partFromSimpleFunction({
     { name: "list2", description: "Second list" },
   ],
   output: { name: "list", description: "Concatenated list" },
-  fn: (list1, list2) => [...list1, ...list2],
+  run: (list1, list2) => [...list1, ...list2],
 });
 
 export const Reverse = partFromSimpleFunction({
@@ -138,7 +138,7 @@ export const Reverse = partFromSimpleFunction({
   description: "Reverses a list",
   inputs: [{ name: "list", description: "List" }],
   output: { name: "reversed", description: "Reversed list" },
-  fn: (list) => list.reverse(),
+  run: (list) => list.reverse(),
 });
 
 export const LoopList: CodePart = {
@@ -157,7 +157,7 @@ export const LoopList: CodePart = {
     index: { description: "Will emit the index of the item" },
     length: { description: "Will emit the length of the list" },
   },
-  fn: (inputs, outputs) => {
+  run: (inputs, outputs) => {
     const { list } = inputs;
     const { item, index } = outputs;
     for (const i of list) {
@@ -183,7 +183,7 @@ export const HeadAndRest: CodePart = {
     head: { description: "The first item in the list" },
     rest: { description: "The rest of the list" },
   },
-  fn: (inputs, outputs) => {
+  run: (inputs, outputs) => {
     const { list } = inputs;
     const { head, rest } = outputs;
     head.next(list[0]);
@@ -206,7 +206,7 @@ export const SplitTuple: CodePart = {
     item1: { description: "The first item in the tuple" },
     item2: { description: "The second item in the tuple" },
   },
-  fn: (inputs, outputs) => {
+  run: (inputs, outputs) => {
     const { list } = inputs;
     const { item1, item2 } = outputs;
     item1.next(list[0]);
@@ -230,7 +230,7 @@ export const SplitTriple: CodePart = {
     item2: { description: "The second item in the triple" },
     item3: { description: "The third item in the triple" },
   },
-  fn: (inputs, outputs) => {
+  run: (inputs, outputs) => {
     const { list } = inputs;
     const { item1, item2, item3 } = outputs;
     item1.next(list[0]);
@@ -256,7 +256,7 @@ export const SplitQuadruple: CodePart = {
     item3: { description: "The third item in the quadruple" },
     item4: { description: "The fourth item in the quadruple" },
   },
-  fn: (inputs, outputs) => {
+  run: (inputs, outputs) => {
     const { list } = inputs;
     const { item1, item2, item3, item4 } = outputs;
     item1.next(list[0]);
@@ -282,7 +282,7 @@ export const AccumulateValuesUntilTrigger: CodePart = {
   outputs: {
     accumulated: { description: "The accumulated values" },
   },
-  fn: (inputs, outputs, adv) => {
+  run: (inputs, outputs, adv) => {
     const { item, until } = inputs;
     const { r } = outputs;
     const { state } = adv;
@@ -321,7 +321,7 @@ export const AccumulateValuesByTime: CodePart = {
   outputs: {
     accumulated: { description: "The accumulated values" },
   },
-  fn: (inputs, outputs, adv) => {
+  run: (inputs, outputs, adv) => {
     const { value, time } = inputs;
     const { accumulated } = outputs;
     const { state } = adv;
@@ -384,7 +384,7 @@ export const AccumulateValuesByCount: CodePart = {
     accumulated: { description: "The accumulated values" },
   },
   completionOutputs: ["accumulated"],
-  fn: (inputs, outputs, adv) => {
+  run: (inputs, outputs, adv) => {
     const { value, count } = inputs;
     const { accumulated } = outputs;
     const { state } = adv;
@@ -422,7 +422,7 @@ export const AccumulateSomeValuesByCount: CodePart = {
     accumulated: { description: "The accumulated accepted values" },
     ignored: { description: "The accumulated ignored values" },
   },
-  fn: (inputs, outputs, adv) => {
+  run: (inputs, outputs, adv) => {
     const { accept, ignore, count } = inputs;
     const { accumulated, ignored } = outputs;
     const { state } = adv;
@@ -456,7 +456,7 @@ export const Append = partFromSimpleFunction({
     { name: "item", description: "The item to append" },
   ],
   output: { name: "list", description: "The resulting list" },
-  fn: (list, item) => {
+  run: (list, item) => {
     return [...list, item];
   },
 });
@@ -470,7 +470,7 @@ export const Prepend = partFromSimpleFunction({
     { name: "item", description: "The item to prepend" },
   ],
   output: { name: "list", description: "The resulting list" },
-  fn: (list, item) => {
+  run: (list, item) => {
     return [item, ...list];
   },
 });
@@ -484,7 +484,7 @@ export const Remove = partFromSimpleFunction({
     { name: "item", description: "The item to remove" },
   ],
   output: { name: "list", description: "The resulting list" },
-  fn: (list, item) => {
+  run: (list, item) => {
     return list.filter((i) => i !== item);
   },
 });
@@ -498,7 +498,7 @@ export const RemoveAt = partFromSimpleFunction({
     { name: "index", description: "The index of the item to remove" },
   ],
   output: { name: "list", description: "The resulting list" },
-  fn: (list, index) => {
+  run: (list, index) => {
     return list.filter((_, idx) => idx !== index);
   },
 });
@@ -514,7 +514,7 @@ export const Slice = partFromSimpleFunction({
     { name: "end", description: "The index to end slicing at" },
   ],
   output: { name: "list", description: "The resulting list" },
-  fn: (list, start, end) => {
+  run: (list, start, end) => {
     return list.slice(start, end);
   },
 });
@@ -525,7 +525,7 @@ export const Flatten = partFromSimpleFunction({
   description: "Flattens a list of lists into a single list",
   inputs: [{ name: "list", description: "The list of lists" }],
   output: { name: "list", description: "The resulting list" },
-  fn: (list) => {
+  run: (list) => {
     return list.reduce((acc, item) => [...acc, ...item], []);
   },
 });

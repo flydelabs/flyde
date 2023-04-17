@@ -16,7 +16,7 @@ part:
             type: any
             delayed: false
             optional: false
-        fnCode: const result = (prompt('What is your weight (in kilograms)?'));
+        runFnRawCode: const result = (prompt('What is your weight (in kilograms)?'));
           Promise.resolve(result).then(val => outputs.value.next(val))
         customViewCode: prompt('What is your weight (in kilograms)?')
         dataBuilderSource: cHJvbXB0KCdXaGF0IGlzIHlvdXIgd2VpZ2h0IChpbiBraWxvZ3JhbXMpPycp
@@ -42,7 +42,7 @@ part:
             type: any
             delayed: false
             optional: false
-        fnCode: const result = (prompt('What is your height (in cm)?'));
+        runFnRawCode: const result = (prompt('What is your height (in cm)?'));
           Promise.resolve(result).then(val => outputs.value.next(val))
         customViewCode: prompt('What is your height (in cm)?')
         dataBuilderSource: cHJvbXB0KCdXaGF0IGlzIHlvdXIgaGVpZ2h0IChpbiBjbSk/Jyk=
@@ -74,7 +74,7 @@ part:
             type: any
             delayed: false
             optional: false
-        fnCode: const result = ((inputs.weight / inputs.height**2)  * 10000);
+        runFnRawCode: const result = ((inputs.weight / inputs.height**2)  * 10000);
           Promise.resolve(result).then(val => outputs.value.next(val))
         customViewCode: (inputs.weight / inputs.height**2)  * 10000
         dataBuilderSource: KGlucHV0cy53ZWlnaHQgLyBpbnB1dHMuaGVpZ2h0KioyKSAgKiAxMDAwMA==
@@ -105,7 +105,7 @@ part:
             type: any
             delayed: false
             optional: false
-        fnCode: |-
+        runFnRawCode: |-
           const result = (function() { let range;
           if (inputs.bmi < 18.5) 
               range = 'overweight'

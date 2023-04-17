@@ -22,11 +22,11 @@ import {
 } from "./part-pins";
 import { ImportedPart } from "../flow-schema";
 
-export type PartRepo = OMap<Part>;
+export type PartsCollection = OMap<Part>;
 
-export type PartDefRepo = OMap<PartDefinition>;
+export type PartsDefCollection = OMap<PartDefinition>;
 
-export type CustomPartRepo = OMap<CustomPart>;
+export type CustomPartCollection = OMap<CustomPart>;
 
 export type PartState = Map<string, any>;
 
@@ -41,7 +41,7 @@ export type PartAdvancedContext = {
   context: Record<string, any>;
 };
 
-export type PartFn = (
+export type RunPartFunction = (
   args: OMapF<any>,
   o: OMapF<Subject<any>>,
   adv: PartAdvancedContext
@@ -51,7 +51,7 @@ export type CustomPartViewFn = (
   instance: PartInstance,
   inputs: OMap<PartInstance[]>,
   outputs: OMap<PartInstance[]>,
-  repo: PartDefRepo
+  resolvedDeps: PartsDefCollection
 ) =>
   | {
       label: string;
@@ -159,10 +159,10 @@ export interface BasePart {
 export interface CodePart extends BasePart {
   /**
    * This function will run as soon as the part's inputs are satisfied.
-   * It has access to the parts inputs values, and output pins. See {@link PartFn} for more information.
+   * It has access to the parts inputs values, and output pins. See {@link RunPartFunction} for more information.
    *
    */
-  fn: PartFn;
+  run: RunPartFunction;
   customView?: CustomPartViewFn;
 }
 
@@ -177,7 +177,7 @@ export enum InlineValuePartType {
  */
 
 export interface InlineValuePart extends BasePart {
-  fnCode: string;
+  runFnRawCode: string;
   dataBuilderSource?: string; // quick solution for "Data builder iteration"
   templateType?: InlineValuePartType;
 }
@@ -212,7 +212,7 @@ export type ImportableSource = {
 
 export type CustomPart = VisualPart | InlineValuePart;
 
-export type CodePartDefinition = Omit<CodePart, "fn">;
+export type CodePartDefinition = Omit<CodePart, "run">;
 
 export type PartDefinition = CustomPart | CodePartDefinition;
 
@@ -228,7 +228,7 @@ export const isBasePart = (p: any): p is BasePart => {
 };
 
 export const isCodePart = (p: Part | PartDefinition): p is CodePart => {
-  return isBasePart(p) && typeof (p as CodePart).fn === "function";
+  return isBasePart(p) && typeof (p as CodePart).run === "function";
 };
 
 export const isVisualPart = (p: Part | PartDefinition): p is VisualPart => {
@@ -238,7 +238,7 @@ export const isVisualPart = (p: Part | PartDefinition): p is VisualPart => {
 export const isInlineValuePart = (
   p: Part | PartDefinition | undefined
 ): p is InlineValuePart => {
-  return isDefined(p) && isDefined((p as InlineValuePart).fnCode);
+  return isDefined(p) && isDefined((p as InlineValuePart).runFnRawCode);
 };
 
 export const visualPart = testDataCreator<VisualPart>({
@@ -255,25 +255,25 @@ export const codePart = testDataCreator<CodePart>({
   id: "part",
   inputs: {},
   outputs: {},
-  fn: noop as any,
+  run: noop as any,
 });
 
 export const inlineValuePart = testDataCreator<InlineValuePart>({
   id: "part",
   inputs: {},
   outputs: {},
-  fnCode: "",
+  runFnRawCode: "",
 });
 
 export type SimplifiedPartParams = {
   id: string;
   inputTypes: OMap<string>;
   outputTypes: OMap<string>;
-  fn: PartFn;
+  run: RunPartFunction;
 };
 
 export const fromSimplified = ({
-  fn,
+  run,
   inputTypes,
   outputTypes,
   id,
@@ -290,7 +290,7 @@ export const fromSimplified = ({
     id,
     inputs,
     outputs,
-    fn,
+    run,
   };
 };
 
@@ -305,12 +305,12 @@ export const maybeGetStaticValuePartId = (value: string) => {
 };
 export const getStaticValue = (
   value: any,
-  repo: PartDefRepo,
+  resolvedDeps: PartsDefCollection,
   calleeId: string
 ) => {
   const maybePartId = maybeGetStaticValuePartId(value);
   if (maybePartId) {
-    const part = repo[maybePartId];
+    const part = resolvedDeps[maybePartId];
     if (!part) {
       throw new Error(
         `Instance ${calleeId} referrer to a part reference ${maybePartId} that does not exist`
@@ -324,13 +324,13 @@ export const getStaticValue = (
 
 export const getPart = (
   idOrIns: string | PartInstance,
-  repo: PartRepo
+  resolvedParts: PartsCollection
 ): Part => {
   if (typeof idOrIns !== "string" && isInlinePartInstance(idOrIns)) {
     return idOrIns.part;
   }
   const id = typeof idOrIns === "string" ? idOrIns : idOrIns.partId;
-  const part = repo[id];
+  const part = resolvedParts[id];
   if (!part) {
     throw new Error(`Part with id ${id} not found`);
   }
@@ -339,13 +339,13 @@ export const getPart = (
 
 export const getPartDef = (
   idOrIns: string | PartInstance,
-  repo: PartDefRepo
+  resolvedParts: PartsDefCollection
 ): PartDefinition => {
   if (typeof idOrIns !== "string" && isInlinePartInstance(idOrIns)) {
     return idOrIns.part;
   }
   const id = typeof idOrIns === "string" ? idOrIns : idOrIns.partId;
-  const part = repo[id];
+  const part = resolvedParts[id];
   if (!part) {
     console.error(`Part with id ${id} not found`);
     throw new Error(`Part with id ${id} not found`);
@@ -372,7 +372,7 @@ export const codeFromFunction = ({
     id,
     inputs: inputNames.reduce((acc, k) => ({ ...acc, [k]: partInput() }), {}),
     outputs: { [outputName]: partOutput() },
-    fn: (inputs, outputs) => {
+    run: (inputs, outputs) => {
       const args = inputNames.map((name) => inputs[name]);
       const output = outputs[outputName];
       const result = fn(...args);

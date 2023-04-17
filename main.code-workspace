@@ -74,10 +74,11 @@
         },
         "presentation": {
           "focus": true,
-          "panel": "dedicated",
+          "panel": "new",
           "showReuseMessage": false,
-          "clear": true
-        }
+          "clear": false
+        },
+        "problemMatcher": []
       }
     ]
   }

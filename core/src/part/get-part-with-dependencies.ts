@@ -1,10 +1,10 @@
 import { CustomPart, isInlineValuePart } from ".";
-import { CustomPartRepo, removeDupes } from "..";
+import { CustomPartCollection, removeDupes } from "..";
 import { isRefPartInstance, RefPartInstance } from "./part-instance";
 
 export const getPartWithDependencies = (
   part: CustomPart,
-  repo: CustomPartRepo,
+  resolvedDeps: CustomPartCollection,
   existingIds: string[] = []
 ): CustomPart[] => {
   if (isInlineValuePart(part)) {
@@ -18,15 +18,18 @@ export const getPartWithDependencies = (
     part.instances
       .filter((i) => isRefPartInstance(i))
       .map((i) => (i as RefPartInstance).partId)
-      .filter((i) => repo[i])
+      .filter((i) => resolvedDeps[i])
   );
 
   const depsPartsWithDeps = deps
-    .flatMap((id) => repo[id] ?? [])
+    .flatMap((id) => resolvedDeps[id] ?? [])
     .reduce<CustomPart[]>((acc, curr) => {
       return [
         ...acc,
-        ...getPartWithDependencies(curr, repo, [...existingIds, ...deps]),
+        ...getPartWithDependencies(curr, resolvedDeps, [
+          ...existingIds,
+          ...deps,
+        ]),
       ];
     }, []);
 

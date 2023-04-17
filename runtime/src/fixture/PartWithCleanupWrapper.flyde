@@ -4,12 +4,6 @@ imports:
 part:
   instances:
     - pos:
-        x: -145.20782470703125
-        y: 400.35975463867186
-      id: IdWithCleanup-840
-      inputConfig: {}
-      partId: IdWithCleanup
-    - pos:
         x: -101.43710571289063
         y: 259.4088671875
       id: clactwgg100074664me4qs55s
@@ -22,7 +16,7 @@ part:
             type: any
             delayed: false
             optional: false
-        fnCode: outputs.r.next((2))
+        runFnRawCode: outputs.r.next((2))
         customViewCode: "2"
         dataBuilderSource: Mg==
         templateType: value
@@ -34,19 +28,25 @@ part:
           cssOverride:
             fontFamily: monospace
             fontWeight: "500"
+    - pos:
+        x: -175.07225915343543
+        y: 420.3097971635871
+      id: clgkqz6qz00024668kbyg1uve
+      inputConfig: {}
+      partId: IdWithCleanup
   connections:
-    - from:
-        insId: IdWithCleanup-840
-        pinId: r
-      to:
-        insId: __this
-        pinId: res
     - from:
         insId: clactwgg100074664me4qs55s
         pinId: r
       to:
-        insId: IdWithCleanup-840
+        insId: clgkqz6qz00024668kbyg1uve
         pinId: n
+    - from:
+        insId: clgkqz6qz00024668kbyg1uve
+        pinId: r
+      to:
+        insId: __this
+        pinId: res
   id: PartWithCleanupWrapper
   inputs: {}
   outputs:

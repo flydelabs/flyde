@@ -1,6 +1,6 @@
 import {
   Part,
-  PartRepo,
+  PartsCollection,
   dynamicOutput,
   keys,
   staticPartInput,
@@ -10,7 +10,7 @@ import { execute, ExecuteParams } from "./execute";
 
 export const simplifiedExecute = (
   partToRun: Part,
-  repo: PartRepo,
+  resolvedDependencies: PartsCollection,
   inputs: Record<string, any>,
   onOutput?: (key: string, data: any) => void,
   otherParams: Partial<ExecuteParams> = {}
@@ -39,7 +39,7 @@ export const simplifiedExecute = (
     part: partToRun,
     inputs: _inputs,
     outputs,
-    partsRepo: repo,
+    resolvedDeps: resolvedDependencies,
     onBubbleError: (err) => {
       throw err;
     },

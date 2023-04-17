@@ -9,7 +9,7 @@ export const JSONParse = partFromSimpleFunction({
   description: "Parses a JSON string into an object",
   inputs: [{ name: "json", description: "JSON string to parse" }],
   output: { name: "object", description: "The parsed object" },
-  fn: (json) => JSON.parse(json),
+  run: (json) => JSON.parse(json),
 });
 
 export const JSONStringify = partFromSimpleFunction({
@@ -19,7 +19,7 @@ export const JSONStringify = partFromSimpleFunction({
   description: "Stringifies an object into a JSON string",
   inputs: [{ name: "object", description: "Object to stringify" }],
   output: { name: "json", description: "The stringified JSON" },
-  fn: (object) => JSON.stringify(object),
+  run: (object) => JSON.stringify(object),
 });
 
 export const ObjectKeys = partFromSimpleFunction({
@@ -29,7 +29,7 @@ export const ObjectKeys = partFromSimpleFunction({
   description: "Emits the keys of an object",
   inputs: [{ name: "object", description: "Object to get keys of" }],
   output: { name: "keys", description: "The keys of object" },
-  fn: (object) => Object.keys(object),
+  run: (object) => Object.keys(object),
 });
 
 export const ObjectValues = partFromSimpleFunction({
@@ -38,7 +38,7 @@ export const ObjectValues = partFromSimpleFunction({
   description: "Emits the values of an object",
   inputs: [{ name: "object", description: "Object to get values of" }],
   output: { name: "values", description: "The values of object" },
-  fn: (object) => Object.values(object),
+  run: (object) => Object.values(object),
 });
 
 export const ObjectEntries = partFromSimpleFunction({
@@ -48,7 +48,7 @@ export const ObjectEntries = partFromSimpleFunction({
   description: "Emits the entries of an object",
   inputs: [{ name: "object", description: "Object to get entries of" }],
   output: { name: "entries", description: "The entries of object" },
-  fn: (object) => Object.entries(object),
+  run: (object) => Object.entries(object),
 });
 
 export const ObjectFromEntries = partFromSimpleFunction({
@@ -60,7 +60,7 @@ export const ObjectFromEntries = partFromSimpleFunction({
     { name: "entries", description: "Array of entries to create object from" },
   ],
   output: { name: "object", description: "The created object" },
-  fn: (entries) => Object.fromEntries(entries),
+  run: (entries) => Object.fromEntries(entries),
 });
 
 export const ObjectAssign = partFromSimpleFunction({
@@ -76,12 +76,12 @@ export const ObjectAssign = partFromSimpleFunction({
     },
   ],
   output: { name: "object", description: "The target object" },
-  fn: (target, ...sources) => Object.assign(target, ...sources),
+  run: (target, ...sources) => Object.assign(target, ...sources),
 });
 
 export const GetAttribute = partFromSimpleFunction({
   id: "Get Attribute",
-  searchKeywords: ['pick', 'dot'],
+  searchKeywords: ["pick", "dot"],
   namespace,
   icon: "fa-magnifying-glass",
   description: "Gets an attribute from an object",
@@ -91,7 +91,7 @@ export const GetAttribute = partFromSimpleFunction({
   ],
   output: { name: "value", description: "The value of the attribute" },
   customViewCode: `<% if (inputs.attribute) { %> Get "<%- inputs.attribute %>"<% } else { %> Get Attribute <% } %>`,
-  fn: (object, attribute) => {
+  run: (object, attribute) => {
     // get attribute from object while supporting dot notation
     return attribute.split(".").reduce((obj, i) => obj[i], object);
   },
@@ -99,7 +99,7 @@ export const GetAttribute = partFromSimpleFunction({
 
 export const SetAttribute = partFromSimpleFunction({
   id: "Set Attribute",
-  searchKeywords: ['dot'],
+  searchKeywords: ["dot"],
   namespace,
   icon: "fa-box",
   description: "Sets an attribute on an object",
@@ -110,7 +110,7 @@ export const SetAttribute = partFromSimpleFunction({
   ],
   customViewCode: `<% if (inputs.attribute) { %> Set "<%- inputs.attribute %>"<% } else { %> Set Attribute <% } %>`,
   output: { name: "object", description: "The object with the attribute set" },
-  fn: (object, attribute, value) => {
+  run: (object, attribute, value) => {
     // set attribute on object while supporting dot notation
     const attributes = attribute.split(".");
     const last = attributes.pop();
@@ -122,7 +122,7 @@ export const SetAttribute = partFromSimpleFunction({
 
 export const DeleteAttribute = partFromSimpleFunction({
   id: "Delete Attribute",
-  searchKeywords: ['remove'],
+  searchKeywords: ["remove"],
   namespace,
   icon: "fa-box",
   description: "Deletes an attribute from an object",
@@ -135,7 +135,7 @@ export const DeleteAttribute = partFromSimpleFunction({
     name: "object",
     description: "The object with the attribute deleted",
   },
-  fn: (object, attribute) => {
+  run: (object, attribute) => {
     // delete attribute from object while supporting dot notation
     const attributes = attribute.split(".");
     const last = attributes.pop();
@@ -149,9 +149,10 @@ export const PropertyEquals: CodePart = {
   id: "Property Equals",
   namespace,
   defaultStyle: {
-    icon: 'fa-equals'
+    icon: "fa-equals",
   },
-  description: "Emits the object to the \"true\" output if an object's property equals a value, otherwise emits to the \"false\" output",
+  description:
+    'Emits the object to the "true" output if an object\'s property equals a value, otherwise emits to the "false" output',
   inputs: {
     object: { description: "Object to check property of" },
     attribute: { description: "Attribute to check" },
@@ -162,14 +163,15 @@ export const PropertyEquals: CodePart = {
     false: { description: "Emitted if the attribute does not equal the value" },
   },
   customViewCode: `<% if (inputs.attribute) { %> "<%- inputs.attribute %>" equals "<%- inputs.value %>"<% } else { %> Property Equals <% } %>`,
-  fn: (inputs, outputs) => {
+  run: (inputs, outputs) => {
     // get attribute from object while supporting dot notation
-    const value = inputs.attribute.split(".").reduce((obj, i) => obj[i], inputs.object);
+    const value = inputs.attribute
+      .split(".")
+      .reduce((obj, i) => obj[i], inputs.object);
     if (value === inputs.value) {
       outputs.true.next(inputs.object);
     } else {
       outputs.false.next(inputs.object);
     }
-  }
-    
-}
+  },
+};

@@ -19,7 +19,7 @@ export const ReadFile = partFromSimpleFunction({
     },
   ],
   output: { name: "contents", description: "Contents of the file" },
-  fn: (path, encoding) => {
+  run: (path, encoding) => {
     return fs.promises.readFile(path, encoding);
   },
 });
@@ -39,7 +39,7 @@ export const WriteFile = partFromSimpleFunction({
       defaultValue: "utf8",
     },
   ],
-  fn: (path, contents, encoding) => {
+  run: (path, contents, encoding) => {
     return fs.promises.writeFile(path, contents, encoding);
   },
 });
@@ -59,7 +59,7 @@ export const AppendFile = partFromSimpleFunction({
       defaultValue: "utf8",
     },
   ],
-  fn: (path, contents, encoding) => {
+  run: (path, contents, encoding) => {
     return fs.promises.appendFile(path, contents, encoding);
   },
 });
@@ -70,7 +70,7 @@ export const DeleteFile = partFromSimpleFunction({
   namespace,
   description: "Deletes a file from the file system",
   inputs: [{ name: "path", description: "Path to the file" }],
-  fn: (path) => {
+  run: (path) => {
     return fs.promises.unlink(path);
   },
 });
@@ -82,7 +82,7 @@ export const Exists = partFromSimpleFunction({
   description: "Checks if a file exists",
   inputs: [{ name: "path", description: "Path to the file" }],
   output: { name: "exists", description: "Whether the file exists" },
-  fn: (path) => {
+  run: (path) => {
     // check if file in path exists
     return fs.promises.access(path, fs.constants.F_OK);
   },

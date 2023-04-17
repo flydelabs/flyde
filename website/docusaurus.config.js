@@ -67,7 +67,7 @@ const config = {
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
   organizationName: "flydehq", // Usually your GitHub org/user name.
-  projectName: "flyde", // Usually your repo name.
+  projectName: "flyde", // Usually your resolvedParts name.
   deploymentBranch: "website",
   trailingSlash: true,
 
@@ -79,21 +79,21 @@ const config = {
     locales: ["en"],
   },
   plugins: [
-    ["docusaurus-plugin-typedoc",
-    // Plugin / TypeDoc options
-    {
-      entryPoints: [
-        '../core/src/index.ts',
-      ],
-      tsconfig: '../core/tsconfig.json',
-      out: 'api-reference',
-      watch: process.env.TYPEDOC_WATCH,
-      sidebar: {
+    [
+      "docusaurus-plugin-typedoc",
+      // Plugin / TypeDoc options
+      {
+        entryPoints: ["../core/src/index.ts"],
+        tsconfig: "../core/tsconfig.json",
+        out: "api-reference",
+        watch: process.env.TYPEDOC_WATCH,
+        sidebar: {
           position: 20,
-          categoryLabel: 'API Reference',
-          fullNames: true
-      }
-    }],
+          categoryLabel: "API Reference",
+          fullNames: true,
+        },
+      },
+    ],
     "docusaurus-plugin-sass",
     "docusaurus-plugin-hotjar",
     // @ts-ignore
@@ -107,14 +107,14 @@ const config = {
       ({
         docs: {
           sidebarPath: require.resolve("./sidebars.js"),
-          // Please change this to your repo.
+          // Please change this to your resolvedParts.
           // Remove this to remove the "edit this page" links.
           editUrl:
             "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/",
         },
         blog: {
           showReadingTime: true,
-          // Please change this to your repo.
+          // Please change this to your resolvedParts.
           // Remove this to remove the "edit this page" links.
           editUrl:
             "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/",
@@ -147,7 +147,7 @@ const config = {
         },
         items: [
           {
-            to: '/docs',
+            to: "/docs",
             label: "Documentation",
           },
           { to: "/blog", label: "Blog", position: "left" },
@@ -156,7 +156,6 @@ const config = {
             label: "VSCode Extension",
           },
           {
-
             href: "https://github.com/FlydeHQ/flyde/tree/main/examples",
             label: "Examples",
           },

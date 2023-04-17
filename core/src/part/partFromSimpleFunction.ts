@@ -1,7 +1,7 @@
 import { BasePart, CodePart, PartStyleSize } from ".";
 import { InputMode } from "./part-pins";
 
-export type SimpleFnData = Omit<BasePart, "inputs" | "outputs" | "fn"> & {
+export type SimpleFnData = Omit<BasePart, "inputs" | "outputs" | "run"> & {
   id: string;
   description: string;
   namespace: string;
@@ -12,7 +12,7 @@ export type SimpleFnData = Omit<BasePart, "inputs" | "outputs" | "fn"> & {
     defaultValue?: any;
   }[];
   output?: { name: string; description: string };
-  fn: (...args: any[]) => any;
+  run: (...args: any[]) => any;
   symbol?: string;
   icon?: string;
   size?: PartStyleSize;
@@ -41,10 +41,10 @@ export function partFromSimpleFunction(data: SimpleFnData): CodePart {
       icon: data.icon,
       size: data.size,
     },
-    fn: async function (inputs, outputs, adv) {
+    run: async function (inputs, outputs, adv) {
       const args = (data.inputs ?? []).map(({ name }) => inputs[name]);
       try {
-        const result = await Promise.resolve(data.fn(...args));
+        const result = await Promise.resolve(data.run(...args));
         if (data.output) {
           outputs[data.output.name]?.next(result);
         }

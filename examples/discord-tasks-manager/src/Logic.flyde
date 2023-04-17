@@ -53,7 +53,7 @@ part:
             type: any
             delayed: false
             optional: false
-        fnCode: outputs.r.next((`Task "${inputs.task.name}" added!`))
+        runFnRawCode: outputs.r.next((`Task "${inputs.task.name}" added!`))
         customViewCode: '`Task "${inputs.task.name}" added!`'
         dataBuilderSource: YFRhc2sgIiR7aW5wdXRzLnRhc2submFtZX0iIGFkZGVkIWA=
         templateType: value
@@ -315,7 +315,7 @@ part:
             type: any
             delayed: false
             optional: false
-        fnCode: "outputs.r.next((`Current tasks are: ${inputs.tasks.map(task =>
+        runFnRawCode: "outputs.r.next((`Current tasks are: ${inputs.tasks.map(task =>
           task.name).join(', ')}`))"
         customViewCode: "`Current tasks are: ${inputs.tasks.map(task =>
           task.name).join(', ')}`"
@@ -368,7 +368,7 @@ part:
                   type: any
                   delayed: false
                   optional: false
-              fnCode: outputs.r.next((inputs.interaction.createMessage(inputs.msg)))
+              runFnRawCode: outputs.r.next((inputs.interaction.createMessage(inputs.msg)))
               customViewCode: inputs.interaction.createMessage(inputs.msg)
               dataBuilderSource: aW5wdXRzLmludGVyYWN0aW9uLmNyZWF0ZU1lc3NhZ2UoaW5wdXRzLm1zZyk=
               templateType: value
@@ -436,7 +436,7 @@ part:
                   type: any
                   delayed: false
                   optional: false
-              fnCode: outputs.r.next((inputs.interaction.createMessage(inputs.msg)))
+              runFnRawCode: outputs.r.next((inputs.interaction.createMessage(inputs.msg)))
               customViewCode: inputs.interaction.createMessage(inputs.msg)
               dataBuilderSource: aW5wdXRzLmludGVyYWN0aW9uLmNyZWF0ZU1lc3NhZ2UoaW5wdXRzLm1zZyk=
               templateType: value
@@ -512,7 +512,7 @@ part:
                   type: any
                   delayed: false
                   optional: false
-              fnCode: outputs.r.next((inputs.cmd.options.find(opt => opt.name ===
+              runFnRawCode: outputs.r.next((inputs.cmd.options.find(opt => opt.name ===
                 inputs.name)))
               customViewCode: inputs.cmd.options.find(opt => opt.name === inputs.name)
               dataBuilderSource: aW5wdXRzLmNtZC5vcHRpb25zLmZpbmQob3B0ID0+IG9wdC5uYW1lID09PSBpbnB1dHMubmFtZSk=
@@ -621,7 +621,7 @@ part:
                   type: any
                   delayed: false
                   optional: false
-              fnCode: outputs.r.next((inputs.cmd.options.find(opt => opt.name ===
+              runFnRawCode: outputs.r.next((inputs.cmd.options.find(opt => opt.name ===
                 inputs.name)))
               customViewCode: inputs.cmd.options.find(opt => opt.name === inputs.name)
               dataBuilderSource: aW5wdXRzLmNtZC5vcHRpb25zLmZpbmQob3B0ID0+IG9wdC5uYW1lID09PSBpbnB1dHMubmFtZSk=
@@ -751,7 +751,7 @@ part:
                   type: any
                   delayed: false
                   optional: false
-              fnCode: outputs.r.next((bot.createMessage(inputs.channelId, "Pong!")))
+              runFnRawCode: outputs.r.next((bot.createMessage(inputs.channelId, "Pong!")))
               customViewCode: bot.createMessage(inputs.channelId, "Pong!")
               dataBuilderSource: Ym90LmNyZWF0ZU1lc3NhZ2UoaW5wdXRzLmNoYW5uZWxJZCwgIlBvbmchIik=
               templateType: value

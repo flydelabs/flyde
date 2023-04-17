@@ -12,7 +12,7 @@ import {
   dynamicPartInput,
   InlineValuePart,
   dynamicOutput,
-  PartRepo,
+  PartsCollection,
 } from "../part";
 
 import { getVM2Instance } from "./get-vm2";
@@ -23,7 +23,7 @@ export const inlineValuePartToPart = (
   inlineValuePart: InlineValuePart,
   extraContext: Record<string, any> = {}
 ): CodePart => {
-  const { fnCode, ...rest } = inlineValuePart;
+  const { runFnRawCode: fnCode, ...rest } = inlineValuePart;
 
   const logger = debugLogger(`code-part:${inlineValuePart.id}`);
 
@@ -38,7 +38,7 @@ export const inlineValuePartToPart = (
   const script = new vm2.VMScript(wrappedCode);
   const part: CodePart = {
     ...rest,
-    fn: (inputs, outputs, adv) => {
+    run: (inputs, outputs, adv) => {
       const log = (...args: any[]) => {
         logger(
           `Log from code part ${inlineValuePart.id} [${adv.insId}]`,
@@ -78,16 +78,16 @@ export const inlineValuePartToPart = (
   return part;
 };
 
-export const customRepoToPartRepo = (
-  customPartRepo: PartRepo,
+export const customPartsToPartsCollection = (
+  customParts: PartsCollection,
   extraContext: Record<string, any> = {}
-): PartRepo => {
-  const newRepo: PartRepo = {};
-  for (let id in customPartRepo) {
-    const part = customPartRepo[id];
-    newRepo[id] = isInlineValuePart(part)
+): PartsCollection => {
+  const partsCollection: PartsCollection = {};
+  for (let id in customParts) {
+    const part = customParts[id];
+    partsCollection[id] = isInlineValuePart(part)
       ? inlineValuePartToPart(part, extraContext)
       : part;
   }
-  return newRepo;
+  return partsCollection;
 };

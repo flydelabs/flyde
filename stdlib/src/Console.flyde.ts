@@ -8,7 +8,7 @@ export const Log = partFromSimpleFunction({
   namespace,
   description: "Logs a value to the console",
   inputs: [{ name: "value", description: "Value to log" }],
-  fn: (value) => console.log(value),
+  run: (value) => console.log(value),
 });
 
 export const Error = partFromSimpleFunction({
@@ -17,5 +17,5 @@ export const Error = partFromSimpleFunction({
   namespace,
   description: "Logs an error to the console",
   inputs: [{ name: "value", description: "Value to log" }],
-  fn: (value) => console.error(value),
+  run: (value) => console.error(value),
 });

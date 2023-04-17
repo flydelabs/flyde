@@ -7,7 +7,7 @@ import {
   PartInstance,
   keys,
   VisualPart,
-  PartDefRepo,
+  PartsDefCollection,
   getPartDef,
   noop,
 } from "@flyde/core";
@@ -16,7 +16,7 @@ import classNames from "classnames";
 export type SideBarProps = {
   part: VisualPart;
   selectedIds: string[];
-  repo: PartDefRepo;
+  resolvedParts: PartsDefCollection;
   onSelect: (id: PartInstance, ev: React.MouseEvent) => void;
   onFocusInput: (id: string, ev: React.MouseEvent) => void;
   onFocusOutput: (id: string, ev: React.MouseEvent) => void;
@@ -95,7 +95,7 @@ export const SideBar: React.FC<SideBarProps> = React.memo(function SideBarInner(
   });
 
   const items: MenuItemProps[] = instances.map((ins) => {
-    const part = getPartDef(ins, props.repo);
+    const part = getPartDef(ins, props.resolvedParts);
     const type = isVisualPart(part)
       ? MenuItemType.VISUAL
       : isCodePart(part)

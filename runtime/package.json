@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha src/**/*.spec.ts --require ts-node/register",
     "watch:ts": "tsc -p . -w --incremental",
     "dev": "concurrently --kill-others 'yarn run watch:ts'",
     "build": "rm -rf dist && tsc -p . ",
@@ -52,6 +52,7 @@
   "devDependencies": {
     "chai": "^4.3.6",
     "concurrently": "^5.2.0",
+    "mocha": "^5.2.0",
     "nodemon": "^2.0.20",
     "sinon": "^14.0.0",
     "ts-node-dev": "^2.0.0",

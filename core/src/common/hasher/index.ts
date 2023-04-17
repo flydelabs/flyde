@@ -2,7 +2,6 @@ import _md5 from "md5";
 import { FlydeFlow } from "../../flow-schema";
 import { isInlineValuePart, isVisualPart, Part } from "../../part";
 
-
 const md5 = (str: string) => {
   return _md5(str);
 };
@@ -13,8 +12,7 @@ export const hashPart = (part: Part, ignorePos = true) => {
   const basePart = { id, completionOutputs, reactiveInputs, inputs, outputs };
 
   if (isVisualPart(part)) {
-    const { instances, connections, inputsPosition, outputsPosition } =
-      part;
+    const { instances, connections, inputsPosition, outputsPosition } = part;
     // const cleanedInstances = ignorePos ? instances.map((ins) => {
     //     const { pos, ...rest } = ins;
     //     return rest;
@@ -46,7 +44,7 @@ export const hashPart = (part: Part, ignorePos = true) => {
     });
     return md5(str);
   } else if (isInlineValuePart(part)) {
-    const { fnCode, customViewCode } = part;
+    const { runFnRawCode: fnCode, customViewCode } = part;
     const str = JSON.stringify({ fnCode, customViewCode, ...basePart });
     return md5(str);
   }

@@ -12,7 +12,7 @@ export const Add = partFromSimpleFunction({
     { name: "n2", description: "Second number to add" },
   ],
   output: { name: "sum", description: "The sum of n1 and n2" },
-  fn: (a, b) => a + b,
+  run: (a, b) => a + b,
 });
 
 export const Subtract = partFromSimpleFunction({
@@ -25,7 +25,7 @@ export const Subtract = partFromSimpleFunction({
     { name: "n2", description: "Second number to subtract" },
   ],
   output: { name: "difference", description: "The difference of n1 and n2" },
-  fn: (a, b) => a - b,
+  run: (a, b) => a - b,
 });
 
 export const Multiply = partFromSimpleFunction({
@@ -38,7 +38,7 @@ export const Multiply = partFromSimpleFunction({
     { name: "n2", description: "Second number to multiply" },
   ],
   output: { name: "product", description: "The product of n1 and n2" },
-  fn: (a, b) => a * b,
+  run: (a, b) => a * b,
 });
 
 export const Divide = partFromSimpleFunction({
@@ -51,7 +51,7 @@ export const Divide = partFromSimpleFunction({
     { name: "n2", description: "Second number to divide" },
   ],
   output: { name: "quotient", description: "The quotient of n1 and n2" },
-  fn: (a, b) => a / b,
+  run: (a, b) => a / b,
 });
 
 export const Modulo = partFromSimpleFunction({
@@ -64,7 +64,7 @@ export const Modulo = partFromSimpleFunction({
     { name: "n2", description: "Second number to divide" },
   ],
   output: { name: "remainder", description: "The remainder of n1 and n2" },
-  fn: (a, b) => a % b,
+  run: (a, b) => a % b,
 });
 
 export const Power = partFromSimpleFunction({
@@ -77,7 +77,7 @@ export const Power = partFromSimpleFunction({
     { name: "n2", description: "Exponent" },
   ],
   output: { name: "power", description: "The power of n1 and n2" },
-  fn: (a, b) => Math.pow(a, b),
+  run: (a, b) => Math.pow(a, b),
 });
 
 export const SquareRoot = partFromSimpleFunction({
@@ -87,7 +87,7 @@ export const SquareRoot = partFromSimpleFunction({
   description: "Emits the square root of a number",
   inputs: [{ name: "n", description: "Number to take the square root of" }],
   output: { name: "root", description: "The square root of n" },
-  fn: (n) => Math.sqrt(n),
+  run: (n) => Math.sqrt(n),
 });
 
 export const AbsoluteValue = partFromSimpleFunction({
@@ -97,7 +97,7 @@ export const AbsoluteValue = partFromSimpleFunction({
   description: "Emits the absolute value of a number",
   inputs: [{ name: "n", description: "Number to take the absolute value of" }],
   output: { name: "absolute", description: "The absolute value of n" },
-  fn: (n) => Math.abs(n),
+  run: (n) => Math.abs(n),
 });
 
 export const Floor = partFromSimpleFunction({
@@ -107,7 +107,7 @@ export const Floor = partFromSimpleFunction({
   description: "Emits the floor of a number",
   inputs: [{ name: "n", description: "Number to take the floor of" }],
   output: { name: "floor", description: "The floor of n" },
-  fn: (n) => Math.floor(n),
+  run: (n) => Math.floor(n),
 });
 
 export const Ceiling = partFromSimpleFunction({
@@ -117,7 +117,7 @@ export const Ceiling = partFromSimpleFunction({
   description: "Emits the ceiling of a number",
   inputs: [{ name: "n", description: "Number to take the ceiling of" }],
   output: { name: "ceiling", description: "The ceiling of n" },
-  fn: (n) => Math.ceil(n),
+  run: (n) => Math.ceil(n),
 });
 
 export const Round = partFromSimpleFunction({
@@ -127,7 +127,7 @@ export const Round = partFromSimpleFunction({
   description: "Emits the rounded value of a number",
   inputs: [{ name: "n", description: "Number to round" }],
   output: { name: "rounded", description: "The rounded value of n" },
-  fn: (n) => Math.round(n),
+  run: (n) => Math.round(n),
 });
 
 export const Truncate = partFromSimpleFunction({
@@ -137,7 +137,7 @@ export const Truncate = partFromSimpleFunction({
   description: "Emits the truncated value of a number",
   inputs: [{ name: "n", description: "Number to truncate" }],
   output: { name: "truncated", description: "The truncated value of n" },
-  fn: (n) => Math.trunc(n),
+  run: (n) => Math.trunc(n),
 });
 
 export const Sin = partFromSimpleFunction({
@@ -147,7 +147,7 @@ export const Sin = partFromSimpleFunction({
   description: "Emits the sine of an angle",
   inputs: [{ name: "angle", description: "Angle in radians" }],
   output: { name: "sine", description: "The sine of angle" },
-  fn: (n) => Math.sin(n),
+  run: (n) => Math.sin(n),
 });
 
 export const Cos = partFromSimpleFunction({
@@ -157,7 +157,7 @@ export const Cos = partFromSimpleFunction({
   description: "Emits the cosine of an angle",
   inputs: [{ name: "angle", description: "Angle in radians" }],
   output: { name: "cosine", description: "The cosine of angle" },
-  fn: (n) => Math.cos(n),
+  run: (n) => Math.cos(n),
 });
 
 export const Min = partFromSimpleFunction({
@@ -169,7 +169,7 @@ export const Min = partFromSimpleFunction({
     { name: "n2", description: "Second number" },
   ],
   output: { name: "min", description: "The minimum of n1 and n2" },
-  fn: (a, b) => Math.min(a, b),
+  run: (a, b) => Math.min(a, b),
 });
 
 export const Max = partFromSimpleFunction({
@@ -181,7 +181,7 @@ export const Max = partFromSimpleFunction({
     { name: "n2", description: "Second number" },
   ],
   output: { name: "max", description: "The maximum of n1 and n2" },
-  fn: (a, b) => Math.max(a, b),
+  run: (a, b) => Math.max(a, b),
 });
 
 export const ParseInt = partFromSimpleFunction({
@@ -190,7 +190,7 @@ export const ParseInt = partFromSimpleFunction({
   description: "Emits the integer value of a string",
   inputs: [{ name: "str", description: "String to parse" }],
   output: { name: "int", description: "The integer value of str" },
-  fn: (str) => parseInt(str),
+  run: (str) => parseInt(str),
 });
 
 export const ParseFloat = partFromSimpleFunction({
@@ -199,7 +199,7 @@ export const ParseFloat = partFromSimpleFunction({
   description: "Emits the float value of a string",
   inputs: [{ name: "str", description: "String to parse" }],
   output: { name: "float", description: "The float value of str" },
-  fn: (str) => parseFloat(str),
+  run: (str) => parseFloat(str),
 });
 
 export const ToFixed = partFromSimpleFunction({
@@ -214,7 +214,7 @@ export const ToFixed = partFromSimpleFunction({
     name: "fixed",
     description: "The number with the specified number of decimal places",
   },
-  fn: (number, places) => number.toFixed(places),
+  run: (number, places) => number.toFixed(places),
 });
 
 export const ToExponential = partFromSimpleFunction({
@@ -231,7 +231,7 @@ export const ToExponential = partFromSimpleFunction({
     description:
       "The number with the specified number of decimal places in exponential notation",
   },
-  fn: (number, places) => number.toExponential(places),
+  run: (number, places) => number.toExponential(places),
 });
 
 export const ToPrecision = partFromSimpleFunction({
@@ -249,7 +249,7 @@ export const ToPrecision = partFromSimpleFunction({
     name: "precision",
     description: "The number with the specified number of significant figures",
   },
-  fn: (number, places) => number.toPrecision(places),
+  run: (number, places) => number.toPrecision(places),
 });
 
 export const GreaterThan = partFromSimpleFunction({
@@ -261,7 +261,7 @@ export const GreaterThan = partFromSimpleFunction({
     { name: "n2", description: "Second number" },
   ],
   output: { name: "result", description: "true if n1 is greater than n2" },
-  fn: (a, b) => a > b,
+  run: (a, b) => a > b,
 });
 
 export const GreaterThanOrEqual = partFromSimpleFunction({
@@ -277,7 +277,7 @@ export const GreaterThanOrEqual = partFromSimpleFunction({
     name: "result",
     description: "true if n1 is greater than or equal to n2",
   },
-  fn: (a, b) => a >= b,
+  run: (a, b) => a >= b,
 });
 
 export const LessThan = partFromSimpleFunction({
@@ -289,7 +289,7 @@ export const LessThan = partFromSimpleFunction({
     { name: "n2", description: "Second number" },
   ],
   output: { name: "result", description: "true if n1 is less than n2" },
-  fn: (a, b) => a < b,
+  run: (a, b) => a < b,
 });
 
 export const LessThanOrEqual = partFromSimpleFunction({
@@ -305,7 +305,7 @@ export const LessThanOrEqual = partFromSimpleFunction({
     name: "result",
     description: "true if n1 is less than or equal to n2",
   },
-  fn: (a, b) => a <= b,
+  run: (a, b) => a <= b,
 });
 
 export const SumList = partFromSimpleFunction({
@@ -315,5 +315,5 @@ export const SumList = partFromSimpleFunction({
   description: "Emits the sum of a list of numbers",
   inputs: [{ name: "list", description: "List of numbers" }],
   output: { name: "sum", description: "The sum of the numbers in list" },
-  fn: (list) => list.reduce((a, b) => a + b, 0),
+  run: (list) => list.reduce((a, b) => a + b, 0),
 });

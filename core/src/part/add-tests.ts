@@ -7,10 +7,14 @@ import { execute } from "../execute";
 import { Subject } from "rxjs";
 
 import { assert } from "chai";
-import { PartRepo } from "..";
+import { PartsCollection } from "..";
 import { queueInputPinConfig, stickyInputPinConfig } from "./pin-config";
 
-export const runAddTests = (add: Part, source: string, repo: PartRepo) => {
+export const runAddTests = (
+  add: Part,
+  source: string,
+  resolvedDeps: PartsCollection
+) => {
   describe(`Add tests: ${source}`, () => {
     it("runs fn when dynamic inputs are given", () => {
       const fn = spy();
@@ -24,7 +28,7 @@ export const runAddTests = (add: Part, source: string, repo: PartRepo) => {
         part: add,
         inputs: { n1, n2 },
         outputs: { r },
-        partsRepo: repo,
+        resolvedDeps: resolvedDeps,
       });
       n1.subject.next(1);
       n2.subject.next(2);
@@ -45,7 +49,7 @@ export const runAddTests = (add: Part, source: string, repo: PartRepo) => {
         part: add,
         inputs: { n1, n2 },
         outputs: { r },
-        partsRepo: repo,
+        resolvedDeps: resolvedDeps,
       });
       assert.equal(fn.callCount, 0);
       n1.subject.next(1);
@@ -68,7 +72,7 @@ export const runAddTests = (add: Part, source: string, repo: PartRepo) => {
         part: add,
         inputs: { n1, n2 },
         outputs: { r },
-        partsRepo: repo,
+        resolvedDeps: resolvedDeps,
       });
       n1.subject.next(1);
       n2.subject.next(2);
@@ -94,7 +98,7 @@ export const runAddTests = (add: Part, source: string, repo: PartRepo) => {
         part: add,
         inputs: { n1, n2 },
         outputs: { r },
-        partsRepo: repo,
+        resolvedDeps: resolvedDeps,
       });
       n1.subject.next(1);
       n2.subject.next(2);
@@ -120,7 +124,7 @@ export const runAddTests = (add: Part, source: string, repo: PartRepo) => {
         part: add,
         inputs: { n1, n2 },
         outputs: { r },
-        partsRepo: repo,
+        resolvedDeps: resolvedDeps,
       });
       n1.subject.next(1);
       n2.subject.next(2);

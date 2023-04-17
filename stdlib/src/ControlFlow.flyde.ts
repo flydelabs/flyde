@@ -20,7 +20,7 @@ export const LimitTimes: CodePart = {
   outputs: { ok: {} },
   reactiveInputs: ["item", "reset"],
   completionOutputs: [],
-  fn: function (inputs, outputs, adv) {
+  run: function (inputs, outputs, adv) {
     // magic here
     const { state } = adv;
     const { item, times, reset } = inputs;
@@ -64,7 +64,7 @@ export const RoundRobin3: CodePart = {
   },
   completionOutputs: [],
   reactiveInputs: ["value"],
-  fn: function (inputs, outputs, adv) {
+  run: function (inputs, outputs, adv) {
     const { state } = adv;
     const { r1, r2, r3 } = outputs;
     const curr = state.get("curr") || 0;
@@ -96,7 +96,7 @@ export const RoundRobin2: CodePart = {
   },
   completionOutputs: [],
   reactiveInputs: ["value"],
-  fn: function (inputs, outputs, adv) {
+  run: function (inputs, outputs, adv) {
     const { state } = adv;
     const { r1, r2 } = outputs;
     const curr = state.get("curr") || 0;
@@ -136,7 +136,7 @@ export const RoundRobin4: CodePart = {
   },
   completionOutputs: [],
   reactiveInputs: ["value"],
-  fn: function (inputs, outputs, adv) {
+  run: function (inputs, outputs, adv) {
     const { state } = adv;
     const { r1, r2, r3, r4 } = outputs;
     const curr = state.get("curr") || 0;
@@ -163,10 +163,10 @@ export const Publish: CodePart = {
     value: { mode: "required" },
   },
   outputs: {},
-  fn: function (inputs, _, adv) {
+  run: function (inputs, _, adv) {
     // magic here
     const nsKey = `${adv.ancestorsInsIds}__${inputs.key}`;
-  
+
     PubSub.publish(nsKey, inputs.value);
   },
 };
@@ -181,11 +181,14 @@ export const Subscribe: CodePart = {
       mode: "required",
       description: "A key to use to subscribe to values",
     },
-    initial: { mode: "required-if-connected", description: "If passed will be published has the first value" },
+    initial: {
+      mode: "required-if-connected",
+      description: "If passed will be published has the first value",
+    },
   },
   completionOutputs: [],
   outputs: { value: { description: "The value published by the key" } },
-  fn: function (inputs, outputs, adv) {
+  run: function (inputs, outputs, adv) {
     const { value } = outputs;
     const nsKey = `${adv.ancestorsInsIds}__${inputs.key}`;
     const token = PubSub.subscribe(nsKey, (_, data) => {
@@ -221,7 +224,7 @@ export const BooleanSplit: CodePart = {
     true: { description: "The value is true" },
     false: { description: "The value is false" },
   },
-  fn: function (inputs, outputs) {
+  run: function (inputs, outputs) {
     const { true: trueOutput, false: falseOutput } = outputs;
     const { value, trueValue, falseValue } = inputs;
     if (value) {
@@ -243,7 +246,7 @@ export const EmitOnTrigger: CodePart = {
   outputs: {
     result: { description: "The value emitted" },
   },
-  fn: function (inputs, outputs) {
+  run: function (inputs, outputs) {
     const { result } = outputs;
     const { value, trigger } = inputs;
     if (trigger !== undefined) {
@@ -294,7 +297,7 @@ export const Switch3: CodePart = {
         "The value emitted if the input value is not equal to any of the cases",
     },
   },
-  fn: function (inputs, outputs) {
+  run: function (inputs, outputs) {
     const {
       first,
       second,
@@ -349,7 +352,7 @@ export const Switch2: CodePart = {
         "The value emitted if the input value is not equal to any of the cases",
     },
   },
-  fn: function (inputs, outputs) {
+  run: function (inputs, outputs) {
     const { first, second, default: defaultOutput, outputValue } = outputs;
     const { value, firstCase, secondCase } = inputs;
     if (value === firstCase) {
@@ -412,7 +415,7 @@ export const Switch4: CodePart = {
         "The value emitted if the input value is not equal to any of the cases",
     },
   },
-  fn: function (inputs, outputs) {
+  run: function (inputs, outputs) {
     const {
       first,
       second,
@@ -421,8 +424,7 @@ export const Switch4: CodePart = {
       default: defaultOutput,
       outputValue,
     } = outputs;
-    const { value, firstCase, secondCase, thirdCase, fourthCase } =
-      inputs;
+    const { value, firstCase, secondCase, thirdCase, fourthCase } = inputs;
     if (value === firstCase) {
       first.next(outputValue ?? value);
     } else if (value === secondCase) {
@@ -448,7 +450,7 @@ export const Delay = partFromSimpleFunction({
     { name: "delay", description: "Delay in milliseconds" },
   ],
   output: { name: "delayedValue", description: "Delayed value" },
-  fn: (value, delay) =>
+  run: (value, delay) =>
     new Promise((resolve) => setTimeout(() => resolve(value), delay)),
 });
 
@@ -468,7 +470,7 @@ export const Interval: CodePart = {
     value: { description: "Emitted value" },
   },
   completionOutputs: [],
-  fn: (inputs, outputs, adv) => {
+  run: (inputs, outputs, adv) => {
     if (adv.state.get("timer")) {
       clearInterval(adv.state.get("timer"));
     }
@@ -504,7 +506,7 @@ export const Debounce: CodePart = {
   reactiveInputs: ["value"],
   description:
     'Emits the last value received after being idle for "wait" amount of milliseconds',
-  fn: function (inputs, outputs, adv) {
+  run: function (inputs, outputs, adv) {
     const { value, wait } = inputs;
     const { result } = outputs;
 
@@ -552,7 +554,7 @@ export const Throttle: CodePart = {
   reactiveInputs: ["value"],
   description:
     'Emits the first value received after being idle for "wait" amount of milliseconds',
-  fn: function (inputs, outputs, adv) {
+  run: function (inputs, outputs, adv) {
     const { value, wait } = inputs;
     const { result } = outputs;
 
@@ -580,14 +582,14 @@ export const EqualsBoolean = partFromSimpleFunction({
     { name: "b", description: "Second value" },
   ],
   output: { name: "result", description: "true if a is equal to b" },
-  fn: (a, b) => a === b,
+  run: (a, b) => a === b,
 });
-
 
 export const Equals: CodePart = {
   id: "Equals",
   namespace,
-  description: 'Emits the value of "a" to output "true" if "a" is equal to "b". Otherwise emits the value of "a" to output "false".',
+  description:
+    'Emits the value of "a" to output "true" if "a" is equal to "b". Otherwise emits the value of "a" to output "false".',
   inputs: {
     a: {
       mode: "required",
@@ -596,7 +598,7 @@ export const Equals: CodePart = {
     b: {
       mode: "required",
       description: "Second value",
-    }
+    },
   },
   outputs: {
     true: {
@@ -606,7 +608,7 @@ export const Equals: CodePart = {
       description: "Emits the value of a if a is not equal to b",
     },
   },
-  fn: (inputs, outputs) => {
+  run: (inputs, outputs) => {
     const { a, b } = inputs;
     const { true: trueOutput, false: falseOutput } = outputs;
 
@@ -615,6 +617,5 @@ export const Equals: CodePart = {
     } else {
       falseOutput.next(a);
     }
-  }
-}
-
+  },
+};

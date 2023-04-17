@@ -1,19 +1,17 @@
 import { CodePart } from "@flyde/core";
 
-const part: CodePart = {
+export const part: CodePart = {
   id: "IdWithCleanup",
   inputs: {
-    n: { mode: "required"},
+    n: { mode: "required" },
   },
   outputs: {
     r: {},
   },
-  fn: ({ n }, { r }, adv) => {
+  run: ({ n }, { r }, adv) => {
     adv.onCleanup(() => {
       adv.context.cleanupSpy();
     });
     r?.next(n);
   },
 };
-
-export = part;

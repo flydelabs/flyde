@@ -9,7 +9,7 @@
     "README.md"
   ],
   "scripts": {
-    "test": "mocha src/spec.ts src/execute/spec.ts src/**/spec.ts --require ts-node/register --require test-setup.js",
+    "test": "mocha src/spec.ts src/execute/spec.ts src/**/spec.ts --require ts-node/register",
     "start": "tsc -p . -w --incremental",
     "dev": "tsc -p . -w --incremental",
     "__publish": "npm version patch && npm publish",

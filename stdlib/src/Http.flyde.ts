@@ -24,7 +24,7 @@ export const Get = partFromSimpleFunction({
     },
   ],
   output: { name: "data", description: "The response data" },
-  fn: (url) => {
+  run: (url) => {
     return axios.get(url).then((res) => res.data);
   },
 });
@@ -54,7 +54,7 @@ export const Post = partFromSimpleFunction({
     },
   ],
   output: { name: "data", description: "The response data" },
-  fn: (url, headers, params, data) => {
+  run: (url, headers, params, data) => {
     return axios.post(url, data, { headers, params }).then((res) => res.data);
   },
 });
@@ -84,7 +84,7 @@ export const Put = partFromSimpleFunction({
     },
   ],
   output: { name: "data", description: "The response data" },
-  fn: (url, headers, params, data) => {
+  run: (url, headers, params, data) => {
     return axios.put(url, data, { headers, params }).then((res) => res.data);
   },
 });
@@ -114,7 +114,7 @@ export const Request = partFromSimpleFunction({
     },
   ],
   output: { name: "data", description: "The response data" },
-  fn: (url, method, headers, params, data) => {
+  run: (url, method, headers, params, data) => {
     return axios
       .request({ url, method, data, headers, params })
       .then((res) => res.data);

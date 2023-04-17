@@ -12,7 +12,7 @@ const part: CodePart = {
   outputs: {
     task: partOutput(),
   },
-  fn: (inputs, outputs, adv) => {
+  run: (inputs, outputs, adv) => {
     servicePromise.then((service) => {
       const task = { name: inputs.name, assignee: inputs.assignee };
       service.addTask(task).then((val) => {

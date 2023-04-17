@@ -84,7 +84,6 @@ export const FoldersSection: React.FC<FoldersSectionProps> = (props) => {
   const [newFlowTarget, setNewFlowTarget] = React.useState<string>();
 
   const [foldersExpanded, setFoldersExpanded] = React.useState(true);
-  const [flowsExpanded, setFlowsExpanded] = React.useState(true);
 
   const toggleFolders = useCallback(
     () => setFoldersExpanded(!foldersExpanded),

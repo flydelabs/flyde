@@ -8,6 +8,8 @@
     "jsx": "react-jsx",
     "esModuleInterop": true,
     "inlineSourceMap": true,
+    "module": "commonjs",
+    "moduleResolution": "node"
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"],
   "exclude": ["node_modules"]

@@ -95,22 +95,25 @@ export type FlydeFlow = {
 
 export interface ImportSource {
   path: string;
-  export: string;
+  export?: string;
 }
 
 export type ImportedPartDefinition = PartDefinition & {
-  source: ImportSource
+  source: ImportSource;
 };
 
 export type ImportedPart = Part & {
-  source: ImportSource
+  source: ImportSource;
 };
 
 export type ImportedPartDef = PartDefinition & {
-  source: ImportSource
+  source: ImportSource;
 };
 
-export type ResolvedDependenciesDefinitions = Record<string, ImportedPartDefinition>;
+export type ResolvedDependenciesDefinitions = Record<
+  string,
+  ImportedPartDefinition
+>;
 
 export type ResolvedFlydeFlowDefinition = {
   main: VisualPart;

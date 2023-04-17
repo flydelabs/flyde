@@ -257,13 +257,13 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
 
       const parentViewport = props.parentViewport || defaultViewPort;
 
-      const [repo, setRepo] = useState({
+      const [currResolvedDeps, setResolvedDeps] = useState({
         ...resolvedDependencies,
         [part.id]: part,
       });
 
       useEffect(() => {
-        setRepo({
+        setResolvedDeps({
           ...resolvedDependencies,
           [part.id]: part,
         });
@@ -413,7 +413,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
       const boardPos = useBoundingclientrect(boardRef) || vZero;
 
       const fitToScreen = () => {
-        const vp = fitViewPortToPart(part, repo, vpSize);
+        const vp = fitViewPortToPart(part, currResolvedDeps, vpSize);
 
         animateViewPort(viewPort, vp, 500, (vp) => {
           setViewPort(vp);
@@ -510,14 +510,24 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
 
       useEffect(() => {
         if (!didCenterInitially && vpSize.width) {
-          const vp = fitViewPortToPart(part, repo, vpSize, initialPadding);
+          const vp = fitViewPortToPart(
+            part,
+            currResolvedDeps,
+            vpSize,
+            initialPadding
+          );
           if (!props.thumbnailMode) {
             // hack to make project view work nicely
             setViewPort(vp);
           }
           // hackidy hack
           const timer = setTimeout(() => {
-            const vp = fitViewPortToPart(part, repo, vpSize, initialPadding);
+            const vp = fitViewPortToPart(
+              part,
+              currResolvedDeps,
+              vpSize,
+              initialPadding
+            );
             if (!props.thumbnailMode) {
               // hack to make project view work nicely
               setViewPort(vp);
@@ -532,7 +542,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
         vpSize,
         props.thumbnailMode,
         didCenterInitially,
-        repo,
+        currResolvedDeps,
         setViewPort,
       ]);
 
@@ -632,7 +642,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
           e.preventDefault();
           toastMsg("Ordering");
           const steps: any[] = [];
-          orderVisualPart(part, repo, 200, (step, idx) => {
+          orderVisualPart(part, currResolvedDeps, 200, (step, idx) => {
             if (idx % 3 === 0) {
               steps.push(step);
             }
@@ -952,7 +962,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             if (calcSelectionBoxArea(selectionBox) > 50) {
               const toSelect = getInstancesInRect(
                 selectionBox,
-                repo,
+                currResolvedDeps,
                 viewPort,
                 instancesConnectToPinsRef.current,
                 part.instances,
@@ -974,7 +984,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
           part.id,
           part.instances,
           selectionBox,
-          repo,
+          currResolvedDeps,
           viewPort,
           boardPos,
           parentViewport,
@@ -1009,7 +1019,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
 
           const closest = findClosestPin(
             part,
-            repo,
+            currResolvedDeps,
             normalizedPos,
             boardPos,
             currentInsId,
@@ -1041,7 +1051,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
           viewPort,
           parentViewport,
           selectionBox,
-          repo,
+          currResolvedDeps,
           currentInsId,
           ancestorsInsIds,
           closestPin,
@@ -1059,7 +1069,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
           if (shift) {
             const part = isInlinePartInstance(ins)
               ? ins.part
-              : getPartDef(ins.partId, repo);
+              : getPartDef(ins.partId, currResolvedDeps);
             if (!part) {
               throw new Error(`Impossible state inspecting inexisting part`);
             }
@@ -1072,7 +1082,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             setOpenInlineInstance({ insId: `${currentInsId}.${ins.id}`, part });
           } else {
             if (isRefPartInstance(ins)) {
-              const part = getPartDef(ins, repo);
+              const part = getPartDef(ins, currResolvedDeps);
 
               onEditPart(part as ImportedPartDef);
             } else {
@@ -1096,7 +1106,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             }
           }
         },
-        [onEditPart, repo, currentInsId]
+        [onEditPart, currResolvedDeps, currentInsId]
       );
 
       const onUnGroup = React.useCallback(
@@ -1133,7 +1143,10 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             // todo - combine the above with below to an atomic action
             onChangeBoardData({ selected: [] });
           } else {
-            const visualPart = getPartDef(groupPartIns.partId, repo);
+            const visualPart = getPartDef(
+              groupPartIns.partId,
+              currResolvedDeps
+            );
 
             if (!isVisualPart(visualPart)) {
               toastMsg("Not supported", "warning");
@@ -1141,7 +1154,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             }
           }
         },
-        [part, onChange, onChangeBoardData, repo]
+        [part, onChange, onChangeBoardData, currResolvedDeps]
       );
 
       const onExtractInlinePart = React.useCallback(
@@ -1348,7 +1361,10 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
                 (ins) => ins.id === selected[0]
               );
               onUnGroup(instance);
-              const insPart = getPartDef(instance, repo) as VisualPart;
+              const insPart = getPartDef(
+                instance,
+                currResolvedDeps
+              ) as VisualPart;
               toastMsg(`Ungrouped inline part ${insPart.id}`);
               reportEvent("unGroupPart", {
                 instancesCount: insPart.instances.length,
@@ -1415,7 +1431,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
           onInspectPin,
           onUnGroup,
           part,
-          repo,
+          currResolvedDeps,
           reportEvent,
           selected,
           to,
@@ -1541,7 +1557,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             });
             reportEvent("addValueModalOpen", { source: "dblClickPin" });
           } else {
-            const part = getPartDef(ins, repo);
+            const part = getPartDef(ins, currResolvedDeps);
             const partOutputs = getPartOutputs(part);
             const pin = partOutputs[pinId];
 
@@ -1558,7 +1574,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             });
           }
         },
-        [repo, reportEvent]
+        [currResolvedDeps, reportEvent]
       );
 
       const onMainInputDblClick = React.useCallback(
@@ -1627,7 +1643,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
       // prune orphan connections
       React.useEffect(() => {
         const validInputs = instances.reduce((acc, ins) => {
-          const part = getPartDef(ins, repo);
+          const part = getPartDef(ins, currResolvedDeps);
           if (part) {
             acc.set(ins.id, keys(getPartInputs(part)));
           }
@@ -1635,7 +1651,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
         }, new Map<string, string[]>());
 
         const validOutputs = instances.reduce((acc, ins) => {
-          const part = getPartDef(ins, repo);
+          const part = getPartDef(ins, currResolvedDeps);
           if (part) {
             acc.set(ins.id, keys(getPartOutputs(part)));
           }
@@ -1674,14 +1690,14 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
           });
           onChange(newPart, functionalChange("prune orphan connections"));
         }
-      }, [instances, onChange, connections, part, repo]);
+      }, [instances, onChange, connections, part, currResolvedDeps]);
 
       // for each instance, if there's a visible input or output that doesn't exist, reset the visible inputs/outputs to be the full list
       React.useEffect(() => {
         let invalids = [];
         const newPart = produce(part, (draft) => {
           draft.instances = draft.instances.map((ins) => {
-            const part = getPartDef(ins, repo);
+            const part = getPartDef(ins, currResolvedDeps);
             if (part) {
               const partInputs = getPartInputs(part);
               const partOutputs = getPartOutputs(part);
@@ -1723,7 +1739,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             functionalChange("reset corrupt visible inputs/outputs")
           );
         }
-      }, [instances, onChange, part, repo]);
+      }, [instances, onChange, part, currResolvedDeps]);
 
       useEffect(() => {
         const instanceMap = new Map(instances.map((ins) => [ins.id, ins]));
@@ -1760,7 +1776,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
               const deps =
                 match.type === "import"
                   ? await onImportPart(match.importablePart)
-                  : repo;
+                  : currResolvedDeps;
 
               const partToAdd =
                 match.type === "import"
@@ -1829,7 +1845,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
         },
         [
           quickAddMenuVisible,
-          repo,
+          currResolvedDeps,
           reportEvent,
           part,
           onChange,
@@ -2476,7 +2492,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             </div> */}
 
               <ConnectionView
-                repo={repo}
+                resolvedParts={currResolvedDeps}
                 currentInsId={currentInsId}
                 ancestorsInsIds={ancestorsInsIds}
                 size={vpSize}
@@ -2507,13 +2523,13 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
                     instancesConnectToPinsRef.current.get(ins.id) || emptyObj
                   }
                   connectionsPerOutput={emptyObj}
-                  part={getPartDef(ins, repo)}
+                  part={getPartDef(ins, currResolvedDeps)}
                   ancestorsInsIds={fullInsIdPath(currentInsId, ancestorsInsIds)}
                   onPinClick={onPinClick}
                   onPinDblClick={onPinDblClick}
                   onDragStart={onStartDraggingInstance}
                   onDragEnd={onInstanceDragEnd}
-                  partDefRepo={repo}
+                  resolvedDeps={currResolvedDeps}
                   onDragMove={onInstanceDragMove}
                   onDblClick={onDblClickInstance}
                   onSelect={onSelectInstance}
@@ -2635,7 +2651,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
               onAction={onAction}
               selectedInstances={selected}
               part={part}
-              repo={repo}
+              resolvedParts={currResolvedDeps}
               to={to}
               from={from}
               hotkeysEnabled={isBoardInFocus}

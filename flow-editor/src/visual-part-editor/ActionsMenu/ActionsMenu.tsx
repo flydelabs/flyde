@@ -5,7 +5,7 @@ import {
   getPartDef,
   ImportableSource,
   isVisualPart,
-  PartDefRepo,
+  PartsDefCollection,
   VisualPart,
 } from "@flyde/core";
 import React, { MouseEvent, MutableRefObject, useCallback } from "react";
@@ -51,7 +51,7 @@ export type Action<T extends ActionType = ActionType> = {
 
 export interface ActionsMenuProps {
   selectedInstances: string[];
-  repo: PartDefRepo;
+  resolvedParts: PartsDefCollection;
   part: VisualPart;
   from?: ConnectionNode;
   to?: ConnectionNode;
@@ -66,7 +66,7 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
   const {
     onAction,
     selectedInstances,
-    repo,
+    resolvedParts,
     part,
     from,
     to,
@@ -111,7 +111,7 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
       console.error(`Could not find instance with id ${selectedInstances[0]}`);
     } else {
       try {
-        const part = getPartDef(instance, repo);
+        const part = getPartDef(instance, resolvedParts);
         if (isVisualPart(part)) {
           types.push(ActionType.UnGroup);
         }

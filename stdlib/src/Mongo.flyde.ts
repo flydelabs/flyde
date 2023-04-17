@@ -14,7 +14,7 @@ export const MongoConnect = partFromSimpleFunction({
     { name: "options", description: "A Valid MongoClientOptions object" },
   ],
   output: { name: "connection", description: "Mongo connected client" },
-  fn: async (url, options) => {
+  run: async (url, options) => {
     const client = new MongoClient(url, options);
     await client.connect();
     return client;
@@ -34,7 +34,7 @@ export const Find = partFromSimpleFunction({
     { name: "options", description: "Options" },
   ],
   output: { name: "result", description: "" },
-  fn: async (connection: MongoClient, collection, query, options) => {
+  run: async (connection: MongoClient, collection, query, options) => {
     const result = await connection
       .db()
       .collection(collection)
@@ -57,7 +57,7 @@ export const FindOne = partFromSimpleFunction({
     { name: "options", description: "Options" },
   ],
   output: { name: "result", description: "" },
-  fn: async (connection: MongoClient, collection, query, options) => {
+  run: async (connection: MongoClient, collection, query, options) => {
     const result = await connection
       .db()
       .collection(collection)
@@ -72,7 +72,7 @@ export const MongoDisconnect = partFromSimpleFunction({
   namespace,
   description: "Disconnects from a Mongo database",
   inputs: [{ name: "connection", description: "Mongo connection" }],
-  fn: async (connection) => {
+  run: async (connection) => {
     await connection.close();
   },
 });
@@ -90,7 +90,7 @@ export const InsertOne = partFromSimpleFunction({
     { name: "options", description: "Options" },
   ],
   output: { name: "result", description: "" },
-  fn: async (connection: MongoClient, collection, document, options) => {
+  run: async (connection: MongoClient, collection, document, options) => {
     const result = await connection
       .db()
       .collection(collection)
@@ -112,7 +112,7 @@ export const InsertMany = partFromSimpleFunction({
     { name: "options", description: "Options" },
   ],
   output: { name: "result", description: "" },
-  fn: async (connection: MongoClient, collection, documents, options) => {
+  run: async (connection: MongoClient, collection, documents, options) => {
     const result = await connection
       .db()
       .collection(collection)
@@ -135,7 +135,7 @@ export const UpdateOne = partFromSimpleFunction({
     { name: "options", description: "Options" },
   ],
   output: { name: "result", description: "" },
-  fn: async (connection: MongoClient, collection, filter, update, options) => {
+  run: async (connection: MongoClient, collection, filter, update, options) => {
     const result = await connection
       .db()
       .collection(collection)
@@ -158,7 +158,7 @@ export const UpdateMany = partFromSimpleFunction({
     { name: "options", description: "Options" },
   ],
   output: { name: "result", description: "" },
-  fn: async (connection: MongoClient, collection, filter, update, options) => {
+  run: async (connection: MongoClient, collection, filter, update, options) => {
     const result = await connection
       .db()
       .collection(collection)
@@ -180,7 +180,7 @@ export const DeleteOne = partFromSimpleFunction({
     { name: "options", description: "Options" },
   ],
   output: { name: "result", description: "" },
-  fn: async (connection: MongoClient, collection, filter, options) => {
+  run: async (connection: MongoClient, collection, filter, options) => {
     const result = await connection
       .db()
       .collection(collection)
@@ -202,7 +202,7 @@ export const DeleteMany = partFromSimpleFunction({
     { name: "options", description: "Query options" },
   ],
   output: { name: "result", description: "" },
-  fn: async (connection: MongoClient, collection, filter, options) => {
+  run: async (connection: MongoClient, collection, filter, options) => {
     const result = await connection
       .db()
       .collection(collection)
@@ -224,7 +224,7 @@ export const CountDocuments = partFromSimpleFunction({
     { name: "options", description: "Options" },
   ],
   output: { name: "result", description: "" },
-  fn: async (connection: MongoClient, collection, query, options) => {
+  run: async (connection: MongoClient, collection, query, options) => {
     const result = await connection
       .db()
       .collection(collection)
@@ -246,7 +246,7 @@ export const CreateIndex = partFromSimpleFunction({
     { name: "options", description: "Options" },
   ],
   output: { name: "result", description: "" },
-  fn: async (connection: MongoClient, collection, fieldOrSpec, options) => {
+  run: async (connection: MongoClient, collection, fieldOrSpec, options) => {
     const result = await connection
       .db()
       .collection(collection)
@@ -268,7 +268,7 @@ export const CreateIndexes = partFromSimpleFunction({
     { name: "options", description: "Options" },
   ],
   output: { name: "result", description: "" },
-  fn: async (connection: MongoClient, collection, indexes, options) => {
+  run: async (connection: MongoClient, collection, indexes, options) => {
     const result = await connection
       .db()
       .collection(collection)

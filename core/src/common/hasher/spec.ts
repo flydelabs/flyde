@@ -2,7 +2,14 @@ import { produce } from "immer";
 import { randomInt, randomPos, shuffle } from "../../common";
 import { assert } from "chai";
 import { hashFlow, hashPart } from ".";
-import { InlineValuePart, partInput, partInstance, partOutput, VisualPart, visualPart } from "../../part";
+import {
+  InlineValuePart,
+  partInput,
+  partInstance,
+  partOutput,
+  VisualPart,
+  visualPart,
+} from "../../part";
 import { FlydeFlow } from "../../flow-schema";
 import { connectionData } from "../../connect";
 
@@ -146,7 +153,7 @@ describe("parts hasher", () => {
   describe("code part", () => {
     const base: InlineValuePart = {
       id: "bob2",
-      fnCode: `some codez`,
+      runFnRawCode: `some codez`,
       customViewCode: "bob",
       inputs: {},
       outputs: {},
@@ -154,7 +161,7 @@ describe("parts hasher", () => {
 
     it("considers fn code code part properly", () => {
       const p2 = produce(base, (d) => {
-        d.fnCode = "dbdfgfdg";
+        d.runFnRawCode = "dbdfgfdg";
       });
 
       const h1 = hashPart(base);

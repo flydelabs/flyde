@@ -9,7 +9,7 @@ const part: CodePart = {
   outputs: {
     tasks: partOutput(),
   },
-  fn: (inputs, outputs, adv) => {
+  run: (inputs, outputs, adv) => {
     servicePromise.then((service) => {
       service.getTasks().then((val) => {
         outputs.tasks.next(val);

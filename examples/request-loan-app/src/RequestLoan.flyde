@@ -81,7 +81,7 @@ part:
             type: any
             delayed: false
             optional: false
-        fnCode: outputs.r.next(((inputs.credit * inputs.risk) > 20))
+        runFnRawCode: outputs.r.next(((inputs.credit * inputs.risk) > 20))
         customViewCode: (inputs.credit * inputs.risk) > 20
         dataBuilderSource: KGlucHV0cy5jcmVkaXQgKiBpbnB1dHMucmlzaykgPiAyMA==
         templateType: value
@@ -112,7 +112,7 @@ part:
             type: any
             delayed: false
             optional: false
-        fnCode: outputs.r.next(('Approved!'))
+        runFnRawCode: outputs.r.next(('Approved!'))
         customViewCode: "'Approved!'"
         dataBuilderSource: J0FwcHJvdmVkISc=
         templateType: value
@@ -144,7 +144,7 @@ part:
             type: any
             delayed: false
             optional: false
-        fnCode: outputs.r.next(('Denied!'))
+        runFnRawCode: outputs.r.next(('Denied!'))
         customViewCode: "'Denied!'"
         dataBuilderSource: J0RlbmllZCEn
         templateType: value

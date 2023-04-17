@@ -3,16 +3,14 @@ import classNames from "classnames";
 import {
   VisualPart,
   Pos,
-  PartDefRepo,
+  PartsDefCollection,
   getPartDef,
   PartInstance,
   isInternalConnectionNode,
   ConnectionData,
   ConnectionNode,
 } from "@flyde/core";
-import {
-  calcStartPos, calcTargetPos,
-} from "./calc-pin-position";
+import { calcStartPos, calcTargetPos } from "./calc-pin-position";
 import { Size } from "../../utils";
 // ;
 
@@ -23,7 +21,7 @@ import { ContextMenu, Menu, MenuItem } from "@blueprintjs/core";
 import { ConnectionViewPath } from "./ConnectionViewPath/ConnectionViewPath";
 
 export interface BaseConnectionViewProps {
-  repo: PartDefRepo;
+  resolvedParts: PartsDefCollection;
   part: VisualPart;
   ancestorsInsIds?: string;
   currentInsId: string;
@@ -67,7 +65,7 @@ export const SingleConnectionView: React.FC<ConnectionItemViewProps> = (
   const {
     connection,
     part,
-    repo,
+    resolvedParts,
     instances,
     type,
     viewPort,
@@ -89,7 +87,7 @@ export const SingleConnectionView: React.FC<ConnectionItemViewProps> = (
 
   const fromPart =
     isInternalConnectionNode(from) && fromInstance
-      ? getPartDef(fromInstance, repo)
+      ? getPartDef(fromInstance, resolvedParts)
       : part;
 
   const sourcePin = fromPart.outputs[from.pinId];
@@ -224,7 +222,7 @@ export const ConnectionView: React.FC<ConnectionViewProps> = (props) => {
       viewPort,
       boardPos: props.boardPos,
       ancestorsInsIds: props.ancestorsInsIds,
-      currentInsId: props.currentInsId
+      currentInsId: props.currentInsId,
     });
 
     connectionPaths.push(

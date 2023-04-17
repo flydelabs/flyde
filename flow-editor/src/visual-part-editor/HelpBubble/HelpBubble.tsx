@@ -6,8 +6,8 @@ import {
   MenuDivider,
   MenuItem,
 } from "@blueprintjs/core";
-import { HotkeysDialog2Props } from "@blueprintjs/core/lib/esm/components/hotkeys/hotkeysDialog2";
-import { Hotkey } from "@blueprintjs/core/lib/esm/components/hotkeys/hotkey";
+import { HotkeysDialog2Props } from "@blueprintjs/core/lib/cjs/components/hotkeys/hotkeysDialog2";
+import { Hotkey } from "@blueprintjs/core/lib/cjs/components/hotkeys/hotkey";
 
 import { IPopover2Props, Popover2 } from "@blueprintjs/popover2";
 
@@ -69,7 +69,7 @@ export const HelpBubble: React.FC<HelpBubbleProps> = () => {
     >
       <div className={Classes.DIALOG_BODY}>
         {groupsArray.map(([group, hotkeys]) => (
-          <React.Fragment>
+          <React.Fragment key={group}>
             <H4>{group}</H4>
             {hotkeys.map((hotkey) => {
               return <Hotkey {...hotkey} key={hotkey.combo} />;

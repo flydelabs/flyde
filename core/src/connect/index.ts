@@ -26,7 +26,7 @@ import {
   TRIGGER_PIN_ID,
 } from "./helpers";
 
-import { PartRepo } from "..";
+import { PartsCollection } from "..";
 
 export * from "./helpers";
 
@@ -58,7 +58,7 @@ type PositionlessVisualPart = Omit<
 
 export const connect = (
   part: PositionlessVisualPart,
-  repo: PartRepo,
+  resolvedDeps: PartsCollection,
   _debugger: Debugger = {},
   ancestorsInsIds?: string,
   mainState: OMap<PartState> = {},
@@ -76,7 +76,7 @@ export const connect = (
     id: partId,
     completionOutputs: part.completionOutputs,
     reactiveInputs: part.reactiveInputs,
-    fn: (fnArgs, fnOutputs) => {
+    run: (fnArgs, fnOutputs) => {
       let cancelFns: CancelFn[] = [];
 
       const depGraph = new DepGraph({});
@@ -101,7 +101,7 @@ export const connect = (
 
       // build all input and output maps
       instances.forEach((instance) => {
-        const part = getPart(instance, repo);
+        const part = getPart(instance, resolvedDeps);
         const instanceId = instance.id;
         instanceToId.set(instance, instanceId);
         idToInstance.set(instanceId, instance);
@@ -246,7 +246,7 @@ export const connect = (
         }
 
         const sourcePart = sourceInstance
-          ? getPart(sourceInstance, repo)
+          ? getPart(sourceInstance, resolvedDeps)
           : part;
 
         const sourceOutputPin = sourcePart.outputs[fromInstancePinId];
@@ -309,7 +309,7 @@ export const connect = (
           const inputs = instanceArgs.get(instance.id);
           const outputs = instanceOutputs.get(instance.id);
 
-          const part = getPart(instance, repo);
+          const part = getPart(instance, resolvedDeps);
           if (!inputs) {
             throw new Error(
               `Unexpected error - args not found when running ${instance}`
@@ -339,7 +339,7 @@ export const connect = (
             part,
             inputs,
             outputs,
-            partsRepo: repo,
+            resolvedDeps: resolvedDeps,
             _debugger,
             insId: instance.id,
             extraContext,

@@ -8,7 +8,7 @@ export const Now = partFromSimpleFunction({
   namespace,
   description: "Returns the current date and time",
   output: { name: "now", description: "Current date and time" },
-  fn: () => new Date(),
+  run: () => new Date(),
 });
 
 export const NowString = partFromSimpleFunction({
@@ -17,7 +17,7 @@ export const NowString = partFromSimpleFunction({
   namespace,
   description: "Returns the current date and time as a string",
   output: { name: "now", description: "Current date and time" },
-  fn: () => new Date().toString(),
+  run: () => new Date().toString(),
 });
 
 export const NowISOString = partFromSimpleFunction({
@@ -26,7 +26,7 @@ export const NowISOString = partFromSimpleFunction({
   namespace,
   description: "Returns the current date and time as a string in ISO format",
   output: { name: "now", description: "Current date and time" },
-  fn: () => new Date().toISOString(),
+  run: () => new Date().toISOString(),
 });
 
 export const NowUnixTime = partFromSimpleFunction({
@@ -35,7 +35,7 @@ export const NowUnixTime = partFromSimpleFunction({
   namespace,
   description: "Returns the current date and time as a Unix time",
   output: { name: "now", description: "Current date and time" },
-  fn: () => new Date().getTime(),
+  run: () => new Date().getTime(),
 });
 
 export const DateFromUnixTime = partFromSimpleFunction({
@@ -45,7 +45,7 @@ export const DateFromUnixTime = partFromSimpleFunction({
   description: "Creates a date from a Unix time",
   inputs: [{ name: "time", description: "Unix time" }],
   output: { name: "date", description: "Date" },
-  fn: (time) => new Date(time),
+  run: (time) => new Date(time),
 });
 
 export const DateFromString = partFromSimpleFunction({
@@ -55,7 +55,7 @@ export const DateFromString = partFromSimpleFunction({
   description: "Creates a date from a string",
   inputs: [{ name: "string", description: "String" }],
   output: { name: "date", description: "Date" },
-  fn: (string) => new Date(string),
+  run: (string) => new Date(string),
 });
 
 export const DateFromISOString = partFromSimpleFunction({
@@ -65,7 +65,7 @@ export const DateFromISOString = partFromSimpleFunction({
   description: "Creates a date from an ISO string",
   inputs: [{ name: "string", description: "String" }],
   output: { name: "date", description: "Date" },
-  fn: (string) => new Date(string),
+  run: (string) => new Date(string),
 });
 
 export const DateToString = partFromSimpleFunction({
@@ -75,7 +75,7 @@ export const DateToString = partFromSimpleFunction({
   description: "Converts a date to a string",
   inputs: [{ name: "date", description: "Date" }],
   output: { name: "string", description: "String" },
-  fn: (date) => date.toString(),
+  run: (date) => date.toString(),
 });
 
 export const DateToISOString = partFromSimpleFunction({
@@ -85,7 +85,7 @@ export const DateToISOString = partFromSimpleFunction({
   description: "Converts a date to an ISO string",
   inputs: [{ name: "date", description: "Date" }],
   output: { name: "string", description: "String" },
-  fn: (date) => date.toISOString(),
+  run: (date) => date.toISOString(),
 });
 
 export const DateToUnixTime = partFromSimpleFunction({
@@ -95,7 +95,7 @@ export const DateToUnixTime = partFromSimpleFunction({
   description: "Converts a date to a Unix time",
   inputs: [{ name: "date", description: "Date" }],
   output: { name: "time", description: "Unix time" },
-  fn: (date) => date.getTime(),
+  run: (date) => date.getTime(),
 });
 
 export const DateToYear = partFromSimpleFunction({
@@ -105,7 +105,7 @@ export const DateToYear = partFromSimpleFunction({
   description: "Converts a date to a year",
   inputs: [{ name: "date", description: "Date" }],
   output: { name: "year", description: "Year" },
-  fn: (date) => date.getFullYear(),
+  run: (date) => date.getFullYear(),
 });
 
 export const DateToMonth = partFromSimpleFunction({
@@ -115,7 +115,7 @@ export const DateToMonth = partFromSimpleFunction({
   description: "Converts a date to a month",
   inputs: [{ name: "date", description: "Date" }],
   output: { name: "month", description: "Month" },
-  fn: (date) => date.getMonth(),
+  run: (date) => date.getMonth(),
 });
 
 export const DateToDay = partFromSimpleFunction({
@@ -125,7 +125,7 @@ export const DateToDay = partFromSimpleFunction({
   description: "Converts a date to a day",
   inputs: [{ name: "date", description: "Date" }],
   output: { name: "day", description: "Day" },
-  fn: (date) => date.getDate(),
+  run: (date) => date.getDate(),
 });
 
 export const DateToHours = partFromSimpleFunction({
@@ -135,7 +135,7 @@ export const DateToHours = partFromSimpleFunction({
   description: "Converts a date to hours",
   inputs: [{ name: "date", description: "Date" }],
   output: { name: "hours", description: "Hours" },
-  fn: (date) => date.getHours(),
+  run: (date) => date.getHours(),
 });
 
 export const DateToMinutes = partFromSimpleFunction({
@@ -145,7 +145,7 @@ export const DateToMinutes = partFromSimpleFunction({
   description: "Converts a date to minutes",
   inputs: [{ name: "date", description: "Date" }],
   output: { name: "minutes", description: "Minutes" },
-  fn: (date) => date.getMinutes(),
+  run: (date) => date.getMinutes(),
 });
 
 export const DateToSeconds = partFromSimpleFunction({
@@ -155,7 +155,7 @@ export const DateToSeconds = partFromSimpleFunction({
   description: "Converts a date to seconds",
   inputs: [{ name: "date", description: "Date" }],
   output: { name: "seconds", description: "Seconds" },
-  fn: (date) => date.getSeconds(),
+  run: (date) => date.getSeconds(),
 });
 
 export const DateToMilliseconds = partFromSimpleFunction({
@@ -165,7 +165,7 @@ export const DateToMilliseconds = partFromSimpleFunction({
   description: "Converts a date to milliseconds",
   inputs: [{ name: "date", description: "Date" }],
   output: { name: "milliseconds", description: "Milliseconds" },
-  fn: (date) => date.getMilliseconds(),
+  run: (date) => date.getMilliseconds(),
 });
 
 export const DateToDayOfWeek = partFromSimpleFunction({
@@ -175,7 +175,7 @@ export const DateToDayOfWeek = partFromSimpleFunction({
   description: "Converts a date to a day of the week",
   inputs: [{ name: "date", description: "Date" }],
   output: { name: "day", description: "Day" },
-  fn: (date) => date.getDay(),
+  run: (date) => date.getDay(),
 });
 
 export const DateToTimezoneOffset = partFromSimpleFunction({
@@ -185,5 +185,5 @@ export const DateToTimezoneOffset = partFromSimpleFunction({
   description: "Converts a date to a timezone offset",
   inputs: [{ name: "date", description: "Date" }],
   output: { name: "offset", description: "Offset" },
-  fn: (date) => date.getTimezoneOffset(),
+  run: (date) => date.getTimezoneOffset(),
 });

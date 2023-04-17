@@ -4,10 +4,7 @@ import "./App.scss";
 import {
   FlydeFlow,
   ImportableSource,
-  TRIGGER_PIN_ID,
-  PartInstance,
   ResolvedDependenciesDefinitions,
-  PartDefRepo,
 } from "@flyde/core";
 
 import classNames from "classnames";
@@ -34,7 +31,7 @@ import { useDebouncedCallback } from "use-debounce";
 import { IntegratedFlowSideMenu } from "./side-menu";
 import { isInlineValuePart, PartDefinition } from "@flyde/core";
 
-import { AppToaster, toastMsg } from "@flyde/flow-editor"; // ../../common/toaster
+import { AppToaster } from "@flyde/flow-editor"; // ../../common/toaster
 
 import { values } from "@flyde/flow-editor"; // ../../common/utils
 import { PinType } from "@flyde/core";
@@ -101,19 +98,14 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
     []
   );
 
-  const [repo, setRepo] = useState<PartDefRepo>({
-    ...currentResolvedDeps,
-    [flow.part.id]: flow.part,
-  });
-
   const didMount = React.useRef(false);
 
   useEffect(() => {
-    setRepo({
-      ...currentResolvedDeps,
-      [flow.part.id]: flow.part,
-    });
-  }, [currentResolvedDeps, flow.part]);
+    setCurrentResolvedDeps((deps) => ({
+      ...deps,
+      [flow.part.id]: { ...flow.part, source: { path: "n/a", export: "n/a" } },
+    }));
+  }, [flow.part]);
 
   useEffect(() => {
     return ports.onExternalFlowChange(({ flow, deps }) => {
@@ -149,7 +141,7 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
       const dt = 0;
       runtimePlayer.current.start(dt);
     },
-    [debuggerClient]
+    [debuggerClient, executionId]
   );
 
   React.useEffect(() => {
@@ -221,7 +213,12 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
 
   const onAddPartToStage = (part: PartDefinition) => {
     const finalPos = vAdd({ x: 100, y: 0 }, editorState.boardData.lastMousePos);
-    const newPartIns = createNewPartInstance(part.id, 0, finalPos, repo);
+    const newPartIns = createNewPartInstance(
+      part.id,
+      0,
+      finalPos,
+      currentResolvedDeps
+    );
     if (newPartIns) {
       const valueChanged = produce(flow, (draft) => {
         const part = draft.part;
@@ -318,7 +315,7 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
   const onExtractInlinePart = React.useCallback(async () => {}, []);
 
   React.useEffect(() => {
-    const importedPartsRepo = importedParts.reduce((acc, curr) => {
+    const _importedParts = importedParts.reduce((acc, curr) => {
       return {
         ...acc,
         [curr.part.id]: { ...curr.part, importPath: curr.module },
@@ -328,7 +325,7 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
     setCurrentResolvedDeps((deps) => {
       return {
         ...deps,
-        ...importedPartsRepo,
+        ..._importedParts,
       };
     });
   }, [importedParts]);

@@ -28,7 +28,7 @@ export interface ConciseVisualPart extends ConciseBasePart {
 }
 
 export interface ConciseCodePart extends ConciseBasePart {
-  fn: CodePart["fn"];
+  run: CodePart["run"];
 }
 
 export const conciseBasePart = (concise: ConciseBasePart): BasePart => {
@@ -88,7 +88,7 @@ export const conciseCodePart = (concise: ConciseCodePart): CodePart => {
   const base = conciseBasePart(concise);
   return {
     ...base,
-    fn: concise.fn,
+    run: concise.run,
   };
 };
 
@@ -97,7 +97,7 @@ export const valuePart = (name: string, value: any) =>
     id: name,
     inputs: [],
     outputs: ["r"],
-    fn: (_, outputs) => outputs.r?.next(value),
+    run: (_, outputs) => outputs.r?.next(value),
   });
 
 export const spiedOutput = (): [Sinon.SinonSpy, DynamicOutput] => {

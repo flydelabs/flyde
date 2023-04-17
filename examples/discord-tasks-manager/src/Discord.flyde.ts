@@ -14,7 +14,7 @@ const part: CodePart = {
     message: partOutput(),
   },
   completionOutputs: [],
-  fn: (inputs, outputs, adv) => {
+  run: (inputs, outputs, adv) => {
     const bot: Client = adv?.context.bot;
 
     bot.on("error", async (e) => {

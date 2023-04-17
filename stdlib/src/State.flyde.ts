@@ -13,7 +13,7 @@ export const SetGlobalState: CodePart = {
   outputs: {
     setValue: { description: "Value that was set" },
   },
-  fn: ({ key, value }, { setValue }, { globalState }) => {
+  run: ({ key, value }, { setValue }, { globalState }) => {
     globalState.set(key, value);
     setValue.next(value);
   },
@@ -33,7 +33,7 @@ export const GetGlobalState: CodePart = {
   outputs: {
     value: { description: "Value of the key" },
   },
-  fn: ({ key, defaultValue }, { value }, { globalState, onError }) => {
+  run: ({ key, defaultValue }, { value }, { globalState, onError }) => {
     const val = globalState.get(key);
     if (val === undefined && defaultValue === undefined) {
       onError(new Error(`Key ${key} is not set`));

@@ -3,7 +3,7 @@ import * as React from "react";
 import { Omnibar as ExternalOmnibar, ItemRenderer } from "@blueprintjs/select";
 import {
   Part,
-  PartDefRepo,
+  PartsDefCollection,
   keys,
   ImportableSource,
   FlydeFlow,
@@ -17,7 +17,7 @@ export interface OmnibarProps {
   onClose: () => void;
   onCommand: (cmd: OmniBarCmd) => void;
   onRequestImportables?: (query: string) => Promise<ImportableSource[]>;
-  repo: PartDefRepo;
+  resolvedParts: PartsDefCollection;
   flow: FlydeFlow;
 }
 
@@ -64,7 +64,7 @@ const SYSTEM_ITEMS: OmniBarItem[] = [
 
 const escapeQuery = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
 export const Omnibar: React.FC<OmnibarProps> = (props) => {
-  const { repo } = props;
+  const { resolvedParts } = props;
 
   const [searchValue, setSearchValue] = React.useState("");
   const [items, setItems] = React.useState<OmniBarItem[] | null>(null);
@@ -72,11 +72,11 @@ export const Omnibar: React.FC<OmnibarProps> = (props) => {
   const [importables, setImportables] = React.useState<ImportableSource[]>([]);
 
   React.useEffect(() => {
-    const all = keys(repo);
+    const all = keys(resolvedParts);
     const addItems = all
       // .filter((k) => k.includes(query))
       .map((k) => {
-        const part: Part = repo[k] as Part;
+        const part: Part = resolvedParts[k] as Part;
         return {
           title: `${part.id}`,
           cmd: {
@@ -115,7 +115,7 @@ export const Omnibar: React.FC<OmnibarProps> = (props) => {
     ];
 
     setItems(items);
-  }, [repo, importables]);
+  }, [resolvedParts, importables]);
 
   React.useEffect(() => {
     if (props.onRequestImportables) {

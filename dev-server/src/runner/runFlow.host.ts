@@ -37,18 +37,26 @@ export function forkRunFlow(...params: Parameters<typeof runFlow>): Promise<{
     const resultsPromise = new Promise((resolve, reject) => {
       onMessage(runFlowProcess, "runFlowCompleted", (result) => {
         resolve(result);
-        runFlowProcess.kill("0");
+
+        // allow some time for remote debugger to emit all events, TODO - fix this
+        setTimeout(() => {
+          runFlowProcess.kill();
+        }, 200);
       });
       onMessage(runFlowProcess, "runFlowError", (error) => {
         reject(error);
-        runFlowProcess.kill("1");
+
+        // allow some time for remote debugger to emit all events, TODO - fix this
+        setTimeout(() => {
+          runFlowProcess.kill();
+        }, 200);
       });
     });
 
     onMessage(runFlowProcess, "runFlowResult", (job) => {
       resolve({
         job,
-        destroy: () => runFlowProcess.kill("0"),
+        destroy: () => runFlowProcess.kill(),
         result: resultsPromise,
       });
     });

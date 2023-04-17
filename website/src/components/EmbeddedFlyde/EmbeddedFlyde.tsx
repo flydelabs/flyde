@@ -91,7 +91,7 @@ const runFlow = ({
       part: flow.part,
       inputs: inputs,
       outputs: { [firstOutputName]: output },
-      partsRepo: { ...dependencies, [flow.part.id]: flow.part },
+      resolvedDeps: { ...dependencies, [flow.part.id]: flow.part },
       _debugger: localDebugger,
       onBubbleError: (e) => {
         onError(e);

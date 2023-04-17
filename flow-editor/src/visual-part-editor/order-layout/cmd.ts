@@ -4,7 +4,7 @@ import {
   isExternalConnectionNode,
   entries,
   VisualPart,
-  PartDefRepo,
+  PartsDefCollection,
   getPartDef,
   ResolvedFlydeFlowDefinition,
 } from "@flyde/core";
@@ -45,13 +45,16 @@ export const layoutToInstances = (
 
 export const orderVisualPart = (
   part: VisualPart,
-  repo: PartDefRepo,
+  resolvedParts: PartsDefCollection,
   itrs: number,
   onStep?: (val: VisualPart, idx: number) => void
 ) => {
   const { instances, connections } = part;
   const insNodes = instances.reduce((prev, curr) => {
-    const s = size(calcPartWidth(curr, getPartDef(curr, repo)), PART_HEIGHT);
+    const s = size(
+      calcPartWidth(curr, getPartDef(curr, resolvedParts)),
+      PART_HEIGHT
+    );
     return {
       ...prev,
       [`ins-${curr.id}`]: { p: curr.pos, s },

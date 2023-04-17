@@ -54,7 +54,7 @@ part:
             type: any
             delayed: false
             optional: false
-        fnCode: outputs.r.next((`Value was throttled!`))
+        runFnRawCode: outputs.r.next((`Value was throttled!`))
         customViewCode: "`Value was throttled!`"
         dataBuilderSource: YFZhbHVlIHdhcyB0aHJvdHRsZWQhYA==
         templateType: value
@@ -88,7 +88,7 @@ part:
             type: any
             delayed: false
             optional: false
-        fnCode: outputs.r.next((`"Throttle" output - ${inputs.value}`))
+        runFnRawCode: outputs.r.next((`"Throttle" output - ${inputs.value}`))
         customViewCode: '`"Throttle" output - ${inputs.value}`'
         dataBuilderSource: YCJUaHJvdHRsZSIgb3V0cHV0IC0gJHtpbnB1dHMudmFsdWV9YA==
         templateType: value
@@ -122,7 +122,7 @@ part:
             type: any
             delayed: false
             optional: false
-        fnCode: outputs.r.next((`"Debounce" output - ${inputs.val}`))
+        runFnRawCode: outputs.r.next((`"Debounce" output - ${inputs.val}`))
         customViewCode: '`"Debounce" output - ${inputs.val}`'
         dataBuilderSource: YCJEZWJvdW5jZSIgb3V0cHV0IC0gJHtpbnB1dHMudmFsfWA=
         templateType: value

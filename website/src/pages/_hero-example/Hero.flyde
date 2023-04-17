@@ -22,7 +22,7 @@ part:
         outputs:
           value:
             delayed: false
-        fnCode: const result = (`Looks like you're from ${inputs.country}! The capital
+        runFnRawCode: const result = (`Looks like you're from ${inputs.country}! The capital
           is ${inputs.capital} (population of ${inputs.population})`);
           Promise.resolve(result).then(val => outputs.value.next(val))
         customViewCode: "`Looks like you're from ${inputs.country}! The capital is
@@ -81,7 +81,7 @@ part:
                   type: any
                   delayed: false
                   optional: false
-              fnCode: "const result = ({iso2: inputs.data.country});
+              runFnRawCode: "const result = ({iso2: inputs.data.country});
                 Promise.resolve(result).then(val => outputs.value.next(val))"
               customViewCode: "{iso2: inputs.data.country}"
               dataBuilderSource: e2lzbzI6IGlucHV0cy5kYXRhLmNvdW50cnl9
@@ -280,7 +280,7 @@ part:
                   type: any
                   delayed: false
                   optional: false
-              fnCode: "outputs.r.next(({city: inputs.city}))"
+              runFnRawCode: "outputs.r.next(({city: inputs.city}))"
               customViewCode: "{city: inputs.city}"
               dataBuilderSource: e2NpdHk6IGlucHV0cy5jaXR5fQ==
               templateType: value
@@ -327,7 +327,7 @@ part:
                         type: any
                         delayed: false
                         optional: false
-                    fnCode: outputs.r.next((new Intl.NumberFormat().format(inputs.population)))
+                    runFnRawCode: outputs.r.next((new Intl.NumberFormat().format(inputs.population)))
                     customViewCode: new Intl.NumberFormat().format(inputs.population)
                     dataBuilderSource: bmV3IEludGwuTnVtYmVyRm9ybWF0KCkuZm9ybWF0KGlucHV0cy5wb3B1bGF0aW9uKQ==
                     templateType: value

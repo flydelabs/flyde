@@ -6448,6 +6448,7 @@ __metadata:
     cuid: ^2.1.8
     glob: ^8.0.3
     lodash: ^4.17.21
+    mocha: ^5.2.0
     module-from-string: ^3.3.0
     require-from-string: ^2.0.2
     require-reload: ^0.2.2
@@ -6483,6 +6484,7 @@ __metadata:
     cuid: ^2.1.8
     find-root: ^1.1.0
     glob: ^8.0.3
+    mocha: ^5.2.0
     module-from-string: ^3.3.0
     nodemon: ^2.0.20
     require-from-string: ^2.0.2

@@ -34,8 +34,8 @@ import {
   Value,
   filter,
   mul2,
-  testRepo,
-  testRepoWith,
+  testPartsCollection,
+  testPartsCollectionWith,
   delay,
   delay5,
 } from "../fixture";
@@ -53,7 +53,7 @@ describe("execute", () => {
     outputs: {
       r: {},
     },
-    fn: ({ n1, n2 }, { r }, {}) => {
+    run: ({ n1, n2 }, { r }, {}) => {
       const a = isDefined(n1) ? n1 : 42;
       const b = isDefined(n2) ? n2 : 42;
       r?.next(a + b);
@@ -127,7 +127,7 @@ describe("execute", () => {
         part: addGrouped,
         inputs: { n1, n2 },
         outputs: { r },
-        partsRepo: testRepo,
+        resolvedDeps: testPartsCollection,
       });
       const num1 = randomInt(1, 100);
       const num2 = randomInt(1, 100);
@@ -146,7 +146,7 @@ describe("execute", () => {
         part: add1mul2,
         inputs: { n },
         outputs: { r },
-        partsRepo: testRepo,
+        resolvedDeps: testPartsCollection,
       });
       const num = randomInt(1, 100);
       n.subject.next(num);
@@ -165,7 +165,7 @@ describe("execute", () => {
         outputsPosition: {},
       };
 
-      const part = connect(visualPart, testRepo, {} as any);
+      const part = connect(visualPart, testPartsCollection, {} as any);
       assert.deepEqual(keys(part.outputs), keys(visualPart.outputs));
       assert.deepEqual(keys(part.inputs), keys(visualPart.inputs));
     });
@@ -184,7 +184,7 @@ describe("execute", () => {
         outputsPosition: {},
       };
 
-      const part = connect(visualPart, testRepo, {} as any);
+      const part = connect(visualPart, testPartsCollection, {} as any);
       assert.equal(part.inputs["a"]?.mode, "optional");
       assert.equal(part.inputs["b"]?.mode, "required");
     });
@@ -203,7 +203,7 @@ describe("execute", () => {
           part: optAdd,
           inputs: { n1 },
           outputs: { r },
-          partsRepo: testRepo,
+          resolvedDeps: testPartsCollection,
         });
 
         n1.subject.next(1);
@@ -225,7 +225,7 @@ describe("execute", () => {
           part: optAdd,
           inputs: { n1, n2 },
           outputs: { r },
-          partsRepo: testRepo,
+          resolvedDeps: testPartsCollection,
         });
 
         n2.subject.next(3);
@@ -248,7 +248,7 @@ describe("execute", () => {
           part: optAdd,
           inputs: { n1, n2 },
           outputs: { r },
-          partsRepo: testRepo,
+          resolvedDeps: testPartsCollection,
         });
 
         n1.subject.next(1);
@@ -270,7 +270,7 @@ describe("execute", () => {
           part: groupedOptInput,
           inputs: { n1 },
           outputs: { r },
-          partsRepo: testRepo,
+          resolvedDeps: testPartsCollection,
         });
 
         n1.subject.next(1);
@@ -292,7 +292,7 @@ describe("execute", () => {
           part: groupedOptInput,
           inputs: { n1, n2 },
           outputs: { r },
-          partsRepo: testRepo,
+          resolvedDeps: testPartsCollection,
         });
 
         n1.subject.next(3);
@@ -314,7 +314,7 @@ describe("execute", () => {
           part: totalOptInput,
           inputs: { n1, n2 },
           outputs: { r },
-          partsRepo: testRepo,
+          resolvedDeps: testPartsCollection,
         });
 
         n1.subject.next(3);
@@ -335,7 +335,7 @@ describe("execute", () => {
           part: totalOptInput,
           inputs: { n1 },
           outputs: { r },
-          partsRepo: testRepo,
+          resolvedDeps: testPartsCollection,
         });
 
         n1.subject.next(3);
@@ -354,7 +354,7 @@ describe("execute", () => {
           part: totalOptInput,
           inputs: {},
           outputs: { r },
-          partsRepo: testRepo,
+          resolvedDeps: testPartsCollection,
         });
 
         equal(s.callCount, 1);
@@ -401,7 +401,7 @@ describe("execute", () => {
           part: part,
           inputs: { a, b },
           outputs: { r },
-          partsRepo: testRepo,
+          resolvedDeps: testPartsCollection,
         });
 
         a.subject.next(42);
@@ -417,7 +417,7 @@ describe("execute", () => {
         r.subscribe(s);
 
         const val2 = Value(2);
-        const repo = testRepoWith(val2);
+        const resolvedDeps = testPartsCollectionWith(val2);
 
         const part: VisualPart = {
           id: "bob",
@@ -436,7 +436,12 @@ describe("execute", () => {
           ],
         };
 
-        execute({ part: part, inputs: {}, outputs: { r }, partsRepo: repo });
+        execute({
+          part: part,
+          inputs: {},
+          outputs: { r },
+          resolvedDeps: resolvedDeps,
+        });
 
         assert.equal(s.callCount, 1);
         assert.equal(s.lastCall.args[0], 2);
@@ -453,7 +458,7 @@ describe("execute", () => {
           r1: {},
           r2: {},
         },
-        fn: ({ v }, { r1, r2 }, {}) => {
+        run: ({ v }, { r1, r2 }, {}) => {
           r1?.next(v);
           if (isDefined(r2)) {
             r2.next(v);
@@ -472,7 +477,7 @@ describe("execute", () => {
           part: optOutput,
           inputs: { v },
           outputs: { r1 },
-          partsRepo: testRepo,
+          resolvedDeps: testPartsCollection,
         });
 
         v.subject.next(1);
@@ -494,7 +499,7 @@ describe("execute", () => {
           part: optOutput,
           inputs: { v },
           outputs: { r1, r2 },
-          partsRepo: testRepo,
+          resolvedDeps: testPartsCollection,
         });
 
         v.subject.next(17);
@@ -538,7 +543,7 @@ describe("execute", () => {
         part: filter,
         inputs: { list, fn },
         outputs: { r },
-        partsRepo: testRepo,
+        resolvedDeps: testPartsCollection,
       });
       list.subject.next([1, 2, 3, 4, 5, 6]);
       fn.subject.next(isEven);
@@ -557,7 +562,7 @@ describe("execute", () => {
         part: filter,
         inputs: { list, fn },
         outputs: { r },
-        partsRepo: testRepo,
+        resolvedDeps: testPartsCollection,
       });
       list.subject.next([1, 2, 3, 4, 5, 6]);
       fn.subject.next(isOddPredicate);
@@ -588,7 +593,7 @@ describe("execute", () => {
           part: add1mul2,
           inputs: { n },
           outputs: { r },
-          partsRepo: testRepo,
+          resolvedDeps: testPartsCollection,
           _debugger: { onEvent },
         });
 
@@ -639,7 +644,7 @@ describe("execute", () => {
           part: add1mul2add1,
           inputs: { n },
           outputs: { r },
-          partsRepo: testRepo,
+          resolvedDeps: testPartsCollection,
           _debugger: { onEvent },
         });
 
@@ -698,7 +703,7 @@ describe("execute", () => {
           part: add1mul2add1,
           inputs: { n },
           outputs: { r },
-          partsRepo: testRepo,
+          resolvedDeps: testPartsCollection,
           _debugger: {
             onEvent: ({ val, insId, type }) => {
               if (type === DebuggerEventType.INPUT_CHANGE) {
@@ -735,7 +740,7 @@ describe("execute", () => {
           part: add,
           inputs: { n1, n2 },
           outputs: { r },
-          partsRepo: testRepo,
+          resolvedDeps: testPartsCollection,
           _debugger: { onEvent },
           insId: "myIns",
         });
@@ -776,7 +781,7 @@ describe("execute", () => {
           part: addGrouped,
           inputs: { n1, n2 },
           outputs: { r },
-          partsRepo: testRepo,
+          resolvedDeps: testPartsCollection,
           _debugger: { onEvent },
           insId: "myIns",
         });
@@ -809,7 +814,7 @@ describe("execute", () => {
           part: addGrouped,
           inputs: { n1, n2 },
           outputs: { r },
-          partsRepo: testRepo,
+          resolvedDeps: testPartsCollection,
           _debugger: { onEvent },
           insId: "myIns",
         });
@@ -837,7 +842,7 @@ describe("execute", () => {
           part: add1mul2add1,
           inputs: { n },
           outputs: { r },
-          partsRepo: testRepo,
+          resolvedDeps: testPartsCollection,
           _debugger: {
             onEvent: ({ val, insId, type }) => {
               if (type === DebuggerEventType.INPUT_CHANGE) {
@@ -870,7 +875,7 @@ describe("execute", () => {
           part: mul2,
           inputs: { n },
           outputs: { r },
-          partsRepo: testRepo,
+          resolvedDeps: testPartsCollection,
           _debugger: {
             onEvent: ({ val, type }) => {
               if (type !== DebuggerEventType.INPUT_CHANGE) return undefined;
@@ -912,7 +917,7 @@ describe("execute", () => {
           part: add1mul2,
           inputs: { n },
           outputs: { r },
-          partsRepo: testRepo,
+          resolvedDeps: testPartsCollection,
           _debugger: { onEvent },
           insId: "myIns",
         });
@@ -960,7 +965,7 @@ describe("execute", () => {
           part: add,
           inputs: { n1, n2 },
           outputs: { r },
-          partsRepo: testRepo,
+          resolvedDeps: testPartsCollection,
           _debugger: { onEvent },
           insId: "myIns",
         });
@@ -991,7 +996,7 @@ describe("execute", () => {
           part: addGrouped,
           inputs: { n1, n2 },
           outputs: { r },
-          partsRepo: testRepo,
+          resolvedDeps: testPartsCollection,
           _debugger: { onEvent },
           insId: "myIns",
         });
@@ -1017,7 +1022,7 @@ describe("execute", () => {
           part: add1mul2add1,
           inputs: { n },
           outputs: { r },
-          partsRepo: testRepo,
+          resolvedDeps: testPartsCollection,
           _debugger: {
             onEvent: ({ val, type }) => {
               if (type !== DebuggerEventType.OUTPUT_CHANGE) return undefined;
@@ -1057,7 +1062,7 @@ describe("execute", () => {
           inputs: ["item"],
           outputs: ["r"],
           completionOutputs: ["r"],
-          fn: ({ item }, { r }) => {
+          run: ({ item }, { r }) => {
             setTimeout(() => {
               r?.next(item);
             }, 5);
@@ -1067,7 +1072,7 @@ describe("execute", () => {
           part: delay,
           inputs: { item },
           outputs: { r },
-          partsRepo: testRepo,
+          resolvedDeps: testPartsCollection,
           _debugger: {
             onEvent,
           },
@@ -1096,7 +1101,7 @@ describe("execute", () => {
           part: delay5,
           inputs: { item },
           outputs: { r },
-          partsRepo: testRepo,
+          resolvedDeps: testPartsCollection,
           _debugger: {
             onEvent,
           },
@@ -1126,7 +1131,7 @@ describe("execute", () => {
           part: delay5,
           inputs: { item },
           outputs: { r },
-          partsRepo: testRepo,
+          resolvedDeps: testPartsCollection,
           _debugger: {
             onEvent,
           },
@@ -1168,7 +1173,7 @@ describe("execute", () => {
           part: delay,
           inputs: { item, ms },
           outputs: { r },
-          partsRepo: testRepo,
+          resolvedDeps: testPartsCollection,
           _debugger: {
             onEvent,
           },

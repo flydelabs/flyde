@@ -19,8 +19,8 @@ import {
   isQueueInputPinConfig,
   PartInstanceError,
   PartState,
-  PartFn,
-  PartRepo,
+  RunPartFunction,
+  PartsCollection,
 } from "../part";
 
 import { connect, ERROR_PIN_ID } from "../connect";
@@ -48,7 +48,7 @@ import { debugLogger } from "../common/debug-logger";
 import { isStaticInputPinConfig } from "../part";
 import { Debugger, DebuggerEvent, DebuggerEventType } from "./debugger";
 import {
-  customRepoToPartRepo,
+  customPartsToPartsCollection,
   inlineValuePartToPart,
 } from "../inline-value-to-code-part";
 
@@ -71,7 +71,7 @@ export type CodeExecutionData = {
   part: CodePart;
   inputs: PartInputs;
   outputs: PartOutputs;
-  repo: PartRepo;
+  resolvedDeps: PartsCollection;
   _debugger?: Debugger;
   /**
    * If the part is an instance of another part, this is the id of the instance.
@@ -102,7 +102,7 @@ const executeCodePart = (data: CodeExecutionData) => {
     part,
     inputs,
     outputs,
-    repo,
+    resolvedDeps: resolvedDeps,
     _debugger,
     insId,
     ancestorsInsIds,
@@ -113,19 +113,19 @@ const executeCodePart = (data: CodeExecutionData) => {
     env,
     extraContext,
   } = data;
-  const { fn } = part;
+  const { run } = part;
 
   const debug = debugLogger("core");
 
   const cleanUps: any = [];
-  let partCleanupFn: ReturnType<PartFn>;
+  let partCleanupFn: ReturnType<RunPartFunction>;
 
   const innerExec: InnerExecuteFn = (part, i, o, id) =>
     execute({
       part: part,
       inputs: i,
       outputs: o,
-      partsRepo: repo,
+      resolvedDeps,
       _debugger,
       insId: id,
       onCompleted,
@@ -328,7 +328,11 @@ const executeCodePart = (data: CodeExecutionData) => {
           if (onStarted) {
             onStarted();
           }
-          partCleanupFn = fn(argValues as any, outputs, advPartContext);
+
+          {
+            argValues;
+          }
+          partCleanupFn = run(argValues as any, outputs, advPartContext);
 
           if (isPromise(partCleanupFn)) {
             partCleanupFn
@@ -476,7 +480,7 @@ export type ExecuteFn = (params: ExecuteParams) => CancelFn;
 
 export type ExecuteParams = {
   part: Part;
-  partsRepo: PartRepo;
+  resolvedDeps: PartsCollection;
   inputs: PartInputs;
   outputs: PartOutputs;
   _debugger?: Debugger;
@@ -499,7 +503,7 @@ export const execute: ExecuteFn = ({
   part,
   inputs,
   outputs,
-  partsRepo,
+  resolvedDeps,
   _debugger = {},
   insId = ROOT_INS_ID,
   extraContext = {},
@@ -518,7 +522,10 @@ export const execute: ExecuteFn = ({
 
   const inlineValuePartContext = { ...extraContext, ENV: env };
 
-  const processedRepo = customRepoToPartRepo(partsRepo, inlineValuePartContext);
+  const processedParts = customPartsToPartsCollection(
+    resolvedDeps,
+    inlineValuePartContext
+  );
 
   const onError = (err: unknown) => {
     // this means "catch the error"
@@ -551,7 +558,7 @@ export const execute: ExecuteFn = ({
     if (isVisualPart(part)) {
       return connect(
         part,
-        processedRepo,
+        processedParts,
         _debugger,
         fullInsIdPath(insId, ancestorsInsIds),
         mainState,
@@ -607,7 +614,7 @@ export const execute: ExecuteFn = ({
         partId: part.id,
       } as DebuggerEvent);
       const mediator = staticPartInput(
-        getStaticValue(arg.config.value, processedRepo, insId)
+        getStaticValue(arg.config.value, processedParts, insId)
       );
       mediatedInputs[pinId] = mediator;
     }
@@ -639,7 +646,7 @@ export const execute: ExecuteFn = ({
     part: processedPart,
     inputs: mediatedInputs,
     outputs: mediatedOutputs,
-    repo: processedRepo,
+    resolvedDeps: processedParts,
     _debugger,
     insId,
     mainState,

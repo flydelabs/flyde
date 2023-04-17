@@ -73,7 +73,7 @@ part:
             type: any
             delayed: false
             optional: false
-        fnCode: "outputs.r.next((inputs.values.map((val, idx) => inputs.tup[0] === idx ?
+        runFnRawCode: "outputs.r.next((inputs.values.map((val, idx) => inputs.tup[0] === idx ?
           inputs.tup[1] : val)))"
         customViewCode: "inputs.values.map((val, idx) => inputs.tup[0] === idx ?
           inputs.tup[1] : val)"
@@ -133,7 +133,7 @@ part:
             type: any
             delayed: false
             optional: false
-        fnCode: outputs.r.next(([...inputs.vals, 0]))
+        runFnRawCode: outputs.r.next(([...inputs.vals, 0]))
         customViewCode: "[...inputs.vals, 0]"
         dataBuilderSource: Wy4uLmlucHV0cy52YWxzLCAwXQ==
         templateType: value
@@ -226,7 +226,7 @@ part:
                   type: any
                   delayed: false
                   optional: false
-              fnCode: outputs.r.next((inputs.value + 1))
+              runFnRawCode: outputs.r.next((inputs.value + 1))
               customViewCode: inputs.value + 1
               dataBuilderSource: aW5wdXRzLnZhbHVlICsgMQ==
               templateType: value
@@ -259,7 +259,7 @@ part:
                   type: any
                   delayed: false
                   optional: false
-              fnCode: outputs.r.next((inputs.value - 1))
+              runFnRawCode: outputs.r.next((inputs.value - 1))
               customViewCode: inputs.value - 1
               dataBuilderSource: aW5wdXRzLnZhbHVlIC0gMQ==
               templateType: value
@@ -390,7 +390,7 @@ part:
             type: any
             delayed: false
             optional: false
-        fnCode: outputs.r.next(([inputs.idx, inputs.val]))
+        runFnRawCode: outputs.r.next(([inputs.idx, inputs.val]))
         customViewCode: "[inputs.idx, inputs.val]"
         dataBuilderSource: W2lucHV0cy5pZHgsIGlucHV0cy52YWxd
         templateType: value
@@ -429,7 +429,7 @@ part:
         outputs:
           value:
             delayed: false
-        fnCode: const result = (`Result is ${inputs.a + inputs.b}`);
+        runFnRawCode: const result = (`Result is ${inputs.a + inputs.b}`);
           Promise.resolve(result).then(val => outputs.value.next(val))
         customViewCode: "`Result is ${inputs.a + inputs.b}`"
         dataBuilderSource: YFJlc3VsdCBpcyAke2lucHV0cy5hICsgaW5wdXRzLmJ9YA==

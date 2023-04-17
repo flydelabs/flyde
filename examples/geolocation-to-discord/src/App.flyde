@@ -31,7 +31,7 @@ part:
         outputs:
           value:
             delayed: false
-        fnCode: const result = (`New user from **${inputs.country}**`);
+        runFnRawCode: const result = (`New user from **${inputs.country}**`);
           Promise.resolve(result).then(val => outputs.value.next(val))
         customViewCode: "`New user from **${inputs.country}**`"
         dataBuilderSource: YE5ldyB1c2VyIGZyb20gKioke2lucHV0cy5jb3VudHJ5fSoqYA==
@@ -86,7 +86,7 @@ part:
               outputs:
                 value:
                   delayed: false
-              fnCode: "const result = ({content: inputs.content});
+              runFnRawCode: "const result = ({content: inputs.content});
                 Promise.resolve(result).then(val => outputs.value.next(val))"
               customViewCode: "{content: inputs.content}"
               dataBuilderSource: e2NvbnRlbnQ6IGlucHV0cy5jb250ZW50fQ==

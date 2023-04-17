@@ -264,7 +264,7 @@ parts:
     templateType: value
     completionOutputs:
       - r
-    fnCode: outputs.r.next((`Value is ${inputs.count}`))
+    runFnRawCode: outputs.r.next((`Value is ${inputs.count}`))
   Inline Code 33269:
     id: Inline Code 33269
     inputs: {}
@@ -276,7 +276,7 @@ parts:
     templateType: value
     completionOutputs:
       - r
-    fnCode: outputs.r.next(())
+    runFnRawCode: outputs.r.next(())
   Inline Code 6685:
     id: Inline Code 6685
     inputs: {}
@@ -288,7 +288,7 @@ parts:
     templateType: value
     completionOutputs:
       - r
-    fnCode: outputs.r.next((0))
+    runFnRawCode: outputs.r.next((0))
   Inline Code 70187:
     id: Inline Code 70187
     inputs: {}
@@ -300,4 +300,4 @@ parts:
     templateType: value
     completionOutputs:
       - r
-    fnCode: outputs.r.next(())
+    runFnRawCode: outputs.r.next(())

@@ -16,7 +16,7 @@ part:
             type: any
             delayed: false
             optional: false
-        fnCode: const result = ("Hello"); Promise.resolve(result).then(val =>
+        runFnRawCode: const result = ("Hello"); Promise.resolve(result).then(val =>
           outputs.value.next(val))
         customViewCode: '"Hello"'
         dataBuilderSource: IkhlbGxvIg==
@@ -48,7 +48,7 @@ part:
             type: any
             delayed: false
             optional: false
-        fnCode: const result = ("World!"); Promise.resolve(result).then(val =>
+        runFnRawCode: const result = ("World!"); Promise.resolve(result).then(val =>
           outputs.value.next(val))
         customViewCode: '"World!"'
         dataBuilderSource: IldvcmxkISI=

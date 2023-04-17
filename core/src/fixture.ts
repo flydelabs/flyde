@@ -15,7 +15,7 @@ import { execute, SubjectMap } from "./execute";
 
 import { isDefined, okeys } from "./common";
 import { Subject } from "rxjs";
-import { PartRepo } from ".";
+import { PartsCollection } from ".";
 import { conciseCodePart } from "./test-utils";
 
 export const add: CodePart = {
@@ -27,7 +27,7 @@ export const add: CodePart = {
   outputs: {
     r: partOutput(),
   },
-  fn: ({ n1, n2 }, { r }) => {
+  run: ({ n1, n2 }, { r }) => {
     r?.next(n1 + n2);
   },
 };
@@ -41,7 +41,7 @@ export const codeAdd: InlineValuePart = {
   outputs: {
     r: partOutput(),
   },
-  fnCode: `
+  runFnRawCode: `
   outputs.r?.next(inputs.n1 + inputs.n2);
     `,
 };
@@ -50,7 +50,7 @@ export const add1: CodePart = {
   id: "add1",
   inputs: { n: partInput() },
   outputs: { r: partOutput() },
-  fn: ({ n }, { r }) => {
+  run: ({ n }, { r }) => {
     r?.next(n + 1);
   },
 };
@@ -62,14 +62,14 @@ export const mul: Part = {
     n2: partInput(),
   },
   outputs: { r: partOutput() },
-  fn: ({ n1, n2 }, { r }) => r?.next(n1 * n2),
+  run: ({ n1, n2 }, { r }) => r?.next(n1 * n2),
 };
 
 export const mul2: Part = fromSimplified({
   id: "mul2",
   inputTypes: { n: "number" },
   outputTypes: { r: "number" },
-  fn: ({ n }, { r }) => {
+  run: ({ n }, { r }) => {
     r?.next(n * 2);
   },
 });
@@ -78,7 +78,7 @@ export const id: Part = {
   id: "id",
   inputs: { v: partInput() },
   outputs: { r: partOutput() },
-  fn: ({ v }, { r }) => {
+  run: ({ v }, { r }) => {
     r?.next(v);
   },
   completionOutputs: ["r"],
@@ -92,7 +92,7 @@ export const id2: CodePart = {
   outputs: {
     r: partOutput(),
   },
-  fn: ({ v }, { r }) => {
+  run: ({ v }, { r }) => {
     r?.next(v);
   },
 };
@@ -101,7 +101,7 @@ export const transform: Part = {
   id: "transform",
   inputs: { from: partInput(), to: partInput() },
   outputs: { r: partOutput() },
-  fn: ({ to }, { r }) => {
+  run: ({ to }, { r }) => {
     r?.next(to);
   },
 };
@@ -111,7 +111,7 @@ export const Value = (v: any): Part => {
     id: `val-${v}`,
     inputTypes: {},
     outputTypes: { r: "any" },
-    fn: ({}, { r }) => r?.next(v),
+    run: ({}, { r }) => r?.next(v),
   });
 };
 
@@ -247,7 +247,7 @@ export const optAdd: CodePart = {
   outputs: {
     r: {},
   },
-  fn: ({ n1, n2 }, { r }) => {
+  run: ({ n1, n2 }, { r }) => {
     const n2Norm = typeof n2 === "undefined" ? 42 : n2;
     r?.next(n1 + n2Norm);
   },
@@ -262,7 +262,7 @@ export const isEven: CodePart = {
   outputs: {
     r: {},
   },
-  fn: ({ item }, { r }) => {
+  run: ({ item }, { r }) => {
     r?.next(item % 2 === 0);
   },
 };
@@ -271,7 +271,7 @@ export const filter: Part = fromSimplified({
   id: "filter",
   inputTypes: { list: "any", fn: "part" },
   outputTypes: { r: "any" },
-  fn: ({ list, fn }, o) => {
+  run: ({ list, fn }, o) => {
     let newList: any[] = [];
 
     const uns: any[] = [];
@@ -286,7 +286,7 @@ export const filter: Part = fromSimplified({
         part: fn,
         inputs: { item: itemInput },
         outputs: outputs,
-        partsRepo: testRepo,
+        resolvedDeps: testPartsCollection,
       });
       outputs.r?.subscribe((bool) => {
         if (bool) {
@@ -316,7 +316,7 @@ export const peq: CodePart = {
   id: "peq",
   inputs: { val: partInput(), compare: partInput() },
   outputs: { r: partOutput(), else: partOutput() },
-  fn: ({ val, compare }, o) => {
+  run: ({ val, compare }, o) => {
     if (val === compare) {
       o.r?.next(val);
     } else {
@@ -330,7 +330,7 @@ export const delay5 = conciseCodePart({
   inputs: ["item"],
   outputs: ["r"],
   completionOutputs: ["r"],
-  fn: ({ item }, { r }) => {
+  run: ({ item }, { r }) => {
     setTimeout(() => {
       r?.next(item);
     }, 5);
@@ -342,14 +342,14 @@ export const delay = conciseCodePart({
   inputs: ["item", "ms"],
   outputs: ["r"],
   completionOutputs: ["r"],
-  fn: ({ item, ms }, { r }) => {
+  run: ({ item, ms }, { r }) => {
     setTimeout(() => {
       r?.next(item);
     }, ms);
   },
 });
 
-export const testRepo = {
+export const testPartsCollection = {
   add,
   add1,
   mul2: mul2,
@@ -370,7 +370,7 @@ export const accumulate = conciseCodePart({
   outputs: ["r"],
   reactiveInputs: ["val"],
   completionOutputs: ["r"],
-  fn: (inputs, outputs, adv) => {
+  run: (inputs, outputs, adv) => {
     const { count, val } = inputs;
     const { r } = outputs;
 
@@ -407,7 +407,7 @@ export const accUntil: CodePart = {
   },
   reactiveInputs: ["item", "until"],
   completionOutputs: ["r"],
-  fn: ({ item, until }, { r }, { state }) => {
+  run: ({ item, until }, { r }, { state }) => {
     let list = state.get("list") || [];
 
     if (isDefined(item)) {
@@ -425,7 +425,7 @@ export const spreadList = conciseCodePart({
   id: "SpreadList",
   inputs: ["list"],
   outputs: ["val", "idx", "length"],
-  fn: (inputs, outputs) => {
+  run: (inputs, outputs) => {
     // magic here
     const { list } = inputs;
     const { val, idx, length } = outputs;
@@ -437,6 +437,9 @@ export const spreadList = conciseCodePart({
   },
 });
 
-export const testRepoWith = (...parts: Part[]): PartRepo => {
-  return parts.reduce<PartRepo>((acc, p) => ({ ...acc, [p.id]: p }), testRepo);
+export const testPartsCollectionWith = (...parts: Part[]): PartsCollection => {
+  return parts.reduce<PartsCollection>(
+    (acc, p) => ({ ...acc, [p.id]: p }),
+    testPartsCollection
+  );
 };

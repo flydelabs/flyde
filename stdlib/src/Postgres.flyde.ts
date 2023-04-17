@@ -18,7 +18,7 @@ export const Connect = partFromSimpleFunction({
     { name: "password", description: "Password" },
   ],
   output: { name: "connection", description: "Postgres connected client" },
-  fn: async (host, port, database, user, password) => {
+  run: async (host, port, database, user, password) => {
     const { Client } = await import("pg");
     const client = new Client({
       host,
@@ -38,7 +38,7 @@ export const Disconnect = partFromSimpleFunction({
   namespace,
   description: "Disconnects from a Postgres database",
   inputs: [{ name: "connection", description: "Postgres connection" }],
-  fn: async (connection) => {
+  run: async (connection) => {
     await connection.end();
   },
 });
@@ -58,7 +58,7 @@ export const Query = partFromSimpleFunction({
     description:
       'valid "pg" <a href="https://node-postgres.com/apis/client#queryconfig">QueryConfig object</a>',
   },
-  fn: async (connection: pg.Client, query) => {
+  run: async (connection: pg.Client, query) => {
     const result = await connection.query(query);
     return result.rows;
   },

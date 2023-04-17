@@ -3,7 +3,7 @@ import {
   OMap,
   PartInstance,
   PartDefinition,
-  PartDefRepo,
+  PartsDefCollection,
   isInlineValuePart,
   Pos,
   isStaticInput,

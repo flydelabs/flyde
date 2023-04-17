@@ -17,7 +17,7 @@ part:
             type: any
             delayed: false
             optional: false
-        fnCode: outputs.r.next(('Hello, Flyde!'))
+        runFnRawCode: outputs.r.next(('Hello, Flyde!'))
         customViewCode: "'Hello, Flyde!'"
         dataBuilderSource: J0hlbGxvLCBGbHlkZSEn
         templateType: value

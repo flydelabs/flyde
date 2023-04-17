@@ -34,7 +34,7 @@ export const createInlineValuePart = ({
     value: partOutput(),
   };
 
-  const fnCode =
+  const runFnRawCode =
     type === InlineValuePartType.FUNCTION
       ? `const result = (function() { ${code}}());
   Promise.resolve(result).then(val => outputs.value.next(val))`
@@ -46,7 +46,7 @@ export const createInlineValuePart = ({
     id: partId || `Inline Code ${randomInt(99999)}`,
     inputs,
     outputs,
-    fnCode,
+    runFnRawCode,
     customViewCode: customView || code,
     dataBuilderSource,
     templateType: type,

@@ -1,14 +1,15 @@
 module.exports = {
-  id: 'Add',
+  id: "Add",
   inputs: {
-    a: {mode: 'required', type: 'number'},
-    b: {mode: 'required', type: 'number'}
+    a: { mode: "required", type: "number" },
+    b: { mode: "required", type: "number" },
   },
   outputs: {
-    r: 'number'
+    r: "number",
   },
-  fn: (inputs, outputs) => {
+  run: (inputs, outputs) => {
     outputs.r.next(inputs.a + inputs.b);
   },
-  customViewCode: "<% if (inputs.ms) { %> Debounce  <%- inputs.ms %>ms <% } else { %> Debounce <% } %>",
-}
+  customViewCode:
+    "<% if (inputs.ms) { %> Debounce  <%- inputs.ms %>ms <% } else { %> Debounce <% } %>",
+};
