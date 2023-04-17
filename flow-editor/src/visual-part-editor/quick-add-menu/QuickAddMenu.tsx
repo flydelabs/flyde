@@ -131,7 +131,7 @@ export const QuickAddMenu: React.FC<QuickMenuProps> = (props) => {
   const [importables, setImportables] = React.useState<ImportableSource[]>();
 
   React.useEffect(() => {
-    onQueryImportables().then(setImportables);
+    onQueryImportables().then((data) => setImportables(data.importables));
   }, [onQueryImportables]);
 
   const availableParts = values({

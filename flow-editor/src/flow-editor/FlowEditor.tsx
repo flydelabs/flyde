@@ -26,7 +26,7 @@ import { useHotkeys } from "../lib/react-utils/use-hotkeys";
 // ;
 import { createNewPartInstance } from "../visual-part-editor/utils";
 
-import { AppToaster, toastMsg } from "../toaster";
+import { AppToaster } from "../toaster";
 
 import {
   FlydeFlowChangeType,
