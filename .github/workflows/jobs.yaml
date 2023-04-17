@@ -33,7 +33,7 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v2
       - name: Checkout & Dependencies
-        uses: ./.github/workflows/prepare.yml
+        uses: ./.github/workflows/prepare.yaml
       - name: Build
         run: yarn run build
       - name: Bump patch version, Publish to NPM (excluding private packages), and Commit changes
