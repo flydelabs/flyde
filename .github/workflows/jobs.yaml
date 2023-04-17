@@ -12,17 +12,8 @@ jobs:
   build-test-lint:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: 16
-
-      - name: Install dependencies
-        run: yarn install --immutable
-
+      - name: Checkout & Dependencies
+        uses: ./.github/workflows/prepare.yml
       - name: Build
         run: yarn run build
 
@@ -37,28 +28,8 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: 16
-          registry-url: "https://registry.npmjs.org"
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-
-      - name: Cache yarn dependencies
-        uses: actions/cache@v2
-        id: yarn-cache
-        with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
-      - name: Install dependencies
-        run: yarn install --immutable
+      - name: Checkout & Dependencies
+        uses: ./.github/workflows/prepare.yml
       - name: Build
         run: yarn run build
       - name: Bump patch version, Publish to NPM (excluding private packages), and Commit changes
