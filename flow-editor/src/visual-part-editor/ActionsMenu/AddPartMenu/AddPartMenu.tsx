@@ -9,16 +9,18 @@ import {
   Tree,
 } from "@blueprintjs/core";
 import { Tooltip2 } from "@blueprintjs/popover2";
-import { ImportableSource, noop } from "@flyde/core";
+import { ImportableSource } from "@flyde/core";
 import classNames from "classnames";
 import React, { useCallback, useEffect } from "react";
+import { LocalImportableResult } from "../../../flow-editor/DependenciesContext";
 import { usePorts } from "../../../flow-editor/ports";
+import { InfoTooltip } from "../../../lib/InfoTooltip";
 import { Loader } from "../../../lib/loader";
 import { AddPartMenuListItem } from "./AddPartMenuListItem";
 import { AddPartMenuResultsSummary } from "./AddPartMenuResultsSummary";
 
 export interface AddPartMenuProps {
-  onRequestImportables: () => Promise<ImportableSource[]>;
+  onRequestImportables: () => Promise<LocalImportableResult>;
   onAddPart: (part: ImportableSource) => void;
   onClose: () => void;
 }
@@ -38,6 +40,9 @@ export const AddPartMenu: React.FC<AddPartMenuProps> = (props) => {
   const { onRequestImportables, onAddPart, onClose } = props;
 
   const [importables, setImportables] = React.useState<ImportableSource[]>();
+  const [importablesErrors, setImportablesErrors] = React.useState<
+    LocalImportableResult["errors"]
+  >([]);
   const [openNodes, setOpenNodes] = React.useState<Set<ITreeNode["id"]>>(
     new Set()
   );
@@ -128,7 +133,8 @@ export const AddPartMenu: React.FC<AddPartMenuProps> = (props) => {
   }, [importables, filter, query]);
 
   useEffect(() => {
-    onRequestImportables().then((importables) => {
+    onRequestImportables().then(({ importables, errors }) => {
+      setImportablesErrors(errors);
       const namespacedExternals = importables
         .filter((importable) => !isInternal(importable))
         .reduce<Record<string, string[]>>((acc, importable) => {
@@ -367,6 +373,14 @@ export const AddPartMenu: React.FC<AddPartMenuProps> = (props) => {
           )}
         </header>
         <div className="content-wrapper">{renderContent()}</div>
+        {importablesErrors.length > 0 ? (
+          <Callout intent="warning" style={{ marginTop: "10px" }}>
+            Found {importablesErrors.length} corrupt flow(s).{" "}
+            <InfoTooltip
+              content={importablesErrors.map((err) => err.path).join(", ")}
+            />{" "}
+          </Callout>
+        ) : null}
       </main>
     </Dialog>
   );

@@ -18,10 +18,20 @@ import { resolveDependentPackages } from "./resolve-dependent-packages";
 import * as StdLib from "@flyde/stdlib/dist/all";
 import { readFileSync } from "fs";
 
+export interface CorruptScannedPart {
+  type: "corrupt";
+  error: string;
+}
+
+export type ImportablesResult = {
+  importables: Record<string, PartsDefCollection>;
+  errors: { path: string; message: string }[];
+};
+
 export async function scanImportableParts(
   rootPath: string,
   filename: string
-): Promise<Record<string, PartsDefCollection>> {
+): Promise<ImportablesResult> {
   const fileRoot = join(rootPath, filename);
 
   const localFiles = getLocalFlydeFiles(rootPath);
@@ -30,19 +40,23 @@ export async function scanImportableParts(
 
   const depsParts = await resolveDependentPackages(rootPath, depsNames);
 
-  let builtInStdLib = {};
+  let builtInStdLib: Record<string, Record<string, BasePart>> = {};
   if (!depsNames.includes("@flyde/stdlib")) {
     debugLogger("Using built-in stdlib");
 
-    const parts = Object.values(StdLib).filter(isBasePart) as BasePart[];
+    const parts = Object.fromEntries(
+      Object.entries(StdLib).filter((pair) => isBasePart(pair[1]))
+    ) as PartsDefCollection;
     builtInStdLib = {
       "@flyde/stdlib": parts,
     };
   }
 
+  let errors: ImportablesResult["errors"] = [];
+
   const localParts = localFiles
     .filter((file) => !file.relativePath.endsWith(filename))
-    .reduce<Record<string, PartsDefCollection>>((acc, file) => {
+    .reduce<Record<string, Record<string, BasePart>>>((acc, file) => {
       if (isCodePartPath(file.fullPath)) {
         const obj = resolveCodePartDependencies(file.fullPath).reduce(
           (obj, { part }) => ({ ...obj, [part.id]: part }),
@@ -62,12 +76,19 @@ export async function scanImportableParts(
 
         return { ...acc, [relativePath]: { [flow.part.id]: flow.part } };
       } catch (e) {
+        errors.push({
+          path: file.fullPath,
+          message: e.message,
+        });
         console.error(`Skipping corrupt flow at ${file.fullPath}, error: ${e}`);
         return acc;
       }
     }, {});
 
-  return { ...builtInStdLib, ...depsParts, ...localParts };
+  return {
+    importables: { ...builtInStdLib, ...depsParts, ...localParts },
+    errors,
+  };
 }
 
 function getLocalFlydeFiles(rootPath: string) {

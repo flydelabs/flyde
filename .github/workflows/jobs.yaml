@@ -68,7 +68,7 @@ jobs:
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "github-actions@users.noreply.github.com"
-          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > $HOME/.npmrc
 
           yarn workspaces foreach -Avit --no-private version patch
           yarn workspaces foreach -Avit --no-private npm publish --access public --tolerate-republish 

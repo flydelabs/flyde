@@ -46,6 +46,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import _ from "lodash";
 import { useBootstrapData } from "./use-bootstrap-data";
+import type { ImportablesResult } from "@flyde/dev-server";
 
 export const PIECE_HEIGHT = 28;
 
@@ -256,23 +257,28 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
     [debuggerClient, executionId]
   );
 
-  const queryImportables = React.useCallback(async (): Promise<
-    ImportableSource[]
-  > => {
-    const importables = await ports
+  const queryImportables = React.useCallback(async (): Promise<{
+    importables: ImportableSource[];
+    errors: ImportablesResult["errors"];
+  }> => {
+    return await ports
       .getImportables({
         rootFolder: props.integratedSource,
         flowPath: props.integratedSource,
       })
       .then((imps) => {
-        return Object.entries(imps).reduce<any[]>((acc, [module, partsMap]) => {
-          const parts = values(partsMap);
-          const partAndModule = parts.map((part) => ({ module, part }));
-          return acc.concat(partAndModule);
-        }, []);
-      });
+        const { importables, errors } = imps;
 
-    return [...importables];
+        const newImportables = Object.entries(importables).reduce<any[]>(
+          (acc, [module, partsMap]) => {
+            const parts = values(partsMap);
+            const partAndModule = parts.map((part) => ({ module, part }));
+            return acc.concat(partAndModule);
+          },
+          []
+        );
+        return { importables: [...newImportables], errors };
+      });
   }, [ports, props.integratedSource]);
 
   const onImportPart = React.useCallback<

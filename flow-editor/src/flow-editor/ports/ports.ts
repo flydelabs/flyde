@@ -1,6 +1,6 @@
 import { createContext, useContext } from "react";
 import { FlydeFlow, ResolvedDependenciesDefinitions } from "@flyde/core";
-import { Importables, FlowJob } from "@flyde/dev-server";
+import { FlowJob, ImportablesResult } from "@flyde/dev-server";
 import { ReportEvent } from "./analytics";
 
 export * from "./analytics";
@@ -25,7 +25,7 @@ export interface EditorPorts {
   getImportables: (dto: {
     rootFolder: string;
     flowPath: string;
-  }) => Promise<Importables>;
+  }) => Promise<ImportablesResult>;
 
   onExternalFlowChange: (
     cb: (data: {

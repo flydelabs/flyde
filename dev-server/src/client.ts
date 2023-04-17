@@ -6,10 +6,10 @@ import {
   ResolvedFlydeFlowDefinition,
 } from "@flyde/core";
 import { FolderStructure } from "./fs-helper/shared";
+import type { ImportablesResult } from "./service/scan-importable-parts";
+export type { ImportablesResult } from "./service/scan-importable-parts";
 
-export type Importables = Record<string, Record<string, BasePart>>;
-
-export * from './runner/shared';
+export * from "./runner/shared";
 
 export const createDevServerClient = (baseUrl: string) => {
   return {
@@ -31,9 +31,7 @@ export const createDevServerClient = (baseUrl: string) => {
         .get(`${baseUrl}/resolveDefinitions?filename=${filename}`)
         .then((res) => res.data);
     },
-    getImportables: (
-      filename: string
-    ): Promise<Importables> => {
+    getImportables: (filename: string): Promise<ImportablesResult> => {
       return axios
         .get(`${baseUrl}/importables?filename=${filename}`)
         .then((res) => res.data);
