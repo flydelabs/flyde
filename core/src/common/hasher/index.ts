@@ -44,7 +44,8 @@ export const hashPart = (part: Part, ignorePos = true) => {
     });
     return md5(str);
   } else if (isInlineValuePart(part)) {
-    const { runFnRawCode: fnCode, customViewCode } = part;
+    const { customViewCode } = part;
+    const fnCode = part.fnCode ?? part.runFnRawCode;
     const str = JSON.stringify({ fnCode, customViewCode, ...basePart });
     return md5(str);
   }

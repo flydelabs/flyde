@@ -113,7 +113,7 @@ const executeCodePart = (data: CodeExecutionData) => {
     env,
     extraContext,
   } = data;
-  const { run } = part;
+  const { run, fn } = part;
 
   const debug = debugLogger("core");
 
@@ -319,6 +319,12 @@ const executeCodePart = (data: CodeExecutionData) => {
               }
             });
           });
+        } else {
+          entries(outputs).forEach(([key, subj]) => {
+            subj.subscribe((val) => {
+              completedOutputsValues[key] = val;
+            });
+          });
         }
 
         // magic happens here
@@ -329,10 +335,11 @@ const executeCodePart = (data: CodeExecutionData) => {
             onStarted();
           }
 
-          {
-            argValues;
-          }
-          partCleanupFn = run(argValues as any, outputs, advPartContext);
+          partCleanupFn = (fn ?? run)(
+            argValues as any,
+            outputs,
+            advPartContext
+          );
 
           if (isPromise(partCleanupFn)) {
             partCleanupFn

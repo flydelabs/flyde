@@ -163,6 +163,10 @@ export interface CodePart extends BasePart {
    *
    */
   run: RunPartFunction;
+  /**
+   * @deprecated use {@link CodePart['run']} instead
+   */
+  fn?: RunPartFunction;
   customView?: CustomPartViewFn;
 }
 
@@ -178,6 +182,7 @@ export enum InlineValuePartType {
 
 export interface InlineValuePart extends BasePart {
   runFnRawCode: string;
+  fnCode?: string;
   dataBuilderSource?: string; // quick solution for "Data builder iteration"
   templateType?: InlineValuePartType;
 }
