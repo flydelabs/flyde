@@ -70,19 +70,16 @@ jobs:
           git config --global user.email "github-actions@users.noreply.github.com"
           echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > $HOME/.npmrc
 
-          for package in $(yarn workspaces list --json | jq -r '.name'); do
-            cd $package
+          for package in $(yarn workspaces list --json | jq -r '.location'); do
             is_private=$(jq '.private' package.json)
             if [[ "$is_private" == "true" ]]; then
-              echo "Skipping private package: $package"
-              cd ..
+              echo "Skipping private package in: $package"
               continue
             fi
-
+            cd $package
             echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
             npm version patch -m "chore(release): bump version to %s"
             npm publish --access public --tolerate-republish 
-
             cd ..
           done
 
