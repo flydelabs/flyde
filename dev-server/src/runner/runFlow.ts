@@ -1,7 +1,7 @@
 import { FlydeFlow } from "@flyde/core";
 import { FlowJob } from "./shared";
 import cuid from "cuid";
-import { loadFlow } from "@flyde/runtime";
+import { loadFlowFromContent } from "@flyde/runtime";
 
 export async function runFlow(
   flow: FlydeFlow,
@@ -15,7 +15,11 @@ export async function runFlow(
 }> {
   const id = cuid();
 
-  const execute = loadFlow(flow, flowPath, `http://localhost:${port}`);
+  const execute = loadFlowFromContent(
+    flow,
+    flowPath,
+    `http://localhost:${port}`
+  );
 
   const data = execute(inputs);
 

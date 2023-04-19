@@ -2571,6 +2571,7 @@ describe("main ", () => {
               onCompleted: s,
             });
             assert.equal(s.callCount, 1);
+            assert.deepEqual(s.lastCall.args[0], { r: "ok" });
           });
 
           it("waits for promises to resolve before triggering an implicit completion of code part with no explicit completion outputs", async () => {
