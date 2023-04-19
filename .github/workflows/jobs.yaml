@@ -68,7 +68,7 @@ jobs:
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "github-actions@users.noreply.github.com"
-          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > $HOME/.npmrc
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
 
           root=$(pwd)
 
@@ -79,10 +79,12 @@ jobs:
               echo "Skipping private package in: $package"
               continue
               cd $root
-            fi
-            echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
+            fi  
+            echo "Bumping version of $package"
             npm version patch -m "chore(release): bump version to %s"
+            echo "Publishing $package"
             npm publish --access public --tolerate-republish 
+            echo "Published $package\n\n"
             cd $root
           done
 
