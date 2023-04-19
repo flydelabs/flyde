@@ -34,7 +34,7 @@ const calcImplicitRoot = () => {
   return findRoot(callPath);
 };
 
-export function loadFlowFromString<Inputs>(
+export function loadFlowFromContent<Inputs>(
   flow: FlydeFlow,
   fullFlowPath: string,
   debuggerUrl: string
@@ -97,7 +97,7 @@ export function loadFlowByPath<Inputs>(
   const flowPath = join(_root, relativePath);
   const flow = deserializeFlowByPath(flowPath);
 
-  return loadFlowFromString(flow, flowPath, "http://localhost:8545");
+  return loadFlowFromContent(flow, flowPath, "http://localhost:8545");
 }
 
 export function loadFlow<Inputs>(
@@ -109,5 +109,5 @@ export function loadFlow<Inputs>(
     typeof flowOrPath === "string"
       ? deserializeFlowByPath(flowOrPath)
       : flowOrPath;
-  return loadFlowFromString(flow, _root, "http://localhost:8545");
+  return loadFlowFromContent(flow, _root, "http://localhost:8545");
 }

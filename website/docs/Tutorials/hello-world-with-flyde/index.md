@@ -2,7 +2,7 @@
 sidebar_position: 1
 ---
 
-# Tutorial: Hello World with Flyde
+# Hello World with Flyde
 
 This tutorial will guide you step-by-step into creating an "Hello world" program using Flyde. For simplicity, we will use vanilla JS. For TS support check any of the official examples.
 
@@ -81,8 +81,8 @@ Now we're going to connect the Flyde flow you just built to the JS code in `inde
 const { loadFlow } = require("@flyde/runtime");
 const executeFlow = loadFlow("HelloFlyde.flyde");
 
-executeFlow() // executeFlow can also receive inputs, and other advanced configuration, more on that in the next steps
-  .then(({ message }) => console.log(message));
+const { result } = executeFlow(); // executeFlow can also receive inputs, and other advanced configuration, more on that in the next steps
+result.then(({ message }) => console.log(message));
 ```
 
 3. using your terminal (VSCode's embedded one works perfect for this case) run `node index.js`
@@ -104,7 +104,7 @@ Also, you'll see how "inline value" components can expose arguments that will tu
 
 ```
 executeFlow({name: 'Your awesome name here'})
-    .then(({message}) => console.log(message))
+    .result.then(({message}) => console.log(message))
 ```
 
 7. In your terminal, run `node index.js` to see the changes live!
