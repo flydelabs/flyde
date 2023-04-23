@@ -57,7 +57,7 @@ jobs:
             echo "Bumping version of $package"
             npm version patch -m "chore(release): bump version to %s"
             echo "Publishing $package"
-            npm publish --access public --tolerate-republish 
+            npm publish --access public --tolerate-republish
             echo "Published $package\n\n"
             cd $root
           done
