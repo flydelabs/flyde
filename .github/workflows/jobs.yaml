@@ -37,34 +37,8 @@ jobs:
         run: yarn run test
       - name: Lint
         run: yarn run lint
-
-  publish:
-    needs: build-test-lint
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v2
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: 16
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-
-      - uses: actions/cache@v3
-        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
-        with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
-      - name: Install dependencies
-        run: yarn install --immutable
-      - name: Build
-        run: yarn run build
       - name: Bump patch version, Publish to NPM (excluding private packages), and Commit changes
+        if: github.ref == 'refs/heads/main'
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "github-actions@users.noreply.github.com"
@@ -77,8 +51,8 @@ jobs:
             is_private=$(jq '.private' package.json)
             if [[ "$is_private" == "true" ]]; then
               echo "Skipping private package in: $package"
-              continue
               cd $root
+              continue
             fi  
             echo "Bumping version of $package"
             npm version patch -m "chore(release): bump version to %s"
