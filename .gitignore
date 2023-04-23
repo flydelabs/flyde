@@ -19,3 +19,5 @@ build
 !.yarn/sdks
 !.yarn/versions
 # above to support boris's telephone fork not working
+
+.npmrc
