@@ -56,6 +56,7 @@
     "ejs": "^3.1.8",
     "markdown-table": "2",
     "mocha": "^10.2.0",
+    "nock": "^13.3.0",
     "nodemon": "^2.0.20",
     "path-browserify": "^1.0.1",
     "process": "^0.11.10",
