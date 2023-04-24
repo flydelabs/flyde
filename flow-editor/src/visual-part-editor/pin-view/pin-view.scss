@@ -8,7 +8,7 @@ $MINIMIZED_WIRE_LENGTH: 6px;
 
 .pin[data-pin-id="__trigger"].input {
   font-style: italic;
-  
+
   .pin-inner {
     border-radius: 10px;
     // font-size: 11px;
@@ -90,7 +90,6 @@ $MINIMIZED_WIRE_LENGTH: 6px;
   }
 
   &.minimized {
-
     // begin margins to compensate for the pin size change when minimized
     // &.input .pin-inner {
     //   margin-top: 12px;
@@ -106,7 +105,7 @@ $MINIMIZED_WIRE_LENGTH: 6px;
     //   color: transparent;
     //   padding: 0;
     //   width: $MINIMIZED_PIN_SIZE;
-    //   height: $MINIMIZED_PIN_SIZE; 
+    //   height: $MINIMIZED_PIN_SIZE;
     // }
 
     // .wire {
@@ -114,20 +113,19 @@ $MINIMIZED_WIRE_LENGTH: 6px;
     // }
   }
 
-
   &:hover .pin-inner {
     border: 4px solid#007EC6;
     opacity: 0.85;
   }
 
   &.selected .pin-inner {
-    background-color: #007EC6 !important;
+    background-color: #007ec6 !important;
     color: white;
     // opacity: 0.7;
   }
 
   &.closest .pin-inner {
-    border: 2px dashed #007EC6;
+    border: 2px dashed #007ec6;
   }
 
   &.input {
@@ -136,32 +134,28 @@ $MINIMIZED_WIRE_LENGTH: 6px;
     }
 
     .pin-inner {
-      background: #DEFDFF;
+      background: #defdff;
     }
-
   }
-
 
   &.has-value {
     &.output {
       .pin-inner {
-        background: #FFE6DE;
+        background: #ffe6de;
         // box-shadow: 0px 0px 4px 0px #4ccfec;
         // transition:f all ease-out 1.5s;
       }
 
       &.pin[data-pin-id="__error"] {
         .pin-inner {
-        background: #ff8f6a;
+          background: #ff8f6a;
         }
       }
     }
-
   }
 
   &.const-value {
     &.input {
-
       .pin-inner {
         background: #ddffe4;
         white-space: nowrap;
@@ -197,11 +191,11 @@ $MINIMIZED_WIRE_LENGTH: 6px;
     }
 
     .pin-inner {
-      background: $output-color
+      background: $output-color;
     }
 
     &.closest:not(.selected) .pin-inner {
-      background: #FFB7A1;
+      background: #ffb7a1;
     }
   }
 
@@ -218,5 +212,6 @@ $MINIMIZED_WIRE_LENGTH: 6px;
   .__react_component_tooltip.pin-info-tooltip {
     font-size: 14px;
     // min-width: 300px;
+    max-width: 400px;
   }
 }

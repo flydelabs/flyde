@@ -65,5 +65,10 @@ jobs:
           git add -A
           git commit -m "chore(release): bump package versions"
           git push origin main
+      - name: Deploy website
+        if: github.ref == 'refs/heads/main'
+        run: |
+          yarn workspace website deploy
+
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

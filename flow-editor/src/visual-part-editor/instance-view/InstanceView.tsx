@@ -361,9 +361,23 @@ export const InstanceView: React.FC<InstanceViewProps> =
 
     const _visibleOutputs = getVisibleOutputs(instance, part, connections);
 
-    is.push([TRIGGER_PIN_ID, partInput()]);
+    is.push([
+      TRIGGER_PIN_ID,
+      {
+        ...partInput(),
+        description:
+          "Use this pin to manually trigger the part. If not connected, the part will be triggered automatically when all required inputs have data.",
+      },
+    ]);
 
-    os.push([ERROR_PIN_ID, partOutput()]);
+    os.push([
+      ERROR_PIN_ID,
+      {
+        ...partOutput(),
+        description:
+          "Use this pin to catch errors that happen inside this part. If not connected, errors will bubble up to the parent part.",
+      },
+    ]);
 
     const inputsToRender = is.filter(([k]) => {
       return (

@@ -62,7 +62,7 @@ export default function DebounceThrottlingExample(): JSX.Element {
           const thrIns = part.instances.find(
             (ins) => isRefPartInstance(ins) && ins.partId === "Throttle"
           );
-          thrIns.inputConfig.threshold = staticInputPinConfig(thr);
+          thrIns.inputConfig.wait = staticInputPinConfig(thr);
         }
       })
     );

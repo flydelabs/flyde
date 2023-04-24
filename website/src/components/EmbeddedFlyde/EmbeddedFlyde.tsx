@@ -17,12 +17,10 @@ import {
 } from "@flyde/flow-editor";
 import { fakeVm } from "@site/src/fake-vm";
 import {
-  BasePart,
   DynamicPartInput,
   execute,
   FlydeFlow,
   ImportedPart,
-  ImportedPartDef,
   isBasePart,
   keys,
   noop,
@@ -31,8 +29,6 @@ import {
   PartInstance,
   PartOutput,
   ResolvedDependencies,
-  ResolvedDependenciesDefinitions,
-  ResolvedFlydeRuntimeFlow,
   TRIGGER_PIN_ID,
 } from "@flyde/core";
 import { createHistoryPlayer } from "./createHistoryPlayer";
@@ -198,10 +194,13 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = (props) => {
       const parts = Object.values(
         await import("@flyde/stdlib/dist/all-browser")
       ).filter(isBasePart) as ImportedPart[];
-      return parts.map((b) => ({
-        part: { ...b, source: { path: "n/a", export: "n/a" } },
-        module: "@flyde/stdlib",
-      }));
+      return {
+        importables: parts.map((b) => ({
+          part: { ...b, source: { path: "n/a", export: "n/a" } },
+          module: "@flyde/stdlib",
+        })),
+        errors: [],
+      };
     };
 
   const [editorState, setFlowEditorState] = useState<FlowEditorState>({
@@ -215,6 +214,14 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = (props) => {
       selected: [],
     },
   });
+
+  // update flow when props change (e.g. debounce/throttling)
+  useEffect(() => {
+    setFlowEditorState((state) => ({
+      ...state,
+      flow,
+    }));
+  }, [flow]);
 
   useEffect(() => {
     setResolvedDeps((f) => ({
@@ -237,7 +244,7 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = (props) => {
 
   useEffect(() => {
     const { executeResult: clean, localDebugger } = runFlow({
-      flow,
+      flow: editorState.flow,
       dependencies: resolvedDeps,
       output,
       inputs,
