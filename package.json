@@ -19,8 +19,8 @@
   },
   "author": "",
   "dependencies": {
-    "concurrently": "^4.1.0",
     "mixpanel-browser": "^2.45.0",
+    "concurrently": "^4.1.0",
     "yarn": "^1.22.18"
   },
   "private": true,
