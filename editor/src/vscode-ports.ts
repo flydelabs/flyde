@@ -89,3 +89,25 @@ export const createVsCodePorts = (): EditorPorts => {
     },
   };
 };
+
+// back-door for testing purposes
+window.addEventListener("message", (event) => {
+  const { data } = event;
+  if (data && data.type === "__testInspectElements") {
+    const { selector } = data.payload;
+    const elements = document.querySelectorAll(selector);
+    const vscode = safelyAcquireApi();
+    const serializedElements = Array.from(elements).map((element) => {
+      return {
+        html: element.innerHTML,
+        text: element.textContent,
+        outerHtml: element.outerHTML,
+      };
+    });
+
+    vscode.postMessage(
+      { type: "__inspectElementsResponse", payload: serializedElements },
+      "*"
+    );
+  }
+});
