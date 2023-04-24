@@ -1,0 +1,10 @@
+undecided:
+  - flyde
+  - "@flyde/core"
+  - "@flyde/dev-server"
+  - "@flyde/editor"
+  - "@flyde/flow-editor"
+  - "@flyde/remote-debugger"
+  - "@flyde/resolver"
+  - "@flyde/runtime"
+  - website
