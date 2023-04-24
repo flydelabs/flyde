@@ -21,3 +21,4 @@ build
 # above to support boris's telephone fork not working
 
 .npmrc
+package-lock.json
