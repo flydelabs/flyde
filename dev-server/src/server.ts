@@ -9,7 +9,8 @@ import { join } from "path";
 
 import { entries } from "@flyde/core";
 import resolveFrom = require("resolve-from");
-import { readFileSync } from "fs";
+import { readFileSync, writeFileSync } from "fs";
+import { generatePartCodeFromPrompt } from "./service/generate-part-from-prompt";
 
 export const runDevServer = (
   port: number,
@@ -84,8 +85,16 @@ export const runDevServer = (
       console.error(e);
       res.status(400).send(e);
     }
+  });
 
-    // res.send({...STDLIB_BACKUP, ...data});
+  app.post("/generatePart", async (req, res) => {
+    const { prompt } = req.body as { prompt: string };
+    console.log({ prompt });
+    const { fileName, code } = await generatePartCodeFromPrompt(prompt);
+
+    writeFileSync(join(rootDir, `${fileName}.flyde.ts`), code, "utf-8");
+
+    res.send(code);
   });
 
   app.use("/editor", express.static(editorStaticRoot));

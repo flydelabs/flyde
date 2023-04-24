@@ -1,5 +1,9 @@
 import { createContext, useContext } from "react";
-import { FlydeFlow, ResolvedDependenciesDefinitions } from "@flyde/core";
+import {
+  BasePart,
+  FlydeFlow,
+  ResolvedDependenciesDefinitions,
+} from "@flyde/core";
 import { FlowJob, ImportablesResult } from "@flyde/dev-server";
 import { ReportEvent } from "./analytics";
 
@@ -40,6 +44,11 @@ export interface EditorPorts {
   onStopFlow: () => Promise<void>;
 
   reportEvent: ReportEvent;
+
+  generatePartFromPrompt: (dto: {
+    // absPath: string;
+    prompt: string;
+  }) => Promise<BasePart | null>;
 }
 
 const throwsNotImplemented: any = async () => {
@@ -61,6 +70,7 @@ export const defaultPorts: EditorPorts = {
   onRunFlow: throwsNotImplemented,
   onStopFlow: throwsNotImplemented,
   reportEvent: throwsNotImplemented,
+  generatePartFromPrompt: throwsNotImplemented,
 };
 
 export const PortsContext = createContext<EditorPorts>(defaultPorts);

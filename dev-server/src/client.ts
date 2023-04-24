@@ -36,6 +36,11 @@ export const createDevServerClient = (baseUrl: string) => {
         .get(`${baseUrl}/importables?filename=${filename}`)
         .then((res) => res.data);
     },
+    generatePartFromPrompt: (prompt: string): Promise<BasePart | null> => {
+      return axios
+        .post(`${baseUrl}/generatePart`, { prompt })
+        .then((res) => res.data);
+    },
   };
 };
 

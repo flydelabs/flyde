@@ -1,6 +1,7 @@
 import { Button } from "@blueprintjs/core";
 import { Tooltip2 } from "@blueprintjs/popover2";
 import {
+  BasePart,
   ConnectionNode,
   getPartDef,
   ImportableSource,
@@ -18,6 +19,7 @@ import { AppToaster, toastMsg } from "../../toaster";
 import { AddPartMenu } from "./AddPartMenu";
 import {
   addPartIcon,
+  atomicIcon,
   groupIcon,
   inspectIcon,
   pencilIcon,
@@ -25,6 +27,7 @@ import {
   removePartIcon,
   ungroupIcon,
 } from "./icons/icons";
+import { PromptAIMenu } from "./PromptAIMenu";
 import { RunFlowModal } from "./RunFlowModal";
 
 export enum ActionType {
@@ -35,10 +38,12 @@ export enum ActionType {
   AddInlineValue = "add-inline-value",
   Inspect = "inspect",
   Run = "run",
+  AI = "ai",
 }
 
 export type ActionData = {
   [ActionType.AddPart]: { importablePart: ImportableSource };
+  [ActionType.AI]: { part: BasePart };
 };
 
 export type BaseAction<T extends ActionType> = {
@@ -79,6 +84,9 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
   const [showAddPartMenu, setShowAddPartMenu] = React.useState(false);
   const [showRunFlowModal, setShowRunFlowModal] = React.useState(false);
 
+  const [showAIPromptModal, setShowAIPromptModal] = React.useState(false);
+  const [generatingPart, setGeneratingPart] = React.useState(false);
+
   const [hideHotkeyHintMap, setHideHotkeyHintMap] = useLocalStorage(
     "hideHotkeyHintMap",
     {}
@@ -88,7 +96,7 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
     setShowAddPartMenu(false);
   }, []);
 
-  const { onRunFlow } = usePorts();
+  const { onRunFlow, generatePartFromPrompt } = usePorts();
 
   const _runFlow = useCallback<typeof onRunFlow>(
     (inputs) => {
@@ -139,6 +147,8 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
     types.push(ActionType.RemovePart);
   }
 
+  types.push(ActionType.AI);
+
   const onDismissHotkeyHint = useCallback(
     (hotkey: string, toastId: string) => {
       setHideHotkeyHintMap({ ...hideHotkeyHintMap, [hotkey]: true });
@@ -185,6 +195,9 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
             }
           })();
           break;
+        case ActionType.AI:
+          setShowAIPromptModal(true);
+          break;
         default:
           onAction({ type, data: undefined });
       }
@@ -193,7 +206,7 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
   );
 
   Object.entries(actionsMetaData).forEach(
-    ([action, data]: [ActionType, typeof actionsMetaData[ActionType]]) => {
+    ([action, data]: [ActionType, (typeof actionsMetaData)[ActionType]]) => {
       if (data.hotkey) {
         // eslint-disable-next-line react-hooks/rules-of-hooks
         useHotkeys(
@@ -223,6 +236,17 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
     [onAction]
   );
 
+  const onAddAIPart = useCallback(
+    async (prompt: string) => {
+      setGeneratingPart(true);
+      const part = await generatePartFromPrompt({ prompt });
+      setGeneratingPart(false);
+      onAction({ type: ActionType.AI, data: { part } });
+      setShowAIPromptModal(false);
+    },
+    [generatePartFromPrompt, onAction]
+  );
+
   return (
     <div className="actions-menu">
       {types.map((type) => (
@@ -240,6 +264,13 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
           onClose={() => setShowRunFlowModal(false)}
           onRun={_runFlow}
           part={part}
+        />
+      ) : null}
+      {showAIPromptModal ? (
+        <PromptAIMenu
+          onClose={() => setShowAIPromptModal(false)}
+          onSubmit={onAddAIPart}
+          submitting={generatingPart}
         />
       ) : null}
     </div>
@@ -288,6 +319,10 @@ const actionsMetaData: Record<
     icon: playIcon,
     text: "Run flow",
     hotkey: "r",
+  },
+  [ActionType.AI]: {
+    icon: atomicIcon,
+    text: "New part using AI",
   },
 };
 
