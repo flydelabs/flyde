@@ -57,7 +57,7 @@ jobs:
             echo "Bumping version of $package"
             yarn version patch
             echo "Publishing $package"
-            yarn npm publish --access public --tolerate-republish
+            npm publish --access public --tolerate-republish
             echo "Published $package\n\n"
             cd $root
           done
