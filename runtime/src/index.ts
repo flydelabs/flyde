@@ -107,7 +107,7 @@ export function loadFlow<Inputs>(
   const _root = root || calcImplicitRoot();
   const flow =
     typeof flowOrPath === "string"
-      ? deserializeFlowByPath(flowOrPath)
+      ? deserializeFlowByPath(join(_root, flowOrPath))
       : flowOrPath;
   return loadFlowFromContent(flow, _root, "http://localhost:8545");
 }

@@ -9,8 +9,8 @@ import { CodeBlock, dracula } from "react-code-blocks";
 const code = `import {loadFlow} from '@flyde/runtime';
 
 const executeFlow = loadFlow('Greet.flyde');
-const {results} = executeFlow();
-const {output} = await results;
+const {result} = executeFlow();
+const {output} = await result;
 console.log(\`Output: \$\{output\}\`);`;
 
 import "./HeroExample.scss";
