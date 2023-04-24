@@ -1,6 +1,6 @@
 {
     "name": "@flyde/stdlib",
-    "version": "0.1.18",
+    "version": "0.1.19",
     "description": "Flyde's StdLib",
     "flyde": {
         "exposes": [
@@ -28,7 +28,7 @@
     "author": "Flyde",
     "license": "MIT",
     "dependencies": {
-        "@flyde/core": "^0.1.17",
+        "@flyde/core": "^0.1.21",
         "@types/pg": "^8.6.6",
         "axios": "^0.27.2",
         "mongodb": "^4.13.0",
