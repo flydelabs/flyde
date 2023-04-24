@@ -6,8 +6,8 @@ imports:
 part:
   instances:
     - pos:
-        x: -656.1905053710938
-        y: 325.03946411132813
+        x: -700.6649926757813
+        y: 170.98888885498047
       id: Inline-value-Hello from ${i76
       inputConfig: {}
       part:
@@ -39,8 +39,8 @@ part:
             fontWeight: "500"
         description: Custom inline value
     - pos:
-        x: -641.0780364990235
-        y: -90.68680785417553
+        x: -704.9867889404297
+        y: -410.9086248707771
       id: Get User's Country-ins
       inputConfig: {}
       part:
@@ -105,8 +105,8 @@ part:
             x: -363.42401672132144
             y: 105.34149194113161
           country:
-            x: -322.5739794922268
-            y: 138.57280736180334
+            x: -394.43371730793234
+            y: 163.07042747781705
         connections:
           - from:
               insId: "Inline-value-{iso2: ${input76"
@@ -126,8 +126,8 @@ part:
         size: large
         color: "#f15bb5"
     - pos:
-        x: -718.9765612792969
-        y: 54.225894863605504
+        x: -774.8439318847657
+        y: -208.67992789030075
       id: Get Country Name And Capital-ins
       inputConfig: {}
       visibleOutputs:
@@ -234,8 +234,8 @@ part:
         size: large
         color: "#9b5de5"
     - pos:
-        x: -387.56652587890625
-        y: 184.55710571289063
+        x: -430.5929541015625
+        y: -13.22971374511718
       id: cl8x5r4qp00074666lb382z1c
       inputConfig: {}
       part:
@@ -374,17 +374,17 @@ part:
             style:
               size: regular
               color: "#fee440"
-          - id: Inline-value-N/A-et044zc
+          - id: Inline-value-N/A-6c146fg
             part:
               id: Inline-value-N/A
               inputs: {}
               outputs:
                 value:
                   delayed: false
-              fnCode: const result = ('N/A'); Promise.resolve(result).then(val =>
+              runFnRawCode: const result = (`N/A`); Promise.resolve(result).then(val =>
                 outputs.value.next(val))
-              customViewCode: "'N/A'"
-              dataBuilderSource: J04vQSc=
+              customViewCode: "`N/A`"
+              dataBuilderSource: YE4vQWA=
               templateType: value
               completionOutputs:
                 - value
@@ -397,8 +397,8 @@ part:
               description: Custom inline value
             inputConfig: {}
             pos:
-              x: 68.64759887695313
-              y: 503.72858459472656
+              x: 50.88002319335938
+              y: 489.9529919433594
         inputsPosition:
           city:
             x: -138.6632074625658
@@ -442,10 +442,10 @@ part:
               insId: POST Request-775
               pinId: __error
             to:
-              insId: Inline-value-N/A-et044zc
+              insId: Inline-value-N/A-6c146fg
               pinId: __trigger
           - from:
-              insId: Inline-value-N/A-et044zc
+              insId: Inline-value-N/A-6c146fg
               pinId: value
             to:
               pinId: value
@@ -469,12 +469,6 @@ part:
         insId: Inline-value-Hello from ${i76
         pinId: capital
     - from:
-        insId: Get Country Name And Capital-ins
-        pinId: capital
-      to:
-        insId: cl8x5r4qp00074666lb382z1c
-        pinId: city
-    - from:
         insId: Get User's Country-ins
         pinId: country
       to:
@@ -492,6 +486,12 @@ part:
       to:
         insId: Inline-value-Hello from ${i76
         pinId: population
+    - from:
+        insId: Get Country Name And Capital-ins
+        pinId: capital
+      to:
+        insId: cl8x5r4qp00074666lb382z1c
+        pinId: city
   id: ApisCombination
   inputs: {}
   outputs:
@@ -517,8 +517,8 @@ part:
       x: -499.82438378976735
       y: 706.7650396699393
     output:
-      x: -473.1328093808214
-      y: 524.8819285153778
+      x: -536.8779453981997
+      y: 343.606152476275
     response:
       x: -506.3386688159596
       y: 488.67302443385125
