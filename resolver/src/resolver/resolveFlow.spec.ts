@@ -323,8 +323,14 @@ describe("resolver", () => {
     assert.exists((resolvedDeps.Add as CodePart).run);
     assert.exists((resolvedDeps.Sub as CodePart).run);
 
-    assert.match((resolvedDeps.Add as ImportedPart).source.export, /add/);
-    assert.match((resolvedDeps.Sub as ImportedPart).source.export, /sub/);
+    assert.match(
+      (resolvedDeps.Add as unknown as ImportedPart).source.export,
+      /add/
+    );
+    assert.match(
+      (resolvedDeps.Sub as unknown as ImportedPart).source.export,
+      /sub/
+    );
 
     const [s, r] = spiedOutput();
     execute({
