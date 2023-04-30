@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { VisualPart, Part, PartDefinition } from "./part";
+import { VisualPart, PartDefinition, Part } from "./part";
 
 const importSchema = z.record(z.string(), z.string().or(z.array(z.string())));
 const position = z.strictObject({ x: z.number(), y: z.number() });

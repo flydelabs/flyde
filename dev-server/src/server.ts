@@ -4,12 +4,20 @@ import { createService } from "./service/service";
 import { setupRemoteDebuggerServer } from "@flyde/remote-debugger/dist/setup-server";
 import { createServer } from "http";
 import { scanImportableParts } from "./service/scan-importable-parts";
-import { deserializeFlow, resolveDependencies } from "@flyde/resolver";
+import {
+  deserializeFlow,
+  resolveCodePartDependencies,
+  resolveDependencies,
+} from "@flyde/resolver";
 import { join } from "path";
 
 import { entries } from "@flyde/core";
 import resolveFrom = require("resolve-from");
-import { readFileSync } from "fs";
+import { existsSync, readFileSync, writeFileSync } from "fs";
+import {
+  generateAndSavePart,
+  generatePartCodeFromPrompt,
+} from "./service/generate-part-from-prompt";
 
 export const runDevServer = (
   port: number,
@@ -84,8 +92,22 @@ export const runDevServer = (
       console.error(e);
       res.status(400).send(e);
     }
+  });
 
-    // res.send({...STDLIB_BACKUP, ...data});
+  app.post("/generatePart", async (req, res) => {
+    const { prompt } = req.body as { prompt: string };
+
+    if (prompt.trim().length === 0) {
+      res.status(400).send("prompt is empty");
+      return;
+    }
+
+    try {
+      const data = await generateAndSavePart(rootDir, prompt);
+      res.send(data);
+    } catch (e) {
+      res.status(400).send(e);
+    }
   });
 
   app.use("/editor", express.static(editorStaticRoot));

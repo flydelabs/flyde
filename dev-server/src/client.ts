@@ -1,9 +1,8 @@
 import axios from "axios";
 import {
-  BasePart,
   FlydeFlow,
+  ImportableSource,
   ResolvedDependenciesDefinitions,
-  ResolvedFlydeFlowDefinition,
 } from "@flyde/core";
 import { FolderStructure } from "./fs-helper/shared";
 import type { ImportablesResult } from "./service/scan-importable-parts";
@@ -34,6 +33,13 @@ export const createDevServerClient = (baseUrl: string) => {
     getImportables: (filename: string): Promise<ImportablesResult> => {
       return axios
         .get(`${baseUrl}/importables?filename=${filename}`)
+        .then((res) => res.data);
+    },
+    generatePartFromPrompt: (
+      prompt: string
+    ): Promise<{ importablePart: ImportableSource }> => {
+      return axios
+        .post(`${baseUrl}/generatePart`, { prompt })
         .then((res) => res.data);
     },
   };

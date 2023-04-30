@@ -65,6 +65,9 @@ export const createVsCodePorts = (): EditorPorts => {
     onInstallRuntimeRequest: async () => {
       return postMessageCallback("onInstallRuntimeRequest", {});
     },
+    generatePartFromPrompt: async (dto) => {
+      return postMessageCallback("generatePartFromPrompt", dto);
+    },
     onExternalFlowChange: (cb) => {
       const handler = (event: MessageEvent) => {
         const { data } = event;
@@ -86,6 +89,9 @@ export const createVsCodePorts = (): EditorPorts => {
     },
     reportEvent: (name, data) => {
       return postMessageCallback("reportEvent", { name, data });
+    },
+    hasOpenAiToken: async () => {
+      return postMessageCallback("hasOpenAiToken", {});
     },
   };
 };
