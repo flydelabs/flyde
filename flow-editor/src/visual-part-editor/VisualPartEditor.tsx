@@ -39,6 +39,7 @@ import {
   fullInsIdPath,
   isStickyInputPinConfig,
   stickyInputPinConfig,
+  ROOT_INS_ID,
 } from "@flyde/core";
 import { InstanceView, InstanceViewProps } from "./instance-view/InstanceView";
 import {
@@ -175,7 +176,7 @@ export type VisualPartEditorProps = {
   onChangePart: (val: VisualPart, type: FlydeFlowChangeType) => void;
 
   onCopy: (data: ClipboardData) => void;
-  onInspectPin: (insId: string, pin: { id: string; type: PinType }) => void;
+  onInspectPin: (insId: string, pin?: { id: string; type: PinType }) => void;
 
   onGoToPartDef: (part: ImportedPartDef) => void;
   onExtractInlinePart: (instance: InlinePartInstance) => Promise<void>;
@@ -1339,12 +1340,16 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
               break;
             }
             case ActionType.Inspect: {
-              if (selected.length === 1 || from || to) {
-                const insId = selected[0] || from?.insId || to?.insId;
-                const pinId = from?.pinId || to?.pinId;
+              if (selected.length === 1) {
+                onInspectPin(selected[0]);
+              } else if (from || to) {
+                const conn = from ?? to;
+                const insId = isExternalConnectionNode(conn)
+                  ? ROOT_INS_ID
+                  : conn.insId;
                 onInspectPin(insId, {
                   type: from ? "output" : "input",
-                  id: pinId,
+                  id: conn.pinId,
                 });
               }
               reportEvent("openInspectMenu", { source: "actionMenu" });
@@ -2522,7 +2527,6 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
                   connectionsPerInput={
                     instancesConnectToPinsRef.current.get(ins.id) || emptyObj
                   }
-                  connectionsPerOutput={emptyObj}
                   part={getPartDef(ins, currResolvedDeps)}
                   ancestorsInsIds={fullInsIdPath(currentInsId, ancestorsInsIds)}
                   onPinClick={onPinClick}

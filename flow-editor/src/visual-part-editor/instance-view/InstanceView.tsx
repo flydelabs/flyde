@@ -119,7 +119,6 @@ export interface InstanceViewProps {
   selectedInput?: string;
   selectedOutput?: string;
   connectionsPerInput: OMap<PartInstance[]>;
-  connectionsPerOutput: OMap<PartInstance[]>;
   closestPin?: ClosestPinData;
   connections: ConnectionData[];
   viewPort: { pos: Pos; zoom: number };
@@ -395,6 +394,10 @@ export const InstanceView: React.FC<InstanceViewProps> =
       );
     });
 
+    const isErrorCaught = connections.some(
+      (conn) => conn.from.insId === id && conn.from.pinId === ERROR_PIN_ID
+    );
+
     const cm = classNames("ins-view", {
       "no-inputs": is.length === 0,
       "no-outputs": os.length === 0,
@@ -406,6 +409,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
         props.forceShowMinimized === "output" ||
         props.forceShowMinimized === "both",
       "inline-part-edited": !!inlineGroupProps,
+      "error-caught": isErrorCaught,
     });
 
     const innerCms = classNames(
