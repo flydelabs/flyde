@@ -17,7 +17,7 @@ export async function resolveDependentPackages(
         const paths = resolveImportablePaths(rootPath, dep);
         const parts = paths.reduce((acc, filePath) => {
           if (isCodePartPath(filePath)) {
-            const obj = resolveCodePartDependencies(filePath).reduce(
+            const obj = resolveCodePartDependencies(filePath).parts.reduce(
               (obj, { part }) => ({ ...obj, [part.id]: part }),
               {}
             );

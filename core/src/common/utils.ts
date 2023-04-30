@@ -205,3 +205,7 @@ export const eventually = async (
     return eventually(callback, timeout - delta, retryDelay, errorSet);
   }
 };
+
+export function simplePluralize(count: number, noun: string) {
+  return `${count} ${noun}${count !== 1 ? "s" : ""}`;
+}
