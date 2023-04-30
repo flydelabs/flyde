@@ -9,7 +9,7 @@ import {
   Tree,
 } from "@blueprintjs/core";
 import { Tooltip2 } from "@blueprintjs/popover2";
-import { ImportableSource } from "@flyde/core";
+import { ImportableSource, simplePluralize } from "@flyde/core";
 import classNames from "classnames";
 import React, { useCallback, useEffect } from "react";
 import { LocalImportableResult } from "../../../flow-editor/DependenciesContext";
@@ -375,9 +375,11 @@ export const AddPartMenu: React.FC<AddPartMenuProps> = (props) => {
         <div className="content-wrapper">{renderContent()}</div>
         {importablesErrors.length > 0 ? (
           <Callout intent="warning" style={{ marginTop: "10px" }}>
-            Found {importablesErrors.length} corrupt flow(s).{" "}
+            Found {simplePluralize(importablesErrors.length, "corrupt flow")}
             <InfoTooltip
-              content={importablesErrors.map((err) => err.path).join(", ")}
+              content={importablesErrors
+                .map(({ path, message }) => `${path}: ${message}`)
+                .join(", ")}
             />{" "}
           </Callout>
         ) : null}

@@ -43,29 +43,29 @@ const getRefPartIds = (part: VisualPart): string[] => {
   return _.uniq([...refPartIds, ...idsFromInline]);
 };
 
-export function resolveCodePartDependencies(
-  path: string
-): { exportName: string; part: CodePart }[] {
-  try {
-    let module = requireReload(path);
+export function resolveCodePartDependencies(path: string): {
+  errors: string[];
+  parts: { exportName: string; part: CodePart }[];
+} {
+  const errors = [];
+  const parts = [];
+  let module = requireReload(path);
 
-    if (isCodePart(module)) {
-      return [{ exportName: "default", part: module }];
-    } else {
-      if (typeof module === "object") {
-        return Object.entries<CodePart>(module)
-          .filter(([_, value]) => isCodePart(value))
-          .map(([key, value]) => ({ exportName: key, part: value }));
+  if (isCodePart(module)) {
+    parts.push({ exportName: "default", part: module });
+  } else if (typeof module === "object") {
+    Object.entries(module).forEach(([key, value]) => {
+      if (isCodePart(value)) {
+        parts.push({ exportName: key, part: value });
       } else {
-        throw new Error(
-          `Error loading code part at ${path} - module does not export a CodePart`
-        );
+        errors.push(`Exported value "${key}" is not a valid CodePart`);
       }
-    }
-  } catch (e) {
-    console.error(`Error loading code part at ${path}`, e);
-    throw new Error(`Error loading code part at ${path} - ${e}`);
+    });
+  } else {
+    errors.push(`Exported value is not a valid CodePart`);
   }
+
+  return { errors, parts };
 }
 
 export function isCodePartPath(path: string): boolean {
@@ -134,7 +134,7 @@ export function resolveDependencies(
         if (isCodePartPath(path)) {
           return [
             ...acc,
-            ...resolveCodePartDependencies(path).map(
+            ...resolveCodePartDependencies(path).parts.map(
               ({ part, exportName }) => ({
                 part,
                 source: {

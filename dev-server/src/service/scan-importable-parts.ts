@@ -52,18 +52,23 @@ export async function scanImportableParts(
     };
   }
 
-  let errors: ImportablesResult["errors"] = [];
+  let allErrors: ImportablesResult["errors"] = [];
 
   const localParts = localFiles
     .filter((file) => !file.relativePath.endsWith(filename))
     .reduce<Record<string, Record<string, BasePart>>>((acc, file) => {
       if (isCodePartPath(file.fullPath)) {
-        const obj = resolveCodePartDependencies(file.fullPath).reduce(
+        const { errors, parts } = resolveCodePartDependencies(file.fullPath);
+        allErrors.push(
+          ...errors.map((err) => ({ path: file.fullPath, message: err }))
+        );
+
+        const partsObj = parts.reduce(
           (obj, { part }) => ({ ...obj, [part.id]: part }),
           {}
         );
         const relativePath = relative(join(fileRoot, ".."), file.fullPath);
-        return { ...acc, [relativePath]: obj };
+        return { ...acc, [relativePath]: partsObj };
       }
 
       try {
@@ -76,7 +81,7 @@ export async function scanImportableParts(
 
         return { ...acc, [relativePath]: { [flow.part.id]: flow.part } };
       } catch (e) {
-        errors.push({
+        allErrors.push({
           path: file.fullPath,
           message: e.message,
         });
@@ -87,7 +92,7 @@ export async function scanImportableParts(
 
   return {
     importables: { ...builtInStdLib, ...depsParts, ...localParts },
-    errors,
+    errors: allErrors,
   };
 }
 

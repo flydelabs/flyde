@@ -232,7 +232,7 @@ export const isBasePart = (p: any): p is BasePart => {
   return p && p.id && p.inputs && p.outputs;
 };
 
-export const isCodePart = (p: Part | PartDefinition): p is CodePart => {
+export const isCodePart = (p: Part | PartDefinition | any): p is CodePart => {
   return isBasePart(p) && typeof (p as CodePart).run === "function";
 };
 

@@ -18,59 +18,63 @@ $pale-purple-puntone: #eddfefff;
 $aero-blue: #c1ebdbff;
 $tea-green: #dff2baff;
 
-$output-color: #FFD5C9;
-
-
+$output-color: #ffd5c9;
 
 @mixin base-part($bg-color: white) {
-    color: #000000;
-    background: $bg-color;
-    font-family: $font-family;
-    border: 2px solid transparent;
-    box-shadow: $shadow-a;
-    user-select: none;
-    font-size: 20px;
-    font-weight: 600;
-    text-align: center;
-    padding: 8px 15px 6px;
-    transition: background-color ease-in-out 0.1s, box-shadow ease-in-out 0.2s;
-    max-width: 400px;
-    white-space: nowrap;
-    overflow: hidden;
+  color: #000000;
+  background: $bg-color;
+  font-family: $font-family;
+  border: 2px solid transparent;
+  box-shadow: $shadow-a;
+  user-select: none;
+  font-size: 20px;
+  font-weight: 600;
+  text-align: center;
+  padding: 8px 15px 6px;
+  transition: background-color ease-in-out 0.1s, box-shadow ease-in-out 0.2s;
+  max-width: 400px;
+  white-space: nowrap;
+  overflow: hidden;
 
-    // display: -webkit-box;
-    // -webkit-box-orient: vertical;
-    // -webkit-line-clamp: 3;
-    // overflow: hidden;
-    text-overflow: ellipsis;
-    cursor: pointer;
+  // display: -webkit-box;
+  // -webkit-box-orient: vertical;
+  // -webkit-line-clamp: 3;
+  // overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
 
-    position: relative;
-    z-index: 1; // added so that it is above pin view when it is retracted when minimized
+  position: relative;
+  z-index: 1; // added so that it is above pin view when it is retracted when minimized
 
-    &.selected {
-        background: $selection-color;
-        color: $selection-text-color;
+  &.selected {
+    background: $selection-color;
+    color: $selection-text-color;
 
-        transition: background-color ease-in-out 0.05s;
-    }
+    transition: background-color ease-in-out 0.05s;
+  }
 
-    &:hover:not(.selected) {
-        border-color: $selection-color;
-    }
+  &:hover:not(.selected) {
+    border-color: $selection-color;
+  }
 
-    &.dragged {
-        opacity: 0.8;
-    }
+  &.dragged {
+    opacity: 0.8;
+  }
 
-    &.closest {
-        border: 2px dashed $selection-color;
-    }
+  &.closest {
+    border: 2px dashed $selection-color;
+  }
 }
 
 @mixin custom-part-color($bg, $fg: inherit) {
-    &:not(.selected) {
-        background: $bg;
-        color: $fg;
-    }
+  &:not(.selected) {
+    background: $bg;
+    color: $fg;
+  }
+}
+
+@at-root {
+  .info-tooltip-icon {
+    margin-left: 5px;
+  }
 }
