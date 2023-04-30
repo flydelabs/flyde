@@ -1,7 +1,6 @@
 import { Button } from "@blueprintjs/core";
 import { Tooltip2 } from "@blueprintjs/popover2";
 import {
-  BasePart,
   ConnectionNode,
   getPartDef,
   ImportableSource,
@@ -19,7 +18,7 @@ import { AppToaster, toastMsg } from "../../toaster";
 import { AddPartMenu } from "./AddPartMenu";
 import {
   addPartIcon,
-  atomicIcon,
+  starIcon,
   groupIcon,
   inspectIcon,
   pencilIcon,
@@ -43,7 +42,7 @@ export enum ActionType {
 
 export type ActionData = {
   [ActionType.AddPart]: { importablePart: ImportableSource };
-  [ActionType.AI]: { part: BasePart };
+  [ActionType.AI]: { importablePart: ImportableSource };
 };
 
 export type BaseAction<T extends ActionType> = {
@@ -85,7 +84,9 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
   const [showRunFlowModal, setShowRunFlowModal] = React.useState(false);
 
   const [showAIPromptModal, setShowAIPromptModal] = React.useState(false);
-  const [generatingPart, setGeneratingPart] = React.useState(false);
+  const [generatingPartTime, setGeneratingPartTime] = React.useState<
+    number | null
+  >(null);
 
   const [hideHotkeyHintMap, setHideHotkeyHintMap] = useLocalStorage(
     "hideHotkeyHintMap",
@@ -238,10 +239,10 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
 
   const onAddAIPart = useCallback(
     async (prompt: string) => {
-      setGeneratingPart(true);
-      const part = await generatePartFromPrompt({ prompt });
-      setGeneratingPart(false);
-      onAction({ type: ActionType.AI, data: { part } });
+      setGeneratingPartTime(Date.now());
+      const response = await generatePartFromPrompt({ prompt });
+      setGeneratingPartTime(null);
+      onAction({ type: ActionType.AI, data: response });
       setShowAIPromptModal(false);
     },
     [generatePartFromPrompt, onAction]
@@ -270,7 +271,8 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
         <PromptAIMenu
           onClose={() => setShowAIPromptModal(false)}
           onSubmit={onAddAIPart}
-          submitting={generatingPart}
+          submitting={generatingPartTime !== null}
+          submitTime={generatingPartTime}
         />
       ) : null}
     </div>
@@ -321,8 +323,8 @@ const actionsMetaData: Record<
     hotkey: "r",
   },
   [ActionType.AI]: {
-    icon: atomicIcon,
-    text: "New part using AI",
+    icon: starIcon,
+    text: "Generate new code part using AI ✨",
   },
 };
 

@@ -300,6 +300,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
         hideOmnibar,
         reportEvent,
         onAddPartInstance,
+        visualEditorRef,
         onImportPart,
         editorBoardData.lastMousePos,
         resolvedDependencies,

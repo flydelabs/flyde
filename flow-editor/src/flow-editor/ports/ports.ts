@@ -1,7 +1,7 @@
 import { createContext, useContext } from "react";
 import {
-  BasePart,
   FlydeFlow,
+  ImportableSource,
   ResolvedDependenciesDefinitions,
 } from "@flyde/core";
 import { FlowJob, ImportablesResult } from "@flyde/dev-server";
@@ -46,9 +46,10 @@ export interface EditorPorts {
   reportEvent: ReportEvent;
 
   generatePartFromPrompt: (dto: {
-    // absPath: string;
     prompt: string;
-  }) => Promise<BasePart | null>;
+  }) => Promise<{ importablePart: ImportableSource }>;
+
+  hasOpenAiToken: () => Promise<boolean>;
 }
 
 const throwsNotImplemented: any = async () => {
@@ -71,6 +72,7 @@ export const defaultPorts: EditorPorts = {
   onStopFlow: throwsNotImplemented,
   reportEvent: throwsNotImplemented,
   generatePartFromPrompt: throwsNotImplemented,
+  hasOpenAiToken: () => Promise.resolve(false),
 };
 
 export const PortsContext = createContext<EditorPorts>(defaultPorts);

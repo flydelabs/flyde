@@ -4,13 +4,20 @@ import { createService } from "./service/service";
 import { setupRemoteDebuggerServer } from "@flyde/remote-debugger/dist/setup-server";
 import { createServer } from "http";
 import { scanImportableParts } from "./service/scan-importable-parts";
-import { deserializeFlow, resolveDependencies } from "@flyde/resolver";
+import {
+  deserializeFlow,
+  resolveCodePartDependencies,
+  resolveDependencies,
+} from "@flyde/resolver";
 import { join } from "path";
 
 import { entries } from "@flyde/core";
 import resolveFrom = require("resolve-from");
-import { readFileSync, writeFileSync } from "fs";
-import { generatePartCodeFromPrompt } from "./service/generate-part-from-prompt";
+import { existsSync, readFileSync, writeFileSync } from "fs";
+import {
+  generateAndSavePart,
+  generatePartCodeFromPrompt,
+} from "./service/generate-part-from-prompt";
 
 export const runDevServer = (
   port: number,
@@ -89,12 +96,18 @@ export const runDevServer = (
 
   app.post("/generatePart", async (req, res) => {
     const { prompt } = req.body as { prompt: string };
-    console.log({ prompt });
-    const { fileName, code } = await generatePartCodeFromPrompt(prompt);
 
-    writeFileSync(join(rootDir, `${fileName}.flyde.ts`), code, "utf-8");
+    if (prompt.trim().length === 0) {
+      res.status(400).send("prompt is empty");
+      return;
+    }
 
-    res.send(code);
+    try {
+      const { filePath, part } = await generateAndSavePart(rootDir, prompt);
+      res.send({ filePath, part });
+    } catch (e) {
+      res.status(400).send(e);
+    }
   });
 
   app.use("/editor", express.static(editorStaticRoot));

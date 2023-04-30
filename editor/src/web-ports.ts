@@ -58,5 +58,8 @@ export const createWebPorts = ({
     generatePartFromPrompt: async ({ prompt }) => {
       return devServerClient.generatePartFromPrompt(prompt);
     },
+    hasOpenAiToken: async () => {
+      return true;
+    },
   };
 };

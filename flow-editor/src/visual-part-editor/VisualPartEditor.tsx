@@ -1421,8 +1421,45 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
               })();
               break;
             }
+            case ActionType.AI: {
+              void (async function () {
+                const pos = getMiddleOfViewPort(viewPort, vpSize);
+
+                const { importablePart } = action.data;
+                const depsWithImport = await onImportPart(importablePart);
+
+                const targetPos = vSub(pos, { x: 0, y: 50 * viewPort.zoom }); // to account for part
+
+                const newPartIns = createNewPartInstance(
+                  importablePart.part.id,
+                  0,
+                  targetPos,
+                  depsWithImport
+                );
+                const newPart = produce(part, (draft) => {
+                  draft.instances.push(newPartIns);
+                });
+
+                const newState = produce(boardData, (draft) => {
+                  draft.selected = [newPartIns.id];
+                });
+
+                onChange(newPart, functionalChange("add new instance"));
+
+                onChangeBoardData(newState);
+
+                toastMsg(
+                  `Part ${importablePart.part.id} successfully imported from ${importablePart.module}`
+                );
+                reportEvent("addPart", {
+                  partId: importablePart.part.id,
+                  source: "actionMenu",
+                });
+              })();
+              break;
+            }
             default: {
-              toastMsg(`${action} not supported yet`);
+              toastMsg(`${action.type} not supported yet`);
             }
           }
         },

@@ -90,6 +90,9 @@ export const createVsCodePorts = (): EditorPorts => {
     reportEvent: (name, data) => {
       return postMessageCallback("reportEvent", { name, data });
     },
+    hasOpenAiToken: async () => {
+      return postMessageCallback("hasOpenAiToken", {});
+    },
   };
 };
 
