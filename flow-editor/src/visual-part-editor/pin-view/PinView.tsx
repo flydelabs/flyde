@@ -89,24 +89,6 @@ export const PinView: React.SFC<PinViewProps> = React.memo(function PinView(
   );
 
   const getContextMenu = () => {
-    const logMenuItem = (
-      <MenuItem
-        onClick={() =>
-          props.onToggleLogged(props.currentInsId, props.id, props.type)
-        }
-        // text={logged ? "Stop logging" : "Start logging"}
-      />
-    );
-
-    const bpMenuItem = (
-      <MenuItem
-        onClick={() =>
-          props.onToggleBreakpoint(props.currentInsId, props.id, props.type)
-        }
-        // text={breakpoint ? "Remove breakpoint" : "Add breakpoint"}
-      />
-    );
-
     const inspectMenuItem = (
       <MenuItem
         onClick={() =>
@@ -152,8 +134,6 @@ export const PinView: React.SFC<PinViewProps> = React.memo(function PinView(
               onClick={() => props.onToggleSticky(props.id)}
               text={"Toggle sticky (square means sticky)"}
             />
-            {logMenuItem}
-            {bpMenuItem}
             {inspectMenuItem}
             {isDefined(props.copiedConstValue) ? (
               <MenuItem

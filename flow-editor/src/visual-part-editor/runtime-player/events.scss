@@ -17,10 +17,16 @@ $runtime-active-color: #c8ffc7;
   // transition: background-color ease-in-out 0.3s, box-shadow ease-in-out 0.3s;
 }
 
-.base-part-view-wrapper[data-runtime="error"] .ins-view-inner {
+.ins-view:not(.error-caught)
+  .base-part-view-wrapper[data-runtime="error"]
+  .ins-view-inner {
   animation: blink-error $blink-duration;
-  //   box-shadow: 0px 0px 10px 2px rgba(99, 38, 24, 0.5);
-  //   transition: background-color ease-in-out 0.05s, box-shadow ease-in-out 0.2s;
+}
+
+.ins-view.error-caught
+  .base-part-view-wrapper[data-runtime="error"] // TODO - perhaps do not trigger error in debugger if it was caught
+  .ins-view-inner {
+  animation: blink-done $blink-duration;
 }
 
 .main-instance-events-indicator[data-runtime="processing"] {
@@ -48,24 +54,20 @@ $runtime-active-color: #c8ffc7;
   }
 }
 
-.pin:not(.error-pin) {
-  .pin-inner[data-runtime="active"],
-  .part-io-view-inner[data-runtime="active"] {
-    animation: blink-done $blink-duration;
-    // transition: background-color ease-in-out 0.05s, box-shadow ease-in-out 0.2s;
-    // background: #C1FF91 !important;
-    // box-shadow: 0px 0px 10px 2px rgba(10, 126, 0, 0.5);
-  }
+.pin:not(.error-pin) .pin-inner[data-runtime="active"],
+.pin.error-pin.connected .pin-inner[data-runtime="active"],
+.part-io-view-inner[data-runtime="active"] {
+  animation: blink-done $blink-duration;
+  // transition: background-color ease-in-out 0.05s, box-shadow ease-in-out 0.2s;
+  // background: #C1FF91 !important;
+  // box-shadow: 0px 0px 10px 2px rgba(10, 126, 0, 0.5);
 }
 
-.pin.error-pin {
-  .pin-inner[data-runtime="active"],
-  .part-io-view-inner[data-runtime="active"] {
-    animation: blink-error $blink-duration * 2;
-    // transition: background-color ease-in-out 0.05s, box-shadow ease-in-out 0.2s;
-    // background: #C1FF91 !important;
-    // box-shadow: 0px 0px 10px 2px rgba(10, 126, 0, 0.5);
-  }
+.pin.error-pin:not(.connected) .pin-inner[data-runtime="active"] {
+  animation: blink-error $blink-duration * 2;
+  // transition: background-color ease-in-out 0.05s, box-shadow ease-in-out 0.2s;
+  // background: #C1FF91 !important;
+  // box-shadow: 0px 0px 10px 2px rgba(10, 126, 0, 0.5);
 }
 
 .part-io-view-inner[data-runtime-queue],
