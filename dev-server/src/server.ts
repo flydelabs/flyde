@@ -103,8 +103,8 @@ export const runDevServer = (
     }
 
     try {
-      const { filePath, part } = await generateAndSavePart(rootDir, prompt);
-      res.send({ filePath, part });
+      const data = await generateAndSavePart(rootDir, prompt);
+      res.send(data);
     } catch (e) {
       res.status(400).send(e);
     }
