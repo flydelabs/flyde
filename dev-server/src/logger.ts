@@ -1,3 +1,3 @@
-import { debugLogger as _debugLogger} from '@flyde/core';
+import { DebugLogger, debugLogger as _debugLogger } from "@flyde/core";
 
-export const debugLogger = _debugLogger('flyde:dev-server');
+export const debugLogger: DebugLogger = _debugLogger("flyde:dev-server");

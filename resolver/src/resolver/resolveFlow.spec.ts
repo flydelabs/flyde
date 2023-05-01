@@ -52,7 +52,7 @@ describe("resolver", () => {
     });
 
     assert.equal(s.lastCall.args[0], 3);
-  }, 50);
+  }).timeout(50);
 
   it("resolves flows with transitive dependencies", async () => {
     const data = resolveFlowDependenciesByPath(
@@ -263,7 +263,7 @@ describe("resolver", () => {
     });
 
     assert.equal(s.lastCall.args[0], 2 + 1 + 2);
-  }, 20);
+  }).timeout(20);
 
   it("properly resolves recursions", async () => {
     const path = getFixturePath("recursive.flyde");
@@ -271,7 +271,7 @@ describe("resolver", () => {
     assert.doesNotThrow(() => {
       resolveFlowDependenciesByPath(path);
     });
-  }, 20);
+  }).timeout(20);
 
   it("resolves dependencies of inline parts", async () => {
     const flow = resolveFlowDependenciesByPath(

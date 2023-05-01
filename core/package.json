@@ -9,21 +9,23 @@
     "README.md"
   ],
   "scripts": {
-    "test": "mocha src/spec.ts src/execute/spec.ts src/**/spec.ts --require ts-node/register",
+    "test": "mocha 'src/**/spec.ts' 'src/**/spec.tsx' --require ts-node/register",
     "start": "tsc -p . -w --incremental",
     "dev": "tsc -p . -w --incremental",
     "__publish": "npm version patch && npm publish",
     "bts": "tsc -p .",
-    "build": "rm -rf dist && (tsc -p . || true)"
+    "build": "rm -rf dist && tsc -p ."
   },
   "author": "",
   "license": "MIT",
   "dependencies": {
     "@types/jsdom-global": "^3.0.4",
     "@types/md5": "^2.3.2",
+    "axios": "^1.4.0",
     "cuid": "^3.0.0",
     "debug": "^4.3.2",
     "dependency-graph": "^0.8.0",
+    "immer": "^10.0.1",
     "md5": "^2.3.0",
     "rxjs": "^6.3.3",
     "vm2": "^3.9.2",

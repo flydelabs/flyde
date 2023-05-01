@@ -12,31 +12,45 @@ jobs:
   build-test-lint:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v2
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
+     cache-and-install:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
         with:
           node-version: 16
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+      - uses: pnpm/action-setup@v2
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: 8
+          run_install: false
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
 
       - uses: actions/cache@v3
-        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+        name: Setup pnpm cache
         with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-yarn-
+            ${{ runner.os }}-pnpm-store-
       - name: Install dependencies
-        run: yarn install --immutable
+        run: pnpm install
       - name: Build
-        run: yarn run build
+        run: pnpm run build
       - name: Test
-        run: yarn run test
+        run: pnpm run test
       - name: Lint
-        run: yarn run lint
+        run: pnpm run lint
       - name: Bump patch version, Publish to NPM (excluding private packages), and Commit changes
         if: github.ref == 'refs/heads/main'
         run: |
@@ -46,19 +60,21 @@ jobs:
 
           root=$(pwd)
 
-          for package in $(yarn workspaces list --json | jq -r '.location'); do
-            cd $package
-            is_private=$(jq '.private' package.json)
+          for package in $(pnpm list --json --only-projects -r | jq -c '.[]'); do
+            name=$(echo $package | jq -r '.name')
+            path=$(echo $package | jq -r '.path')
+            cd $path
+            is_private=$(echo $package | jq '.private')
             if [[ "$is_private" == "true" ]]; then
-              echo "Skipping private package in: $package"
+              echo "Skipping private package: $name"
               cd $root
               continue
             fi  
-            echo "Bumping version of $package"
+            echo "Bumping version of $name"
             yarn version patch
-            echo "Publishing $package"
-            npm publish --access public --tolerate-republish
-            echo "Published $package\n\n"
+            echo "Publishing $name"
+            pnpm publish --access public --tolerate-republish
+            echo "Published $name\n\n"
             cd $root
           done
 

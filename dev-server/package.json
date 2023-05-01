@@ -12,7 +12,7 @@
     "test": ":",
     "watch:ts": "tsc -p . -w --incremental",
     "start": "ts-node-dev src/cli.ts --root=../website",
-    "dev": "concurrently --kill-others 'yarn run start' 'yarn run watch:ts'",
+    "dev": "concurrently --kill-others 'pnpm run start' 'pnpm run watch:ts'",
     "__publish": "npm version patch && npm publish",
     "build": "rm -rf dist && tsc -p .",
     "prod": "node dist/index.js"

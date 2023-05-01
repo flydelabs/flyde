@@ -10,6 +10,7 @@
   "proxy": "http://localhost:8484",
   "dependencies": {
     "@blueprintjs/core": "^3.11.0",
+    "@blueprintjs/icons": "^4.15.0",
     "@blueprintjs/popover2": "^0.3.1",
     "@blueprintjs/select": "^3.5.0",
     "@flyde/core": "^0.1.28",
@@ -23,6 +24,8 @@
     "@types/node": "^12.0.0",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
+    "@types/react-resizable": "^1.7.2",
+    "@types/react-router": "^5.1.20",
     "@types/react-router-dom": "^5.1.7",
     "axios": "^0.18.0",
     "classnames": "^2.3.1",
@@ -56,7 +59,7 @@
     "eject": "react-scripts eject",
     "dev": "WDS_SOCKET_HOST=localhost DANGEROUSLY_DISABLE_HOST_CHECK=true FAST_REFRESH=false PUBLIC_URL=/editor REACT_APP_FLYDE_MODE=development FORCE_ENV=production react-scripts start",
     "__publish": "npm version patch && npm publish",
-    "start": "yarn dev",
+    "start": "pnpm run dev",
     "postinstall": "node dependencies-patch/index.js || true"
   },
   "eslintConfig": {
