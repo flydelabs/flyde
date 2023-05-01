@@ -3757,8 +3757,8 @@ describe("main ", () => {
 
   describe("environment vars", () => {
     it("supports reading environment variables if they are defined", async () => {
-      const prop1Name = `prop${randomInt(100).toString(16)}`;
-      const prop2Name = `prop${randomInt(100).toString(16)}`;
+      const prop1Name = "prop1";
+      const prop2Name = `prop2`;
       const prop1Value = `${randomInt(100)}`;
       const prop2Value = `${randomInt(100)}`;
 
