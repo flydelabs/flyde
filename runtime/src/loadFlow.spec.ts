@@ -3,10 +3,10 @@ import { assert } from "chai";
 import EventEmitter = require("events");
 import { dirname, join } from "path";
 import Sinon = require("sinon");
-import { loadFlowByPath } from ".";
+import { loadFlow } from ".";
 
 const loadFixture = (name: string) => {
-  return loadFlowByPath(`./src/fixture/${name}.flyde`, join(__dirname, ".."));
+  return loadFlow(`./src/fixture/${name}.flyde`, join(__dirname, ".."));
 };
 describe("runtime", () => {
   describe("loadFlow", () => {
@@ -37,6 +37,13 @@ describe("runtime", () => {
       // log
 
       assert.equal(result, "Bob");
+    });
+
+    it("properly loads flow that uses a code part stored relative to the flow", async () => {
+      const execute = loadFixture("flow-and-code/CallsBob");
+      const { res } = await execute().result;
+
+      assert.equal(res, "Bob");
     });
 
     it.skip("cleans up execution when done", async () => {

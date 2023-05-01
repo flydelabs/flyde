@@ -1,13 +1,13 @@
 import { sep } from "path";
 import callsite from "callsite";
 
-export const getCallPath = () => {
+export const getCallPath = (fnName: string) => {
   // Very hacky.. might need a refactor
   const stack = callsite();
   const idx = stack.findIndex((s) => {
     const folders: string[] = (s.getFileName() || "not available").split(sep); // for windows support
     const functionName = s.getFunctionName() || "n/a";
-    return folders.includes("runtime") && functionName.includes("loadFlow");
+    return folders.includes("runtime") && functionName === fnName;
   });
 
   if (idx === -1) {
