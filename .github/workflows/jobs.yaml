@@ -69,7 +69,7 @@ jobs:
             echo "Bumping version of $name"
             pnpm version patch
             echo "Publishing $name"
-            pnpm publish --access public --tolerate-republish
+            pnpm publish --access public --force
             echo "Published $name\n\n"
             cd $root
           done
