@@ -29,8 +29,8 @@ export type LoadedFlowExecuteFn<Inputs> = (
   destroy: () => void;
 };
 
-const calcImplicitRoot = () => {
-  const callPath = getCallPath();
+const calcImplicitRoot = (fnName: string) => {
+  const callPath = getCallPath(fnName);
   return findRoot(callPath);
 };
 
@@ -93,7 +93,7 @@ export function loadFlowByPath<Inputs>(
   relativePath: string,
   root?: string
 ): LoadedFlowExecuteFn<Inputs> {
-  const _root = root || calcImplicitRoot();
+  const _root = root || calcImplicitRoot("loadFlowByPath");
   const flowPath = join(_root, relativePath);
   const flow = deserializeFlowByPath(flowPath);
 
@@ -104,11 +104,10 @@ export function loadFlow<Inputs>(
   flowOrPath: FlydeFlow | string,
   root?: string
 ): LoadedFlowExecuteFn<Inputs> {
+  const _root = root || calcImplicitRoot("loadFlow");
   if (typeof flowOrPath === "string") {
-    return loadFlowByPath(flowOrPath, root);
+    return loadFlowByPath(flowOrPath, _root);
   } else {
-    const _root = root || calcImplicitRoot();
-
     return loadFlowFromContent(flowOrPath, _root, "http://localhost:8545");
   }
 }

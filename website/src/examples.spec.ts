@@ -13,7 +13,6 @@ describe("Hero example", () => {
     const executeFlow = loadFlow("./src/pages/_hero-example/Hero.flyde");
     const { result } = executeFlow();
     const { output } = await result;
-    console.log(output);
     assert.include(output, "Looks like you're from Denmark!");
   }).timeout(10000);
 });
