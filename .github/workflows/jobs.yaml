@@ -67,7 +67,7 @@ jobs:
               continue
             fi  
             echo "Bumping version of $name"
-            yarn version patch
+            pnpm version patch
             echo "Publishing $name"
             pnpm publish --access public --tolerate-republish
             echo "Published $name\n\n"
