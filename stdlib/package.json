@@ -19,8 +19,8 @@
         "echo": "echo 'no watch'",
         "watch:ts": "tsc -p . -w --incremental",
         "watch:docs-data": "nodemon --watch scripts --watch src -e ts --exec \"ts-node scripts/docs-data.ts\"",
-        "dev": "concurrently --kill-others \"yarn watch:ts\" \"yarn watch:docs-data\"",
-        "build": "tsc -p . && yarn build:docs-data",
+        "dev": "concurrently --kill-others \"pnpm run watch:ts\" \"pnpm run watch:docs-data\"",
+        "build": "tsc -p . && pnpm run build:docs-data",
         "build:docs-data": "ts-node scripts/docs-data.ts",
         "prod": "node dist/index.js",
         "__publish": "npm version patch && npm publish"
@@ -29,6 +29,7 @@
     "license": "MIT",
     "dependencies": {
         "@flyde/core": "^0.1.28",
+        "@types/mocha": "^10.0.1",
         "@types/pg": "^8.6.6",
         "axios": "^0.27.2",
         "mongodb": "^4.13.0",

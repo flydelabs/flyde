@@ -1,0 +1,11 @@
+packages:
+  - "core"
+  - "flow-editor"
+  - "dev-server"
+  - "stdlib"
+  - "website"
+  - "editor"
+  - "remote-debugger"
+  - "resolver"
+  - "runtime"
+  - "!examples/*"

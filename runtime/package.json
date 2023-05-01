@@ -7,10 +7,10 @@
   "scripts": {
     "test": "mocha src/**/*.spec.ts --require ts-node/register",
     "watch:ts": "tsc -p . -w --incremental",
-    "dev": "concurrently --kill-others 'yarn run watch:ts'",
+    "dev": "concurrently --kill-others 'pnpm run watch:ts'",
     "build": "rm -rf dist && tsc -p . ",
     "prod": "node dist/index.js",
-    "start": "concurrently  --kill-others 'yarn run watch:ts'"
+    "start": "concurrently  --kill-others 'pnpm run watch:ts'"
   },
   "flyde": {
     "exposes": [
@@ -50,6 +50,7 @@
     "zod": "^3.17.10"
   },
   "devDependencies": {
+    "@types/mocha": "^10.0.1",
     "chai": "^4.3.6",
     "concurrently": "^5.2.0",
     "mocha": "^5.2.0",
