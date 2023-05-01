@@ -104,10 +104,11 @@ export function loadFlow<Inputs>(
   flowOrPath: FlydeFlow | string,
   root?: string
 ): LoadedFlowExecuteFn<Inputs> {
-  const _root = root || calcImplicitRoot();
-  const flow =
-    typeof flowOrPath === "string"
-      ? deserializeFlowByPath(join(_root, flowOrPath))
-      : flowOrPath;
-  return loadFlowFromContent(flow, _root, "http://localhost:8545");
+  if (typeof flowOrPath === "string") {
+    return loadFlowByPath(flowOrPath, root);
+  } else {
+    const _root = root || calcImplicitRoot();
+
+    return loadFlowFromContent(flowOrPath, _root, "http://localhost:8545");
+  }
 }
