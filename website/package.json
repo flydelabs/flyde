@@ -34,7 +34,7 @@
     "@flyde/runtime": "workspace:^0.4.21",
     "@flyde/stdlib": "^0.1.26",
     "@mdx-js/react": "^1.6.22",
-    "axios": "^1.4.0",
+    "axios": "^0.27.2",
     "clsx": "^1.2.1",
     "docusaurus-plugin-hotjar": "^0.0.2",
     "immer": "^9.0.15",

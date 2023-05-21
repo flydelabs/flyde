@@ -192,7 +192,7 @@ export const HeadAndRest: CodePart = {
 };
 
 export const SplitTuple: CodePart = {
-  id: "Split Tuple",
+  id: "Split Pair",
   defaultStyle: {
     icon: "fa-list",
   },
@@ -200,17 +200,17 @@ export const SplitTuple: CodePart = {
   description:
     "Receives a list with 2 items and emits two outputs: the first item and the second item",
   inputs: {
-    tuple: { description: "The tuple" },
+    pair: { description: "The pair to split" },
   },
   outputs: {
-    item1: { description: "The first item in the tuple" },
-    item2: { description: "The second item in the tuple" },
+    item1: { description: "The first item in the pair" },
+    item2: { description: "The second item in the pair" },
   },
   run: (inputs, outputs) => {
-    const { list } = inputs;
+    const { pair } = inputs;
     const { item1, item2 } = outputs;
-    item1.next(list[0]);
-    item2.next(list[1]);
+    item1.next(pair[0]);
+    item2.next(pair[1]);
   },
 };
 

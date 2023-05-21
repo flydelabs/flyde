@@ -5,7 +5,6 @@ import {
   randomInt,
 } from "@flyde/core";
 import { resolveCodePartDependencies } from "@flyde/resolver";
-import "dotenv/config";
 import { existsSync, writeFile, writeFileSync } from "fs";
 
 import { OpenAIApi, Configuration } from "openai";
@@ -57,7 +56,7 @@ use no libraries. Assume NodeJS. Avoid hardcoded values. Prefer APIs
 
 export async function generatePartCodeFromPrompt(
   prompt: string,
-  apiKey = process.env.OPEN_AI_API_KEY
+  apiKey: string
 ) {
   const configuration = new Configuration({
     apiKey,
