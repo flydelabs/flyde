@@ -11,13 +11,14 @@ import EventEmitter = require("events");
 import findRoot from "find-root";
 import { join } from "path";
 import { createDebugger } from "./create-debugger";
-// import { EventPromise } from "./events-promise";
+
 import { getCallPath } from "./get-call-path";
 import { debugLogger } from "./logger";
 
-export type PromiseWithEmitter<T> = Promise<T> & { on: EventEmitter["on"] };
+// convenience exports
+export { CodePart, BasePart, VisualPart } from "@flyde/core";
 
-// export const
+export type PromiseWithEmitter<T> = Promise<T> & { on: EventEmitter["on"] };
 
 export type LoadedFlowExecuteFn<Inputs> = (
   inputs?: Inputs,
