@@ -5,7 +5,10 @@ import { runFlow } from "./runFlow";
 import { FlowJob } from "./shared";
 import { onMessage, sendMessage } from "./typedProcessMessage";
 
-export function forkRunFlow(...params: Parameters<typeof runFlow>): Promise<{
+export function forkRunFlow(data: {
+  runFlowParams: Parameters<typeof runFlow>;
+  cwd?: string;
+}): Promise<{
   job: FlowJob;
   destroy: Function;
   result: Promise<Record<string, any>>;
@@ -14,6 +17,7 @@ export function forkRunFlow(...params: Parameters<typeof runFlow>): Promise<{
     const file = join(__dirname, "runFlow.child.js");
     const runFlowProcess = fork(file, {
       stdio: ["pipe", "pipe", "pipe", "ipc"],
+      cwd: data.cwd,
     });
 
     runFlowProcess.stdout.on("data", (data) => {
@@ -61,6 +65,6 @@ export function forkRunFlow(...params: Parameters<typeof runFlow>): Promise<{
       });
     });
 
-    sendMessage(runFlowProcess, "runFlow", params);
+    sendMessage(runFlowProcess, "runFlow", data.runFlowParams);
   });
 }

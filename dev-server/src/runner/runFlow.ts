@@ -3,6 +3,8 @@ import { FlowJob } from "./shared";
 import cuid from "cuid";
 import { loadFlowFromContent } from "@flyde/runtime";
 
+import "dotenv/config";
+
 export async function runFlow(
   flow: FlydeFlow,
   flowPath: string,

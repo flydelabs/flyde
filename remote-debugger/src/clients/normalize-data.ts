@@ -1,8 +1,12 @@
 import { PartInstanceError } from "@flyde/core";
+import { serializeError } from "serialize-error";
 
 export const normalizeData = (data: any) => {
   // if it's an object, mark any circular references as "<<circular>>" (using a WeakRef)
-  if (typeof data === "object" && data !== null) {
+
+  if (data instanceof Error) {
+    return serializeError(data);
+  } else if (typeof data === "object" && data !== null) {
     // hack to avoid toJSON overrides (i.e. in discord bot)
     data = { ...data };
 
