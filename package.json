@@ -8,7 +8,7 @@
     "start": "pnpm run open-vscode",
     "open-vscode": "code main.code-workspace",
     "preinstall": "npx only-allow pnpm",
-    "watch-all-integrated": "pnpm run -rps --filter @flyde/managed-editor --filter flyde-vscode run dev",
+    "watch-all-integrated": "pnpm -rps run dev",
     "build": "pnpm run -r build",
     "test": "pnpm run -r test",
     "lint": "pnpm run -r lint",
