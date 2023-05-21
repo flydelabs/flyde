@@ -1,6 +1,6 @@
 {
   "name": "@flyde/core",
-  "version": "0.1.32",
+  "version": "0.1.33",
   "description": "",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
