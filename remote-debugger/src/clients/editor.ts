@@ -1,6 +1,6 @@
 import { debugLogger, DebuggerEvent, PinType } from "@flyde/core";
 
-import * as axios from "axios";
+import { default as axios } from "axios";
 
 import { io as _io } from "socket.io-client";
 import {
