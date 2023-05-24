@@ -1,122 +1,123 @@
-import { partFromSimpleFunction } from "@flyde/core";
-
-import axios from "axios";
+import { CodePart } from "@flyde/core";
+import axios, { AxiosRequestConfig } from "axios";
 
 const namespace = "HTTP";
 
-export const Get = partFromSimpleFunction({
+export const Get: CodePart = {
   id: "GET Request",
-  icon: "fa-server", // font awesome icon
+  defaultStyle: {
+    icon: "fa-server",
+  },
   namespace,
   description:
     "Performs a HTTP GET request to a URL and emits the response data",
-  inputs: [
-    { name: "url", description: "URL to fetch data from" },
-    {
-      name: "headers",
+  inputs: {
+    url: { description: "URL to fetch data from" },
+    headers: {
       description: "Headers to send with the request",
       mode: "required-if-connected",
     },
-    {
-      name: "params",
+    params: {
       description: "Query parameters to send with the request",
       mode: "required-if-connected",
     },
-  ],
-  output: { name: "data", description: "The response data" },
-  run: (url) => {
-    return axios.get(url).then((res) => res.data);
   },
-});
+  outputs: { data: { description: "The response data" } },
+  run: ({ url, headers, params }, { data }) => {
+    return axios
+      .get(url, { headers, params })
+      .then((res) => data.next(res.data));
+  },
+};
 
-export const Post = partFromSimpleFunction({
+export const Post: CodePart = {
   id: "POST Request",
-  icon: "fa-server", // font awesome icon
+  defaultStyle: {
+    icon: "fa-server",
+  },
   namespace,
   description:
     "Performs a HTTP POST request to a URL and emits the response data",
-  inputs: [
-    { name: "url", description: "URL to fetch data from" },
-    {
-      name: "headers",
+  inputs: {
+    url: { description: "URL to fetch data from" },
+    headers: {
       description: "Headers to send with the request",
       mode: "required-if-connected",
     },
-    {
-      name: "params",
+    params: {
       description: "Query parameters to send with the request",
       mode: "required-if-connected",
     },
-    {
-      name: "data",
+    data: {
       description: "Data to send with the request",
       mode: "required-if-connected",
     },
-  ],
-  output: { name: "data", description: "The response data" },
-  run: (url, headers, params, data) => {
-    return axios.post(url, data, { headers, params }).then((res) => res.data);
   },
-});
+  outputs: { data: { description: "The response data" } },
+  run: ({ url, headers, params, data: body }, { data }) => {
+    const config: AxiosRequestConfig = { headers, params };
+    return axios.post(url, body, config).then((res) => data.next(res.data));
+  },
+};
 
-export const Put = partFromSimpleFunction({
+export const Put: CodePart = {
   id: "PUT Request",
-  icon: "fa-server", // font awesome icon
+  defaultStyle: {
+    icon: "fa-server",
+  },
   namespace,
   description:
     "Performs a HTTP PUT request to a URL and emits the response data",
-  inputs: [
-    { name: "url", description: "URL to fetch data from" },
-    {
-      name: "headers",
+  inputs: {
+    url: { description: "URL to fetch data from" },
+    headers: {
       description: "Headers to send with the request",
       mode: "required-if-connected",
     },
-    {
-      name: "params",
+    params: {
       description: "Query parameters to send with the request",
       mode: "required-if-connected",
     },
-    {
-      name: "data",
+    data: {
       description: "Data to send with the request",
       mode: "required-if-connected",
     },
-  ],
-  output: { name: "data", description: "The response data" },
-  run: (url, headers, params, data) => {
-    return axios.put(url, data, { headers, params }).then((res) => res.data);
   },
-});
+  outputs: { data: { description: "The response data" } },
+  run: ({ url, headers, params, data: body }, { data }) => {
+    const config: AxiosRequestConfig = { headers, params };
+    return axios.put(url, body, config).then((res) => data.next(res.data));
+  },
+};
 
-export const Request = partFromSimpleFunction({
+export const Request: CodePart = {
   id: "Request",
-  icon: "fa-server", // font awesome icon
+  defaultStyle: {
+    icon: "fa-server",
+  },
   namespace,
   description: "Performs a HTTP request to a URL and emits the response data",
-  inputs: [
-    { name: "url", description: "URL to fetch data from" },
-    { name: "method", description: "HTTP method to use" },
-    {
-      name: "headers",
+  inputs: {
+    url: { description: "URL to fetch data from" },
+    method: { description: "HTTP method to use" },
+    headers: {
       description: "Headers to send with the request",
       mode: "required-if-connected",
     },
-    {
-      name: "params",
+    params: {
       description: "Query parameters to send with the request",
       mode: "required-if-connected",
     },
-    {
-      name: "data",
+    data: {
       description: "Data to send with the request",
       mode: "required-if-connected",
     },
-  ],
-  output: { name: "data", description: "The response data" },
-  run: (url, method, headers, params, data) => {
-    return axios
-      .request({ url, method, data, headers, params })
-      .then((res) => res.data);
   },
-});
+  outputs: { data: { description: "The response data" } },
+  run: ({ url, method, headers, params, data: body }, { data }) => {
+    const config: AxiosRequestConfig = { method, headers, params };
+    return axios
+      .request({ url, data: body, ...config })
+      .then((res) => data.next(res.data));
+  },
+};

@@ -190,7 +190,7 @@ For simplicity, all parts of Flyde's standard library reside in the same package
 | **Date To ISO String**      | Converts a date to an ISO string                            | <div><strong>date</strong>: Date (required) </div>      | <div><strong>string</strong>: String</div>             |
 | **Date To Unix Time**       | Converts a date to a Unix time                              | <div><strong>date</strong>: Date (required) </div>      | <div><strong>time</strong>: Unix time</div>            |
 | **Date To Year**            | Converts a date to a year                                   | <div><strong>date</strong>: Date (required) </div>      | <div><strong>year</strong>: Year</div>                 |
-| **Date To Month**           | Converts a date to a month                                  | <div><strong>date</strong>: Date (required) </div>      | <div><strong>month</strong>: Month</div>               |
+| **Month To Date**           | Converts a date to a month                                  | <div><strong>date</strong>: Date (required) </div>      | <div><strong>month</strong>: Month</div>               |
 | **Date To Day**             | Converts a date to a day                                    | <div><strong>date</strong>: Date (required) </div>      | <div><strong>day</strong>: Day</div>                   |
 | **Date To Hours**           | Converts a date to hours                                    | <div><strong>date</strong>: Date (required) </div>      | <div><strong>hours</strong>: Hours</div>               |
 | **Date To Minutes**         | Converts a date to minutes                                  | <div><strong>date</strong>: Date (required) </div>      | <div><strong>minutes</strong>: Minutes</div>           |

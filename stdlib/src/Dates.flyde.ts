@@ -1,189 +1,270 @@
-import { partFromSimpleFunction } from "@flyde/core";
+import { CodePart } from "@flyde/core";
 
 const namespace = "Dates";
 
-export const Now = partFromSimpleFunction({
+export const Now: CodePart = {
   id: "Now",
-  icon: "fa-calendar",
+  defaultStyle: {
+    icon: "fa-calendar",
+  },
   namespace,
   description: "Returns the current date and time",
-  output: { name: "now", description: "Current date and time" },
-  run: () => new Date(),
-});
+  inputs: {},
+  outputs: { now: { description: "Current date and time" } },
+  run: (_, { now }) => now.next(new Date()),
+};
 
-export const NowString = partFromSimpleFunction({
+export const NowString: CodePart = {
   id: "Now String",
-  icon: "fa-calendar",
+  defaultStyle: {
+    icon: "fa-calendar",
+  },
   namespace,
   description: "Returns the current date and time as a string",
-  output: { name: "now", description: "Current date and time" },
-  run: () => new Date().toString(),
-});
+  inputs: {},
+  outputs: { now: { description: "Current date and time" } },
+  run: (_, { now }) => now.next(new Date().toString()),
+};
 
-export const NowISOString = partFromSimpleFunction({
+export const NowISOString: CodePart = {
   id: "Now ISO String",
-  icon: "fa-calendar",
+  defaultStyle: {
+    icon: "fa-calendar",
+  },
   namespace,
   description: "Returns the current date and time as a string in ISO format",
-  output: { name: "now", description: "Current date and time" },
-  run: () => new Date().toISOString(),
-});
+  inputs: {},
+  outputs: { now: { description: "Current date and time" } },
+  run: (_, { now }) => now.next(new Date().toISOString()),
+};
 
-export const NowUnixTime = partFromSimpleFunction({
+export const NowUnixTime: CodePart = {
   id: "Now Unix Time",
-  icon: "fa-calendar",
+  defaultStyle: {
+    icon: "fa-calendar",
+  },
   namespace,
   description: "Returns the current date and time as a Unix time",
-  output: { name: "now", description: "Current date and time" },
-  run: () => new Date().getTime(),
-});
+  inputs: {},
+  outputs: { now: { description: "Current date and time" } },
+  run: (_, { now }) => now.next(new Date().getTime()),
+};
 
-export const DateFromUnixTime = partFromSimpleFunction({
+export const DateFromUnixTime: CodePart = {
   id: "Date From Unix Time",
-  icon: "fa-calendar",
+  defaultStyle: {
+    icon: "fa-calendar",
+  },
   namespace,
   description: "Creates a date from a Unix time",
-  inputs: [{ name: "time", description: "Unix time" }],
-  output: { name: "date", description: "Date" },
-  run: (time) => new Date(time),
-});
+  inputs: { time: { description: "Unix time" } },
+  outputs: { date: { description: "Date" } },
+  run: ({ time }, { date }) => date.next(new Date(time)),
+};
 
-export const DateFromString = partFromSimpleFunction({
+export const DateFromString: CodePart = {
   id: "Date From String",
-  icon: "fa-calendar",
+  defaultStyle: {
+    icon: "fa-calendar",
+  },
   namespace,
   description: "Creates a date from a string",
-  inputs: [{ name: "string", description: "String" }],
-  output: { name: "date", description: "Date" },
-  run: (string) => new Date(string),
-});
+  inputs: { string: { description: "String" } },
+  outputs: { date: { description: "Date" } },
+  run: ({ string }, { date }) => date.next(new Date(string)),
+};
 
-export const DateFromISOString = partFromSimpleFunction({
+export const DateFromISOString: CodePart = {
   id: "Date From ISO String",
-  icon: "fa-calendar",
+  defaultStyle: {
+    icon: "fa-calendar",
+  },
   namespace,
   description: "Creates a date from an ISO string",
-  inputs: [{ name: "string", description: "String" }],
-  output: { name: "date", description: "Date" },
-  run: (string) => new Date(string),
-});
+  inputs: {
+    string: { description: "String" },
+  },
+  outputs: {
+    date: { description: "Date" },
+  },
+  run: async ({ string }, { date }, { onError }) => {
+    try {
+      date.next(new Date(string));
+    } catch (e) {
+      console.error("Error in part", e);
+      onError(e);
+    }
+  },
+};
 
-export const DateToString = partFromSimpleFunction({
+export const DateToString: CodePart = {
   id: "Date To String",
-  icon: "fa-calendar",
+  defaultStyle: {
+    icon: "fa-calendar",
+  },
   namespace,
   description: "Converts a date to a string",
-  inputs: [{ name: "date", description: "Date" }],
-  output: { name: "string", description: "String" },
-  run: (date) => date.toString(),
-});
+  inputs: { date: { description: "Date" } },
+  outputs: { string: { description: "String" } },
+  run: ({ date }, { string }) => string.next(date.toString()),
+};
 
-export const DateToISOString = partFromSimpleFunction({
+export const DateToISOString: CodePart = {
   id: "Date To ISO String",
-  icon: "fa-calendar",
+  defaultStyle: {
+    icon: "fa-calendar",
+  },
   namespace,
   description: "Converts a date to an ISO string",
-  inputs: [{ name: "date", description: "Date" }],
-  output: { name: "string", description: "String" },
-  run: (date) => date.toISOString(),
-});
+  inputs: { date: { description: "Date" } },
+  outputs: { string: { description: "String" } },
+  run: ({ date }, { string }) => string.next(date.toISOString()),
+};
 
-export const DateToUnixTime = partFromSimpleFunction({
+export const DateToUnixTime: CodePart = {
   id: "Date To Unix Time",
-  icon: "fa-calendar",
+  defaultStyle: {
+    icon: "fa-calendar",
+  },
   namespace,
   description: "Converts a date to a Unix time",
-  inputs: [{ name: "date", description: "Date" }],
-  output: { name: "time", description: "Unix time" },
-  run: (date) => date.getTime(),
-});
+  inputs: { date: { description: "Date" } },
+  outputs: { time: { description: "Unix time" } },
+  run: ({ date }, { time }) => time.next(date.getTime()),
+};
 
-export const DateToYear = partFromSimpleFunction({
+export const DateToYear: CodePart = {
   id: "Date To Year",
-  icon: "fa-calendar",
+  defaultStyle: {
+    icon: "fa-calendar",
+  },
   namespace,
   description: "Converts a date to a year",
-  inputs: [{ name: "date", description: "Date" }],
-  output: { name: "year", description: "Year" },
-  run: (date) => date.getFullYear(),
-});
-
-export const DateToMonth = partFromSimpleFunction({
-  id: "Date To Month",
-  icon: "fa-calendar",
+  inputs: {
+    date: { description: "Date" },
+  },
+  outputs: {
+    year: { description: "Year" },
+  },
+  run: ({ date }, { year }) => year.next(date.getFullYear()),
+};
+export const MonthToDate: CodePart = {
+  id: "Month To Date",
+  defaultStyle: {
+    icon: "fa-calendar",
+  },
   namespace,
   description: "Converts a date to a month",
-  inputs: [{ name: "date", description: "Date" }],
-  output: { name: "month", description: "Month" },
-  run: (date) => date.getMonth(),
-});
+  inputs: {
+    date: {
+      description: "Date",
+    },
+  },
+  outputs: {
+    month: {
+      description: "Month",
+    },
+  },
+  run: ({ date }, { month }) => month.next(date.getMonth()),
+};
 
-export const DateToDay = partFromSimpleFunction({
+export const DateToDay: CodePart = {
   id: "Date To Day",
-  icon: "fa-calendar",
+  defaultStyle: {
+    icon: "fa-calendar",
+  },
   namespace,
   description: "Converts a date to a day",
-  inputs: [{ name: "date", description: "Date" }],
-  output: { name: "day", description: "Day" },
-  run: (date) => date.getDate(),
-});
+  inputs: {
+    date: {
+      description: "Date",
+    },
+  },
+  outputs: {
+    day: {
+      description: "Day",
+    },
+  },
+  run: ({ date }, { day }) => day.next(date.getDate()),
+};
 
-export const DateToHours = partFromSimpleFunction({
+export const DateToHours: CodePart = {
   id: "Date To Hours",
-  icon: "fa-calendar",
+  defaultStyle: {
+    icon: "fa-calendar",
+  },
   namespace,
   description: "Converts a date to hours",
-  inputs: [{ name: "date", description: "Date" }],
-  output: { name: "hours", description: "Hours" },
-  run: (date) => date.getHours(),
-});
+  inputs: {
+    date: {
+      description: "Date",
+    },
+  },
+  outputs: {
+    hours: {
+      description: "Hours",
+    },
+  },
+  run: ({ date }, { hours }) => hours.next(date.getHours()),
+};
 
-export const DateToMinutes = partFromSimpleFunction({
+export const DateToMinutes: CodePart = {
   id: "Date To Minutes",
-  icon: "fa-calendar",
+  defaultStyle: {
+    icon: "fa-calendar",
+  },
   namespace,
   description: "Converts a date to minutes",
-  inputs: [{ name: "date", description: "Date" }],
-  output: { name: "minutes", description: "Minutes" },
-  run: (date) => date.getMinutes(),
-});
+  inputs: { date: { description: "Date" } },
+  outputs: { minutes: { description: "Minutes" } },
+  run: ({ date }, { minutes }) => minutes.next(date.getMinutes()),
+};
 
-export const DateToSeconds = partFromSimpleFunction({
+export const DateToSeconds: CodePart = {
   id: "Date To Seconds",
-  icon: "fa-calendar",
+  defaultStyle: {
+    icon: "fa-calendar",
+  },
   namespace,
   description: "Converts a date to seconds",
-  inputs: [{ name: "date", description: "Date" }],
-  output: { name: "seconds", description: "Seconds" },
-  run: (date) => date.getSeconds(),
-});
+  inputs: { date: { description: "Date" } },
+  outputs: { seconds: { description: "Seconds" } },
+  run: ({ date }, { seconds }) => seconds.next(date.getSeconds()),
+};
 
-export const DateToMilliseconds = partFromSimpleFunction({
+export const DateToMilliseconds: CodePart = {
   id: "Date To Milliseconds",
-  icon: "fa-calendar",
+  defaultStyle: {
+    icon: "fa-calendar",
+  },
   namespace,
   description: "Converts a date to milliseconds",
-  inputs: [{ name: "date", description: "Date" }],
-  output: { name: "milliseconds", description: "Milliseconds" },
-  run: (date) => date.getMilliseconds(),
-});
+  inputs: { date: { description: "Date" } },
+  outputs: { milliseconds: { description: "Milliseconds" } },
+  run: ({ date }, { milliseconds }) =>
+    milliseconds.next(date.getMilliseconds()),
+};
 
-export const DateToDayOfWeek = partFromSimpleFunction({
+export const DateToDayOfWeek: CodePart = {
   id: "Date To Day Of Week",
-  icon: "fa-calendar",
+  defaultStyle: {
+    icon: "fa-calendar",
+  },
   namespace,
   description: "Converts a date to a day of the week",
-  inputs: [{ name: "date", description: "Date" }],
-  output: { name: "day", description: "Day" },
-  run: (date) => date.getDay(),
-});
+  inputs: { date: { description: "Date" } },
+  outputs: { day: { description: "Day" } },
+  run: ({ date }, { day }) => day.next(date.getDay()),
+};
 
-export const DateToTimezoneOffset = partFromSimpleFunction({
+export const DateToTimezoneOffset: CodePart = {
   id: "Date To Timezone Offset",
-  icon: "fa-calendar",
+  defaultStyle: {
+    icon: "fa-calendar",
+  },
   namespace,
   description: "Converts a date to a timezone offset",
-  inputs: [{ name: "date", description: "Date" }],
-  output: { name: "offset", description: "Offset" },
-  run: (date) => date.getTimezoneOffset(),
-});
+  inputs: { date: { description: "Date" } },
+  outputs: { offset: { description: "Offset" } },
+  run: ({ date }, { offset }) => offset.next(date.getTimezoneOffset()),
+};

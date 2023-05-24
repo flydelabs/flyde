@@ -1,149 +1,194 @@
-import { CodePart, partFromSimpleFunction } from "@flyde/core";
+import { CodePart } from "@flyde/core";
 
 const namespace = "Objects";
 
-export const JSONParse = partFromSimpleFunction({
+export const JSONParse: CodePart = {
   id: "JSON Parse",
-  icon: "fa-glasses",
+  defaultStyle: {
+    icon: "fa-glasses",
+  },
   namespace,
   description: "Parses a JSON string into an object",
-  inputs: [{ name: "json", description: "JSON string to parse" }],
-  output: { name: "object", description: "The parsed object" },
-  run: (json) => JSON.parse(json),
-});
+  inputs: { json: { description: "JSON string to parse" } },
+  outputs: { object: { description: "The parsed object" } },
+  run: ({ json }, { object }) => object.next(JSON.parse(json)),
+};
 
-export const JSONStringify = partFromSimpleFunction({
+export const JSONStringify: CodePart = {
   id: "JSON Stringify",
-  icon: "fa-pen-fancy",
+  defaultStyle: {
+    icon: "fa-pen-fancy",
+  },
   namespace,
   description: "Stringifies an object into a JSON string",
-  inputs: [{ name: "object", description: "Object to stringify" }],
-  output: { name: "json", description: "The stringified JSON" },
-  run: (object) => JSON.stringify(object),
-});
+  inputs: { object: { description: "Object to stringify" } },
+  outputs: { json: { description: "The stringified JSON" } },
+  run: ({ object }, { json }) => json.next(JSON.stringify(object)),
+};
 
-export const ObjectKeys = partFromSimpleFunction({
+export const ObjectKeys: CodePart = {
   id: "Keys",
-  icon: "fa-key",
+  defaultStyle: {
+    icon: "fa-key",
+  },
   namespace,
   description: "Emits the keys of an object",
-  inputs: [{ name: "object", description: "Object to get keys of" }],
-  output: { name: "keys", description: "The keys of object" },
-  run: (object) => Object.keys(object),
-});
+  inputs: { object: { description: "Object to get keys of" } },
+  outputs: { keys: { description: "The keys of object" } },
+  run: ({ object }, { keys }) => keys.next(Object.keys(object)),
+};
 
-export const ObjectValues = partFromSimpleFunction({
+export const ObjectValues: CodePart = {
   id: "Values",
   namespace,
   description: "Emits the values of an object",
-  inputs: [{ name: "object", description: "Object to get values of" }],
-  output: { name: "values", description: "The values of object" },
-  run: (object) => Object.values(object),
-});
+  inputs: { object: { description: "Object to get values of" } },
+  outputs: { values: { description: "The values of object" } },
+  run: ({ object }, { values }) => values.next(Object.values(object)),
+};
 
-export const ObjectEntries = partFromSimpleFunction({
+export const ObjectEntries: CodePart = {
   id: "Entries",
+  defaultStyle: {
+    icon: "fa-box",
+  },
   namespace,
-  icon: "fa-box",
   description: "Emits the entries of an object",
-  inputs: [{ name: "object", description: "Object to get entries of" }],
-  output: { name: "entries", description: "The entries of object" },
-  run: (object) => Object.entries(object),
-});
+  inputs: { object: { description: "Object to get entries of" } },
+  outputs: { entries: { description: "The entries of object" } },
+  run: ({ object }, { entries }) => entries.next(Object.entries(object)),
+};
 
-export const ObjectFromEntries = partFromSimpleFunction({
+export const ObjectFromEntries: CodePart = {
   id: "From Entries",
   namespace,
-  icon: "fa-box",
+  defaultStyle: {
+    icon: "fa-box",
+  },
   description: "Creates an object from an array of entries",
-  inputs: [
-    { name: "entries", description: "Array of entries to create object from" },
-  ],
-  output: { name: "object", description: "The created object" },
-  run: (entries) => Object.fromEntries(entries),
-});
+  inputs: {
+    entries: {
+      description: "Array of entries to create object from",
+    },
+  },
+  outputs: {
+    object: {
+      description: "The created object",
+    },
+  },
+  run: ({ entries }, { object }) => object.next(Object.fromEntries(entries)),
+};
 
-export const ObjectAssign = partFromSimpleFunction({
+export const ObjectAssign: CodePart = {
   id: "Assign",
   namespace,
-  icon: "fa-box",
+  defaultStyle: {
+    icon: "fa-box",
+  },
   description: "Assigns properties from one or more objects to a target object",
-  inputs: [
-    { name: "target", description: "Target object to assign properties to" },
-    {
-      name: "sources",
+  inputs: {
+    target: {
+      description: "Target object to assign properties to",
+    },
+    sources: {
       description: "One or more objects to assign properties from",
     },
-  ],
-  output: { name: "object", description: "The target object" },
-  run: (target, ...sources) => Object.assign(target, ...sources),
-});
+  },
+  outputs: {
+    object: {
+      description: "The target object",
+    },
+  },
+  run: ({ target, sources }, { object }) =>
+    object.next(Object.assign(target, ...sources)),
+};
 
-export const GetAttribute = partFromSimpleFunction({
+export const GetAttribute: CodePart = {
   id: "Get Attribute",
   searchKeywords: ["pick", "dot"],
   namespace,
-  icon: "fa-magnifying-glass",
-  description: "Gets an attribute from an object",
-  inputs: [
-    { name: "object", description: "Object to get attribute from" },
-    { name: "attribute", description: "Attribute to get" },
-  ],
-  output: { name: "value", description: "The value of the attribute" },
-  customViewCode: `<% if (inputs.attribute) { %> Get "<%- inputs.attribute %>"<% } else { %> Get Attribute <% } %>`,
-  run: (object, attribute) => {
-    // get attribute from object while supporting dot notation
-    return attribute.split(".").reduce((obj, i) => obj[i], object);
+  defaultStyle: {
+    icon: "fa-magnifying-glass",
   },
-});
+  description: "Gets an attribute from an object",
+  inputs: {
+    object: {
+      description: "Object to get attribute from",
+    },
+    attribute: {
+      description: "Attribute to get",
+    },
+  },
+  outputs: {
+    value: {
+      description: "The value of the attribute",
+    },
+  },
+  customViewCode: `<% if (inputs.attribute) { %> Get "<%- inputs.attribute %>"<% } else { %> Get Attribute <% } %>`,
+  run: ({ object, attribute }, { value }) =>
+    value.next(attribute.split(".").reduce((obj, i) => obj[i], object)),
+};
 
-export const SetAttribute = partFromSimpleFunction({
+export const SetAttribute: CodePart = {
   id: "Set Attribute",
   searchKeywords: ["dot"],
   namespace,
-  icon: "fa-box",
+  defaultStyle: {
+    icon: "fa-box",
+  },
   description: "Sets an attribute on an object",
-  inputs: [
-    { name: "object", description: "Object to set attribute on" },
-    { name: "attribute", description: "Attribute to set" },
-    { name: "value", description: "Value to set attribute to" },
-  ],
+  inputs: {
+    object: {
+      description: "Object to set attribute on",
+    },
+    attribute: {
+      description: "Attribute to set",
+    },
+    value: {
+      description: "Value to set attribute to",
+    },
+  },
+  outputs: {
+    object: {
+      description: "The object with the attribute set",
+    },
+  },
   customViewCode: `<% if (inputs.attribute) { %> Set "<%- inputs.attribute %>"<% } else { %> Set Attribute <% } %>`,
-  output: { name: "object", description: "The object with the attribute set" },
-  run: (object, attribute, value) => {
-    // set attribute on object while supporting dot notation
+  run: ({ object, attribute, value }, { object: outputObject }) => {
     const attributes = attribute.split(".");
     const last = attributes.pop();
     const target = attributes.reduce((obj, i) => obj[i], object);
     target[last] = value;
-    return object;
+    return outputObject.next(object);
   },
-});
+};
 
-export const DeleteAttribute = partFromSimpleFunction({
+export const DeleteAttribute: CodePart = {
   id: "Delete Attribute",
-  searchKeywords: ["remove"],
+  defaultStyle: {
+    icon: "fa-box",
+  },
   namespace,
-  icon: "fa-box",
   description: "Deletes an attribute from an object",
-  inputs: [
-    { name: "object", description: "Object to delete attribute from" },
-    { name: "attribute", description: "Attribute to delete" },
-  ],
-  customViewCode: `<% if (inputs.attribute) { %> Delete "<%- inputs.attribute %>"<% } else { %> Delete Attribute <% } %>`,
-  output: {
-    name: "object",
-    description: "The object with the attribute deleted",
+  inputs: {
+    object: { description: "Object to delete attribute from" },
+    attribute: { description: "Attribute to delete" },
   },
-  run: (object, attribute) => {
+  customViewCode: `<% if (inputs.attribute?.value) { %> Delete "<%- inputs.attribute.value %>"<% } else { %> Delete Attribute <% } %>`,
+  outputs: {
+    object: {
+      description: "The object with the attribute deleted",
+    },
+  },
+  run: ({ object, attribute }, { object: outputObject }) => {
     // delete attribute from object while supporting dot notation
-    const attributes = attribute.split(".");
+    const attributes = attribute.value.split(".");
     const last = attributes.pop();
-    const target = attributes.reduce((obj, i) => obj[i], object);
+    const target = attributes.reduce((obj, i) => obj[i], object.value);
     delete target[last];
-    return object;
+    outputObject.next(object.value);
   },
-});
+};
 
 export const PropertyEquals: CodePart = {
   id: "Property Equals",
