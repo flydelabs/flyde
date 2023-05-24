@@ -62,92 +62,101 @@ export const Repeat: CodePart = {
   },
 };
 
-export const ListFrom2 = partFromSimpleFunction({
+export const ListFrom2: CodePart = {
   id: "List From 2",
-  icon: "fa-list",
+  defaultStyle: {
+    icon: "fa-list",
+  },
   namespace,
   description: "Creates a list from two values",
-  inputs: [
-    { name: "value1", description: "First value" },
-    { name: "value2", description: "Second value" },
-  ],
-  output: { name: "list", description: "List containing the 2 values" },
-  run: (value1, value2) => [value1, value2],
-});
+  inputs: {
+    value1: { description: "First value" },
+    value2: { description: "Second value" },
+  },
+  outputs: { list: { description: "List containing the 2 values" } },
+  run: ({ value1, value2 }, { list }) => list.next([value1, value2]),
+};
 
-export const ListFrom3 = partFromSimpleFunction({
+export const ListFrom3: CodePart = {
   id: "List From 3",
-  icon: "fa-list",
+  defaultStyle: {
+    icon: "fa-list",
+  },
   namespace,
   description: "Creates a list from three values",
-  inputs: [
-    { name: "value1", description: "First value" },
-    { name: "value2", description: "Second value" },
-    { name: "value3", description: "Third value" },
-  ],
-  output: { name: "list", description: "List containing all 3 values" },
-  run: (value1, value2, value3) => [value1, value2, value3],
-});
+  inputs: {
+    value1: { description: "First value" },
+    value2: { description: "Second value" },
+    value3: { description: "Third value" },
+  },
+  outputs: { list: { description: "List containing all 3 values" } },
+  run: ({ value1, value2, value3 }, { list }) =>
+    list.next([value1, value2, value3]),
+};
 
-export const ListFrom4 = partFromSimpleFunction({
+export const ListFrom4: CodePart = {
   id: "List From 4",
-  icon: "fa-list",
+  defaultStyle: {
+    icon: "fa-list",
+  },
   namespace,
   description: "Creates a list from four values",
-  inputs: [
-    { name: "value1", description: "First value" },
-    { name: "value2", description: "Second value" },
-    { name: "value3", description: "Third value" },
-    { name: "value4", description: "Fourth value" },
-  ],
-  output: { name: "list", description: "List containing all 4 values" },
-  run: (value1, value2, value3, value4) => [value1, value2, value3, value4],
-});
+  inputs: {
+    value1: { description: "First value" },
+    value2: { description: "Second value" },
+    value3: { description: "Third value" },
+    value4: { description: "Fourth value" },
+  },
+  outputs: { list: { description: "List containing all 4 values" } },
+  run: ({ value1, value2, value3, value4 }, { list }) =>
+    list.next([value1, value2, value3, value4]),
+};
 
-export const ListFrom5 = partFromSimpleFunction({
+export const ListFrom5: CodePart = {
   id: "List From 5",
-  icon: "fa-list",
+  defaultStyle: {
+    icon: "fa-list",
+  },
   namespace,
   description: "Creates a list from five values",
-  inputs: [
-    { name: "value1", description: "First value" },
-    { name: "value2", description: "Second value" },
-    { name: "value3", description: "Third value" },
-    { name: "value4", description: "Fourth value" },
-    { name: "value5", description: "Fifth value" },
-  ],
-  output: { name: "list", description: "List containing all 5 values" },
-  run: (value1, value2, value3, value4, value5) => [
-    value1,
-    value2,
-    value3,
-    value4,
-    value5,
-  ],
-});
+  inputs: {
+    value1: { description: "First value" },
+    value2: { description: "Second value" },
+    value3: { description: "Third value" },
+    value4: { description: "Fourth value" },
+    value5: { description: "Fifth value" },
+  },
+  outputs: { list: { description: "List containing all 5 values" } },
+  run: ({ value1, value2, value3, value4, value5 }, { list }) =>
+    list.next([value1, value2, value3, value4, value5]),
+};
 
-export const ConcatLists = partFromSimpleFunction({
+export const ConcatLists: CodePart = {
   id: "Concat Lists",
-  icon: "fa-list",
+  defaultStyle: {
+    icon: "fa-list",
+  },
   namespace,
   description: "Concatenates two lists",
-  inputs: [
-    { name: "list1", description: "First list" },
-    { name: "list2", description: "Second list" },
-  ],
-  output: { name: "list", description: "Concatenated list" },
-  run: (list1, list2) => [...list1, ...list2],
-});
+  inputs: {
+    list1: { description: "First list" },
+    list2: { description: "Second list" },
+  },
+  outputs: { list: { description: "Concatenated list" } },
+  run: ({ list1, list2 }, { list }) => list.next([...list1, ...list2]),
+};
 
-export const Reverse = partFromSimpleFunction({
+export const Reverse: CodePart = {
   id: "Reverse",
-  icon: "fa-list",
+  defaultStyle: {
+    icon: "fa-list",
+  },
   namespace,
   description: "Reverses a list",
-  inputs: [{ name: "list", description: "List" }],
-  output: { name: "reversed", description: "Reversed list" },
-  run: (list) => list.reverse(),
-});
+  inputs: { list: { description: "List" } },
+  outputs: { reversed: { description: "Reversed list" } },
+  run: ({ list }, { reversed }) => reversed.next(list.reverse()),
+};
 
 export const LoopList: CodePart = {
   id: "Loop List",
@@ -455,85 +464,103 @@ export const AccumulateSomeValuesByCount: CodePart = {
   },
 };
 
-export const Append = partFromSimpleFunction({
+export const Append: CodePart = {
   id: "Append",
   namespace,
   description: "Appends an item to a list",
-  inputs: [
-    { name: "list", description: "The list" },
-    { name: "item", description: "The item to append" },
-  ],
-  output: { name: "list", description: "The resulting list" },
-  run: (list, item) => {
-    return [...list, item];
+  inputs: {
+    list: { description: "The list" },
+    item: { description: "The item to append" },
   },
-});
+  outputs: { list: { description: "The resulting list" } },
+  run: ({ list, item }, { list: outputList }) => {
+    outputList.next([...list, item]);
+  },
+  defaultStyle: {
+    icon: "fa-plus",
+  },
+};
 
-export const Prepend = partFromSimpleFunction({
+export const Prepend: CodePart = {
   id: "Prepend",
   namespace,
   description: "Prepends an item to a list",
-  inputs: [
-    { name: "list", description: "The list" },
-    { name: "item", description: "The item to prepend" },
-  ],
-  output: { name: "list", description: "The resulting list" },
-  run: (list, item) => {
-    return [item, ...list];
+  inputs: {
+    list: { description: "The list" },
+    item: { description: "The item to prepend" },
   },
-});
+  outputs: { list: { description: "The resulting list" } },
+  run: ({ list, item }, { list: outputList }) => {
+    outputList.next([item, ...list]);
+  },
+  defaultStyle: {
+    icon: "fa-arrow-up",
+  },
+};
 
-export const Remove = partFromSimpleFunction({
+export const Remove: CodePart = {
   id: "Remove",
   namespace,
   description: "Removes an item from a list",
-  inputs: [
-    { name: "list", description: "The list" },
-    { name: "item", description: "The item to remove" },
-  ],
-  output: { name: "list", description: "The resulting list" },
-  run: (list, item) => {
-    return list.filter((i) => i !== item);
+  inputs: {
+    list: { description: "The list" },
+    item: { description: "The item to remove" },
   },
-});
+  outputs: { list: { description: "The resulting list" } },
+  run: ({ list, item }, { list: outputList }) => {
+    outputList.next(list.filter((i) => i !== item));
+  },
+  defaultStyle: {
+    icon: "fa-minus",
+  },
+};
 
-export const RemoveAt = partFromSimpleFunction({
+export const RemoveAt: CodePart = {
   id: "Remove At",
   namespace,
   description: "Removes an item from a list at the specified index",
-  inputs: [
-    { name: "list", description: "The list" },
-    { name: "index", description: "The index of the item to remove" },
-  ],
-  output: { name: "list", description: "The resulting list" },
-  run: (list, index) => {
-    return list.filter((_, idx) => idx !== index);
+  inputs: {
+    list: { description: "The list" },
+    index: { description: "The index of the item to remove" },
   },
-});
+  outputs: { list: { description: "The resulting list" } },
+  run: ({ list, index }, { list: outputList }) => {
+    outputList.next(list.filter((_, idx) => idx !== index));
+  },
+  defaultStyle: {
+    icon: "fa-times",
+  },
+};
 
-export const Slice = partFromSimpleFunction({
+export const Slice: CodePart = {
   id: "Slice",
   namespace,
   description:
     "Returns a slice of a list from the specified start index to the specified end index",
-  inputs: [
-    { name: "list", description: "The list" },
-    { name: "start", description: "The index to start slicing from" },
-    { name: "end", description: "The index to end slicing at" },
-  ],
-  output: { name: "list", description: "The resulting list" },
-  run: (list, start, end) => {
-    return list.slice(start, end);
+  inputs: {
+    list: { description: "The list" },
+    start: { description: "The index to start slicing from" },
+    end: { description: "The index to end slicing at" },
   },
-});
+  outputs: { list: { description: "The resulting list" } },
+  run: ({ list, start, end }, { list: outputList }) => {
+    outputList.next(list.slice(start, end));
+  },
+  defaultStyle: {
+    icon: "fa-cut",
+  },
+};
 
-export const Flatten = partFromSimpleFunction({
+export const Flatten: CodePart = {
   id: "Flatten",
   namespace,
   description: "Flattens a list of lists into a single list",
-  inputs: [{ name: "list", description: "The list of lists" }],
-  output: { name: "list", description: "The resulting list" },
-  run: (list) => {
-    return list.reduce((acc, item) => [...acc, ...item], []);
+  inputs: { list: { description: "The list of lists" } },
+  outputs: { list: { description: "The resulting list" } },
+  run: ({ list }, { list: outputList }) => {
+    outputList.next(list.reduce((acc, item) => [...acc, ...item], []));
   },
-});
+  defaultStyle: {
+    icon: "fa-compress",
+  },
+};
