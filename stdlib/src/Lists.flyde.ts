@@ -2,57 +2,65 @@ import { CodePart, partFromSimpleFunction } from "@flyde/core";
 
 const namespace = "Lists";
 
-export const ListLength = partFromSimpleFunction({
+export const ListLength: CodePart = {
   id: "List Length",
-  icon: "fa-list",
+  defaultStyle: {
+    icon: "fa-list",
+  },
   namespace,
   description: "Returns the length of a list",
-  inputs: [{ name: "list", description: "List" }],
-  output: { name: "length", description: "Length" },
-  run: (list) => list.length,
-});
+  inputs: { list: { description: "List" } },
+  outputs: { length: { description: "Length" } },
+  run: ({ list }, { length }) => length.next(list.length),
+};
 
-export const ListIsEmpty = partFromSimpleFunction({
+export const ListIsEmpty: CodePart = {
   id: "List Is Empty",
-  icon: "fa-list",
+  defaultStyle: {
+    icon: "fa-list",
+  },
   namespace,
   description: "Returns true if the list is empty",
-  inputs: [{ name: "list", description: "List" }],
-  output: { name: "isEmpty", description: "Is empty" },
-  run: (list) => list.length === 0,
-});
+  inputs: { list: { description: "List" } },
+  outputs: { isEmpty: { description: "Is empty" } },
+  run: ({ list }, { isEmpty }) => isEmpty.next(list.length === 0),
+};
 
-export const GetListElement = partFromSimpleFunction({
+export const GetListElement: CodePart = {
   id: "Get List Element",
-  icon: "fa-list",
+  defaultStyle: {
+    icon: "fa-list",
+  },
   namespace,
   description: "Returns the element at the specified index",
-  inputs: [
-    { name: "list", description: "List" },
-    { name: "index", description: "Index" },
-  ],
-  output: { name: "element", description: "Element" },
-  run: (list, index) => list[index],
-});
+  inputs: {
+    list: { description: "List" },
+    index: { description: "Index" },
+  },
+  outputs: { element: { description: "Element" } },
+  run: ({ list, index }, { element }) => element.next(list[index]),
+};
 
-export const Repeat = partFromSimpleFunction({
+export const Repeat: CodePart = {
   id: "Repeat",
-  icon: "fa-list",
+  defaultStyle: {
+    icon: "fa-list",
+  },
   namespace,
   description: "Repeats a value a number of times",
-  inputs: [
-    { name: "value", description: "Value to repeat" },
-    { name: "times", description: "How many times will the value be repeated" },
-  ],
-  output: { name: "list", description: "List" },
-  run: (value, times) => {
-    const list = [];
-    for (let i = 0; i < times; i++) {
-      list.push(value);
-    }
-    return list;
+  inputs: {
+    value: { description: "Value to repeat" },
+    times: { description: "How many times will the value be repeated" },
   },
-});
+  outputs: { list: { description: "List" } },
+  run: ({ value, times }, { list }) => {
+    const result = [];
+    for (let i = 0; i < times; i++) {
+      result.push(value);
+    }
+    return list.next(result);
+  },
+};
 
 export const ListFrom2 = partFromSimpleFunction({
   id: "List From 2",
