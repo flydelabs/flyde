@@ -1,5 +1,4 @@
 import { CodePart } from "@flyde/core";
-import { partFromSimpleFunction } from "@flyde/core";
 
 const PubSub = require("pubsub-js");
 
@@ -439,20 +438,26 @@ export const Switch4: CodePart = {
   },
 };
 
-export const Delay = partFromSimpleFunction({
+export const Delay: CodePart = {
   id: "Delay",
-  icon: "fa-clock",
+  defaultStyle: {
+    icon: "fa-clock",
+  },
   searchKeywords: ["timeout", "wait", "setTimeout"],
   namespace,
   description: "Delays a value",
-  inputs: [
-    { name: "value", description: "Value to delay" },
-    { name: "delay", description: "Delay in milliseconds" },
-  ],
-  output: { name: "delayedValue", description: "Delayed value" },
-  run: (value, delay) =>
-    new Promise((resolve) => setTimeout(() => resolve(value), delay)),
-});
+  inputs: {
+    value: { description: "Value to delay" },
+    delay: { description: "Delay in milliseconds" },
+  },
+  outputs: {
+    delayedValue: { description: "Delayed value" },
+  },
+  run: async ({ value, delay }, { delayedValue }) => {
+    await new Promise((resolve) => setTimeout(resolve, delay));
+    delayedValue.next(value);
+  },
+};
 
 export const Interval: CodePart = {
   id: "Interval",
@@ -572,18 +577,21 @@ export const Throttle: CodePart = {
   },
 };
 
-export const EqualsBoolean = partFromSimpleFunction({
+export const EqualsBoolean: CodePart = {
   id: "Equals (Bool)",
+  defaultStyle: {
+    icon: "fa-equals",
+  },
   namespace,
   description:
     "Emits true if two values are equal (=== equality). Otherwise emits false.",
-  inputs: [
-    { name: "a", description: "First value" },
-    { name: "b", description: "Second value" },
-  ],
-  output: { name: "result", description: "true if a is equal to b" },
-  run: (a, b) => a === b,
-});
+  inputs: {
+    a: { description: "First value" },
+    b: { description: "Second value" },
+  },
+  outputs: { result: { description: "true if a is equal to b" } },
+  run: ({ a, b }, { result }) => result.next(a === b),
+};
 
 export const Equals: CodePart = {
   id: "Equals",

@@ -1,24 +1,24 @@
-import { partFromSimpleFunction } from "@flyde/core";
-
-import type * as pg from "pg";
-
 const namespace = "Postgres";
 
-export const Connect = partFromSimpleFunction({
+import { CodePart } from "@flyde/core";
+
+export const Connect: CodePart = {
   id: "Connect",
-  icon: "fa-database",
+  defaultStyle: {
+    icon: "fa-database",
+  },
   namespace,
   description:
     'Connects to a Postgres database and returns a client. Uses the "pg" package.',
-  inputs: [
-    { name: "host", description: "Host" },
-    { name: "port", description: "Port" },
-    { name: "database", description: "Database" },
-    { name: "user", description: "User" },
-    { name: "password", description: "Password" },
-  ],
-  output: { name: "connection", description: "Postgres connected client" },
-  run: async (host, port, database, user, password) => {
+  inputs: {
+    host: { description: "Host" },
+    port: { description: "Port" },
+    database: { description: "Database" },
+    user: { description: "User" },
+    password: { description: "Password" },
+  },
+  outputs: { connection: { description: "Postgres connected client" } },
+  run: async ({ host, port, database, user, password }, { connection }) => {
     const { Client } = await import("pg");
     const client = new Client({
       host,
@@ -28,38 +28,44 @@ export const Connect = partFromSimpleFunction({
       password,
     });
     await client.connect();
-    return client;
+    connection.next(client);
   },
-});
+};
 
-export const Disconnect = partFromSimpleFunction({
+export const Disconnect: CodePart = {
   id: "Disconnect",
-  icon: "fa-database",
+  defaultStyle: {
+    icon: "fa-database",
+  },
   namespace,
   description: "Disconnects from a Postgres database",
-  inputs: [{ name: "connection", description: "Postgres connection" }],
-  run: async (connection) => {
-    await connection.end();
+  inputs: { connection: { description: "Postgres connection" } },
+  outputs: {},
+  run: async ({ connection }) => {
+    await connection.value?.end();
   },
-});
+};
 
-export const Query = partFromSimpleFunction({
+export const Query: CodePart = {
   id: "Query",
-  icon: "fa-database",
+  defaultStyle: {
+    icon: "fa-database",
+  },
   namespace,
   description:
     'Queries a Postgres database. Query receives a valid "pg" QueryConfig object.',
-  inputs: [
-    { name: "connection", description: "Postgres connection" },
-    { name: "query", description: "Query" },
-  ],
-  output: {
-    name: "result",
-    description:
-      'valid "pg" <a href="https://node-postgres.com/apis/client#queryconfig">QueryConfig object</a>',
+  inputs: {
+    connection: { description: "Postgres connection" },
+    query: { description: "Query" },
   },
-  run: async (connection: pg.Client, query) => {
-    const result = await connection.query(query);
-    return result.rows;
+  outputs: {
+    result: {
+      description:
+        'valid "pg" <a href="https://node-postgres.com/apis/client#queryconfig">QueryConfig object</a>',
+    },
   },
-});
+  run: async ({ connection, query }, { result }) => {
+    const queryResult = await connection.value?.query(query);
+    result.next(queryResult?.rows);
+  },
+};
