@@ -37,8 +37,10 @@
         "pubsub-js": "^1.9.4"
     },
     "devDependencies": {
+        "@types/jscodeshift": "^0.11.6",
         "chai": "^4.3.7",
         "concurrently": "^7.3.0",
+        "jscodeshift": "^0.15.0",
         "mocha": "^10.2.0",
         "nodemon": "^2.0.20",
         "sinon": "^15.0.1",
