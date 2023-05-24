@@ -1,4 +1,4 @@
-import { CodePart, partFromSimpleFunction } from "@flyde/core";
+import { CodePart } from "@flyde/core";
 
 const namespace = "Lists";
 
