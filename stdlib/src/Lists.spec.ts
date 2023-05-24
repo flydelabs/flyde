@@ -1,85 +1,92 @@
+// ```
 import {
-  delay,
-  dynamicPartInput,
-  eventually,
-  execute,
-  staticPartInput,
-} from "@flyde/core";
-import { assert } from "chai";
+  BasePart,
+  CodePart,
+  InputPartPin,
+  OutputPartPin,
+  PartStyleSize,
+  RunPartFunction,
+} from ".";
+import { InputMode } from "./part-pins";
 
-import { spiedOutput } from "@flyde/core/dist/test-utils";
-import { AccumulateValuesByCount, AccumulateValuesByTime } from "./Lists.flyde";
+// An improved type for the inputs object. It uses dynamic keys to allow the object properties to match the input names.
+type ImprovedInputs = {
+  [key: string]: InputPartPin<any>;
+}
 
-describe("Lists", () => {
-  describe("Accumulate values by count", () => {
-    it("emits values received until specified count has been reached", async () => {
-      const [s, accumulated] = spiedOutput();
+type Output = {
+  [key: string]: { 
+    description: string;
+    next: (value?: any) => void;
+  }
+};
 
-      const input = dynamicPartInput();
+export type SimpleFnData = Omit<BasePart, "inputs" | "outputs" | "run"> & { 
+  id: string; 
+  description: string; 
+  namespace: string; 
+  inputs?: { 
+    name: string; 
+    description: string; 
+    mode?: InputMode; 
+    defaultValue?: any; 
+  }[];
+  output?: { 
+    name: string; 
+    description: string 
+  };
+  run?: (...args: any[]) => any; 
+  symbol?: string; 
+  icon?: string; 
+  size?: PartStyleSize;   
+  customViewCode?: string; 
+  fullRunFn?: RunPartFunction;
+};
 
-      execute({
-        part: AccumulateValuesByCount,
-        outputs: { accumulated },
-        inputs: { value: input, count: staticPartInput(3) },
-        resolvedDeps: {},
-      });
+// This is the refactored partFromSimpleFunction function.
+export function partFromSimpleFunction(data: SimpleFnData): CodePart {
+  const inputs: ImprovedInputs = {}; // Using the improved inputs type defined above.
+  const outputs: Output = {};
 
-      input.subject.next(1);
-      input.subject.next(2);
-      input.subject.next(3);
-
-      // does not enter the first list
-      input.subject.next(4);
-      input.subject.next(5);
-      input.subject.next(6);
-
-      // does not enter the second list
-      input.subject.next(7);
-
-      await eventually(() => {
-        console.log(s.getCalls());
-
-        assert.equal(s.callCount, 2);
-        assert.deepEqual(s.firstCall.args[0], [1, 2, 3]);
-        assert.deepEqual(s.secondCall.args[0], [4, 5, 6]);
-      });
+  // Converting the inputs array defined in the data parameter to the ImprovedInputs object format.
+  if (data.inputs) {
+    data.inputs.forEach(({ name, description, mode, defaultValue }) => {
+      inputs[name] = { description, mode: mode ?? "required", defaultValue };
     });
-  });
+  }
 
-  describe("Accumulate Values by Time", () => {
-    it("emits values received until specified time has passed", async () => {
-      const timeout = 100;
+  // Creating an output object if there is an output defined.
+  if (data.output) {
+    outputs[data.output.name] = {
+      description: data.output.description,
+      next: () => { },
+    };
+  }
 
-      const [s, accumulated] = spiedOutput();
-
-      const input = dynamicPartInput();
-
-      execute({
-        part: AccumulateValuesByTime,
-        outputs: { accumulated },
-        inputs: { value: input, time: staticPartInput(timeout) },
-        resolvedDeps: {},
-        ancestorsInsIds: "bob",
-      });
-
-      // enters the list
-      input.subject.next(1);
-      await delay(timeout / 3);
-      // // enters the list
-      input.subject.next(2);
-      await delay(timeout / 3);
-      // //enters the list
-      input.subject.next(3);
-      await delay(timeout);
-
-      // does not enter the first list
-      input.subject.next(4);
-
-      await eventually(() => {
-        assert.equal(s.callCount, 2);
-        assert.deepEqual(s.firstCall.args[0], [1, 2, 3]);
-        assert.deepEqual(s.secondCall.args[0], [4]);
-      });
-    });
-  });
-});
+  return {
+    id: data.id,
+    description: data.description,
+    namespace: data.namespace,
+    inputs,
+    outputs,
+    defaultStyle: {
+      icon: data.icon,
+      size: data.size,
+    },
+    // Modifying the function passed to run to receive two arguments; inputs and outputs.
+    run: data.fullRunFn ?? async function (inputs, outputs, adv) {
+      const args = Object.values(inputs);
+      try {
+        const result = await Promise.resolve(data.run(...args)); // Using the arguments array to call the function.
+        if (data.output) {
+          outputs[data.output.name].next(result); // Updating the output with the result returned from the function.
+        }
+      } catch (e) {
+        console.error("Error in part", e);
+        adv.onError(e);
+      }
+    },
+    customViewCode: data.customViewCode,
+  };
+}
+```

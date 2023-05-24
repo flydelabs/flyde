@@ -1,33 +1,42 @@
-import { partFromSimpleFunction } from "@flyde/core";
+import { CodePart, partFromSimpleFunction } from "@flyde/core";
 
 const namespace = "Dates";
 
-export const Now = partFromSimpleFunction({
+export const Now: CodePart = {
   id: "Now",
-  icon: "fa-calendar",
+  defaultStyle: {
+    icon: "fa-calendar",
+  },
   namespace,
   description: "Returns the current date and time",
-  output: { name: "now", description: "Current date and time" },
-  run: () => new Date(),
-});
+  inputs: {},
+  outputs: { now: { description: "Current date and time" } },
+  run: (_, { now }) => now.next(new Date()),
+};
 
-export const NowString = partFromSimpleFunction({
+export const NowString: CodePart = {
   id: "Now String",
-  icon: "fa-calendar",
+  defaultStyle: {
+    icon: "fa-calendar",
+  },
   namespace,
   description: "Returns the current date and time as a string",
-  output: { name: "now", description: "Current date and time" },
-  run: () => new Date().toString(),
-});
+  inputs: {},
+  outputs: { now: { description: "Current date and time" } },
+  run: (_, { now }) => now.next(new Date().toString()),
+};
 
-export const NowISOString = partFromSimpleFunction({
+export const NowISOString: CodePart = {
   id: "Now ISO String",
-  icon: "fa-calendar",
+  defaultStyle: {
+    icon: "fa-calendar",
+  },
   namespace,
   description: "Returns the current date and time as a string in ISO format",
-  output: { name: "now", description: "Current date and time" },
-  run: () => new Date().toISOString(),
-});
+  inputs: {},
+  outputs: { now: { description: "Current date and time" } },
+  run: (_, { now }) => now.next(new Date().toISOString()),
+};
 
 export const NowUnixTime = partFromSimpleFunction({
   id: "Now Unix Time",
@@ -48,25 +57,40 @@ export const DateFromUnixTime = partFromSimpleFunction({
   run: (time) => new Date(time),
 });
 
-export const DateFromString = partFromSimpleFunction({
+export const DateFromString: CodePart = {
   id: "Date From String",
-  icon: "fa-calendar",
+  defaultStyle: {
+    icon: "fa-calendar",
+  },
   namespace,
   description: "Creates a date from a string",
-  inputs: [{ name: "string", description: "String" }],
-  output: { name: "date", description: "Date" },
-  run: (string) => new Date(string),
-});
+  inputs: { string: { description: "String" } },
+  outputs: { date: { description: "Date" } },
+  run: ({ string }, { date }) => date.next(new Date(string)),
+};
 
-export const DateFromISOString = partFromSimpleFunction({
+export const DateFromISOString: CodePart = {
   id: "Date From ISO String",
-  icon: "fa-calendar",
+  defaultStyle: {
+    icon: "fa-calendar",
+  },
   namespace,
   description: "Creates a date from an ISO string",
-  inputs: [{ name: "string", description: "String" }],
-  output: { name: "date", description: "Date" },
-  run: (string) => new Date(string),
-});
+  inputs: {
+    string: { description: "String" },
+  },
+  outputs: {
+    date: { description: "Date" },
+  },
+  run: async ({ string }, { date }, { onError }) => {
+    try {
+      date.next(new Date(string));
+    } catch (e) {
+      console.error("Error in part", e);
+      onError(e);
+    }
+  },
+};
 
 export const DateToString = partFromSimpleFunction({
   id: "Date To String",

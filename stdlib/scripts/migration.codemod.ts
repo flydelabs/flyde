@@ -1,21 +1,47 @@
-/**
- * Copyright (c) Facebook, Inc. and its affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
+import * as ts from "typescript";
+import * as fs from "fs";
 
-/**
- * Example jscodeshift transformer. Simply reverses the names of all
- * identifiers.
- */
-import { API, FileInfo } from "jscodeshift";
+function visit(node: ts.Node): ts.Node {
+  switch (node.kind) {
+    case ts.SyntaxKind.VariableDeclaration: {
+      const variableDeclaration = node as ts.VariableDeclaration;
+      // Perform transformation here...
+      // For example, replace 'oldName' identifiers with 'newName':
+      if (
+        ts.isIdentifier(variableDeclaration.name) &&
+        variableDeclaration.name.text === "oldName"
+      ) {
+        return ts.factory.updateVariableDeclaration(
+          variableDeclaration,
+          ts.factory.createIdentifier("newName"),
+          variableDeclaration.type,
+          variableDeclaration.initializer
+        );
+      }
+      break;
+    }
+    // Add more cases for other kinds of nodes you're interested in...
+  }
 
-export default function transformer(file: FileInfo, api: API) {
-  const j = api.jscodeshift;
-
-  return j(file.source)
-    .find(j.Identifier)
-    .replaceWith((p) => j.identifier(p.node.name.split("").reverse().join("")))
-    .toSource();
+  return ts.visitEachChild(node, visit, null);
 }
+
+function transform(file: string) {
+  const sourceText = fs.readFileSync(file, "utf-8");
+  const sourceFile = ts.createSourceFile(
+    file,
+    sourceText,
+    ts.ScriptTarget.Latest,
+    true
+  );
+
+  const transformedSourceFile = ts.visitNode(sourceFile, visit);
+
+  const printer = ts.createPrinter({ newLine: ts.NewLineKind.LineFeed });
+
+  const result = printer.printFile(transformedSourceFile);
+
+  fs.writeFileSync(file, result, "utf-8");
+}
+
+transform("path-to-your-file.ts");
