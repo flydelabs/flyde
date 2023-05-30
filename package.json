@@ -14,7 +14,7 @@
     "lint": "pnpm run -r lint",
     "clean": "pnpm run -r -y",
     "clean-dist": "pnpm exec -r \"rm -rf dist\"",
-    "bump-all-patch": "pnpm run -r --no-private version patch",
+    "bump-all-patch": "pnpm -r version patch",
     "publish-all": "./publish-all-with-otp.sh",
     "release": "pnpm run build && pnpm run bump-all-patch && pnpm run publish-all"
   },
