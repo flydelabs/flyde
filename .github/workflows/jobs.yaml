@@ -56,6 +56,7 @@ jobs:
 
           root=$(pwd)
 
+          echo "Bumping all versions"
           for package in $(pnpm list --json --only-projects -r | jq -c '.[]'); do
             name=$(echo $package | jq -r '.name')
             path=$(echo $package | jq -r '.path')
@@ -68,15 +69,33 @@ jobs:
             fi  
             echo "Bumping version of $name"
             pnpm version patch
+            cd $root
+          done
+
+          echo "Commiting and pushing changes"
+
+          git add -A
+          git commit -m "chore(release): bump package versions"
+          git push origin main
+
+          echo "Publishing"
+          for package in $(pnpm list --json --only-projects -r | jq -c '.[]'); do
+            name=$(echo $package | jq -r '.name')
+            path=$(echo $package | jq -r '.path')
+            cd $path
+            is_private=$(echo $package | jq '.private')
+            if [[ "$is_private" == "true" ]]; then
+              echo "Skipping private package: $name"
+              cd $root
+              continue
+            fi  
             echo "Publishing $name"
             pnpm publish --access public --force --no-git-checks
             echo "Published $name\n\n"
             cd $root
           done
 
-          git add -A
-          git commit -m "chore(release): bump package versions"
-          git push origin main
+          
       - name: Deploy Website to GitHub Pages
         if: github.ref == 'refs/heads/main'
         uses: peaceiris/actions-gh-pages@v3
