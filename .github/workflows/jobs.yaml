@@ -1,4 +1,4 @@
-name: Build, Test and Lint
+name: Build, Test, Lint and Publish (only on Main)
 
 on:
   push:
