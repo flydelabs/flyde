@@ -49,22 +49,25 @@ export function resolveCodePartDependencies(path: string): {
 } {
   const errors = [];
   const parts = [];
-  let module = requireReload(path);
 
-  if (isCodePart(module)) {
-    parts.push({ exportName: "default", part: module });
-  } else if (typeof module === "object") {
-    Object.entries(module).forEach(([key, value]) => {
-      if (isCodePart(value)) {
-        parts.push({ exportName: key, part: value });
-      } else {
-        errors.push(`Exported value "${key}" is not a valid CodePart`);
-      }
-    });
-  } else {
-    errors.push(`Exported value is not a valid CodePart`);
+  try {
+    let module = requireReload(path);
+    if (isCodePart(module)) {
+      parts.push({ exportName: "default", part: module });
+    } else if (typeof module === "object") {
+      Object.entries(module).forEach(([key, value]) => {
+        if (isCodePart(value)) {
+          parts.push({ exportName: key, part: value });
+        } else {
+          errors.push(`Exported value "${key}" is not a valid CodePart`);
+        }
+      });
+    } else {
+      errors.push(`Exported value is not a valid CodePart`);
+    }
+  } catch (e) {
+    errors.push(`Error loading module "${path}": ${e.message}`);
   }
-
   return { errors, parts };
 }
 
