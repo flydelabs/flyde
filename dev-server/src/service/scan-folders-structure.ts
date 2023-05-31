@@ -16,25 +16,27 @@ export const scanFolderStructure = (
     const filePath = join(path, file);
     const stats = lstatSync(filePath);
 
-    if (filter(file, path)) {
-      if (stats.isDirectory() && maxDepth > 0) {
-        res.push({
-          name: file,
-          children: scanFolderStructure(filePath, root, maxDepth - 1, filter),
-          isFolder: true,
-          fullPath: filePath,
-          relativePath: relative(root, filePath),
-        });
-      } else {
-        res.push({
-          name: file,
-          isFolder: false,
-          fullPath: filePath,
-          relativePath: relative(root, filePath),
-          isFlyde: file.endsWith(".flyde"),
-          isFlydeCode: file.endsWith(".flyde.js") || file.endsWith(".flyde.ts"),
-        });
-      }
+    if (!filter(filePath, root)) {
+      continue;
+    }
+
+    if (stats.isDirectory() && maxDepth > 0) {
+      res.push({
+        name: file,
+        children: scanFolderStructure(filePath, root, maxDepth - 1, filter),
+        isFolder: true,
+        fullPath: filePath,
+        relativePath: relative(root, filePath),
+      });
+    } else {
+      res.push({
+        name: file,
+        isFolder: false,
+        fullPath: filePath,
+        relativePath: relative(root, filePath),
+        isFlyde: file.endsWith(".flyde"),
+        isFlydeCode: file.endsWith(".flyde.js") || file.endsWith(".flyde.ts"),
+      });
     }
   }
   return res;

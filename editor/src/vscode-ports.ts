@@ -99,20 +99,42 @@ export const createVsCodePorts = (): EditorPorts => {
 // back-door for testing purposes
 window.addEventListener("message", (event) => {
   const { data } = event;
-  if (data && data.type === "__testInspectElements") {
-    const { selector } = data.payload;
-    const elements = document.querySelectorAll(selector);
+  if (data && data.type === "__webviewTestingCommand") {
+    let response: any;
+    let error: any;
+    switch (data.command) {
+      case "$$": {
+        const { selector } = data.params;
+        const elements = document.querySelectorAll(selector);
+        response = Array.from(elements).map((element) => {
+          return {
+            html: element.innerHTML,
+            text: element.textContent,
+            outerHtml: element.outerHTML,
+          };
+        });
+        break;
+      }
+      case "click": {
+        const { selector } = data.params;
+        const element = document.querySelector(selector);
+        if (element) {
+          element.click();
+          response = {};
+        } else {
+          error = `Element not found: ${selector}`;
+        }
+        break;
+      }
+      default: {
+        error = `Unknown command: ${data.command}`;
+      }
+    }
+
     const vscode = safelyAcquireApi();
-    const serializedElements = Array.from(elements).map((element) => {
-      return {
-        html: element.innerHTML,
-        text: element.textContent,
-        outerHtml: element.outerHTML,
-      };
-    });
 
     vscode.postMessage(
-      { type: "__inspectElementsResponse", payload: serializedElements },
+      { type: "__webviewTestingResponse", response, error },
       "*"
     );
   }
