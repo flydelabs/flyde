@@ -4,20 +4,12 @@ import { createService } from "./service/service";
 import { setupRemoteDebuggerServer } from "@flyde/remote-debugger/dist/setup-server";
 import { createServer } from "http";
 import { scanImportableParts } from "./service/scan-importable-parts";
-import {
-  deserializeFlow,
-  resolveCodePartDependencies,
-  resolveDependencies,
-} from "@flyde/resolver";
+import { deserializeFlow, resolveDependencies } from "@flyde/resolver";
 import { join } from "path";
 
-import { entries } from "@flyde/core";
 import resolveFrom = require("resolve-from");
-import { existsSync, readFileSync, writeFileSync } from "fs";
-import {
-  generateAndSavePart,
-  generatePartCodeFromPrompt,
-} from "./service/generate-part-from-prompt";
+import { readFileSync } from "fs";
+import { generateAndSavePart } from "./service/generate-part-from-prompt";
 
 export const runDevServer = (
   port: number,
