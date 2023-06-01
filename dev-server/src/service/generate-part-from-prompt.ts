@@ -2,85 +2,59 @@ import {
   CodePart,
   ImportableSource,
   ImportedPart,
+  RunPartFunction,
   randomInt,
 } from "@flyde/core";
 import { resolveCodePartDependencies } from "@flyde/resolver";
-import { existsSync, writeFile, writeFileSync } from "fs";
+import axios from "axios";
+import { existsSync, writeFileSync } from "fs";
 
-import { OpenAIApi, Configuration } from "openai";
 import { join } from "path";
 
-const primingNotice = `You create code-based parts for Flyde, a flow-based programming tool.
-This is how a part looks like:
-// fileName: limit-times.flyde.ts
-import { CodePart } from "@flyde/core";
-export const LimitTimes: CodePart = {
-  id: "Limit Times",
-  description: "Item will be emitted until the limit is reached",
-  inputs: {
-    item: { mode: "required", description: "The item to emit" },
-    times: {
-      mode: "required",
-      description: "The number of times to emit the item",
-    },
-    reset: { mode: "optional", description: "Reset the counter" },
-  },
-  outputs: { ok: {} },
-  run: function (inputs, outputs, adv) {
-    // magic here
-    const { state } = adv;
-    const { item, times, reset } = inputs;
-    const { ok } = outputs;
+async function generatePart(
+  prompt: string
+): Promise<{ code: string; fileName: string }> {
+  const { tokensUsed, response } = (
+    await axios.post("https://api.flyde.dev/generate", { prompt })
+  ).data;
 
-    if (typeof reset !== "undefined") {
-      state.set("val", 0);
-      return;
-    }
+  const [metadata, ...functionBody] = response.split("\n");
+  const [rawId, inputs, outputs, completionOutputs, reactiveInputs] = metadata
+    .split("|")
+    .map((s) => s.trim());
 
-    let curr = state.get("val") || 0;
-    curr++;
-    state.set("val", curr);
-    if (curr >= times) {
-      adv.onError(new Error(\`Limit of \$\{times\} reached\`));
-    } else {
-      ok.next(item);
-    }
-  },
-};
-// end of part
+  const id = rawId.replace(/id:?\s*/i, "");
+  const code = `
+import { CodePart } from "@flyde/runtime";
 
-you should reply only with code, no explanations
-use no libraries. Assume NodeJS. Avoid hardcoded values. Prefer APIs
 
+
+const rawInputs: string = "${inputs}";
+const rawOutputs: string = "${outputs}";
+const rawCompletionOutputs: string = "${completionOutputs}";
+const rawReactiveInputs: string = "${reactiveInputs}";
+
+export const Part: CodePart = {
+  id: "${id}",
+  inputs: (rawInputs ? rawInputs.split(",") : []).reduce<Record<string, {}>>((acc, curr) => {
+    acc[curr.trim()] = {};
+    return acc;
+  }, {}),
+  outputs: (rawOutputs ? rawOutputs.split(",") : []).reduce<Record<string, {}>>((acc, curr) => {
+    acc[curr.trim()] = {};
+    return acc;
+  }, {}),
+  completionOutputs: rawCompletionOutputs === "IMPLICIT" ? undefined : rawCompletionOutputs.split(","),
+  reactiveInputs: rawReactiveInputs === "NONE" ? undefined : rawReactiveInputs.split(","),
+  run: ${functionBody.join("\n")}
+}; 
 `;
 
-export async function generatePartCodeFromPrompt(
-  prompt: string,
-  apiKey: string
-) {
-  const configuration = new Configuration({
-    apiKey,
-  });
-  const openai = new OpenAIApi(configuration);
-  const completion = await openai.createChatCompletion({
-    model: "gpt-3.5-turbo",
-    messages: [
-      { role: "system", content: primingNotice },
-      {
-        role: "user",
-        content: `Create a part that does the following: ${prompt}`,
-      },
-    ],
-    temperature: 0.1,
-    n: 1,
-  });
+  const fileName = id.replace(/[^a-zA-Z0-9]/g, "-").toLowerCase();
 
-  const code = completion.data.choices[0].message?.content;
-  const fileName = code?.match(/fileName: (.*)\.flyde\.ts/)?.[1];
+  console.log({ code, functionBody });
 
-  console.log({ code, fileName });
-
-  return { fileName, code };
+  return { code, fileName };
 }
 
 export async function generateAndSavePart(
@@ -88,14 +62,16 @@ export async function generateAndSavePart(
   prompt: string,
   apiKey?: string
 ): Promise<ImportableSource> {
-  const { fileName, code } = await generatePartCodeFromPrompt(prompt, apiKey);
+  const { fileName, code } = await generatePart(prompt);
+
+  console.log({ fileName, code });
   let filePath = join(rootDir, `${fileName}.flyde.ts`);
   if (existsSync(filePath)) {
     filePath = filePath.replace(/\.flyde\.ts$/, `${randomInt(9999)}.flyde.ts`);
   }
 
   writeFileSync(filePath, code);
-  const maybePart = resolveCodePartDependencies(filePath)[0];
+  const maybePart = resolveCodePartDependencies(filePath).parts[0];
   if (!maybePart) {
     throw new Error("Generated part is corrupt");
   }

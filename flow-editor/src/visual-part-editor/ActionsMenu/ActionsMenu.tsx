@@ -240,10 +240,18 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
   const onAddAIPart = useCallback(
     async (prompt: string) => {
       setGeneratingPartTime(Date.now());
-      const response = await generatePartFromPrompt({ prompt });
-      setGeneratingPartTime(null);
-      onAction({ type: ActionType.AI, data: response });
-      setShowAIPromptModal(false);
+      try {
+        const response = await generatePartFromPrompt({ prompt });
+        setGeneratingPartTime(null);
+        onAction({ type: ActionType.AI, data: response });
+        setShowAIPromptModal(false);
+      } catch (e) {
+        setGeneratingPartTime(null);
+        AppToaster.show({
+          message: "Failed to generate part",
+          intent: "danger",
+        });
+      }
     },
     [generatePartFromPrompt, onAction]
   );
@@ -269,7 +277,10 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
       ) : null}
       {showAIPromptModal ? (
         <PromptAIMenu
-          onClose={() => setShowAIPromptModal(false)}
+          onClose={() => {
+            setShowAIPromptModal(false);
+            setGeneratingPartTime(null);
+          }}
           onSubmit={onAddAIPart}
           submitting={generatingPartTime !== null}
           submitTime={generatingPartTime}

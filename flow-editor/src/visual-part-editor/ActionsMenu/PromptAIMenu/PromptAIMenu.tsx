@@ -27,17 +27,17 @@ export const PromptAIMenu: React.FC<PromptAIMenuProps> = (props) => {
 
   const [progress, setProgress] = React.useState(0);
 
-  const { hasOpenAiToken } = usePorts();
+  // const { hasOpenAiToken } = usePorts();
 
-  const [openAiStatus, setOpenAiStatus] = React.useState<
-    "loading" | "enabled" | "disabled"
-  >("loading");
+  // const [openAiStatus, setOpenAiStatus] = React.useState<
+  //   "loading" | "enabled" | "disabled"
+  // >("enabled");
 
-  useEffect(() => {
-    hasOpenAiToken().then((val) =>
-      setOpenAiStatus(val ? "enabled" : "disabled")
-    );
-  }, [hasOpenAiToken]);
+  // useEffect(() => {
+  //   hasOpenAiToken().then((val) =>
+  //     setOpenAiStatus(val ? "enabled" : "disabled")
+  //   );
+  // }, [hasOpenAiToken]);
 
   const onSubmit = () => {
     setProgress(0.0);
@@ -76,13 +76,13 @@ export const PromptAIMenu: React.FC<PromptAIMenuProps> = (props) => {
           placeholder="Describe your part in details"
           fill
         />
-        {openAiStatus === "disabled" ? (
+        {/* {openAiStatus === "disabled" ? (
           <Callout intent={Intent.WARNING}>
             You need to set up your OpenAI API key in order to use this feature.
             Open the command palette and search for "Flyde: Set OpenAI API Key"
             to set it
           </Callout>
-        ) : null}
+        ) : null} */}
       </main>
       {props.submitTime ? (
         <div className="progress-bar-container">
@@ -96,7 +96,7 @@ export const PromptAIMenu: React.FC<PromptAIMenuProps> = (props) => {
             intent={Intent.PRIMARY}
             className="run-btn"
             disabled={
-              props.submitting || !prompt || openAiStatus === "disabled"
+              props.submitting || !prompt // ||  openAiStatus === "disabled"
             }
             loading={props.submitting}
             onClick={onSubmit}
