@@ -6,41 +6,14 @@ import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import Layout from "@theme/Layout";
 import HomepageFeatures from "@site/src/components/HomepageFeatures";
 import styles from "./index.module.css";
-import YouTube from 'react-player/youtube'
-
+import YouTube from "react-player/youtube";
 
 import "../css/global.scss";
 import { HeroExample } from "./_hero-example/HeroExample";
 
-
-const UseCases = () => {
-  return (
-    <strong className="integration-points">
-      <Typical
-        steps={[
-          "Discord Bots",
-          1200,
-          "Website Scrapers",
-          1200,
-          "Data Pipelines",
-          1200,
-          "APIs",
-          1200,
-          "CLI tools",
-          1200,
-          "Telegram Bots",
-          1200,
-          "Webhooks",
-          1200,
-          "The next big thing",
-          5000
-        ].map(s => typeof s === 'string' ? s + '.' : s)}
-        loop={Infinity}
-        wrapper="span"
-      />
-    </strong>
-  );
-};
+const Gradient: React.FC = ({ children }) => (
+  <span className="gradient">{children}</span>
+);
 
 function HomepageHeader() {
   const { siteConfig } = useDocusaurusContext();
@@ -56,21 +29,22 @@ function HomepageHeader() {
         </video>
       </div>
       <div className="container">
-        <h1 className="hero__title">{siteConfig.title}</h1>
+        <h1 className="hero__title">
+          <Gradient>Coding, Simplified:</Gradient> Visual Programming with Flyde
+        </h1>
         <p className="hero__subtitle">
-          Flyde is <em>open source</em> visual, flow-based programming tool, batteries-included.
-          <br />
-          Seamlessly integrates with traditional coding using the <a
+          Flyde, the <Gradient>AI-assisted</Gradient> visual programming tool
+          for{" "}
+          <a
             href="https://marketplace.visualstudio.com/items?itemName=flyde.flyde-vscode"
             target="_blank"
           >
-            VSCode extension
-          </a>.
-          <br/>
-          Build <UseCases/>
+            VSCode.
+          </a>
+          <br />
+          Simplifies the development of <Gradient>APIs, webhooks</Gradient>, and{" "}
+          <Gradient>bots.</Gradient>
         </p>
-        
-        
       </div>
     </header>
   );
@@ -78,10 +52,12 @@ function HomepageHeader() {
 
 export default function Home(): JSX.Element {
   const { siteConfig } = useDocusaurusContext();
+
   return (
     <Layout
-      title={`Visual Programming Tool`}
-      description="Flyde is a modern visual programming tool that fully integrates with your codebase"
+      title={`Flyde | AI-Assisted Visual Programming Tool`}
+      description="Flyde, the AI-assisted visual programming tool for VSCode.
+      Simplifies the development of APIs, webhooks, and bots."
     >
       <HomepageHeader />
       <HeroExample />
@@ -99,7 +75,7 @@ export default function Home(): JSX.Element {
             }
           />
           </div> */}
-      <main className="home-page-main-content">
+      <main className="home-page-main-content" data-theme="dark">
         <HomepageFeatures />
       </main>
     </Layout>

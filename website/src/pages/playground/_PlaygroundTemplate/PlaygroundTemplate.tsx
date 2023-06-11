@@ -1,44 +1,19 @@
-import React, {
-  Fragment,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { Fragment, useCallback, useState } from "react";
 import * as PubSub from "pubsub-js";
 import Layout from "@theme/Layout";
 import clsx from "clsx";
-import {
-  createNewPartInstance,
-  createRuntimePlayer,
-  fitViewPortToPart,
-  FlowEditor,
-  FlowEditorState,
-  FlydeFlowChangeType,
-  FlydeFlowEditorProps,
-  functionalChange,
-  RuntimePlayer,
-  toastMsg,
-  useDebounce,
-  vAdd,
-} from "@flyde/flow-editor";
+import { RuntimePlayer } from "@flyde/flow-editor";
 import { fakeVm } from "@site/src/fake-vm";
 import Link from "@docusaurus/Link";
 import {
-  BasePart,
   DynamicPartInput,
   execute,
   FlydeFlow,
-  isBasePart,
   keys,
-  noop,
-  Part,
   PartInputs,
-  PartInstance,
   PartOutput,
   ResolvedDependencies,
   ResolvedFlydeRuntimeFlow,
-  TRIGGER_PIN_ID,
 } from "@flyde/core";
 import { createHistoryPlayer } from "../../../components/EmbeddedFlyde/createHistoryPlayer";
 import { createRuntimeClientDebugger } from "../../../components/EmbeddedFlyde/createRuntimePlayerDebugger";
@@ -48,9 +23,6 @@ import "./PlaygroundTemplate.scss";
 import "@flyde/flow-editor/src/index.scss";
 
 import { Resizable } from "react-resizable";
-import produce from "immer";
-import BrowserOnly from "@docusaurus/BrowserOnly";
-import { EditorDebuggerClient } from "@site/../remote-debugger/dist";
 import { EmbeddedFlyde } from "@site/src/components/EmbeddedFlyde/EmbeddedFlyde";
 
 (global as any).vm2 = fakeVm;

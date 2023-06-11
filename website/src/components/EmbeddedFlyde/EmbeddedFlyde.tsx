@@ -44,7 +44,7 @@ import { EditorDebuggerClient } from "@site/../remote-debugger/dist";
 
 const historyPlayer = createHistoryPlayer();
 
-const initialPadding = [0, 10] as [number, number];
+const initialPadding = [0, 0] as [number, number];
 
 export interface EmbeddedFlydeProps {
   flowProps: {
