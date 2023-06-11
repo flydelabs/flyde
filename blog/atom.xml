@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://www.flyde.dev/blog</id>
-    <title>Visual Programming for the Modern Web Blog</title>
+    <title>Coding, Simplified: Visual Programming with Flyde Blog</title>
     <updated>2023-01-22T00:00:00.000Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://www.flyde.dev/blog"/>
-    <subtitle>Visual Programming for the Modern Web Blog</subtitle>
+    <subtitle>Coding, Simplified: Visual Programming with Flyde Blog</subtitle>
     <icon>https://www.flyde.dev/img/favicon.ico</icon>
     <entry>
         <title type="html"><![CDATA[Introducing Flyde]]></title>
