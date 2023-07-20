@@ -1,11 +1,33 @@
-# Flyde: Visual Flow-Based Programming
+<div align="center">
+<h1>Flyde: Visual Flow-Based Programming</h1>
+</div>
 
-[Flyde](https://flyde.dev) is a powerful visual flow-based programming toolkit that enables you to create and edit code using a visual flow-based programming interface. With Flyde, you can build applications quickly and intuitively, making it ideal for novice developers, non-developer technical teams, and experienced developers who want to prototype and test ideas fast.
+<div align="center">
+<a href="https://flyde.dev">Flyde</a> is a powerful visual flow-based programming toolkit that enables you to create and edit code using a visual flow-based programming interface. With Flyde, you can build backend flows quickly and intuitively, making it ideal for novice developers, non-developer technical teams, and experienced developers who want to prototype and test ideas fast.
+<br/>
+<br/>
+  
+[![Official Website](https://img.shields.io/badge/Official%20Website-flyde.dev-blue?style=flat&logo=world&logoColor=white)](https://flyde.dev.com)
+[![Discord Follow](https://dcbadge.vercel.app/api/server/x7t4tjZQP8?style=flat)](https://discord.com/invite/x7t4tjZQP8)
+[![GitHub Repo stars](https://img.shields.io/github/stars/flydehq/flyde?style=social)](https://github.com/flydehq/flyde)
+[![@FlydeDev](https://img.shields.io/twitter/follow/FlydeDev?style=social)](https://twitter.com/FlydeDev)
+
+<strong>VSCode Extension ✔️</strong> · <strong>Runtime Library ✔️</strong> · <strong>Integrates with Existing Code ✔️</strong>
+<br/>
+<strong>✔Rich Standard Library ✔️</strong> · <strong>Visual Debugger ✔️</strong> · <strong>AI-Assisted Node Creation ✔️</strong> 
+<br/>
+<strong>TypeScript Support ✔️</strong> · <strong>TypeScript Support ✔️</strong>
+
+<br/>
+<br/>
+</div>
+
+
+
 
 ![Flyde example](https://github.com/FlydeHQ/flyde-vscode/raw/main/media/walkthrough/run-flow.gif)
 
 ## Features
-
 - Intuitive flow-based programming interface for creating and editing programs
 - Real-time visual debugger for easy error handling and debugging
 - Integrates with your existing codebase and workflows
