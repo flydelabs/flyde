@@ -7,16 +7,16 @@ imports:
     - Boolean Split
     - Equals
     - Property Equals
+    - Interval
+    - Log
+    - Empty String
   ./tasks/AddTask.flyde.ts:
     - Add Task
   ./tasks/GetTasks.flyde.ts:
     - Get Tasks
   Discord.flyde.ts:
     - Discord Bot
-  "@flyde/runtime":
-    - Interval
-    - Log
-    - Empty String
+    
 part:
   instances:
     - pos:

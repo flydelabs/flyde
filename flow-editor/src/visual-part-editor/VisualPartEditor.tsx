@@ -192,6 +192,7 @@ export type VisualPartEditorProps = {
   instancesWithErrors?: Set<string>;
 
   initialPadding?: [number, number];
+  disableScrolling?: boolean;
 };
 
 type InlineValueTargetExisting = {
@@ -250,6 +251,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
         resolvedDependencies,
         queuedInputsData: queueInputsData,
         initialPadding,
+        disableScrolling,
       } = props;
 
       const { onImportPart } = useDependenciesContext();
@@ -517,10 +519,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             vpSize,
             initialPadding
           );
-          if (!props.thumbnailMode) {
-            // hack to make project view work nicely
-            setViewPort(vp);
-          }
+          setViewPort(vp);
           // hackidy hack
           const timer = setTimeout(() => {
             const vp = fitViewPortToPart(
@@ -1645,6 +1644,9 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             e.preventDefault();
             e.stopPropagation();
           } else {
+            if (disableScrolling) {
+              return;
+            }
             const dx = e.deltaX;
             const dy = e.deltaY;
 
@@ -1657,7 +1659,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             e.preventDefault();
           }
         },
-        [onZoom, setViewPort, viewPort]
+        [disableScrolling, onZoom, setViewPort, viewPort]
       );
 
       useEffect(() => {

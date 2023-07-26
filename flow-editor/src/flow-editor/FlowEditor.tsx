@@ -68,6 +68,7 @@ export type FlydeFlowEditorProps = {
   hideTemplatingTips?: boolean;
 
   initialPadding?: [number, number];
+  disableScrolling?: boolean;
 };
 
 const maxUndoStackSize = 50;
@@ -357,6 +358,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
               queuedInputsData={queuedInputsData}
               initialPadding={props.initialPadding}
               instancesWithErrors={instancesWithErrors}
+              disableScrolling={props.disableScrolling}
             />
 
             {omniBarVisible ? (

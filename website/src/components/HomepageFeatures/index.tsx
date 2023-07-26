@@ -15,7 +15,7 @@ const FeatureList: FeatureItem[] = [
     description: (
       <>
         Flyde's visual interface brings simplicity to coding. Beginners can
-        build complex systems without diving deep into complex syntax or
+        build complex systems without diving deep into complex syntax or{" "}
         <mark>asynchronous and concurrent</mark> programming. It's a
         user-friendly way to code, focusing on the big picture, not the small
         details.
@@ -30,6 +30,19 @@ const FeatureList: FeatureItem[] = [
         Flyde integrates with AI to enable users to turn free text into code
         components. Let AI take care of the inner workings,{" "}
         <mark>while controlling the bigger picture!</mark>
+      </>
+    ),
+  },
+  {
+    title: "Visual Debugger",
+    Svg: require("@site/static/img/undraw_visual.svg").default,
+    description: (
+      <>
+        Flyde's visual debugger provides real-time feedback, making it easier to
+        understand, track, and fix issues in your software. It highlights active
+        parts and <mark>visually indicates the flow of data,</mark> enabling
+        both beginners and experienced developers to quickly identify and
+        resolve problems in their systems.
       </>
     ),
   },
@@ -58,28 +71,14 @@ const FeatureList: FeatureItem[] = [
     ),
   },
   {
-    title: "Visual Debugger",
-    Svg: require("@site/static/img/undraw_visual.svg").default,
-    description: (
-      <>
-        Flyde's visual debugger provides real-time feedback, making it easier to
-        understand, track, and fix issues in your software. It highlights active
-        parts and <mark>visually indicates the flow of data,</mark> enabling
-        both beginners and experienced developers to quickly identify and
-        resolve problems in their systems.
-      </>
-    ),
-  },
-  {
     title: "Pre-built Components",
     Svg: require("@site/static/img/undraw_features.svg").default,
     description: (
       <>
-        Jumpstart your development with Flyde's extensive library of pre-built
-        components. Whether you need to interact with the file system, make HTTP
-        requests, manipulate lists, or handle string operations, Flyde has you
-        covered. These components not only save you time but also help you avoid
-        common coding pitfalls, letting you focus on building your application.
+        Boost your development with Flyde's pre-built components. Simplify file
+        system interaction, HTTP requests, list manipulation, and string
+        operations. With Flyde, save time, avoid pitfalls, and focus on building
+        your application.
       </>
     ),
   },

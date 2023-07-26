@@ -39,6 +39,7 @@ import "@flyde/flow-editor/src/index.scss";
 import produce from "immer";
 import BrowserOnly from "@docusaurus/BrowserOnly";
 import { EditorDebuggerClient } from "@site/../remote-debugger/dist";
+import { useEventCallback } from "usehooks-ts";
 
 (global as any).vm2 = fakeVm;
 
@@ -236,6 +237,7 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = (props) => {
     hideTemplatingTips: true,
     initialPadding,
     onExtractInlinePart: noop as any,
+    disableScrolling: true,
   };
 
   useEffect(() => {
