@@ -11,9 +11,11 @@
     text-align: center;
     position: relative;
 
-    h1 {
-      padding-left: 5rem;
-      padding-right: 5rem;
+    @media only screen and (min-width: 600px) {
+      h1 {
+        padding-left: 5rem;
+        padding-right: 5rem;
+      }
     }
   }
 

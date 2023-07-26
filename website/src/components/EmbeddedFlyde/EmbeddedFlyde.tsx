@@ -236,6 +236,7 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = (props) => {
     hideTemplatingTips: true,
     initialPadding,
     onExtractInlinePart: noop as any,
+    disableScrolling: true,
   };
 
   useEffect(() => {

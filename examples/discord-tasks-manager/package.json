@@ -10,7 +10,6 @@
     "@flyde/core": "latest",
     "@flyde/resolver": "latest",
     "@flyde/runtime": "latest",
-    "@flyde/stdlib": "latest",
     "@types/lokijs": "^1.5.7",
     "body-parser": "^1.20.1",
     "dotenv": "^16.0.3",

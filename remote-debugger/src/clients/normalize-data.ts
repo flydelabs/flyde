@@ -12,6 +12,10 @@ export const normalizeData = (data: any) => {
 
     const seen = new WeakSet();
     const normalize = (data: any) => {
+      if (typeof data === "bigint") {
+        return data.toString();
+      }
+
       if (typeof data !== "object" || Array.isArray(data)) {
         return data;
       }

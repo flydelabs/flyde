@@ -26,8 +26,9 @@ A discord bot that manages a simple to-do list. Built using:
 7. Interact with your bot and see parts lighting up!
 
 ## Next steps
+
 1. Send a message when an unsupported command is sent
 2. Add a command to delete all tasks
-3. Send a DM to the assignee when a task is created with them as assignee
+3. Send a DM to the assignee when a task is created with them as the assignee
 
 Looking to learn more about Flyde? Visit the official website at https://www.flyde.dev
