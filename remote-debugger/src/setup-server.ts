@@ -14,7 +14,7 @@ import { Server } from "socket.io";
 import { Express } from "express";
 import { HistoryPayload } from ".";
 
-const debug = debugLogger(`runtime-server`);
+const debug = debugLogger(`remote-debugger:server`);
 
 const MAX_LAST_EVENTS = 100;
 const MAX_LAST_EVENTS_TAPE_SIZE = 10000;

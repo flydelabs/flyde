@@ -15,7 +15,7 @@ import {
 } from "../common";
 import { normalizeData } from "./normalize-data";
 
-const debug = debugLogger("debugger-runtime-client");
+const debug = debugLogger("remote-debugger:runtime-client");
 
 export type RuntimeDebuggerClient = {
   onChange: (cb: RemoteDebuggerCallback<{}>) => RemoteDebuggerCancelFn;

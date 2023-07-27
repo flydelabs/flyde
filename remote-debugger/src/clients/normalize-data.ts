@@ -1,5 +1,7 @@
-import { PartInstanceError } from "@flyde/core";
+import { debugLogger } from "@flyde/core";
 import { serializeError } from "serialize-error";
+
+const debug = debugLogger("remote-debugger:normalize-data");
 
 export const normalizeData = (data: any) => {
   // if it's an object, mark any circular references as "<<circular>>" (using a WeakRef)
@@ -20,13 +22,25 @@ export const normalizeData = (data: any) => {
         return data;
       }
 
+      if (data === null) {
+        return data;
+      }
+
       if (seen.has(data)) {
         return "[Circular]";
       }
       try {
         seen.add(data);
       } catch (e) {
-        console.error(typeof data, data);
+        debug(
+          "Error adding to WeakSet",
+          "data:",
+          data,
+          `type:`,
+          typeof data,
+          `error:`,
+          e
+        );
       }
       if (Array.isArray(data)) {
         return data.map(normalize);

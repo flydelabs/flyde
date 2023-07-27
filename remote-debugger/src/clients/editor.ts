@@ -12,7 +12,7 @@ import {
 
 import { HistoryPayload } from "..";
 
-const debug = debugLogger("runtime-editor-client");
+const debug = debugLogger("remote-debugger:editor-client");
 
 export type GetPinHistoryDto = {
   id?: string;
