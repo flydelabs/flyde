@@ -19,6 +19,13 @@ export interface AnalyticsEventsMap {
   editReactiveInputs: { count: number };
   editCompletionOutputs: { count: number };
   togglePinSticky: { isSticky: boolean };
+  "generatePartFromPrompt:start": { promptLength: number };
+  "generatePartFromPrompt:success": {
+    totalTime: number;
+    inputs: string[];
+    outputs: string[];
+  };
+  "generatePartFromPrompt:failure": { error: string };
 }
 
 export type AnalyticsEvent = keyof AnalyticsEventsMap;
