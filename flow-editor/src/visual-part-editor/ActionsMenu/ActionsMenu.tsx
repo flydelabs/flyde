@@ -97,7 +97,7 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
     setShowAddPartMenu(false);
   }, []);
 
-  const { onRunFlow, generatePartFromPrompt } = usePorts();
+  const { onRunFlow, generatePartFromPrompt, reportEvent } = usePorts();
 
   const _runFlow = useCallback<typeof onRunFlow>(
     (inputs) => {
@@ -239,9 +239,20 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
 
   const onAddAIPart = useCallback(
     async (prompt: string) => {
-      setGeneratingPartTime(Date.now());
+      const startTime = Date.now();
+      setGeneratingPartTime(startTime);
       try {
+        reportEvent("generatePartFromPrompt:start", {
+          promptLength: prompt.length,
+        });
         const response = await generatePartFromPrompt({ prompt });
+        const { inputs, outputs } = response.importablePart.part;
+        const totalTime = Date.now() - startTime;
+        reportEvent("generatePartFromPrompt:success", {
+          totalTime,
+          inputs: Object.keys(inputs),
+          outputs: Object.keys(outputs),
+        });
         setGeneratingPartTime(null);
         onAction({ type: ActionType.AI, data: response });
         setShowAIPromptModal(false);
@@ -251,9 +262,12 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
           message: "Failed to generate part",
           intent: "danger",
         });
+        reportEvent("generatePartFromPrompt:failure", {
+          error: e.message,
+        });
       }
     },
-    [generatePartFromPrompt, onAction]
+    [generatePartFromPrompt, onAction, reportEvent]
   );
 
   return (

@@ -5,6 +5,7 @@
 <div align="center">
 <a href="https://flyde.dev">Flyde</a> is a powerful visual flow-based programming toolkit that enables you to create and edit code using a visual flow-based programming interface. With Flyde, you can build backend flows quickly and intuitively, making it ideal for novice developers, non-developer technical teams, and experienced developers who want to prototype and test ideas fast.
 <br/>
+
 <br/>
   
 [![Official Website](https://img.shields.io/badge/Official%20Website-flyde.dev-blue?style=flat&logo=world&logoColor=white)](https://flyde.dev.com)
@@ -14,7 +15,7 @@
 
 <strong>VSCode Extension ✔️</strong> · <strong>Runtime Library ✔️</strong> · <strong>Integrates with Existing Code ✔️</strong>
 <br/>
-<strong>✔Rich Standard Library ✔️</strong> · <strong>Visual Debugger ✔️</strong> · <strong>AI-Assisted Node Creation ✔️</strong> 
+<strong>✔Rich Standard Library ✔️</strong> · <strong>Visual Debugger ✔️</strong> · <strong>AI-Assisted Node Creation ✔️</strong>
 <br/>
 <strong>TypeScript Support ✔️</strong> · <strong>TypeScript Support ✔️</strong>
 
@@ -22,12 +23,10 @@
 <br/>
 </div>
 
-
-
-
 ![Flyde example](https://github.com/FlydeHQ/flyde-vscode/raw/main/media/walkthrough/run-flow.gif)
 
 ## Features
+
 - Intuitive flow-based programming interface for creating and editing programs
 - Real-time visual debugger for easy error handling and debugging
 - Integrates with your existing codebase and workflows
@@ -86,13 +85,13 @@ No. Textual coding excels in many areas, such as implementing algorithms, which 
 
 Flyde hasn't been optimized for runtime performance or benchmarked yet, so it should be slower than writing regular code. Just as JavaScript is slower than C, abstractions come at a cost. However, numerous ideas can improve performance, so it's safe to say performance will improve significantly in the future.
 
-### Which Languages are Supported?
+### Which Languages Are Supported?
 
 Currently, only JavaScript and TypeScript are supported. However, since Flyde is a higher-level abstraction, there's no real logical barrier preventing support for other languages in the future.
 
 ### What Inspired You to Build Flyde?
 
-Years of drawing and reviewing software designs on whiteboards led me to dream of a "run" button in the corner of the whiteboard. Modern development involves a lot of "glue" code, concurrency, asynchronicity, and third-party APIs. I find it hard to believe that developers will continue coding the same way in 10 years, and I think we're ready for the next abstraction. Flyde is my attempt to make that happen and lower the barrier for developers to create complex software, just as Assembly did for punched card programming, and C did for Assembly.
+Years of drawing and reviewing software designs on whiteboards led me to dream of a "run" button in the corner of the whiteboard. Modern development involves a lot of "glue" code, concurrency, asynchronicity, and third-party APIs. I find it hard to believe that developers will continue coding the same way in 10 years, and I think we're ready for the next level of abstraction. Flyde is my attempt to make that happen and lower the barrier for developers to create complex software, just as Assembly did for punched card programming, and C did for Assembly.
 
 ---
 
