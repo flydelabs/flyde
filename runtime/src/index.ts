@@ -49,7 +49,7 @@ export function loadFlowFromContent<Inputs>(
   const mainNode: ImportedNode = {
     ...flow.node,
     source: { path: fullFlowPath, export: "n/a" },
-  }; // TODO - fix the need for imported visual parts to declare an export source.
+  }; // TODO - fix the need for imported visual nodes to declare an export source.
 
   deps[mainNode.id] = mainNode;
 

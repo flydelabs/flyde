@@ -44,19 +44,19 @@ const getRefNodeIds = (node: VisualNode): string[] => {
 
 export function resolveCodeNodeDependencies(path: string): {
   errors: string[];
-  parts: { exportName: string; node: CodeNode }[];
+  nodes: { exportName: string; node: CodeNode }[];
 } {
   const errors = [];
-  const parts = [];
+  const nodes = [];
 
   try {
     let module = requireReload(path);
     if (isCodeNode(module)) {
-      parts.push({ exportName: "default", node: module });
+      nodes.push({ exportName: "default", node: module });
     } else if (typeof module === "object") {
       Object.entries(module).forEach(([key, value]) => {
         if (isCodeNode(value)) {
-          parts.push({ exportName: key, node: value });
+          nodes.push({ exportName: key, node: value });
         } else {
           errors.push(`Exported value "${key}" is not a valid CodeNode`);
         }
@@ -67,7 +67,7 @@ export function resolveCodeNodeDependencies(path: string): {
   } catch (e) {
     errors.push(`Error loading module "${path}": ${e.message}`);
   }
-  return { errors, parts };
+  return { errors, nodes };
 }
 
 export function isCodeNodePath(path: string): boolean {
@@ -84,9 +84,9 @@ export function resolveDependencies(
   const imports = flow.imports;
 
   const inverseImports = Object.entries(imports ?? {}).reduce((acc, curr) => {
-    const [module, parts] = curr;
+    const [module, nodes] = curr;
 
-    const obj = parts.reduce(
+    const obj = nodes.reduce(
       (acc, curr) => ({ ...acc, [curr as string]: module }),
       {}
     );
@@ -136,7 +136,7 @@ export function resolveDependencies(
         if (isCodeNodePath(path)) {
           return [
             ...acc,
-            ...resolveCodeNodeDependencies(path).parts.map(
+            ...resolveCodeNodeDependencies(path).nodes.map(
               ({ node, exportName }) => ({
                 node,
                 source: {
@@ -212,7 +212,7 @@ export function resolveDependencies(
   const mainNode: ImportedNodeDef = {
     ...flow.node,
     source: { path: fullFlowPath, export: "n/a" },
-  }; // TODO - fix the need for imported visual parts to declare an export source.
+  }; // TODO - fix the need for imported visual nodes to declare an export source.
 
   return { ...deps, [mainNode.id]: mainNode };
 }

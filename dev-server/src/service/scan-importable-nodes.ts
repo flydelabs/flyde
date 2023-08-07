@@ -44,11 +44,11 @@ export async function scanImportableNodes(
   if (!depsNames.includes("@flyde/stdlib")) {
     debugLogger("Using built-in stdlib");
 
-    const parts = Object.fromEntries(
+    const nodes = Object.fromEntries(
       Object.entries(StdLib).filter((pair) => isBaseNode(pair[1]))
     ) as NodesDefCollection;
     builtInStdLib = {
-      "@flyde/stdlib": parts,
+      "@flyde/stdlib": nodes,
     };
   }
 
@@ -58,17 +58,17 @@ export async function scanImportableNodes(
     .filter((file) => !file.relativePath.endsWith(filename))
     .reduce<Record<string, Record<string, BaseNode>>>((acc, file) => {
       if (isCodeNodePath(file.fullPath)) {
-        const { errors, parts } = resolveCodeNodeDependencies(file.fullPath);
+        const { errors, nodes } = resolveCodeNodeDependencies(file.fullPath);
         allErrors.push(
           ...errors.map((err) => ({ path: file.fullPath, message: err }))
         );
 
-        const partsObj = parts.reduce(
+        const nodesObj = nodes.reduce(
           (obj, { node }) => ({ ...obj, [node.id]: node }),
           {}
         );
         const relativePath = relative(join(fileRoot, ".."), file.fullPath);
-        return { ...acc, [relativePath]: partsObj };
+        return { ...acc, [relativePath]: nodesObj };
       }
 
       try {

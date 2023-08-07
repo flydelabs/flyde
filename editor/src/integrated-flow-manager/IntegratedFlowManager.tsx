@@ -94,7 +94,7 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
 
   const [menuSelectedItem, setMenuSelectedItem] = React.useState<string>();
 
-  // to avoid re-resolving imported flows, this holds parts that were imported in the current session
+  // to avoid re-resolving imported flows, this holds nodes that were imported in the current session
   const [importedNodes, setImportedNodes] = React.useState<ImportableSource[]>(
     []
   );
@@ -270,9 +270,9 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
         const { importables, errors } = imps;
 
         const newImportables = Object.entries(importables).reduce<any[]>(
-          (acc, [module, partsMap]) => {
-            const parts = values(partsMap);
-            const nodeAndModule = parts.map((node) => ({ module, node }));
+          (acc, [module, nodesMap]) => {
+            const nodes = values(nodesMap);
+            const nodeAndModule = nodes.map((node) => ({ module, node }));
             return acc.concat(nodeAndModule);
           },
           []
@@ -288,7 +288,7 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
       const existingModuleImports =
         (flow.imports || {})[importableNode.module] || [];
 
-      setImportedNodes((parts) => [...parts, importableNode]);
+      setImportedNodes((nodes) => [...nodes, importableNode]);
 
       const newDeps = {
         ...resolvedDependencies,

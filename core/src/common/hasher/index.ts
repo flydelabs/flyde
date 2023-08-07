@@ -49,7 +49,7 @@ export const hashNode = (node: Node, ignorePos = true) => {
     const str = JSON.stringify({ fnCode, customViewCode, ...baseNode });
     return md5(str);
   }
-  throw new Error(`Hashing code parts unsupported`);
+  throw new Error(`Hashing code nodes unsupported`);
 };
 
 export const hashFlow = (flow: FlydeFlow) => {

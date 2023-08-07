@@ -35,7 +35,7 @@ const someNode: VisualNode = {
   outputsPosition: { r: { x: 20, y: 500 } },
 };
 
-describe("parts hasher", () => {
+describe("nodes hasher", () => {
   describe("visual node", () => {
     it("creates difference hash for different id", () => {
       const p2 = produce(someNode, (d) => {
@@ -70,7 +70,7 @@ describe("parts hasher", () => {
       assert.notEqual(h1, h2);
     });
 
-    it("hashes parts disregarding i/o position", () => {
+    it("hashes nodes disregarding i/o position", () => {
       const part2 = produce(someNode, (draft) => {
         draft.inputsPosition.a = randomPos();
         draft.outputsPosition.r = randomPos();
@@ -82,7 +82,7 @@ describe("parts hasher", () => {
       assert.equal(h1, h2);
     });
 
-    it("hashes parts disregarding instance position when ignore enabled", () => {
+    it("hashes nodes disregarding instance position when ignore enabled", () => {
       const part2 = produce(someNode, (draft) => {
         draft.instances[0]!.pos = randomPos();
       });

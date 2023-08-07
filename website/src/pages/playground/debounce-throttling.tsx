@@ -29,7 +29,7 @@ const META_DATA = {
   key: "debounce-throttling",
 };
 
-const extraInfo = `Cool right? you can try duplicating parts by pressing shift+D. Connect parts together by clicking on the source node's output pin and then on a the targets node's input pin`;
+const extraInfo = `Cool right? you can try duplicating nodes by pressing shift+D. Connect nodes together by clicking on the source node's output pin and then on a the targets node's input pin`;
 
 export default function DebounceThrottlingExample(): JSX.Element {
   const result = useRef(dynamicOutput());

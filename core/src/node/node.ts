@@ -79,7 +79,7 @@ export interface BaseNode {
    */
   id: string;
   /**
-   * Is displayed in the visual editor and used to search for parts.
+   * Is displayed in the visual editor and used to search for nodes.
    */
   description?: string;
   /**
@@ -191,7 +191,7 @@ export interface InlineValueNode extends BaseNode {
  * A visual node is what makes Flyde special. It represents a node created visually in the editor.
  * It consists of node instances and connections. Each node instance will either refer to an imported node (by id), or include the node "inline".
  * Each connection will represent a "wire" between 2 instances, or between an instance and a main input/output pin.
- * Connecting to a main input or output is the way that a visual parts' internal implementation can communicate with its external API.
+ * Connecting to a main input or output is the way that a visual nodes' internal implementation can communicate with its external API.
  */
 
 export interface VisualNode extends BaseNode {
@@ -199,7 +199,7 @@ export interface VisualNode extends BaseNode {
   inputsPosition: OMap<Pos>;
   /** a map holding the position for each main output. Used in the editor only. */
   outputsPosition: OMap<Pos>;
-  /** the visual parts internal node instances, either referring to other parts by id or by value (inline) */
+  /** the visual nodes internal node instances, either referring to other nodes by id or by value (inline) */
   instances: NodeInstance[];
   /** each connection represents a "wire" between 2 different instances, or between an instance and a main input/output*/
   connections: ConnectionData[];

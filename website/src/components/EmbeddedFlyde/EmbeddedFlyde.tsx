@@ -191,11 +191,11 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = (props) => {
 
   const onRequestImportables: DependenciesContextData["onRequestImportables"] =
     async () => {
-      const parts = Object.values(
+      const nodes = Object.values(
         await import("@flyde/stdlib/dist/all-browser")
       ).filter(isBaseNode) as ImportedNode[];
       return {
-        importables: parts.map((b) => ({
+        importables: nodes.map((b) => ({
           node: { ...b, source: { path: "n/a", export: "n/a" } },
           module: "@flyde/stdlib",
         })),

@@ -4,7 +4,7 @@ import { CodeNode, Node } from "@site/../core";
 
 import markdownTable from "markdown-table";
 
-const data: Record<string, Node> = require("@flyde/stdlib/dist/parts.json");
+const data: Record<string, Node> = require("@flyde/stdlib/dist/nodes.json");
 
 // group data object by "namespace"
 const groupedData = Object.values(data).reduce((acc, node) => {
@@ -24,10 +24,10 @@ const groupedData = Object.values(data).reduce((acc, node) => {
 
 const entries = Object.entries<CodeNode[]>(groupedData);
 
-const groupAndTables = entries.map(([ns, parts]) => {
+const groupAndTables = entries.map(([ns, nodes]) => {
   const rows = [
     ["Id", "Description", "Inputs", "Outputs"],
-    ...parts.map((node) => {
+    ...nodes.map((node) => {
       if (!node.inputs || !node.outputs) {
         console.error({ node });
         throw new Error("Node is missing inputs or outputs");

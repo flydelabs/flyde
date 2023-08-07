@@ -47,7 +47,7 @@ export const groupSelected = async (
       ? nodeInstance(createInsId(visualNode), visualNode.id, {}, midPos)
       : inlineNodeInstance(createInsId(visualNode), visualNode, {}, midPos);
 
-  // replace relevant parts with new node
+  // replace relevant nodes with new node
   const newInstancesArr = instances.filter((ins) => {
     return selected.indexOf(ins.id) === -1;
   });

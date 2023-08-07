@@ -40,7 +40,7 @@ export const MenuAddSection: React.FC<MenuAddSectionProps> = (props) => {
       <input
         className="bp3-input"
         type="search"
-        placeholder="Search for parts"
+        placeholder="Search for nodes"
         dir="auto"
         autoFocus={true}
         value={searchTerm}
@@ -49,7 +49,7 @@ export const MenuAddSection: React.FC<MenuAddSectionProps> = (props) => {
       <div style={{ marginTop: 10 }}>
         {renderedInstances.length === 0
           ? "No results"
-          : "Double click on parts to add them"}
+          : "Double click on nodes to add them"}
       </div>
       {renderedInstances}
       {/* <div className='ins-wrapper' onDoubleClick={() => props.onAdd(part1)}>

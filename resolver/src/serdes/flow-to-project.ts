@@ -6,8 +6,8 @@
 //     if (flow.main) {
 //         resolvedNodes.Main = flow.main;
 //     }
-//     if (flow.parts) {
-//         resolvedNodes = {...resolvedNodes, ...flow.parts};
+//     if (flow.nodes) {
+//         resolvedNodes = {...resolvedNodes, ...flow.nodes};
 //     }
 
 //     for (const key in resolvedNodes) {

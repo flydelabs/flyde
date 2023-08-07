@@ -1702,9 +1702,9 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           return acc;
         }, new Map<string, string[]>());
 
-        /* the parts output are targets for connections therefore they are fed into the "validInputs" map */
+        /* the nodes output are targets for connections therefore they are fed into the "validInputs" map */
         validInputs.set(THIS_INS_ID, keys(node.outputs));
-        /* the parts inputs are targets for connections therefore they are fed into the "validOutputs" map */
+        /* the nodes inputs are targets for connections therefore they are fed into the "validOutputs" map */
         validOutputs.set(THIS_INS_ID, keys(node.inputs));
 
         const orphanConnections = connections.filter((conn) => {

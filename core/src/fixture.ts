@@ -437,8 +437,8 @@ export const spreadList = conciseCodeNode({
   },
 });
 
-export const testNodesCollectionWith = (...parts: Node[]): NodesCollection => {
-  return parts.reduce<NodesCollection>(
+export const testNodesCollectionWith = (...nodes: Node[]): NodesCollection => {
+  return nodes.reduce<NodesCollection>(
     (acc, p) => ({ ...acc, [p.id]: p }),
     testNodesCollection
   );

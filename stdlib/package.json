@@ -4,10 +4,6 @@
     "description": "Flyde's StdLib",
     "flyde": {
         "exposes": [
-            "parts/*.flyde",
-            "parts/*.flyde.js",
-            "parts/**/*.flyde.js",
-            "parts/**/*.flyde",
             "dist/**/*.flyde.js"
         ],
         "typings": "flyde-typings.d.ts"

@@ -116,7 +116,7 @@ describe("execute", () => {
     ],
   };
 
-  describe("visual parts", () => {
+  describe("visual nodes", () => {
     it("works with a single piece inside", () => {
       const n1 = dynamicNodeInput();
       const n2 = dynamicNodeInput();
@@ -154,7 +154,7 @@ describe("execute", () => {
       assert.equal(s.lastCall.args[0], (num + 1) * 2);
     });
 
-    it("compiles visual parts with the right inputs and outputs", () => {
+    it("compiles visual nodes with the right inputs and outputs", () => {
       const visualNode: VisualNode = {
         id: "apart",
         inputs: { a: nodeInput(), b: nodeInput() },
@@ -170,7 +170,7 @@ describe("execute", () => {
       assert.deepEqual(keys(node.inputs), keys(visualNode.inputs));
     });
 
-    it("compiles visual parts with the right inputs and outputs when inputs have modes", () => {
+    it("compiles visual nodes with the right inputs and outputs when inputs have modes", () => {
       const visualNode: VisualNode = {
         id: "apart",
         inputs: {
@@ -633,7 +633,7 @@ describe("execute", () => {
         );
       });
 
-      it("is called for all parts inside the group", () => {
+      it("is called for all nodes inside the group", () => {
         const n = dynamicNodeInput();
         const r = dynamicOutput();
 

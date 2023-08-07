@@ -252,7 +252,7 @@ export const AddNodeMenu: React.FC<AddNodeMenuProps> = (props) => {
           <Callout className="callout" intent="primary">
             Can't find a suitable node? Create one yourself!{" "}
             <a
-              href="https://www.flyde.dev/docs/code-parts"
+              href="https://www.flyde.dev/docs/code-nodes"
               target="_blank"
               rel="noreferrer"
             >

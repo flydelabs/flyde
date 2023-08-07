@@ -211,7 +211,7 @@ describe("main ", () => {
       assert.equal(s.lastCall.args[0], num1 + num2);
     });
 
-    it("works with nested parts", () => {
+    it("works with nested nodes", () => {
       const add1mul2twice = {
         id: "a1m2x2",
         instances: [
@@ -254,7 +254,7 @@ describe("main ", () => {
       assert.equal(fn.lastCall.args[0], 86);
     });
 
-    it("supports inline instance parts", () => {
+    it("supports inline instance nodes", () => {
       const add1: VisualNode = {
         id: "add1",
         inputs: {
@@ -296,7 +296,7 @@ describe("main ", () => {
     });
 
     describe("optional inputs", () => {
-      it("runs parts with optional pins that were left unconnected", () => {
+      it("runs nodes with optional pins that were left unconnected", () => {
         const node = connect(
           {
             id: "bob",
@@ -329,7 +329,7 @@ describe("main ", () => {
         assert.equal(s.lastCall.args[0], 84);
       });
 
-      it("runs parts with optional pins that were connected", () => {
+      it("runs nodes with optional pins that were connected", () => {
         const node = connect(
           {
             id: "bob",
@@ -722,7 +722,7 @@ describe("main ", () => {
       });
     });
 
-    it("supports external outputs on connected parts", () => {
+    it("supports external outputs on connected nodes", () => {
       const p = connect(
         {
           id: "test",
@@ -1077,7 +1077,7 @@ describe("main ", () => {
       });
     });
 
-    // it('runs "leaf" parts without waiting for external inputs', () => {
+    // it('runs "leaf" nodes without waiting for external inputs', () => {
     //   const innerLeafSpy = spy();
     //   const leaf: CodeNode = {
     //     id: "emit-1",
@@ -1133,7 +1133,7 @@ describe("main ", () => {
     //   assert.equal(innerLeafSpy.callCount, 1);
     // });
 
-    describe("high order parts", () => {
+    describe("high order nodes", () => {
       it("works for a simple case", () => {
         const s = spy();
         const list = dynamicNodeInput();
@@ -1187,7 +1187,7 @@ describe("main ", () => {
       };
 
       describe("global state", () => {
-        it("allows parts to access global state", () => {
+        it("allows nodes to access global state", () => {
           const s = spy();
           const v = dynamicNodeInput();
           const r = new Subject();
@@ -1257,7 +1257,7 @@ describe("main ", () => {
         });
       });
 
-      it("allows parts to access execution state", () => {
+      it("allows nodes to access execution state", () => {
         const s = spy();
         const v = dynamicNodeInput();
         const r = new Subject();
@@ -1387,7 +1387,7 @@ describe("main ", () => {
         assert.equal(s.getCalls()[1]?.args[0], 7);
       });
 
-      it("cleans internal state of parts after execution", async () => {
+      it("cleans internal state of nodes after execution", async () => {
         /*
           internal node P will increase on each input received and return the current state
         */
@@ -1437,7 +1437,7 @@ describe("main ", () => {
         assert.equal(s.getCalls()[2]?.args[0], 0);
       });
 
-      it("does not clean internal of parts after execution until parent is not done", () => {
+      it("does not clean internal of nodes after execution until parent is not done", () => {
         /*
           internal node P will increase on each input received and return the current state
         */
@@ -1519,7 +1519,7 @@ describe("main ", () => {
       });
     });
 
-    it("runs parts that are not fully connected", () => {
+    it("runs nodes that are not fully connected", () => {
       const node: VisualNode = {
         id: "node",
         inputsPosition: {},
@@ -1584,7 +1584,7 @@ describe("main ", () => {
     });
   });
 
-  describe("uncontrolled visual parts", () => {
+  describe("uncontrolled visual nodes", () => {
     it("waits for all inputs when visual node is uncontrolled", () => {
       const innerSpy = spy();
       const innerNode: CodeNode = {
@@ -1630,7 +1630,7 @@ describe("main ", () => {
   });
 
   describe("recursion support", () => {
-    it("does run parts that have no args", () => {
+    it("does run nodes that have no args", () => {
       const node: CodeNode = {
         id: "node",
         inputs: {},
@@ -1898,7 +1898,7 @@ describe("main ", () => {
       assert.equal(spyFn.calledOnce, true);
     });
 
-    it("runs cleanup code of code parts", async () => {
+    it("runs cleanup code of code nodes", async () => {
       const inlineValueNode: InlineValueNode = {
         id: "id",
         inputs: {},
@@ -2013,7 +2013,7 @@ describe("main ", () => {
       assert.equal(s.lastCall.args[0], 54);
     });
 
-    it.skip("passes external context forward to visual parts", async () => {
+    it.skip("passes external context forward to visual nodes", async () => {
       // TODO - write test
     });
   });
@@ -2040,7 +2040,7 @@ describe("main ", () => {
       assert.equal(s.getCalls()[1]?.args[0], num2 + num2);
     });
 
-    it("supports const values with inner visual parts", () => {
+    it("supports const values with inner visual nodes", () => {
       const num1 = randomInt(1, 100);
       const num2 = randomInt(1, 100);
 
@@ -2061,7 +2061,7 @@ describe("main ", () => {
       assert.equal(s.getCalls()[0]?.args[0], num1 + num2);
     });
 
-    it("supports const values defined inside visual parts", () => {
+    it("supports const values defined inside visual nodes", () => {
       const n1 = dynamicNodeInput();
       const r = new Subject();
       const s = spy();
@@ -2281,7 +2281,7 @@ describe("main ", () => {
     });
 
     describe("node completion", () => {
-      it("re-runs parts when one of the required outputs complete", async () => {
+      it("re-runs nodes when one of the required outputs complete", async () => {
         const item = dynamicNodeInput({ config: queueInputPinConfig() });
 
         const r = new Subject();
@@ -2385,7 +2385,7 @@ describe("main ", () => {
         );
       });
 
-      it("re-runs parts only when one of the required outputs complete if there are more than 1", async () => {
+      it("re-runs nodes only when one of the required outputs complete if there are more than 1", async () => {
         const item = dynamicNodeInput({ config: queueInputPinConfig() });
 
         const [r, final1, final2] = [
@@ -2450,7 +2450,7 @@ describe("main ", () => {
         );
       });
 
-      it("completes parts when there are errors", async () => {
+      it("completes nodes when there are errors", async () => {
         const item = dynamicNodeInput({ config: queueInputPinConfig() });
 
         const [r, final1] = [dynamicOutput(), dynamicOutput(), dynamicOutput()];
@@ -2556,7 +2556,7 @@ describe("main ", () => {
       });
 
       describe("implicit completion", () => {
-        describe("code parts", () => {
+        describe("code nodes", () => {
           it("triggers an implicit completion when there are no explicit completion outputs", async () => {
             const node = conciseCodeNode({
               outputs: ["r"],
@@ -2635,8 +2635,8 @@ describe("main ", () => {
           });
         });
 
-        describe("visual parts", () => {
-          it('triggers implicit completion when parts "inside" stop running', async () => {
+        describe("visual nodes", () => {
+          it('triggers implicit completion when nodes "inside" stop running', async () => {
             const delayNode = (ms: number) =>
               conciseCodeNode({
                 outputs: ["r"],
@@ -2986,7 +2986,7 @@ describe("main ", () => {
       });
     });
 
-    it("supports running inner parts with static values", async () => {
+    it("supports running inner nodes with static values", async () => {
       const num1 = randomInt(100);
       const num2 = randomInt(100);
 

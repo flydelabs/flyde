@@ -71,7 +71,7 @@ export async function generateAndSaveNode(
   }
 
   writeFileSync(filePath, code);
-  const maybeNode = resolveCodeNodeDependencies(filePath).parts[0];
+  const maybeNode = resolveCodeNodeDependencies(filePath).nodes[0];
   if (!maybeNode) {
     throw new Error("Generated node is corrupt");
   }

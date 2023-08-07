@@ -166,7 +166,7 @@ export const QuickAddMenu: React.FC<QuickMenuProps> = (props) => {
   return (
     <div className="quick-add-menu" style={style}>
       <NodeSelect
-        className="quick-add-parts-select"
+        className="quick-add-nodes-select"
         items={matches}
         itemPredicate={nodePredicate}
         itemRenderer={renderNode}

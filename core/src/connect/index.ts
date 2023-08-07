@@ -334,7 +334,7 @@ export const connect = (
               delete inputs[key];
             }
           }
-          // magic happens here - parts are executed
+          // magic happens here - nodes are executed
           const cancel = execute({
             node,
             inputs,

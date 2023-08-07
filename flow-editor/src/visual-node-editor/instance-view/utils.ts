@@ -46,7 +46,7 @@ export const calcNodeContent = (
 
       return ejs.render(node.customViewCode, { inputs, isDefined }).trim(); // TODO: render with ejs or equivalent. Removed due to wp5 issues
 
-      // // hack to render detached embedded parts correctly
+      // // hack to render detached embedded nodes correctly
       // if (maybeGetStaticValueNodeId(result)) {
       //   return toString(result);
       // } else {

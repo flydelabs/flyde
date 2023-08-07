@@ -40,7 +40,7 @@ const FeatureList: FeatureItem[] = [
       <>
         Flyde's visual debugger provides real-time feedback, making it easier to
         understand, track, and fix issues in your software. It highlights active
-        parts and <mark>visually indicates the flow of data,</mark> enabling
+        nodes and <mark>visually indicates the flow of data,</mark> enabling
         both beginners and experienced developers to quickly identify and
         resolve problems in their systems.
       </>

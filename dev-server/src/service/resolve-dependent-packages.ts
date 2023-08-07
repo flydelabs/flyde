@@ -15,9 +15,9 @@ export async function resolveDependentPackages(
     (acc, dep) => {
       try {
         const paths = resolveImportablePaths(rootPath, dep);
-        const parts = paths.reduce((acc, filePath) => {
+        const nodes = paths.reduce((acc, filePath) => {
           if (isCodeNodePath(filePath)) {
-            const obj = resolveCodeNodeDependencies(filePath).parts.reduce(
+            const obj = resolveCodeNodeDependencies(filePath).nodes.reduce(
               (obj, { node }) => ({ ...obj, [node.id]: node }),
               {}
             );
@@ -34,7 +34,7 @@ export async function resolveDependentPackages(
             return acc;
           }
         }, {});
-        return { ...acc, [dep]: parts };
+        return { ...acc, [dep]: nodes };
       } catch (e) {
         console.log(`skipping invalid dependency ${dep}`);
         return acc;

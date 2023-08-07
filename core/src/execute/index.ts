@@ -197,7 +197,7 @@ const executeCodeNode = (data: CodeExecutionData) => {
   const cleanState = () => {
     mainState[innerStateId]?.clear();
 
-    // removes all internal state from child parts.
+    // removes all internal state from child nodes.
     // TODO - use a better data structure on mainState so this becomes a O(1) operation
     keys(mainState)
       .filter((k) => k.startsWith(`${fullInsId}.`))

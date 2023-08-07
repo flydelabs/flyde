@@ -1,5 +1,5 @@
 /*
-    first version of Flyde ran code parts in VM2 for security,
+    first version of Flyde ran code nodes in VM2 for security,
     but now given that it's running user code, not sure it's needed anymore..
 */
 

@@ -196,7 +196,7 @@ export const Omnibar: React.FC<OmnibarProps> = (props) => {
       initialContent={undefined}
       onItemSelect={onSelect as any}
       itemRenderer={renderItem}
-      inputProps={{ placeholder: "Search for parts or commands.." }}
+      inputProps={{ placeholder: "Search for nodes or commands.." }}
     />
   ) : null;
 };

@@ -82,12 +82,12 @@ export const customNodesToNodesCollection = (
   customNodes: NodesCollection,
   extraContext: Record<string, any> = {}
 ): NodesCollection => {
-  const partsCollection: NodesCollection = {};
+  const nodesCollection: NodesCollection = {};
   for (let id in customNodes) {
     const node = customNodes[id];
-    partsCollection[id] = isInlineValueNode(node)
+    nodesCollection[id] = isInlineValueNode(node)
       ? inlineValueNodeToNode(node, extraContext)
       : node;
   }
-  return partsCollection;
+  return nodesCollection;
 };

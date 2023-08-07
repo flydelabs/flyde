@@ -110,7 +110,7 @@ describe("connect", () => {
   });
 
   describe("cyclic dependencies", () => {
-    it.skip("allows closing cyclic dependencies with delayed parts", () => {
+    it.skip("allows closing cyclic dependencies with delayed nodes", () => {
       const delayedId: CodeNode = {
         id: "d",
         inputs: { n: {} },

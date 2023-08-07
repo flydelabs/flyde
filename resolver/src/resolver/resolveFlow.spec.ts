@@ -103,7 +103,7 @@ describe("resolver", () => {
 
   it("avoids clashes in imports by namespacing imports", async () => {
     /*
-       node Container will import 2 parts, each importing a node 
+       node Container will import 2 nodes, each importing a node 
        named "Special" but with a different content (one does +1, the other does -1)
     */
     const data = resolveFlowDependenciesByPath(
@@ -204,7 +204,7 @@ describe("resolver", () => {
     }
   });
 
-  it("allows importing simple code based parts that require packages", async () => {
+  it("allows importing simple code based nodes that require packages", async () => {
     const path = getFixturePath("a-imports-js-node-from-b-with-dep/a.flyde");
     const flow = resolveFlowDependenciesByPath(path);
 
@@ -238,7 +238,7 @@ describe("resolver", () => {
     }, /GetListItem/);
   });
 
-  it("only resolves imported parts, aka does not break if a package exports a broken node that is not imported", () => {
+  it("only resolves imported nodes, aka does not break if a package exports a broken node that is not imported", () => {
     const path = getFixturePath(
       "imports-ok-from-package-with-problematic.flyde"
     );
@@ -248,8 +248,8 @@ describe("resolver", () => {
     assert.notExists(flow.dependencies.Problematic);
   });
 
-  it("imports multiple parts from the same package", async () => {
-    const path = getFixturePath("imports-2-parts-from-package.flyde");
+  it("imports multiple nodes from the same package", async () => {
+    const path = getFixturePath("imports-2-nodes-from-package.flyde");
 
     const flow = resolveFlowDependenciesByPath(path);
     const resolvedDeps = flow.dependencies as NodesCollection;
@@ -273,7 +273,7 @@ describe("resolver", () => {
     });
   }).timeout(20);
 
-  it("resolves dependencies of inline parts", async () => {
+  it("resolves dependencies of inline nodes", async () => {
     const flow = resolveFlowDependenciesByPath(
       getFixturePath("a-uses-inline-node-with-dependency/a.flyde")
     );
@@ -293,7 +293,7 @@ describe("resolver", () => {
     assert.equal(s.lastCall.args[0], 2 + 1);
   });
 
-  it("resolves dependencies of imported inline parts", async () => {
+  it("resolves dependencies of imported inline nodes", async () => {
     const flow = resolveFlowDependenciesByPath(
       getFixturePath("a-uses-inline-node-with-dependency/b-imports-a.flyde")
     );
@@ -313,7 +313,7 @@ describe("resolver", () => {
     assert.equal(s.lastCall.args[0], 2 + 1);
   });
 
-  it("supports importing files that expose multiple parts under a single import", async () => {
+  it("supports importing files that expose multiple nodes under a single import", async () => {
     const flow = resolveFlowDependenciesByPath(
       getFixturePath("a-imports-multi-exposed-from-package/a.flyde")
     );
@@ -365,7 +365,7 @@ describe("resolver", () => {
   });
 
   describe("typescript", () => {
-    it("runs code parts written in TS", async () => {
+    it("runs code nodes written in TS", async () => {
       const data = resolveFlowDependenciesByPath(
         getFixturePath("a-imports-ts-node-from-b/a.flyde")
       );

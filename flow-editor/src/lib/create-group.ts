@@ -64,7 +64,7 @@ export const createGroup = async (
   let renamedInputs: OMap<string> = {};
   let renamedOutputs: OMap<string> = {};
 
-  // if we're grouping only 2 parts (say 2 [id]), both connected to the same pin, we want only 1 input created, not 2
+  // if we're grouping only 2 nodes (say 2 [id]), both connected to the same pin, we want only 1 input created, not 2
   // this helps making sure of it
   let usedInputs: OMap<string> = {};
   let usedOutputs: OMap<string> = {};
@@ -138,7 +138,7 @@ export const createGroup = async (
     outputs[name] = nodeOutput();
   }
 
-  // replace relevant parts with new node
+  // replace relevant nodes with new node
   const midPos = instances.reduce((p, c) => {
     return middlePos(c.pos, p);
   }, instances[0].pos);
