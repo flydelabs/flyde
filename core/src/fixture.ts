@@ -1,10 +1,10 @@
 import {
   fromSimplified,
   Part,
-  VisualPart,
+  VisualNode,
   partInput,
   partOutput,
-  CodePart,
+  CodeNode,
   InlineValuePart,
   partInstance,
   dynamicPartInput,
@@ -18,7 +18,7 @@ import { Subject } from "rxjs";
 import { PartsCollection } from ".";
 import { conciseCodePart } from "./test-utils";
 
-export const add: CodePart = {
+export const add: CodeNode = {
   id: "add",
   inputs: {
     n1: partInput(),
@@ -46,7 +46,7 @@ export const codeAdd: InlineValuePart = {
     `,
 };
 
-export const add1: CodePart = {
+export const add1: CodeNode = {
   id: "add1",
   inputs: { n: partInput() },
   outputs: { r: partOutput() },
@@ -84,7 +84,7 @@ export const id: Part = {
   completionOutputs: ["r"],
 };
 
-export const id2: CodePart = {
+export const id2: CodeNode = {
   id: "id2",
   inputs: {
     v: partInput(),
@@ -115,7 +115,7 @@ export const Value = (v: any): Part => {
   });
 };
 
-export const add1mul2: VisualPart = {
+export const add1mul2: VisualNode = {
   id: "a1m2",
   inputs: {
     n: partInput(),
@@ -142,7 +142,7 @@ export const add1mul2: VisualPart = {
   ],
 };
 
-export const add1mul2add1: VisualPart = {
+export const add1mul2add1: VisualNode = {
   id: "a1m2a1",
   inputs: {
     n: partInput(),
@@ -177,7 +177,7 @@ export const add1mul2add1: VisualPart = {
   ],
 };
 
-export const addGrouped: VisualPart = {
+export const addGrouped: VisualNode = {
   id: "add-visual",
   inputsPosition: {},
   outputsPosition: {},
@@ -205,7 +205,7 @@ export const addGrouped: VisualPart = {
   ],
 };
 
-export const addGroupedQueued: VisualPart = {
+export const addGroupedQueued: VisualNode = {
   id: "add-visual-queued",
   inputsPosition: {},
   outputsPosition: {},
@@ -238,7 +238,7 @@ export const addGroupedQueued: VisualPart = {
   ],
 };
 
-export const optAdd: CodePart = {
+export const optAdd: CodeNode = {
   id: "optAdd",
   inputs: {
     n1: {},
@@ -253,7 +253,7 @@ export const optAdd: CodePart = {
   },
 };
 
-export const isEven: CodePart = {
+export const isEven: CodeNode = {
   id: "is-even",
   inputs: {
     item: {},
@@ -312,7 +312,7 @@ export const filter: Part = fromSimplified({
   },
 });
 
-export const peq: CodePart = {
+export const peq: CodeNode = {
   id: "peq",
   inputs: { val: partInput(), compare: partInput() },
   outputs: { r: partOutput(), else: partOutput() },
@@ -396,7 +396,7 @@ export const accumulate = conciseCodePart({
   },
 });
 
-export const accUntil: CodePart = {
+export const accUntil: CodeNode = {
   id: "accUntil",
   inputs: {
     item: partInput("optional"),

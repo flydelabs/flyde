@@ -1,9 +1,9 @@
-import { VisualPart, CodePart, partInput, partOutput } from "@flyde/core";
+import { VisualNode, CodeNode, partInput, partOutput } from "@flyde/core";
 import { createTasksService } from "./tasks";
 
 const servicePromise = createTasksService();
 
-const part: CodePart = {
+const part: CodeNode = {
   id: "Get Tasks",
   inputs: {},
   outputs: {

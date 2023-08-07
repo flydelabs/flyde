@@ -1,6 +1,6 @@
-import { partInput, partOutput, VisualPart } from "@flyde/core";
+import { partInput, partOutput, VisualNode } from "@flyde/core";
 
-export const emptyWebUiProject: VisualPart = {
+export const emptyWebUiProject: VisualNode = {
   id: "new-web-ui-project",
   inputs: {},
   outputs: {
@@ -14,7 +14,7 @@ export const emptyWebUiProject: VisualPart = {
   reactiveInputs: [],
 };
 
-export const emptyServerProject: VisualPart = {
+export const emptyServerProject: VisualNode = {
   id: "new-server-project",
   inputs: {
     request: partInput(),
@@ -28,7 +28,7 @@ export const emptyServerProject: VisualPart = {
   instances: [],
 };
 
-export const emptyLambdaProject: VisualPart = {
+export const emptyLambdaProject: VisualNode = {
   id: "new-lambda-project",
   inputs: {
     context: partInput(),
@@ -42,7 +42,7 @@ export const emptyLambdaProject: VisualPart = {
   instances: [],
 };
 
-export const emptyMobileProject: VisualPart = {
+export const emptyMobileProject: VisualNode = {
   id: "new-mobile-project",
   inputs: {},
   outputs: {
@@ -54,15 +54,15 @@ export const emptyMobileProject: VisualPart = {
   instances: [],
 };
 
-export const emptyCliProject: VisualPart = {
+export const emptyCliProject: VisualNode = {
   id: "new-cli-project",
   inputs: {
     args: partInput(),
   },
   outputs: {
-    stdout: partOutput( true),
-    stderr: partOutput( true),
-    exit: partOutput( true),
+    stdout: partOutput(true),
+    stderr: partOutput(true),
+    exit: partOutput(true),
   },
   inputsPosition: { args: { x: 0, y: 0 } },
   outputsPosition: {
@@ -74,7 +74,7 @@ export const emptyCliProject: VisualPart = {
   instances: [],
 };
 
-export const typeProjectMap: { [k: string]: VisualPart } = {
+export const typeProjectMap: { [k: string]: VisualNode } = {
   server: emptyServerProject,
   "web-ui": emptyWebUiProject,
   lambda: emptyLambdaProject,

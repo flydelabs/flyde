@@ -34,9 +34,9 @@ Create a new directory for your project and open it in Visual Studio Code. Initi
 Create a new file, call it "EmailValidator.flyde.ts" and add the following code:
 
 ```
-import { CodePart } from '@flyde/core';
+import { CodeNode } from '@flyde/core';
 
-export const validatorPart: CodePart = {
+export const validatorPart: CodeNode = {
   id: 'Email Validator',
   description: 'Validates an email address',
   inputs: {
@@ -107,7 +107,7 @@ That's it! You've successfully created a custom code part using the validator np
 Before moving on to the next tutorial, I highly recommend you to try tinkering with this example:
 
 - allow passing a second, optional parameter to the code part to specify the validation options that the validator package supports.
-- explore the "defaultStyle" property of the CodePart interface and try making your part pop-out.
+- explore the "defaultStyle" property of the CodeNode interface and try making your part pop-out.
 - Try adding a list of email addresses, a loop part and a delay and see how you can validate a list of email addresses.
 - package that part into a separate npm package and publish it to npm! See [/packages] for more info.
 

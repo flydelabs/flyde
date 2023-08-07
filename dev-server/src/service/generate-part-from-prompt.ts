@@ -1,5 +1,5 @@
 import {
-  CodePart,
+  CodeNode,
   ImportableSource,
   ImportedPart,
   RunPartFunction,
@@ -25,7 +25,7 @@ async function generatePart(
 
   const id = rawId.replace(/id:?\s*/i, "");
   const code = `
-import { CodePart } from "@flyde/runtime";
+import { CodeNode } from "@flyde/runtime";
 
 
 
@@ -34,7 +34,7 @@ const rawOutputs: string = "${outputs}";
 const rawCompletionOutputs: string = "${completionOutputs}";
 const rawReactiveInputs: string = "${reactiveInputs}";
 
-export const Part: CodePart = {
+export const Part: CodeNode = {
   id: "${id}",
   inputs: (rawInputs ? rawInputs.split(",") : []).reduce<Record<string, {}>>((acc, curr) => {
     acc[curr.trim()] = {};

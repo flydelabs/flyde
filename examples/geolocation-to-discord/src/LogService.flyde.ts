@@ -1,7 +1,7 @@
-import { CodePart, partInput } from "@flyde/core";
+import { CodeNode, partInput } from "@flyde/core";
 import { storeLog } from "./LogService";
 
-export const LogPart: CodePart = {
+export const LogPart: CodeNode = {
   id: "Log Service",
   inputs: {
     data: partInput(),

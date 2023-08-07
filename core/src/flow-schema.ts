@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { VisualPart, PartDefinition, Part } from "./part";
+import { VisualNode, PartDefinition, Part } from "./part";
 
 const importSchema = z.record(z.string(), z.string().or(z.array(z.string())));
 const position = z.strictObject({ x: z.number(), y: z.number() });
@@ -90,7 +90,7 @@ const visualPart = z
 
 export type FlydeFlow = {
   imports?: Record<string, String[]>;
-  part: VisualPart;
+  part: VisualNode;
 };
 
 export interface ImportSource {
@@ -116,14 +116,14 @@ export type ResolvedDependenciesDefinitions = Record<
 >;
 
 export type ResolvedFlydeFlowDefinition = {
-  main: VisualPart;
+  main: VisualNode;
   dependencies: ResolvedDependenciesDefinitions;
 };
 
 export type ResolvedDependencies = Record<string, ImportedPart>;
 
 export type ResolvedFlydeRuntimeFlow = {
-  main: VisualPart;
+  main: VisualNode;
   dependencies: ResolvedDependencies;
 };
 

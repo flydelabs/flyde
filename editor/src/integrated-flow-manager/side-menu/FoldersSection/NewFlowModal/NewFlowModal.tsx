@@ -6,7 +6,7 @@ import {
   Callout,
   Code,
 } from "@blueprintjs/core";
-import { BasePart, visualPart } from "@flyde/core";
+import { BaseNode, visualPart } from "@flyde/core";
 import classNames from "classnames";
 import React from "react";
 import { BasePartEditor } from "@flyde/flow-editor"; // ../../../../../common/flow-editor/base-part-editor
@@ -15,12 +15,12 @@ import "./NewFlowModal.scss";
 
 export interface NewFlowModalProps {
   onCancel: () => void;
-  onCreate: (part: BasePart) => void;
+  onCreate: (part: BaseNode) => void;
   folder: string;
 }
 
 export const NewFlowModal: React.FC<NewFlowModalProps> = (props) => {
-  const [basePart, setBasePart] = React.useState<BasePart>(
+  const [basePart, setBasePart] = React.useState<BaseNode>(
     visualPart({ id: "new-flow.flyde" })
   );
 

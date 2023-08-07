@@ -1,4 +1,4 @@
-import { VisualPart, values, Pos } from "@flyde/core";
+import { VisualNode, values, Pos } from "@flyde/core";
 import React from "react";
 import { Size } from "../../utils";
 import { logicalPosToRenderedPos, ViewPort } from "../utils";
@@ -72,7 +72,7 @@ export const LayoutDebuggerItem: React.FC<LayoutDebuggerItemProps> = (
 export interface LayoutDebuggerProps {
   extraDebug: LayoutDebuggerItemProps[];
   vp: ViewPort;
-  part: VisualPart;
+  part: VisualNode;
   mousePos: Pos;
 }
 

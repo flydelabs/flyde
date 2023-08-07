@@ -1,9 +1,9 @@
-import { CodePart } from "@flyde/core";
+import { CodeNode } from "@flyde/core";
 import { MongoClient } from "mongodb";
 
 const namespace = "MongoDB";
 
-export const MongoConnect: CodePart = {
+export const MongoConnect: CodeNode = {
   id: "Connect",
   defaultStyle: {
     icon: "fa-database",
@@ -23,7 +23,7 @@ export const MongoConnect: CodePart = {
   },
 };
 
-export const Find: CodePart = {
+export const Find: CodeNode = {
   id: "Find",
   defaultStyle: {
     icon: "fa-database",
@@ -48,7 +48,7 @@ export const Find: CodePart = {
   },
 };
 
-export const FindOne: CodePart = {
+export const FindOne: CodeNode = {
   id: "FindOne",
   defaultStyle: {
     icon: "fa-database",
@@ -72,7 +72,7 @@ export const FindOne: CodePart = {
   },
 };
 
-export const MongoDisconnect: CodePart = {
+export const MongoDisconnect: CodeNode = {
   id: "Disconnect",
   defaultStyle: {
     icon: "fa-database",
@@ -86,7 +86,7 @@ export const MongoDisconnect: CodePart = {
   },
 };
 
-export const InsertOne: CodePart = {
+export const InsertOne: CodeNode = {
   id: "InsertOne",
   defaultStyle: {
     icon: "fa-database",
@@ -110,7 +110,7 @@ export const InsertOne: CodePart = {
   },
 };
 
-export const InsertMany: CodePart = {
+export const InsertMany: CodeNode = {
   id: "InsertMany",
   defaultStyle: {
     icon: "fa-database",
@@ -134,7 +134,7 @@ export const InsertMany: CodePart = {
   },
 };
 
-export const UpdateOne: CodePart = {
+export const UpdateOne: CodeNode = {
   id: "UpdateOne",
   defaultStyle: {
     icon: "fa-database",
@@ -161,7 +161,7 @@ export const UpdateOne: CodePart = {
     result.next(res);
   },
 };
-export const UpdateMany: CodePart = {
+export const UpdateMany: CodeNode = {
   id: "UpdateMany",
   defaultStyle: {
     icon: "fa-database",
@@ -189,7 +189,7 @@ export const UpdateMany: CodePart = {
   },
 };
 
-export const DeleteOne: CodePart = {
+export const DeleteOne: CodeNode = {
   id: "DeleteOne",
   defaultStyle: {
     icon: "fa-database",
@@ -213,7 +213,7 @@ export const DeleteOne: CodePart = {
   },
 };
 
-export const DeleteMany: CodePart = {
+export const DeleteMany: CodeNode = {
   id: "DeleteMany",
   defaultStyle: {
     icon: "fa-database",
@@ -237,7 +237,7 @@ export const DeleteMany: CodePart = {
   },
 };
 
-export const CountDocuments: CodePart = {
+export const CountDocuments: CodeNode = {
   id: "CountDocuments",
   defaultStyle: {
     icon: "fa-database",
@@ -261,7 +261,7 @@ export const CountDocuments: CodePart = {
   },
 };
 
-export const CreateIndex: CodePart = {
+export const CreateIndex: CodeNode = {
   id: "CreateIndex",
   defaultStyle: {
     icon: "fa-database",
@@ -285,7 +285,7 @@ export const CreateIndex: CodePart = {
   },
 };
 
-export const CreateIndexes: CodePart = {
+export const CreateIndexes: CodeNode = {
   id: "CreateIndexes",
   defaultStyle: {
     icon: "fa-database",

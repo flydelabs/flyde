@@ -1,6 +1,6 @@
-import { CodePart } from "@flyde/core";
+import { CodeNode } from "@flyde/core";
 
-export const part: CodePart = {
+export const part: CodeNode = {
   id: "IdWithCleanup",
   inputs: {
     n: { mode: "required" },

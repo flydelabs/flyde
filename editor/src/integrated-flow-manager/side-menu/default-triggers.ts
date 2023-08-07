@@ -1,5 +1,5 @@
 import {
-  VisualPart,
+  VisualNode,
   partInput,
   partOutput,
   RestApiTrigger,
@@ -20,7 +20,7 @@ export const routeTriggerPart = (id: string = triggerPartId()) => {
   };
 };
 
-export const scheduledTriggerPart = (): VisualPart => {
+export const scheduledTriggerPart = (): VisualNode => {
   return {
     id: triggerPartId(),
     inputs: {
@@ -79,7 +79,7 @@ export const scheduledTrigger = (
   };
 };
 
-export const emptyWebUiProject: VisualPart = {
+export const emptyWebUiProject: VisualNode = {
   id: "new-web-ui-project",
   inputs: {
     mouse: partInput(),

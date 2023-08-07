@@ -16,7 +16,7 @@ import { getCallPath } from "./get-call-path";
 import { debugLogger } from "./logger";
 
 // convenience exports
-export { CodePart, BasePart, VisualPart } from "@flyde/core";
+export { CodeNode, BaseNode, VisualNode } from "@flyde/core";
 
 export type PromiseWithEmitter<T> = Promise<T> & { on: EventEmitter["on"] };
 

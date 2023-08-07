@@ -1,10 +1,10 @@
-import { CodePart } from "@flyde/core";
+import { CodeNode } from "@flyde/core";
 
 const PubSub = require("pubsub-js");
 
 const namespace = "Control Flow";
 
-export const LimitTimes: CodePart = {
+export const LimitTimes: CodeNode = {
   id: "Limit Times",
   namespace,
   description: "Item will be emitted until the limit is reached",
@@ -41,7 +41,7 @@ export const LimitTimes: CodePart = {
   },
 };
 
-export const RoundRobin3: CodePart = {
+export const RoundRobin3: CodeNode = {
   id: "Round Robin 3",
   namespace,
   description:
@@ -77,7 +77,7 @@ export const RoundRobin3: CodePart = {
   },
 };
 
-export const RoundRobin2: CodePart = {
+export const RoundRobin2: CodeNode = {
   namespace,
   id: "Round Robin 2",
   description:
@@ -109,7 +109,7 @@ export const RoundRobin2: CodePart = {
   },
 };
 
-export const RoundRobin4: CodePart = {
+export const RoundRobin4: CodeNode = {
   id: "Round Robin 4",
   namespace,
   description:
@@ -149,7 +149,7 @@ export const RoundRobin4: CodePart = {
   },
 };
 
-export const Publish: CodePart = {
+export const Publish: CodeNode = {
   id: "Publish",
   namespace,
   description:
@@ -170,7 +170,7 @@ export const Publish: CodePart = {
   },
 };
 
-export const Subscribe: CodePart = {
+export const Subscribe: CodeNode = {
   id: "Subscribe",
   namespace,
   description:
@@ -204,7 +204,7 @@ export const Subscribe: CodePart = {
   },
 };
 
-export const BooleanSplit: CodePart = {
+export const BooleanSplit: CodeNode = {
   namespace,
   id: "Boolean Split",
   description: "Splits a boolean value into two outputs",
@@ -234,7 +234,7 @@ export const BooleanSplit: CodePart = {
   },
 };
 
-export const EmitOnTrigger: CodePart = {
+export const EmitOnTrigger: CodeNode = {
   namespace,
   id: "Emit on Trigger",
   description: "Emits the value when the trigger input receives any value",
@@ -254,7 +254,7 @@ export const EmitOnTrigger: CodePart = {
   },
 };
 
-export const Switch3: CodePart = {
+export const Switch3: CodeNode = {
   namespace,
   id: "Switch 3",
   description:
@@ -317,7 +317,7 @@ export const Switch3: CodePart = {
   },
 };
 
-export const Switch2: CodePart = {
+export const Switch2: CodeNode = {
   id: "Switch 2",
   description:
     "Switches between 2 outputs based on the input value. If the value is not equal to any of the cases, the default output is used.",
@@ -364,7 +364,7 @@ export const Switch2: CodePart = {
   },
 };
 
-export const Switch4: CodePart = {
+export const Switch4: CodeNode = {
   id: "Switch 4",
   description:
     "Switches between 4 outputs based on the input value. If the value is not equal to any of the cases, the default output is used.",
@@ -438,7 +438,7 @@ export const Switch4: CodePart = {
   },
 };
 
-export const Delay: CodePart = {
+export const Delay: CodeNode = {
   id: "Delay",
   defaultStyle: {
     icon: "fa-clock",
@@ -459,7 +459,7 @@ export const Delay: CodePart = {
   },
 };
 
-export const Interval: CodePart = {
+export const Interval: CodeNode = {
   id: "Interval",
   namespace,
   defaultStyle: {
@@ -492,7 +492,7 @@ export const Interval: CodePart = {
   },
 };
 
-export const Debounce: CodePart = {
+export const Debounce: CodeNode = {
   id: "Debounce",
   namespace,
   inputs: {
@@ -540,7 +540,7 @@ export class ThrottleError extends Error {
   }
 }
 
-export const Throttle: CodePart = {
+export const Throttle: CodeNode = {
   id: "Throttle",
   namespace,
   inputs: {
@@ -577,7 +577,7 @@ export const Throttle: CodePart = {
   },
 };
 
-export const EqualsBoolean: CodePart = {
+export const EqualsBoolean: CodeNode = {
   id: "Equals (Bool)",
   defaultStyle: {
     icon: "fa-equals",
@@ -593,7 +593,7 @@ export const EqualsBoolean: CodePart = {
   run: ({ a, b }, { result }) => result.next(a === b),
 };
 
-export const Equals: CodePart = {
+export const Equals: CodeNode = {
   id: "Equals",
   namespace,
   description:

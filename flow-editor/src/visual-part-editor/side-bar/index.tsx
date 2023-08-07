@@ -6,7 +6,7 @@ import {
   isVisualPart,
   PartInstance,
   keys,
-  VisualPart,
+  VisualNode,
   PartsDefCollection,
   getPartDef,
   noop,
@@ -14,7 +14,7 @@ import {
 import classNames from "classnames";
 
 export type SideBarProps = {
-  part: VisualPart;
+  part: VisualNode;
   selectedIds: string[];
   resolvedParts: PartsDefCollection;
   onSelect: (id: PartInstance, ev: React.MouseEvent) => void;

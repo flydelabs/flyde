@@ -1,5 +1,5 @@
 import {
-  CodePart,
+  CodeNode,
   isDynamicInput,
   PartInput,
   PartInputs,
@@ -8,7 +8,7 @@ import {
   dynamicOutput,
   dynamicPartInput,
   PartInstance,
-  VisualPart,
+  VisualNode,
   queueInputPinConfig,
   isStaticInputPinConfig,
   PartOutput,
@@ -52,7 +52,7 @@ export type ConnectionNode = ExternalConnectionNode | InternalConnectionNode;
 export type PinList = Array<{ insId: string; pinId: string }>;
 
 type PositionlessVisualPart = Omit<
-  Omit<VisualPart, "inputsPosition">,
+  Omit<VisualNode, "inputsPosition">,
   "outputsPosition"
 >;
 
@@ -65,7 +65,7 @@ export const connect = (
   onBubbleError: (err: any) => void = noop,
   env: ExecuteEnv = {},
   extraContext: Record<string, any> = {}
-): CodePart => {
+): CodeNode => {
   const { id: maybeId, connections, instances } = part;
 
   const partId = maybeId || "connected-part" + randomInt(999);

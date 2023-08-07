@@ -1,8 +1,8 @@
-import { CodePart } from "@flyde/core";
+import { CodeNode } from "@flyde/core";
 
 const namespace = "Objects";
 
-export const JSONParse: CodePart = {
+export const JSONParse: CodeNode = {
   id: "JSON Parse",
   defaultStyle: {
     icon: "fa-glasses",
@@ -14,7 +14,7 @@ export const JSONParse: CodePart = {
   run: ({ json }, { object }) => object.next(JSON.parse(json)),
 };
 
-export const JSONStringify: CodePart = {
+export const JSONStringify: CodeNode = {
   id: "JSON Stringify",
   defaultStyle: {
     icon: "fa-pen-fancy",
@@ -26,7 +26,7 @@ export const JSONStringify: CodePart = {
   run: ({ object }, { json }) => json.next(JSON.stringify(object)),
 };
 
-export const ObjectKeys: CodePart = {
+export const ObjectKeys: CodeNode = {
   id: "Keys",
   defaultStyle: {
     icon: "fa-key",
@@ -38,7 +38,7 @@ export const ObjectKeys: CodePart = {
   run: ({ object }, { keys }) => keys.next(Object.keys(object)),
 };
 
-export const ObjectValues: CodePart = {
+export const ObjectValues: CodeNode = {
   id: "Values",
   namespace,
   description: "Emits the values of an object",
@@ -47,7 +47,7 @@ export const ObjectValues: CodePart = {
   run: ({ object }, { values }) => values.next(Object.values(object)),
 };
 
-export const ObjectEntries: CodePart = {
+export const ObjectEntries: CodeNode = {
   id: "Entries",
   defaultStyle: {
     icon: "fa-box",
@@ -59,7 +59,7 @@ export const ObjectEntries: CodePart = {
   run: ({ object }, { entries }) => entries.next(Object.entries(object)),
 };
 
-export const ObjectFromEntries: CodePart = {
+export const ObjectFromEntries: CodeNode = {
   id: "From Entries",
   namespace,
   defaultStyle: {
@@ -79,7 +79,7 @@ export const ObjectFromEntries: CodePart = {
   run: ({ entries }, { object }) => object.next(Object.fromEntries(entries)),
 };
 
-export const ObjectAssign: CodePart = {
+export const ObjectAssign: CodeNode = {
   id: "Assign",
   namespace,
   defaultStyle: {
@@ -103,7 +103,7 @@ export const ObjectAssign: CodePart = {
     object.next(Object.assign(target, ...sources)),
 };
 
-export const GetAttribute: CodePart = {
+export const GetAttribute: CodeNode = {
   id: "Get Attribute",
   searchKeywords: ["pick", "dot"],
   namespace,
@@ -129,7 +129,7 @@ export const GetAttribute: CodePart = {
     value.next(attribute.split(".").reduce((obj, i) => obj[i], object)),
 };
 
-export const SetAttribute: CodePart = {
+export const SetAttribute: CodeNode = {
   id: "Set Attribute",
   searchKeywords: ["dot"],
   namespace,
@@ -163,7 +163,7 @@ export const SetAttribute: CodePart = {
   },
 };
 
-export const DeleteAttribute: CodePart = {
+export const DeleteAttribute: CodeNode = {
   id: "Delete Attribute",
   defaultStyle: {
     icon: "fa-box",
@@ -190,7 +190,7 @@ export const DeleteAttribute: CodePart = {
   },
 };
 
-export const PropertyEquals: CodePart = {
+export const PropertyEquals: CodeNode = {
   id: "Property Equals",
   namespace,
   defaultStyle: {

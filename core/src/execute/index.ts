@@ -11,7 +11,7 @@ import {
   getStaticValue,
   isInlineValuePart,
   isVisualPart,
-  CodePart,
+  CodeNode,
   PartInputs,
   PartOutputs,
   staticPartInput,
@@ -68,7 +68,7 @@ export type InnerExecuteFn = (
 ) => CancelFn;
 
 export type CodeExecutionData = {
-  part: CodePart;
+  part: CodeNode;
   inputs: PartInputs;
   outputs: PartOutputs;
   resolvedDeps: PartsCollection;
@@ -561,7 +561,7 @@ export const execute: ExecuteFn = ({
     }
   };
 
-  const processPart = (part: Part): CodePart => {
+  const processPart = (part: Part): CodeNode => {
     if (isVisualPart(part)) {
       return connect(
         part,

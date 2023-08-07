@@ -1,8 +1,8 @@
 import { writeFileSync } from "fs";
 import ejs from "ejs";
-import { CodePart, Part } from "@site/../core";
+import { CodeNode, Part } from "@site/../core";
 
-import markdownTable from 'markdown-table';
+import markdownTable from "markdown-table";
 
 const data: Record<string, Part> = require("@flyde/stdlib/dist/parts.json");
 
@@ -14,7 +14,7 @@ const groupedData = Object.values(data).reduce((acc, part) => {
   }
 
   if (!part.inputs || !part.outputs) {
-    console.error({part});
+    console.error({ part });
     throw new Error("42424");
   }
 
@@ -22,32 +22,43 @@ const groupedData = Object.values(data).reduce((acc, part) => {
   return acc;
 }, {});
 
-const entries = Object.entries<CodePart[]>(groupedData);
+const entries = Object.entries<CodeNode[]>(groupedData);
 
 const groupAndTables = entries.map(([ns, parts]) => {
-
   const rows = [
     ["Id", "Description", "Inputs", "Outputs"],
     ...parts.map((part) => {
-
       if (!part.inputs || !part.outputs) {
-        console.error({part});
+        console.error({ part });
         throw new Error("Part is missing inputs or outputs");
       }
 
       return [
         `**${part.id}**`,
         part.description,
-        Object.entries(part.inputs).map(([name, obj]) => `<div><strong>${name}</strong>: ${obj.description} (${obj.mode ?? 'required'}) ${obj.defaultValue ? `Default value - ${obj.defaultValue}` : ''}</div>`).join("") || '*None*',
-        Object.entries(part.outputs).map(([name, obj]) => `<div><strong>${name}</strong>: ${obj.description}</div>`).join("") || '*None*',
+        Object.entries(part.inputs)
+          .map(
+            ([name, obj]) =>
+              `<div><strong>${name}</strong>: ${obj.description} (${
+                obj.mode ?? "required"
+              }) ${
+                obj.defaultValue ? `Default value - ${obj.defaultValue}` : ""
+              }</div>`
+          )
+          .join("") || "*None*",
+        Object.entries(part.outputs)
+          .map(
+            ([name, obj]) =>
+              `<div><strong>${name}</strong>: ${obj.description}</div>`
+          )
+          .join("") || "*None*",
       ];
-    })
+    }),
   ];
   const table = markdownTable(rows);
 
   return { ns, table };
 });
-
 
 (async function () {
   const contents = await ejs.renderFile(

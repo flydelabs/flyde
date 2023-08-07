@@ -3,7 +3,7 @@ import {
   okeys,
   isExternalConnectionNode,
   entries,
-  VisualPart,
+  VisualNode,
   PartsDefCollection,
   getPartDef,
   ResolvedFlydeFlowDefinition,
@@ -16,8 +16,8 @@ import { calcPartWidth } from "../instance-view/utils";
 
 export const layoutToInstances = (
   ld: LayoutData,
-  part: VisualPart
-): VisualPart => {
+  part: VisualNode
+): VisualNode => {
   return produce(part, (draft) => {
     entries(ld.nodes).forEach(([id, node]) => {
       if (id.startsWith("ins-")) {
@@ -44,10 +44,10 @@ export const layoutToInstances = (
 };
 
 export const orderVisualPart = (
-  part: VisualPart,
+  part: VisualNode,
   resolvedParts: PartsDefCollection,
   itrs: number,
-  onStep?: (val: VisualPart, idx: number) => void
+  onStep?: (val: VisualNode, idx: number) => void
 ) => {
   const { instances, connections } = part;
   const insNodes = instances.reduce((prev, curr) => {

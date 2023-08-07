@@ -1,8 +1,8 @@
-import { CodePart } from "@flyde/core";
+import { CodeNode } from "@flyde/core";
 
 const namespace = "Lists";
 
-export const ListLength: CodePart = {
+export const ListLength: CodeNode = {
   id: "List Length",
   defaultStyle: {
     icon: "fa-list",
@@ -14,7 +14,7 @@ export const ListLength: CodePart = {
   run: ({ list }, { length }) => length.next(list.length),
 };
 
-export const ListIsEmpty: CodePart = {
+export const ListIsEmpty: CodeNode = {
   id: "List Is Empty",
   defaultStyle: {
     icon: "fa-list",
@@ -26,7 +26,7 @@ export const ListIsEmpty: CodePart = {
   run: ({ list }, { isEmpty }) => isEmpty.next(list.length === 0),
 };
 
-export const GetListElement: CodePart = {
+export const GetListElement: CodeNode = {
   id: "Get List Element",
   defaultStyle: {
     icon: "fa-list",
@@ -41,7 +41,7 @@ export const GetListElement: CodePart = {
   run: ({ list, index }, { element }) => element.next(list[index]),
 };
 
-export const Repeat: CodePart = {
+export const Repeat: CodeNode = {
   id: "Repeat",
   defaultStyle: {
     icon: "fa-list",
@@ -62,7 +62,7 @@ export const Repeat: CodePart = {
   },
 };
 
-export const ListFrom2: CodePart = {
+export const ListFrom2: CodeNode = {
   id: "List From 2",
   defaultStyle: {
     icon: "fa-list",
@@ -77,7 +77,7 @@ export const ListFrom2: CodePart = {
   run: ({ value1, value2 }, { list }) => list.next([value1, value2]),
 };
 
-export const ListFrom3: CodePart = {
+export const ListFrom3: CodeNode = {
   id: "List From 3",
   defaultStyle: {
     icon: "fa-list",
@@ -94,7 +94,7 @@ export const ListFrom3: CodePart = {
     list.next([value1, value2, value3]),
 };
 
-export const ListFrom4: CodePart = {
+export const ListFrom4: CodeNode = {
   id: "List From 4",
   defaultStyle: {
     icon: "fa-list",
@@ -112,7 +112,7 @@ export const ListFrom4: CodePart = {
     list.next([value1, value2, value3, value4]),
 };
 
-export const ListFrom5: CodePart = {
+export const ListFrom5: CodeNode = {
   id: "List From 5",
   defaultStyle: {
     icon: "fa-list",
@@ -131,7 +131,7 @@ export const ListFrom5: CodePart = {
     list.next([value1, value2, value3, value4, value5]),
 };
 
-export const ConcatLists: CodePart = {
+export const ConcatLists: CodeNode = {
   id: "Concat Lists",
   defaultStyle: {
     icon: "fa-list",
@@ -146,7 +146,7 @@ export const ConcatLists: CodePart = {
   run: ({ list1, list2 }, { list }) => list.next([...list1, ...list2]),
 };
 
-export const Reverse: CodePart = {
+export const Reverse: CodeNode = {
   id: "Reverse",
   defaultStyle: {
     icon: "fa-list",
@@ -158,7 +158,7 @@ export const Reverse: CodePart = {
   run: ({ list }, { reversed }) => reversed.next(list.reverse()),
 };
 
-export const LoopList: CodePart = {
+export const LoopList: CodeNode = {
   id: "Loop List",
   defaultStyle: {
     icon: "fa-list",
@@ -185,7 +185,7 @@ export const LoopList: CodePart = {
   },
 };
 
-export const HeadAndRest: CodePart = {
+export const HeadAndRest: CodeNode = {
   id: "Head and rest",
   defaultStyle: {
     icon: "fa-list",
@@ -208,7 +208,7 @@ export const HeadAndRest: CodePart = {
   },
 };
 
-export const SplitTuple: CodePart = {
+export const SplitTuple: CodeNode = {
   id: "Split Pair",
   defaultStyle: {
     icon: "fa-list",
@@ -231,7 +231,7 @@ export const SplitTuple: CodePart = {
   },
 };
 
-export const SplitTriple: CodePart = {
+export const SplitTriple: CodeNode = {
   id: "Split Triple",
   defaultStyle: {
     icon: "fa-list",
@@ -256,7 +256,7 @@ export const SplitTriple: CodePart = {
   },
 };
 
-export const SplitQuadruple: CodePart = {
+export const SplitQuadruple: CodeNode = {
   id: "Split Quadruple",
   defaultStyle: {
     icon: "fa-list",
@@ -283,7 +283,7 @@ export const SplitQuadruple: CodePart = {
   },
 };
 
-export const AccumulateValuesUntilTrigger: CodePart = {
+export const AccumulateValuesUntilTrigger: CodeNode = {
   id: "Accumulate Values by Trigger",
   defaultStyle: {
     icon: "fa-basket-shopping",
@@ -317,7 +317,7 @@ export const AccumulateValuesUntilTrigger: CodePart = {
   },
 };
 
-export const AccumulateValuesByTime: CodePart = {
+export const AccumulateValuesByTime: CodeNode = {
   id: "Accumulate Values by Time",
   defaultStyle: {
     icon: "fa-basket-shopping",
@@ -382,7 +382,7 @@ export const AccumulateValuesByTime: CodePart = {
   },
 };
 
-export const AccumulateValuesByCount: CodePart = {
+export const AccumulateValuesByCount: CodeNode = {
   id: "Accumulate Values by Count",
   defaultStyle: {
     icon: "fa-basket-shopping",
@@ -419,7 +419,7 @@ export const AccumulateValuesByCount: CodePart = {
   },
 };
 
-export const AccumulateSomeValuesByCount: CodePart = {
+export const AccumulateSomeValuesByCount: CodeNode = {
   id: "Accumulate Some Values by Count",
   defaultStyle: {
     icon: "fa-basket-shopping",
@@ -464,7 +464,7 @@ export const AccumulateSomeValuesByCount: CodePart = {
   },
 };
 
-export const Append: CodePart = {
+export const Append: CodeNode = {
   id: "Append",
   namespace,
   description: "Appends an item to a list",
@@ -481,7 +481,7 @@ export const Append: CodePart = {
   },
 };
 
-export const Prepend: CodePart = {
+export const Prepend: CodeNode = {
   id: "Prepend",
   namespace,
   description: "Prepends an item to a list",
@@ -498,7 +498,7 @@ export const Prepend: CodePart = {
   },
 };
 
-export const Remove: CodePart = {
+export const Remove: CodeNode = {
   id: "Remove",
   namespace,
   description: "Removes an item from a list",
@@ -515,7 +515,7 @@ export const Remove: CodePart = {
   },
 };
 
-export const RemoveAt: CodePart = {
+export const RemoveAt: CodeNode = {
   id: "Remove At",
   namespace,
   description: "Removes an item from a list at the specified index",
@@ -532,7 +532,7 @@ export const RemoveAt: CodePart = {
   },
 };
 
-export const Slice: CodePart = {
+export const Slice: CodeNode = {
   id: "Slice",
   namespace,
   description:
@@ -551,7 +551,7 @@ export const Slice: CodePart = {
   },
 };
 
-export const Flatten: CodePart = {
+export const Flatten: CodeNode = {
   id: "Flatten",
   namespace,
   description: "Flattens a list of lists into a single list",

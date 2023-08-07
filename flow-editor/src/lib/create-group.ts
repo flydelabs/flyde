@@ -5,7 +5,7 @@ import {
   connectionNode,
   partInput,
   connectionNodeEquals,
-  VisualPart,
+  VisualNode,
   middlePos,
 } from "@flyde/core";
 import { rnd } from "../physics";
@@ -149,7 +149,7 @@ export const createGroup = async (
       instanceIds.includes(conn.to.insId)
   );
 
-  const visualPart: VisualPart = {
+  const visualPart: VisualNode = {
     id: name,
     inputs,
     outputs,

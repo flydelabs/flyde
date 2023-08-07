@@ -7,13 +7,13 @@ import {
   partInput,
   partInstance,
   partOutput,
-  VisualPart,
+  VisualNode,
   visualPart,
 } from "../../part";
 import { FlydeFlow } from "../../flow-schema";
 import { connectionData } from "../../connect";
 
-const somePart: VisualPart = {
+const somePart: VisualNode = {
   id: "bob",
   inputs: {
     a: partInput(),

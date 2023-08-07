@@ -1,12 +1,12 @@
 import {
-  VisualPart,
+  VisualNode,
   isRefPartInstance,
   isInlinePartInstance,
   isVisualPart,
   FlydeFlow,
   ResolvedFlydeFlow,
   isCodePart,
-  CodePart,
+  CodeNode,
   ImportSource,
   isBasePart,
   Part,
@@ -25,7 +25,7 @@ import requireReload from "require-reload";
 
 import * as StdLib from "@flyde/stdlib/dist/all";
 
-const getRefPartIds = (part: VisualPart): string[] => {
+const getRefPartIds = (part: VisualNode): string[] => {
   const refPartIds = part.instances
     .filter(isRefPartInstance)
     .map((ins) => ins.partId);
@@ -45,7 +45,7 @@ const getRefPartIds = (part: VisualPart): string[] => {
 
 export function resolveCodePartDependencies(path: string): {
   errors: string[];
-  parts: { exportName: string; part: CodePart }[];
+  parts: { exportName: string; part: CodeNode }[];
 } {
   const errors = [];
   const parts = [];
@@ -59,11 +59,11 @@ export function resolveCodePartDependencies(path: string): {
         if (isCodePart(value)) {
           parts.push({ exportName: key, part: value });
         } else {
-          errors.push(`Exported value "${key}" is not a valid CodePart`);
+          errors.push(`Exported value "${key}" is not a valid CodeNode`);
         }
       });
     } else {
-      errors.push(`Exported value is not a valid CodePart`);
+      errors.push(`Exported value is not a valid CodeNode`);
     }
   } catch (e) {
     errors.push(`Error loading module "${path}": ${e.message}`);
@@ -162,7 +162,7 @@ export function resolveDependencies(
       if (importPath === "@flyde/stdlib") {
         const maybePartAndExport = Object.entries(StdLib)
           .filter(([_, value]) => isBasePart(value))
-          .map(([key, value]) => ({ part: value as CodePart, exportPath: key }))
+          .map(([key, value]) => ({ part: value as CodeNode, exportPath: key }))
           .find(({ part }) => part.id === refPartId);
         if (!maybePartAndExport) {
           throw new Error(

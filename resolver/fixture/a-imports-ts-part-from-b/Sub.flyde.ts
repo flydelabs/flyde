@@ -1,6 +1,6 @@
-import { CodePart, partOutput } from "@flyde/core";
+import { CodeNode, partOutput } from "@flyde/core";
 
-const part: CodePart = {
+const part: CodeNode = {
   id: "Sub",
   inputs: {
     a: { mode: "required" },

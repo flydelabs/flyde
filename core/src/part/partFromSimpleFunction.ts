@@ -1,7 +1,7 @@
-import { BasePart, CodePart, PartStyleSize, RunPartFunction } from ".";
+import { BaseNode, CodeNode, PartStyleSize, RunPartFunction } from ".";
 import { InputMode } from "./part-pins";
 
-export type SimpleFnData = Omit<BasePart, "inputs" | "outputs" | "run"> & {
+export type SimpleFnData = Omit<BaseNode, "inputs" | "outputs" | "run"> & {
   id: string;
   description: string;
   namespace: string;
@@ -20,7 +20,7 @@ export type SimpleFnData = Omit<BasePart, "inputs" | "outputs" | "run"> & {
   fullRunFn?: RunPartFunction; // hack to start migrating these back
 };
 
-export function partFromSimpleFunction(data: SimpleFnData): CodePart {
+export function partFromSimpleFunction(data: SimpleFnData): CodeNode {
   return {
     ...data,
     id: data.id,

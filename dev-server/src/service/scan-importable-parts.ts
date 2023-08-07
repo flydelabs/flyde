@@ -6,7 +6,7 @@ import {
 } from "@flyde/resolver";
 
 import {
-  BasePart,
+  BaseNode,
   debugLogger,
   isBasePart,
   PartsDefCollection,
@@ -40,7 +40,7 @@ export async function scanImportableParts(
 
   const depsParts = await resolveDependentPackages(rootPath, depsNames);
 
-  let builtInStdLib: Record<string, Record<string, BasePart>> = {};
+  let builtInStdLib: Record<string, Record<string, BaseNode>> = {};
   if (!depsNames.includes("@flyde/stdlib")) {
     debugLogger("Using built-in stdlib");
 
@@ -56,7 +56,7 @@ export async function scanImportableParts(
 
   const localParts = localFiles
     .filter((file) => !file.relativePath.endsWith(filename))
-    .reduce<Record<string, Record<string, BasePart>>>((acc, file) => {
+    .reduce<Record<string, Record<string, BaseNode>>>((acc, file) => {
       if (isCodePartPath(file.fullPath)) {
         const { errors, parts } = resolveCodePartDependencies(file.fullPath);
         allErrors.push(

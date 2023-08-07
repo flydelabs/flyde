@@ -1,5 +1,5 @@
 import { Button, Label, Tag } from "@blueprintjs/core";
-import { BasePart, ImportableSource, ImportedPart } from "@flyde/core";
+import { BaseNode, ImportableSource, ImportedPart } from "@flyde/core";
 import classNames from "classnames";
 import React, { useCallback } from "react";
 import { AddPartMenuFilter } from "../AddPartMenu";

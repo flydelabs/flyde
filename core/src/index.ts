@@ -2,7 +2,7 @@ export * from "./common";
 import { Pos, OMap } from "./common";
 import {
   CustomPart,
-  VisualPart,
+  VisualNode,
   InputPinsConfig,
   maybeGetStaticValuePartId,
   Part,
@@ -26,7 +26,7 @@ export * from "./web-project";
 
 export * from "./flow-schema";
 
-export type InputStaticValue = string | number | object | VisualPart;
+export type InputStaticValue = string | number | object | VisualNode;
 
 export const isStaticValueVisualPart = (val: InputStaticValue): boolean => {
   return !!val && !!maybeGetStaticValuePartId(`${val}`);
@@ -34,7 +34,7 @@ export const isStaticValueVisualPart = (val: InputStaticValue): boolean => {
 
 export interface InstanceViewData {
   id: string;
-  partIdOrGroup: string | VisualPart;
+  partIdOrGroup: string | VisualNode;
   pos: Pos;
   visibleOptionalInputs?: string[];
   inputConfig: InputPinsConfig;

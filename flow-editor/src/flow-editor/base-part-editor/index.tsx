@@ -1,6 +1,6 @@
 import React from "react";
 import {
-  BasePart,
+  BaseNode,
   entries,
   InputMode,
   okeys,
@@ -8,7 +8,13 @@ import {
   partOutput,
 } from "@flyde/core";
 // ;
-import { Checkbox, Collapse, FormGroup, InputGroup, MenuItem } from "@blueprintjs/core";
+import {
+  Checkbox,
+  Collapse,
+  FormGroup,
+  InputGroup,
+  MenuItem,
+} from "@blueprintjs/core";
 import produce from "immer";
 import { MultiSelect } from "@blueprintjs/select";
 import { PartPreview } from "../../PartPreview/PartPreview";
@@ -30,8 +36,8 @@ export const renderCreateIOOption = (
 const IOMultiSelect = MultiSelect.ofType<string>();
 
 export interface BasePartEditorProps {
-  part: BasePart;
-  onChange: (part: BasePart) => void;
+  part: BaseNode;
+  onChange: (part: BaseNode) => void;
   idDisabled: boolean;
   hiddenOutputs?: boolean;
 }
@@ -86,7 +92,7 @@ export const BasePartEditor: React.FC<BasePartEditorProps> = (props) => {
   const onAddInput = React.useCallback(
     (name: string, mode: InputMode) => {
       const newPart = produce(part, (draft) => {
-        draft.inputs[name] = partInput( mode);
+        draft.inputs[name] = partInput(mode);
       });
       onChange(newPart);
     },
@@ -145,7 +151,6 @@ export const BasePartEditor: React.FC<BasePartEditorProps> = (props) => {
     },
     [onChange, part]
   );
-
 
   return (
     <div className="base-part-editor">

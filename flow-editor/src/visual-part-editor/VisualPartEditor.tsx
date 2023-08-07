@@ -5,7 +5,7 @@ import {
   THIS_INS_ID,
   ConnectionData,
   isInternalConnectionNode,
-  VisualPart,
+  VisualNode,
   partInput,
   PartInstance,
   partOutput,
@@ -159,7 +159,7 @@ export type GroupEditorBoardData = {
 };
 
 export type VisualPartEditorProps = {
-  part: VisualPart;
+  part: VisualNode;
   currentInsId: string;
   ancestorsInsIds?: string;
 
@@ -173,7 +173,7 @@ export type VisualPartEditorProps = {
 
   onChangeBoardData: (data: Partial<GroupEditorBoardData>) => void;
 
-  onChangePart: (val: VisualPart, type: FlydeFlowChangeType) => void;
+  onChangePart: (val: VisualNode, type: FlydeFlowChangeType) => void;
 
   onCopy: (data: ClipboardData) => void;
   onInspectPin: (insId: string, pin?: { id: string; type: PinType }) => void;
@@ -306,7 +306,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
         useState<InlineValueTarget>();
 
       const [openInlineInstance, setOpenInlineInstance] = useState<{
-        part: VisualPart;
+        part: VisualNode;
         insId: string;
       }>();
 
@@ -1368,7 +1368,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
               const insPart = getPartDef(
                 instance,
                 currResolvedDeps
-              ) as VisualPart;
+              ) as VisualNode;
               toastMsg(`Ungrouped inline part ${insPart.id}`);
               reportEvent("unGroupPart", {
                 instancesCount: insPart.instances.length,

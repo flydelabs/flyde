@@ -1,5 +1,5 @@
 import {
-  CodePart,
+  CodeNode,
   dynamicPartInput,
   execute,
   ImportedPart,
@@ -320,8 +320,8 @@ describe("resolver", () => {
 
     const resolvedDeps = flow.dependencies as PartsCollection;
 
-    assert.exists((resolvedDeps.Add as CodePart).run);
-    assert.exists((resolvedDeps.Sub as CodePart).run);
+    assert.exists((resolvedDeps.Add as CodeNode).run);
+    assert.exists((resolvedDeps.Sub as CodeNode).run);
 
     assert.match(
       (resolvedDeps.Add as unknown as ImportedPart).source.export,

@@ -1,9 +1,9 @@
-import { VisualPart, Pos, createInsId } from "@flyde/core";
+import { VisualNode, Pos, createInsId } from "@flyde/core";
 import produce from "immer";
 import { ClipboardData } from "../VisualPartEditor";
 
 export const pasteInstancesCommand = (
-  _part: VisualPart,
+  _part: VisualNode,
   mousePos: Pos,
   clipboardData: ClipboardData
 ) => {

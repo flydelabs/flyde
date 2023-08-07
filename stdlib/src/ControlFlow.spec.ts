@@ -5,7 +5,7 @@ import {
   inlinePartInstance,
   randomInt,
   staticInputPinConfig,
-  VisualPart,
+  VisualNode,
 } from "@flyde/core";
 import { assert } from "chai";
 
@@ -18,7 +18,7 @@ describe("ControlFlow", () => {
       const key = "bla";
       const value = randomInt(42);
 
-      const visualPart: VisualPart = concisePart({
+      const visualPart: VisualNode = concisePart({
         id: "test",
         inputs: ["a"],
         outputs: ["b"],

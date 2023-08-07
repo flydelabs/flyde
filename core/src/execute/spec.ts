@@ -1,6 +1,6 @@
 import {
-  CodePart,
-  VisualPart,
+  CodeNode,
+  VisualNode,
   partInput,
   partOutput,
   Part,
@@ -44,7 +44,7 @@ import { conciseCodePart, wrappedOnEvent } from "../test-utils";
 import { DebuggerEventType } from "./debugger";
 
 describe("execute", () => {
-  const totalOptInput: CodePart = {
+  const totalOptInput: CodeNode = {
     id: "optAdd",
     inputs: {
       n1: { mode: "required-if-connected" },
@@ -60,7 +60,7 @@ describe("execute", () => {
     },
   };
 
-  const groupedOptInput: VisualPart = {
+  const groupedOptInput: VisualNode = {
     id: "groupedOptAdd",
     inputs: {
       n1: partInput(),
@@ -88,7 +88,7 @@ describe("execute", () => {
     ],
   };
 
-  const addGrouped: VisualPart = {
+  const addGrouped: VisualNode = {
     id: "add-visual",
     inputsPosition: {},
     outputsPosition: {},
@@ -155,7 +155,7 @@ describe("execute", () => {
     });
 
     it("compiles visual parts with the right inputs and outputs", () => {
-      const visualPart: VisualPart = {
+      const visualPart: VisualNode = {
         id: "apart",
         inputs: { a: partInput(), b: partInput() },
         outputs: { r: partOutput() },
@@ -171,7 +171,7 @@ describe("execute", () => {
     });
 
     it("compiles visual parts with the right inputs and outputs when inputs have modes", () => {
-      const visualPart: VisualPart = {
+      const visualPart: VisualNode = {
         id: "apart",
         inputs: {
           a: partInput("optional"),
@@ -367,7 +367,7 @@ describe("execute", () => {
         const s = spy();
         r.subscribe(s);
 
-        const part: VisualPart = {
+        const part: VisualNode = {
           id: "bob",
           inputsPosition: {},
           outputsPosition: {},
@@ -419,7 +419,7 @@ describe("execute", () => {
         const val2 = Value(2);
         const resolvedDeps = testPartsCollectionWith(val2);
 
-        const part: VisualPart = {
+        const part: VisualNode = {
           id: "bob",
           inputsPosition: {},
           outputsPosition: {},
@@ -512,7 +512,7 @@ describe("execute", () => {
   });
 
   describe("part as args", () => {
-    const isOddPredicate: VisualPart = {
+    const isOddPredicate: VisualNode = {
       id: "is-even",
       inputsPosition: {},
       outputsPosition: {},

@@ -1,6 +1,6 @@
-import { VisualPart } from "@flyde/core";
+import { VisualNode } from "@flyde/core";
 
-export const defaultProjectRoutePart: Omit<VisualPart, "id"> = {
+export const defaultProjectRoutePart: Omit<VisualNode, "id"> = {
   inputs: {
     request: {
       mode: "optional",
@@ -45,8 +45,7 @@ export const defaultProjectRoutePart: Omit<VisualPart, "id"> = {
     },
   ],
   outputs: {
-    response: {
-    },
+    response: {},
   },
   inputsPosition: {
     request: {

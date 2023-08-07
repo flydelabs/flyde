@@ -1,10 +1,10 @@
-import { CodePart } from "@flyde/core";
+import { CodeNode } from "@flyde/core";
 
 import * as fs from "fs";
 
 const namespace = "File System";
 
-export const ReadFile: CodePart = {
+export const ReadFile: CodeNode = {
   id: "Read File",
   defaultStyle: {
     icon: "fa-file",
@@ -25,7 +25,7 @@ export const ReadFile: CodePart = {
   },
 };
 
-export const WriteFile: CodePart = {
+export const WriteFile: CodeNode = {
   id: "Write File",
   defaultStyle: {
     icon: "fa-file",
@@ -47,7 +47,7 @@ export const WriteFile: CodePart = {
   },
 };
 
-export const AppendFile: CodePart = {
+export const AppendFile: CodeNode = {
   id: "Append File",
   defaultStyle: {
     icon: "fa-file",
@@ -69,7 +69,7 @@ export const AppendFile: CodePart = {
   },
 };
 
-export const DeleteFile: CodePart = {
+export const DeleteFile: CodeNode = {
   id: "Delete File",
   defaultStyle: {
     icon: "fa-file",
@@ -83,7 +83,7 @@ export const DeleteFile: CodePart = {
   },
 };
 
-export const Exists: CodePart = {
+export const Exists: CodeNode = {
   id: "Exists",
   defaultStyle: {
     icon: "fa-file",

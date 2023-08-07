@@ -1,7 +1,7 @@
-import { codeFromFunction, CodePart } from "@flyde/core";
+import { codeFromFunction, CodeNode } from "@flyde/core";
 import { crmService } from "./lib/crm-service";
 
-const GetUserByEmail: CodePart = codeFromFunction({
+const GetUserByEmail: CodeNode = codeFromFunction({
   id: "Get User By Email",
   fn: crmService.getUser,
   inputNames: ["email"],

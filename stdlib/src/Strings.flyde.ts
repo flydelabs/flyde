@@ -1,8 +1,8 @@
-import { CodePart } from "@flyde/core";
+import { CodeNode } from "@flyde/core";
 
 const namespace = "Strings";
 
-export const Concat: CodePart = {
+export const Concat: CodeNode = {
   id: "Concat",
   defaultStyle: {
     icon: "fa-font",
@@ -17,7 +17,7 @@ export const Concat: CodePart = {
   run: ({ a, b }, { value }) => value.next(a + b),
 };
 
-export const Split: CodePart = {
+export const Split: CodeNode = {
   id: "Split",
   defaultStyle: { icon: "fa-font" },
   namespace,
@@ -31,7 +31,7 @@ export const Split: CodePart = {
     value.next(string.split(separator)),
 };
 
-export const Join: CodePart = {
+export const Join: CodeNode = {
   id: "Join",
   defaultStyle: { icon: "fa-font" },
   namespace,
@@ -44,7 +44,7 @@ export const Join: CodePart = {
   run: ({ array, separator }, { value }) => value.next(array.join(separator)),
 };
 
-export const Replace: CodePart = {
+export const Replace: CodeNode = {
   id: "Replace",
   defaultStyle: { icon: "fa-font" },
   namespace,
@@ -59,7 +59,7 @@ export const Replace: CodePart = {
     value.next(string.replace(searchValue, replaceValue)),
 };
 
-export const Trim: CodePart = {
+export const Trim: CodeNode = {
   id: "Trim",
   defaultStyle: { icon: "fa-font" },
   namespace,
@@ -69,7 +69,7 @@ export const Trim: CodePart = {
   run: ({ string }, { value }) => value.next(string.trim()),
 };
 
-export const ToLowerCase: CodePart = {
+export const ToLowerCase: CodeNode = {
   id: "To Lower Case",
   defaultStyle: { icon: "fa-font" },
   namespace,
@@ -79,7 +79,7 @@ export const ToLowerCase: CodePart = {
   run: ({ string }, { value }) => value.next(string.toLowerCase()),
 };
 
-export const ToUpperCase: CodePart = {
+export const ToUpperCase: CodeNode = {
   id: "To Upper Case",
   defaultStyle: { icon: "fa-font" },
   namespace,
@@ -89,7 +89,7 @@ export const ToUpperCase: CodePart = {
   run: ({ string }, { value }) => value.next(string.toUpperCase()),
 };
 
-export const Substring: CodePart = {
+export const Substring: CodeNode = {
   id: "Substring",
   defaultStyle: { icon: "fa-font" },
   namespace,
@@ -105,7 +105,7 @@ export const Substring: CodePart = {
     value.next(string.substring(start, end)),
 };
 
-export const Length: CodePart = {
+export const Length: CodeNode = {
   id: "Length",
   defaultStyle: { icon: "fa-font" },
   namespace,
@@ -115,7 +115,7 @@ export const Length: CodePart = {
   run: ({ string }, { value }) => value.next(string.length),
 };
 
-export const IndexOf: CodePart = {
+export const IndexOf: CodeNode = {
   id: "Index Of",
   defaultStyle: { icon: "fa-font" },
   namespace,
@@ -131,7 +131,7 @@ export const IndexOf: CodePart = {
     value.next(string.indexOf(searchValue, fromIndex)),
 };
 
-export const LastIndexOf: CodePart = {
+export const LastIndexOf: CodeNode = {
   id: "Last Index Of",
   defaultStyle: { icon: "fa-font" },
   namespace,
@@ -147,7 +147,7 @@ export const LastIndexOf: CodePart = {
     value.next(string.lastIndexOf(searchValue, fromIndex)),
 };
 
-export const CharAt: CodePart = {
+export const CharAt: CodeNode = {
   id: "Char At",
   defaultStyle: { icon: "fa-font" },
   namespace,
@@ -160,7 +160,7 @@ export const CharAt: CodePart = {
   run: ({ string, index }, { value }) => value.next(string.charAt(index)),
 };
 
-export const ToKebabCase: CodePart = {
+export const ToKebabCase: CodeNode = {
   id: "To Kebab Case",
   defaultStyle: { icon: "fa-font" },
   namespace,
@@ -176,7 +176,7 @@ export const ToKebabCase: CodePart = {
     ),
 };
 
-export const ToCamelCase: CodePart = {
+export const ToCamelCase: CodeNode = {
   id: "To Camel Case",
   defaultStyle: { icon: "fa-font" },
   namespace,
@@ -192,7 +192,7 @@ export const ToCamelCase: CodePart = {
     ),
 };
 
-export const ToPascalCase: CodePart = {
+export const ToPascalCase: CodeNode = {
   id: "To Pascal Case",
   defaultStyle: { icon: "fa-font" },
   namespace,
@@ -209,7 +209,7 @@ export const ToPascalCase: CodePart = {
     ),
 };
 
-export const ToSnakeCase: CodePart = {
+export const ToSnakeCase: CodeNode = {
   id: "To Snake Case",
   defaultStyle: { icon: "fa-font" },
   namespace,
@@ -223,7 +223,7 @@ export const ToSnakeCase: CodePart = {
       .toLowerCase(),
 };
 
-export const ToTitleCase: CodePart = {
+export const ToTitleCase: CodeNode = {
   id: "To Title Case",
   defaultStyle: { icon: "fa-font" },
   namespace,
@@ -239,7 +239,7 @@ export const ToTitleCase: CodePart = {
     ),
 };
 
-export const Includes: CodePart = {
+export const Includes: CodeNode = {
   id: "Includes",
   namespace,
   defaultStyle: { icon: "fa-font" },
@@ -255,7 +255,7 @@ export const Includes: CodePart = {
     value.next(string.includes(searchValue, fromIndex)),
 };
 
-export const StartsWith: CodePart = {
+export const StartsWith: CodeNode = {
   id: "Starts With",
   namespace,
   defaultStyle: { icon: "fa-font" },
@@ -271,7 +271,7 @@ export const StartsWith: CodePart = {
     value.next(string.startsWith(searchValue, fromIndex)),
 };
 
-export const EndsWith: CodePart = {
+export const EndsWith: CodeNode = {
   id: "Ends With",
   namespace,
   defaultStyle: { icon: "fa-font" },
@@ -287,7 +287,7 @@ export const EndsWith: CodePart = {
     string.endsWith(searchValue, fromIndex),
 };
 
-export const IsEmpty: CodePart = {
+export const IsEmpty: CodeNode = {
   id: "Is Empty",
   namespace,
   defaultStyle: { icon: "fa-font" },
@@ -297,7 +297,7 @@ export const IsEmpty: CodePart = {
   run: ({ string }, { value }) => value.next(string.length === 0),
 };
 
-export const MatchRegex: CodePart = {
+export const MatchRegex: CodeNode = {
   id: "Match Regex",
   namespace,
   defaultStyle: { icon: "fa-font" },
@@ -310,7 +310,7 @@ export const MatchRegex: CodePart = {
   run: ({ string, regex }, { value }) => value.next(string.match(regex)),
 };
 
-export const EmptyString: CodePart = {
+export const EmptyString: CodeNode = {
   id: "Empty String",
   namespace,
   defaultStyle: { icon: "fa-font", size: "small" },

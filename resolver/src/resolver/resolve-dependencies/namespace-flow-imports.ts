@@ -5,14 +5,14 @@ import {
   isRefPartInstance,
   RefPartInstance,
   isInlinePartInstance,
-  VisualPart,
+  VisualNode,
 } from "@flyde/core";
 import _ = require("lodash");
 
 const namespaceVisualPart = (
-  part: VisualPart,
+  part: VisualNode,
   namespace: string
-): VisualPart => {
+): VisualNode => {
   const namespacedInstances = part.instances.map((ins) => {
     if (isInlinePartInstance(ins)) {
       if (isVisualPart(ins.part)) {

@@ -1,7 +1,7 @@
-import { CodePart } from "@flyde/core";
+import { CodeNode } from "@flyde/core";
 
 const namespace = "Numbers";
-export const Add: CodePart = {
+export const Add: CodeNode = {
   id: "Add",
   defaultStyle: {
     icon: "fa-plus",
@@ -16,7 +16,7 @@ export const Add: CodePart = {
   run: ({ n1, n2 }, { sum }) => sum.next(n1 + n2),
 };
 
-export const Subtract: CodePart = {
+export const Subtract: CodeNode = {
   id: "Subtract",
   defaultStyle: {
     icon: "fa-minus",
@@ -31,7 +31,7 @@ export const Subtract: CodePart = {
   run: ({ n1, n2 }, { difference }) => difference.next(n1 - n2),
 };
 
-export const Multiply: CodePart = {
+export const Multiply: CodeNode = {
   id: "Multiply",
   defaultStyle: {
     icon: "fa-times",
@@ -46,7 +46,7 @@ export const Multiply: CodePart = {
   run: ({ n1, n2 }, { product }) => product.next(n1 * n2),
 };
 
-export const Divide: CodePart = {
+export const Divide: CodeNode = {
   id: "Divide",
   defaultStyle: {
     icon: "fa-divide",
@@ -61,7 +61,7 @@ export const Divide: CodePart = {
   run: ({ n1, n2 }, { quotient }) => quotient.next(n1 / n2),
 };
 
-export const Modulo: CodePart = {
+export const Modulo: CodeNode = {
   id: "Modulo",
   defaultStyle: {
     icon: "fa-percentage",
@@ -76,7 +76,7 @@ export const Modulo: CodePart = {
   run: ({ n1, n2 }, { remainder }) => remainder.next(n1 % n2),
 };
 
-export const Power: CodePart = {
+export const Power: CodeNode = {
   id: "Power",
   defaultStyle: {
     icon: "fa-superscript",
@@ -91,7 +91,7 @@ export const Power: CodePart = {
   run: ({ n1, n2 }, { power }) => power.next(Math.pow(n1, n2)),
 };
 
-export const SquareRoot: CodePart = {
+export const SquareRoot: CodeNode = {
   id: "Square Root",
   defaultStyle: {
     icon: "fa-square-root-alt",
@@ -103,7 +103,7 @@ export const SquareRoot: CodePart = {
   run: ({ n }, { root }) => root.next(Math.sqrt(n)),
 };
 
-export const AbsoluteValue: CodePart = {
+export const AbsoluteValue: CodeNode = {
   id: "Absolute Value",
   defaultStyle: {
     icon: "fa-abs",
@@ -115,7 +115,7 @@ export const AbsoluteValue: CodePart = {
   run: ({ n }, { absolute }) => absolute.next(Math.abs(n)),
 };
 
-export const Floor: CodePart = {
+export const Floor: CodeNode = {
   id: "Floor",
   defaultStyle: {
     icon: "fa-floor",
@@ -127,7 +127,7 @@ export const Floor: CodePart = {
   run: ({ n }, { floor }) => floor.next(Math.floor(n)),
 };
 
-export const Ceiling: CodePart = {
+export const Ceiling: CodeNode = {
   id: "Ceiling",
   defaultStyle: {
     icon: "fa-ceiling",
@@ -139,7 +139,7 @@ export const Ceiling: CodePart = {
   run: ({ n }, { ceiling }) => ceiling.next(Math.ceil(n)),
 };
 
-export const Round: CodePart = {
+export const Round: CodeNode = {
   id: "Round",
   defaultStyle: {
     icon: "fa-round",
@@ -151,7 +151,7 @@ export const Round: CodePart = {
   run: ({ n }, { rounded }) => rounded.next(Math.round(n)),
 };
 
-export const Truncate: CodePart = {
+export const Truncate: CodeNode = {
   id: "Truncate",
   defaultStyle: {
     icon: "fa-truncate",
@@ -163,7 +163,7 @@ export const Truncate: CodePart = {
   run: ({ n }, { truncated }) => truncated.next(Math.trunc(n)),
 };
 
-export const Sin: CodePart = {
+export const Sin: CodeNode = {
   id: "Sin",
   defaultStyle: {
     icon: "fa-sin",
@@ -175,7 +175,7 @@ export const Sin: CodePart = {
   run: ({ angle }, { sine }) => sine.next(Math.sin(angle)),
 };
 
-export const Cos: CodePart = {
+export const Cos: CodeNode = {
   id: "Cos",
   defaultStyle: {
     icon: "fa-cos",
@@ -187,7 +187,7 @@ export const Cos: CodePart = {
   run: ({ angle }, { cosine }) => cosine.next(Math.cos(angle)),
 };
 
-export const Min: CodePart = {
+export const Min: CodeNode = {
   id: "Min",
   namespace,
   description: "Emits the minimum of two numbers",
@@ -199,7 +199,7 @@ export const Min: CodePart = {
   run: ({ n1, n2 }, { min }) => min.next(Math.min(n1, n2)),
 };
 
-export const Max: CodePart = {
+export const Max: CodeNode = {
   id: "Max",
   namespace,
   description: "Emits the maximum of two numbers",
@@ -211,7 +211,7 @@ export const Max: CodePart = {
   run: ({ n1, n2 }, { max }) => max.next(Math.max(n1, n2)),
 };
 
-export const ParseInt: CodePart = {
+export const ParseInt: CodeNode = {
   id: "Parse Int",
   namespace,
   description: "Emits the integer value of a string",
@@ -220,7 +220,7 @@ export const ParseInt: CodePart = {
   run: ({ str }, { int }) => int.next(parseInt(str)),
 };
 
-export const ParseFloat: CodePart = {
+export const ParseFloat: CodeNode = {
   id: "Parse Float",
   namespace,
   description: "Emits the float value of a string",
@@ -229,7 +229,7 @@ export const ParseFloat: CodePart = {
   run: ({ str }, { float }) => float.next(parseFloat(str)),
 };
 
-export const ToFixed: CodePart = {
+export const ToFixed: CodeNode = {
   id: "To Fixed",
   namespace,
   description: "Emits the specified number of decimal places of a number",
@@ -245,7 +245,7 @@ export const ToFixed: CodePart = {
   run: ({ number, places }, { fixed }) => fixed.next(number.toFixed(places)),
 };
 
-export const ToExponential: CodePart = {
+export const ToExponential: CodeNode = {
   id: "To Exponential",
   namespace,
   description:
@@ -264,7 +264,7 @@ export const ToExponential: CodePart = {
     exponential.next(number.toExponential(places)),
 };
 
-export const ToPrecision: CodePart = {
+export const ToPrecision: CodeNode = {
   id: "To Precision",
   namespace,
   description: "Emits the specified number of significant figures of a number",
@@ -282,7 +282,7 @@ export const ToPrecision: CodePart = {
     precision.next(number.toPrecision(places)),
 };
 
-export const GreaterThan: CodePart = {
+export const GreaterThan: CodeNode = {
   id: "Greater Than",
   namespace,
   description: "Emits true if the first number is greater than the second",
@@ -294,7 +294,7 @@ export const GreaterThan: CodePart = {
   run: ({ n1, n2 }, { result }) => result.next(n1 > n2),
 };
 
-export const GreaterThanOrEqual: CodePart = {
+export const GreaterThanOrEqual: CodeNode = {
   id: "Greater Than Or Equal",
   namespace,
   description:
@@ -309,7 +309,7 @@ export const GreaterThanOrEqual: CodePart = {
   run: ({ n1, n2 }, { result }) => result.next(n1 >= n2),
 };
 
-export const LessThan: CodePart = {
+export const LessThan: CodeNode = {
   id: "Less Than",
   namespace,
   description: "Emits true if the first number is less than the second",
@@ -321,7 +321,7 @@ export const LessThan: CodePart = {
   run: ({ n1, n2 }, { result }) => result.next(n1 < n2),
 };
 
-export const LessThanOrEqual: CodePart = {
+export const LessThanOrEqual: CodeNode = {
   id: "Less Than Or Equal",
   namespace,
   description:
@@ -336,7 +336,7 @@ export const LessThanOrEqual: CodePart = {
   run: ({ n1, n2 }, { result }) => result.next(n1 <= n2),
 };
 
-export const SumList: CodePart = {
+export const SumList: CodeNode = {
   id: "Sum List",
   defaultStyle: {
     icon: "fa-plus",

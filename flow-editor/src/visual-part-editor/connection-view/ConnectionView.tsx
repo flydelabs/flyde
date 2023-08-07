@@ -1,7 +1,7 @@
 import * as React from "react";
 import classNames from "classnames";
 import {
-  VisualPart,
+  VisualNode,
   Pos,
   PartsDefCollection,
   getPartDef,
@@ -22,7 +22,7 @@ import { ConnectionViewPath } from "./ConnectionViewPath/ConnectionViewPath";
 
 export interface BaseConnectionViewProps {
   resolvedParts: PartsDefCollection;
-  part: VisualPart;
+  part: VisualNode;
   ancestorsInsIds?: string;
   currentInsId: string;
   onDblClick: () => void;

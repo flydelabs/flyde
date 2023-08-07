@@ -2,7 +2,7 @@ import * as React from "react";
 import {
   isVisualPart,
   Pos,
-  VisualPart,
+  VisualNode,
   isInlineValuePart,
   PartInstance,
   FlydeFlow,
@@ -204,7 +204,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
     );
 
     const onChangePart = React.useCallback(
-      (newPart: VisualPart, changeType: FlydeFlowChangeType) => {
+      (newPart: VisualNode, changeType: FlydeFlowChangeType) => {
         const shouldIgnore = ignoreUndoChangeTypes.some((str) =>
           changeType.message.includes(str)
         );

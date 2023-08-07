@@ -1,5 +1,5 @@
 import {
-  VisualPart,
+  VisualNode,
   visualPart,
   partInstance,
   RefPartInstance,
@@ -24,9 +24,9 @@ describe("namespace flows", () => {
             instances: [partInstance("i2", "Dave")],
           }),
           source: {
-            path: 'bob',
-            export: 'default'
-          }
+            path: "bob",
+            export: "default",
+          },
         },
       },
     };
@@ -43,7 +43,7 @@ describe("namespace flows", () => {
 
     assert.equal(
       (
-        (namespaced.dependencies["NS__Alice"] as unknown as VisualPart)
+        (namespaced.dependencies["NS__Alice"] as unknown as VisualNode)
           .instances[0] as RefPartInstance
       ).partId,
       "NS__Dave"

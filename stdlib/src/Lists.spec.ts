@@ -1,7 +1,7 @@
 // // ```
 // import {
-//   BasePart,
-//   CodePart,
+//   BaseNode,
+//   CodeNode,
 //   InputPartPin,
 //   OutputPartPin,
 //   PartStyleSize,
@@ -21,7 +21,7 @@
 //   };
 // };
 
-// export type SimpleFnData = Omit<BasePart, "inputs" | "outputs" | "run"> & {
+// export type SimpleFnData = Omit<BaseNode, "inputs" | "outputs" | "run"> & {
 //   id: string;
 //   description: string;
 //   namespace: string;
@@ -44,7 +44,7 @@
 // };
 
 // // This is the refactored partFromSimpleFunction function.
-// export function partFromSimpleFunction(data: SimpleFnData): CodePart {
+// export function partFromSimpleFunction(data: SimpleFnData): CodeNode {
 //   const inputs: ImprovedInputs = {}; // Using the improved inputs type defined above.
 //   const outputs: Output = {};
 

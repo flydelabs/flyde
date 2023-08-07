@@ -71,11 +71,11 @@ export interface PartStyle {
 }
 
 /**
- * Extended by {@link VisualPart}, {@link CodePart} and {@link InlineValuePart}
+ * Extended by {@link VisualNode}, {@link CodeNode} and {@link InlineValuePart}
  */
-export interface BasePart {
+export interface BaseNode {
   /**
-   * Part's unique id. {@link VisualPart.instances }  refer use this to refer to the correct part
+   * Part's unique id. {@link VisualNode.instances }  refer use this to refer to the correct part
    */
   id: string;
   /**
@@ -156,7 +156,7 @@ export interface BasePart {
   defaultStyle?: PartStyle;
 }
 
-export interface CodePart extends BasePart {
+export interface CodeNode extends BaseNode {
   /**
    * This function will run as soon as the part's inputs are satisfied.
    * It has access to the parts inputs values, and output pins. See {@link RunPartFunction} for more information.
@@ -164,7 +164,7 @@ export interface CodePart extends BasePart {
    */
   run: RunPartFunction;
   /**
-   * @deprecated use {@link CodePart['run']} instead
+   * @deprecated use {@link CodeNode['run']} instead
    */
   fn?: RunPartFunction;
   customView?: CustomPartViewFn;
@@ -180,7 +180,7 @@ export enum InlineValuePartType {
  * @deprecated will turn into a "Macro Part" as soon as that is developed
  */
 
-export interface InlineValuePart extends BasePart {
+export interface InlineValuePart extends BaseNode {
   runFnRawCode: string;
   fnCode?: string;
   dataBuilderSource?: string; // quick solution for "Data builder iteration"
@@ -194,7 +194,7 @@ export interface InlineValuePart extends BasePart {
  * Connecting to a main input or output is the way that a visual parts' internal implementation can communicate with its external API.
  */
 
-export interface VisualPart extends BasePart {
+export interface VisualNode extends BaseNode {
   /** a map holding the position for each main input. Used in the editor only. */
   inputsPosition: OMap<Pos>;
   /** a map holding the position for each main output. Used in the editor only. */
@@ -203,11 +203,11 @@ export interface VisualPart extends BasePart {
   instances: PartInstance[];
   /** each connection represents a "wire" between 2 different instances, or between an instance and a main input/output*/
   connections: ConnectionData[];
-  /** TODO - either deprecate this or {@link BasePart.customViewCode} */
+  /** TODO - either deprecate this or {@link BaseNode.customViewCode} */
   customView?: CustomPartViewFn;
 }
 
-export type Part = CodePart | CustomPart;
+export type Part = CodeNode | CustomPart;
 
 export type ImportableSource = {
   module: string;
@@ -215,9 +215,9 @@ export type ImportableSource = {
   implicit?: boolean;
 };
 
-export type CustomPart = VisualPart | InlineValuePart;
+export type CustomPart = VisualNode | InlineValuePart;
 
-export type CodePartDefinition = Omit<CodePart, "run">;
+export type CodePartDefinition = Omit<CodeNode, "run">;
 
 export type PartDefinition = CustomPart | CodePartDefinition;
 
@@ -228,16 +228,16 @@ export type PartModuleMetaData = {
 export type PartDefinitionWithModuleMetaData = PartDefinition &
   PartModuleMetaData;
 
-export const isBasePart = (p: any): p is BasePart => {
+export const isBasePart = (p: any): p is BaseNode => {
   return p && p.id && p.inputs && p.outputs;
 };
 
-export const isCodePart = (p: Part | PartDefinition | any): p is CodePart => {
-  return isBasePart(p) && typeof (p as CodePart).run === "function";
+export const isCodePart = (p: Part | PartDefinition | any): p is CodeNode => {
+  return isBasePart(p) && typeof (p as CodeNode).run === "function";
 };
 
-export const isVisualPart = (p: Part | PartDefinition): p is VisualPart => {
-  return !!(p as VisualPart).instances;
+export const isVisualPart = (p: Part | PartDefinition): p is VisualNode => {
+  return !!(p as VisualNode).instances;
 };
 
 export const isInlineValuePart = (
@@ -246,7 +246,7 @@ export const isInlineValuePart = (
   return isDefined(p) && isDefined((p as InlineValuePart).runFnRawCode);
 };
 
-export const visualPart = testDataCreator<VisualPart>({
+export const visualPart = testDataCreator<VisualNode>({
   id: "visual-part",
   inputs: {},
   outputs: {},
@@ -256,7 +256,7 @@ export const visualPart = testDataCreator<VisualPart>({
   inputsPosition: {},
 });
 
-export const codePart = testDataCreator<CodePart>({
+export const codePart = testDataCreator<CodeNode>({
   id: "part",
   inputs: {},
   outputs: {},
@@ -282,7 +282,7 @@ export const fromSimplified = ({
   inputTypes,
   outputTypes,
   id,
-}: SimplifiedPartParams): CodePart => {
+}: SimplifiedPartParams): CodeNode => {
   const inputs: InputPinMap = entries(inputTypes).reduce<InputPinMap>(
     (p, [k]) => ({ ...p, [k]: {} }),
     {}
@@ -372,7 +372,7 @@ export const codeFromFunction = ({
   inputNames,
   outputName,
   defaultStyle,
-}: codeFromFunctionParams): CodePart => {
+}: codeFromFunctionParams): CodeNode => {
   return {
     id,
     inputs: inputNames.reduce((acc, k) => ({ ...acc, [k]: partInput() }), {}),

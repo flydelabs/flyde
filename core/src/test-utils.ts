@@ -1,6 +1,6 @@
 import { spy } from "sinon";
 import Sinon = require("sinon");
-import { BasePart, InputPinMap, VisualPart, CodePart, PartInstance } from "./.";
+import { BaseNode, InputPinMap, VisualNode, CodeNode, PartInstance } from "./.";
 
 import {
   DynamicOutput,
@@ -16,7 +16,7 @@ import { connectionNode, externalConnectionNode } from "./connect";
 import { DebuggerEventType, DebuggerEvent, Debugger } from "./execute/debugger";
 
 export interface ConciseBasePart
-  extends Omit<BasePart, "inputs" | "outputs" | "id"> {
+  extends Omit<BaseNode, "inputs" | "outputs" | "id"> {
   inputs?: string[];
   outputs?: string[];
   id?: string;
@@ -28,10 +28,10 @@ export interface ConciseVisualPart extends ConciseBasePart {
 }
 
 export interface ConciseCodePart extends ConciseBasePart {
-  run: CodePart["run"];
+  run: CodeNode["run"];
 }
 
-export const conciseBasePart = (concise: ConciseBasePart): BasePart => {
+export const conciseBasePart = (concise: ConciseBasePart): BaseNode => {
   return {
     id: "a-part",
     ...concise,
@@ -56,7 +56,7 @@ export const conciseBasePart = (concise: ConciseBasePart): BasePart => {
   };
 };
 
-export const concisePart = (concise: ConciseVisualPart): VisualPart => {
+export const concisePart = (concise: ConciseVisualPart): VisualNode => {
   const base = conciseBasePart(concise);
 
   return {
@@ -84,7 +84,7 @@ export const concisePart = (concise: ConciseVisualPart): VisualPart => {
   };
 };
 
-export const conciseCodePart = (concise: ConciseCodePart): CodePart => {
+export const conciseCodePart = (concise: ConciseCodePart): CodeNode => {
   const base = conciseBasePart(concise);
   return {
     ...base,

@@ -1,7 +1,7 @@
 import {
   InlineValuePartType,
   connectionData,
-  VisualPart,
+  VisualNode,
   inlinePartInstance,
   isStaticInputPinConfig,
   queueInputPinConfig,
@@ -11,7 +11,7 @@ import produce from "immer";
 import { createInlineValuePart } from "../../flow-editor/inline-code-modal/inline-code-to-part";
 
 export const handleDetachConstEditorCommand = (
-  part: VisualPart,
+  part: VisualNode,
   insId: string,
   pinId: string
 ) => {

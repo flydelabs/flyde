@@ -1,4 +1,4 @@
-import { FlydeFlow, VisualPart, keys, PartDefinition } from "@flyde/core";
+import { FlydeFlow, VisualNode, keys, PartDefinition } from "@flyde/core";
 import { Corrupt } from "../setup-flows-watcher";
 
 import * as ejs from "ejs";

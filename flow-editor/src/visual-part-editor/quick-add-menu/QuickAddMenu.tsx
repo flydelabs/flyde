@@ -8,7 +8,7 @@ import {
   values,
   Pos,
   ResolvedDependenciesDefinitions,
-  VisualPart,
+  VisualNode,
 } from "@flyde/core";
 // ;
 import { MenuDivider, MenuItem } from "@blueprintjs/core";
@@ -46,7 +46,7 @@ export type QuickAddMenuData = {
 export type QuickMenuProps = QuickAddMenuData & {
   onAdd: (match: QuickMenuMatch) => void;
   onClose: () => void;
-  part: VisualPart;
+  part: VisualNode;
   resolvedDependencies: ResolvedDependenciesDefinitions;
 };
 

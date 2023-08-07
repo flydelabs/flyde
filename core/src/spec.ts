@@ -1,4 +1,4 @@
-import { DynamicPartInput, PartInstanceError, VisualPart } from ".";
+import { DynamicPartInput, PartInstanceError, VisualNode } from ".";
 import { assert } from "chai";
 
 import { spy } from "sinon";
@@ -26,7 +26,7 @@ import {
   TRIGGER_PIN_ID,
 } from "./connect";
 import {
-  CodePart,
+  CodeNode,
   fromSimplified,
   staticPartInput,
   dynamicPartInput,
@@ -94,7 +94,7 @@ describe("main ", () => {
 
   describe("core", () => {
     it("runs an Id code part properly", () => {
-      const part: CodePart = {
+      const part: CodeNode = {
         id: "id",
         inputs: {
           v: partInput(),
@@ -123,7 +123,7 @@ describe("main ", () => {
     });
 
     it("runs an pure-like Id code part properly", () => {
-      const part: CodePart = {
+      const part: CodeNode = {
         id: "id",
         inputs: {
           v: partInput(),
@@ -153,7 +153,7 @@ describe("main ", () => {
 
     it("runs an ADD code part properly", () => {
       const innerSpy = spy();
-      const part: CodePart = {
+      const part: CodeNode = {
         id: "add",
         inputs: {
           a: partInput(),
@@ -255,7 +255,7 @@ describe("main ", () => {
     });
 
     it("supports inline instance parts", () => {
-      const add1: VisualPart = {
+      const add1: VisualNode = {
         id: "add1",
         inputs: {
           n: partInput(),
@@ -458,7 +458,7 @@ describe("main ", () => {
       });
 
       it("connects 2 pieces and runs it", () => {
-        const add1mul2: VisualPart = {
+        const add1mul2: VisualNode = {
           id: "test",
           instances: [partInstance("a", add1.id), partInstance("b", mul2.id)],
           connections: [
@@ -689,7 +689,7 @@ describe("main ", () => {
       it("connects const inputs properly", () => {
         const n = randomInt(99);
         const resolvedDeps = testPartsCollectionWith(Value(n));
-        const part: VisualPart = {
+        const part: VisualNode = {
           id: "test",
           inputs: {},
           outputs: {
@@ -897,7 +897,7 @@ describe("main ", () => {
       it("stops running connected components", () => {
         const internalSpy = spy();
         const s = spy();
-        const ids: CodePart = fromSimplified({
+        const ids: CodeNode = fromSimplified({
           id: "test",
           inputTypes: { v: "any" },
           outputTypes: { r: "any" },
@@ -967,7 +967,7 @@ describe("main ", () => {
 
     it("allows same name for input and output", () => {
       const resolvedDeps = testPartsCollectionWith(Value(1));
-      const part: VisualPart = {
+      const part: VisualNode = {
         id: "part",
         inputs: {
           a: partOutput(),
@@ -1005,7 +1005,7 @@ describe("main ", () => {
 
     describe("more than 1 connection per pin", () => {
       it("is possible when connecting main input to 2 inputs inside it", () => {
-        const part: VisualPart = {
+        const part: VisualNode = {
           id: "part",
           inputs: {
             n: partInput(),
@@ -1041,7 +1041,7 @@ describe("main ", () => {
 
       it("returns all given pulses to output", async () => {
         const resolvedDeps = testPartsCollectionWith(Value(1), Value(2));
-        const part: VisualPart = {
+        const part: VisualNode = {
           id: "part",
           inputs: {},
           outputs: {
@@ -1079,7 +1079,7 @@ describe("main ", () => {
 
     // it('runs "leaf" parts without waiting for external inputs', () => {
     //   const innerLeafSpy = spy();
-    //   const leaf: CodePart = {
+    //   const leaf: CodeNode = {
     //     id: "emit-1",
     //     inputs: {},
     //     outputs: { r: partOutput() },
@@ -1090,7 +1090,7 @@ describe("main ", () => {
     //   };
 
     //   const resolvedDeps = something(leaf);
-    //   const part: VisualPart = {
+    //   const part: VisualNode = {
     //     id: "part",
     //     inputsPosition: {},
     //     outputsPosition: {},
@@ -1173,7 +1173,7 @@ describe("main ", () => {
     });
 
     describe("part state", () => {
-      const part: CodePart = {
+      const part: CodeNode = {
         id: "fixture",
         inputs: { v: partInput() },
         outputs: { r: partOutput() },
@@ -1192,7 +1192,7 @@ describe("main ", () => {
           const v = dynamicPartInput();
           const r = new Subject();
 
-          const part1: CodePart = {
+          const part1: CodeNode = {
             id: "p1",
             inputs: {},
             outputs: { r: partOutput() },
@@ -1203,7 +1203,7 @@ describe("main ", () => {
               outs.r?.next(n);
             },
           };
-          const part2: CodePart = {
+          const part2: CodeNode = {
             id: "p2",
             inputs: {},
             outputs: { r: partOutput() },
@@ -1520,7 +1520,7 @@ describe("main ", () => {
     });
 
     it("runs parts that are not fully connected", () => {
-      const part: VisualPart = {
+      const part: VisualNode = {
         id: "part",
         inputsPosition: {},
         outputsPosition: {},
@@ -1587,7 +1587,7 @@ describe("main ", () => {
   describe("uncontrolled visual parts", () => {
     it("waits for all inputs when visual part is uncontrolled", () => {
       const innerSpy = spy();
-      const innerPart: CodePart = {
+      const innerPart: CodeNode = {
         id: "inner",
         inputs: {},
         outputs: {},
@@ -1596,7 +1596,7 @@ describe("main ", () => {
         },
       };
 
-      const visual: VisualPart = {
+      const visual: VisualNode = {
         id: "bob",
         inputs: { n: partInput() },
         outputs: {},
@@ -1631,7 +1631,7 @@ describe("main ", () => {
 
   describe("recursion support", () => {
     it("does run parts that have no args", () => {
-      const part: CodePart = {
+      const part: CodeNode = {
         id: "part",
         inputs: {},
         outputs: {
@@ -1657,7 +1657,7 @@ describe("main ", () => {
     });
 
     it('support recursive "add" calculation', () => {
-      const addRec: VisualPart = {
+      const addRec: VisualNode = {
         id: "add-rec",
         inputs: {
           n: partInput(),
@@ -1716,7 +1716,7 @@ describe("main ", () => {
     });
 
     it("support recursion based factorial calculation", async () => {
-      const fact: VisualPart = {
+      const fact: VisualNode = {
         id: "fact",
         inputs: {
           n: partInput(),
@@ -1803,7 +1803,7 @@ describe("main ", () => {
         runFnRawCode: `outputs.r?.next(inputs.v)`,
       };
 
-      // const part: CodePart = inlineValuePartToPart(inlineValuePart);
+      // const part: CodeNode = inlineValuePartToPart(inlineValuePart);
 
       const s = spy();
       const v = dynamicPartInput();
@@ -1869,7 +1869,7 @@ describe("main ", () => {
   describe("part cleanup", () => {
     it("runs cleanup code after a a part finished running on code part", () => {
       const spyFn = spy();
-      const part: CodePart = {
+      const part: CodeNode = {
         id: "id",
         inputs: {
           v: partInput(),
@@ -1930,7 +1930,7 @@ describe("main ", () => {
 
     it("calls destroy fn of debugger when cleaning up", () => {
       const spyFn = spy();
-      const part: CodePart = {
+      const part: CodeNode = {
         id: "id",
         inputs: {
           v: partInput(),
@@ -1989,7 +1989,7 @@ describe("main ", () => {
 
     it("passes external context forward when running code comps", async () => {
       const bobber = (n: number) => n + 42;
-      const part: CodePart = {
+      const part: CodeNode = {
         id: "tester",
         inputs: {},
         outputs: {
@@ -2244,7 +2244,7 @@ describe("main ", () => {
       const s = spy();
       r.subscribe(s);
 
-      const delayer: CodePart = {
+      const delayer: CodeNode = {
         id: "delayer",
         inputs: {
           item: partInput(),
@@ -2290,7 +2290,7 @@ describe("main ", () => {
         r.subscribe(s);
         final.subscribe(s);
 
-        const delayer: CodePart = {
+        const delayer: CodeNode = {
           id: "delayer",
           inputs: {
             item: partInput(),
@@ -2341,7 +2341,7 @@ describe("main ", () => {
 
         const [_, r] = spiedOutput();
 
-        const delayer: CodePart = {
+        const delayer: CodeNode = {
           id: "delayer",
           inputs: {
             item: partInput(),
@@ -2399,7 +2399,7 @@ describe("main ", () => {
         final2.subscribe((v) => s(`f2-${v}`));
         r.subscribe((v) => s(`r-${v}`));
 
-        const delayer: CodePart = {
+        const delayer: CodeNode = {
           id: "delayer",
           inputs: {
             item: partInput(),
@@ -2459,7 +2459,7 @@ describe("main ", () => {
         final1.subscribe((v) => s(`f1-${v}`));
         r.subscribe((v) => s(`r-${v}`));
 
-        const delayer: CodePart = {
+        const delayer: CodeNode = {
           id: "delayer",
           inputs: {
             item: partInput(),
@@ -2518,7 +2518,7 @@ describe("main ", () => {
       });
 
       it("triggers the completion callback with last values when completed", async () => {
-        const simpleCompletion: CodePart = {
+        const simpleCompletion: CodeNode = {
           id: "simpleCompletion",
           inputs: {},
           outputs: {
@@ -2697,7 +2697,7 @@ describe("main ", () => {
       r.subscribe(s);
       final.subscribe(s);
 
-      const somePart: CodePart = {
+      const somePart: CodeNode = {
         id: "somePart",
         inputs: {
           item: partInput(),
@@ -2742,7 +2742,7 @@ describe("main ", () => {
     });
 
     describe("accumulate", () => {
-      const accumulate: CodePart = {
+      const accumulate: CodeNode = {
         id: "acc",
         inputs: {
           item: partInput(),
@@ -2936,7 +2936,7 @@ describe("main ", () => {
       });
 
       it('supports creation of "accumulate until"', () => {
-        const accUntil: CodePart = {
+        const accUntil: CodeNode = {
           id: "acc",
           inputs: {
             item: partInput("optional"),
@@ -2990,7 +2990,7 @@ describe("main ", () => {
       const num1 = randomInt(100);
       const num2 = randomInt(100);
 
-      const visualPart: VisualPart = {
+      const visualPart: VisualNode = {
         id: "visual-part",
         inputsPosition: {},
         outputsPosition: {},
@@ -3034,7 +3034,7 @@ describe("main ", () => {
     });
 
     it('supports creation of "merge" part - code', () => {
-      const merge: CodePart = {
+      const merge: CodeNode = {
         id: "merge",
         inputs: {
           a: partInput("optional"),
@@ -3082,7 +3082,7 @@ describe("main ", () => {
     });
 
     it('supports creation of "merge" part - visual', () => {
-      const mergeGrouped: VisualPart = {
+      const mergeGrouped: VisualNode = {
         id: "visual-part",
         inputsPosition: {},
         outputsPosition: {},
@@ -3767,7 +3767,7 @@ describe("main ", () => {
         [prop2Name]: prop2Value,
       };
 
-      const visualPart: VisualPart = {
+      const visualPart: VisualNode = {
         id: "visual-part",
         inputsPosition: {},
         outputsPosition: {},

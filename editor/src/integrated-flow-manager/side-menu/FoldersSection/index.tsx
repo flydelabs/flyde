@@ -19,7 +19,7 @@ import { toastMsg } from "@flyde/flow-editor"; // ../../../../common/toaster
 import { useHistory } from "react-router-dom";
 import { NewFlowModal } from "./NewFlowModal/NewFlowModal";
 import {
-  BasePart,
+  BaseNode,
   CustomPart,
   FlydeFlow,
   visualPart,
@@ -173,7 +173,7 @@ export const FoldersSection: React.FC<FoldersSectionProps> = (props) => {
   );
 
   const onCreateFlow = useCallback(
-    (basePart: BasePart) => {
+    (basePart: BaseNode) => {
       const part = visualPart(basePart);
       part.outputs = { result: partOutput() };
       const path = newFlowTarget + "/" + part.id;

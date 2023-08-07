@@ -8,7 +8,7 @@ import {
 
 import {
   isInlineValuePart,
-  CodePart,
+  CodeNode,
   dynamicPartInput,
   InlineValuePart,
   dynamicOutput,
@@ -22,7 +22,7 @@ const vm2 = getVM2Instance();
 export const inlineValuePartToPart = (
   inlineValuePart: InlineValuePart,
   extraContext: Record<string, any> = {}
-): CodePart => {
+): CodeNode => {
   const { runFnRawCode: fnCode, ...rest } = inlineValuePart;
 
   const logger = debugLogger(`code-part:${inlineValuePart.id}`);
@@ -36,7 +36,7 @@ export const inlineValuePartToPart = (
   `;
 
   const script = new vm2.VMScript(wrappedCode);
-  const part: CodePart = {
+  const part: CodeNode = {
     ...rest,
     run: (inputs, outputs, adv) => {
       const log = (...args: any[]) => {

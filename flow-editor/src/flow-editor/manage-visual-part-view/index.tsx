@@ -1,4 +1,4 @@
-import { BasePart, VisualPart } from "@flyde/core";
+import { BaseNode, VisualNode } from "@flyde/core";
 import { Button, Classes, Dialog, Intent, MenuItem } from "@blueprintjs/core";
 import classNames from "classnames";
 import React from "react";
@@ -9,9 +9,9 @@ import { BasePartEditor } from "../base-part-editor";
 
 export interface ManageVisualPartViewProps {
   title: string;
-  initialPart?: VisualPart;
+  initialPart?: VisualNode;
   externalModule?: boolean;
-  onSave: (part: VisualPart) => Promise<void> | void;
+  onSave: (part: VisualNode) => Promise<void> | void;
   onCancel: () => void;
 }
 
@@ -29,7 +29,7 @@ export const renderCreateIOOption = (
   />
 );
 
-const defaultPart: VisualPart = {
+const defaultPart: VisualNode = {
   id: "NewPart",
   inputs: {},
   outputs: {},
@@ -49,7 +49,7 @@ export const ManageVisualPartView: React.FC<ManageVisualPartViewProps> = (
   );
 
   const onChangeBasePart = React.useCallback(
-    (base: BasePart) => {
+    (base: BaseNode) => {
       setDraftPart({ ...draftPart, ...base });
     },
     [draftPart]

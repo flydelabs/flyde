@@ -6,7 +6,7 @@ import {
   ImportableSource,
   isVisualPart,
   PartsDefCollection,
-  VisualPart,
+  VisualNode,
 } from "@flyde/core";
 import React, { MouseEvent, MutableRefObject, useCallback } from "react";
 import { useDependenciesContext } from "../../flow-editor/DependenciesContext";
@@ -56,7 +56,7 @@ export type Action<T extends ActionType = ActionType> = {
 export interface ActionsMenuProps {
   selectedInstances: string[];
   resolvedParts: PartsDefCollection;
-  part: VisualPart;
+  part: VisualNode;
   from?: ConnectionNode;
   to?: ConnectionNode;
   hotkeysEnabled: MutableRefObject<boolean>;

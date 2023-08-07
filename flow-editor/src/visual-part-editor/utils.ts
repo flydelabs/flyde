@@ -5,7 +5,7 @@ import {
   Pos,
   InputPin,
   OutputPin,
-  VisualPart,
+  VisualNode,
   PartInstance,
   PartsDefCollection,
   PartDefinition,
@@ -47,7 +47,7 @@ export const emptyObj = {}; // for immutability
 export const emptyList = []; // for immutability
 
 export function getInstancePinConfig(
-  part: VisualPart,
+  part: VisualNode,
   insId: string,
   pinId: string
 ): InputPinConfig {
@@ -60,7 +60,7 @@ export function getInstancePinConfig(
 }
 
 export const changePinConfig = (
-  value: VisualPart,
+  value: VisualNode,
   insKey: string,
   pinId: string,
   newConfig: InputPinConfig
@@ -81,7 +81,7 @@ export const changePinConfig = (
 };
 
 export const findClosestPin = (
-  part: VisualPart,
+  part: VisualNode,
   resolvedParts: PartsDefCollection,
   mousePos: Pos,
   boardPos: Pos,
@@ -414,7 +414,7 @@ const calcPoints = (w: number, h: number, pos: Pos, tag: string): Points => {
 };
 
 export const calcPartsPositions = (
-  part: VisualPart,
+  part: VisualNode,
   resolvedParts: PartsDefCollection
 ): Points[] => {
   const insParts = part.instances.map((curr) => {
@@ -440,13 +440,13 @@ export const calcPartsPositions = (
   return [...insParts, ...inputsCenter, ...outputsCenter];
 };
 
-// export const calcPartsCenter = (part: VisualPart, resolvedParts: PartsDefCollection): Pos => {
+// export const calcPartsCenter = (part: VisualNode, resolvedParts: PartsDefCollection): Pos => {
 //   const positions = calcPartsPositions(part, resolvedParts);
 //   return positions.reduce((acc, curr) => middlePos(acc, curr), positions[0] || { x: 0, y: 0 });
 // };
 
 export const getEffectivePartDimensions = (
-  part: VisualPart,
+  part: VisualNode,
   resolvedParts: PartsDefCollection
 ) => {
   const positions = calcPartsPositions(part, resolvedParts);
@@ -530,7 +530,7 @@ const FIT_VIEWPORT_MIN_ZOOM = 0.3;
 const FIT_VIEWPORT_MAX_ZOOM = 1.2;
 
 export const fitViewPortToPart = (
-  part: VisualPart,
+  part: VisualNode,
   resolvedParts: PartsDefCollection,
   vpSize: Size,
   padding: [number, number] = [20, 150]
@@ -616,7 +616,7 @@ export const getInstancesInRect = (
 };
 
 export const handleInstanceDrag = (
-  value: VisualPart,
+  value: VisualNode,
   ins: PartInstance,
   pos: Pos,
   event: any,
@@ -666,7 +666,7 @@ export const handleInstanceDrag = (
 };
 
 export const handleIoPinRename = (
-  part: VisualPart,
+  part: VisualNode,
   type: PinType,
   pinId: string,
   newPinId: string
@@ -700,7 +700,7 @@ export const handleIoPinRename = (
 };
 
 export const handleChangePartInputType = (
-  part: VisualPart,
+  part: VisualNode,
   pinId: string,
   mode: InputMode
 ) => {

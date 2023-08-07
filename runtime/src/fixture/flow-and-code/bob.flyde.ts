@@ -1,6 +1,6 @@
-import { CodePart } from "@flyde/core";
+import { CodeNode } from "@flyde/core";
 
-export const Bob: CodePart = {
+export const Bob: CodeNode = {
   id: "Bob",
   inputs: {},
   outputs: { r: {} },

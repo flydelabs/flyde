@@ -1,5 +1,5 @@
 import {
-  VisualPart,
+  VisualNode,
   middlePos,
   partInstance,
   ConnectionData,
@@ -12,11 +12,11 @@ import { PromptFn } from "./flow-editor/ports";
 
 export const groupSelected = async (
   selected: string[],
-  part: VisualPart,
+  part: VisualNode,
   partName: string,
   type: "inline" | "ref",
   prompt: PromptFn
-): Promise<{ newPart: VisualPart; currentPart: VisualPart }> => {
+): Promise<{ newPart: VisualNode; currentPart: VisualNode }> => {
   const { instances, connections } = part;
   const relevantInstances = instances.filter((ins) =>
     selected.includes(ins.id)

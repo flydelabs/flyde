@@ -1,8 +1,8 @@
 const namespace = "Postgres";
 
-import { CodePart } from "@flyde/core";
+import { CodeNode } from "@flyde/core";
 
-export const Connect: CodePart = {
+export const Connect: CodeNode = {
   id: "Connect",
   defaultStyle: {
     icon: "fa-database",
@@ -32,7 +32,7 @@ export const Connect: CodePart = {
   },
 };
 
-export const Disconnect: CodePart = {
+export const Disconnect: CodeNode = {
   id: "Disconnect",
   defaultStyle: {
     icon: "fa-database",
@@ -46,7 +46,7 @@ export const Disconnect: CodePart = {
   },
 };
 
-export const Query: CodePart = {
+export const Query: CodeNode = {
   id: "Query",
   defaultStyle: {
     icon: "fa-database",

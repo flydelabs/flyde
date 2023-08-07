@@ -1,9 +1,9 @@
-import { CodePart } from "@flyde/core";
+import { CodeNode } from "@flyde/core";
 import axios, { AxiosRequestConfig } from "axios";
 
 const namespace = "HTTP";
 
-export const Get: CodePart = {
+export const Get: CodeNode = {
   id: "GET Request",
   defaultStyle: {
     icon: "fa-server",
@@ -30,7 +30,7 @@ export const Get: CodePart = {
   },
 };
 
-export const Post: CodePart = {
+export const Post: CodeNode = {
   id: "POST Request",
   defaultStyle: {
     icon: "fa-server",
@@ -60,7 +60,7 @@ export const Post: CodePart = {
   },
 };
 
-export const Put: CodePart = {
+export const Put: CodeNode = {
   id: "PUT Request",
   defaultStyle: {
     icon: "fa-server",
@@ -90,7 +90,7 @@ export const Put: CodePart = {
   },
 };
 
-export const Request: CodePart = {
+export const Request: CodeNode = {
   id: "Request",
   defaultStyle: {
     icon: "fa-server",

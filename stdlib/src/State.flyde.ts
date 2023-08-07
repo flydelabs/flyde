@@ -1,8 +1,8 @@
-import { CodePart } from "@flyde/core";
+import { CodeNode } from "@flyde/core";
 
 const namespace = "State";
 
-export const SetGlobalState: CodePart = {
+export const SetGlobalState: CodeNode = {
   id: "Set Global State",
   namespace,
   description: "Sets a value in the global state",
@@ -19,7 +19,7 @@ export const SetGlobalState: CodePart = {
   },
 };
 
-export const GetGlobalState: CodePart = {
+export const GetGlobalState: CodeNode = {
   id: "Get Global State",
   namespace,
   description: "Gets a value from the global state",
