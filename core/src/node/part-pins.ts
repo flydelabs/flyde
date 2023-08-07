@@ -31,7 +31,7 @@ export interface OutputPin extends BasePinData {
   delayed?: boolean;
 }
 
-export const partInput = (
+export const nodeInput = (
   mode: InputMode = "required"
 ): InputPin => ({
   mode,
@@ -41,12 +41,12 @@ export const isInputPinOptional = (input: InputPin) => {
   return input.mode === "optional";
 };
 
-export const partInputs = (count: number, modes?: InputMode[]): InputPin[] =>
+export const nodeInputs = (count: number, modes?: InputMode[]): InputPin[] =>
   repeat(count, (idx) => {
-    return partInput(modes?.[idx] || "required");
+    return nodeInput(modes?.[idx] || "required");
   });
 
-export const partOutput = (
+export const nodeOutput = (
   delayed = false,
 ): OutputPin => ({
   delayed,
@@ -54,7 +54,7 @@ export const partOutput = (
 
 export const partOutputs = (count: number): OutputPin[] =>
   repeat(count, () => {
-    return partOutput();
+    return nodeOutput();
   });
 
 export type DynamicPartInput = {

@@ -4,7 +4,7 @@ import {
   CustomNode,
   VisualNode,
   InputPinsConfig,
-  maybeGetStaticValuePartId,
+  maybeGetStaticValueNodeId,
   Node,
   NodeDefinition,
 } from "./node";
@@ -29,7 +29,7 @@ export * from "./flow-schema";
 export type InputStaticValue = string | number | object | VisualNode;
 
 export const isStaticValueVisualPart = (val: InputStaticValue): boolean => {
-  return !!val && !!maybeGetStaticValuePartId(`${val}`);
+  return !!val && !!maybeGetStaticValueNodeId(`${val}`);
 };
 
 export interface InstanceViewData {

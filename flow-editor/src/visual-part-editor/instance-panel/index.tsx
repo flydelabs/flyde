@@ -1,7 +1,7 @@
 // import {
 //   ConnectionData,
 //   NodeDefinition,
-//   partInput,
+//   nodeInput,
 //   NodeInstance,
 //   queueInputPinConfig,
 //   removeDupes,
@@ -100,7 +100,7 @@
 //                 key={pinId}
 //                 id={pinId}
 //                 config={inputConfig[pinId] || queueInputPinConfig()}
-//                 pin={part.inputs[pinId] || partInput()}
+//                 pin={part.inputs[pinId] || nodeInput()}
 //                 onToggleVisible={onToggleVisible}
 //                 onChangeConfig={_onChangeConfig}
 //                 connected={props.connections.some((c) => c.to.pinId === pinId)}

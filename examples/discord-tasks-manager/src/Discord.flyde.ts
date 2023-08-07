@@ -1,4 +1,4 @@
-import { CodeNode, partOutput } from "@flyde/core";
+import { CodeNode, nodeOutput } from "@flyde/core";
 import { Client } from "eris";
 
 const part: CodeNode = {
@@ -10,8 +10,8 @@ const part: CodeNode = {
     size: "large",
   },
   outputs: {
-    interaction: partOutput(),
-    message: partOutput(),
+    interaction: nodeOutput(),
+    message: nodeOutput(),
   },
   completionOutputs: [],
   run: (inputs, outputs, adv) => {

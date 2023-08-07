@@ -34,8 +34,8 @@ import {
   partInstance,
   InlineValueNode,
   NodeInstance,
-  partInput,
-  partOutput,
+  nodeInput,
+  nodeOutput,
   queueInputPinConfig,
   staticInputPinConfig,
   stickyInputPinConfig,
@@ -97,10 +97,10 @@ describe("main ", () => {
       const part: CodeNode = {
         id: "id",
         inputs: {
-          v: partInput(),
+          v: nodeInput(),
         },
         outputs: {
-          r: partInput(),
+          r: nodeInput(),
         },
         run: ({ v }, { r }) => {
           r?.next(v);
@@ -126,10 +126,10 @@ describe("main ", () => {
       const part: CodeNode = {
         id: "id",
         inputs: {
-          v: partInput(),
+          v: nodeInput(),
         },
         outputs: {
-          r: partInput(),
+          r: nodeInput(),
         },
         run: ({ v }, { r }) => {
           r?.next(v);
@@ -156,11 +156,11 @@ describe("main ", () => {
       const part: CodeNode = {
         id: "add",
         inputs: {
-          a: partInput(),
-          b: partInput(),
+          a: nodeInput(),
+          b: nodeInput(),
         },
         outputs: {
-          r: partInput(),
+          r: nodeInput(),
         },
         run: (args, { r }, {}) => {
           innerSpy();
@@ -227,10 +227,10 @@ describe("main ", () => {
           connectionData("p2.r", "r"),
         ],
         inputs: {
-          n: partInput(),
+          n: nodeInput(),
         },
         outputs: {
-          r: partOutput(),
+          r: nodeOutput(),
         },
       };
 
@@ -258,10 +258,10 @@ describe("main ", () => {
       const add1: VisualNode = {
         id: "add1",
         inputs: {
-          n: partInput(),
+          n: nodeInput(),
         },
         outputs: {
-          r: partOutput(),
+          r: nodeOutput(),
         },
         inputsPosition: {},
         outputsPosition: {},
@@ -306,10 +306,10 @@ describe("main ", () => {
               connectionData("a.r", "r"),
             ],
             inputs: {
-              n1: partInput(),
+              n1: nodeInput(),
             },
             outputs: {
-              r: partOutput(),
+              r: nodeOutput(),
             },
           },
           testPartsCollection
@@ -335,11 +335,11 @@ describe("main ", () => {
             id: "bob",
             instances: [partInstance("a", optAdd.id)],
             inputs: {
-              n1: partInput(),
-              n2: partInput(),
+              n1: nodeInput(),
+              n2: nodeInput(),
             },
             outputs: {
-              r: partOutput(),
+              r: nodeOutput(),
             },
             connections: [
               connectionData("n1", "a.n1"),
@@ -390,7 +390,7 @@ describe("main ", () => {
             ],
             inputs: {},
             outputs: {
-              r: partOutput(),
+              r: nodeOutput(),
             },
           },
           resolvedDeps
@@ -416,10 +416,10 @@ describe("main ", () => {
             id: "test",
             instances: [partInstance("a", add1.id)],
             inputs: {
-              n: partInput(),
+              n: nodeInput(),
             },
             outputs: {
-              r: partOutput(),
+              r: nodeOutput(),
             },
             connections: [
               connectionData("n", "a.n"),
@@ -476,10 +476,10 @@ describe("main ", () => {
             },
           ],
           inputs: {
-            n: partInput(),
+            n: nodeInput(),
           },
           outputs: {
-            r: partOutput(),
+            r: nodeOutput(),
           },
           inputsPosition: {},
           outputsPosition: {},
@@ -533,7 +533,7 @@ describe("main ", () => {
               connectionData("a.r", "r"),
             ],
             outputs: {
-              r: partOutput(),
+              r: nodeOutput(),
             },
             inputs: {},
           },
@@ -575,7 +575,7 @@ describe("main ", () => {
               connectionData("a.r", "r"),
             ],
             outputs: {
-              r: partOutput(),
+              r: nodeOutput(),
             },
             inputs: {},
           },
@@ -619,7 +619,7 @@ describe("main ", () => {
               ],
               inputs: {},
               outputs: {
-                r: partOutput(),
+                r: nodeOutput(),
               },
             },
             resolvedDeps
@@ -666,7 +666,7 @@ describe("main ", () => {
               ],
               inputs: {},
               outputs: {
-                r: partOutput(),
+                r: nodeOutput(),
               },
             },
             resolvedDeps
@@ -693,7 +693,7 @@ describe("main ", () => {
           id: "test",
           inputs: {},
           outputs: {
-            r: partOutput(),
+            r: nodeOutput(),
           },
           instances: [
             partInstance("v1", Value(n).id),
@@ -729,10 +729,10 @@ describe("main ", () => {
           instances: [partInstance("a", add1.id)],
           connections: [connectionData("n", "a.n"), connectionData("a.r", "r")],
           inputs: {
-            n: partInput(),
+            n: nodeInput(),
           },
           outputs: {
-            r: partOutput(),
+            r: nodeOutput(),
           },
         },
         testPartsCollection
@@ -802,10 +802,10 @@ describe("main ", () => {
             connectionData("a.r", "r"),
           ],
           inputs: {
-            n2: partInput(),
+            n2: nodeInput(),
           },
           outputs: {
-            r: partOutput(),
+            r: nodeOutput(),
           },
         },
         resolvedDeps
@@ -845,10 +845,10 @@ describe("main ", () => {
             connectionData("a.r", "r"),
           ],
           inputs: {
-            from: partInput(),
+            from: nodeInput(),
           },
           outputs: {
-            r: partOutput(),
+            r: nodeOutput(),
           },
         },
         resolvedDeps
@@ -922,10 +922,10 @@ describe("main ", () => {
               connectionData("a.r", "r"),
             ],
             inputs: {
-              v: partInput(),
+              v: nodeInput(),
             },
             outputs: {
-              r: partOutput(),
+              r: nodeOutput(),
             },
           },
           resolvedDeps
@@ -970,10 +970,10 @@ describe("main ", () => {
       const part: VisualNode = {
         id: "part",
         inputs: {
-          a: partOutput(),
+          a: nodeOutput(),
         },
         outputs: {
-          a: partOutput(),
+          a: nodeOutput(),
         },
         instances: [
           partInstance("v", Value(1).id),
@@ -1008,10 +1008,10 @@ describe("main ", () => {
         const part: VisualNode = {
           id: "part",
           inputs: {
-            n: partInput(),
+            n: nodeInput(),
           },
           outputs: {
-            r: partOutput(),
+            r: nodeOutput(),
           },
           instances: [partInstance("a", add.id)],
           connections: [
@@ -1045,7 +1045,7 @@ describe("main ", () => {
           id: "part",
           inputs: {},
           outputs: {
-            r: partOutput(),
+            r: nodeOutput(),
           },
           inputsPosition: {},
           outputsPosition: {},
@@ -1082,7 +1082,7 @@ describe("main ", () => {
     //   const leaf: CodeNode = {
     //     id: "emit-1",
     //     inputs: {},
-    //     outputs: { r: partOutput() },
+    //     outputs: { r: nodeOutput() },
     //     run: (_, o) => {
     //       innerLeafSpy();
     //       o.r?.next(1);
@@ -1095,10 +1095,10 @@ describe("main ", () => {
     //     inputsPosition: {},
     //     outputsPosition: {},
     //     inputs: {
-    //       n: partInput()
+    //       n: nodeInput()
     //     },
     //     outputs: {
-    //       r: partOutput()
+    //       r: nodeOutput()
     //     },
     //     instances: [
     //       partInstance("a", leaf),
@@ -1175,8 +1175,8 @@ describe("main ", () => {
     describe("part state", () => {
       const part: CodeNode = {
         id: "fixture",
-        inputs: { v: partInput() },
-        outputs: { r: partOutput() },
+        inputs: { v: nodeInput() },
+        outputs: { r: nodeOutput() },
         reactiveInputs: ["v"],
         completionOutputs: [],
         run: (args, outs, { state }) => {
@@ -1195,7 +1195,7 @@ describe("main ", () => {
           const part1: CodeNode = {
             id: "p1",
             inputs: {},
-            outputs: { r: partOutput() },
+            outputs: { r: nodeOutput() },
             reactiveInputs: ["v"],
             run: (_, outs, { globalState }) => {
               const n = (globalState.get("curr") || 0) + 1;
@@ -1206,7 +1206,7 @@ describe("main ", () => {
           const part2: CodeNode = {
             id: "p2",
             inputs: {},
-            outputs: { r: partOutput() },
+            outputs: { r: nodeOutput() },
             reactiveInputs: ["v"],
             run: (_, outs, { globalState }) => {
               const n = (globalState.get("curr") || 0) + 1;
@@ -1525,10 +1525,10 @@ describe("main ", () => {
         inputsPosition: {},
         outputsPosition: {},
         inputs: {
-          n: partInput(),
+          n: nodeInput(),
         },
         outputs: {
-          r: partOutput(),
+          r: nodeOutput(),
         },
         instances: [partInstance("p1", id.id), partInstance("p2", add.id)],
         connections: [connectionData("n", "p1.v"), connectionData("p1.r", "r")],
@@ -1554,8 +1554,8 @@ describe("main ", () => {
     it("allows state in code comp", async () => {
       const part: InlineValueNode = {
         id: "fixture",
-        inputs: { v: partInput() },
-        outputs: { r: partOutput() },
+        inputs: { v: nodeInput() },
+        outputs: { r: nodeOutput() },
         runFnRawCode: `
           const n = inputs.v + (adv.state.get("curr") || 0);
           outputs.r?.next(n);
@@ -1598,7 +1598,7 @@ describe("main ", () => {
 
       const visual: VisualNode = {
         id: "bob",
-        inputs: { n: partInput() },
+        inputs: { n: nodeInput() },
         outputs: {},
         instances: [partInstance("i", innerPart.id)],
         connections: [],
@@ -1635,7 +1635,7 @@ describe("main ", () => {
         id: "part",
         inputs: {},
         outputs: {
-          r: partOutput(),
+          r: nodeOutput(),
         },
         run: (_, { r }) => {
           r?.next("ok");
@@ -1660,10 +1660,10 @@ describe("main ", () => {
       const addRec: VisualNode = {
         id: "add-rec",
         inputs: {
-          n: partInput(),
+          n: nodeInput(),
         },
         outputs: {
-          r: partOutput(),
+          r: nodeOutput(),
         },
         inputsPosition: {},
         outputsPosition: {},
@@ -1719,10 +1719,10 @@ describe("main ", () => {
       const fact: VisualNode = {
         id: "fact",
         inputs: {
-          n: partInput(),
+          n: nodeInput(),
         },
         outputs: {
-          r: partOutput(),
+          r: nodeOutput(),
         },
         inputsPosition: {},
         outputsPosition: {},
@@ -1795,10 +1795,10 @@ describe("main ", () => {
       const inlineValuePart: InlineValueNode = {
         id: "id",
         inputs: {
-          v: partInput(),
+          v: nodeInput(),
         },
         outputs: {
-          r: partInput(),
+          r: nodeInput(),
         },
         runFnRawCode: `outputs.r?.next(inputs.v)`,
       };
@@ -1825,11 +1825,11 @@ describe("main ", () => {
       const inlineValuePart: InlineValueNode = {
         id: "add",
         inputs: {
-          a: partInput(),
-          b: partInput(),
+          a: nodeInput(),
+          b: nodeInput(),
         },
         outputs: {
-          r: partInput(),
+          r: nodeInput(),
         },
         runFnRawCode: `
         outputs.r?.next(inputs.a + inputs.b);
@@ -1872,10 +1872,10 @@ describe("main ", () => {
       const part: CodeNode = {
         id: "id",
         inputs: {
-          v: partInput(),
+          v: nodeInput(),
         },
         outputs: {
-          r: partInput(),
+          r: nodeInput(),
         },
         run: ({ v }, { r }, { onCleanup: cleanup }) => {
           r?.next(v);
@@ -1903,7 +1903,7 @@ describe("main ", () => {
         id: "id",
         inputs: {},
         outputs: {
-          r: partInput(),
+          r: nodeInput(),
         },
         runFnRawCode: `
           const timer = setInterval(() => outputs.r?.next(1), 1);
@@ -1933,10 +1933,10 @@ describe("main ", () => {
       const part: CodeNode = {
         id: "id",
         inputs: {
-          v: partInput(),
+          v: nodeInput(),
         },
         outputs: {
-          r: partInput(),
+          r: nodeInput(),
         },
         run: ({ v }, { r }, { onCleanup: cleanup }) => {
           r?.next(v);
@@ -1967,7 +1967,7 @@ describe("main ", () => {
         id: "tester",
         inputs: {},
         outputs: {
-          r: partInput(),
+          r: nodeInput(),
         },
         runFnRawCode: `
           outputs.r?.next(bobber(12));
@@ -1993,7 +1993,7 @@ describe("main ", () => {
         id: "tester",
         inputs: {},
         outputs: {
-          r: partInput(),
+          r: nodeInput(),
         },
         run: (_, o, adv) => {
           o.r?.next(adv.context.bobber(12));
@@ -2247,10 +2247,10 @@ describe("main ", () => {
       const delayer: CodeNode = {
         id: "delayer",
         inputs: {
-          item: partInput(),
+          item: nodeInput(),
         },
         outputs: {
-          r: partOutput(),
+          r: nodeOutput(),
         },
         completionOutputs: ["r"],
         run: ({ item }, { r }) => {
@@ -2293,11 +2293,11 @@ describe("main ", () => {
         const delayer: CodeNode = {
           id: "delayer",
           inputs: {
-            item: partInput(),
+            item: nodeInput(),
           },
           outputs: {
-            r: partOutput(),
-            final: partOutput(),
+            r: nodeOutput(),
+            final: nodeOutput(),
           },
           completionOutputs: ["final"],
           run: ({ item }, { r, final }) => {
@@ -2344,12 +2344,12 @@ describe("main ", () => {
         const delayer: CodeNode = {
           id: "delayer",
           inputs: {
-            item: partInput(),
+            item: nodeInput(),
           },
           outputs: {
-            r: partOutput(),
-            f1: partOutput(),
-            f2: partOutput(),
+            r: nodeOutput(),
+            f1: nodeOutput(),
+            f2: nodeOutput(),
           },
           completionOutputs: ["f1+f2"],
           run: ({ item }, { r, f1, f2 }) => {
@@ -2402,12 +2402,12 @@ describe("main ", () => {
         const delayer: CodeNode = {
           id: "delayer",
           inputs: {
-            item: partInput(),
+            item: nodeInput(),
           },
           outputs: {
-            r: partOutput(),
-            final1: partOutput(),
-            final2: partOutput(),
+            r: nodeOutput(),
+            final1: nodeOutput(),
+            final2: nodeOutput(),
           },
           completionOutputs: ["final1", "final2"],
           run: ({ item }, { r, final1, final2 }) => {
@@ -2462,12 +2462,12 @@ describe("main ", () => {
         const delayer: CodeNode = {
           id: "delayer",
           inputs: {
-            item: partInput(),
+            item: nodeInput(),
           },
           outputs: {
-            r: partOutput(),
-            final1: partOutput(),
-            final2: partOutput(),
+            r: nodeOutput(),
+            final1: nodeOutput(),
+            final2: nodeOutput(),
           },
           completionOutputs: ["final1", "final2"],
           run: ({ item }, { r, final1 }) => {
@@ -2522,7 +2522,7 @@ describe("main ", () => {
           id: "simpleCompletion",
           inputs: {},
           outputs: {
-            r: partOutput(),
+            r: nodeOutput(),
           },
           completionOutputs: ["r"],
           run: ({}, { r }) => {
@@ -2700,11 +2700,11 @@ describe("main ", () => {
       const somePart: CodeNode = {
         id: "somePart",
         inputs: {
-          item: partInput(),
+          item: nodeInput(),
         },
         outputs: {
-          r: partOutput(),
-          final: partOutput(),
+          r: nodeOutput(),
+          final: nodeOutput(),
         },
         reactiveInputs: ["item"],
         completionOutputs: ["final"],
@@ -2745,11 +2745,11 @@ describe("main ", () => {
       const accumulate: CodeNode = {
         id: "acc",
         inputs: {
-          item: partInput(),
-          count: partInput(),
+          item: nodeInput(),
+          count: nodeInput(),
         },
         outputs: {
-          r: partOutput(),
+          r: nodeOutput(),
         },
         reactiveInputs: ["item"],
         completionOutputs: ["r"],
@@ -2939,11 +2939,11 @@ describe("main ", () => {
         const accUntil: CodeNode = {
           id: "acc",
           inputs: {
-            item: partInput("optional"),
-            until: partInput("optional"),
+            item: nodeInput("optional"),
+            until: nodeInput("optional"),
           },
           outputs: {
-            r: partOutput(),
+            r: nodeOutput(),
           },
           reactiveInputs: ["item", "until"],
           completionOutputs: ["r"],
@@ -2996,7 +2996,7 @@ describe("main ", () => {
         outputsPosition: {},
         inputs: {},
         outputs: {
-          r: partOutput(),
+          r: nodeOutput(),
         },
         instances: [
           partInstance("a", add.id, {
@@ -3037,11 +3037,11 @@ describe("main ", () => {
       const merge: CodeNode = {
         id: "merge",
         inputs: {
-          a: partInput("optional"),
-          b: partInput("optional"),
+          a: nodeInput("optional"),
+          b: nodeInput("optional"),
         },
         outputs: {
-          r: partOutput(),
+          r: nodeOutput(),
         },
         run: ({ a, b }, { r }) => {
           if (isDefined(a)) {
@@ -3087,11 +3087,11 @@ describe("main ", () => {
         inputsPosition: {},
         outputsPosition: {},
         inputs: {
-          b: partInput("optional"),
-          a: partInput("optional"),
+          b: nodeInput("optional"),
+          a: nodeInput("optional"),
         },
         outputs: {
-          r: partOutput(),
+          r: nodeOutput(),
         },
         instances: [partInstance("id", id2.id)],
         connections: [
@@ -3772,10 +3772,10 @@ describe("main ", () => {
         inputsPosition: {},
         outputsPosition: {},
         inputs: {
-          n1: partInput(),
+          n1: nodeInput(),
         },
         outputs: {
-          r: partOutput(),
+          r: nodeOutput(),
         },
         instances: [
           partInstance("a", add.id, {

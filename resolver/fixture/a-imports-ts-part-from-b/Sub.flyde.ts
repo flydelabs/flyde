@@ -1,4 +1,4 @@
-import { CodeNode, partOutput } from "@flyde/core";
+import { CodeNode, nodeOutput } from "@flyde/core";
 
 const part: CodeNode = {
   id: "Sub",
@@ -7,7 +7,7 @@ const part: CodeNode = {
     b: { mode: "required" },
   },
   outputs: {
-    r: partOutput(),
+    r: nodeOutput(),
   },
   run: (inputs, outputs) => {
     outputs.r.next(inputs.a - inputs.b);

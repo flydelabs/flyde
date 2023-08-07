@@ -17,8 +17,8 @@ import {
   InputPinMap,
   OutputPin,
   OutputPinMap,
-  partInput,
-  partOutput,
+  nodeInput,
+  nodeOutput,
 } from "./part-pins";
 import { ImportedNode } from "../flow-schema";
 
@@ -247,7 +247,7 @@ export const isInlineValueNode = (
 };
 
 export const visualNode = testDataCreator<VisualNode>({
-  id: "visual-part",
+  id: "visual-node",
   inputs: {},
   outputs: {},
   instances: [],
@@ -256,8 +256,8 @@ export const visualNode = testDataCreator<VisualNode>({
   inputsPosition: {},
 });
 
-export const codePart = testDataCreator<CodeNode>({
-  id: "part",
+export const codeNode = testDataCreator<CodeNode>({
+  id: "node",
   inputs: {},
   outputs: {},
   run: noop as any,
@@ -299,7 +299,7 @@ export const fromSimplified = ({
   };
 };
 
-export const maybeGetStaticValuePartId = (value: string) => {
+export const maybeGetStaticValueNodeId = (value: string) => {
   const maybePartMatch =
     typeof value === "string" && value.match(/^__part\:(.*)/);
   if (maybePartMatch) {
@@ -313,7 +313,7 @@ export const getStaticValue = (
   resolvedDeps: NodesDefCollection,
   calleeId: string
 ) => {
-  const maybePartId = maybeGetStaticValuePartId(value);
+  const maybePartId = maybeGetStaticValueNodeId(value);
   if (maybePartId) {
     const part = resolvedDeps[maybePartId];
     if (!part) {
@@ -327,7 +327,7 @@ export const getStaticValue = (
   }
 };
 
-export const getPart = (
+export const getNode = (
   idOrIns: string | NodeInstance,
   resolvedParts: NodesCollection
 ): Node => {
@@ -375,8 +375,8 @@ export const codeFromFunction = ({
 }: codeFromFunctionParams): CodeNode => {
   return {
     id,
-    inputs: inputNames.reduce((acc, k) => ({ ...acc, [k]: partInput() }), {}),
-    outputs: { [outputName]: partOutput() },
+    inputs: inputNames.reduce((acc, k) => ({ ...acc, [k]: nodeInput() }), {}),
+    outputs: { [outputName]: nodeOutput() },
     run: (inputs, outputs) => {
       const args = inputNames.map((name) => inputs[name]);
       const output = outputs[outputName];

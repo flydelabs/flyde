@@ -8,9 +8,9 @@ import { assert } from "chai";
 import {
   dynamicPartInput,
   CodeNode,
-  partInput,
+  nodeInput,
   partInstance,
-  partOutput,
+  nodeOutput,
 } from "../node";
 import { execute } from "../execute";
 import { runAddTests } from "../node/add-tests";
@@ -46,10 +46,10 @@ describe("connect", () => {
             connectionData("a.r", "r"),
           ],
           inputs: {
-            n1: partInput(),
+            n1: nodeInput(),
           },
           outputs: {
-            r: partOutput(),
+            r: nodeOutput(),
           },
         },
         testPartsCollection
@@ -81,11 +81,11 @@ describe("connect", () => {
             connectionData("a.r", "r"),
           ],
           inputs: {
-            n1: partInput(),
-            n2: partInput(),
+            n1: nodeInput(),
+            n2: nodeInput(),
           },
           outputs: {
-            r: partOutput(),
+            r: nodeOutput(),
           },
         },
         testPartsCollection
@@ -149,7 +149,7 @@ describe("connect", () => {
           ],
           inputs: {},
           outputs: {
-            r: partOutput(),
+            r: nodeOutput(),
           },
         },
         testPartsCollection
@@ -179,11 +179,11 @@ describe("connect", () => {
           connectionData("a.r", "r"),
         ],
         inputs: {
-          n1: partInput(),
-          n2: partInput(),
+          n1: nodeInput(),
+          n2: nodeInput(),
         },
         outputs: {
-          r: partOutput(),
+          r: nodeOutput(),
         },
       },
       testPartsCollection

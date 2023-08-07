@@ -47,7 +47,7 @@ export const calcPartContent = (
       return ejs.render(part.customViewCode, { inputs, isDefined }).trim(); // TODO: render with ejs or equivalent. Removed due to wp5 issues
 
       // // hack to render detached embedded parts correctly
-      // if (maybeGetStaticValuePartId(result)) {
+      // if (maybeGetStaticValueNodeId(result)) {
       //   return toString(result);
       // } else {
       //   return result || part.id;

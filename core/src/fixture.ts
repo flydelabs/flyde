@@ -2,8 +2,8 @@ import {
   fromSimplified,
   Node,
   VisualNode,
-  partInput,
-  partOutput,
+  nodeInput,
+  nodeOutput,
   CodeNode,
   InlineValueNode,
   partInstance,
@@ -21,11 +21,11 @@ import { conciseCodePart } from "./test-utils";
 export const add: CodeNode = {
   id: "add",
   inputs: {
-    n1: partInput(),
-    n2: partInput(),
+    n1: nodeInput(),
+    n2: nodeInput(),
   },
   outputs: {
-    r: partOutput(),
+    r: nodeOutput(),
   },
   run: ({ n1, n2 }, { r }) => {
     r?.next(n1 + n2);
@@ -35,11 +35,11 @@ export const add: CodeNode = {
 export const codeAdd: InlineValueNode = {
   id: "add",
   inputs: {
-    n1: partInput(),
-    n2: partInput(),
+    n1: nodeInput(),
+    n2: nodeInput(),
   },
   outputs: {
-    r: partOutput(),
+    r: nodeOutput(),
   },
   runFnRawCode: `
   outputs.r?.next(inputs.n1 + inputs.n2);
@@ -48,8 +48,8 @@ export const codeAdd: InlineValueNode = {
 
 export const add1: CodeNode = {
   id: "add1",
-  inputs: { n: partInput() },
-  outputs: { r: partOutput() },
+  inputs: { n: nodeInput() },
+  outputs: { r: nodeOutput() },
   run: ({ n }, { r }) => {
     r?.next(n + 1);
   },
@@ -58,10 +58,10 @@ export const add1: CodeNode = {
 export const mul: Node = {
   id: "mul",
   inputs: {
-    n1: partInput(),
-    n2: partInput(),
+    n1: nodeInput(),
+    n2: nodeInput(),
   },
-  outputs: { r: partOutput() },
+  outputs: { r: nodeOutput() },
   run: ({ n1, n2 }, { r }) => r?.next(n1 * n2),
 };
 
@@ -76,8 +76,8 @@ export const mul2: Node = fromSimplified({
 
 export const id: Node = {
   id: "id",
-  inputs: { v: partInput() },
-  outputs: { r: partOutput() },
+  inputs: { v: nodeInput() },
+  outputs: { r: nodeOutput() },
   run: ({ v }, { r }) => {
     r?.next(v);
   },
@@ -87,10 +87,10 @@ export const id: Node = {
 export const id2: CodeNode = {
   id: "id2",
   inputs: {
-    v: partInput(),
+    v: nodeInput(),
   },
   outputs: {
-    r: partOutput(),
+    r: nodeOutput(),
   },
   run: ({ v }, { r }) => {
     r?.next(v);
@@ -99,8 +99,8 @@ export const id2: CodeNode = {
 
 export const transform: Node = {
   id: "transform",
-  inputs: { from: partInput(), to: partInput() },
-  outputs: { r: partOutput() },
+  inputs: { from: nodeInput(), to: nodeInput() },
+  outputs: { r: nodeOutput() },
   run: ({ to }, { r }) => {
     r?.next(to);
   },
@@ -118,10 +118,10 @@ export const Value = (v: any): Node => {
 export const add1mul2: VisualNode = {
   id: "a1m2",
   inputs: {
-    n: partInput(),
+    n: nodeInput(),
   },
   outputs: {
-    r: partOutput(),
+    r: nodeOutput(),
   },
   inputsPosition: {},
   outputsPosition: {},
@@ -145,10 +145,10 @@ export const add1mul2: VisualNode = {
 export const add1mul2add1: VisualNode = {
   id: "a1m2a1",
   inputs: {
-    n: partInput(),
+    n: nodeInput(),
   },
   outputs: {
-    r: partOutput(),
+    r: nodeOutput(),
   },
   inputsPosition: {},
   outputsPosition: {},
@@ -182,11 +182,11 @@ export const addGrouped: VisualNode = {
   inputsPosition: {},
   outputsPosition: {},
   inputs: {
-    n1: partInput(),
-    n2: partInput(),
+    n1: nodeInput(),
+    n2: nodeInput(),
   },
   outputs: {
-    r: partOutput(),
+    r: nodeOutput(),
   },
   instances: [partInstance("a", add.id)],
   connections: [
@@ -210,11 +210,11 @@ export const addGroupedQueued: VisualNode = {
   inputsPosition: {},
   outputsPosition: {},
   inputs: {
-    n1: partInput(),
-    n2: partInput(),
+    n1: nodeInput(),
+    n2: nodeInput(),
   },
   outputs: {
-    r: partOutput(),
+    r: nodeOutput(),
   },
   instances: [
     partInstance("a", add.id, {
@@ -314,8 +314,8 @@ export const filter: Node = fromSimplified({
 
 export const peq: CodeNode = {
   id: "peq",
-  inputs: { val: partInput(), compare: partInput() },
-  outputs: { r: partOutput(), else: partOutput() },
+  inputs: { val: nodeInput(), compare: nodeInput() },
+  outputs: { r: nodeOutput(), else: nodeOutput() },
   run: ({ val, compare }, o) => {
     if (val === compare) {
       o.r?.next(val);
@@ -399,11 +399,11 @@ export const accumulate = conciseCodePart({
 export const accUntil: CodeNode = {
   id: "accUntil",
   inputs: {
-    item: partInput("optional"),
-    until: partInput("optional"),
+    item: nodeInput("optional"),
+    until: nodeInput("optional"),
   },
   outputs: {
-    r: partOutput(),
+    r: nodeOutput(),
   },
   reactiveInputs: ["item", "until"],
   completionOutputs: ["r"],

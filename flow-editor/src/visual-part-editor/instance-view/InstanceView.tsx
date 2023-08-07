@@ -5,7 +5,7 @@ import {
   pickFirst,
   OMap,
   okeys,
-  partInput,
+  nodeInput,
   keys,
   isInlinePartInstance,
   InlinePartInstance,
@@ -26,7 +26,7 @@ import {
   isStickyInputPinConfig,
   ERROR_PIN_ID,
   TRIGGER_PIN_ID,
-  partOutput,
+  nodeOutput,
   isInputPinOptional,
 } from "@flyde/core";
 import {
@@ -363,7 +363,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
     is.push([
       TRIGGER_PIN_ID,
       {
-        ...partInput(),
+        ...nodeInput(),
         description:
           "Use this pin to manually trigger the part. If not connected, the part will be triggered automatically when all required inputs have data.",
       },
@@ -372,7 +372,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
     os.push([
       ERROR_PIN_ID,
       {
-        ...partOutput(),
+        ...nodeOutput(),
         description:
           "Use this pin to catch errors that happen inside this part. If not connected, errors will bubble up to the parent part.",
       },

@@ -1,7 +1,7 @@
 import {
   InlineValueNodeType,
-  partInput,
-  partOutput,
+  nodeInput,
+  nodeOutput,
   randomInt,
 } from "@flyde/core";
 import { inlineValuePart } from "@flyde/core";
@@ -27,11 +27,11 @@ export const createInlineValuePart = ({
   const variables = getVariables(code);
 
   const inputs = variables.reduce((prev, curr) => {
-    return { ...prev, [curr]: partInput() };
+    return { ...prev, [curr]: nodeInput() };
   }, {});
 
   const outputs = {
-    value: partOutput(),
+    value: nodeOutput(),
   };
 
   const runFnRawCode =

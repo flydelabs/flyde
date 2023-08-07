@@ -89,11 +89,11 @@ export const pullValueForExecution = (
 };
 
 export const pullValuesForExecution = (
-  partInputs: PartInputs,
+  nodeInputs: PartInputs,
   state: NodeState,
   env: ExecuteEnv
 ) => {
-  const data = entries(partInputs).reduce<Record<string, unknown>>(
+  const data = entries(nodeInputs).reduce<Record<string, unknown>>(
     (acc, [key, input]) => {
       acc[key] = pullValueForExecution(key, input, state, env);
       return acc;
@@ -105,12 +105,12 @@ export const pullValuesForExecution = (
 };
 
 export const peekValuesForExecution = (
-  partInputs: PartInputs,
+  nodeInputs: PartInputs,
   state: NodeState,
   env: ExecuteEnv,
   partId: string
 ) => {
-  const data = entries(partInputs).reduce<Record<string, unknown>>(
+  const data = entries(nodeInputs).reduce<Record<string, unknown>>(
     (acc, [key, input]) => {
       acc[key] = peekValueForExecution(key, input, state, env, partId);
       return acc;
@@ -122,12 +122,12 @@ export const peekValuesForExecution = (
 };
 
 export const hasNewSignificantValues = (
-  partInputs: PartInputs,
+  nodeInputs: PartInputs,
   state: NodeState,
   env: ExecuteEnv,
   partId: string
 ) => {
-  return entries(partInputs).some(([k, i]) => {
+  return entries(nodeInputs).some(([k, i]) => {
     const isQueue = isQueueInputPinConfig(i.config);
     const value = peekValueForExecution(k, i, state, env, partId);
 
@@ -136,11 +136,11 @@ export const hasNewSignificantValues = (
 };
 
 export const isPartStateValid = (
-  partInputs: PartInputs,
+  nodeInputs: PartInputs,
   state: NodeState,
   part: Node
 ) => {
-  const connectedKeys = keys(partInputs);
+  const connectedKeys = keys(nodeInputs);
 
   const requiredInputs = keys(part.inputs).filter((k) => {
     const mode = part.inputs[k]?.mode;
@@ -158,7 +158,7 @@ export const isPartStateValid = (
   }
 
   return (
-    entries(partInputs)
+    entries(nodeInputs)
       .filter(([key]) => !!part.inputs[key] || key === TRIGGER_PIN_ID) // filter irrelevant inputs
       // .filter(([key]) => !part.reactiveInputs?.includes(key))
       .every(([key, input]) => {
@@ -182,13 +182,13 @@ export const isPartStateValid = (
 };
 
 export const subscribeInputsToState = (
-  partInputs: PartInputs,
+  nodeInputs: PartInputs,
   state: NodeState,
   onInput: (key: string, val: unknown) => void
 ) => {
   const cleanups: Function[] = [];
 
-  entries(partInputs).forEach(([key, arg]) => {
+  entries(nodeInputs).forEach(([key, arg]) => {
     if (!arg) {
       // means the part is optional and was not given
       return;

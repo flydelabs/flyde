@@ -1,8 +1,8 @@
 import {
   CodeNode,
   VisualNode,
-  partInput,
-  partOutput,
+  nodeInput,
+  nodeOutput,
   Node,
   dynamicOutput,
   dynamicPartInput,
@@ -63,11 +63,11 @@ describe("execute", () => {
   const groupedOptInput: VisualNode = {
     id: "groupedOptAdd",
     inputs: {
-      n1: partInput(),
-      n2: partInput("optional"),
+      n1: nodeInput(),
+      n2: nodeInput("optional"),
     },
     outputs: {
-      r: partOutput(),
+      r: nodeOutput(),
     },
     inputsPosition: {},
     outputsPosition: {},
@@ -93,11 +93,11 @@ describe("execute", () => {
     inputsPosition: {},
     outputsPosition: {},
     inputs: {
-      n1: partInput(),
-      n2: partInput(),
+      n1: nodeInput(),
+      n2: nodeInput(),
     },
     outputs: {
-      r: partOutput(),
+      r: nodeOutput(),
     },
     instances: [partInstance("a", add.id)],
     connections: [
@@ -157,8 +157,8 @@ describe("execute", () => {
     it("compiles visual parts with the right inputs and outputs", () => {
       const visualNode: VisualNode = {
         id: "apart",
-        inputs: { a: partInput(), b: partInput() },
-        outputs: { r: partOutput() },
+        inputs: { a: nodeInput(), b: nodeInput() },
+        outputs: { r: nodeOutput() },
         instances: [],
         connections: [],
         inputsPosition: {},
@@ -174,10 +174,10 @@ describe("execute", () => {
       const visualNode: VisualNode = {
         id: "apart",
         inputs: {
-          a: partInput("optional"),
-          b: partInput("required"),
+          a: nodeInput("optional"),
+          b: nodeInput("required"),
         },
-        outputs: { r: partOutput() },
+        outputs: { r: nodeOutput() },
         instances: [],
         connections: [],
         inputsPosition: {},
@@ -372,11 +372,11 @@ describe("execute", () => {
           inputsPosition: {},
           outputsPosition: {},
           inputs: {
-            a: partInput(),
-            b: partInput("optional"),
+            a: nodeInput(),
+            b: nodeInput("optional"),
           },
           outputs: {
-            r: partOutput(),
+            r: nodeOutput(),
           },
           instances: [
             partInstance("a", id.id),
@@ -424,10 +424,10 @@ describe("execute", () => {
           inputsPosition: {},
           outputsPosition: {},
           inputs: {
-            a: partInput("optional"),
+            a: nodeInput("optional"),
           },
           outputs: {
-            r: partOutput(),
+            r: nodeOutput(),
           },
           instances: [partInstance("v", Value(2).id), partInstance("a", id.id)],
           connections: [
@@ -452,7 +452,7 @@ describe("execute", () => {
       const optOutput: Node = {
         id: "dup",
         inputs: {
-          v: partInput(),
+          v: nodeInput(),
         },
         outputs: {
           r1: {},

@@ -7,8 +7,8 @@ import {
   dynamicOutput,
   InputMode,
   OutputPinMap,
-  partInput,
-  partOutput,
+  nodeInput,
+  nodeOutput,
 } from "./node";
 
 import { connectionNode, externalConnectionNode } from "./connect";
@@ -47,11 +47,11 @@ export const conciseBasePart = (concise: ConciseBasePart): BaseNode => {
         throw new Error(`Bad input ${curr} in concise part`);
       }
 
-      return { ...prev, [clean]: partInput(mode as InputMode) };
+      return { ...prev, [clean]: nodeInput(mode as InputMode) };
     }, {}),
     outputs: (concise.outputs || []).reduce<OutputPinMap>((prev, curr) => {
       const clean = curr.replace("?", "");
-      return { ...prev, [clean]: partOutput(clean !== curr) };
+      return { ...prev, [clean]: nodeOutput(clean !== curr) };
     }, {}),
   };
 };

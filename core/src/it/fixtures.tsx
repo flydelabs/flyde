@@ -1,4 +1,4 @@
-// import { VisualNode, partInput, partOutput } from "../part";
+// import { VisualNode, nodeInput, nodeOutput } from "../part";
 
 // import { connectionData } from "..";
 // import { Button, Txt, container, listFrom, merge, add, transform } from "../lib";
@@ -9,12 +9,12 @@
 // export const Counter: VisualNode = {
 // 	id: 'Counter',
 // 	inputs: {
-// 		val: partInput('number')
+// 		val: nodeInput('number')
 // 	},
 // 	outputs: {
-// 		jsx: partOutput('jsx'),
-// 		inc: partOutput('none', true),
-// 		dec: partOutput('none', true),
+// 		jsx: nodeOutput('jsx'),
+// 		inc: nodeOutput('none', true),
+// 		dec: nodeOutput('none', true),
 // 	},
 // 	instances: [
 // 		partInstance('lf', listFrom),
@@ -51,7 +51,7 @@
 // 	id: 'ControllerCounter',
 // 	inputs: {},
 // 	outputs: {
-// 		jsx: partOutput('jsx')
+// 		jsx: nodeOutput('jsx')
 // 	},
 // 	instances: [
 // 		{

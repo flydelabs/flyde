@@ -1,10 +1,10 @@
-import { partInput, partOutput, VisualNode } from "@flyde/core";
+import { nodeInput, nodeOutput, VisualNode } from "@flyde/core";
 
 export const emptyWebUiProject: VisualNode = {
   id: "new-web-ui-project",
   inputs: {},
   outputs: {
-    jsx: partOutput(),
+    jsx: nodeOutput(),
   },
   inputsPosition: { mouse: { x: 0, y: 0 }, keyPress: { x: 200, y: 0 } },
   outputsPosition: { response: { x: 0, y: 400 } },
@@ -17,10 +17,10 @@ export const emptyWebUiProject: VisualNode = {
 export const emptyServerProject: VisualNode = {
   id: "new-server-project",
   inputs: {
-    request: partInput(),
+    request: nodeInput(),
   },
   outputs: {
-    response: partOutput(),
+    response: nodeOutput(),
   },
   inputsPosition: { request: { x: 0, y: 0 } },
   outputsPosition: { response: { x: 0, y: 400 } },
@@ -31,10 +31,10 @@ export const emptyServerProject: VisualNode = {
 export const emptyLambdaProject: VisualNode = {
   id: "new-lambda-project",
   inputs: {
-    context: partInput(),
+    context: nodeInput(),
   },
   outputs: {
-    response: partOutput(),
+    response: nodeOutput(),
   },
   inputsPosition: { context: { x: 0, y: 0 } },
   outputsPosition: { response: { x: 0, y: 400 } },
@@ -46,7 +46,7 @@ export const emptyMobileProject: VisualNode = {
   id: "new-mobile-project",
   inputs: {},
   outputs: {
-    jsx: partOutput(),
+    jsx: nodeOutput(),
   },
   inputsPosition: { context: { x: 0, y: 0 } },
   outputsPosition: { response: { x: 0, y: 400 } },
@@ -57,12 +57,12 @@ export const emptyMobileProject: VisualNode = {
 export const emptyCliProject: VisualNode = {
   id: "new-cli-project",
   inputs: {
-    args: partInput(),
+    args: nodeInput(),
   },
   outputs: {
-    stdout: partOutput(true),
-    stderr: partOutput(true),
-    exit: partOutput(true),
+    stdout: nodeOutput(true),
+    stderr: nodeOutput(true),
+    exit: nodeOutput(true),
   },
   inputsPosition: { args: { x: 0, y: 0 } },
   outputsPosition: {

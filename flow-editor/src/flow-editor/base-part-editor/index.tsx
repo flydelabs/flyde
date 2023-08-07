@@ -4,8 +4,8 @@ import {
   entries,
   InputMode,
   okeys,
-  partInput,
-  partOutput,
+  nodeInput,
+  nodeOutput,
 } from "@flyde/core";
 // ;
 import {
@@ -92,7 +92,7 @@ export const BasePartEditor: React.FC<BasePartEditorProps> = (props) => {
   const onAddInput = React.useCallback(
     (name: string, mode: InputMode) => {
       const newPart = produce(part, (draft) => {
-        draft.inputs[name] = partInput(mode);
+        draft.inputs[name] = nodeInput(mode);
       });
       onChange(newPart);
     },
@@ -112,7 +112,7 @@ export const BasePartEditor: React.FC<BasePartEditorProps> = (props) => {
   const onAddOutput = React.useCallback(
     (name: string) => {
       const newPart = produce(part, (draft) => {
-        draft.outputs[name] = partOutput();
+        draft.outputs[name] = nodeOutput();
       });
       onChange(newPart);
     },

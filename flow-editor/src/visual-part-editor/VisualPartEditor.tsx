@@ -6,9 +6,9 @@ import {
   ConnectionData,
   isInternalConnectionNode,
   VisualNode,
-  partInput,
+  nodeInput,
   NodeInstance,
-  partOutput,
+  nodeOutput,
   PinType,
   isStaticInputPinConfig,
   InputMode,
@@ -1220,13 +1220,13 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
               if (!part.inputs) {
                 draft.inputs = {};
               }
-              draft.inputs[newPinId] = partInput();
+              draft.inputs[newPinId] = nodeInput();
               draft.inputsPosition[newPinId] = lastMousePos.current;
             } else {
               if (!part.outputs) {
                 draft.outputs = {};
               }
-              draft.outputs[newPinId] = partOutput();
+              draft.outputs[newPinId] = nodeOutput();
               draft.outputsPosition[newPinId] = lastMousePos.current;
 
               if (draft.completionOutputs?.length) {
@@ -1743,15 +1743,15 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
           draft.instances = draft.instances.map((ins) => {
             const part = getPartDef(ins, currResolvedDeps);
             if (part) {
-              const partInputs = getPartInputs(part);
+              const nodeInputs = getPartInputs(part);
               const partOutputs = getPartOutputs(part);
 
               if (ins.visibleInputs) {
                 const invalidInputs = ins.visibleInputs.filter(
-                  (pinId) => !partInputs[pinId]
+                  (pinId) => !nodeInputs[pinId]
                 );
                 if (invalidInputs.length > 0) {
-                  ins.visibleInputs = keys(partInputs);
+                  ins.visibleInputs = keys(nodeInputs);
                   invalids.push(...invalidInputs);
                 }
               }

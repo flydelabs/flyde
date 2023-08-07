@@ -1,7 +1,7 @@
 import {
   VisualNode,
-  partInput,
-  partOutput,
+  nodeInput,
+  nodeOutput,
   RestApiTrigger,
   ScheduledTrigger,
   WebAppTrigger,
@@ -82,11 +82,11 @@ export const scheduledTrigger = (
 export const emptyWebUiProject: VisualNode = {
   id: "new-web-ui-project",
   inputs: {
-    mouse: partInput(),
-    keyPress: partInput(),
+    mouse: nodeInput(),
+    keyPress: nodeInput(),
   },
   outputs: {
-    jsx: partOutput(),
+    jsx: nodeOutput(),
   },
   inputsPosition: { mouse: { x: 0, y: 0 }, keyPress: { x: 200, y: 0 } },
   outputsPosition: { response: { x: 0, y: 400 } },

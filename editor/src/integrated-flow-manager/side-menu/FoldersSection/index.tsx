@@ -23,7 +23,7 @@ import {
   CustomNode,
   FlydeFlow,
   visualNode,
-  partOutput,
+  nodeOutput,
 } from "@flyde/core";
 
 export interface FoldersSectionProps {
@@ -175,7 +175,7 @@ export const FoldersSection: React.FC<FoldersSectionProps> = (props) => {
   const onCreateFlow = useCallback(
     (basePart: BaseNode) => {
       const part = visualNode(basePart);
-      part.outputs = { result: partOutput() };
+      part.outputs = { result: nodeOutput() };
       const path = newFlowTarget + "/" + part.id;
 
       part.id = "Main";

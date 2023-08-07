@@ -4,9 +4,9 @@ import { assert } from "chai";
 import { hashFlow, hashPart } from ".";
 import {
   InlineValueNode,
-  partInput,
+  nodeInput,
   partInstance,
-  partOutput,
+  nodeOutput,
   VisualNode,
   visualNode,
 } from "../../node";
@@ -16,10 +16,10 @@ import { connectionData } from "../../connect";
 const somePart: VisualNode = {
   id: "bob",
   inputs: {
-    a: partInput(),
+    a: nodeInput(),
   },
   outputs: {
-    r: partOutput(),
+    r: nodeOutput(),
   },
   connections: [
     connectionData("i2.r", "i3.v"),
@@ -129,7 +129,7 @@ describe("parts hasher", () => {
 
     it("considers different inputs", () => {
       const p2 = produce(somePart, (draft) => {
-        draft.inputs.bob2 = partInput();
+        draft.inputs.bob2 = nodeInput();
       });
 
       const h1 = hashPart(somePart);
@@ -140,7 +140,7 @@ describe("parts hasher", () => {
 
     it("considers different outputs", () => {
       const p2 = produce(somePart, (draft) => {
-        draft.outputs.bob2 = partInput();
+        draft.outputs.bob2 = nodeInput();
       });
 
       const h1 = hashPart(somePart);

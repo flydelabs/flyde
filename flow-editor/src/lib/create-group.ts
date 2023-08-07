@@ -1,9 +1,9 @@
-import { OMap, okeys, partOutput, pickRandom } from "@flyde/core";
+import { OMap, okeys, nodeOutput, pickRandom } from "@flyde/core";
 import {
   ConnectionData,
   externalConnectionNode,
   connectionNode,
-  partInput,
+  nodeInput,
   connectionNodeEquals,
   VisualNode,
   middlePos,
@@ -102,7 +102,7 @@ export const createGroup = async (
       to: connectionNode(conn.to.insId, conn.to.pinId),
     });
 
-    inputs[name] = partInput();
+    inputs[name] = nodeInput();
   }
 
   const outputs = {};
@@ -135,7 +135,7 @@ export const createGroup = async (
       to: externalConnectionNode(name),
     });
 
-    outputs[name] = partOutput();
+    outputs[name] = nodeOutput();
   }
 
   // replace relevant parts with new part

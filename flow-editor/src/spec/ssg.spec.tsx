@@ -1,9 +1,9 @@
 import {
   connectionData,
   visualNode,
-  partInput,
+  nodeInput,
   partInstance,
-  partOutput,
+  nodeOutput,
 } from "@flyde/core";
 import { assert } from "chai";
 import { noop } from "lodash";
@@ -22,8 +22,8 @@ describe("ssg/ssr support", () => {
     const id = "part";
     const part = visualNode({
       id,
-      inputs: { a: partInput() },
-      outputs: { r: partOutput() },
+      inputs: { a: nodeInput() },
+      outputs: { r: nodeOutput() },
       instances: [partInstance("i1", id), partInstance("i2", id)],
       connections: [connectionData("i1.r", "i2.a")],
     });

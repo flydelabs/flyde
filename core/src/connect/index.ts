@@ -13,7 +13,7 @@ import {
   isStaticInputPinConfig,
   PartOutput,
   NodeState,
-  getPart,
+  getNode,
 } from "../node";
 import { CancelFn, execute, Debugger, ExecuteEnv } from "../execute";
 import { DepGraph, isDefined, noop, okeys, OMap, randomInt } from "../common";
@@ -101,7 +101,7 @@ export const connect = (
 
       // build all input and output maps
       instances.forEach((instance) => {
-        const part = getPart(instance, resolvedDeps);
+        const part = getNode(instance, resolvedDeps);
         const instanceId = instance.id;
         instanceToId.set(instance, instanceId);
         idToInstance.set(instanceId, instance);
@@ -246,7 +246,7 @@ export const connect = (
         }
 
         const sourcePart = sourceInstance
-          ? getPart(sourceInstance, resolvedDeps)
+          ? getNode(sourceInstance, resolvedDeps)
           : part;
 
         const sourceOutputPin = sourcePart.outputs[fromInstancePinId];
@@ -309,7 +309,7 @@ export const connect = (
           const inputs = instanceArgs.get(instance.id);
           const outputs = instanceOutputs.get(instance.id);
 
-          const part = getPart(instance, resolvedDeps);
+          const part = getNode(instance, resolvedDeps);
           if (!inputs) {
             throw new Error(
               `Unexpected error - args not found when running ${instance}`

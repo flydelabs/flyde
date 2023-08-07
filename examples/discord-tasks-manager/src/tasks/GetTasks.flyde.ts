@@ -1,4 +1,4 @@
-import { VisualNode, CodeNode, partInput, partOutput } from "@flyde/core";
+import { VisualNode, CodeNode, nodeInput, nodeOutput } from "@flyde/core";
 import { createTasksService } from "./tasks";
 
 const servicePromise = createTasksService();
@@ -7,7 +7,7 @@ const part: CodeNode = {
   id: "Get Tasks",
   inputs: {},
   outputs: {
-    tasks: partOutput(),
+    tasks: nodeOutput(),
   },
   run: (inputs, outputs, adv) => {
     servicePromise.then((service) => {
