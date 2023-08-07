@@ -672,5 +672,5 @@ export const execute: ExecuteFn = ({
   };
 };
 /*
-start the components, connect the inputs to outputs, push the right sources
+start the nodes, connect the inputs to outputs, push the right sources
 */

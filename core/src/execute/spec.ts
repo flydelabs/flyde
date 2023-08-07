@@ -533,7 +533,7 @@ describe("execute", () => {
       ],
     };
 
-    it("works with components as parameters", () => {
+    it("works with nodes as parameters", () => {
       const s = spy();
       const list = dynamicNodeInput();
       const fn = dynamicNodeInput();
@@ -552,7 +552,7 @@ describe("execute", () => {
       assert.deepEqual(s.lastCall.args[0], [2, 4, 6]);
     });
 
-    it("works with visual components as parameters", () => {
+    it("works with visual nodes as parameters", () => {
       const s = spy();
       const list = dynamicNodeInput();
       const fn = dynamicNodeInput();

@@ -1,6 +1,6 @@
 {
   "name": "@flyde/remote-debugger",
-  "version": "0.2.39",
+  "version": "0.3.0",
   "description": "",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",

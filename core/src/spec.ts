@@ -875,7 +875,7 @@ describe("main ", () => {
     });
 
     describe("stopping execution", () => {
-      it("stops running simple components", () => {
+      it("stops running simple nodes", () => {
         const v = dynamicNodeInput();
         const r = dynamicOutput();
         const s = spy();
@@ -894,7 +894,7 @@ describe("main ", () => {
         assert.equal(s.callCount, 1);
       });
 
-      it("stops running connected components", () => {
+      it("stops running connected nodes", () => {
         const internalSpy = spy();
         const s = spy();
         const ids: CodeNode = fromSimplified({
