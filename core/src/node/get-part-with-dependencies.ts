@@ -1,6 +1,6 @@
 import { CustomNode, isInlineValueNode } from ".";
 import { CustomNodeCollection, removeDupes } from "..";
-import { isRefNodeInstance, RefNodeInstance } from "./part-instance";
+import { isRefNodeInstance, RefNodeInstance } from "./node-instance";
 
 export const getNodeWithDependencies = (
   part: CustomNode,

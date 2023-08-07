@@ -11,7 +11,7 @@ import { Subject } from "rxjs";
 
 import { CancelFn, InnerExecuteFn } from "../execute";
 import { ConnectionData } from "../connect";
-import { isInlineNodeInstance, NodeInstance } from "./part-instance";
+import { isInlineNodeInstance, NodeInstance } from "./node-instance";
 import {
   InputPin,
   InputPinMap,
@@ -19,7 +19,7 @@ import {
   OutputPinMap,
   nodeInput,
   nodeOutput,
-} from "./part-pins";
+} from "./node-pins";
 import { ImportedNode } from "../flow-schema";
 
 export type NodesCollection = OMap<Node>;

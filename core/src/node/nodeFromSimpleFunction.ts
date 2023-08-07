@@ -1,5 +1,5 @@
 import { BaseNode, CodeNode, NodeStyleSize, RunNodeFunction } from ".";
-import { InputMode } from "./part-pins";
+import { InputMode } from "./node-pins";
 
 export type SimpleFnData = Omit<BaseNode, "inputs" | "outputs" | "run"> & {
   id: string;
