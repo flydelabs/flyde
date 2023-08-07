@@ -12,7 +12,7 @@ import {
   PinType,
   isStaticInputPinConfig,
   InputMode,
-  getPartDef,
+  getNodeDef,
   isVisualNode,
   connectionDataEquals,
   ConnectionNode,
@@ -21,18 +21,18 @@ import {
   noop,
   keys,
   TRIGGER_PIN_ID,
-  inlinePartInstance,
-  isInlinePartInstance,
-  isRefPartInstance,
+  inlineNodeInstance,
+  isInlineNodeInstance,
+  isRefNodeInstance,
   InlineValueNodeType,
   isInlineValueNode,
-  InlinePartInstance,
+  InlineNodeInstance,
   connectionNode,
   ImportedNodeDef,
   NodeStyle,
-  getPartOutputs,
+  getNodeOutputs,
   Pos,
-  getPartInputs,
+  getNodeInputs,
   createInsId,
   externalConnectionNode,
   ResolvedDependenciesDefinitions,
@@ -53,7 +53,7 @@ import {
   findClosestPin,
   getSelectionBoxRect,
   emptyObj,
-  createNewPartInstance,
+  createNewNodeInstance,
   ViewPort,
   domToViewPort,
   roundNumber,
@@ -61,7 +61,7 @@ import {
   getInstancesInRect,
   handleInstanceDrag,
   handleIoPinRename,
-  handleChangePartInputType,
+  handleChangeNodeInputType,
   calcSelectionBoxArea,
   centerBoardPosOnTarget,
   emptyList,
@@ -85,7 +85,7 @@ import {
   MenuDivider,
   Button,
 } from "@blueprintjs/core";
-import { PartIoView, PartIoViewProps } from "./part-io-view";
+import { NodeIoView, NodeIoViewProps } from "./part-io-view";
 
 import { vAdd, vec, vSub, vZero } from "../physics";
 import {
@@ -115,7 +115,7 @@ import { pasteInstancesCommand } from "./commands/paste-instances";
 import { handleConnectionCloseEditorCommand } from "./commands/close-connection";
 import { handleDetachConstEditorCommand } from "./commands/detach-const";
 import { handleDuplicateSelectedEditorCommand } from "./commands/duplicate-instances";
-import { PartStyleMenu } from "./instance-view/PartStyleMenu";
+import { NodeStyleMenu } from "./instance-view/NodeStyleMenu";
 import { useDependenciesContext } from "../flow-editor/FlowEditor";
 import { Action, ActionsMenu, ActionType } from "./ActionsMenu/ActionsMenu";
 import { MainInstanceEventsIndicator } from "./MainInstanceEventsIndicator";
@@ -158,7 +158,7 @@ export type GroupEditorBoardData = {
   to?: ConnectionNode;
 };
 
-export type VisualPartEditorProps = {
+export type VisualNodeEditorProps = {
   part: VisualNode;
   currentInsId: string;
   ancestorsInsIds?: string;
@@ -178,8 +178,8 @@ export type VisualPartEditorProps = {
   onCopy: (data: ClipboardData) => void;
   onInspectPin: (insId: string, pin?: { id: string; type: PinType }) => void;
 
-  onGoToPartDef: (part: ImportedNodeDef) => void;
-  onExtractInlinePart: (instance: InlinePartInstance) => Promise<void>;
+  onGoToNodeDef: (part: ImportedNodeDef) => void;
+  onExtractInlinePart: (instance: InlineNodeInstance) => Promise<void>;
 
   onShowOmnibar: (e: any) => void;
 
@@ -225,7 +225,7 @@ type InlineValueTarget =
   | InlineValueTargetNewFloating
   | InlineValueTargetNewOutput;
 
-export interface VisualPartEditorHandle {
+export interface VisualNodeEditorHandle {
   centerInstance(insId: string): void;
   centerViewPort(): void;
   getViewPort(): ViewPort;
@@ -233,14 +233,14 @@ export interface VisualPartEditorHandle {
   requestNewInlineValue(): void;
 }
 
-export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
+export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
   React.memo(
     React.forwardRef((props, thisRef) => {
       const {
         onChangePart: onChange,
         partIoEditable,
         onCopy,
-        onGoToPartDef: onEditPart,
+        onGoToNodeDef: onEditPart,
         onInspectPin,
         boardData,
         onChangeBoardData,
@@ -339,7 +339,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
       );
 
       const _onInspectPin = React.useCallback<
-        VisualPartEditorProps["onInspectPin"]
+        VisualNodeEditorProps["onInspectPin"]
       >(
         (insId, pin) => {
           return onInspectPin(insId, pin);
@@ -423,7 +423,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
         });
       };
 
-      const onPartIoPinClick = React.useCallback(
+      const onNodeIoPinClick = React.useCallback(
         (pinId: string, type: PinType) => {
           const { to: currTo, from: currFrom } = boardData;
 
@@ -452,7 +452,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
         [boardData, onChangeBoardData, onConnectionClose]
       );
 
-      const onPartIoSetDescription = React.useCallback(
+      const onNodeIoSetDescription = React.useCallback(
         (type: PinType, pinId: string, description: string) => {
           const newPart = produce(part, (draft) => {
             if (type === "input") {
@@ -578,18 +578,18 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
 
         if (closestPin.type === "input") {
           if (closestPin.ins.id === rootId) {
-            onPartIoPinClick(closestPin.pin, "input");
+            onNodeIoPinClick(closestPin.pin, "input");
           } else {
             onPinClick(closestPin.ins, closestPin.pin, "input");
           }
         } else {
           if (closestPin.ins.id === rootId) {
-            onPartIoPinClick(closestPin.pin, "output");
+            onNodeIoPinClick(closestPin.pin, "output");
           } else {
             onPinClick(closestPin.ins, closestPin.pin, "output");
           }
         }
-      }, [part.id, closestPin, onPartIoPinClick, onPinClick]);
+      }, [part.id, closestPin, onNodeIoPinClick, onPinClick]);
 
       const onZoom = React.useCallback(
         (_newZoom: number, source?: "hotkey" | "mouse") => {
@@ -716,7 +716,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
         setDraggingId(undefined);
       }, []);
 
-      const onStartDraggingPartIo = React.useCallback(
+      const onStartDraggingNodeIo = React.useCallback(
         (_: string, event: any) => {
           event.preventDefault();
           event.stopPropagation();
@@ -725,7 +725,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
         []
       );
 
-      const onDragMovePartIo = React.useCallback(
+      const onDragMoveNodeIo = React.useCallback(
         async (
           type: "input" | "output",
           pin: string,
@@ -750,7 +750,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
         [props, part]
       );
 
-      const onDragEndPartIo = React.useCallback(
+      const onDragEndNodeIo = React.useCallback(
         async (
           type: "input" | "output",
           pin: string,
@@ -1067,9 +1067,9 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
       const onDblClickInstance = React.useCallback(
         (ins: NodeInstance, shift: boolean) => {
           if (shift) {
-            const part = isInlinePartInstance(ins)
+            const part = isInlineNodeInstance(ins)
               ? ins.part
-              : getPartDef(ins.partId, currResolvedDeps);
+              : getNodeDef(ins.partId, currResolvedDeps);
             if (!part) {
               throw new Error(`Impossible state inspecting inexisting part`);
             }
@@ -1081,8 +1081,8 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
 
             setOpenInlineInstance({ insId: `${currentInsId}.${ins.id}`, part });
           } else {
-            if (isRefPartInstance(ins)) {
-              const part = getPartDef(ins, currResolvedDeps);
+            if (isRefNodeInstance(ins)) {
+              const part = getNodeDef(ins, currResolvedDeps);
 
               onEditPart(part as ImportedNodeDef);
             } else {
@@ -1110,9 +1110,9 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
       );
 
       const onUnGroup = React.useCallback(
-        (groupPartIns: NodeInstance) => {
-          if (isInlinePartInstance(groupPartIns)) {
-            const visualNode = groupPartIns.part;
+        (groupNodeIns: NodeInstance) => {
+          if (isInlineNodeInstance(groupNodeIns)) {
+            const visualNode = groupNodeIns.part;
             if (!isVisualNode(visualNode)) {
               toastMsg("Not supported", "warning");
               return;
@@ -1120,12 +1120,12 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
 
             const newPart = produce(part, (draft) => {
               draft.instances = draft.instances.filter(
-                (ins) => ins.id !== groupPartIns.id
+                (ins) => ins.id !== groupNodeIns.id
               );
 
               draft.connections = draft.connections.filter(
                 ({ from, to }) =>
-                  from.insId !== groupPartIns.id && to.insId !== groupPartIns.id
+                  from.insId !== groupNodeIns.id && to.insId !== groupNodeIns.id
               );
 
               draft.instances.push(...visualNode.instances);
@@ -1143,8 +1143,8 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             // todo - combine the above with below to an atomic action
             onChangeBoardData({ selected: [] });
           } else {
-            const visualNode = getPartDef(
-              groupPartIns.partId,
+            const visualNode = getNodeDef(
+              groupNodeIns.partId,
               currResolvedDeps
             );
 
@@ -1158,7 +1158,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
       );
 
       const onExtractInlinePart = React.useCallback(
-        async (inlineInstance: InlinePartInstance) => {},
+        async (inlineInstance: InlineNodeInstance) => {},
         []
       );
 
@@ -1275,7 +1275,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
         }
       }, [_prompt, onChange, part, reportEvent]);
 
-      const editPartDescription = React.useCallback(async () => {
+      const editNodeDescription = React.useCallback(async () => {
         const description = await _prompt(`Description?`, part.description);
         const newValue = produce(part, (draft) => {
           draft.description = description;
@@ -1306,7 +1306,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
 
       const onChangeInputMode = React.useCallback(
         (pinId: string, mode: InputMode) => {
-          const newValue = handleChangePartInputType(part, pinId, mode);
+          const newValue = handleChangeNodeInputType(part, pinId, mode);
           onChange(newValue, functionalChange("toggle io pin optional"));
         },
         [part, onChange]
@@ -1365,7 +1365,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
                 (ins) => ins.id === selected[0]
               );
               onUnGroup(instance);
-              const insPart = getPartDef(
+              const insPart = getNodeDef(
                 instance,
                 currResolvedDeps
               ) as VisualNode;
@@ -1392,18 +1392,18 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
 
                 const targetPos = vSub(pos, { x: 0, y: 50 * viewPort.zoom }); // to account for part
 
-                const newPartIns = createNewPartInstance(
+                const newNodeIns = createNewNodeInstance(
                   importablePart.part.id,
                   0,
                   targetPos,
                   depsWithImport
                 );
                 const newPart = produce(part, (draft) => {
-                  draft.instances.push(newPartIns);
+                  draft.instances.push(newNodeIns);
                 });
 
                 const newState = produce(boardData, (draft) => {
-                  draft.selected = [newPartIns.id];
+                  draft.selected = [newNodeIns.id];
                 });
 
                 onChange(newPart, functionalChange("add new instance"));
@@ -1429,18 +1429,18 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
 
                 const targetPos = vSub(pos, { x: 0, y: 50 * viewPort.zoom }); // to account for part
 
-                const newPartIns = createNewPartInstance(
+                const newNodeIns = createNewNodeInstance(
                   importablePart.part.id,
                   0,
                   targetPos,
                   depsWithImport
                 );
                 const newPart = produce(part, (draft) => {
-                  draft.instances.push(newPartIns);
+                  draft.instances.push(newNodeIns);
                 });
 
                 const newState = produce(boardData, (draft) => {
-                  draft.selected = [newPartIns.id];
+                  draft.selected = [newNodeIns.id];
                 });
 
                 onChange(newPart, functionalChange("add new instance"));
@@ -1481,11 +1481,11 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
         ]
       );
 
-      const renderPartInputs = () => {
+      const renderNodeInputs = () => {
         const from = boardData.from;
 
         return entries(inputs).map(([k, v]) => (
-          <PartIoView
+          <NodeIoView
             currentInsId={currentInsId}
             ancestorInsIds={props.ancestorsInsIds}
             type="input"
@@ -1507,23 +1507,23 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             onChangeInputMode={onChangeInputMode}
             key={k}
             viewPort={viewPort}
-            onDragStart={onStartDraggingPartIo}
-            onDragEnd={onDragEndPartIo}
-            onDragMove={onDragMovePartIo}
-            onSelect={onPartIoPinClick}
-            onSetDescription={onPartIoSetDescription}
+            onDragStart={onStartDraggingNodeIo}
+            onDragEnd={onDragEndNodeIo}
+            onDragMove={onDragMoveNodeIo}
+            onSelect={onNodeIoPinClick}
+            onSetDescription={onNodeIoSetDescription}
             selected={from?.pinId === k}
             description={v.description}
-            onMouseUp={onPartIoMouseUp}
-            onMouseDown={onPartIoMouseDown}
+            onMouseUp={onNodeIoMouseUp}
+            onMouseDown={onNodeIoMouseDown}
           />
         ));
       };
 
-      const renderPartOutputs = () => {
+      const renderNodeOutputs = () => {
         const { to } = boardData;
         return entries(outputs).map(([k, v]) => (
-          <PartIoView
+          <NodeIoView
             currentInsId={currentInsId}
             ancestorInsIds={props.ancestorsInsIds}
             type="output"
@@ -1542,15 +1542,15 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             connected={false}
             key={k}
             viewPort={viewPort}
-            onDragStart={onStartDraggingPartIo}
-            onDragEnd={onDragEndPartIo}
-            onDragMove={onDragMovePartIo}
-            onSelect={onPartIoPinClick}
-            onSetDescription={onPartIoSetDescription}
+            onDragStart={onStartDraggingNodeIo}
+            onDragEnd={onDragEndNodeIo}
+            onDragMove={onDragMoveNodeIo}
+            onSelect={onNodeIoPinClick}
+            onSetDescription={onNodeIoSetDescription}
             description={v.description}
             selected={to?.pinId === k}
-            onMouseUp={onPartIoMouseUp}
-            onMouseDown={onPartIoMouseDown}
+            onMouseUp={onNodeIoMouseUp}
+            onMouseDown={onNodeIoMouseDown}
           />
         ));
       };
@@ -1598,8 +1598,8 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             });
             reportEvent("addValueModalOpen", { source: "dblClickPin" });
           } else {
-            const part = getPartDef(ins, currResolvedDeps);
-            const nodeOutputs = getPartOutputs(part);
+            const part = getNodeDef(ins, currResolvedDeps);
+            const nodeOutputs = getNodeOutputs(part);
             const pin = nodeOutputs[pinId];
 
             if (!pin) {
@@ -1687,17 +1687,17 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
       // prune orphan connections
       React.useEffect(() => {
         const validInputs = instances.reduce((acc, ins) => {
-          const part = getPartDef(ins, currResolvedDeps);
+          const part = getNodeDef(ins, currResolvedDeps);
           if (part) {
-            acc.set(ins.id, keys(getPartInputs(part)));
+            acc.set(ins.id, keys(getNodeInputs(part)));
           }
           return acc;
         }, new Map<string, string[]>());
 
         const validOutputs = instances.reduce((acc, ins) => {
-          const part = getPartDef(ins, currResolvedDeps);
+          const part = getNodeDef(ins, currResolvedDeps);
           if (part) {
-            acc.set(ins.id, keys(getPartOutputs(part)));
+            acc.set(ins.id, keys(getNodeOutputs(part)));
           }
           return acc;
         }, new Map<string, string[]>());
@@ -1741,10 +1741,10 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
         let invalids = [];
         const newPart = produce(part, (draft) => {
           draft.instances = draft.instances.map((ins) => {
-            const part = getPartDef(ins, currResolvedDeps);
+            const part = getNodeDef(ins, currResolvedDeps);
             if (part) {
-              const nodeInputs = getPartInputs(part);
-              const nodeOutputs = getPartOutputs(part);
+              const nodeInputs = getNodeInputs(part);
+              const nodeOutputs = getNodeOutputs(part);
 
               if (ins.visibleInputs) {
                 const invalidInputs = ins.visibleInputs.filter(
@@ -1826,19 +1826,19 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
                 match.type === "import"
                   ? match.importablePart.part
                   : match.part;
-              const newPartIns = createNewPartInstance(
+              const newNodeIns = createNewNodeInstance(
                 partToAdd.id,
                 100,
                 lastMousePos.current,
                 deps
               );
 
-              if (newPartIns) {
+              if (newNodeIns) {
                 const newValue = produce(part, (draft) => {
-                  draft.instances.push(newPartIns);
+                  draft.instances.push(newNodeIns);
                   draft.connections.push({
                     from: { insId: ins ? ins.id : THIS_INS_ID, pinId },
-                    to: { insId: newPartIns.id, pinId: TRIGGER_PIN_ID },
+                    to: { insId: newNodeIns.id, pinId: TRIGGER_PIN_ID },
                   });
                 });
 
@@ -1853,7 +1853,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             }
             // case "import": {
             //   const deps = await onImportPart(match.importablePart);
-            //   const newPartIns = createNewPartInstance(
+            //   const newNodeIns = createNewNodeInstance(
             //     match.importablePart.part,
             //     100,
             //     lastMousePos.current,
@@ -1861,10 +1861,10 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             //   );
 
             //   const newValue = produce(part, (draft) => {
-            //     draft.instances.push(newPartIns);
+            //     draft.instances.push(newNodeIns);
             //     draft.connections.push({
             //       from: { insId: ins ? ins.id : THIS_INS_ID, pinId },
-            //       to: { insId: newPartIns.id, pinId: TRIGGER_PIN_ID },
+            //       to: { insId: newNodeIns.id, pinId: TRIGGER_PIN_ID },
             //     });
             //   });
 
@@ -1898,7 +1898,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
         ]
       );
 
-      const copyPartToClipboard = React.useCallback(async () => {
+      const copyNodeToClipboard = React.useCallback(async () => {
         const str = JSON.stringify(part);
         await navigator.clipboard.writeText(str);
         AppToaster.show({ message: "Copied!" });
@@ -1938,7 +1938,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
               <MenuItem
                 onMouseDown={(e) => e.stopPropagation()}
                 text={"Copy part to clipboard"}
-                onClick={preventDefaultAnd(copyPartToClipboard)}
+                onClick={preventDefaultAnd(copyNodeToClipboard)}
               />
               <MenuItem
                 onMouseDown={(e) => e.stopPropagation()}
@@ -1958,11 +1958,11 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
               <MenuItem
                 onMouseDown={(e) => e.stopPropagation()}
                 text={`Edit description`}
-                onClick={preventDefaultAnd(() => editPartDescription())}
+                onClick={preventDefaultAnd(() => editNodeDescription())}
               />
               <MenuDivider />
               <MenuItem text="Default Style">
-                <PartStyleMenu
+                <NodeStyleMenu
                   style={part.defaultStyle}
                   onChange={onChangeDefaultStyle}
                   promptFn={_prompt}
@@ -1973,7 +1973,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
         },
         [
           partIoEditable,
-          copyPartToClipboard,
+          copyNodeToClipboard,
           part.completionOutputs,
           part.reactiveInputs,
           part.defaultStyle,
@@ -1983,7 +1983,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
           onAddIoPin,
           editCompletionOutputs,
           editReactiveInputs,
-          editPartDescription,
+          editNodeDescription,
         ]
       );
 
@@ -2062,7 +2062,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
         isBoardInFocus
       );
 
-      const onChangeInspected: VisualPartEditorProps["onChangePart"] =
+      const onChangeInspected: VisualNodeEditorProps["onChangePart"] =
         React.useCallback(
           (changedInlinePart, type) => {
             if (!openInlineInstance) {
@@ -2072,7 +2072,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
               const ins = draft.instances.find(
                 (i) => i.id === openInlineInstance.insId
               );
-              if (!ins || !isInlinePartInstance(ins)) {
+              if (!ins || !isInlineNodeInstance(ins)) {
                 throw new Error("impossible state");
               }
               ins.part = changedInlinePart;
@@ -2103,7 +2103,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
 
       const maybeGetInlineProps = (
         ins: NodeInstance
-      ): VisualPartEditorProps => {
+      ): VisualNodeEditorProps => {
         if (openInlineInstance && openInlineInstance.insId === ins.id) {
           return {
             currentInsId: openInlineInstance.insId,
@@ -2114,7 +2114,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             onCopy: onCopy,
             clipboardData: props.clipboardData,
             onInspectPin: props.onInspectPin,
-            onGoToPartDef: props.onGoToPartDef,
+            onGoToNodeDef: props.onGoToNodeDef,
             partIoEditable: props.partIoEditable,
             part: openInlineInstance.part,
             onChangePart: onChangeInspected,
@@ -2240,7 +2240,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
       );
 
       React.useImperativeHandle(thisRef, () => {
-        const ref: VisualPartEditorHandle = {
+        const ref: VisualNodeEditorHandle = {
           centerInstance(insId: string) {
             const ins = part.instances.find((ins) => ins.id === insId);
             if (ins) {
@@ -2294,8 +2294,8 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             case "existing": {
               const [existingInlinePart] = part.instances
                 .filter((ins) => ins.id === inlineCodeTarget.insId)
-                .filter((ins) => isInlinePartInstance(ins))
-                .map((ins: InlinePartInstance) => ins.part);
+                .filter((ins) => isInlineNodeInstance(ins))
+                .map((ins: InlineNodeInstance) => ins.part);
 
               if (!existingInlinePart) {
                 throw new Error(`Unable to find inline part to save to`);
@@ -2309,7 +2309,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
               const newVal = produce(part, (draft) => {
                 draft.instances = draft.instances.map((i) => {
                   return i.id === inlineCodeTarget.insId
-                    ? inlinePartInstance(i.id, newPart, i.inputConfig, i.pos)
+                    ? inlineNodeInstance(i.id, newPart, i.inputConfig, i.pos)
                     : i;
                 });
                 draft.connections = draft.connections.filter((conn) => {
@@ -2351,7 +2351,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
               break;
             }
             case "new-floating": {
-              const ins = inlinePartInstance(
+              const ins = inlineNodeInstance(
                 createInsId(newPart),
                 newPart,
                 {},
@@ -2370,7 +2370,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
               if (!existingIns) {
                 throw new Error(`Impossible state`);
               }
-              const newIns = inlinePartInstance(
+              const newIns = inlineNodeInstance(
                 createInsId(newPart),
                 newPart,
                 {},
@@ -2477,14 +2477,14 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
         [draggedConnection, onConnectionClose]
       );
 
-      const onPartIoMouseDown = React.useCallback<
-        PartIoViewProps["onMouseDown"]
+      const onNodeIoMouseDown = React.useCallback<
+        NodeIoViewProps["onMouseDown"]
       >((id, type) => {
         // drag to connect disabled in part io pins as they conflict with the drag to move
         // whole concept of "Node IO" probably needs to be rethought
       }, []);
 
-      const onPartIoMouseUp = React.useCallback<PartIoViewProps["onMouseUp"]>(
+      const onNodeIoMouseUp = React.useCallback<NodeIoViewProps["onMouseUp"]>(
         (id, type) => {
           if (draggedConnection) {
             if (draggedConnection.from && type === "output") {
@@ -2554,7 +2554,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
                 lastMousePos={lastMousePos.current}
                 draggedSource={draggedConnection}
               />
-              {renderPartInputs()}
+              {renderNodeInputs()}
               {instances.map((ins) => (
                 <InstanceView
                   onUngroup={onUnGroup}
@@ -2566,7 +2566,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
                   connectionsPerInput={
                     instancesConnectToPinsRef.current.get(ins.id) || emptyObj
                   }
-                  part={getPartDef(ins, currResolvedDeps)}
+                  part={getNodeDef(ins, currResolvedDeps)}
                   ancestorsInsIds={fullInsIdPath(currentInsId, ancestorsInsIds)}
                   onPinClick={onPinClick}
                   onPinDblClick={onPinDblClick}
@@ -2641,7 +2641,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
               ))}
               {maybeRenderSelectionBox()}
               {/* {maybeRenderEditGroupModal()} */}
-              {renderPartOutputs()}
+              {renderNodeOutputs()}
               <MainInstanceEventsIndicator
                 currentInsId={currentInsId}
                 ancestorsInsIds={ancestorsInsIds}

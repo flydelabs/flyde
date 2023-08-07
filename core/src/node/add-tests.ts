@@ -1,4 +1,4 @@
-import { dynamicPartInput, Node } from ".";
+import { dynamicNodeInput, Node } from ".";
 
 import { spy } from "sinon";
 
@@ -19,8 +19,8 @@ export const runAddTests = (
     it("runs fn when dynamic inputs are given", () => {
       const fn = spy();
 
-      const n1 = dynamicPartInput();
-      const n2 = dynamicPartInput();
+      const n1 = dynamicNodeInput();
+      const n2 = dynamicNodeInput();
 
       const r = new Subject();
       r.subscribe(fn);
@@ -40,8 +40,8 @@ export const runAddTests = (
     it("waits for all inputs to be have value before running", () => {
       const fn = spy();
 
-      const n1 = dynamicPartInput();
-      const n2 = dynamicPartInput();
+      const n1 = dynamicNodeInput();
+      const n2 = dynamicNodeInput();
 
       const r = new Subject();
       r.subscribe(fn);
@@ -63,8 +63,8 @@ export const runAddTests = (
     it("pins do not hold their value after usage", () => {
       const fn = spy();
 
-      const n1 = dynamicPartInput();
-      const n2 = dynamicPartInput();
+      const n1 = dynamicNodeInput();
+      const n2 = dynamicNodeInput();
 
       const r = new Subject();
       r.subscribe(fn);
@@ -89,8 +89,8 @@ export const runAddTests = (
     it.skip("pins hold their value after usage by default", () => {
       const fn = spy();
 
-      const n1 = dynamicPartInput({ config: stickyInputPinConfig() });
-      const n2 = dynamicPartInput({ config: stickyInputPinConfig() });
+      const n1 = dynamicNodeInput({ config: stickyInputPinConfig() });
+      const n2 = dynamicNodeInput({ config: stickyInputPinConfig() });
 
       const r = new Subject();
       r.subscribe(fn);
@@ -115,8 +115,8 @@ export const runAddTests = (
     it.skip("works when only 1 pin should hold be sticky", () => {
       const fn = spy();
 
-      const n1 = dynamicPartInput({ config: stickyInputPinConfig() });
-      const n2 = dynamicPartInput({ config: queueInputPinConfig() });
+      const n1 = dynamicNodeInput({ config: stickyInputPinConfig() });
+      const n2 = dynamicNodeInput({ config: queueInputPinConfig() });
 
       const r = new Subject();
       r.subscribe(fn);

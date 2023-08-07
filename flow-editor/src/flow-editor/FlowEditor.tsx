@@ -7,24 +7,24 @@ import {
   NodeInstance,
   FlydeFlow,
   ImportedNodeDef,
-  InlinePartInstance,
+  InlineNodeInstance,
   PinType,
   DebuggerEventType,
   ROOT_INS_ID,
 } from "@flyde/core";
 import {
-  VisualPartEditor,
+  VisualNodeEditor,
   ClipboardData,
   defaultViewPort,
   GroupEditorBoardData,
   PART_HEIGHT,
-  VisualPartEditorHandle,
-} from "../visual-part-editor/VisualPartEditor";
+  VisualNodeEditorHandle,
+} from "../visual-part-editor/VisualNodeEditor";
 import produce from "immer";
 import { useHotkeys } from "../lib/react-utils/use-hotkeys";
 
 // ;
-import { createNewPartInstance } from "../visual-part-editor/utils";
+import { createNewNodeInstance } from "../visual-part-editor/utils";
 
 import { AppToaster } from "../toaster";
 
@@ -61,7 +61,7 @@ export type FlydeFlowEditorProps = {
 
   onNewEnvVar?: (name: string, val: any) => void;
 
-  onExtractInlinePart: (ins: InlinePartInstance) => Promise<void>;
+  onExtractInlinePart: (ins: InlineNodeInstance) => Promise<void>;
 
   ref?: React.Ref<any>;
 
@@ -224,15 +224,15 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
       [openFile]
     );
 
-    const onAddPartInstance = React.useCallback(
+    const onAddNodeInstance = React.useCallback(
       (partId: string, offset: number = -1 * PART_HEIGHT * 1.5) => {
-        const newPartIns = createNewPartInstance(
+        const newNodeIns = createNewNodeInstance(
           partId,
           offset,
           editorBoardData.lastMousePos,
           resolvedDependencies
         );
-        if (newPartIns) {
+        if (newNodeIns) {
           const valueChanged = produce(flow, (draft) => {
             const part = draft.part;
             if (!isVisualNode(part)) {
@@ -240,11 +240,11 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
                 `Impossible state, adding part to non visual part`
               );
             }
-            part.instances.push(newPartIns);
+            part.instances.push(newNodeIns);
           });
           onChangeFlow(valueChanged, functionalChange("add-part"));
           hideOmnibar();
-          return newPartIns;
+          return newNodeIns;
         }
       },
       [
@@ -261,9 +261,9 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
         switch (cmd.type) {
           case OmniBarCmdType.ADD:
             reportEvent("addPart", { partId: cmd.data, source: "omnibar" });
-            return onAddPartInstance(cmd.data);
+            return onAddNodeInstance(cmd.data);
           case OmniBarCmdType.ADD_VALUE: {
-            const ref: VisualPartEditorHandle | undefined = (
+            const ref: VisualNodeEditorHandle | undefined = (
               visualEditorRef as any
             ).current;
             ref?.requestNewInlineValue();
@@ -273,14 +273,14 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
           case OmniBarCmdType.IMPORT: {
             await onImportPart(cmd.data, { pos: editorBoardData.lastMousePos });
             const finalPos = vAdd({ x: 0, y: 0 }, editorBoardData.lastMousePos);
-            const newPartIns = createNewPartInstance(
+            const newNodeIns = createNewNodeInstance(
               cmd.data.part,
               0,
               finalPos,
               resolvedDependencies
             );
             const newValue = produce(flow, (draft) => {
-              draft.part.instances.push(newPartIns);
+              draft.part.instances.push(newNodeIns);
             });
             onChangeFlow(newValue, functionalChange("add-imported-part"));
             reportEvent("addPart", {
@@ -300,7 +300,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
       [
         hideOmnibar,
         reportEvent,
-        onAddPartInstance,
+        onAddNodeInstance,
         visualEditorRef,
         onImportPart,
         editorBoardData.lastMousePos,
@@ -339,14 +339,14 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
                 onClose={onCloseInspectedItemModal}
               />
             ) : null}
-            <VisualPartEditor
+            <VisualNodeEditor
               currentInsId={ROOT_INS_ID}
               ref={visualEditorRef}
               key={editedPart.id}
               boardData={editorBoardData}
               onChangeBoardData={onChangeEditorBoardData}
               part={editedPart}
-              onGoToPartDef={onEditPart}
+              onGoToNodeDef={onEditPart}
               onChangePart={onChangePart}
               resolvedDependencies={resolvedDependencies}
               clipboardData={clipboardData}

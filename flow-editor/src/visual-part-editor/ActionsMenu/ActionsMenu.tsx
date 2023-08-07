@@ -2,7 +2,7 @@ import { Button } from "@blueprintjs/core";
 import { Tooltip2 } from "@blueprintjs/popover2";
 import {
   ConnectionNode,
-  getPartDef,
+  getNodeDef,
   ImportableSource,
   isVisualNode,
   NodesDefCollection,
@@ -15,15 +15,15 @@ import { useHotkeys } from "../../lib/react-utils/use-hotkeys";
 import { useLocalStorage } from "../../lib/user-preferences";
 
 import { AppToaster, toastMsg } from "../../toaster";
-import { AddPartMenu } from "./AddPartMenu";
+import { AddNodeMenu } from "./AddNodeMenu";
 import {
-  addPartIcon,
+  addNodeIcon,
   starIcon,
   groupIcon,
   inspectIcon,
   pencilIcon,
   playIcon,
-  removePartIcon,
+  removeNodeIcon,
   ungroupIcon,
 } from "./icons/icons";
 import { PromptAIMenu } from "./PromptAIMenu";
@@ -80,11 +80,11 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
 
   const { onRequestImportables } = useDependenciesContext();
 
-  const [showAddPartMenu, setShowAddPartMenu] = React.useState(false);
+  const [showAddNodeMenu, setShowAddNodeMenu] = React.useState(false);
   const [showRunFlowModal, setShowRunFlowModal] = React.useState(false);
 
   const [showAIPromptModal, setShowAIPromptModal] = React.useState(false);
-  const [generatingPartTime, setGeneratingPartTime] = React.useState<
+  const [generatingNodeTime, setGeneratingNodeTime] = React.useState<
     number | null
   >(null);
 
@@ -93,11 +93,11 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
     {}
   );
 
-  const closeAddPartMenu = useCallback(() => {
-    setShowAddPartMenu(false);
+  const closeAddNodeMenu = useCallback(() => {
+    setShowAddNodeMenu(false);
   }, []);
 
-  const { onRunFlow, generatePartFromPrompt, reportEvent } = usePorts();
+  const { onRunFlow, generateNodeFromPrompt, reportEvent } = usePorts();
 
   const _runFlow = useCallback<typeof onRunFlow>(
     (inputs) => {
@@ -120,7 +120,7 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
       console.error(`Could not find instance with id ${selectedInstances[0]}`);
     } else {
       try {
-        const part = getPartDef(instance, resolvedNodes);
+        const part = getNodeDef(instance, resolvedNodes);
         if (isVisualNode(part)) {
           types.push(ActionType.UnGroup);
         }
@@ -185,7 +185,7 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
 
       switch (type) {
         case ActionType.AddPart:
-          setShowAddPartMenu(true);
+          setShowAddNodeMenu(true);
           break;
         case ActionType.Run:
           void (async function () {
@@ -240,34 +240,34 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
   const onAddAIPart = useCallback(
     async (prompt: string) => {
       const startTime = Date.now();
-      setGeneratingPartTime(startTime);
+      setGeneratingNodeTime(startTime);
       try {
-        reportEvent("generatePartFromPrompt:start", {
+        reportEvent("generateNodeFromPrompt:start", {
           promptLength: prompt.length,
         });
-        const response = await generatePartFromPrompt({ prompt });
+        const response = await generateNodeFromPrompt({ prompt });
         const { inputs, outputs } = response.importablePart.part;
         const totalTime = Date.now() - startTime;
-        reportEvent("generatePartFromPrompt:success", {
+        reportEvent("generateNodeFromPrompt:success", {
           totalTime,
           inputs: Object.keys(inputs),
           outputs: Object.keys(outputs),
         });
-        setGeneratingPartTime(null);
+        setGeneratingNodeTime(null);
         onAction({ type: ActionType.AI, data: response });
         setShowAIPromptModal(false);
       } catch (e) {
-        setGeneratingPartTime(null);
+        setGeneratingNodeTime(null);
         AppToaster.show({
           message: "Failed to generate part",
           intent: "danger",
         });
-        reportEvent("generatePartFromPrompt:failure", {
+        reportEvent("generateNodeFromPrompt:failure", {
           error: e.message,
         });
       }
     },
-    [generatePartFromPrompt, onAction, reportEvent]
+    [generateNodeFromPrompt, onAction, reportEvent]
   );
 
   return (
@@ -275,11 +275,11 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
       {types.map((type) => (
         <ActionButton key={type} type={type} onClick={internalOnAction} />
       ))}
-      {showAddPartMenu ? (
-        <AddPartMenu
+      {showAddNodeMenu ? (
+        <AddNodeMenu
           onRequestImportables={onRequestImportables}
           onAddPart={onAddPart}
-          onClose={closeAddPartMenu}
+          onClose={closeAddNodeMenu}
         />
       ) : null}
       {showRunFlowModal ? (
@@ -293,11 +293,11 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
         <PromptAIMenu
           onClose={() => {
             setShowAIPromptModal(false);
-            setGeneratingPartTime(null);
+            setGeneratingNodeTime(null);
           }}
           onSubmit={onAddAIPart}
-          submitting={generatingPartTime !== null}
-          submitTime={generatingPartTime}
+          submitting={generatingNodeTime !== null}
+          submitTime={generatingNodeTime}
         />
       ) : null}
     </div>
@@ -314,12 +314,12 @@ const actionsMetaData: Record<
   { icon: string; text: string; hotkey?: string }
 > = {
   [ActionType.AddPart]: {
-    icon: addPartIcon,
+    icon: addNodeIcon,
     text: 'Open the "add part" menu',
     hotkey: "a",
   },
   [ActionType.RemovePart]: {
-    icon: removePartIcon,
+    icon: removeNodeIcon,
     text: `Remove selected instances`,
     hotkey: "backspace",
   },

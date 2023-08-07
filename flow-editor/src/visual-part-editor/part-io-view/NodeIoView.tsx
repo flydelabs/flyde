@@ -9,7 +9,7 @@ import {
   PinType,
   Pos,
 } from "@flyde/core";
-import { BasePartView } from "../base-part-view";
+import { BaseNodeView } from "../base-part-view";
 import classNames from "classnames";
 import { Menu, MenuItem, ContextMenu } from "@blueprintjs/core";
 import { usePrompt } from "../../flow-editor/ports";
@@ -18,7 +18,7 @@ import { getInputName } from "@flyde/core";
 import CustomReactTooltip from "../../lib/tooltip";
 import { getPinDomId } from "../dom-ids";
 
-export interface PartIoViewProps {
+export interface NodeIoViewProps {
   id: string;
   type: PinType;
   pos: Pos;
@@ -52,8 +52,8 @@ export interface PartIoViewProps {
 
 const INSIGHTS_TOOLTIP_INTERVAL = 500;
 
-export const PartIoView: React.SFC<PartIoViewProps> = React.memo(
-  function PartIoViewInner(props) {
+export const NodeIoView: React.SFC<NodeIoViewProps> = React.memo(
+  function NodeIoViewInner(props) {
     const {
       viewPort,
       selected,
@@ -226,7 +226,7 @@ export const PartIoView: React.SFC<PartIoViewProps> = React.memo(
     );
 
     return (
-      <BasePartView
+      <BaseNodeView
         className={classNames(`part-io-view`, type)}
         pos={pos}
         onDragEnd={onDragEnd}
@@ -264,7 +264,7 @@ export const PartIoView: React.SFC<PartIoViewProps> = React.memo(
         >
           {id}
         </div>
-      </BasePartView>
+      </BaseNodeView>
     );
   }
 );

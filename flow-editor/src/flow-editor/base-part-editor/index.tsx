@@ -17,7 +17,7 @@ import {
 } from "@blueprintjs/core";
 import produce from "immer";
 import { MultiSelect } from "@blueprintjs/select";
-import { PartPreview } from "../../PartPreview/PartPreview";
+import { NodePreview } from "../../NodePreview/NodePreview";
 
 export const renderCreateIOOption = (
   query: string,
@@ -35,14 +35,14 @@ export const renderCreateIOOption = (
 
 const IOMultiSelect = MultiSelect.ofType<string>();
 
-export interface BasePartEditorProps {
+export interface BaseNodeEditorProps {
   part: BaseNode;
   onChange: (part: BaseNode) => void;
   idDisabled: boolean;
   hiddenOutputs?: boolean;
 }
 
-export const BasePartEditor: React.FC<BasePartEditorProps> = (props) => {
+export const BaseNodeEditor: React.FC<BaseNodeEditorProps> = (props) => {
   const { part, onChange } = props;
 
   const allInputs = entries(part.inputs);
@@ -266,7 +266,7 @@ export const BasePartEditor: React.FC<BasePartEditorProps> = (props) => {
 
       <FormGroup label="Preview">
         <div className="preview-wrapper">
-          <PartPreview part={part} />
+          <NodePreview part={part} />
         </div>
       </FormGroup>
     </div>

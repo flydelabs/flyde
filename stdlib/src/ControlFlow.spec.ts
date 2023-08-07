@@ -1,8 +1,8 @@
 import {
-  dynamicPartInput,
+  dynamicNodeInput,
   eventually,
   execute,
-  inlinePartInstance,
+  inlineNodeInstance,
   randomInt,
   staticInputPinConfig,
   VisualNode,
@@ -23,8 +23,8 @@ describe("ControlFlow", () => {
         inputs: ["a"],
         outputs: ["b"],
         instances: [
-          inlinePartInstance("i1", Publish, { key: staticInputPinConfig(key) }),
-          inlinePartInstance("i2", Subscribe, {
+          inlineNodeInstance("i1", Publish, { key: staticInputPinConfig(key) }),
+          inlineNodeInstance("i2", Subscribe, {
             key: staticInputPinConfig(key),
           }),
         ],
@@ -36,7 +36,7 @@ describe("ControlFlow", () => {
 
       const [s, b] = spiedOutput();
 
-      const input = dynamicPartInput();
+      const input = dynamicNodeInput();
 
       execute({
         part: visualNode,

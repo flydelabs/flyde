@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { dynamicOutput, dynamicPartInput } from "@site/../core/dist";
+import { dynamicOutput, dynamicNodeInput } from "@site/../core/dist";
 
 import {
   PlaygroundTemplate,
@@ -25,7 +25,7 @@ export default function Home(): JSX.Element {
   const result = useRef(dynamicOutput());
 
   const inputs = useRef({
-    __trigger: dynamicPartInput(),
+    __trigger: dynamicNodeInput(),
   });
 
   const [flowProps, setFlowProps] = useState<

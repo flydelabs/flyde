@@ -1,6 +1,6 @@
 import { VisualNode, Pos, createInsId } from "@flyde/core";
 import produce from "immer";
-import { ClipboardData } from "../VisualPartEditor";
+import { ClipboardData } from "../VisualNodeEditor";
 
 export const pasteInstancesCommand = (
   _part: VisualNode,

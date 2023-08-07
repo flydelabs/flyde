@@ -9,7 +9,7 @@ import {
 import { BaseNode, visualNode } from "@flyde/core";
 import classNames from "classnames";
 import React from "react";
-import { BasePartEditor } from "@flyde/flow-editor"; // ../../../../../common/flow-editor/base-part-editor
+import { BaseNodeEditor } from "@flyde/flow-editor"; // ../../../../../common/flow-editor/base-part-editor
 
 import "./NewFlowModal.scss";
 
@@ -36,7 +36,7 @@ export const NewFlowModal: React.FC<NewFlowModalProps> = (props) => {
           <Callout>
             Will create new flow inside <Code>{props.folder}</Code>
           </Callout>
-          <BasePartEditor
+          <BaseNodeEditor
             part={basePart}
             onChange={setBasePart}
             idDisabled={false}

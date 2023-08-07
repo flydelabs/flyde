@@ -11,7 +11,7 @@ import {
 import { rnd } from "../physics";
 import { NodeInstance } from "@flyde/core";
 import { PromptFn } from "..";
-import { partStylePresetColors } from "../visual-part-editor/instance-view/PartStyleMenu";
+import { partStylePresetColors } from "../visual-part-editor/instance-view/NodeStyleMenu";
 
 export const createGroup = async (
   instances: NodeInstance[],

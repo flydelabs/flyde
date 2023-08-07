@@ -11,7 +11,7 @@ export const getConstValuePlaceholders = (v: any) => {
   return placeholderMatches;
 };
 
-export type ConstBuilderPartDto = {
+export type ConstBuilderNodeDto = {
   placeholders: string[];
   constValue: any;
 };

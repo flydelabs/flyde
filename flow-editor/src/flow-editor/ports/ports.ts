@@ -45,7 +45,7 @@ export interface EditorPorts {
 
   reportEvent: ReportEvent;
 
-  generatePartFromPrompt: (dto: {
+  generateNodeFromPrompt: (dto: {
     prompt: string;
   }) => Promise<{ importablePart: ImportableSource }>;
 
@@ -71,7 +71,7 @@ export const defaultPorts: EditorPorts = {
   onRunFlow: throwsNotImplemented,
   onStopFlow: throwsNotImplemented,
   reportEvent: throwsNotImplemented,
-  generatePartFromPrompt: throwsNotImplemented,
+  generateNodeFromPrompt: throwsNotImplemented,
   hasOpenAiToken: () => Promise.resolve(false),
 };
 

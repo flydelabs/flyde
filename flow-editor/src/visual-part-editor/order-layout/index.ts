@@ -82,11 +82,11 @@ export const orderLayout = (
           const dx = Math.abs(diff.x);
           const dy = Math.abs(diff.y);
 
-          const isE1PartInput = e1.id.startsWith("part-input");
-          const isE1PartOutput = e1.id.startsWith("part-output");
+          const isE1NodeInput = e1.id.startsWith("part-input");
+          const isE1NodeOutput = e1.id.startsWith("part-output");
 
-          const isE2PartInput = e2.id.startsWith("part-input");
-          const isE2PartOutput = e2.id.startsWith("part-output");
+          const isE2NodeInput = e2.id.startsWith("part-input");
+          const isE2NodeOutput = e2.id.startsWith("part-output");
 
           // push aside those that are too close horizontally
           if (
@@ -105,7 +105,7 @@ export const orderLayout = (
             e2.f = vAdd(e2.f, vec(0, force * -0.5));
           }
 
-          if (isE1PartInput && isE2PartOutput) {
+          if (isE1NodeInput && isE2NodeOutput) {
             // make sure e1 is above e2
             const delta = vSub(e1.p, e2.p);
 
@@ -119,7 +119,7 @@ export const orderLayout = (
               e1.f = vAdd(e1.f, vec(0, force * -0.5));
               e2.f = vAdd(e2.f, vec(0, force * 0.5));
             }
-          } else if (isE1PartOutput && isE2PartInput) {
+          } else if (isE1NodeOutput && isE2NodeInput) {
             const delta = vSub(e1.p, e2.p);
 
             const dy = delta.y;
@@ -132,9 +132,9 @@ export const orderLayout = (
               e1.f = vAdd(e1.f, vec(0, force * -0.5));
               e2.f = vAdd(e2.f, vec(0, force * 0.5));
             }
-          } else if (isE1PartInput && isE2PartInput) {
+          } else if (isE1NodeInput && isE2NodeInput) {
             // make sure e1 and e2 are aligned horizontal
-          } else if (isE2PartInput && isE2PartOutput) {
+          } else if (isE2NodeInput && isE2NodeOutput) {
             // make sure e1 and e2 are aligned horizontal
           }
 

@@ -96,7 +96,7 @@ export const LayoutDebugger: React.FC<LayoutDebuggerProps> = (props) => {
     <LayoutDebuggerItem {...props} key={idx} />
   ));
 
-  const basePartElems = [
+  const baseNodeElems = [
     ...part.instances.map((i) => i.pos),
     ...values(part.inputsPosition),
     ...values(part.outputsPosition),
@@ -129,7 +129,7 @@ export const LayoutDebugger: React.FC<LayoutDebuggerProps> = (props) => {
     <React.Fragment>
       {viewPortData}
       {itemElems}
-      {basePartElems}
+      {baseNodeElems}
     </React.Fragment>
   );
 };

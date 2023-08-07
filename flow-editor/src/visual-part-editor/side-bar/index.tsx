@@ -8,7 +8,7 @@ import {
   keys,
   VisualNode,
   NodesDefCollection,
-  getPartDef,
+  getNodeDef,
   noop,
 } from "@flyde/core";
 import classNames from "classnames";
@@ -95,7 +95,7 @@ export const SideBar: React.FC<SideBarProps> = React.memo(function SideBarInner(
   });
 
   const items: MenuItemProps[] = instances.map((ins) => {
-    const part = getPartDef(ins, props.resolvedNodes);
+    const part = getNodeDef(ins, props.resolvedNodes);
     const type = isVisualNode(part)
       ? MenuItemType.VISUAL
       : isCodeNode(part)

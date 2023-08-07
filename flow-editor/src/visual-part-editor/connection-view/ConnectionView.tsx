@@ -4,7 +4,7 @@ import {
   VisualNode,
   Pos,
   NodesDefCollection,
-  getPartDef,
+  getNodeDef,
   NodeInstance,
   isInternalConnectionNode,
   ConnectionData,
@@ -87,7 +87,7 @@ export const SingleConnectionView: React.FC<ConnectionItemViewProps> = (
 
   const fromPart =
     isInternalConnectionNode(from) && fromInstance
-      ? getPartDef(fromInstance, resolvedNodes)
+      ? getNodeDef(fromInstance, resolvedNodes)
       : part;
 
   const sourcePin = fromPart.outputs[from.pinId];

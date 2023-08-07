@@ -1,7 +1,7 @@
 import { entries, NodeDefinition } from "@flyde/core";
 import React, { useCallback, useState } from "react";
 import { useDebounce } from "usehooks-ts";
-import { PartPreview, useDependenciesContext } from "@flyde/flow-editor"; // ../../../../common/PartPreview/PartPreview
+import { NodePreview, useDependenciesContext } from "@flyde/flow-editor"; // ../../../../common/NodePreview/NodePreview
 
 export interface MenuAddSectionProps {
   onAdd: (part: NodeDefinition) => void;
@@ -30,7 +30,7 @@ export const MenuAddSection: React.FC<MenuAddSectionProps> = (props) => {
         onDoubleClick={() => props.onAdd(part)}
         key={part.id}
       >
-        <PartPreview part={part} />
+        <NodePreview part={part} />
       </div>
     );
   });

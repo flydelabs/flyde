@@ -1,1 +1,1 @@
-export * from "./VisualPartEditor";
+export * from "./VisualNodeEditor";

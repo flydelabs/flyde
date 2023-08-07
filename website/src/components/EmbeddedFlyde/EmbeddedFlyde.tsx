@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import * as PubSub from "pubsub-js";
 import {
-  createNewPartInstance,
+  createNewNodeInstance,
   createRuntimePlayer,
   DebuggerContextData,
   DebuggerContextProvider,
@@ -25,9 +25,9 @@ import {
   keys,
   noop,
   Node,
-  PartInputs,
+  NodeInputs,
   NodeInstance,
-  PartOutput,
+  NodeOutput,
   ResolvedDependencies,
   TRIGGER_PIN_ID,
 } from "@flyde/core";
@@ -51,7 +51,7 @@ export interface EmbeddedFlydeProps {
     inputs: Record<string, DynamicNodeInput>;
     flow: FlydeFlow;
     dependencies: ResolvedDependencies;
-    output: PartOutput;
+    output: NodeOutput;
   };
   debugDelay: number;
   onOutput: (data: any) => void;
@@ -60,8 +60,8 @@ export interface EmbeddedFlydeProps {
 export type PlaygroundFlowDto = {
   flow: FlydeFlow;
   dependencies: ResolvedDependencies;
-  output: PartOutput;
-  inputs: PartInputs;
+  output: NodeOutput;
+  inputs: NodeInputs;
   onError: any;
   debugDelay?: number;
   player: RuntimePlayer;
@@ -141,18 +141,18 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = (props) => {
       };
     });
 
-    let newPartIns: NodeInstance | undefined = undefined;
+    let newNodeIns: NodeInstance | undefined = undefined;
 
     const newFlow = produce(flow, (draft) => {
       if (target) {
         const finalPos = vAdd({ x: 0, y: 0 }, target.pos);
-        newPartIns = createNewPartInstance(
+        newNodeIns = createNewNodeInstance(
           importedPart.part,
           0,
           finalPos,
           resolvedDeps
         );
-        draft.part.instances.push(newPartIns);
+        draft.part.instances.push(newNodeIns);
 
         if (target.connectTo) {
           const { insId, outputId } = target.connectTo;
@@ -162,7 +162,7 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = (props) => {
               pinId: outputId,
             },
             to: {
-              insId: newPartIns.id,
+              insId: newNodeIns.id,
               pinId: TRIGGER_PIN_ID,
             },
           });
@@ -175,8 +175,8 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = (props) => {
 
     const newState = produce(editorState, (draft) => {
       draft.flow = newFlow;
-      if (target?.selectAfterAdding && newPartIns) {
-        draft.boardData.selected = [newPartIns?.id];
+      if (target?.selectAfterAdding && newNodeIns) {
+        draft.boardData.selected = [newNodeIns?.id];
       }
     });
 

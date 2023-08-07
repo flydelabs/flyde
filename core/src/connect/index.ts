@@ -1,17 +1,17 @@
 import {
   CodeNode,
   isDynamicInput,
-  PartInput,
-  PartInputs,
-  staticPartInput,
-  PartOutputs,
+  NodeInput,
+  NodeInputs,
+  staticNodeInput,
+  NodeOutputs,
   dynamicOutput,
-  dynamicPartInput,
+  dynamicNodeInput,
   NodeInstance,
   VisualNode,
   queueInputPinConfig,
   isStaticInputPinConfig,
-  PartOutput,
+  NodeOutput,
   NodeState,
   getNode,
 } from "../node";
@@ -85,12 +85,12 @@ export const connect = (
       const idToInstance = new Map<string, NodeInstance>();
 
       // these hold the args / outputs for each piece of an internal connection
-      const instanceArgs = new Map<string, PartInputs>();
-      const instanceOutputs = new Map<string, PartOutputs>();
+      const instanceArgs = new Map<string, NodeInputs>();
+      const instanceOutputs = new Map<string, NodeOutputs>();
 
       // hold the external connection points to be connected in the end
-      const externalInputConnections = new Map<string, PartInput[]>();
-      const externalOutputConnections = new Map<string, PartOutput[]>();
+      const externalInputConnections = new Map<string, NodeInput[]>();
+      const externalOutputConnections = new Map<string, NodeOutput[]>();
 
       // holds status of each instance - if it is running or not, for implicit completion
       let resolveCompletionPromise: any;
@@ -111,23 +111,23 @@ export const connect = (
         const inputKeys = Object.keys(part.inputs);
         const outputKeys = Object.keys(part.outputs);
 
-        const args: PartInputs = {},
-          outputs: PartOutputs = {};
+        const args: NodeInputs = {},
+          outputs: NodeOutputs = {};
 
         inputKeys.forEach((k) => {
           const inputConfig =
             (instance.inputConfig || {})[k] || queueInputPinConfig();
 
           if (isStaticInputPinConfig(inputConfig)) {
-            args[k] = staticPartInput(inputConfig.value);
+            args[k] = staticNodeInput(inputConfig.value);
           } else {
-            args[k] = dynamicPartInput({
+            args[k] = dynamicNodeInput({
               config: inputConfig,
             });
           }
         });
 
-        args[TRIGGER_PIN_ID] = dynamicPartInput({
+        args[TRIGGER_PIN_ID] = dynamicNodeInput({
           config: queueInputPinConfig(),
         });
 

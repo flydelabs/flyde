@@ -35,7 +35,7 @@ export const createDevServerClient = (baseUrl: string) => {
         .get(`${baseUrl}/importables?filename=${filename}`)
         .then((res) => res.data);
     },
-    generatePartFromPrompt: (
+    generateNodeFromPrompt: (
       prompt: string
     ): Promise<{ importablePart: ImportableSource }> => {
       return axios

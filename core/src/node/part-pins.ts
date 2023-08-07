@@ -58,30 +58,30 @@ export type DynamicNodeInput = {
   config: StickyInputPinConfig | QueueInputPinConfig;
 };
 
-export type StaticPartInput = {
+export type StaticNodeInput = {
   config: StaticInputPinConfig;
 };
 
-export type PartInput = DynamicNodeInput | StaticPartInput;
+export type NodeInput = DynamicNodeInput | StaticNodeInput;
 
-export type PartOutput = Subject<any>;
+export type NodeOutput = Subject<any>;
 
-export type PartOutputs = OMapF<PartOutput>;
+export type NodeOutputs = OMapF<NodeOutput>;
 
-export type PartInputs = OMapF<PartInput>;
+export type NodeInputs = OMapF<NodeInput>;
 
 export interface DynamicOutput extends Subject<any> {}
 
 export const dynamicOutput = (): DynamicOutput => new Subject();
 
-export const dynamicPartInput = testDataCreator<DynamicNodeInput>(() => {
+export const dynamicNodeInput = testDataCreator<DynamicNodeInput>(() => {
   return {
     subject: new Subject(),
     config: queueInputPinConfig(),
   };
 });
 
-export const dynamicPartInputs = (count: number = 10) =>
+export const dynamicNodeInputs = (count: number = 10) =>
   repeat(count, () =>
     testDataCreator<DynamicNodeInput>(() => {
       return {
@@ -91,24 +91,24 @@ export const dynamicPartInputs = (count: number = 10) =>
     })()
   );
 
-export const staticPartInput = (value: any): StaticPartInput => ({
+export const staticNodeInput = (value: any): StaticNodeInput => ({
   config: staticInputPinConfig(value),
 });
 
 export const isDynamicInput = (
-  arg: PartInput | undefined
+  arg: NodeInput | undefined
 ): arg is DynamicNodeInput => {
   const dArg = arg as DynamicNodeInput;
   return dArg && dArg.subject && !!dArg.subject.next;
 };
 
 export const isStaticInput = (
-  arg: PartInput | undefined
-): arg is StaticPartInput => {
+  arg: NodeInput | undefined
+): arg is StaticNodeInput => {
   return isStaticInputPinConfig(arg?.config);
 };
 
-export const extractStaticValue = (arg: PartInput) => {
+export const extractStaticValue = (arg: NodeInput) => {
   if (isStaticInput(arg)) {
     return arg.config.value;
   } else {

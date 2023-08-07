@@ -7,12 +7,12 @@ import {
   okeys,
   nodeInput,
   keys,
-  isInlinePartInstance,
-  InlinePartInstance,
+  isInlineNodeInstance,
+  InlineNodeInstance,
   randomInt,
   pickRandom,
   NodeStyle,
-  getPartOutputs,
+  getNodeOutputs,
   getInputName,
   getOutputName,
 } from "@flyde/core";
@@ -34,22 +34,22 @@ import {
   isVisualNode,
   NodeDefinition,
   PinType,
-  getPartInputs,
+  getNodeInputs,
 } from "@flyde/core";
-import { calcPartContent } from "./utils";
-import { BasePartView } from "../base-part-view";
+import { calcNodeContent } from "./utils";
+import { BaseNodeView } from "../base-part-view";
 import { isStaticInputPinConfig } from "@flyde/core";
 
 import { getInstanceDomId } from "../dom-ids";
 import {
   ClosestPinData,
-  VisualPartEditor,
-  VisualPartEditorProps,
-} from "../VisualPartEditor";
+  VisualNodeEditor,
+  VisualNodeEditorProps,
+} from "../VisualNodeEditor";
 import { usePrompt } from "../..";
 import { ContextMenu, IMenuItemProps, Menu, MenuItem } from "@blueprintjs/core";
 import ReactDOM from "react-dom";
-import { PartStyleMenu } from "./PartStyleMenu";
+import { NodeStyleMenu } from "./NodeStyleMenu";
 import CustomReactTooltip from "../../lib/tooltip";
 
 export const PIECE_HORIZONTAL_PADDING = 25;
@@ -69,7 +69,7 @@ export const getVisibleInputs = (
     return visibleInputs;
   }
 
-  const visiblePins = keys(getPartInputs(part)).filter((k, v) => {
+  const visiblePins = keys(getNodeInputs(part)).filter((k, v) => {
     const isConnected = connections.some(
       (c) => c.to.insId === instance.id && c.to.pinId === k
     );
@@ -166,10 +166,10 @@ export interface InstanceViewProps {
 
   isConnectedInstanceSelected: boolean;
 
-  inlineGroupProps?: VisualPartEditorProps;
+  inlineGroupProps?: VisualNodeEditorProps;
   onCloseInlineEditor: () => void;
 
-  onExtractInlinePart: (instance: InlinePartInstance) => Promise<void>;
+  onExtractInlinePart: (instance: InlineNodeInstance) => Promise<void>;
 
   inlineEditorPortalDomNode: HTMLElement;
 
@@ -444,7 +444,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
       console.error(`Error rendering custom view for part ${part.id}`);
     }
 
-    const content = calcPartContent(instance, part);
+    const content = calcNodeContent(instance, part);
 
     const getStaticValue = (k: string) => {
       const config = instance.inputConfig[k];
@@ -487,8 +487,8 @@ export const InstanceView: React.FC<InstanceViewProps> =
       onSetDisplayName(instance, name);
     }, [_prompt, instance, onSetDisplayName, part.id]);
 
-    const inputKeys = Object.keys(getPartInputs(part));
-    const outputKeys = Object.keys(getPartOutputs(part));
+    const inputKeys = Object.keys(getNodeInputs(part));
+    const outputKeys = Object.keys(getNodeOutputs(part));
 
     const _onConvertConstToEnv = React.useCallback(
       (pinId: string) => {
@@ -652,7 +652,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
       const contextMenuItems: IMenuItemProps[] = [
         ...inputMenuItems,
         ...outputMenuItems,
-        ...(isInlinePartInstance(instance) && isVisualNode(instance.part)
+        ...(isInlineNodeInstance(instance) && isVisualNode(instance.part)
           ? [
               {
                 text: "Ungroup inline part",
@@ -660,7 +660,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
               },
             ]
           : []),
-        ...(isInlinePartInstance(instance)
+        ...(isInlineNodeInstance(instance)
           ? [
               {
                 text: "Extract inline part to file",
@@ -681,7 +681,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
       return (
         <Menu>
           <MenuItem text="Style">
-            <PartStyleMenu
+            <NodeStyleMenu
               style={style}
               onChange={_onChangeStyle}
               promptFn={_prompt}
@@ -744,7 +744,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
                 {content}{" "}
                 <button onClick={props.onCloseInlineEditor}>close</button>
               </header>
-              <VisualPartEditor
+              <VisualNodeEditor
                 {...props.inlineGroupProps}
                 className="no-drag"
                 ref={inlineEditorRef}
@@ -778,7 +778,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
 
     return (
       <div className={cm}>
-        <BasePartView
+        <BaseNodeView
           pos={instance.pos}
           viewPort={viewPort}
           onDragStart={_onDragStart}
@@ -798,7 +798,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
           {renderInputs()}
           {renderContent()}
           {renderOutputs()}
-        </BasePartView>
+        </BaseNodeView>
       </div>
     );
   };

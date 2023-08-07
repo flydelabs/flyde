@@ -27,7 +27,7 @@ import {
 import { clamp } from "lodash";
 import { getInstanceDomId } from "../dom-ids";
 
-export const calcPartContent = (
+export const calcNodeContent = (
   instance: NodeInstance,
   part: NodeDefinition
 ) => {
@@ -61,11 +61,11 @@ export const calcPartContent = (
   return part.id;
 };
 
-export const calcPartWidth = (instance: NodeInstance, part: NodeDefinition) => {
+export const calcNodeWidth = (instance: NodeInstance, part: NodeDefinition) => {
   const allInputKeys = okeys(part.inputs);
   const visibleInputs = allInputKeys.length;
   const minWidth = visibleInputs * MIN_WIDTH_PER_PIN;
-  const partContent = calcPartContent(instance, part);
+  const partContent = calcNodeContent(instance, part);
 
   const charWidth = PIECE_CHAR_WIDTH;
 

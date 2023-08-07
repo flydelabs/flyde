@@ -1,18 +1,18 @@
-import { PART_HEIGHT } from "../VisualPartEditor";
+import { PART_HEIGHT } from "../VisualNodeEditor";
 import {
   okeys,
   isExternalConnectionNode,
   entries,
   VisualNode,
   NodesDefCollection,
-  getPartDef,
+  getNodeDef,
   ResolvedFlydeFlowDefinition,
 } from "@flyde/core";
 import { orderLayout, LayoutData } from ".";
 import produce from "immer";
-import { calcPartIoWidth } from "../part-io-view/utils";
+import { calcNodeIoWidth } from "../part-io-view/utils";
 import { size } from "../../physics";
-import { calcPartWidth } from "../instance-view/utils";
+import { calcNodeWidth } from "../instance-view/utils";
 
 export const layoutToInstances = (
   ld: LayoutData,
@@ -52,7 +52,7 @@ export const orderVisualPart = (
   const { instances, connections } = part;
   const insNodes = instances.reduce((prev, curr) => {
     const s = size(
-      calcPartWidth(curr, getPartDef(curr, resolvedNodes)),
+      calcNodeWidth(curr, getNodeDef(curr, resolvedNodes)),
       PART_HEIGHT
     );
     return {
@@ -63,13 +63,13 @@ export const orderVisualPart = (
 
   const partInputNodes = okeys(part.inputsPosition).reduce((prev, curr) => {
     const p = part.inputsPosition[curr];
-    const s = size(calcPartIoWidth(curr), PART_HEIGHT);
+    const s = size(calcNodeIoWidth(curr), PART_HEIGHT);
     return { ...prev, [`part-input-${curr}`]: { p, s } };
   }, {});
 
   const partOutputNodes = okeys(part.outputsPosition).reduce((prev, curr) => {
     const p = part.outputsPosition[curr];
-    const s = size(calcPartIoWidth(curr), PART_HEIGHT);
+    const s = size(calcNodeIoWidth(curr), PART_HEIGHT);
     return { ...prev, [`part-output-${curr}`]: { p, s } };
   }, {});
 

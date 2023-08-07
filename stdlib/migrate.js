@@ -2,8 +2,8 @@ const {
   isInlineValueNode,
   keys,
   isVisualNode,
-  isInlinePartInstance,
-  isRefPartInstance,
+  isInlineNodeInstance,
+  isRefNodeInstance,
   flydeFlowSchema,
 } = require("@flyde/core");
 const { deserializeFlow, serializeFlow } = require("@flyde/runtime");
@@ -37,7 +37,7 @@ for (const f of files) {
     const deps = Array.from(
       new Set(
         firstPart.instances
-          .filter((i) => isRefPartInstance(i))
+          .filter((i) => isRefNodeInstance(i))
           .map((i) => i.partId)
       )
     );

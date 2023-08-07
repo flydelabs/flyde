@@ -7,7 +7,7 @@
 // import {reactUniDriver} from @unidriver/react;
 // import * as ReactDOM from 'react-dom';
 // // import { Counter, ControlledCounter } from './fixtures';
-// import { execute, dynamicPartInput } from '../execute';
+// import { execute, dynamicNodeInput } from '../execute';
 
 // let cleanups: any[] = [];
 
@@ -33,7 +33,7 @@
 // describe('counter app', () => {
 
 // 	it('shows right value and triggers right outputs', async () => {
-// 		const val = dynamicPartInput();
+// 		const val = dynamicNodeInput();
 // 		const jsx = new Subject<any>();
 
 // 		const inc = new Subject(), dec = new Subject();

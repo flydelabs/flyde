@@ -3,7 +3,7 @@ import {
   middlePos,
   partInstance,
   ConnectionData,
-  inlinePartInstance,
+  inlineNodeInstance,
   createInsId,
 } from "@flyde/core";
 import produce from "immer";
@@ -45,7 +45,7 @@ export const groupSelected = async (
   const newInstance =
     type === "ref"
       ? partInstance(createInsId(visualNode), visualNode.id, {}, midPos)
-      : inlinePartInstance(createInsId(visualNode), visualNode, {}, midPos);
+      : inlineNodeInstance(createInsId(visualNode), visualNode, {}, midPos);
 
   // replace relevant parts with new part
   const newInstancesArr = instances.filter((ins) => {

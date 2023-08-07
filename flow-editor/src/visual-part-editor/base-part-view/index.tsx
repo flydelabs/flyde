@@ -12,12 +12,12 @@ import { Pos } from "@flyde/core";
 
 import { IMenuItemProps } from "@blueprintjs/core";
 
-export interface BasePartViewContextItem {
+export interface BaseNodeViewContextItem {
   label: string;
   callback: any;
 }
 
-export interface BasePartViewProps {
+export interface BaseNodeViewProps {
   domId?: string;
   className?: string;
   pos: Pos;
@@ -34,8 +34,8 @@ export interface BasePartViewProps {
   onDragMove: (ev: React.MouseEvent, pos: Pos) => void;
 }
 
-export const BasePartView: React.FC<BasePartViewProps> =
-  function BasePartViewInner(props) {
+export const BaseNodeView: React.FC<BaseNodeViewProps> =
+  function BaseNodeViewInner(props) {
     const {
       dragged,
       viewPort,

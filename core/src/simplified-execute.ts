@@ -3,7 +3,7 @@ import {
   NodesCollection,
   dynamicOutput,
   keys,
-  staticPartInput,
+  staticNodeInput,
   isDynamicInput,
 } from ".";
 import { execute, ExecuteParams } from "./execute";
@@ -21,7 +21,7 @@ export const simplifiedExecute = (
     const input = inputs[curr];
     return {
       ...acc,
-      [curr]: isDynamicInput(input) ? input : staticPartInput(input),
+      [curr]: isDynamicInput(input) ? input : staticNodeInput(input),
     };
   }, {});
 

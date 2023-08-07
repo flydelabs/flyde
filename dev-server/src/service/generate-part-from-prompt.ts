@@ -5,7 +5,7 @@ import {
   RunNodeFunction,
   randomInt,
 } from "@flyde/core";
-import { resolveCodePartDependencies } from "@flyde/resolver";
+import { resolveCodeNodeDependencies } from "@flyde/resolver";
 import axios from "axios";
 import { existsSync, writeFileSync } from "fs";
 
@@ -71,7 +71,7 @@ export async function generateAndSavePart(
   }
 
   writeFileSync(filePath, code);
-  const maybePart = resolveCodePartDependencies(filePath).parts[0];
+  const maybePart = resolveCodeNodeDependencies(filePath).parts[0];
   if (!maybePart) {
     throw new Error("Generated part is corrupt");
   }

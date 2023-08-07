@@ -1,4 +1,4 @@
-import { DynamicNodeInput, PartInstanceError, VisualNode } from ".";
+import { DynamicNodeInput, NodeInstanceError, VisualNode } from ".";
 import { assert } from "chai";
 
 import { spy } from "sinon";
@@ -28,8 +28,8 @@ import {
 import {
   CodeNode,
   fromSimplified,
-  staticPartInput,
-  dynamicPartInput,
+  staticNodeInput,
+  dynamicNodeInput,
   dynamicOutput,
   partInstance,
   InlineValueNode,
@@ -39,8 +39,8 @@ import {
   queueInputPinConfig,
   staticInputPinConfig,
   stickyInputPinConfig,
-  dynamicPartInputs,
-  inlinePartInstance,
+  dynamicNodeInputs,
+  inlineNodeInstance,
 } from "./node";
 import { execute } from "./execute";
 import {
@@ -65,7 +65,7 @@ import {
   spreadList,
 } from "./fixture";
 
-import { inlineValuePartToPart } from "./inline-value-to-code-part";
+import { inlineValueNodeToPart } from "./inline-value-to-code-part";
 import {
   concisePart,
   conciseCodePart,
@@ -108,7 +108,7 @@ describe("main ", () => {
       };
 
       const s = spy();
-      const v = dynamicPartInput();
+      const v = dynamicNodeInput();
       const r = dynamicOutput();
 
       r.subscribe(s);
@@ -137,7 +137,7 @@ describe("main ", () => {
       };
 
       const s = spy();
-      const v = dynamicPartInput();
+      const v = dynamicNodeInput();
       const r = dynamicOutput();
 
       r.subscribe(s);
@@ -169,8 +169,8 @@ describe("main ", () => {
       };
 
       const s = spy();
-      const a = dynamicPartInput();
-      const b = dynamicPartInput();
+      const a = dynamicNodeInput();
+      const b = dynamicNodeInput();
       const r = dynamicOutput();
 
       r.subscribe(s);
@@ -192,8 +192,8 @@ describe("main ", () => {
     });
 
     it("works with a simple visual part", () => {
-      const n1 = dynamicPartInput();
-      const n2 = dynamicPartInput();
+      const n1 = dynamicNodeInput();
+      const n2 = dynamicNodeInput();
       const r = new Subject();
       const s = spy();
       r.subscribe(s);
@@ -237,7 +237,7 @@ describe("main ", () => {
       const part = connect(add1mul2twice, testNodesCollection);
 
       const fn = spy();
-      const n = dynamicPartInput();
+      const n = dynamicNodeInput();
       const r = dynamicOutput();
       execute({
         part: part,
@@ -266,7 +266,7 @@ describe("main ", () => {
         inputsPosition: {},
         outputsPosition: {},
         instances: [
-          inlinePartInstance("a", add, { n1: staticInputPinConfig(1) }),
+          inlineNodeInstance("a", add, { n1: staticInputPinConfig(1) }),
         ],
         connections: [
           {
@@ -280,7 +280,7 @@ describe("main ", () => {
         ],
       };
 
-      const n = dynamicPartInput();
+      const n = dynamicNodeInput();
       const [s, r] = spiedOutput();
 
       execute({
@@ -315,7 +315,7 @@ describe("main ", () => {
           testNodesCollection
         );
 
-        const n1 = dynamicPartInput();
+        const n1 = dynamicNodeInput();
         const s = spy();
         const r = dynamicOutput();
         execute({
@@ -350,8 +350,8 @@ describe("main ", () => {
           testNodesCollection
         );
 
-        const n1 = dynamicPartInput();
-        const n2 = dynamicPartInput();
+        const n1 = dynamicNodeInput();
+        const n2 = dynamicNodeInput();
         const s = spy();
         const r = dynamicOutput();
         execute({
@@ -429,7 +429,7 @@ describe("main ", () => {
           testNodesCollection
         );
 
-        const n = dynamicPartInput();
+        const n = dynamicNodeInput();
         const s1 = spy();
         const r1 = dynamicOutput();
         execute({
@@ -489,7 +489,7 @@ describe("main ", () => {
 
         const part = connect(add1mul2, testNodesCollection, {});
 
-        const n = dynamicPartInput();
+        const n = dynamicNodeInput();
         const r = new Subject();
 
         assert.deepEqual(Object.keys(part.inputs), ["n"]);
@@ -741,8 +741,8 @@ describe("main ", () => {
       const s1 = spy();
       const s2 = spy();
 
-      const n1 = dynamicPartInput();
-      const n2 = dynamicPartInput();
+      const n1 = dynamicNodeInput();
+      const n2 = dynamicNodeInput();
       const r1 = new Subject();
       const r2 = new Subject();
 
@@ -770,8 +770,8 @@ describe("main ", () => {
     });
 
     it("does not trigger fn on unexpected arguments", () => {
-      const n = dynamicPartInput();
-      const bob = dynamicPartInput();
+      const n = dynamicNodeInput();
+      const bob = dynamicNodeInput();
       const r = new Subject();
       execute({
         part: add1,
@@ -811,7 +811,7 @@ describe("main ", () => {
         resolvedDeps
       );
 
-      const n2 = dynamicPartInput();
+      const n2 = dynamicNodeInput();
       const r = new Subject();
 
       const s = spy();
@@ -854,7 +854,7 @@ describe("main ", () => {
         resolvedDeps
       );
 
-      const from = dynamicPartInput();
+      const from = dynamicNodeInput();
       const r = new Subject();
 
       const s = spy();
@@ -876,7 +876,7 @@ describe("main ", () => {
 
     describe("stopping execution", () => {
       it("stops running simple components", () => {
-        const v = dynamicPartInput();
+        const v = dynamicNodeInput();
         const r = dynamicOutput();
         const s = spy();
         const cancel = execute({
@@ -931,7 +931,7 @@ describe("main ", () => {
           resolvedDeps
         );
 
-        const v = dynamicPartInput();
+        const v = dynamicNodeInput();
         const r = dynamicOutput();
         const cancel = execute({
           part: part,
@@ -988,7 +988,7 @@ describe("main ", () => {
         inputsPosition: {},
       };
 
-      const inputA = dynamicPartInput();
+      const inputA = dynamicNodeInput();
       const outputA = dynamicOutput();
       const fn = spy();
       outputA.subscribe(fn);
@@ -1023,7 +1023,7 @@ describe("main ", () => {
           inputsPosition: {},
         };
 
-        const n = dynamicPartInput();
+        const n = dynamicNodeInput();
         const r = dynamicOutput();
         execute({
           part: part,
@@ -1112,7 +1112,7 @@ describe("main ", () => {
     //   };
 
     //   const fn = spy();
-    //   const n = dynamicPartInput();
+    //   const n = dynamicNodeInput();
     //   const r = dynamicOutput();
     //   r.subscribe(fn);
     //   execute({part: part, inputs: { n }, outputs: { r }, resolvedDeps: resolvedDeps});
@@ -1136,8 +1136,8 @@ describe("main ", () => {
     describe("high order parts", () => {
       it("works for a simple case", () => {
         const s = spy();
-        const list = dynamicPartInput();
-        const fn = dynamicPartInput();
+        const list = dynamicNodeInput();
+        const fn = dynamicNodeInput();
         const r = new Subject();
         r.subscribe(s);
         execute({
@@ -1155,8 +1155,8 @@ describe("main ", () => {
 
       it("works using part reference", () => {
         const s = spy();
-        const list = dynamicPartInput();
-        const fn = staticPartInput(`__part:${isEven.id}`);
+        const list = dynamicNodeInput();
+        const fn = staticNodeInput(`__part:${isEven.id}`);
         const r = new Subject();
         r.subscribe(s);
         execute({
@@ -1189,7 +1189,7 @@ describe("main ", () => {
       describe("global state", () => {
         it("allows parts to access global state", () => {
           const s = spy();
-          const v = dynamicPartInput();
+          const v = dynamicNodeInput();
           const r = new Subject();
 
           const part1: CodeNode = {
@@ -1259,7 +1259,7 @@ describe("main ", () => {
 
       it("allows parts to access execution state", () => {
         const s = spy();
-        const v = dynamicPartInput();
+        const v = dynamicNodeInput();
         const r = new Subject();
         r.subscribe(s);
         execute({
@@ -1279,9 +1279,9 @@ describe("main ", () => {
 
       it("uses a different state between executions", () => {
         const s = spy();
-        const v1 = dynamicPartInput();
+        const v1 = dynamicNodeInput();
         const r1 = new Subject();
-        const v2 = dynamicPartInput();
+        const v2 = dynamicNodeInput();
         const r2 = new Subject();
         r1.subscribe(s);
         3;
@@ -1325,7 +1325,7 @@ describe("main ", () => {
           ],
         });
 
-        const [n1, n2] = [dynamicPartInput(), dynamicPartInput()];
+        const [n1, n2] = [dynamicNodeInput(), dynamicNodeInput()];
         const r = dynamicOutput();
 
         r.subscribe(s);
@@ -1366,7 +1366,7 @@ describe("main ", () => {
           completionOutputs: ["r"],
         });
 
-        const [n1, n2] = [dynamicPartInput(), dynamicPartInput()];
+        const [n1, n2] = [dynamicNodeInput(), dynamicNodeInput()];
         const r = dynamicOutput();
 
         r.subscribe(s);
@@ -1416,7 +1416,7 @@ describe("main ", () => {
           ],
         });
 
-        const v = dynamicPartInput();
+        const v = dynamicNodeInput();
         const r = dynamicOutput();
         const s = spy();
         r.subscribe(s);
@@ -1472,7 +1472,7 @@ describe("main ", () => {
           ],
         });
 
-        const [v, v2] = [dynamicPartInput(), dynamicPartInput()];
+        const [v, v2] = [dynamicNodeInput(), dynamicNodeInput()];
         const [r, r2] = [dynamicOutput(), dynamicOutput()];
         const s = spy();
         r.subscribe(s);
@@ -1498,7 +1498,7 @@ describe("main ", () => {
 
       it("uses shared global state to allow for hot reloading, and more", async () => {
         const s = spy();
-        const v = dynamicPartInput();
+        const v = dynamicNodeInput();
         const r = new Subject();
         r.subscribe(s);
         const state = {};
@@ -1534,7 +1534,7 @@ describe("main ", () => {
         connections: [connectionData("n", "p1.v"), connectionData("p1.r", "r")],
       };
 
-      const n = dynamicPartInput();
+      const n = dynamicNodeInput();
       const r = new Subject();
       const s = spy();
 
@@ -1565,7 +1565,7 @@ describe("main ", () => {
         reactiveInputs: ["v"],
       };
       const s = spy();
-      const v = dynamicPartInput();
+      const v = dynamicNodeInput();
       const r = new Subject();
       r.subscribe(s);
       execute({
@@ -1608,7 +1608,7 @@ describe("main ", () => {
 
       const resolvedDeps = testNodesCollectionWith(innerPart);
 
-      const n = dynamicPartInput();
+      const n = dynamicNodeInput();
       const r = new Subject();
 
       const s = spy();
@@ -1690,7 +1690,7 @@ describe("main ", () => {
       const r = new Subject();
       const s = spy();
 
-      const n = dynamicPartInput();
+      const n = dynamicNodeInput();
 
       r.subscribe(s);
 
@@ -1756,7 +1756,7 @@ describe("main ", () => {
       const r = new Subject();
       const s = spy();
 
-      const n = dynamicPartInput();
+      const n = dynamicNodeInput();
 
       r.subscribe(s);
 
@@ -1803,10 +1803,10 @@ describe("main ", () => {
         runFnRawCode: `outputs.r?.next(inputs.v)`,
       };
 
-      // const part: CodeNode = inlineValuePartToPart(inlineValuePart);
+      // const part: CodeNode = inlineValueNodeToPart(inlineValuePart);
 
       const s = spy();
-      const v = dynamicPartInput();
+      const v = dynamicNodeInput();
       const r = dynamicOutput();
 
       r.subscribe(s);
@@ -1837,13 +1837,13 @@ describe("main ", () => {
           `,
       };
 
-      const part = inlineValuePartToPart(inlineValuePart, {
+      const part = inlineValueNodeToPart(inlineValuePart, {
         innerSpy,
       });
 
       const s = spy();
-      const a = dynamicPartInput();
-      const b = dynamicPartInput();
+      const a = dynamicNodeInput();
+      const b = dynamicNodeInput();
       const r = dynamicOutput();
 
       r.subscribe(s);
@@ -1884,7 +1884,7 @@ describe("main ", () => {
           });
         },
       };
-      const v = dynamicPartInput();
+      const v = dynamicNodeInput();
       const r = dynamicOutput();
       const clean = execute({
         part: part,
@@ -1911,7 +1911,7 @@ describe("main ", () => {
           `,
       };
 
-      const part = inlineValuePartToPart(inlineValuePart);
+      const part = inlineValueNodeToPart(inlineValuePart);
       const r = dynamicOutput();
       const s = spy();
       r.subscribe(s);
@@ -1945,7 +1945,7 @@ describe("main ", () => {
           });
         },
       };
-      const v = dynamicPartInput();
+      const v = dynamicNodeInput();
       const r = dynamicOutput();
       const clean = execute({
         part: part,
@@ -2022,8 +2022,8 @@ describe("main ", () => {
     it("supports const values on main execution", () => {
       const num1 = randomInt(1, 100);
       const num2 = randomInt(1, 100);
-      const n1 = dynamicPartInput();
-      const n2 = staticPartInput(num2);
+      const n1 = dynamicNodeInput();
+      const n2 = staticNodeInput(num2);
       const r = new Subject();
       const s = spy();
       r.subscribe(s);
@@ -2044,8 +2044,8 @@ describe("main ", () => {
       const num1 = randomInt(1, 100);
       const num2 = randomInt(1, 100);
 
-      const n1 = dynamicPartInput();
-      const n2 = staticPartInput(num2);
+      const n1 = dynamicNodeInput();
+      const n2 = staticNodeInput(num2);
       const r = new Subject();
       const s = spy();
       r.subscribe(s);
@@ -2062,7 +2062,7 @@ describe("main ", () => {
     });
 
     it("supports const values defined inside visual parts", () => {
-      const n1 = dynamicPartInput();
+      const n1 = dynamicNodeInput();
       const r = new Subject();
       const s = spy();
       r.subscribe(s);
@@ -2097,7 +2097,7 @@ describe("main ", () => {
     });
 
     it("supports const values on visual part", () => {
-      const n1 = dynamicPartInput();
+      const n1 = dynamicNodeInput();
       const r = new Subject();
       const s = spy();
       r.subscribe(s);
@@ -2135,10 +2135,10 @@ describe("main ", () => {
   describe("part v2 tests", () => {
     it("queues values - code part", () => {
       const [n1, n2] = [
-        dynamicPartInput({
+        dynamicNodeInput({
           // config: queueInputPinConfig(),
         }),
-        dynamicPartInput({
+        dynamicNodeInput({
           // config: queueInputPinConfig(),Rr3
         }),
       ];
@@ -2167,10 +2167,10 @@ describe("main ", () => {
 
     it("queues values - visual part", () => {
       const [n1, n2] = [
-        dynamicPartInput({
+        dynamicNodeInput({
           // config: queueInputPinConfig(),
         }),
-        dynamicPartInput({
+        dynamicNodeInput({
           // config: queueInputPinConfig(),
         }),
       ];
@@ -2198,8 +2198,8 @@ describe("main ", () => {
     });
 
     it("sticky values work on simple code", () => {
-      const a = dynamicPartInput({ config: queueInputPinConfig() });
-      const b = dynamicPartInput({ config: stickyInputPinConfig() });
+      const a = dynamicNodeInput({ config: queueInputPinConfig() });
+      const b = dynamicNodeInput({ config: stickyInputPinConfig() });
 
       const r = dynamicOutput();
 
@@ -2238,7 +2238,7 @@ describe("main ", () => {
     });
 
     it("completes last value only when part is done", async () => {
-      const item = dynamicPartInput({ config: queueInputPinConfig() });
+      const item = dynamicNodeInput({ config: queueInputPinConfig() });
 
       const r = new Subject();
       const s = spy();
@@ -2282,7 +2282,7 @@ describe("main ", () => {
 
     describe("part completion", () => {
       it("re-runs parts when one of the required outputs complete", async () => {
-        const item = dynamicPartInput({ config: queueInputPinConfig() });
+        const item = dynamicNodeInput({ config: queueInputPinConfig() });
 
         const r = new Subject();
         const final = new Subject();
@@ -2330,7 +2330,7 @@ describe("main ", () => {
       });
 
       it("supports + as the AND operator for completion outputs", async () => {
-        const item = dynamicPartInput({ config: queueInputPinConfig() });
+        const item = dynamicNodeInput({ config: queueInputPinConfig() });
 
         const f1 = dynamicOutput();
         const f2 = dynamicOutput();
@@ -2386,7 +2386,7 @@ describe("main ", () => {
       });
 
       it("re-runs parts only when one of the required outputs complete if there are more than 1", async () => {
-        const item = dynamicPartInput({ config: queueInputPinConfig() });
+        const item = dynamicNodeInput({ config: queueInputPinConfig() });
 
         const [r, final1, final2] = [
           dynamicOutput(),
@@ -2451,7 +2451,7 @@ describe("main ", () => {
       });
 
       it("completes parts when there are errors", async () => {
-        const item = dynamicPartInput({ config: queueInputPinConfig() });
+        const item = dynamicNodeInput({ config: queueInputPinConfig() });
 
         const [r, final1] = [dynamicOutput(), dynamicOutput(), dynamicOutput()];
 
@@ -2484,7 +2484,7 @@ describe("main ", () => {
           },
         };
 
-        const onError = (err: PartInstanceError) => {
+        const onError = (err: NodeInstanceError) => {
           const val = err.message?.match(/(\d)/)?.[1];
           s(`e-${val}`);
         };
@@ -2613,7 +2613,7 @@ describe("main ", () => {
 
             const s = spy();
             const [sr, r] = spiedOutput();
-            const input = dynamicPartInput();
+            const input = dynamicNodeInput();
             execute({
               part,
               resolvedDeps: testNodesCollection,
@@ -2688,7 +2688,7 @@ describe("main ", () => {
     });
 
     it("cleans up part only when the part is done", async () => {
-      const item = dynamicPartInput({ config: queueInputPinConfig() });
+      const item = dynamicNodeInput({ config: queueInputPinConfig() });
 
       const r = new Subject();
       const final = new Subject();
@@ -2772,8 +2772,8 @@ describe("main ", () => {
       };
 
       it("supports creation of an accumulate", () => {
-        const count = dynamicPartInput({ config: queueInputPinConfig() });
-        const item = dynamicPartInput({ config: queueInputPinConfig() });
+        const count = dynamicNodeInput({ config: queueInputPinConfig() });
+        const item = dynamicNodeInput({ config: queueInputPinConfig() });
 
         const r = new Subject();
         const s = spy();
@@ -2796,8 +2796,8 @@ describe("main ", () => {
       });
 
       it("supports creation of an accumulate, another variation of input order", () => {
-        const count = dynamicPartInput({ config: queueInputPinConfig() });
-        const item = dynamicPartInput({ config: queueInputPinConfig() });
+        const count = dynamicNodeInput({ config: queueInputPinConfig() });
+        const item = dynamicNodeInput({ config: queueInputPinConfig() });
 
         const r = new Subject();
         const s = spy();
@@ -2826,8 +2826,8 @@ describe("main ", () => {
       });
 
       it("supports creation of an accumulate, third variation of input order", () => {
-        const count = dynamicPartInput({ config: queueInputPinConfig() });
-        const item = dynamicPartInput({ config: queueInputPinConfig() });
+        const count = dynamicNodeInput({ config: queueInputPinConfig() });
+        const item = dynamicNodeInput({ config: queueInputPinConfig() });
 
         const r = new Subject();
         const s = spy();
@@ -2874,8 +2874,8 @@ describe("main ", () => {
         });
 
         const s = spy();
-        const val = dynamicPartInput();
-        const count = dynamicPartInput();
+        const val = dynamicNodeInput();
+        const count = dynamicNodeInput();
         const r = dynamicOutput();
         r.subscribe(s);
 
@@ -2909,8 +2909,8 @@ describe("main ", () => {
         });
 
         const s = spy();
-        const val = dynamicPartInput();
-        const count = dynamicPartInput();
+        const val = dynamicNodeInput();
+        const count = dynamicNodeInput();
         const r = dynamicOutput();
         r.subscribe(s);
 
@@ -2961,8 +2961,8 @@ describe("main ", () => {
           },
         };
 
-        const until = dynamicPartInput({ config: queueInputPinConfig() });
-        const item = dynamicPartInput({ config: queueInputPinConfig() });
+        const until = dynamicNodeInput({ config: queueInputPinConfig() });
+        const item = dynamicNodeInput({ config: queueInputPinConfig() });
 
         const r = new Subject();
         const s = spy();
@@ -3013,7 +3013,7 @@ describe("main ", () => {
       };
 
       const [n1] = [
-        dynamicPartInput({
+        dynamicNodeInput({
           // config: queueInputPinConfig(),
         }),
       ];
@@ -3054,8 +3054,8 @@ describe("main ", () => {
         },
       };
 
-      const a = dynamicPartInput({ config: queueInputPinConfig() });
-      const b = dynamicPartInput({ config: queueInputPinConfig() });
+      const a = dynamicNodeInput({ config: queueInputPinConfig() });
+      const b = dynamicNodeInput({ config: queueInputPinConfig() });
 
       const r = new Subject();
       const s = spy();
@@ -3101,8 +3101,8 @@ describe("main ", () => {
         ],
       };
 
-      const a = dynamicPartInput({ config: queueInputPinConfig() });
-      const b = dynamicPartInput({ config: queueInputPinConfig() });
+      const a = dynamicNodeInput({ config: queueInputPinConfig() });
+      const b = dynamicNodeInput({ config: queueInputPinConfig() });
 
       const r = new Subject();
       const s = spy();
@@ -3143,7 +3143,7 @@ describe("main ", () => {
           },
         });
 
-        const [a, b] = [dynamicPartInput(), dynamicPartInput()];
+        const [a, b] = [dynamicNodeInput(), dynamicNodeInput()];
 
         execute({
           part: dummyPart,
@@ -3186,7 +3186,7 @@ describe("main ", () => {
           },
         });
 
-        const [a, b] = [dynamicPartInput(), dynamicPartInput()];
+        const [a, b] = [dynamicNodeInput(), dynamicNodeInput()];
 
         execute({
           part: dummyPart,
@@ -3228,7 +3228,7 @@ describe("main ", () => {
 
     it("reports errors that were reported inside a direct part", async () => {
       const s = spy();
-      const a = dynamicPartInput();
+      const a = dynamicNodeInput();
 
       const debuggerSpy = spy();
       const onEvent = wrappedOnEvent(DebuggerEventType.ERROR, debuggerSpy);
@@ -3249,7 +3249,7 @@ describe("main ", () => {
 
       assert.equal(s.callCount, 1);
 
-      const lastError = (): PartInstanceError => s.lastCall.args[0];
+      const lastError = (): NodeInstanceError => s.lastCall.args[0];
       assert.include(lastError().toString(), "blah");
       assert.include(lastError().fullInsIdsPath, "someIns");
 
@@ -3259,7 +3259,7 @@ describe("main ", () => {
 
     it("reports errors that were thrown inside a direct part", async () => {
       const s = spy();
-      const a = dynamicPartInput();
+      const a = dynamicNodeInput();
 
       const p2 = {
         ...errorReportingPart,
@@ -3292,7 +3292,7 @@ describe("main ", () => {
 
     it("reports async errors that were thrown inside a direct part", async () => {
       const s = spy();
-      const a = dynamicPartInput();
+      const a = dynamicNodeInput();
 
       const p2 = {
         ...errorReportingPart,
@@ -3326,7 +3326,7 @@ describe("main ", () => {
 
     it("reports async errors that were reported inside a direct part", async () => {
       const s = spy();
-      const a = dynamicPartInput();
+      const a = dynamicNodeInput();
 
       const p2 = {
         ...errorReportingPart,
@@ -3366,7 +3366,7 @@ describe("main ", () => {
 
     it("reports uncaught thrown that happened on an visual part", async () => {
       const s = spy();
-      const a = dynamicPartInput();
+      const a = dynamicNodeInput();
 
       const p2 = {
         ...errorReportingPart,
@@ -3414,7 +3414,7 @@ describe("main ", () => {
 
     it("reports uncaught async error that happened on an visual part", async () => {
       const s = spy();
-      const a = dynamicPartInput();
+      const a = dynamicNodeInput();
 
       const p2 = {
         ...errorReportingPart,
@@ -3464,7 +3464,7 @@ describe("main ", () => {
 
     it("reports uncaught errors that happened on an internal part", async () => {
       const s = spy();
-      const a = dynamicPartInput();
+      const a = dynamicNodeInput();
 
       const badWrapper = concisePart({
         id: "badWrap",
@@ -3505,7 +3505,7 @@ describe("main ", () => {
     it('allows to catch errors in any part using the "error" pin', async () => {
       const s1 = spy();
       const s2 = spy();
-      const a = dynamicPartInput();
+      const a = dynamicNodeInput();
       const r = dynamicOutput();
 
       r.subscribe(s2);
@@ -3544,7 +3544,7 @@ describe("main ", () => {
     it("does not bubble up caught errors", async () => {
       const s1 = spy();
       const s2 = spy();
-      const a = dynamicPartInput();
+      const a = dynamicNodeInput();
 
       const errPin = dynamicOutput();
       errPin.subscribe(s2);
@@ -3572,7 +3572,7 @@ describe("main ", () => {
     it("does report errors caught errors via debugger", async () => {
       const s = spy();
       const onEvent = wrappedOnEvent(DebuggerEventType.ERROR, s);
-      const a = dynamicPartInput();
+      const a = dynamicNodeInput();
 
       const errPin = dynamicOutput();
 
@@ -3624,8 +3624,8 @@ describe("main ", () => {
   describe("bugs found", () => {
     it("works with accumulate and a static input", () => {
       const [s, r] = spiedOutput();
-      const [val] = dynamicPartInputs() as [DynamicNodeInput];
-      const count = staticPartInput(1);
+      const [val] = dynamicNodeInputs() as [DynamicNodeInput];
+      const count = staticNodeInput(1);
 
       execute({
         part: accumulate,
@@ -3644,7 +3644,7 @@ describe("main ", () => {
 
     it("works with spreading a 3 arrayed list into an accumulate 1", () => {
       const [s, r] = spiedOutput();
-      const [list] = dynamicPartInputs() as [DynamicNodeInput];
+      const [list] = dynamicNodeInputs() as [DynamicNodeInput];
 
       const part = concisePart({
         id: "merger",
@@ -3792,7 +3792,7 @@ describe("main ", () => {
       };
 
       const [n1] = [
-        dynamicPartInput({
+        dynamicNodeInput({
           // config: queueInputPinConfig(),
         }),
       ];
@@ -3923,7 +3923,7 @@ describe("main ", () => {
       });
 
       const [s, r] = spiedOutput();
-      const a = dynamicPartInput();
+      const a = dynamicNodeInput();
 
       const err = (e: Error) => {
         throw e;
@@ -3969,7 +3969,7 @@ describe("main ", () => {
       });
 
       const [s, r] = spiedOutput();
-      const a = dynamicPartInput();
+      const a = dynamicNodeInput();
 
       const err = (e: Error) => {
         throw e;
@@ -4016,7 +4016,7 @@ describe("main ", () => {
       });
 
       const [s, r] = spiedOutput();
-      const a = dynamicPartInput();
+      const a = dynamicNodeInput();
 
       const errSpy = spy();
       execute({
@@ -4053,7 +4053,7 @@ describe("main ", () => {
       });
 
       const [s, r] = spiedOutput();
-      const a = dynamicPartInput();
+      const a = dynamicNodeInput();
       execute({
         part,
         inputs: { a },
@@ -4083,7 +4083,7 @@ describe("main ", () => {
       });
 
       const [s, r] = spiedOutput();
-      const a = staticPartInput(5);
+      const a = staticNodeInput(5);
       execute({
         part,
         inputs: { a },

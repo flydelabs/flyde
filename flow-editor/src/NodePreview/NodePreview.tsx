@@ -5,7 +5,7 @@ import {
   InstanceViewProps,
 } from "../visual-part-editor/instance-view/InstanceView";
 
-export const PartPreview: React.FC<{ part: NodeDefinition }> = ({ part }) => {
+export const NodePreview: React.FC<{ part: NodeDefinition }> = ({ part }) => {
   const ins = partInstance("bob", part.id, {});
   const instanceProps: InstanceViewProps = {
     part,

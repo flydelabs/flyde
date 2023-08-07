@@ -2,7 +2,7 @@ import {
   InlineValueNodeType,
   connectionData,
   VisualNode,
-  inlinePartInstance,
+  inlineNodeInstance,
   isStaticInputPinConfig,
   queueInputPinConfig,
   randomInt,
@@ -41,7 +41,7 @@ export const handleDetachConstEditorCommand = (
       type: InlineValueNodeType.VALUE,
     });
 
-    const newIns = inlinePartInstance(
+    const newIns = inlineNodeInstance(
       `value-${randomInt(999)}`,
       newPart,
       {},

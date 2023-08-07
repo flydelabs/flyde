@@ -1,20 +1,20 @@
 import {
   Node,
   isVisualNode,
-  isRefPartInstance,
-  isInlinePartInstance,
+  isRefNodeInstance,
+  isInlineNodeInstance,
   FlydeFlow,
 } from "@flyde/core";
 
-const getPartIds = (part?: Node) => {
+const getNodeIds = (part?: Node) => {
   if (part && isVisualNode(part)) {
     const refIds = part.instances
-      .filter((ins: any) => isRefPartInstance(ins))
+      .filter((ins: any) => isRefNodeInstance(ins))
       .map((ins: any) => ins.partId);
 
     const innerIds = part.instances
-      .filter((ins: any) => isInlinePartInstance(ins))
-      .flatMap((ins: any) => getPartIds(ins.part));
+      .filter((ins: any) => isInlineNodeInstance(ins))
+      .flatMap((ins: any) => getNodeIds(ins.part));
 
     return [...refIds, ...innerIds];
   } else {
@@ -23,14 +23,14 @@ const getPartIds = (part?: Node) => {
 };
 
 export const cleanUnusedImports = (flow: FlydeFlow): FlydeFlow => {
-  const importedPartIds = getPartIds(flow.part as Node);
+  const importedNodeIds = getNodeIds(flow.part as Node);
 
-  console.log({ importedPartIds });
+  console.log({ importedNodeIds });
 
   const imports = Object.fromEntries(
     Object.entries(flow.imports ?? {}).map(([key, val]) => {
       const ids = (typeof val === "string" ? [val] : val).filter((id) => {
-        return importedPartIds.includes(id);
+        return importedNodeIds.includes(id);
       });
 
       return [key, ids];

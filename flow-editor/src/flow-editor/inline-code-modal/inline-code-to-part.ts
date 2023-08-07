@@ -12,7 +12,7 @@ export const getVariables = (code: string) => {
   );
 };
 
-export type InlineValuePartData = {
+export type InlineValueNodeData = {
   code: string;
   customView?: string;
   partId?: string;
@@ -23,7 +23,7 @@ export const createInlineValuePart = ({
   customView,
   partId,
   type,
-}: InlineValuePartData) => {
+}: InlineValueNodeData) => {
   const variables = getVariables(code);
 
   const inputs = variables.reduce((prev, curr) => {

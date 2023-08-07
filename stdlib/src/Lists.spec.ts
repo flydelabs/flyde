@@ -2,8 +2,8 @@
 // import {
 //   BaseNode,
 //   CodeNode,
-//   InputPartPin,
-//   OutputPartPin,
+//   InputNodePin,
+//   OutputNodePin,
 //   NodeStyleSize,
 //   RunNodeFunction,
 // } from ".";
@@ -11,7 +11,7 @@
 
 // // An improved type for the inputs object. It uses dynamic keys to allow the object properties to match the input names.
 // type ImprovedInputs = {
-//   [key: string]: InputPartPin<any>;
+//   [key: string]: InputNodePin<any>;
 // };
 
 // type Output = {

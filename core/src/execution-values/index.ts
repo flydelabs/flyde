@@ -7,8 +7,8 @@ import {
   isStaticInput,
   isStickyInputPinConfig,
   Node,
-  PartInput,
-  PartInputs,
+  NodeInput,
+  NodeInputs,
   NodeState,
 } from "../node";
 
@@ -28,7 +28,7 @@ const pickFromObject = (key: string, obj: OMap<any>) => {
   return o;
 };
 
-const getFinalStaticValue = (input: PartInput, env: ExecuteEnv) => {
+const getFinalStaticValue = (input: NodeInput, env: ExecuteEnv) => {
   const value = extractStaticValue(input);
   if (isEnvValue(value)) {
     const prop = getEnvKeyFromValue(value);
@@ -40,7 +40,7 @@ const getFinalStaticValue = (input: PartInput, env: ExecuteEnv) => {
 
 export const peekValueForExecution = (
   key: string,
-  input: PartInput,
+  input: NodeInput,
   state: NodeState,
   env: ExecuteEnv,
   partId: string
@@ -65,7 +65,7 @@ export const peekValueForExecution = (
 
 export const pullValueForExecution = (
   key: string,
-  input: PartInput,
+  input: NodeInput,
   state: NodeState,
   env: ExecuteEnv
 ): unknown => {
@@ -89,7 +89,7 @@ export const pullValueForExecution = (
 };
 
 export const pullValuesForExecution = (
-  nodeInputs: PartInputs,
+  nodeInputs: NodeInputs,
   state: NodeState,
   env: ExecuteEnv
 ) => {
@@ -105,7 +105,7 @@ export const pullValuesForExecution = (
 };
 
 export const peekValuesForExecution = (
-  nodeInputs: PartInputs,
+  nodeInputs: NodeInputs,
   state: NodeState,
   env: ExecuteEnv,
   partId: string
@@ -122,7 +122,7 @@ export const peekValuesForExecution = (
 };
 
 export const hasNewSignificantValues = (
-  nodeInputs: PartInputs,
+  nodeInputs: NodeInputs,
   state: NodeState,
   env: ExecuteEnv,
   partId: string
@@ -135,8 +135,8 @@ export const hasNewSignificantValues = (
   });
 };
 
-export const isPartStateValid = (
-  nodeInputs: PartInputs,
+export const isNodeStateValid = (
+  nodeInputs: NodeInputs,
   state: NodeState,
   part: Node
 ) => {
@@ -182,7 +182,7 @@ export const isPartStateValid = (
 };
 
 export const subscribeInputsToState = (
-  nodeInputs: PartInputs,
+  nodeInputs: NodeInputs,
   state: NodeState,
   onInput: (key: string, val: unknown) => void
 ) => {

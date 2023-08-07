@@ -16,27 +16,27 @@ import { LocalImportableResult } from "../../../flow-editor/DependenciesContext"
 import { usePorts } from "../../../flow-editor/ports";
 import { InfoTooltip } from "../../../lib/InfoTooltip";
 import { Loader } from "../../../lib/loader";
-import { AddPartMenuListItem } from "./AddPartMenuListItem";
-import { AddPartMenuResultsSummary } from "./AddPartMenuResultsSummary";
+import { AddNodeMenuListItem } from "./AddNodeMenuListItem";
+import { AddNodeMenuResultsSummary } from "./AddNodeMenuResultsSummary";
 
-export interface AddPartMenuProps {
+export interface AddNodeMenuProps {
   onRequestImportables: () => Promise<LocalImportableResult>;
   onAddPart: (part: ImportableSource) => void;
   onClose: () => void;
 }
 
-export const AddPartMenuFilterTree = Tree.ofType<AddPartMenuFilter>();
+export const AddNodeMenuFilterTree = Tree.ofType<AddNodeMenuFilter>();
 
-export type AddPartMenuFilter =
+export type AddNodeMenuFilter =
   | { type: "external"; module: string; namespace?: string }
   | { type: "internal"; file?: string }
   | { type: "all" };
-export type AddPartMenuFilterStructure = {
+export type AddNodeMenuFilterStructure = {
   external: { module: string; namespaces: string[] }[];
   internal: { files: string[] };
 };
 
-export const AddPartMenu: React.FC<AddPartMenuProps> = (props) => {
+export const AddNodeMenu: React.FC<AddNodeMenuProps> = (props) => {
   const { onRequestImportables, onAddPart, onClose } = props;
 
   const [importables, setImportables] = React.useState<ImportableSource[]>();
@@ -48,11 +48,11 @@ export const AddPartMenu: React.FC<AddPartMenuProps> = (props) => {
   );
 
   const [query, setQuery] = React.useState("");
-  const [filter, setFilter] = React.useState<AddPartMenuFilter>({
+  const [filter, setFilter] = React.useState<AddNodeMenuFilter>({
     type: "all",
   });
   const [filterStructure, setFilterStructure] =
-    React.useState<AddPartMenuFilterStructure>(null);
+    React.useState<AddNodeMenuFilterStructure>(null);
 
   const [visibleImportables, setVisibleImportables] = React.useState<
     ImportableSource[] | null
@@ -88,7 +88,7 @@ export const AddPartMenu: React.FC<AddPartMenuProps> = (props) => {
   const { onInstallRuntimeRequest, reportEvent } = usePorts();
 
   useEffect(() => {
-    reportEvent("addPartMenuOpen", {});
+    reportEvent("addNodeMenuOpen", {});
   }, [reportEvent]);
 
   useEffect(() => {
@@ -202,7 +202,7 @@ export const AddPartMenu: React.FC<AddPartMenuProps> = (props) => {
   );
 
   const onNodeClick = useCallback(
-    ({ nodeData }: ITreeNode<AddPartMenuFilter>) => {
+    ({ nodeData }: ITreeNode<AddNodeMenuFilter>) => {
       if (JSON.stringify(nodeData) === JSON.stringify(filter)) {
         if (nodeData.type === "external") {
           if (nodeData.namespace) {
@@ -242,7 +242,7 @@ export const AddPartMenu: React.FC<AddPartMenuProps> = (props) => {
     if (visibleImportables.length === 0) {
       return (
         <div className="no-results">
-          <AddPartMenuResultsSummary
+          <AddNodeMenuResultsSummary
             filter={filter}
             onChangeFilter={setFilter}
             query={query}
@@ -265,7 +265,7 @@ export const AddPartMenu: React.FC<AddPartMenuProps> = (props) => {
 
     return (
       <React.Fragment>
-        <AddPartMenuResultsSummary
+        <AddNodeMenuResultsSummary
           filter={filter}
           onChangeFilter={setFilter}
           query={query}
@@ -274,7 +274,7 @@ export const AddPartMenu: React.FC<AddPartMenuProps> = (props) => {
         />
         <div className="results">
           {visibleImportables.map((importablePart) => (
-            <AddPartMenuListItem
+            <AddNodeMenuListItem
               importablePart={importablePart}
               key={
                 importablePart.part.id +
@@ -320,7 +320,7 @@ export const AddPartMenu: React.FC<AddPartMenuProps> = (props) => {
             </Tooltip2>
           </div>
           <div className="tree-container">
-            <AddPartMenuFilterTree
+            <AddNodeMenuFilterTree
               contents={renderTreeNodes(filterStructure, filter, openNodes)}
               onNodeCollapse={onNodeCollapse}
               onNodeExpand={onNodeExpand}
@@ -389,10 +389,10 @@ export const AddPartMenu: React.FC<AddPartMenuProps> = (props) => {
 };
 
 function renderTreeNodes(
-  structure: AddPartMenuFilterStructure,
-  filter: AddPartMenuFilter | null,
+  structure: AddNodeMenuFilterStructure,
+  filter: AddNodeMenuFilter | null,
   expandedNodes: Set<ITreeNode["id"]>
-): ITreeNode<AddPartMenuFilter>[] {
+): ITreeNode<AddNodeMenuFilter>[] {
   const externals = structure.external.map((external) => {
     return {
       id: external.module,

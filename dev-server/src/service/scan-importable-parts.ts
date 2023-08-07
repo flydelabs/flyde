@@ -1,7 +1,7 @@
 import { join, relative } from "path";
 import {
-  isCodePartPath,
-  resolveCodePartDependencies,
+  isCodeNodePath,
+  resolveCodeNodeDependencies,
   deserializeFlow,
 } from "@flyde/resolver";
 
@@ -57,8 +57,8 @@ export async function scanImportableNodes(
   const localNodes = localFiles
     .filter((file) => !file.relativePath.endsWith(filename))
     .reduce<Record<string, Record<string, BaseNode>>>((acc, file) => {
-      if (isCodePartPath(file.fullPath)) {
-        const { errors, parts } = resolveCodePartDependencies(file.fullPath);
+      if (isCodeNodePath(file.fullPath)) {
+        const { errors, parts } = resolveCodeNodeDependencies(file.fullPath);
         allErrors.push(
           ...errors.map((err) => ({ path: file.fullPath, message: err }))
         );

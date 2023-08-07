@@ -2,17 +2,17 @@ import { Button, Label, Tag } from "@blueprintjs/core";
 import { BaseNode, ImportableSource, ImportedNode } from "@flyde/core";
 import classNames from "classnames";
 import React, { useCallback } from "react";
-import { AddPartMenuFilter } from "../AddPartMenu";
+import { AddNodeMenuFilter } from "../AddNodeMenu";
 
-export interface AddPartMenuListItemProps {
+export interface AddNodeMenuListItemProps {
   importablePart: ImportableSource;
   selected: boolean;
   onAdd: (part: ImportableSource) => void;
   onSelect: (part: ImportableSource) => void;
-  onSetFilter: (fitler: AddPartMenuFilter) => void;
+  onSetFilter: (fitler: AddNodeMenuFilter) => void;
 }
 
-export const AddPartMenuListItem: React.FC<AddPartMenuListItemProps> = (
+export const AddNodeMenuListItem: React.FC<AddNodeMenuListItemProps> = (
   props
 ) => {
   const { importablePart, onSetFilter, onAdd, onSelect } = props;

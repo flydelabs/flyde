@@ -5,9 +5,9 @@ import React from "react";
 
 // ;
 
-import { BasePartEditor } from "../base-part-editor";
+import { BaseNodeEditor } from "../base-part-editor";
 
-export interface ManageVisualPartViewProps {
+export interface ManageVisualNodeViewProps {
   title: string;
   initialPart?: VisualNode;
   externalModule?: boolean;
@@ -39,7 +39,7 @@ const defaultPart: VisualNode = {
   outputsPosition: {},
 };
 
-export const ManageVisualPartView: React.FC<ManageVisualPartViewProps> = (
+export const ManageVisualNodeView: React.FC<ManageVisualNodeViewProps> = (
   props
 ) => {
   const { title } = props;
@@ -64,7 +64,7 @@ export const ManageVisualPartView: React.FC<ManageVisualPartViewProps> = (
         canEscapeKeyClose={false}
       >
         <main className={classNames(Classes.DIALOG_BODY)}>
-          <BasePartEditor
+          <BaseNodeEditor
             part={draftPart}
             onChange={onChangeBasePart}
             idDisabled={false}

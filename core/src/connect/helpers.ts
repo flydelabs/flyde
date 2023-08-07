@@ -10,7 +10,7 @@ export const THIS_INS_ID = "__this";
 export const ERROR_PIN_ID = "__error";
 export const TRIGGER_PIN_ID = "__trigger";
 
-export const getPartInputs = (part: NodeDefinition) => {
+export const getNodeInputs = (part: NodeDefinition) => {
   return { ...part.inputs, [TRIGGER_PIN_ID]: nodeInput() };
 };
 
@@ -32,7 +32,7 @@ export const getOutputName = (pinId: string) => {
   }
 };
 
-export const getPartOutputs = (part: NodeDefinition) => {
+export const getNodeOutputs = (part: NodeDefinition) => {
   return { ...part.outputs, [ERROR_PIN_ID]: nodeOutput() };
 };
 

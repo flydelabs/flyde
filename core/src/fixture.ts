@@ -7,7 +7,7 @@ import {
   CodeNode,
   InlineValueNode,
   partInstance,
-  dynamicPartInput,
+  dynamicNodeInput,
   queueInputPinConfig,
 } from "./node";
 import { externalConnectionNode, connectionNode } from "./connect";
@@ -277,7 +277,7 @@ export const filter: Node = fromSimplified({
     const uns: any[] = [];
 
     list.forEach((item: any, idx: number) => {
-      const itemInput = dynamicPartInput();
+      const itemInput = dynamicNodeInput();
       const outputs = okeys(fn.outputs).reduce<SubjectMap>(
         (p, k) => ({ ...p, [k]: new Subject() }),
         {}

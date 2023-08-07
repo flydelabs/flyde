@@ -1,7 +1,7 @@
 import { InputPinsConfig, Node, NodeDefinition, NodeStyle, Pos } from "..";
 import { slug } from "cuid";
 
-export interface PartInstanceConfig {
+export interface NodeInstanceConfig {
   inputConfig: InputPinsConfig;
   visibleInputs?: string[];
   visibleOutputs?: string[];
@@ -9,18 +9,18 @@ export interface PartInstanceConfig {
   style?: NodeStyle;
 }
 
-export interface RefPartInstance extends PartInstanceConfig {
+export interface RefNodeInstance extends NodeInstanceConfig {
   id: string;
   partId: string;
   pos: Pos;
 }
 
-export interface InlinePartInstance extends PartInstanceConfig {
+export interface InlineNodeInstance extends NodeInstanceConfig {
   id: string;
   part: Node;
   pos: Pos;
 }
-export type NodeInstance = RefPartInstance | InlinePartInstance;
+export type NodeInstance = RefNodeInstance | InlineNodeInstance;
 
 export const partInstance = (
   id: string,
@@ -34,7 +34,7 @@ export const partInstance = (
   pos: pos || { x: 0, y: 0 },
 });
 
-export const inlinePartInstance = (
+export const inlineNodeInstance = (
   id: string,
   part: Node,
   config?: InputPinsConfig,
@@ -46,13 +46,13 @@ export const inlinePartInstance = (
   pos: pos || { x: 0, y: 0 },
 });
 
-export const isInlinePartInstance = (
+export const isInlineNodeInstance = (
   ins: NodeInstance
-): ins is InlinePartInstance => {
+): ins is InlineNodeInstance => {
   return !!(ins as any).part;
 };
-export const isRefPartInstance = (ins: NodeInstance): ins is RefPartInstance =>
-  !isInlinePartInstance(ins);
+export const isRefNodeInstance = (ins: NodeInstance): ins is RefNodeInstance =>
+  !isInlineNodeInstance(ins);
 
 export const NodeInstance = (
   id: string,

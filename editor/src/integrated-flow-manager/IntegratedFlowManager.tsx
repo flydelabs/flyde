@@ -15,7 +15,7 @@ import {
 
 import produce from "immer";
 import {
-  createNewPartInstance,
+  createNewNodeInstance,
   DebuggerContextData,
   DebuggerContextProvider,
   DependenciesContextData,
@@ -40,7 +40,7 @@ import { createRuntimePlayer, RuntimePlayer } from "@flyde/flow-editor"; // ../.
 // import { useDevServerApi } from "../api/dev-server-api";
 import { FlydeFlowChangeType, functionalChange } from "@flyde/flow-editor"; // ../../common/flow-editor/flyde-flow-change-type
 import { FlowEditorState } from "@flyde/flow-editor"; // ../../common/lib/react-utils/use-hotkeys
-import { defaultViewPort } from "@flyde/flow-editor/dist/visual-part-editor/VisualPartEditor";
+import { defaultViewPort } from "@flyde/flow-editor/dist/visual-part-editor/VisualNodeEditor";
 // import { vscodePromptHandler } from "../vscode-ports";
 import { useState } from "react";
 import { useEffect } from "react";
@@ -212,21 +212,21 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
     props.integratedSource,
   ]);
 
-  const onAddPartToStage = (part: NodeDefinition) => {
+  const onAddNodeToStage = (part: NodeDefinition) => {
     const finalPos = vAdd({ x: 100, y: 0 }, editorState.boardData.lastMousePos);
-    const newPartIns = createNewPartInstance(
+    const newNodeIns = createNewNodeInstance(
       part.id,
       0,
       finalPos,
       currentResolvedDeps
     );
-    if (newPartIns) {
+    if (newNodeIns) {
       const valueChanged = produce(flow, (draft) => {
         const part = draft.part;
         if (isInlineValueNode(part)) {
           AppToaster.show({ message: "cannot add part to code part" });
         } else {
-          part.instances.push(newPartIns);
+          part.instances.push(newNodeIns);
         }
       });
       onChangeFlow(valueChanged, functionalChange("add-item"));
@@ -362,7 +362,7 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
             // editedPart={editedPart}
             flow={flow}
             // onDeletePart={onDeleteCustomPart}
-            onAdd={onAddPartToStage}
+            onAdd={onAddNodeToStage}
             // onAddPart={onAddPart}
             // onRenamePart={onRenamePart}
             selectedMenuItem={menuSelectedItem}

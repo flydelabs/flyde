@@ -5,19 +5,19 @@ export * from "./debugger";
 
 import {
   isDynamicInput,
-  dynamicPartInput,
+  dynamicNodeInput,
   dynamicOutput,
   Node,
   getStaticValue,
   isInlineValueNode,
   isVisualNode,
   CodeNode,
-  PartInputs,
-  PartOutputs,
-  staticPartInput,
+  NodeInputs,
+  NodeOutputs,
+  staticNodeInput,
   NodeAdvancedContext,
   isQueueInputPinConfig,
-  PartInstanceError,
+  NodeInstanceError,
   NodeState,
   RunNodeFunction,
   NodesCollection,
@@ -27,7 +27,7 @@ import { connect, ERROR_PIN_ID } from "../connect";
 
 import {
   hasNewSignificantValues,
-  isPartStateValid,
+  isNodeStateValid,
   peekValueForExecution,
   pullValueForExecution,
   pullValuesForExecution,
@@ -49,7 +49,7 @@ import { isStaticInputPinConfig } from "../node";
 import { Debugger, DebuggerEvent, DebuggerEventType } from "./debugger";
 import {
   customNodesToNodesCollection,
-  inlineValuePartToPart,
+  inlineValueNodeToPart,
 } from "../inline-value-to-code-part";
 
 export type SubjectMap = OMapF<Subject<any>>;
@@ -62,15 +62,15 @@ export type ExecuteEnv = OMap<any>;
 
 export type InnerExecuteFn = (
   part: Node,
-  args: PartInputs,
-  outputs: PartOutputs,
+  args: NodeInputs,
+  outputs: NodeOutputs,
   insId: string
 ) => CancelFn;
 
 export type CodeExecutionData = {
   part: CodeNode;
-  inputs: PartInputs;
-  outputs: PartOutputs;
+  inputs: NodeInputs;
+  outputs: NodeOutputs;
   resolvedDeps: NodesCollection;
   _debugger?: Debugger;
   /**
@@ -171,7 +171,7 @@ const executeCodePart = (data: CodeExecutionData) => {
     });
   };
 
-  const advPartContext: NodeAdvancedContext = {
+  const advNodeContext: NodeAdvancedContext = {
     execute: innerExec,
     insId,
     state: mainState[innerStateId] ?? new Map(),
@@ -217,7 +217,7 @@ const executeCodePart = (data: CodeExecutionData) => {
     } else {
       const isReactiveInputWhileRunning = processing && isReactiveInput;
 
-      const partStateValid = isPartStateValid(inputs, inputsState, part);
+      const partStateValid = isNodeStateValid(inputs, inputsState, part);
 
       if (partStateValid || isReactiveInputWhileRunning) {
         let argValues;
@@ -338,7 +338,7 @@ const executeCodePart = (data: CodeExecutionData) => {
           partCleanupFn = (fn ?? run)(
             argValues as any,
             outputs,
-            advPartContext
+            advNodeContext
           );
 
           if (isPromise(partCleanupFn)) {
@@ -488,13 +488,13 @@ export type ExecuteFn = (params: ExecuteParams) => CancelFn;
 export type ExecuteParams = {
   part: Node;
   resolvedDeps: NodesCollection;
-  inputs: PartInputs;
-  outputs: PartOutputs;
+  inputs: NodeInputs;
+  outputs: NodeOutputs;
   _debugger?: Debugger;
   insId?: string;
   ancestorsInsIds?: string;
   mainState?: OMap<NodeState>;
-  onBubbleError?: (err: PartInstanceError) => void;
+  onBubbleError?: (err: NodeInstanceError) => void;
   env?: ExecuteEnv;
   extraContext?: Record<string, any>;
 
@@ -527,19 +527,19 @@ export const execute: ExecuteFn = ({
     mainState[GLOBAL_STATE_NS] = new Map();
   }
 
-  const inlineValuePartContext = { ...extraContext, ENV: env };
+  const inlineValueNodeContext = { ...extraContext, ENV: env };
 
   const processedNodes = customNodesToNodesCollection(
     resolvedDeps,
-    inlineValuePartContext
+    inlineValueNodeContext
   );
 
   const onError = (err: unknown) => {
     // this means "catch the error"
     const error =
-      err instanceof PartInstanceError
+      err instanceof NodeInstanceError
         ? err
-        : new PartInstanceError(
+        : new NodeInstanceError(
             err,
             fullInsIdPath(insId, ancestorsInsIds),
             part.id
@@ -574,7 +574,7 @@ export const execute: ExecuteFn = ({
         extraContext
       );
     } else if (isInlineValueNode(part)) {
-      return inlineValuePartToPart(part, inlineValuePartContext);
+      return inlineValueNodeToPart(part, inlineValueNodeContext);
     } else {
       return part;
     }
@@ -584,12 +584,12 @@ export const execute: ExecuteFn = ({
 
   const onEvent = _debugger.onEvent || noop; // TODO - remove this for "production" mode
 
-  const mediatedOutputs: PartOutputs = {};
-  const mediatedInputs: PartInputs = {};
+  const mediatedOutputs: NodeOutputs = {};
+  const mediatedInputs: NodeInputs = {};
 
   entries(inputs).forEach(([pinId, arg]) => {
     if (isDynamicInput(arg)) {
-      const mediator = dynamicPartInput({ config: arg.config });
+      const mediator = dynamicNodeInput({ config: arg.config });
       const subscription = arg.subject.subscribe(async (val) => {
         const res = onEvent({
           type: DebuggerEventType.INPUT_CHANGE,
@@ -620,7 +620,7 @@ export const execute: ExecuteFn = ({
         ancestorsInsIds,
         partId: part.id,
       } as DebuggerEvent);
-      const mediator = staticPartInput(
+      const mediator = staticNodeInput(
         getStaticValue(arg.config.value, processedNodes, insId)
       );
       mediatedInputs[pinId] = mediator;

@@ -16,7 +16,7 @@ import { Select, ItemRenderer, ItemPredicate } from "@blueprintjs/select";
 import { highlightText } from "../../lib/highlight-text";
 import { useDependenciesContext } from "../../flow-editor/DependenciesContext";
 
-export type QuickMenuPartMatch = {
+export type QuickMenuNodeMatch = {
   part: NodeDefinition;
   type: "part";
 };
@@ -31,7 +31,7 @@ export type QuickMenuImportMatch = {
 };
 
 export type QuickMenuMatch =
-  | QuickMenuPartMatch
+  | QuickMenuNodeMatch
   | QuickMenuValueMatch
   | QuickMenuImportMatch;
 
@@ -52,7 +52,7 @@ export type QuickMenuProps = QuickAddMenuData & {
 
 // Select<T> is a generic component to work with your data types.
 // In TypeScript, you must first obtain a non-generic reference:
-const PartSelect = Select.ofType<QuickMenuMatch>();
+const NodeSelect = Select.ofType<QuickMenuMatch>();
 
 const matchTitle = (match: QuickMenuMatch) => {
   switch (match.type) {
@@ -139,7 +139,7 @@ export const QuickAddMenu: React.FC<QuickMenuProps> = (props) => {
     [part.id]: part,
   });
 
-  const existingPartMatches = availableNodes.map<QuickMenuMatch>((curr) => {
+  const existingNodeMatches = availableNodes.map<QuickMenuMatch>((curr) => {
     return {
       type: "part",
       part: curr as NodeDefinition,
@@ -159,13 +159,13 @@ export const QuickAddMenu: React.FC<QuickMenuProps> = (props) => {
         })
     : [];
 
-  const matches: QuickMenuMatch[] = existingPartMatches
+  const matches: QuickMenuMatch[] = existingNodeMatches
     .concat(importableNodes)
     .concat({ type: "value" });
 
   return (
     <div className="quick-add-menu" style={style}>
-      <PartSelect
+      <NodeSelect
         className="quick-add-parts-select"
         items={matches}
         itemPredicate={partPredicate}

@@ -5,11 +5,11 @@ import {
   nodeOutput,
   Node,
   dynamicOutput,
-  dynamicPartInput,
+  dynamicNodeInput,
   partInstance,
-  dynamicPartInputs,
+  dynamicNodeInputs,
   stickyInputPinConfig,
-  staticPartInput,
+  staticNodeInput,
   DynamicNodeInput,
 } from "../node";
 import { execute } from ".";
@@ -118,8 +118,8 @@ describe("execute", () => {
 
   describe("visual parts", () => {
     it("works with a single piece inside", () => {
-      const n1 = dynamicPartInput();
-      const n2 = dynamicPartInput();
+      const n1 = dynamicNodeInput();
+      const n2 = dynamicNodeInput();
       const r = new Subject();
       const s = spy();
       r.subscribe(s);
@@ -138,7 +138,7 @@ describe("execute", () => {
     });
 
     it("connects two pieces together properly", () => {
-      const n = dynamicPartInput();
+      const n = dynamicNodeInput();
       const r = new Subject();
       const s = spy();
       r.subscribe(s);
@@ -193,7 +193,7 @@ describe("execute", () => {
   describe("optional", () => {
     describe("inputs", () => {
       it("runs when optional inputs are absent", () => {
-        const n1 = dynamicPartInput();
+        const n1 = dynamicNodeInput();
         const r = new Subject();
 
         const s = spy();
@@ -214,8 +214,8 @@ describe("execute", () => {
       });
 
       it("runs considers optional types that are given before mandatory", () => {
-        const n1 = dynamicPartInput();
-        const n2 = dynamicPartInput();
+        const n1 = dynamicNodeInput();
+        const n2 = dynamicNodeInput();
         const r = new Subject();
 
         const s = spy();
@@ -237,8 +237,8 @@ describe("execute", () => {
       });
 
       it("runs considers optional types that are given after mandatory", () => {
-        const n1 = dynamicPartInput();
-        const n2 = dynamicPartInput();
+        const n1 = dynamicNodeInput();
+        const n2 = dynamicNodeInput();
         const r = new Subject();
 
         const s = spy();
@@ -260,7 +260,7 @@ describe("execute", () => {
       });
 
       it("runs when optional inputs are absent- visual opt input", () => {
-        const n1 = dynamicPartInput();
+        const n1 = dynamicNodeInput();
         const r = new Subject();
 
         const s = spy();
@@ -281,8 +281,8 @@ describe("execute", () => {
       });
 
       it.skip("works properly when optional input is given after mandatory", () => {
-        const n1 = dynamicPartInput();
-        const n2 = dynamicPartInput();
+        const n1 = dynamicNodeInput();
+        const n2 = dynamicNodeInput();
         const r = new Subject();
 
         const s = spy();
@@ -303,8 +303,8 @@ describe("execute", () => {
       });
 
       it("waits for inputs given when all are given", () => {
-        const n1 = dynamicPartInput();
-        const n2 = dynamicPartInput();
+        const n1 = dynamicNodeInput();
+        const n2 = dynamicNodeInput();
         const r = new Subject();
 
         const s = spy();
@@ -325,7 +325,7 @@ describe("execute", () => {
       });
 
       it("waits for inputs given when some are given", () => {
-        const n1 = dynamicPartInput();
+        const n1 = dynamicNodeInput();
         const r = new Subject();
 
         const s = spy();
@@ -394,8 +394,8 @@ describe("execute", () => {
           ],
         };
 
-        const a = dynamicPartInput();
-        const b = dynamicPartInput();
+        const a = dynamicNodeInput();
+        const b = dynamicNodeInput();
 
         execute({
           part: part,
@@ -467,7 +467,7 @@ describe("execute", () => {
       };
 
       it("runs when optional outputs are absent", () => {
-        const v = dynamicPartInput();
+        const v = dynamicNodeInput();
         const r1 = new Subject();
 
         const s = spy();
@@ -488,7 +488,7 @@ describe("execute", () => {
       });
 
       it("runs when optional outputs are passed", () => {
-        const v = dynamicPartInput();
+        const v = dynamicNodeInput();
         const r1 = new Subject();
         const r2 = new Subject();
 
@@ -535,8 +535,8 @@ describe("execute", () => {
 
     it("works with components as parameters", () => {
       const s = spy();
-      const list = dynamicPartInput();
-      const fn = dynamicPartInput();
+      const list = dynamicNodeInput();
+      const fn = dynamicNodeInput();
       const r = new Subject();
       r.subscribe(s);
       execute({
@@ -554,8 +554,8 @@ describe("execute", () => {
 
     it("works with visual components as parameters", () => {
       const s = spy();
-      const list = dynamicPartInput();
-      const fn = dynamicPartInput();
+      const list = dynamicNodeInput();
+      const fn = dynamicNodeInput();
       const r = new Subject();
       r.subscribe(s);
       execute({
@@ -582,7 +582,7 @@ describe("execute", () => {
       });
 
       it("is called properly inside group", () => {
-        const n = dynamicPartInput();
+        const n = dynamicNodeInput();
         const r = dynamicOutput();
 
         const s = spy();
@@ -634,7 +634,7 @@ describe("execute", () => {
       });
 
       it("is called for all parts inside the group", () => {
-        const n = dynamicPartInput();
+        const n = dynamicNodeInput();
         const r = dynamicOutput();
 
         const s = spy();
@@ -693,7 +693,7 @@ describe("execute", () => {
       });
 
       it("group - waits for the promise to be resolved if the command is an intercept cmd", async () => {
-        const n = dynamicPartInput();
+        const n = dynamicNodeInput();
         const r = dynamicOutput();
 
         const s = spy();
@@ -727,8 +727,8 @@ describe("execute", () => {
       });
 
       it("emits input change msgs on main inputs as well - code", () => {
-        const n1 = dynamicPartInput();
-        const n2 = dynamicPartInput();
+        const n1 = dynamicNodeInput();
+        const n2 = dynamicNodeInput();
         const r = new Subject();
 
         const inputSpy = spy();
@@ -767,8 +767,8 @@ describe("execute", () => {
       });
 
       it("emits input change msgs on main inputs as well - visual", () => {
-        const n1 = dynamicPartInput();
-        const n2 = dynamicPartInput();
+        const n1 = dynamicNodeInput();
+        const n2 = dynamicNodeInput();
         const r = new Subject();
 
         const inputSpy = spy();
@@ -800,8 +800,8 @@ describe("execute", () => {
       });
 
       it("emits input change msgs on static values", () => {
-        const n1 = staticPartInput(25);
-        const n2 = dynamicPartInput();
+        const n1 = staticNodeInput(25);
+        const n2 = dynamicNodeInput();
         const r = new Subject();
 
         const inputSpy = spy();
@@ -833,7 +833,7 @@ describe("execute", () => {
       });
 
       it("intercepts input value on visual part", async () => {
-        const n = dynamicPartInput();
+        const n = dynamicNodeInput();
         const r = dynamicOutput();
 
         const s = spy();
@@ -866,7 +866,7 @@ describe("execute", () => {
       });
 
       it("intercepts input value on code part", async () => {
-        const n = dynamicPartInput();
+        const n = dynamicNodeInput();
         const r = dynamicOutput();
 
         const s = spy();
@@ -907,7 +907,7 @@ describe("execute", () => {
       });
 
       it("is called properly inside group", () => {
-        const n = dynamicPartInput();
+        const n = dynamicNodeInput();
         const r = dynamicOutput();
 
         const s = spy();
@@ -950,8 +950,8 @@ describe("execute", () => {
       });
 
       it("emits output change msgs on main inputs as well - native", () => {
-        const n1 = dynamicPartInput();
-        const n2 = dynamicPartInput();
+        const n1 = dynamicNodeInput();
+        const n2 = dynamicNodeInput();
         const r = new Subject();
 
         const onOutput = spy();
@@ -982,8 +982,8 @@ describe("execute", () => {
       });
 
       it("emits output change msgs on main output as well - visual", () => {
-        const n1 = dynamicPartInput();
-        const n2 = dynamicPartInput();
+        const n1 = dynamicNodeInput();
+        const n2 = dynamicNodeInput();
         const r = new Subject();
 
         const onOutput = spy();
@@ -1013,7 +1013,7 @@ describe("execute", () => {
       });
 
       it("intercepts returned value", async () => {
-        const n = dynamicPartInput();
+        const n = dynamicNodeInput();
         const r = dynamicOutput();
 
         const s = spy();
@@ -1048,7 +1048,7 @@ describe("execute", () => {
 
     describe("processing event", () => {
       it("notifies when part starts processing", async () => {
-        const [item] = dynamicPartInputs(1) as [DynamicNodeInput];
+        const [item] = dynamicNodeInputs(1) as [DynamicNodeInput];
         const r = dynamicOutput();
 
         const onProcessing = spy();
@@ -1088,7 +1088,7 @@ describe("execute", () => {
       });
 
       it("notifies when part ends processing", async () => {
-        const [item] = dynamicPartInputs(1) as [DynamicNodeInput];
+        const [item] = dynamicNodeInputs(1) as [DynamicNodeInput];
         const r = dynamicOutput();
 
         const onProcessing = spy();
@@ -1117,7 +1117,7 @@ describe("execute", () => {
       });
 
       it("notifies with state count when inputs state is changed", async () => {
-        const [item] = dynamicPartInputs(1) as [DynamicNodeInput];
+        const [item] = dynamicNodeInputs(1) as [DynamicNodeInput];
         const r = dynamicOutput();
 
         const onInputsStateChange = spy();
@@ -1154,7 +1154,7 @@ describe("execute", () => {
       });
 
       it("notifies with state count when inputs state is changed on sticky inputs", async () => {
-        const [item, ms] = dynamicPartInputs(2) as [
+        const [item, ms] = dynamicNodeInputs(2) as [
           DynamicNodeInput,
           DynamicNodeInput
         ];

@@ -55,8 +55,8 @@ export const createWebPorts = ({
     reportEvent: (name, data) => {
       console.info(`Analytics event: ${name}`, data);
     },
-    generatePartFromPrompt: async ({ prompt }) => {
-      return devServerClient.generatePartFromPrompt(prompt);
+    generateNodeFromPrompt: async ({ prompt }) => {
+      return devServerClient.generateNodeFromPrompt(prompt);
     },
     hasOpenAiToken: async () => {
       return true;

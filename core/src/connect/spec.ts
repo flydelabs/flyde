@@ -6,7 +6,7 @@ import { spy } from "sinon";
 
 import { assert } from "chai";
 import {
-  dynamicPartInput,
+  dynamicNodeInput,
   CodeNode,
   nodeInput,
   partInstance,
@@ -55,7 +55,7 @@ describe("connect", () => {
         testNodesCollection
       );
 
-      const n1 = dynamicPartInput();
+      const n1 = dynamicNodeInput();
       const r = new Subject();
       const fn = spy();
       r.subscribe(fn);
@@ -91,8 +91,8 @@ describe("connect", () => {
         testNodesCollection
       );
 
-      const n1 = dynamicPartInput();
-      const n2 = dynamicPartInput();
+      const n1 = dynamicNodeInput();
+      const n2 = dynamicNodeInput();
       const r = new Subject();
       const fn = spy();
       r.subscribe(fn);

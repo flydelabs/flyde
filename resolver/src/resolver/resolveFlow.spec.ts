@@ -1,11 +1,11 @@
 import {
   CodeNode,
-  dynamicPartInput,
+  dynamicNodeInput,
   execute,
   ImportedNode,
   NodesCollection,
   randomInt,
-  staticPartInput,
+  staticNodeInput,
   values,
 } from "@flyde/core";
 import { assert } from "chai";
@@ -47,7 +47,7 @@ describe("resolver", () => {
     execute({
       part,
       resolvedDeps: resolvedDeps,
-      inputs: { n: staticPartInput(2) },
+      inputs: { n: staticNodeInput(2) },
       outputs: { r },
     });
 
@@ -66,7 +66,7 @@ describe("resolver", () => {
     execute({
       part,
       resolvedDeps: resolvedDeps,
-      inputs: { n: staticPartInput(2) },
+      inputs: { n: staticNodeInput(2) },
       outputs: { r },
     });
 
@@ -94,7 +94,7 @@ describe("resolver", () => {
     execute({
       part: data.main,
       resolvedDeps: resolvedDeps,
-      inputs: { n: staticPartInput(2) },
+      inputs: { n: staticNodeInput(2) },
       outputs: { r },
     });
 
@@ -118,7 +118,7 @@ describe("resolver", () => {
       "Subs1Wrapper",
     ]);
 
-    const input = dynamicPartInput();
+    const input = dynamicNodeInput();
     const [s1, nplus1] = spiedOutput();
     const [s2, nminus1] = spiedOutput();
     execute({
@@ -150,7 +150,7 @@ describe("resolver", () => {
     execute({
       part: data.main,
       resolvedDeps: resolvedDeps,
-      inputs: { n: staticPartInput(2) },
+      inputs: { n: staticNodeInput(2) },
       outputs: { r },
     });
     assert.equal(s.lastCall.args[0], 3);
@@ -173,7 +173,7 @@ describe("resolver", () => {
     execute({
       part: data.main,
       resolvedDeps: resolvedDeps,
-      inputs: { n: staticPartInput(2) },
+      inputs: { n: staticNodeInput(2) },
       outputs: { r },
     });
 
@@ -214,7 +214,7 @@ describe("resolver", () => {
     execute({
       part: flow.main,
       resolvedDeps: resolvedDeps,
-      inputs: { n: staticPartInput(2) },
+      inputs: { n: staticNodeInput(2) },
       outputs: { r },
     });
 
@@ -258,7 +258,7 @@ describe("resolver", () => {
     execute({
       part: flow.main,
       resolvedDeps: resolvedDeps,
-      inputs: { n: staticPartInput(2) },
+      inputs: { n: staticNodeInput(2) },
       outputs: { r },
     });
 
@@ -287,7 +287,7 @@ describe("resolver", () => {
     execute({
       part: flow.main,
       resolvedDeps: resolvedDeps,
-      inputs: { n: staticPartInput(2) },
+      inputs: { n: staticNodeInput(2) },
       outputs: { r },
     });
     assert.equal(s.lastCall.args[0], 2 + 1);
@@ -306,7 +306,7 @@ describe("resolver", () => {
     execute({
       part: flow.main,
       resolvedDeps: resolvedDeps,
-      inputs: { n: staticPartInput(2) },
+      inputs: { n: staticNodeInput(2) },
       outputs: { r },
     });
 
@@ -336,7 +336,7 @@ describe("resolver", () => {
     execute({
       part: flow.main,
       resolvedDeps: resolvedDeps,
-      inputs: { n: staticPartInput(5) },
+      inputs: { n: staticNodeInput(5) },
       outputs: { r },
     });
 
@@ -357,7 +357,7 @@ describe("resolver", () => {
     execute({
       part,
       resolvedDeps: resolvedDeps,
-      inputs: { n: staticPartInput(2) },
+      inputs: { n: staticNodeInput(2) },
       outputs: { r },
     });
 
@@ -378,7 +378,7 @@ describe("resolver", () => {
       execute({
         part,
         resolvedDeps: resolvedDeps,
-        inputs: { n: staticPartInput(2) },
+        inputs: { n: staticNodeInput(2) },
         outputs: { r },
       });
 

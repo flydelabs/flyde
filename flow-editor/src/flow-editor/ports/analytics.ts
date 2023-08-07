@@ -2,7 +2,7 @@ import { PinType } from "@flyde/core";
 
 export interface AnalyticsEventsMap {
   hotkeyUsed: { hotkey: string };
-  addPartMenuOpen: {};
+  addNodeMenuOpen: {};
   addPart: { partId: string; source: string };
   addValueModalOpen: { source?: string };
   addValue: { placeholdersCount: number; type?: string };
@@ -19,13 +19,13 @@ export interface AnalyticsEventsMap {
   editReactiveInputs: { count: number };
   editCompletionOutputs: { count: number };
   togglePinSticky: { isSticky: boolean };
-  "generatePartFromPrompt:start": { promptLength: number };
-  "generatePartFromPrompt:success": {
+  "generateNodeFromPrompt:start": { promptLength: number };
+  "generateNodeFromPrompt:success": {
     totalTime: number;
     inputs: string[];
     outputs: string[];
   };
-  "generatePartFromPrompt:failure": { error: string };
+  "generateNodeFromPrompt:failure": { error: string };
 }
 
 export type AnalyticsEvent = keyof AnalyticsEventsMap;

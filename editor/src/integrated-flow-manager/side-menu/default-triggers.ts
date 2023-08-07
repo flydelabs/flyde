@@ -11,9 +11,9 @@ import {
 import cuid from "cuid";
 import { defaultProjectRoutePart } from "./default-route-project";
 
-export const triggerPartId = () => `API Trigger ${randomInt(99999)}`;
+export const triggerNodeId = () => `API Trigger ${randomInt(99999)}`;
 
-export const routeTriggerPart = (id: string = triggerPartId()) => {
+export const routeTriggerPart = (id: string = triggerNodeId()) => {
   return {
     id,
     ...defaultProjectRoutePart,
@@ -22,7 +22,7 @@ export const routeTriggerPart = (id: string = triggerPartId()) => {
 
 export const scheduledTriggerPart = (): VisualNode => {
   return {
-    id: triggerPartId(),
+    id: triggerNodeId(),
     inputs: {
       context: {},
     },

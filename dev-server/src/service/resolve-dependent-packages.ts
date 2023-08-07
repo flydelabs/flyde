@@ -1,8 +1,8 @@
 import { NodesDefCollection } from "@flyde/core";
 import {
   deserializeFlow,
-  isCodePartPath,
-  resolveCodePartDependencies,
+  isCodeNodePath,
+  resolveCodeNodeDependencies,
   resolveImportablePaths,
 } from "@flyde/resolver";
 import { readFileSync } from "fs";
@@ -16,8 +16,8 @@ export async function resolveDependentPackages(
       try {
         const paths = resolveImportablePaths(rootPath, dep);
         const parts = paths.reduce((acc, filePath) => {
-          if (isCodePartPath(filePath)) {
-            const obj = resolveCodePartDependencies(filePath).parts.reduce(
+          if (isCodeNodePath(filePath)) {
+            const obj = resolveCodeNodeDependencies(filePath).parts.reduce(
               (obj, { part }) => ({ ...obj, [part.id]: part }),
               {}
             );

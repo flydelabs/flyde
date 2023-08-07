@@ -10,8 +10,8 @@ import {
   execute,
   FlydeFlow,
   keys,
-  PartInputs,
-  PartOutput,
+  NodeInputs,
+  NodeOutput,
   ResolvedDependencies,
   ResolvedFlydeRuntimeFlow,
 } from "@flyde/core";
@@ -67,7 +67,7 @@ export interface PlaygroundTemplateProps {
     inputs: Record<string, DynamicNodeInput>;
     flow: FlydeFlow;
     dependencies: ResolvedDependencies;
-    output: PartOutput;
+    output: NodeOutput;
   };
   prefixComponent?: JSX.Element;
   extraInfo?: string;
@@ -78,8 +78,8 @@ export interface PlaygroundTemplateProps {
 
 export type PlaygroundFlowDto = {
   flow: ResolvedFlydeRuntimeFlow;
-  output: PartOutput;
-  inputs: PartInputs;
+  output: NodeOutput;
+  inputs: NodeInputs;
   onError: any;
   debugDelay?: number;
   player: RuntimePlayer;

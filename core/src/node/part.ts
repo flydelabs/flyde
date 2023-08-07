@@ -11,7 +11,7 @@ import { Subject } from "rxjs";
 
 import { CancelFn, InnerExecuteFn } from "../execute";
 import { ConnectionData } from "../connect";
-import { isInlinePartInstance, NodeInstance } from "./part-instance";
+import { isInlineNodeInstance, NodeInstance } from "./part-instance";
 import {
   InputPin,
   InputPinMap,
@@ -300,10 +300,10 @@ export const fromSimplified = ({
 };
 
 export const maybeGetStaticValueNodeId = (value: string) => {
-  const maybePartMatch =
+  const maybeNodeMatch =
     typeof value === "string" && value.match(/^__part\:(.*)/);
-  if (maybePartMatch) {
-    const partId = maybePartMatch[1];
+  if (maybeNodeMatch) {
+    const partId = maybeNodeMatch[1];
     return partId;
   }
   return null;
@@ -313,12 +313,12 @@ export const getStaticValue = (
   resolvedDeps: NodesDefCollection,
   calleeId: string
 ) => {
-  const maybePartId = maybeGetStaticValueNodeId(value);
-  if (maybePartId) {
-    const part = resolvedDeps[maybePartId];
+  const maybeNodeId = maybeGetStaticValueNodeId(value);
+  if (maybeNodeId) {
+    const part = resolvedDeps[maybeNodeId];
     if (!part) {
       throw new Error(
-        `Instance ${calleeId} referrer to a part reference ${maybePartId} that does not exist`
+        `Instance ${calleeId} referrer to a part reference ${maybeNodeId} that does not exist`
       );
     }
     return part;
@@ -331,7 +331,7 @@ export const getNode = (
   idOrIns: string | NodeInstance,
   resolvedNodes: NodesCollection
 ): Node => {
-  if (typeof idOrIns !== "string" && isInlinePartInstance(idOrIns)) {
+  if (typeof idOrIns !== "string" && isInlineNodeInstance(idOrIns)) {
     return idOrIns.part;
   }
   const id = typeof idOrIns === "string" ? idOrIns : idOrIns.partId;
@@ -342,11 +342,11 @@ export const getNode = (
   return part;
 };
 
-export const getPartDef = (
+export const getNodeDef = (
   idOrIns: string | NodeInstance,
   resolvedNodes: NodesDefCollection
 ): NodeDefinition => {
-  if (typeof idOrIns !== "string" && isInlinePartInstance(idOrIns)) {
+  if (typeof idOrIns !== "string" && isInlineNodeInstance(idOrIns)) {
     return idOrIns.part;
   }
   const id = typeof idOrIns === "string" ? idOrIns : idOrIns.partId;

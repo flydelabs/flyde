@@ -48,11 +48,11 @@ describe("runtime", () => {
 
     it.skip("cleans up execution when done", async () => {
       /*
-              PartWithCleanupWrapper uses "part-with-cleanup" that uses the cleanup hook
+              NodeWithCleanupWrapper uses "part-with-cleanup" that uses the cleanup hook
               connected to the "cleanupSpy" external dependency
               test assumes if that spy is called the whole cleanup flow is properly triggered
             */
-      const execute = loadFixture("PartWithCleanupWrapper");
+      const execute = loadFixture("NodeWithCleanupWrapper");
       const spy = Sinon.spy();
 
       const { res } = await execute({}, { extraContext: { cleanupSpy: spy } })

@@ -1,10 +1,10 @@
 import { MenuDivider, MenuItem } from "@blueprintjs/core";
-import { Node, NodeStyle } from "@flyde/core";
+import { NodeStyle } from "@flyde/core";
 import React, { useCallback } from "react";
-import { PromptFn, usePrompt } from "../../../flow-editor/ports";
+import { PromptFn } from "../../../flow-editor/ports";
 import { toastMsg } from "../../../toaster";
 
-export interface PartStyleMenuProps {
+export interface NodeStyleMenuProps {
   style: NodeStyle | undefined;
   onChange: (style: NodeStyle) => void;
   promptFn: PromptFn;
@@ -20,7 +20,7 @@ export const partStylePresetColors: { name: string; color: string }[] = [
 ];
 
 const defaultStyle: NodeStyle = { size: "regular" };
-export const PartStyleMenu: React.FC<PartStyleMenuProps> = (props) => {
+export const NodeStyleMenu: React.FC<NodeStyleMenuProps> = (props) => {
   const { onChange, style: _style } = props;
 
   const style = _style || defaultStyle;

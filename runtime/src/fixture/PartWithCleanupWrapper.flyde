@@ -47,7 +47,7 @@ part:
       to:
         insId: __this
         pinId: res
-  id: PartWithCleanupWrapper
+  id: NodeWithCleanupWrapper
   inputs: {}
   outputs:
     res:

@@ -1,4 +1,4 @@
-export class PartInstanceError extends Error {
+export class NodeInstanceError extends Error {
   fullInsIdsPath: string;
   partId: string;
 

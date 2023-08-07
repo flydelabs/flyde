@@ -2,7 +2,7 @@ import {
   VisualNode,
   visualNode,
   partInstance,
-  RefPartInstance,
+  RefNodeInstance,
   ResolvedFlydeFlow,
   ResolvedFlydeFlowDefinition,
 } from "@flyde/core";
@@ -34,7 +34,7 @@ describe("namespace flows", () => {
     const namespaced = namespaceFlowImports(flow, "NS__");
 
     assert.equal(
-      (namespaced.main.instances[0] as RefPartInstance).partId,
+      (namespaced.main.instances[0] as RefNodeInstance).partId,
       "NS__Alice"
     );
 
@@ -44,7 +44,7 @@ describe("namespace flows", () => {
     assert.equal(
       (
         (namespaced.dependencies["NS__Alice"] as unknown as VisualNode)
-          .instances[0] as RefPartInstance
+          .instances[0] as RefNodeInstance
       ).partId,
       "NS__Dave"
     );

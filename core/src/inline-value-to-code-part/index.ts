@@ -9,7 +9,7 @@ import {
 import {
   isInlineValueNode,
   CodeNode,
-  dynamicPartInput,
+  dynamicNodeInput,
   InlineValueNode,
   dynamicOutput,
   NodesCollection,
@@ -19,7 +19,7 @@ import { getVM2Instance } from "./get-vm2";
 
 const vm2 = getVM2Instance();
 
-export const inlineValuePartToPart = (
+export const inlineValueNodeToPart = (
   inlineValuePart: InlineValueNode,
   extraContext: Record<string, any> = {}
 ): CodeNode => {
@@ -58,8 +58,8 @@ export const inlineValuePartToPart = (
           log,
           axios,
           DEFAULT_AXIOS_TIMEOUT: 15000,
-          dynamicPartInput,
-          dynamicPartArg: dynamicPartInput,
+          dynamicNodeInput,
+          dynamicNodeArg: dynamicNodeInput,
           dynamicOutput,
           isDefined,
           compileStringTemplate,
@@ -86,7 +86,7 @@ export const customNodesToNodesCollection = (
   for (let id in customNodes) {
     const part = customNodes[id];
     partsCollection[id] = isInlineValueNode(part)
-      ? inlineValuePartToPart(part, extraContext)
+      ? inlineValueNodeToPart(part, extraContext)
       : part;
   }
   return partsCollection;

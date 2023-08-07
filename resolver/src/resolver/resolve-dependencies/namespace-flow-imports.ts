@@ -2,9 +2,9 @@ import {
   Node,
   isVisualNode,
   ResolvedFlydeFlow,
-  isRefPartInstance,
-  RefPartInstance,
-  isInlinePartInstance,
+  isRefNodeInstance,
+  RefNodeInstance,
+  isInlineNodeInstance,
   VisualNode,
 } from "@flyde/core";
 import _ = require("lodash");
@@ -14,7 +14,7 @@ const namespaceVisualPart = (
   namespace: string
 ): VisualNode => {
   const namespacedInstances = part.instances.map((ins) => {
-    if (isInlinePartInstance(ins)) {
+    if (isInlineNodeInstance(ins)) {
       if (isVisualNode(ins.part)) {
         return { ...ins, part: namespaceVisualPart(ins.part, namespace) };
       } else {
@@ -45,7 +45,7 @@ export const namespaceFlowImports = (
           ? {
               ...part,
               instances: part.instances.map((ins) => {
-                return isRefPartInstance(ins)
+                return isRefNodeInstance(ins)
                   ? { ...ins, partId: `${namespace}${ins.partId}` }
                   : ins;
               }),

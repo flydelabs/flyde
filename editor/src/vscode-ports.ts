@@ -65,8 +65,8 @@ export const createVsCodePorts = (): EditorPorts => {
     onInstallRuntimeRequest: async () => {
       return postMessageCallback("onInstallRuntimeRequest", {});
     },
-    generatePartFromPrompt: async (dto) => {
-      return postMessageCallback("generatePartFromPrompt", dto);
+    generateNodeFromPrompt: async (dto) => {
+      return postMessageCallback("generateNodeFromPrompt", dto);
     },
     onExternalFlowChange: (cb) => {
       const handler = (event: MessageEvent) => {

@@ -1,6 +1,6 @@
 import * as immer from "immer";
 import cuid from "cuid";
-import { PART_HEIGHT } from "./VisualPartEditor";
+import { PART_HEIGHT } from "./VisualNodeEditor";
 import {
   Pos,
   InputPin,
@@ -10,14 +10,14 @@ import {
   NodesDefCollection,
   NodeDefinition,
   isExternalConnectionNode,
-  getPartDef,
+  getNodeDef,
   PinType,
   partInstance,
   stickyInputPinConfig,
   queueInputPinConfig,
   isStickyInputPinConfig,
   InputMode,
-  inlinePartInstance,
+  inlineNodeInstance,
   staticInputPinConfig,
   intersectRect,
   Rect,
@@ -36,9 +36,9 @@ import {
   fromEntries,
   isDefined,
 } from "@flyde/core";
-import { calcPartWidth } from "./instance-view/utils";
+import { calcNodeWidth } from "./instance-view/utils";
 
-import { calcPartIoWidth as calcIoPartWidth } from "./part-io-view/utils";
+import { calcNodeIoWidth as calcIoNodeWidth } from "./part-io-view/utils";
 import { vSub, vAdd, vMul, vDiv } from "../physics";
 import { getLeafInstancesOfSelection } from "./part-graph-utils";
 import { getVisibleInputs, getVisibleOutputs } from "./instance-view";
@@ -117,7 +117,7 @@ export const findClosestPin = (
   });
 
   const instancesData = part.instances.reduce<any[]>((acc, ins) => {
-    const insPart = getPartDef(ins, resolvedNodes);
+    const insPart = getNodeDef(ins, resolvedNodes);
 
     const visibleInputs = getVisibleInputs(ins, insPart, part.connections);
     const visibleOutputs = getVisibleOutputs(ins, insPart, part.connections);
@@ -227,18 +227,18 @@ export const parseInputOutputTypes = (
   };
 };
 
-export const createNewInlinePartInstance = (
+export const createNewInlineNodeInstance = (
   part: NodeDefinition,
   offset: number = -1 * PART_HEIGHT * 1.5,
   lastMousePos: Pos
 ): NodeInstance => {
-  const ins = inlinePartInstance(
+  const ins = inlineNodeInstance(
     `${part.id}-${randomInt(999)}`,
     part as any,
     {},
     { x: 0, y: 0 }
   );
-  const width = calcPartWidth(ins, part);
+  const width = calcNodeWidth(ins, part);
 
   const { x, y } = lastMousePos;
   const pos = {
@@ -249,7 +249,7 @@ export const createNewInlinePartInstance = (
   return { ...ins, pos };
 };
 
-export const createNewPartInstance = (
+export const createNewNodeInstance = (
   partIdOrPart: string | NodeDefinition,
   offset: number = -1 * PART_HEIGHT * 1.5,
   lastMousePos: Pos,
@@ -257,7 +257,7 @@ export const createNewPartInstance = (
 ): NodeInstance => {
   const part =
     typeof partIdOrPart === "string"
-      ? getPartDef(partIdOrPart, resolvedNodes)
+      ? getNodeDef(partIdOrPart, resolvedNodes)
       : partIdOrPart;
 
   if (!part) {
@@ -273,7 +273,7 @@ export const createNewPartInstance = (
   }, {});
 
   const ins = partInstance(cuid(), part.id, inputsConfig, { x: 0, y: 0 });
-  const width = calcPartWidth(ins, part);
+  const width = calcNodeWidth(ins, part);
 
   const { x, y } = lastMousePos;
   const pos = {
@@ -418,20 +418,20 @@ export const calcNodesPositions = (
   resolvedNodes: NodesDefCollection
 ): Points[] => {
   const insNodes = part.instances.map((curr) => {
-    const w = calcPartWidth(curr, getPartDef(curr, resolvedNodes));
+    const w = calcNodeWidth(curr, getNodeDef(curr, resolvedNodes));
     const h = PART_HEIGHT;
     return calcPoints(w, h, curr.pos, curr.id);
   });
 
   const inputsCenter = okeys(part.inputs).map((curr) => {
-    const w = calcIoPartWidth(curr);
+    const w = calcIoNodeWidth(curr);
     const h = PART_HEIGHT;
     const pos = part.inputsPosition[curr] || { x: 0, y: 0 };
     return calcPoints(w, h, pos, "input_" + curr);
   });
 
   const outputsCenter = okeys(part.outputs).map((curr) => {
-    const w = calcIoPartWidth(curr);
+    const w = calcIoNodeWidth(curr);
     const h = PART_HEIGHT;
     const pos = part.outputsPosition[curr] || { x: 0, y: 0 };
     return calcPoints(w, h, pos, "output" + curr);
@@ -445,7 +445,7 @@ export const calcNodesPositions = (
 //   return positions.reduce((acc, curr) => middlePos(acc, curr), positions[0] || { x: 0, y: 0 });
 // };
 
-export const getEffectivePartDimensions = (
+export const getEffectiveNodeDimensions = (
   part: VisualNode,
   resolvedNodes: NodesDefCollection
 ) => {
@@ -535,7 +535,7 @@ export const fitViewPortToPart = (
   vpSize: Size,
   padding: [number, number] = [20, 150]
 ): ViewPort => {
-  const { size, center } = getEffectivePartDimensions(part, resolvedNodes);
+  const { size, center } = getEffectiveNodeDimensions(part, resolvedNodes);
 
   const horPadding = padding[0];
   const verPadding = padding[1];
@@ -598,7 +598,7 @@ export const getInstancesInRect = (
     .filter((ins) => {
       const { pos } = ins;
       const w =
-        calcPartWidth(ins, getPartDef(ins, resolvedNodes)) *
+        calcNodeWidth(ins, getNodeDef(ins, resolvedNodes)) *
         viewPort.zoom *
         parentVp.zoom;
       const rec2 = {
@@ -699,7 +699,7 @@ export const handleIoPinRename = (
   });
 };
 
-export const handleChangePartInputType = (
+export const handleChangeNodeInputType = (
   part: VisualNode,
   pinId: string,
   mode: InputMode

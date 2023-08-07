@@ -1,8 +1,8 @@
 import { CustomNode, isInlineValueNode } from ".";
 import { CustomNodeCollection, removeDupes } from "..";
-import { isRefPartInstance, RefPartInstance } from "./part-instance";
+import { isRefNodeInstance, RefNodeInstance } from "./part-instance";
 
-export const getPartWithDependencies = (
+export const getNodeWithDependencies = (
   part: CustomNode,
   resolvedDeps: CustomNodeCollection,
   existingIds: string[] = []
@@ -16,8 +16,8 @@ export const getPartWithDependencies = (
   }
   const deps = removeDupes(
     part.instances
-      .filter((i) => isRefPartInstance(i))
-      .map((i) => (i as RefPartInstance).partId)
+      .filter((i) => isRefNodeInstance(i))
+      .map((i) => (i as RefNodeInstance).partId)
       .filter((i) => resolvedDeps[i])
   );
 
@@ -26,7 +26,7 @@ export const getPartWithDependencies = (
     .reduce<CustomNode[]>((acc, curr) => {
       return [
         ...acc,
-        ...getPartWithDependencies(curr, resolvedDeps, [
+        ...getNodeWithDependencies(curr, resolvedDeps, [
           ...existingIds,
           ...deps,
         ]),
