@@ -891,7 +891,7 @@
             }
         },
         "outputs": {},
-        "fnCode": "try {\n    const document = getDocument();\n    const normKey = inputs.key || \"default-css\";\n    const tag = document.createElement(\"style\");\n    tag.innerHTML = inputs.css;\n    tag.id = normKey;\n    \n    const existing = document.getElementById(normKey);\n    if (existing) {\n      existing.remove();\n    }\n    document.head.appendChild(tag);\n} catch (e) {\n    log(`Unable to run head css part`, e);\n}"
+        "fnCode": "try {\n    const document = getDocument();\n    const normKey = inputs.key || \"default-css\";\n    const tag = document.createElement(\"style\");\n    tag.innerHTML = inputs.css;\n    tag.id = normKey;\n    \n    const existing = document.getElementById(normKey);\n    if (existing) {\n      existing.remove();\n    }\n    document.head.appendChild(tag);\n} catch (e) {\n    log(`Unable to run head css node`, e);\n}"
     },
     "HtmlTag": {
         "id": "HtmlTag",
@@ -1331,7 +1331,7 @@
             },
             "fn": {
                 "mode": "required",
-                "type": "part({\"item\": \"any\", \"idx?\": \"any\"}|{\"allow\": \"any\", \"block\": \"any\"})"
+                "type": "node({\"item\": \"any\", \"idx?\": \"any\"}|{\"allow\": \"any\", \"block\": \"any\"})"
             }
         },
         "outputs": {
@@ -1463,7 +1463,7 @@
             },
             "fn": {
                 "mode": "required",
-                "type": "part({\"item?\": \"any\", \"idx?\": \"any\"}|{\"r\": \"any\", \"rs\": \"any\"})"
+                "type": "node({\"item?\": \"any\", \"idx?\": \"any\"}|{\"r\": \"any\", \"rs\": \"any\"})"
             }
         },
         "outputs": {
@@ -1968,7 +1968,7 @@
             },
             "onValue": {
                 "mode": "required",
-                "type": "part({\"prevValue\": \"any\", \"currValue\": \"any\"}|{\"newVal\": \"any\"})"
+                "type": "node({\"prevValue\": \"any\", \"currValue\": \"any\"}|{\"newVal\": \"any\"})"
             }
         },
         "outputs": {

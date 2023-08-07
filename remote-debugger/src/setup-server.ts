@@ -67,7 +67,7 @@ export const setupRemoteDebuggerServer = (
       const result = triggerNode(nodeId, inputs);
       res.send(result);
     } catch (e) {
-      debug(`Error triggering part: %e`, e);
+      debug(`Error triggering node: %e`, e);
       console.log(e);
 
       res.status(400).send(e.message);

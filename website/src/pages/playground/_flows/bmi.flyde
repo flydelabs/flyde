@@ -1,14 +1,14 @@
 imports:
   "@flyde/stdlib":
     - IsGreater
-part:
+node:
   instances:
     - pos:
         x: -339.8445458984375
         y: -298.6939727783203
       id: clal8c6ws00054664pn7mxwak
       inputConfig: {}
-      part:
+      node:
         id: Inline-value-prompt(What is
         inputs: {}
         outputs:
@@ -34,7 +34,7 @@ part:
         y: -298.35113525390625
       id: clal8cm19000b4664u3iz2pbb
       inputConfig: {}
-      part:
+      node:
         id: Inline-value-prompt(What is
         inputs: {}
         outputs:
@@ -60,7 +60,7 @@ part:
         y: -123.31595092773438
       id: clal8dus5000j4664s9pwujgy
       inputConfig: {}
-      part:
+      node:
         id: "Inline-value-(inputs.weight "
         inputs:
           weight:
@@ -92,7 +92,7 @@ part:
         y: 6.26922607421875
       id: clal91glf00024664mfh47zbj
       inputConfig: {}
-      part:
+      node:
         id: |-
           Inline-value-let range;
           if (

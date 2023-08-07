@@ -7,7 +7,7 @@
 //   NodeStyleSize,
 //   RunNodeFunction,
 // } from ".";
-// import { InputMode } from "./part-pins";
+// import { InputMode } from "./node-pins";
 
 // // An improved type for the inputs object. It uses dynamic keys to allow the object properties to match the input names.
 // type ImprovedInputs = {
@@ -84,7 +84,7 @@
 //             outputs[data.output.name].next(result); // Updating the output with the result returned from the function.
 //           }
 //         } catch (e) {
-//           console.error("Error in part", e);
+//           console.error("Error in node", e);
 //           adv.onError(e);
 //         }
 //       },

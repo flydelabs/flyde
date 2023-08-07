@@ -10,7 +10,7 @@ imports:
     - Button
   ./Span.flyde.js:
     - Span
-part:
+node:
   instances:
     - pos:
         x: -115.26095214843747
@@ -142,7 +142,7 @@ part:
         y: 110.83120086669919
       id: Inline-value-Value is ${inp-308
       inputConfig: {}
-      part:
+      node:
         id: Inline-value-${inputs.count
         inputs:
           count:
@@ -170,7 +170,7 @@ part:
         y: 12.137357788085978
       id: Inline-value-0-783
       inputConfig: {}
-      part:
+      node:
         id: Inline-value-0
         inputs: {}
         outputs:

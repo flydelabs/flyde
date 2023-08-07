@@ -1,7 +1,7 @@
 ---
 imports:
   "./SpecialAdds1.flyde.js": Special
-part:
+node:
   id: Adds1Wrapper
   inputs:
     n:

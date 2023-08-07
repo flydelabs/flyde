@@ -13,7 +13,7 @@ export function resolveFlowDependencies(
   const dependencies = resolveDependencies(flow, mode, flowPath);
 
   return {
-    main: flow.part,
+    main: flow.node,
     dependencies,
   };
 }

@@ -15,7 +15,7 @@ export interface LocalImportableResult {
 export interface DependenciesContextData {
   resolvedDependencies: ResolvedDependenciesDefinitions;
   onImportNode: (
-    part: ImportableSource,
+    node: ImportableSource,
     target?: {
       pos: Pos;
       selectAfterAdding?: boolean;

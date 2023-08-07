@@ -7,18 +7,18 @@ import markdownTable from "markdown-table";
 const data: Record<string, Node> = require("@flyde/stdlib/dist/parts.json");
 
 // group data object by "namespace"
-const groupedData = Object.values(data).reduce((acc, part) => {
-  const ns = part.namespace ?? "Misc";
+const groupedData = Object.values(data).reduce((acc, node) => {
+  const ns = node.namespace ?? "Misc";
   if (!acc[ns]) {
     acc[ns] = [];
   }
 
-  if (!part.inputs || !part.outputs) {
-    console.error({ part });
+  if (!node.inputs || !node.outputs) {
+    console.error({ node });
     throw new Error("42424");
   }
 
-  acc[ns].push(part);
+  acc[ns].push(node);
   return acc;
 }, {});
 
@@ -27,16 +27,16 @@ const entries = Object.entries<CodeNode[]>(groupedData);
 const groupAndTables = entries.map(([ns, parts]) => {
   const rows = [
     ["Id", "Description", "Inputs", "Outputs"],
-    ...parts.map((part) => {
-      if (!part.inputs || !part.outputs) {
-        console.error({ part });
+    ...parts.map((node) => {
+      if (!node.inputs || !node.outputs) {
+        console.error({ node });
         throw new Error("Node is missing inputs or outputs");
       }
 
       return [
-        `**${part.id}**`,
-        part.description,
-        Object.entries(part.inputs)
+        `**${node.id}**`,
+        node.description,
+        Object.entries(node.inputs)
           .map(
             ([name, obj]) =>
               `<div><strong>${name}</strong>: ${obj.description} (${
@@ -46,7 +46,7 @@ const groupAndTables = entries.map(([ns, parts]) => {
               }</div>`
           )
           .join("") || "*None*",
-        Object.entries(part.outputs)
+        Object.entries(node.outputs)
           .map(
             ([name, obj]) =>
               `<div><strong>${name}</strong>: ${obj.description}</div>`

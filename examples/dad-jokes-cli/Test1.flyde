@@ -2,7 +2,7 @@ imports:
   "@flyde/stdlib":
     - Delay
     - Log
-part:
+node:
   instances:
     - pos:
         x: -120.89910888671875

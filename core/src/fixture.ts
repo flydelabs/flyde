@@ -269,7 +269,7 @@ export const isEven: CodeNode = {
 
 export const filter: Node = fromSimplified({
   id: "filter",
-  inputTypes: { list: "any", fn: "part" },
+  inputTypes: { list: "any", fn: "node" },
   outputTypes: { r: "any" },
   run: ({ list, fn }, o) => {
     let newList: any[] = [];
@@ -283,7 +283,7 @@ export const filter: Node = fromSimplified({
         {}
       );
       const clean = execute({
-        part: fn,
+        node: fn,
         inputs: { item: itemInput },
         outputs: outputs,
         resolvedDeps: testNodesCollection,

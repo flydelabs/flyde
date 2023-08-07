@@ -49,7 +49,7 @@ for (const f of files) {
 
     const complete = {
       imports,
-      part: firstNode,
+      node: firstNode,
     };
 
     const { success } = flydeFlowSchema.safeParse(complete);
@@ -76,11 +76,11 @@ for (const f of files) {
   //         throw new Error('many parts in ' + f)
   //     }
 
-  //     const {fnCode, ...part} = firstNode;
+  //     const {fnCode, ...node} = firstNode;
 
-  //     part.run = "__FN_HERE__"
+  //     node.run = "__FN_HERE__"
 
-  //     const nodeStr = JSON.stringify(part).replace('"__FN_HERE__"', `function (inputs, outputs, adv) { ${fnCode} }`);
+  //     const nodeStr = JSON.stringify(node).replace('"__FN_HERE__"', `function (inputs, outputs, adv) { ${fnCode} }`);
 
   //     const template = `module.exports = ${nodeStr}`
 

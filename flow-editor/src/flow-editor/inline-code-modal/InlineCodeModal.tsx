@@ -15,7 +15,7 @@ import {
   RadioGroup,
 } from "@blueprintjs/core";
 import classNames from "classnames";
-import { getVariables } from "./inline-code-to-part";
+import { getVariables } from "./inline-code-to-node";
 import { InlineValueNodeType, ExecuteEnv, isDefined } from "@flyde/core";
 import { Tooltip2 } from "@blueprintjs/popover2";
 

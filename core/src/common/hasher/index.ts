@@ -6,13 +6,13 @@ const md5 = (str: string) => {
   return _md5(str);
 };
 
-export const hashNode = (part: Node, ignorePos = true) => {
-  const { id, completionOutputs, reactiveInputs, inputs, outputs } = part;
+export const hashNode = (node: Node, ignorePos = true) => {
+  const { id, completionOutputs, reactiveInputs, inputs, outputs } = node;
 
   const baseNode = { id, completionOutputs, reactiveInputs, inputs, outputs };
 
-  if (isVisualNode(part)) {
-    const { instances, connections, inputsPosition, outputsPosition } = part;
+  if (isVisualNode(node)) {
+    const { instances, connections, inputsPosition, outputsPosition } = node;
     // const cleanedInstances = ignorePos ? instances.map((ins) => {
     //     const { pos, ...rest } = ins;
     //     return rest;
@@ -43,9 +43,9 @@ export const hashNode = (part: Node, ignorePos = true) => {
       maybeIoPos,
     });
     return md5(str);
-  } else if (isInlineValueNode(part)) {
-    const { customViewCode } = part;
-    const fnCode = part.fnCode ?? part.runFnRawCode;
+  } else if (isInlineValueNode(node)) {
+    const { customViewCode } = node;
+    const fnCode = node.fnCode ?? node.runFnRawCode;
     const str = JSON.stringify({ fnCode, customViewCode, ...baseNode });
     return md5(str);
   }
@@ -53,9 +53,9 @@ export const hashNode = (part: Node, ignorePos = true) => {
 };
 
 export const hashFlow = (flow: FlydeFlow) => {
-  const { part, imports } = flow;
+  const { node, imports } = flow;
 
-  const nodeHash = hashNode(part, false);
+  const nodeHash = hashNode(node, false);
 
   const orderedImports = Object.entries(imports ?? {})
     .sort(([k1], [k2]) => k1.localeCompare(k2))

@@ -73,12 +73,12 @@ export async function generateAndSaveNode(
   writeFileSync(filePath, code);
   const maybeNode = resolveCodeNodeDependencies(filePath).parts[0];
   if (!maybeNode) {
-    throw new Error("Generated part is corrupt");
+    throw new Error("Generated node is corrupt");
   }
 
-  const part: ImportedNode = {
-    ...maybeNode.part,
+  const node: ImportedNode = {
+    ...maybeNode.node,
     source: { path: filePath, export: maybeNode.exportName },
   };
-  return { part, module: `./${fileName}.flyde.ts` };
+  return { node, module: `./${fileName}.flyde.ts` };
 }

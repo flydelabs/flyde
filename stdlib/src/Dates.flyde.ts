@@ -91,7 +91,7 @@ export const DateFromISOString: CodeNode = {
     try {
       date.next(new Date(string));
     } catch (e) {
-      console.error("Error in part", e);
+      console.error("Error in node", e);
       onError(e);
     }
   },

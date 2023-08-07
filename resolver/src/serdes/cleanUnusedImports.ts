@@ -6,15 +6,15 @@ import {
   FlydeFlow,
 } from "@flyde/core";
 
-const getNodeIds = (part?: Node) => {
-  if (part && isVisualNode(part)) {
-    const refIds = part.instances
+const getNodeIds = (node?: Node) => {
+  if (node && isVisualNode(node)) {
+    const refIds = node.instances
       .filter((ins: any) => isRefNodeInstance(ins))
       .map((ins: any) => ins.nodeId);
 
-    const innerIds = part.instances
+    const innerIds = node.instances
       .filter((ins: any) => isInlineNodeInstance(ins))
-      .flatMap((ins: any) => getNodeIds(ins.part));
+      .flatMap((ins: any) => getNodeIds(ins.node));
 
     return [...refIds, ...innerIds];
   } else {
@@ -23,7 +23,7 @@ const getNodeIds = (part?: Node) => {
 };
 
 export const cleanUnusedImports = (flow: FlydeFlow): FlydeFlow => {
-  const importedNodeIds = getNodeIds(flow.part as Node);
+  const importedNodeIds = getNodeIds(flow.node as Node);
 
   console.log({ importedNodeIds });
 
@@ -37,5 +37,5 @@ export const cleanUnusedImports = (flow: FlydeFlow): FlydeFlow => {
     })
   );
 
-  return { part: flow.part, imports };
+  return { node: flow.node, imports };
 };

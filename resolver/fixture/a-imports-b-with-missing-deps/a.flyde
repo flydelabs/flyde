@@ -2,7 +2,7 @@
 imports:
   "./SpreadList3.flyde":
     - SpreadList3
-part:
+node:
   id: Bob
   inputs:
     n1: "number"

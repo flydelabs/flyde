@@ -2,14 +2,14 @@ imports:
   "@flyde/stdlib":
     - Trim
     - Request
-part:
+node:
   instances:
     - pos:
         x: -210.6530285644531
         y: 314.3049545288086
       id: clacz9qa700034664mecvv1ga
       inputConfig: {}
-      part:
+      node:
         id: Inline-value-Hello, Flyde!
         inputs: {}
         outputs:

@@ -3,10 +3,10 @@ import { add, codeAdd } from "../fixture";
 
 describe("add tests", () => {
   describe("normal", () => {
-    runAddTests(add, "part", {});
+    runAddTests(add, "node", {});
   });
 
   describe("fromCode", () => {
-    runAddTests(codeAdd, "code-part", {});
+    runAddTests(codeAdd, "code-node", {});
   });
 });

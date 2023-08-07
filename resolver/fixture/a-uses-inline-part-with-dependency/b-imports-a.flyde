@@ -1,7 +1,7 @@
 imports:
   "./a.flyde":
     - Add1Wrapper
-part:
+node:
   id: Add1WrapperTwice
   inputs:
     n:

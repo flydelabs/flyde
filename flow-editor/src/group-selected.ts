@@ -12,12 +12,12 @@ import { PromptFn } from "./flow-editor/ports";
 
 export const groupSelected = async (
   selected: string[],
-  part: VisualNode,
+  node: VisualNode,
   nodeName: string,
   type: "inline" | "ref",
   prompt: PromptFn
 ): Promise<{ newNode: VisualNode; currentNode: VisualNode }> => {
-  const { instances, connections } = part;
+  const { instances, connections } = node;
   const relevantInstances = instances.filter((ins) =>
     selected.includes(ins.id)
   );
@@ -47,7 +47,7 @@ export const groupSelected = async (
       ? nodeInstance(createInsId(visualNode), visualNode.id, {}, midPos)
       : inlineNodeInstance(createInsId(visualNode), visualNode, {}, midPos);
 
-  // replace relevant parts with new part
+  // replace relevant parts with new node
   const newInstancesArr = instances.filter((ins) => {
     return selected.indexOf(ins.id) === -1;
   });
@@ -89,7 +89,7 @@ export const groupSelected = async (
 
   return {
     newNode: visualNode,
-    currentNode: produce(part, (draft) => {
+    currentNode: produce(node, (draft) => {
       draft.instances = [...newInstancesArr, newInstance];
       draft.connections = newConnections;
     }),

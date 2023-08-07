@@ -1,5 +1,5 @@
 imports: {}
-part:
+node:
   id: SpreadList3
   inputs:
     list:

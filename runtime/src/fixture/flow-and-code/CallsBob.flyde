@@ -2,7 +2,7 @@ imports:
   "@flyde/stdlib": []
   bob.flyde.ts:
     - Bob
-part:
+node:
   instances:
     - pos:
         x: -79.11480712890625

@@ -3,7 +3,7 @@ import { createTasksService } from "./tasks";
 
 const servicePromise = createTasksService();
 
-const part: CodeNode = {
+const node: CodeNode = {
   id: "Add Task",
   inputs: {
     name: nodeInput(),
@@ -22,4 +22,4 @@ const part: CodeNode = {
   },
 };
 
-export = part;
+export = node;

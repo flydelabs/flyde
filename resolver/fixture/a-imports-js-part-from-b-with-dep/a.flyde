@@ -1,7 +1,7 @@
 imports:
   "./Add.flyde.js":
   - Add
-part:
+node:
   id: Add1
   inputs:
     n:

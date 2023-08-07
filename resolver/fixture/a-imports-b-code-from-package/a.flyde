@@ -1,7 +1,7 @@
 ---
 imports:
   "@acme/add1": Add1
-part:
+node:
   id: Add1Wrapped
   inputs:
     n:

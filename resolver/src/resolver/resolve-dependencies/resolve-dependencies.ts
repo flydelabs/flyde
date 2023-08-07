@@ -24,17 +24,17 @@ import requireReload from "require-reload";
 
 import * as StdLib from "@flyde/stdlib/dist/all";
 
-const getRefNodeIds = (part: VisualNode): string[] => {
-  const refNodeIds = part.instances
+const getRefNodeIds = (node: VisualNode): string[] => {
+  const refNodeIds = node.instances
     .filter(isRefNodeInstance)
     .map((ins) => ins.nodeId);
-  const inlineNodes = part.instances
+  const inlineNodes = node.instances
     .filter(isInlineNodeInstance)
-    .map((ins) => ins.part);
+    .map((ins) => ins.node);
 
-  const idsFromInline = inlineNodes.reduce<string[]>((acc, part) => {
-    if (isVisualNode(part)) {
-      acc.push(...getRefNodeIds(part));
+  const idsFromInline = inlineNodes.reduce<string[]>((acc, node) => {
+    if (isVisualNode(node)) {
+      acc.push(...getRefNodeIds(node));
     }
     return acc;
   }, []);
@@ -44,7 +44,7 @@ const getRefNodeIds = (part: VisualNode): string[] => {
 
 export function resolveCodeNodeDependencies(path: string): {
   errors: string[];
-  parts: { exportName: string; part: CodeNode }[];
+  parts: { exportName: string; node: CodeNode }[];
 } {
   const errors = [];
   const parts = [];
@@ -52,11 +52,11 @@ export function resolveCodeNodeDependencies(path: string): {
   try {
     let module = requireReload(path);
     if (isCodeNode(module)) {
-      parts.push({ exportName: "default", part: module });
+      parts.push({ exportName: "default", node: module });
     } else if (typeof module === "object") {
       Object.entries(module).forEach(([key, value]) => {
         if (isCodeNode(value)) {
-          parts.push({ exportName: key, part: value });
+          parts.push({ exportName: key, node: value });
         } else {
           errors.push(`Exported value "${key}" is not a valid CodeNode`);
         }
@@ -79,7 +79,7 @@ export function resolveDependencies(
   mode: ResolveMode,
   fullFlowPath: string
 ): ResolvedFlydeFlow["dependencies"] {
-  const part = flow.part;
+  const node = flow.node;
 
   const imports = flow.imports;
 
@@ -111,12 +111,12 @@ export function resolveDependencies(
       }
     }
   };
-  const refNodeIds = getRefNodeIds(part);
+  const refNodeIds = getRefNodeIds(node);
 
   let deps: ResolvedFlydeFlow["dependencies"] = {};
 
   for (const refNodeId of refNodeIds) {
-    if (refNodeId === part.id) {
+    if (refNodeId === node.id) {
       // recursive call
       continue;
     }
@@ -124,21 +124,21 @@ export function resolveDependencies(
     const importPath = inverseImports[refNodeId];
     if (!importPath) {
       throw new Error(
-        `${part.id} in ${fullFlowPath} is using referenced part with id ${refNodeId} that is not imported`
+        `${node.id} in ${fullFlowPath} is using referenced node with id ${refNodeId} that is not imported`
       );
     }
 
     const paths = getLocalOrExternalPaths(importPath);
 
     // TODO - refactor the code below. It is unnecessarily complex and inefficient
-    let result: { part: Node; source: ImportSource } | undefined = paths
-      .reduce<{ part: Node; source: ImportSource }[]>((acc, path) => {
+    let result: { node: Node; source: ImportSource } | undefined = paths
+      .reduce<{ node: Node; source: ImportSource }[]>((acc, path) => {
         if (isCodeNodePath(path)) {
           return [
             ...acc,
             ...resolveCodeNodeDependencies(path).parts.map(
-              ({ part, exportName }) => ({
-                part,
+              ({ node, exportName }) => ({
+                node,
                 source: {
                   path,
                   export: exportName,
@@ -150,27 +150,27 @@ export function resolveDependencies(
           const flow = deserializeFlowByPath(path);
           return [
             ...acc,
-            { part: flow.part, source: { path, export: "__n/a__visual__" } },
+            { node: flow.node, source: { path, export: "__n/a__visual__" } },
           ];
         }
       }, [])
       .filter((obj) => !!obj)
-      .find((obj) => obj.part.id === refNodeId);
+      .find((obj) => obj.node.id === refNodeId);
 
     if (!result) {
       if (importPath === "@flyde/stdlib") {
         const maybeNodeAndExport = Object.entries(StdLib)
           .filter(([_, value]) => isBaseNode(value))
-          .map(([key, value]) => ({ part: value as CodeNode, exportPath: key }))
-          .find(({ part }) => part.id === refNodeId);
+          .map(([key, value]) => ({ node: value as CodeNode, exportPath: key }))
+          .find(({ node }) => node.id === refNodeId);
         if (!maybeNodeAndExport) {
           throw new Error(
-            `Cannot find part ${refNodeId} in ${importPath} (both external and built-in). It is imported by ${part.id} (${fullFlowPath})`
+            `Cannot find node ${refNodeId} in ${importPath} (both external and built-in). It is imported by ${node.id} (${fullFlowPath})`
           );
         }
 
         deps[refNodeId] = {
-          ...maybeNodeAndExport.part,
+          ...maybeNodeAndExport.node,
           source: {
             path: importPath,
             export: maybeNodeAndExport.exportPath,
@@ -178,15 +178,15 @@ export function resolveDependencies(
         };
       } else {
         throw new Error(
-          `Cannot find part ${refNodeId} in ${importPath}. It is imported by ${part.id} (${fullFlowPath})`
+          `Cannot find node ${refNodeId} in ${importPath}. It is imported by ${node.id} (${fullFlowPath})`
         );
       }
     } else {
-      const { part, source } = result;
+      const { node, source } = result;
 
-      if (isCodeNode(part)) {
+      if (isCodeNode(node)) {
         deps[refNodeId] = {
-          ...part,
+          ...node,
           source,
         };
       } else {
@@ -210,7 +210,7 @@ export function resolveDependencies(
   }
 
   const mainNode: ImportedNodeDef = {
-    ...flow.part,
+    ...flow.node,
     source: { path: fullFlowPath, export: "n/a" },
   }; // TODO - fix the need for imported visual parts to declare an export source.
 

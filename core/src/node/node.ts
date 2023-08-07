@@ -134,10 +134,10 @@ export interface BaseNode {
    */
   reactiveInputs?: string[];
   /**
-   * Supply a custom string template ([EJS](https://ejs.co/) format) to control how an instance of this part will be rendered in the visual editor.
+   * Supply a custom string template ([EJS](https://ejs.co/) format) to control how an instance of this node will be rendered in the visual editor.
    * The template has access to static values, making it possible to expose valuable information in the instance itself:
    * @example
-   * A "Delay" part has 2 inputs: value and a time. In many cases, the `time` input will be provided statically.
+   * A "Delay" node has 2 inputs: value and a time. In many cases, the `time` input will be provided statically.
    * It can be convenient to show the time input in the instance itself so it shows "Delay 500ms" instead of "Delay" (in the case 500 is the static value of `time`)
    *
    * ```
@@ -188,8 +188,8 @@ export interface InlineValueNode extends BaseNode {
 }
 
 /**
- * A visual part is what makes Flyde special. It represents a part created visually in the editor.
- * It consists of part instances and connections. Each part instance will either refer to an imported part (by id), or include the part "inline".
+ * A visual node is what makes Flyde special. It represents a node created visually in the editor.
+ * It consists of node instances and connections. Each node instance will either refer to an imported node (by id), or include the node "inline".
  * Each connection will represent a "wire" between 2 instances, or between an instance and a main input/output pin.
  * Connecting to a main input or output is the way that a visual parts' internal implementation can communicate with its external API.
  */
@@ -199,7 +199,7 @@ export interface VisualNode extends BaseNode {
   inputsPosition: OMap<Pos>;
   /** a map holding the position for each main output. Used in the editor only. */
   outputsPosition: OMap<Pos>;
-  /** the visual parts internal part instances, either referring to other parts by id or by value (inline) */
+  /** the visual parts internal node instances, either referring to other parts by id or by value (inline) */
   instances: NodeInstance[];
   /** each connection represents a "wire" between 2 different instances, or between an instance and a main input/output*/
   connections: ConnectionData[];
@@ -211,7 +211,7 @@ export type Node = CodeNode | CustomNode;
 
 export type ImportableSource = {
   module: string;
-  part: ImportedNode;
+  node: ImportedNode;
   implicit?: boolean;
 };
 
@@ -264,7 +264,7 @@ export const codeNode = testDataCreator<CodeNode>({
 });
 
 export const inlineValueNode = testDataCreator<InlineValueNode>({
-  id: "part",
+  id: "node",
   inputs: {},
   outputs: {},
   runFnRawCode: "",
@@ -301,7 +301,7 @@ export const fromSimplified = ({
 
 export const maybeGetStaticValueNodeId = (value: string) => {
   const maybeNodeMatch =
-    typeof value === "string" && value.match(/^__part\:(.*)/);
+    typeof value === "string" && value.match(/^__node\:(.*)/);
   if (maybeNodeMatch) {
     const nodeId = maybeNodeMatch[1];
     return nodeId;
@@ -315,13 +315,13 @@ export const getStaticValue = (
 ) => {
   const maybeNodeId = maybeGetStaticValueNodeId(value);
   if (maybeNodeId) {
-    const part = resolvedDeps[maybeNodeId];
-    if (!part) {
+    const node = resolvedDeps[maybeNodeId];
+    if (!node) {
       throw new Error(
-        `Instance ${calleeId} referrer to a part reference ${maybeNodeId} that does not exist`
+        `Instance ${calleeId} referrer to a node reference ${maybeNodeId} that does not exist`
       );
     }
-    return part;
+    return node;
   } else {
     return value;
   }
@@ -332,14 +332,14 @@ export const getNode = (
   resolvedNodes: NodesCollection
 ): Node => {
   if (typeof idOrIns !== "string" && isInlineNodeInstance(idOrIns)) {
-    return idOrIns.part;
+    return idOrIns.node;
   }
   const id = typeof idOrIns === "string" ? idOrIns : idOrIns.nodeId;
-  const part = resolvedNodes[id];
-  if (!part) {
+  const node = resolvedNodes[id];
+  if (!node) {
     throw new Error(`Node with id ${id} not found`);
   }
-  return part;
+  return node;
 };
 
 export const getNodeDef = (
@@ -347,15 +347,15 @@ export const getNodeDef = (
   resolvedNodes: NodesDefCollection
 ): NodeDefinition => {
   if (typeof idOrIns !== "string" && isInlineNodeInstance(idOrIns)) {
-    return idOrIns.part;
+    return idOrIns.node;
   }
   const id = typeof idOrIns === "string" ? idOrIns : idOrIns.nodeId;
-  const part = resolvedNodes[id];
-  if (!part) {
+  const node = resolvedNodes[id];
+  if (!node) {
     console.error(`Node with id ${id} not found`);
     throw new Error(`Node with id ${id} not found`);
   }
-  return part;
+  return node;
 };
 
 export type codeFromFunctionParams = {

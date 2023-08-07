@@ -101,7 +101,7 @@ const runFlow = ({
 
   return {
     executeResult: execute({
-      part: flow.main,
+      node: flow.main,
       inputs: inputs,
       outputs: { [firstOutputName]: output },
       resolvedDeps: flow.dependencies,
@@ -136,7 +136,7 @@ export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (
     //     : { width: 500, height: 500 };
     //   return produce(state, (draft) => {
     //     draft.boardData.viewPort = fitViewPortToNode(
-    //       draft.flow.part as any,
+    //       draft.flow.node as any,
     //       resolvedFlow.dependencies,
     //       vpSize
     //     );

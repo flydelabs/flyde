@@ -37,7 +37,7 @@ describe("connect", () => {
     });
 
     it("runs properly when optional arg is not passed", () => {
-      const part = connect(
+      const node = connect(
         {
           id: "bob",
           instances: [nodeInstance("a", optAdd.id)],
@@ -60,7 +60,7 @@ describe("connect", () => {
       const fn = spy();
       r.subscribe(fn);
       execute({
-        part: part,
+        node: node,
         inputs: { n1 },
         outputs: { r },
         resolvedDeps: testNodesCollection,
@@ -71,7 +71,7 @@ describe("connect", () => {
     });
 
     it("waits for optional input if passed", () => {
-      const part = connect(
+      const node = connect(
         {
           id: "bob",
           instances: [nodeInstance("a", optAdd.id)],
@@ -97,7 +97,7 @@ describe("connect", () => {
       const fn = spy();
       r.subscribe(fn);
       execute({
-        part: part,
+        node: node,
         inputs: { n1, n2 },
         outputs: { r },
         resolvedDeps: testNodesCollection,
@@ -122,7 +122,7 @@ describe("connect", () => {
         },
       };
 
-      const part = connect(
+      const node = connect(
         {
           id: "bob",
           instances: [
@@ -160,7 +160,7 @@ describe("connect", () => {
       r.subscribe(fn);
 
       execute({
-        part: part,
+        node: node,
         inputs: {},
         outputs: { r },
         resolvedDeps: testNodesCollection,
@@ -168,8 +168,8 @@ describe("connect", () => {
     });
   });
 
-  describe("passes normal part specs when connected with no other pieces", () => {
-    const part = connect(
+  describe("passes normal node specs when connected with no other pieces", () => {
+    const node = connect(
       {
         id: "bob",
         instances: [nodeInstance("a", add.id)],
@@ -189,6 +189,6 @@ describe("connect", () => {
       testNodesCollection
     );
 
-    runAddTests(part, "connect", testNodesCollection);
+    runAddTests(node, "connect", testNodesCollection);
   });
 });

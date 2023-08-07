@@ -35,17 +35,17 @@ describe("resolver", () => {
     assert.exists(data.main.connections);
   });
 
-  it("resolves a .flyde with dependency on an inline code part from another Flyde file ", async () => {
+  it("resolves a .flyde with dependency on an inline code node from another Flyde file ", async () => {
     const data = resolveFlowDependenciesByPath(
-      getFixturePath("a-imports-js-part-from-b/a.flyde")
+      getFixturePath("a-imports-js-node-from-b/a.flyde")
     );
-    const part = data.main;
+    const node = data.main;
 
     const resolvedDeps = data.dependencies as NodesCollection;
 
     const [s, r] = spiedOutput();
     execute({
-      part,
+      node,
       resolvedDeps: resolvedDeps,
       inputs: { n: staticNodeInput(2) },
       outputs: { r },
@@ -59,12 +59,12 @@ describe("resolver", () => {
       getFixturePath("a-imports-b-imports-c/Container.flyde")
     );
 
-    const part = data.main;
+    const node = data.main;
     const resolvedDeps = data.dependencies as NodesCollection;
 
     const [s, r] = spiedOutput();
     execute({
-      part,
+      node,
       resolvedDeps: resolvedDeps,
       inputs: { n: staticNodeInput(2) },
       outputs: { r },
@@ -92,7 +92,7 @@ describe("resolver", () => {
 
     const [s, r] = spiedOutput();
     execute({
-      part: data.main,
+      node: data.main,
       resolvedDeps: resolvedDeps,
       inputs: { n: staticNodeInput(2) },
       outputs: { r },
@@ -103,7 +103,7 @@ describe("resolver", () => {
 
   it("avoids clashes in imports by namespacing imports", async () => {
     /*
-       part Container will import 2 parts, each importing a part 
+       node Container will import 2 parts, each importing a node 
        named "Special" but with a different content (one does +1, the other does -1)
     */
     const data = resolveFlowDependenciesByPath(
@@ -122,7 +122,7 @@ describe("resolver", () => {
     const [s1, nplus1] = spiedOutput();
     const [s2, nminus1] = spiedOutput();
     execute({
-      part: data.main,
+      node: data.main,
       resolvedDeps: resolvedDeps,
       inputs: {
         n: input,
@@ -139,7 +139,7 @@ describe("resolver", () => {
     assert.equal(s2.lastCall.args[0], n - 1);
   });
 
-  it("resolves a .flyde with dependency on a code part from a different package", async () => {
+  it("resolves a .flyde with dependency on a code node from a different package", async () => {
     const data = resolveFlowDependenciesByPath(
       getFixturePath("a-imports-b-code-from-package/a.flyde"),
       "implementation"
@@ -148,7 +148,7 @@ describe("resolver", () => {
     const resolvedDeps = data.dependencies as NodesCollection;
     const [s, r] = spiedOutput();
     execute({
-      part: data.main,
+      node: data.main,
       resolvedDeps: resolvedDeps,
       inputs: { n: staticNodeInput(2) },
       outputs: { r },
@@ -162,7 +162,7 @@ describe("resolver", () => {
     assert.equal(data.dependencies.Add1?.source.export ?? "", "default");
   });
 
-  it("resolves a .flyde with dependency on a visual part from a different package", async () => {
+  it("resolves a .flyde with dependency on a visual node from a different package", async () => {
     const data = resolveFlowDependenciesByPath(
       getFixturePath("a-imports-b-grouped-from-package/a.flyde"),
       "implementation"
@@ -171,7 +171,7 @@ describe("resolver", () => {
     const resolvedDeps = data.dependencies as NodesCollection;
     const [s, r] = spiedOutput();
     execute({
-      part: data.main,
+      node: data.main,
       resolvedDeps: resolvedDeps,
       inputs: { n: staticNodeInput(2) },
       outputs: { r },
@@ -205,14 +205,14 @@ describe("resolver", () => {
   });
 
   it("allows importing simple code based parts that require packages", async () => {
-    const path = getFixturePath("a-imports-js-part-from-b-with-dep/a.flyde");
+    const path = getFixturePath("a-imports-js-node-from-b-with-dep/a.flyde");
     const flow = resolveFlowDependenciesByPath(path);
 
     const resolvedDeps = flow.dependencies as NodesCollection;
 
     const [s, r] = spiedOutput();
     execute({
-      part: flow.main,
+      node: flow.main,
       resolvedDeps: resolvedDeps,
       inputs: { n: staticNodeInput(2) },
       outputs: { r },
@@ -221,14 +221,14 @@ describe("resolver", () => {
     assert.equal(s.lastCall.args[0], 2 + 1);
   });
 
-  it("throws error when importing part that has a missing dep transitively", async () => {
+  it("throws error when importing node that has a missing dep transitively", async () => {
     const path = getFixturePath("a-imports-b-with-missing-deps/a.flyde");
     assert.throws(() => {
       resolveFlowDependenciesByPath(path);
     }, /not imported/);
   });
 
-  it("throws error when importing part that has a missing dep directly", async () => {
+  it("throws error when importing node that has a missing dep directly", async () => {
     // has a missing depen
     const path = getFixturePath(
       "a-imports-b-with-missing-deps/SpreadList3.flyde"
@@ -238,7 +238,7 @@ describe("resolver", () => {
     }, /GetListItem/);
   });
 
-  it("only resolves imported parts, aka does not break if a package exports a broken part that is not imported", () => {
+  it("only resolves imported parts, aka does not break if a package exports a broken node that is not imported", () => {
     const path = getFixturePath(
       "imports-ok-from-package-with-problematic.flyde"
     );
@@ -256,7 +256,7 @@ describe("resolver", () => {
 
     const [s, r] = spiedOutput();
     execute({
-      part: flow.main,
+      node: flow.main,
       resolvedDeps: resolvedDeps,
       inputs: { n: staticNodeInput(2) },
       outputs: { r },
@@ -275,7 +275,7 @@ describe("resolver", () => {
 
   it("resolves dependencies of inline parts", async () => {
     const flow = resolveFlowDependenciesByPath(
-      getFixturePath("a-uses-inline-part-with-dependency/a.flyde")
+      getFixturePath("a-uses-inline-node-with-dependency/a.flyde")
     );
 
     const resolvedDeps = flow.dependencies as NodesCollection;
@@ -285,7 +285,7 @@ describe("resolver", () => {
 
     const [s, r] = spiedOutput();
     execute({
-      part: flow.main,
+      node: flow.main,
       resolvedDeps: resolvedDeps,
       inputs: { n: staticNodeInput(2) },
       outputs: { r },
@@ -295,7 +295,7 @@ describe("resolver", () => {
 
   it("resolves dependencies of imported inline parts", async () => {
     const flow = resolveFlowDependenciesByPath(
-      getFixturePath("a-uses-inline-part-with-dependency/b-imports-a.flyde")
+      getFixturePath("a-uses-inline-node-with-dependency/b-imports-a.flyde")
     );
 
     const resolvedDeps = flow.dependencies as NodesCollection;
@@ -304,7 +304,7 @@ describe("resolver", () => {
 
     const [s, r] = spiedOutput();
     execute({
-      part: flow.main,
+      node: flow.main,
       resolvedDeps: resolvedDeps,
       inputs: { n: staticNodeInput(2) },
       outputs: { r },
@@ -334,7 +334,7 @@ describe("resolver", () => {
 
     const [s, r] = spiedOutput();
     execute({
-      part: flow.main,
+      node: flow.main,
       resolvedDeps: resolvedDeps,
       inputs: { n: staticNodeInput(5) },
       outputs: { r },
@@ -344,18 +344,18 @@ describe("resolver", () => {
   });
 
   it("resolves flow by content", async () => {
-    const path = getFixturePath("a-imports-js-part-from-b/a.flyde");
+    const path = getFixturePath("a-imports-js-node-from-b/a.flyde");
     const flow = deserializeFlowByPath(
-      getFixturePath("a-imports-js-part-from-b/a.flyde")
+      getFixturePath("a-imports-js-node-from-b/a.flyde")
     );
     const resolvedFlow = resolveFlowDependencies(flow, path);
-    const part = resolvedFlow.main;
+    const node = resolvedFlow.main;
 
     const resolvedDeps = resolvedFlow.dependencies as NodesCollection;
 
     const [s, r] = spiedOutput();
     execute({
-      part,
+      node,
       resolvedDeps: resolvedDeps,
       inputs: { n: staticNodeInput(2) },
       outputs: { r },
@@ -367,16 +367,16 @@ describe("resolver", () => {
   describe("typescript", () => {
     it("runs code parts written in TS", async () => {
       const data = resolveFlowDependenciesByPath(
-        getFixturePath("a-imports-ts-part-from-b/a.flyde")
+        getFixturePath("a-imports-ts-node-from-b/a.flyde")
       );
-      const part = data.main;
+      const node = data.main;
 
       const resolvedDeps = data.dependencies as NodesCollection;
 
       const [s, r] = spiedOutput();
 
       execute({
-        part,
+        node,
         resolvedDeps: resolvedDeps,
         inputs: { n: staticNodeInput(2) },
         outputs: { r },

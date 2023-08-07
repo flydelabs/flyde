@@ -17,7 +17,7 @@ export interface RefNodeInstance extends NodeInstanceConfig {
 
 export interface InlineNodeInstance extends NodeInstanceConfig {
   id: string;
-  part: Node;
+  node: Node;
   pos: Pos;
 }
 export type NodeInstance = RefNodeInstance | InlineNodeInstance;
@@ -36,12 +36,12 @@ export const nodeInstance = (
 
 export const inlineNodeInstance = (
   id: string,
-  part: Node,
+  node: Node,
   config?: InputPinsConfig,
   pos?: Pos
 ): NodeInstance => ({
   id,
-  part,
+  node,
   inputConfig: config || {},
   pos: pos || { x: 0, y: 0 },
 });
@@ -49,23 +49,23 @@ export const inlineNodeInstance = (
 export const isInlineNodeInstance = (
   ins: NodeInstance
 ): ins is InlineNodeInstance => {
-  return !!(ins as any).part;
+  return !!(ins as any).node;
 };
 export const isRefNodeInstance = (ins: NodeInstance): ins is RefNodeInstance =>
   !isInlineNodeInstance(ins);
 
 export const NodeInstance = (
   id: string,
-  part: NodeDefinition,
+  node: NodeDefinition,
   config?: InputPinsConfig,
   pos?: Pos
 ): NodeInstance => ({
   id,
-  nodeId: part.id,
+  nodeId: node.id,
   inputConfig: config || {},
   pos: pos || { x: 0, y: 0 },
 });
 
-export const createInsId = (part: NodeDefinition) => {
-  return `${part.id}-${slug()}`;
+export const createInsId = (node: NodeDefinition) => {
+  return `${node.id}-${slug()}`;
 };

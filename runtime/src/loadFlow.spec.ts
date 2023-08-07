@@ -39,7 +39,7 @@ describe("runtime", () => {
       assert.equal(result, "Bob");
     });
 
-    it("properly loads flow that uses a code part stored relative to the flow", async () => {
+    it("properly loads flow that uses a code node stored relative to the flow", async () => {
       const execute = loadFixture("flow-and-code/CallsBob");
       const { res } = await execute().result;
 
@@ -48,7 +48,7 @@ describe("runtime", () => {
 
     it.skip("cleans up execution when done", async () => {
       /*
-              NodeWithCleanupWrapper uses "part-with-cleanup" that uses the cleanup hook
+              NodeWithCleanupWrapper uses "node-with-cleanup" that uses the cleanup hook
               connected to the "cleanupSpy" external dependency
               test assumes if that spy is called the whole cleanup flow is properly triggered
             */

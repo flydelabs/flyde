@@ -39,7 +39,7 @@ describe("ControlFlow", () => {
       const input = dynamicNodeInput();
 
       execute({
-        part: visualNode,
+        node: visualNode,
         outputs: { b },
         inputs: { a: input },
         resolvedDeps: {},

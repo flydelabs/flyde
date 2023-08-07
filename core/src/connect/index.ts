@@ -57,7 +57,7 @@ type PositionlessVisualNode = Omit<
 >;
 
 export const connect = (
-  part: PositionlessVisualNode,
+  node: PositionlessVisualNode,
   resolvedDeps: NodesCollection,
   _debugger: Debugger = {},
   ancestorsInsIds?: string,
@@ -66,16 +66,16 @@ export const connect = (
   env: ExecuteEnv = {},
   extraContext: Record<string, any> = {}
 ): CodeNode => {
-  const { id: maybeId, connections, instances } = part;
+  const { id: maybeId, connections, instances } = node;
 
-  const nodeId = maybeId || "connected-part" + randomInt(999);
+  const nodeId = maybeId || "connected-node" + randomInt(999);
 
   return {
-    inputs: part.inputs,
-    outputs: part.outputs,
+    inputs: node.inputs,
+    outputs: node.outputs,
     id: nodeId,
-    completionOutputs: part.completionOutputs,
-    reactiveInputs: part.reactiveInputs,
+    completionOutputs: node.completionOutputs,
+    reactiveInputs: node.reactiveInputs,
     run: (fnArgs, fnOutputs) => {
       let cancelFns: CancelFn[] = [];
 
@@ -96,20 +96,20 @@ export const connect = (
       let resolveCompletionPromise: any;
       const runningInstances = new Set();
 
-      // build the inputs and outputs of the part itself
-      // they will be then connected to fnArgs and fnOutputs and will run the part
+      // build the inputs and outputs of the node itself
+      // they will be then connected to fnArgs and fnOutputs and will run the node
 
       // build all input and output maps
       instances.forEach((instance) => {
-        const part = getNode(instance, resolvedDeps);
+        const node = getNode(instance, resolvedDeps);
         const instanceId = instance.id;
         instanceToId.set(instance, instanceId);
         idToInstance.set(instanceId, instance);
 
         depGraph.addNode(instanceId);
 
-        const inputKeys = Object.keys(part.inputs);
-        const outputKeys = Object.keys(part.outputs);
+        const inputKeys = Object.keys(node.inputs);
+        const outputKeys = Object.keys(node.outputs);
 
         const args: NodeInputs = {},
           outputs: NodeOutputs = {};
@@ -231,7 +231,7 @@ export const connect = (
           console.log(fromInstancePinId);
 
           throw new Error(
-            `Output source - [${fromInstancePinId}] not found in part [${nodeId}]`
+            `Output source - [${fromInstancePinId}] not found in node [${nodeId}]`
           );
         }
 
@@ -247,7 +247,7 @@ export const connect = (
 
         const sourceNode = sourceInstance
           ? getNode(sourceInstance, resolvedDeps)
-          : part;
+          : node;
 
         const sourceOutputPin = sourceNode.outputs[fromInstancePinId];
         const isDelayed =
@@ -260,7 +260,7 @@ export const connect = (
         }
 
         if (!targetArg) {
-          throw new Error(`Target arg - [${to}] not found in part [${nodeId}]`);
+          throw new Error(`Target arg - [${to}] not found in node [${nodeId}]`);
         }
 
         const sub = sourceOutput.subscribe(async (val: any) => {
@@ -309,7 +309,7 @@ export const connect = (
           const inputs = instanceArgs.get(instance.id);
           const outputs = instanceOutputs.get(instance.id);
 
-          const part = getNode(instance, resolvedDeps);
+          const node = getNode(instance, resolvedDeps);
           if (!inputs) {
             throw new Error(
               `Unexpected error - args not found when running ${instance}`
@@ -336,7 +336,7 @@ export const connect = (
           }
           // magic happens here - parts are executed
           const cancel = execute({
-            part,
+            node,
             inputs,
             outputs,
             resolvedDeps: resolvedDeps,
@@ -374,7 +374,7 @@ export const connect = (
         });
       });
 
-      if (part.completionOutputs === undefined && runningInstances.size > 0) {
+      if (node.completionOutputs === undefined && runningInstances.size > 0) {
         return new Promise((res) => {
           resolveCompletionPromise = res;
         });

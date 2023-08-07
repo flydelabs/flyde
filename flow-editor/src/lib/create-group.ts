@@ -11,7 +11,7 @@ import {
 import { rnd } from "../physics";
 import { NodeInstance } from "@flyde/core";
 import { PromptFn } from "..";
-import { nodeStylePresetColors } from "../visual-part-editor/instance-view/NodeStyleMenu";
+import { nodeStylePresetColors } from "../visual-node-editor/instance-view/NodeStyleMenu";
 
 export const createGroup = async (
   instances: NodeInstance[],
@@ -25,7 +25,7 @@ export const createGroup = async (
 
   const instanceIds = instances.map((ins) => ins.id);
 
-  // connections that were "left out" after the grouping make great candidates for inputs of the new part
+  // connections that were "left out" after the grouping make great candidates for inputs of the new node
 
   // in inputs case it means every instance that has a connection to an instance it the group but not out of it
   const inputCandidates = connections
@@ -138,7 +138,7 @@ export const createGroup = async (
     outputs[name] = nodeOutput();
   }
 
-  // replace relevant parts with new part
+  // replace relevant parts with new node
   const midPos = instances.reduce((p, c) => {
     return middlePos(c.pos, p);
   }, instances[0].pos);

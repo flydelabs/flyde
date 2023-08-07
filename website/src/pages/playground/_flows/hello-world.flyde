@@ -1,14 +1,14 @@
 imports:
   "@flyde/stdlib":
     - Delay
-part:
+node:
   instances:
     - pos:
         x: -249.638056640625
         y: -391.20183471679684
       id: Inline-value-Hello World-673
       inputConfig: {}
-      part:
+      node:
         id: Inline-value-Hello
         inputs: {}
         outputs:
@@ -40,7 +40,7 @@ part:
         y: -99.73132080078125
       id: clbdutwlh000c4664hu8g9uxd
       inputConfig: {}
-      part:
+      node:
         id: Inline-value-World!
         inputs: {}
         outputs:

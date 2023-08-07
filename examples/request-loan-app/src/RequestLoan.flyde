@@ -9,7 +9,7 @@ imports:
     - Equals (Bool)
   CalculateRisk.flyde.ts:
     - Calculate Risk
-part:
+node:
   instances:
     - pos:
         x: -44.367919921875
@@ -67,7 +67,7 @@ part:
         y: 488.6315782165527
       id: cl9l9t9gb000b4666ckct55oy
       inputConfig: {}
-      part:
+      node:
         id: "Inline-value-(inputs.credit "
         inputs:
           credit:
@@ -104,7 +104,7 @@ part:
         y: 716.1647003173828
       id: cl9l9uq6i001a46661ezsuxk5
       inputConfig: {}
-      part:
+      node:
         id: Inline-value-Approved!
         inputs: {}
         outputs:
@@ -136,7 +136,7 @@ part:
         y: 720.6115234375
       id: cl9l9uuxb001g4666zyaqbluw
       inputConfig: {}
-      part:
+      node:
         id: Inline-value-Denied!
         inputs: {}
         outputs:

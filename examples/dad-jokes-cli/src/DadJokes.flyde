@@ -4,7 +4,7 @@ imports:
     - Get Attribute
     - Delay
     - Log
-part:
+node:
   instances:
     - pos:
         x: -730.6186218261719

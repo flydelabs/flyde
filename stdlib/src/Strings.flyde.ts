@@ -94,7 +94,7 @@ export const Substring: CodeNode = {
   defaultStyle: { icon: "fa-font" },
   namespace,
   description:
-    "Returns the part of the string between the start and end indexes",
+    "Returns the node of the string between the start and end indexes",
   inputs: {
     string: { description: "String to get substring from" },
     start: { description: "Start index" },

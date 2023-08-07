@@ -21,7 +21,7 @@ const META_DATA = {
   extraInfo: (
     <strong>
       <h3>
-        Try double-clicking each API part to see it's underlying implementation!
+        Try double-clicking each API node to see it's underlying implementation!
         In Flyde, nothing is hidden, only abstracted
       </h3>
     </strong>

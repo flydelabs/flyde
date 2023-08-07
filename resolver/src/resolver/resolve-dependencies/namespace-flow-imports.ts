@@ -10,13 +10,13 @@ import {
 import _ = require("lodash");
 
 const namespaceVisualNode = (
-  part: VisualNode,
+  node: VisualNode,
   namespace: string
 ): VisualNode => {
-  const namespacedInstances = part.instances.map((ins) => {
+  const namespacedInstances = node.instances.map((ins) => {
     if (isInlineNodeInstance(ins)) {
-      if (isVisualNode(ins.part)) {
-        return { ...ins, part: namespaceVisualNode(ins.part, namespace) };
+      if (isVisualNode(ins.node)) {
+        return { ...ins, node: namespaceVisualNode(ins.node, namespace) };
       } else {
         return ins;
       }
@@ -25,7 +25,7 @@ const namespaceVisualNode = (
     }
   });
   return {
-    ...part,
+    ...node,
     instances: namespacedInstances,
   };
 };
@@ -34,26 +34,26 @@ export const namespaceFlowImports = (
   resolvedFlow: ResolvedFlydeFlow,
   namespace: string = ""
 ): ResolvedFlydeFlow => {
-  const part = resolvedFlow.main;
-  if (isVisualNode(part)) {
-    const namespacedNode = namespaceVisualNode(part, namespace);
+  const node = resolvedFlow.main;
+  if (isVisualNode(node)) {
+    const namespacedNode = namespaceVisualNode(node, namespace);
 
     const namespacedImports = _.chain(resolvedFlow.dependencies)
       .mapKeys((_, key) => `${namespace}${key}`)
-      .mapValues((part) => {
-        const newNode = isVisualNode(part)
+      .mapValues((node) => {
+        const newNode = isVisualNode(node)
           ? {
-              ...part,
-              instances: part.instances.map((ins) => {
+              ...node,
+              instances: node.instances.map((ins) => {
                 return isRefNodeInstance(ins)
                   ? { ...ins, nodeId: `${namespace}${ins.nodeId}` }
                   : ins;
               }),
-              id: `${namespace}${part.id}`,
+              id: `${namespace}${node.id}`,
             }
           : {
-              ...part,
-              id: `${namespace}${part.id}`,
+              ...node,
+              id: `${namespace}${node.id}`,
             };
         return newNode;
       })

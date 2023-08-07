@@ -1,4 +1,4 @@
-part:
+node:
   id: Recursive
   inputs:
     a:

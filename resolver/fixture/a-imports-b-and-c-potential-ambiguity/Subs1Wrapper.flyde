@@ -1,7 +1,7 @@
 ---
 imports:
   "./SpecialSubs1.flyde.js": Special
-part:
+node:
   id: Subs1Wrapper
   inputs:
     n:

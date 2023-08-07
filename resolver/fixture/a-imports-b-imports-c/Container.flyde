@@ -1,7 +1,7 @@
 ---
 imports:
   "./Add1Wrapper.flyde": Add1Wrapper
-part:
+node:
   id: Container
   inputs:
     n:

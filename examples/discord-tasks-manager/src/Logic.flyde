@@ -17,7 +17,7 @@ imports:
   Discord.flyde.ts:
     - Discord Bot
     
-part:
+node:
   instances:
     - pos:
         x: -397.24336547851567
@@ -42,7 +42,7 @@ part:
         y: -158.24935806274414
       id: Inline-value-inputs.interact17
       inputConfig: {}
-      part:
+      node:
         id: Inline-value-Task ${inputs
         inputs:
           task:
@@ -74,7 +74,7 @@ part:
         y: -568.9275423431396
       id: Tasks Command Router-ins
       inputConfig: {}
-      part:
+      node:
         id: Tasks Command Router
         inputs:
           data:
@@ -220,7 +220,7 @@ part:
       visibleOutputs:
         - tasks
         - other
-      part:
+      node:
         id: Command Router
         inputs:
           interaction:
@@ -304,7 +304,7 @@ part:
         y: -258.2449024963379
       id: cl935owgw002046664zlvwaum
       inputConfig: {}
-      part:
+      node:
         id: "Inline-value-Current tasks "
         inputs:
           tasks:
@@ -338,7 +338,7 @@ part:
           mode: sticky
       visibleInputs:
         - msg
-      part:
+      node:
         id: Create Message
         inputs:
           msg:
@@ -354,7 +354,7 @@ part:
               y: 66.17001449584961
             id: cl9337the00014666v6s9fbqy
             inputConfig: {}
-            part:
+            node:
               id: Inline-value-inputs.interact
               inputs:
                 interaction:
@@ -406,7 +406,7 @@ part:
           mode: sticky
       visibleInputs:
         - msg
-      part:
+      node:
         id: Create Message
         inputs:
           msg:
@@ -422,7 +422,7 @@ part:
               y: 72.94857894897461
             id: cl9337the00014666v6s9fbqy
             inputConfig: {}
-            part:
+            node:
               id: Inline-value-inputs.interact
               inputs:
                 interaction:
@@ -476,7 +476,7 @@ part:
       visibleInputs:
         - cmd
         - name
-      part:
+      node:
         id: Option Extractor
         inputs:
           cmd:
@@ -498,7 +498,7 @@ part:
             inputConfig:
               name:
                 mode: queue
-            part:
+            node:
               id: Inline-value-inputs.cmd.opti
               inputs:
                 cmd:
@@ -585,7 +585,7 @@ part:
       visibleOutputs:
         - value
         - __error
-      part:
+      node:
         id: Option Extractor
         inputs:
           cmd:
@@ -607,7 +607,7 @@ part:
             inputConfig:
               name:
                 mode: queue
-            part:
+            node:
               id: Inline-value-inputs.cmd.opti
               inputs:
                 cmd:
@@ -706,7 +706,7 @@ part:
         y: -713.5735204696655
       id: Ping Pong Handler-ins
       inputConfig: {}
-      part:
+      node:
         id: Ping Pong Handler
         inputs:
           message:
@@ -740,7 +740,7 @@ part:
               - val
               - transform
           - id: cl948hivp00004666tlhc3b4c
-            part:
+            node:
               id: Inline-value-bot.createMessa
               inputs:
                 channelId:

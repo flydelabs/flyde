@@ -2,7 +2,7 @@ imports:
   "@flyde/runtime": []
   "@flyde/stdlib":
     - Log
-part:
+node:
   instances:
     - pos:
         x: -41.5

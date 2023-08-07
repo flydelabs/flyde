@@ -7,7 +7,7 @@ imports:
   Log.flyde.ts: []
   LogService.flyde.ts:
     - Log Service
-part:
+node:
   instances:
     - pos:
         x: -761.8734174624128
@@ -23,7 +23,7 @@ part:
         y: -803.7675024414062
       id: Inline-value-New user from -tt246wl
       inputConfig: {}
-      part:
+      node:
         id: "Inline-value-New user from "
         inputs:
           country:
@@ -59,7 +59,7 @@ part:
         y: -553.3733032132657
       id: Send to Discord-ins
       inputConfig: {}
-      part:
+      node:
         id: Send to Discord
         inputs:
           content:
@@ -78,7 +78,7 @@ part:
               x: -646.0132755082489
               y: -513.0880977689285
           - id: "Inline-value-{content: input-flt46yc"
-            part:
+            node:
               id: "Inline-value-{content: input"
               inputs:
                 content:

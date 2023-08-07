@@ -19,12 +19,12 @@ import {
   GroupEditorBoardData,
   PART_HEIGHT,
   VisualNodeEditorHandle,
-} from "../visual-part-editor/VisualNodeEditor";
+} from "../visual-node-editor/VisualNodeEditor";
 import produce from "immer";
 import { useHotkeys } from "../lib/react-utils/use-hotkeys";
 
 // ;
-import { createNewNodeInstance } from "../visual-part-editor/utils";
+import { createNewNodeInstance } from "../visual-node-editor/utils";
 
 import { AppToaster } from "../toaster";
 
@@ -100,7 +100,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
     >([]);
 
     const { flow, boardData: editorBoardData } = state;
-    const editedNode = state.flow.part;
+    const editedNode = state.flow.node;
 
     const [queuedInputsData, setQueuedInputsData] = React.useState<
       Record<string, Record<string, number>>
@@ -176,7 +176,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
       [onChangeEditorState]
     );
 
-    // clear board data that isn't related to part when it changes
+    // clear board data that isn't related to node when it changes
     React.useEffect(() => {
       onChangeEditorBoardData({
         selected: [],
@@ -212,14 +212,14 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
           setRedoStack([]);
         }
 
-        onChangeFlow({ part: newNode }, changeType);
+        onChangeFlow({ node: newNode }, changeType);
       },
       [onChangeFlow]
     );
 
     const onEditNode = React.useCallback(
-      (part: ImportedNodeDef) => {
-        openFile({ absPath: part.source.path });
+      (node: ImportedNodeDef) => {
+        openFile({ absPath: node.source.path });
       },
       [openFile]
     );
@@ -234,15 +234,15 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
         );
         if (newNodeIns) {
           const valueChanged = produce(flow, (draft) => {
-            const part = draft.part;
-            if (!isVisualNode(part)) {
+            const node = draft.node;
+            if (!isVisualNode(node)) {
               throw new Error(
-                `Impossible state, adding part to non visual part`
+                `Impossible state, adding node to non visual node`
               );
             }
-            part.instances.push(newNodeIns);
+            node.instances.push(newNodeIns);
           });
-          onChangeFlow(valueChanged, functionalChange("add-part"));
+          onChangeFlow(valueChanged, functionalChange("add-node"));
           hideOmnibar();
           return newNodeIns;
         }
@@ -274,17 +274,17 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
             await onImportNode(cmd.data, { pos: editorBoardData.lastMousePos });
             const finalPos = vAdd({ x: 0, y: 0 }, editorBoardData.lastMousePos);
             const newNodeIns = createNewNodeInstance(
-              cmd.data.part,
+              cmd.data.node,
               0,
               finalPos,
               resolvedDependencies
             );
             const newValue = produce(flow, (draft) => {
-              draft.part.instances.push(newNodeIns);
+              draft.node.instances.push(newNodeIns);
             });
-            onChangeFlow(newValue, functionalChange("add-imported-part"));
+            onChangeFlow(newValue, functionalChange("add-imported-node"));
             reportEvent("addNode", {
-              nodeId: cmd.data.part.id,
+              nodeId: cmd.data.node.id,
               source: "omnibar",
             });
             break;
@@ -345,7 +345,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
               key={editedNode.id}
               boardData={editorBoardData}
               onChangeBoardData={onChangeEditorBoardData}
-              part={editedNode}
+              node={editedNode}
               onGoToNodeDef={onEditNode}
               onChangeNode={onChangeNode}
               resolvedDependencies={resolvedDependencies}

@@ -4,7 +4,7 @@ import { useDebounce } from "usehooks-ts";
 import { NodePreview, useDependenciesContext } from "@flyde/flow-editor"; // ../../../../common/NodePreview/NodePreview
 
 export interface MenuAddSectionProps {
-  onAdd: (part: NodeDefinition) => void;
+  onAdd: (node: NodeDefinition) => void;
 }
 
 const SEARCH_DEBOUNCE = 400;
@@ -23,14 +23,14 @@ export const MenuAddSection: React.FC<MenuAddSectionProps> = (props) => {
     setSearchTerm(e.target.value);
   }, []);
 
-  const renderedInstances = visibleNodes.map(([k, part]) => {
+  const renderedInstances = visibleNodes.map(([k, node]) => {
     return (
       <div
         className="ins-wrapper"
-        onDoubleClick={() => props.onAdd(part)}
-        key={part.id}
+        onDoubleClick={() => props.onAdd(node)}
+        key={node.id}
       >
-        <NodePreview part={part} />
+        <NodePreview node={node} />
       </div>
     );
   });

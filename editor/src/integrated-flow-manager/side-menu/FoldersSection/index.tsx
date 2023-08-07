@@ -174,16 +174,16 @@ export const FoldersSection: React.FC<FoldersSectionProps> = (props) => {
 
   const onCreateFlow = useCallback(
     (baseNode: BaseNode) => {
-      const part = visualNode(baseNode);
-      part.outputs = { result: nodeOutput() };
-      const path = newFlowTarget + "/" + part.id;
+      const node = visualNode(baseNode);
+      node.outputs = { result: nodeOutput() };
+      const path = newFlowTarget + "/" + node.id;
 
-      part.id = "Main";
-      part.completionOutputs = ["result"];
+      node.id = "Main";
+      node.completionOutputs = ["result"];
 
       const flow: FlydeFlow = {
         imports: {},
-        part: part,
+        node: node,
       };
       devClient.saveFile(path, flow);
 

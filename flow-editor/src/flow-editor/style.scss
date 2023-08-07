@@ -1,6 +1,6 @@
-@import "./base-part-editor/styles.scss";
+@import "./base-node-editor/styles.scss";
 @import "./inline-code-modal/style.scss";
-@import "./manage-visual-part-view/styles.scss";
+@import "./manage-visual-node-view/styles.scss";
 @import "./omnibar/style.scss";
 @import "./DataInspectionModal/DataInspectionModal.scss";
 
@@ -11,7 +11,7 @@
   flex-direction: column;
   background-color: white;
 
-  > .visual-part-editor {
+  > .visual-node-editor {
     height: 100%;
     flex: 1;
   }

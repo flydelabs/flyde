@@ -21,7 +21,7 @@ import {
   DependenciesContextData,
   DependenciesContextProvider,
   usePorts,
-} from "@flyde/flow-editor"; // ../../common/visual-part-editor/utils
+} from "@flyde/flow-editor"; // ../../common/visual-node-editor/utils
 import { vAdd } from "@flyde/flow-editor"; // ../../common/physics
 
 import { FlowEditor } from "@flyde/flow-editor"; // ../../common/flow-editor/FlowEditor
@@ -35,12 +35,12 @@ import { AppToaster } from "@flyde/flow-editor"; // ../../common/toaster
 
 import { values } from "@flyde/flow-editor"; // ../../common/utils
 import { PinType } from "@flyde/core";
-import { createRuntimePlayer, RuntimePlayer } from "@flyde/flow-editor"; // ../../common/visual-part-editor/runtime-player
+import { createRuntimePlayer, RuntimePlayer } from "@flyde/flow-editor"; // ../../common/visual-node-editor/runtime-player
 
 // import { useDevServerApi } from "../api/dev-server-api";
 import { FlydeFlowChangeType, functionalChange } from "@flyde/flow-editor"; // ../../common/flow-editor/flyde-flow-change-type
 import { FlowEditorState } from "@flyde/flow-editor"; // ../../common/lib/react-utils/use-hotkeys
-import { defaultViewPort } from "@flyde/flow-editor/dist/visual-part-editor/VisualNodeEditor";
+import { defaultViewPort } from "@flyde/flow-editor/dist/visual-node-editor/VisualNodeEditor";
 // import { vscodePromptHandler } from "../vscode-ports";
 import { useState } from "react";
 import { useEffect } from "react";
@@ -104,9 +104,9 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
   useEffect(() => {
     setCurrentResolvedDeps((deps) => ({
       ...deps,
-      [flow.part.id]: { ...flow.part, source: { path: "n/a", export: "n/a" } },
+      [flow.node.id]: { ...flow.node, source: { path: "n/a", export: "n/a" } },
     }));
-  }, [flow.part]);
+  }, [flow.node]);
 
   useEffect(() => {
     return ports.onExternalFlowChange(({ flow, deps }) => {
@@ -146,7 +146,7 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
   );
 
   React.useEffect(() => {
-    document.title = `${props.integratedSource} | ${flow.part.id} | Flyde`;
+    document.title = `${props.integratedSource} | ${flow.node.id} | Flyde`;
 
     connectToRemoteDebugger("http://localhost:" + props.port);
 
@@ -212,27 +212,27 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
     props.integratedSource,
   ]);
 
-  const onAddNodeToStage = (part: NodeDefinition) => {
+  const onAddNodeToStage = (node: NodeDefinition) => {
     const finalPos = vAdd({ x: 100, y: 0 }, editorState.boardData.lastMousePos);
     const newNodeIns = createNewNodeInstance(
-      part.id,
+      node.id,
       0,
       finalPos,
       currentResolvedDeps
     );
     if (newNodeIns) {
       const valueChanged = produce(flow, (draft) => {
-        const part = draft.part;
-        if (isInlineValueNode(part)) {
-          AppToaster.show({ message: "cannot add part to code part" });
+        const node = draft.node;
+        if (isInlineValueNode(node)) {
+          AppToaster.show({ message: "cannot add node to code node" });
         } else {
-          part.instances.push(newNodeIns);
+          node.instances.push(newNodeIns);
         }
       });
       onChangeFlow(valueChanged, functionalChange("add-item"));
     }
 
-    AppToaster.show({ message: `Added ${part.id} on last cursor position` });
+    AppToaster.show({ message: `Added ${node.id} on last cursor position` });
   };
 
   const onFocusInstance = React.useCallback((insId: string) => {
@@ -272,7 +272,7 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
         const newImportables = Object.entries(importables).reduce<any[]>(
           (acc, [module, partsMap]) => {
             const parts = values(partsMap);
-            const nodeAndModule = parts.map((part) => ({ module, part }));
+            const nodeAndModule = parts.map((node) => ({ module, node }));
             return acc.concat(nodeAndModule);
           },
           []
@@ -292,15 +292,15 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
 
       const newDeps = {
         ...resolvedDependencies,
-        [importableNode.part.id]: importableNode.part,
+        [importableNode.node.id]: importableNode.node,
       };
 
       const newFlow = produce(flow, (draft) => {
         const imports = draft.imports || {};
         const modImports = imports[importableNode.module] || [];
 
-        if (!existingModuleImports.includes(importableNode.part.id)) {
-          modImports.push(importableNode.part.id);
+        if (!existingModuleImports.includes(importableNode.node.id)) {
+          modImports.push(importableNode.node.id);
         }
 
         imports[importableNode.module] = modImports;
@@ -311,7 +311,7 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
         draft.flow = newFlow;
       });
 
-      onChangeState(newState, functionalChange("imported-part"));
+      onChangeState(newState, functionalChange("imported-node"));
 
       return newDeps;
     },
@@ -324,7 +324,7 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
     const _importedNodes = importedNodes.reduce((acc, curr) => {
       return {
         ...acc,
-        [curr.part.id]: { ...curr.part, importPath: curr.module },
+        [curr.node.id]: { ...curr.node, importPath: curr.module },
       };
     }, {});
 

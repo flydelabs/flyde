@@ -80,14 +80,14 @@ const runFlow = ({
 
   localDebugger.debugDelay = debugDelay;
 
-  const firstOutputName = keys(flow.part.outputs)[0];
+  const firstOutputName = keys(flow.node.outputs)[0];
 
   return {
     executeResult: execute({
-      part: flow.part,
+      node: flow.node,
       inputs: inputs,
       outputs: { [firstOutputName]: output },
-      resolvedDeps: { ...dependencies, [flow.part.id]: flow.part },
+      resolvedDeps: { ...dependencies, [flow.node.id]: flow.node },
       _debugger: localDebugger,
       onBubbleError: (e) => {
         onError(e);
@@ -119,11 +119,11 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = (props) => {
     importedNode,
     target
   ) => {
-    const { part } = importedNode;
+    const { node } = importedNode;
 
     const depNode = Object.values(
       await import("@flyde/stdlib/dist/all-browser")
-    ).find((p) => isBaseNode(p) && p.id === part.id) as Node;
+    ).find((p) => isBaseNode(p) && p.id === node.id) as Node;
 
     setResolvedDeps((flow) => {
       return {
@@ -147,16 +147,16 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = (props) => {
       if (target) {
         const finalPos = vAdd({ x: 0, y: 0 }, target.pos);
         newNodeIns = createNewNodeInstance(
-          importedNode.part,
+          importedNode.node,
           0,
           finalPos,
           resolvedDeps
         );
-        draft.part.instances.push(newNodeIns);
+        draft.node.instances.push(newNodeIns);
 
         if (target.connectTo) {
           const { insId, outputId } = target.connectTo;
-          draft.part.connections.push({
+          draft.node.connections.push({
             from: {
               insId,
               pinId: outputId,
@@ -170,7 +170,7 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = (props) => {
       }
     });
 
-    // yacky hack to make sure flow is only rerendered when the new part exists
+    // yacky hack to make sure flow is only rerendered when the new node exists
     await new Promise((resolve) => setTimeout(resolve, 10));
 
     const newState = produce(editorState, (draft) => {
@@ -183,7 +183,7 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = (props) => {
     setFlowEditorState(newState);
 
     toastMsg(
-      `Node ${part.id} successfully imported from ${importedNode.module}`
+      `Node ${node.id} successfully imported from ${importedNode.module}`
     );
 
     return resolvedDeps;
@@ -196,7 +196,7 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = (props) => {
       ).filter(isBaseNode) as ImportedNode[];
       return {
         importables: parts.map((b) => ({
-          part: { ...b, source: { path: "n/a", export: "n/a" } },
+          node: { ...b, source: { path: "n/a", export: "n/a" } },
           module: "@flyde/stdlib",
         })),
         errors: [],
@@ -226,9 +226,9 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = (props) => {
   useEffect(() => {
     setResolvedDeps((f) => ({
       ...f,
-      main: editorState.flow.part as ImportedNode,
+      main: editorState.flow.node as ImportedNode,
     }));
-  }, [editorState.flow.part]);
+  }, [editorState.flow.node]);
 
   const flowEditorProps: FlydeFlowEditorProps = {
     state: editorState,

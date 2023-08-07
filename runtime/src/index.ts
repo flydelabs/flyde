@@ -47,7 +47,7 @@ export function loadFlowFromContent<Inputs>(
   ) as ResolvedDependencies;
 
   const mainNode: ImportedNode = {
-    ...flow.part,
+    ...flow.node,
     source: { path: fullFlowPath, export: "n/a" },
   }; // TODO - fix the need for imported visual parts to declare an export source.
 
@@ -65,7 +65,7 @@ export function loadFlowFromContent<Inputs>(
 
       debugLogger("Using debugger %o", _debugger);
       destroy = await simplifiedExecute(
-        flow.part,
+        flow.node,
         deps,
         inputs || {},
         onOutputs,

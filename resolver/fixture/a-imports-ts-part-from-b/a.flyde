@@ -1,7 +1,7 @@
 imports:
   "./Sub.flyde.ts":
   - Sub
-part:
+node:
   id: Sub1
   inputs:
     n:

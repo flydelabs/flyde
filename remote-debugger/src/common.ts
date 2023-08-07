@@ -64,7 +64,7 @@ export enum DebuggerServerEventType {
 
   PROCESSING_CHANGE = "processing-changed",
   INPUTS_STATE_CHANGE = "inputs-state-changed",
-  PART_ERROR = "part-error",
+  PART_ERROR = "node-error",
 
   EVENTS_BATCH = "events-batch",
 }

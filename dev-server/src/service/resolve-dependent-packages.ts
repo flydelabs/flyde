@@ -18,7 +18,7 @@ export async function resolveDependentPackages(
         const parts = paths.reduce((acc, filePath) => {
           if (isCodeNodePath(filePath)) {
             const obj = resolveCodeNodeDependencies(filePath).parts.reduce(
-              (obj, { part }) => ({ ...obj, [part.id]: part }),
+              (obj, { node }) => ({ ...obj, [node.id]: node }),
               {}
             );
             return { ...acc, ...obj };
@@ -28,7 +28,7 @@ export async function resolveDependentPackages(
               readFileSync(filePath, "utf8"),
               filePath
             );
-            return { ...acc, [flow.part.id]: flow.part };
+            return { ...acc, [flow.node.id]: flow.node };
           } catch (e) {
             console.error(`Skipping corrupt flow at ${filePath}, error: ${e}`);
             return acc;

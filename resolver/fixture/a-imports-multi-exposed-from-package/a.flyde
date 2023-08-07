@@ -2,7 +2,7 @@ imports:
   "@acme/multiple-exports":
     - Add
     - Sub
-part:
+node:
   id: MultiWrapper
   inputs:
     n:

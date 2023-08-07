@@ -1,6 +1,6 @@
 import { CodeNode, nodeOutput } from "@flyde/core";
 
-const part: CodeNode = {
+const node: CodeNode = {
   id: "Sub",
   inputs: {
     a: { mode: "required" },
@@ -14,4 +14,4 @@ const part: CodeNode = {
   },
 };
 
-export default part;
+export default node;

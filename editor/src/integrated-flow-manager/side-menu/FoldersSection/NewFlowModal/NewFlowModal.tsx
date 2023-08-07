@@ -9,13 +9,13 @@ import {
 import { BaseNode, visualNode } from "@flyde/core";
 import classNames from "classnames";
 import React from "react";
-import { BaseNodeEditor } from "@flyde/flow-editor"; // ../../../../../common/flow-editor/base-part-editor
+import { BaseNodeEditor } from "@flyde/flow-editor"; // ../../../../../common/flow-editor/base-node-editor
 
 import "./NewFlowModal.scss";
 
 export interface NewFlowModalProps {
   onCancel: () => void;
-  onCreate: (part: BaseNode) => void;
+  onCreate: (node: BaseNode) => void;
   folder: string;
 }
 
@@ -37,7 +37,7 @@ export const NewFlowModal: React.FC<NewFlowModalProps> = (props) => {
             Will create new flow inside <Code>{props.folder}</Code>
           </Callout>
           <BaseNodeEditor
-            part={baseNode}
+            node={baseNode}
             onChange={setBaseNode}
             idDisabled={false}
             hiddenOutputs

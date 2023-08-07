@@ -144,13 +144,13 @@
     &.add {
       user-select: none;
 
-      .part-section-title {
+      .node-section-title {
         font-size: 14px;
         color: #505050;
         margin: 30px 10px 10px;
       }
 
-      .part-section {
+      .node-section {
         display: flex;
         flex-wrap: wrap;
         justify-content: space-between;
@@ -167,7 +167,7 @@
         }
       }
 
-      .part-preview {
+      .node-preview {
         margin: 15px 10px;
       }
     }

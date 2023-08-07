@@ -79,7 +79,7 @@ export const runDevServer = (
       const fullPath = resolveFrom(rootDir, filename);
       const flow = deserializeFlow(readFileSync(fullPath, "utf-8"), fullPath);
       const deps = await resolveDependencies(flow, "definition", fullPath);
-      res.send({ ...deps, [flow.part.id]: flow.part });
+      res.send({ ...deps, [flow.node.id]: flow.node });
     } catch (e) {
       console.error(e);
       res.status(400).send(e);

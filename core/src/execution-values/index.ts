@@ -49,7 +49,7 @@ export const peekValueForExecution = (
   let val;
   if (!input) {
     throw new Error(
-      `Trying to peek value of inexsting input in key "${key}" in part "${nodeId}"`
+      `Trying to peek value of inexsting input in key "${key}" in node "${nodeId}"`
     );
   }
   if (isStaticInput(input)) {
@@ -138,12 +138,12 @@ export const hasNewSignificantValues = (
 export const isNodeStateValid = (
   nodeInputs: NodeInputs,
   state: NodeState,
-  part: Node
+  node: Node
 ) => {
   const connectedKeys = keys(nodeInputs);
 
-  const requiredInputs = keys(part.inputs).filter((k) => {
-    const mode = part.inputs[k]?.mode;
+  const requiredInputs = keys(node.inputs).filter((k) => {
+    const mode = node.inputs[k]?.mode;
     return !mode || mode === "required";
   });
 
@@ -159,12 +159,12 @@ export const isNodeStateValid = (
 
   return (
     entries(nodeInputs)
-      .filter(([key]) => !!part.inputs[key] || key === TRIGGER_PIN_ID) // filter irrelevant inputs
-      // .filter(([key]) => !part.reactiveInputs?.includes(key))
+      .filter(([key]) => !!node.inputs[key] || key === TRIGGER_PIN_ID) // filter irrelevant inputs
+      // .filter(([key]) => !node.reactiveInputs?.includes(key))
       .every(([key, input]) => {
         const stateItem = state.get(key);
 
-        const mode = part.inputs[key]?.mode || "required";
+        const mode = node.inputs[key]?.mode || "required";
 
         if (mode === "optional") {
           return true;
@@ -190,7 +190,7 @@ export const subscribeInputsToState = (
 
   entries(nodeInputs).forEach(([key, arg]) => {
     if (!arg) {
-      // means the part is optional and was not given
+      // means the node is optional and was not given
       return;
     }
 

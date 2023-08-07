@@ -11,7 +11,7 @@ import * as ReactDOMServer from "react-dom/server";
 
 import { FlowEditor } from "..";
 import { FlydeFlowEditorProps } from "../flow-editor/FlowEditor";
-import { defaultViewPort } from "../visual-part-editor";
+import { defaultViewPort } from "../visual-node-editor";
 
 describe("ssg/ssr support", () => {
   beforeEach(() => {
@@ -19,8 +19,8 @@ describe("ssg/ssr support", () => {
   });
 
   it("renders into string without throwing in the absence of DOM", () => {
-    const id = "part";
-    const part = visualNode({
+    const id = "node";
+    const node = visualNode({
       id,
       inputs: { a: nodeInput() },
       outputs: { r: nodeOutput() },
@@ -31,7 +31,7 @@ describe("ssg/ssr support", () => {
       state: {
         flow: {
           imports: {},
-          part,
+          node,
         },
         boardData: {
           selected: [],

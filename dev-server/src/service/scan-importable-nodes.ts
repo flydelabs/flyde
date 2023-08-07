@@ -64,7 +64,7 @@ export async function scanImportableNodes(
         );
 
         const partsObj = parts.reduce(
-          (obj, { part }) => ({ ...obj, [part.id]: part }),
+          (obj, { node }) => ({ ...obj, [node.id]: node }),
           {}
         );
         const relativePath = relative(join(fileRoot, ".."), file.fullPath);
@@ -79,7 +79,7 @@ export async function scanImportableNodes(
 
         const relativePath = relative(join(fileRoot, ".."), file.fullPath);
 
-        return { ...acc, [relativePath]: { [flow.part.id]: flow.part } };
+        return { ...acc, [relativePath]: { [flow.node.id]: flow.node } };
       } catch (e) {
         allErrors.push({
           path: file.fullPath,

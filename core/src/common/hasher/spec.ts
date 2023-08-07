@@ -36,7 +36,7 @@ const someNode: VisualNode = {
 };
 
 describe("parts hasher", () => {
-  describe("visual part", () => {
+  describe("visual node", () => {
     it("creates difference hash for different id", () => {
       const p2 = produce(someNode, (d) => {
         d.id = `${d.id}-${randomInt}`;
@@ -150,7 +150,7 @@ describe("parts hasher", () => {
     });
   });
 
-  describe("code part", () => {
+  describe("code node", () => {
     const base: InlineValueNode = {
       id: "bob2",
       runFnRawCode: `some codez`,
@@ -159,7 +159,7 @@ describe("parts hasher", () => {
       outputs: {},
     };
 
-    it("considers fn code code part properly", () => {
+    it("considers fn code code node properly", () => {
       const p2 = produce(base, (d) => {
         d.runFnRawCode = "dbdfgfdg";
       });
@@ -190,7 +190,7 @@ describe("flow hasher", () => {
         a: ["b"],
         c: ["d"],
       },
-      part: visualNode({ id: "bob" }),
+      node: visualNode({ id: "bob" }),
     };
 
     const f2: FlydeFlow = {
@@ -198,19 +198,19 @@ describe("flow hasher", () => {
         c: ["d"],
         a: ["b"],
       },
-      part: visualNode({ id: "bob" }),
+      node: visualNode({ id: "bob" }),
     };
 
     assert.equal(hashFlow(f1), hashFlow(f2));
   });
 
-  it("emits different hash for different part", () => {
+  it("emits different hash for different node", () => {
     const f1: FlydeFlow = {
       imports: {
         a: ["b"],
         c: ["d"],
       },
-      part: visualNode({ id: "bob" }),
+      node: visualNode({ id: "bob" }),
     };
 
     const f2: FlydeFlow = {
@@ -218,7 +218,7 @@ describe("flow hasher", () => {
         c: ["d"],
         a: ["b"],
       },
-      part: visualNode({ id: "bob2" }),
+      node: visualNode({ id: "bob2" }),
     };
 
     assert.notEqual(hashFlow(f1), hashFlow(f2));

@@ -29,7 +29,7 @@ const META_DATA = {
   key: "debounce-throttling",
 };
 
-const extraInfo = `Cool right? you can try duplicating parts by pressing shift+D. Connect parts together by clicking on the source part's output pin and then on a the targets part's input pin`;
+const extraInfo = `Cool right? you can try duplicating parts by pressing shift+D. Connect parts together by clicking on the source node's output pin and then on a the targets node's input pin`;
 
 export default function DebounceThrottlingExample(): JSX.Element {
   const result = useRef(dynamicOutput());
@@ -53,13 +53,13 @@ export default function DebounceThrottlingExample(): JSX.Element {
   useEffect(() => {
     setFlowProps(
       produce(flowProps, (draft) => {
-        const part = draft.flow.part;
-        if (isVisualNode(part)) {
-          const debIns = part.instances.find(
+        const node = draft.flow.node;
+        if (isVisualNode(node)) {
+          const debIns = node.instances.find(
             (ins) => isRefNodeInstance(ins) && ins.nodeId === "Debounce"
           );
           debIns.inputConfig.wait = staticInputPinConfig(deb);
-          const thrIns = part.instances.find(
+          const thrIns = node.instances.find(
             (ins) => isRefNodeInstance(ins) && ins.nodeId === "Throttle"
           );
           thrIns.inputConfig.wait = staticInputPinConfig(thr);

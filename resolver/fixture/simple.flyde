@@ -1,4 +1,4 @@
-part:
+node:
   id: Simple
   inputs:
     a:

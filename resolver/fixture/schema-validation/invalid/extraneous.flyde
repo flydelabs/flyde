@@ -1,6 +1,6 @@
 ---
 bob: "2"
-part:
+node:
   inputs:
     n1:
       type: number

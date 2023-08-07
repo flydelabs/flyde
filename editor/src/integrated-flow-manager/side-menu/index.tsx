@@ -20,7 +20,7 @@ export interface IntegratedFlowSideMenuProps {
   flow: FlydeFlow;
   flowPath: string;
 
-  onAdd: (part: NodeDefinition) => void;
+  onAdd: (node: NodeDefinition) => void;
 
   onChangeFlow: (flow: FlydeFlow, type: FlydeFlowChangeType) => void;
 
@@ -94,7 +94,7 @@ export const IntegratedFlowSideMenu: React.FC<IntegratedFlowSideMenuProps> = (
       case "add": {
         return (
           <div className="menu-section add" style={{ width: `${width}px` }}>
-            <div className="title">Add part</div>
+            <div className="title">Add node</div>
             <MenuAddSection onAdd={props.onAdd} />
           </div>
         );
@@ -105,7 +105,7 @@ export const IntegratedFlowSideMenu: React.FC<IntegratedFlowSideMenuProps> = (
             <div className="title">Files & Flows</div>
             <FoldersSection
               currentFile={props.flowPath}
-              editedNode={props.flow.part}
+              editedNode={props.flow.node}
               onFocusInstance={onFocusInstance}
               flow={props.flow}
             />

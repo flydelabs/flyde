@@ -13,7 +13,7 @@ imports:
     - Span
   Div.flyde.js:
     - Div
-part:
+node:
   instances:
     - pos:
         x: -68.42527832031251
@@ -59,7 +59,7 @@ part:
       visibleInputs:
         - tup
         - values
-      part:
+      node:
         id: Inline-value-inputs.values.m
         inputs:
           values:
@@ -122,7 +122,7 @@ part:
       visibleInputs:
         - vals
         - __trigger
-      part:
+      node:
         id: Inline-value-[...inputs.vals
         inputs:
           vals:
@@ -166,7 +166,7 @@ part:
       inputConfig:
         value:
           mode: queue
-      part:
+      node:
         id: Counter
         inputs:
           value:
@@ -215,7 +215,7 @@ part:
             inputConfig: {}
             nodeId: List From 3
           - id: cl9n5gsim000y4666mlmovgh1
-            part:
+            node:
               id: "Inline-value-inputs.value + "
               inputs:
                 value:
@@ -248,7 +248,7 @@ part:
               - value
               - __trigger
           - id: cl9n5hluc00054666sk1dk39h
-            part:
+            node:
               id: "Inline-value-inputs.value - "
               inputs:
                 value:
@@ -376,7 +376,7 @@ part:
       visibleInputs:
         - val
         - idx
-      part:
+      node:
         id: Inline-value-[inputs.idx, in
         inputs:
           idx:
@@ -419,7 +419,7 @@ part:
         y: 805.23
       id: Inline-value-Result is ${in-pd03cnj
       inputConfig: {}
-      part:
+      node:
         id: Inline-value-Result is ${in
         inputs:
           a:

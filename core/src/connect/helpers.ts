@@ -10,8 +10,8 @@ export const THIS_INS_ID = "__this";
 export const ERROR_PIN_ID = "__error";
 export const TRIGGER_PIN_ID = "__trigger";
 
-export const getNodeInputs = (part: NodeDefinition) => {
-  return { ...part.inputs, [TRIGGER_PIN_ID]: nodeInput() };
+export const getNodeInputs = (node: NodeDefinition) => {
+  return { ...node.inputs, [TRIGGER_PIN_ID]: nodeInput() };
 };
 
 export const getInputName = (pinId: string) => {
@@ -32,8 +32,8 @@ export const getOutputName = (pinId: string) => {
   }
 };
 
-export const getNodeOutputs = (part: NodeDefinition) => {
-  return { ...part.outputs, [ERROR_PIN_ID]: nodeOutput() };
+export const getNodeOutputs = (node: NodeDefinition) => {
+  return { ...node.outputs, [ERROR_PIN_ID]: nodeOutput() };
 };
 
 export const isExternalConnectionNode = (

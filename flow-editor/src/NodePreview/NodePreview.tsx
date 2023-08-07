@@ -3,12 +3,12 @@ import React from "react";
 import {
   InstanceView,
   InstanceViewProps,
-} from "../visual-part-editor/instance-view/InstanceView";
+} from "../visual-node-editor/instance-view/InstanceView";
 
-export const NodePreview: React.FC<{ part: NodeDefinition }> = ({ part }) => {
-  const ins = nodeInstance("bob", part.id, {});
+export const NodePreview: React.FC<{ node: NodeDefinition }> = ({ node }) => {
+  const ins = nodeInstance("bob", node.id, {});
   const instanceProps: InstanceViewProps = {
-    part,
+    node,
     instance: ins,
     connections: [],
     viewPort: { pos: { x: 0, y: 0 }, zoom: 1 },
@@ -50,7 +50,7 @@ export const NodePreview: React.FC<{ part: NodeDefinition }> = ({ part }) => {
   };
 
   return (
-    <div className="part-preview">
+    <div className="node-preview">
       <InstanceView {...instanceProps} />
     </div>
   );

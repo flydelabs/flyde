@@ -16,11 +16,11 @@ export * from "./simplified-execute";
 
 export * from "./node";
 
-export * from "./node/get-part-with-dependencies";
+export * from "./node/get-node-with-dependencies";
 
 // export * from "./serdes";
 
-export * from "./inline-value-to-code-part";
+export * from "./inline-value-to-code-node";
 
 export * from "./web-project";
 

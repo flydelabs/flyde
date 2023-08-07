@@ -11,7 +11,7 @@ import _ = require("lodash");
 import { namespaceFlowImports } from "./namespace-flow-imports";
 
 describe("namespace flows", () => {
-  it("namespaces referred part ids and their imports", () => {
+  it("namespaces referred node ids and their imports", () => {
     const flow: ResolvedFlydeFlowDefinition = {
       main: visualNode({
         id: "Bob",

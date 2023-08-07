@@ -33,7 +33,7 @@ export interface ConciseCodeNode extends ConciseBaseNode {
 
 export const conciseBaseNode = (concise: ConciseBaseNode): BaseNode => {
   return {
-    id: "a-part",
+    id: "a-node",
     ...concise,
     inputs: (concise.inputs || []).reduce<InputPinMap>((prev, curr) => {
       const [clean, mode] = curr.split("|");
@@ -41,10 +41,10 @@ export const conciseBaseNode = (concise: ConciseBaseNode): BaseNode => {
         mode &&
         !["required", "required-if-connected", "optional"].includes(mode)
       ) {
-        throw new Error(`Bad mode ${mode} in concise part`);
+        throw new Error(`Bad mode ${mode} in concise node`);
       }
       if (!clean) {
-        throw new Error(`Bad input ${curr} in concise part`);
+        throw new Error(`Bad input ${curr} in concise node`);
       }
 
       return { ...prev, [clean]: nodeInput(mode as InputMode) };
@@ -66,11 +66,11 @@ export const conciseNode = (concise: ConciseVisualNode): VisualNode => {
       const [t1, t2] = to.split(".");
 
       if (!f1) {
-        throw new Error(`Bad source connection ${from} in concise part`);
+        throw new Error(`Bad source connection ${from} in concise node`);
       }
 
       if (!t1) {
-        throw new Error(`Bad target connection ${to} in concise part`);
+        throw new Error(`Bad target connection ${to} in concise node`);
       }
 
       return {

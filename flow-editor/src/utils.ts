@@ -1,4 +1,4 @@
-import { isJsxValue } from "./visual-part-editor/utils";
+import { isJsxValue } from "./visual-node-editor/utils";
 import {
   getEnvKeyFromValue,
   isEnvValue,

@@ -36,7 +36,7 @@ export const simplifiedExecute = (
   }, {});
 
   return execute({
-    part: nodeToRun,
+    node: nodeToRun,
     inputs: _inputs,
     outputs,
     resolvedDeps: resolvedDependencies,

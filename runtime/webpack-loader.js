@@ -14,15 +14,15 @@ module.exports = async function loader() {
   );
 
   const originalFlowFolder = dirname(this.resourcePath);
-  dependencies = Object.entries(dependencies).reduce((acc, [key, part]) => {
-    if (typeof part.run === "function") {
-      const requirePath = relative(originalFlowFolder, part.source.path);
-      if (part.source.export === "default") {
-        part.run = `___require('./${requirePath}').run___`;
+  dependencies = Object.entries(dependencies).reduce((acc, [key, node]) => {
+    if (typeof node.run === "function") {
+      const requirePath = relative(originalFlowFolder, node.source.path);
+      if (node.source.export === "default") {
+        node.run = `___require('./${requirePath}').run___`;
       } else {
-        part.run = `___require('./${requirePath}').${part.source.export}.run___`;
+        node.run = `___require('./${requirePath}').${node.source.export}.run___`;
       }
-      return { ...acc, [key]: part };
+      return { ...acc, [key]: node };
     }
     return acc;
   }, []);

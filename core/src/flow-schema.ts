@@ -32,11 +32,11 @@ const instance = z
     visibleInputs: z.optional(z.array(z.string())),
     visibleOutputs: z.optional(z.array(z.string())),
     nodeId: z.optional(z.string()),
-    part: z.optional(z.any()),
+    node: z.optional(z.any()),
     style: z.optional(nodeStyle),
   })
-  .refine((val) => val.part || val.nodeId, {
-    message: "Instance must have either an inline part or refer to a nodeId",
+  .refine((val) => val.node || val.nodeId, {
+    message: "Instance must have either an inline node or refer to a nodeId",
   });
 
 const inputPinSchema = z.union([
@@ -90,7 +90,7 @@ const visualNode = z
 
 export type FlydeFlow = {
   imports?: Record<string, String[]>;
-  part: VisualNode;
+  node: VisualNode;
 };
 
 export interface ImportSource {
@@ -133,5 +133,5 @@ export type ResolvedFlydeFlow =
 
 export const flydeFlowSchema = z.strictObject({
   imports: z.optional(importSchema).default({}),
-  part: visualNode,
+  node: visualNode,
 });

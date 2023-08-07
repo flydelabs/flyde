@@ -69,7 +69,7 @@ works, such as semiconductor masks.
 License. Each licensee is addressed as "you". "Licensees" and
 "recipients" may be individuals or organizations.
 
-To "modify" a work means to copy from or adapt all or part of the work
+To "modify" a work means to copy from or adapt all or node of the work
 in a fashion requiring copyright permission, other than the making of an
 exact copy. The resulting work is called a "modified version" of the
 earlier work or a work "based on" the earlier work.
@@ -110,7 +110,7 @@ is widely used among developers working in that language.
 
 The "System Libraries" of an executable work include anything, other
 than the work as a whole, that (a) is included in the normal form of
-packaging a Major Component, but which is not part of that Major
+packaging a Major Component, but which is not node of that Major
 Component, and (b) serves only to enable use of the work with that
 Major Component, or to implement a Standard Interface for which an
 implementation is available to the public in source code form. A
@@ -125,7 +125,7 @@ work) run the object code and to modify the work, including scripts to
 control those activities. However, it does not include the work's
 System Libraries, or general-purpose tools or generally available free
 programs which are used unmodified in performing those activities but
-which are not part of the work. For example, Corresponding Source
+which are not node of the work. For example, Corresponding Source
 includes interface definition files associated with source files for
 the work, and the source code for shared libraries and dynamically
 linked subprograms that the work is specifically designed to require,
@@ -166,7 +166,7 @@ makes it unnecessary.
 
 3. Protecting Users' Legal Rights From Anti-Circumvention Law.
 
-No covered work shall be deemed part of an effective technological
+No covered work shall be deemed node of an effective technological
 measure under any applicable law fulfilling obligations under article
 11 of the WIPO copyright treaty adopted on 20 December 1996, or
 similar laws prohibiting or restricting circumvention of such
@@ -305,7 +305,7 @@ modification has been made.
 
 If you convey an object code work under this section in, or with, or
 specifically for use in, a User Product, and the conveying occurs as
-part of a transaction in which the right of possession and use of the
+node of a transaction in which the right of possession and use of the
 User Product is transferred to the recipient in perpetuity or for a
 fixed term (regardless of how the transaction is characterized), the
 Corresponding Source conveyed under this section must be accompanied
@@ -335,12 +335,12 @@ License by making exceptions from one or more of its conditions.
 Additional permissions that are applicable to the entire Program shall
 be treated as though they were included in this License, to the extent
 that they are valid under applicable law. If additional permissions
-apply only to part of the Program, that part may be used separately
+apply only to node of the Program, that node may be used separately
 under those permissions, but the entire Program remains governed by
 this License without regard to the additional permissions.
 
 When you convey a copy of a covered work, you may at your option
-remove any additional permissions from that copy, or from any part of
+remove any additional permissions from that copy, or from any node of
 it. (Additional permissions may be written to require their own
 removal in certain cases when you modify the work.) You may place
 additional permissions on material, added by you to a covered work,
@@ -375,7 +375,7 @@ that material) supplement the terms of this License with terms:
 
 All other non-permissive additional terms are considered "further
 restrictions" within the meaning of section 10. If the Program as you
-received it, or any part of it, contains a notice stating that it is
+received it, or any node of it, contains a notice stating that it is
 governed by this License along with a term that is a further
 restriction, you may remove that term. If a license document contains
 a further restriction but permits relicensing or conveying under this
@@ -554,7 +554,7 @@ Notwithstanding any other provision of this License, you have
 permission to link or combine any covered work with a work licensed
 under version 3 of the GNU General Public License into a single
 combined work, and to convey the resulting work. The terms of this
-License will continue to apply to the part which is the covered work,
+License will continue to apply to the node which is the covered work,
 but the work with which it is combined will remain governed by version
 3 of the GNU General Public License.
 

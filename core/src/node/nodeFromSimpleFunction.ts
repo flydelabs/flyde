@@ -52,7 +52,7 @@ export function nodeFromSimpleFunction(data: SimpleFnData): CodeNode {
             outputs[data.output.name]?.next(result);
           }
         } catch (e) {
-          console.error("Error in part", e);
+          console.error("Error in node", e);
           adv.onError(e);
         }
       },

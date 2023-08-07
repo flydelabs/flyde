@@ -48,16 +48,16 @@ export type OmniBarState = {
 const SYSTEM_ITEMS: OmniBarItem[] = [
   // {
   //   cmd: {
-  //     type: OmniBarCmdType.CREATE_GROUPED_PART,
+  //     type: OmniBarCmdType.CREATE_GROUPED_node,
   //   },
-  //   title: "Create new visual part",
+  //   title: "Create new visual node",
   //   suggestOnEmpty: true,
   // },
   // {
   //   cmd: {
-  //     type: OmniBarCmdType.CREATE_CODE_PART,
+  //     type: OmniBarCmdType.CREATE_CODE_node,
   //   },
-  //   title: "Create new code part",
+  //   title: "Create new code node",
   //   suggestOnEmpty: true,
   // },
 ];
@@ -76,9 +76,9 @@ export const Omnibar: React.FC<OmnibarProps> = (props) => {
     const addItems = all
       // .filter((k) => k.includes(query))
       .map((k) => {
-        const part: Node = resolvedNodes[k] as Node;
+        const node: Node = resolvedNodes[k] as Node;
         return {
-          title: `${part.id}`,
+          title: `${node.id}`,
           cmd: {
             type: OmniBarCmdType.ADD,
             data: k,
@@ -89,8 +89,8 @@ export const Omnibar: React.FC<OmnibarProps> = (props) => {
 
     const importableItems = importables.map((i) => {
       return {
-        title: `${i.part.id}`,
-        description: i.part.description,
+        title: `${i.node.id}`,
+        description: i.node.description,
         cmd: {
           type: OmniBarCmdType.IMPORT,
           data: i,

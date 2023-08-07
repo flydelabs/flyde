@@ -2,7 +2,7 @@
 imports:
   "./Adds1Wrapper.flyde": Adds1Wrapper
   "./Subs1Wrapper.flyde": Subs1Wrapper
-part:
+node:
   id: Container
   inputs:
     n:

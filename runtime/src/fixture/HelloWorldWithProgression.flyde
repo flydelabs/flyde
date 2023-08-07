@@ -2,14 +2,14 @@ imports:
   "@flyde/stdlib":
     - Delay
     - Loop List
-part:
+node:
   instances:
     - pos:
         x: -130.47068969726564
         y: 147.54583740234375
       id: clacauk7q00024664dvk97m72
       inputConfig: {}
-      part:
+      node:
         id: Inline-value-Bob
         inputs: {}
         outputs:

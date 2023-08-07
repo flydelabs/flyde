@@ -25,7 +25,7 @@ export const runAddTests = (
       const r = new Subject();
       r.subscribe(fn);
       execute({
-        part: add,
+        node: add,
         inputs: { n1, n2 },
         outputs: { r },
         resolvedDeps: resolvedDeps,
@@ -46,7 +46,7 @@ export const runAddTests = (
       const r = new Subject();
       r.subscribe(fn);
       execute({
-        part: add,
+        node: add,
         inputs: { n1, n2 },
         outputs: { r },
         resolvedDeps: resolvedDeps,
@@ -69,7 +69,7 @@ export const runAddTests = (
       const r = new Subject();
       r.subscribe(fn);
       execute({
-        part: add,
+        node: add,
         inputs: { n1, n2 },
         outputs: { r },
         resolvedDeps: resolvedDeps,
@@ -95,7 +95,7 @@ export const runAddTests = (
       const r = new Subject();
       r.subscribe(fn);
       execute({
-        part: add,
+        node: add,
         inputs: { n1, n2 },
         outputs: { r },
         resolvedDeps: resolvedDeps,
@@ -121,7 +121,7 @@ export const runAddTests = (
       const r = new Subject();
       r.subscribe(fn);
       execute({
-        part: add,
+        node: add,
         inputs: { n1, n2 },
         outputs: { r },
         resolvedDeps: resolvedDeps,

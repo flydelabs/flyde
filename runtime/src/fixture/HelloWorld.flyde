@@ -1,12 +1,12 @@
 imports: {}
-part:
+node:
   instances:
     - pos:
         x: -132.15184204101564
         y: 306.1363830566406
       id: clacauk7q00024664dvk97m72
       inputConfig: {}
-      part:
+      node:
         id: Inline-value-Hello World
         inputs: {}
         outputs:
