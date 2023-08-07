@@ -209,10 +209,10 @@ export function resolveDependencies(
     }
   }
 
-  const mainPart: ImportedNodeDef = {
+  const mainNode: ImportedNodeDef = {
     ...flow.part,
     source: { path: fullFlowPath, export: "n/a" },
   }; // TODO - fix the need for imported visual parts to declare an export source.
 
-  return { ...deps, [mainPart.id]: mainPart };
+  return { ...deps, [mainNode.id]: mainNode };
 }

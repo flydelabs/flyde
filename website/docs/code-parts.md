@@ -22,7 +22,7 @@ Let's say we want create a scraping part that uses [Scrape-it](https://www.npmjs
 import { CodeNode } from "@flyde/core";
 import scrapeIt from "scrape-it";
 
-export const scrapeItPart: CodeNode = {
+export const scrapeItNode: CodeNode = {
   name: "Scrape It",
   description: "Scrapes a website",
   inputs: {

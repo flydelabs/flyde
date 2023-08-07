@@ -2,7 +2,7 @@ import { isJsxValue } from "./visual-part-editor/utils";
 import {
   getEnvKeyFromValue,
   isEnvValue,
-  isStaticValueVisualPart,
+  isStaticValueVisualNode,
 } from "@flyde/core";
 import moment from "moment";
 import React from "react";
@@ -65,7 +65,7 @@ export const toString = (v: any): string => {
     return "JSX Value";
   }
 
-  if (isStaticValueVisualPart(v)) {
+  if (isStaticValueVisualNode(v)) {
     return "Embedded Node";
   }
 

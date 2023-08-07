@@ -49,7 +49,7 @@ import { isStaticInputPinConfig } from "../node";
 import { Debugger, DebuggerEvent, DebuggerEventType } from "./debugger";
 import {
   customNodesToNodesCollection,
-  inlineValueNodeToPart,
+  inlineValueNodeToNode,
 } from "../inline-value-to-code-part";
 
 export type SubjectMap = OMapF<Subject<any>>;
@@ -97,7 +97,7 @@ export type CodeExecutionData = {
 export const INNER_STATE_SUFFIX = "_inner";
 export const INPUTS_STATE_SUFFIX = "_inputs";
 
-const executeCodePart = (data: CodeExecutionData) => {
+const executeCodeNode = (data: CodeExecutionData) => {
   const {
     part,
     inputs,
@@ -209,7 +209,7 @@ const executeCodePart = (data: CodeExecutionData) => {
   // for each input received, if the state is valid and the part isn't already processing
   // we'll run the part, otherwise, we'll wait for it to be valid
 
-  const maybeRunPart = (input?: { key: string; value: any }) => {
+  const maybeRunNode = (input?: { key: string; value: any }) => {
     const isReactiveInput = input?.key && reactiveInputs.includes(input?.key);
 
     if (processing && !isReactiveInput) {
@@ -312,7 +312,7 @@ const executeCodePart = (data: CodeExecutionData) => {
                 if (
                   hasNewSignificantValues(inputs, inputsState, env, part.id)
                 ) {
-                  maybeRunPart();
+                  maybeRunNode();
                 }
               } else {
                 // do nothing, part is not done
@@ -360,7 +360,7 @@ const executeCodePart = (data: CodeExecutionData) => {
                   if (
                     hasNewSignificantValues(inputs, inputsState, env, part.id)
                   ) {
-                    maybeRunPart();
+                    maybeRunNode();
                   }
                 }
               })
@@ -418,7 +418,7 @@ const executeCodePart = (data: CodeExecutionData) => {
             env,
             part.id
           );
-          maybeRunPart({ key: maybeReactiveKey, value });
+          maybeRunNode({ key: maybeReactiveKey, value });
         } else {
           const hasStaticValuePending = entries(inputs).find(([k, input]) => {
             const isQueue = isQueueInputPinConfig((input as any).config);
@@ -447,7 +447,7 @@ const executeCodePart = (data: CodeExecutionData) => {
               part.id
             );
 
-            maybeRunPart({ key, value });
+            maybeRunNode({ key, value });
           }
         }
       } else {
@@ -456,7 +456,7 @@ const executeCodePart = (data: CodeExecutionData) => {
     }
   };
 
-  maybeRunPart();
+  maybeRunNode();
   const cleanSubscriptions = subscribeInputsToState(
     inputs,
     inputsState,
@@ -465,7 +465,7 @@ const executeCodePart = (data: CodeExecutionData) => {
       reportInputStateChange();
 
       try {
-        maybeRunPart({ key, value });
+        maybeRunNode({ key, value });
       } catch (e) {
         onError(e);
       }
@@ -561,7 +561,7 @@ export const execute: ExecuteFn = ({
     }
   };
 
-  const processPart = (part: Node): CodeNode => {
+  const processNode = (part: Node): CodeNode => {
     if (isVisualNode(part)) {
       return connect(
         part,
@@ -574,13 +574,13 @@ export const execute: ExecuteFn = ({
         extraContext
       );
     } else if (isInlineValueNode(part)) {
-      return inlineValueNodeToPart(part, inlineValueNodeContext);
+      return inlineValueNodeToNode(part, inlineValueNodeContext);
     } else {
       return part;
     }
   };
 
-  const processedPart = processPart(part);
+  const processedNode = processNode(part);
 
   const onEvent = _debugger.onEvent || noop; // TODO - remove this for "production" mode
 
@@ -649,8 +649,8 @@ export const execute: ExecuteFn = ({
     mediatedOutputs[pinId] = mediator;
   });
 
-  const cancelFn = executeCodePart({
-    part: processedPart,
+  const cancelFn = executeCodeNode({
+    part: processedNode,
     inputs: mediatedInputs,
     outputs: mediatedOutputs,
     resolvedDeps: processedNodes,

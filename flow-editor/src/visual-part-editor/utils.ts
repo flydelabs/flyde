@@ -117,10 +117,10 @@ export const findClosestPin = (
   });
 
   const instancesData = part.instances.reduce<any[]>((acc, ins) => {
-    const insPart = getNodeDef(ins, resolvedNodes);
+    const insNode = getNodeDef(ins, resolvedNodes);
 
-    const visibleInputs = getVisibleInputs(ins, insPart, part.connections);
-    const visibleOutputs = getVisibleOutputs(ins, insPart, part.connections);
+    const visibleInputs = getVisibleInputs(ins, insNode, part.connections);
+    const visibleOutputs = getVisibleOutputs(ins, insNode, part.connections);
 
     const ips = visibleInputs.map((id) => ({
       ins,
@@ -250,18 +250,18 @@ export const createNewInlineNodeInstance = (
 };
 
 export const createNewNodeInstance = (
-  nodeIdOrPart: string | NodeDefinition,
+  nodeIdOrNode: string | NodeDefinition,
   offset: number = -1 * PART_HEIGHT * 1.5,
   lastMousePos: Pos,
   resolvedNodes: NodesDefCollection
 ): NodeInstance => {
   const part =
-    typeof nodeIdOrPart === "string"
-      ? getNodeDef(nodeIdOrPart, resolvedNodes)
-      : nodeIdOrPart;
+    typeof nodeIdOrNode === "string"
+      ? getNodeDef(nodeIdOrNode, resolvedNodes)
+      : nodeIdOrNode;
 
   if (!part) {
-    throw new Error(`${nodeIdOrPart} part not found in resolvedNodes`);
+    throw new Error(`${nodeIdOrNode} part not found in resolvedNodes`);
   }
 
   const inputsConfig = entries(part.inputs).reduce((acc, [k, v]) => {
@@ -529,7 +529,7 @@ export const centerBoardPosOnTarget = (
 const FIT_VIEWPORT_MIN_ZOOM = 0.3;
 const FIT_VIEWPORT_MAX_ZOOM = 1.2;
 
-export const fitViewPortToPart = (
+export const fitViewPortToNode = (
   part: VisualNode,
   resolvedNodes: NodesDefCollection,
   vpSize: Size,

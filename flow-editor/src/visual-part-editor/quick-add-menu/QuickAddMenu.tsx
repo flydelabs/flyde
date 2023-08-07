@@ -27,7 +27,7 @@ export type QuickMenuValueMatch = {
 
 export type QuickMenuImportMatch = {
   type: "import";
-  importablePart: ImportableSource;
+  importableNode: ImportableSource;
 };
 
 export type QuickMenuMatch =
@@ -38,7 +38,7 @@ export type QuickMenuMatch =
 export type QuickAddMenuData = {
   pos: Pos;
   ins?: NodeInstance;
-  targetPart: NodeDefinition;
+  targetNode: NodeDefinition;
   pinId: string;
   pinType: PinType;
 };
@@ -63,12 +63,12 @@ const matchTitle = (match: QuickMenuMatch) => {
       return "Add inline value or function";
     }
     case "import": {
-      return `Import ${match.importablePart.part.id} from ${match.importablePart.module}`;
+      return `Import ${match.importableNode.part.id} from ${match.importableNode.module}`;
     }
   }
 };
 
-const renderPart: ItemRenderer<QuickMenuMatch> = (
+const renderNode: ItemRenderer<QuickMenuMatch> = (
   match,
   { handleClick, modifiers, query }
 ) => {
@@ -120,7 +120,7 @@ const nodePredicate: ItemPredicate<QuickMenuMatch> = (
 };
 
 export const QuickAddMenu: React.FC<QuickMenuProps> = (props) => {
-  const { resolvedDependencies, targetPart: part } = props;
+  const { resolvedDependencies, targetNode: part } = props;
   const style = {
     left: props.pos.x,
     top: props.pos.y,
@@ -154,7 +154,7 @@ export const QuickAddMenu: React.FC<QuickMenuProps> = (props) => {
         .map<QuickMenuMatch>((curr) => {
           return {
             type: "import",
-            importablePart: curr,
+            importableNode: curr,
           };
         })
     : [];
@@ -169,7 +169,7 @@ export const QuickAddMenu: React.FC<QuickMenuProps> = (props) => {
         className="quick-add-parts-select"
         items={matches}
         itemPredicate={nodePredicate}
-        itemRenderer={renderPart}
+        itemRenderer={renderNode}
         inputProps={{ className: "quick-add-input" }}
         noResults={<MenuItem disabled={true} text="No results." />}
         onItemSelect={(match) => props.onAdd(match)}

@@ -61,7 +61,7 @@ export type FlydeFlowEditorProps = {
 
   onNewEnvVar?: (name: string, val: any) => void;
 
-  onExtractInlinePart: (ins: InlineNodeInstance) => Promise<void>;
+  onExtractInlineNode: (ins: InlineNodeInstance) => Promise<void>;
 
   ref?: React.Ref<any>;
 
@@ -90,7 +90,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
   React.forwardRef((props, visualEditorRef) => {
     const { state, onChangeEditorState } = props;
 
-    const { resolvedDependencies, onImportPart } = useDependenciesContext();
+    const { resolvedDependencies, onImportNode } = useDependenciesContext();
 
     const [undoStack, setUndoStack] = React.useState<
       Partial<FlowEditorState>[]
@@ -100,7 +100,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
     >([]);
 
     const { flow, boardData: editorBoardData } = state;
-    const editedPart = state.flow.part;
+    const editedNode = state.flow.part;
 
     const [queuedInputsData, setQueuedInputsData] = React.useState<
       Record<string, Record<string, number>>
@@ -186,7 +186,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
         lastMousePos: { x: 0, y: 0 },
       });
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [editedPart.id]);
+    }, [editedNode.id]);
 
     useHotkeys(
       "cmd+z",
@@ -203,8 +203,8 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
       [state, undoStack, redoStack]
     );
 
-    const onChangePart = React.useCallback(
-      (newPart: VisualNode, changeType: FlydeFlowChangeType) => {
+    const onChangeNode = React.useCallback(
+      (newNode: VisualNode, changeType: FlydeFlowChangeType) => {
         const shouldIgnore = ignoreUndoChangeTypes.some((str) =>
           changeType.message.includes(str)
         );
@@ -212,12 +212,12 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
           setRedoStack([]);
         }
 
-        onChangeFlow({ part: newPart }, changeType);
+        onChangeFlow({ part: newNode }, changeType);
       },
       [onChangeFlow]
     );
 
-    const onEditPart = React.useCallback(
+    const onEditNode = React.useCallback(
       (part: ImportedNodeDef) => {
         openFile({ absPath: part.source.path });
       },
@@ -260,7 +260,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
       async (cmd: OmniBarCmd) => {
         switch (cmd.type) {
           case OmniBarCmdType.ADD:
-            reportEvent("addPart", { nodeId: cmd.data, source: "omnibar" });
+            reportEvent("addNode", { nodeId: cmd.data, source: "omnibar" });
             return onAddNodeInstance(cmd.data);
           case OmniBarCmdType.ADD_VALUE: {
             const ref: VisualNodeEditorHandle | undefined = (
@@ -271,7 +271,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
             break;
           }
           case OmniBarCmdType.IMPORT: {
-            await onImportPart(cmd.data, { pos: editorBoardData.lastMousePos });
+            await onImportNode(cmd.data, { pos: editorBoardData.lastMousePos });
             const finalPos = vAdd({ x: 0, y: 0 }, editorBoardData.lastMousePos);
             const newNodeIns = createNewNodeInstance(
               cmd.data.part,
@@ -283,7 +283,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
               draft.part.instances.push(newNodeIns);
             });
             onChangeFlow(newValue, functionalChange("add-imported-part"));
-            reportEvent("addPart", {
+            reportEvent("addNode", {
               nodeId: cmd.data.part.id,
               source: "omnibar",
             });
@@ -302,7 +302,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
         reportEvent,
         onAddNodeInstance,
         visualEditorRef,
-        onImportPart,
+        onImportNode,
         editorBoardData.lastMousePos,
         resolvedDependencies,
         flow,
@@ -328,7 +328,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
     );
 
     const renderInner = () => {
-      if (isInlineValueNode(editedPart)) {
+      if (isInlineValueNode(editedNode)) {
         throw new Error("Impossible state");
       } else {
         return (
@@ -342,19 +342,19 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
             <VisualNodeEditor
               currentInsId={ROOT_INS_ID}
               ref={visualEditorRef}
-              key={editedPart.id}
+              key={editedNode.id}
               boardData={editorBoardData}
               onChangeBoardData={onChangeEditorBoardData}
-              part={editedPart}
-              onGoToNodeDef={onEditPart}
-              onChangePart={onChangePart}
+              part={editedNode}
+              onGoToNodeDef={onEditNode}
+              onChangeNode={onChangeNode}
               resolvedDependencies={resolvedDependencies}
               clipboardData={clipboardData}
               onCopy={setClipboardData}
-              nodeIoEditable={!editedPart.id.startsWith("Trigger")}
+              nodeIoEditable={!editedNode.id.startsWith("Trigger")}
               onInspectPin={onInspectPin}
               onShowOmnibar={showOmnibar}
-              onExtractInlinePart={props.onExtractInlinePart}
+              onExtractInlineNode={props.onExtractInlineNode}
               queuedInputsData={queuedInputsData}
               initialPadding={props.initialPadding}
               instancesWithErrors={instancesWithErrors}

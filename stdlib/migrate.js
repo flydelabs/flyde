@@ -28,15 +28,15 @@ for (const f of files) {
       throw "oops more than 1";
     }
 
-    const firstPart = parts[firstId];
+    const firstNode = parts[firstId];
 
-    if (!isVisualNode(firstPart)) {
+    if (!isVisualNode(firstNode)) {
       throw "wat";
     }
 
     const deps = Array.from(
       new Set(
-        firstPart.instances
+        firstNode.instances
           .filter((i) => isRefNodeInstance(i))
           .map((i) => i.nodeId)
       )
@@ -49,7 +49,7 @@ for (const f of files) {
 
     const complete = {
       imports,
-      part: firstPart,
+      part: firstNode,
     };
 
     const { success } = flydeFlowSchema.safeParse(complete);
@@ -60,7 +60,7 @@ for (const f of files) {
 
     const flow = serializeFlow(complete);
 
-    fs.writeFileSync("./parts/" + firstPart.id + ".flyde", flow, "utf-8");
+    fs.writeFileSync("./parts/" + firstNode.id + ".flyde", flow, "utf-8");
 
     // const neededImports =
   }
@@ -69,14 +69,14 @@ for (const f of files) {
 
   // const deser = deserializeFlow(fs.readFileSync(flowPath, 'utf-8'), flowPath);
 
-  // const firstPart = deser.parts[Object.keys(deser.parts)[0]];
+  // const firstNode = deser.parts[Object.keys(deser.parts)[0]];
 
-  // if (isInlineValueNode(firstPart)) {
+  // if (isInlineValueNode(firstNode)) {
   //     if (Object.keys(deser.parts) > 1) {
   //         throw new Error('many parts in ' + f)
   //     }
 
-  //     const {fnCode, ...part} = firstPart;
+  //     const {fnCode, ...part} = firstNode;
 
   //     part.run = "__FN_HERE__"
 
@@ -84,7 +84,7 @@ for (const f of files) {
 
   //     const template = `module.exports = ${nodeStr}`
 
-  //     fs.writeFileSync('./parts/' + firstPart.id + '.flyde.js', template, 'utf-8');
+  //     fs.writeFileSync('./parts/' + firstNode.id + '.flyde.js', template, 'utf-8');
   //     fs.rmSync(flowPath)
   // }
   // console.log(deser);

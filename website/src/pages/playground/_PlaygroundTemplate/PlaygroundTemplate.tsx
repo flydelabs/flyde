@@ -135,7 +135,7 @@ export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (
     //     ? container.getBoundingClientRect()
     //     : { width: 500, height: 500 };
     //   return produce(state, (draft) => {
-    //     draft.boardData.viewPort = fitViewPortToPart(
+    //     draft.boardData.viewPort = fitViewPortToNode(
     //       draft.flow.part as any,
     //       resolvedFlow.dependencies,
     //       vpSize

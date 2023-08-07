@@ -263,7 +263,7 @@ export const codeNode = testDataCreator<CodeNode>({
   run: noop as any,
 });
 
-export const inlineValuePart = testDataCreator<InlineValueNode>({
+export const inlineValueNode = testDataCreator<InlineValueNode>({
   id: "part",
   inputs: {},
   outputs: {},

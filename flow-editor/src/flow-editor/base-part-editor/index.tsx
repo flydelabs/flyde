@@ -91,40 +91,40 @@ export const BaseNodeEditor: React.FC<BaseNodeEditorProps> = (props) => {
 
   const onAddInput = React.useCallback(
     (name: string, mode: InputMode) => {
-      const newPart = produce(part, (draft) => {
+      const newNode = produce(part, (draft) => {
         draft.inputs[name] = nodeInput(mode);
       });
-      onChange(newPart);
+      onChange(newNode);
     },
     [part, onChange]
   );
 
   const onRemoveInput = React.useCallback(
     (name: string) => {
-      const newPart = produce(part, (draft) => {
+      const newNode = produce(part, (draft) => {
         delete draft.inputs[name];
       });
-      onChange(newPart);
+      onChange(newNode);
     },
     [part, onChange]
   );
 
   const onAddOutput = React.useCallback(
     (name: string) => {
-      const newPart = produce(part, (draft) => {
+      const newNode = produce(part, (draft) => {
         draft.outputs[name] = nodeOutput();
       });
-      onChange(newPart);
+      onChange(newNode);
     },
     [part, onChange]
   );
 
   const onRemoveOutput = React.useCallback(
     (name: string) => {
-      const newPart = produce(part, (draft) => {
+      const newNode = produce(part, (draft) => {
         delete draft.outputs[name];
       });
-      onChange(newPart);
+      onChange(newNode);
     },
     [part, onChange]
   );
@@ -133,7 +133,7 @@ export const BaseNodeEditor: React.FC<BaseNodeEditorProps> = (props) => {
     (code: string) => {
       try {
         const p: any = JSON.parse(code);
-        const newPart = produce(part, (draft) => {
+        const newNode = produce(part, (draft) => {
           Object.entries(p).forEach(([k, v]: [string, any]) => {
             const input = draft.inputs[k];
             const output = draft.outputs[k];
@@ -144,7 +144,7 @@ export const BaseNodeEditor: React.FC<BaseNodeEditorProps> = (props) => {
             }
           });
         });
-        onChange(newPart);
+        onChange(newNode);
       } catch (e) {
         console.error("cannot parse");
       }

@@ -105,7 +105,7 @@ export const IntegratedFlowSideMenu: React.FC<IntegratedFlowSideMenuProps> = (
             <div className="title">Files & Flows</div>
             <FoldersSection
               currentFile={props.flowPath}
-              editedPart={props.flow.part}
+              editedNode={props.flow.part}
               onFocusInstance={onFocusInstance}
               flow={props.flow}
             />

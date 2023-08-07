@@ -41,7 +41,7 @@ describe("ssg/ssr support", () => {
       },
       onChangeEditorState: noop,
       hideTemplatingTips: false,
-      onExtractInlinePart: noop as any,
+      onExtractInlineNode: noop as any,
     };
 
     let s = "";

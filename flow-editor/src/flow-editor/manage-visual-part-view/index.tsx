@@ -9,7 +9,7 @@ import { BaseNodeEditor } from "../base-part-editor";
 
 export interface ManageVisualNodeViewProps {
   title: string;
-  initialPart?: VisualNode;
+  initialNode?: VisualNode;
   externalModule?: boolean;
   onSave: (part: VisualNode) => Promise<void> | void;
   onCancel: () => void;
@@ -29,8 +29,8 @@ export const renderCreateIOOption = (
   />
 );
 
-const defaultPart: VisualNode = {
-  id: "NewPart",
+const defaultNode: VisualNode = {
+  id: "NewNode",
   inputs: {},
   outputs: {},
   instances: [],
@@ -44,15 +44,15 @@ export const ManageVisualNodeView: React.FC<ManageVisualNodeViewProps> = (
 ) => {
   const { title } = props;
 
-  const [draftPart, setDraftPart] = React.useState(
-    props.initialPart || defaultPart
+  const [draftNode, setDraftNode] = React.useState(
+    props.initialNode || defaultNode
   );
 
-  const onChangeBasePart = React.useCallback(
+  const onChangeBaseNode = React.useCallback(
     (base: BaseNode) => {
-      setDraftPart({ ...draftPart, ...base });
+      setDraftNode({ ...draftNode, ...base });
     },
-    [draftPart]
+    [draftNode]
   );
 
   return (
@@ -65,8 +65,8 @@ export const ManageVisualNodeView: React.FC<ManageVisualNodeViewProps> = (
       >
         <main className={classNames(Classes.DIALOG_BODY)}>
           <BaseNodeEditor
-            part={draftPart}
-            onChange={onChangeBasePart}
+            part={draftNode}
+            onChange={onChangeBaseNode}
             idDisabled={false}
           />
           {props.externalModule ? (
@@ -78,7 +78,7 @@ export const ManageVisualNodeView: React.FC<ManageVisualNodeViewProps> = (
           <div className={Classes.DIALOG_FOOTER_ACTIONS}>
             <Button onClick={props.onCancel}>Cancel</Button>
             <Button
-              onClick={() => props.onSave(draftPart)}
+              onClick={() => props.onSave(draftNode)}
               intent={Intent.PRIMARY}
               disabled={props.externalModule}
             >

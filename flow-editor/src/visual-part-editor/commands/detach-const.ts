@@ -8,7 +8,7 @@ import {
   randomInt,
 } from "@flyde/core";
 import produce from "immer";
-import { createInlineValuePart } from "../../flow-editor/inline-code-modal/inline-code-to-part";
+import { createInlineValueNode } from "../../flow-editor/inline-code-modal/inline-code-to-part";
 
 export const handleDetachConstEditorCommand = (
   part: VisualNode,
@@ -36,14 +36,14 @@ export const handleDetachConstEditorCommand = (
 
     const value = JSON.stringify(inputConfig.value);
 
-    const newPart = createInlineValuePart({
+    const newNode = createInlineValueNode({
       code: `${value}`,
       type: InlineValueNodeType.VALUE,
     });
 
     const newIns = inlineNodeInstance(
       `value-${randomInt(999)}`,
-      newPart,
+      newNode,
       {},
       { x: instance.pos.x, y: instance.pos.y - 100 }
     );

@@ -46,12 +46,12 @@ export function loadFlowFromContent<Inputs>(
     fullFlowPath
   ) as ResolvedDependencies;
 
-  const mainPart: ImportedNode = {
+  const mainNode: ImportedNode = {
     ...flow.part,
     source: { path: fullFlowPath, export: "n/a" },
   }; // TODO - fix the need for imported visual parts to declare an export source.
 
-  deps[mainPart.id] = mainPart;
+  deps[mainNode.id] = mainNode;
 
   return (inputs, params = {}) => {
     const { onOutputs, ...otherParams } = params;

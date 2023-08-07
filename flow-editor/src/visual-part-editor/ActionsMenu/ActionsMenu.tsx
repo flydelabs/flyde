@@ -30,8 +30,8 @@ import { PromptAIMenu } from "./PromptAIMenu";
 import { RunFlowModal } from "./RunFlowModal";
 
 export enum ActionType {
-  AddPart = "add-part",
-  RemovePart = "remove-part",
+  AddNode = "add-part",
+  RemoveNode = "remove-part",
   Group = "group",
   UnGroup = "un-group",
   AddInlineValue = "add-inline-value",
@@ -41,8 +41,8 @@ export enum ActionType {
 }
 
 export type ActionData = {
-  [ActionType.AddPart]: { importablePart: ImportableSource };
-  [ActionType.AI]: { importablePart: ImportableSource };
+  [ActionType.AddNode]: { importableNode: ImportableSource };
+  [ActionType.AI]: { importableNode: ImportableSource };
 };
 
 export type BaseAction<T extends ActionType> = {
@@ -109,7 +109,7 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
 
   const types: ActionType[] = [];
 
-  types.push(ActionType.AddPart);
+  types.push(ActionType.AddNode);
   types.push(ActionType.AddInlineValue);
 
   if (selectedInstances.length === 1) {
@@ -145,7 +145,7 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
   }
 
   if (selectedInstances.length > 0) {
-    types.push(ActionType.RemovePart);
+    types.push(ActionType.RemoveNode);
   }
 
   types.push(ActionType.AI);
@@ -184,7 +184,7 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
       }
 
       switch (type) {
-        case ActionType.AddPart:
+        case ActionType.AddNode:
           setShowAddNodeMenu(true);
           break;
         case ActionType.Run:
@@ -230,14 +230,14 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
     }
   );
 
-  const onAddPart = useCallback(
-    (importablePart: ImportableSource) => {
-      onAction({ type: ActionType.AddPart, data: { importablePart } });
+  const onAddNode = useCallback(
+    (importableNode: ImportableSource) => {
+      onAction({ type: ActionType.AddNode, data: { importableNode } });
     },
     [onAction]
   );
 
-  const onAddAIPart = useCallback(
+  const onAddAINode = useCallback(
     async (prompt: string) => {
       const startTime = Date.now();
       setGeneratingNodeTime(startTime);
@@ -246,7 +246,7 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
           promptLength: prompt.length,
         });
         const response = await generateNodeFromPrompt({ prompt });
-        const { inputs, outputs } = response.importablePart.part;
+        const { inputs, outputs } = response.importableNode.part;
         const totalTime = Date.now() - startTime;
         reportEvent("generateNodeFromPrompt:success", {
           totalTime,
@@ -278,7 +278,7 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
       {showAddNodeMenu ? (
         <AddNodeMenu
           onRequestImportables={onRequestImportables}
-          onAddPart={onAddPart}
+          onAddNode={onAddNode}
           onClose={closeAddNodeMenu}
         />
       ) : null}
@@ -295,7 +295,7 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
             setShowAIPromptModal(false);
             setGeneratingNodeTime(null);
           }}
-          onSubmit={onAddAIPart}
+          onSubmit={onAddAINode}
           submitting={generatingNodeTime !== null}
           submitTime={generatingNodeTime}
         />
@@ -313,12 +313,12 @@ const actionsMetaData: Record<
   ActionType,
   { icon: string; text: string; hotkey?: string }
 > = {
-  [ActionType.AddPart]: {
+  [ActionType.AddNode]: {
     icon: addNodeIcon,
     text: 'Open the "add part" menu',
     hotkey: "a",
   },
-  [ActionType.RemovePart]: {
+  [ActionType.RemoveNode]: {
     icon: removeNodeIcon,
     text: `Remove selected instances`,
     hotkey: "backspace",

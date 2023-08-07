@@ -43,7 +43,7 @@ export const layoutToInstances = (
   });
 };
 
-export const orderVisualPart = (
+export const orderVisualNode = (
   part: VisualNode,
   resolvedNodes: NodesDefCollection,
   itrs: number,

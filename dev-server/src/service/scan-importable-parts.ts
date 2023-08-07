@@ -18,7 +18,7 @@ import { resolveDependentPackages } from "./resolve-dependent-packages";
 import * as StdLib from "@flyde/stdlib/dist/all";
 import { readFileSync } from "fs";
 
-export interface CorruptScannedPart {
+export interface CorruptScannedNode {
   type: "corrupt";
   error: string;
 }

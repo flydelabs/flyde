@@ -9,14 +9,14 @@ import {
 } from "@flyde/core";
 import _ = require("lodash");
 
-const namespaceVisualPart = (
+const namespaceVisualNode = (
   part: VisualNode,
   namespace: string
 ): VisualNode => {
   const namespacedInstances = part.instances.map((ins) => {
     if (isInlineNodeInstance(ins)) {
       if (isVisualNode(ins.part)) {
-        return { ...ins, part: namespaceVisualPart(ins.part, namespace) };
+        return { ...ins, part: namespaceVisualNode(ins.part, namespace) };
       } else {
         return ins;
       }
@@ -36,12 +36,12 @@ export const namespaceFlowImports = (
 ): ResolvedFlydeFlow => {
   const part = resolvedFlow.main;
   if (isVisualNode(part)) {
-    const namespacedPart = namespaceVisualPart(part, namespace);
+    const namespacedNode = namespaceVisualNode(part, namespace);
 
     const namespacedImports = _.chain(resolvedFlow.dependencies)
       .mapKeys((_, key) => `${namespace}${key}`)
       .mapValues((part) => {
-        const newPart = isVisualNode(part)
+        const newNode = isVisualNode(part)
           ? {
               ...part,
               instances: part.instances.map((ins) => {
@@ -55,13 +55,13 @@ export const namespaceFlowImports = (
               ...part,
               id: `${namespace}${part.id}`,
             };
-        return newPart;
+        return newNode;
       })
       .value();
 
     return {
       ...resolvedFlow,
-      main: namespacedPart,
+      main: namespacedNode,
       dependencies: namespacedImports,
     };
   } else {

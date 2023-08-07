@@ -16,7 +16,7 @@ import { execute, SubjectMap } from "./execute";
 import { isDefined, okeys } from "./common";
 import { Subject } from "rxjs";
 import { NodesCollection } from ".";
-import { conciseCodePart } from "./test-utils";
+import { conciseCodeNode } from "./test-utils";
 
 export const add: CodeNode = {
   id: "add",
@@ -325,7 +325,7 @@ export const peq: CodeNode = {
   },
 };
 
-export const delay5 = conciseCodePart({
+export const delay5 = conciseCodeNode({
   id: "delay5",
   inputs: ["item"],
   outputs: ["r"],
@@ -337,7 +337,7 @@ export const delay5 = conciseCodePart({
   },
 });
 
-export const delay = conciseCodePart({
+export const delay = conciseCodeNode({
   id: "delay5",
   inputs: ["item", "ms"],
   outputs: ["r"],
@@ -364,7 +364,7 @@ export const testNodesCollection = {
   delay,
 };
 
-export const accumulate = conciseCodePart({
+export const accumulate = conciseCodeNode({
   id: "accumulate",
   inputs: ["count|required", "val|optional"],
   outputs: ["r"],
@@ -421,7 +421,7 @@ export const accUntil: CodeNode = {
   },
 };
 
-export const spreadList = conciseCodePart({
+export const spreadList = conciseCodeNode({
   id: "SpreadList",
   inputs: ["list"],
   outputs: ["val", "idx", "length"],

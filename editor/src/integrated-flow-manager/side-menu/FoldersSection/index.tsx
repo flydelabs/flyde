@@ -31,9 +31,9 @@ export interface FoldersSectionProps {
   flow: FlydeFlow;
 
   // data: NavigatorData;
-  editedPart: CustomNode;
+  editedNode: CustomNode;
 
-  // onEditPart: (nodeId: string) => void;
+  // onEditNode: (nodeId: string) => void;
   onFocusInstance: (nodeId: string) => void;
 }
 
@@ -173,8 +173,8 @@ export const FoldersSection: React.FC<FoldersSectionProps> = (props) => {
   );
 
   const onCreateFlow = useCallback(
-    (basePart: BaseNode) => {
-      const part = visualNode(basePart);
+    (baseNode: BaseNode) => {
+      const part = visualNode(baseNode);
       part.outputs = { result: nodeOutput() };
       const path = newFlowTarget + "/" + part.id;
 

@@ -9,18 +9,18 @@ import {
 } from "@flyde/core";
 
 import cuid from "cuid";
-import { defaultProjectRoutePart } from "./default-route-project";
+import { defaultProjectRouteNode } from "./default-route-project";
 
 export const triggerNodeId = () => `API Trigger ${randomInt(99999)}`;
 
-export const routeTriggerPart = (id: string = triggerNodeId()) => {
+export const routeTriggerNode = (id: string = triggerNodeId()) => {
   return {
     id,
-    ...defaultProjectRoutePart,
+    ...defaultProjectRouteNode,
   };
 };
 
-export const scheduledTriggerPart = (): VisualNode => {
+export const scheduledTriggerNode = (): VisualNode => {
   return {
     id: triggerNodeId(),
     inputs: {

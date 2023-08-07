@@ -21,7 +21,7 @@ import { AddNodeMenuResultsSummary } from "./AddNodeMenuResultsSummary";
 
 export interface AddNodeMenuProps {
   onRequestImportables: () => Promise<LocalImportableResult>;
-  onAddPart: (part: ImportableSource) => void;
+  onAddNode: (part: ImportableSource) => void;
   onClose: () => void;
 }
 
@@ -37,7 +37,7 @@ export type AddNodeMenuFilterStructure = {
 };
 
 export const AddNodeMenu: React.FC<AddNodeMenuProps> = (props) => {
-  const { onRequestImportables, onAddPart, onClose } = props;
+  const { onRequestImportables, onAddNode, onClose } = props;
 
   const [importables, setImportables] = React.useState<ImportableSource[]>();
   const [importablesErrors, setImportablesErrors] = React.useState<
@@ -58,7 +58,7 @@ export const AddNodeMenu: React.FC<AddNodeMenuProps> = (props) => {
     ImportableSource[] | null
   >(null);
 
-  const [selectedPart, setSelectedPart] =
+  const [selectedNode, setSelectedNode] =
     React.useState<ImportableSource>(null);
 
   const onNodeExpand = useCallback(
@@ -77,12 +77,12 @@ export const AddNodeMenu: React.FC<AddNodeMenuProps> = (props) => {
     [openNodes]
   );
 
-  const _onAddPart = useCallback(
+  const _onAddNode = useCallback(
     (part: ImportableSource) => {
-      onAddPart(part);
+      onAddNode(part);
       onClose();
     },
-    [onAddPart, onClose]
+    [onAddNode, onClose]
   );
 
   const { onInstallRuntimeRequest, reportEvent } = usePorts();
@@ -169,8 +169,8 @@ export const AddNodeMenu: React.FC<AddNodeMenuProps> = (props) => {
         case "ArrowUp": {
           e.preventDefault();
 
-          if (visibleImportables && !selectedPart) {
-            setSelectedPart(
+          if (visibleImportables && !selectedNode) {
+            setSelectedNode(
               visibleImportables[
                 e.key === "ArrowDown" ? 0 : visibleImportables.length - 1
               ]
@@ -178,27 +178,27 @@ export const AddNodeMenu: React.FC<AddNodeMenuProps> = (props) => {
             return;
           }
 
-          if (visibleImportables && selectedPart) {
+          if (visibleImportables && selectedNode) {
             const index = visibleImportables.findIndex(
-              (p) => p === selectedPart
+              (p) => p === selectedNode
             );
             let nextIndex = e.key === "ArrowDown" ? index + 1 : index - 1;
             nextIndex =
               nextIndex < 0 ? visibleImportables.length - 1 : nextIndex;
             nextIndex = nextIndex >= visibleImportables.length ? 0 : nextIndex;
-            setSelectedPart(visibleImportables[nextIndex]);
+            setSelectedNode(visibleImportables[nextIndex]);
           }
           break;
         }
         case "Enter": {
-          if (selectedPart) {
-            _onAddPart(selectedPart);
+          if (selectedNode) {
+            _onAddNode(selectedNode);
           }
           break;
         }
       }
     },
-    [visibleImportables, selectedPart, _onAddPart]
+    [visibleImportables, selectedNode, _onAddNode]
   );
 
   const onNodeClick = useCallback(
@@ -273,17 +273,17 @@ export const AddNodeMenu: React.FC<AddNodeMenuProps> = (props) => {
           resultsCount={visibleImportables.length}
         />
         <div className="results">
-          {visibleImportables.map((importablePart) => (
+          {visibleImportables.map((importableNode) => (
             <AddNodeMenuListItem
-              importablePart={importablePart}
+              importableNode={importableNode}
               key={
-                importablePart.part.id +
-                importablePart.part.namespace +
-                importablePart.module
+                importableNode.part.id +
+                importableNode.part.namespace +
+                importableNode.module
               }
-              onAdd={_onAddPart}
-              selected={selectedPart?.part === importablePart.part}
-              onSelect={setSelectedPart}
+              onAdd={_onAddNode}
+              selected={selectedNode?.part === importableNode.part}
+              onSelect={setSelectedNode}
               onSetFilter={setFilter}
             />
           ))}

@@ -1,6 +1,6 @@
 import { VisualNode } from "@flyde/core";
 
-export const defaultProjectRoutePart: Omit<VisualNode, "id"> = {
+export const defaultProjectRouteNode: Omit<VisualNode, "id"> = {
   inputs: {
     request: {
       mode: "optional",

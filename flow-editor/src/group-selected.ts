@@ -16,7 +16,7 @@ export const groupSelected = async (
   nodeName: string,
   type: "inline" | "ref",
   prompt: PromptFn
-): Promise<{ newPart: VisualNode; currentPart: VisualNode }> => {
+): Promise<{ newNode: VisualNode; currentNode: VisualNode }> => {
   const { instances, connections } = part;
   const relevantInstances = instances.filter((ins) =>
     selected.includes(ins.id)
@@ -88,8 +88,8 @@ export const groupSelected = async (
     });
 
   return {
-    newPart: visualNode,
-    currentPart: produce(part, (draft) => {
+    newNode: visualNode,
+    currentNode: produce(part, (draft) => {
       draft.instances = [...newInstancesArr, newInstance];
       draft.connections = newConnections;
     }),

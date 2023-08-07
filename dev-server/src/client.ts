@@ -37,9 +37,9 @@ export const createDevServerClient = (baseUrl: string) => {
     },
     generateNodeFromPrompt: (
       prompt: string
-    ): Promise<{ importablePart: ImportableSource }> => {
+    ): Promise<{ importableNode: ImportableSource }> => {
       return axios
-        .post(`${baseUrl}/generatePart`, { prompt })
+        .post(`${baseUrl}/generateNode`, { prompt })
         .then((res) => res.data);
     },
   };

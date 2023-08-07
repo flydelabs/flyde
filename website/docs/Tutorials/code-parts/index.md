@@ -36,7 +36,7 @@ Create a new file, call it "EmailValidator.flyde.ts" and add the following code:
 ```
 import { CodeNode } from '@flyde/core';
 
-export const validatorPart: CodeNode = {
+export const validatorNode: CodeNode = {
   id: 'Email Validator',
   description: 'Validates an email address',
   inputs: {

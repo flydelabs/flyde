@@ -3,7 +3,7 @@ import { PinType } from "@flyde/core";
 export interface AnalyticsEventsMap {
   hotkeyUsed: { hotkey: string };
   addNodeMenuOpen: {};
-  addPart: { nodeId: string; source: string };
+  addNode: { nodeId: string; source: string };
   addValueModalOpen: { source?: string };
   addValue: { placeholdersCount: number; type?: string };
   helpMenuItem: { item: string };
@@ -11,7 +11,7 @@ export interface AnalyticsEventsMap {
   deleteInstances: { count: number };
   openInspectMenu: { source: string };
   groupSelected: { count: number };
-  unGroupPart: { instancesCount: number };
+  unGroupNode: { instancesCount: number };
   createConnection: { source: string };
   removeConnection: {};
   addIoPin: { type: PinType };

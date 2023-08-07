@@ -171,7 +171,7 @@ export const createGroup = async (
   };
 
   return { visualNode, renamedInputs, renamedOutputs };
-  // const ordered = orderVisualPart(visualNode, 20);
+  // const ordered = orderVisualNode(visualNode, 20);
 
   // return nodeInstance(`${name}-ins`, visualNode, {}, midPos);
 };

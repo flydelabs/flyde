@@ -47,7 +47,7 @@ export interface EditorPorts {
 
   generateNodeFromPrompt: (dto: {
     prompt: string;
-  }) => Promise<{ importablePart: ImportableSource }>;
+  }) => Promise<{ importableNode: ImportableSource }>;
 
   hasOpenAiToken: () => Promise<boolean>;
 }

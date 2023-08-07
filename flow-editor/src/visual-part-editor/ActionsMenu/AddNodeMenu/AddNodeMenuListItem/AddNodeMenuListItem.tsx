@@ -5,7 +5,7 @@ import React, { useCallback } from "react";
 import { AddNodeMenuFilter } from "../AddNodeMenu";
 
 export interface AddNodeMenuListItemProps {
-  importablePart: ImportableSource;
+  importableNode: ImportableSource;
   selected: boolean;
   onAdd: (part: ImportableSource) => void;
   onSelect: (part: ImportableSource) => void;
@@ -15,8 +15,8 @@ export interface AddNodeMenuListItemProps {
 export const AddNodeMenuListItem: React.FC<AddNodeMenuListItemProps> = (
   props
 ) => {
-  const { importablePart, onSetFilter, onAdd, onSelect } = props;
-  const { part, module } = importablePart;
+  const { importableNode, onSetFilter, onAdd, onSelect } = props;
+  const { part, module } = importableNode;
   const { id, description } = part;
 
   // auto scroll to element if selected
@@ -28,12 +28,12 @@ export const AddNodeMenuListItem: React.FC<AddNodeMenuListItemProps> = (
   }, [props.selected]);
 
   const _onAdd = useCallback(() => {
-    onAdd(importablePart);
-  }, [onAdd, importablePart]);
+    onAdd(importableNode);
+  }, [onAdd, importableNode]);
 
   const _onSelect = useCallback(() => {
-    onSelect(importablePart);
-  }, [onSelect, importablePart]);
+    onSelect(importableNode);
+  }, [onSelect, importableNode]);
 
   return (
     <div

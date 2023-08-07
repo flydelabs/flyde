@@ -85,12 +85,12 @@ export const SingleConnectionView: React.FC<ConnectionItemViewProps> = (
     );
   }
 
-  const fromPart =
+  const fromNode =
     isInternalConnectionNode(from) && fromInstance
       ? getNodeDef(fromInstance, resolvedNodes)
       : part;
 
-  const sourcePin = fromPart.outputs[from.pinId];
+  const sourcePin = fromNode.outputs[from.pinId];
   const delayed = sourcePin && sourcePin.delayed;
 
   const startPos = isBrowser

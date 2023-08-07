@@ -4,7 +4,7 @@ import {
   nodeOutput,
   randomInt,
 } from "@flyde/core";
-import { inlineValuePart } from "@flyde/core";
+import { inlineValueNode } from "@flyde/core";
 
 export const getVariables = (code: string) => {
   return (code.match(/inputs\.([a-zA-Z]\w*)/g) || []).map((v) =>
@@ -18,7 +18,7 @@ export type InlineValueNodeData = {
   nodeId?: string;
   type: InlineValueNodeType;
 };
-export const createInlineValuePart = ({
+export const createInlineValueNode = ({
   code,
   customView,
   nodeId,
@@ -42,7 +42,7 @@ export const createInlineValuePart = ({
 
   const dataBuilderSource = btoa(code);
 
-  return inlineValuePart({
+  return inlineValueNode({
     id: nodeId || `Inline Code ${randomInt(99999)}`,
     inputs,
     outputs,

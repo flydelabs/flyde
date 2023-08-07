@@ -169,7 +169,7 @@ export interface InstanceViewProps {
   inlineGroupProps?: VisualNodeEditorProps;
   onCloseInlineEditor: () => void;
 
-  onExtractInlinePart: (instance: InlineNodeInstance) => Promise<void>;
+  onExtractInlineNode: (instance: InlineNodeInstance) => Promise<void>;
 
   inlineEditorPortalDomNode: HTMLElement;
 
@@ -213,7 +213,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
       onConvertConstToEnv,
       inlineGroupProps,
       onUngroup,
-      onExtractInlinePart,
+      onExtractInlineNode,
       onGroupSelected,
       isConnectedInstanceSelected,
       inlineEditorPortalDomNode,
@@ -664,7 +664,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
           ? [
               {
                 text: "Extract inline part to file",
-                onClick: () => onExtractInlinePart(instance),
+                onClick: () => onExtractInlineNode(instance),
               },
             ]
           : []),
@@ -710,7 +710,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
       connectedOutputs,
       onChangeVisibleOutputs,
       onUngroup,
-      onExtractInlinePart,
+      onExtractInlineNode,
       onGroupSelected,
     ]);
 

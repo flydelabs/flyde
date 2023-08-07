@@ -6,7 +6,7 @@ export const handleDuplicateSelectedEditorCommand = (
   selected: string[]
 ) => {
   const newInstances = [];
-  const newPart = produce(part, (draft) => {
+  const newNode = produce(part, (draft) => {
     const instances = draft.instances;
     selected.forEach((id) => {
       const ins = instances.find((ins) => ins.id === id);
@@ -28,5 +28,5 @@ export const handleDuplicateSelectedEditorCommand = (
       }
     });
   });
-  return { newPart, newInstances };
+  return { newNode, newInstances };
 };

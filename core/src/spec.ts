@@ -65,12 +65,12 @@ import {
   spreadList,
 } from "./fixture";
 
-import { inlineValueNodeToPart } from "./inline-value-to-code-part";
+import { inlineValueNodeToNode } from "./inline-value-to-code-part";
 import {
-  concisePart,
-  conciseCodePart,
+  conciseNode,
+  conciseCodeNode,
   callsFirstArgs,
-  valuePart,
+  valueNode,
   spiedOutput,
   wrappedOnEvent,
 } from "./test-utils";
@@ -1215,7 +1215,7 @@ describe("main ", () => {
             },
           };
 
-          const wrappedP2 = concisePart({
+          const wrappedP2 = conciseNode({
             id: "wrappedP2",
             inputs: [],
             outputs: ["r"],
@@ -1226,7 +1226,7 @@ describe("main ", () => {
             ],
           });
 
-          const wrapper = concisePart({
+          const wrapper = conciseNode({
             id: "wrapper",
             inputs: ["v"],
             outputs: ["r"],
@@ -1308,7 +1308,7 @@ describe("main ", () => {
       it("cleans inner inputs state after part is executed - no completion", async () => {
         // this test introduces a double connection to an add part, and tests that the inner state of the inputs isn't kept
         const s = spy();
-        const part = concisePart({
+        const part = conciseNode({
           id: "test",
           inputs: ["n1", "n2"],
           outputs: ["r"],
@@ -1348,7 +1348,7 @@ describe("main ", () => {
 
       it("cleans inner inputs state after part is executed - with completion", () => {
         const s = spy();
-        const part = concisePart({
+        const part = conciseNode({
           id: "test",
           inputs: ["n1", "n2"],
           outputs: ["r"],
@@ -1391,7 +1391,7 @@ describe("main ", () => {
         /*
           internal part P will increase on each input received and return the current state
         */
-        const counter = conciseCodePart({
+        const counter = conciseCodeNode({
           id: "counter",
           inputs: ["v"],
           outputs: ["r"],
@@ -1404,7 +1404,7 @@ describe("main ", () => {
           },
         });
 
-        const counterWrapper = concisePart({
+        const counterWrapper = conciseNode({
           id: "cwrap",
           inputs: ["v"],
           outputs: ["r"],
@@ -1441,7 +1441,7 @@ describe("main ", () => {
         /*
           internal part P will increase on each input received and return the current state
         */
-        const counter = conciseCodePart({
+        const counter = conciseCodeNode({
           id: "counter",
           inputs: ["v"],
           outputs: ["r"],
@@ -1454,7 +1454,7 @@ describe("main ", () => {
           },
         });
 
-        const counterWrapper = concisePart({
+        const counterWrapper = conciseNode({
           id: "cwrap",
           inputs: ["v", "v2|optional"],
           completionOutputs: ["r2"],
@@ -1587,7 +1587,7 @@ describe("main ", () => {
   describe("uncontrolled visual parts", () => {
     it("waits for all inputs when visual part is uncontrolled", () => {
       const innerSpy = spy();
-      const innerPart: CodeNode = {
+      const innerNode: CodeNode = {
         id: "inner",
         inputs: {},
         outputs: {},
@@ -1600,13 +1600,13 @@ describe("main ", () => {
         id: "bob",
         inputs: { n: nodeInput() },
         outputs: {},
-        instances: [nodeInstance("i", innerPart.id)],
+        instances: [nodeInstance("i", innerNode.id)],
         connections: [],
         inputsPosition: {},
         outputsPosition: {},
       };
 
-      const resolvedDeps = testNodesCollectionWith(innerPart);
+      const resolvedDeps = testNodesCollectionWith(innerNode);
 
       const n = dynamicNodeInput();
       const r = new Subject();
@@ -1792,7 +1792,7 @@ describe("main ", () => {
 
   describe("code part support", () => {
     it("runs an Id code part properly", () => {
-      const inlineValuePart: InlineValueNode = {
+      const inlineValueNode: InlineValueNode = {
         id: "id",
         inputs: {
           v: nodeInput(),
@@ -1803,7 +1803,7 @@ describe("main ", () => {
         runFnRawCode: `outputs.r?.next(inputs.v)`,
       };
 
-      // const part: CodeNode = inlineValueNodeToPart(inlineValuePart);
+      // const part: CodeNode = inlineValueNodeToNode(inlineValueNode);
 
       const s = spy();
       const v = dynamicNodeInput();
@@ -1811,7 +1811,7 @@ describe("main ", () => {
 
       r.subscribe(s);
       execute({
-        part: inlineValuePart,
+        part: inlineValueNode,
         inputs: { v },
         outputs: { r },
         resolvedDeps: testNodesCollection,
@@ -1822,7 +1822,7 @@ describe("main ", () => {
 
     it("runs ADD properly on code part", () => {
       const innerSpy = spy();
-      const inlineValuePart: InlineValueNode = {
+      const inlineValueNode: InlineValueNode = {
         id: "add",
         inputs: {
           a: nodeInput(),
@@ -1837,7 +1837,7 @@ describe("main ", () => {
           `,
       };
 
-      const part = inlineValueNodeToPart(inlineValuePart, {
+      const part = inlineValueNodeToNode(inlineValueNode, {
         innerSpy,
       });
 
@@ -1899,7 +1899,7 @@ describe("main ", () => {
     });
 
     it("runs cleanup code of code parts", async () => {
-      const inlineValuePart: InlineValueNode = {
+      const inlineValueNode: InlineValueNode = {
         id: "id",
         inputs: {},
         outputs: {
@@ -1911,7 +1911,7 @@ describe("main ", () => {
           `,
       };
 
-      const part = inlineValueNodeToPart(inlineValuePart);
+      const part = inlineValueNodeToNode(inlineValueNode);
       const r = dynamicOutput();
       const s = spy();
       r.subscribe(s);
@@ -2069,7 +2069,7 @@ describe("main ", () => {
 
       const n2 = randomInt(20);
 
-      const part = concisePart({
+      const part = conciseNode({
         id: "part",
         inputs: ["n1"],
         outputs: ["r"],
@@ -2104,7 +2104,7 @@ describe("main ", () => {
 
       const n2 = randomInt(20);
 
-      const part = concisePart({
+      const part = conciseNode({
         id: "part",
         inputs: ["n1"],
         outputs: ["r"],
@@ -2207,7 +2207,7 @@ describe("main ", () => {
 
       r.subscribe(s);
 
-      const part = conciseCodePart({
+      const part = conciseCodeNode({
         inputs: ["a", "b"],
         outputs: ["r"],
         id: "bob",
@@ -2558,7 +2558,7 @@ describe("main ", () => {
       describe("implicit completion", () => {
         describe("code parts", () => {
           it("triggers an implicit completion when there are no explicit completion outputs", async () => {
-            const part = conciseCodePart({
+            const part = conciseCodeNode({
               outputs: ["r"],
               run: (_, o) => o.r?.next("ok"),
             });
@@ -2575,7 +2575,7 @@ describe("main ", () => {
           });
 
           it("waits for promises to resolve before triggering an implicit completion of code part with no explicit completion outputs", async () => {
-            const part = conciseCodePart({
+            const part = conciseCodeNode({
               outputs: ["r"],
               run: async (_, o) => {
                 await new Promise((r) => setTimeout(r, 10));
@@ -2599,7 +2599,7 @@ describe("main ", () => {
           });
 
           it("keeps state of a an implicitly running part", async () => {
-            const part = conciseCodePart({
+            const part = conciseCodeNode({
               inputs: ["a"],
               outputs: ["r"],
               reactiveInputs: ["a"],
@@ -2637,8 +2637,8 @@ describe("main ", () => {
 
         describe("visual parts", () => {
           it('triggers implicit completion when parts "inside" stop running', async () => {
-            const delayPart = (ms: number) =>
-              conciseCodePart({
+            const delayNode = (ms: number) =>
+              conciseCodeNode({
                 outputs: ["r"],
                 run: async (_, o) => {
                   await new Promise((r) => setTimeout(r, ms));
@@ -2647,10 +2647,10 @@ describe("main ", () => {
                 id: `delay-${ms}`,
               });
 
-            const delay10 = delayPart(10);
-            const delay5 = delayPart(5);
+            const delay10 = delayNode(10);
+            const delay5 = delayNode(5);
 
-            const wrapper = concisePart({
+            const wrapper = conciseNode({
               outputs: ["r"],
               instances: [
                 { id: "a", part: delay5, pos: { x: 0, y: 0 }, inputConfig: {} },
@@ -2697,8 +2697,8 @@ describe("main ", () => {
       r.subscribe(s);
       final.subscribe(s);
 
-      const somePart: CodeNode = {
-        id: "somePart",
+      const someNode: CodeNode = {
+        id: "someNode",
         inputs: {
           item: nodeInput(),
         },
@@ -2725,7 +2725,7 @@ describe("main ", () => {
       };
 
       const clean = execute({
-        part: somePart,
+        part: someNode,
         inputs: { item },
         outputs: { r, final },
         resolvedDeps: testNodesCollection,
@@ -2856,7 +2856,7 @@ describe("main ", () => {
       });
 
       it("allows creating accumulate2 visually (shared state)", () => {
-        const visualNode = concisePart({
+        const visualNode = conciseNode({
           id: "bob",
           inputs: ["val"],
           outputs: ["r"],
@@ -2894,7 +2894,7 @@ describe("main ", () => {
       });
 
       it("accumulate2 visually cleans up state properly after it is done", () => {
-        const visualNode = concisePart({
+        const visualNode = conciseNode({
           id: "bob",
           inputs: ["val", "count"],
           outputs: ["r"],
@@ -3134,7 +3134,7 @@ describe("main ", () => {
     describe("input modes", () => {
       it("required - does not run a part before with required inputs if they do not existing", () => {
         const s = spy();
-        const dummyPart = conciseCodePart({
+        const dummyNode = conciseCodeNode({
           id: "bob",
           inputs: ["a|required", "b|required"],
           outputs: ["r"],
@@ -3146,13 +3146,13 @@ describe("main ", () => {
         const [a, b] = [dynamicNodeInput(), dynamicNodeInput()];
 
         execute({
-          part: dummyPart,
+          part: dummyNode,
           inputs: { a },
           outputs: {},
           resolvedDeps: testNodesCollection,
         });
         execute({
-          part: dummyPart,
+          part: dummyNode,
           inputs: { b },
           outputs: {},
           resolvedDeps: testNodesCollection,
@@ -3164,7 +3164,7 @@ describe("main ", () => {
         assert.equal(s.callCount, 0);
 
         execute({
-          part: dummyPart,
+          part: dummyNode,
           inputs: { a, b },
           outputs: {},
           resolvedDeps: testNodesCollection,
@@ -3177,7 +3177,7 @@ describe("main ", () => {
 
       it("required if connected - runs if not connected, but does not run if connected", () => {
         const s = spy();
-        const dummyPart = conciseCodePart({
+        const dummyNode = conciseCodeNode({
           id: "bob",
           inputs: ["a|required", "b|required-if-connected"],
           outputs: ["r"],
@@ -3189,7 +3189,7 @@ describe("main ", () => {
         const [a, b] = [dynamicNodeInput(), dynamicNodeInput()];
 
         execute({
-          part: dummyPart,
+          part: dummyNode,
           inputs: { a, b },
           outputs: {},
           resolvedDeps: testNodesCollection,
@@ -3200,7 +3200,7 @@ describe("main ", () => {
         assert.equal(s.callCount, 0);
 
         execute({
-          part: dummyPart,
+          part: dummyNode,
           inputs: { a },
           outputs: {},
           resolvedDeps: testNodesCollection,
@@ -3217,7 +3217,7 @@ describe("main ", () => {
   });
 
   describe("error handling", () => {
-    const errorReportingPart = conciseCodePart({
+    const errorReportingNode = conciseCodeNode({
       id: "bad",
       inputs: ["a"],
       outputs: ["r"],
@@ -3234,7 +3234,7 @@ describe("main ", () => {
       const onEvent = wrappedOnEvent(DebuggerEventType.ERROR, debuggerSpy);
 
       execute({
-        part: errorReportingPart,
+        part: errorReportingNode,
         inputs: { a },
         outputs: {},
         resolvedDeps: testNodesCollection,
@@ -3262,7 +3262,7 @@ describe("main ", () => {
       const a = dynamicNodeInput();
 
       const p2 = {
-        ...errorReportingPart,
+        ...errorReportingNode,
         run: () => {
           throw new Error("blaft");
         },
@@ -3295,7 +3295,7 @@ describe("main ", () => {
       const a = dynamicNodeInput();
 
       const p2 = {
-        ...errorReportingPart,
+        ...errorReportingNode,
         run: async () => {
           throw new Error("blaft");
         },
@@ -3329,7 +3329,7 @@ describe("main ", () => {
       const a = dynamicNodeInput();
 
       const p2 = {
-        ...errorReportingPart,
+        ...errorReportingNode,
         run: async (_, __, { onError }) => {
           onError(new Error("blaft"));
         },
@@ -3369,14 +3369,14 @@ describe("main ", () => {
       const a = dynamicNodeInput();
 
       const p2 = {
-        ...errorReportingPart,
+        ...errorReportingNode,
         id: "nodePart2",
         run: () => {
           throw new Error("blaft");
         },
       };
 
-      const badWrapper = concisePart({
+      const badWrapper = conciseNode({
         id: "badWrap",
         inputs: ["a"],
         outputs: ["r"],
@@ -3417,14 +3417,14 @@ describe("main ", () => {
       const a = dynamicNodeInput();
 
       const p2 = {
-        ...errorReportingPart,
+        ...errorReportingNode,
         id: "nodePart2",
         run: async () => {
           throw new Error("blaft");
         },
       };
 
-      const badWrapper = concisePart({
+      const badWrapper = conciseNode({
         id: "badWrap",
         inputs: ["a"],
         outputs: ["r"],
@@ -3466,11 +3466,11 @@ describe("main ", () => {
       const s = spy();
       const a = dynamicNodeInput();
 
-      const badWrapper = concisePart({
+      const badWrapper = conciseNode({
         id: "badWrap",
         inputs: ["a"],
         outputs: ["r"],
-        instances: [nodeInstance("i1", errorReportingPart.id)],
+        instances: [nodeInstance("i1", errorReportingNode.id)],
         connections: [["a", "i1.a"]],
       });
 
@@ -3480,7 +3480,7 @@ describe("main ", () => {
         part: badWrapper,
         inputs: { a },
         outputs: {},
-        resolvedDeps: testNodesCollectionWith(errorReportingPart),
+        resolvedDeps: testNodesCollectionWith(errorReportingNode),
         _debugger: { onEvent },
         insId: "someIns",
       });
@@ -3510,11 +3510,11 @@ describe("main ", () => {
 
       r.subscribe(s2);
 
-      const badWrapper = concisePart({
+      const badWrapper = conciseNode({
         id: "badWrap",
         inputs: ["a"],
         outputs: ["r"],
-        instances: [nodeInstance("i1", errorReportingPart.id)],
+        instances: [nodeInstance("i1", errorReportingNode.id)],
         connections: [
           ["a", "i1.a"],
           [`i1.${ERROR_PIN_ID}`, "r"],
@@ -3527,7 +3527,7 @@ describe("main ", () => {
         part: badWrapper,
         inputs: { a },
         outputs: { r },
-        resolvedDeps: testNodesCollectionWith(errorReportingPart),
+        resolvedDeps: testNodesCollectionWith(errorReportingNode),
         _debugger: { onEvent },
         insId: "someIns",
       });
@@ -3550,7 +3550,7 @@ describe("main ", () => {
       errPin.subscribe(s2);
 
       execute({
-        part: errorReportingPart,
+        part: errorReportingNode,
         inputs: { a },
         outputs: { [ERROR_PIN_ID]: errPin },
         resolvedDeps: testNodesCollection,
@@ -3577,7 +3577,7 @@ describe("main ", () => {
       const errPin = dynamicOutput();
 
       execute({
-        part: errorReportingPart,
+        part: errorReportingNode,
         inputs: { a },
         outputs: { [ERROR_PIN_ID]: errPin },
         resolvedDeps: testNodesCollection,
@@ -3595,7 +3595,7 @@ describe("main ", () => {
 
   describe("async part function", () => {
     it("works with async functions", async () => {
-      const part = conciseCodePart({
+      const part = conciseCodeNode({
         id: "Async",
         inputs: [],
         outputs: ["r"],
@@ -3646,7 +3646,7 @@ describe("main ", () => {
       const [s, r] = spiedOutput();
       const [list] = dynamicNodeInputs() as [DynamicNodeInput];
 
-      const part = concisePart({
+      const part = conciseNode({
         id: "merger",
         inputs: ["list"],
         outputs: ["r"],
@@ -3677,7 +3677,7 @@ describe("main ", () => {
     });
 
     it("does not get in a loop with a sticky input that got data", () => {
-      const part = concisePart({
+      const part = conciseNode({
         id: "test",
         inputs: [],
         outputs: ["r"],
@@ -3707,7 +3707,7 @@ describe("main ", () => {
 
     // todo - add this to the implicit completion test suite
     it("queues values properly when inputs are received in a synchronous order in an async function", async () => {
-      const loopValuesPart = conciseCodePart({
+      const loopValuesNode = conciseCodeNode({
         id: "loopValues",
         inputs: [],
         outputs: ["r"],
@@ -3716,7 +3716,7 @@ describe("main ", () => {
         },
       });
 
-      const asyncId = conciseCodePart({
+      const asyncId = conciseCodeNode({
         id: "asyncId",
         inputs: ["v"],
         outputs: ["r"],
@@ -3725,12 +3725,12 @@ describe("main ", () => {
         },
       });
 
-      const wrapperPart = concisePart({
+      const wrapperNode = conciseNode({
         id: "wrapper",
         inputs: [],
         outputs: ["r"],
         instances: [
-          nodeInstance("i1", loopValuesPart.id),
+          nodeInstance("i1", loopValuesNode.id),
           nodeInstance("i2", asyncId.id),
         ],
         connections: [
@@ -3742,10 +3742,10 @@ describe("main ", () => {
       const [s, r] = spiedOutput();
 
       execute({
-        part: wrapperPart,
+        part: wrapperNode,
         inputs: {},
         outputs: { r },
-        resolvedDeps: testNodesCollectionWith(loopValuesPart, asyncId),
+        resolvedDeps: testNodesCollectionWith(loopValuesNode, asyncId),
       });
 
       await eventually(() => {
@@ -3814,7 +3814,7 @@ describe("main ", () => {
     });
 
     it("supports reading non string env variables", async () => {
-      const groupedId = concisePart({
+      const groupedId = conciseNode({
         id: "gid",
         inputs: [],
         outputs: ["r"],
@@ -3845,7 +3845,7 @@ describe("main ", () => {
     });
 
     it("supports reading properties from objects in env", async () => {
-      const groupedId = concisePart({
+      const groupedId = conciseNode({
         id: "gid",
         inputs: [],
         outputs: ["r"],
@@ -3877,7 +3877,7 @@ describe("main ", () => {
     });
 
     it("throws error if config value was not found", async () => {
-      const groupedId = concisePart({
+      const groupedId = conciseNode({
         id: "gid",
         inputs: [],
         outputs: ["r"],
@@ -3909,9 +3909,9 @@ describe("main ", () => {
 
   describe("part level trigger", () => {
     it("waits for __trigger input inside visual part", () => {
-      const v42 = valuePart("val", 42);
+      const v42 = valueNode("val", 42);
 
-      const visualNode = concisePart({
+      const visualNode = conciseNode({
         id: "visual-part",
         inputs: ["a|optional"],
         outputs: ["r"],
@@ -3945,19 +3945,19 @@ describe("main ", () => {
     });
 
     it("trigger input works in combination with static inputs", () => {
-      const addPart = conciseCodePart({
+      const addNode = conciseCodeNode({
         id: "add",
         inputs: ["a", "b"],
         outputs: ["r"],
         run: (inputs, outputs) => outputs.r?.next(inputs.a + inputs.b),
       });
 
-      const visualNode = concisePart({
+      const visualNode = conciseNode({
         id: "visual-part",
         inputs: ["a|optional"],
         outputs: ["r"],
         instances: [
-          nodeInstance("a1", addPart.id, {
+          nodeInstance("a1", addNode.id, {
             a: staticInputPinConfig(1),
             b: staticInputPinConfig(2),
           }),
@@ -3978,7 +3978,7 @@ describe("main ", () => {
         part: visualNode,
         inputs: { a },
         outputs: { r },
-        resolvedDeps: testNodesCollectionWith(addPart),
+        resolvedDeps: testNodesCollectionWith(addNode),
         onBubbleError: err,
       });
 
@@ -3991,19 +3991,19 @@ describe("main ", () => {
     });
 
     it("trigger input cannot be static", () => {
-      const addPart = conciseCodePart({
+      const addNode = conciseCodeNode({
         id: "add",
         inputs: ["a", "b"],
         outputs: ["r"],
         run: (inputs, outputs) => outputs.r?.next(inputs.a + inputs.b),
       });
 
-      const visualNode = concisePart({
+      const visualNode = conciseNode({
         id: "visual-part",
         inputs: ["a"],
         outputs: ["r"],
         instances: [
-          nodeInstance("a1", addPart.id, {
+          nodeInstance("a1", addNode.id, {
             a: staticInputPinConfig(1),
             b: staticInputPinConfig(2),
             __trigger: staticInputPinConfig(2),
@@ -4023,7 +4023,7 @@ describe("main ", () => {
         part: visualNode,
         inputs: { a },
         outputs: { r },
-        resolvedDeps: testNodesCollectionWith(addPart),
+        resolvedDeps: testNodesCollectionWith(addNode),
         onBubbleError: errSpy,
       });
 
@@ -4038,7 +4038,7 @@ describe("main ", () => {
 
   describe("misc", () => {
     it("does not clean state when reactive input is received", () => {
-      const part = conciseCodePart({
+      const part = conciseCodeNode({
         id: "part",
         inputs: ["a"],
         outputs: ["r"],
@@ -4071,7 +4071,7 @@ describe("main ", () => {
     });
 
     it("does not enter a loop when static values are connected to a reactive input", () => {
-      const part = conciseCodePart({
+      const part = conciseCodeNode({
         id: "part",
         inputs: ["a"],
         outputs: ["r"],

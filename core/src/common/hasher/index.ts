@@ -6,10 +6,10 @@ const md5 = (str: string) => {
   return _md5(str);
 };
 
-export const hashPart = (part: Node, ignorePos = true) => {
+export const hashNode = (part: Node, ignorePos = true) => {
   const { id, completionOutputs, reactiveInputs, inputs, outputs } = part;
 
-  const basePart = { id, completionOutputs, reactiveInputs, inputs, outputs };
+  const baseNode = { id, completionOutputs, reactiveInputs, inputs, outputs };
 
   if (isVisualNode(part)) {
     const { instances, connections, inputsPosition, outputsPosition } = part;
@@ -39,14 +39,14 @@ export const hashPart = (part: Node, ignorePos = true) => {
     const str = JSON.stringify({
       instancesToUse,
       conns,
-      ...basePart,
+      ...baseNode,
       maybeIoPos,
     });
     return md5(str);
   } else if (isInlineValueNode(part)) {
     const { customViewCode } = part;
     const fnCode = part.fnCode ?? part.runFnRawCode;
-    const str = JSON.stringify({ fnCode, customViewCode, ...basePart });
+    const str = JSON.stringify({ fnCode, customViewCode, ...baseNode });
     return md5(str);
   }
   throw new Error(`Hashing code parts unsupported`);
@@ -55,7 +55,7 @@ export const hashPart = (part: Node, ignorePos = true) => {
 export const hashFlow = (flow: FlydeFlow) => {
   const { part, imports } = flow;
 
-  const nodeHash = hashPart(part, false);
+  const nodeHash = hashNode(part, false);
 
   const orderedImports = Object.entries(imports ?? {})
     .sort(([k1], [k2]) => k1.localeCompare(k2))

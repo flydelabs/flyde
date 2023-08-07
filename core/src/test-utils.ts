@@ -15,23 +15,23 @@ import { connectionNode, externalConnectionNode } from "./connect";
 
 import { DebuggerEventType, DebuggerEvent, Debugger } from "./execute/debugger";
 
-export interface ConciseBasePart
+export interface ConciseBaseNode
   extends Omit<BaseNode, "inputs" | "outputs" | "id"> {
   inputs?: string[];
   outputs?: string[];
   id?: string;
 }
 
-export interface ConciseVisualPart extends ConciseBasePart {
+export interface ConciseVisualNode extends ConciseBaseNode {
   connections: Array<[string, string]>;
   instances: NodeInstance[];
 }
 
-export interface ConciseCodePart extends ConciseBasePart {
+export interface ConciseCodeNode extends ConciseBaseNode {
   run: CodeNode["run"];
 }
 
-export const conciseBasePart = (concise: ConciseBasePart): BaseNode => {
+export const conciseBaseNode = (concise: ConciseBaseNode): BaseNode => {
   return {
     id: "a-part",
     ...concise,
@@ -56,8 +56,8 @@ export const conciseBasePart = (concise: ConciseBasePart): BaseNode => {
   };
 };
 
-export const concisePart = (concise: ConciseVisualPart): VisualNode => {
-  const base = conciseBasePart(concise);
+export const conciseNode = (concise: ConciseVisualNode): VisualNode => {
+  const base = conciseBaseNode(concise);
 
   return {
     ...base,
@@ -84,16 +84,16 @@ export const concisePart = (concise: ConciseVisualPart): VisualNode => {
   };
 };
 
-export const conciseCodePart = (concise: ConciseCodePart): CodeNode => {
-  const base = conciseBasePart(concise);
+export const conciseCodeNode = (concise: ConciseCodeNode): CodeNode => {
+  const base = conciseBaseNode(concise);
   return {
     ...base,
     run: concise.run,
   };
 };
 
-export const valuePart = (name: string, value: any) =>
-  conciseCodePart({
+export const valueNode = (name: string, value: any) =>
+  conciseCodeNode({
     id: name,
     inputs: [],
     outputs: ["r"],

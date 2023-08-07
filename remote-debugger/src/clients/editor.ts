@@ -55,7 +55,7 @@ export type EditorDebuggerClient = {
   getHistory: (dto: GetHistoryDto) => Promise<HistoryPayload>;
   clearHistory: () => Promise<void>;
 
-  triggerPart: (nodeId: string, inputs: Record<string, any>) => void;
+  triggerNode: (nodeId: string, inputs: Record<string, any>) => void;
 };
 
 export const createEditorClient = (
@@ -140,7 +140,7 @@ export const createEditorClient = (
     clearHistory: () => {
       return axios.delete(`${url}/history`).then(() => {});
     },
-    triggerPart: (nodeId, inputs) => {
+    triggerNode: (nodeId, inputs) => {
       return axios
         .post(`${url}/trigger`, { nodeId, inputs })
         .then((r) => r.data);

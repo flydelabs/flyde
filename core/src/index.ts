@@ -28,7 +28,7 @@ export * from "./flow-schema";
 
 export type InputStaticValue = string | number | object | VisualNode;
 
-export const isStaticValueVisualPart = (val: InputStaticValue): boolean => {
+export const isStaticValueVisualNode = (val: InputStaticValue): boolean => {
   return !!val && !!maybeGetStaticValueNodeId(`${val}`);
 };
 

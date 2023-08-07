@@ -281,29 +281,29 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
       });
   }, [ports, props.integratedSource]);
 
-  const onImportPart = React.useCallback<
-    DependenciesContextData["onImportPart"]
+  const onImportNode = React.useCallback<
+    DependenciesContextData["onImportNode"]
   >(
-    async (importablePart) => {
+    async (importableNode) => {
       const existingModuleImports =
-        (flow.imports || {})[importablePart.module] || [];
+        (flow.imports || {})[importableNode.module] || [];
 
-      setImportedNodes((parts) => [...parts, importablePart]);
+      setImportedNodes((parts) => [...parts, importableNode]);
 
       const newDeps = {
         ...resolvedDependencies,
-        [importablePart.part.id]: importablePart.part,
+        [importableNode.part.id]: importableNode.part,
       };
 
       const newFlow = produce(flow, (draft) => {
         const imports = draft.imports || {};
-        const modImports = imports[importablePart.module] || [];
+        const modImports = imports[importableNode.module] || [];
 
-        if (!existingModuleImports.includes(importablePart.part.id)) {
-          modImports.push(importablePart.part.id);
+        if (!existingModuleImports.includes(importableNode.part.id)) {
+          modImports.push(importableNode.part.id);
         }
 
-        imports[importablePart.module] = modImports;
+        imports[importableNode.module] = modImports;
         draft.imports = imports;
       });
 
@@ -318,7 +318,7 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
     [editorState, flow, onChangeState, resolvedDependencies]
   );
 
-  const onExtractInlinePart = React.useCallback(async () => {}, []);
+  const onExtractInlineNode = React.useCallback(async () => {}, []);
 
   React.useEffect(() => {
     const _importedNodes = importedNodes.reduce((acc, curr) => {
@@ -347,10 +347,10 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
   const dependenciesContextValue = React.useMemo<DependenciesContextData>(
     () => ({
       resolvedDependencies: currentResolvedDeps,
-      onImportPart,
+      onImportNode,
       onRequestImportables: queryImportables,
     }),
-    [currentResolvedDeps, onImportPart, queryImportables]
+    [currentResolvedDeps, onImportNode, queryImportables]
   );
 
   return (
@@ -359,12 +359,12 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
         <main>
           <IntegratedFlowSideMenu
             flowPath={props.integratedSource}
-            // editedPart={editedPart}
+            // editedNode={editedNode}
             flow={flow}
-            // onDeletePart={onDeleteCustomPart}
+            // onDeleteNode={onDeleteCustomNode}
             onAdd={onAddNodeToStage}
-            // onAddPart={onAddPart}
-            // onRenamePart={onRenamePart}
+            // onAddNode={onAddNode}
+            // onRenameNode={onRenameNode}
             selectedMenuItem={menuSelectedItem}
             setSelectedMenuItem={setMenuSelectedItem}
             editorDebugger={debuggerClient}
@@ -378,7 +378,7 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
                 state={editorState}
                 onChangeEditorState={setEditorState}
                 hideTemplatingTips={false}
-                onExtractInlinePart={onExtractInlinePart}
+                onExtractInlineNode={onExtractInlineNode}
                 ref={boardRef}
               />
             </DebuggerContextProvider>

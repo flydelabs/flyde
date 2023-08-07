@@ -58,7 +58,7 @@ const outputPinSchema = z.object({
   description: z.optional(z.string()),
 });
 
-const flydeBasePart = z.object({
+const flydeBaseNode = z.object({
   id: z.optional(z.string()),
   inputs: z.record(z.string(), inputPinSchema),
   outputs: z.record(z.string(), outputPinSchema),
@@ -86,7 +86,7 @@ const visualNode = z
       })
     ),
   })
-  .and(flydeBasePart);
+  .and(flydeBaseNode);
 
 export type FlydeFlow = {
   imports?: Record<string, String[]>;

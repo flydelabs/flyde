@@ -115,13 +115,13 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = (props) => {
 
   const [debouncedFlow] = useDebounce(resolvedDeps, 500);
 
-  const onImportPart: DependenciesContextData["onImportPart"] = async (
-    importedPart,
+  const onImportNode: DependenciesContextData["onImportNode"] = async (
+    importedNode,
     target
   ) => {
-    const { part } = importedPart;
+    const { part } = importedNode;
 
-    const depPart = Object.values(
+    const depNode = Object.values(
       await import("@flyde/stdlib/dist/all-browser")
     ).find((p) => isBaseNode(p) && p.id === part.id) as Node;
 
@@ -130,11 +130,11 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = (props) => {
         ...flow,
         dependencies: {
           ...flow.dependencies,
-          [depPart.id]: {
-            ...depPart,
+          [depNode.id]: {
+            ...depNode,
             source: {
               path: "@flyde/stdlib/dist/all-browser",
-              export: depPart.id,
+              export: depNode.id,
             }, // fake, for playground
           },
         },
@@ -147,7 +147,7 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = (props) => {
       if (target) {
         const finalPos = vAdd({ x: 0, y: 0 }, target.pos);
         newNodeIns = createNewNodeInstance(
-          importedPart.part,
+          importedNode.part,
           0,
           finalPos,
           resolvedDeps
@@ -183,7 +183,7 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = (props) => {
     setFlowEditorState(newState);
 
     toastMsg(
-      `Node ${part.id} successfully imported from ${importedPart.module}`
+      `Node ${part.id} successfully imported from ${importedNode.module}`
     );
 
     return resolvedDeps;
@@ -235,7 +235,7 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = (props) => {
     onChangeEditorState: setFlowEditorState,
     hideTemplatingTips: true,
     initialPadding,
-    onExtractInlinePart: noop as any,
+    onExtractInlineNode: noop as any,
     disableScrolling: true,
   };
 
@@ -264,7 +264,7 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = (props) => {
   const depsContextValue = useMemo<DependenciesContextData>(() => {
     return {
       resolvedDependencies: resolvedDeps,
-      onImportPart,
+      onImportNode,
       onRequestImportables,
     };
   }, []);

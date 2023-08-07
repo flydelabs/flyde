@@ -19,13 +19,13 @@ import { getVM2Instance } from "./get-vm2";
 
 const vm2 = getVM2Instance();
 
-export const inlineValueNodeToPart = (
-  inlineValuePart: InlineValueNode,
+export const inlineValueNodeToNode = (
+  inlineValueNode: InlineValueNode,
   extraContext: Record<string, any> = {}
 ): CodeNode => {
-  const { runFnRawCode: fnCode, ...rest } = inlineValuePart;
+  const { runFnRawCode: fnCode, ...rest } = inlineValueNode;
 
-  const logger = debugLogger(`code-part:${inlineValuePart.id}`);
+  const logger = debugLogger(`code-part:${inlineValueNode.id}`);
 
   const wrappedCode = `
   try {
@@ -41,7 +41,7 @@ export const inlineValueNodeToPart = (
     run: (inputs, outputs, adv) => {
       const log = (...args: any[]) => {
         logger(
-          `Log from code part ${inlineValuePart.id} [${adv.insId}]`,
+          `Log from code part ${inlineValueNode.id} [${adv.insId}]`,
           ...args
         );
       };
@@ -86,7 +86,7 @@ export const customNodesToNodesCollection = (
   for (let id in customNodes) {
     const part = customNodes[id];
     partsCollection[id] = isInlineValueNode(part)
-      ? inlineValueNodeToPart(part, extraContext)
+      ? inlineValueNodeToNode(part, extraContext)
       : part;
   }
   return partsCollection;

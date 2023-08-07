@@ -134,7 +134,7 @@
 // // 	}
 // // }
 
-// // export const CounterListView: ConnectedPart = {
+// // export const CounterListView: ConnectedNode = {
 // // 	id: 'CounterListView',
 // // 	instances: [
 // // 		{

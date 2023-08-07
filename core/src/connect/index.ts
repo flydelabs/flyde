@@ -51,13 +51,13 @@ export type ConnectionNode = ExternalConnectionNode | InternalConnectionNode;
 
 export type PinList = Array<{ insId: string; pinId: string }>;
 
-type PositionlessVisualPart = Omit<
+type PositionlessVisualNode = Omit<
   Omit<VisualNode, "inputsPosition">,
   "outputsPosition"
 >;
 
 export const connect = (
-  part: PositionlessVisualPart,
+  part: PositionlessVisualNode,
   resolvedDeps: NodesCollection,
   _debugger: Debugger = {},
   ancestorsInsIds?: string,
@@ -245,11 +245,11 @@ export const connect = (
           );
         }
 
-        const sourcePart = sourceInstance
+        const sourceNode = sourceInstance
           ? getNode(sourceInstance, resolvedDeps)
           : part;
 
-        const sourceOutputPin = sourcePart.outputs[fromInstancePinId];
+        const sourceOutputPin = sourceNode.outputs[fromInstancePinId];
         const isDelayed =
           (sourceOutputPin && sourceOutputPin.delayed) || conn.delayed;
 

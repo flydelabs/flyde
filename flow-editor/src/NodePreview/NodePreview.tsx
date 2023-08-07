@@ -35,7 +35,7 @@ export const NodePreview: React.FC<{ part: NodeDefinition }> = ({ part }) => {
     onChangeVisibleOutputs: noop,
     onConvertConstToEnv: noop,
     forceShowMinimized: "both",
-    onExtractInlinePart: noop as any,
+    onExtractInlineNode: noop as any,
     onCloseInlineEditor: noop,
     isConnectedInstanceSelected: false,
     inlineEditorPortalDomNode: null as any,

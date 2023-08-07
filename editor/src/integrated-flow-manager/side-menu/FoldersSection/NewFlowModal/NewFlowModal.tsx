@@ -20,7 +20,7 @@ export interface NewFlowModalProps {
 }
 
 export const NewFlowModal: React.FC<NewFlowModalProps> = (props) => {
-  const [basePart, setBasePart] = React.useState<BaseNode>(
+  const [baseNode, setBaseNode] = React.useState<BaseNode>(
     visualNode({ id: "new-flow.flyde" })
   );
 
@@ -37,8 +37,8 @@ export const NewFlowModal: React.FC<NewFlowModalProps> = (props) => {
             Will create new flow inside <Code>{props.folder}</Code>
           </Callout>
           <BaseNodeEditor
-            part={basePart}
-            onChange={setBasePart}
+            part={baseNode}
+            onChange={setBaseNode}
             idDisabled={false}
             hiddenOutputs
           />
@@ -48,7 +48,7 @@ export const NewFlowModal: React.FC<NewFlowModalProps> = (props) => {
           <div className={Classes.DIALOG_FOOTER_ACTIONS}>
             <Button onClick={props.onCancel}>Cancel</Button>
             <Button
-              onClick={() => props.onCreate(basePart)}
+              onClick={() => props.onCreate(baseNode)}
               intent={Intent.PRIMARY}
             >
               Save

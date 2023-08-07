@@ -9,7 +9,7 @@ import {
 } from "@flyde/core";
 import { assert } from "chai";
 
-import { concisePart, spiedOutput } from "@flyde/core/dist/test-utils";
+import { conciseNode, spiedOutput } from "@flyde/core/dist/test-utils";
 import { Publish, Subscribe } from "./ControlFlow.flyde";
 
 describe("ControlFlow", () => {
@@ -18,7 +18,7 @@ describe("ControlFlow", () => {
       const key = "bla";
       const value = randomInt(42);
 
-      const visualNode: VisualNode = concisePart({
+      const visualNode: VisualNode = conciseNode({
         id: "test",
         inputs: ["a"],
         outputs: ["b"],

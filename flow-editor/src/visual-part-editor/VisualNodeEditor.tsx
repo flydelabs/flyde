@@ -57,7 +57,7 @@ import {
   ViewPort,
   domToViewPort,
   roundNumber,
-  fitViewPortToPart,
+  fitViewPortToNode,
   getInstancesInRect,
   handleInstanceDrag,
   handleIoPinRename,
@@ -94,7 +94,7 @@ import {
   QuickMenuMatch,
 } from "./quick-add-menu";
 import { queueInputPinConfig } from "@flyde/core";
-import { orderVisualPart } from "./order-layout/cmd";
+import { orderVisualNode } from "./order-layout/cmd";
 import { LayoutDebugger, LayoutDebuggerProps } from "./layout-debugger";
 import { preloadMonaco } from "../lib/preload-monaco";
 // import { InstancePanel } from "./instance-panel";
@@ -105,7 +105,7 @@ import {
   metaChange,
 } from "../flow-editor/flyde-flow-change-type";
 import { InlineCodeModal } from "../flow-editor/inline-code-modal";
-import { createInlineValuePart } from "../flow-editor/inline-code-modal/inline-code-to-part";
+import { createInlineValueNode } from "../flow-editor/inline-code-modal/inline-code-to-part";
 import _ from "lodash";
 import { groupSelected } from "../group-selected";
 import { useConfirm, usePorts, usePrompt } from "../flow-editor/ports";
@@ -173,13 +173,13 @@ export type VisualNodeEditorProps = {
 
   onChangeBoardData: (data: Partial<GroupEditorBoardData>) => void;
 
-  onChangePart: (val: VisualNode, type: FlydeFlowChangeType) => void;
+  onChangeNode: (val: VisualNode, type: FlydeFlowChangeType) => void;
 
   onCopy: (data: ClipboardData) => void;
   onInspectPin: (insId: string, pin?: { id: string; type: PinType }) => void;
 
   onGoToNodeDef: (part: ImportedNodeDef) => void;
-  onExtractInlinePart: (instance: InlineNodeInstance) => Promise<void>;
+  onExtractInlineNode: (instance: InlineNodeInstance) => Promise<void>;
 
   onShowOmnibar: (e: any) => void;
 
@@ -237,10 +237,10 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
   React.memo(
     React.forwardRef((props, thisRef) => {
       const {
-        onChangePart: onChange,
+        onChangeNode: onChange,
         nodeIoEditable,
         onCopy,
-        onGoToNodeDef: onEditPart,
+        onGoToNodeDef: onEditNode,
         onInspectPin,
         boardData,
         onChangeBoardData,
@@ -254,7 +254,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         disableScrolling,
       } = props;
 
-      const { onImportPart } = useDependenciesContext();
+      const { onImportNode } = useDependenciesContext();
 
       const { reportEvent } = usePorts();
 
@@ -349,7 +349,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
       const onConnectionClose = React.useCallback(
         (from: ConnectionNode, to: ConnectionNode, source: string) => {
-          const newPart = handleConnectionCloseEditorCommand(part, {
+          const newNode = handleConnectionCloseEditorCommand(part, {
             from,
             to,
           });
@@ -361,11 +361,11 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           const pinConfig = inputConfig[to.pinId];
           const isTargetStaticValue = isStaticInputPinConfig(pinConfig);
 
-          const maybeDetachedPart = isTargetStaticValue
-            ? handleDetachConstEditorCommand(newPart, to.insId, to.pinId)
-            : newPart;
+          const maybeDetachedNode = isTargetStaticValue
+            ? handleDetachConstEditorCommand(newNode, to.insId, to.pinId)
+            : newNode;
 
-          onChange(maybeDetachedPart, functionalChange("close-connection"));
+          onChange(maybeDetachedNode, functionalChange("close-connection"));
           onChangeBoardData({ from: undefined, to: undefined });
           reportEvent("createConnection", { source });
         },
@@ -375,14 +375,14 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       const onGroupSelectedInternal = React.useCallback(async () => {
         const name = await _prompt("New visual part name?");
         if (!name) return;
-        const { currentPart } = await groupSelected(
+        const { currentNode } = await groupSelected(
           boardData.selected,
           part,
           name,
           "inline",
           _prompt
         );
-        onChange(currentPart, functionalChange("group part"));
+        onChange(currentNode, functionalChange("group part"));
 
         toastMsg("Node grouped");
 
@@ -416,7 +416,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       const boardPos = useBoundingclientrect(boardRef) || vZero;
 
       const fitToScreen = () => {
-        const vp = fitViewPortToPart(part, currResolvedDeps, vpSize);
+        const vp = fitViewPortToNode(part, currResolvedDeps, vpSize);
 
         animateViewPort(viewPort, vp, 500, (vp) => {
           setViewPort(vp);
@@ -454,14 +454,14 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
       const onNodeIoSetDescription = React.useCallback(
         (type: PinType, pinId: string, description: string) => {
-          const newPart = produce(part, (draft) => {
+          const newNode = produce(part, (draft) => {
             if (type === "input") {
               draft.inputs[pinId].description = description;
             } else {
               draft.outputs[pinId].description = description;
             }
           });
-          onChange(newPart, functionalChange("Node io description"));
+          onChange(newNode, functionalChange("Node io description"));
         },
         [onChange, part]
       );
@@ -513,7 +513,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
       useEffect(() => {
         if (!didCenterInitially && vpSize.width) {
-          const vp = fitViewPortToPart(
+          const vp = fitViewPortToNode(
             part,
             currResolvedDeps,
             vpSize,
@@ -522,7 +522,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           setViewPort(vp);
           // hackidy hack
           const timer = setTimeout(() => {
-            const vp = fitViewPortToPart(
+            const vp = fitViewPortToNode(
               part,
               currResolvedDeps,
               vpSize,
@@ -558,12 +558,12 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       }, [boardData, onCopy, part]);
 
       const onPaste = React.useCallback(() => {
-        const { newPart, newInstances } = pasteInstancesCommand(
+        const { newNode, newInstances } = pasteInstancesCommand(
           part,
           lastMousePos.current,
           props.clipboardData
         );
-        onChange(newPart, functionalChange("paste instances"));
+        onChange(newNode, functionalChange("paste instances"));
 
         onChangeBoardData({ selected: newInstances.map((ins) => ins.id) });
       }, [onChange, onChangeBoardData, part, props.clipboardData]);
@@ -642,7 +642,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           e.preventDefault();
           toastMsg("Ordering");
           const steps: any[] = [];
-          orderVisualPart(part, currResolvedDeps, 200, (step, idx) => {
+          orderVisualNode(part, currResolvedDeps, 200, (step, idx) => {
             if (idx % 3 === 0) {
               steps.push(step);
             }
@@ -745,7 +745,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             }
           });
 
-          props.onChangePart(newValue, metaChange("part-io-drag-move"));
+          props.onChangeNode(newValue, metaChange("part-io-drag-move"));
         },
         [props, part]
       );
@@ -903,12 +903,12 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       );
 
       const duplicate = React.useCallback(() => {
-        const { newPart, newInstances } = handleDuplicateSelectedEditorCommand(
+        const { newNode, newInstances } = handleDuplicateSelectedEditorCommand(
           part,
           selected
         );
 
-        onChange(newPart, functionalChange("duplicated instances"));
+        onChange(newNode, functionalChange("duplicated instances"));
         onChangeBoardData({ selected: newInstances.map((ins) => ins.id) });
         // onChange(duplicateSelected(value), functionalChange("duplicate"));
       }, [onChange, onChangeBoardData, part, selected]);
@@ -1084,7 +1084,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             if (isRefNodeInstance(ins)) {
               const part = getNodeDef(ins, currResolvedDeps);
 
-              onEditPart(part as ImportedNodeDef);
+              onEditNode(part as ImportedNodeDef);
             } else {
               const part = ins.part;
               if (!isInlineValueNode(part)) {
@@ -1106,7 +1106,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             }
           }
         },
-        [onEditPart, currResolvedDeps, currentInsId]
+        [onEditNode, currResolvedDeps, currentInsId]
       );
 
       const onUnGroup = React.useCallback(
@@ -1118,7 +1118,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
               return;
             }
 
-            const newPart = produce(part, (draft) => {
+            const newNode = produce(part, (draft) => {
               draft.instances = draft.instances.filter(
                 (ins) => ins.id !== groupNodeIns.id
               );
@@ -1139,7 +1139,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
               );
             });
 
-            onChange(newPart, { type: "functional", message: "ungroup" });
+            onChange(newNode, { type: "functional", message: "ungroup" });
             // todo - combine the above with below to an atomic action
             onChangeBoardData({ selected: [] });
           } else {
@@ -1157,15 +1157,15 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         [part, onChange, onChangeBoardData, currResolvedDeps]
       );
 
-      const onExtractInlinePart = React.useCallback(
+      const onExtractInlineNode = React.useCallback(
         async (inlineInstance: InlineNodeInstance) => {},
         []
       );
 
       const onDetachConstValue = React.useCallback(
         (ins: NodeInstance, pinId: string) => {
-          const newPart = handleDetachConstEditorCommand(part, ins.id, pinId);
-          onChange(newPart, functionalChange("detach-const"));
+          const newNode = handleDetachConstEditorCommand(part, ins.id, pinId);
+          onChange(newNode, functionalChange("detach-const"));
         },
         [onChange, part]
       );
@@ -1286,10 +1286,10 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
       const onChangeDefaultStyle = React.useCallback(
         (style: NodeStyle) => {
-          const newPart = produce(part, (draft) => {
+          const newNode = produce(part, (draft) => {
             draft.defaultStyle = style;
           });
-          onChange(newPart, functionalChange("change default style"));
+          onChange(newNode, functionalChange("change default style"));
           reportEvent("changeStyle", { isDefault: true });
         },
         [onChange, part, reportEvent]
@@ -1315,7 +1315,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       const onAction = React.useCallback(
         (action: Action) => {
           switch (action.type) {
-            case ActionType.RemovePart: {
+            case ActionType.RemoveNode: {
               const newValue = produce(part, (draft) => {
                 if (!isVisualNode(part)) {
                   throw new Error(
@@ -1365,13 +1365,13 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                 (ins) => ins.id === selected[0]
               );
               onUnGroup(instance);
-              const insPart = getNodeDef(
+              const insNode = getNodeDef(
                 instance,
                 currResolvedDeps
               ) as VisualNode;
-              toastMsg(`Ungrouped inline part ${insPart.id}`);
-              reportEvent("unGroupPart", {
-                instancesCount: insPart.instances.length,
+              toastMsg(`Ungrouped inline part ${insNode.id}`);
+              reportEvent("unGroupNode", {
+                instancesCount: insNode.instances.length,
               });
               break;
             }
@@ -1383,22 +1383,22 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
               reportEvent("addValueModalOpen", { source: "actionMenu" });
               break;
             }
-            case ActionType.AddPart: {
+            case ActionType.AddNode: {
               void (async function () {
                 const pos = getMiddleOfViewPort(viewPort, vpSize);
 
-                const { importablePart } = action.data;
-                const depsWithImport = await onImportPart(importablePart);
+                const { importableNode } = action.data;
+                const depsWithImport = await onImportNode(importableNode);
 
                 const targetPos = vSub(pos, { x: 0, y: 50 * viewPort.zoom }); // to account for part
 
                 const newNodeIns = createNewNodeInstance(
-                  importablePart.part.id,
+                  importableNode.part.id,
                   0,
                   targetPos,
                   depsWithImport
                 );
-                const newPart = produce(part, (draft) => {
+                const newNode = produce(part, (draft) => {
                   draft.instances.push(newNodeIns);
                 });
 
@@ -1406,15 +1406,15 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                   draft.selected = [newNodeIns.id];
                 });
 
-                onChange(newPart, functionalChange("add new instance"));
+                onChange(newNode, functionalChange("add new instance"));
 
                 onChangeBoardData(newState);
 
                 toastMsg(
-                  `Node ${importablePart.part.id} successfully imported from ${importablePart.module}`
+                  `Node ${importableNode.part.id} successfully imported from ${importableNode.module}`
                 );
-                reportEvent("addPart", {
-                  nodeId: importablePart.part.id,
+                reportEvent("addNode", {
+                  nodeId: importableNode.part.id,
                   source: "actionMenu",
                 });
               })();
@@ -1424,18 +1424,18 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
               void (async function () {
                 const pos = getMiddleOfViewPort(viewPort, vpSize);
 
-                const { importablePart } = action.data;
-                const depsWithImport = await onImportPart(importablePart);
+                const { importableNode } = action.data;
+                const depsWithImport = await onImportNode(importableNode);
 
                 const targetPos = vSub(pos, { x: 0, y: 50 * viewPort.zoom }); // to account for part
 
                 const newNodeIns = createNewNodeInstance(
-                  importablePart.part.id,
+                  importableNode.part.id,
                   0,
                   targetPos,
                   depsWithImport
                 );
-                const newPart = produce(part, (draft) => {
+                const newNode = produce(part, (draft) => {
                   draft.instances.push(newNodeIns);
                 });
 
@@ -1443,15 +1443,15 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                   draft.selected = [newNodeIns.id];
                 });
 
-                onChange(newPart, functionalChange("add new instance"));
+                onChange(newNode, functionalChange("add new instance"));
 
                 onChangeBoardData(newState);
 
                 toastMsg(
-                  `Node ${importablePart.part.id} successfully imported from ${importablePart.module}`
+                  `Node ${importableNode.part.id} successfully imported from ${importableNode.module}`
                 );
-                reportEvent("addPart", {
-                  nodeId: importablePart.part.id,
+                reportEvent("addNode", {
+                  nodeId: importableNode.part.id,
                   source: "actionMenu",
                 });
               })();
@@ -1468,7 +1468,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           onChange,
           onChangeBoardData,
           onGroupSelectedInternal,
-          onImportPart,
+          onImportNode,
           onInspectPin,
           onUnGroup,
           part,
@@ -1609,7 +1609,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             setQuickAddMenuVisible({
               pos: { x: e.clientX, y: e.clientY },
               ins,
-              targetPart: part,
+              targetNode: part,
               pinId,
               pinType: type,
             });
@@ -1630,7 +1630,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             pos: { x: e.clientX, y: e.clientY },
             pinId,
             pinType: "input",
-            targetPart: part,
+            targetNode: part,
           });
         },
         [part]
@@ -1727,19 +1727,19 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             orphanConnections
           );
 
-          const newPart = produce(part, (draft) => {
+          const newNode = produce(part, (draft) => {
             draft.connections = part.connections.filter(
               (conn) => !orphanConnections.includes(conn)
             );
           });
-          onChange(newPart, functionalChange("prune orphan connections"));
+          onChange(newNode, functionalChange("prune orphan connections"));
         }
       }, [instances, onChange, connections, part, currResolvedDeps]);
 
       // for each instance, if there's a visible input or output that doesn't exist, reset the visible inputs/outputs to be the full list
       React.useEffect(() => {
         let invalids = [];
-        const newPart = produce(part, (draft) => {
+        const newNode = produce(part, (draft) => {
           draft.instances = draft.instances.map((ins) => {
             const part = getNodeDef(ins, currResolvedDeps);
             if (part) {
@@ -1779,7 +1779,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             "warning"
           );
           onChange(
-            newPart,
+            newNode,
             functionalChange("reset corrupt visible inputs/outputs")
           );
         }
@@ -1819,12 +1819,12 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             case "part": {
               const deps =
                 match.type === "import"
-                  ? await onImportPart(match.importablePart)
+                  ? await onImportNode(match.importableNode)
                   : currResolvedDeps;
 
               const nodeToAdd =
                 match.type === "import"
-                  ? match.importablePart.part
+                  ? match.importableNode.part
                   : match.part;
               const newNodeIns = createNewNodeInstance(
                 nodeToAdd.id,
@@ -1845,16 +1845,16 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                 onChange(newValue, functionalChange("add-item-quick-menu"));
                 onCloseQuickAdd();
               }
-              reportEvent("addPart", {
+              reportEvent("addNode", {
                 nodeId: nodeToAdd.id,
                 source: "quickAdd",
               });
               break;
             }
             // case "import": {
-            //   const deps = await onImportPart(match.importablePart);
+            //   const deps = await onImportNode(match.importableNode);
             //   const newNodeIns = createNewNodeInstance(
-            //     match.importablePart.part,
+            //     match.importableNode.part,
             //     100,
             //     lastMousePos.current,
             //     deps
@@ -1871,8 +1871,8 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             //   onChange(newValue, functionalChange("import-part-quick-menu"));
 
             //   onCloseQuickAdd();
-            //   reportEvent("addPart", {
-            //     nodeId: match.importablePart.part.id,
+            //   reportEvent("addNode", {
+            //     nodeId: match.importableNode.part.id,
             //     source: "quickAdd",
             //   });
             //   break;
@@ -1894,7 +1894,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           part,
           onChange,
           onCloseQuickAdd,
-          onImportPart,
+          onImportNode,
         ]
       );
 
@@ -2062,29 +2062,29 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         isBoardInFocus
       );
 
-      const onChangeInspected: VisualNodeEditorProps["onChangePart"] =
+      const onChangeInspected: VisualNodeEditorProps["onChangeNode"] =
         React.useCallback(
-          (changedInlinePart, type) => {
+          (changedInlineNode, type) => {
             if (!openInlineInstance) {
               throw new Error("impossible state");
             }
-            const newPart = produce(part, (draft) => {
+            const newNode = produce(part, (draft) => {
               const ins = draft.instances.find(
                 (i) => i.id === openInlineInstance.insId
               );
               if (!ins || !isInlineNodeInstance(ins)) {
                 throw new Error("impossible state");
               }
-              ins.part = changedInlinePart;
+              ins.part = changedInlineNode;
             });
 
             onChange(
-              newPart,
+              newNode,
               functionalChange("Inner change: " + type.message)
             );
             setOpenInlineInstance((obj) => ({
               ...obj,
-              part: changedInlinePart,
+              part: changedInlineNode,
             }));
           },
           [onChange, openInlineInstance, part]
@@ -2117,12 +2117,12 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             onGoToNodeDef: props.onGoToNodeDef,
             nodeIoEditable: props.nodeIoEditable,
             part: openInlineInstance.part,
-            onChangePart: onChangeInspected,
+            onChangeNode: onChangeInspected,
             onShowOmnibar: onShowOmnibar,
             parentViewport: defaultViewPort,
             // parentViewport: viewPort, // this was needed when I rendered it completely inline
             parentBoardPos: boardPos,
-            onExtractInlinePart: props.onExtractInlinePart,
+            onExtractInlineNode: props.onExtractInlineNode,
             queuedInputsData: props.queuedInputsData,
           };
         } else {
@@ -2189,24 +2189,24 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
       const onChangeVisibleInputs = React.useCallback(
         (ins: NodeInstance, inputs: string[]) => {
-          const newPart = produce(part, (draft) => {
+          const newNode = produce(part, (draft) => {
             draft.instances = draft.instances.map((i) => {
               return i.id === ins.id ? { ...i, visibleInputs: inputs } : i;
             });
           });
-          onChange(newPart, functionalChange("change instance visible inputs"));
+          onChange(newNode, functionalChange("change instance visible inputs"));
         },
         [part, onChange]
       );
 
       const onChangeInstanceStyle = React.useCallback(
         (instance: NodeInstance, style: NodeStyle) => {
-          const newPart = produce(part, (draft) => {
+          const newNode = produce(part, (draft) => {
             draft.instances = draft.instances.map((ins) => {
               return ins.id === instance.id ? { ...ins, style } : ins;
             });
           });
-          onChange(newPart, functionalChange("change instance style"));
+          onChange(newNode, functionalChange("change instance style"));
           reportEvent("changeStyle", { isDefault: false });
         },
         [onChange, part, reportEvent]
@@ -2214,13 +2214,13 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
       const onChangeVisibleOutputs = React.useCallback(
         (ins: NodeInstance, outputs: string[]) => {
-          const newPart = produce(part, (draft) => {
+          const newNode = produce(part, (draft) => {
             draft.instances = draft.instances.map((i) => {
               return i.id === ins.id ? { ...i, visibleOutputs: outputs } : i;
             });
           });
           onChange(
-            newPart,
+            newNode,
             functionalChange("change instance visible outputs")
           );
         },
@@ -2229,12 +2229,12 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
       const onChangeInstanceDisplayName = React.useCallback(
         (ins: NodeInstance, name: string) => {
-          const newPart = produce(part, (draft) => {
+          const newNode = produce(part, (draft) => {
             draft.instances = draft.instances.map((i) => {
               return i.id === ins.id ? { ...i, displayName: name } : i;
             });
           });
-          onChange(newPart, functionalChange("change instance display name"));
+          onChange(newNode, functionalChange("change instance display name"));
         },
         [part, onChange]
       );
@@ -2276,14 +2276,14 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         Array<Omit<LayoutDebuggerProps, "viewPort">>
       >([]);
 
-      const onSaveInlineValuePart = React.useCallback(
+      const onSaveInlineValueNode = React.useCallback(
         (type: InlineValueNodeType, code: string) => {
           const customView = code.trim().substr(0, 100);
           const nodeId = `Inline-value-${customView
             .substr(0, 15)
             .replace(/["'`]/g, "")}`;
 
-          const newPart = createInlineValuePart({
+          const newNode = createInlineValueNode({
             code,
             customView,
             nodeId,
@@ -2292,24 +2292,24 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
           switch (inlineCodeTarget.type) {
             case "existing": {
-              const [existingInlinePart] = part.instances
+              const [existingInlineNode] = part.instances
                 .filter((ins) => ins.id === inlineCodeTarget.insId)
                 .filter((ins) => isInlineNodeInstance(ins))
                 .map((ins: InlineNodeInstance) => ins.part);
 
-              if (!existingInlinePart) {
+              if (!existingInlineNode) {
                 throw new Error(`Unable to find inline part to save to`);
               }
 
-              const oldInputs = keys(existingInlinePart.inputs);
-              const newInputs = keys(newPart.inputs);
+              const oldInputs = keys(existingInlineNode.inputs);
+              const newInputs = keys(newNode.inputs);
 
               const removedInputs = new Set(_.difference(oldInputs, newInputs));
 
               const newVal = produce(part, (draft) => {
                 draft.instances = draft.instances.map((i) => {
                   return i.id === inlineCodeTarget.insId
-                    ? inlineNodeInstance(i.id, newPart, i.inputConfig, i.pos)
+                    ? inlineNodeInstance(i.id, newNode, i.inputConfig, i.pos)
                     : i;
                 });
                 draft.connections = draft.connections.filter((conn) => {
@@ -2352,8 +2352,8 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             }
             case "new-floating": {
               const ins = inlineNodeInstance(
-                createInsId(newPart),
-                newPart,
+                createInsId(newNode),
+                newNode,
                 {},
                 inlineCodeTarget.pos
               );
@@ -2371,8 +2371,8 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                 throw new Error(`Impossible state`);
               }
               const newIns = inlineNodeInstance(
-                createInsId(newPart),
-                newPart,
+                createInsId(newNode),
+                newNode,
                 {},
                 vAdd(existingIns.pos, { x: -50, y: 150 })
               );
@@ -2393,7 +2393,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
           reportEvent("addValue", {
             type,
-            placeholdersCount: keys(newPart.inputs).length,
+            placeholdersCount: keys(newNode.inputs).length,
           });
         },
         [inlineCodeTarget, onChange, part, reportEvent]
@@ -2558,7 +2558,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
               {instances.map((ins) => (
                 <InstanceView
                   onUngroup={onUnGroup}
-                  onExtractInlinePart={onExtractInlinePart}
+                  onExtractInlineNode={onExtractInlineNode}
                   onDetachConstValue={onDetachConstValue}
                   onCopyConstValue={onCopyConstValue}
                   onPasteConstValue={onPasteConstValue}
@@ -2649,7 +2649,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
               />
               {quickAddMenuVisible ? (
                 <QuickAddMenu
-                  targetPart={quickAddMenuVisible.targetPart}
+                  targetNode={quickAddMenuVisible.targetNode}
                   pinId={quickAddMenuVisible.pinId}
                   pinType={quickAddMenuVisible.pinType}
                   pos={quickAddMenuVisible.pos}
@@ -2684,7 +2684,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                       : undefined
                   }
                   onCancel={() => setInlineCodeTarget(undefined)}
-                  onSubmit={onSaveInlineValuePart}
+                  onSubmit={onSaveInlineValueNode}
                 />
               ) : null}
               <div className="inline-editor-portal-root" />

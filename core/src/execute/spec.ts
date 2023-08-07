@@ -40,7 +40,7 @@ import {
   delay5,
 } from "../fixture";
 
-import { conciseCodePart, wrappedOnEvent } from "../test-utils";
+import { conciseCodeNode, wrappedOnEvent } from "../test-utils";
 import { DebuggerEventType } from "./debugger";
 
 describe("execute", () => {
@@ -1057,7 +1057,7 @@ describe("execute", () => {
           onProcessing
         );
 
-        const delay = conciseCodePart({
+        const delay = conciseCodeNode({
           id: "delay5",
           inputs: ["item"],
           outputs: ["r"],

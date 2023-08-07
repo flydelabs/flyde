@@ -11,7 +11,7 @@ import { existsSync, writeFileSync } from "fs";
 
 import { join } from "path";
 
-async function generatePart(
+async function generateNode(
   prompt: string
 ): Promise<{ code: string; fileName: string }> {
   const { tokensUsed, response } = (
@@ -57,12 +57,12 @@ export const Node: CodeNode = {
   return { code, fileName };
 }
 
-export async function generateAndSavePart(
+export async function generateAndSaveNode(
   rootDir: string,
   prompt: string,
   apiKey?: string
 ): Promise<ImportableSource> {
-  const { fileName, code } = await generatePart(prompt);
+  const { fileName, code } = await generateNode(prompt);
 
   console.log({ fileName, code });
   let filePath = join(rootDir, `${fileName}.flyde.ts`);
@@ -71,14 +71,14 @@ export async function generateAndSavePart(
   }
 
   writeFileSync(filePath, code);
-  const maybePart = resolveCodeNodeDependencies(filePath).parts[0];
-  if (!maybePart) {
+  const maybeNode = resolveCodeNodeDependencies(filePath).parts[0];
+  if (!maybeNode) {
     throw new Error("Generated part is corrupt");
   }
 
   const part: ImportedNode = {
-    ...maybePart.part,
-    source: { path: filePath, export: maybePart.exportName },
+    ...maybeNode.part,
+    source: { path: filePath, export: maybeNode.exportName },
   };
   return { part, module: `./${fileName}.flyde.ts` };
 }

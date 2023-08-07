@@ -21,7 +21,7 @@ export const pasteInstancesCommand = (
     })
   );
 
-  const newPart = produce(_part, (draft) => {
+  const newNode = produce(_part, (draft) => {
     draft.instances.push(...newInstances);
 
     const newConnections = clipboardData.connections.map(({ from, to }) => {
@@ -33,5 +33,5 @@ export const pasteInstancesCommand = (
 
     draft.connections.push(...newConnections);
   });
-  return { newPart, newInstances };
+  return { newNode, newInstances };
 };
