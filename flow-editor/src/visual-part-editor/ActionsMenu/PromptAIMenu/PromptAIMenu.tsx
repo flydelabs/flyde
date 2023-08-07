@@ -62,7 +62,7 @@ export const PromptAIMenu: React.FC<PromptAIMenuProps> = (props) => {
       isOpen={true}
       onClose={onClose}
       className="prompt-ai-menu"
-      title="✨ Generate Code Part using AI"
+      title="✨ Generate Code Node using AI"
     >
       <main
         className={classNames(Classes.DIALOG_BODY)}

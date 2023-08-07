@@ -337,7 +337,7 @@ export const AddPartMenu: React.FC<AddPartMenuProps> = (props) => {
   return (
     <Dialog
       isOpen={true}
-      title="Add Part Menu"
+      title="Add Node Menu"
       onClose={props.onClose}
       className="add-part-menu"
       isCloseButtonShown={true}

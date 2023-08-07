@@ -32,8 +32,8 @@ import {
   dynamicPartInput,
   dynamicOutput,
   partInstance,
-  InlineValuePart,
-  PartInstance,
+  InlineValueNode,
+  NodeInstance,
   partInput,
   partOutput,
   queueInputPinConfig,
@@ -642,7 +642,7 @@ describe("main ", () => {
       it("works regardless of the order of the instances and connections with 3 pieces", () => {
         const n = randomInt(99);
         const resolvedDeps = testPartsCollectionWith(Value(n));
-        const instances: PartInstance[] = [
+        const instances: NodeInstance[] = [
           partInstance("a", add.id),
           partInstance("v1", Value(n).id),
           partInstance("v2", Value(n).id),
@@ -1552,7 +1552,7 @@ describe("main ", () => {
     });
 
     it("allows state in code comp", async () => {
-      const part: InlineValuePart = {
+      const part: InlineValueNode = {
         id: "fixture",
         inputs: { v: partInput() },
         outputs: { r: partOutput() },
@@ -1792,7 +1792,7 @@ describe("main ", () => {
 
   describe("code part support", () => {
     it("runs an Id code part properly", () => {
-      const inlineValuePart: InlineValuePart = {
+      const inlineValuePart: InlineValueNode = {
         id: "id",
         inputs: {
           v: partInput(),
@@ -1822,7 +1822,7 @@ describe("main ", () => {
 
     it("runs ADD properly on code part", () => {
       const innerSpy = spy();
-      const inlineValuePart: InlineValuePart = {
+      const inlineValuePart: InlineValueNode = {
         id: "add",
         inputs: {
           a: partInput(),
@@ -1899,7 +1899,7 @@ describe("main ", () => {
     });
 
     it("runs cleanup code of code parts", async () => {
-      const inlineValuePart: InlineValuePart = {
+      const inlineValuePart: InlineValueNode = {
         id: "id",
         inputs: {},
         outputs: {
@@ -1963,7 +1963,7 @@ describe("main ", () => {
   describe("extra context", () => {
     it("passes external context forward when running code comps", async () => {
       const bobber = (n: number) => n + 42;
-      const part: InlineValuePart = {
+      const part: InlineValueNode = {
         id: "tester",
         inputs: {},
         outputs: {

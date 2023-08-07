@@ -1,12 +1,12 @@
 export * from "./common";
 import { Pos, OMap } from "./common";
 import {
-  CustomPart,
+  CustomNode,
   VisualNode,
   InputPinsConfig,
   maybeGetStaticValuePartId,
-  Part,
-  PartDefinition,
+  Node,
+  NodeDefinition,
 } from "./part";
 
 export * from "./connect";
@@ -40,8 +40,8 @@ export interface InstanceViewData {
   inputConfig: InputPinsConfig;
 }
 
-export type PartsCollection = OMap<Part>;
+export type NodesCollection = OMap<Node>;
 
-export type PartsDefCollection = OMap<PartDefinition>;
+export type NodesDefCollection = OMap<NodeDefinition>;
 
-export type CustomPartsCollection = OMap<CustomPart>;
+export type CustomPartsCollection = OMap<CustomNode>;

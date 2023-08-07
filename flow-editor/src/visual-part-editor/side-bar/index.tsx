@@ -4,10 +4,10 @@ import * as React from "react";
 import {
   isCodePart,
   isVisualPart,
-  PartInstance,
+  NodeInstance,
   keys,
   VisualNode,
-  PartsDefCollection,
+  NodesDefCollection,
   getPartDef,
   noop,
 } from "@flyde/core";
@@ -16,11 +16,11 @@ import classNames from "classnames";
 export type SideBarProps = {
   part: VisualNode;
   selectedIds: string[];
-  resolvedParts: PartsDefCollection;
-  onSelect: (id: PartInstance, ev: React.MouseEvent) => void;
+  resolvedParts: NodesDefCollection;
+  onSelect: (id: NodeInstance, ev: React.MouseEvent) => void;
   onFocusInput: (id: string, ev: React.MouseEvent) => void;
   onFocusOutput: (id: string, ev: React.MouseEvent) => void;
-  onDblClick: (ins: PartInstance) => void;
+  onDblClick: (ins: NodeInstance) => void;
 };
 
 export enum MenuItemType {

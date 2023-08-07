@@ -9,12 +9,12 @@ import {
   middlePos,
 } from "@flyde/core";
 import { rnd } from "../physics";
-import { PartInstance } from "@flyde/core";
+import { NodeInstance } from "@flyde/core";
 import { PromptFn } from "..";
 import { partStylePresetColors } from "../visual-part-editor/instance-view/PartStyleMenu";
 
 export const createGroup = async (
-  instances: PartInstance[],
+  instances: NodeInstance[],
   connections: ConnectionData[],
   name: string,
   prompt: PromptFn

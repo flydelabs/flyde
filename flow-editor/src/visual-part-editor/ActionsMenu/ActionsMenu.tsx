@@ -5,7 +5,7 @@ import {
   getPartDef,
   ImportableSource,
   isVisualPart,
-  PartsDefCollection,
+  NodesDefCollection,
   VisualNode,
 } from "@flyde/core";
 import React, { MouseEvent, MutableRefObject, useCallback } from "react";
@@ -55,7 +55,7 @@ export type Action<T extends ActionType = ActionType> = {
 
 export interface ActionsMenuProps {
   selectedInstances: string[];
-  resolvedParts: PartsDefCollection;
+  resolvedParts: NodesDefCollection;
   part: VisualNode;
   from?: ConnectionNode;
   to?: ConnectionNode;

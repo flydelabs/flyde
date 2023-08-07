@@ -66,7 +66,7 @@ export const toString = (v: any): string => {
   }
 
   if (isStaticValueVisualPart(v)) {
-    return "Embedded Part";
+    return "Embedded Node";
   }
 
   if (isEnvValue(v)) {

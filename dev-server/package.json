@@ -54,7 +54,6 @@
     "walker": "^1.0.8"
   },
   "devDependencies": {
-    "@flyde/editor": "^0.1.8",
     "fs-extra": "^10.1.0",
     "ts-node-dev": "^2.0.0"
   },

@@ -2,8 +2,8 @@ import * as React from "react";
 
 import { Omnibar as ExternalOmnibar, ItemRenderer } from "@blueprintjs/select";
 import {
-  Part,
-  PartsDefCollection,
+  Node,
+  NodesDefCollection,
   keys,
   ImportableSource,
   FlydeFlow,
@@ -17,7 +17,7 @@ export interface OmnibarProps {
   onClose: () => void;
   onCommand: (cmd: OmniBarCmd) => void;
   onRequestImportables?: (query: string) => Promise<ImportableSource[]>;
-  resolvedParts: PartsDefCollection;
+  resolvedParts: NodesDefCollection;
   flow: FlydeFlow;
 }
 
@@ -76,7 +76,7 @@ export const Omnibar: React.FC<OmnibarProps> = (props) => {
     const addItems = all
       // .filter((k) => k.includes(query))
       .map((k) => {
-        const part: Part = resolvedParts[k] as Part;
+        const part: Node = resolvedParts[k] as Node;
         return {
           title: `${part.id}`,
           cmd: {

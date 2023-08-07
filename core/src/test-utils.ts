@@ -1,6 +1,6 @@
 import { spy } from "sinon";
 import Sinon = require("sinon");
-import { BaseNode, InputPinMap, VisualNode, CodeNode, PartInstance } from "./.";
+import { BaseNode, InputPinMap, VisualNode, CodeNode, NodeInstance } from "./.";
 
 import {
   DynamicOutput,
@@ -24,7 +24,7 @@ export interface ConciseBasePart
 
 export interface ConciseVisualPart extends ConciseBasePart {
   connections: Array<[string, string]>;
-  instances: PartInstance[];
+  instances: NodeInstance[];
 }
 
 export interface ConciseCodePart extends ConciseBasePart {

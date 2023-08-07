@@ -1,4 +1,4 @@
-import { FlydeFlow, PartDefinition } from "@flyde/core";
+import { FlydeFlow, NodeDefinition } from "@flyde/core";
 import classNames from "classnames";
 import React, { useCallback } from "react";
 import { Resizable, ResizeCallbackData } from "react-resizable";
@@ -20,7 +20,7 @@ export interface IntegratedFlowSideMenuProps {
   flow: FlydeFlow;
   flowPath: string;
 
-  onAdd: (part: PartDefinition) => void;
+  onAdd: (part: NodeDefinition) => void;
 
   onChangeFlow: (flow: FlydeFlow, type: FlydeFlowChangeType) => void;
 

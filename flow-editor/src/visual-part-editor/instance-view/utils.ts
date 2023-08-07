@@ -1,9 +1,9 @@
 import {
   okeys,
   OMap,
-  PartInstance,
-  PartDefinition,
-  PartsDefCollection,
+  NodeInstance,
+  NodeDefinition,
+  NodesDefCollection,
   isInlineValuePart,
   Pos,
   isStaticInput,
@@ -28,8 +28,8 @@ import { clamp } from "lodash";
 import { getInstanceDomId } from "../dom-ids";
 
 export const calcPartContent = (
-  instance: PartInstance,
-  part: PartDefinition
+  instance: NodeInstance,
+  part: NodeDefinition
 ) => {
   if (instance.displayName) {
     return instance.displayName;
@@ -61,7 +61,7 @@ export const calcPartContent = (
   return part.id;
 };
 
-export const calcPartWidth = (instance: PartInstance, part: PartDefinition) => {
+export const calcPartWidth = (instance: NodeInstance, part: NodeDefinition) => {
   const allInputKeys = okeys(part.inputs);
   const visibleInputs = allInputKeys.length;
   const minWidth = visibleInputs * MIN_WIDTH_PER_PIN;

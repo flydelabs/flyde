@@ -1,4 +1,4 @@
-import { PartsDefCollection } from "@flyde/core";
+import { NodesDefCollection } from "@flyde/core";
 import {
   deserializeFlow,
   isCodePartPath,
@@ -11,7 +11,7 @@ export async function resolveDependentPackages(
   rootPath: string,
   flydeDependencies: string[]
 ) {
-  return flydeDependencies.reduce<Record<string, PartsDefCollection>>(
+  return flydeDependencies.reduce<Record<string, NodesDefCollection>>(
     (acc, dep) => {
       try {
         const paths = resolveImportablePaths(rootPath, dep);

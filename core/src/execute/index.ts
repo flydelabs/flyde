@@ -7,7 +7,7 @@ import {
   isDynamicInput,
   dynamicPartInput,
   dynamicOutput,
-  Part,
+  Node,
   getStaticValue,
   isInlineValuePart,
   isVisualPart,
@@ -15,12 +15,12 @@ import {
   PartInputs,
   PartOutputs,
   staticPartInput,
-  PartAdvancedContext,
+  NodeAdvancedContext,
   isQueueInputPinConfig,
   PartInstanceError,
-  PartState,
-  RunPartFunction,
-  PartsCollection,
+  NodeState,
+  RunNodeFunction,
+  NodesCollection,
 } from "../part";
 
 import { connect, ERROR_PIN_ID } from "../connect";
@@ -61,7 +61,7 @@ export type CancelFn = () => void;
 export type ExecuteEnv = OMap<any>;
 
 export type InnerExecuteFn = (
-  part: Part,
+  part: Node,
   args: PartInputs,
   outputs: PartOutputs,
   insId: string
@@ -71,7 +71,7 @@ export type CodeExecutionData = {
   part: CodeNode;
   inputs: PartInputs;
   outputs: PartOutputs;
-  resolvedDeps: PartsCollection;
+  resolvedDeps: NodesCollection;
   _debugger?: Debugger;
   /**
    * If the part is an instance of another part, this is the id of the instance.
@@ -85,7 +85,7 @@ export type CodeExecutionData = {
    */
   ancestorsInsIds?: string;
   extraContext?: Record<string, any>;
-  mainState: OMap<PartState>;
+  mainState: OMap<NodeState>;
   onError: (err: any) => void;
   onBubbleError: (err: any) => void;
   env: ExecuteEnv;
@@ -118,7 +118,7 @@ const executeCodePart = (data: CodeExecutionData) => {
   const debug = debugLogger("core");
 
   const cleanUps: any = [];
-  let partCleanupFn: ReturnType<RunPartFunction>;
+  let partCleanupFn: ReturnType<RunNodeFunction>;
 
   const innerExec: InnerExecuteFn = (part, i, o, id) =>
     execute({
@@ -171,7 +171,7 @@ const executeCodePart = (data: CodeExecutionData) => {
     });
   };
 
-  const advPartContext: PartAdvancedContext = {
+  const advPartContext: NodeAdvancedContext = {
     execute: innerExec,
     insId,
     state: mainState[innerStateId] ?? new Map(),
@@ -486,14 +486,14 @@ const executeCodePart = (data: CodeExecutionData) => {
 export type ExecuteFn = (params: ExecuteParams) => CancelFn;
 
 export type ExecuteParams = {
-  part: Part;
-  resolvedDeps: PartsCollection;
+  part: Node;
+  resolvedDeps: NodesCollection;
   inputs: PartInputs;
   outputs: PartOutputs;
   _debugger?: Debugger;
   insId?: string;
   ancestorsInsIds?: string;
-  mainState?: OMap<PartState>;
+  mainState?: OMap<NodeState>;
   onBubbleError?: (err: PartInstanceError) => void;
   env?: ExecuteEnv;
   extraContext?: Record<string, any>;
@@ -561,7 +561,7 @@ export const execute: ExecuteFn = ({
     }
   };
 
-  const processPart = (part: Part): CodeNode => {
+  const processPart = (part: Node): CodeNode => {
     if (isVisualPart(part)) {
       return connect(
         part,

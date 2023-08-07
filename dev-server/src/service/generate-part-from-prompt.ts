@@ -1,8 +1,8 @@
 import {
   CodeNode,
   ImportableSource,
-  ImportedPart,
-  RunPartFunction,
+  ImportedNode,
+  RunNodeFunction,
   randomInt,
 } from "@flyde/core";
 import { resolveCodePartDependencies } from "@flyde/resolver";
@@ -34,7 +34,7 @@ const rawOutputs: string = "${outputs}";
 const rawCompletionOutputs: string = "${completionOutputs}";
 const rawReactiveInputs: string = "${reactiveInputs}";
 
-export const Part: CodeNode = {
+export const Node: CodeNode = {
   id: "${id}",
   inputs: (rawInputs ? rawInputs.split(",") : []).reduce<Record<string, {}>>((acc, curr) => {
     acc[curr.trim()] = {};
@@ -76,7 +76,7 @@ export async function generateAndSavePart(
     throw new Error("Generated part is corrupt");
   }
 
-  const part: ImportedPart = {
+  const part: ImportedNode = {
     ...maybePart.part,
     source: { path: filePath, export: maybePart.exportName },
   };

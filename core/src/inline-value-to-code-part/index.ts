@@ -10,9 +10,9 @@ import {
   isInlineValuePart,
   CodeNode,
   dynamicPartInput,
-  InlineValuePart,
+  InlineValueNode,
   dynamicOutput,
-  PartsCollection,
+  NodesCollection,
 } from "../part";
 
 import { getVM2Instance } from "./get-vm2";
@@ -20,7 +20,7 @@ import { getVM2Instance } from "./get-vm2";
 const vm2 = getVM2Instance();
 
 export const inlineValuePartToPart = (
-  inlineValuePart: InlineValuePart,
+  inlineValuePart: InlineValueNode,
   extraContext: Record<string, any> = {}
 ): CodeNode => {
   const { runFnRawCode: fnCode, ...rest } = inlineValuePart;
@@ -79,10 +79,10 @@ export const inlineValuePartToPart = (
 };
 
 export const customPartsToPartsCollection = (
-  customParts: PartsCollection,
+  customParts: NodesCollection,
   extraContext: Record<string, any> = {}
-): PartsCollection => {
-  const partsCollection: PartsCollection = {};
+): NodesCollection => {
+  const partsCollection: NodesCollection = {};
   for (let id in customParts) {
     const part = customParts[id];
     partsCollection[id] = isInlineValuePart(part)

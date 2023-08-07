@@ -7,12 +7,12 @@ import {
   PartOutputs,
   dynamicOutput,
   dynamicPartInput,
-  PartInstance,
+  NodeInstance,
   VisualNode,
   queueInputPinConfig,
   isStaticInputPinConfig,
   PartOutput,
-  PartState,
+  NodeState,
   getPart,
 } from "../part";
 import { CancelFn, execute, Debugger, ExecuteEnv } from "../execute";
@@ -26,7 +26,7 @@ import {
   TRIGGER_PIN_ID,
 } from "./helpers";
 
-import { PartsCollection } from "..";
+import { NodesCollection } from "..";
 
 export * from "./helpers";
 
@@ -58,10 +58,10 @@ type PositionlessVisualPart = Omit<
 
 export const connect = (
   part: PositionlessVisualPart,
-  resolvedDeps: PartsCollection,
+  resolvedDeps: NodesCollection,
   _debugger: Debugger = {},
   ancestorsInsIds?: string,
-  mainState: OMap<PartState> = {},
+  mainState: OMap<NodeState> = {},
   onBubbleError: (err: any) => void = noop,
   env: ExecuteEnv = {},
   extraContext: Record<string, any> = {}
@@ -81,8 +81,8 @@ export const connect = (
 
       const depGraph = new DepGraph({});
 
-      const instanceToId = new Map<PartInstance, string>();
-      const idToInstance = new Map<string, PartInstance>();
+      const instanceToId = new Map<NodeInstance, string>();
+      const idToInstance = new Map<string, NodeInstance>();
 
       // these hold the args / outputs for each piece of an internal connection
       const instanceArgs = new Map<string, PartInputs>();
@@ -305,7 +305,7 @@ export const connect = (
       depGraph
         .overallOrder()
         .map((name: string) => idToInstance.get(name))
-        .forEach((instance: PartInstance) => {
+        .forEach((instance: NodeInstance) => {
           const inputs = instanceArgs.get(instance.id);
           const outputs = instanceOutputs.get(instance.id);
 

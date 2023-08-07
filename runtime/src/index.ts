@@ -1,7 +1,7 @@
 import {
   ExecuteParams,
   FlydeFlow,
-  ImportedPart,
+  ImportedNode,
   ResolvedDependencies,
   simplifiedExecute,
 } from "@flyde/core";
@@ -46,7 +46,7 @@ export function loadFlowFromContent<Inputs>(
     fullFlowPath
   ) as ResolvedDependencies;
 
-  const mainPart: ImportedPart = {
+  const mainPart: ImportedNode = {
     ...flow.part,
     source: { path: fullFlowPath, export: "n/a" },
   }; // TODO - fix the need for imported visual parts to declare an export source.

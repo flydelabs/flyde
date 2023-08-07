@@ -4,8 +4,8 @@
 //   CodeNode,
 //   InputPartPin,
 //   OutputPartPin,
-//   PartStyleSize,
-//   RunPartFunction,
+//   NodeStyleSize,
+//   RunNodeFunction,
 // } from ".";
 // import { InputMode } from "./part-pins";
 
@@ -38,9 +38,9 @@
 //   run?: (...args: any[]) => any;
 //   symbol?: string;
 //   icon?: string;
-//   size?: PartStyleSize;
+//   size?: NodeStyleSize;
 //   customViewCode?: string;
-//   fullRunFn?: RunPartFunction;
+//   fullRunFn?: RunNodeFunction;
 // };
 
 // // This is the refactored partFromSimpleFunction function.

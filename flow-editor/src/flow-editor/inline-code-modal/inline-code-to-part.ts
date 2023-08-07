@@ -1,5 +1,5 @@
 import {
-  InlineValuePartType,
+  InlineValueNodeType,
   partInput,
   partOutput,
   randomInt,
@@ -16,7 +16,7 @@ export type InlineValuePartData = {
   code: string;
   customView?: string;
   partId?: string;
-  type: InlineValuePartType;
+  type: InlineValueNodeType;
 };
 export const createInlineValuePart = ({
   code,
@@ -35,7 +35,7 @@ export const createInlineValuePart = ({
   };
 
   const runFnRawCode =
-    type === InlineValuePartType.FUNCTION
+    type === InlineValueNodeType.FUNCTION
       ? `const result = (function() { ${code}}());
   Promise.resolve(result).then(val => outputs.value.next(val))`
       : `const result = (${code}); Promise.resolve(result).then(val => outputs.value.next(val))`;
@@ -60,7 +60,7 @@ export const createInlineValuePart = ({
       },
     },
     description: `Custom inline ${
-      type === InlineValuePartType.VALUE ? "value" : "function"
+      type === InlineValueNodeType.VALUE ? "value" : "function"
     }`,
   });
 };

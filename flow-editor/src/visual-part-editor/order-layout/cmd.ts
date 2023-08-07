@@ -4,7 +4,7 @@ import {
   isExternalConnectionNode,
   entries,
   VisualNode,
-  PartsDefCollection,
+  NodesDefCollection,
   getPartDef,
   ResolvedFlydeFlowDefinition,
 } from "@flyde/core";
@@ -45,7 +45,7 @@ export const layoutToInstances = (
 
 export const orderVisualPart = (
   part: VisualNode,
-  resolvedParts: PartsDefCollection,
+  resolvedParts: NodesDefCollection,
   itrs: number,
   onStep?: (val: VisualNode, idx: number) => void
 ) => {

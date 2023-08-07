@@ -1,4 +1,4 @@
-import { CustomPart, FlydeFlow, flydeFlowSchema } from "@flyde/core";
+import { CustomNode, FlydeFlow, flydeFlowSchema } from "@flyde/core";
 import * as yaml from "yaml";
 import * as rfs from "require-from-string";
 import _ = require("lodash");
@@ -13,11 +13,7 @@ require("ts-node").register({
   // }
 });
 
-
-export function deserializeFlow (
-  flowContents: string,
-  path: string
-): FlydeFlow {
+export function deserializeFlow(flowContents: string, path: string): FlydeFlow {
   const unsafeflow = yaml.parse(flowContents);
 
   const result = flydeFlowSchema.safeParse(unsafeflow);
@@ -34,10 +30,10 @@ export function deserializeFlow (
   data.imports = imports;
 
   return data as FlydeFlow;
-};
+}
 
-export function deserializeFlowByPath(path: string): FlydeFlow  {
-  try { 
+export function deserializeFlowByPath(path: string): FlydeFlow {
+  try {
     return deserializeFlow(readFileSync(path, "utf8"), path);
   } catch (e) {
     console.error(`Error loading flow at ${path}`, e);

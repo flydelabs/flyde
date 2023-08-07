@@ -1,4 +1,4 @@
-import { BaseNode, CodeNode, PartStyleSize, RunPartFunction } from ".";
+import { BaseNode, CodeNode, NodeStyleSize, RunNodeFunction } from ".";
 import { InputMode } from "./part-pins";
 
 export type SimpleFnData = Omit<BaseNode, "inputs" | "outputs" | "run"> & {
@@ -15,9 +15,9 @@ export type SimpleFnData = Omit<BaseNode, "inputs" | "outputs" | "run"> & {
   run?: (...args: any[]) => any;
   symbol?: string;
   icon?: string;
-  size?: PartStyleSize;
+  size?: NodeStyleSize;
   customViewCode?: string;
-  fullRunFn?: RunPartFunction; // hack to start migrating these back
+  fullRunFn?: RunNodeFunction; // hack to start migrating these back
 };
 
 export function partFromSimpleFunction(data: SimpleFnData): CodeNode {

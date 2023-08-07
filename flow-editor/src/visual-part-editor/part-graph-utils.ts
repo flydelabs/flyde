@@ -1,16 +1,16 @@
-import { PartInstance, ConnectionData, VisualNode } from "@flyde/core";
+import { NodeInstance, ConnectionData, VisualNode } from "@flyde/core";
 
 export const getLeafInstancesOfSelection = (
-  selectedInstances: PartInstance[],
-  allInstances: PartInstance[],
+  selectedInstances: NodeInstance[],
+  allInstances: NodeInstance[],
   allConnections: ConnectionData[]
-): PartInstance[] => {
-  const allConnected = selectedInstances.reduce<PartInstance[]>((acc, curr) => {
+): NodeInstance[] => {
+  const allConnected = selectedInstances.reduce<NodeInstance[]>((acc, curr) => {
     const instancesConnectedToCurr = allConnections
       .filter((conn) => conn.to.insId === curr.id)
       .map(
         (conn) =>
-          allInstances.find((ins) => ins.id === conn.from.insId) as PartInstance
+          allInstances.find((ins) => ins.id === conn.from.insId) as NodeInstance
       )
       .filter((ins) => !!ins);
     return [...acc, ...instancesConnectedToCurr];

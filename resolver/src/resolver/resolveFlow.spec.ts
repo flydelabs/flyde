@@ -2,8 +2,8 @@ import {
   CodeNode,
   dynamicPartInput,
   execute,
-  ImportedPart,
-  PartsCollection,
+  ImportedNode,
+  NodesCollection,
   randomInt,
   staticPartInput,
   values,
@@ -41,7 +41,7 @@ describe("resolver", () => {
     );
     const part = data.main;
 
-    const resolvedDeps = data.dependencies as PartsCollection;
+    const resolvedDeps = data.dependencies as NodesCollection;
 
     const [s, r] = spiedOutput();
     execute({
@@ -60,7 +60,7 @@ describe("resolver", () => {
     );
 
     const part = data.main;
-    const resolvedDeps = data.dependencies as PartsCollection;
+    const resolvedDeps = data.dependencies as NodesCollection;
 
     const [s, r] = spiedOutput();
     execute({
@@ -80,7 +80,7 @@ describe("resolver", () => {
       getFixturePath("a-imports-b-imports-c-imports-d/Container.flyde")
     );
 
-    const resolvedDeps = data.dependencies as PartsCollection;
+    const resolvedDeps = data.dependencies as NodesCollection;
 
     const keys = _.keys(resolvedDeps);
 
@@ -109,7 +109,7 @@ describe("resolver", () => {
     const data = resolveFlowDependenciesByPath(
       getFixturePath("a-imports-b-and-c-potential-ambiguity/Container.flyde")
     );
-    const resolvedDeps = data.dependencies as PartsCollection;
+    const resolvedDeps = data.dependencies as NodesCollection;
 
     assert.deepEqual(_.keys(resolvedDeps), [
       "Adds1Wrapper__Special",
@@ -145,7 +145,7 @@ describe("resolver", () => {
       "implementation"
     );
 
-    const resolvedDeps = data.dependencies as PartsCollection;
+    const resolvedDeps = data.dependencies as NodesCollection;
     const [s, r] = spiedOutput();
     execute({
       part: data.main,
@@ -168,7 +168,7 @@ describe("resolver", () => {
       "implementation"
     );
 
-    const resolvedDeps = data.dependencies as PartsCollection;
+    const resolvedDeps = data.dependencies as NodesCollection;
     const [s, r] = spiedOutput();
     execute({
       part: data.main,
@@ -208,7 +208,7 @@ describe("resolver", () => {
     const path = getFixturePath("a-imports-js-part-from-b-with-dep/a.flyde");
     const flow = resolveFlowDependenciesByPath(path);
 
-    const resolvedDeps = flow.dependencies as PartsCollection;
+    const resolvedDeps = flow.dependencies as NodesCollection;
 
     const [s, r] = spiedOutput();
     execute({
@@ -252,7 +252,7 @@ describe("resolver", () => {
     const path = getFixturePath("imports-2-parts-from-package.flyde");
 
     const flow = resolveFlowDependenciesByPath(path);
-    const resolvedDeps = flow.dependencies as PartsCollection;
+    const resolvedDeps = flow.dependencies as NodesCollection;
 
     const [s, r] = spiedOutput();
     execute({
@@ -278,7 +278,7 @@ describe("resolver", () => {
       getFixturePath("a-uses-inline-part-with-dependency/a.flyde")
     );
 
-    const resolvedDeps = flow.dependencies as PartsCollection;
+    const resolvedDeps = flow.dependencies as NodesCollection;
 
     assert.exists(resolvedDeps.Add);
     // const val = await simplifiedExecute(flow.main, resolvedDeps, { n: 2 });
@@ -298,7 +298,7 @@ describe("resolver", () => {
       getFixturePath("a-uses-inline-part-with-dependency/b-imports-a.flyde")
     );
 
-    const resolvedDeps = flow.dependencies as PartsCollection;
+    const resolvedDeps = flow.dependencies as NodesCollection;
 
     assert.exists(resolvedDeps.Add1Wrapper);
 
@@ -318,17 +318,17 @@ describe("resolver", () => {
       getFixturePath("a-imports-multi-exposed-from-package/a.flyde")
     );
 
-    const resolvedDeps = flow.dependencies as PartsCollection;
+    const resolvedDeps = flow.dependencies as NodesCollection;
 
     assert.exists((resolvedDeps.Add as CodeNode).run);
     assert.exists((resolvedDeps.Sub as CodeNode).run);
 
     assert.match(
-      (resolvedDeps.Add as unknown as ImportedPart).source.export,
+      (resolvedDeps.Add as unknown as ImportedNode).source.export,
       /add/
     );
     assert.match(
-      (resolvedDeps.Sub as unknown as ImportedPart).source.export,
+      (resolvedDeps.Sub as unknown as ImportedNode).source.export,
       /sub/
     );
 
@@ -351,7 +351,7 @@ describe("resolver", () => {
     const resolvedFlow = resolveFlowDependencies(flow, path);
     const part = resolvedFlow.main;
 
-    const resolvedDeps = resolvedFlow.dependencies as PartsCollection;
+    const resolvedDeps = resolvedFlow.dependencies as NodesCollection;
 
     const [s, r] = spiedOutput();
     execute({
@@ -371,7 +371,7 @@ describe("resolver", () => {
       );
       const part = data.main;
 
-      const resolvedDeps = data.dependencies as PartsCollection;
+      const resolvedDeps = data.dependencies as NodesCollection;
 
       const [s, r] = spiedOutput();
 

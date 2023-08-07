@@ -11,7 +11,7 @@ import { Subject } from "rxjs";
 
 import { CancelFn, InnerExecuteFn } from "../execute";
 import { ConnectionData } from "../connect";
-import { isInlinePartInstance, PartInstance } from "./part-instance";
+import { isInlinePartInstance, NodeInstance } from "./part-instance";
 import {
   InputPin,
   InputPinMap,
@@ -20,38 +20,38 @@ import {
   partInput,
   partOutput,
 } from "./part-pins";
-import { ImportedPart } from "../flow-schema";
+import { ImportedNode } from "../flow-schema";
 
-export type PartsCollection = OMap<Part>;
+export type NodesCollection = OMap<Node>;
 
-export type PartsDefCollection = OMap<PartDefinition>;
+export type NodesDefCollection = OMap<NodeDefinition>;
 
-export type CustomPartCollection = OMap<CustomPart>;
+export type CustomNodeCollection = OMap<CustomNode>;
 
-export type PartState = Map<string, any>;
+export type NodeState = Map<string, any>;
 
-export type PartAdvancedContext = {
+export type NodeAdvancedContext = {
   execute: InnerExecuteFn;
   insId: string;
   ancestorsInsIds?: string;
-  state: PartState;
-  globalState: PartState;
+  state: NodeState;
+  globalState: NodeState;
   onCleanup: (cb: Function) => void;
   onError: (e: any) => void;
   context: Record<string, any>;
 };
 
-export type RunPartFunction = (
+export type RunNodeFunction = (
   args: OMapF<any>,
   o: OMapF<Subject<any>>,
-  adv: PartAdvancedContext
+  adv: NodeAdvancedContext
 ) => void | CancelFn | Promise<void | CancelFn>;
 
-export type CustomPartViewFn = (
-  instance: PartInstance,
-  inputs: OMap<PartInstance[]>,
-  outputs: OMap<PartInstance[]>,
-  resolvedDeps: PartsDefCollection
+export type CustomNodeViewFn = (
+  instance: NodeInstance,
+  inputs: OMap<NodeInstance[]>,
+  outputs: OMap<NodeInstance[]>,
+  resolvedDeps: NodesDefCollection
 ) =>
   | {
       label: string;
@@ -60,22 +60,22 @@ export type CustomPartViewFn = (
     }
   | false;
 
-export type PartStyleSize = "small" | "regular" | "large";
-export type PartTypeIcon = string | [string, string];
+export type NodeStyleSize = "small" | "regular" | "large";
+export type NodeTypeIcon = string | [string, string];
 
-export interface PartStyle {
-  icon?: PartTypeIcon;
-  size?: PartStyleSize;
+export interface NodeStyle {
+  icon?: NodeTypeIcon;
+  size?: NodeStyleSize;
   color?: string | [string, string];
   cssOverride?: Record<string, string>;
 }
 
 /**
- * Extended by {@link VisualNode}, {@link CodeNode} and {@link InlineValuePart}
+ * Extended by {@link VisualNode}, {@link CodeNode} and {@link InlineValueNode}
  */
 export interface BaseNode {
   /**
-   * Part's unique id. {@link VisualNode.instances }  refer use this to refer to the correct part
+   * Node's unique id. {@link VisualNode.instances }  refer use this to refer to the correct node
    */
   id: string;
   /**
@@ -83,13 +83,13 @@ export interface BaseNode {
    */
   description?: string;
   /**
-   * A list of keywords that can be used to search for the part. Useful for parts that users might search using different words.
+   * A list of keywords that can be used to search for the node. Useful for node that users might search using different words.
    */
   searchKeywords?: string[];
   /**
-   * A pin on a part that receives data. Each part can have zero or more input pins.
+   * A pin on a node that receives data. Each node can have zero or more input pins.
    *
-   * Example for the inputs of a mathematical multiplier part:
+   * Example for the inputs of a mathematical multiplier node:
    * ```ts
    * {
    *  multiplicand: { description: "The number to be multiplied" },
@@ -99,8 +99,8 @@ export interface BaseNode {
    */
   inputs: Record<string, InputPin>;
   /**
-   * A pin on a part that sends data. Each part can have zero or more output pins.
-   * For example, a "Split array" part might have one input pin for an array and two output pins for the first and second halves of the array:
+   * A pin on a node that sends data. Each node can have zero or more output pins.
+   * For example, a "Split array" node might have one input pin for an array and two output pins for the first and second halves of the array:
    *
    * @example
    * ```ts
@@ -116,7 +116,7 @@ export interface BaseNode {
    */
   namespace?: string;
   /**
-   * Instructs Flyde that the part is in "explicit completion" mode and describes which outputs trigger the part's completion. Receives a list of outputs that should trigger an explicit completion of the part when they emit a value. Any of the listed outputs will trigger a completion (i.e. completionOutput[0] `OR` completionOutput[1])
+   * Instructs Flyde that the node is in "explicit completion" mode and describes which outputs trigger the node's completion. Receives a list of outputs that should trigger an explicit completion of the node when they emit a value. Any of the listed outputs will trigger a completion (i.e. completionOutput[0] `OR` completionOutput[1])
    * Leave empty for implicit completion. This should work best for 99% of the case.
    *
    * To declare that 2 different outputs must emit a value in order to trigger a completion, different outputs can be joined together with a `+` sign as following:
@@ -126,7 +126,7 @@ export interface BaseNode {
    *  completionOutputs: ["data+headers", "error"] // this means either data AND headers, OR "error" will trigger an explicit completion.
    * ```
    *
-   * See the [Parts lifecycle](/docs/lifecycle) for more info
+   * See the [Nodes lifecycle](/docs/lifecycle) for more info
    */
   completionOutputs?: string[];
   /**
@@ -150,41 +150,41 @@ export interface BaseNode {
    */
   customViewCode?: string;
   /**
-   * All instances of this part will inherit the default style if it is supplied.
-   * See {@link PartStyle} for the full options supported
+   * All instances of this node will inherit the default style if it is supplied.
+   * See {@link NodeStyle} for the full options supported
    */
-  defaultStyle?: PartStyle;
+  defaultStyle?: NodeStyle;
 }
 
 export interface CodeNode extends BaseNode {
   /**
-   * This function will run as soon as the part's inputs are satisfied.
-   * It has access to the parts inputs values, and output pins. See {@link RunPartFunction} for more information.
+   * This function will run as soon as the node's inputs are satisfied.
+   * It has access to the nodes inputs values, and output pins. See {@link RunNodeFunction} for more information.
    *
    */
-  run: RunPartFunction;
+  run: RunNodeFunction;
   /**
    * @deprecated use {@link CodeNode['run']} instead
    */
-  fn?: RunPartFunction;
-  customView?: CustomPartViewFn;
+  fn?: RunNodeFunction;
+  customView?: CustomNodeViewFn;
 }
 
-export enum InlineValuePartType {
+export enum InlineValueNodeType {
   VALUE = "value",
   FUNCTION = "function",
 }
 
 /**
- * InlineValuePart is used by the editor to create inline values and function.
- * @deprecated will turn into a "Macro Part" as soon as that is developed
+ * InlineValueNode is used by the editor to create inline values and function.
+ * @deprecated will turn into a "Macro Node" as soon as that is developed
  */
 
-export interface InlineValuePart extends BaseNode {
+export interface InlineValueNode extends BaseNode {
   runFnRawCode: string;
   fnCode?: string;
   dataBuilderSource?: string; // quick solution for "Data builder iteration"
-  templateType?: InlineValuePartType;
+  templateType?: InlineValueNodeType;
 }
 
 /**
@@ -200,50 +200,50 @@ export interface VisualNode extends BaseNode {
   /** a map holding the position for each main output. Used in the editor only. */
   outputsPosition: OMap<Pos>;
   /** the visual parts internal part instances, either referring to other parts by id or by value (inline) */
-  instances: PartInstance[];
+  instances: NodeInstance[];
   /** each connection represents a "wire" between 2 different instances, or between an instance and a main input/output*/
   connections: ConnectionData[];
   /** TODO - either deprecate this or {@link BaseNode.customViewCode} */
-  customView?: CustomPartViewFn;
+  customView?: CustomNodeViewFn;
 }
 
-export type Part = CodeNode | CustomPart;
+export type Node = CodeNode | CustomNode;
 
 export type ImportableSource = {
   module: string;
-  part: ImportedPart;
+  part: ImportedNode;
   implicit?: boolean;
 };
 
-export type CustomPart = VisualNode | InlineValuePart;
+export type CustomNode = VisualNode | InlineValueNode;
 
-export type CodePartDefinition = Omit<CodeNode, "run">;
+export type CodeNodeDefinition = Omit<CodeNode, "run">;
 
-export type PartDefinition = CustomPart | CodePartDefinition;
+export type NodeDefinition = CustomNode | CodeNodeDefinition;
 
 export type PartModuleMetaData = {
   imported?: boolean;
 };
 
-export type PartDefinitionWithModuleMetaData = PartDefinition &
+export type NodeDefinitionWithModuleMetaData = NodeDefinition &
   PartModuleMetaData;
 
 export const isBasePart = (p: any): p is BaseNode => {
   return p && p.id && p.inputs && p.outputs;
 };
 
-export const isCodePart = (p: Part | PartDefinition | any): p is CodeNode => {
+export const isCodePart = (p: Node | NodeDefinition | any): p is CodeNode => {
   return isBasePart(p) && typeof (p as CodeNode).run === "function";
 };
 
-export const isVisualPart = (p: Part | PartDefinition): p is VisualNode => {
+export const isVisualPart = (p: Node | NodeDefinition): p is VisualNode => {
   return !!(p as VisualNode).instances;
 };
 
 export const isInlineValuePart = (
-  p: Part | PartDefinition | undefined
-): p is InlineValuePart => {
-  return isDefined(p) && isDefined((p as InlineValuePart).runFnRawCode);
+  p: Node | NodeDefinition | undefined
+): p is InlineValueNode => {
+  return isDefined(p) && isDefined((p as InlineValueNode).runFnRawCode);
 };
 
 export const visualPart = testDataCreator<VisualNode>({
@@ -263,18 +263,18 @@ export const codePart = testDataCreator<CodeNode>({
   run: noop as any,
 });
 
-export const inlineValuePart = testDataCreator<InlineValuePart>({
+export const inlineValuePart = testDataCreator<InlineValueNode>({
   id: "part",
   inputs: {},
   outputs: {},
   runFnRawCode: "",
 });
 
-export type SimplifiedPartParams = {
+export type SimplifiedNodeParams = {
   id: string;
   inputTypes: OMap<string>;
   outputTypes: OMap<string>;
-  run: RunPartFunction;
+  run: RunNodeFunction;
 };
 
 export const fromSimplified = ({
@@ -282,7 +282,7 @@ export const fromSimplified = ({
   inputTypes,
   outputTypes,
   id,
-}: SimplifiedPartParams): CodeNode => {
+}: SimplifiedNodeParams): CodeNode => {
   const inputs: InputPinMap = entries(inputTypes).reduce<InputPinMap>(
     (p, [k]) => ({ ...p, [k]: {} }),
     {}
@@ -310,7 +310,7 @@ export const maybeGetStaticValuePartId = (value: string) => {
 };
 export const getStaticValue = (
   value: any,
-  resolvedDeps: PartsDefCollection,
+  resolvedDeps: NodesDefCollection,
   calleeId: string
 ) => {
   const maybePartId = maybeGetStaticValuePartId(value);
@@ -328,32 +328,32 @@ export const getStaticValue = (
 };
 
 export const getPart = (
-  idOrIns: string | PartInstance,
-  resolvedParts: PartsCollection
-): Part => {
+  idOrIns: string | NodeInstance,
+  resolvedParts: NodesCollection
+): Node => {
   if (typeof idOrIns !== "string" && isInlinePartInstance(idOrIns)) {
     return idOrIns.part;
   }
   const id = typeof idOrIns === "string" ? idOrIns : idOrIns.partId;
   const part = resolvedParts[id];
   if (!part) {
-    throw new Error(`Part with id ${id} not found`);
+    throw new Error(`Node with id ${id} not found`);
   }
   return part;
 };
 
 export const getPartDef = (
-  idOrIns: string | PartInstance,
-  resolvedParts: PartsDefCollection
-): PartDefinition => {
+  idOrIns: string | NodeInstance,
+  resolvedParts: NodesDefCollection
+): NodeDefinition => {
   if (typeof idOrIns !== "string" && isInlinePartInstance(idOrIns)) {
     return idOrIns.part;
   }
   const id = typeof idOrIns === "string" ? idOrIns : idOrIns.partId;
   const part = resolvedParts[id];
   if (!part) {
-    console.error(`Part with id ${id} not found`);
-    throw new Error(`Part with id ${id} not found`);
+    console.error(`Node with id ${id} not found`);
+    throw new Error(`Node with id ${id} not found`);
   }
   return part;
 };
@@ -363,7 +363,7 @@ export type codeFromFunctionParams = {
   fn: Function;
   inputNames: string[];
   outputName: string;
-  defaultStyle?: PartStyle;
+  defaultStyle?: NodeStyle;
 };
 
 export const codeFromFunction = ({

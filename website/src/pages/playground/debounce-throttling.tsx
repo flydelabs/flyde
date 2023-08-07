@@ -9,7 +9,7 @@ import {
   dynamicPartInput,
   isVisualPart,
   isRefPartInstance,
-  PartsDefCollection,
+  NodesDefCollection,
   staticInputPinConfig,
 } from "@site/../core/dist";
 

@@ -1,12 +1,12 @@
 import _md5 from "md5";
 import { FlydeFlow } from "../../flow-schema";
-import { isInlineValuePart, isVisualPart, Part } from "../../part";
+import { isInlineValuePart, isVisualPart, Node } from "../../part";
 
 const md5 = (str: string) => {
   return _md5(str);
 };
 
-export const hashPart = (part: Part, ignorePos = true) => {
+export const hashPart = (part: Node, ignorePos = true) => {
   const { id, completionOutputs, reactiveInputs, inputs, outputs } = part;
 
   const basePart = { id, completionOutputs, reactiveInputs, inputs, outputs };

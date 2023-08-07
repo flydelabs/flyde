@@ -6,10 +6,10 @@ import {
   isQueueInputPinConfig,
   isStaticInput,
   isStickyInputPinConfig,
-  Part,
+  Node,
   PartInput,
   PartInputs,
-  PartState,
+  NodeState,
 } from "../part";
 
 import { containsAll, entries, isDefined, keys, OMap } from "../common";
@@ -41,7 +41,7 @@ const getFinalStaticValue = (input: PartInput, env: ExecuteEnv) => {
 export const peekValueForExecution = (
   key: string,
   input: PartInput,
-  state: PartState,
+  state: NodeState,
   env: ExecuteEnv,
   partId: string
 ) => {
@@ -66,7 +66,7 @@ export const peekValueForExecution = (
 export const pullValueForExecution = (
   key: string,
   input: PartInput,
-  state: PartState,
+  state: NodeState,
   env: ExecuteEnv
 ): unknown => {
   const stateItem = state.get(key);
@@ -90,34 +90,40 @@ export const pullValueForExecution = (
 
 export const pullValuesForExecution = (
   partInputs: PartInputs,
-  state: PartState,
+  state: NodeState,
   env: ExecuteEnv
 ) => {
-  const data = entries(partInputs).reduce<Record<string, unknown>>((acc, [key, input]) => {
-    acc[key] = pullValueForExecution(key, input, state, env);
-    return acc;
-  }, {});
+  const data = entries(partInputs).reduce<Record<string, unknown>>(
+    (acc, [key, input]) => {
+      acc[key] = pullValueForExecution(key, input, state, env);
+      return acc;
+    },
+    {}
+  );
 
   return data;
 };
 
 export const peekValuesForExecution = (
   partInputs: PartInputs,
-  state: PartState,
+  state: NodeState,
   env: ExecuteEnv,
   partId: string
 ) => {
-  const data = entries(partInputs).reduce<Record<string, unknown>>((acc, [key, input]) => {
-    acc[key] = peekValueForExecution(key, input, state, env, partId);
-    return acc;
-  }, {});
+  const data = entries(partInputs).reduce<Record<string, unknown>>(
+    (acc, [key, input]) => {
+      acc[key] = peekValueForExecution(key, input, state, env, partId);
+      return acc;
+    },
+    {}
+  );
 
   return data;
 };
 
 export const hasNewSignificantValues = (
   partInputs: PartInputs,
-  state: PartState,
+  state: NodeState,
   env: ExecuteEnv,
   partId: string
 ) => {
@@ -131,8 +137,8 @@ export const hasNewSignificantValues = (
 
 export const isPartStateValid = (
   partInputs: PartInputs,
-  state: PartState,
-  part: Part
+  state: NodeState,
+  part: Node
 ) => {
   const connectedKeys = keys(partInputs);
 
@@ -177,7 +183,7 @@ export const isPartStateValid = (
 
 export const subscribeInputsToState = (
   partInputs: PartInputs,
-  state: PartState,
+  state: NodeState,
   onInput: (key: string, val: unknown) => void
 ) => {
   const cleanups: Function[] = [];

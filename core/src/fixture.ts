@@ -1,11 +1,11 @@
 import {
   fromSimplified,
-  Part,
+  Node,
   VisualNode,
   partInput,
   partOutput,
   CodeNode,
-  InlineValuePart,
+  InlineValueNode,
   partInstance,
   dynamicPartInput,
   queueInputPinConfig,
@@ -15,7 +15,7 @@ import { execute, SubjectMap } from "./execute";
 
 import { isDefined, okeys } from "./common";
 import { Subject } from "rxjs";
-import { PartsCollection } from ".";
+import { NodesCollection } from ".";
 import { conciseCodePart } from "./test-utils";
 
 export const add: CodeNode = {
@@ -32,7 +32,7 @@ export const add: CodeNode = {
   },
 };
 
-export const codeAdd: InlineValuePart = {
+export const codeAdd: InlineValueNode = {
   id: "add",
   inputs: {
     n1: partInput(),
@@ -55,7 +55,7 @@ export const add1: CodeNode = {
   },
 };
 
-export const mul: Part = {
+export const mul: Node = {
   id: "mul",
   inputs: {
     n1: partInput(),
@@ -65,7 +65,7 @@ export const mul: Part = {
   run: ({ n1, n2 }, { r }) => r?.next(n1 * n2),
 };
 
-export const mul2: Part = fromSimplified({
+export const mul2: Node = fromSimplified({
   id: "mul2",
   inputTypes: { n: "number" },
   outputTypes: { r: "number" },
@@ -74,7 +74,7 @@ export const mul2: Part = fromSimplified({
   },
 });
 
-export const id: Part = {
+export const id: Node = {
   id: "id",
   inputs: { v: partInput() },
   outputs: { r: partOutput() },
@@ -97,7 +97,7 @@ export const id2: CodeNode = {
   },
 };
 
-export const transform: Part = {
+export const transform: Node = {
   id: "transform",
   inputs: { from: partInput(), to: partInput() },
   outputs: { r: partOutput() },
@@ -106,7 +106,7 @@ export const transform: Part = {
   },
 };
 
-export const Value = (v: any): Part => {
+export const Value = (v: any): Node => {
   return fromSimplified({
     id: `val-${v}`,
     inputTypes: {},
@@ -267,7 +267,7 @@ export const isEven: CodeNode = {
   },
 };
 
-export const filter: Part = fromSimplified({
+export const filter: Node = fromSimplified({
   id: "filter",
   inputTypes: { list: "any", fn: "part" },
   outputTypes: { r: "any" },
@@ -437,8 +437,8 @@ export const spreadList = conciseCodePart({
   },
 });
 
-export const testPartsCollectionWith = (...parts: Part[]): PartsCollection => {
-  return parts.reduce<PartsCollection>(
+export const testPartsCollectionWith = (...parts: Node[]): NodesCollection => {
+  return parts.reduce<NodesCollection>(
     (acc, p) => ({ ...acc, [p.id]: p }),
     testPartsCollection
   );

@@ -11,7 +11,7 @@ import {
   InlinePartInstance,
   randomInt,
   pickRandom,
-  PartStyle,
+  NodeStyle,
   getPartOutputs,
   getInputName,
   getOutputName,
@@ -22,7 +22,7 @@ import { PinView } from "../pin-view/PinView";
 import {
   ConnectionData,
   Pos,
-  PartsDefCollection,
+  NodesDefCollection,
   isStickyInputPinConfig,
   ERROR_PIN_ID,
   TRIGGER_PIN_ID,
@@ -30,9 +30,9 @@ import {
   isInputPinOptional,
 } from "@flyde/core";
 import {
-  PartInstance,
+  NodeInstance,
   isVisualPart,
-  PartDefinition,
+  NodeDefinition,
   PinType,
   getPartInputs,
 } from "@flyde/core";
@@ -59,8 +59,8 @@ export const MAX_INSTANCE_WIDTH = 400; // to change in CSS as well
 export const INSTANCE_INFO_TOOLTIP_DELAY = 400;
 
 export const getVisibleInputs = (
-  instance: PartInstance,
-  part: PartDefinition,
+  instance: NodeInstance,
+  part: NodeDefinition,
   connections: ConnectionData[]
 ): string[] => {
   const { visibleInputs } = instance;
@@ -90,8 +90,8 @@ export const getVisibleInputs = (
 };
 
 export const getVisibleOutputs = (
-  instance: PartInstance,
-  part: PartDefinition,
+  instance: NodeInstance,
+  part: NodeDefinition,
   connections: ConnectionData[]
 ) => {
   const { visibleOutputs } = instance;
@@ -112,13 +112,13 @@ export const getVisibleOutputs = (
 };
 
 export interface InstanceViewProps {
-  instance: PartInstance;
-  part: PartDefinition;
+  instance: NodeInstance;
+  part: NodeDefinition;
   selected?: boolean;
   dragged?: boolean;
   selectedInput?: string;
   selectedOutput?: string;
-  connectionsPerInput: OMap<PartInstance[]>;
+  connectionsPerInput: OMap<NodeInstance[]>;
   closestPin?: ClosestPinData;
   connections: ConnectionData[];
   viewPort: { pos: Pos; zoom: number };
@@ -127,36 +127,36 @@ export interface InstanceViewProps {
 
   ancestorsInsIds?: string;
 
-  resolvedDeps: PartsDefCollection;
-  onPinClick: (v: PartInstance, k: string, type: PinType) => void;
+  resolvedDeps: NodesDefCollection;
+  onPinClick: (v: NodeInstance, k: string, type: PinType) => void;
   onPinDblClick: (
-    v: PartInstance,
+    v: NodeInstance,
     k: string,
     type: PinType,
     e: React.MouseEvent
   ) => void;
-  onDragEnd: (ins: PartInstance, ...data: any[]) => void;
-  onDragStart: (ins: PartInstance, ...data: any[]) => void;
-  onDragMove: (ins: PartInstance, ev: React.MouseEvent, pos: Pos) => void;
-  onSelect: (ins: PartInstance, ev: React.MouseEvent) => void;
-  onDblClick: (ins: PartInstance, shiftKey: boolean) => void;
-  onToggleSticky: (ins: PartInstance, pinId: string) => void;
+  onDragEnd: (ins: NodeInstance, ...data: any[]) => void;
+  onDragStart: (ins: NodeInstance, ...data: any[]) => void;
+  onDragMove: (ins: NodeInstance, ev: React.MouseEvent, pos: Pos) => void;
+  onSelect: (ins: NodeInstance, ev: React.MouseEvent) => void;
+  onDblClick: (ins: NodeInstance, shiftKey: boolean) => void;
+  onToggleSticky: (ins: NodeInstance, pinId: string) => void;
   onTogglePinLog: (insId: string, pinId: string, type: PinType) => void;
   onTogglePinBreakpoint: (insId: string, pinId: string, type: PinType) => void;
 
   onInspectPin: (insId: string, pin: { id: string; type: PinType }) => void;
 
-  onUngroup: (ins: PartInstance) => void;
-  onDetachConstValue: (ins: PartInstance, pinId: string) => void;
-  onCopyConstValue: (ins: PartInstance, pinId: string) => void;
-  onPasteConstValue: (ins: PartInstance, pinId: string) => void;
-  onConvertConstToEnv?: (ins: PartInstance, pinId: string) => void;
+  onUngroup: (ins: NodeInstance) => void;
+  onDetachConstValue: (ins: NodeInstance, pinId: string) => void;
+  onCopyConstValue: (ins: NodeInstance, pinId: string) => void;
+  onPasteConstValue: (ins: NodeInstance, pinId: string) => void;
+  onConvertConstToEnv?: (ins: NodeInstance, pinId: string) => void;
 
-  onChangeVisibleInputs: (ins: PartInstance, inputs: string[]) => void;
-  onChangeVisibleOutputs: (ins: PartInstance, outputs: string[]) => void;
+  onChangeVisibleInputs: (ins: NodeInstance, inputs: string[]) => void;
+  onChangeVisibleOutputs: (ins: NodeInstance, outputs: string[]) => void;
 
-  onDeleteInstance: (ins: PartInstance) => void;
-  onSetDisplayName: (ins: PartInstance, view: string | undefined) => void;
+  onDeleteInstance: (ins: NodeInstance) => void;
+  onSetDisplayName: (ins: NodeInstance, view: string | undefined) => void;
 
   copiedConstValue?: any;
 
@@ -173,11 +173,11 @@ export interface InstanceViewProps {
 
   inlineEditorPortalDomNode: HTMLElement;
 
-  onChangeStyle: (instance: PartInstance, style: PartStyle) => void;
+  onChangeStyle: (instance: NodeInstance, style: NodeStyle) => void;
   onGroupSelected: () => void;
 
-  onPinMouseDown: (ins: PartInstance, pinId: string, type: PinType) => void;
-  onPinMouseUp: (ins: PartInstance, pinId: string, type: PinType) => void;
+  onPinMouseDown: (ins: NodeInstance, pinId: string, type: PinType) => void;
+  onPinMouseUp: (ins: NodeInstance, pinId: string, type: PinType) => void;
 
   hadError: boolean;
 }
@@ -595,7 +595,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
     };
 
     const _onChangeStyle = React.useCallback(
-      (style: PartStyle) => {
+      (style: NodeStyle) => {
         onChangeStyle(instance, style);
       },
       [instance, onChangeStyle]

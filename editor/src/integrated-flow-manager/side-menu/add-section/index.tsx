@@ -1,10 +1,10 @@
-import { entries, PartDefinition } from "@flyde/core";
+import { entries, NodeDefinition } from "@flyde/core";
 import React, { useCallback, useState } from "react";
 import { useDebounce } from "usehooks-ts";
 import { PartPreview, useDependenciesContext } from "@flyde/flow-editor"; // ../../../../common/PartPreview/PartPreview
 
 export interface MenuAddSectionProps {
-  onAdd: (part: PartDefinition) => void;
+  onAdd: (part: NodeDefinition) => void;
 }
 
 const SEARCH_DEBOUNCE = 400;

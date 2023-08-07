@@ -4,9 +4,9 @@ import {
   Pos,
   VisualNode,
   isInlineValuePart,
-  PartInstance,
+  NodeInstance,
   FlydeFlow,
-  ImportedPartDef,
+  ImportedNodeDef,
   InlinePartInstance,
   PinType,
   DebuggerEventType,
@@ -74,7 +74,7 @@ export type FlydeFlowEditorProps = {
 const maxUndoStackSize = 50;
 
 export type ConstTargetData = {
-  ins?: PartInstance;
+  ins?: NodeInstance;
   pinId?: string;
   pos: Pos;
 };
@@ -218,7 +218,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
     );
 
     const onEditPart = React.useCallback(
-      (part: ImportedPartDef) => {
+      (part: ImportedNodeDef) => {
         openFile({ absPath: part.source.path });
       },
       [openFile]

@@ -1,4 +1,4 @@
-import { dynamicPartInput, Part } from ".";
+import { dynamicPartInput, Node } from ".";
 
 import { spy } from "sinon";
 
@@ -7,13 +7,13 @@ import { execute } from "../execute";
 import { Subject } from "rxjs";
 
 import { assert } from "chai";
-import { PartsCollection } from "..";
+import { NodesCollection } from "..";
 import { queueInputPinConfig, stickyInputPinConfig } from "./pin-config";
 
 export const runAddTests = (
-  add: Part,
+  add: Node,
   source: string,
-  resolvedDeps: PartsCollection
+  resolvedDeps: NodesCollection
 ) => {
   describe(`Add tests: ${source}`, () => {
     it("runs fn when dynamic inputs are given", () => {

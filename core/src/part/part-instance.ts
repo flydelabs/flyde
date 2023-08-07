@@ -1,12 +1,12 @@
-import { InputPinsConfig, Part, PartDefinition, PartStyle, Pos } from "..";
-import {slug} from 'cuid';
+import { InputPinsConfig, Node, NodeDefinition, NodeStyle, Pos } from "..";
+import { slug } from "cuid";
 
 export interface PartInstanceConfig {
   inputConfig: InputPinsConfig;
   visibleInputs?: string[];
   visibleOutputs?: string[];
   displayName?: string;
-  style?: PartStyle;
+  style?: NodeStyle;
 }
 
 export interface RefPartInstance extends PartInstanceConfig {
@@ -17,17 +17,17 @@ export interface RefPartInstance extends PartInstanceConfig {
 
 export interface InlinePartInstance extends PartInstanceConfig {
   id: string;
-  part: Part;
+  part: Node;
   pos: Pos;
 }
-export type PartInstance = RefPartInstance | InlinePartInstance;
+export type NodeInstance = RefPartInstance | InlinePartInstance;
 
 export const partInstance = (
   id: string,
   partOrId: string,
   config?: InputPinsConfig,
   pos?: Pos
-): PartInstance => ({
+): NodeInstance => ({
   id,
   partId: partOrId,
   inputConfig: config || {},
@@ -36,10 +36,10 @@ export const partInstance = (
 
 export const inlinePartInstance = (
   id: string,
-  part: Part,
+  part: Node,
   config?: InputPinsConfig,
   pos?: Pos
-): PartInstance => ({
+): NodeInstance => ({
   id,
   part,
   inputConfig: config || {},
@@ -47,25 +47,25 @@ export const inlinePartInstance = (
 });
 
 export const isInlinePartInstance = (
-  ins: PartInstance
+  ins: NodeInstance
 ): ins is InlinePartInstance => {
   return !!(ins as any).part;
 };
-export const isRefPartInstance = (ins: PartInstance): ins is RefPartInstance =>
+export const isRefPartInstance = (ins: NodeInstance): ins is RefPartInstance =>
   !isInlinePartInstance(ins);
 
-export const PartInstance = (
+export const NodeInstance = (
   id: string,
-  part: PartDefinition,
+  part: NodeDefinition,
   config?: InputPinsConfig,
   pos?: Pos
-): PartInstance => ({
+): NodeInstance => ({
   id,
   partId: part.id,
   inputConfig: config || {},
   pos: pos || { x: 0, y: 0 },
 });
 
-export const createInsId = (part: PartDefinition) => {
+export const createInsId = (part: NodeDefinition) => {
   return `${part.id}-${slug()}`;
-}
+};

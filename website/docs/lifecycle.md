@@ -2,7 +2,7 @@
 sidebar_position: 5
 ---
 
-# Lifecycle of a Part
+# Lifecycle of a Node
 
 A part in Flyde is a self-contained unit of functionality that can be connected to other parts to form a flow. The lifecycle of a part consists of two states: waiting for inputs, and processing.
 

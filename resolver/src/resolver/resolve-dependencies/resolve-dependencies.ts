@@ -9,9 +9,8 @@ import {
   CodeNode,
   ImportSource,
   isBasePart,
-  Part,
-  ImportedPart,
-  ImportedPartDef,
+  Node,
+  ImportedNodeDef,
 } from "@flyde/core";
 import { existsSync } from "fs";
 import _ = require("lodash");
@@ -132,8 +131,8 @@ export function resolveDependencies(
     const paths = getLocalOrExternalPaths(importPath);
 
     // TODO - refactor the code below. It is unnecessarily complex and inefficient
-    let result: { part: Part; source: ImportSource } | undefined = paths
-      .reduce<{ part: Part; source: ImportSource }[]>((acc, path) => {
+    let result: { part: Node; source: ImportSource } | undefined = paths
+      .reduce<{ part: Node; source: ImportSource }[]>((acc, path) => {
         if (isCodePartPath(path)) {
           return [
             ...acc,
@@ -210,7 +209,7 @@ export function resolveDependencies(
     }
   }
 
-  const mainPart: ImportedPartDef = {
+  const mainPart: ImportedNodeDef = {
     ...flow.part,
     source: { path: fullFlowPath, export: "n/a" },
   }; // TODO - fix the need for imported visual parts to declare an export source.

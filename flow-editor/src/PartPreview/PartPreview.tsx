@@ -1,11 +1,11 @@
-import { noop, PartDefinition, partInstance } from "@flyde/core";
+import { noop, NodeDefinition, partInstance } from "@flyde/core";
 import React from "react";
 import {
   InstanceView,
   InstanceViewProps,
 } from "../visual-part-editor/instance-view/InstanceView";
 
-export const PartPreview: React.FC<{ part: PartDefinition }> = ({ part }) => {
+export const PartPreview: React.FC<{ part: NodeDefinition }> = ({ part }) => {
   const ins = partInstance("bob", part.id, {});
   const instanceProps: InstanceViewProps = {
     part,

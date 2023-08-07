@@ -3,7 +3,7 @@ import {
   VisualNode,
   partInput,
   partOutput,
-  Part,
+  Node,
   dynamicOutput,
   dynamicPartInput,
   partInstance,
@@ -449,7 +449,7 @@ describe("execute", () => {
     });
 
     describe("outputs", () => {
-      const optOutput: Part = {
+      const optOutput: Node = {
         id: "dup",
         inputs: {
           v: partInput(),

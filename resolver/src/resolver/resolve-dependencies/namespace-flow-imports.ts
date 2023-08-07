@@ -1,5 +1,5 @@
 import {
-  Part,
+  Node,
   isVisualPart,
   ResolvedFlydeFlow,
   isRefPartInstance,

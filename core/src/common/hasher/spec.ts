@@ -3,7 +3,7 @@ import { randomInt, randomPos, shuffle } from "../../common";
 import { assert } from "chai";
 import { hashFlow, hashPart } from ".";
 import {
-  InlineValuePart,
+  InlineValueNode,
   partInput,
   partInstance,
   partOutput,
@@ -151,7 +151,7 @@ describe("parts hasher", () => {
   });
 
   describe("code part", () => {
-    const base: InlineValuePart = {
+    const base: InlineValueNode = {
       id: "bob2",
       runFnRawCode: `some codez`,
       customViewCode: "bob",

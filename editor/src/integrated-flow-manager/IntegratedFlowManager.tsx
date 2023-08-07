@@ -29,7 +29,7 @@ import { FlowEditor } from "@flyde/flow-editor"; // ../../common/flow-editor/Flo
 import { useDebouncedCallback } from "use-debounce";
 
 import { IntegratedFlowSideMenu } from "./side-menu";
-import { isInlineValuePart, PartDefinition } from "@flyde/core";
+import { isInlineValuePart, NodeDefinition } from "@flyde/core";
 
 import { AppToaster } from "@flyde/flow-editor"; // ../../common/toaster
 
@@ -212,7 +212,7 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
     props.integratedSource,
   ]);
 
-  const onAddPartToStage = (part: PartDefinition) => {
+  const onAddPartToStage = (part: NodeDefinition) => {
     const finalPos = vAdd({ x: 100, y: 0 }, editorState.boardData.lastMousePos);
     const newPartIns = createNewPartInstance(
       part.id,

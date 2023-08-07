@@ -2,8 +2,8 @@ import * as React from "react";
 
 import {
   ImportableSource,
-  PartDefinition,
-  PartInstance,
+  NodeDefinition,
+  NodeInstance,
   PinType,
   values,
   Pos,
@@ -17,7 +17,7 @@ import { highlightText } from "../../lib/highlight-text";
 import { useDependenciesContext } from "../../flow-editor/DependenciesContext";
 
 export type QuickMenuPartMatch = {
-  part: PartDefinition;
+  part: NodeDefinition;
   type: "part";
 };
 
@@ -37,8 +37,8 @@ export type QuickMenuMatch =
 
 export type QuickAddMenuData = {
   pos: Pos;
-  ins?: PartInstance;
-  targetPart: PartDefinition;
+  ins?: NodeInstance;
+  targetPart: NodeDefinition;
   pinId: string;
   pinType: PinType;
 };
@@ -142,7 +142,7 @@ export const QuickAddMenu: React.FC<QuickMenuProps> = (props) => {
   const existingPartMatches = availableParts.map<QuickMenuMatch>((curr) => {
     return {
       type: "part",
-      part: curr as PartDefinition,
+      part: curr as NodeDefinition,
     };
   });
 

@@ -20,7 +20,7 @@ import { useHistory } from "react-router-dom";
 import { NewFlowModal } from "./NewFlowModal/NewFlowModal";
 import {
   BaseNode,
-  CustomPart,
+  CustomNode,
   FlydeFlow,
   visualPart,
   partOutput,
@@ -31,7 +31,7 @@ export interface FoldersSectionProps {
   flow: FlydeFlow;
 
   // data: NavigatorData;
-  editedPart: CustomPart;
+  editedPart: CustomNode;
 
   // onEditPart: (partId: string) => void;
   onFocusInstance: (partId: string) => void;

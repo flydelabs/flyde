@@ -9,7 +9,7 @@ import {
   BaseNode,
   debugLogger,
   isBasePart,
-  PartsDefCollection,
+  NodesDefCollection,
 } from "@flyde/core";
 import { scanFolderStructure } from "./scan-folders-structure";
 import { FlydeFile } from "../fs-helper/shared";
@@ -24,7 +24,7 @@ export interface CorruptScannedPart {
 }
 
 export type ImportablesResult = {
-  importables: Record<string, PartsDefCollection>;
+  importables: Record<string, NodesDefCollection>;
   errors: { path: string; message: string }[];
 };
 
@@ -46,7 +46,7 @@ export async function scanImportableParts(
 
     const parts = Object.fromEntries(
       Object.entries(StdLib).filter((pair) => isBasePart(pair[1]))
-    ) as PartsDefCollection;
+    ) as NodesDefCollection;
     builtInStdLib = {
       "@flyde/stdlib": parts,
     };

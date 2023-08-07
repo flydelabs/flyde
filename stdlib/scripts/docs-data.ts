@@ -1,10 +1,12 @@
-import * as allExported from '../src/all';
-import { writeFileSync } from 'fs';
-import { isCodePart, isVisualPart, Part } from '@flyde/core';
-
+import * as allExported from "../src/all";
+import { writeFileSync } from "fs";
+import { isCodePart, isVisualPart, Node } from "@flyde/core";
 
 const parts = Object.fromEntries(
-    Object.entries(allExported).filter(([_, value]: [string, unknown]) => isCodePart(value as Part) || isVisualPart(value as Part))
+  Object.entries(allExported).filter(
+    ([_, value]: [string, unknown]) =>
+      isCodePart(value as Node) || isVisualPart(value as Node)
+  )
 );
 
-writeFileSync('dist/parts.json', JSON.stringify(parts));
+writeFileSync("dist/parts.json", JSON.stringify(parts));

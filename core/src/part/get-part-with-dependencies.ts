@@ -1,12 +1,12 @@
-import { CustomPart, isInlineValuePart } from ".";
-import { CustomPartCollection, removeDupes } from "..";
+import { CustomNode, isInlineValuePart } from ".";
+import { CustomNodeCollection, removeDupes } from "..";
 import { isRefPartInstance, RefPartInstance } from "./part-instance";
 
 export const getPartWithDependencies = (
-  part: CustomPart,
-  resolvedDeps: CustomPartCollection,
+  part: CustomNode,
+  resolvedDeps: CustomNodeCollection,
   existingIds: string[] = []
-): CustomPart[] => {
+): CustomNode[] => {
   if (isInlineValuePart(part)) {
     return [part];
   }
@@ -23,7 +23,7 @@ export const getPartWithDependencies = (
 
   const depsPartsWithDeps = deps
     .flatMap((id) => resolvedDeps[id] ?? [])
-    .reduce<CustomPart[]>((acc, curr) => {
+    .reduce<CustomNode[]>((acc, curr) => {
       return [
         ...acc,
         ...getPartWithDependencies(curr, resolvedDeps, [

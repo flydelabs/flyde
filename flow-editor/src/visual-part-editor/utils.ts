@@ -6,9 +6,9 @@ import {
   InputPin,
   OutputPin,
   VisualNode,
-  PartInstance,
-  PartsDefCollection,
-  PartDefinition,
+  NodeInstance,
+  NodesDefCollection,
+  NodeDefinition,
   isExternalConnectionNode,
   getPartDef,
   PinType,
@@ -82,14 +82,14 @@ export const changePinConfig = (
 
 export const findClosestPin = (
   part: VisualNode,
-  resolvedParts: PartsDefCollection,
+  resolvedParts: NodesDefCollection,
   mousePos: Pos,
   boardPos: Pos,
   currentInsId: string,
   ancestorsInsIds: string,
   viewPort: ViewPort
 ) => {
-  const rootInstance: PartInstance = partInstance(part.id, part.id);
+  const rootInstance: NodeInstance = partInstance(part.id, part.id);
   const mainInputsData = okeys(part.inputs).map((pinId) => {
     const pos = calcPinPosition({
       insId: currentInsId,
@@ -228,10 +228,10 @@ export const parseInputOutputTypes = (
 };
 
 export const createNewInlinePartInstance = (
-  part: PartDefinition,
+  part: NodeDefinition,
   offset: number = -1 * PART_HEIGHT * 1.5,
   lastMousePos: Pos
-): PartInstance => {
+): NodeInstance => {
   const ins = inlinePartInstance(
     `${part.id}-${randomInt(999)}`,
     part as any,
@@ -250,11 +250,11 @@ export const createNewInlinePartInstance = (
 };
 
 export const createNewPartInstance = (
-  partIdOrPart: string | PartDefinition,
+  partIdOrPart: string | NodeDefinition,
   offset: number = -1 * PART_HEIGHT * 1.5,
   lastMousePos: Pos,
-  resolvedParts: PartsDefCollection
-): PartInstance => {
+  resolvedParts: NodesDefCollection
+): NodeInstance => {
   const part =
     typeof partIdOrPart === "string"
       ? getPartDef(partIdOrPart, resolvedParts)
@@ -415,7 +415,7 @@ const calcPoints = (w: number, h: number, pos: Pos, tag: string): Points => {
 
 export const calcPartsPositions = (
   part: VisualNode,
-  resolvedParts: PartsDefCollection
+  resolvedParts: NodesDefCollection
 ): Points[] => {
   const insParts = part.instances.map((curr) => {
     const w = calcPartWidth(curr, getPartDef(curr, resolvedParts));
@@ -440,14 +440,14 @@ export const calcPartsPositions = (
   return [...insParts, ...inputsCenter, ...outputsCenter];
 };
 
-// export const calcPartsCenter = (part: VisualNode, resolvedParts: PartsDefCollection): Pos => {
+// export const calcPartsCenter = (part: VisualNode, resolvedParts: NodesDefCollection): Pos => {
 //   const positions = calcPartsPositions(part, resolvedParts);
 //   return positions.reduce((acc, curr) => middlePos(acc, curr), positions[0] || { x: 0, y: 0 });
 // };
 
 export const getEffectivePartDimensions = (
   part: VisualNode,
-  resolvedParts: PartsDefCollection
+  resolvedParts: NodesDefCollection
 ) => {
   const positions = calcPartsPositions(part, resolvedParts);
   const firstPosition = positions[0] || {
@@ -531,7 +531,7 @@ const FIT_VIEWPORT_MAX_ZOOM = 1.2;
 
 export const fitViewPortToPart = (
   part: VisualNode,
-  resolvedParts: PartsDefCollection,
+  resolvedParts: NodesDefCollection,
   vpSize: Size,
   padding: [number, number] = [20, 150]
 ): ViewPort => {
@@ -584,10 +584,10 @@ export const isJsxValue = (val: any): boolean => {
 
 export const getInstancesInRect = (
   selectionBox: { from: Pos; to: Pos },
-  resolvedParts: PartsDefCollection,
+  resolvedParts: NodesDefCollection,
   viewPort: ViewPort,
   instancesConnectToPins: any,
-  instances: PartInstance[],
+  instances: NodeInstance[],
   boardPos: Pos,
   parentVp: ViewPort
 ) => {
@@ -617,7 +617,7 @@ export const getInstancesInRect = (
 
 export const handleInstanceDrag = (
   value: VisualNode,
-  ins: PartInstance,
+  ins: NodeInstance,
   pos: Pos,
   event: any,
   selected: string[],

@@ -156,14 +156,14 @@ export const BasePartEditor: React.FC<BasePartEditorProps> = (props) => {
     <div className="base-part-editor">
       <div className="form-row">
         <FormGroup
-          label="Part Name"
+          label="Node Name"
           labelFor="text-input"
           labelInfo="(required)"
         >
           <InputGroup
             id="part-name"
             disabled={props.idDisabled}
-            placeholder="Part ID"
+            placeholder="Node ID"
             value={part.id}
             onChange={(e: any) => onChangeId(e.target.value)}
           />

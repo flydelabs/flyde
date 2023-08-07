@@ -20,13 +20,13 @@ import {
   DynamicPartInput,
   execute,
   FlydeFlow,
-  ImportedPart,
+  ImportedNode,
   isBasePart,
   keys,
   noop,
-  Part,
+  Node,
   PartInputs,
-  PartInstance,
+  NodeInstance,
   PartOutput,
   ResolvedDependencies,
   TRIGGER_PIN_ID,
@@ -123,7 +123,7 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = (props) => {
 
     const depPart = Object.values(
       await import("@flyde/stdlib/dist/all-browser")
-    ).find((p) => isBasePart(p) && p.id === part.id) as Part;
+    ).find((p) => isBasePart(p) && p.id === part.id) as Node;
 
     setResolvedDeps((flow) => {
       return {
@@ -141,7 +141,7 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = (props) => {
       };
     });
 
-    let newPartIns: PartInstance | undefined = undefined;
+    let newPartIns: NodeInstance | undefined = undefined;
 
     const newFlow = produce(flow, (draft) => {
       if (target) {
@@ -183,7 +183,7 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = (props) => {
     setFlowEditorState(newState);
 
     toastMsg(
-      `Part ${part.id} successfully imported from ${importedPart.module}`
+      `Node ${part.id} successfully imported from ${importedPart.module}`
     );
 
     return resolvedDeps;
@@ -193,7 +193,7 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = (props) => {
     async () => {
       const parts = Object.values(
         await import("@flyde/stdlib/dist/all-browser")
-      ).filter(isBasePart) as ImportedPart[];
+      ).filter(isBasePart) as ImportedNode[];
       return {
         importables: parts.map((b) => ({
           part: { ...b, source: { path: "n/a", export: "n/a" } },
@@ -226,7 +226,7 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = (props) => {
   useEffect(() => {
     setResolvedDeps((f) => ({
       ...f,
-      main: editorState.flow.part as ImportedPart,
+      main: editorState.flow.part as ImportedNode,
     }));
   }, [editorState.flow.part]);
 

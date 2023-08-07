@@ -1,5 +1,5 @@
 import {
-  InlineValuePartType,
+  InlineValueNodeType,
   connectionData,
   VisualNode,
   inlinePartInstance,
@@ -38,7 +38,7 @@ export const handleDetachConstEditorCommand = (
 
     const newPart = createInlineValuePart({
       code: `${value}`,
-      type: InlineValuePartType.VALUE,
+      type: InlineValueNodeType.VALUE,
     });
 
     const newIns = inlinePartInstance(

@@ -4,20 +4,20 @@ import {
   InternalConnectionNode,
   ConnectionData,
 } from ".";
-import { PartDefinition, partInput, partOutput } from "../part";
+import { NodeDefinition, partInput, partOutput } from "../part";
 
 export const THIS_INS_ID = "__this";
 export const ERROR_PIN_ID = "__error";
 export const TRIGGER_PIN_ID = "__trigger";
 
-export const getPartInputs = (part: PartDefinition) => {
+export const getPartInputs = (part: NodeDefinition) => {
   return { ...part.inputs, [TRIGGER_PIN_ID]: partInput() };
 };
 
 export const getInputName = (pinId: string) => {
   switch (pinId) {
     case TRIGGER_PIN_ID:
-      return "Trigger Part";
+      return "Trigger Node";
     default:
       return pinId;
   }
@@ -32,7 +32,7 @@ export const getOutputName = (pinId: string) => {
   }
 };
 
-export const getPartOutputs = (part: PartDefinition) => {
+export const getPartOutputs = (part: NodeDefinition) => {
   return { ...part.outputs, [ERROR_PIN_ID]: partOutput() };
 };
 

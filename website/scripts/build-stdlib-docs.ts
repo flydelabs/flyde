@@ -1,10 +1,10 @@
 import { writeFileSync } from "fs";
 import ejs from "ejs";
-import { CodeNode, Part } from "@site/../core";
+import { CodeNode, Node } from "@site/../core";
 
 import markdownTable from "markdown-table";
 
-const data: Record<string, Part> = require("@flyde/stdlib/dist/parts.json");
+const data: Record<string, Node> = require("@flyde/stdlib/dist/parts.json");
 
 // group data object by "namespace"
 const groupedData = Object.values(data).reduce((acc, part) => {
@@ -30,7 +30,7 @@ const groupAndTables = entries.map(([ns, parts]) => {
     ...parts.map((part) => {
       if (!part.inputs || !part.outputs) {
         console.error({ part });
-        throw new Error("Part is missing inputs or outputs");
+        throw new Error("Node is missing inputs or outputs");
       }
 
       return [

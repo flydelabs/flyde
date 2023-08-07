@@ -3,9 +3,9 @@ import classNames from "classnames";
 import {
   VisualNode,
   Pos,
-  PartsDefCollection,
+  NodesDefCollection,
   getPartDef,
-  PartInstance,
+  NodeInstance,
   isInternalConnectionNode,
   ConnectionData,
   ConnectionNode,
@@ -21,7 +21,7 @@ import { ContextMenu, Menu, MenuItem } from "@blueprintjs/core";
 import { ConnectionViewPath } from "./ConnectionViewPath/ConnectionViewPath";
 
 export interface BaseConnectionViewProps {
-  resolvedParts: PartsDefCollection;
+  resolvedParts: NodesDefCollection;
   part: VisualNode;
   ancestorsInsIds?: string;
   currentInsId: string;
@@ -29,7 +29,7 @@ export interface BaseConnectionViewProps {
   size: Size;
   boardPos: Pos;
   viewPort: ViewPort;
-  instances: PartInstance[];
+  instances: NodeInstance[];
   parentVp: ViewPort;
 }
 

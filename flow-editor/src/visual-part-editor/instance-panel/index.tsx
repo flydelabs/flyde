@@ -1,8 +1,8 @@
 // import {
 //   ConnectionData,
-//   PartDefinition,
+//   NodeDefinition,
 //   partInput,
-//   PartInstance,
+//   NodeInstance,
 //   queueInputPinConfig,
 //   removeDupes,
 //   TRIGGER_PIN_ID,
@@ -19,10 +19,10 @@
 // import { InstancePanelInputPinView } from "./InstancePanelInputPinView";
 
 // export interface InstancePanelProps {
-//   instance: PartInstance;
-//   part: PartDefinition;
+//   instance: NodeInstance;
+//   part: NodeDefinition;
 //   connections: ConnectionData[];
-//   onChangeInstanceConfig: (newInstanceConfig: PartInstance, comment: string) => void;
+//   onChangeInstanceConfig: (newInstanceConfig: NodeInstance, comment: string) => void;
 // }
 // const handle = <div className="resizer" />;
 
