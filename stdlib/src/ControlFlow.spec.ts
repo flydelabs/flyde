@@ -18,7 +18,7 @@ describe("ControlFlow", () => {
       const key = "bla";
       const value = randomInt(42);
 
-      const visualPart: VisualNode = concisePart({
+      const visualNode: VisualNode = concisePart({
         id: "test",
         inputs: ["a"],
         outputs: ["b"],
@@ -39,7 +39,7 @@ describe("ControlFlow", () => {
       const input = dynamicPartInput();
 
       execute({
-        part: visualPart,
+        part: visualNode,
         outputs: { b },
         inputs: { a: input },
         resolvedDeps: {},

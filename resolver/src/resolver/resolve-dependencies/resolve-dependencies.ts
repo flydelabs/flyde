@@ -2,13 +2,13 @@ import {
   VisualNode,
   isRefPartInstance,
   isInlinePartInstance,
-  isVisualPart,
+  isVisualNode,
   FlydeFlow,
   ResolvedFlydeFlow,
-  isCodePart,
+  isCodeNode,
   CodeNode,
   ImportSource,
-  isBasePart,
+  isBaseNode,
   Node,
   ImportedNodeDef,
 } from "@flyde/core";
@@ -33,7 +33,7 @@ const getRefPartIds = (part: VisualNode): string[] => {
     .map((ins) => ins.part);
 
   const idsFromInline = inlineParts.reduce<string[]>((acc, part) => {
-    if (isVisualPart(part)) {
+    if (isVisualNode(part)) {
       acc.push(...getRefPartIds(part));
     }
     return acc;
@@ -51,11 +51,11 @@ export function resolveCodePartDependencies(path: string): {
 
   try {
     let module = requireReload(path);
-    if (isCodePart(module)) {
+    if (isCodeNode(module)) {
       parts.push({ exportName: "default", part: module });
     } else if (typeof module === "object") {
       Object.entries(module).forEach(([key, value]) => {
-        if (isCodePart(value)) {
+        if (isCodeNode(value)) {
           parts.push({ exportName: key, part: value });
         } else {
           errors.push(`Exported value "${key}" is not a valid CodeNode`);
@@ -160,7 +160,7 @@ export function resolveDependencies(
     if (!result) {
       if (importPath === "@flyde/stdlib") {
         const maybePartAndExport = Object.entries(StdLib)
-          .filter(([_, value]) => isBasePart(value))
+          .filter(([_, value]) => isBaseNode(value))
           .map(([key, value]) => ({ part: value as CodeNode, exportPath: key }))
           .find(({ part }) => part.id === refPartId);
         if (!maybePartAndExport) {
@@ -184,7 +184,7 @@ export function resolveDependencies(
     } else {
       const { part, source } = result;
 
-      if (isCodePart(part)) {
+      if (isCodeNode(part)) {
         deps[refPartId] = {
           ...part,
           source,

@@ -149,7 +149,7 @@ export const createGroup = async (
       instanceIds.includes(conn.to.insId)
   );
 
-  const visualPart: VisualNode = {
+  const visualNode: VisualNode = {
     id: name,
     inputs,
     outputs,
@@ -170,8 +170,8 @@ export const createGroup = async (
     completionOutputs: okeys(outputs),
   };
 
-  return { visualPart, renamedInputs, renamedOutputs };
-  // const ordered = orderVisualPart(visualPart, 20);
+  return { visualNode, renamedInputs, renamedOutputs };
+  // const ordered = orderVisualPart(visualNode, 20);
 
-  // return partInstance(`${name}-ins`, visualPart, {}, midPos);
+  // return partInstance(`${name}-ins`, visualNode, {}, midPos);
 };

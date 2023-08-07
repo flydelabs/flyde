@@ -32,7 +32,7 @@ export const groupSelected = async (
     throw new Error("visual without selections");
   }
 
-  const { visualPart, renamedInputs, renamedOutputs } = await createGroup(
+  const { visualNode, renamedInputs, renamedOutputs } = await createGroup(
     relevantInstances,
     relevantConnections,
     partName,
@@ -44,8 +44,8 @@ export const groupSelected = async (
   }, instances[0].pos);
   const newInstance =
     type === "ref"
-      ? partInstance(createInsId(visualPart), visualPart.id, {}, midPos)
-      : inlinePartInstance(createInsId(visualPart), visualPart, {}, midPos);
+      ? partInstance(createInsId(visualNode), visualNode.id, {}, midPos)
+      : inlinePartInstance(createInsId(visualNode), visualNode, {}, midPos);
 
   // replace relevant parts with new part
   const newInstancesArr = instances.filter((ins) => {
@@ -88,7 +88,7 @@ export const groupSelected = async (
     });
 
   return {
-    newPart: visualPart,
+    newPart: visualNode,
     currentPart: produce(part, (draft) => {
       draft.instances = [...newInstancesArr, newInstance];
       draft.connections = newConnections;

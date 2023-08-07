@@ -13,7 +13,7 @@ import {
   isStaticInputPinConfig,
   InputMode,
   getPartDef,
-  isVisualPart,
+  isVisualNode,
   connectionDataEquals,
   ConnectionNode,
   staticInputPinConfig,
@@ -25,7 +25,7 @@ import {
   isInlinePartInstance,
   isRefPartInstance,
   InlineValueNodeType,
-  isInlineValuePart,
+  isInlineValueNode,
   InlinePartInstance,
   connectionNode,
   ImportedNodeDef,
@@ -1073,7 +1073,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             if (!part) {
               throw new Error(`Impossible state inspecting inexisting part`);
             }
-            if (!isVisualPart(part)) {
+            if (!isVisualNode(part)) {
               toastMsg("Cannot inspect a non visual part", "warning");
               //`Impossible state inspecting visual part`);
               return;
@@ -1087,8 +1087,8 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
               onEditPart(part as ImportedNodeDef);
             } else {
               const part = ins.part;
-              if (!isInlineValuePart(part)) {
-                if (isVisualPart(part)) {
+              if (!isInlineValueNode(part)) {
+                if (isVisualNode(part)) {
                   setOpenInlineInstance({ insId: ins.id, part });
                 } else {
                   toastMsg("Editing this type of part is not supported");
@@ -1112,8 +1112,8 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
       const onUnGroup = React.useCallback(
         (groupPartIns: NodeInstance) => {
           if (isInlinePartInstance(groupPartIns)) {
-            const visualPart = groupPartIns.part;
-            if (!isVisualPart(visualPart)) {
+            const visualNode = groupPartIns.part;
+            if (!isVisualNode(visualNode)) {
               toastMsg("Not supported", "warning");
               return;
             }
@@ -1128,9 +1128,9 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
                   from.insId !== groupPartIns.id && to.insId !== groupPartIns.id
               );
 
-              draft.instances.push(...visualPart.instances);
+              draft.instances.push(...visualNode.instances);
               draft.connections.push(
-                ...visualPart.connections.filter((conn) => {
+                ...visualNode.connections.filter((conn) => {
                   return (
                     isInternalConnectionNode(conn.from) &&
                     isInternalConnectionNode(conn.to)
@@ -1143,12 +1143,12 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             // todo - combine the above with below to an atomic action
             onChangeBoardData({ selected: [] });
           } else {
-            const visualPart = getPartDef(
+            const visualNode = getPartDef(
               groupPartIns.partId,
               currResolvedDeps
             );
 
-            if (!isVisualPart(visualPart)) {
+            if (!isVisualNode(visualNode)) {
               toastMsg("Not supported", "warning");
               return;
             }
@@ -1317,7 +1317,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
           switch (action.type) {
             case ActionType.RemovePart: {
               const newValue = produce(part, (draft) => {
-                if (!isVisualPart(part)) {
+                if (!isVisualNode(part)) {
                   throw new Error(
                     `Impossible state, deleting instances opf non visual part`
                   );

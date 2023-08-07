@@ -8,7 +8,7 @@ import {
 import {
   BaseNode,
   debugLogger,
-  isBasePart,
+  isBaseNode,
   NodesDefCollection,
 } from "@flyde/core";
 import { scanFolderStructure } from "./scan-folders-structure";
@@ -45,7 +45,7 @@ export async function scanImportableParts(
     debugLogger("Using built-in stdlib");
 
     const parts = Object.fromEntries(
-      Object.entries(StdLib).filter((pair) => isBasePart(pair[1]))
+      Object.entries(StdLib).filter((pair) => isBaseNode(pair[1]))
     ) as NodesDefCollection;
     builtInStdLib = {
       "@flyde/stdlib": parts,

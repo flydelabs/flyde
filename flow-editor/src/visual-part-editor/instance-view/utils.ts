@@ -4,7 +4,7 @@ import {
   NodeInstance,
   NodeDefinition,
   NodesDefCollection,
-  isInlineValuePart,
+  isInlineValueNode,
   Pos,
   isStaticInput,
   isStaticInputPinConfig,

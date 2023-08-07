@@ -11,9 +11,9 @@ import {
   partInput,
   partInstance,
   partOutput,
-} from "../part";
+} from "../node";
 import { execute } from "../execute";
-import { runAddTests } from "../part/add-tests";
+import { runAddTests } from "../node/add-tests";
 import { add, optAdd, testPartsCollection } from "../fixture";
 import { connectionData } from "./helpers";
 

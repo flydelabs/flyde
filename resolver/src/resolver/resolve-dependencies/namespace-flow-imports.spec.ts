@@ -1,6 +1,6 @@
 import {
   VisualNode,
-  visualPart,
+  visualNode,
   partInstance,
   RefPartInstance,
   ResolvedFlydeFlow,
@@ -13,13 +13,13 @@ import { namespaceFlowImports } from "./namespace-flow-imports";
 describe("namespace flows", () => {
   it("namespaces referred part ids and their imports", () => {
     const flow: ResolvedFlydeFlowDefinition = {
-      main: visualPart({
+      main: visualNode({
         id: "Bob",
         instances: [partInstance("i1", "Alice")],
       }),
       dependencies: {
         Alice: {
-          ...visualPart({
+          ...visualNode({
             id: "Alice",
             instances: [partInstance("i2", "Dave")],
           }),

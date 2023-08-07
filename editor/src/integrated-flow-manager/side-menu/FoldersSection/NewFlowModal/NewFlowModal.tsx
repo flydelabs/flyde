@@ -6,7 +6,7 @@ import {
   Callout,
   Code,
 } from "@blueprintjs/core";
-import { BaseNode, visualPart } from "@flyde/core";
+import { BaseNode, visualNode } from "@flyde/core";
 import classNames from "classnames";
 import React from "react";
 import { BasePartEditor } from "@flyde/flow-editor"; // ../../../../../common/flow-editor/base-part-editor
@@ -21,7 +21,7 @@ export interface NewFlowModalProps {
 
 export const NewFlowModal: React.FC<NewFlowModalProps> = (props) => {
   const [basePart, setBasePart] = React.useState<BaseNode>(
-    visualPart({ id: "new-flow.flyde" })
+    visualNode({ id: "new-flow.flyde" })
   );
 
   return (

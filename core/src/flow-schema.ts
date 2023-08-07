@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { VisualNode, NodeDefinition, Node } from "./part";
+import { VisualNode, NodeDefinition, Node } from "./node";
 
 const importSchema = z.record(z.string(), z.string().or(z.array(z.string())));
 const position = z.strictObject({ x: z.number(), y: z.number() });
@@ -74,7 +74,7 @@ const flydeBasePart = z.object({
   searchKeywords: z.optional(z.array(z.string())),
 });
 
-const visualPart = z
+const visualNode = z
   .object({
     instances: z.array(instance),
     connections: z.array(
@@ -133,5 +133,5 @@ export type ResolvedFlydeFlow =
 
 export const flydeFlowSchema = z.strictObject({
   imports: z.optional(importSchema).default({}),
-  part: visualPart,
+  part: visualNode,
 });

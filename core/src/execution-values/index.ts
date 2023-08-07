@@ -10,7 +10,7 @@ import {
   PartInput,
   PartInputs,
   NodeState,
-} from "../part";
+} from "../node";
 
 import { containsAll, entries, isDefined, keys, OMap } from "../common";
 import { TRIGGER_PIN_ID } from "../connect";

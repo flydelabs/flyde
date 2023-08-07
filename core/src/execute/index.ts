@@ -9,8 +9,8 @@ import {
   dynamicOutput,
   Node,
   getStaticValue,
-  isInlineValuePart,
-  isVisualPart,
+  isInlineValueNode,
+  isVisualNode,
   CodeNode,
   PartInputs,
   PartOutputs,
@@ -21,7 +21,7 @@ import {
   NodeState,
   RunNodeFunction,
   NodesCollection,
-} from "../part";
+} from "../node";
 
 import { connect, ERROR_PIN_ID } from "../connect";
 
@@ -45,7 +45,7 @@ import {
   OMapF,
 } from "../common";
 import { debugLogger } from "../common/debug-logger";
-import { isStaticInputPinConfig } from "../part";
+import { isStaticInputPinConfig } from "../node";
 import { Debugger, DebuggerEvent, DebuggerEventType } from "./debugger";
 import {
   customPartsToPartsCollection,
@@ -562,7 +562,7 @@ export const execute: ExecuteFn = ({
   };
 
   const processPart = (part: Node): CodeNode => {
-    if (isVisualPart(part)) {
+    if (isVisualNode(part)) {
       return connect(
         part,
         processedParts,
@@ -573,7 +573,7 @@ export const execute: ExecuteFn = ({
         env,
         extraContext
       );
-    } else if (isInlineValuePart(part)) {
+    } else if (isInlineValueNode(part)) {
       return inlineValuePartToPart(part, inlineValuePartContext);
     } else {
       return part;

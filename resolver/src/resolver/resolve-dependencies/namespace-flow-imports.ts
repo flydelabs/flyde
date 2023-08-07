@@ -1,6 +1,6 @@
 import {
   Node,
-  isVisualPart,
+  isVisualNode,
   ResolvedFlydeFlow,
   isRefPartInstance,
   RefPartInstance,
@@ -15,7 +15,7 @@ const namespaceVisualPart = (
 ): VisualNode => {
   const namespacedInstances = part.instances.map((ins) => {
     if (isInlinePartInstance(ins)) {
-      if (isVisualPart(ins.part)) {
+      if (isVisualNode(ins.part)) {
         return { ...ins, part: namespaceVisualPart(ins.part, namespace) };
       } else {
         return ins;
@@ -35,13 +35,13 @@ export const namespaceFlowImports = (
   namespace: string = ""
 ): ResolvedFlydeFlow => {
   const part = resolvedFlow.main;
-  if (isVisualPart(part)) {
+  if (isVisualNode(part)) {
     const namespacedPart = namespaceVisualPart(part, namespace);
 
     const namespacedImports = _.chain(resolvedFlow.dependencies)
       .mapKeys((_, key) => `${namespace}${key}`)
       .mapValues((part) => {
-        const newPart = isVisualPart(part)
+        const newPart = isVisualNode(part)
           ? {
               ...part,
               instances: part.instances.map((ins) => {

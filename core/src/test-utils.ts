@@ -9,7 +9,7 @@ import {
   OutputPinMap,
   partInput,
   partOutput,
-} from "./part";
+} from "./node";
 
 import { connectionNode, externalConnectionNode } from "./connect";
 

@@ -1,13 +1,13 @@
 import {
   Node,
-  isVisualPart,
+  isVisualNode,
   isRefPartInstance,
   isInlinePartInstance,
   FlydeFlow,
 } from "@flyde/core";
 
 const getPartIds = (part?: Node) => {
-  if (part && isVisualPart(part)) {
+  if (part && isVisualNode(part)) {
     const refIds = part.instances
       .filter((ins: any) => isRefPartInstance(ins))
       .map((ins: any) => ins.partId);

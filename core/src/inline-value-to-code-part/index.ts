@@ -7,13 +7,13 @@ import {
 } from "../common";
 
 import {
-  isInlineValuePart,
+  isInlineValueNode,
   CodeNode,
   dynamicPartInput,
   InlineValueNode,
   dynamicOutput,
   NodesCollection,
-} from "../part";
+} from "../node";
 
 import { getVM2Instance } from "./get-vm2";
 
@@ -85,7 +85,7 @@ export const customPartsToPartsCollection = (
   const partsCollection: NodesCollection = {};
   for (let id in customParts) {
     const part = customParts[id];
-    partsCollection[id] = isInlineValuePart(part)
+    partsCollection[id] = isInlineValueNode(part)
       ? inlineValuePartToPart(part, extraContext)
       : part;
   }

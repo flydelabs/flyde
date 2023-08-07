@@ -8,8 +8,8 @@ import {
   partInstance,
   partOutput,
   VisualNode,
-  visualPart,
-} from "../../part";
+  visualNode,
+} from "../../node";
 import { FlydeFlow } from "../../flow-schema";
 import { connectionData } from "../../connect";
 
@@ -190,7 +190,7 @@ describe("flow hasher", () => {
         a: ["b"],
         c: ["d"],
       },
-      part: visualPart({ id: "bob" }),
+      part: visualNode({ id: "bob" }),
     };
 
     const f2: FlydeFlow = {
@@ -198,7 +198,7 @@ describe("flow hasher", () => {
         c: ["d"],
         a: ["b"],
       },
-      part: visualPart({ id: "bob" }),
+      part: visualNode({ id: "bob" }),
     };
 
     assert.equal(hashFlow(f1), hashFlow(f2));
@@ -210,7 +210,7 @@ describe("flow hasher", () => {
         a: ["b"],
         c: ["d"],
       },
-      part: visualPart({ id: "bob" }),
+      part: visualNode({ id: "bob" }),
     };
 
     const f2: FlydeFlow = {
@@ -218,7 +218,7 @@ describe("flow hasher", () => {
         c: ["d"],
         a: ["b"],
       },
-      part: visualPart({ id: "bob2" }),
+      part: visualNode({ id: "bob2" }),
     };
 
     assert.notEqual(hashFlow(f1), hashFlow(f2));

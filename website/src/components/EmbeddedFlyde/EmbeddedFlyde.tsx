@@ -21,7 +21,7 @@ import {
   execute,
   FlydeFlow,
   ImportedNode,
-  isBasePart,
+  isBaseNode,
   keys,
   noop,
   Node,
@@ -123,7 +123,7 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = (props) => {
 
     const depPart = Object.values(
       await import("@flyde/stdlib/dist/all-browser")
-    ).find((p) => isBasePart(p) && p.id === part.id) as Node;
+    ).find((p) => isBaseNode(p) && p.id === part.id) as Node;
 
     setResolvedDeps((flow) => {
       return {
@@ -193,7 +193,7 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = (props) => {
     async () => {
       const parts = Object.values(
         await import("@flyde/stdlib/dist/all-browser")
-      ).filter(isBasePart) as ImportedNode[];
+      ).filter(isBaseNode) as ImportedNode[];
       return {
         importables: parts.map((b) => ({
           part: { ...b, source: { path: "n/a", export: "n/a" } },

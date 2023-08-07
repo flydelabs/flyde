@@ -4,7 +4,7 @@ import {
   ConnectionNode,
   getPartDef,
   ImportableSource,
-  isVisualPart,
+  isVisualNode,
   NodesDefCollection,
   VisualNode,
 } from "@flyde/core";
@@ -121,7 +121,7 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
     } else {
       try {
         const part = getPartDef(instance, resolvedParts);
-        if (isVisualPart(part)) {
+        if (isVisualNode(part)) {
           types.push(ActionType.UnGroup);
         }
       } catch (e) {

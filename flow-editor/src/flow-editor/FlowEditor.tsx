@@ -1,9 +1,9 @@
 import * as React from "react";
 import {
-  isVisualPart,
+  isVisualNode,
   Pos,
   VisualNode,
-  isInlineValuePart,
+  isInlineValueNode,
   NodeInstance,
   FlydeFlow,
   ImportedNodeDef,
@@ -235,7 +235,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
         if (newPartIns) {
           const valueChanged = produce(flow, (draft) => {
             const part = draft.part;
-            if (!isVisualPart(part)) {
+            if (!isVisualNode(part)) {
               throw new Error(
                 `Impossible state, adding part to non visual part`
               );
@@ -328,7 +328,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
     );
 
     const renderInner = () => {
-      if (isInlineValuePart(editedPart)) {
+      if (isInlineValueNode(editedPart)) {
         throw new Error("Impossible state");
       } else {
         return (

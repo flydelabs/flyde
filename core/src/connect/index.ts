@@ -14,7 +14,7 @@ import {
   PartOutput,
   NodeState,
   getPart,
-} from "../part";
+} from "../node";
 import { CancelFn, execute, Debugger, ExecuteEnv } from "../execute";
 import { DepGraph, isDefined, noop, okeys, OMap, randomInt } from "../common";
 import {

@@ -31,7 +31,7 @@ import {
 } from "@flyde/core";
 import {
   NodeInstance,
-  isVisualPart,
+  isVisualNode,
   NodeDefinition,
   PinType,
   getPartInputs,
@@ -652,7 +652,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
       const contextMenuItems: IMenuItemProps[] = [
         ...inputMenuItems,
         ...outputMenuItems,
-        ...(isInlinePartInstance(instance) && isVisualPart(instance.part)
+        ...(isInlinePartInstance(instance) && isVisualNode(instance.part)
           ? [
               {
                 text: "Ungroup inline part",

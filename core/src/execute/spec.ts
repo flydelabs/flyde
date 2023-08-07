@@ -11,7 +11,7 @@ import {
   stickyInputPinConfig,
   staticPartInput,
   DynamicPartInput,
-} from "../part";
+} from "../node";
 import { execute } from ".";
 import { Subject } from "rxjs";
 import { spy } from "sinon";
@@ -155,7 +155,7 @@ describe("execute", () => {
     });
 
     it("compiles visual parts with the right inputs and outputs", () => {
-      const visualPart: VisualNode = {
+      const visualNode: VisualNode = {
         id: "apart",
         inputs: { a: partInput(), b: partInput() },
         outputs: { r: partOutput() },
@@ -165,13 +165,13 @@ describe("execute", () => {
         outputsPosition: {},
       };
 
-      const part = connect(visualPart, testPartsCollection, {} as any);
-      assert.deepEqual(keys(part.outputs), keys(visualPart.outputs));
-      assert.deepEqual(keys(part.inputs), keys(visualPart.inputs));
+      const part = connect(visualNode, testPartsCollection, {} as any);
+      assert.deepEqual(keys(part.outputs), keys(visualNode.outputs));
+      assert.deepEqual(keys(part.inputs), keys(visualNode.inputs));
     });
 
     it("compiles visual parts with the right inputs and outputs when inputs have modes", () => {
-      const visualPart: VisualNode = {
+      const visualNode: VisualNode = {
         id: "apart",
         inputs: {
           a: partInput("optional"),
@@ -184,7 +184,7 @@ describe("execute", () => {
         outputsPosition: {},
       };
 
-      const part = connect(visualPart, testPartsCollection, {} as any);
+      const part = connect(visualNode, testPartsCollection, {} as any);
       assert.equal(part.inputs["a"]?.mode, "optional");
       assert.equal(part.inputs["b"]?.mode, "required");
     });

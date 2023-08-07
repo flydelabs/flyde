@@ -1,7 +1,7 @@
 const {
-  isInlineValuePart,
+  isInlineValueNode,
   keys,
-  isVisualPart,
+  isVisualNode,
   isInlinePartInstance,
   isRefPartInstance,
   flydeFlowSchema,
@@ -30,7 +30,7 @@ for (const f of files) {
 
     const firstPart = parts[firstId];
 
-    if (!isVisualPart(firstPart)) {
+    if (!isVisualNode(firstPart)) {
       throw "wat";
     }
 
@@ -71,7 +71,7 @@ for (const f of files) {
 
   // const firstPart = deser.parts[Object.keys(deser.parts)[0]];
 
-  // if (isInlineValuePart(firstPart)) {
+  // if (isInlineValueNode(firstPart)) {
   //     if (Object.keys(deser.parts) > 1) {
   //         throw new Error('many parts in ' + f)
   //     }

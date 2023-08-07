@@ -2,8 +2,8 @@ import * as React from "react";
 
 // ;
 import {
-  isCodePart,
-  isVisualPart,
+  isCodeNode,
+  isVisualNode,
   NodeInstance,
   keys,
   VisualNode,
@@ -96,9 +96,9 @@ export const SideBar: React.FC<SideBarProps> = React.memo(function SideBarInner(
 
   const items: MenuItemProps[] = instances.map((ins) => {
     const part = getPartDef(ins, props.resolvedParts);
-    const type = isVisualPart(part)
+    const type = isVisualNode(part)
       ? MenuItemType.VISUAL
-      : isCodePart(part)
+      : isCodeNode(part)
       ? MenuItemType.CODE
       : MenuItemType.CONST;
     const selected = selectedIds.includes(ins.id);

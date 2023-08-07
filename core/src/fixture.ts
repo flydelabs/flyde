@@ -9,7 +9,7 @@ import {
   partInstance,
   dynamicPartInput,
   queueInputPinConfig,
-} from "./part";
+} from "./node";
 import { externalConnectionNode, connectionNode } from "./connect";
 import { execute, SubjectMap } from "./execute";
 

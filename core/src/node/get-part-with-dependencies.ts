@@ -1,4 +1,4 @@
-import { CustomNode, isInlineValuePart } from ".";
+import { CustomNode, isInlineValueNode } from ".";
 import { CustomNodeCollection, removeDupes } from "..";
 import { isRefPartInstance, RefPartInstance } from "./part-instance";
 
@@ -7,7 +7,7 @@ export const getPartWithDependencies = (
   resolvedDeps: CustomNodeCollection,
   existingIds: string[] = []
 ): CustomNode[] => {
-  if (isInlineValuePart(part)) {
+  if (isInlineValueNode(part)) {
     return [part];
   }
 

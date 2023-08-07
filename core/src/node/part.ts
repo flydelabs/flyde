@@ -221,32 +221,32 @@ export type CodeNodeDefinition = Omit<CodeNode, "run">;
 
 export type NodeDefinition = CustomNode | CodeNodeDefinition;
 
-export type PartModuleMetaData = {
+export type NodeModuleMetaData = {
   imported?: boolean;
 };
 
 export type NodeDefinitionWithModuleMetaData = NodeDefinition &
-  PartModuleMetaData;
+  NodeModuleMetaData;
 
-export const isBasePart = (p: any): p is BaseNode => {
+export const isBaseNode = (p: any): p is BaseNode => {
   return p && p.id && p.inputs && p.outputs;
 };
 
-export const isCodePart = (p: Node | NodeDefinition | any): p is CodeNode => {
-  return isBasePart(p) && typeof (p as CodeNode).run === "function";
+export const isCodeNode = (p: Node | NodeDefinition | any): p is CodeNode => {
+  return isBaseNode(p) && typeof (p as CodeNode).run === "function";
 };
 
-export const isVisualPart = (p: Node | NodeDefinition): p is VisualNode => {
+export const isVisualNode = (p: Node | NodeDefinition): p is VisualNode => {
   return !!(p as VisualNode).instances;
 };
 
-export const isInlineValuePart = (
+export const isInlineValueNode = (
   p: Node | NodeDefinition | undefined
 ): p is InlineValueNode => {
   return isDefined(p) && isDefined((p as InlineValueNode).runFnRawCode);
 };
 
-export const visualPart = testDataCreator<VisualNode>({
+export const visualNode = testDataCreator<VisualNode>({
   id: "visual-part",
   inputs: {},
   outputs: {},

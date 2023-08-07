@@ -7,7 +7,7 @@ import "./style.scss";
 import {
   dynamicOutput,
   dynamicPartInput,
-  isVisualPart,
+  isVisualNode,
   isRefPartInstance,
   NodesDefCollection,
   staticInputPinConfig,
@@ -54,7 +54,7 @@ export default function DebounceThrottlingExample(): JSX.Element {
     setFlowProps(
       produce(flowProps, (draft) => {
         const part = draft.flow.part;
-        if (isVisualPart(part)) {
+        if (isVisualNode(part)) {
           const debIns = part.instances.find(
             (ins) => isRefPartInstance(ins) && ins.partId === "Debounce"
           );

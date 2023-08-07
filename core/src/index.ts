@@ -7,16 +7,16 @@ import {
   maybeGetStaticValuePartId,
   Node,
   NodeDefinition,
-} from "./part";
+} from "./node";
 
 export * from "./connect";
 
 export * from "./execute";
 export * from "./simplified-execute";
 
-export * from "./part";
+export * from "./node";
 
-export * from "./part/get-part-with-dependencies";
+export * from "./node/get-part-with-dependencies";
 
 // export * from "./serdes";
 

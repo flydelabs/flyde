@@ -41,7 +41,7 @@ import {
   stickyInputPinConfig,
   dynamicPartInputs,
   inlinePartInstance,
-} from "./part";
+} from "./node";
 import { execute } from "./execute";
 import {
   add1,
@@ -2856,7 +2856,7 @@ describe("main ", () => {
       });
 
       it("allows creating accumulate2 visually (shared state)", () => {
-        const visualPart = concisePart({
+        const visualNode = concisePart({
           id: "bob",
           inputs: ["val"],
           outputs: ["r"],
@@ -2880,7 +2880,7 @@ describe("main ", () => {
         r.subscribe(s);
 
         execute({
-          part: visualPart,
+          part: visualNode,
           inputs: { val, count },
           outputs: { r },
           resolvedDeps: testPartsCollectionWith(accumulate),
@@ -2894,7 +2894,7 @@ describe("main ", () => {
       });
 
       it("accumulate2 visually cleans up state properly after it is done", () => {
-        const visualPart = concisePart({
+        const visualNode = concisePart({
           id: "bob",
           inputs: ["val", "count"],
           outputs: ["r"],
@@ -2915,7 +2915,7 @@ describe("main ", () => {
         r.subscribe(s);
 
         execute({
-          part: visualPart,
+          part: visualNode,
           inputs: { val, count },
           outputs: { r },
           resolvedDeps: testPartsCollectionWith(accumulate),
@@ -2990,7 +2990,7 @@ describe("main ", () => {
       const num1 = randomInt(100);
       const num2 = randomInt(100);
 
-      const visualPart: VisualNode = {
+      const visualNode: VisualNode = {
         id: "visual-part",
         inputsPosition: {},
         outputsPosition: {},
@@ -3023,7 +3023,7 @@ describe("main ", () => {
       r.subscribe(s);
 
       execute({
-        part: visualPart,
+        part: visualNode,
         inputs: { n1 },
         outputs: { r },
         resolvedDeps: testPartsCollection,
@@ -3767,7 +3767,7 @@ describe("main ", () => {
         [prop2Name]: prop2Value,
       };
 
-      const visualPart: VisualNode = {
+      const visualNode: VisualNode = {
         id: "visual-part",
         inputsPosition: {},
         outputsPosition: {},
@@ -3800,7 +3800,7 @@ describe("main ", () => {
       const [s, r] = spiedOutput();
 
       execute({
-        part: visualPart,
+        part: visualNode,
         inputs: { n1 },
         outputs: { r },
         resolvedDeps: testPartsCollection,
@@ -3911,7 +3911,7 @@ describe("main ", () => {
     it("waits for __trigger input inside visual part", () => {
       const v42 = valuePart("val", 42);
 
-      const visualPart = concisePart({
+      const visualNode = concisePart({
         id: "visual-part",
         inputs: ["a|optional"],
         outputs: ["r"],
@@ -3929,7 +3929,7 @@ describe("main ", () => {
         throw e;
       };
       execute({
-        part: visualPart,
+        part: visualNode,
         inputs: { a },
         outputs: { r },
         resolvedDeps: testPartsCollectionWith(v42),
@@ -3952,7 +3952,7 @@ describe("main ", () => {
         run: (inputs, outputs) => outputs.r?.next(inputs.a + inputs.b),
       });
 
-      const visualPart = concisePart({
+      const visualNode = concisePart({
         id: "visual-part",
         inputs: ["a|optional"],
         outputs: ["r"],
@@ -3975,7 +3975,7 @@ describe("main ", () => {
         throw e;
       };
       execute({
-        part: visualPart,
+        part: visualNode,
         inputs: { a },
         outputs: { r },
         resolvedDeps: testPartsCollectionWith(addPart),
@@ -3998,7 +3998,7 @@ describe("main ", () => {
         run: (inputs, outputs) => outputs.r?.next(inputs.a + inputs.b),
       });
 
-      const visualPart = concisePart({
+      const visualNode = concisePart({
         id: "visual-part",
         inputs: ["a"],
         outputs: ["r"],
@@ -4020,7 +4020,7 @@ describe("main ", () => {
 
       const errSpy = spy();
       execute({
-        part: visualPart,
+        part: visualNode,
         inputs: { a },
         outputs: { r },
         resolvedDeps: testPartsCollectionWith(addPart),

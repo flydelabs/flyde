@@ -1,6 +1,6 @@
 import {
   connectionData,
-  visualPart,
+  visualNode,
   partInput,
   partInstance,
   partOutput,
@@ -20,7 +20,7 @@ describe("ssg/ssr support", () => {
 
   it("renders into string without throwing in the absence of DOM", () => {
     const id = "part";
-    const part = visualPart({
+    const part = visualNode({
       id,
       inputs: { a: partInput() },
       outputs: { r: partOutput() },
