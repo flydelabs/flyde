@@ -71,36 +71,36 @@ describe("nodes hasher", () => {
     });
 
     it("hashes nodes disregarding i/o position", () => {
-      const part2 = produce(someNode, (draft) => {
+      const node2 = produce(someNode, (draft) => {
         draft.inputsPosition.a = randomPos();
         draft.outputsPosition.r = randomPos();
       });
 
       const h1 = hashNode(someNode);
-      const h2 = hashNode(part2);
+      const h2 = hashNode(node2);
 
       assert.equal(h1, h2);
     });
 
     it("hashes nodes disregarding instance position when ignore enabled", () => {
-      const part2 = produce(someNode, (draft) => {
+      const node2 = produce(someNode, (draft) => {
         draft.instances[0]!.pos = randomPos();
       });
 
       const h1 = hashNode(someNode);
-      const h2 = hashNode(part2);
+      const h2 = hashNode(node2);
 
       assert.equal(h1, h2);
     });
 
     it("disregards order of instances and connections", () => {
-      const part2 = produce(someNode, (draft) => {
+      const node2 = produce(someNode, (draft) => {
         draft.instances = shuffle(draft.instances);
         draft.connections = shuffle(draft.connections);
       });
 
       const h1 = hashNode(someNode);
-      const h2 = hashNode(part2);
+      const h2 = hashNode(node2);
 
       assert.equal(h1, h2);
     });

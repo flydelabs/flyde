@@ -1192,7 +1192,7 @@ describe("main ", () => {
           const v = dynamicNodeInput();
           const r = new Subject();
 
-          const part1: CodeNode = {
+          const node1: CodeNode = {
             id: "p1",
             inputs: {},
             outputs: { r: nodeOutput() },
@@ -1203,7 +1203,7 @@ describe("main ", () => {
               outs.r?.next(n);
             },
           };
-          const part2: CodeNode = {
+          const node2: CodeNode = {
             id: "p2",
             inputs: {},
             outputs: { r: nodeOutput() },
@@ -1219,7 +1219,7 @@ describe("main ", () => {
             id: "wrappedP2",
             inputs: [],
             outputs: ["r"],
-            instances: [nodeInstance("p2", part2.id)],
+            instances: [nodeInstance("p2", node2.id)],
             connections: [
               ["__trigger", "p2.__trigger"],
               ["p2.r", "r"],
@@ -1231,7 +1231,7 @@ describe("main ", () => {
             inputs: ["v"],
             outputs: ["r"],
             instances: [
-              nodeInstance("p1", part1.id),
+              nodeInstance("p1", node1.id),
               nodeInstance("p2", wrappedP2.id),
             ],
             connections: [
@@ -1246,7 +1246,7 @@ describe("main ", () => {
             node: wrapper,
             inputs: { v },
             outputs: { r },
-            resolvedDeps: testNodesCollectionWith(part1, part2, wrappedP2),
+            resolvedDeps: testNodesCollectionWith(node1, node2, wrappedP2),
           });
           v.subject.next("");
           assert.deepEqual(s.lastCall.args[0], 2);
@@ -3370,7 +3370,7 @@ describe("main ", () => {
 
       const p2 = {
         ...errorReportingNode,
-        id: "nodePart2",
+        id: "nodeNode2",
         run: () => {
           throw new Error("blaft");
         },
@@ -3418,7 +3418,7 @@ describe("main ", () => {
 
       const p2 = {
         ...errorReportingNode,
-        id: "nodePart2",
+        id: "nodeNode2",
         run: async () => {
           throw new Error("blaft");
         },

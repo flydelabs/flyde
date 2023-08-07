@@ -52,11 +52,11 @@ export const MenuAddSection: React.FC<MenuAddSectionProps> = (props) => {
           : "Double click on nodes to add them"}
       </div>
       {renderedInstances}
-      {/* <div className='ins-wrapper' onDoubleClick={() => props.onAdd(part1)}>
-			{fakeIns(part1, props.resolvedNodes)}
+      {/* <div className='ins-wrapper' onDoubleClick={() => props.onAdd(node1)}>
+			{fakeIns(node1, props.resolvedNodes)}
 		</div> */}
-      {/* <div className='ins-wrapper' onDoubleClick={() => props.onAdd(part2)}>
-			{fakeIns(part2, props.resolvedNodes)}
+      {/* <div className='ins-wrapper' onDoubleClick={() => props.onAdd(node2)}>
+			{fakeIns(node2, props.resolvedNodes)}
 		</div> */}
     </div>
   );

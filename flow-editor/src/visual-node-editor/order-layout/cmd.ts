@@ -1,4 +1,4 @@
-import { PART_HEIGHT } from "../VisualNodeEditor";
+import { NODE_HEIGHT } from "../VisualNodeEditor";
 import {
   okeys,
   isExternalConnectionNode,
@@ -53,7 +53,7 @@ export const orderVisualNode = (
   const insNodes = instances.reduce((prev, curr) => {
     const s = size(
       calcNodeWidth(curr, getNodeDef(curr, resolvedNodes)),
-      PART_HEIGHT
+      NODE_HEIGHT
     );
     return {
       ...prev,
@@ -63,13 +63,13 @@ export const orderVisualNode = (
 
   const nodeInputNodes = okeys(node.inputsPosition).reduce((prev, curr) => {
     const p = node.inputsPosition[curr];
-    const s = size(calcNodeIoWidth(curr), PART_HEIGHT);
+    const s = size(calcNodeIoWidth(curr), NODE_HEIGHT);
     return { ...prev, [`node-input-${curr}`]: { p, s } };
   }, {});
 
   const nodeOutputNodes = okeys(node.outputsPosition).reduce((prev, curr) => {
     const p = node.outputsPosition[curr];
-    const s = size(calcNodeIoWidth(curr), PART_HEIGHT);
+    const s = size(calcNodeIoWidth(curr), NODE_HEIGHT);
     return { ...prev, [`node-output-${curr}`]: { p, s } };
   }, {});
 

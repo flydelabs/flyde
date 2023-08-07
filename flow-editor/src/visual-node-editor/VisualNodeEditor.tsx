@@ -125,7 +125,7 @@ const MemodSlider = React.memo(Slider);
 
 const sliderRenderer = () => null;
 
-export const PART_HEIGHT = 28;
+export const NODE_HEIGHT = 28;
 const DBL_CLICK_TIME = 300;
 
 export const defaultViewPort: ViewPort = {

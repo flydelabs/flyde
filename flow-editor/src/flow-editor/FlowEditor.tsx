@@ -17,7 +17,7 @@ import {
   ClipboardData,
   defaultViewPort,
   GroupEditorBoardData,
-  PART_HEIGHT,
+  NODE_HEIGHT,
   VisualNodeEditorHandle,
 } from "../visual-node-editor/VisualNodeEditor";
 import produce from "immer";
@@ -225,7 +225,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
     );
 
     const onAddNodeInstance = React.useCallback(
-      (nodeId: string, offset: number = -1 * PART_HEIGHT * 1.5) => {
+      (nodeId: string, offset: number = -1 * NODE_HEIGHT * 1.5) => {
         const newNodeIns = createNewNodeInstance(
           nodeId,
           offset,

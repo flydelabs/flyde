@@ -156,7 +156,7 @@ describe("execute", () => {
 
     it("compiles visual nodes with the right inputs and outputs", () => {
       const visualNode: VisualNode = {
-        id: "apart",
+        id: "anode",
         inputs: { a: nodeInput(), b: nodeInput() },
         outputs: { r: nodeOutput() },
         instances: [],
@@ -172,7 +172,7 @@ describe("execute", () => {
 
     it("compiles visual nodes with the right inputs and outputs when inputs have modes", () => {
       const visualNode: VisualNode = {
-        id: "apart",
+        id: "anode",
         inputs: {
           a: nodeInput("optional"),
           b: nodeInput("required"),

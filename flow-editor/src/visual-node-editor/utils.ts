@@ -1,6 +1,6 @@
 import * as immer from "immer";
 import cuid from "cuid";
-import { PART_HEIGHT } from "./VisualNodeEditor";
+import { NODE_HEIGHT } from "./VisualNodeEditor";
 import {
   Pos,
   InputPin,
@@ -229,7 +229,7 @@ export const parseInputOutputTypes = (
 
 export const createNewInlineNodeInstance = (
   node: NodeDefinition,
-  offset: number = -1 * PART_HEIGHT * 1.5,
+  offset: number = -1 * NODE_HEIGHT * 1.5,
   lastMousePos: Pos
 ): NodeInstance => {
   const ins = inlineNodeInstance(
@@ -251,7 +251,7 @@ export const createNewInlineNodeInstance = (
 
 export const createNewNodeInstance = (
   nodeIdOrNode: string | NodeDefinition,
-  offset: number = -1 * PART_HEIGHT * 1.5,
+  offset: number = -1 * NODE_HEIGHT * 1.5,
   lastMousePos: Pos,
   resolvedNodes: NodesDefCollection
 ): NodeInstance => {
@@ -419,20 +419,20 @@ export const calcNodesPositions = (
 ): Points[] => {
   const insNodes = node.instances.map((curr) => {
     const w = calcNodeWidth(curr, getNodeDef(curr, resolvedNodes));
-    const h = PART_HEIGHT;
+    const h = NODE_HEIGHT;
     return calcPoints(w, h, curr.pos, curr.id);
   });
 
   const inputsCenter = okeys(node.inputs).map((curr) => {
     const w = calcIoNodeWidth(curr);
-    const h = PART_HEIGHT;
+    const h = NODE_HEIGHT;
     const pos = node.inputsPosition[curr] || { x: 0, y: 0 };
     return calcPoints(w, h, pos, "input_" + curr);
   });
 
   const outputsCenter = okeys(node.outputs).map((curr) => {
     const w = calcIoNodeWidth(curr);
-    const h = PART_HEIGHT;
+    const h = NODE_HEIGHT;
     const pos = node.outputsPosition[curr] || { x: 0, y: 0 };
     return calcPoints(w, h, pos, "output" + curr);
   });
@@ -604,7 +604,7 @@ export const getInstancesInRect = (
       const rec2 = {
         ...pos,
         w,
-        h: PART_HEIGHT * viewPort.zoom * parentVp.zoom,
+        h: NODE_HEIGHT * viewPort.zoom * parentVp.zoom,
       };
       console.log(ins.id, rec2, "main", rect);
 
