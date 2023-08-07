@@ -1,8 +1,8 @@
 export class NodeInstanceError extends Error {
   fullInsIdsPath: string;
-  partId: string;
+  nodeId: string;
 
-  constructor(error: unknown, fullInsIdsPath: string, partId: string) {
+  constructor(error: unknown, fullInsIdsPath: string, nodeId: string) {
     let errorMessage = "Unknown error";
 
     if (typeof error === "string") {
@@ -15,11 +15,11 @@ export class NodeInstanceError extends Error {
       errorMessage = String(error);
     }
 
-    super(`${errorMessage} (insId: ${fullInsIdsPath}, partId: ${partId})`);
+    super(`${errorMessage} (insId: ${fullInsIdsPath}, nodeId: ${nodeId})`);
 
     // Ensure the name of this error is the same as the class name
     this.name = this.constructor.name;
-    this.message = `${errorMessage} (insId: ${fullInsIdsPath}, partId: ${partId})`;
+    this.message = `${errorMessage} (insId: ${fullInsIdsPath}, nodeId: ${nodeId})`;
 
     // Capture the current stack trace
     Error.captureStackTrace
@@ -27,6 +27,6 @@ export class NodeInstanceError extends Error {
       : (this.stack = new Error().stack);
 
     this.fullInsIdsPath = fullInsIdsPath;
-    this.partId = partId;
+    this.nodeId = nodeId;
   }
 }

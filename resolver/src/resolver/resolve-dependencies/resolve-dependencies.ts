@@ -27,7 +27,7 @@ import * as StdLib from "@flyde/stdlib/dist/all";
 const getRefNodeIds = (part: VisualNode): string[] => {
   const refNodeIds = part.instances
     .filter(isRefNodeInstance)
-    .map((ins) => ins.partId);
+    .map((ins) => ins.nodeId);
   const inlineNodes = part.instances
     .filter(isInlineNodeInstance)
     .map((ins) => ins.part);

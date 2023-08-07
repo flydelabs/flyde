@@ -11,7 +11,7 @@ export interface NodeInstanceConfig {
 
 export interface RefNodeInstance extends NodeInstanceConfig {
   id: string;
-  partId: string;
+  nodeId: string;
   pos: Pos;
 }
 
@@ -22,14 +22,14 @@ export interface InlineNodeInstance extends NodeInstanceConfig {
 }
 export type NodeInstance = RefNodeInstance | InlineNodeInstance;
 
-export const partInstance = (
+export const nodeInstance = (
   id: string,
-  partOrId: string,
+  nodeOrId: string,
   config?: InputPinsConfig,
   pos?: Pos
 ): NodeInstance => ({
   id,
-  partId: partOrId,
+  nodeId: nodeOrId,
   inputConfig: config || {},
   pos: pos || { x: 0, y: 0 },
 });
@@ -61,7 +61,7 @@ export const NodeInstance = (
   pos?: Pos
 ): NodeInstance => ({
   id,
-  partId: part.id,
+  nodeId: part.id,
   inputConfig: config || {},
   pos: pos || { x: 0, y: 0 },
 });

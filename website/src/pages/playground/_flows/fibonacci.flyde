@@ -20,7 +20,7 @@ part:
         - a
         - b
         - __trigger
-      partId: Equals
+      nodeId: Equals
       style:
         size: regular
     - pos:
@@ -38,13 +38,13 @@ part:
         - a
         - b
         - __trigger
-      partId: Equals
+      nodeId: Equals
     - pos:
         x: 159.85901489257813
         y: 471.33189712524415
       id: Add-539
       inputConfig: {}
-      partId: Add
+      nodeId: Add
       style:
         color: "#fee440"
     - pos:
@@ -57,7 +57,7 @@ part:
           value: 1
       visibleInputs:
         - n1
-      partId: Subtract
+      nodeId: Subtract
       style:
         color: "#f15bb5"
     - pos:
@@ -70,7 +70,7 @@ part:
           value: 2
       visibleInputs:
         - n1
-      partId: Subtract
+      nodeId: Subtract
       style:
         color: "#f15bb5"
     - pos:
@@ -78,13 +78,13 @@ part:
         y: 340.2993609619141
       id: Fibonacci-261
       inputConfig: {}
-      partId: Fibonacci
+      nodeId: Fibonacci
     - pos:
         x: 227.87701416015625
         y: 340.5600205230713
       id: Fibonacci-379
       inputConfig: {}
-      partId: Fibonacci
+      nodeId: Fibonacci
   connections:
     - from:
         insId: Fibonacci-261

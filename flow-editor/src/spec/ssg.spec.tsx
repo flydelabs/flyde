@@ -2,7 +2,7 @@ import {
   connectionData,
   visualNode,
   nodeInput,
-  partInstance,
+  nodeInstance,
   nodeOutput,
 } from "@flyde/core";
 import { assert } from "chai";
@@ -24,7 +24,7 @@ describe("ssg/ssr support", () => {
       id,
       inputs: { a: nodeInput() },
       outputs: { r: nodeOutput() },
-      instances: [partInstance("i1", id), partInstance("i2", id)],
+      instances: [nodeInstance("i1", id), nodeInstance("i2", id)],
       connections: [connectionData("i1.r", "i2.a")],
     });
     const props: FlydeFlowEditorProps = {

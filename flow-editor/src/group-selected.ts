@@ -1,7 +1,7 @@
 import {
   VisualNode,
   middlePos,
-  partInstance,
+  nodeInstance,
   ConnectionData,
   inlineNodeInstance,
   createInsId,
@@ -13,7 +13,7 @@ import { PromptFn } from "./flow-editor/ports";
 export const groupSelected = async (
   selected: string[],
   part: VisualNode,
-  partName: string,
+  nodeName: string,
   type: "inline" | "ref",
   prompt: PromptFn
 ): Promise<{ newPart: VisualNode; currentPart: VisualNode }> => {
@@ -35,7 +35,7 @@ export const groupSelected = async (
   const { visualNode, renamedInputs, renamedOutputs } = await createGroup(
     relevantInstances,
     relevantConnections,
-    partName,
+    nodeName,
     prompt
   );
   const midPos = relevantInstances.reduce((p, c) => {
@@ -44,7 +44,7 @@ export const groupSelected = async (
   }, instances[0].pos);
   const newInstance =
     type === "ref"
-      ? partInstance(createInsId(visualNode), visualNode.id, {}, midPos)
+      ? nodeInstance(createInsId(visualNode), visualNode.id, {}, midPos)
       : inlineNodeInstance(createInsId(visualNode), visualNode, {}, midPos);
 
   // replace relevant parts with new part

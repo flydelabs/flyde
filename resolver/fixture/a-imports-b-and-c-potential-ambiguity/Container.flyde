@@ -15,12 +15,12 @@ part:
       type: number
   instances:
   - id: ins1
-    partId: Adds1Wrapper
+    nodeId: Adds1Wrapper
     pos:
       x: 0
       y: 0
   - id: ins2
-    partId: Subs1Wrapper
+    nodeId: Subs1Wrapper
     pos:
       x: 0
       y: 0

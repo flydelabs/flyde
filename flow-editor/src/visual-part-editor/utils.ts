@@ -12,7 +12,7 @@ import {
   isExternalConnectionNode,
   getNodeDef,
   PinType,
-  partInstance,
+  nodeInstance,
   stickyInputPinConfig,
   queueInputPinConfig,
   isStickyInputPinConfig,
@@ -89,7 +89,7 @@ export const findClosestPin = (
   ancestorsInsIds: string,
   viewPort: ViewPort
 ) => {
-  const rootInstance: NodeInstance = partInstance(part.id, part.id);
+  const rootInstance: NodeInstance = nodeInstance(part.id, part.id);
   const mainInputsData = okeys(part.inputs).map((pinId) => {
     const pos = calcPinPosition({
       insId: currentInsId,
@@ -250,18 +250,18 @@ export const createNewInlineNodeInstance = (
 };
 
 export const createNewNodeInstance = (
-  partIdOrPart: string | NodeDefinition,
+  nodeIdOrPart: string | NodeDefinition,
   offset: number = -1 * PART_HEIGHT * 1.5,
   lastMousePos: Pos,
   resolvedNodes: NodesDefCollection
 ): NodeInstance => {
   const part =
-    typeof partIdOrPart === "string"
-      ? getNodeDef(partIdOrPart, resolvedNodes)
-      : partIdOrPart;
+    typeof nodeIdOrPart === "string"
+      ? getNodeDef(nodeIdOrPart, resolvedNodes)
+      : nodeIdOrPart;
 
   if (!part) {
-    throw new Error(`${partIdOrPart} part not found in resolvedNodes`);
+    throw new Error(`${nodeIdOrPart} part not found in resolvedNodes`);
   }
 
   const inputsConfig = entries(part.inputs).reduce((acc, [k, v]) => {
@@ -272,7 +272,7 @@ export const createNewNodeInstance = (
     return acc;
   }, {});
 
-  const ins = partInstance(cuid(), part.id, inputsConfig, { x: 0, y: 0 });
+  const ins = nodeInstance(cuid(), part.id, inputsConfig, { x: 0, y: 0 });
   const width = calcNodeWidth(ins, part);
 
   const { x, y } = lastMousePos;

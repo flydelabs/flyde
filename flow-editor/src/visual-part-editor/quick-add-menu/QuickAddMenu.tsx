@@ -103,7 +103,7 @@ const renderPart: ItemRenderer<QuickMenuMatch> = (
   );
 };
 
-const partPredicate: ItemPredicate<QuickMenuMatch> = (
+const nodePredicate: ItemPredicate<QuickMenuMatch> = (
   query,
   match,
   _index,
@@ -168,7 +168,7 @@ export const QuickAddMenu: React.FC<QuickMenuProps> = (props) => {
       <NodeSelect
         className="quick-add-parts-select"
         items={matches}
-        itemPredicate={partPredicate}
+        itemPredicate={nodePredicate}
         itemRenderer={renderPart}
         inputProps={{ className: "quick-add-input" }}
         noResults={<MenuItem disabled={true} text="No results." />}

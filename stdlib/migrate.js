@@ -38,7 +38,7 @@ for (const f of files) {
       new Set(
         firstPart.instances
           .filter((i) => isRefNodeInstance(i))
-          .map((i) => i.partId)
+          .map((i) => i.nodeId)
       )
     );
     console.log({ deps });
@@ -80,9 +80,9 @@ for (const f of files) {
 
   //     part.run = "__FN_HERE__"
 
-  //     const partStr = JSON.stringify(part).replace('"__FN_HERE__"', `function (inputs, outputs, adv) { ${fnCode} }`);
+  //     const nodeStr = JSON.stringify(part).replace('"__FN_HERE__"', `function (inputs, outputs, adv) { ${fnCode} }`);
 
-  //     const template = `module.exports = ${partStr}`
+  //     const template = `module.exports = ${nodeStr}`
 
   //     fs.writeFileSync('./parts/' + firstPart.id + '.flyde.js', template, 'utf-8');
   //     fs.rmSync(flowPath)

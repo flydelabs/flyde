@@ -10,7 +10,7 @@ const getNodeIds = (part?: Node) => {
   if (part && isVisualNode(part)) {
     const refIds = part.instances
       .filter((ins: any) => isRefNodeInstance(ins))
-      .map((ins: any) => ins.partId);
+      .map((ins: any) => ins.nodeId);
 
     const innerIds = part.instances
       .filter((ins: any) => isInlineNodeInstance(ins))

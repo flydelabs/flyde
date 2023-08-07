@@ -6,7 +6,7 @@ import {
   Node,
   dynamicOutput,
   dynamicNodeInput,
-  partInstance,
+  nodeInstance,
   dynamicNodeInputs,
   stickyInputPinConfig,
   staticNodeInput,
@@ -71,7 +71,7 @@ describe("execute", () => {
     },
     inputsPosition: {},
     outputsPosition: {},
-    instances: [partInstance("a", optAdd.id)],
+    instances: [nodeInstance("a", optAdd.id)],
     connections: [
       {
         from: externalConnectionNode("n1"),
@@ -99,7 +99,7 @@ describe("execute", () => {
     outputs: {
       r: nodeOutput(),
     },
-    instances: [partInstance("a", add.id)],
+    instances: [nodeInstance("a", add.id)],
     connections: [
       {
         from: externalConnectionNode("n1"),
@@ -379,8 +379,8 @@ describe("execute", () => {
             r: nodeOutput(),
           },
           instances: [
-            partInstance("a", id.id),
-            // partInstance('b', id),
+            nodeInstance("a", id.id),
+            // nodeInstance('b', id),
           ],
           connections: [
             {
@@ -429,7 +429,7 @@ describe("execute", () => {
           outputs: {
             r: nodeOutput(),
           },
-          instances: [partInstance("v", Value(2).id), partInstance("a", id.id)],
+          instances: [nodeInstance("v", Value(2).id), nodeInstance("a", id.id)],
           connections: [
             connectionData(["a", "r"], ["r"]),
             connectionData(["v", "r"], ["a", "v"]),
@@ -523,7 +523,7 @@ describe("execute", () => {
       outputs: {
         r: {},
       },
-      instances: [partInstance("a", isEven.id)],
+      instances: [nodeInstance("a", isEven.id)],
       connections: [
         {
           from: externalConnectionNode("item"),
@@ -1084,7 +1084,7 @@ describe("execute", () => {
         assert.equal(onProcessing.called, true);
         assert.equal(onProcessing.lastCall.args[0].val, true);
         assert.equal(onProcessing.lastCall.args[0].insId, "__root");
-        assert.equal(onProcessing.lastCall.args[0].partId, "delay5");
+        assert.equal(onProcessing.lastCall.args[0].nodeId, "delay5");
       });
 
       it("notifies when part ends processing", async () => {
@@ -1111,7 +1111,7 @@ describe("execute", () => {
 
         return eventually(() => {
           assert.equal(onProcessing.lastCall.args[0].val, false);
-          assert.equal(onProcessing.lastCall.args[0].partId, "delay5");
+          assert.equal(onProcessing.lastCall.args[0].nodeId, "delay5");
           assert.equal(onProcessing.callCount, 2);
         }, 200);
       });
@@ -1143,7 +1143,7 @@ describe("execute", () => {
         assert.equal(onInputsStateChange.callCount, 3);
 
         assert.equal(onInputsStateChange.lastCall.args[0].val.item, 1);
-        assert.equal(onInputsStateChange.lastCall.args[0].partId, "delay5");
+        assert.equal(onInputsStateChange.lastCall.args[0].nodeId, "delay5");
 
         item.subject.next("c");
         assert.equal(onInputsStateChange.lastCall.args[0].val.item, 2);

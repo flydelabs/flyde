@@ -24,7 +24,7 @@ part:
         y: -902.475394897461
       id: cl918rngj00074666es8w7c41
       inputConfig: {}
-      partId: Discord Bot
+      nodeId: Discord Bot
     - pos:
         x: -266.47919433593734
         y: -259.11201293945305
@@ -33,7 +33,7 @@ part:
       visibleOutputs:
         - task
         - __error
-      partId: Add Task
+      nodeId: Add Task
       style:
         size: regular
         color: "#f15bb5"
@@ -109,7 +109,7 @@ part:
               value:
                 mode: static
                 value: list
-            partId: Property Equals
+            nodeId: Property Equals
           - pos:
               x: -271.0569311523436
               y: -143.07026123046876
@@ -127,9 +127,9 @@ part:
               value:
                 mode: static
                 value: add
-            partId: Property Equals
+            nodeId: Property Equals
           - id: Get Attribute-728
-            partId: Get Attribute
+            nodeId: Get Attribute
             inputConfig:
               attribute:
                 mode: static
@@ -208,7 +208,7 @@ part:
         y: -385.08027587890626
       id: cl932yd64001u4666242a73d5
       inputConfig: {}
-      partId: Get Tasks
+      nodeId: Get Tasks
       style:
         size: regular
         color: "#f15bb5"
@@ -253,7 +253,7 @@ part:
               value:
                 mode: static
                 value: tasks
-            partId: Property Equals
+            nodeId: Property Equals
             visibleOutputs:
               - "true"
               - "false"
@@ -530,7 +530,7 @@ part:
               attribute:
                 mode: static
                 value: value
-            partId: Get Attribute
+            nodeId: Get Attribute
         inputsPosition:
           cmd:
             x: -171.10925114704733
@@ -639,12 +639,12 @@ part:
               attribute:
                 mode: static
                 value: value
-            partId: Get Attribute
+            nodeId: Get Attribute
             visibleOutputs:
               - value
               - __error
           - id: Empty String-745
-            partId: Empty String
+            nodeId: Empty String
             inputConfig: {}
             pos:
               x: -41.41132324218751
@@ -724,7 +724,7 @@ part:
                 value: content
             visibleOutputs:
               - value
-            partId: Get Attribute
+            nodeId: Get Attribute
             visibleInputs:
               - obj
           - pos:
@@ -735,7 +735,7 @@ part:
               compare:
                 mode: static
                 value: "!ping"
-            partId: Equals
+            nodeId: Equals
             visibleInputs:
               - val
               - transform
@@ -765,7 +765,7 @@ part:
               - channelId
               - __trigger
           - id: Dot-213
-            partId: Get Attribute
+            nodeId: Get Attribute
             inputConfig:
               key:
                 mode: static

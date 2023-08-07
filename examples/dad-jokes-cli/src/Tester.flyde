@@ -12,7 +12,7 @@ part:
         value:
           mode: static
           value: bob22
-      partId: Log
+      nodeId: Log
   connections: []
   id: DadJoke
   inputs: {}

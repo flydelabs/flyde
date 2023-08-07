@@ -43,13 +43,13 @@ export const peekValueForExecution = (
   input: NodeInput,
   state: NodeState,
   env: ExecuteEnv,
-  partId: string
+  nodeId: string
 ) => {
   const stateItem = state.get(key);
   let val;
   if (!input) {
     throw new Error(
-      `Trying to peek value of inexsting input in key "${key}" in part "${partId}"`
+      `Trying to peek value of inexsting input in key "${key}" in part "${nodeId}"`
     );
   }
   if (isStaticInput(input)) {
@@ -108,11 +108,11 @@ export const peekValuesForExecution = (
   nodeInputs: NodeInputs,
   state: NodeState,
   env: ExecuteEnv,
-  partId: string
+  nodeId: string
 ) => {
   const data = entries(nodeInputs).reduce<Record<string, unknown>>(
     (acc, [key, input]) => {
-      acc[key] = peekValueForExecution(key, input, state, env, partId);
+      acc[key] = peekValueForExecution(key, input, state, env, nodeId);
       return acc;
     },
     {}
@@ -125,11 +125,11 @@ export const hasNewSignificantValues = (
   nodeInputs: NodeInputs,
   state: NodeState,
   env: ExecuteEnv,
-  partId: string
+  nodeId: string
 ) => {
   return entries(nodeInputs).some(([k, i]) => {
     const isQueue = isQueueInputPinConfig(i.config);
-    const value = peekValueForExecution(k, i, state, env, partId);
+    const value = peekValueForExecution(k, i, state, env, nodeId);
 
     return isDefined(value) && isQueue;
   });

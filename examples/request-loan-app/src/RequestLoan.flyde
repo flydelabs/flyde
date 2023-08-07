@@ -16,7 +16,7 @@ part:
         y: 76.70314407348633
       id: Get User By Email-516
       inputConfig: {}
-      partId: Get User By Email
+      nodeId: Get User By Email
       style:
         size: large
         icon: user
@@ -26,7 +26,7 @@ part:
         y: 330.68904666900636
       id: Get Credit By Id-957
       inputConfig: {}
-      partId: Get Credit By Id
+      nodeId: Get Credit By Id
       style:
         size: large
         icon: dollar
@@ -46,7 +46,7 @@ part:
         - obj
         - object
         - attribute
-      partId: Get Attribute
+      nodeId: Get Attribute
       style:
         size: regular
     - pos:
@@ -57,7 +57,7 @@ part:
       visibleInputs:
         - userId
         - amount
-      partId: Calculate Risk
+      nodeId: Calculate Risk
       style:
         size: large
         icon: warning
@@ -168,7 +168,7 @@ part:
         y: 604.5701513671875
       id: Boolean Split-483
       inputConfig: {}
-      partId: Boolean Split
+      nodeId: Boolean Split
   connections:
     - from:
         insId: __this

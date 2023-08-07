@@ -55,7 +55,7 @@ export const hashPart = (part: Node, ignorePos = true) => {
 export const hashFlow = (flow: FlydeFlow) => {
   const { part, imports } = flow;
 
-  const partHash = hashPart(part, false);
+  const nodeHash = hashPart(part, false);
 
   const orderedImports = Object.entries(imports ?? {})
     .sort(([k1], [k2]) => k1.localeCompare(k2))
@@ -64,5 +64,5 @@ export const hashFlow = (flow: FlydeFlow) => {
 
   const rest = JSON.stringify(orderedImports);
 
-  return md5(partHash + rest);
+  return md5(nodeHash + rest);
 };

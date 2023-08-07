@@ -20,7 +20,7 @@ export type SimpleFnData = Omit<BaseNode, "inputs" | "outputs" | "run"> & {
   fullRunFn?: RunNodeFunction; // hack to start migrating these back
 };
 
-export function partFromSimpleFunction(data: SimpleFnData): CodeNode {
+export function nodeFromSimpleFunction(data: SimpleFnData): CodeNode {
   return {
     ...data,
     id: data.id,

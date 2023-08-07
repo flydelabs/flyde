@@ -12,7 +12,7 @@ part:
       type: number
   instances:
   - id: ins1
-    partId: Add1Wrapper
+    nodeId: Add1Wrapper
     inputConfig: {}
     pos:
       x: 0

@@ -68,7 +68,7 @@ part:
               - __error
               - response
               - data
-            partId: GET Request
+            nodeId: GET Request
           - id: "Inline-value-{iso2: ${input76"
             part:
               id: "Inline-value-{iso2: inputs.d"
@@ -160,9 +160,9 @@ part:
               - url
               - body
               - data
-            partId: POST Request
+            nodeId: POST Request
           - id: Get Attribute-217
-            partId: Get Attribute
+            nodeId: Get Attribute
             inputConfig:
               attribute:
                 mode: static
@@ -171,7 +171,7 @@ part:
               x: -285.6922900390625
               y: 219.88888122558592
           - id: Get Country Name And Capital-srp46ei
-            partId: Get Attribute
+            nodeId: Get Attribute
             inputConfig:
               attribute:
                 mode: static
@@ -332,7 +332,7 @@ part:
               - url
               - body
               - data
-            partId: POST Request
+            nodeId: POST Request
           - pos:
               x: -143.08780761718754
               y: 233.70198646545413
@@ -356,7 +356,7 @@ part:
               completionOutputs:
                 - r
           - id: Get Attribute-893
-            partId: Get Attribute
+            nodeId: Get Attribute
             inputConfig:
               attribute:
                 mode: static

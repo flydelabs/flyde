@@ -43,8 +43,8 @@
 //   fullRunFn?: RunNodeFunction;
 // };
 
-// // This is the refactored partFromSimpleFunction function.
-// export function partFromSimpleFunction(data: SimpleFnData): CodeNode {
+// // This is the refactored nodeFromSimpleFunction function.
+// export function nodeFromSimpleFunction(data: SimpleFnData): CodeNode {
 //   const inputs: ImprovedInputs = {}; // Using the improved inputs type defined above.
 //   const outputs: Output = {};
 

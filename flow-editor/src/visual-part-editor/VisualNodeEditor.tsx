@@ -166,7 +166,7 @@ export type VisualNodeEditorProps = {
   clipboardData: ClipboardData;
   resolvedDependencies: ResolvedDependenciesDefinitions;
 
-  partIoEditable: boolean;
+  nodeIoEditable: boolean;
   thumbnailMode?: true;
 
   boardData: GroupEditorBoardData;
@@ -238,7 +238,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
     React.forwardRef((props, thisRef) => {
       const {
         onChangePart: onChange,
-        partIoEditable,
+        nodeIoEditable,
         onCopy,
         onGoToNodeDef: onEditPart,
         onInspectPin,
@@ -443,9 +443,9 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           } else {
             //close the connection if we have a target match
             if (type === "input" && currTo) {
-              onConnectionClose(newPin, currTo, "partIoClick");
+              onConnectionClose(newPin, currTo, "nodeIoClick");
             } else if (currFrom) {
-              onConnectionClose(currFrom, newPin, "partIoClick");
+              onConnectionClose(currFrom, newPin, "nodeIoClick");
             }
           }
         },
@@ -1069,7 +1069,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           if (shift) {
             const part = isInlineNodeInstance(ins)
               ? ins.part
-              : getNodeDef(ins.partId, currResolvedDeps);
+              : getNodeDef(ins.nodeId, currResolvedDeps);
             if (!part) {
               throw new Error(`Impossible state inspecting inexisting part`);
             }
@@ -1144,7 +1144,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             onChangeBoardData({ selected: [] });
           } else {
             const visualNode = getNodeDef(
-              groupNodeIns.partId,
+              groupNodeIns.nodeId,
               currResolvedDeps
             );
 
@@ -1414,7 +1414,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                   `Node ${importablePart.part.id} successfully imported from ${importablePart.module}`
                 );
                 reportEvent("addPart", {
-                  partId: importablePart.part.id,
+                  nodeId: importablePart.part.id,
                   source: "actionMenu",
                 });
               })();
@@ -1451,7 +1451,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                   `Node ${importablePart.part.id} successfully imported from ${importablePart.module}`
                 );
                 reportEvent("addPart", {
-                  partId: importablePart.part.id,
+                  nodeId: importablePart.part.id,
                   source: "actionMenu",
                 });
               })();
@@ -1491,8 +1491,8 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             type="input"
             pos={inputsPosition[k] || { x: 0, y: 0 }}
             id={k}
-            onDelete={partIoEditable ? onRemoveIoPin : undefined}
-            onRename={partIoEditable ? onRenameIoPin : undefined}
+            onDelete={nodeIoEditable ? onRemoveIoPin : undefined}
+            onRename={nodeIoEditable ? onRenameIoPin : undefined}
             onDblClick={onMainInputDblClick}
             closest={
               !!(
@@ -1529,8 +1529,8 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             type="output"
             pos={outputsPosition[k] || { x: 0, y: 0 }}
             id={k}
-            onDelete={partIoEditable ? onRemoveIoPin : undefined}
-            onRename={partIoEditable ? onRenameIoPin : undefined}
+            onDelete={nodeIoEditable ? onRemoveIoPin : undefined}
+            onRename={nodeIoEditable ? onRenameIoPin : undefined}
             closest={
               !!(
                 closestPin &&
@@ -1822,12 +1822,12 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                   ? await onImportPart(match.importablePart)
                   : currResolvedDeps;
 
-              const partToAdd =
+              const nodeToAdd =
                 match.type === "import"
                   ? match.importablePart.part
                   : match.part;
               const newNodeIns = createNewNodeInstance(
-                partToAdd.id,
+                nodeToAdd.id,
                 100,
                 lastMousePos.current,
                 deps
@@ -1846,7 +1846,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                 onCloseQuickAdd();
               }
               reportEvent("addPart", {
-                partId: partToAdd.id,
+                nodeId: nodeToAdd.id,
                 source: "quickAdd",
               });
               break;
@@ -1872,7 +1872,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
             //   onCloseQuickAdd();
             //   reportEvent("addPart", {
-            //     partId: match.importablePart.part.id,
+            //     nodeId: match.importablePart.part.id,
             //     source: "quickAdd",
             //   });
             //   break;
@@ -1906,7 +1906,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
       const getContextMenu = React.useCallback(
         (pos: Pos) => {
-          const maybeDisabledLabel = partIoEditable
+          const maybeDisabledLabel = nodeIoEditable
             ? ""
             : " (cannot edit main part, only visual)";
 
@@ -1927,13 +1927,13 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                 text={`New input ${maybeDisabledLabel}`}
                 onMouseDown={(e) => e.stopPropagation()}
                 onClick={preventDefaultAnd(() => onAddIoPin("input"))}
-                disabled={!partIoEditable}
+                disabled={!nodeIoEditable}
               />
               <MenuItem
                 onMouseDown={(e) => e.stopPropagation()}
                 text={`New output ${maybeDisabledLabel}`}
                 onClick={preventDefaultAnd(() => onAddIoPin("output"))}
-                disabled={!partIoEditable}
+                disabled={!nodeIoEditable}
               />
               <MenuItem
                 onMouseDown={(e) => e.stopPropagation()}
@@ -1972,7 +1972,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           );
         },
         [
-          partIoEditable,
+          nodeIoEditable,
           copyNodeToClipboard,
           part.completionOutputs,
           part.reactiveInputs,
@@ -2115,7 +2115,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             clipboardData: props.clipboardData,
             onInspectPin: props.onInspectPin,
             onGoToNodeDef: props.onGoToNodeDef,
-            partIoEditable: props.partIoEditable,
+            nodeIoEditable: props.nodeIoEditable,
             part: openInlineInstance.part,
             onChangePart: onChangeInspected,
             onShowOmnibar: onShowOmnibar,
@@ -2279,14 +2279,14 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       const onSaveInlineValuePart = React.useCallback(
         (type: InlineValueNodeType, code: string) => {
           const customView = code.trim().substr(0, 100);
-          const partId = `Inline-value-${customView
+          const nodeId = `Inline-value-${customView
             .substr(0, 15)
             .replace(/["'`]/g, "")}`;
 
           const newPart = createInlineValuePart({
             code,
             customView,
-            partId,
+            nodeId,
             type,
           });
 
@@ -2491,13 +2491,13 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
               onConnectionClose(
                 draggedConnection.from,
                 externalConnectionNode(id),
-                "partIoPinDrag"
+                "nodeIoPinDrag"
               );
             } else if (draggedConnection.to && type === "input") {
               onConnectionClose(
                 externalConnectionNode(id),
                 draggedConnection.to,
-                "partIoPinDrag"
+                "nodeIoPinDrag"
               );
             }
           }
@@ -2710,10 +2710,10 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
 const isEventOnCurrentBoard = (
   e: KeyboardEvent | MouseEvent,
-  partId: string
+  nodeId: string
 ) => {
   const targetElem = e.target as Element;
   const closestBoard = targetElem.closest(".visual-part-editor");
 
-  return closestBoard && closestBoard.getAttribute("data-id") === partId;
+  return closestBoard && closestBoard.getAttribute("data-id") === nodeId;
 };

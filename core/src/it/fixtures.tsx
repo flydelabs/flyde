@@ -2,7 +2,7 @@
 
 // import { connectionData } from "..";
 // import { Button, Txt, container, listFrom, merge, add, transform } from "../lib";
-// import { legacyStaticInputPinConfig, dynamicInputPinConfig, partInstance } from "../execute";
+// import { legacyStaticInputPinConfig, dynamicInputPinConfig, nodeInstance } from "../execute";
 // import { connectionNode, externalConnectionNode } from "../connect";
 // // import { connectionNode } from "../connect";
 
@@ -17,11 +17,11 @@
 // 		dec: nodeOutput('none', true),
 // 	},
 // 	instances: [
-// 		partInstance('lf', listFrom),
-// 		partInstance('txt', Txt),
-// 		partInstance('c', container),
-// 		partInstance('bdec', Button, {label: legacyStaticInputPinConfig('+')}),
-// 		partInstance('binc', Button, {label: legacyStaticInputPinConfig('-')})
+// 		nodeInstance('lf', listFrom),
+// 		nodeInstance('txt', Txt),
+// 		nodeInstance('c', container),
+// 		nodeInstance('bdec', Button, {label: legacyStaticInputPinConfig('+')}),
+// 		nodeInstance('binc', Button, {label: legacyStaticInputPinConfig('-')})
 // 	],
 // 	connections: [
 // 		connectionData(['binc', 'jsx'], ['lf', 'item1']),

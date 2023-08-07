@@ -41,7 +41,7 @@ export const scheduledTriggerPart = (): VisualNode => {
 export const restApiTrigger = (
   path: string,
   method: any,
-  partId: string
+  nodeId: string
 ): RestApiTrigger => {
   return {
     id: cuid(),
@@ -50,24 +50,24 @@ export const restApiTrigger = (
       path,
       method,
     },
-    partId,
+    nodeId,
   };
 };
 
-export const webAppTrigger = (path: string, partId: string): WebAppTrigger => {
+export const webAppTrigger = (path: string, nodeId: string): WebAppTrigger => {
   return {
     id: cuid(),
     type: "web-app",
     data: {
       path,
     },
-    partId,
+    nodeId,
   };
 };
 
 export const scheduledTrigger = (
   cronExpression: string,
-  partId: string
+  nodeId: string
 ): ScheduledTrigger => {
   return {
     id: cuid(),
@@ -75,7 +75,7 @@ export const scheduledTrigger = (
     data: {
       cronExpression,
     },
-    partId,
+    nodeId,
   };
 };
 

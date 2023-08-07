@@ -9,7 +9,7 @@ export const defaultProjectRoutePart: Omit<VisualNode, "id"> = {
   instances: [
     {
       id: "Transform-529",
-      partId: "Transform",
+      nodeId: "Transform",
       inputConfig: {
         to: {
           mode: "static",

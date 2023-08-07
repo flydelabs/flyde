@@ -56,11 +56,11 @@ export default function DebounceThrottlingExample(): JSX.Element {
         const part = draft.flow.part;
         if (isVisualNode(part)) {
           const debIns = part.instances.find(
-            (ins) => isRefNodeInstance(ins) && ins.partId === "Debounce"
+            (ins) => isRefNodeInstance(ins) && ins.nodeId === "Debounce"
           );
           debIns.inputConfig.wait = staticInputPinConfig(deb);
           const thrIns = part.instances.find(
-            (ins) => isRefNodeInstance(ins) && ins.partId === "Throttle"
+            (ins) => isRefNodeInstance(ins) && ins.nodeId === "Throttle"
           );
           thrIns.inputConfig.wait = staticInputPinConfig(thr);
         }

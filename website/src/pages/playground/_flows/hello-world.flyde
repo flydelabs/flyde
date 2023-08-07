@@ -75,7 +75,7 @@ part:
         delay:
           mode: static
           value: 3000
-      partId: Delay
+      nodeId: Delay
   connections:
     - from:
         insId: Inline-value-Hello World-673

@@ -10,7 +10,7 @@ export interface NodeStyleMenuProps {
   promptFn: PromptFn;
 }
 
-export const partStylePresetColors: { name: string; color: string }[] = [
+export const nodeStylePresetColors: { name: string; color: string }[] = [
   { name: "Amethyst", color: "#9b5de5" },
   { name: "Magenta", color: "#f15bb5" },
   { name: "Yellow", color: "#fee440" },
@@ -66,7 +66,7 @@ export const NodeStyleMenu: React.FC<NodeStyleMenuProps> = (props) => {
   return (
     <React.Fragment>
       <MenuItem text="Color">
-        {partStylePresetColors.map((c) => (
+        {nodeStylePresetColors.map((c) => (
           <MenuItem
             key={c.name}
             text={c.name}

@@ -303,8 +303,8 @@ export const maybeGetStaticValueNodeId = (value: string) => {
   const maybeNodeMatch =
     typeof value === "string" && value.match(/^__part\:(.*)/);
   if (maybeNodeMatch) {
-    const partId = maybeNodeMatch[1];
-    return partId;
+    const nodeId = maybeNodeMatch[1];
+    return nodeId;
   }
   return null;
 };
@@ -334,7 +334,7 @@ export const getNode = (
   if (typeof idOrIns !== "string" && isInlineNodeInstance(idOrIns)) {
     return idOrIns.part;
   }
-  const id = typeof idOrIns === "string" ? idOrIns : idOrIns.partId;
+  const id = typeof idOrIns === "string" ? idOrIns : idOrIns.nodeId;
   const part = resolvedNodes[id];
   if (!part) {
     throw new Error(`Node with id ${id} not found`);
@@ -349,7 +349,7 @@ export const getNodeDef = (
   if (typeof idOrIns !== "string" && isInlineNodeInstance(idOrIns)) {
     return idOrIns.part;
   }
-  const id = typeof idOrIns === "string" ? idOrIns : idOrIns.partId;
+  const id = typeof idOrIns === "string" ? idOrIns : idOrIns.nodeId;
   const part = resolvedNodes[id];
   if (!part) {
     console.error(`Node with id ${id} not found`);

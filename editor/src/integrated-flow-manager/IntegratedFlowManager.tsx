@@ -272,8 +272,8 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
         const newImportables = Object.entries(importables).reduce<any[]>(
           (acc, [module, partsMap]) => {
             const parts = values(partsMap);
-            const partAndModule = parts.map((part) => ({ module, part }));
-            return acc.concat(partAndModule);
+            const nodeAndModule = parts.map((part) => ({ module, part }));
+            return acc.concat(nodeAndModule);
           },
           []
         );

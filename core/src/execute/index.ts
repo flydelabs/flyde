@@ -118,7 +118,7 @@ const executeCodePart = (data: CodeExecutionData) => {
   const debug = debugLogger("core");
 
   const cleanUps: any = [];
-  let partCleanupFn: ReturnType<RunNodeFunction>;
+  let nodeCleanupFn: ReturnType<RunNodeFunction>;
 
   const innerExec: InnerExecuteFn = (part, i, o, id) =>
     execute({
@@ -167,7 +167,7 @@ const executeCodePart = (data: CodeExecutionData) => {
       val: obj,
       insId,
       ancestorsInsIds: ancestorsInsIds,
-      partId: part.id,
+      nodeId: part.id,
     });
   };
 
@@ -217,9 +217,9 @@ const executeCodePart = (data: CodeExecutionData) => {
     } else {
       const isReactiveInputWhileRunning = processing && isReactiveInput;
 
-      const partStateValid = isNodeStateValid(inputs, inputsState, part);
+      const nodeStateValid = isNodeStateValid(inputs, inputsState, part);
 
-      if (partStateValid || isReactiveInputWhileRunning) {
+      if (nodeStateValid || isReactiveInputWhileRunning) {
         let argValues;
 
         if (!processing) {
@@ -256,7 +256,7 @@ const executeCodePart = (data: CodeExecutionData) => {
           val: processing,
           insId,
           ancestorsInsIds: ancestorsInsIds,
-          partId: part.id,
+          nodeId: part.id,
         });
         if (part.completionOutputs) {
           // completion outputs support the "AND" operator via "+" sign, i.e. "a+b,c" means "(a AND b) OR c)""
@@ -292,7 +292,7 @@ const executeCodePart = (data: CodeExecutionData) => {
                   val: processing,
                   insId,
                   ancestorsInsIds: ancestorsInsIds,
-                  partId: part.id,
+                  nodeId: part.id,
                 });
 
                 if (onCompleted) {
@@ -302,10 +302,10 @@ const executeCodePart = (data: CodeExecutionData) => {
                 cleanState();
 
                 callFnOrFnPromise(
-                  partCleanupFn,
+                  nodeCleanupFn,
                   `Error with cleanup function of ${part.id}`
                 );
-                partCleanupFn = undefined;
+                nodeCleanupFn = undefined;
                 completedOutputs.clear();
                 completedOutputsValues = {};
                 // this avoids an endless loop after triggering an ended part with static inputs
@@ -335,14 +335,14 @@ const executeCodePart = (data: CodeExecutionData) => {
             onStarted();
           }
 
-          partCleanupFn = (fn ?? run)(
+          nodeCleanupFn = (fn ?? run)(
             argValues as any,
             outputs,
             advNodeContext
           );
 
-          if (isPromise(partCleanupFn)) {
-            partCleanupFn
+          if (isPromise(nodeCleanupFn)) {
+            nodeCleanupFn
               .then(() => {
                 if (part.completionOutputs === undefined && onCompleted) {
                   processing = false;
@@ -351,7 +351,7 @@ const executeCodePart = (data: CodeExecutionData) => {
                     val: processing,
                     insId,
                     ancestorsInsIds: ancestorsInsIds,
-                    partId: part.id,
+                    nodeId: part.id,
                   });
 
                   onCompleted(completedOutputsValues);
@@ -373,7 +373,7 @@ const executeCodePart = (data: CodeExecutionData) => {
                   val: processing,
                   insId,
                   ancestorsInsIds: ancestorsInsIds,
-                  partId: part.id,
+                  nodeId: part.id,
                 });
               });
           } else {
@@ -384,7 +384,7 @@ const executeCodePart = (data: CodeExecutionData) => {
                 val: processing,
                 insId,
                 ancestorsInsIds: ancestorsInsIds,
-                partId: part.id,
+                nodeId: part.id,
               });
               onCompleted(completedOutputsValues);
               cleanState();
@@ -399,7 +399,7 @@ const executeCodePart = (data: CodeExecutionData) => {
             val: processing,
             insId,
             ancestorsInsIds: ancestorsInsIds,
-            partId: part.id,
+            nodeId: part.id,
           });
         }
 
@@ -476,7 +476,7 @@ const executeCodePart = (data: CodeExecutionData) => {
 
   return () => {
     callFnOrFnPromise(
-      partCleanupFn,
+      nodeCleanupFn,
       `Error with cleanup function of ${part.id}`
     );
     cleanUps.forEach((fn: any) => fn());
@@ -551,7 +551,7 @@ export const execute: ExecuteFn = ({
         val: error,
         insId,
         ancestorsInsIds,
-        partId: part.id,
+        nodeId: part.id,
       });
     }
     if (outputs[ERROR_PIN_ID]) {
@@ -597,7 +597,7 @@ export const execute: ExecuteFn = ({
           pinId,
           val,
           ancestorsInsIds,
-          partId: part.id,
+          nodeId: part.id,
         } as DebuggerEvent);
         if (res) {
           const interceptedValue = await res.valuePromise;
@@ -618,7 +618,7 @@ export const execute: ExecuteFn = ({
         pinId,
         val: arg.config.value,
         ancestorsInsIds,
-        partId: part.id,
+        nodeId: part.id,
       } as DebuggerEvent);
       const mediator = staticNodeInput(
         getStaticValue(arg.config.value, processedNodes, insId)
@@ -636,7 +636,7 @@ export const execute: ExecuteFn = ({
         pinId,
         val,
         ancestorsInsIds: ancestorsInsIds,
-        partId: part.id,
+        nodeId: part.id,
       } as DebuggerEvent);
       if (res) {
         const interceptedValue = await res.valuePromise;

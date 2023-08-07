@@ -22,7 +22,7 @@ part:
         r: number
       instances: 
         - id: ins1
-          partId: Add
+          nodeId: Add
           pos: 
             x: 0
             y: 0

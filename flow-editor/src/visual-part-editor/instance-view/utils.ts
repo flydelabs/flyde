@@ -65,17 +65,17 @@ export const calcNodeWidth = (instance: NodeInstance, part: NodeDefinition) => {
   const allInputKeys = okeys(part.inputs);
   const visibleInputs = allInputKeys.length;
   const minWidth = visibleInputs * MIN_WIDTH_PER_PIN;
-  const partContent = calcNodeContent(instance, part);
+  const nodeContent = calcNodeContent(instance, part);
 
   const charWidth = PIECE_CHAR_WIDTH;
 
   return clamp(
-    partContent.length * charWidth + PIECE_HORIZONTAL_PADDING * 2,
+    nodeContent.length * charWidth + PIECE_HORIZONTAL_PADDING * 2,
     minWidth,
     MAX_INSTANCE_WIDTH
   );
 
-  // return Math.max(minWidth, partContent.length * charWidth + PIECE_HORIZONTAL_PADDING * 2);
+  // return Math.max(minWidth, nodeContent.length * charWidth + PIECE_HORIZONTAL_PADDING * 2);
 };
 
 export const calcInstancePosition = (

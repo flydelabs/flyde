@@ -12,12 +12,12 @@ part:
     r:
       type: number
   instances:
-    - partId: Add1
+    - nodeId: Add1
       id: ins1
       pos: 
         x: 0
         y: 0
-    - partId: Add2
+    - nodeId: Add2
       id: ins2
       pos: 
         x: 0

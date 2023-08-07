@@ -5,7 +5,7 @@ import { hashFlow, hashPart } from ".";
 import {
   InlineValueNode,
   nodeInput,
-  partInstance,
+  nodeInstance,
   nodeOutput,
   VisualNode,
   visualNode,
@@ -27,9 +27,9 @@ const somePart: VisualNode = {
     connectionData("i4.r", "i5.v"),
   ],
   instances: [
-    partInstance("i1", "somePart", undefined, { x: 14, y: 28 }),
-    partInstance("i2", "somePart", undefined, { x: 14, y: 28 }),
-    partInstance("i3", "somePart", undefined, { x: 14, y: 28 }),
+    nodeInstance("i1", "somePart", undefined, { x: 14, y: 28 }),
+    nodeInstance("i2", "somePart", undefined, { x: 14, y: 28 }),
+    nodeInstance("i3", "somePart", undefined, { x: 14, y: 28 }),
   ],
   inputsPosition: { a: { x: 20, y: 20 } },
   outputsPosition: { r: { x: 20, y: 500 } },
@@ -50,7 +50,7 @@ describe("parts hasher", () => {
 
     it("creates difference hash for different instances", () => {
       const p2 = produce(somePart, (d) => {
-        d.instances.push(partInstance("i7", "somePart"));
+        d.instances.push(nodeInstance("i7", "somePart"));
       });
 
       const h1 = hashPart(somePart);

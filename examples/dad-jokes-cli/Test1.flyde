@@ -15,13 +15,13 @@ part:
         delay:
           mode: static
           value: 1000
-      partId: Delay
+      nodeId: Delay
     - pos:
         x: -71.21993896484366
         y: 113.74983846028648
       id: clg8afk9300074668vcfr9e38
       inputConfig: {}
-      partId: Log
+      nodeId: Log
   connections:
     - from:
         insId: clg8afb7500014668va291ed4

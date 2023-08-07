@@ -15,13 +15,13 @@ export const getVariables = (code: string) => {
 export type InlineValueNodeData = {
   code: string;
   customView?: string;
-  partId?: string;
+  nodeId?: string;
   type: InlineValueNodeType;
 };
 export const createInlineValuePart = ({
   code,
   customView,
-  partId,
+  nodeId,
   type,
 }: InlineValueNodeData) => {
   const variables = getVariables(code);
@@ -43,7 +43,7 @@ export const createInlineValuePart = ({
   const dataBuilderSource = btoa(code);
 
   return inlineValuePart({
-    id: partId || `Inline Code ${randomInt(99999)}`,
+    id: nodeId || `Inline Code ${randomInt(99999)}`,
     inputs,
     outputs,
     runFnRawCode,

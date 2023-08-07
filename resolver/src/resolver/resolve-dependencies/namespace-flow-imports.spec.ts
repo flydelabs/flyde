@@ -1,7 +1,7 @@
 import {
   VisualNode,
   visualNode,
-  partInstance,
+  nodeInstance,
   RefNodeInstance,
   ResolvedFlydeFlow,
   ResolvedFlydeFlowDefinition,
@@ -15,13 +15,13 @@ describe("namespace flows", () => {
     const flow: ResolvedFlydeFlowDefinition = {
       main: visualNode({
         id: "Bob",
-        instances: [partInstance("i1", "Alice")],
+        instances: [nodeInstance("i1", "Alice")],
       }),
       dependencies: {
         Alice: {
           ...visualNode({
             id: "Alice",
-            instances: [partInstance("i2", "Dave")],
+            instances: [nodeInstance("i2", "Dave")],
           }),
           source: {
             path: "bob",
@@ -34,7 +34,7 @@ describe("namespace flows", () => {
     const namespaced = namespaceFlowImports(flow, "NS__");
 
     assert.equal(
-      (namespaced.main.instances[0] as RefNodeInstance).partId,
+      (namespaced.main.instances[0] as RefNodeInstance).nodeId,
       "NS__Alice"
     );
 
@@ -45,7 +45,7 @@ describe("namespace flows", () => {
       (
         (namespaced.dependencies["NS__Alice"] as unknown as VisualNode)
           .instances[0] as RefNodeInstance
-      ).partId,
+      ).nodeId,
       "NS__Dave"
     );
   });

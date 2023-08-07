@@ -21,7 +21,7 @@ const namespaceVisualPart = (
         return ins;
       }
     } else {
-      return { ...ins, partId: `${namespace}${ins.partId}` };
+      return { ...ins, nodeId: `${namespace}${ins.nodeId}` };
     }
   });
   return {
@@ -46,7 +46,7 @@ export const namespaceFlowImports = (
               ...part,
               instances: part.instances.map((ins) => {
                 return isRefNodeInstance(ins)
-                  ? { ...ins, partId: `${namespace}${ins.partId}` }
+                  ? { ...ins, nodeId: `${namespace}${ins.nodeId}` }
                   : ins;
               }),
               id: `${namespace}${part.id}`,

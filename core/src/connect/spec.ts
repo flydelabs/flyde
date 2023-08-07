@@ -9,7 +9,7 @@ import {
   dynamicNodeInput,
   CodeNode,
   nodeInput,
-  partInstance,
+  nodeInstance,
   nodeOutput,
 } from "../node";
 import { execute } from "../execute";
@@ -26,7 +26,7 @@ describe("connect", () => {
         connect(
           {
             id: "bob",
-            instances: [partInstance("a", optAdd.id)],
+            instances: [nodeInstance("a", optAdd.id)],
             connections: [],
             inputs: {},
             outputs: {},
@@ -40,7 +40,7 @@ describe("connect", () => {
       const part = connect(
         {
           id: "bob",
-          instances: [partInstance("a", optAdd.id)],
+          instances: [nodeInstance("a", optAdd.id)],
           connections: [
             connectionData("n1", "a.n1"),
             connectionData("a.r", "r"),
@@ -74,7 +74,7 @@ describe("connect", () => {
       const part = connect(
         {
           id: "bob",
-          instances: [partInstance("a", optAdd.id)],
+          instances: [nodeInstance("a", optAdd.id)],
           connections: [
             connectionData("n1", "a.n1"),
             connectionData("n2", "a.n2"),
@@ -126,9 +126,9 @@ describe("connect", () => {
         {
           id: "bob",
           instances: [
-            partInstance("d", delayedId.id),
-            partInstance("add", add.id),
-            // partInstance('m', merge, {
+            nodeInstance("d", delayedId.id),
+            nodeInstance("add", add.id),
+            // nodeInstance('m', merge, {
             // 	b: {type: 'static', value: 0}
             // }),
           ],
@@ -172,7 +172,7 @@ describe("connect", () => {
     const part = connect(
       {
         id: "bob",
-        instances: [partInstance("a", add.id)],
+        instances: [nodeInstance("a", add.id)],
         connections: [
           connectionData("n1", "a.n1"),
           connectionData("n2", "a.n2"),

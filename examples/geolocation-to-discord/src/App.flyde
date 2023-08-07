@@ -17,7 +17,7 @@ part:
         url:
           mode: static
           value: https://api.country.is
-      partId: GET Request
+      nodeId: GET Request
     - pos:
         x: -719.726181640625
         y: -803.7675024414062
@@ -53,7 +53,7 @@ part:
         attribute:
           mode: static
           value: country
-      partId: Get Attribute
+      nodeId: Get Attribute
     - pos:
         x: -648.8890694828998
         y: -553.3733032132657
@@ -69,7 +69,7 @@ part:
             delayed: false
         instances:
           - id: clebgbl8k000m4566572u3pxz
-            partId: POST Request
+            nodeId: POST Request
             inputConfig:
               url:
                 mode: static
@@ -142,7 +142,7 @@ part:
         y: -684.7819095122256
       id: clebvggud00014566t4ddj3cr
       inputConfig: {}
-      partId: Log Service
+      nodeId: Log Service
   connections:
     - from:
         insId: clebg7bwv00044566r0h1hc4f

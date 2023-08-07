@@ -13,7 +13,7 @@ part:
       type: number
   instances:
     - id: ins1
-      partId: Add
+      nodeId: Add
       pos: 
         x: 0
         y: 0
@@ -22,7 +22,7 @@ part:
           mode: static
           value: 1
     - id: ins2
-      partId: Sub
+      nodeId: Sub
       pos: 
         x: 0
         y: 0

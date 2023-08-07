@@ -17,7 +17,7 @@ export const getNodeWithDependencies = (
   const deps = removeDupes(
     part.instances
       .filter((i) => isRefNodeInstance(i))
-      .map((i) => (i as RefNodeInstance).partId)
+      .map((i) => (i as RefNodeInstance).nodeId)
       .filter((i) => resolvedDeps[i])
   );
 

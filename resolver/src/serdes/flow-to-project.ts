@@ -22,7 +22,7 @@
 //               "path": "/",
 //               "method": "GET"
 //             },
-//             "partId": "Main"
+//             "nodeId": "Main"
 //           }
 //     ]
 

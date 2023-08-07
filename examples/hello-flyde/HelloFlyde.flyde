@@ -40,13 +40,13 @@ part:
         y: 421.16241290638254
       id: clfb6eplk000246660v31uhjz
       inputConfig: {}
-      partId: Trim
+      nodeId: Trim
     - pos:
         x: 115.93972106933597
         y: 380.3970756530762
       id: clfb6gvv80003466687j2evs4
       inputConfig: {}
-      partId: Request
+      nodeId: Request
   connections:
     - from:
         insId: clacz9qa700034664mecvv1ga

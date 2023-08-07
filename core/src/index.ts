@@ -34,7 +34,7 @@ export const isStaticValueVisualPart = (val: InputStaticValue): boolean => {
 
 export interface InstanceViewData {
   id: string;
-  partIdOrGroup: string | VisualNode;
+  nodeIdOrGroup: string | VisualNode;
   pos: Pos;
   visibleOptionalInputs?: string[];
   inputConfig: InputPinsConfig;

@@ -11,7 +11,7 @@ part:
       type: "bob"
   instances:
     - id: ins1
-      partId: SpreadList3
+      nodeId: SpreadList3
       pos:
         x: 0
         y: 0

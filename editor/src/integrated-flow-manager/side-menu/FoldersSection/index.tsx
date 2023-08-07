@@ -33,8 +33,8 @@ export interface FoldersSectionProps {
   // data: NavigatorData;
   editedPart: CustomNode;
 
-  // onEditPart: (partId: string) => void;
-  onFocusInstance: (partId: string) => void;
+  // onEditPart: (nodeId: string) => void;
+  onFocusInstance: (nodeId: string) => void;
 }
 
 const toTreeNode = (
@@ -133,7 +133,7 @@ export const FoldersSection: React.FC<FoldersSectionProps> = (props) => {
               label={`Add new flow here`}
               onClick={() => onCreateFlowHere(data)}
               // onClick={preventDefaultAnd(() => onAddIoPin("input"))}
-              // disabled={!partIoEditable}
+              // disabled={!nodeIoEditable}
             />
           </Menu>
         );
@@ -145,14 +145,14 @@ export const FoldersSection: React.FC<FoldersSectionProps> = (props) => {
               label={`Duplicate flow`}
               onClick={() => toastMsg("Bob " + data?.fullPath)}
               // onClick={preventDefaultAnd(() => onAddIoPin("input"))}
-              // disabled={!partIoEditable}
+              // disabled={!nodeIoEditable}
             />
             <MenuItem
               label={`Delete flow`}
               intent="danger"
               onClick={() => toastMsg("Bob " + data?.fullPath)}
               // onClick={preventDefaultAnd(() => onAddIoPin("input"))}
-              // disabled={!partIoEditable}
+              // disabled={!nodeIoEditable}
             />
           </Menu>
         );

@@ -80,7 +80,7 @@ export type ConstTargetData = {
 };
 
 export type DataBuilderTarget = {
-  partId: string;
+  nodeId: string;
   src: string;
 };
 
@@ -225,9 +225,9 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
     );
 
     const onAddNodeInstance = React.useCallback(
-      (partId: string, offset: number = -1 * PART_HEIGHT * 1.5) => {
+      (nodeId: string, offset: number = -1 * PART_HEIGHT * 1.5) => {
         const newNodeIns = createNewNodeInstance(
-          partId,
+          nodeId,
           offset,
           editorBoardData.lastMousePos,
           resolvedDependencies
@@ -260,7 +260,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
       async (cmd: OmniBarCmd) => {
         switch (cmd.type) {
           case OmniBarCmdType.ADD:
-            reportEvent("addPart", { partId: cmd.data, source: "omnibar" });
+            reportEvent("addPart", { nodeId: cmd.data, source: "omnibar" });
             return onAddNodeInstance(cmd.data);
           case OmniBarCmdType.ADD_VALUE: {
             const ref: VisualNodeEditorHandle | undefined = (
@@ -284,7 +284,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
             });
             onChangeFlow(newValue, functionalChange("add-imported-part"));
             reportEvent("addPart", {
-              partId: cmd.data.part.id,
+              nodeId: cmd.data.part.id,
               source: "omnibar",
             });
             break;
@@ -351,7 +351,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
               resolvedDependencies={resolvedDependencies}
               clipboardData={clipboardData}
               onCopy={setClipboardData}
-              partIoEditable={!editedPart.id.startsWith("Trigger")}
+              nodeIoEditable={!editedPart.id.startsWith("Trigger")}
               onInspectPin={onInspectPin}
               onShowOmnibar={showOmnibar}
               onExtractInlinePart={props.onExtractInlinePart}

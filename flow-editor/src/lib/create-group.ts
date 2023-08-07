@@ -11,7 +11,7 @@ import {
 import { rnd } from "../physics";
 import { NodeInstance } from "@flyde/core";
 import { PromptFn } from "..";
-import { partStylePresetColors } from "../visual-part-editor/instance-view/NodeStyleMenu";
+import { nodeStylePresetColors } from "../visual-part-editor/instance-view/NodeStyleMenu";
 
 export const createGroup = async (
   instances: NodeInstance[],
@@ -156,7 +156,7 @@ export const createGroup = async (
     instances,
     defaultStyle: {
       size: "large",
-      color: pickRandom(partStylePresetColors.map((c) => c.color)),
+      color: pickRandom(nodeStylePresetColors.map((c) => c.color)),
     },
     inputsPosition: okeys(inputs).reduce(
       (acc, curr, idx) => ({ ...acc, [curr]: { x: 0 + 100 * idx, y: 0 } }),
@@ -173,5 +173,5 @@ export const createGroup = async (
   return { visualNode, renamedInputs, renamedOutputs };
   // const ordered = orderVisualPart(visualNode, 20);
 
-  // return partInstance(`${name}-ins`, visualNode, {}, midPos);
+  // return nodeInstance(`${name}-ins`, visualNode, {}, midPos);
 };

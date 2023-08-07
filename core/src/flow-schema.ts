@@ -17,7 +17,7 @@ const inputConfig = z.discriminatedUnion("mode", [
   }),
 ]);
 
-const partStyle = z.object({
+const nodeStyle = z.object({
   size: z.optional(z.enum(["small", "regular", "large"])),
   icon: z.optional(z.any()),
   color: z.optional(z.string()),
@@ -31,12 +31,12 @@ const instance = z
     inputConfig: z.optional(z.record(z.string(), inputConfig)).default({}),
     visibleInputs: z.optional(z.array(z.string())),
     visibleOutputs: z.optional(z.array(z.string())),
-    partId: z.optional(z.string()),
+    nodeId: z.optional(z.string()),
     part: z.optional(z.any()),
-    style: z.optional(partStyle),
+    style: z.optional(nodeStyle),
   })
-  .refine((val) => val.part || val.partId, {
-    message: "Instance must have either an inline part or refer to a partId",
+  .refine((val) => val.part || val.nodeId, {
+    message: "Instance must have either an inline part or refer to a nodeId",
   });
 
 const inputPinSchema = z.union([
@@ -69,7 +69,7 @@ const flydeBasePart = z.object({
   templateType: z.optional(z.string()),
   completionOutputs: z.optional(z.array(z.string())),
   reactiveInputs: z.optional(z.array(z.string())),
-  defaultStyle: z.optional(partStyle),
+  defaultStyle: z.optional(nodeStyle),
   description: z.optional(z.string()),
   searchKeywords: z.optional(z.array(z.string())),
 });

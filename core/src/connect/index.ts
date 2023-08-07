@@ -68,12 +68,12 @@ export const connect = (
 ): CodeNode => {
   const { id: maybeId, connections, instances } = part;
 
-  const partId = maybeId || "connected-part" + randomInt(999);
+  const nodeId = maybeId || "connected-part" + randomInt(999);
 
   return {
     inputs: part.inputs,
     outputs: part.outputs,
-    id: partId,
+    id: nodeId,
     completionOutputs: part.completionOutputs,
     reactiveInputs: part.reactiveInputs,
     run: (fnArgs, fnOutputs) => {
@@ -231,7 +231,7 @@ export const connect = (
           console.log(fromInstancePinId);
 
           throw new Error(
-            `Output source - [${fromInstancePinId}] not found in part [${partId}]`
+            `Output source - [${fromInstancePinId}] not found in part [${nodeId}]`
           );
         }
 
@@ -260,7 +260,7 @@ export const connect = (
         }
 
         if (!targetArg) {
-          throw new Error(`Target arg - [${to}] not found in part [${partId}]`);
+          throw new Error(`Target arg - [${to}] not found in part [${nodeId}]`);
         }
 
         const sub = sourceOutput.subscribe(async (val: any) => {

@@ -61,19 +61,19 @@ export const orderVisualPart = (
     };
   }, {});
 
-  const partInputNodes = okeys(part.inputsPosition).reduce((prev, curr) => {
+  const nodeInputNodes = okeys(part.inputsPosition).reduce((prev, curr) => {
     const p = part.inputsPosition[curr];
     const s = size(calcNodeIoWidth(curr), PART_HEIGHT);
     return { ...prev, [`part-input-${curr}`]: { p, s } };
   }, {});
 
-  const partOutputNodes = okeys(part.outputsPosition).reduce((prev, curr) => {
+  const nodeOutputNodes = okeys(part.outputsPosition).reduce((prev, curr) => {
     const p = part.outputsPosition[curr];
     const s = size(calcNodeIoWidth(curr), PART_HEIGHT);
     return { ...prev, [`part-output-${curr}`]: { p, s } };
   }, {});
 
-  const nodes = { ...insNodes, ...partInputNodes, ...partOutputNodes };
+  const nodes = { ...insNodes, ...nodeInputNodes, ...nodeOutputNodes };
 
   const edges = connections.map((data) => {
     const from = !isExternalConnectionNode(data.from)

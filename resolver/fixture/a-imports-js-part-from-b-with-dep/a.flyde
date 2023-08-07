@@ -12,7 +12,7 @@ part:
       type: number
   instances:
   - id: ins1
-    partId: Add
+    nodeId: Add
     inputConfig:
         b:
           mode: static

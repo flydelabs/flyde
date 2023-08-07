@@ -3,7 +3,7 @@ import { PinType } from "@flyde/core";
 export interface AnalyticsEventsMap {
   hotkeyUsed: { hotkey: string };
   addNodeMenuOpen: {};
-  addPart: { partId: string; source: string };
+  addPart: { nodeId: string; source: string };
   addValueModalOpen: { source?: string };
   addValue: { placeholdersCount: number; type?: string };
   helpMenuItem: { item: string };

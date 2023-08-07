@@ -6,7 +6,7 @@ import {
   nodeOutput,
   CodeNode,
   InlineValueNode,
-  partInstance,
+  nodeInstance,
   dynamicNodeInput,
   queueInputPinConfig,
 } from "./node";
@@ -125,7 +125,7 @@ export const add1mul2: VisualNode = {
   },
   inputsPosition: {},
   outputsPosition: {},
-  instances: [partInstance("a", add1.id), partInstance("b", mul2.id)],
+  instances: [nodeInstance("a", add1.id), nodeInstance("b", mul2.id)],
   connections: [
     {
       from: externalConnectionNode("n"),
@@ -153,9 +153,9 @@ export const add1mul2add1: VisualNode = {
   inputsPosition: {},
   outputsPosition: {},
   instances: [
-    partInstance("a", add1.id),
-    partInstance("b", mul2.id),
-    partInstance("c", add1.id),
+    nodeInstance("a", add1.id),
+    nodeInstance("b", mul2.id),
+    nodeInstance("c", add1.id),
   ],
   connections: [
     {
@@ -188,7 +188,7 @@ export const addGrouped: VisualNode = {
   outputs: {
     r: nodeOutput(),
   },
-  instances: [partInstance("a", add.id)],
+  instances: [nodeInstance("a", add.id)],
   connections: [
     {
       from: externalConnectionNode("n1"),
@@ -217,7 +217,7 @@ export const addGroupedQueued: VisualNode = {
     r: nodeOutput(),
   },
   instances: [
-    partInstance("a", add.id, {
+    nodeInstance("a", add.id, {
       n1: queueInputPinConfig(),
       n2: queueInputPinConfig(),
     }),
