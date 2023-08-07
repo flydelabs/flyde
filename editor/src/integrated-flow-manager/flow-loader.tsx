@@ -118,7 +118,7 @@ export const FlowLoader: React.FC = (props) => {
       Number(params.get("port") || locationPortIfNot3000) ||
       (bootstrapData?.port ?? 8545);
 
-    console.log("Rendering", fileName, flow.part);
+    console.log("Rendering", fileName, flow.node);
 
     return (
       <PortsContext.Provider value={ports.current}>

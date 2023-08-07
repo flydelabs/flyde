@@ -1,6 +1,6 @@
 ---
 bob: "2"
-part:
+node:
   inputs:
     n1:
       type: number
@@ -10,7 +10,7 @@ part:
       type: number
   instances:
   - id: ins1
-    partId: Bob
+    nodeId: Bob
     pos:
       x: 0
       y: 0

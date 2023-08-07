@@ -13,7 +13,7 @@ imports:
     - Span
   Div.flyde.js:
     - Div
-part:
+node:
   instances:
     - pos:
         x: -68.42527832031251
@@ -27,7 +27,7 @@ part:
           mode: static
           value:
             - 4
-      partId: Subscribe
+      nodeId: Subscribe
       style:
         size: small
     - pos:
@@ -38,7 +38,7 @@ part:
         key:
           mode: static
           value: values
-      partId: Publish
+      nodeId: Publish
       style:
         size: small
     - pos:
@@ -46,7 +46,7 @@ part:
         y: -35.00316101074219
       id: Loop List-386
       inputConfig: {}
-      partId: Loop List
+      nodeId: Loop List
       style:
         color: "#9b5de5"
     - pos:
@@ -59,7 +59,7 @@ part:
       visibleInputs:
         - tup
         - values
-      part:
+      node:
         id: Inline-value-inputs.values.m
         inputs:
           values:
@@ -98,7 +98,7 @@ part:
           mode: sticky
         value2:
           mode: sticky
-      partId: List From 2
+      nodeId: List From 2
       style:
         size: small
     - pos:
@@ -109,7 +109,7 @@ part:
         children:
           mode: static
           value: Add counter
-      partId: Button
+      nodeId: Button
       style:
         color: "#00f5d4"
     - pos:
@@ -122,7 +122,7 @@ part:
       visibleInputs:
         - vals
         - __trigger
-      part:
+      node:
         id: Inline-value-[...inputs.vals
         inputs:
           vals:
@@ -152,13 +152,13 @@ part:
       inputConfig:
         count:
           mode: sticky
-      partId: Accumulate Values by Count
+      nodeId: Accumulate Values by Count
     - pos:
         x: -467.64607421875
         y: 60.77903717041016
       id: List Length-285
       inputConfig: {}
-      partId: List Length
+      nodeId: List Length
     - pos:
         x: -191.2879022216797
         y: 122.18738981366158
@@ -166,7 +166,7 @@ part:
       inputConfig:
         value:
           mode: queue
-      part:
+      node:
         id: Counter
         inputs:
           value:
@@ -190,7 +190,7 @@ part:
               children:
                 mode: static
                 value: +
-            partId: Button
+            nodeId: Button
           - pos:
               x: -210.8126220703125
               y: 275.0645151567459
@@ -199,7 +199,7 @@ part:
               children:
                 mode: static
                 value: "-"
-            partId: Button
+            nodeId: Button
           - pos:
               x: 30.04846557617188
               y: 279.52244750976564
@@ -207,15 +207,15 @@ part:
             inputConfig:
               children:
                 mode: queue
-            partId: Span
+            nodeId: Span
           - pos:
               x: -36.912857666015626
               y: 463.0896810913086
             id: List From 3-643
             inputConfig: {}
-            partId: List From 3
+            nodeId: List From 3
           - id: cl9n5gsim000y4666mlmovgh1
-            part:
+            node:
               id: "Inline-value-inputs.value + "
               inputs:
                 value:
@@ -248,7 +248,7 @@ part:
               - value
               - __trigger
           - id: cl9n5hluc00054666sk1dk39h
-            part:
+            node:
               id: "Inline-value-inputs.value - "
               inputs:
                 value:
@@ -376,7 +376,7 @@ part:
       visibleInputs:
         - val
         - idx
-      part:
+      node:
         id: Inline-value-[inputs.idx, in
         inputs:
           idx:
@@ -413,13 +413,13 @@ part:
         - children
         - k
         - key
-      partId: Div
+      nodeId: Div
     - pos:
         x: 33.72
         y: 805.23
       id: Inline-value-Result is ${in-pd03cnj
       inputConfig: {}
-      part:
+      node:
         id: Inline-value-Result is ${in
         inputs:
           a:

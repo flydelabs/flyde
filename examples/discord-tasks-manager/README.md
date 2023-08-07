@@ -23,7 +23,7 @@ A discord bot that manages a simple to-do list. Built using:
 4. `npm install`
 5. `npm start`
 6. Open "src/Main.flyde"
-7. Interact with your bot and see parts lighting up!
+7. Interact with your bot and see nodes lighting up!
 
 ## Next steps
 

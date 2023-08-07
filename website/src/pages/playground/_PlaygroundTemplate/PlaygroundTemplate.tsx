@@ -6,12 +6,12 @@ import { RuntimePlayer } from "@flyde/flow-editor";
 import { fakeVm } from "@site/src/fake-vm";
 import Link from "@docusaurus/Link";
 import {
-  DynamicPartInput,
+  DynamicNodeInput,
   execute,
   FlydeFlow,
   keys,
-  PartInputs,
-  PartOutput,
+  NodeInputs,
+  NodeOutput,
   ResolvedDependencies,
   ResolvedFlydeRuntimeFlow,
 } from "@flyde/core";
@@ -64,10 +64,10 @@ export interface PlaygroundTemplateProps {
     extraInfo?: string | JSX.Element;
   };
   flowProps: {
-    inputs: Record<string, DynamicPartInput>;
+    inputs: Record<string, DynamicNodeInput>;
     flow: FlydeFlow;
     dependencies: ResolvedDependencies;
-    output: PartOutput;
+    output: NodeOutput;
   };
   prefixComponent?: JSX.Element;
   extraInfo?: string;
@@ -78,8 +78,8 @@ export interface PlaygroundTemplateProps {
 
 export type PlaygroundFlowDto = {
   flow: ResolvedFlydeRuntimeFlow;
-  output: PartOutput;
-  inputs: PartInputs;
+  output: NodeOutput;
+  inputs: NodeInputs;
   onError: any;
   debugDelay?: number;
   player: RuntimePlayer;
@@ -101,7 +101,7 @@ const runFlow = ({
 
   return {
     executeResult: execute({
-      part: flow.main,
+      node: flow.main,
       inputs: inputs,
       outputs: { [firstOutputName]: output },
       resolvedDeps: flow.dependencies,
@@ -135,8 +135,8 @@ export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (
     //     ? container.getBoundingClientRect()
     //     : { width: 500, height: 500 };
     //   return produce(state, (draft) => {
-    //     draft.boardData.viewPort = fitViewPortToPart(
-    //       draft.flow.part as any,
+    //     draft.boardData.viewPort = fitViewPortToNode(
+    //       draft.flow.node as any,
     //       resolvedFlow.dependencies,
     //       vpSize
     //     );

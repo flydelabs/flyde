@@ -1,6 +1,6 @@
-import { VisualPart } from "@flyde/core";
+import { VisualNode } from "@flyde/core";
 
-export const defaultProjectRoutePart: Omit<VisualPart, "id"> = {
+export const defaultProjectRouteNode: Omit<VisualNode, "id"> = {
   inputs: {
     request: {
       mode: "optional",
@@ -9,7 +9,7 @@ export const defaultProjectRoutePart: Omit<VisualPart, "id"> = {
   instances: [
     {
       id: "Transform-529",
-      partId: "Transform",
+      nodeId: "Transform",
       inputConfig: {
         to: {
           mode: "static",
@@ -45,8 +45,7 @@ export const defaultProjectRoutePart: Omit<VisualPart, "id"> = {
     },
   ],
   outputs: {
-    response: {
-    },
+    response: {},
   },
   inputsPosition: {
     request: {

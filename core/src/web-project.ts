@@ -1,7 +1,7 @@
 export type RestApiTrigger = {
   id: string;
   type: "rest-api";
-  partId: string;
+  nodeId: string;
   data: {
     path: string;
     method: "GET" | "POST" | "PUT" | "DELETE" | "*"; // HTTP Method
@@ -18,7 +18,7 @@ export type RestApiTrigger = {
 export type ScheduledTrigger = {
   id: string;
   type: "scheduled";
-  partId: string;
+  nodeId: string;
   data: {
     cronExpression: string;
   };
@@ -27,7 +27,7 @@ export type ScheduledTrigger = {
 export type WebAppTrigger = {
   id: string;
   type: "web-app";
-  partId: string;
+  nodeId: string;
   data: {
     path: string;
   };

@@ -1,7 +1,7 @@
 imports:
   "./Sub.flyde.ts":
   - Sub
-part:
+node:
   id: Sub1
   inputs:
     n:
@@ -12,7 +12,7 @@ part:
       type: number
   instances:
   - id: ins1
-    partId: Sub
+    nodeId: Sub
     inputConfig:
         b:
           mode: static

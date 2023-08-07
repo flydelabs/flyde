@@ -1,0 +1,53 @@
+.instance-panel {
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  // width: 220px;
+  // height: calc(100vh - 100px); // todo layout here..
+  background: #ffffff;
+  border-left: 1px solid #e2e2e2;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  user-select: none;
+
+  padding: 20px 10px;
+  margin-left: 4px;
+  z-index: 1; // so it's above base-node-inner that got z-index:1
+
+  padding-bottom: 100px;
+
+  .instance-panel-inner {
+    height: 100%;
+    overflow: auto;
+    flex: 1;
+  }
+
+  &:not(:hover) .resizer {
+    opacity: 0.2;
+  }
+
+  .resizer {
+    top: 0;
+    width: 3px;
+    height: 100%;
+    background: #aeaeae;
+    position: absolute;
+    cursor: col-resize;
+    flex-shrink: 0;
+    flex-grow: 0;
+    left: 0px;
+    bottom: 0;
+    transition: opacity 0.05s linear;
+
+    &:after {
+      display: block;
+      content: "";
+      background-color: #cecece;
+      position: absolute;
+      height: 80%;
+      width: 1px;
+      left: 1px;
+      top: 10%;
+    }
+  }
+}

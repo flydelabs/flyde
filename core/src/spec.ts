@@ -1,4 +1,4 @@
-import { DynamicPartInput, PartInstanceError, VisualPart } from ".";
+import { DynamicNodeInput, NodeInstanceError, VisualNode } from ".";
 import { assert } from "chai";
 
 import { spy } from "sinon";
@@ -26,22 +26,22 @@ import {
   TRIGGER_PIN_ID,
 } from "./connect";
 import {
-  CodePart,
+  CodeNode,
   fromSimplified,
-  staticPartInput,
-  dynamicPartInput,
+  staticNodeInput,
+  dynamicNodeInput,
   dynamicOutput,
-  partInstance,
-  InlineValuePart,
-  PartInstance,
-  partInput,
-  partOutput,
+  nodeInstance,
+  InlineValueNode,
+  NodeInstance,
+  nodeInput,
+  nodeOutput,
   queueInputPinConfig,
   staticInputPinConfig,
   stickyInputPinConfig,
-  dynamicPartInputs,
-  inlinePartInstance,
-} from "./part";
+  dynamicNodeInputs,
+  inlineNodeInstance,
+} from "./node";
 import { execute } from "./execute";
 import {
   add1,
@@ -55,8 +55,8 @@ import {
   filter,
   isEven,
   add1mul2,
-  testPartsCollection,
-  testPartsCollectionWith,
+  testNodesCollection,
+  testNodesCollectionWith,
   peq,
   mul,
   addGroupedQueued,
@@ -65,12 +65,12 @@ import {
   spreadList,
 } from "./fixture";
 
-import { inlineValuePartToPart } from "./inline-value-to-code-part";
+import { inlineValueNodeToNode } from "./inline-value-to-code-node";
 import {
-  concisePart,
-  conciseCodePart,
+  conciseNode,
+  conciseCodeNode,
   callsFirstArgs,
-  valuePart,
+  valueNode,
   spiedOutput,
   wrappedOnEvent,
 } from "./test-utils";
@@ -93,14 +93,14 @@ describe("main ", () => {
   });
 
   describe("core", () => {
-    it("runs an Id code part properly", () => {
-      const part: CodePart = {
+    it("runs an Id code node properly", () => {
+      const node: CodeNode = {
         id: "id",
         inputs: {
-          v: partInput(),
+          v: nodeInput(),
         },
         outputs: {
-          r: partInput(),
+          r: nodeInput(),
         },
         run: ({ v }, { r }) => {
           r?.next(v);
@@ -108,28 +108,28 @@ describe("main ", () => {
       };
 
       const s = spy();
-      const v = dynamicPartInput();
+      const v = dynamicNodeInput();
       const r = dynamicOutput();
 
       r.subscribe(s);
       execute({
-        part: part,
+        node: node,
         inputs: { v },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
       v.subject.next(2);
       assert.equal(s.calledOnceWithExactly(2), true);
     });
 
-    it("runs an pure-like Id code part properly", () => {
-      const part: CodePart = {
+    it("runs an pure-like Id code node properly", () => {
+      const node: CodeNode = {
         id: "id",
         inputs: {
-          v: partInput(),
+          v: nodeInput(),
         },
         outputs: {
-          r: partInput(),
+          r: nodeInput(),
         },
         run: ({ v }, { r }) => {
           r?.next(v);
@@ -137,30 +137,30 @@ describe("main ", () => {
       };
 
       const s = spy();
-      const v = dynamicPartInput();
+      const v = dynamicNodeInput();
       const r = dynamicOutput();
 
       r.subscribe(s);
       execute({
-        part: part,
+        node: node,
         inputs: { v },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
       v.subject.next(2);
       assert.equal(s.calledOnceWithExactly(2), true);
     });
 
-    it("runs an ADD code part properly", () => {
+    it("runs an ADD code node properly", () => {
       const innerSpy = spy();
-      const part: CodePart = {
+      const node: CodeNode = {
         id: "add",
         inputs: {
-          a: partInput(),
-          b: partInput(),
+          a: nodeInput(),
+          b: nodeInput(),
         },
         outputs: {
-          r: partInput(),
+          r: nodeInput(),
         },
         run: (args, { r }, {}) => {
           innerSpy();
@@ -169,16 +169,16 @@ describe("main ", () => {
       };
 
       const s = spy();
-      const a = dynamicPartInput();
-      const b = dynamicPartInput();
+      const a = dynamicNodeInput();
+      const b = dynamicNodeInput();
       const r = dynamicOutput();
 
       r.subscribe(s);
       execute({
-        part: part,
+        node: node,
         inputs: { a, b },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
       a.subject.next(2);
       b.subject.next(3);
@@ -191,17 +191,17 @@ describe("main ", () => {
       assert.equal(s.calledWithExactly(7), true);
     });
 
-    it("works with a simple visual part", () => {
-      const n1 = dynamicPartInput();
-      const n2 = dynamicPartInput();
+    it("works with a simple visual node", () => {
+      const n1 = dynamicNodeInput();
+      const n2 = dynamicNodeInput();
       const r = new Subject();
       const s = spy();
       r.subscribe(s);
       execute({
-        part: addGrouped,
+        node: addGrouped,
         inputs: { n1, n2 },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
       const num1 = randomInt(1, 100);
       const num2 = randomInt(1, 100);
@@ -211,12 +211,12 @@ describe("main ", () => {
       assert.equal(s.lastCall.args[0], num1 + num2);
     });
 
-    it("works with nested parts", () => {
+    it("works with nested nodes", () => {
       const add1mul2twice = {
         id: "a1m2x2",
         instances: [
-          partInstance("p1", add1mul2.id),
-          partInstance("p2", add1mul2.id),
+          nodeInstance("p1", add1mul2.id),
+          nodeInstance("p2", add1mul2.id),
         ],
         connections: [
           {
@@ -227,46 +227,46 @@ describe("main ", () => {
           connectionData("p2.r", "r"),
         ],
         inputs: {
-          n: partInput(),
+          n: nodeInput(),
         },
         outputs: {
-          r: partOutput(),
+          r: nodeOutput(),
         },
       };
 
-      const part = connect(add1mul2twice, testPartsCollection);
+      const node = connect(add1mul2twice, testNodesCollection);
 
       const fn = spy();
-      const n = dynamicPartInput();
+      const n = dynamicNodeInput();
       const r = dynamicOutput();
       execute({
-        part: part,
+        node: node,
         inputs: { n },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
       r.subscribe(fn);
 
       n.subject.next(20); // ((21 * 2) + 1) * 2
 
-      assert.deepEqual(Object.keys(part.inputs), ["n"]);
-      assert.deepEqual(Object.keys(part.outputs), ["r"]);
+      assert.deepEqual(Object.keys(node.inputs), ["n"]);
+      assert.deepEqual(Object.keys(node.outputs), ["r"]);
       assert.equal(fn.lastCall.args[0], 86);
     });
 
-    it("supports inline instance parts", () => {
-      const add1: VisualPart = {
+    it("supports inline instance nodes", () => {
+      const add1: VisualNode = {
         id: "add1",
         inputs: {
-          n: partInput(),
+          n: nodeInput(),
         },
         outputs: {
-          r: partOutput(),
+          r: nodeOutput(),
         },
         inputsPosition: {},
         outputsPosition: {},
         instances: [
-          inlinePartInstance("a", add, { n1: staticInputPinConfig(1) }),
+          inlineNodeInstance("a", add, { n1: staticInputPinConfig(1) }),
         ],
         connections: [
           {
@@ -280,14 +280,14 @@ describe("main ", () => {
         ],
       };
 
-      const n = dynamicPartInput();
+      const n = dynamicNodeInput();
       const [s, r] = spiedOutput();
 
       execute({
-        part: add1,
+        node: add1,
         inputs: { n },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
 
       n.subject.next(2);
@@ -296,50 +296,50 @@ describe("main ", () => {
     });
 
     describe("optional inputs", () => {
-      it("runs parts with optional pins that were left unconnected", () => {
-        const part = connect(
+      it("runs nodes with optional pins that were left unconnected", () => {
+        const node = connect(
           {
             id: "bob",
-            instances: [partInstance("a", optAdd.id)],
+            instances: [nodeInstance("a", optAdd.id)],
             connections: [
               connectionData("n1", "a.n1"),
               connectionData("a.r", "r"),
             ],
             inputs: {
-              n1: partInput(),
+              n1: nodeInput(),
             },
             outputs: {
-              r: partOutput(),
+              r: nodeOutput(),
             },
           },
-          testPartsCollection
+          testNodesCollection
         );
 
-        const n1 = dynamicPartInput();
+        const n1 = dynamicNodeInput();
         const s = spy();
         const r = dynamicOutput();
         execute({
-          part: part,
+          node: node,
           inputs: { n1 },
           outputs: { r },
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
         });
         r.subscribe(s);
         n1.subject.next(42);
         assert.equal(s.lastCall.args[0], 84);
       });
 
-      it("runs parts with optional pins that were connected", () => {
-        const part = connect(
+      it("runs nodes with optional pins that were connected", () => {
+        const node = connect(
           {
             id: "bob",
-            instances: [partInstance("a", optAdd.id)],
+            instances: [nodeInstance("a", optAdd.id)],
             inputs: {
-              n1: partInput(),
-              n2: partInput(),
+              n1: nodeInput(),
+              n2: nodeInput(),
             },
             outputs: {
-              r: partOutput(),
+              r: nodeOutput(),
             },
             connections: [
               connectionData("n1", "a.n1"),
@@ -347,18 +347,18 @@ describe("main ", () => {
               connectionData("a.r", "r"),
             ],
           },
-          testPartsCollection
+          testNodesCollection
         );
 
-        const n1 = dynamicPartInput();
-        const n2 = dynamicPartInput();
+        const n1 = dynamicNodeInput();
+        const n2 = dynamicNodeInput();
         const s = spy();
         const r = dynamicOutput();
         execute({
-          part: part,
+          node: node,
           inputs: { n1, n2 },
           outputs: { r },
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
         });
         r.subscribe(s);
         n2.subject.next(1);
@@ -368,20 +368,20 @@ describe("main ", () => {
 
       it("resolves dependencies properly", () => {
         // here there are 2 constants, 42 and 5, connected
-        // to an "add" part that has n2 as an optional input
+        // to an "add" node that has n2 as an optional input
         // this case both n1 and n2 are given, so it's expected
         // to wait for "n2" or at least consider it
 
         // eventually I solved it by making sure that the constant for n2 is called first.
         // Not ideal at all!
-        const resolvedDeps = testPartsCollectionWith(Value(42), Value(5));
-        const part = connect(
+        const resolvedDeps = testNodesCollectionWith(Value(42), Value(5));
+        const node = connect(
           {
             id: "bob",
             instances: [
-              partInstance("b", Value(5).id),
-              partInstance("v", Value(42).id),
-              partInstance("a", optAdd.id),
+              nodeInstance("b", Value(5).id),
+              nodeInstance("v", Value(42).id),
+              nodeInstance("a", optAdd.id),
             ],
             connections: [
               connectionData(["b", "r"], ["a", "n2"]),
@@ -390,7 +390,7 @@ describe("main ", () => {
             ],
             inputs: {},
             outputs: {
-              r: partOutput(),
+              r: nodeOutput(),
             },
           },
           resolvedDeps
@@ -400,7 +400,7 @@ describe("main ", () => {
         const r = dynamicOutput();
         r.subscribe(s);
         execute({
-          part: part,
+          node: node,
           inputs: {},
           outputs: { r },
           resolvedDeps: resolvedDeps,
@@ -414,39 +414,39 @@ describe("main ", () => {
         const p1 = connect(
           {
             id: "test",
-            instances: [partInstance("a", add1.id)],
+            instances: [nodeInstance("a", add1.id)],
             inputs: {
-              n: partInput(),
+              n: nodeInput(),
             },
             outputs: {
-              r: partOutput(),
+              r: nodeOutput(),
             },
             connections: [
               connectionData("n", "a.n"),
               connectionData("a.r", "r"),
             ],
           },
-          testPartsCollection
+          testNodesCollection
         );
 
-        const n = dynamicPartInput();
+        const n = dynamicNodeInput();
         const s1 = spy();
         const r1 = dynamicOutput();
         execute({
-          part: p1,
+          node: p1,
           inputs: { n },
           outputs: { r: r1 },
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
         });
         r1.subscribe(s1);
 
         const s2 = spy();
         const r2 = dynamicOutput();
         execute({
-          part: p1,
+          node: p1,
           inputs: { n },
           outputs: { r: r2 },
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
         });
         r2.subscribe(s2);
 
@@ -458,9 +458,9 @@ describe("main ", () => {
       });
 
       it("connects 2 pieces and runs it", () => {
-        const add1mul2: VisualPart = {
+        const add1mul2: VisualNode = {
           id: "test",
-          instances: [partInstance("a", add1.id), partInstance("b", mul2.id)],
+          instances: [nodeInstance("a", add1.id), nodeInstance("b", mul2.id)],
           connections: [
             {
               from: connectionNode("a", "r"),
@@ -476,10 +476,10 @@ describe("main ", () => {
             },
           ],
           inputs: {
-            n: partInput(),
+            n: nodeInput(),
           },
           outputs: {
-            r: partOutput(),
+            r: nodeOutput(),
           },
           inputsPosition: {},
           outputsPosition: {},
@@ -487,21 +487,21 @@ describe("main ", () => {
 
         const fn = spy();
 
-        const part = connect(add1mul2, testPartsCollection, {});
+        const node = connect(add1mul2, testNodesCollection, {});
 
-        const n = dynamicPartInput();
+        const n = dynamicNodeInput();
         const r = new Subject();
 
-        assert.deepEqual(Object.keys(part.inputs), ["n"]);
-        assert.deepEqual(Object.keys(part.outputs), ["r"]);
+        assert.deepEqual(Object.keys(node.inputs), ["n"]);
+        assert.deepEqual(Object.keys(node.outputs), ["r"]);
 
         r.subscribe(fn);
 
         execute({
-          part: part,
+          node: node,
           inputs: { n },
           outputs: { r },
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
         });
 
         assert.equal(fn.callCount, 0);
@@ -517,13 +517,13 @@ describe("main ", () => {
 
       it("connects one-off inputs properly", () => {
         const n = randomInt(99);
-        const resolvedDeps = testPartsCollectionWith(Value(n));
-        const part = connect(
+        const resolvedDeps = testNodesCollectionWith(Value(n));
+        const node = connect(
           {
             id: "test",
             instances: [
-              partInstance("v1", Value(n).id),
-              partInstance("a", add1.id),
+              nodeInstance("v1", Value(n).id),
+              nodeInstance("a", add1.id),
             ],
             connections: [
               {
@@ -533,7 +533,7 @@ describe("main ", () => {
               connectionData("a.r", "r"),
             ],
             outputs: {
-              r: partOutput(),
+              r: nodeOutput(),
             },
             inputs: {},
           },
@@ -544,7 +544,7 @@ describe("main ", () => {
         const s = spy();
         r.subscribe(s);
         execute({
-          part: part,
+          node: node,
           inputs: {},
           outputs: { r },
           resolvedDeps: resolvedDeps,
@@ -555,13 +555,13 @@ describe("main ", () => {
 
       it("connects the same output to 2 inputs", () => {
         const n = randomInt(99);
-        const resolvedDeps = testPartsCollectionWith(Value(n));
-        const part = connect(
+        const resolvedDeps = testNodesCollectionWith(Value(n));
+        const node = connect(
           {
             id: "test",
             instances: [
-              partInstance("v", Value(n).id),
-              partInstance("a", add.id),
+              nodeInstance("v", Value(n).id),
+              nodeInstance("a", add.id),
             ],
             connections: [
               {
@@ -575,7 +575,7 @@ describe("main ", () => {
               connectionData("a.r", "r"),
             ],
             outputs: {
-              r: partOutput(),
+              r: nodeOutput(),
             },
             inputs: {},
           },
@@ -586,7 +586,7 @@ describe("main ", () => {
         const s = spy();
         r.subscribe(s);
         execute({
-          part: part,
+          node: node,
           inputs: {},
           outputs: { r },
           resolvedDeps: resolvedDeps,
@@ -599,14 +599,14 @@ describe("main ", () => {
 
       it("works regardless of the order of the instances and connections with 2 pieces", () => {
         const n = randomInt(99);
-        const resolvedDeps = testPartsCollectionWith(Value(n));
+        const resolvedDeps = testNodesCollectionWith(Value(n));
         const instances = [
-          partInstance("a", add1.id),
-          partInstance("v", Value(n).id),
+          nodeInstance("a", add1.id),
+          nodeInstance("v", Value(n).id),
         ];
 
         for (let i = 0; i < 10; i++) {
-          const part = connect(
+          const node = connect(
             {
               id: "test",
               instances: shuffle(instances),
@@ -619,7 +619,7 @@ describe("main ", () => {
               ],
               inputs: {},
               outputs: {
-                r: partOutput(),
+                r: nodeOutput(),
               },
             },
             resolvedDeps
@@ -629,7 +629,7 @@ describe("main ", () => {
           const s = spy();
           r.subscribe(s);
           execute({
-            part: part,
+            node: node,
             inputs: {},
             outputs: { r },
             resolvedDeps: resolvedDeps,
@@ -641,15 +641,15 @@ describe("main ", () => {
 
       it("works regardless of the order of the instances and connections with 3 pieces", () => {
         const n = randomInt(99);
-        const resolvedDeps = testPartsCollectionWith(Value(n));
-        const instances: PartInstance[] = [
-          partInstance("a", add.id),
-          partInstance("v1", Value(n).id),
-          partInstance("v2", Value(n).id),
+        const resolvedDeps = testNodesCollectionWith(Value(n));
+        const instances: NodeInstance[] = [
+          nodeInstance("a", add.id),
+          nodeInstance("v1", Value(n).id),
+          nodeInstance("v2", Value(n).id),
         ];
 
         for (let i = 0; i < 10; i++) {
-          const part = connect(
+          const node = connect(
             {
               id: "test",
               instances: shuffle(instances),
@@ -666,7 +666,7 @@ describe("main ", () => {
               ],
               inputs: {},
               outputs: {
-                r: partOutput(),
+                r: nodeOutput(),
               },
             },
             resolvedDeps
@@ -676,7 +676,7 @@ describe("main ", () => {
           const s = spy();
           r.subscribe(s);
           execute({
-            part: part,
+            node: node,
             inputs: {},
             outputs: { r },
             resolvedDeps: resolvedDeps,
@@ -688,16 +688,16 @@ describe("main ", () => {
 
       it("connects const inputs properly", () => {
         const n = randomInt(99);
-        const resolvedDeps = testPartsCollectionWith(Value(n));
-        const part: VisualPart = {
+        const resolvedDeps = testNodesCollectionWith(Value(n));
+        const node: VisualNode = {
           id: "test",
           inputs: {},
           outputs: {
-            r: partOutput(),
+            r: nodeOutput(),
           },
           instances: [
-            partInstance("v1", Value(n).id),
-            partInstance("a", add1.id),
+            nodeInstance("v1", Value(n).id),
+            nodeInstance("a", add1.id),
           ],
           connections: [
             connectionData("v1.r", "a.n"),
@@ -711,7 +711,7 @@ describe("main ", () => {
         const s = spy();
         r.subscribe(s);
         execute({
-          part: part,
+          node: node,
           inputs: {},
           outputs: { r },
           resolvedDeps: resolvedDeps,
@@ -722,36 +722,36 @@ describe("main ", () => {
       });
     });
 
-    it("supports external outputs on connected parts", () => {
+    it("supports external outputs on connected nodes", () => {
       const p = connect(
         {
           id: "test",
-          instances: [partInstance("a", add1.id)],
+          instances: [nodeInstance("a", add1.id)],
           connections: [connectionData("n", "a.n"), connectionData("a.r", "r")],
           inputs: {
-            n: partInput(),
+            n: nodeInput(),
           },
           outputs: {
-            r: partOutput(),
+            r: nodeOutput(),
           },
         },
-        testPartsCollection
+        testNodesCollection
       );
 
       const s1 = spy();
       const s2 = spy();
 
-      const n1 = dynamicPartInput();
-      const n2 = dynamicPartInput();
+      const n1 = dynamicNodeInput();
+      const n2 = dynamicNodeInput();
       const r1 = new Subject();
       const r2 = new Subject();
 
       // normal
       execute({
-        part: add1,
+        node: add1,
         inputs: { n: n1 },
         outputs: { r: r1 },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
       r1.subscribe(s1);
       n1.subject.next(4);
@@ -759,10 +759,10 @@ describe("main ", () => {
 
       // connected
       execute({
-        part: p,
+        node: p,
         inputs: { n: n2 },
         outputs: { r: r2 },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
       r2.subscribe(s2);
       n2.subject.next(4);
@@ -770,14 +770,14 @@ describe("main ", () => {
     });
 
     it("does not trigger fn on unexpected arguments", () => {
-      const n = dynamicPartInput();
-      const bob = dynamicPartInput();
+      const n = dynamicNodeInput();
+      const bob = dynamicNodeInput();
       const r = new Subject();
       execute({
-        part: add1,
+        node: add1,
         inputs: { n, bob },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
       const res = spy();
       r.subscribe(res);
@@ -788,13 +788,13 @@ describe("main ", () => {
     });
 
     it("supports constant values on connect", () => {
-      const resolvedDeps = testPartsCollectionWith(Value(7));
-      const part = connect(
+      const resolvedDeps = testNodesCollectionWith(Value(7));
+      const node = connect(
         {
           id: "test",
           instances: [
-            partInstance("v", Value(7).id),
-            partInstance("a", add.id),
+            nodeInstance("v", Value(7).id),
+            nodeInstance("a", add.id),
           ],
           connections: [
             connectionData("v.r", "a.n1"),
@@ -802,22 +802,22 @@ describe("main ", () => {
             connectionData("a.r", "r"),
           ],
           inputs: {
-            n2: partInput(),
+            n2: nodeInput(),
           },
           outputs: {
-            r: partOutput(),
+            r: nodeOutput(),
           },
         },
         resolvedDeps
       );
 
-      const n2 = dynamicPartInput();
+      const n2 = dynamicNodeInput();
       const r = new Subject();
 
       const s = spy();
-      assert.deepEqual(Object.keys(part.inputs), ["n2"]);
+      assert.deepEqual(Object.keys(node.inputs), ["n2"]);
       execute({
-        part: part,
+        node: node,
         inputs: { n2 },
         outputs: { r },
         resolvedDeps: resolvedDeps,
@@ -830,14 +830,14 @@ describe("main ", () => {
     });
 
     it("supports static values on raw", () => {
-      const resolvedDeps = testPartsCollectionWith(Value(7));
+      const resolvedDeps = testNodesCollectionWith(Value(7));
 
-      const part = connect(
+      const node = connect(
         {
           id: "test",
           instances: [
-            partInstance("v", Value(7).id),
-            partInstance("a", transform.id),
+            nodeInstance("v", Value(7).id),
+            nodeInstance("a", transform.id),
           ],
           connections: [
             connectionData("v.r", "a.to"),
@@ -845,24 +845,24 @@ describe("main ", () => {
             connectionData("a.r", "r"),
           ],
           inputs: {
-            from: partInput(),
+            from: nodeInput(),
           },
           outputs: {
-            r: partOutput(),
+            r: nodeOutput(),
           },
         },
         resolvedDeps
       );
 
-      const from = dynamicPartInput();
+      const from = dynamicNodeInput();
       const r = new Subject();
 
       const s = spy();
-      assert.deepEqual(Object.keys(part.inputs), ["from"]);
+      assert.deepEqual(Object.keys(node.inputs), ["from"]);
 
       r.subscribe(s);
       execute({
-        part: part,
+        node: node,
         inputs: { from },
         outputs: { r },
         resolvedDeps: resolvedDeps,
@@ -875,15 +875,15 @@ describe("main ", () => {
     });
 
     describe("stopping execution", () => {
-      it("stops running simple components", () => {
-        const v = dynamicPartInput();
+      it("stops running simple nodes", () => {
+        const v = dynamicNodeInput();
         const r = dynamicOutput();
         const s = spy();
         const cancel = execute({
-          part: id,
+          node: id,
           inputs: { v },
           outputs: { r },
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
         });
         r.subscribe(s);
         v.subject.next(5);
@@ -894,10 +894,10 @@ describe("main ", () => {
         assert.equal(s.callCount, 1);
       });
 
-      it("stops running connected components", () => {
+      it("stops running connected nodes", () => {
         const internalSpy = spy();
         const s = spy();
-        const ids: CodePart = fromSimplified({
+        const ids: CodeNode = fromSimplified({
           id: "test",
           inputTypes: { v: "any" },
           outputTypes: { r: "any" },
@@ -907,12 +907,12 @@ describe("main ", () => {
           },
         });
 
-        const resolvedDeps = testPartsCollectionWith(ids);
+        const resolvedDeps = testNodesCollectionWith(ids);
 
-        const part = connect(
+        const node = connect(
           {
             id: "bob",
-            instances: [partInstance("a", ids.id), partInstance("b", ids.id)],
+            instances: [nodeInstance("a", ids.id), nodeInstance("b", ids.id)],
             connections: [
               {
                 from: connectionNode("a", "r"),
@@ -922,19 +922,19 @@ describe("main ", () => {
               connectionData("a.r", "r"),
             ],
             inputs: {
-              v: partInput(),
+              v: nodeInput(),
             },
             outputs: {
-              r: partOutput(),
+              r: nodeOutput(),
             },
           },
           resolvedDeps
         );
 
-        const v = dynamicPartInput();
+        const v = dynamicNodeInput();
         const r = dynamicOutput();
         const cancel = execute({
-          part: part,
+          node: node,
           inputs: { v },
           outputs: { r },
           resolvedDeps: resolvedDeps,
@@ -966,18 +966,18 @@ describe("main ", () => {
     });
 
     it("allows same name for input and output", () => {
-      const resolvedDeps = testPartsCollectionWith(Value(1));
-      const part: VisualPart = {
-        id: "part",
+      const resolvedDeps = testNodesCollectionWith(Value(1));
+      const node: VisualNode = {
+        id: "node",
         inputs: {
-          a: partOutput(),
+          a: nodeOutput(),
         },
         outputs: {
-          a: partOutput(),
+          a: nodeOutput(),
         },
         instances: [
-          partInstance("v", Value(1).id),
-          partInstance("add", add.id),
+          nodeInstance("v", Value(1).id),
+          nodeInstance("add", add.id),
         ],
         connections: [
           connectionData("v.r", "add.n2"),
@@ -988,12 +988,12 @@ describe("main ", () => {
         inputsPosition: {},
       };
 
-      const inputA = dynamicPartInput();
+      const inputA = dynamicNodeInput();
       const outputA = dynamicOutput();
       const fn = spy();
       outputA.subscribe(fn);
       execute({
-        part: part,
+        node: node,
         inputs: { a: inputA },
         outputs: { a: outputA },
         resolvedDeps: resolvedDeps,
@@ -1005,15 +1005,15 @@ describe("main ", () => {
 
     describe("more than 1 connection per pin", () => {
       it("is possible when connecting main input to 2 inputs inside it", () => {
-        const part: VisualPart = {
-          id: "part",
+        const node: VisualNode = {
+          id: "node",
           inputs: {
-            n: partInput(),
+            n: nodeInput(),
           },
           outputs: {
-            r: partOutput(),
+            r: nodeOutput(),
           },
-          instances: [partInstance("a", add.id)],
+          instances: [nodeInstance("a", add.id)],
           connections: [
             connection(externalConnectionNode("n"), connectionNode("a", "n1")),
             connection(externalConnectionNode("n"), connectionNode("a", "n2")),
@@ -1023,13 +1023,13 @@ describe("main ", () => {
           inputsPosition: {},
         };
 
-        const n = dynamicPartInput();
+        const n = dynamicNodeInput();
         const r = dynamicOutput();
         execute({
-          part: part,
+          node: node,
           inputs: { n },
           outputs: { r },
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
         });
 
         const fn = spy();
@@ -1040,18 +1040,18 @@ describe("main ", () => {
       });
 
       it("returns all given pulses to output", async () => {
-        const resolvedDeps = testPartsCollectionWith(Value(1), Value(2));
-        const part: VisualPart = {
-          id: "part",
+        const resolvedDeps = testNodesCollectionWith(Value(1), Value(2));
+        const node: VisualNode = {
+          id: "node",
           inputs: {},
           outputs: {
-            r: partOutput(),
+            r: nodeOutput(),
           },
           inputsPosition: {},
           outputsPosition: {},
           instances: [
-            partInstance("a", Value(1).id),
-            partInstance("b", Value(2).id),
+            nodeInstance("a", Value(1).id),
+            nodeInstance("b", Value(2).id),
           ],
           connections: [
             connection(connectionNode("a", "r"), externalConnectionNode("r")),
@@ -1063,7 +1063,7 @@ describe("main ", () => {
         const fn = spy();
         r.subscribe(fn);
         execute({
-          part: part,
+          node: node,
           inputs: {},
           outputs: { r },
           resolvedDeps: resolvedDeps,
@@ -1077,12 +1077,12 @@ describe("main ", () => {
       });
     });
 
-    // it('runs "leaf" parts without waiting for external inputs', () => {
+    // it('runs "leaf" nodes without waiting for external inputs', () => {
     //   const innerLeafSpy = spy();
-    //   const leaf: CodePart = {
+    //   const leaf: CodeNode = {
     //     id: "emit-1",
     //     inputs: {},
-    //     outputs: { r: partOutput() },
+    //     outputs: { r: nodeOutput() },
     //     run: (_, o) => {
     //       innerLeafSpy();
     //       o.r?.next(1);
@@ -1090,19 +1090,19 @@ describe("main ", () => {
     //   };
 
     //   const resolvedDeps = something(leaf);
-    //   const part: VisualPart = {
-    //     id: "part",
+    //   const node: VisualNode = {
+    //     id: "node",
     //     inputsPosition: {},
     //     outputsPosition: {},
     //     inputs: {
-    //       n: partInput()
+    //       n: nodeInput()
     //     },
     //     outputs: {
-    //       r: partOutput()
+    //       r: nodeOutput()
     //     },
     //     instances: [
-    //       partInstance("a", leaf),
-    //       partInstance("b", id) // we need it just to mediate the connection
+    //       nodeInstance("a", leaf),
+    //       nodeInstance("b", id) // we need it just to mediate the connection
     //     ],
     //     connections: [
     //       connection(externalConnectionNode("n"), connectionNode("b", "v")),
@@ -1112,10 +1112,10 @@ describe("main ", () => {
     //   };
 
     //   const fn = spy();
-    //   const n = dynamicPartInput();
+    //   const n = dynamicNodeInput();
     //   const r = dynamicOutput();
     //   r.subscribe(fn);
-    //   execute({part: part, inputs: { n }, outputs: { r }, resolvedDeps: resolvedDeps});
+    //   execute({node: node, inputs: { n }, outputs: { r }, resolvedDeps: resolvedDeps});
 
     //   // assert.equal(fn.calledWith(2), true);
     //   assert.equal(fn.callCount, 1);
@@ -1133,18 +1133,18 @@ describe("main ", () => {
     //   assert.equal(innerLeafSpy.callCount, 1);
     // });
 
-    describe("high order parts", () => {
+    describe("high order nodes", () => {
       it("works for a simple case", () => {
         const s = spy();
-        const list = dynamicPartInput();
-        const fn = dynamicPartInput();
+        const list = dynamicNodeInput();
+        const fn = dynamicNodeInput();
         const r = new Subject();
         r.subscribe(s);
         execute({
-          part: filter,
+          node: filter,
           inputs: { list, fn },
           outputs: { r },
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
         });
         list.subject.next([1, 2, 3, 4, 5, 6]);
         fn.subject.next(isEven);
@@ -1153,17 +1153,17 @@ describe("main ", () => {
         assert.deepEqual(s.lastCall.args[0], [2, 4, 6]);
       });
 
-      it("works using part reference", () => {
+      it("works using node reference", () => {
         const s = spy();
-        const list = dynamicPartInput();
-        const fn = staticPartInput(`__part:${isEven.id}`);
+        const list = dynamicNodeInput();
+        const fn = staticNodeInput(`__node:${isEven.id}`);
         const r = new Subject();
         r.subscribe(s);
         execute({
-          part: filter,
+          node: filter,
           inputs: { list, fn },
           outputs: { r },
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
         });
         list.subject.next([1, 2, 3, 4, 5, 6]);
 
@@ -1172,11 +1172,11 @@ describe("main ", () => {
       });
     });
 
-    describe("part state", () => {
-      const part: CodePart = {
+    describe("node state", () => {
+      const node: CodeNode = {
         id: "fixture",
-        inputs: { v: partInput() },
-        outputs: { r: partOutput() },
+        inputs: { v: nodeInput() },
+        outputs: { r: nodeOutput() },
         reactiveInputs: ["v"],
         completionOutputs: [],
         run: (args, outs, { state }) => {
@@ -1187,15 +1187,15 @@ describe("main ", () => {
       };
 
       describe("global state", () => {
-        it("allows parts to access global state", () => {
+        it("allows nodes to access global state", () => {
           const s = spy();
-          const v = dynamicPartInput();
+          const v = dynamicNodeInput();
           const r = new Subject();
 
-          const part1: CodePart = {
+          const node1: CodeNode = {
             id: "p1",
             inputs: {},
-            outputs: { r: partOutput() },
+            outputs: { r: nodeOutput() },
             reactiveInputs: ["v"],
             run: (_, outs, { globalState }) => {
               const n = (globalState.get("curr") || 0) + 1;
@@ -1203,10 +1203,10 @@ describe("main ", () => {
               outs.r?.next(n);
             },
           };
-          const part2: CodePart = {
+          const node2: CodeNode = {
             id: "p2",
             inputs: {},
-            outputs: { r: partOutput() },
+            outputs: { r: nodeOutput() },
             reactiveInputs: ["v"],
             run: (_, outs, { globalState }) => {
               const n = (globalState.get("curr") || 0) + 1;
@@ -1215,24 +1215,24 @@ describe("main ", () => {
             },
           };
 
-          const wrappedP2 = concisePart({
+          const wrappedP2 = conciseNode({
             id: "wrappedP2",
             inputs: [],
             outputs: ["r"],
-            instances: [partInstance("p2", part2.id)],
+            instances: [nodeInstance("p2", node2.id)],
             connections: [
               ["__trigger", "p2.__trigger"],
               ["p2.r", "r"],
             ],
           });
 
-          const wrapper = concisePart({
+          const wrapper = conciseNode({
             id: "wrapper",
             inputs: ["v"],
             outputs: ["r"],
             instances: [
-              partInstance("p1", part1.id),
-              partInstance("p2", wrappedP2.id),
+              nodeInstance("p1", node1.id),
+              nodeInstance("p2", wrappedP2.id),
             ],
             connections: [
               ["v", "p1.__trigger"],
@@ -1243,10 +1243,10 @@ describe("main ", () => {
 
           r.subscribe(s);
           execute({
-            part: wrapper,
+            node: wrapper,
             inputs: { v },
             outputs: { r },
-            resolvedDeps: testPartsCollectionWith(part1, part2, wrappedP2),
+            resolvedDeps: testNodesCollectionWith(node1, node2, wrappedP2),
           });
           v.subject.next("");
           assert.deepEqual(s.lastCall.args[0], 2);
@@ -1257,16 +1257,16 @@ describe("main ", () => {
         });
       });
 
-      it("allows parts to access execution state", () => {
+      it("allows nodes to access execution state", () => {
         const s = spy();
-        const v = dynamicPartInput();
+        const v = dynamicNodeInput();
         const r = new Subject();
         r.subscribe(s);
         execute({
-          part: part,
+          node: node,
           inputs: { v },
           outputs: { r },
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
         });
         v.subject.next(1);
         v.subject.next(2);
@@ -1279,25 +1279,25 @@ describe("main ", () => {
 
       it("uses a different state between executions", () => {
         const s = spy();
-        const v1 = dynamicPartInput();
+        const v1 = dynamicNodeInput();
         const r1 = new Subject();
-        const v2 = dynamicPartInput();
+        const v2 = dynamicNodeInput();
         const r2 = new Subject();
         r1.subscribe(s);
         3;
         execute({
-          part: part,
+          node: node,
           inputs: { v: v1 },
           outputs: { r: r1 },
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
         });
         v1.subject.next(1);
         v1.subject.next(2);
         execute({
-          part: part,
+          node: node,
           inputs: { v: v2 },
           outputs: { r: r2 },
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
         });
         v2.subject.next(1);
         v2.subject.next(2);
@@ -1305,16 +1305,16 @@ describe("main ", () => {
         assert.deepEqual(s.lastCall.args[0], 1 + 2); // if state was shared it would be 6
       });
 
-      it("cleans inner inputs state after part is executed - no completion", async () => {
-        // this test introduces a double connection to an add part, and tests that the inner state of the inputs isn't kept
+      it("cleans inner inputs state after node is executed - no completion", async () => {
+        // this test introduces a double connection to an add node, and tests that the inner state of the inputs isn't kept
         const s = spy();
-        const part = concisePart({
+        const node = conciseNode({
           id: "test",
           inputs: ["n1", "n2"],
           outputs: ["r"],
           instances: [
-            partInstance("i1", add.id),
-            partInstance("i2", id.id), // id to simulate another part
+            nodeInstance("i1", add.id),
+            nodeInstance("i2", id.id), // id to simulate another node
           ],
           connections: [
             ["n1", "i1.n1"],
@@ -1325,15 +1325,15 @@ describe("main ", () => {
           ],
         });
 
-        const [n1, n2] = [dynamicPartInput(), dynamicPartInput()];
+        const [n1, n2] = [dynamicNodeInput(), dynamicNodeInput()];
         const r = dynamicOutput();
 
         r.subscribe(s);
         execute({
-          part: part,
+          node: node,
           inputs: { n1, n2 },
           outputs: { r },
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
         });
 
         n1.subject.next(1);
@@ -1346,15 +1346,15 @@ describe("main ", () => {
         assert.equal(s.getCalls()[1]?.args[0], 7);
       });
 
-      it("cleans inner inputs state after part is executed - with completion", () => {
+      it("cleans inner inputs state after node is executed - with completion", () => {
         const s = spy();
-        const part = concisePart({
+        const node = conciseNode({
           id: "test",
           inputs: ["n1", "n2"],
           outputs: ["r"],
           instances: [
-            partInstance("i1", add.id),
-            partInstance("i2", id.id), // id to simualte anot
+            nodeInstance("i1", add.id),
+            nodeInstance("i2", id.id), // id to simualte anot
           ],
           connections: [
             ["n1", "i1.n1"],
@@ -1366,15 +1366,15 @@ describe("main ", () => {
           completionOutputs: ["r"],
         });
 
-        const [n1, n2] = [dynamicPartInput(), dynamicPartInput()];
+        const [n1, n2] = [dynamicNodeInput(), dynamicNodeInput()];
         const r = dynamicOutput();
 
         r.subscribe(s);
         execute({
-          part: part,
+          node: node,
           inputs: { n1, n2 },
           outputs: { r },
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
         });
 
         n1.subject.next(1);
@@ -1387,11 +1387,11 @@ describe("main ", () => {
         assert.equal(s.getCalls()[1]?.args[0], 7);
       });
 
-      it("cleans internal state of parts after execution", async () => {
+      it("cleans internal state of nodes after execution", async () => {
         /*
-          internal part P will increase on each input received and return the current state
+          internal node P will increase on each input received and return the current state
         */
-        const counter = conciseCodePart({
+        const counter = conciseCodeNode({
           id: "counter",
           inputs: ["v"],
           outputs: ["r"],
@@ -1404,28 +1404,28 @@ describe("main ", () => {
           },
         });
 
-        const counterWrapper = concisePart({
+        const counterWrapper = conciseNode({
           id: "cwrap",
           inputs: ["v"],
           outputs: ["r"],
           completionOutputs: ["r"],
-          instances: [partInstance("i1", counter.id)],
+          instances: [nodeInstance("i1", counter.id)],
           connections: [
             ["v", "i1.v"],
             ["i1.r", "r"],
           ],
         });
 
-        const v = dynamicPartInput();
+        const v = dynamicNodeInput();
         const r = dynamicOutput();
         const s = spy();
         r.subscribe(s);
 
         execute({
-          part: counterWrapper,
+          node: counterWrapper,
           inputs: { v },
           outputs: { r },
-          resolvedDeps: testPartsCollectionWith(counter),
+          resolvedDeps: testNodesCollectionWith(counter),
         });
         v.subject.next(1);
         v.subject.next(1);
@@ -1437,11 +1437,11 @@ describe("main ", () => {
         assert.equal(s.getCalls()[2]?.args[0], 0);
       });
 
-      it("does not clean internal of parts after execution until parent is not done", () => {
+      it("does not clean internal of nodes after execution until parent is not done", () => {
         /*
-          internal part P will increase on each input received and return the current state
+          internal node P will increase on each input received and return the current state
         */
-        const counter = conciseCodePart({
+        const counter = conciseCodeNode({
           id: "counter",
           inputs: ["v"],
           outputs: ["r"],
@@ -1454,15 +1454,15 @@ describe("main ", () => {
           },
         });
 
-        const counterWrapper = concisePart({
+        const counterWrapper = conciseNode({
           id: "cwrap",
           inputs: ["v", "v2|optional"],
           completionOutputs: ["r2"],
           outputs: ["r", "r2"],
           reactiveInputs: ["v", "v2"],
           instances: [
-            partInstance("i1", counter.id),
-            partInstance("i2", id.id),
+            nodeInstance("i1", counter.id),
+            nodeInstance("i2", id.id),
           ],
           connections: [
             ["v", "i1.v"],
@@ -1472,16 +1472,16 @@ describe("main ", () => {
           ],
         });
 
-        const [v, v2] = [dynamicPartInput(), dynamicPartInput()];
+        const [v, v2] = [dynamicNodeInput(), dynamicNodeInput()];
         const [r, r2] = [dynamicOutput(), dynamicOutput()];
         const s = spy();
         r.subscribe(s);
 
         execute({
-          part: counterWrapper,
+          node: counterWrapper,
           inputs: { v, v2 },
           outputs: { r, r2 },
-          resolvedDeps: testPartsCollectionWith(counter),
+          resolvedDeps: testNodesCollectionWith(counter),
         });
         v.subject.next(1);
         v.subject.next(1);
@@ -1498,15 +1498,15 @@ describe("main ", () => {
 
       it("uses shared global state to allow for hot reloading, and more", async () => {
         const s = spy();
-        const v = dynamicPartInput();
+        const v = dynamicNodeInput();
         const r = new Subject();
         r.subscribe(s);
         const state = {};
         execute({
-          part: part,
+          node: node,
           inputs: { v },
           outputs: { r },
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
           mainState: state,
         });
         v.subject.next(1);
@@ -1519,32 +1519,32 @@ describe("main ", () => {
       });
     });
 
-    it("runs parts that are not fully connected", () => {
-      const part: VisualPart = {
-        id: "part",
+    it("runs nodes that are not fully connected", () => {
+      const node: VisualNode = {
+        id: "node",
         inputsPosition: {},
         outputsPosition: {},
         inputs: {
-          n: partInput(),
+          n: nodeInput(),
         },
         outputs: {
-          r: partOutput(),
+          r: nodeOutput(),
         },
-        instances: [partInstance("p1", id.id), partInstance("p2", add.id)],
+        instances: [nodeInstance("p1", id.id), nodeInstance("p2", add.id)],
         connections: [connectionData("n", "p1.v"), connectionData("p1.r", "r")],
       };
 
-      const n = dynamicPartInput();
+      const n = dynamicNodeInput();
       const r = new Subject();
       const s = spy();
 
       r.subscribe(s);
 
       execute({
-        part: part,
+        node: node,
         inputs: { n },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
       n.subject.next(42);
 
@@ -1552,10 +1552,10 @@ describe("main ", () => {
     });
 
     it("allows state in code comp", async () => {
-      const part: InlineValuePart = {
+      const node: InlineValueNode = {
         id: "fixture",
-        inputs: { v: partInput() },
-        outputs: { r: partOutput() },
+        inputs: { v: nodeInput() },
+        outputs: { r: nodeOutput() },
         runFnRawCode: `
           const n = inputs.v + (adv.state.get("curr") || 0);
           outputs.r?.next(n);
@@ -1565,14 +1565,14 @@ describe("main ", () => {
         reactiveInputs: ["v"],
       };
       const s = spy();
-      const v = dynamicPartInput();
+      const v = dynamicNodeInput();
       const r = new Subject();
       r.subscribe(s);
       execute({
-        part: part,
+        node: node,
         inputs: { v },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
       v.subject.next(1);
       v.subject.next(2);
@@ -1584,10 +1584,10 @@ describe("main ", () => {
     });
   });
 
-  describe("uncontrolled visual parts", () => {
-    it("waits for all inputs when visual part is uncontrolled", () => {
+  describe("uncontrolled visual nodes", () => {
+    it("waits for all inputs when visual node is uncontrolled", () => {
       const innerSpy = spy();
-      const innerPart: CodePart = {
+      const innerNode: CodeNode = {
         id: "inner",
         inputs: {},
         outputs: {},
@@ -1596,26 +1596,26 @@ describe("main ", () => {
         },
       };
 
-      const visual: VisualPart = {
+      const visual: VisualNode = {
         id: "bob",
-        inputs: { n: partInput() },
+        inputs: { n: nodeInput() },
         outputs: {},
-        instances: [partInstance("i", innerPart.id)],
+        instances: [nodeInstance("i", innerNode.id)],
         connections: [],
         inputsPosition: {},
         outputsPosition: {},
       };
 
-      const resolvedDeps = testPartsCollectionWith(innerPart);
+      const resolvedDeps = testNodesCollectionWith(innerNode);
 
-      const n = dynamicPartInput();
+      const n = dynamicNodeInput();
       const r = new Subject();
 
       const s = spy();
       r.subscribe(s);
 
       execute({
-        part: visual,
+        node: visual,
         inputs: { n },
         outputs: {},
         resolvedDeps: resolvedDeps,
@@ -1630,12 +1630,12 @@ describe("main ", () => {
   });
 
   describe("recursion support", () => {
-    it("does run parts that have no args", () => {
-      const part: CodePart = {
-        id: "part",
+    it("does run nodes that have no args", () => {
+      const node: CodeNode = {
+        id: "node",
         inputs: {},
         outputs: {
-          r: partOutput(),
+          r: nodeOutput(),
         },
         run: (_, { r }) => {
           r?.next("ok");
@@ -1648,31 +1648,31 @@ describe("main ", () => {
       r.subscribe(s);
 
       execute({
-        part: part,
+        node: node,
         inputs: {},
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
       assert.equal(s.lastCall.args[0], "ok");
     });
 
     it('support recursive "add" calculation', () => {
-      const addRec: VisualPart = {
+      const addRec: VisualNode = {
         id: "add-rec",
         inputs: {
-          n: partInput(),
+          n: nodeInput(),
         },
         outputs: {
-          r: partOutput(),
+          r: nodeOutput(),
         },
         inputsPosition: {},
         outputsPosition: {},
         instances: [
-          partInstance("if", peq.id, { compare: staticInputPinConfig(0) }),
-          partInstance("arr", "add-rec"),
-          partInstance("add1", add.id, { n2: staticInputPinConfig(-1) }),
-          partInstance("add2", add.id, { n2: staticInputPinConfig(1) }),
-          partInstance("tr1", transform.id, { to: staticInputPinConfig(1) }),
+          nodeInstance("if", peq.id, { compare: staticInputPinConfig(0) }),
+          nodeInstance("arr", "add-rec"),
+          nodeInstance("add1", add.id, { n2: staticInputPinConfig(-1) }),
+          nodeInstance("add2", add.id, { n2: staticInputPinConfig(1) }),
+          nodeInstance("tr1", transform.id, { to: staticInputPinConfig(1) }),
         ],
         connections: [
           connectionData("n", "if.val"),
@@ -1685,17 +1685,17 @@ describe("main ", () => {
         ],
       };
 
-      const resolvedDeps = testPartsCollectionWith(addRec);
+      const resolvedDeps = testNodesCollectionWith(addRec);
 
       const r = new Subject();
       const s = spy();
 
-      const n = dynamicPartInput();
+      const n = dynamicNodeInput();
 
       r.subscribe(s);
 
       execute({
-        part: addRec,
+        node: addRec,
         inputs: { n },
         outputs: { r },
         resolvedDeps: resolvedDeps,
@@ -1716,25 +1716,25 @@ describe("main ", () => {
     });
 
     it("support recursion based factorial calculation", async () => {
-      const fact: VisualPart = {
+      const fact: VisualNode = {
         id: "fact",
         inputs: {
-          n: partInput(),
+          n: nodeInput(),
         },
         outputs: {
-          r: partOutput(),
+          r: nodeOutput(),
         },
         inputsPosition: {},
         outputsPosition: {},
         instances: [
-          // partInstance("z", zero),
-          // partInstance("one", one),
-          // partInstance("m1", mOne),
-          partInstance("if", peq.id, { compare: staticInputPinConfig(0) }),
-          partInstance("f", "fact"),
-          partInstance("add", add.id, { n2: staticInputPinConfig(-1) }),
-          partInstance("mul", mul.id),
-          partInstance("tr1", transform.id, { to: staticInputPinConfig(1) }),
+          // nodeInstance("z", zero),
+          // nodeInstance("one", one),
+          // nodeInstance("m1", mOne),
+          nodeInstance("if", peq.id, { compare: staticInputPinConfig(0) }),
+          nodeInstance("f", "fact"),
+          nodeInstance("add", add.id, { n2: staticInputPinConfig(-1) }),
+          nodeInstance("mul", mul.id),
+          nodeInstance("tr1", transform.id, { to: staticInputPinConfig(1) }),
         ],
         connections: [
           connectionData("n", "if.val"),
@@ -1751,17 +1751,17 @@ describe("main ", () => {
         ],
       };
 
-      const resolvedDeps = testPartsCollectionWith(fact);
+      const resolvedDeps = testNodesCollectionWith(fact);
 
       const r = new Subject();
       const s = spy();
 
-      const n = dynamicPartInput();
+      const n = dynamicNodeInput();
 
       r.subscribe(s);
 
       execute({
-        part: fact,
+        node: fact,
         inputs: { n },
         outputs: { r },
         resolvedDeps: resolvedDeps,
@@ -1790,46 +1790,46 @@ describe("main ", () => {
     });
   });
 
-  describe("code part support", () => {
-    it("runs an Id code part properly", () => {
-      const inlineValuePart: InlineValuePart = {
+  describe("code node support", () => {
+    it("runs an Id code node properly", () => {
+      const inlineValueNode: InlineValueNode = {
         id: "id",
         inputs: {
-          v: partInput(),
+          v: nodeInput(),
         },
         outputs: {
-          r: partInput(),
+          r: nodeInput(),
         },
         runFnRawCode: `outputs.r?.next(inputs.v)`,
       };
 
-      // const part: CodePart = inlineValuePartToPart(inlineValuePart);
+      // const node: CodeNode = inlineValueNodeToNode(inlineValueNode);
 
       const s = spy();
-      const v = dynamicPartInput();
+      const v = dynamicNodeInput();
       const r = dynamicOutput();
 
       r.subscribe(s);
       execute({
-        part: inlineValuePart,
+        node: inlineValueNode,
         inputs: { v },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
       v.subject.next(2);
       assert.equal(s.calledOnceWithExactly(2), true);
     });
 
-    it("runs ADD properly on code part", () => {
+    it("runs ADD properly on code node", () => {
       const innerSpy = spy();
-      const inlineValuePart: InlineValuePart = {
+      const inlineValueNode: InlineValueNode = {
         id: "add",
         inputs: {
-          a: partInput(),
-          b: partInput(),
+          a: nodeInput(),
+          b: nodeInput(),
         },
         outputs: {
-          r: partInput(),
+          r: nodeInput(),
         },
         runFnRawCode: `
         outputs.r?.next(inputs.a + inputs.b);
@@ -1837,21 +1837,21 @@ describe("main ", () => {
           `,
       };
 
-      const part = inlineValuePartToPart(inlineValuePart, {
+      const node = inlineValueNodeToNode(inlineValueNode, {
         innerSpy,
       });
 
       const s = spy();
-      const a = dynamicPartInput();
-      const b = dynamicPartInput();
+      const a = dynamicNodeInput();
+      const b = dynamicNodeInput();
       const r = dynamicOutput();
 
       r.subscribe(s);
       execute({
-        part: part,
+        node: node,
         inputs: { a, b },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
       assert.equal(innerSpy.callCount, 0);
       a.subject.next(2);
@@ -1866,16 +1866,16 @@ describe("main ", () => {
     });
   });
 
-  describe("part cleanup", () => {
-    it("runs cleanup code after a a part finished running on code part", () => {
+  describe("node cleanup", () => {
+    it("runs cleanup code after a a node finished running on code node", () => {
       const spyFn = spy();
-      const part: CodePart = {
+      const node: CodeNode = {
         id: "id",
         inputs: {
-          v: partInput(),
+          v: nodeInput(),
         },
         outputs: {
-          r: partInput(),
+          r: nodeInput(),
         },
         run: ({ v }, { r }, { onCleanup: cleanup }) => {
           r?.next(v);
@@ -1884,13 +1884,13 @@ describe("main ", () => {
           });
         },
       };
-      const v = dynamicPartInput();
+      const v = dynamicNodeInput();
       const r = dynamicOutput();
       const clean = execute({
-        part: part,
+        node: node,
         inputs: { v },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
       v.subject.next(2);
       assert.equal(spyFn.calledOnce, false);
@@ -1898,12 +1898,12 @@ describe("main ", () => {
       assert.equal(spyFn.calledOnce, true);
     });
 
-    it("runs cleanup code of code parts", async () => {
-      const inlineValuePart: InlineValuePart = {
+    it("runs cleanup code of code nodes", async () => {
+      const inlineValueNode: InlineValueNode = {
         id: "id",
         inputs: {},
         outputs: {
-          r: partInput(),
+          r: nodeInput(),
         },
         runFnRawCode: `
           const timer = setInterval(() => outputs.r?.next(1), 1);
@@ -1911,15 +1911,15 @@ describe("main ", () => {
           `,
       };
 
-      const part = inlineValuePartToPart(inlineValuePart);
+      const node = inlineValueNodeToNode(inlineValueNode);
       const r = dynamicOutput();
       const s = spy();
       r.subscribe(s);
       const clean = execute({
-        part: part,
+        node: node,
         inputs: {},
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
       await delay(4);
       assert.equal(s.callCount >= 1, true, `call count: ${s.callCount}`);
@@ -1930,13 +1930,13 @@ describe("main ", () => {
 
     it("calls destroy fn of debugger when cleaning up", () => {
       const spyFn = spy();
-      const part: CodePart = {
+      const node: CodeNode = {
         id: "id",
         inputs: {
-          v: partInput(),
+          v: nodeInput(),
         },
         outputs: {
-          r: partInput(),
+          r: nodeInput(),
         },
         run: ({ v }, { r }, { onCleanup: cleanup }) => {
           r?.next(v);
@@ -1945,13 +1945,13 @@ describe("main ", () => {
           });
         },
       };
-      const v = dynamicPartInput();
+      const v = dynamicNodeInput();
       const r = dynamicOutput();
       const clean = execute({
-        part: part,
+        node: node,
         inputs: { v },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
       v.subject.next(2);
       assert.equal(spyFn.calledOnce, false);
@@ -1963,11 +1963,11 @@ describe("main ", () => {
   describe("extra context", () => {
     it("passes external context forward when running code comps", async () => {
       const bobber = (n: number) => n + 42;
-      const part: InlineValuePart = {
+      const node: InlineValueNode = {
         id: "tester",
         inputs: {},
         outputs: {
-          r: partInput(),
+          r: nodeInput(),
         },
         runFnRawCode: `
           outputs.r?.next(bobber(12));
@@ -1977,10 +1977,10 @@ describe("main ", () => {
       const s = spy();
       r.subscribe(s);
       execute({
-        part: part,
+        node: node,
         inputs: {},
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
         extraContext: { bobber },
       });
       assert.equal(s.callCount, 1);
@@ -1989,11 +1989,11 @@ describe("main ", () => {
 
     it("passes external context forward when running code comps", async () => {
       const bobber = (n: number) => n + 42;
-      const part: CodePart = {
+      const node: CodeNode = {
         id: "tester",
         inputs: {},
         outputs: {
-          r: partInput(),
+          r: nodeInput(),
         },
         run: (_, o, adv) => {
           o.r?.next(adv.context.bobber(12));
@@ -2003,17 +2003,17 @@ describe("main ", () => {
       const s = spy();
       r.subscribe(s);
       execute({
-        part: part,
+        node: node,
         inputs: {},
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
         extraContext: { bobber },
       });
       assert.equal(s.callCount, 1);
       assert.equal(s.lastCall.args[0], 54);
     });
 
-    it.skip("passes external context forward to visual parts", async () => {
+    it.skip("passes external context forward to visual nodes", async () => {
       // TODO - write test
     });
   });
@@ -2022,16 +2022,16 @@ describe("main ", () => {
     it("supports const values on main execution", () => {
       const num1 = randomInt(1, 100);
       const num2 = randomInt(1, 100);
-      const n1 = dynamicPartInput();
-      const n2 = staticPartInput(num2);
+      const n1 = dynamicNodeInput();
+      const n2 = staticNodeInput(num2);
       const r = new Subject();
       const s = spy();
       r.subscribe(s);
       execute({
-        part: add,
+        node: add,
         inputs: { n1, n2 },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
       n1.subject.next(num1);
       n1.subject.next(num2);
@@ -2040,41 +2040,41 @@ describe("main ", () => {
       assert.equal(s.getCalls()[1]?.args[0], num2 + num2);
     });
 
-    it("supports const values with inner visual parts", () => {
+    it("supports const values with inner visual nodes", () => {
       const num1 = randomInt(1, 100);
       const num2 = randomInt(1, 100);
 
-      const n1 = dynamicPartInput();
-      const n2 = staticPartInput(num2);
+      const n1 = dynamicNodeInput();
+      const n2 = staticNodeInput(num2);
       const r = new Subject();
       const s = spy();
       r.subscribe(s);
 
       execute({
-        part: addGrouped,
+        node: addGrouped,
         inputs: { n1, n2 },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
       n1.subject.next(num1);
       assert.equal(s.callCount, 1);
       assert.equal(s.getCalls()[0]?.args[0], num1 + num2);
     });
 
-    it("supports const values defined inside visual parts", () => {
-      const n1 = dynamicPartInput();
+    it("supports const values defined inside visual nodes", () => {
+      const n1 = dynamicNodeInput();
       const r = new Subject();
       const s = spy();
       r.subscribe(s);
 
       const n2 = randomInt(20);
 
-      const part = concisePart({
-        id: "part",
+      const node = conciseNode({
+        id: "node",
         inputs: ["n1"],
         outputs: ["r"],
         instances: [
-          partInstance("a", add.id, { n2: staticInputPinConfig(n2) }),
+          nodeInstance("a", add.id, { n2: staticInputPinConfig(n2) }),
         ],
         connections: [
           ["n1", "a.n1"],
@@ -2083,10 +2083,10 @@ describe("main ", () => {
       });
 
       execute({
-        part: part,
+        node: node,
         inputs: { n1 },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
       const num1 = randomInt(1, 100);
       n1.subject.next(num1);
@@ -2096,20 +2096,20 @@ describe("main ", () => {
       assert.equal(s.getCalls()[1]?.args[0], n2 + n2);
     });
 
-    it("supports const values on visual part", () => {
-      const n1 = dynamicPartInput();
+    it("supports const values on visual node", () => {
+      const n1 = dynamicNodeInput();
       const r = new Subject();
       const s = spy();
       r.subscribe(s);
 
       const n2 = randomInt(20);
 
-      const part = concisePart({
-        id: "part",
+      const node = conciseNode({
+        id: "node",
         inputs: ["n1"],
         outputs: ["r"],
         instances: [
-          partInstance("a", add.id, { n2: staticInputPinConfig(n2) }),
+          nodeInstance("a", add.id, { n2: staticInputPinConfig(n2) }),
         ],
         connections: [
           ["n1", "a.n1"],
@@ -2118,10 +2118,10 @@ describe("main ", () => {
       });
 
       execute({
-        part: part,
+        node: node,
         inputs: { n1 },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
       const num1 = randomInt(1, 100);
       n1.subject.next(num1);
@@ -2132,13 +2132,13 @@ describe("main ", () => {
     });
   });
 
-  describe("part v2 tests", () => {
-    it("queues values - code part", () => {
+  describe("node v2 tests", () => {
+    it("queues values - code node", () => {
       const [n1, n2] = [
-        dynamicPartInput({
+        dynamicNodeInput({
           // config: queueInputPinConfig(),
         }),
-        dynamicPartInput({
+        dynamicNodeInput({
           // config: queueInputPinConfig(),Rr3
         }),
       ];
@@ -2148,10 +2148,10 @@ describe("main ", () => {
       r.subscribe(s);
 
       execute({
-        part: add,
+        node: add,
         inputs: { n1, n2 },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
 
       n1.subject.next(1);
@@ -2165,12 +2165,12 @@ describe("main ", () => {
       assert.deepEqual(callsFirstArgs(s), [5, 7, 9]);
     });
 
-    it("queues values - visual part", () => {
+    it("queues values - visual node", () => {
       const [n1, n2] = [
-        dynamicPartInput({
+        dynamicNodeInput({
           // config: queueInputPinConfig(),
         }),
-        dynamicPartInput({
+        dynamicNodeInput({
           // config: queueInputPinConfig(),
         }),
       ];
@@ -2180,10 +2180,10 @@ describe("main ", () => {
       r.subscribe(s);
 
       execute({
-        part: addGroupedQueued,
+        node: addGroupedQueued,
         inputs: { n1, n2 },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
 
       n1.subject.next(1);
@@ -2198,8 +2198,8 @@ describe("main ", () => {
     });
 
     it("sticky values work on simple code", () => {
-      const a = dynamicPartInput({ config: queueInputPinConfig() });
-      const b = dynamicPartInput({ config: stickyInputPinConfig() });
+      const a = dynamicNodeInput({ config: queueInputPinConfig() });
+      const b = dynamicNodeInput({ config: stickyInputPinConfig() });
 
       const r = dynamicOutput();
 
@@ -2207,7 +2207,7 @@ describe("main ", () => {
 
       r.subscribe(s);
 
-      const part = conciseCodePart({
+      const node = conciseCodeNode({
         inputs: ["a", "b"],
         outputs: ["r"],
         id: "bob",
@@ -2218,10 +2218,10 @@ describe("main ", () => {
       });
 
       execute({
-        part: part,
+        node: node,
         inputs: { a, b },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
 
       a.subject.next(1);
@@ -2237,20 +2237,20 @@ describe("main ", () => {
       ]);
     });
 
-    it("completes last value only when part is done", async () => {
-      const item = dynamicPartInput({ config: queueInputPinConfig() });
+    it("completes last value only when node is done", async () => {
+      const item = dynamicNodeInput({ config: queueInputPinConfig() });
 
       const r = new Subject();
       const s = spy();
       r.subscribe(s);
 
-      const delayer: CodePart = {
+      const delayer: CodeNode = {
         id: "delayer",
         inputs: {
-          item: partInput(),
+          item: nodeInput(),
         },
         outputs: {
-          r: partOutput(),
+          r: nodeOutput(),
         },
         completionOutputs: ["r"],
         run: ({ item }, { r }) => {
@@ -2261,10 +2261,10 @@ describe("main ", () => {
       };
 
       execute({
-        part: delayer,
+        node: delayer,
         inputs: { item },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
 
       item.subject.next(10);
@@ -2280,9 +2280,9 @@ describe("main ", () => {
       );
     });
 
-    describe("part completion", () => {
-      it("re-runs parts when one of the required outputs complete", async () => {
-        const item = dynamicPartInput({ config: queueInputPinConfig() });
+    describe("node completion", () => {
+      it("re-runs nodes when one of the required outputs complete", async () => {
+        const item = dynamicNodeInput({ config: queueInputPinConfig() });
 
         const r = new Subject();
         const final = new Subject();
@@ -2290,14 +2290,14 @@ describe("main ", () => {
         r.subscribe(s);
         final.subscribe(s);
 
-        const delayer: CodePart = {
+        const delayer: CodeNode = {
           id: "delayer",
           inputs: {
-            item: partInput(),
+            item: nodeInput(),
           },
           outputs: {
-            r: partOutput(),
-            final: partOutput(),
+            r: nodeOutput(),
+            final: nodeOutput(),
           },
           completionOutputs: ["final"],
           run: ({ item }, { r, final }) => {
@@ -2310,10 +2310,10 @@ describe("main ", () => {
         };
 
         execute({
-          part: delayer,
+          node: delayer,
           inputs: { item },
           outputs: { r, final },
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
         });
 
         item.subject.next(1);
@@ -2330,7 +2330,7 @@ describe("main ", () => {
       });
 
       it("supports + as the AND operator for completion outputs", async () => {
-        const item = dynamicPartInput({ config: queueInputPinConfig() });
+        const item = dynamicNodeInput({ config: queueInputPinConfig() });
 
         const f1 = dynamicOutput();
         const f2 = dynamicOutput();
@@ -2341,15 +2341,15 @@ describe("main ", () => {
 
         const [_, r] = spiedOutput();
 
-        const delayer: CodePart = {
+        const delayer: CodeNode = {
           id: "delayer",
           inputs: {
-            item: partInput(),
+            item: nodeInput(),
           },
           outputs: {
-            r: partOutput(),
-            f1: partOutput(),
-            f2: partOutput(),
+            r: nodeOutput(),
+            f1: nodeOutput(),
+            f2: nodeOutput(),
           },
           completionOutputs: ["f1+f2"],
           run: ({ item }, { r, f1, f2 }) => {
@@ -2366,10 +2366,10 @@ describe("main ", () => {
         };
 
         execute({
-          part: delayer,
+          node: delayer,
           inputs: { item },
           outputs: { f1, f2, r },
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
         });
 
         item.subject.next(1);
@@ -2385,8 +2385,8 @@ describe("main ", () => {
         );
       });
 
-      it("re-runs parts only when one of the required outputs complete if there are more than 1", async () => {
-        const item = dynamicPartInput({ config: queueInputPinConfig() });
+      it("re-runs nodes only when one of the required outputs complete if there are more than 1", async () => {
+        const item = dynamicNodeInput({ config: queueInputPinConfig() });
 
         const [r, final1, final2] = [
           dynamicOutput(),
@@ -2399,15 +2399,15 @@ describe("main ", () => {
         final2.subscribe((v) => s(`f2-${v}`));
         r.subscribe((v) => s(`r-${v}`));
 
-        const delayer: CodePart = {
+        const delayer: CodeNode = {
           id: "delayer",
           inputs: {
-            item: partInput(),
+            item: nodeInput(),
           },
           outputs: {
-            r: partOutput(),
-            final1: partOutput(),
-            final2: partOutput(),
+            r: nodeOutput(),
+            final1: nodeOutput(),
+            final2: nodeOutput(),
           },
           completionOutputs: ["final1", "final2"],
           run: ({ item }, { r, final1, final2 }) => {
@@ -2424,10 +2424,10 @@ describe("main ", () => {
         };
 
         execute({
-          part: delayer,
+          node: delayer,
           inputs: { item },
           outputs: { r, final1, final2 },
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
         });
 
         item.subject.next(0);
@@ -2450,8 +2450,8 @@ describe("main ", () => {
         );
       });
 
-      it("completes parts when there are errors", async () => {
-        const item = dynamicPartInput({ config: queueInputPinConfig() });
+      it("completes nodes when there are errors", async () => {
+        const item = dynamicNodeInput({ config: queueInputPinConfig() });
 
         const [r, final1] = [dynamicOutput(), dynamicOutput(), dynamicOutput()];
 
@@ -2459,15 +2459,15 @@ describe("main ", () => {
         final1.subscribe((v) => s(`f1-${v}`));
         r.subscribe((v) => s(`r-${v}`));
 
-        const delayer: CodePart = {
+        const delayer: CodeNode = {
           id: "delayer",
           inputs: {
-            item: partInput(),
+            item: nodeInput(),
           },
           outputs: {
-            r: partOutput(),
-            final1: partOutput(),
-            final2: partOutput(),
+            r: nodeOutput(),
+            final1: nodeOutput(),
+            final2: nodeOutput(),
           },
           completionOutputs: ["final1", "final2"],
           run: ({ item }, { r, final1 }) => {
@@ -2484,16 +2484,16 @@ describe("main ", () => {
           },
         };
 
-        const onError = (err: PartInstanceError) => {
+        const onError = (err: NodeInstanceError) => {
           const val = err.message?.match(/(\d)/)?.[1];
           s(`e-${val}`);
         };
 
         execute({
-          part: delayer,
+          node: delayer,
           inputs: { item },
           outputs: { r, final1 },
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
           onBubbleError: onError,
         });
 
@@ -2518,11 +2518,11 @@ describe("main ", () => {
       });
 
       it("triggers the completion callback with last values when completed", async () => {
-        const simpleCompletion: CodePart = {
+        const simpleCompletion: CodeNode = {
           id: "simpleCompletion",
           inputs: {},
           outputs: {
-            r: partOutput(),
+            r: nodeOutput(),
           },
           completionOutputs: ["r"],
           run: ({}, { r }) => {
@@ -2536,10 +2536,10 @@ describe("main ", () => {
         const completionSpy = spy();
 
         execute({
-          part: simpleCompletion,
+          node: simpleCompletion,
           inputs: {},
           outputs: { r },
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
           onCompleted: completionSpy,
         });
 
@@ -2556,16 +2556,16 @@ describe("main ", () => {
       });
 
       describe("implicit completion", () => {
-        describe("code parts", () => {
+        describe("code nodes", () => {
           it("triggers an implicit completion when there are no explicit completion outputs", async () => {
-            const part = conciseCodePart({
+            const node = conciseCodeNode({
               outputs: ["r"],
               run: (_, o) => o.r?.next("ok"),
             });
             const s = spy();
             execute({
-              part,
-              resolvedDeps: testPartsCollection,
+              node,
+              resolvedDeps: testNodesCollection,
               inputs: {},
               outputs: { r: dynamicOutput() },
               onCompleted: s,
@@ -2574,8 +2574,8 @@ describe("main ", () => {
             assert.deepEqual(s.lastCall.args[0], { r: "ok" });
           });
 
-          it("waits for promises to resolve before triggering an implicit completion of code part with no explicit completion outputs", async () => {
-            const part = conciseCodePart({
+          it("waits for promises to resolve before triggering an implicit completion of code node with no explicit completion outputs", async () => {
+            const node = conciseCodeNode({
               outputs: ["r"],
               run: async (_, o) => {
                 await new Promise((r) => setTimeout(r, 10));
@@ -2586,8 +2586,8 @@ describe("main ", () => {
             const s = spy();
             const [sr, r] = spiedOutput();
             execute({
-              part,
-              resolvedDeps: testPartsCollection,
+              node,
+              resolvedDeps: testNodesCollection,
               inputs: {},
               outputs: { r },
               onCompleted: s,
@@ -2598,8 +2598,8 @@ describe("main ", () => {
             assert.isTrue(s.calledAfter(sr));
           });
 
-          it("keeps state of a an implicitly running part", async () => {
-            const part = conciseCodePart({
+          it("keeps state of a an implicitly running node", async () => {
+            const node = conciseCodeNode({
               inputs: ["a"],
               outputs: ["r"],
               reactiveInputs: ["a"],
@@ -2613,10 +2613,10 @@ describe("main ", () => {
 
             const s = spy();
             const [sr, r] = spiedOutput();
-            const input = dynamicPartInput();
+            const input = dynamicNodeInput();
             execute({
-              part,
-              resolvedDeps: testPartsCollection,
+              node,
+              resolvedDeps: testNodesCollection,
               inputs: { a: input },
               outputs: { r },
               onCompleted: s,
@@ -2635,10 +2635,10 @@ describe("main ", () => {
           });
         });
 
-        describe("visual parts", () => {
-          it('triggers implicit completion when parts "inside" stop running', async () => {
-            const delayPart = (ms: number) =>
-              conciseCodePart({
+        describe("visual nodes", () => {
+          it('triggers implicit completion when nodes "inside" stop running', async () => {
+            const delayNode = (ms: number) =>
+              conciseCodeNode({
                 outputs: ["r"],
                 run: async (_, o) => {
                   await new Promise((r) => setTimeout(r, ms));
@@ -2647,16 +2647,16 @@ describe("main ", () => {
                 id: `delay-${ms}`,
               });
 
-            const delay10 = delayPart(10);
-            const delay5 = delayPart(5);
+            const delay10 = delayNode(10);
+            const delay5 = delayNode(5);
 
-            const wrapper = concisePart({
+            const wrapper = conciseNode({
               outputs: ["r"],
               instances: [
-                { id: "a", part: delay5, pos: { x: 0, y: 0 }, inputConfig: {} },
+                { id: "a", node: delay5, pos: { x: 0, y: 0 }, inputConfig: {} },
                 {
                   id: "b",
-                  part: delay10,
+                  node: delay10,
                   pos: { x: 0, y: 0 },
                   inputConfig: {},
                 },
@@ -2670,8 +2670,8 @@ describe("main ", () => {
             const [sr, r] = spiedOutput();
             const onCompleted = spy();
             execute({
-              part: wrapper,
-              resolvedDeps: testPartsCollection,
+              node: wrapper,
+              resolvedDeps: testNodesCollection,
               inputs: {},
               outputs: { r },
               onCompleted,
@@ -2687,8 +2687,8 @@ describe("main ", () => {
       });
     });
 
-    it("cleans up part only when the part is done", async () => {
-      const item = dynamicPartInput({ config: queueInputPinConfig() });
+    it("cleans up node only when the node is done", async () => {
+      const item = dynamicNodeInput({ config: queueInputPinConfig() });
 
       const r = new Subject();
       const final = new Subject();
@@ -2697,14 +2697,14 @@ describe("main ", () => {
       r.subscribe(s);
       final.subscribe(s);
 
-      const somePart: CodePart = {
-        id: "somePart",
+      const someNode: CodeNode = {
+        id: "someNode",
         inputs: {
-          item: partInput(),
+          item: nodeInput(),
         },
         outputs: {
-          r: partOutput(),
-          final: partOutput(),
+          r: nodeOutput(),
+          final: nodeOutput(),
         },
         reactiveInputs: ["item"],
         completionOutputs: ["final"],
@@ -2725,10 +2725,10 @@ describe("main ", () => {
       };
 
       const clean = execute({
-        part: somePart,
+        node: someNode,
         inputs: { item },
         outputs: { r, final },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
 
       item.subject.next(23423); // call 0
@@ -2742,14 +2742,14 @@ describe("main ", () => {
     });
 
     describe("accumulate", () => {
-      const accumulate: CodePart = {
+      const accumulate: CodeNode = {
         id: "acc",
         inputs: {
-          item: partInput(),
-          count: partInput(),
+          item: nodeInput(),
+          count: nodeInput(),
         },
         outputs: {
-          r: partOutput(),
+          r: nodeOutput(),
         },
         reactiveInputs: ["item"],
         completionOutputs: ["r"],
@@ -2772,18 +2772,18 @@ describe("main ", () => {
       };
 
       it("supports creation of an accumulate", () => {
-        const count = dynamicPartInput({ config: queueInputPinConfig() });
-        const item = dynamicPartInput({ config: queueInputPinConfig() });
+        const count = dynamicNodeInput({ config: queueInputPinConfig() });
+        const item = dynamicNodeInput({ config: queueInputPinConfig() });
 
         const r = new Subject();
         const s = spy();
         r.subscribe(s);
 
         execute({
-          part: accumulate,
+          node: accumulate,
           inputs: { item, count },
           outputs: { r },
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
         });
 
         count.subject.next(1);
@@ -2796,18 +2796,18 @@ describe("main ", () => {
       });
 
       it("supports creation of an accumulate, another variation of input order", () => {
-        const count = dynamicPartInput({ config: queueInputPinConfig() });
-        const item = dynamicPartInput({ config: queueInputPinConfig() });
+        const count = dynamicNodeInput({ config: queueInputPinConfig() });
+        const item = dynamicNodeInput({ config: queueInputPinConfig() });
 
         const r = new Subject();
         const s = spy();
         r.subscribe(s);
 
         execute({
-          part: accumulate,
+          node: accumulate,
           inputs: { item, count },
           outputs: { r },
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
         });
 
         item.subject.next(1);
@@ -2826,18 +2826,18 @@ describe("main ", () => {
       });
 
       it("supports creation of an accumulate, third variation of input order", () => {
-        const count = dynamicPartInput({ config: queueInputPinConfig() });
-        const item = dynamicPartInput({ config: queueInputPinConfig() });
+        const count = dynamicNodeInput({ config: queueInputPinConfig() });
+        const item = dynamicNodeInput({ config: queueInputPinConfig() });
 
         const r = new Subject();
         const s = spy();
         r.subscribe(s);
 
         execute({
-          part: accumulate,
+          node: accumulate,
           inputs: { item, count },
           outputs: { r },
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
         });
 
         item.subject.next(1);
@@ -2856,14 +2856,14 @@ describe("main ", () => {
       });
 
       it("allows creating accumulate2 visually (shared state)", () => {
-        const visualPart = concisePart({
+        const visualNode = conciseNode({
           id: "bob",
           inputs: ["val"],
           outputs: ["r"],
           completionOutputs: ["r"],
           reactiveInputs: ["val"],
           instances: [
-            partInstance("i1", accumulate.id, {
+            nodeInstance("i1", accumulate.id, {
               count: staticInputPinConfig(2),
             }),
           ],
@@ -2874,16 +2874,16 @@ describe("main ", () => {
         });
 
         const s = spy();
-        const val = dynamicPartInput();
-        const count = dynamicPartInput();
+        const val = dynamicNodeInput();
+        const count = dynamicNodeInput();
         const r = dynamicOutput();
         r.subscribe(s);
 
         execute({
-          part: visualPart,
+          node: visualNode,
           inputs: { val, count },
           outputs: { r },
-          resolvedDeps: testPartsCollectionWith(accumulate),
+          resolvedDeps: testNodesCollectionWith(accumulate),
         });
 
         val.subject.next(1);
@@ -2894,12 +2894,12 @@ describe("main ", () => {
       });
 
       it("accumulate2 visually cleans up state properly after it is done", () => {
-        const visualPart = concisePart({
+        const visualNode = conciseNode({
           id: "bob",
           inputs: ["val", "count"],
           outputs: ["r"],
           reactiveInputs: ["val"],
-          instances: [partInstance("i1", accumulate.id, {})],
+          instances: [nodeInstance("i1", accumulate.id, {})],
           connections: [
             ["val", "i1.item"],
             ["count", "i1.count"],
@@ -2909,16 +2909,16 @@ describe("main ", () => {
         });
 
         const s = spy();
-        const val = dynamicPartInput();
-        const count = dynamicPartInput();
+        const val = dynamicNodeInput();
+        const count = dynamicNodeInput();
         const r = dynamicOutput();
         r.subscribe(s);
 
         execute({
-          part: visualPart,
+          node: visualNode,
           inputs: { val, count },
           outputs: { r },
-          resolvedDeps: testPartsCollectionWith(accumulate),
+          resolvedDeps: testNodesCollectionWith(accumulate),
         });
 
         count.subject.next(2);
@@ -2936,14 +2936,14 @@ describe("main ", () => {
       });
 
       it('supports creation of "accumulate until"', () => {
-        const accUntil: CodePart = {
+        const accUntil: CodeNode = {
           id: "acc",
           inputs: {
-            item: partInput("optional"),
-            until: partInput("optional"),
+            item: nodeInput("optional"),
+            until: nodeInput("optional"),
           },
           outputs: {
-            r: partOutput(),
+            r: nodeOutput(),
           },
           reactiveInputs: ["item", "until"],
           completionOutputs: ["r"],
@@ -2961,18 +2961,18 @@ describe("main ", () => {
           },
         };
 
-        const until = dynamicPartInput({ config: queueInputPinConfig() });
-        const item = dynamicPartInput({ config: queueInputPinConfig() });
+        const until = dynamicNodeInput({ config: queueInputPinConfig() });
+        const item = dynamicNodeInput({ config: queueInputPinConfig() });
 
         const r = new Subject();
         const s = spy();
         r.subscribe(s);
 
         execute({
-          part: accUntil,
+          node: accUntil,
           inputs: { item, until },
           outputs: { r },
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
         });
 
         item.subject.next(22);
@@ -2986,20 +2986,20 @@ describe("main ", () => {
       });
     });
 
-    it("supports running inner parts with static values", async () => {
+    it("supports running inner nodes with static values", async () => {
       const num1 = randomInt(100);
       const num2 = randomInt(100);
 
-      const visualPart: VisualPart = {
-        id: "visual-part",
+      const visualNode: VisualNode = {
+        id: "visual-node",
         inputsPosition: {},
         outputsPosition: {},
         inputs: {},
         outputs: {
-          r: partOutput(),
+          r: nodeOutput(),
         },
         instances: [
-          partInstance("a", add.id, {
+          nodeInstance("a", add.id, {
             n1: staticInputPinConfig(num1),
             n2: staticInputPinConfig(num2),
           }),
@@ -3013,7 +3013,7 @@ describe("main ", () => {
       };
 
       const [n1] = [
-        dynamicPartInput({
+        dynamicNodeInput({
           // config: queueInputPinConfig(),
         }),
       ];
@@ -3023,25 +3023,25 @@ describe("main ", () => {
       r.subscribe(s);
 
       execute({
-        part: visualPart,
+        node: visualNode,
         inputs: { n1 },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
 
       assert.equal(s.getCalls()[0]?.args[0], num1 + num2);
       assert.equal(s.callCount, 1);
     });
 
-    it('supports creation of "merge" part - code', () => {
-      const merge: CodePart = {
+    it('supports creation of "merge" node - code', () => {
+      const merge: CodeNode = {
         id: "merge",
         inputs: {
-          a: partInput("optional"),
-          b: partInput("optional"),
+          a: nodeInput("optional"),
+          b: nodeInput("optional"),
         },
         outputs: {
-          r: partOutput(),
+          r: nodeOutput(),
         },
         run: ({ a, b }, { r }) => {
           if (isDefined(a)) {
@@ -3054,18 +3054,18 @@ describe("main ", () => {
         },
       };
 
-      const a = dynamicPartInput({ config: queueInputPinConfig() });
-      const b = dynamicPartInput({ config: queueInputPinConfig() });
+      const a = dynamicNodeInput({ config: queueInputPinConfig() });
+      const b = dynamicNodeInput({ config: queueInputPinConfig() });
 
       const r = new Subject();
       const s = spy();
       r.subscribe(s);
 
       execute({
-        part: merge,
+        node: merge,
         inputs: { a, b },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
 
       const numbers = randomInts(20);
@@ -3081,19 +3081,19 @@ describe("main ", () => {
       });
     });
 
-    it('supports creation of "merge" part - visual', () => {
-      const mergeGrouped: VisualPart = {
-        id: "visual-part",
+    it('supports creation of "merge" node - visual', () => {
+      const mergeGrouped: VisualNode = {
+        id: "visual-node",
         inputsPosition: {},
         outputsPosition: {},
         inputs: {
-          b: partInput("optional"),
-          a: partInput("optional"),
+          b: nodeInput("optional"),
+          a: nodeInput("optional"),
         },
         outputs: {
-          r: partOutput(),
+          r: nodeOutput(),
         },
-        instances: [partInstance("id", id2.id)],
+        instances: [nodeInstance("id", id2.id)],
         connections: [
           connectionData("a", "id.v"),
           connectionData("b", "id.v"),
@@ -3101,18 +3101,18 @@ describe("main ", () => {
         ],
       };
 
-      const a = dynamicPartInput({ config: queueInputPinConfig() });
-      const b = dynamicPartInput({ config: queueInputPinConfig() });
+      const a = dynamicNodeInput({ config: queueInputPinConfig() });
+      const b = dynamicNodeInput({ config: queueInputPinConfig() });
 
       const r = new Subject();
       const s = spy();
       r.subscribe(s);
 
       execute({
-        part: mergeGrouped,
+        node: mergeGrouped,
         inputs: { b, a },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
 
       const valuesCount = randomInt(10, 20);
@@ -3132,9 +3132,9 @@ describe("main ", () => {
     });
 
     describe("input modes", () => {
-      it("required - does not run a part before with required inputs if they do not existing", () => {
+      it("required - does not run a node before with required inputs if they do not existing", () => {
         const s = spy();
-        const dummyPart = conciseCodePart({
+        const dummyNode = conciseCodeNode({
           id: "bob",
           inputs: ["a|required", "b|required"],
           outputs: ["r"],
@@ -3143,19 +3143,19 @@ describe("main ", () => {
           },
         });
 
-        const [a, b] = [dynamicPartInput(), dynamicPartInput()];
+        const [a, b] = [dynamicNodeInput(), dynamicNodeInput()];
 
         execute({
-          part: dummyPart,
+          node: dummyNode,
           inputs: { a },
           outputs: {},
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
         });
         execute({
-          part: dummyPart,
+          node: dummyNode,
           inputs: { b },
           outputs: {},
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
         });
 
         a.subject.next(1);
@@ -3164,10 +3164,10 @@ describe("main ", () => {
         assert.equal(s.callCount, 0);
 
         execute({
-          part: dummyPart,
+          node: dummyNode,
           inputs: { a, b },
           outputs: {},
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
         });
 
         a.subject.next(1);
@@ -3177,7 +3177,7 @@ describe("main ", () => {
 
       it("required if connected - runs if not connected, but does not run if connected", () => {
         const s = spy();
-        const dummyPart = conciseCodePart({
+        const dummyNode = conciseCodeNode({
           id: "bob",
           inputs: ["a|required", "b|required-if-connected"],
           outputs: ["r"],
@@ -3186,13 +3186,13 @@ describe("main ", () => {
           },
         });
 
-        const [a, b] = [dynamicPartInput(), dynamicPartInput()];
+        const [a, b] = [dynamicNodeInput(), dynamicNodeInput()];
 
         execute({
-          part: dummyPart,
+          node: dummyNode,
           inputs: { a, b },
           outputs: {},
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
         });
 
         a.subject.next(1);
@@ -3200,10 +3200,10 @@ describe("main ", () => {
         assert.equal(s.callCount, 0);
 
         execute({
-          part: dummyPart,
+          node: dummyNode,
           inputs: { a },
           outputs: {},
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
         });
 
         a.subject.next(1);
@@ -3217,7 +3217,7 @@ describe("main ", () => {
   });
 
   describe("error handling", () => {
-    const errorReportingPart = conciseCodePart({
+    const errorReportingNode = conciseCodeNode({
       id: "bad",
       inputs: ["a"],
       outputs: ["r"],
@@ -3226,18 +3226,18 @@ describe("main ", () => {
       },
     });
 
-    it("reports errors that were reported inside a direct part", async () => {
+    it("reports errors that were reported inside a direct node", async () => {
       const s = spy();
-      const a = dynamicPartInput();
+      const a = dynamicNodeInput();
 
       const debuggerSpy = spy();
       const onEvent = wrappedOnEvent(DebuggerEventType.ERROR, debuggerSpy);
 
       execute({
-        part: errorReportingPart,
+        node: errorReportingNode,
         inputs: { a },
         outputs: {},
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
         onBubbleError: s,
         insId: "someIns",
         _debugger: { onEvent },
@@ -3249,20 +3249,20 @@ describe("main ", () => {
 
       assert.equal(s.callCount, 1);
 
-      const lastError = (): PartInstanceError => s.lastCall.args[0];
+      const lastError = (): NodeInstanceError => s.lastCall.args[0];
       assert.include(lastError().toString(), "blah");
       assert.include(lastError().fullInsIdsPath, "someIns");
 
       assert.equal(debuggerSpy.callCount, 1);
-      assert.include(s.lastCall.args[0].message, "partId: bad");
+      assert.include(s.lastCall.args[0].message, "nodeId: bad");
     });
 
-    it("reports errors that were thrown inside a direct part", async () => {
+    it("reports errors that were thrown inside a direct node", async () => {
       const s = spy();
-      const a = dynamicPartInput();
+      const a = dynamicNodeInput();
 
       const p2 = {
-        ...errorReportingPart,
+        ...errorReportingNode,
         run: () => {
           throw new Error("blaft");
         },
@@ -3272,10 +3272,10 @@ describe("main ", () => {
 
       1;
       execute({
-        part: p2,
+        node: p2,
         inputs: { a },
         outputs: {},
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
         _debugger: { onEvent },
         insId: "someIns",
       });
@@ -3290,12 +3290,12 @@ describe("main ", () => {
       assert.include(s.lastCall.args[0].insId, "someIns");
     });
 
-    it("reports async errors that were thrown inside a direct part", async () => {
+    it("reports async errors that were thrown inside a direct node", async () => {
       const s = spy();
-      const a = dynamicPartInput();
+      const a = dynamicNodeInput();
 
       const p2 = {
-        ...errorReportingPart,
+        ...errorReportingNode,
         run: async () => {
           throw new Error("blaft");
         },
@@ -3304,10 +3304,10 @@ describe("main ", () => {
       const onEvent = wrappedOnEvent(DebuggerEventType.ERROR, s);
 
       execute({
-        part: p2,
+        node: p2,
         inputs: { a },
         outputs: {},
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
         _debugger: { onEvent },
         insId: "someIns",
       });
@@ -3324,12 +3324,12 @@ describe("main ", () => {
       });
     });
 
-    it("reports async errors that were reported inside a direct part", async () => {
+    it("reports async errors that were reported inside a direct node", async () => {
       const s = spy();
-      const a = dynamicPartInput();
+      const a = dynamicNodeInput();
 
       const p2 = {
-        ...errorReportingPart,
+        ...errorReportingNode,
         run: async (_, __, { onError }) => {
           onError(new Error("blaft"));
         },
@@ -3339,10 +3339,10 @@ describe("main ", () => {
 
       try {
         execute({
-          part: p2,
+          node: p2,
           inputs: { a },
           outputs: {},
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
           _debugger: { onEvent },
           insId: "someIns",
           // onBubbleError: (e) => {
@@ -3364,33 +3364,33 @@ describe("main ", () => {
       });
     });
 
-    it("reports uncaught thrown that happened on an visual part", async () => {
+    it("reports uncaught thrown that happened on an visual node", async () => {
       const s = spy();
-      const a = dynamicPartInput();
+      const a = dynamicNodeInput();
 
       const p2 = {
-        ...errorReportingPart,
-        id: "partPart2",
+        ...errorReportingNode,
+        id: "nodeNode2",
         run: () => {
           throw new Error("blaft");
         },
       };
 
-      const badWrapper = concisePart({
+      const badWrapper = conciseNode({
         id: "badWrap",
         inputs: ["a"],
         outputs: ["r"],
-        instances: [partInstance("i1", p2.id)],
+        instances: [nodeInstance("i1", p2.id)],
         connections: [["a", "i1.a"]],
       });
 
       const onEvent = wrappedOnEvent(DebuggerEventType.ERROR, s);
 
       execute({
-        part: badWrapper,
+        node: badWrapper,
         inputs: { a },
         outputs: {},
-        resolvedDeps: testPartsCollectionWith(p2),
+        resolvedDeps: testNodesCollectionWith(p2),
         _debugger: { onEvent },
         insId: "someIns",
       });
@@ -3412,33 +3412,33 @@ describe("main ", () => {
       assert.include(s.getCalls()[1]?.args[0].insId, "someIns");
     });
 
-    it("reports uncaught async error that happened on an visual part", async () => {
+    it("reports uncaught async error that happened on an visual node", async () => {
       const s = spy();
-      const a = dynamicPartInput();
+      const a = dynamicNodeInput();
 
       const p2 = {
-        ...errorReportingPart,
-        id: "partPart2",
+        ...errorReportingNode,
+        id: "nodeNode2",
         run: async () => {
           throw new Error("blaft");
         },
       };
 
-      const badWrapper = concisePart({
+      const badWrapper = conciseNode({
         id: "badWrap",
         inputs: ["a"],
         outputs: ["r"],
-        instances: [partInstance("i1", p2.id)],
+        instances: [nodeInstance("i1", p2.id)],
         connections: [["a", "i1.a"]],
       });
 
       const onEvent = wrappedOnEvent(DebuggerEventType.ERROR, s);
 
       execute({
-        part: badWrapper,
+        node: badWrapper,
         inputs: { a },
         outputs: {},
-        resolvedDeps: testPartsCollectionWith(p2),
+        resolvedDeps: testNodesCollectionWith(p2),
         _debugger: { onEvent },
         insId: "someIns",
       });
@@ -3462,25 +3462,25 @@ describe("main ", () => {
       });
     });
 
-    it("reports uncaught errors that happened on an internal part", async () => {
+    it("reports uncaught errors that happened on an internal node", async () => {
       const s = spy();
-      const a = dynamicPartInput();
+      const a = dynamicNodeInput();
 
-      const badWrapper = concisePart({
+      const badWrapper = conciseNode({
         id: "badWrap",
         inputs: ["a"],
         outputs: ["r"],
-        instances: [partInstance("i1", errorReportingPart.id)],
+        instances: [nodeInstance("i1", errorReportingNode.id)],
         connections: [["a", "i1.a"]],
       });
 
       const onEvent = wrappedOnEvent(DebuggerEventType.ERROR, s);
 
       execute({
-        part: badWrapper,
+        node: badWrapper,
         inputs: { a },
         outputs: {},
-        resolvedDeps: testPartsCollectionWith(errorReportingPart),
+        resolvedDeps: testNodesCollectionWith(errorReportingNode),
         _debugger: { onEvent },
         insId: "someIns",
       });
@@ -3502,19 +3502,19 @@ describe("main ", () => {
       assert.include(s.getCalls()[1]?.args[0].insId, "someIns");
     });
 
-    it('allows to catch errors in any part using the "error" pin', async () => {
+    it('allows to catch errors in any node using the "error" pin', async () => {
       const s1 = spy();
       const s2 = spy();
-      const a = dynamicPartInput();
+      const a = dynamicNodeInput();
       const r = dynamicOutput();
 
       r.subscribe(s2);
 
-      const badWrapper = concisePart({
+      const badWrapper = conciseNode({
         id: "badWrap",
         inputs: ["a"],
         outputs: ["r"],
-        instances: [partInstance("i1", errorReportingPart.id)],
+        instances: [nodeInstance("i1", errorReportingNode.id)],
         connections: [
           ["a", "i1.a"],
           [`i1.${ERROR_PIN_ID}`, "r"],
@@ -3524,10 +3524,10 @@ describe("main ", () => {
       const onEvent = wrappedOnEvent(DebuggerEventType.ERROR, s1);
 
       execute({
-        part: badWrapper,
+        node: badWrapper,
         inputs: { a },
         outputs: { r },
-        resolvedDeps: testPartsCollectionWith(errorReportingPart),
+        resolvedDeps: testNodesCollectionWith(errorReportingNode),
         _debugger: { onEvent },
         insId: "someIns",
       });
@@ -3544,16 +3544,16 @@ describe("main ", () => {
     it("does not bubble up caught errors", async () => {
       const s1 = spy();
       const s2 = spy();
-      const a = dynamicPartInput();
+      const a = dynamicNodeInput();
 
       const errPin = dynamicOutput();
       errPin.subscribe(s2);
 
       execute({
-        part: errorReportingPart,
+        node: errorReportingNode,
         inputs: { a },
         outputs: { [ERROR_PIN_ID]: errPin },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
         onBubbleError: s1,
         insId: "someIns",
       });
@@ -3572,15 +3572,15 @@ describe("main ", () => {
     it("does report errors caught errors via debugger", async () => {
       const s = spy();
       const onEvent = wrappedOnEvent(DebuggerEventType.ERROR, s);
-      const a = dynamicPartInput();
+      const a = dynamicNodeInput();
 
       const errPin = dynamicOutput();
 
       execute({
-        part: errorReportingPart,
+        node: errorReportingNode,
         inputs: { a },
         outputs: { [ERROR_PIN_ID]: errPin },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
         insId: "someIns",
         _debugger: { onEvent },
       });
@@ -3593,9 +3593,9 @@ describe("main ", () => {
     });
   });
 
-  describe("async part function", () => {
+  describe("async node function", () => {
     it("works with async functions", async () => {
-      const part = conciseCodePart({
+      const node = conciseCodeNode({
         id: "Async",
         inputs: [],
         outputs: ["r"],
@@ -3607,7 +3607,7 @@ describe("main ", () => {
 
       const [s, r] = spiedOutput();
       const clean = execute({
-        part,
+        node,
         resolvedDeps: {},
         inputs: {},
         outputs: { r },
@@ -3624,14 +3624,14 @@ describe("main ", () => {
   describe("bugs found", () => {
     it("works with accumulate and a static input", () => {
       const [s, r] = spiedOutput();
-      const [val] = dynamicPartInputs() as [DynamicPartInput];
-      const count = staticPartInput(1);
+      const [val] = dynamicNodeInputs() as [DynamicNodeInput];
+      const count = staticNodeInput(1);
 
       execute({
-        part: accumulate,
+        node: accumulate,
         inputs: { val, count },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
 
       assert.equal(s.callCount, 0);
@@ -3644,15 +3644,15 @@ describe("main ", () => {
 
     it("works with spreading a 3 arrayed list into an accumulate 1", () => {
       const [s, r] = spiedOutput();
-      const [list] = dynamicPartInputs() as [DynamicPartInput];
+      const [list] = dynamicNodeInputs() as [DynamicNodeInput];
 
-      const part = concisePart({
+      const node = conciseNode({
         id: "merger",
         inputs: ["list"],
         outputs: ["r"],
         instances: [
-          partInstance("i1", spreadList.id),
-          partInstance("i2", accumulate.id, { count: staticInputPinConfig(1) }),
+          nodeInstance("i1", spreadList.id),
+          nodeInstance("i2", accumulate.id, { count: staticInputPinConfig(1) }),
         ],
         connections: [
           ["list", "i1.list"],
@@ -3662,10 +3662,10 @@ describe("main ", () => {
       });
 
       execute({
-        part: part,
+        node: node,
         inputs: { list },
         outputs: { r },
-        resolvedDeps: testPartsCollectionWith(spreadList, accumulate),
+        resolvedDeps: testNodesCollectionWith(spreadList, accumulate),
       });
 
       assert.equal(s.callCount, 0);
@@ -3677,13 +3677,13 @@ describe("main ", () => {
     });
 
     it("does not get in a loop with a sticky input that got data", () => {
-      const part = concisePart({
+      const node = conciseNode({
         id: "test",
         inputs: [],
         outputs: ["r"],
         instances: [
-          partInstance("i1", id.id, { v: staticInputPinConfig("bob") }),
-          partInstance("i2", id.id, { v: stickyInputPinConfig() }),
+          nodeInstance("i1", id.id, { v: staticInputPinConfig("bob") }),
+          nodeInstance("i2", id.id, { v: stickyInputPinConfig() }),
         ],
         connections: [
           ["i1.r", "i2.v"],
@@ -3694,10 +3694,10 @@ describe("main ", () => {
       const [s, r] = spiedOutput();
 
       execute({
-        part: part,
+        node: node,
         inputs: {},
         outputs: { r },
-        resolvedDeps: testPartsCollectionWith(id),
+        resolvedDeps: testNodesCollectionWith(id),
       });
 
       // a.subject.next(1);
@@ -3707,7 +3707,7 @@ describe("main ", () => {
 
     // todo - add this to the implicit completion test suite
     it("queues values properly when inputs are received in a synchronous order in an async function", async () => {
-      const loopValuesPart = conciseCodePart({
+      const loopValuesNode = conciseCodeNode({
         id: "loopValues",
         inputs: [],
         outputs: ["r"],
@@ -3716,7 +3716,7 @@ describe("main ", () => {
         },
       });
 
-      const asyncId = conciseCodePart({
+      const asyncId = conciseCodeNode({
         id: "asyncId",
         inputs: ["v"],
         outputs: ["r"],
@@ -3725,13 +3725,13 @@ describe("main ", () => {
         },
       });
 
-      const wrapperPart = concisePart({
+      const wrapperNode = conciseNode({
         id: "wrapper",
         inputs: [],
         outputs: ["r"],
         instances: [
-          partInstance("i1", loopValuesPart.id),
-          partInstance("i2", asyncId.id),
+          nodeInstance("i1", loopValuesNode.id),
+          nodeInstance("i2", asyncId.id),
         ],
         connections: [
           ["i1.r", "i2.v"],
@@ -3742,10 +3742,10 @@ describe("main ", () => {
       const [s, r] = spiedOutput();
 
       execute({
-        part: wrapperPart,
+        node: wrapperNode,
         inputs: {},
         outputs: { r },
-        resolvedDeps: testPartsCollectionWith(loopValuesPart, asyncId),
+        resolvedDeps: testNodesCollectionWith(loopValuesNode, asyncId),
       });
 
       await eventually(() => {
@@ -3767,18 +3767,18 @@ describe("main ", () => {
         [prop2Name]: prop2Value,
       };
 
-      const visualPart: VisualPart = {
-        id: "visual-part",
+      const visualNode: VisualNode = {
+        id: "visual-node",
         inputsPosition: {},
         outputsPosition: {},
         inputs: {
-          n1: partInput(),
+          n1: nodeInput(),
         },
         outputs: {
-          r: partOutput(),
+          r: nodeOutput(),
         },
         instances: [
-          partInstance("a", add.id, {
+          nodeInstance("a", add.id, {
             n1: staticInputPinConfig(`$ENV.${prop1Name}`),
             n2: staticInputPinConfig(`$ENV.${prop2Name}`),
           }),
@@ -3792,7 +3792,7 @@ describe("main ", () => {
       };
 
       const [n1] = [
-        dynamicPartInput({
+        dynamicNodeInput({
           // config: queueInputPinConfig(),
         }),
       ];
@@ -3800,10 +3800,10 @@ describe("main ", () => {
       const [s, r] = spiedOutput();
 
       execute({
-        part: visualPart,
+        node: visualNode,
         inputs: { n1 },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
         env,
       });
 
@@ -3814,13 +3814,13 @@ describe("main ", () => {
     });
 
     it("supports reading non string env variables", async () => {
-      const groupedId = concisePart({
+      const groupedId = conciseNode({
         id: "gid",
         inputs: [],
         outputs: ["r"],
         connections: [["i1.r", "r"]],
         instances: [
-          partInstance("i1", id.id, { v: staticInputPinConfig("$ENV.aValue") }),
+          nodeInstance("i1", id.id, { v: staticInputPinConfig("$ENV.aValue") }),
         ],
       });
 
@@ -3834,10 +3834,10 @@ describe("main ", () => {
         const [s, r] = spiedOutput();
         const env = { aValue: val };
         execute({
-          part: groupedId,
+          node: groupedId,
           inputs: {},
           outputs: { r },
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
           env,
         });
         assert.deepEqual(callsFirstArgs(s), [val]);
@@ -3845,13 +3845,13 @@ describe("main ", () => {
     });
 
     it("supports reading properties from objects in env", async () => {
-      const groupedId = concisePart({
+      const groupedId = conciseNode({
         id: "gid",
         inputs: [],
         outputs: ["r"],
         connections: [["i1.r", "r"]],
         instances: [
-          partInstance("i1", id.id, {
+          nodeInstance("i1", id.id, {
             v: staticInputPinConfig("$ENV.myObj.student.name"),
           }),
         ],
@@ -3867,23 +3867,23 @@ describe("main ", () => {
 
       const [s, r] = spiedOutput();
       execute({
-        part: groupedId,
+        node: groupedId,
         inputs: {},
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
         env,
       });
       assert.deepEqual(callsFirstArgs(s), ["Albert"]);
     });
 
     it("throws error if config value was not found", async () => {
-      const groupedId = concisePart({
+      const groupedId = conciseNode({
         id: "gid",
         inputs: [],
         outputs: ["r"],
         connections: [["i1.r", "r"]],
         instances: [
-          partInstance("i1", id.id, {
+          nodeInstance("i1", id.id, {
             v: staticInputPinConfig("$ENV.myObj.student.name"),
           }),
         ],
@@ -3895,10 +3895,10 @@ describe("main ", () => {
       const [_, r] = spiedOutput();
 
       execute({
-        part: groupedId,
+        node: groupedId,
         inputs: {},
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
         onBubbleError: onError,
         env,
       });
@@ -3907,15 +3907,15 @@ describe("main ", () => {
     });
   });
 
-  describe("part level trigger", () => {
-    it("waits for __trigger input inside visual part", () => {
-      const v42 = valuePart("val", 42);
+  describe("node level trigger", () => {
+    it("waits for __trigger input inside visual node", () => {
+      const v42 = valueNode("val", 42);
 
-      const visualPart = concisePart({
-        id: "visual-part",
+      const visualNode = conciseNode({
+        id: "visual-node",
         inputs: ["a|optional"],
         outputs: ["r"],
-        instances: [partInstance("v1", v42.id)],
+        instances: [nodeInstance("v1", v42.id)],
         connections: [
           ["a", "v1.__trigger"],
           ["v1.r", "r"],
@@ -3923,16 +3923,16 @@ describe("main ", () => {
       });
 
       const [s, r] = spiedOutput();
-      const a = dynamicPartInput();
+      const a = dynamicNodeInput();
 
       const err = (e: Error) => {
         throw e;
       };
       execute({
-        part: visualPart,
+        node: visualNode,
         inputs: { a },
         outputs: { r },
-        resolvedDeps: testPartsCollectionWith(v42),
+        resolvedDeps: testNodesCollectionWith(v42),
         onBubbleError: err,
       });
 
@@ -3945,19 +3945,19 @@ describe("main ", () => {
     });
 
     it("trigger input works in combination with static inputs", () => {
-      const addPart = conciseCodePart({
+      const addNode = conciseCodeNode({
         id: "add",
         inputs: ["a", "b"],
         outputs: ["r"],
         run: (inputs, outputs) => outputs.r?.next(inputs.a + inputs.b),
       });
 
-      const visualPart = concisePart({
-        id: "visual-part",
+      const visualNode = conciseNode({
+        id: "visual-node",
         inputs: ["a|optional"],
         outputs: ["r"],
         instances: [
-          partInstance("a1", addPart.id, {
+          nodeInstance("a1", addNode.id, {
             a: staticInputPinConfig(1),
             b: staticInputPinConfig(2),
           }),
@@ -3969,16 +3969,16 @@ describe("main ", () => {
       });
 
       const [s, r] = spiedOutput();
-      const a = dynamicPartInput();
+      const a = dynamicNodeInput();
 
       const err = (e: Error) => {
         throw e;
       };
       execute({
-        part: visualPart,
+        node: visualNode,
         inputs: { a },
         outputs: { r },
-        resolvedDeps: testPartsCollectionWith(addPart),
+        resolvedDeps: testNodesCollectionWith(addNode),
         onBubbleError: err,
       });
 
@@ -3991,19 +3991,19 @@ describe("main ", () => {
     });
 
     it("trigger input cannot be static", () => {
-      const addPart = conciseCodePart({
+      const addNode = conciseCodeNode({
         id: "add",
         inputs: ["a", "b"],
         outputs: ["r"],
         run: (inputs, outputs) => outputs.r?.next(inputs.a + inputs.b),
       });
 
-      const visualPart = concisePart({
-        id: "visual-part",
+      const visualNode = conciseNode({
+        id: "visual-node",
         inputs: ["a"],
         outputs: ["r"],
         instances: [
-          partInstance("a1", addPart.id, {
+          nodeInstance("a1", addNode.id, {
             a: staticInputPinConfig(1),
             b: staticInputPinConfig(2),
             __trigger: staticInputPinConfig(2),
@@ -4016,14 +4016,14 @@ describe("main ", () => {
       });
 
       const [s, r] = spiedOutput();
-      const a = dynamicPartInput();
+      const a = dynamicNodeInput();
 
       const errSpy = spy();
       execute({
-        part: visualPart,
+        node: visualNode,
         inputs: { a },
         outputs: { r },
-        resolvedDeps: testPartsCollectionWith(addPart),
+        resolvedDeps: testNodesCollectionWith(addNode),
         onBubbleError: errSpy,
       });
 
@@ -4038,8 +4038,8 @@ describe("main ", () => {
 
   describe("misc", () => {
     it("does not clean state when reactive input is received", () => {
-      const part = conciseCodePart({
-        id: "part",
+      const node = conciseCodeNode({
+        id: "node",
         inputs: ["a"],
         outputs: ["r"],
         reactiveInputs: ["a"],
@@ -4053,12 +4053,12 @@ describe("main ", () => {
       });
 
       const [s, r] = spiedOutput();
-      const a = dynamicPartInput();
+      const a = dynamicNodeInput();
       execute({
-        part,
+        node,
         inputs: { a },
         outputs: { r },
-        resolvedDeps: testPartsCollectionWith(part),
+        resolvedDeps: testNodesCollectionWith(node),
       });
 
       const timesToCall = randomInt(3, 10);
@@ -4071,8 +4071,8 @@ describe("main ", () => {
     });
 
     it("does not enter a loop when static values are connected to a reactive input", () => {
-      const part = conciseCodePart({
-        id: "part",
+      const node = conciseCodeNode({
+        id: "node",
         inputs: ["a"],
         outputs: ["r"],
         reactiveInputs: ["a"],
@@ -4083,12 +4083,12 @@ describe("main ", () => {
       });
 
       const [s, r] = spiedOutput();
-      const a = staticPartInput(5);
+      const a = staticNodeInput(5);
       execute({
-        part,
+        node,
         inputs: { a },
         outputs: { r },
-        resolvedDeps: testPartsCollectionWith(part),
+        resolvedDeps: testNodesCollectionWith(node),
       });
       assert.equal(s.callCount, 1);
     });

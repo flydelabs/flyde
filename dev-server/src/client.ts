@@ -5,8 +5,8 @@ import {
   ResolvedDependenciesDefinitions,
 } from "@flyde/core";
 import { FolderStructure } from "./fs-helper/shared";
-import type { ImportablesResult } from "./service/scan-importable-parts";
-export type { ImportablesResult } from "./service/scan-importable-parts";
+import type { ImportablesResult } from "./service/scan-importable-nodes";
+export type { ImportablesResult } from "./service/scan-importable-nodes";
 
 export * from "./runner/shared";
 
@@ -35,11 +35,11 @@ export const createDevServerClient = (baseUrl: string) => {
         .get(`${baseUrl}/importables?filename=${filename}`)
         .then((res) => res.data);
     },
-    generatePartFromPrompt: (
+    generateNodeFromPrompt: (
       prompt: string
-    ): Promise<{ importablePart: ImportableSource }> => {
+    ): Promise<{ importableNode: ImportableSource }> => {
       return axios
-        .post(`${baseUrl}/generatePart`, { prompt })
+        .post(`${baseUrl}/generateNode`, { prompt })
         .then((res) => res.data);
     },
   };

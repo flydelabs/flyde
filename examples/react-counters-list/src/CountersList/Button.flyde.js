@@ -1,6 +1,6 @@
 const React = require("react"); // hack to workaround esm complexities
 
-const part = {
+const node = {
   id: "Button",
   inputs: {
     children: { type: "any", mode: "required" },
@@ -24,4 +24,4 @@ const part = {
   },
 };
 
-module.exports = part;
+module.exports = node;

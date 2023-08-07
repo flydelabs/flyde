@@ -10,7 +10,7 @@ imports:
     - Button
   ./Span.flyde.js:
     - Span
-part:
+node:
   instances:
     - pos:
         x: -115.26095214843747
@@ -22,7 +22,7 @@ part:
           value: +
       visibleInputs:
         - children
-      partId: Button
+      nodeId: Button
       style:
         size: large
         color: "#00bbf9"
@@ -35,7 +35,7 @@ part:
           mode: queue
       visibleInputs:
         - children
-      partId: Span
+      nodeId: Span
       style:
         size: large
         color: "#9b5de5"
@@ -49,7 +49,7 @@ part:
           value: "-"
       visibleInputs:
         - children
-      partId: Button
+      nodeId: Button
       style:
         size: large
         color: "#00bbf9"
@@ -68,7 +68,7 @@ part:
         - key
         - value
         - __trigger
-      partId: Publish
+      nodeId: Publish
       style:
         color: "#00bbf9"
     - pos:
@@ -79,7 +79,7 @@ part:
         key:
           mode: static
           value: inc
-      partId: Subscribe
+      nodeId: Subscribe
       style:
         color: "#00f5d4"
     - pos:
@@ -89,7 +89,7 @@ part:
       inputConfig:
         n1:
           mode: sticky
-      partId: Add
+      nodeId: Add
     - pos:
         x: -387.2609814453125
         y: -186.2929638671875
@@ -101,7 +101,7 @@ part:
         initial:
           mode: static
           value: 0
-      partId: Subscribe
+      nodeId: Subscribe
       style:
         color: "#00f5d4"
     - pos:
@@ -119,7 +119,7 @@ part:
         - key
         - value
         - __trigger
-      partId: Publish
+      nodeId: Publish
       style:
         color: "#00bbf9"
     - pos:
@@ -134,7 +134,7 @@ part:
           mode: queue
       visibleInputs:
         - value
-      partId: Publish
+      nodeId: Publish
       style:
         color: "#00bbf9"
     - pos:
@@ -142,7 +142,7 @@ part:
         y: 110.83120086669919
       id: Inline-value-Value is ${inp-308
       inputConfig: {}
-      part:
+      node:
         id: Inline-value-${inputs.count
         inputs:
           count:
@@ -170,7 +170,7 @@ part:
         y: 12.137357788085978
       id: Inline-value-0-783
       inputConfig: {}
-      part:
+      node:
         id: Inline-value-0
         inputs: {}
         outputs:
@@ -201,7 +201,7 @@ part:
           mode: sticky
         value2:
           mode: sticky
-      partId: List From 3
+      nodeId: List From 3
   connections:
     - from:
         insId: Button-410

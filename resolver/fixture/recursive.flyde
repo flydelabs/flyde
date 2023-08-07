@@ -1,4 +1,4 @@
-part:
+node:
   id: Recursive
   inputs:
     a:
@@ -17,7 +17,7 @@ part:
       y: 100
   instances:
     - id: ins
-      partId: Recursive
+      nodeId: Recursive
       pos: 
         x: 0
         y: 0

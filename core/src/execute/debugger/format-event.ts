@@ -20,7 +20,7 @@ function eventBody(event: DebuggerEvent) {
 export function formatEvent(event: DebuggerEvent) {
   const insIds = [event.insId, ...(event.ancestorsInsIds?.split(".") ?? [])];
   event.ancestorsInsIds?.length > 0 ? ` -> ${event.ancestorsInsIds}` : "";
-  const prefix = `Part <${event.partId}> `;
+  const prefix = `Node <${event.nodeId}> `;
   const suffix = `(${insIds.join(" -> ")})`;
   return `${prefix} - ${eventBody(event)} ${suffix}`;
 }

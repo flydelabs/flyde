@@ -66,7 +66,7 @@
 // 				const jsx = new Subject<any>();
 
 // 				const inc = new Subject(), dec = new Subject();
-// 				execute({part: Counter, {value}, inputs: {jsx, outputs: inc, resolvedDeps: dec}});
+// 				execute({node: Counter, {value}, inputs: {jsx, outputs: inc, resolvedDeps: dec}});
 
 // 				const d = pipeToDomAndReturnDriver(jsx);
 // 				value.next(i);

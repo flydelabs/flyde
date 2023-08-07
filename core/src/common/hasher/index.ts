@@ -1,18 +1,18 @@
 import _md5 from "md5";
 import { FlydeFlow } from "../../flow-schema";
-import { isInlineValuePart, isVisualPart, Part } from "../../part";
+import { isInlineValueNode, isVisualNode, Node } from "../../node";
 
 const md5 = (str: string) => {
   return _md5(str);
 };
 
-export const hashPart = (part: Part, ignorePos = true) => {
-  const { id, completionOutputs, reactiveInputs, inputs, outputs } = part;
+export const hashNode = (node: Node, ignorePos = true) => {
+  const { id, completionOutputs, reactiveInputs, inputs, outputs } = node;
 
-  const basePart = { id, completionOutputs, reactiveInputs, inputs, outputs };
+  const baseNode = { id, completionOutputs, reactiveInputs, inputs, outputs };
 
-  if (isVisualPart(part)) {
-    const { instances, connections, inputsPosition, outputsPosition } = part;
+  if (isVisualNode(node)) {
+    const { instances, connections, inputsPosition, outputsPosition } = node;
     // const cleanedInstances = ignorePos ? instances.map((ins) => {
     //     const { pos, ...rest } = ins;
     //     return rest;
@@ -39,23 +39,23 @@ export const hashPart = (part: Part, ignorePos = true) => {
     const str = JSON.stringify({
       instancesToUse,
       conns,
-      ...basePart,
+      ...baseNode,
       maybeIoPos,
     });
     return md5(str);
-  } else if (isInlineValuePart(part)) {
-    const { customViewCode } = part;
-    const fnCode = part.fnCode ?? part.runFnRawCode;
-    const str = JSON.stringify({ fnCode, customViewCode, ...basePart });
+  } else if (isInlineValueNode(node)) {
+    const { customViewCode } = node;
+    const fnCode = node.fnCode ?? node.runFnRawCode;
+    const str = JSON.stringify({ fnCode, customViewCode, ...baseNode });
     return md5(str);
   }
-  throw new Error(`Hashing code parts unsupported`);
+  throw new Error(`Hashing code nodes unsupported`);
 };
 
 export const hashFlow = (flow: FlydeFlow) => {
-  const { part, imports } = flow;
+  const { node, imports } = flow;
 
-  const partHash = hashPart(part, false);
+  const nodeHash = hashNode(node, false);
 
   const orderedImports = Object.entries(imports ?? {})
     .sort(([k1], [k2]) => k1.localeCompare(k2))
@@ -64,5 +64,5 @@ export const hashFlow = (flow: FlydeFlow) => {
 
   const rest = JSON.stringify(orderedImports);
 
-  return md5(partHash + rest);
+  return md5(nodeHash + rest);
 };

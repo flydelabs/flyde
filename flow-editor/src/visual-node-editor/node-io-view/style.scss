@@ -1,0 +1,27 @@
+@import "../../lib/common.scss";
+
+.node-io-view {
+  .node-io-view-inner {
+    @include base-node;
+    font-size: 18px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 5px;
+  }
+
+  &.input {
+    .node-io-view-inner {
+      @include custom-node-color(#e7f8ff);
+    }
+  }
+
+  &.output {
+    .node-io-view-inner {
+      @include custom-node-color($output-color);
+    }
+  }
+
+  &.active .node-io-view-inner {
+    background: #c8ffc7;
+  }
+}

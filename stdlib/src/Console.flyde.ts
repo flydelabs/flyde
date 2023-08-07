@@ -1,8 +1,8 @@
-import { CodePart } from "@flyde/core";
+import { CodeNode } from "@flyde/core";
 
 const namespace = "Console";
 
-export const Log: CodePart = {
+export const Log: CodeNode = {
   id: "Log",
   defaultStyle: {
     icon: "fa-terminal",
@@ -16,7 +16,7 @@ export const Log: CodePart = {
   run: ({ value }) => console.log(value),
 };
 
-export const Error: CodePart = {
+export const Error: CodeNode = {
   id: "Error",
   defaultStyle: {
     icon: "fa-terminal",

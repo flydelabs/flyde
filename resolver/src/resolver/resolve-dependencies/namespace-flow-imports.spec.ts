@@ -1,8 +1,8 @@
 import {
-  VisualPart,
-  visualPart,
-  partInstance,
-  RefPartInstance,
+  VisualNode,
+  visualNode,
+  nodeInstance,
+  RefNodeInstance,
   ResolvedFlydeFlow,
   ResolvedFlydeFlowDefinition,
 } from "@flyde/core";
@@ -11,22 +11,22 @@ import _ = require("lodash");
 import { namespaceFlowImports } from "./namespace-flow-imports";
 
 describe("namespace flows", () => {
-  it("namespaces referred part ids and their imports", () => {
+  it("namespaces referred node ids and their imports", () => {
     const flow: ResolvedFlydeFlowDefinition = {
-      main: visualPart({
+      main: visualNode({
         id: "Bob",
-        instances: [partInstance("i1", "Alice")],
+        instances: [nodeInstance("i1", "Alice")],
       }),
       dependencies: {
         Alice: {
-          ...visualPart({
+          ...visualNode({
             id: "Alice",
-            instances: [partInstance("i2", "Dave")],
+            instances: [nodeInstance("i2", "Dave")],
           }),
           source: {
-            path: 'bob',
-            export: 'default'
-          }
+            path: "bob",
+            export: "default",
+          },
         },
       },
     };
@@ -34,7 +34,7 @@ describe("namespace flows", () => {
     const namespaced = namespaceFlowImports(flow, "NS__");
 
     assert.equal(
-      (namespaced.main.instances[0] as RefPartInstance).partId,
+      (namespaced.main.instances[0] as RefNodeInstance).nodeId,
       "NS__Alice"
     );
 
@@ -43,9 +43,9 @@ describe("namespace flows", () => {
 
     assert.equal(
       (
-        (namespaced.dependencies["NS__Alice"] as unknown as VisualPart)
-          .instances[0] as RefPartInstance
-      ).partId,
+        (namespaced.dependencies["NS__Alice"] as unknown as VisualNode)
+          .instances[0] as RefNodeInstance
+      ).nodeId,
       "NS__Dave"
     );
   });

@@ -1,7 +1,7 @@
 imports:
   "@acme/one-problematic-one-ok":
   - Ok
-part:
+node:
   id: Bob
   inputs:
     n1:
@@ -12,7 +12,7 @@ part:
     result:
       type: number
   instances:
-    - partId: Ok
+    - nodeId: Ok
       id: ins
       pos: 
         x: 0

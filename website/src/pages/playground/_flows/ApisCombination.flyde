@@ -3,14 +3,14 @@ imports:
     - GET Request
     - POST Request
     - Get Attribute
-part:
+node:
   instances:
     - pos:
         x: -652.4219506835938
         y: 281.67776977539063
       id: Inline-value-Hello from ${i76
       inputConfig: {}
-      part:
+      node:
         id: "Inline-value-Hello visitor "
         inputs:
           country:
@@ -43,7 +43,7 @@ part:
         y: -228.04816649675365
       id: Get User's Country-ins
       inputConfig: {}
-      part:
+      node:
         id: Get User's Country
         inputs: {}
         outputs:
@@ -68,9 +68,9 @@ part:
               - __error
               - response
               - data
-            partId: GET Request
+            nodeId: GET Request
           - id: "Inline-value-{iso2: ${input76"
-            part:
+            node:
               id: "Inline-value-{iso2: inputs.d"
               inputs:
                 data:
@@ -132,7 +132,7 @@ part:
       visibleOutputs:
         - name
         - capital
-      part:
+      node:
         id: Get Country Name And Capital
         inputs:
           body:
@@ -160,9 +160,9 @@ part:
               - url
               - body
               - data
-            partId: POST Request
+            nodeId: POST Request
           - id: Get Attribute-217
-            partId: Get Attribute
+            nodeId: Get Attribute
             inputConfig:
               attribute:
                 mode: static
@@ -171,7 +171,7 @@ part:
               x: -285.6922900390625
               y: 219.88888122558592
           - id: Get Country Name And Capital-srp46ei
-            partId: Get Attribute
+            nodeId: Get Attribute
             inputConfig:
               attribute:
                 mode: static
@@ -237,7 +237,7 @@ part:
         y: 175.29793395996091
       id: Format Number-ins
       inputConfig: {}
-      part:
+      node:
         id: Format Number
         inputs:
           number:
@@ -250,7 +250,7 @@ part:
             optional: false
         instances:
           - id: Inline-value-Result is ${in47
-            part:
+            node:
               id: Inline-value-new Intl.Number
               inputs:
                 population:
@@ -308,7 +308,7 @@ part:
         y: 54.336173706054694
       id: cl8x5r4qp00074666lb382z1c
       inputConfig: {}
-      part:
+      node:
         id: Get Population By City
         inputs:
           city:
@@ -332,13 +332,13 @@ part:
               - url
               - body
               - data
-            partId: POST Request
+            nodeId: POST Request
           - pos:
               x: -143.08780761718754
               y: 233.70198646545413
             id: "Inline-value-{city: inputs.c75"
             inputConfig: {}
-            part:
+            node:
               id: "Inline-value-{city: inputs.c"
               inputs:
                 city:
@@ -356,7 +356,7 @@ part:
               completionOutputs:
                 - r
           - id: Get Attribute-893
-            partId: Get Attribute
+            nodeId: Get Attribute
             inputConfig:
               attribute:
                 mode: static

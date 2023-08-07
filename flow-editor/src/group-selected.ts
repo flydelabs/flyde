@@ -1,9 +1,9 @@
 import {
-  VisualPart,
+  VisualNode,
   middlePos,
-  partInstance,
+  nodeInstance,
   ConnectionData,
-  inlinePartInstance,
+  inlineNodeInstance,
   createInsId,
 } from "@flyde/core";
 import produce from "immer";
@@ -12,12 +12,12 @@ import { PromptFn } from "./flow-editor/ports";
 
 export const groupSelected = async (
   selected: string[],
-  part: VisualPart,
-  partName: string,
+  node: VisualNode,
+  nodeName: string,
   type: "inline" | "ref",
   prompt: PromptFn
-): Promise<{ newPart: VisualPart; currentPart: VisualPart }> => {
-  const { instances, connections } = part;
+): Promise<{ newNode: VisualNode; currentNode: VisualNode }> => {
+  const { instances, connections } = node;
   const relevantInstances = instances.filter((ins) =>
     selected.includes(ins.id)
   );
@@ -32,10 +32,10 @@ export const groupSelected = async (
     throw new Error("visual without selections");
   }
 
-  const { visualPart, renamedInputs, renamedOutputs } = await createGroup(
+  const { visualNode, renamedInputs, renamedOutputs } = await createGroup(
     relevantInstances,
     relevantConnections,
-    partName,
+    nodeName,
     prompt
   );
   const midPos = relevantInstances.reduce((p, c) => {
@@ -44,10 +44,10 @@ export const groupSelected = async (
   }, instances[0].pos);
   const newInstance =
     type === "ref"
-      ? partInstance(createInsId(visualPart), visualPart.id, {}, midPos)
-      : inlinePartInstance(createInsId(visualPart), visualPart, {}, midPos);
+      ? nodeInstance(createInsId(visualNode), visualNode.id, {}, midPos)
+      : inlineNodeInstance(createInsId(visualNode), visualNode, {}, midPos);
 
-  // replace relevant parts with new part
+  // replace relevant nodes with new node
   const newInstancesArr = instances.filter((ins) => {
     return selected.indexOf(ins.id) === -1;
   });
@@ -88,8 +88,8 @@ export const groupSelected = async (
     });
 
   return {
-    newPart: visualPart,
-    currentPart: produce(part, (draft) => {
+    newNode: visualNode,
+    currentNode: produce(node, (draft) => {
       draft.instances = [...newInstancesArr, newInstance];
       draft.connections = newConnections;
     }),

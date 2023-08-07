@@ -1,39 +1,39 @@
 import { spy } from "sinon";
 import Sinon = require("sinon");
-import { BasePart, InputPinMap, VisualPart, CodePart, PartInstance } from "./.";
+import { BaseNode, InputPinMap, VisualNode, CodeNode, NodeInstance } from "./.";
 
 import {
   DynamicOutput,
   dynamicOutput,
   InputMode,
   OutputPinMap,
-  partInput,
-  partOutput,
-} from "./part";
+  nodeInput,
+  nodeOutput,
+} from "./node";
 
 import { connectionNode, externalConnectionNode } from "./connect";
 
 import { DebuggerEventType, DebuggerEvent, Debugger } from "./execute/debugger";
 
-export interface ConciseBasePart
-  extends Omit<BasePart, "inputs" | "outputs" | "id"> {
+export interface ConciseBaseNode
+  extends Omit<BaseNode, "inputs" | "outputs" | "id"> {
   inputs?: string[];
   outputs?: string[];
   id?: string;
 }
 
-export interface ConciseVisualPart extends ConciseBasePart {
+export interface ConciseVisualNode extends ConciseBaseNode {
   connections: Array<[string, string]>;
-  instances: PartInstance[];
+  instances: NodeInstance[];
 }
 
-export interface ConciseCodePart extends ConciseBasePart {
-  run: CodePart["run"];
+export interface ConciseCodeNode extends ConciseBaseNode {
+  run: CodeNode["run"];
 }
 
-export const conciseBasePart = (concise: ConciseBasePart): BasePart => {
+export const conciseBaseNode = (concise: ConciseBaseNode): BaseNode => {
   return {
-    id: "a-part",
+    id: "a-node",
     ...concise,
     inputs: (concise.inputs || []).reduce<InputPinMap>((prev, curr) => {
       const [clean, mode] = curr.split("|");
@@ -41,23 +41,23 @@ export const conciseBasePart = (concise: ConciseBasePart): BasePart => {
         mode &&
         !["required", "required-if-connected", "optional"].includes(mode)
       ) {
-        throw new Error(`Bad mode ${mode} in concise part`);
+        throw new Error(`Bad mode ${mode} in concise node`);
       }
       if (!clean) {
-        throw new Error(`Bad input ${curr} in concise part`);
+        throw new Error(`Bad input ${curr} in concise node`);
       }
 
-      return { ...prev, [clean]: partInput(mode as InputMode) };
+      return { ...prev, [clean]: nodeInput(mode as InputMode) };
     }, {}),
     outputs: (concise.outputs || []).reduce<OutputPinMap>((prev, curr) => {
       const clean = curr.replace("?", "");
-      return { ...prev, [clean]: partOutput(clean !== curr) };
+      return { ...prev, [clean]: nodeOutput(clean !== curr) };
     }, {}),
   };
 };
 
-export const concisePart = (concise: ConciseVisualPart): VisualPart => {
-  const base = conciseBasePart(concise);
+export const conciseNode = (concise: ConciseVisualNode): VisualNode => {
+  const base = conciseBaseNode(concise);
 
   return {
     ...base,
@@ -66,11 +66,11 @@ export const concisePart = (concise: ConciseVisualPart): VisualPart => {
       const [t1, t2] = to.split(".");
 
       if (!f1) {
-        throw new Error(`Bad source connection ${from} in concise part`);
+        throw new Error(`Bad source connection ${from} in concise node`);
       }
 
       if (!t1) {
-        throw new Error(`Bad target connection ${to} in concise part`);
+        throw new Error(`Bad target connection ${to} in concise node`);
       }
 
       return {
@@ -84,16 +84,16 @@ export const concisePart = (concise: ConciseVisualPart): VisualPart => {
   };
 };
 
-export const conciseCodePart = (concise: ConciseCodePart): CodePart => {
-  const base = conciseBasePart(concise);
+export const conciseCodeNode = (concise: ConciseCodeNode): CodeNode => {
+  const base = conciseBaseNode(concise);
   return {
     ...base,
     run: concise.run,
   };
 };
 
-export const valuePart = (name: string, value: any) =>
-  conciseCodePart({
+export const valueNode = (name: string, value: any) =>
+  conciseCodeNode({
     id: name,
     inputs: [],
     outputs: ["r"],

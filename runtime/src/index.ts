@@ -1,7 +1,7 @@
 import {
   ExecuteParams,
   FlydeFlow,
-  ImportedPart,
+  ImportedNode,
   ResolvedDependencies,
   simplifiedExecute,
 } from "@flyde/core";
@@ -16,7 +16,7 @@ import { getCallPath } from "./get-call-path";
 import { debugLogger } from "./logger";
 
 // convenience exports
-export { CodePart, BasePart, VisualPart } from "@flyde/core";
+export { CodeNode, BaseNode, VisualNode } from "@flyde/core";
 
 export type PromiseWithEmitter<T> = Promise<T> & { on: EventEmitter["on"] };
 
@@ -46,12 +46,12 @@ export function loadFlowFromContent<Inputs>(
     fullFlowPath
   ) as ResolvedDependencies;
 
-  const mainPart: ImportedPart = {
-    ...flow.part,
+  const mainNode: ImportedNode = {
+    ...flow.node,
     source: { path: fullFlowPath, export: "n/a" },
-  }; // TODO - fix the need for imported visual parts to declare an export source.
+  }; // TODO - fix the need for imported visual nodes to declare an export source.
 
-  deps[mainPart.id] = mainPart;
+  deps[mainNode.id] = mainNode;
 
   return (inputs, params = {}) => {
     const { onOutputs, ...otherParams } = params;
@@ -65,7 +65,7 @@ export function loadFlowFromContent<Inputs>(
 
       debugLogger("Using debugger %o", _debugger);
       destroy = await simplifiedExecute(
-        flow.part,
+        flow.node,
         deps,
         inputs || {},
         onOutputs,

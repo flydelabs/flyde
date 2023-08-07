@@ -14,7 +14,7 @@ declare module '<%-MODULE_NAME%>' {
     */
     export function <%-FN_NAME%>(path: '<%-locatedFlow.relativePath%>'): never;
         <%_} else {_%>
-    export function <%-FN_NAME%>(path: '<%-locatedFlow.relativePath%>'): LoadedFlowExecuteFn<{<%- Object.keys(locatedFlow.flow.part.inputs || {}).map(k => `${k}: any`).join(', ') %>}>;
+    export function <%-FN_NAME%>(path: '<%-locatedFlow.relativePath%>'): LoadedFlowExecuteFn<{<%- Object.keys(locatedFlow.flow.node.inputs || {}).map(k => `${k}: any`).join(', ') %>}>;
         <%_} _%>
     <%_ }); _%>   
 }

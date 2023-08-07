@@ -1,47 +1,47 @@
 export * from "./common";
 import { Pos, OMap } from "./common";
 import {
-  CustomPart,
-  VisualPart,
+  CustomNode,
+  VisualNode,
   InputPinsConfig,
-  maybeGetStaticValuePartId,
-  Part,
-  PartDefinition,
-} from "./part";
+  maybeGetStaticValueNodeId,
+  Node,
+  NodeDefinition,
+} from "./node";
 
 export * from "./connect";
 
 export * from "./execute";
 export * from "./simplified-execute";
 
-export * from "./part";
+export * from "./node";
 
-export * from "./part/get-part-with-dependencies";
+export * from "./node/get-node-with-dependencies";
 
 // export * from "./serdes";
 
-export * from "./inline-value-to-code-part";
+export * from "./inline-value-to-code-node";
 
 export * from "./web-project";
 
 export * from "./flow-schema";
 
-export type InputStaticValue = string | number | object | VisualPart;
+export type InputStaticValue = string | number | object | VisualNode;
 
-export const isStaticValueVisualPart = (val: InputStaticValue): boolean => {
-  return !!val && !!maybeGetStaticValuePartId(`${val}`);
+export const isStaticValueVisualNode = (val: InputStaticValue): boolean => {
+  return !!val && !!maybeGetStaticValueNodeId(`${val}`);
 };
 
 export interface InstanceViewData {
   id: string;
-  partIdOrGroup: string | VisualPart;
+  nodeIdOrGroup: string | VisualNode;
   pos: Pos;
   visibleOptionalInputs?: string[];
   inputConfig: InputPinsConfig;
 }
 
-export type PartsCollection = OMap<Part>;
+export type NodesCollection = OMap<Node>;
 
-export type PartsDefCollection = OMap<PartDefinition>;
+export type NodesDefCollection = OMap<NodeDefinition>;
 
-export type CustomPartsCollection = OMap<CustomPart>;
+export type CustomNodesCollection = OMap<CustomNode>;

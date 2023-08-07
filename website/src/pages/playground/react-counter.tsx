@@ -17,7 +17,7 @@ const META_DATA = {
   description: `This examples how Flyde can be used to build functional reactive UIs using React! Each time the "jsx" output receives a new value, it is rendered to the output pane.`,
   key: "react-counter",
   extraInfo:
-    'Another powerful feature of Flyde is that a part can have more than 1 output. For example, "Button" outputs JSX, but also outputs "click" signals. Cool, right?',
+    'Another powerful feature of Flyde is that a node can have more than 1 output. For example, "Button" outputs JSX, but also outputs "click" signals. Cool, right?',
 };
 
 const outputWithSub = (sub: any) => {

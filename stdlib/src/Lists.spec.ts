@@ -1,17 +1,17 @@
 // // ```
 // import {
-//   BasePart,
-//   CodePart,
-//   InputPartPin,
-//   OutputPartPin,
-//   PartStyleSize,
-//   RunPartFunction,
+//   BaseNode,
+//   CodeNode,
+//   InputNodePin,
+//   OutputNodePin,
+//   NodeStyleSize,
+//   RunNodeFunction,
 // } from ".";
-// import { InputMode } from "./part-pins";
+// import { InputMode } from "./node-pins";
 
 // // An improved type for the inputs object. It uses dynamic keys to allow the object properties to match the input names.
 // type ImprovedInputs = {
-//   [key: string]: InputPartPin<any>;
+//   [key: string]: InputNodePin<any>;
 // };
 
 // type Output = {
@@ -21,7 +21,7 @@
 //   };
 // };
 
-// export type SimpleFnData = Omit<BasePart, "inputs" | "outputs" | "run"> & {
+// export type SimpleFnData = Omit<BaseNode, "inputs" | "outputs" | "run"> & {
 //   id: string;
 //   description: string;
 //   namespace: string;
@@ -38,13 +38,13 @@
 //   run?: (...args: any[]) => any;
 //   symbol?: string;
 //   icon?: string;
-//   size?: PartStyleSize;
+//   size?: NodeStyleSize;
 //   customViewCode?: string;
-//   fullRunFn?: RunPartFunction;
+//   fullRunFn?: RunNodeFunction;
 // };
 
-// // This is the refactored partFromSimpleFunction function.
-// export function partFromSimpleFunction(data: SimpleFnData): CodePart {
+// // This is the refactored nodeFromSimpleFunction function.
+// export function nodeFromSimpleFunction(data: SimpleFnData): CodeNode {
 //   const inputs: ImprovedInputs = {}; // Using the improved inputs type defined above.
 //   const outputs: Output = {};
 
@@ -84,7 +84,7 @@
 //             outputs[data.output.name].next(result); // Updating the output with the result returned from the function.
 //           }
 //         } catch (e) {
-//           console.error("Error in part", e);
+//           console.error("Error in node", e);
 //           adv.onError(e);
 //         }
 //       },

@@ -5,29 +5,29 @@ export * from "./debugger";
 
 import {
   isDynamicInput,
-  dynamicPartInput,
+  dynamicNodeInput,
   dynamicOutput,
-  Part,
+  Node,
   getStaticValue,
-  isInlineValuePart,
-  isVisualPart,
-  CodePart,
-  PartInputs,
-  PartOutputs,
-  staticPartInput,
-  PartAdvancedContext,
+  isInlineValueNode,
+  isVisualNode,
+  CodeNode,
+  NodeInputs,
+  NodeOutputs,
+  staticNodeInput,
+  NodeAdvancedContext,
   isQueueInputPinConfig,
-  PartInstanceError,
-  PartState,
-  RunPartFunction,
-  PartsCollection,
-} from "../part";
+  NodeInstanceError,
+  NodeState,
+  RunNodeFunction,
+  NodesCollection,
+} from "../node";
 
 import { connect, ERROR_PIN_ID } from "../connect";
 
 import {
   hasNewSignificantValues,
-  isPartStateValid,
+  isNodeStateValid,
   peekValueForExecution,
   pullValueForExecution,
   pullValuesForExecution,
@@ -45,12 +45,12 @@ import {
   OMapF,
 } from "../common";
 import { debugLogger } from "../common/debug-logger";
-import { isStaticInputPinConfig } from "../part";
+import { isStaticInputPinConfig } from "../node";
 import { Debugger, DebuggerEvent, DebuggerEventType } from "./debugger";
 import {
-  customPartsToPartsCollection,
-  inlineValuePartToPart,
-} from "../inline-value-to-code-part";
+  customNodesToNodesCollection,
+  inlineValueNodeToNode,
+} from "../inline-value-to-code-node";
 
 export type SubjectMap = OMapF<Subject<any>>;
 
@@ -61,21 +61,21 @@ export type CancelFn = () => void;
 export type ExecuteEnv = OMap<any>;
 
 export type InnerExecuteFn = (
-  part: Part,
-  args: PartInputs,
-  outputs: PartOutputs,
+  node: Node,
+  args: NodeInputs,
+  outputs: NodeOutputs,
   insId: string
 ) => CancelFn;
 
 export type CodeExecutionData = {
-  part: CodePart;
-  inputs: PartInputs;
-  outputs: PartOutputs;
-  resolvedDeps: PartsCollection;
+  node: CodeNode;
+  inputs: NodeInputs;
+  outputs: NodeOutputs;
+  resolvedDeps: NodesCollection;
   _debugger?: Debugger;
   /**
-   * If the part is an instance of another part, this is the id of the instance.
-   * If the part is the root part, this is "__root".
+   * If the node is an instance of another node, this is the id of the instance.
+   * If the node is the root node, this is "__root".
    * Used for debugger events and state namespacing
    */
   insId: string;
@@ -85,7 +85,7 @@ export type CodeExecutionData = {
    */
   ancestorsInsIds?: string;
   extraContext?: Record<string, any>;
-  mainState: OMap<PartState>;
+  mainState: OMap<NodeState>;
   onError: (err: any) => void;
   onBubbleError: (err: any) => void;
   env: ExecuteEnv;
@@ -97,9 +97,9 @@ export type CodeExecutionData = {
 export const INNER_STATE_SUFFIX = "_inner";
 export const INPUTS_STATE_SUFFIX = "_inputs";
 
-const executeCodePart = (data: CodeExecutionData) => {
+const executeCodeNode = (data: CodeExecutionData) => {
   const {
-    part,
+    node,
     inputs,
     outputs,
     resolvedDeps: resolvedDeps,
@@ -113,16 +113,16 @@ const executeCodePart = (data: CodeExecutionData) => {
     env,
     extraContext,
   } = data;
-  const { run, fn } = part;
+  const { run, fn } = node;
 
   const debug = debugLogger("core");
 
   const cleanUps: any = [];
-  let partCleanupFn: ReturnType<RunPartFunction>;
+  let nodeCleanupFn: ReturnType<RunNodeFunction>;
 
-  const innerExec: InnerExecuteFn = (part, i, o, id) =>
+  const innerExec: InnerExecuteFn = (node, i, o, id) =>
     execute({
-      part: part,
+      node: node,
       inputs: i,
       outputs: o,
       resolvedDeps,
@@ -167,11 +167,11 @@ const executeCodePart = (data: CodeExecutionData) => {
       val: obj,
       insId,
       ancestorsInsIds: ancestorsInsIds,
-      partId: part.id,
+      nodeId: node.id,
     });
   };
 
-  const advPartContext: PartAdvancedContext = {
+  const advNodeContext: NodeAdvancedContext = {
     execute: innerExec,
     insId,
     state: mainState[innerStateId] ?? new Map(),
@@ -188,7 +188,7 @@ const executeCodePart = (data: CodeExecutionData) => {
 
   let lastValues: Record<string, unknown>;
 
-  const reactiveInputs = (part.reactiveInputs || [])
+  const reactiveInputs = (node.reactiveInputs || [])
     /* 
     Reactive inputs that are static shouldn't get a special treatment 
   */
@@ -197,7 +197,7 @@ const executeCodePart = (data: CodeExecutionData) => {
   const cleanState = () => {
     mainState[innerStateId]?.clear();
 
-    // removes all internal state from child parts.
+    // removes all internal state from child nodes.
     // TODO - use a better data structure on mainState so this becomes a O(1) operation
     keys(mainState)
       .filter((k) => k.startsWith(`${fullInsId}.`))
@@ -206,10 +206,10 @@ const executeCodePart = (data: CodeExecutionData) => {
       });
   };
 
-  // for each input received, if the state is valid and the part isn't already processing
-  // we'll run the part, otherwise, we'll wait for it to be valid
+  // for each input received, if the state is valid and the node isn't already processing
+  // we'll run the node, otherwise, we'll wait for it to be valid
 
-  const maybeRunPart = (input?: { key: string; value: any }) => {
+  const maybeRunNode = (input?: { key: string; value: any }) => {
     const isReactiveInput = input?.key && reactiveInputs.includes(input?.key);
 
     if (processing && !isReactiveInput) {
@@ -217,9 +217,9 @@ const executeCodePart = (data: CodeExecutionData) => {
     } else {
       const isReactiveInputWhileRunning = processing && isReactiveInput;
 
-      const partStateValid = isPartStateValid(inputs, inputsState, part);
+      const nodeStateValid = isNodeStateValid(inputs, inputsState, node);
 
-      if (partStateValid || isReactiveInputWhileRunning) {
+      if (nodeStateValid || isReactiveInputWhileRunning) {
         let argValues;
 
         if (!processing) {
@@ -231,7 +231,7 @@ const executeCodePart = (data: CodeExecutionData) => {
         } else {
           if (!input) {
             throw new Error(
-              `Unexpected state,  got reactive part while not processing and not valid`
+              `Unexpected state,  got reactive node while not processing and not valid`
             );
           }
 
@@ -256,11 +256,11 @@ const executeCodePart = (data: CodeExecutionData) => {
           val: processing,
           insId,
           ancestorsInsIds: ancestorsInsIds,
-          partId: part.id,
+          nodeId: node.id,
         });
-        if (part.completionOutputs) {
+        if (node.completionOutputs) {
           // completion outputs support the "AND" operator via "+" sign, i.e. "a+b,c" means "(a AND b) OR c)""
-          const dependenciesArray = part.completionOutputs.map((k) =>
+          const dependenciesArray = node.completionOutputs.map((k) =>
             k.split("+")
           );
           const dependenciesMap = dependenciesArray.reduce((map, currArr) => {
@@ -278,7 +278,7 @@ const executeCodePart = (data: CodeExecutionData) => {
               let requirementArr = dependenciesMap.get(key);
 
               if (!requirementArr) {
-                // this means the pin received is not part of completion output requirements
+                // this means the pin received is not node of completion output requirements
                 return;
               }
 
@@ -292,7 +292,7 @@ const executeCodePart = (data: CodeExecutionData) => {
                   val: processing,
                   insId,
                   ancestorsInsIds: ancestorsInsIds,
-                  partId: part.id,
+                  nodeId: node.id,
                 });
 
                 if (onCompleted) {
@@ -302,20 +302,20 @@ const executeCodePart = (data: CodeExecutionData) => {
                 cleanState();
 
                 callFnOrFnPromise(
-                  partCleanupFn,
-                  `Error with cleanup function of ${part.id}`
+                  nodeCleanupFn,
+                  `Error with cleanup function of ${node.id}`
                 );
-                partCleanupFn = undefined;
+                nodeCleanupFn = undefined;
                 completedOutputs.clear();
                 completedOutputsValues = {};
-                // this avoids an endless loop after triggering an ended part with static inputs
+                // this avoids an endless loop after triggering an ended node with static inputs
                 if (
-                  hasNewSignificantValues(inputs, inputsState, env, part.id)
+                  hasNewSignificantValues(inputs, inputsState, env, node.id)
                 ) {
-                  maybeRunPart();
+                  maybeRunNode();
                 }
               } else {
-                // do nothing, part is not done
+                // do nothing, node is not done
               }
             });
           });
@@ -329,62 +329,62 @@ const executeCodePart = (data: CodeExecutionData) => {
 
         // magic happens here
         try {
-          innerDebug(`Running part %s with values %o`, part.id, argValues);
+          innerDebug(`Running node %s with values %o`, node.id, argValues);
 
           if (onStarted) {
             onStarted();
           }
 
-          partCleanupFn = (fn ?? run)(
+          nodeCleanupFn = (fn ?? run)(
             argValues as any,
             outputs,
-            advPartContext
+            advNodeContext
           );
 
-          if (isPromise(partCleanupFn)) {
-            partCleanupFn
+          if (isPromise(nodeCleanupFn)) {
+            nodeCleanupFn
               .then(() => {
-                if (part.completionOutputs === undefined && onCompleted) {
+                if (node.completionOutputs === undefined && onCompleted) {
                   processing = false;
                   onEvent({
                     type: DebuggerEventType.PROCESSING_CHANGE,
                     val: processing,
                     insId,
                     ancestorsInsIds: ancestorsInsIds,
-                    partId: part.id,
+                    nodeId: node.id,
                   });
 
                   onCompleted(completedOutputsValues);
                   cleanState();
 
                   if (
-                    hasNewSignificantValues(inputs, inputsState, env, part.id)
+                    hasNewSignificantValues(inputs, inputsState, env, node.id)
                   ) {
-                    maybeRunPart();
+                    maybeRunNode();
                   }
                 }
               })
               .catch((err) => {
                 onError(err);
                 processing = false;
-                innerDebug(`Error in part %s - value %e`, part.id, err);
+                innerDebug(`Error in node %s - value %e`, node.id, err);
                 onEvent({
                   type: DebuggerEventType.PROCESSING_CHANGE,
                   val: processing,
                   insId,
                   ancestorsInsIds: ancestorsInsIds,
-                  partId: part.id,
+                  nodeId: node.id,
                 });
               });
           } else {
-            if (part.completionOutputs === undefined && onCompleted) {
+            if (node.completionOutputs === undefined && onCompleted) {
               processing = false;
               onEvent({
                 type: DebuggerEventType.PROCESSING_CHANGE,
                 val: processing,
                 insId,
                 ancestorsInsIds: ancestorsInsIds,
-                partId: part.id,
+                nodeId: node.id,
               });
               onCompleted(completedOutputsValues);
               cleanState();
@@ -393,20 +393,20 @@ const executeCodePart = (data: CodeExecutionData) => {
         } catch (e) {
           onError(e);
           processing = false;
-          innerDebug(`Error in part %s - value %e`, part.id, e);
+          innerDebug(`Error in node %s - value %e`, node.id, e);
           onEvent({
             type: DebuggerEventType.PROCESSING_CHANGE,
             val: processing,
             insId,
             ancestorsInsIds: ancestorsInsIds,
-            partId: part.id,
+            nodeId: node.id,
           });
         }
 
         const maybeReactiveKey = reactiveInputs.find((key) => {
           return (
             inputs[key] &&
-            peekValueForExecution(key, inputs[key]!, inputsState, env, part.id)
+            peekValueForExecution(key, inputs[key]!, inputsState, env, node.id)
           );
         });
 
@@ -416,19 +416,19 @@ const executeCodePart = (data: CodeExecutionData) => {
             inputs[maybeReactiveKey]!,
             inputsState,
             env,
-            part.id
+            node.id
           );
-          maybeRunPart({ key: maybeReactiveKey, value });
+          maybeRunNode({ key: maybeReactiveKey, value });
         } else {
           const hasStaticValuePending = entries(inputs).find(([k, input]) => {
             const isQueue = isQueueInputPinConfig((input as any).config);
-            // const isNotOptional = !isInputPinOptional(part.inputs[k]);
+            // const isNotOptional = !isInputPinOptional(node.inputs[k]);
             const value = peekValueForExecution(
               k,
               input,
               inputsState,
               env,
-              part.id
+              node.id
             );
             if (isQueue) {
               return isDefined(value);
@@ -444,19 +444,19 @@ const executeCodePart = (data: CodeExecutionData) => {
               input,
               inputsState,
               env,
-              part.id
+              node.id
             );
 
-            maybeRunPart({ key, value });
+            maybeRunNode({ key, value });
           }
         }
       } else {
-        // part inputs in an invalid state
+        // node inputs in an invalid state
       }
     }
   };
 
-  maybeRunPart();
+  maybeRunNode();
   const cleanSubscriptions = subscribeInputsToState(
     inputs,
     inputsState,
@@ -465,7 +465,7 @@ const executeCodePart = (data: CodeExecutionData) => {
       reportInputStateChange();
 
       try {
-        maybeRunPart({ key, value });
+        maybeRunNode({ key, value });
       } catch (e) {
         onError(e);
       }
@@ -476,8 +476,8 @@ const executeCodePart = (data: CodeExecutionData) => {
 
   return () => {
     callFnOrFnPromise(
-      partCleanupFn,
-      `Error with cleanup function of ${part.id}`
+      nodeCleanupFn,
+      `Error with cleanup function of ${node.id}`
     );
     cleanUps.forEach((fn: any) => fn());
   };
@@ -486,15 +486,15 @@ const executeCodePart = (data: CodeExecutionData) => {
 export type ExecuteFn = (params: ExecuteParams) => CancelFn;
 
 export type ExecuteParams = {
-  part: Part;
-  resolvedDeps: PartsCollection;
-  inputs: PartInputs;
-  outputs: PartOutputs;
+  node: Node;
+  resolvedDeps: NodesCollection;
+  inputs: NodeInputs;
+  outputs: NodeOutputs;
   _debugger?: Debugger;
   insId?: string;
   ancestorsInsIds?: string;
-  mainState?: OMap<PartState>;
-  onBubbleError?: (err: PartInstanceError) => void;
+  mainState?: OMap<NodeState>;
+  onBubbleError?: (err: NodeInstanceError) => void;
   env?: ExecuteEnv;
   extraContext?: Record<string, any>;
 
@@ -507,7 +507,7 @@ export const ROOT_INS_ID = "__root";
 export const GLOBAL_STATE_NS = "____global";
 
 export const execute: ExecuteFn = ({
-  part,
+  node,
   inputs,
   outputs,
   resolvedDeps,
@@ -527,22 +527,22 @@ export const execute: ExecuteFn = ({
     mainState[GLOBAL_STATE_NS] = new Map();
   }
 
-  const inlineValuePartContext = { ...extraContext, ENV: env };
+  const inlineValueNodeContext = { ...extraContext, ENV: env };
 
-  const processedParts = customPartsToPartsCollection(
+  const processedNodes = customNodesToNodesCollection(
     resolvedDeps,
-    inlineValuePartContext
+    inlineValueNodeContext
   );
 
   const onError = (err: unknown) => {
     // this means "catch the error"
     const error =
-      err instanceof PartInstanceError
+      err instanceof NodeInstanceError
         ? err
-        : new PartInstanceError(
+        : new NodeInstanceError(
             err,
             fullInsIdPath(insId, ancestorsInsIds),
-            part.id
+            node.id
           );
 
     if (_debugger.onEvent) {
@@ -551,7 +551,7 @@ export const execute: ExecuteFn = ({
         val: error,
         insId,
         ancestorsInsIds,
-        partId: part.id,
+        nodeId: node.id,
       });
     }
     if (outputs[ERROR_PIN_ID]) {
@@ -561,11 +561,11 @@ export const execute: ExecuteFn = ({
     }
   };
 
-  const processPart = (part: Part): CodePart => {
-    if (isVisualPart(part)) {
+  const processNode = (node: Node): CodeNode => {
+    if (isVisualNode(node)) {
       return connect(
-        part,
-        processedParts,
+        node,
+        processedNodes,
         _debugger,
         fullInsIdPath(insId, ancestorsInsIds),
         mainState,
@@ -573,23 +573,23 @@ export const execute: ExecuteFn = ({
         env,
         extraContext
       );
-    } else if (isInlineValuePart(part)) {
-      return inlineValuePartToPart(part, inlineValuePartContext);
+    } else if (isInlineValueNode(node)) {
+      return inlineValueNodeToNode(node, inlineValueNodeContext);
     } else {
-      return part;
+      return node;
     }
   };
 
-  const processedPart = processPart(part);
+  const processedNode = processNode(node);
 
   const onEvent = _debugger.onEvent || noop; // TODO - remove this for "production" mode
 
-  const mediatedOutputs: PartOutputs = {};
-  const mediatedInputs: PartInputs = {};
+  const mediatedOutputs: NodeOutputs = {};
+  const mediatedInputs: NodeInputs = {};
 
   entries(inputs).forEach(([pinId, arg]) => {
     if (isDynamicInput(arg)) {
-      const mediator = dynamicPartInput({ config: arg.config });
+      const mediator = dynamicNodeInput({ config: arg.config });
       const subscription = arg.subject.subscribe(async (val) => {
         const res = onEvent({
           type: DebuggerEventType.INPUT_CHANGE,
@@ -597,7 +597,7 @@ export const execute: ExecuteFn = ({
           pinId,
           val,
           ancestorsInsIds,
-          partId: part.id,
+          nodeId: node.id,
         } as DebuggerEvent);
         if (res) {
           const interceptedValue = await res.valuePromise;
@@ -618,10 +618,10 @@ export const execute: ExecuteFn = ({
         pinId,
         val: arg.config.value,
         ancestorsInsIds,
-        partId: part.id,
+        nodeId: node.id,
       } as DebuggerEvent);
-      const mediator = staticPartInput(
-        getStaticValue(arg.config.value, processedParts, insId)
+      const mediator = staticNodeInput(
+        getStaticValue(arg.config.value, processedNodes, insId)
       );
       mediatedInputs[pinId] = mediator;
     }
@@ -636,7 +636,7 @@ export const execute: ExecuteFn = ({
         pinId,
         val,
         ancestorsInsIds: ancestorsInsIds,
-        partId: part.id,
+        nodeId: node.id,
       } as DebuggerEvent);
       if (res) {
         const interceptedValue = await res.valuePromise;
@@ -649,11 +649,11 @@ export const execute: ExecuteFn = ({
     mediatedOutputs[pinId] = mediator;
   });
 
-  const cancelFn = executeCodePart({
-    part: processedPart,
+  const cancelFn = executeCodeNode({
+    node: processedNode,
     inputs: mediatedInputs,
     outputs: mediatedOutputs,
-    resolvedDeps: processedParts,
+    resolvedDeps: processedNodes,
     _debugger,
     insId,
     mainState,
@@ -672,5 +672,5 @@ export const execute: ExecuteFn = ({
   };
 };
 /*
-start the components, connect the inputs to outputs, push the right sources
+start the nodes, connect the inputs to outputs, push the right sources
 */

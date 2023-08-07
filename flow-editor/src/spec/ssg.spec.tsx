@@ -1,9 +1,9 @@
 import {
   connectionData,
-  visualPart,
-  partInput,
-  partInstance,
-  partOutput,
+  visualNode,
+  nodeInput,
+  nodeInstance,
+  nodeOutput,
 } from "@flyde/core";
 import { assert } from "chai";
 import { noop } from "lodash";
@@ -11,7 +11,7 @@ import * as ReactDOMServer from "react-dom/server";
 
 import { FlowEditor } from "..";
 import { FlydeFlowEditorProps } from "../flow-editor/FlowEditor";
-import { defaultViewPort } from "../visual-part-editor";
+import { defaultViewPort } from "../visual-node-editor";
 
 describe("ssg/ssr support", () => {
   beforeEach(() => {
@@ -19,19 +19,19 @@ describe("ssg/ssr support", () => {
   });
 
   it("renders into string without throwing in the absence of DOM", () => {
-    const id = "part";
-    const part = visualPart({
+    const id = "node";
+    const node = visualNode({
       id,
-      inputs: { a: partInput() },
-      outputs: { r: partOutput() },
-      instances: [partInstance("i1", id), partInstance("i2", id)],
+      inputs: { a: nodeInput() },
+      outputs: { r: nodeOutput() },
+      instances: [nodeInstance("i1", id), nodeInstance("i2", id)],
       connections: [connectionData("i1.r", "i2.a")],
     });
     const props: FlydeFlowEditorProps = {
       state: {
         flow: {
           imports: {},
-          part,
+          node,
         },
         boardData: {
           selected: [],
@@ -41,7 +41,7 @@ describe("ssg/ssr support", () => {
       },
       onChangeEditorState: noop,
       hideTemplatingTips: false,
-      onExtractInlinePart: noop as any,
+      onExtractInlineNode: noop as any,
     };
 
     let s = "";

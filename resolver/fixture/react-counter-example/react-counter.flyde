@@ -41,7 +41,7 @@ parts:
     completionOutputs:
       - result
     instances:
-      - partId: Button
+      - nodeId: Button
         pos:
           x: -112.55849853515622
           y: 264.69233886718746
@@ -52,7 +52,7 @@ parts:
             value: + 1
         visibleInputs:
           - children
-      - partId: Span
+      - nodeId: Span
         pos:
           x: -316.5079125976563
           y: 277.8121800231934
@@ -63,7 +63,7 @@ parts:
         visibleInputs:
           - __trigger
           - children
-      - partId: Inline Code 73878
+      - nodeId: Inline Code 73878
         pos:
           x: -434.4105419921875
           y: 150.16451232910157
@@ -73,7 +73,7 @@ parts:
             mode: queue
         visibleInputs:
           - count
-      - partId: ListFrom3
+      - nodeId: ListFrom3
         pos:
           x: -347.506982421875
           y: 450.8367645263672
@@ -85,7 +85,7 @@ parts:
             mode: sticky
           item2:
             mode: queue
-      - partId: Button
+      - nodeId: Button
         pos:
           x: -515.2419702148437
           y: 266.9907855224609
@@ -96,7 +96,7 @@ parts:
             value: "- 1"
         visibleInputs:
           - children
-      - partId: Publish
+      - nodeId: Publish
         pos:
           x: -90.45
           y: 472.37
@@ -108,7 +108,7 @@ parts:
           value:
             mode: static
             value: 1
-      - partId: Subscribe
+      - nodeId: Subscribe
         pos:
           x: -201.807001953125
           y: -187.86253479003906
@@ -117,7 +117,7 @@ parts:
           key:
             mode: static
             value: inc
-      - partId: Add
+      - nodeId: Add
         pos:
           x: -272.72882080078125
           y: -9.603830566406259
@@ -125,7 +125,7 @@ parts:
         inputConfig:
           n1:
             mode: sticky
-      - partId: Subscribe
+      - nodeId: Subscribe
         pos:
           x: -387.2609814453125
           y: -186.2929638671875
@@ -134,7 +134,7 @@ parts:
           key:
             mode: static
             value: value
-      - partId: Publish
+      - nodeId: Publish
         pos:
           x: -541.97
           y: 466.84
@@ -146,7 +146,7 @@ parts:
           value:
             mode: static
             value: -1
-      - partId: Publish
+      - nodeId: Publish
         pos:
           x: -599.5746044921875
           y: -143.15812744140624
@@ -158,13 +158,13 @@ parts:
           value:
             mode: static
             value: 0
-      - partId: Inline Code 6685
+      - nodeId: Inline Code 6685
         pos:
           x: -429.99247314453123
           y: -53.56334594726559
         id: Inline Code 6685-155
         inputConfig: {}
-      - partId: Publish
+      - nodeId: Publish
         pos:
           x: -23.290394287109393
           y: 72.78687225341798

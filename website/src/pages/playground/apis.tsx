@@ -1,6 +1,6 @@
 import React, { useCallback, useRef, useState } from "react";
 
-import { dynamicOutput, dynamicPartInput } from "@site/../core/dist";
+import { dynamicOutput, dynamicNodeInput } from "@site/../core/dist";
 
 import {
   PlaygroundTemplate,
@@ -21,7 +21,7 @@ const META_DATA = {
   extraInfo: (
     <strong>
       <h3>
-        Try double-clicking each API part to see it's underlying implementation!
+        Try double-clicking each API node to see it's underlying implementation!
         In Flyde, nothing is hidden, only abstracted
       </h3>
     </strong>
@@ -37,7 +37,7 @@ const outputWithSub = (sub: any) => {
 export default function ReactCounterExample(): JSX.Element {
   const result = useRef(dynamicOutput());
 
-  const inputs = useRef({ __trigger: dynamicPartInput() });
+  const inputs = useRef({ __trigger: dynamicNodeInput() });
 
   const [flowProps, setFlowProps] = useState<
     PlaygroundTemplateProps["flowProps"]

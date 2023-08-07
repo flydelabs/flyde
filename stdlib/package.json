@@ -1,13 +1,9 @@
 {
     "name": "@flyde/stdlib",
-    "version": "0.1.40",
+    "version": "0.2.0",
     "description": "Flyde's StdLib",
     "flyde": {
         "exposes": [
-            "parts/*.flyde",
-            "parts/*.flyde.js",
-            "parts/**/*.flyde.js",
-            "parts/**/*.flyde",
             "dist/**/*.flyde.js"
         ],
         "typings": "flyde-typings.d.ts"
@@ -28,7 +24,7 @@
     "author": "Flyde",
     "license": "MIT",
     "dependencies": {
-        "@flyde/core": "^0.1.28",
+        "@flyde/core": "^0.2.0",
         "@types/mocha": "^10.0.1",
         "@types/pg": "^8.6.6",
         "axios": "^0.27.2",

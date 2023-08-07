@@ -1,8 +1,8 @@
-import { PartsDefCollection } from "@flyde/core";
+import { NodesDefCollection } from "@flyde/core";
 import {
   deserializeFlow,
-  isCodePartPath,
-  resolveCodePartDependencies,
+  isCodeNodePath,
+  resolveCodeNodeDependencies,
   resolveImportablePaths,
 } from "@flyde/resolver";
 import { readFileSync } from "fs";
@@ -11,14 +11,14 @@ export async function resolveDependentPackages(
   rootPath: string,
   flydeDependencies: string[]
 ) {
-  return flydeDependencies.reduce<Record<string, PartsDefCollection>>(
+  return flydeDependencies.reduce<Record<string, NodesDefCollection>>(
     (acc, dep) => {
       try {
         const paths = resolveImportablePaths(rootPath, dep);
-        const parts = paths.reduce((acc, filePath) => {
-          if (isCodePartPath(filePath)) {
-            const obj = resolveCodePartDependencies(filePath).parts.reduce(
-              (obj, { part }) => ({ ...obj, [part.id]: part }),
+        const nodes = paths.reduce((acc, filePath) => {
+          if (isCodeNodePath(filePath)) {
+            const obj = resolveCodeNodeDependencies(filePath).nodes.reduce(
+              (obj, { node }) => ({ ...obj, [node.id]: node }),
               {}
             );
             return { ...acc, ...obj };
@@ -28,13 +28,13 @@ export async function resolveDependentPackages(
               readFileSync(filePath, "utf8"),
               filePath
             );
-            return { ...acc, [flow.part.id]: flow.part };
+            return { ...acc, [flow.node.id]: flow.node };
           } catch (e) {
             console.error(`Skipping corrupt flow at ${filePath}, error: ${e}`);
             return acc;
           }
         }, {});
-        return { ...acc, [dep]: parts };
+        return { ...acc, [dep]: nodes };
       } catch (e) {
         console.log(`skipping invalid dependency ${dep}`);
         return acc;

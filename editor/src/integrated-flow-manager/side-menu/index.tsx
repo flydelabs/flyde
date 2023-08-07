@@ -1,4 +1,4 @@
-import { FlydeFlow, PartDefinition } from "@flyde/core";
+import { FlydeFlow, NodeDefinition } from "@flyde/core";
 import classNames from "classnames";
 import React, { useCallback } from "react";
 import { Resizable, ResizeCallbackData } from "react-resizable";
@@ -20,7 +20,7 @@ export interface IntegratedFlowSideMenuProps {
   flow: FlydeFlow;
   flowPath: string;
 
-  onAdd: (part: PartDefinition) => void;
+  onAdd: (node: NodeDefinition) => void;
 
   onChangeFlow: (flow: FlydeFlow, type: FlydeFlowChangeType) => void;
 
@@ -94,7 +94,7 @@ export const IntegratedFlowSideMenu: React.FC<IntegratedFlowSideMenuProps> = (
       case "add": {
         return (
           <div className="menu-section add" style={{ width: `${width}px` }}>
-            <div className="title">Add part</div>
+            <div className="title">Add node</div>
             <MenuAddSection onAdd={props.onAdd} />
           </div>
         );
@@ -105,7 +105,7 @@ export const IntegratedFlowSideMenu: React.FC<IntegratedFlowSideMenuProps> = (
             <div className="title">Files & Flows</div>
             <FoldersSection
               currentFile={props.flowPath}
-              editedPart={props.flow.part}
+              editedNode={props.flow.node}
               onFocusInstance={onFocusInstance}
               flow={props.flow}
             />

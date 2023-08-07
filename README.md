@@ -31,17 +31,17 @@
 - Real-time visual debugger for easy error handling and debugging
 - Integrates with your existing codebase and workflows
 - Supports TypeScript and JavaScript
-- Build custom parts visually, or use custom code
+- Build custom nodes visually, or use custom code
 - Pre-built templates to help you get started quickly
 - Split complex flows into sub-flows for better readability and maintainability
-- A rich standard library of parts for common tasks
+- A rich standard library of nodes for common tasks
 
 ## Getting Started
 
 - Install the Flyde extension from the Visual Studio Code marketplace
 - Right-click on a folder in the Explorer and select "Flyde: New Visual Flow"
 - Choose a template and name your flow
-- Start creating your flow by adding parts, connecting them together, and writing code
+- Start creating your flow by adding nodes, connecting them together, and writing code
 
 ## Use-cases
 
@@ -67,7 +67,7 @@ Everything needed to run a Flyde file is _MIT_ licensed. That includes:
 - `@flyde/runtime`
 - `@flyde/stdlib`
 
-The UI library and other parts of the toolkit are GNU AGPLv3 licensed.
+The UI library and other nodes of the toolkit are GNU AGPLv3 licensed.
 
 In other words, using Flyde flows in your software is permitted without any limitation. However, if you use Flyde's visual editor in your own work, it must be open-sourced as well. More about [GNU APGLv3](https://choosealicense.com/licenses/agpl-3.0/) here
 

@@ -1,4 +1,4 @@
-import { FlydeFlow, ImportedPart, ResolvedFlydeFlow } from "@flyde/core";
+import { FlydeFlow, ImportedNode, ResolvedFlydeFlow } from "@flyde/core";
 import _ = require("lodash");
 import { deserializeFlowByPath } from "../serdes/deserialize";
 import { resolveDependencies } from "./resolve-dependencies/resolve-dependencies";
@@ -13,7 +13,7 @@ export function resolveFlowDependencies(
   const dependencies = resolveDependencies(flow, mode, flowPath);
 
   return {
-    main: flow.part,
+    main: flow.node,
     dependencies,
   };
 }

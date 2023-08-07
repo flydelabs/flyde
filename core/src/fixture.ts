@@ -1,71 +1,71 @@
 import {
   fromSimplified,
-  Part,
-  VisualPart,
-  partInput,
-  partOutput,
-  CodePart,
-  InlineValuePart,
-  partInstance,
-  dynamicPartInput,
+  Node,
+  VisualNode,
+  nodeInput,
+  nodeOutput,
+  CodeNode,
+  InlineValueNode,
+  nodeInstance,
+  dynamicNodeInput,
   queueInputPinConfig,
-} from "./part";
+} from "./node";
 import { externalConnectionNode, connectionNode } from "./connect";
 import { execute, SubjectMap } from "./execute";
 
 import { isDefined, okeys } from "./common";
 import { Subject } from "rxjs";
-import { PartsCollection } from ".";
-import { conciseCodePart } from "./test-utils";
+import { NodesCollection } from ".";
+import { conciseCodeNode } from "./test-utils";
 
-export const add: CodePart = {
+export const add: CodeNode = {
   id: "add",
   inputs: {
-    n1: partInput(),
-    n2: partInput(),
+    n1: nodeInput(),
+    n2: nodeInput(),
   },
   outputs: {
-    r: partOutput(),
+    r: nodeOutput(),
   },
   run: ({ n1, n2 }, { r }) => {
     r?.next(n1 + n2);
   },
 };
 
-export const codeAdd: InlineValuePart = {
+export const codeAdd: InlineValueNode = {
   id: "add",
   inputs: {
-    n1: partInput(),
-    n2: partInput(),
+    n1: nodeInput(),
+    n2: nodeInput(),
   },
   outputs: {
-    r: partOutput(),
+    r: nodeOutput(),
   },
   runFnRawCode: `
   outputs.r?.next(inputs.n1 + inputs.n2);
     `,
 };
 
-export const add1: CodePart = {
+export const add1: CodeNode = {
   id: "add1",
-  inputs: { n: partInput() },
-  outputs: { r: partOutput() },
+  inputs: { n: nodeInput() },
+  outputs: { r: nodeOutput() },
   run: ({ n }, { r }) => {
     r?.next(n + 1);
   },
 };
 
-export const mul: Part = {
+export const mul: Node = {
   id: "mul",
   inputs: {
-    n1: partInput(),
-    n2: partInput(),
+    n1: nodeInput(),
+    n2: nodeInput(),
   },
-  outputs: { r: partOutput() },
+  outputs: { r: nodeOutput() },
   run: ({ n1, n2 }, { r }) => r?.next(n1 * n2),
 };
 
-export const mul2: Part = fromSimplified({
+export const mul2: Node = fromSimplified({
   id: "mul2",
   inputTypes: { n: "number" },
   outputTypes: { r: "number" },
@@ -74,39 +74,39 @@ export const mul2: Part = fromSimplified({
   },
 });
 
-export const id: Part = {
+export const id: Node = {
   id: "id",
-  inputs: { v: partInput() },
-  outputs: { r: partOutput() },
+  inputs: { v: nodeInput() },
+  outputs: { r: nodeOutput() },
   run: ({ v }, { r }) => {
     r?.next(v);
   },
   completionOutputs: ["r"],
 };
 
-export const id2: CodePart = {
+export const id2: CodeNode = {
   id: "id2",
   inputs: {
-    v: partInput(),
+    v: nodeInput(),
   },
   outputs: {
-    r: partOutput(),
+    r: nodeOutput(),
   },
   run: ({ v }, { r }) => {
     r?.next(v);
   },
 };
 
-export const transform: Part = {
+export const transform: Node = {
   id: "transform",
-  inputs: { from: partInput(), to: partInput() },
-  outputs: { r: partOutput() },
+  inputs: { from: nodeInput(), to: nodeInput() },
+  outputs: { r: nodeOutput() },
   run: ({ to }, { r }) => {
     r?.next(to);
   },
 };
 
-export const Value = (v: any): Part => {
+export const Value = (v: any): Node => {
   return fromSimplified({
     id: `val-${v}`,
     inputTypes: {},
@@ -115,17 +115,17 @@ export const Value = (v: any): Part => {
   });
 };
 
-export const add1mul2: VisualPart = {
+export const add1mul2: VisualNode = {
   id: "a1m2",
   inputs: {
-    n: partInput(),
+    n: nodeInput(),
   },
   outputs: {
-    r: partOutput(),
+    r: nodeOutput(),
   },
   inputsPosition: {},
   outputsPosition: {},
-  instances: [partInstance("a", add1.id), partInstance("b", mul2.id)],
+  instances: [nodeInstance("a", add1.id), nodeInstance("b", mul2.id)],
   connections: [
     {
       from: externalConnectionNode("n"),
@@ -142,20 +142,20 @@ export const add1mul2: VisualPart = {
   ],
 };
 
-export const add1mul2add1: VisualPart = {
+export const add1mul2add1: VisualNode = {
   id: "a1m2a1",
   inputs: {
-    n: partInput(),
+    n: nodeInput(),
   },
   outputs: {
-    r: partOutput(),
+    r: nodeOutput(),
   },
   inputsPosition: {},
   outputsPosition: {},
   instances: [
-    partInstance("a", add1.id),
-    partInstance("b", mul2.id),
-    partInstance("c", add1.id),
+    nodeInstance("a", add1.id),
+    nodeInstance("b", mul2.id),
+    nodeInstance("c", add1.id),
   ],
   connections: [
     {
@@ -177,18 +177,18 @@ export const add1mul2add1: VisualPart = {
   ],
 };
 
-export const addGrouped: VisualPart = {
+export const addGrouped: VisualNode = {
   id: "add-visual",
   inputsPosition: {},
   outputsPosition: {},
   inputs: {
-    n1: partInput(),
-    n2: partInput(),
+    n1: nodeInput(),
+    n2: nodeInput(),
   },
   outputs: {
-    r: partOutput(),
+    r: nodeOutput(),
   },
-  instances: [partInstance("a", add.id)],
+  instances: [nodeInstance("a", add.id)],
   connections: [
     {
       from: externalConnectionNode("n1"),
@@ -205,19 +205,19 @@ export const addGrouped: VisualPart = {
   ],
 };
 
-export const addGroupedQueued: VisualPart = {
+export const addGroupedQueued: VisualNode = {
   id: "add-visual-queued",
   inputsPosition: {},
   outputsPosition: {},
   inputs: {
-    n1: partInput(),
-    n2: partInput(),
+    n1: nodeInput(),
+    n2: nodeInput(),
   },
   outputs: {
-    r: partOutput(),
+    r: nodeOutput(),
   },
   instances: [
-    partInstance("a", add.id, {
+    nodeInstance("a", add.id, {
       n1: queueInputPinConfig(),
       n2: queueInputPinConfig(),
     }),
@@ -238,7 +238,7 @@ export const addGroupedQueued: VisualPart = {
   ],
 };
 
-export const optAdd: CodePart = {
+export const optAdd: CodeNode = {
   id: "optAdd",
   inputs: {
     n1: {},
@@ -253,7 +253,7 @@ export const optAdd: CodePart = {
   },
 };
 
-export const isEven: CodePart = {
+export const isEven: CodeNode = {
   id: "is-even",
   inputs: {
     item: {},
@@ -267,9 +267,9 @@ export const isEven: CodePart = {
   },
 };
 
-export const filter: Part = fromSimplified({
+export const filter: Node = fromSimplified({
   id: "filter",
-  inputTypes: { list: "any", fn: "part" },
+  inputTypes: { list: "any", fn: "node" },
   outputTypes: { r: "any" },
   run: ({ list, fn }, o) => {
     let newList: any[] = [];
@@ -277,16 +277,16 @@ export const filter: Part = fromSimplified({
     const uns: any[] = [];
 
     list.forEach((item: any, idx: number) => {
-      const itemInput = dynamicPartInput();
+      const itemInput = dynamicNodeInput();
       const outputs = okeys(fn.outputs).reduce<SubjectMap>(
         (p, k) => ({ ...p, [k]: new Subject() }),
         {}
       );
       const clean = execute({
-        part: fn,
+        node: fn,
         inputs: { item: itemInput },
         outputs: outputs,
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
       outputs.r?.subscribe((bool) => {
         if (bool) {
@@ -312,10 +312,10 @@ export const filter: Part = fromSimplified({
   },
 });
 
-export const peq: CodePart = {
+export const peq: CodeNode = {
   id: "peq",
-  inputs: { val: partInput(), compare: partInput() },
-  outputs: { r: partOutput(), else: partOutput() },
+  inputs: { val: nodeInput(), compare: nodeInput() },
+  outputs: { r: nodeOutput(), else: nodeOutput() },
   run: ({ val, compare }, o) => {
     if (val === compare) {
       o.r?.next(val);
@@ -325,7 +325,7 @@ export const peq: CodePart = {
   },
 };
 
-export const delay5 = conciseCodePart({
+export const delay5 = conciseCodeNode({
   id: "delay5",
   inputs: ["item"],
   outputs: ["r"],
@@ -337,7 +337,7 @@ export const delay5 = conciseCodePart({
   },
 });
 
-export const delay = conciseCodePart({
+export const delay = conciseCodeNode({
   id: "delay5",
   inputs: ["item", "ms"],
   outputs: ["r"],
@@ -349,7 +349,7 @@ export const delay = conciseCodePart({
   },
 });
 
-export const testPartsCollection = {
+export const testNodesCollection = {
   add,
   add1,
   mul2: mul2,
@@ -364,7 +364,7 @@ export const testPartsCollection = {
   delay,
 };
 
-export const accumulate = conciseCodePart({
+export const accumulate = conciseCodeNode({
   id: "accumulate",
   inputs: ["count|required", "val|optional"],
   outputs: ["r"],
@@ -396,14 +396,14 @@ export const accumulate = conciseCodePart({
   },
 });
 
-export const accUntil: CodePart = {
+export const accUntil: CodeNode = {
   id: "accUntil",
   inputs: {
-    item: partInput("optional"),
-    until: partInput("optional"),
+    item: nodeInput("optional"),
+    until: nodeInput("optional"),
   },
   outputs: {
-    r: partOutput(),
+    r: nodeOutput(),
   },
   reactiveInputs: ["item", "until"],
   completionOutputs: ["r"],
@@ -421,7 +421,7 @@ export const accUntil: CodePart = {
   },
 };
 
-export const spreadList = conciseCodePart({
+export const spreadList = conciseCodeNode({
   id: "SpreadList",
   inputs: ["list"],
   outputs: ["val", "idx", "length"],
@@ -437,9 +437,9 @@ export const spreadList = conciseCodePart({
   },
 });
 
-export const testPartsCollectionWith = (...parts: Part[]): PartsCollection => {
-  return parts.reduce<PartsCollection>(
+export const testNodesCollectionWith = (...nodes: Node[]): NodesCollection => {
+  return nodes.reduce<NodesCollection>(
     (acc, p) => ({ ...acc, [p.id]: p }),
-    testPartsCollection
+    testNodesCollection
   );
 };

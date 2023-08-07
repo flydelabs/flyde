@@ -20,7 +20,7 @@ $tea-green: #dff2baff;
 
 $output-color: #ffd5c9;
 
-@mixin base-part($bg-color: white) {
+@mixin base-node($bg-color: white) {
   color: #000000;
   background: $bg-color;
   font-family: $font-family;
@@ -66,7 +66,7 @@ $output-color: #ffd5c9;
   }
 }
 
-@mixin custom-part-color($bg, $fg: inherit) {
+@mixin custom-node-color($bg, $fg: inherit) {
   &:not(.selected) {
     background: $bg;
     color: $fg;

@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import * as PubSub from "pubsub-js";
 import {
-  createNewPartInstance,
+  createNewNodeInstance,
   createRuntimePlayer,
   DebuggerContextData,
   DebuggerContextProvider,
@@ -17,17 +17,17 @@ import {
 } from "@flyde/flow-editor";
 import { fakeVm } from "@site/src/fake-vm";
 import {
-  DynamicPartInput,
+  DynamicNodeInput,
   execute,
   FlydeFlow,
-  ImportedPart,
-  isBasePart,
+  ImportedNode,
+  isBaseNode,
   keys,
   noop,
-  Part,
-  PartInputs,
-  PartInstance,
-  PartOutput,
+  Node,
+  NodeInputs,
+  NodeInstance,
+  NodeOutput,
   ResolvedDependencies,
   TRIGGER_PIN_ID,
 } from "@flyde/core";
@@ -48,10 +48,10 @@ const initialPadding = [0, 0] as [number, number];
 
 export interface EmbeddedFlydeProps {
   flowProps: {
-    inputs: Record<string, DynamicPartInput>;
+    inputs: Record<string, DynamicNodeInput>;
     flow: FlydeFlow;
     dependencies: ResolvedDependencies;
-    output: PartOutput;
+    output: NodeOutput;
   };
   debugDelay: number;
   onOutput: (data: any) => void;
@@ -60,8 +60,8 @@ export interface EmbeddedFlydeProps {
 export type PlaygroundFlowDto = {
   flow: FlydeFlow;
   dependencies: ResolvedDependencies;
-  output: PartOutput;
-  inputs: PartInputs;
+  output: NodeOutput;
+  inputs: NodeInputs;
   onError: any;
   debugDelay?: number;
   player: RuntimePlayer;
@@ -80,14 +80,14 @@ const runFlow = ({
 
   localDebugger.debugDelay = debugDelay;
 
-  const firstOutputName = keys(flow.part.outputs)[0];
+  const firstOutputName = keys(flow.node.outputs)[0];
 
   return {
     executeResult: execute({
-      part: flow.part,
+      node: flow.node,
       inputs: inputs,
       outputs: { [firstOutputName]: output },
-      resolvedDeps: { ...dependencies, [flow.part.id]: flow.part },
+      resolvedDeps: { ...dependencies, [flow.node.id]: flow.node },
       _debugger: localDebugger,
       onBubbleError: (e) => {
         onError(e);
@@ -115,54 +115,54 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = (props) => {
 
   const [debouncedFlow] = useDebounce(resolvedDeps, 500);
 
-  const onImportPart: DependenciesContextData["onImportPart"] = async (
-    importedPart,
+  const onImportNode: DependenciesContextData["onImportNode"] = async (
+    importedNode,
     target
   ) => {
-    const { part } = importedPart;
+    const { node } = importedNode;
 
-    const depPart = Object.values(
+    const depNode = Object.values(
       await import("@flyde/stdlib/dist/all-browser")
-    ).find((p) => isBasePart(p) && p.id === part.id) as Part;
+    ).find((p) => isBaseNode(p) && p.id === node.id) as Node;
 
     setResolvedDeps((flow) => {
       return {
         ...flow,
         dependencies: {
           ...flow.dependencies,
-          [depPart.id]: {
-            ...depPart,
+          [depNode.id]: {
+            ...depNode,
             source: {
               path: "@flyde/stdlib/dist/all-browser",
-              export: depPart.id,
+              export: depNode.id,
             }, // fake, for playground
           },
         },
       };
     });
 
-    let newPartIns: PartInstance | undefined = undefined;
+    let newNodeIns: NodeInstance | undefined = undefined;
 
     const newFlow = produce(flow, (draft) => {
       if (target) {
         const finalPos = vAdd({ x: 0, y: 0 }, target.pos);
-        newPartIns = createNewPartInstance(
-          importedPart.part,
+        newNodeIns = createNewNodeInstance(
+          importedNode.node,
           0,
           finalPos,
           resolvedDeps
         );
-        draft.part.instances.push(newPartIns);
+        draft.node.instances.push(newNodeIns);
 
         if (target.connectTo) {
           const { insId, outputId } = target.connectTo;
-          draft.part.connections.push({
+          draft.node.connections.push({
             from: {
               insId,
               pinId: outputId,
             },
             to: {
-              insId: newPartIns.id,
+              insId: newNodeIns.id,
               pinId: TRIGGER_PIN_ID,
             },
           });
@@ -170,20 +170,20 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = (props) => {
       }
     });
 
-    // yacky hack to make sure flow is only rerendered when the new part exists
+    // yacky hack to make sure flow is only rerendered when the new node exists
     await new Promise((resolve) => setTimeout(resolve, 10));
 
     const newState = produce(editorState, (draft) => {
       draft.flow = newFlow;
-      if (target?.selectAfterAdding && newPartIns) {
-        draft.boardData.selected = [newPartIns?.id];
+      if (target?.selectAfterAdding && newNodeIns) {
+        draft.boardData.selected = [newNodeIns?.id];
       }
     });
 
     setFlowEditorState(newState);
 
     toastMsg(
-      `Part ${part.id} successfully imported from ${importedPart.module}`
+      `Node ${node.id} successfully imported from ${importedNode.module}`
     );
 
     return resolvedDeps;
@@ -191,12 +191,12 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = (props) => {
 
   const onRequestImportables: DependenciesContextData["onRequestImportables"] =
     async () => {
-      const parts = Object.values(
+      const nodes = Object.values(
         await import("@flyde/stdlib/dist/all-browser")
-      ).filter(isBasePart) as ImportedPart[];
+      ).filter(isBaseNode) as ImportedNode[];
       return {
-        importables: parts.map((b) => ({
-          part: { ...b, source: { path: "n/a", export: "n/a" } },
+        importables: nodes.map((b) => ({
+          node: { ...b, source: { path: "n/a", export: "n/a" } },
           module: "@flyde/stdlib",
         })),
         errors: [],
@@ -226,16 +226,16 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = (props) => {
   useEffect(() => {
     setResolvedDeps((f) => ({
       ...f,
-      main: editorState.flow.part as ImportedPart,
+      main: editorState.flow.node as ImportedNode,
     }));
-  }, [editorState.flow.part]);
+  }, [editorState.flow.node]);
 
   const flowEditorProps: FlydeFlowEditorProps = {
     state: editorState,
     onChangeEditorState: setFlowEditorState,
     hideTemplatingTips: true,
     initialPadding,
-    onExtractInlinePart: noop as any,
+    onExtractInlineNode: noop as any,
     disableScrolling: true,
   };
 
@@ -264,7 +264,7 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = (props) => {
   const depsContextValue = useMemo<DependenciesContextData>(() => {
     return {
       resolvedDependencies: resolvedDeps,
-      onImportPart,
+      onImportNode,
       onRequestImportables,
     };
   }, []);

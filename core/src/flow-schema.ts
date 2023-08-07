@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { VisualPart, PartDefinition, Part } from "./part";
+import { VisualNode, NodeDefinition, Node } from "./node";
 
 const importSchema = z.record(z.string(), z.string().or(z.array(z.string())));
 const position = z.strictObject({ x: z.number(), y: z.number() });
@@ -17,7 +17,7 @@ const inputConfig = z.discriminatedUnion("mode", [
   }),
 ]);
 
-const partStyle = z.object({
+const nodeStyle = z.object({
   size: z.optional(z.enum(["small", "regular", "large"])),
   icon: z.optional(z.any()),
   color: z.optional(z.string()),
@@ -31,12 +31,12 @@ const instance = z
     inputConfig: z.optional(z.record(z.string(), inputConfig)).default({}),
     visibleInputs: z.optional(z.array(z.string())),
     visibleOutputs: z.optional(z.array(z.string())),
-    partId: z.optional(z.string()),
-    part: z.optional(z.any()),
-    style: z.optional(partStyle),
+    nodeId: z.optional(z.string()),
+    node: z.optional(z.any()),
+    style: z.optional(nodeStyle),
   })
-  .refine((val) => val.part || val.partId, {
-    message: "Instance must have either an inline part or refer to a partId",
+  .refine((val) => val.node || val.nodeId, {
+    message: "Instance must have either an inline node or refer to a nodeId",
   });
 
 const inputPinSchema = z.union([
@@ -58,7 +58,7 @@ const outputPinSchema = z.object({
   description: z.optional(z.string()),
 });
 
-const flydeBasePart = z.object({
+const flydeBaseNode = z.object({
   id: z.optional(z.string()),
   inputs: z.record(z.string(), inputPinSchema),
   outputs: z.record(z.string(), outputPinSchema),
@@ -69,12 +69,12 @@ const flydeBasePart = z.object({
   templateType: z.optional(z.string()),
   completionOutputs: z.optional(z.array(z.string())),
   reactiveInputs: z.optional(z.array(z.string())),
-  defaultStyle: z.optional(partStyle),
+  defaultStyle: z.optional(nodeStyle),
   description: z.optional(z.string()),
   searchKeywords: z.optional(z.array(z.string())),
 });
 
-const visualPart = z
+const visualNode = z
   .object({
     instances: z.array(instance),
     connections: z.array(
@@ -86,11 +86,11 @@ const visualPart = z
       })
     ),
   })
-  .and(flydeBasePart);
+  .and(flydeBaseNode);
 
 export type FlydeFlow = {
   imports?: Record<string, String[]>;
-  part: VisualPart;
+  node: VisualNode;
 };
 
 export interface ImportSource {
@@ -98,32 +98,32 @@ export interface ImportSource {
   export?: string;
 }
 
-export type ImportedPartDefinition = PartDefinition & {
+export type ImportedNodeDefinition = NodeDefinition & {
   source: ImportSource;
 };
 
-export type ImportedPart = Part & {
+export type ImportedNode = Node & {
   source: ImportSource;
 };
 
-export type ImportedPartDef = PartDefinition & {
+export type ImportedNodeDef = NodeDefinition & {
   source: ImportSource;
 };
 
 export type ResolvedDependenciesDefinitions = Record<
   string,
-  ImportedPartDefinition
+  ImportedNodeDefinition
 >;
 
 export type ResolvedFlydeFlowDefinition = {
-  main: VisualPart;
+  main: VisualNode;
   dependencies: ResolvedDependenciesDefinitions;
 };
 
-export type ResolvedDependencies = Record<string, ImportedPart>;
+export type ResolvedDependencies = Record<string, ImportedNode>;
 
 export type ResolvedFlydeRuntimeFlow = {
-  main: VisualPart;
+  main: VisualNode;
   dependencies: ResolvedDependencies;
 };
 
@@ -133,5 +133,5 @@ export type ResolvedFlydeFlow =
 
 export const flydeFlowSchema = z.strictObject({
   imports: z.optional(importSchema).default({}),
-  part: visualPart,
+  node: visualNode,
 });

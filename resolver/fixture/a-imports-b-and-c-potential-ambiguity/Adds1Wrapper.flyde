@@ -1,7 +1,7 @@
 ---
 imports:
   "./SpecialAdds1.flyde.js": Special
-part:
+node:
   id: Adds1Wrapper
   inputs:
     n:
@@ -12,7 +12,7 @@ part:
       type: number
   instances:
   - id: ins1
-    partId: Special
+    nodeId: Special
     pos:
       x: 0
       y: 0

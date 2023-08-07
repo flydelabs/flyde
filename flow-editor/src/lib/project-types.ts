@@ -1,10 +1,10 @@
-import { partInput, partOutput, VisualPart } from "@flyde/core";
+import { nodeInput, nodeOutput, VisualNode } from "@flyde/core";
 
-export const emptyWebUiProject: VisualPart = {
+export const emptyWebUiProject: VisualNode = {
   id: "new-web-ui-project",
   inputs: {},
   outputs: {
-    jsx: partOutput(),
+    jsx: nodeOutput(),
   },
   inputsPosition: { mouse: { x: 0, y: 0 }, keyPress: { x: 200, y: 0 } },
   outputsPosition: { response: { x: 0, y: 400 } },
@@ -14,13 +14,13 @@ export const emptyWebUiProject: VisualPart = {
   reactiveInputs: [],
 };
 
-export const emptyServerProject: VisualPart = {
+export const emptyServerProject: VisualNode = {
   id: "new-server-project",
   inputs: {
-    request: partInput(),
+    request: nodeInput(),
   },
   outputs: {
-    response: partOutput(),
+    response: nodeOutput(),
   },
   inputsPosition: { request: { x: 0, y: 0 } },
   outputsPosition: { response: { x: 0, y: 400 } },
@@ -28,13 +28,13 @@ export const emptyServerProject: VisualPart = {
   instances: [],
 };
 
-export const emptyLambdaProject: VisualPart = {
+export const emptyLambdaProject: VisualNode = {
   id: "new-lambda-project",
   inputs: {
-    context: partInput(),
+    context: nodeInput(),
   },
   outputs: {
-    response: partOutput(),
+    response: nodeOutput(),
   },
   inputsPosition: { context: { x: 0, y: 0 } },
   outputsPosition: { response: { x: 0, y: 400 } },
@@ -42,11 +42,11 @@ export const emptyLambdaProject: VisualPart = {
   instances: [],
 };
 
-export const emptyMobileProject: VisualPart = {
+export const emptyMobileProject: VisualNode = {
   id: "new-mobile-project",
   inputs: {},
   outputs: {
-    jsx: partOutput(),
+    jsx: nodeOutput(),
   },
   inputsPosition: { context: { x: 0, y: 0 } },
   outputsPosition: { response: { x: 0, y: 400 } },
@@ -54,15 +54,15 @@ export const emptyMobileProject: VisualPart = {
   instances: [],
 };
 
-export const emptyCliProject: VisualPart = {
+export const emptyCliProject: VisualNode = {
   id: "new-cli-project",
   inputs: {
-    args: partInput(),
+    args: nodeInput(),
   },
   outputs: {
-    stdout: partOutput( true),
-    stderr: partOutput( true),
-    exit: partOutput( true),
+    stdout: nodeOutput(true),
+    stderr: nodeOutput(true),
+    exit: nodeOutput(true),
   },
   inputsPosition: { args: { x: 0, y: 0 } },
   outputsPosition: {
@@ -74,7 +74,7 @@ export const emptyCliProject: VisualPart = {
   instances: [],
 };
 
-export const typeProjectMap: { [k: string]: VisualPart } = {
+export const typeProjectMap: { [k: string]: VisualNode } = {
   server: emptyServerProject,
   "web-ui": emptyWebUiProject,
   lambda: emptyLambdaProject,

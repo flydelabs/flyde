@@ -1,7 +1,7 @@
-import { CodePart, partOutput } from "@flyde/core";
+import { CodeNode, nodeOutput } from "@flyde/core";
 import { Client } from "eris";
 
-const part: CodePart = {
+const node: CodeNode = {
   id: "Discord Bot",
   inputs: {},
   defaultStyle: {
@@ -10,8 +10,8 @@ const part: CodePart = {
     size: "large",
   },
   outputs: {
-    interaction: partOutput(),
-    message: partOutput(),
+    interaction: nodeOutput(),
+    message: nodeOutput(),
   },
   completionOutputs: [],
   run: (inputs, outputs, adv) => {
@@ -33,4 +33,4 @@ const part: CodePart = {
   },
 };
 
-export = part;
+export = node;

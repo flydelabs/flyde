@@ -6,11 +6,11 @@ import {
   isQueueInputPinConfig,
   isStaticInput,
   isStickyInputPinConfig,
-  Part,
-  PartInput,
-  PartInputs,
-  PartState,
-} from "../part";
+  Node,
+  NodeInput,
+  NodeInputs,
+  NodeState,
+} from "../node";
 
 import { containsAll, entries, isDefined, keys, OMap } from "../common";
 import { TRIGGER_PIN_ID } from "../connect";
@@ -28,7 +28,7 @@ const pickFromObject = (key: string, obj: OMap<any>) => {
   return o;
 };
 
-const getFinalStaticValue = (input: PartInput, env: ExecuteEnv) => {
+const getFinalStaticValue = (input: NodeInput, env: ExecuteEnv) => {
   const value = extractStaticValue(input);
   if (isEnvValue(value)) {
     const prop = getEnvKeyFromValue(value);
@@ -40,16 +40,16 @@ const getFinalStaticValue = (input: PartInput, env: ExecuteEnv) => {
 
 export const peekValueForExecution = (
   key: string,
-  input: PartInput,
-  state: PartState,
+  input: NodeInput,
+  state: NodeState,
   env: ExecuteEnv,
-  partId: string
+  nodeId: string
 ) => {
   const stateItem = state.get(key);
   let val;
   if (!input) {
     throw new Error(
-      `Trying to peek value of inexsting input in key "${key}" in part "${partId}"`
+      `Trying to peek value of inexsting input in key "${key}" in node "${nodeId}"`
     );
   }
   if (isStaticInput(input)) {
@@ -65,8 +65,8 @@ export const peekValueForExecution = (
 
 export const pullValueForExecution = (
   key: string,
-  input: PartInput,
-  state: PartState,
+  input: NodeInput,
+  state: NodeState,
   env: ExecuteEnv
 ): unknown => {
   const stateItem = state.get(key);
@@ -89,55 +89,61 @@ export const pullValueForExecution = (
 };
 
 export const pullValuesForExecution = (
-  partInputs: PartInputs,
-  state: PartState,
+  nodeInputs: NodeInputs,
+  state: NodeState,
   env: ExecuteEnv
 ) => {
-  const data = entries(partInputs).reduce<Record<string, unknown>>((acc, [key, input]) => {
-    acc[key] = pullValueForExecution(key, input, state, env);
-    return acc;
-  }, {});
+  const data = entries(nodeInputs).reduce<Record<string, unknown>>(
+    (acc, [key, input]) => {
+      acc[key] = pullValueForExecution(key, input, state, env);
+      return acc;
+    },
+    {}
+  );
 
   return data;
 };
 
 export const peekValuesForExecution = (
-  partInputs: PartInputs,
-  state: PartState,
+  nodeInputs: NodeInputs,
+  state: NodeState,
   env: ExecuteEnv,
-  partId: string
+  nodeId: string
 ) => {
-  const data = entries(partInputs).reduce<Record<string, unknown>>((acc, [key, input]) => {
-    acc[key] = peekValueForExecution(key, input, state, env, partId);
-    return acc;
-  }, {});
+  const data = entries(nodeInputs).reduce<Record<string, unknown>>(
+    (acc, [key, input]) => {
+      acc[key] = peekValueForExecution(key, input, state, env, nodeId);
+      return acc;
+    },
+    {}
+  );
 
   return data;
 };
 
 export const hasNewSignificantValues = (
-  partInputs: PartInputs,
-  state: PartState,
+  nodeInputs: NodeInputs,
+  state: NodeState,
   env: ExecuteEnv,
-  partId: string
+  nodeId: string
 ) => {
-  return entries(partInputs).some(([k, i]) => {
+  return entries(nodeInputs).some(([k, i]) => {
     const isQueue = isQueueInputPinConfig(i.config);
-    const value = peekValueForExecution(k, i, state, env, partId);
+    const value = peekValueForExecution(k, i, state, env, nodeId);
 
     return isDefined(value) && isQueue;
   });
 };
 
-export const isPartStateValid = (
-  partInputs: PartInputs,
-  state: PartState,
-  part: Part
+export const isNodeStateValid = (
+  nodeInputs: NodeInputs,
+  state: NodeState,
+  node: Node
 ) => {
-  const connectedKeys = keys(partInputs);
+  const connectedKeys = keys(nodeInputs);
 
-  const requiredInputs = keys(part.inputs).filter((k) => {
-    const mode = part.inputs[k]?.mode;
+  const requiredInputs = keys(node.inputs).filter((k) => {
+    const mode = node.inputs[k]?.mode;
     return !mode || mode === "required";
   });
 
@@ -152,13 +158,13 @@ export const isPartStateValid = (
   }
 
   return (
-    entries(partInputs)
-      .filter(([key]) => !!part.inputs[key] || key === TRIGGER_PIN_ID) // filter irrelevant inputs
-      // .filter(([key]) => !part.reactiveInputs?.includes(key))
+    entries(nodeInputs)
+      .filter(([key]) => !!node.inputs[key] || key === TRIGGER_PIN_ID) // filter irrelevant inputs
+      // .filter(([key]) => !node.reactiveInputs?.includes(key))
       .every(([key, input]) => {
         const stateItem = state.get(key);
 
-        const mode = part.inputs[key]?.mode || "required";
+        const mode = node.inputs[key]?.mode || "required";
 
         if (mode === "optional") {
           return true;
@@ -176,15 +182,15 @@ export const isPartStateValid = (
 };
 
 export const subscribeInputsToState = (
-  partInputs: PartInputs,
-  state: PartState,
+  nodeInputs: NodeInputs,
+  state: NodeState,
   onInput: (key: string, val: unknown) => void
 ) => {
   const cleanups: Function[] = [];
 
-  entries(partInputs).forEach(([key, arg]) => {
+  entries(nodeInputs).forEach(([key, arg]) => {
     if (!arg) {
-      // means the part is optional and was not given
+      // means the node is optional and was not given
       return;
     }
 

@@ -1,20 +1,20 @@
 import {
-  CodePart,
+  CodeNode,
   isDynamicInput,
-  PartInput,
-  PartInputs,
-  staticPartInput,
-  PartOutputs,
+  NodeInput,
+  NodeInputs,
+  staticNodeInput,
+  NodeOutputs,
   dynamicOutput,
-  dynamicPartInput,
-  PartInstance,
-  VisualPart,
+  dynamicNodeInput,
+  NodeInstance,
+  VisualNode,
   queueInputPinConfig,
   isStaticInputPinConfig,
-  PartOutput,
-  PartState,
-  getPart,
-} from "../part";
+  NodeOutput,
+  NodeState,
+  getNode,
+} from "../node";
 import { CancelFn, execute, Debugger, ExecuteEnv } from "../execute";
 import { DepGraph, isDefined, noop, okeys, OMap, randomInt } from "../common";
 import {
@@ -26,7 +26,7 @@ import {
   TRIGGER_PIN_ID,
 } from "./helpers";
 
-import { PartsCollection } from "..";
+import { NodesCollection } from "..";
 
 export * from "./helpers";
 
@@ -51,83 +51,83 @@ export type ConnectionNode = ExternalConnectionNode | InternalConnectionNode;
 
 export type PinList = Array<{ insId: string; pinId: string }>;
 
-type PositionlessVisualPart = Omit<
-  Omit<VisualPart, "inputsPosition">,
+type PositionlessVisualNode = Omit<
+  Omit<VisualNode, "inputsPosition">,
   "outputsPosition"
 >;
 
 export const connect = (
-  part: PositionlessVisualPart,
-  resolvedDeps: PartsCollection,
+  node: PositionlessVisualNode,
+  resolvedDeps: NodesCollection,
   _debugger: Debugger = {},
   ancestorsInsIds?: string,
-  mainState: OMap<PartState> = {},
+  mainState: OMap<NodeState> = {},
   onBubbleError: (err: any) => void = noop,
   env: ExecuteEnv = {},
   extraContext: Record<string, any> = {}
-): CodePart => {
-  const { id: maybeId, connections, instances } = part;
+): CodeNode => {
+  const { id: maybeId, connections, instances } = node;
 
-  const partId = maybeId || "connected-part" + randomInt(999);
+  const nodeId = maybeId || "connected-node" + randomInt(999);
 
   return {
-    inputs: part.inputs,
-    outputs: part.outputs,
-    id: partId,
-    completionOutputs: part.completionOutputs,
-    reactiveInputs: part.reactiveInputs,
+    inputs: node.inputs,
+    outputs: node.outputs,
+    id: nodeId,
+    completionOutputs: node.completionOutputs,
+    reactiveInputs: node.reactiveInputs,
     run: (fnArgs, fnOutputs) => {
       let cancelFns: CancelFn[] = [];
 
       const depGraph = new DepGraph({});
 
-      const instanceToId = new Map<PartInstance, string>();
-      const idToInstance = new Map<string, PartInstance>();
+      const instanceToId = new Map<NodeInstance, string>();
+      const idToInstance = new Map<string, NodeInstance>();
 
       // these hold the args / outputs for each piece of an internal connection
-      const instanceArgs = new Map<string, PartInputs>();
-      const instanceOutputs = new Map<string, PartOutputs>();
+      const instanceArgs = new Map<string, NodeInputs>();
+      const instanceOutputs = new Map<string, NodeOutputs>();
 
       // hold the external connection points to be connected in the end
-      const externalInputConnections = new Map<string, PartInput[]>();
-      const externalOutputConnections = new Map<string, PartOutput[]>();
+      const externalInputConnections = new Map<string, NodeInput[]>();
+      const externalOutputConnections = new Map<string, NodeOutput[]>();
 
       // holds status of each instance - if it is running or not, for implicit completion
       let resolveCompletionPromise: any;
       const runningInstances = new Set();
 
-      // build the inputs and outputs of the part itself
-      // they will be then connected to fnArgs and fnOutputs and will run the part
+      // build the inputs and outputs of the node itself
+      // they will be then connected to fnArgs and fnOutputs and will run the node
 
       // build all input and output maps
       instances.forEach((instance) => {
-        const part = getPart(instance, resolvedDeps);
+        const node = getNode(instance, resolvedDeps);
         const instanceId = instance.id;
         instanceToId.set(instance, instanceId);
         idToInstance.set(instanceId, instance);
 
         depGraph.addNode(instanceId);
 
-        const inputKeys = Object.keys(part.inputs);
-        const outputKeys = Object.keys(part.outputs);
+        const inputKeys = Object.keys(node.inputs);
+        const outputKeys = Object.keys(node.outputs);
 
-        const args: PartInputs = {},
-          outputs: PartOutputs = {};
+        const args: NodeInputs = {},
+          outputs: NodeOutputs = {};
 
         inputKeys.forEach((k) => {
           const inputConfig =
             (instance.inputConfig || {})[k] || queueInputPinConfig();
 
           if (isStaticInputPinConfig(inputConfig)) {
-            args[k] = staticPartInput(inputConfig.value);
+            args[k] = staticNodeInput(inputConfig.value);
           } else {
-            args[k] = dynamicPartInput({
+            args[k] = dynamicNodeInput({
               config: inputConfig,
             });
           }
         });
 
-        args[TRIGGER_PIN_ID] = dynamicPartInput({
+        args[TRIGGER_PIN_ID] = dynamicNodeInput({
           config: queueInputPinConfig(),
         });
 
@@ -231,7 +231,7 @@ export const connect = (
           console.log(fromInstancePinId);
 
           throw new Error(
-            `Output source - [${fromInstancePinId}] not found in part [${partId}]`
+            `Output source - [${fromInstancePinId}] not found in node [${nodeId}]`
           );
         }
 
@@ -245,11 +245,11 @@ export const connect = (
           );
         }
 
-        const sourcePart = sourceInstance
-          ? getPart(sourceInstance, resolvedDeps)
-          : part;
+        const sourceNode = sourceInstance
+          ? getNode(sourceInstance, resolvedDeps)
+          : node;
 
-        const sourceOutputPin = sourcePart.outputs[fromInstancePinId];
+        const sourceOutputPin = sourceNode.outputs[fromInstancePinId];
         const isDelayed =
           (sourceOutputPin && sourceOutputPin.delayed) || conn.delayed;
 
@@ -260,7 +260,7 @@ export const connect = (
         }
 
         if (!targetArg) {
-          throw new Error(`Target arg - [${to}] not found in part [${partId}]`);
+          throw new Error(`Target arg - [${to}] not found in node [${nodeId}]`);
         }
 
         const sub = sourceOutput.subscribe(async (val: any) => {
@@ -305,11 +305,11 @@ export const connect = (
       depGraph
         .overallOrder()
         .map((name: string) => idToInstance.get(name))
-        .forEach((instance: PartInstance) => {
+        .forEach((instance: NodeInstance) => {
           const inputs = instanceArgs.get(instance.id);
           const outputs = instanceOutputs.get(instance.id);
 
-          const part = getPart(instance, resolvedDeps);
+          const node = getNode(instance, resolvedDeps);
           if (!inputs) {
             throw new Error(
               `Unexpected error - args not found when running ${instance}`
@@ -334,9 +334,9 @@ export const connect = (
               delete inputs[key];
             }
           }
-          // magic happens here - parts are executed
+          // magic happens here - nodes are executed
           const cancel = execute({
-            part,
+            node,
             inputs,
             outputs,
             resolvedDeps: resolvedDeps,
@@ -374,7 +374,7 @@ export const connect = (
         });
       });
 
-      if (part.completionOutputs === undefined && runningInstances.size > 0) {
+      if (node.completionOutputs === undefined && runningInstances.size > 0) {
         return new Promise((res) => {
           resolveCompletionPromise = res;
         });

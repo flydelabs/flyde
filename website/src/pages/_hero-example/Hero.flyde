@@ -3,14 +3,14 @@ imports:
     - GET Request
     - POST Request
     - Get Attribute
-part:
+node:
   instances:
     - pos:
         x: -702.4322045898438
         y: 137.9009524536133
       id: Inline-value-Hello from ${i76
       inputConfig: {}
-      part:
+      node:
         id: Inline-value-Looks like you
         inputs:
           country:
@@ -43,7 +43,7 @@ part:
         y: -353.57775328874584
       id: Get User's Country-ins
       inputConfig: {}
-      part:
+      node:
         id: Get User's Country
         inputs: {}
         outputs:
@@ -66,9 +66,9 @@ part:
             visibleOutputs:
               - data
               - __error
-            partId: GET Request
+            nodeId: GET Request
           - id: "Inline-value-{iso2: ${input76"
-            part:
+            node:
               id: "Inline-value-{iso2: inputs.d"
               inputs:
                 data:
@@ -133,7 +133,7 @@ part:
       visibleOutputs:
         - name
         - capital
-      part:
+      node:
         id: Get Country Name And Capital
         inputs:
           body:
@@ -161,9 +161,9 @@ part:
               - url
               - body
               - data
-            partId: POST Request
+            nodeId: POST Request
           - id: Get Attribute-217
-            partId: Get Attribute
+            nodeId: Get Attribute
             inputConfig:
               attribute:
                 mode: static
@@ -172,7 +172,7 @@ part:
               x: -285.6922900390625
               y: 219.88888122558592
           - id: Get Country Name And Capital-srp46ei
-            partId: Get Attribute
+            nodeId: Get Attribute
             inputConfig:
               attribute:
                 mode: static
@@ -238,7 +238,7 @@ part:
         y: -37.000313110351556
       id: cl8x5r4qp00074666lb382z1c
       inputConfig: {}
-      part:
+      node:
         id: Get Population By City
         inputs:
           city:
@@ -264,7 +264,7 @@ part:
               - params
               - data
               - __trigger
-            partId: POST Request
+            nodeId: POST Request
             visibleOutputs:
               - data
               - __error
@@ -273,7 +273,7 @@ part:
               y: 147.6986600494385
             id: "Inline-value-{city: inputs.c75"
             inputConfig: {}
-            part:
+            node:
               id: "Inline-value-{city: inputs.c"
               inputs:
                 city:
@@ -291,7 +291,7 @@ part:
               completionOutputs:
                 - r
           - id: Get Attribute-893
-            partId: Get Attribute
+            nodeId: Get Attribute
             inputConfig:
               attribute:
                 mode: static
@@ -307,7 +307,7 @@ part:
               y: 562.7676763916015
             id: Get Population By City-oq646gx
             inputConfig: {}
-            part:
+            node:
               id: Format Number
               inputs:
                 number:
@@ -320,7 +320,7 @@ part:
                   optional: false
               instances:
                 - id: Inline-value-Result is ${in47
-                  part:
+                  node:
                     id: Inline-value-new Intl.Number
                     inputs:
                       population:
@@ -375,7 +375,7 @@ part:
               size: regular
               color: "#fee440"
           - id: Inline-value-N/A-6c146fg
-            part:
+            node:
               id: Inline-value-N/A
               inputs: {}
               outputs:

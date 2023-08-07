@@ -1,31 +1,31 @@
 import {
-  Part,
-  isVisualPart,
+  Node,
+  isVisualNode,
   ResolvedFlydeFlow,
-  isRefPartInstance,
-  RefPartInstance,
-  isInlinePartInstance,
-  VisualPart,
+  isRefNodeInstance,
+  RefNodeInstance,
+  isInlineNodeInstance,
+  VisualNode,
 } from "@flyde/core";
 import _ = require("lodash");
 
-const namespaceVisualPart = (
-  part: VisualPart,
+const namespaceVisualNode = (
+  node: VisualNode,
   namespace: string
-): VisualPart => {
-  const namespacedInstances = part.instances.map((ins) => {
-    if (isInlinePartInstance(ins)) {
-      if (isVisualPart(ins.part)) {
-        return { ...ins, part: namespaceVisualPart(ins.part, namespace) };
+): VisualNode => {
+  const namespacedInstances = node.instances.map((ins) => {
+    if (isInlineNodeInstance(ins)) {
+      if (isVisualNode(ins.node)) {
+        return { ...ins, node: namespaceVisualNode(ins.node, namespace) };
       } else {
         return ins;
       }
     } else {
-      return { ...ins, partId: `${namespace}${ins.partId}` };
+      return { ...ins, nodeId: `${namespace}${ins.nodeId}` };
     }
   });
   return {
-    ...part,
+    ...node,
     instances: namespacedInstances,
   };
 };
@@ -34,34 +34,34 @@ export const namespaceFlowImports = (
   resolvedFlow: ResolvedFlydeFlow,
   namespace: string = ""
 ): ResolvedFlydeFlow => {
-  const part = resolvedFlow.main;
-  if (isVisualPart(part)) {
-    const namespacedPart = namespaceVisualPart(part, namespace);
+  const node = resolvedFlow.main;
+  if (isVisualNode(node)) {
+    const namespacedNode = namespaceVisualNode(node, namespace);
 
     const namespacedImports = _.chain(resolvedFlow.dependencies)
       .mapKeys((_, key) => `${namespace}${key}`)
-      .mapValues((part) => {
-        const newPart = isVisualPart(part)
+      .mapValues((node) => {
+        const newNode = isVisualNode(node)
           ? {
-              ...part,
-              instances: part.instances.map((ins) => {
-                return isRefPartInstance(ins)
-                  ? { ...ins, partId: `${namespace}${ins.partId}` }
+              ...node,
+              instances: node.instances.map((ins) => {
+                return isRefNodeInstance(ins)
+                  ? { ...ins, nodeId: `${namespace}${ins.nodeId}` }
                   : ins;
               }),
-              id: `${namespace}${part.id}`,
+              id: `${namespace}${node.id}`,
             }
           : {
-              ...part,
-              id: `${namespace}${part.id}`,
+              ...node,
+              id: `${namespace}${node.id}`,
             };
-        return newPart;
+        return newNode;
       })
       .value();
 
     return {
       ...resolvedFlow,
-      main: namespacedPart,
+      main: namespacedNode,
       dependencies: namespacedImports,
     };
   } else {

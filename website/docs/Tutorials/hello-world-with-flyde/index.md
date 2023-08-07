@@ -51,7 +51,7 @@ Now we're getting to the real deal, creating a visual flow! We're going to creat
 Before moving on, here's a quick intro to Flyde's terminology:  
 **The flow board** - it's the canvas where visual flows are edited. Components can be added to the board and connected among themselves or to the flow's main input or output pins  
 **A component** - they are the equivalent of "functions" or even data in Flyde  
-**Input pin** - Each component can have 0 or more custom input pins, and will always have the built in "Trigger" pin. Input pins are like arguments to functions. By default, whenever all arguments are satisfied, the part is triggered. To have more control on when it should trigger, the Trigger input pin can be used as a way to manually invoke the component  
+**Input pin** - Each component can have 0 or more custom input pins, and will always have the built in "Trigger" pin. Input pins are like arguments to functions. By default, whenever all arguments are satisfied, the node is triggered. To have more control on when it should trigger, the Trigger input pin can be used as a way to manually invoke the component  
 **Output pin** - Each component can have 0 or more custom output pins, and will always have the built in "Error" pin (needs to be explicitly shown via right-clicking a component). Output pins are like return values of functions, but unlike regular functions, a component may have multiple output pins, and each one may trigger more than once  
 **A connection** - a connection connects a component's output pin to another's input pin, creating our control flow and logic  
 **Main flow input/output pin** - just like each component has it's inputs and outputs, so does the flow itself. Actually, a flow is just like any another component! Main inputs and outputs are the flow's API to the external world, while the components inside are it's implementation detail
@@ -62,7 +62,7 @@ Before moving on, here's a quick intro to Flyde's terminology:
 
 Now it's time to do some changes! We're gonna remove the default placeholder content and replace it with an component that emits a string.
 
-1. click on the "Your logic here!" part and press delete to remove it from the board
+1. click on the "Your logic here!" node and press delete to remove it from the board
 2. right click the board and select "New value"
 3. Type in `"Hello, Flyde!"` (make sure it's surrounded by quotes so it's a valid string) and click the "save" button
 4. Now connect the "r" output pin to the "result" flow's output pin by first clicking on the "r" pin and then on the result (or vice-versa)
@@ -118,7 +118,7 @@ Before moving on to the next tutorial, I highly recommend you to try tinkering w
 - Add another input to your message
 - rename the "message" main output pin to say "greeting"
 - add another output and the same value to it
-- Mega bonus points: create a second flow and use it in your first one 🤯 adding new parts is possible by double clicking the board and searching for a flow
+- Mega bonus points: create a second flow and use it in your first one 🤯 adding new nodes is possible by double clicking the board and searching for a flow
 
 ---
 

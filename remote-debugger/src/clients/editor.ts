@@ -55,18 +55,18 @@ export type EditorDebuggerClient = {
   getHistory: (dto: GetHistoryDto) => Promise<HistoryPayload>;
   clearHistory: () => Promise<void>;
 
-  triggerPart: (partId: string, inputs: Record<string, any>) => void;
+  triggerNode: (nodeId: string, inputs: Record<string, any>) => void;
 };
 
 export const createEditorClient = (
   url: string,
   executionId: string
 ): EditorDebuggerClient => {
-  const urlParts = new URL(url);
+  const urlNodes = new URL(url);
 
-  const socket = _io(urlParts.origin, {
+  const socket = _io(urlNodes.origin, {
     path: `${
-      urlParts.pathname === "/" ? "" : urlParts.pathname
+      urlNodes.pathname === "/" ? "" : urlNodes.pathname
     }/socket.io/editor`,
     timeout: 30000,
   });
@@ -140,9 +140,9 @@ export const createEditorClient = (
     clearHistory: () => {
       return axios.delete(`${url}/history`).then(() => {});
     },
-    triggerPart: (partId, inputs) => {
+    triggerNode: (nodeId, inputs) => {
       return axios
-        .post(`${url}/trigger`, { partId, inputs })
+        .post(`${url}/trigger`, { nodeId, inputs })
         .then((r) => r.data);
     },
   };

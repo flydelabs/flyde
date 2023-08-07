@@ -1,7 +1,7 @@
 ---
 imports:
   "./Add1WrapperTwice.flyde": Add1WrapperTwice
-part:
+node:
   id: Container
   inputs:
     n:
@@ -12,7 +12,7 @@ part:
       type: number
   instances:
   - id: ins1
-    partId: Add1WrapperTwice
+    nodeId: Add1WrapperTwice
     pos:
       x: 0
       y: 0

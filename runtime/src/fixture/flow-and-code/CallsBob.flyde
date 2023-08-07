@@ -2,14 +2,14 @@ imports:
   "@flyde/stdlib": []
   bob.flyde.ts:
     - Bob
-part:
+node:
   instances:
     - pos:
         x: -79.11480712890625
         y: -99.6658935546875
       id: clh559uyg000246660k0shdva
       inputConfig: {}
-      partId: Bob
+      nodeId: Bob
   connections:
     - from:
         insId: clh559uyg000246660k0shdva

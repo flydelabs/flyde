@@ -1,7 +1,7 @@
 ---
 imports:
   "@acme/add1-wrapped": Add1Wrapped
-part:
+node:
   id: Add1WrappedTwice
   inputs:
     n:
@@ -12,7 +12,7 @@ part:
       type: number
   instances:
   - id: ins1
-    partId: Add1Wrapped
+    nodeId: Add1Wrapped
     pos:
       x: 0
       y: 0

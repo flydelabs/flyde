@@ -28,7 +28,7 @@ const FeatureList: FeatureItem[] = [
     description: (
       <>
         Flyde integrates with AI to enable users to turn free text into code
-        components. Let AI take care of the inner workings,{" "}
+        nodes. Let AI take care of the inner workings,{" "}
         <mark>while controlling the bigger picture!</mark>
       </>
     ),
@@ -40,7 +40,7 @@ const FeatureList: FeatureItem[] = [
       <>
         Flyde's visual debugger provides real-time feedback, making it easier to
         understand, track, and fix issues in your software. It highlights active
-        parts and <mark>visually indicates the flow of data,</mark> enabling
+        nodes and <mark>visually indicates the flow of data,</mark> enabling
         both beginners and experienced developers to quickly identify and
         resolve problems in their systems.
       </>
@@ -71,11 +71,11 @@ const FeatureList: FeatureItem[] = [
     ),
   },
   {
-    title: "Pre-built Components",
+    title: "Pre-built Nodes",
     Svg: require("@site/static/img/undraw_features.svg").default,
     description: (
       <>
-        Boost your development with Flyde's pre-built components. Simplify file
+        Boost your development with Flyde's pre-built nodes. Simplify file
         system interaction, HTTP requests, list manipulation, and string
         operations. With Flyde, save time, avoid pitfalls, and focus on building
         your application.

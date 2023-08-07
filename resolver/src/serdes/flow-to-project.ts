@@ -2,16 +2,16 @@
 
 // export const flowToProject = (flow: FlydeFlow): Project => {
 //     // begin normalization to conventional project
-//     let resolvedParts: any = {};
+//     let resolvedNodes: any = {};
 //     if (flow.main) {
-//         resolvedParts.Main = flow.main;
+//         resolvedNodes.Main = flow.main;
 //     }
-//     if (flow.parts) {
-//         resolvedParts = {...resolvedParts, ...flow.parts};
+//     if (flow.nodes) {
+//         resolvedNodes = {...resolvedNodes, ...flow.nodes};
 //     }
 
-//     for (const key in resolvedParts) {
-//         resolvedParts[key].id = key;
+//     for (const key in resolvedNodes) {
+//         resolvedNodes[key].id = key;
 //     }
 
 //     const fakeTriggersToSatisfyCurrentEditor: Trigger[] = [
@@ -22,7 +22,7 @@
 //               "path": "/",
 //               "method": "GET"
 //             },
-//             "partId": "Main"
+//             "nodeId": "Main"
 //           }
 //     ]
 
@@ -33,7 +33,7 @@
 //         updated: Date.now(),
 //         name: 'pseudo-proj',
 //         slug: '/pseudo-proj',
-//         resolvedParts: resolvedParts,
+//         resolvedNodes: resolvedNodes,
 //         triggers: fakeTriggersToSatisfyCurrentEditor
 //     }
 //     // throw 'bob'

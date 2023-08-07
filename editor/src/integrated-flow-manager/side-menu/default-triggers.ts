@@ -1,7 +1,7 @@
 import {
-  VisualPart,
-  partInput,
-  partOutput,
+  VisualNode,
+  nodeInput,
+  nodeOutput,
   RestApiTrigger,
   ScheduledTrigger,
   WebAppTrigger,
@@ -9,20 +9,20 @@ import {
 } from "@flyde/core";
 
 import cuid from "cuid";
-import { defaultProjectRoutePart } from "./default-route-project";
+import { defaultProjectRouteNode } from "./default-route-project";
 
-export const triggerPartId = () => `API Trigger ${randomInt(99999)}`;
+export const triggerNodeId = () => `API Trigger ${randomInt(99999)}`;
 
-export const routeTriggerPart = (id: string = triggerPartId()) => {
+export const routeTriggerNode = (id: string = triggerNodeId()) => {
   return {
     id,
-    ...defaultProjectRoutePart,
+    ...defaultProjectRouteNode,
   };
 };
 
-export const scheduledTriggerPart = (): VisualPart => {
+export const scheduledTriggerNode = (): VisualNode => {
   return {
-    id: triggerPartId(),
+    id: triggerNodeId(),
     inputs: {
       context: {},
     },
@@ -41,7 +41,7 @@ export const scheduledTriggerPart = (): VisualPart => {
 export const restApiTrigger = (
   path: string,
   method: any,
-  partId: string
+  nodeId: string
 ): RestApiTrigger => {
   return {
     id: cuid(),
@@ -50,24 +50,24 @@ export const restApiTrigger = (
       path,
       method,
     },
-    partId,
+    nodeId,
   };
 };
 
-export const webAppTrigger = (path: string, partId: string): WebAppTrigger => {
+export const webAppTrigger = (path: string, nodeId: string): WebAppTrigger => {
   return {
     id: cuid(),
     type: "web-app",
     data: {
       path,
     },
-    partId,
+    nodeId,
   };
 };
 
 export const scheduledTrigger = (
   cronExpression: string,
-  partId: string
+  nodeId: string
 ): ScheduledTrigger => {
   return {
     id: cuid(),
@@ -75,18 +75,18 @@ export const scheduledTrigger = (
     data: {
       cronExpression,
     },
-    partId,
+    nodeId,
   };
 };
 
-export const emptyWebUiProject: VisualPart = {
+export const emptyWebUiProject: VisualNode = {
   id: "new-web-ui-project",
   inputs: {
-    mouse: partInput(),
-    keyPress: partInput(),
+    mouse: nodeInput(),
+    keyPress: nodeInput(),
   },
   outputs: {
-    jsx: partOutput(),
+    jsx: nodeOutput(),
   },
   inputsPosition: { mouse: { x: 0, y: 0 }, keyPress: { x: 200, y: 0 } },
   outputsPosition: { response: { x: 0, y: 400 } },

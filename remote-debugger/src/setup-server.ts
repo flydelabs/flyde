@@ -40,7 +40,7 @@ export const setupRemoteDebuggerServer = (
   httpServer: HttpServer,
   app: Express,
   stateRequester: () => OMap<Map<string, any>>,
-  triggerPart: (partId: string, inputs: any) => any,
+  triggerNode: (nodeId: string, inputs: any) => any,
   onBatchedEvents?: (events: DebuggerEvent[]) => void
 ) => {
   const io = new Server(httpServer, {
@@ -62,12 +62,12 @@ export const setupRemoteDebuggerServer = (
   };
 
   app.post("/trigger", (req, res) => {
-    const { partId, inputs } = req.body;
+    const { nodeId, inputs } = req.body;
     try {
-      const result = triggerPart(partId, inputs);
+      const result = triggerNode(nodeId, inputs);
       res.send(result);
     } catch (e) {
-      debug(`Error triggering part: %e`, e);
+      debug(`Error triggering node: %e`, e);
       console.log(e);
 
       res.status(400).send(e.message);

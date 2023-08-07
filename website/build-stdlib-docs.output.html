@@ -1,308 +1,332 @@
-# Flyde Parts Library
+# Flyde Nodes Library
 
-This is the documentation for the Flyde Parts Library. It contains all the parts that are available in the @flyde/stdlib
+This is the documentation for the Flyde Nodes Library. It contains all the parts that are available in the @flyde/stdlib
 (which is copied to @flyde/runtime for convenience).
 
 
-    ## Console
-        | Name | Description | Inputs | Outputs |
-        |------|-------------|-------------------------|---------|
-        
-            |  | Logs a value to the console | [object Object] | [object Object] |
-                            
-            |  | Logs an error to the console | [object Object] | [object Object] |
-                            
-                                
-    ## Dates
-        | Name | Description | Inputs | Outputs |
-        |------|-------------|-------------------------|---------|
-        
-            |  | Returns the current date and time | [object Object] | [object Object] |
-                            
-            |  | Returns the current date and time as a string | [object Object] | [object Object] |
-                            
-            |  | Returns the current date and time as a string in ISO format | [object Object] | [object Object] |
-                            
-            |  | Returns the current date and time as a Unix time | [object Object] | [object Object] |
-                            
-            |  | Creates a date from a Unix time | [object Object] | [object Object] |
-                            
-            |  | Creates a date from a string | [object Object] | [object Object] |
-                            
-            |  | Creates a date from an ISO string | [object Object] | [object Object] |
-                            
-            |  | Converts a date to a string | [object Object] | [object Object] |
-                            
-            |  | Converts a date to an ISO string | [object Object] | [object Object] |
-                            
-            |  | Converts a date to a Unix time | [object Object] | [object Object] |
-                            
-            |  | Converts a date to a year | [object Object] | [object Object] |
-                            
-            |  | Converts a date to a month | [object Object] | [object Object] |
-                            
-            |  | Converts a date to a day | [object Object] | [object Object] |
-                            
-            |  | Converts a date to hours | [object Object] | [object Object] |
-                            
-            |  | Converts a date to minutes | [object Object] | [object Object] |
-                            
-            |  | Converts a date to seconds | [object Object] | [object Object] |
-                            
-            |  | Converts a date to milliseconds | [object Object] | [object Object] |
-                            
-            |  | Converts a date to a day of the week | [object Object] | [object Object] |
-                            
-            |  | Converts a date to a timezone offset | [object Object] | [object Object] |
-                            
-                                
-    ## File System
-        | Name | Description | Inputs | Outputs |
-        |------|-------------|-------------------------|---------|
-        
-            |  | Reads a file from the file system | [object Object] | [object Object] |
-                            
-            |  | Writes a file to the file system | [object Object] | [object Object] |
-                            
-            |  | Appends a file to the file system | [object Object] | [object Object] |
-                            
-            |  | Deletes a file from the file system | [object Object] | [object Object] |
-                            
-            |  | Checks if a file exists | [object Object] | [object Object] |
-                            
-                                
-    ## HTTP
-        | Name | Description | Inputs | Outputs |
-        |------|-------------|-------------------------|---------|
-        
-            |  | Performs a HTTP GET request to a URL and emits the response data | [object Object] | [object Object] |
-                            
-            |  | Performs a HTTP POST request to a URL and emits the response data | [object Object] | [object Object] |
-                            
-            |  | Performs a HTTP PUT request to a URL and emits the response data | [object Object] | [object Object] |
-                            
-            |  | Performs a HTTP request to a URL and emits the response data | [object Object] | [object Object] |
-                            
-                                
-    ## Lists
-        | Name | Description | Inputs | Outputs |
-        |------|-------------|-------------------------|---------|
-        
-            |  | Returns the length of a list | [object Object] | [object Object] |
-                            
-            |  | Returns true if the list is empty | [object Object] | [object Object] |
-                            
-            |  | Returns the element at the specified index | [object Object] | [object Object] |
-                            
-            |  | Repeats a value a number of times | [object Object] | [object Object] |
-                            
-            |  | Creates a list from two values | [object Object] | [object Object] |
-                            
-            |  | Creates a list from three values | [object Object] | [object Object] |
-                            
-            |  | Creates a list from four values | [object Object] | [object Object] |
-                            
-            |  | Creates a list from five values | [object Object] | [object Object] |
-                            
-            |  | Concatenates two lists | [object Object] | [object Object] |
-                            
-            |  | Reverses a list | [object Object] | [object Object] |
-                            
-            |  | Emits all values in a list | [object Object] | [object Object] |
-                            
-            |  | Receives a list and emits two outputs: the first item and the rest of the list | [object Object] | [object Object] |
-                            
-            |  | Receives a list with 2 items and emits two outputs: the first item and the second item | [object Object] | [object Object] |
-                            
-            |  | Receives a list with 3 items and emits three outputs: the first item, the second item and the third item | [object Object] | [object Object] |
-                            
-            |  | Receives a list with 4 items and emits four outputs: the first item, the second item, the third item and the fourth item | [object Object] | [object Object] |
-                            
-            |  | Accumulates values sent to the "value" input, until the "reset" input is triggered. Then it emits the accumulated values and resets the accumulator. | [object Object] | [object Object] |
-                            
-            |  | Accumulates values sent to the "value" input. After the specified time it emits the accumulated values and resets the accumulator. | [object Object] | [object Object] |
-                            
-            |  | Accumulates values sent to the "value" input. After the specified count it emits the accumulated values and resets the accumulator. | [object Object] | [object Object] |
-                            
-            |  | Accumulates values sent to the "accept" input. Emits the list after the total items passed to both "accept" and "ignore" inputs reach the specified count. | [object Object] | [object Object] |
-                            
-                                
-    ## MongoDB
-        | Name | Description | Inputs | Outputs |
-        |------|-------------|-------------------------|---------|
-        
-            |  | Connects to a Mongo database and returns a client. Uses the "mongodb" package. | [object Object] | [object Object] |
-                            
-            |  | Queries a Mongo database. Find receives a valid "mongodb" FindOptions object. | [object Object] | [object Object] |
-                            
-            |  | Queries a Mongo database. FindOne receives a valid "mongodb" FindOneOptions object. | [object Object] | [object Object] |
-                            
-            |  | Disconnects from a Mongo database | [object Object] | [object Object] |
-                            
-            |  | Inserts one document into a Mongo database. InsertOne receives a valid "mongodb" InsertOneOptions object. | [object Object] | [object Object] |
-                            
-            |  | Inserts many documents into a Mongo database. InsertMany receives a valid "mongodb" InsertManyOptions object. | [object Object] | [object Object] |
-                            
-            |  | Updates one document in a Mongo database. UpdateOne receives a valid "mongodb" UpdateOneOptions object. | [object Object] | [object Object] |
-                            
-            |  | Updates many documents in a Mongo database. UpdateMany receives a valid "mongodb" UpdateManyOptions object. | [object Object] | [object Object] |
-                            
-            |  | Deletes one document in a Mongo database. DeleteOne receives a valid "mongodb" DeleteOneOptions object. | [object Object] | [object Object] |
-                            
-            |  | Deletes many documents in a Mongo database. DeleteMany receives a valid "mongodb" DeleteManyOptions object. | [object Object] | [object Object] |
-                            
-            |  | Counts documents in a Mongo database. CountDocuments receives a valid "mongodb" CountDocumentsOptions object. | [object Object] | [object Object] |
-                            
-            |  | Creates an index in a Mongo database. CreateIndex receives a valid "mongodb" CreateIndexesOptions object. | [object Object] | [object Object] |
-                            
-            |  | Creates indexes in a Mongo database. CreateIndexes receives a valid "mongodb" CreateIndexesOptions object. | [object Object] | [object Object] |
-                            
-                                
-    ## Numbers
-        | Name | Description | Inputs | Outputs |
-        |------|-------------|-------------------------|---------|
-        
-            |  | Emits the sum of two numbers | [object Object] | [object Object] |
-                            
-            |  | Emits the difference of two numbers | [object Object] | [object Object] |
-                            
-            |  | Emits the product of two numbers | [object Object] | [object Object] |
-                            
-            |  | Emits the quotient of two numbers | [object Object] | [object Object] |
-                            
-            |  | Emits the remainder of two numbers | [object Object] | [object Object] |
-                            
-            |  | Emits the power of two numbers | [object Object] | [object Object] |
-                            
-            |  | Emits the square root of a number | [object Object] | [object Object] |
-                            
-            |  | Emits the absolute value of a number | [object Object] | [object Object] |
-                            
-            |  | Emits the floor of a number | [object Object] | [object Object] |
-                            
-            |  | Emits the ceiling of a number | [object Object] | [object Object] |
-                            
-            |  | Emits the rounded value of a number | [object Object] | [object Object] |
-                            
-            |  | Emits the truncated value of a number | [object Object] | [object Object] |
-                            
-            |  | Emits the sine of an angle | [object Object] | [object Object] |
-                            
-            |  | Emits the cosine of an angle | [object Object] | [object Object] |
-                            
-            |  | Emits the minimum of two numbers | [object Object] | [object Object] |
-                            
-            |  | Emits the maximum of two numbers | [object Object] | [object Object] |
-                            
-            |  | Emits the integer value of a string | [object Object] | [object Object] |
-                            
-            |  | Emits the float value of a string | [object Object] | [object Object] |
-                            
-            |  | Emits the specified number of decimal places of a number | [object Object] | [object Object] |
-                            
-            |  | Emits the specified number of decimal places of a number in exponential notation | [object Object] | [object Object] |
-                            
-            |  | Emits the specified number of significant figures of a number | [object Object] | [object Object] |
-                            
-                                
-    ## Objects
-        | Name | Description | Inputs | Outputs |
-        |------|-------------|-------------------------|---------|
-        
-            |  | Parses a JSON string into an object | [object Object] | [object Object] |
-                            
-            |  | Stringifies an object into a JSON string | [object Object] | [object Object] |
-                            
-            |  | Emits the keys of an object | [object Object] | [object Object] |
-                            
-            |  | Emits the values of an object | [object Object] | [object Object] |
-                            
-            |  | Emits the entries of an object | [object Object] | [object Object] |
-                            
-            |  | Creates an object from an array of entries | [object Object] | [object Object] |
-                            
-            |  | Assigns properties from one or more objects to a target object | [object Object] | [object Object] |
-                            
-            |  | Gets an attribute from an object | [object Object] | [object Object] |
-                            
-            |  | Sets an attribute on an object | [object Object] | [object Object] |
-                            
-                                
-    ## Postgres
-        | Name | Description | Inputs | Outputs |
-        |------|-------------|-------------------------|---------|
-        
-            |  | Connects to a Postgres database and returns a client. Uses the "pg" package. | [object Object] | [object Object] |
-                            
-            |  | Disconnects from a Postgres database | [object Object] | [object Object] |
-                            
-            |  | Queries a Postgres database. Query receives a valid "pg" QueryConfig object. | [object Object] | [object Object] |
-                            
-                                
-    ## Strings
-        | Name | Description | Inputs | Outputs |
-        |------|-------------|-------------------------|---------|
-        
-            |  | Concatenates two strings | [object Object] | [object Object] |
-                            
-            |  | Splits a string | [object Object] | [object Object] |
-                            
-            |  | Joins an array of strings | [object Object] | [object Object] |
-                            
-            |  | Replaces a string | [object Object] | [object Object] |
-                            
-            |  | Trims a string | [object Object] | [object Object] |
-                            
-            |  | Converts a string to lower case | [object Object] | [object Object] |
-                            
-            |  | Converts a string to upper case | [object Object] | [object Object] |
-                            
-            |  | Returns the part of the string between the start and end indexes | [object Object] | [object Object] |
-                            
-            |  | Returns the length of a string | [object Object] | [object Object] |
-                            
-            |  | Returns the index within the calling String object of the first occurrence of the specified value, starting the search at fromIndex | [object Object] | [object Object] |
-                            
-            |  | Returns the index within the calling String object of the last occurrence of the specified value, or -1 if not found. The calling string is searched backward, starting at fromIndex | [object Object] | [object Object] |
-                            
-            |  | Returns the character at the specified index | [object Object] | [object Object] |
-                            
-            |  | Converts a string to kebab case | [object Object] | [object Object] |
-                            
-            |  | Converts a string to camel case | [object Object] | [object Object] |
-                            
-            |  | Converts a string to pascal case | [object Object] | [object Object] |
-                            
-            |  | Converts a string to snake case | [object Object] | [object Object] |
-                            
-            |  | Converts a string to title case | [object Object] | [object Object] |
-                            
-            |  | Determines whether one string may be found within another string, returning true or false as appropriate | [object Object] | [object Object] |
-                            
-            |  | Determines whether a string begins with the characters of another string, returning true or false as appropriate | [object Object] | [object Object] |
-                            
-            |  | Determines whether a string ends with the characters of another string, returning true or false as appropriate | [object Object] | [object Object] |
-                            
-            |  | Determines whether a string is empty | [object Object] | [object Object] |
-                            
-                                
-    ## Time
-        | Name | Description | Inputs | Outputs |
-        |------|-------------|-------------------------|---------|
-        
-            |  | Delays a value | [object Object] | [object Object] |
-                            
-            |  | Emits a value every interval | [object Object] | [object Object] |
-                            
-                                
-    ## Misc
-        | Name | Description | Inputs | Outputs |
-        |------|-------------|-------------------------|---------|
-        
-            |  | Emits the last value received after being idle for "wait" amount of milliseconds | [object Object] | [object Object] |
-                            
-            |  | Emits the first value received after being idle for "wait" amount of milliseconds | [object Object] | [object Object] |
-                            
-            |  | Emits the first value received after being idle for "wait" amount of milliseconds | [object Object] | [object Object] |
-                            
-                                
+## Console
+| Name | Description | Inputs | Outputs |
+|------|-------------|-------------------------|---------|
+
+| | Logs a value to the console | [object Object] | [object Object] |
+
+| | Logs an error to the console | [object Object] | [object Object] |
+
+
+## Dates
+| Name | Description | Inputs | Outputs |
+|------|-------------|-------------------------|---------|
+
+| | Returns the current date and time | [object Object] | [object Object] |
+
+| | Returns the current date and time as a string | [object Object] | [object Object] |
+
+| | Returns the current date and time as a string in ISO format | [object Object] | [object Object] |
+
+| | Returns the current date and time as a Unix time | [object Object] | [object Object] |
+
+| | Creates a date from a Unix time | [object Object] | [object Object] |
+
+| | Creates a date from a string | [object Object] | [object Object] |
+
+| | Creates a date from an ISO string | [object Object] | [object Object] |
+
+| | Converts a date to a string | [object Object] | [object Object] |
+
+| | Converts a date to an ISO string | [object Object] | [object Object] |
+
+| | Converts a date to a Unix time | [object Object] | [object Object] |
+
+| | Converts a date to a year | [object Object] | [object Object] |
+
+| | Converts a date to a month | [object Object] | [object Object] |
+
+| | Converts a date to a day | [object Object] | [object Object] |
+
+| | Converts a date to hours | [object Object] | [object Object] |
+
+| | Converts a date to minutes | [object Object] | [object Object] |
+
+| | Converts a date to seconds | [object Object] | [object Object] |
+
+| | Converts a date to milliseconds | [object Object] | [object Object] |
+
+| | Converts a date to a day of the week | [object Object] | [object Object] |
+
+| | Converts a date to a timezone offset | [object Object] | [object Object] |
+
+
+## File System
+| Name | Description | Inputs | Outputs |
+|------|-------------|-------------------------|---------|
+
+| | Reads a file from the file system | [object Object] | [object Object] |
+
+| | Writes a file to the file system | [object Object] | [object Object] |
+
+| | Appends a file to the file system | [object Object] | [object Object] |
+
+| | Deletes a file from the file system | [object Object] | [object Object] |
+
+| | Checks if a file exists | [object Object] | [object Object] |
+
+
+## HTTP
+| Name | Description | Inputs | Outputs |
+|------|-------------|-------------------------|---------|
+
+| | Performs a HTTP GET request to a URL and emits the response data | [object Object] | [object Object] |
+
+| | Performs a HTTP POST request to a URL and emits the response data | [object Object] | [object Object] |
+
+| | Performs a HTTP PUT request to a URL and emits the response data | [object Object] | [object Object] |
+
+| | Performs a HTTP request to a URL and emits the response data | [object Object] | [object Object] |
+
+
+## Lists
+| Name | Description | Inputs | Outputs |
+|------|-------------|-------------------------|---------|
+
+| | Returns the length of a list | [object Object] | [object Object] |
+
+| | Returns true if the list is empty | [object Object] | [object Object] |
+
+| | Returns the element at the specified index | [object Object] | [object Object] |
+
+| | Repeats a value a number of times | [object Object] | [object Object] |
+
+| | Creates a list from two values | [object Object] | [object Object] |
+
+| | Creates a list from three values | [object Object] | [object Object] |
+
+| | Creates a list from four values | [object Object] | [object Object] |
+
+| | Creates a list from five values | [object Object] | [object Object] |
+
+| | Concatenates two lists | [object Object] | [object Object] |
+
+| | Reverses a list | [object Object] | [object Object] |
+
+| | Emits all values in a list | [object Object] | [object Object] |
+
+| | Receives a list and emits two outputs: the first item and the rest of the list | [object Object] | [object Object] |
+
+| | Receives a list with 2 items and emits two outputs: the first item and the second item | [object Object] | [object
+Object] |
+
+| | Receives a list with 3 items and emits three outputs: the first item, the second item and the third item | [object
+Object] | [object Object] |
+
+| | Receives a list with 4 items and emits four outputs: the first item, the second item, the third item and the fourth
+item | [object Object] | [object Object] |
+
+| | Accumulates values sent to the "value" input, until the "reset" input is triggered. Then it emits the accumulated
+values and resets the accumulator. | [object Object] | [object Object] |
+
+| | Accumulates values sent to the "value" input. After the specified time it emits the accumulated values and resets
+the accumulator. | [object Object] | [object Object] |
+
+| | Accumulates values sent to the "value" input. After the specified count it emits the accumulated values and resets
+the accumulator. | [object Object] | [object Object] |
+
+| | Accumulates values sent to the "accept" input. Emits the list after the total items passed to both "accept" and
+"ignore" inputs reach the specified count. | [object Object] | [object Object] |
+
+
+## MongoDB
+| Name | Description | Inputs | Outputs |
+|------|-------------|-------------------------|---------|
+
+| | Connects to a Mongo database and returns a client. Uses the "mongodb" package. | [object Object] | [object Object] |
+
+| | Queries a Mongo database. Find receives a valid "mongodb" FindOptions object. | [object Object] | [object Object] |
+
+| | Queries a Mongo database. FindOne receives a valid "mongodb" FindOneOptions object. | [object Object] | [object
+Object] |
+
+| | Disconnects from a Mongo database | [object Object] | [object Object] |
+
+| | Inserts one document into a Mongo database. InsertOne receives a valid "mongodb" InsertOneOptions object. | [object
+Object] | [object Object] |
+
+| | Inserts many documents into a Mongo database. InsertMany receives a valid "mongodb" InsertManyOptions object. |
+[object Object] | [object Object] |
+
+| | Updates one document in a Mongo database. UpdateOne receives a valid "mongodb" UpdateOneOptions object. | [object
+Object] | [object Object] |
+
+| | Updates many documents in a Mongo database. UpdateMany receives a valid "mongodb" UpdateManyOptions object. |
+[object Object] | [object Object] |
+
+| | Deletes one document in a Mongo database. DeleteOne receives a valid "mongodb" DeleteOneOptions object. | [object
+Object] | [object Object] |
+
+| | Deletes many documents in a Mongo database. DeleteMany receives a valid "mongodb" DeleteManyOptions object. |
+[object Object] | [object Object] |
+
+| | Counts documents in a Mongo database. CountDocuments receives a valid "mongodb" CountDocumentsOptions object. |
+[object Object] | [object Object] |
+
+| | Creates an index in a Mongo database. CreateIndex receives a valid "mongodb" CreateIndexesOptions object. | [object
+Object] | [object Object] |
+
+| | Creates indexes in a Mongo database. CreateIndexes receives a valid "mongodb" CreateIndexesOptions object. | [object
+Object] | [object Object] |
+
+
+## Numbers
+| Name | Description | Inputs | Outputs |
+|------|-------------|-------------------------|---------|
+
+| | Emits the sum of two numbers | [object Object] | [object Object] |
+
+| | Emits the difference of two numbers | [object Object] | [object Object] |
+
+| | Emits the product of two numbers | [object Object] | [object Object] |
+
+| | Emits the quotient of two numbers | [object Object] | [object Object] |
+
+| | Emits the remainder of two numbers | [object Object] | [object Object] |
+
+| | Emits the power of two numbers | [object Object] | [object Object] |
+
+| | Emits the square root of a number | [object Object] | [object Object] |
+
+| | Emits the absolute value of a number | [object Object] | [object Object] |
+
+| | Emits the floor of a number | [object Object] | [object Object] |
+
+| | Emits the ceiling of a number | [object Object] | [object Object] |
+
+| | Emits the rounded value of a number | [object Object] | [object Object] |
+
+| | Emits the truncated value of a number | [object Object] | [object Object] |
+
+| | Emits the sine of an angle | [object Object] | [object Object] |
+
+| | Emits the cosine of an angle | [object Object] | [object Object] |
+
+| | Emits the minimum of two numbers | [object Object] | [object Object] |
+
+| | Emits the maximum of two numbers | [object Object] | [object Object] |
+
+| | Emits the integer value of a string | [object Object] | [object Object] |
+
+| | Emits the float value of a string | [object Object] | [object Object] |
+
+| | Emits the specified number of decimal places of a number | [object Object] | [object Object] |
+
+| | Emits the specified number of decimal places of a number in exponential notation | [object Object] | [object Object]
+|
+
+| | Emits the specified number of significant figures of a number | [object Object] | [object Object] |
+
+
+## Objects
+| Name | Description | Inputs | Outputs |
+|------|-------------|-------------------------|---------|
+
+| | Parses a JSON string into an object | [object Object] | [object Object] |
+
+| | Stringifies an object into a JSON string | [object Object] | [object Object] |
+
+| | Emits the keys of an object | [object Object] | [object Object] |
+
+| | Emits the values of an object | [object Object] | [object Object] |
+
+| | Emits the entries of an object | [object Object] | [object Object] |
+
+| | Creates an object from an array of entries | [object Object] | [object Object] |
+
+| | Assigns properties from one or more objects to a target object | [object Object] | [object Object] |
+
+| | Gets an attribute from an object | [object Object] | [object Object] |
+
+| | Sets an attribute on an object | [object Object] | [object Object] |
+
+
+## Postgres
+| Name | Description | Inputs | Outputs |
+|------|-------------|-------------------------|---------|
+
+| | Connects to a Postgres database and returns a client. Uses the "pg" package. | [object Object] | [object Object] |
+
+| | Disconnects from a Postgres database | [object Object] | [object Object] |
+
+| | Queries a Postgres database. Query receives a valid "pg" QueryConfig object. | [object Object] | [object Object] |
+
+
+## Strings
+| Name | Description | Inputs | Outputs |
+|------|-------------|-------------------------|---------|
+
+| | Concatenates two strings | [object Object] | [object Object] |
+
+| | Splits a string | [object Object] | [object Object] |
+
+| | Joins an array of strings | [object Object] | [object Object] |
+
+| | Replaces a string | [object Object] | [object Object] |
+
+| | Trims a string | [object Object] | [object Object] |
+
+| | Converts a string to lower case | [object Object] | [object Object] |
+
+| | Converts a string to upper case | [object Object] | [object Object] |
+
+| | Returns the node of the string between the start and end indexes | [object Object] | [object Object] |
+
+| | Returns the length of a string | [object Object] | [object Object] |
+
+| | Returns the index within the calling String object of the first occurrence of the specified value, starting the
+search at fromIndex | [object Object] | [object Object] |
+
+| | Returns the index within the calling String object of the last occurrence of the specified value, or -1 if not
+found. The calling string is searched backward, starting at fromIndex | [object Object] | [object Object] |
+
+| | Returns the character at the specified index | [object Object] | [object Object] |
+
+| | Converts a string to kebab case | [object Object] | [object Object] |
+
+| | Converts a string to camel case | [object Object] | [object Object] |
+
+| | Converts a string to pascal case | [object Object] | [object Object] |
+
+| | Converts a string to snake case | [object Object] | [object Object] |
+
+| | Converts a string to title case | [object Object] | [object Object] |
+
+| | Determines whether one string may be found within another string, returning true or false as appropriate | [object
+Object] | [object Object] |
+
+| | Determines whether a string begins with the characters of another string, returning true or false as appropriate |
+[object Object] | [object Object] |
+
+| | Determines whether a string ends with the characters of another string, returning true or false as appropriate |
+[object Object] | [object Object] |
+
+| | Determines whether a string is empty | [object Object] | [object Object] |
+
+
+## Time
+| Name | Description | Inputs | Outputs |
+|------|-------------|-------------------------|---------|
+
+| | Delays a value | [object Object] | [object Object] |
+
+| | Emits a value every interval | [object Object] | [object Object] |
+
+
+## Misc
+| Name | Description | Inputs | Outputs |
+|------|-------------|-------------------------|---------|
+
+| | Emits the last value received after being idle for "wait" amount of milliseconds | [object Object] | [object Object]
+|
+
+| | Emits the first value received after being idle for "wait" amount of milliseconds | [object Object] | [object
+Object] |
+
+| | Emits the first value received after being idle for "wait" amount of milliseconds | [object Object] | [object
+Object] |

@@ -1,12 +1,12 @@
 imports: {}
-part:
+node:
   instances:
     - pos:
         x: -50.477996826171875
         y: 273.1924496459961
       id: clachgdym000a46649wnbf5cb
       inputConfig: {}
-      part:
+      node:
         id: Inline-value-Hello
         inputs: {}
         outputs:
@@ -31,7 +31,7 @@ part:
         y: 278.1868420410156
       id: clachgfqy000d4664i72bcel2
       inputConfig: {}
-      part:
+      node:
         id: Inline-value-World
         inputs: {}
         outputs:

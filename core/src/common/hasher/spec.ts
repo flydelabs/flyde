@@ -1,25 +1,25 @@
 import { produce } from "immer";
 import { randomInt, randomPos, shuffle } from "../../common";
 import { assert } from "chai";
-import { hashFlow, hashPart } from ".";
+import { hashFlow, hashNode } from ".";
 import {
-  InlineValuePart,
-  partInput,
-  partInstance,
-  partOutput,
-  VisualPart,
-  visualPart,
-} from "../../part";
+  InlineValueNode,
+  nodeInput,
+  nodeInstance,
+  nodeOutput,
+  VisualNode,
+  visualNode,
+} from "../../node";
 import { FlydeFlow } from "../../flow-schema";
 import { connectionData } from "../../connect";
 
-const somePart: VisualPart = {
+const someNode: VisualNode = {
   id: "bob",
   inputs: {
-    a: partInput(),
+    a: nodeInput(),
   },
   outputs: {
-    r: partOutput(),
+    r: nodeOutput(),
   },
   connections: [
     connectionData("i2.r", "i3.v"),
@@ -27,131 +27,131 @@ const somePart: VisualPart = {
     connectionData("i4.r", "i5.v"),
   ],
   instances: [
-    partInstance("i1", "somePart", undefined, { x: 14, y: 28 }),
-    partInstance("i2", "somePart", undefined, { x: 14, y: 28 }),
-    partInstance("i3", "somePart", undefined, { x: 14, y: 28 }),
+    nodeInstance("i1", "someNode", undefined, { x: 14, y: 28 }),
+    nodeInstance("i2", "someNode", undefined, { x: 14, y: 28 }),
+    nodeInstance("i3", "someNode", undefined, { x: 14, y: 28 }),
   ],
   inputsPosition: { a: { x: 20, y: 20 } },
   outputsPosition: { r: { x: 20, y: 500 } },
 };
 
-describe("parts hasher", () => {
-  describe("visual part", () => {
+describe("nodes hasher", () => {
+  describe("visual node", () => {
     it("creates difference hash for different id", () => {
-      const p2 = produce(somePart, (d) => {
+      const p2 = produce(someNode, (d) => {
         d.id = `${d.id}-${randomInt}`;
       });
 
-      const h1 = hashPart(somePart);
-      const h2 = hashPart(p2);
+      const h1 = hashNode(someNode);
+      const h2 = hashNode(p2);
 
       assert.notEqual(h1, h2);
     });
 
     it("creates difference hash for different instances", () => {
-      const p2 = produce(somePart, (d) => {
-        d.instances.push(partInstance("i7", "somePart"));
+      const p2 = produce(someNode, (d) => {
+        d.instances.push(nodeInstance("i7", "someNode"));
       });
 
-      const h1 = hashPart(somePart);
-      const h2 = hashPart(p2);
+      const h1 = hashNode(someNode);
+      const h2 = hashNode(p2);
 
       assert.notEqual(h1, h2);
     });
 
     it("creates difference hash for different connections", () => {
-      const p2 = produce(somePart, (d) => {
+      const p2 = produce(someNode, (d) => {
         d.connections.push(d.connections[0]!);
       });
 
-      const h1 = hashPart(somePart);
-      const h2 = hashPart(p2);
+      const h1 = hashNode(someNode);
+      const h2 = hashNode(p2);
 
       assert.notEqual(h1, h2);
     });
 
-    it("hashes parts disregarding i/o position", () => {
-      const part2 = produce(somePart, (draft) => {
+    it("hashes nodes disregarding i/o position", () => {
+      const node2 = produce(someNode, (draft) => {
         draft.inputsPosition.a = randomPos();
         draft.outputsPosition.r = randomPos();
       });
 
-      const h1 = hashPart(somePart);
-      const h2 = hashPart(part2);
+      const h1 = hashNode(someNode);
+      const h2 = hashNode(node2);
 
       assert.equal(h1, h2);
     });
 
-    it("hashes parts disregarding instance position when ignore enabled", () => {
-      const part2 = produce(somePart, (draft) => {
+    it("hashes nodes disregarding instance position when ignore enabled", () => {
+      const node2 = produce(someNode, (draft) => {
         draft.instances[0]!.pos = randomPos();
       });
 
-      const h1 = hashPart(somePart);
-      const h2 = hashPart(part2);
+      const h1 = hashNode(someNode);
+      const h2 = hashNode(node2);
 
       assert.equal(h1, h2);
     });
 
     it("disregards order of instances and connections", () => {
-      const part2 = produce(somePart, (draft) => {
+      const node2 = produce(someNode, (draft) => {
         draft.instances = shuffle(draft.instances);
         draft.connections = shuffle(draft.connections);
       });
 
-      const h1 = hashPart(somePart);
-      const h2 = hashPart(part2);
+      const h1 = hashNode(someNode);
+      const h2 = hashNode(node2);
 
       assert.equal(h1, h2);
     });
 
     it("considers completion outputs", () => {
-      const p2 = produce(somePart, (draft) => {
+      const p2 = produce(someNode, (draft) => {
         draft.completionOutputs = ["bob"];
       });
 
-      const h1 = hashPart(somePart);
-      const h2 = hashPart(p2);
+      const h1 = hashNode(someNode);
+      const h2 = hashNode(p2);
 
       assert.notEqual(h1, h2);
     });
 
     it("considers reactive inputs", () => {
-      const p2 = produce(somePart, (draft) => {
+      const p2 = produce(someNode, (draft) => {
         draft.reactiveInputs = ["bob"];
       });
 
-      const h1 = hashPart(somePart);
-      const h2 = hashPart(p2);
+      const h1 = hashNode(someNode);
+      const h2 = hashNode(p2);
 
       assert.notEqual(h1, h2);
     });
 
     it("considers different inputs", () => {
-      const p2 = produce(somePart, (draft) => {
-        draft.inputs.bob2 = partInput();
+      const p2 = produce(someNode, (draft) => {
+        draft.inputs.bob2 = nodeInput();
       });
 
-      const h1 = hashPart(somePart);
-      const h2 = hashPart(p2);
+      const h1 = hashNode(someNode);
+      const h2 = hashNode(p2);
 
       assert.notEqual(h1, h2);
     });
 
     it("considers different outputs", () => {
-      const p2 = produce(somePart, (draft) => {
-        draft.outputs.bob2 = partInput();
+      const p2 = produce(someNode, (draft) => {
+        draft.outputs.bob2 = nodeInput();
       });
 
-      const h1 = hashPart(somePart);
-      const h2 = hashPart(p2);
+      const h1 = hashNode(someNode);
+      const h2 = hashNode(p2);
 
       assert.notEqual(h1, h2);
     });
   });
 
-  describe("code part", () => {
-    const base: InlineValuePart = {
+  describe("code node", () => {
+    const base: InlineValueNode = {
       id: "bob2",
       runFnRawCode: `some codez`,
       customViewCode: "bob",
@@ -159,13 +159,13 @@ describe("parts hasher", () => {
       outputs: {},
     };
 
-    it("considers fn code code part properly", () => {
+    it("considers fn code code node properly", () => {
       const p2 = produce(base, (d) => {
         d.runFnRawCode = "dbdfgfdg";
       });
 
-      const h1 = hashPart(base);
-      const h2 = hashPart(p2);
+      const h1 = hashNode(base);
+      const h2 = hashNode(p2);
 
       assert.notEqual(h1, h2);
     });
@@ -175,8 +175,8 @@ describe("parts hasher", () => {
         d.customViewCode = "dbdfgfdg";
       });
 
-      const h1 = hashPart(base);
-      const h2 = hashPart(p2);
+      const h1 = hashNode(base);
+      const h2 = hashNode(p2);
 
       assert.notEqual(h1, h2);
     });
@@ -190,7 +190,7 @@ describe("flow hasher", () => {
         a: ["b"],
         c: ["d"],
       },
-      part: visualPart({ id: "bob" }),
+      node: visualNode({ id: "bob" }),
     };
 
     const f2: FlydeFlow = {
@@ -198,19 +198,19 @@ describe("flow hasher", () => {
         c: ["d"],
         a: ["b"],
       },
-      part: visualPart({ id: "bob" }),
+      node: visualNode({ id: "bob" }),
     };
 
     assert.equal(hashFlow(f1), hashFlow(f2));
   });
 
-  it("emits different hash for different part", () => {
+  it("emits different hash for different node", () => {
     const f1: FlydeFlow = {
       imports: {
         a: ["b"],
         c: ["d"],
       },
-      part: visualPart({ id: "bob" }),
+      node: visualNode({ id: "bob" }),
     };
 
     const f2: FlydeFlow = {
@@ -218,7 +218,7 @@ describe("flow hasher", () => {
         c: ["d"],
         a: ["b"],
       },
-      part: visualPart({ id: "bob2" }),
+      node: visualNode({ id: "bob2" }),
     };
 
     assert.notEqual(hashFlow(f1), hashFlow(f2));

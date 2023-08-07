@@ -1,17 +1,17 @@
-import { CodePart, partOutput } from "@flyde/core";
+import { CodeNode, nodeOutput } from "@flyde/core";
 
-const part: CodePart = {
+const node: CodeNode = {
   id: "Sub",
   inputs: {
     a: { mode: "required" },
     b: { mode: "required" },
   },
   outputs: {
-    r: partOutput(),
+    r: nodeOutput(),
   },
   run: (inputs, outputs) => {
     outputs.r.next(inputs.a - inputs.b);
   },
 };
 
-export default part;
+export default node;

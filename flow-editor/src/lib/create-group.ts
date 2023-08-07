@@ -1,20 +1,20 @@
-import { OMap, okeys, partOutput, pickRandom } from "@flyde/core";
+import { OMap, okeys, nodeOutput, pickRandom } from "@flyde/core";
 import {
   ConnectionData,
   externalConnectionNode,
   connectionNode,
-  partInput,
+  nodeInput,
   connectionNodeEquals,
-  VisualPart,
+  VisualNode,
   middlePos,
 } from "@flyde/core";
 import { rnd } from "../physics";
-import { PartInstance } from "@flyde/core";
+import { NodeInstance } from "@flyde/core";
 import { PromptFn } from "..";
-import { partStylePresetColors } from "../visual-part-editor/instance-view/PartStyleMenu";
+import { nodeStylePresetColors } from "../visual-node-editor/instance-view/NodeStyleMenu";
 
 export const createGroup = async (
-  instances: PartInstance[],
+  instances: NodeInstance[],
   connections: ConnectionData[],
   name: string,
   prompt: PromptFn
@@ -25,7 +25,7 @@ export const createGroup = async (
 
   const instanceIds = instances.map((ins) => ins.id);
 
-  // connections that were "left out" after the grouping make great candidates for inputs of the new part
+  // connections that were "left out" after the grouping make great candidates for inputs of the new node
 
   // in inputs case it means every instance that has a connection to an instance it the group but not out of it
   const inputCandidates = connections
@@ -64,7 +64,7 @@ export const createGroup = async (
   let renamedInputs: OMap<string> = {};
   let renamedOutputs: OMap<string> = {};
 
-  // if we're grouping only 2 parts (say 2 [id]), both connected to the same pin, we want only 1 input created, not 2
+  // if we're grouping only 2 nodes (say 2 [id]), both connected to the same pin, we want only 1 input created, not 2
   // this helps making sure of it
   let usedInputs: OMap<string> = {};
   let usedOutputs: OMap<string> = {};
@@ -102,7 +102,7 @@ export const createGroup = async (
       to: connectionNode(conn.to.insId, conn.to.pinId),
     });
 
-    inputs[name] = partInput();
+    inputs[name] = nodeInput();
   }
 
   const outputs = {};
@@ -135,10 +135,10 @@ export const createGroup = async (
       to: externalConnectionNode(name),
     });
 
-    outputs[name] = partOutput();
+    outputs[name] = nodeOutput();
   }
 
-  // replace relevant parts with new part
+  // replace relevant nodes with new node
   const midPos = instances.reduce((p, c) => {
     return middlePos(c.pos, p);
   }, instances[0].pos);
@@ -149,14 +149,14 @@ export const createGroup = async (
       instanceIds.includes(conn.to.insId)
   );
 
-  const visualPart: VisualPart = {
+  const visualNode: VisualNode = {
     id: name,
     inputs,
     outputs,
     instances,
     defaultStyle: {
       size: "large",
-      color: pickRandom(partStylePresetColors.map((c) => c.color)),
+      color: pickRandom(nodeStylePresetColors.map((c) => c.color)),
     },
     inputsPosition: okeys(inputs).reduce(
       (acc, curr, idx) => ({ ...acc, [curr]: { x: 0 + 100 * idx, y: 0 } }),
@@ -170,8 +170,8 @@ export const createGroup = async (
     completionOutputs: okeys(outputs),
   };
 
-  return { visualPart, renamedInputs, renamedOutputs };
-  // const ordered = orderVisualPart(visualPart, 20);
+  return { visualNode, renamedInputs, renamedOutputs };
+  // const ordered = orderVisualNode(visualNode, 20);
 
-  // return partInstance(`${name}-ins`, visualPart, {}, midPos);
+  // return nodeInstance(`${name}-ins`, visualNode, {}, midPos);
 };

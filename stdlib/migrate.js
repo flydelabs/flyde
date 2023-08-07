@@ -1,9 +1,9 @@
 const {
-  isInlineValuePart,
+  isInlineValueNode,
   keys,
-  isVisualPart,
-  isInlinePartInstance,
-  isRefPartInstance,
+  isVisualNode,
+  isInlineNodeInstance,
+  isRefNodeInstance,
   flydeFlowSchema,
 } = require("@flyde/core");
 const { deserializeFlow, serializeFlow } = require("@flyde/runtime");
@@ -28,17 +28,17 @@ for (const f of files) {
       throw "oops more than 1";
     }
 
-    const firstPart = parts[firstId];
+    const firstNode = parts[firstId];
 
-    if (!isVisualPart(firstPart)) {
+    if (!isVisualNode(firstNode)) {
       throw "wat";
     }
 
     const deps = Array.from(
       new Set(
-        firstPart.instances
-          .filter((i) => isRefPartInstance(i))
-          .map((i) => i.partId)
+        firstNode.instances
+          .filter((i) => isRefNodeInstance(i))
+          .map((i) => i.nodeId)
       )
     );
     console.log({ deps });
@@ -49,7 +49,7 @@ for (const f of files) {
 
     const complete = {
       imports,
-      part: firstPart,
+      node: firstNode,
     };
 
     const { success } = flydeFlowSchema.safeParse(complete);
@@ -60,7 +60,7 @@ for (const f of files) {
 
     const flow = serializeFlow(complete);
 
-    fs.writeFileSync("./parts/" + firstPart.id + ".flyde", flow, "utf-8");
+    fs.writeFileSync("./parts/" + firstNode.id + ".flyde", flow, "utf-8");
 
     // const neededImports =
   }
@@ -69,22 +69,22 @@ for (const f of files) {
 
   // const deser = deserializeFlow(fs.readFileSync(flowPath, 'utf-8'), flowPath);
 
-  // const firstPart = deser.parts[Object.keys(deser.parts)[0]];
+  // const firstNode = deser.parts[Object.keys(deser.parts)[0]];
 
-  // if (isInlineValuePart(firstPart)) {
+  // if (isInlineValueNode(firstNode)) {
   //     if (Object.keys(deser.parts) > 1) {
   //         throw new Error('many parts in ' + f)
   //     }
 
-  //     const {fnCode, ...part} = firstPart;
+  //     const {fnCode, ...node} = firstNode;
 
-  //     part.run = "__FN_HERE__"
+  //     node.run = "__FN_HERE__"
 
-  //     const partStr = JSON.stringify(part).replace('"__FN_HERE__"', `function (inputs, outputs, adv) { ${fnCode} }`);
+  //     const nodeStr = JSON.stringify(node).replace('"__FN_HERE__"', `function (inputs, outputs, adv) { ${fnCode} }`);
 
-  //     const template = `module.exports = ${partStr}`
+  //     const template = `module.exports = ${nodeStr}`
 
-  //     fs.writeFileSync('./parts/' + firstPart.id + '.flyde.js', template, 'utf-8');
+  //     fs.writeFileSync('./parts/' + firstNode.id + '.flyde.js', template, 'utf-8');
   //     fs.rmSync(flowPath)
   // }
   // console.log(deser);

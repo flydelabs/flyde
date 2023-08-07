@@ -1,4 +1,4 @@
-import { dynamicOutput, dynamicPartInput, noop } from "@site/../core/dist";
+import { dynamicOutput, dynamicNodeInput, noop } from "@site/../core/dist";
 import { EmbeddedFlyde } from "@site/src/components/EmbeddedFlyde/EmbeddedFlyde";
 import React, { useRef } from "react";
 
@@ -21,7 +21,7 @@ export const HeroExample: React.FC = () => {
   const [logs, setLogs] = React.useState<any>([]);
 
   const inputs = useRef({
-    __trigger: dynamicPartInput(),
+    __trigger: dynamicNodeInput(),
   });
 
   const result = useRef(dynamicOutput());

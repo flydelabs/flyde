@@ -6,10 +6,10 @@ import "./style.scss";
 
 import {
   dynamicOutput,
-  dynamicPartInput,
-  isVisualPart,
-  isRefPartInstance,
-  PartsDefCollection,
+  dynamicNodeInput,
+  isVisualNode,
+  isRefNodeInstance,
+  NodesDefCollection,
   staticInputPinConfig,
 } from "@site/../core/dist";
 
@@ -29,13 +29,13 @@ const META_DATA = {
   key: "debounce-throttling",
 };
 
-const extraInfo = `Cool right? you can try duplicating parts by pressing shift+D. Connect parts together by clicking on the source part's output pin and then on a the targets part's input pin`;
+const extraInfo = `Cool right? you can try duplicating nodes by pressing shift+D. Connect nodes together by clicking on the source node's output pin and then on a the targets node's input pin`;
 
 export default function DebounceThrottlingExample(): JSX.Element {
   const result = useRef(dynamicOutput());
 
   const inputs = useRef({
-    input: dynamicPartInput(),
+    input: dynamicNodeInput(),
   });
 
   const [deb, setDeb] = useState(1500);
@@ -53,14 +53,14 @@ export default function DebounceThrottlingExample(): JSX.Element {
   useEffect(() => {
     setFlowProps(
       produce(flowProps, (draft) => {
-        const part = draft.flow.part;
-        if (isVisualPart(part)) {
-          const debIns = part.instances.find(
-            (ins) => isRefPartInstance(ins) && ins.partId === "Debounce"
+        const node = draft.flow.node;
+        if (isVisualNode(node)) {
+          const debIns = node.instances.find(
+            (ins) => isRefNodeInstance(ins) && ins.nodeId === "Debounce"
           );
           debIns.inputConfig.wait = staticInputPinConfig(deb);
-          const thrIns = part.instances.find(
-            (ins) => isRefPartInstance(ins) && ins.partId === "Throttle"
+          const thrIns = node.instances.find(
+            (ins) => isRefNodeInstance(ins) && ins.nodeId === "Throttle"
           );
           thrIns.inputConfig.wait = staticInputPinConfig(thr);
         }

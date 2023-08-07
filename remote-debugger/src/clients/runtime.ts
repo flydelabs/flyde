@@ -42,10 +42,10 @@ export const createRuntimeClient = (
   url: string,
   executionId: string
 ): RuntimeDebuggerClient => {
-  const urlParts = new URL(url);
-  const socket = io(urlParts.origin, {
+  const urlNodes = new URL(url);
+  const socket = io(urlNodes.origin, {
     path: `${
-      urlParts.pathname === "/" ? "" : urlParts.pathname
+      urlNodes.pathname === "/" ? "" : urlNodes.pathname
     }/socket.io/runtime`,
     timeout: 1000,
     reconnectionAttempts: 3,

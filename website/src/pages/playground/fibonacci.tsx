@@ -1,6 +1,6 @@
 import React, { useCallback, useRef, useState } from "react";
 
-import { dynamicOutput, dynamicPartInput } from "@site/../core/dist";
+import { dynamicOutput, dynamicNodeInput } from "@site/../core/dist";
 
 import {
   PlaygroundTemplate,
@@ -16,7 +16,7 @@ import { OutputLogs } from "./_OutputLogs/OutputLogs";
 
 const META_DATA = {
   title: "Fibonacci Sequence",
-  description: `This example showcases a classical recursion - the Fibonacci sequence. On numbers higher than 1, the "Fibonacci" part calls itself recursively!`,
+  description: `This example showcases a classical recursion - the Fibonacci sequence. On numbers higher than 1, the "Fibonacci" node calls itself recursively!`,
   key: "fibonacci",
   extraInfo:
     "Cool right? everything is editable, so try changing the algorithm and see how it affects the end result!",
@@ -34,7 +34,7 @@ export default function ReactCounterExample(): JSX.Element {
 
   const result = useRef(outputWithSub((res) => setFib(res)));
 
-  const inputs = useRef({ n: dynamicPartInput() });
+  const inputs = useRef({ n: dynamicNodeInput() });
 
   const [flowProps, setFlowProps] = useState<
     PlaygroundTemplateProps["flowProps"]

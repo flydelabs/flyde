@@ -1,0 +1,63 @@
+imports:
+  node-with-cleanup.flyde.ts:
+    - IdWithCleanup
+node:
+  instances:
+    - pos:
+        x: -101.43710571289063
+        y: 259.4088671875
+      id: clactwgg100074664me4qs55s
+      inputConfig: {}
+      node:
+        id: Inline-value-2
+        inputs: {}
+        outputs:
+          r:
+            type: any
+            delayed: false
+            optional: false
+        runFnRawCode: outputs.r.next((2))
+        customViewCode: "2"
+        dataBuilderSource: Mg==
+        templateType: value
+        completionOutputs:
+          - r
+        defaultStyle:
+          size: small
+          icon: code
+          cssOverride:
+            fontFamily: monospace
+            fontWeight: "500"
+    - pos:
+        x: -175.07225915343543
+        y: 420.3097971635871
+      id: clgkqz6qz00024668kbyg1uve
+      inputConfig: {}
+      nodeId: IdWithCleanup
+  connections:
+    - from:
+        insId: clactwgg100074664me4qs55s
+        pinId: r
+      to:
+        insId: clgkqz6qz00024668kbyg1uve
+        pinId: n
+    - from:
+        insId: clgkqz6qz00024668kbyg1uve
+        pinId: r
+      to:
+        insId: __this
+        pinId: res
+  id: NodeWithCleanupWrapper
+  inputs: {}
+  outputs:
+    res:
+      type: any
+      optional: false
+      delayed: false
+  inputsPosition: {}
+  outputsPosition:
+    res:
+      x: -102.1390532189802
+      y: 628.3422394344815
+  completionOutputs:
+    - res

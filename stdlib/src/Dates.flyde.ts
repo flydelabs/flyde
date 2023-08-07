@@ -1,8 +1,8 @@
-import { CodePart } from "@flyde/core";
+import { CodeNode } from "@flyde/core";
 
 const namespace = "Dates";
 
-export const Now: CodePart = {
+export const Now: CodeNode = {
   id: "Now",
   defaultStyle: {
     icon: "fa-calendar",
@@ -14,7 +14,7 @@ export const Now: CodePart = {
   run: (_, { now }) => now.next(new Date()),
 };
 
-export const NowString: CodePart = {
+export const NowString: CodeNode = {
   id: "Now String",
   defaultStyle: {
     icon: "fa-calendar",
@@ -26,7 +26,7 @@ export const NowString: CodePart = {
   run: (_, { now }) => now.next(new Date().toString()),
 };
 
-export const NowISOString: CodePart = {
+export const NowISOString: CodeNode = {
   id: "Now ISO String",
   defaultStyle: {
     icon: "fa-calendar",
@@ -38,7 +38,7 @@ export const NowISOString: CodePart = {
   run: (_, { now }) => now.next(new Date().toISOString()),
 };
 
-export const NowUnixTime: CodePart = {
+export const NowUnixTime: CodeNode = {
   id: "Now Unix Time",
   defaultStyle: {
     icon: "fa-calendar",
@@ -50,7 +50,7 @@ export const NowUnixTime: CodePart = {
   run: (_, { now }) => now.next(new Date().getTime()),
 };
 
-export const DateFromUnixTime: CodePart = {
+export const DateFromUnixTime: CodeNode = {
   id: "Date From Unix Time",
   defaultStyle: {
     icon: "fa-calendar",
@@ -62,7 +62,7 @@ export const DateFromUnixTime: CodePart = {
   run: ({ time }, { date }) => date.next(new Date(time)),
 };
 
-export const DateFromString: CodePart = {
+export const DateFromString: CodeNode = {
   id: "Date From String",
   defaultStyle: {
     icon: "fa-calendar",
@@ -74,7 +74,7 @@ export const DateFromString: CodePart = {
   run: ({ string }, { date }) => date.next(new Date(string)),
 };
 
-export const DateFromISOString: CodePart = {
+export const DateFromISOString: CodeNode = {
   id: "Date From ISO String",
   defaultStyle: {
     icon: "fa-calendar",
@@ -91,13 +91,13 @@ export const DateFromISOString: CodePart = {
     try {
       date.next(new Date(string));
     } catch (e) {
-      console.error("Error in part", e);
+      console.error("Error in node", e);
       onError(e);
     }
   },
 };
 
-export const DateToString: CodePart = {
+export const DateToString: CodeNode = {
   id: "Date To String",
   defaultStyle: {
     icon: "fa-calendar",
@@ -109,7 +109,7 @@ export const DateToString: CodePart = {
   run: ({ date }, { string }) => string.next(date.toString()),
 };
 
-export const DateToISOString: CodePart = {
+export const DateToISOString: CodeNode = {
   id: "Date To ISO String",
   defaultStyle: {
     icon: "fa-calendar",
@@ -121,7 +121,7 @@ export const DateToISOString: CodePart = {
   run: ({ date }, { string }) => string.next(date.toISOString()),
 };
 
-export const DateToUnixTime: CodePart = {
+export const DateToUnixTime: CodeNode = {
   id: "Date To Unix Time",
   defaultStyle: {
     icon: "fa-calendar",
@@ -133,7 +133,7 @@ export const DateToUnixTime: CodePart = {
   run: ({ date }, { time }) => time.next(date.getTime()),
 };
 
-export const DateToYear: CodePart = {
+export const DateToYear: CodeNode = {
   id: "Date To Year",
   defaultStyle: {
     icon: "fa-calendar",
@@ -148,7 +148,7 @@ export const DateToYear: CodePart = {
   },
   run: ({ date }, { year }) => year.next(date.getFullYear()),
 };
-export const MonthToDate: CodePart = {
+export const MonthToDate: CodeNode = {
   id: "Month To Date",
   defaultStyle: {
     icon: "fa-calendar",
@@ -168,7 +168,7 @@ export const MonthToDate: CodePart = {
   run: ({ date }, { month }) => month.next(date.getMonth()),
 };
 
-export const DateToDay: CodePart = {
+export const DateToDay: CodeNode = {
   id: "Date To Day",
   defaultStyle: {
     icon: "fa-calendar",
@@ -188,7 +188,7 @@ export const DateToDay: CodePart = {
   run: ({ date }, { day }) => day.next(date.getDate()),
 };
 
-export const DateToHours: CodePart = {
+export const DateToHours: CodeNode = {
   id: "Date To Hours",
   defaultStyle: {
     icon: "fa-calendar",
@@ -208,7 +208,7 @@ export const DateToHours: CodePart = {
   run: ({ date }, { hours }) => hours.next(date.getHours()),
 };
 
-export const DateToMinutes: CodePart = {
+export const DateToMinutes: CodeNode = {
   id: "Date To Minutes",
   defaultStyle: {
     icon: "fa-calendar",
@@ -220,7 +220,7 @@ export const DateToMinutes: CodePart = {
   run: ({ date }, { minutes }) => minutes.next(date.getMinutes()),
 };
 
-export const DateToSeconds: CodePart = {
+export const DateToSeconds: CodeNode = {
   id: "Date To Seconds",
   defaultStyle: {
     icon: "fa-calendar",
@@ -232,7 +232,7 @@ export const DateToSeconds: CodePart = {
   run: ({ date }, { seconds }) => seconds.next(date.getSeconds()),
 };
 
-export const DateToMilliseconds: CodePart = {
+export const DateToMilliseconds: CodeNode = {
   id: "Date To Milliseconds",
   defaultStyle: {
     icon: "fa-calendar",
@@ -245,7 +245,7 @@ export const DateToMilliseconds: CodePart = {
     milliseconds.next(date.getMilliseconds()),
 };
 
-export const DateToDayOfWeek: CodePart = {
+export const DateToDayOfWeek: CodeNode = {
   id: "Date To Day Of Week",
   defaultStyle: {
     icon: "fa-calendar",
@@ -257,7 +257,7 @@ export const DateToDayOfWeek: CodePart = {
   run: ({ date }, { day }) => day.next(date.getDay()),
 };
 
-export const DateToTimezoneOffset: CodePart = {
+export const DateToTimezoneOffset: CodeNode = {
   id: "Date To Timezone Offset",
   defaultStyle: {
     icon: "fa-calendar",

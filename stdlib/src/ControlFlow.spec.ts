@@ -1,15 +1,15 @@
 import {
-  dynamicPartInput,
+  dynamicNodeInput,
   eventually,
   execute,
-  inlinePartInstance,
+  inlineNodeInstance,
   randomInt,
   staticInputPinConfig,
-  VisualPart,
+  VisualNode,
 } from "@flyde/core";
 import { assert } from "chai";
 
-import { concisePart, spiedOutput } from "@flyde/core/dist/test-utils";
+import { conciseNode, spiedOutput } from "@flyde/core/dist/test-utils";
 import { Publish, Subscribe } from "./ControlFlow.flyde";
 
 describe("ControlFlow", () => {
@@ -18,13 +18,13 @@ describe("ControlFlow", () => {
       const key = "bla";
       const value = randomInt(42);
 
-      const visualPart: VisualPart = concisePart({
+      const visualNode: VisualNode = conciseNode({
         id: "test",
         inputs: ["a"],
         outputs: ["b"],
         instances: [
-          inlinePartInstance("i1", Publish, { key: staticInputPinConfig(key) }),
-          inlinePartInstance("i2", Subscribe, {
+          inlineNodeInstance("i1", Publish, { key: staticInputPinConfig(key) }),
+          inlineNodeInstance("i2", Subscribe, {
             key: staticInputPinConfig(key),
           }),
         ],
@@ -36,10 +36,10 @@ describe("ControlFlow", () => {
 
       const [s, b] = spiedOutput();
 
-      const input = dynamicPartInput();
+      const input = dynamicNodeInput();
 
       execute({
-        part: visualPart,
+        node: visualNode,
         outputs: { b },
         inputs: { a: input },
         resolvedDeps: {},

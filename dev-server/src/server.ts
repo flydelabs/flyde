@@ -3,13 +3,13 @@ import { createService } from "./service/service";
 
 import { setupRemoteDebuggerServer } from "@flyde/remote-debugger/dist/setup-server";
 import { createServer } from "http";
-import { scanImportableParts } from "./service/scan-importable-parts";
+import { scanImportableNodes } from "./service/scan-importable-nodes";
 import { deserializeFlow, resolveDependencies } from "@flyde/resolver";
 import { join } from "path";
 
 import resolveFrom = require("resolve-from");
 import { readFileSync } from "fs";
-import { generateAndSavePart } from "./service/generate-part-from-prompt";
+import { generateAndSaveNode } from "./service/generate-node-from-prompt";
 
 export const runDevServer = (
   port: number,
@@ -60,7 +60,7 @@ export const runDevServer = (
   app.get("/importables", async (req, res) => {
     const { filename } = req.query as { filename: string };
     try {
-      const importables = await scanImportableParts(rootDir, filename);
+      const importables = await scanImportableNodes(rootDir, filename);
       res.send(importables);
     } catch (e) {
       console.error(e);
@@ -79,14 +79,14 @@ export const runDevServer = (
       const fullPath = resolveFrom(rootDir, filename);
       const flow = deserializeFlow(readFileSync(fullPath, "utf-8"), fullPath);
       const deps = await resolveDependencies(flow, "definition", fullPath);
-      res.send({ ...deps, [flow.part.id]: flow.part });
+      res.send({ ...deps, [flow.node.id]: flow.node });
     } catch (e) {
       console.error(e);
       res.status(400).send(e);
     }
   });
 
-  app.post("/generatePart", async (req, res) => {
+  app.post("/generateNode", async (req, res) => {
     const { prompt } = req.body as { prompt: string };
 
     if (prompt.trim().length === 0) {
@@ -95,7 +95,7 @@ export const runDevServer = (
     }
 
     try {
-      const data = await generateAndSavePart(rootDir, prompt);
+      const data = await generateAndSaveNode(rootDir, prompt);
       res.send(data);
     } catch (e) {
       res.status(400).send(e);

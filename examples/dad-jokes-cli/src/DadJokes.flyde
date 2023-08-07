@@ -4,7 +4,7 @@ imports:
     - Get Attribute
     - Delay
     - Log
-part:
+node:
   instances:
     - pos:
         x: -730.6186218261719
@@ -16,7 +16,7 @@ part:
           value: https://api.dadjokes.io/api/random/joke
       visibleInputs:
         - url
-      partId: GET Request
+      nodeId: GET Request
       style:
         size: large
         color: "#f15bb5"
@@ -35,7 +35,7 @@ part:
         - object
         - attribute
         - __trigger
-      partId: Get Attribute
+      nodeId: Get Attribute
       style:
         size: small
         icon: magnifying-glass
@@ -54,7 +54,7 @@ part:
         - object
         - attribute
         - __trigger
-      partId: Get Attribute
+      nodeId: Get Attribute
       style:
         size: small
         icon: magnifying-glass
@@ -65,7 +65,7 @@ part:
       inputConfig:
         ms:
           mode: queue
-      partId: Delay
+      nodeId: Delay
       style:
         size: regular
         color: "#fee440"
@@ -74,13 +74,13 @@ part:
         y: -606.290712890625
       id: Log-778
       inputConfig: {}
-      partId: Log
+      nodeId: Log
     - pos:
         x: -309.6312084960937
         y: -539.9351831054687
       id: DadJoke-l0p46hh
       inputConfig: {}
-      partId: Log
+      nodeId: Log
   connections:
     - from:
         insId: clchvfuoj000145662fwav020

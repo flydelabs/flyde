@@ -15,11 +15,11 @@
   height: 100vh;
 
   &.embedded {
-    .flow-header, .side-menu {
+    .flow-header,
+    .side-menu {
       display: none;
     }
   }
-
 }
 
 .app > main {
@@ -53,18 +53,15 @@
   > .flyde-flow-editor {
     height: 100%;
 
-    > .visual-part-editor {
+    > .visual-node-editor {
       height: 100%;
       flex: 1;
       // padding: 20px;
     }
   }
-
 }
 
-.app > main > .stage-wrapper 
-
-.bob {
+.app > main > .stage-wrapper .bob {
   pointer-events: none;
 }
 
@@ -132,5 +129,4 @@ $primary-color: #007ec6;
 }
 
 .app.try-me {
-
 }

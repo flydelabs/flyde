@@ -6,22 +6,22 @@ import {
   Callout,
   Code,
 } from "@blueprintjs/core";
-import { BasePart, visualPart } from "@flyde/core";
+import { BaseNode, visualNode } from "@flyde/core";
 import classNames from "classnames";
 import React from "react";
-import { BasePartEditor } from "@flyde/flow-editor"; // ../../../../../common/flow-editor/base-part-editor
+import { BaseNodeEditor } from "@flyde/flow-editor"; // ../../../../../common/flow-editor/base-node-editor
 
 import "./NewFlowModal.scss";
 
 export interface NewFlowModalProps {
   onCancel: () => void;
-  onCreate: (part: BasePart) => void;
+  onCreate: (node: BaseNode) => void;
   folder: string;
 }
 
 export const NewFlowModal: React.FC<NewFlowModalProps> = (props) => {
-  const [basePart, setBasePart] = React.useState<BasePart>(
-    visualPart({ id: "new-flow.flyde" })
+  const [baseNode, setBaseNode] = React.useState<BaseNode>(
+    visualNode({ id: "new-flow.flyde" })
   );
 
   return (
@@ -36,9 +36,9 @@ export const NewFlowModal: React.FC<NewFlowModalProps> = (props) => {
           <Callout>
             Will create new flow inside <Code>{props.folder}</Code>
           </Callout>
-          <BasePartEditor
-            part={basePart}
-            onChange={setBasePart}
+          <BaseNodeEditor
+            node={baseNode}
+            onChange={setBaseNode}
             idDisabled={false}
             hiddenOutputs
           />
@@ -48,7 +48,7 @@ export const NewFlowModal: React.FC<NewFlowModalProps> = (props) => {
           <div className={Classes.DIALOG_FOOTER_ACTIONS}>
             <Button onClick={props.onCancel}>Cancel</Button>
             <Button
-              onClick={() => props.onCreate(basePart)}
+              onClick={() => props.onCreate(baseNode)}
               intent={Intent.PRIMARY}
             >
               Save

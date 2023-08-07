@@ -1,27 +1,27 @@
-// import { VisualPart, partInput, partOutput } from "../part";
+// import { VisualNode, nodeInput, nodeOutput } from "../node";
 
 // import { connectionData } from "..";
 // import { Button, Txt, container, listFrom, merge, add, transform } from "../lib";
-// import { legacyStaticInputPinConfig, dynamicInputPinConfig, partInstance } from "../execute";
+// import { legacyStaticInputPinConfig, dynamicInputPinConfig, nodeInstance } from "../execute";
 // import { connectionNode, externalConnectionNode } from "../connect";
 // // import { connectionNode } from "../connect";
 
-// export const Counter: VisualPart = {
+// export const Counter: VisualNode = {
 // 	id: 'Counter',
 // 	inputs: {
-// 		val: partInput('number')
+// 		val: nodeInput('number')
 // 	},
 // 	outputs: {
-// 		jsx: partOutput('jsx'),
-// 		inc: partOutput('none', true),
-// 		dec: partOutput('none', true),
+// 		jsx: nodeOutput('jsx'),
+// 		inc: nodeOutput('none', true),
+// 		dec: nodeOutput('none', true),
 // 	},
 // 	instances: [
-// 		partInstance('lf', listFrom),
-// 		partInstance('txt', Txt),
-// 		partInstance('c', container),
-// 		partInstance('bdec', Button, {label: legacyStaticInputPinConfig('+')}),
-// 		partInstance('binc', Button, {label: legacyStaticInputPinConfig('-')})
+// 		nodeInstance('lf', listFrom),
+// 		nodeInstance('txt', Txt),
+// 		nodeInstance('c', container),
+// 		nodeInstance('bdec', Button, {label: legacyStaticInputPinConfig('+')}),
+// 		nodeInstance('binc', Button, {label: legacyStaticInputPinConfig('-')})
 // 	],
 // 	connections: [
 // 		connectionData(['binc', 'jsx'], ['lf', 'item1']),
@@ -47,16 +47,16 @@
 // 	]
 // };
 
-// export const ControlledCounter: VisualPart = {
+// export const ControlledCounter: VisualNode = {
 // 	id: 'ControllerCounter',
 // 	inputs: {},
 // 	outputs: {
-// 		jsx: partOutput('jsx')
+// 		jsx: nodeOutput('jsx')
 // 	},
 // 	instances: [
 // 		{
 // 			id: 'a',
-// 			part: add,
+// 			node: add,
 // 			inputConfig: {
 // 				n1: dynamicInputPinConfig(true),
 // 				n2: dynamicInputPinConfig(true)
@@ -65,14 +65,14 @@
 // 		},
 // 		{
 // 			id: 'cnt',
-// 			part: Counter,
+// 			node: Counter,
 // 			pos: {x: 0, y: 0},
 // 			inputConfig: {}
 // 		},
 // 		{
 // 			id: 'm',
 // 			pos: {x: 0, y: 0},
-// 			part: merge,
+// 			node: merge,
 // 			inputConfig: {
 // 				a: legacyStaticInputPinConfig(0)
 // 			}
@@ -80,7 +80,7 @@
 // 		{
 // 			id: 't1',
 // 			pos: {x: 0, y: 0},
-// 			part: transform,
+// 			node: transform,
 // 			inputConfig: {
 // 				to: legacyStaticInputPinConfig(1)
 // 			}
@@ -88,7 +88,7 @@
 // 		{
 // 			id: 't2',
 // 			pos: {x: 0, y: 0},
-// 			part: transform,
+// 			node: transform,
 // 			inputConfig: {
 // 				to: legacyStaticInputPinConfig(-1)
 // 			}
@@ -114,14 +114,14 @@
 // // 	instances: [
 // // 		{
 // // 			id: 'm',
-// // 			part: listMap,
+// // 			node: listMap,
 // // 			staticInputs: {
 // // 				fn: rename(Counter, {value: 'item', jsx: 'r'})
 // // 			}
 // // 		},
 // // 		{
 // // 			id: 'c',
-// // 			part: container
+// // 			node: container
 // // 		}
 // // 	],
 // // 	connections: [
@@ -134,38 +134,38 @@
 // // 	}
 // // }
 
-// // export const CounterListView: ConnectedPart = {
+// // export const CounterListView: ConnectedNode = {
 // // 	id: 'CounterListView',
 // // 	instances: [
 // // 		{
 // // 			id: 'm',
-// // 			part: listMap,
+// // 			node: listMap,
 // // 			staticInputs: {
 // // 				fn: rename(Counter, {value: 'item', jsx: 'r'})
 // // 			}
 // // 		},
 // // 		{
 // // 			id: 'c',
-// // 			part: container
+// // 			node: container
 // // 		},
 // // 		{
 // // 			id: 'cond-inc',
-// // 			part: pikhv,
+// // 			node: pikhv,
 // // 			staticInputs: {key: 'key', value: 'inc'}
 // // 		},
 // // 		{
 // // 			id: 'cond-dec',
-// // 			part: pikhv,
+// // 			node: pikhv,
 // // 			staticInputs: {key: 'key', value: 'dec'}
 // // 		},
 // // 		{
 // // 			id: 'pick-idx-inc',
-// // 			part: pick,
+// // 			node: pick,
 // // 			staticInputs: {key: 'idx'}
 // // 		},
 // // 		{
 // // 			id: 'pick-idx-dec',
-// // 			part: pick,
+// // 			node: pick,
 // // 			staticInputs: {key: 'idx'}
 // // 		}
 // // 	],
@@ -189,36 +189,36 @@
 // // 	instances: [
 // // 		{
 // // 			id: 'mr',
-// // 			part: merge,
+// // 			node: merge,
 // // 			staticInputs: {
 // // 				a: [0, 0]
 // // 			}
 // // 		},
 // // 		{
 // // 			id: 'clist',
-// // 			part: connect(CounterListView)
+// // 			node: connect(CounterListView)
 // // 		},
 // // 		{
 // // 			id: 'a1',
-// // 			part: add,
+// // 			node: add,
 // // 			staticInputs: {n2: 1}
 // // 		},
 // // 		{
 // // 			id: 's1',
-// // 			part: {...setItem, clean: true}
+// // 			node: {...setItem, clean: true}
 // // 		},
 // // 		{
 // // 			id: 'a2',
-// // 			part: add,
+// // 			node: add,
 // // 			staticInputs: {n2: -1}
 // // 		},
 // // 		{
 // // 			id: 's2',
-// // 			part: {...setItem, clean: true}
+// // 			node: {...setItem, clean: true}
 // // 		},
 // // 		{
 // // 			id: 'g1',
-// // 			part: getItem
+// // 			node: getItem
 // // 		}
 // // 	],
 // // 	connections: [

@@ -19,11 +19,11 @@ import { toastMsg } from "@flyde/flow-editor"; // ../../../../common/toaster
 import { useHistory } from "react-router-dom";
 import { NewFlowModal } from "./NewFlowModal/NewFlowModal";
 import {
-  BasePart,
-  CustomPart,
+  BaseNode,
+  CustomNode,
   FlydeFlow,
-  visualPart,
-  partOutput,
+  visualNode,
+  nodeOutput,
 } from "@flyde/core";
 
 export interface FoldersSectionProps {
@@ -31,10 +31,10 @@ export interface FoldersSectionProps {
   flow: FlydeFlow;
 
   // data: NavigatorData;
-  editedPart: CustomPart;
+  editedNode: CustomNode;
 
-  // onEditPart: (partId: string) => void;
-  onFocusInstance: (partId: string) => void;
+  // onEditNode: (nodeId: string) => void;
+  onFocusInstance: (nodeId: string) => void;
 }
 
 const toTreeNode = (
@@ -133,7 +133,7 @@ export const FoldersSection: React.FC<FoldersSectionProps> = (props) => {
               label={`Add new flow here`}
               onClick={() => onCreateFlowHere(data)}
               // onClick={preventDefaultAnd(() => onAddIoPin("input"))}
-              // disabled={!partIoEditable}
+              // disabled={!nodeIoEditable}
             />
           </Menu>
         );
@@ -145,14 +145,14 @@ export const FoldersSection: React.FC<FoldersSectionProps> = (props) => {
               label={`Duplicate flow`}
               onClick={() => toastMsg("Bob " + data?.fullPath)}
               // onClick={preventDefaultAnd(() => onAddIoPin("input"))}
-              // disabled={!partIoEditable}
+              // disabled={!nodeIoEditable}
             />
             <MenuItem
               label={`Delete flow`}
               intent="danger"
               onClick={() => toastMsg("Bob " + data?.fullPath)}
               // onClick={preventDefaultAnd(() => onAddIoPin("input"))}
-              // disabled={!partIoEditable}
+              // disabled={!nodeIoEditable}
             />
           </Menu>
         );
@@ -173,17 +173,17 @@ export const FoldersSection: React.FC<FoldersSectionProps> = (props) => {
   );
 
   const onCreateFlow = useCallback(
-    (basePart: BasePart) => {
-      const part = visualPart(basePart);
-      part.outputs = { result: partOutput() };
-      const path = newFlowTarget + "/" + part.id;
+    (baseNode: BaseNode) => {
+      const node = visualNode(baseNode);
+      node.outputs = { result: nodeOutput() };
+      const path = newFlowTarget + "/" + node.id;
 
-      part.id = "Main";
-      part.completionOutputs = ["result"];
+      node.id = "Main";
+      node.completionOutputs = ["result"];
 
       const flow: FlydeFlow = {
         imports: {},
-        part: part,
+        node: node,
       };
       devClient.saveFile(path, flow);
 
@@ -220,7 +220,7 @@ export const FoldersSection: React.FC<FoldersSectionProps> = (props) => {
       </Collapse>
       {/* <h4 onClick={toggleFlows}>Current Flow - {props.currentFile} </h4>
       <Collapse isOpen={flowsExpanded}>
-        <FlowPartsSection {...props}/>
+        <FlowNodesSection {...props}/>
       </Collapse> */}
 
       {newFlowTarget ? (

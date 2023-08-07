@@ -14,8 +14,8 @@ export interface LocalImportableResult {
 
 export interface DependenciesContextData {
   resolvedDependencies: ResolvedDependenciesDefinitions;
-  onImportPart: (
-    part: ImportableSource,
+  onImportNode: (
+    node: ImportableSource,
     target?: {
       pos: Pos;
       selectAfterAdding?: boolean;
@@ -27,7 +27,7 @@ export interface DependenciesContextData {
 
 const DependenciesContext = createContext<DependenciesContextData>({
   resolvedDependencies: {},
-  onImportPart: () => Promise.reject(new Error("Not implemented")),
+  onImportNode: () => Promise.reject(new Error("Not implemented")),
   onRequestImportables: () => Promise.reject(new Error("Not implemented")),
 });
 
