@@ -20,19 +20,19 @@ By using a visual tool to build higher-level flows of applications, many benefit
 
 - Collaboration with non-dev team members (such as product owners, QA, support, and more) becomes much easier. Reading a Flyde flow is much more intuitive than reading code. It's like Zapier and your Codebase had an awesome baby!
 - Flows act as an always-correct flow chart, acting as living documentation for both new team members and existing ones
-- Visual programming opens new ways of reasoning about code. For example, Flyde parts light up as data passes through them, creating a new type of feedback loop while programming
+- Visual programming opens new ways of reasoning about code. For example, Flyde nodes light up as data passes through them, creating a new type of feedback loop while programming
 - Monitoring and observability data can reside on top of the "code" itself, making troubleshooting much faster
 
 ## How Does It Work
 
-Flyde's visual flow editor allows programs to be built by connecting parts via a nodes-and-wires editor.  
+Flyde's visual flow editor allows programs to be built by connecting nodes via a nodes-and-wires editor.  
 It comes with:
 
 - a _visual editor_ (VSCode extension and stand-alone)
 - a runtime library and
 - a robust standard library of ready-made components. Install or publish more Flyde components easily via the known and loved NPM ecosystem
 
-Using the visual editor, you can build flows that use standard library parts alongside your parts (more on that below). After flows are created, execute them back from your code using Flyde's runtime library.
+Using the visual editor, you can build flows that use standard library nodes alongside your nodes (more on that below). After flows are created, execute them back from your code using Flyde's runtime library.
 
 ## Fully Integrated With Your Code
 
@@ -41,11 +41,11 @@ Flyde takes a different approach, and fully ingrates with existing code-bases an
 
 - Flow files are committed to **your version control** system of choice like any other file. This means anything from revisions to branches and pull-requests work seamlessly with Flyde
 - Flyde flows are executed from your existing codebase, making use of your **existing production environment**. No other platforms to manage or security risks to worry about
-- Flyde flows can be tested using your **existing testing frameworks** and technologies, just like any part of your code. Nothing stops you from even writing test cases in Flyde that test your conventional code as well!
+- Flyde flows can be tested using your **existing testing frameworks** and technologies, just like any node of your code. Nothing stops you from even writing test cases in Flyde that test your conventional code as well!
 
 The integration to existing code is done in two ways:
 
-1. Flyde parts can be either visual parts or code-based parts. Code-based parts support being imported from a local file in your project, meaning you can abstract any functionality in your code base into a Flyde part and use it in a visual flow.
+1. Flyde nodes can be either visual nodes or code-based nodes. Code-based nodes support being imported from a local file in your project, meaning you can abstract any functionality in your code base into a Flyde node and use it in a visual flow.
 2. Flyde flows run from your code. For example, if you build `my-cool-flow1.flyde`, you will need to call `execute('my-cool-flow')` from your code again, and choose what will you do with the response. Classic use cases are handling HTTP requests, building bots, and many more!
 
 ## Flow-Based Programming / Other tools
@@ -79,4 +79,3 @@ If you've read so far I'd appreciate showing support by [starring the project](h
 Thanks and stay tuned for more blog posts!
 
 Yours, Gabriel
-

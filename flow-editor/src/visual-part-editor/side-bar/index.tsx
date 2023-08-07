@@ -128,7 +128,7 @@ export const SideBar: React.FC<SideBarProps> = React.memo(function SideBarInner(
         ))}
       </div>
       <div className="heading" onClick={expandCollapse}>
-        Parts
+        Nodes
       </div>
       <div className="items">
         {items.map((item) => (

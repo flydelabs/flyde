@@ -3,13 +3,13 @@ import { createService } from "./service/service";
 
 import { setupRemoteDebuggerServer } from "@flyde/remote-debugger/dist/setup-server";
 import { createServer } from "http";
-import { scanImportableNodes } from "./service/scan-importable-parts";
+import { scanImportableNodes } from "./service/scan-importable-nodes";
 import { deserializeFlow, resolveDependencies } from "@flyde/resolver";
 import { join } from "path";
 
 import resolveFrom = require("resolve-from");
 import { readFileSync } from "fs";
-import { generateAndSaveNode } from "./service/generate-part-from-prompt";
+import { generateAndSaveNode } from "./service/generate-node-from-prompt";
 
 export const runDevServer = (
   port: number,

@@ -4,4 +4,4 @@ Resolves .flyde files and their imports into a resolved flow that contains all i
 
 It resolves all imports, recursively, until reaching leaf flows (either code flows or visual flows with no imports).
 
-The resolved flow will include all imported parts, namespaced by the part required them.
+The resolved flow will include all imported nodes, namespaced by the node required them.
