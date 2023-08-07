@@ -94,20 +94,20 @@ importers:
   dev-server:
     dependencies:
       '@flyde/core':
-        specifier: ^0.1.28
-        version: 0.1.28
+        specifier: ^0.2.0
+        version: link:../core
       '@flyde/remote-debugger':
-        specifier: ^0.2.25
-        version: 0.2.25
+        specifier: ^0.3.0
+        version: link:../remote-debugger
       '@flyde/resolver':
-        specifier: ^0.3.26
-        version: 0.3.26(@flyde/stdlib@0.1.26)(typescript@4.9.4)
+        specifier: ^0.4.0
+        version: link:../resolver
       '@flyde/runtime':
-        specifier: ^0.4.21
-        version: 0.4.21(typescript@4.9.4)
+        specifier: ^0.5.0
+        version: link:../runtime
       '@flyde/stdlib':
-        specifier: ^0.1.26
-        version: 0.1.26
+        specifier: ^0.2.0
+        version: link:../stdlib
       '@types/args':
         specifier: ^5.0.0
         version: 5.0.0
@@ -327,14 +327,14 @@ importers:
         specifier: ^3.5.0
         version: 3.15.10(react-dom@17.0.2)(react@17.0.2)
       '@flyde/core':
-        specifier: ^0.1.28
-        version: 0.1.28
+        specifier: ^0.2.0
+        version: link:../core
       '@flyde/dev-server':
-        specifier: ^0.4.23
-        version: 0.4.23(@flyde/stdlib@0.1.26)
+        specifier: ^0.5.0
+        version: link:../dev-server
       '@flyde/remote-debugger':
-        specifier: ^0.2.25
-        version: 0.2.25
+        specifier: ^0.3.0
+        version: link:../remote-debugger
       '@fortawesome/fontawesome-svg-core':
         specifier: ^6.2.0
         version: 6.2.0
@@ -460,8 +460,8 @@ importers:
         specifier: ^7.8.4
         version: 7.13.10
       '@flyde/core':
-        specifier: ^0.1.28
-        version: 0.1.28
+        specifier: ^0.2.0
+        version: link:../core
       '@socket.io/admin-ui':
         specifier: ^0.2.0
         version: 0.2.0(socket.io@4.6.1)
@@ -511,11 +511,11 @@ importers:
   resolver:
     dependencies:
       '@flyde/core':
-        specifier: ^0.1.28
-        version: 0.1.28
+        specifier: ^0.2.0
+        version: link:../core
       '@flyde/stdlib':
-        specifier: ^0.1.26
-        version: 0.1.26
+        specifier: ^0.2.0
+        version: link:../stdlib
       '@types/cuid':
         specifier: ^1.3.0
         version: 1.3.1
@@ -590,17 +590,17 @@ importers:
   runtime:
     dependencies:
       '@flyde/core':
-        specifier: ^0.1.28
-        version: 0.1.28
+        specifier: ^0.2.0
+        version: link:../core
       '@flyde/remote-debugger':
-        specifier: ^0.2.25
-        version: 0.2.25
+        specifier: ^0.3.0
+        version: link:../remote-debugger
       '@flyde/resolver':
-        specifier: ^0.3.26
-        version: 0.3.26(@flyde/stdlib@0.1.26)(typescript@4.9.4)
+        specifier: ^0.4.0
+        version: link:../resolver
       '@flyde/stdlib':
-        specifier: ^0.1.26
-        version: 0.1.26
+        specifier: ^0.2.0
+        version: link:../stdlib
       '@types/callsite':
         specifier: ^1.0.31
         version: 1.0.31
@@ -681,8 +681,8 @@ importers:
   stdlib:
     dependencies:
       '@flyde/core':
-        specifier: ^0.1.28
-        version: 0.1.28
+        specifier: ^0.2.0
+        version: link:../core
       '@types/mocha':
         specifier: ^10.0.1
         version: 10.0.1
@@ -4245,7 +4245,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.21.8
-      '@babel/helper-plugin-utils': 7.18.9
+      '@babel/helper-plugin-utils': 7.21.5
       '@babel/helper-validator-option': 7.18.6
       '@babel/plugin-transform-typescript': 7.18.10(@babel/core@7.21.8)
     transitivePeerDependencies:
@@ -5320,7 +5320,7 @@ packages:
       '@docusaurus/plugin-content-pages': 2.0.1(react-dom@17.0.2)(react@17.0.2)(typescript@4.9.4)
       '@docusaurus/utils': 2.0.1(@docusaurus/types@2.0.1)
       '@types/history': 4.7.11
-      '@types/react': 18.2.6
+      '@types/react': 17.0.48
       '@types/react-router-config': 5.0.6
       clsx: 1.2.1
       parse-numeric-range: 1.3.0
@@ -5427,7 +5427,7 @@ packages:
       react-dom: ^16.8.4 || ^17.0.0
     dependencies:
       '@types/history': 4.7.11
-      '@types/react': 18.2.6
+      '@types/react': 17.0.48
       commander: 5.1.0
       joi: 17.6.0
       react: 17.0.2
@@ -5636,182 +5636,6 @@ packages:
   /@eslint/js@8.41.0:
     resolution: {integrity: sha512-LxcyMGxwmTh2lY9FwHPGWOHmYFCZvbrFCBZL4FzSSsxsRPuhrYUg/49/0KDfW8tnIEaEHtfmn6+NPN+1DqaNmA==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
-
-  /@flyde/core@0.1.28:
-    resolution: {integrity: sha512-JYTjAnALHGeT0dz3QXnm5SeIb9tzjcLFUzlspssOGgfypvgn9d0v65nQnllHvstAG7z4uOxFQofn8yV2igiMNg==}
-    dependencies:
-      '@types/jsdom-global': 3.0.4
-      '@types/md5': 2.3.2
-      cuid: 3.0.0
-      debug: 4.3.4(supports-color@5.5.0)
-      dependency-graph: 0.8.1
-      md5: 2.3.0
-      rxjs: 6.6.7
-      vm2: 3.9.11
-      zod: 3.17.10
-    transitivePeerDependencies:
-      - supports-color
-    dev: false
-
-  /@flyde/dev-server@0.4.23(@flyde/stdlib@0.1.26):
-    resolution: {integrity: sha512-8CVj0/8b5ZM/8F635c/qxUS4nbOxQjRcgRyJL1y7WZ5/NDSp+J0RWAoN0QXFz3KO+Gxk7o0wP+L6PzPQO6LKFw==}
-    hasBin: true
-    peerDependencies:
-      '@flyde/stdlib': ^0.1.25
-    dependencies:
-      '@flyde/core': 0.1.28
-      '@flyde/remote-debugger': 0.2.25
-      '@flyde/resolver': 0.3.26(@flyde/stdlib@0.1.26)(typescript@4.9.4)
-      '@flyde/runtime': 0.4.21(typescript@4.9.4)
-      '@flyde/stdlib': 0.1.26
-      '@types/args': 5.0.0
-      '@types/cuid': 1.3.1
-      '@types/express': 4.17.13
-      '@types/glob': 7.2.0
-      '@types/node': 11.15.52
-      args: 5.0.3
-      axios: 0.21.4
-      body-parser: 1.20.0
-      chokidar: 3.5.3
-      concurrently: 5.3.0
-      cuid: 2.1.8
-      ejs: 3.1.8
-      express: 4.18.1
-      find-git-root: 1.0.4
-      glob: 8.0.3
-      ignore: 5.2.4
-      openai: 3.2.1
-      pkg-up: 3.1.0
-      resolve-from: 5.0.0
-      source-map-support: 0.5.21
-      toml: 3.0.0
-      typescript: 4.9.4
-      walker: 1.0.8
-    transitivePeerDependencies:
-      - '@swc/core'
-      - '@swc/wasm'
-      - aws-crt
-      - bufferutil
-      - debug
-      - encoding
-      - node-notifier
-      - pg-native
-      - supports-color
-      - utf-8-validate
-    dev: false
-
-  /@flyde/remote-debugger@0.2.25:
-    resolution: {integrity: sha512-j+E91nWNoPG33GAkv7uB2ZqiSP7s+aco0fWLlAtZaspJtGYcQSOZaWXIk73K9rilgpo7Ue5h936L/vPZw5X4Jg==}
-    dependencies:
-      '@babel/runtime': 7.21.0
-      '@flyde/core': 0.1.28
-      '@socket.io/admin-ui': 0.2.0(socket.io@4.6.1)
-      '@types/component-emitter': 1.2.11
-      '@types/express': 4.17.13
-      '@types/node': 11.15.52
-      '@ungap/structured-clone': 1.0.1
-      component-emitter: 1.3.0
-      concurrently: 4.1.2
-      express: 4.18.1
-      flatted: 3.2.7
-      serialize-error: 8.1.0
-      socket.io: 4.6.1
-      socket.io-client: 4.6.1
-      ts-node-dev: 2.0.0(@types/node@11.15.52)(typescript@4.9.4)
-      typescript: 4.9.4
-    transitivePeerDependencies:
-      - '@swc/core'
-      - '@swc/wasm'
-      - bufferutil
-      - encoding
-      - node-notifier
-      - supports-color
-      - utf-8-validate
-    dev: false
-
-  /@flyde/resolver@0.3.26(@flyde/stdlib@0.1.26)(typescript@4.9.4):
-    resolution: {integrity: sha512-pnow6e+ZcKAcGl9VrDkyYJUAAKvD1Nmc56VZ/AIhrv040MS+bSJ1CSoXVSh2q2nuyzKPw/syWNjfbZJ9MY+DWA==}
-    peerDependencies:
-      '@flyde/stdlib': ^0.1.25
-    dependencies:
-      '@flyde/core': 0.1.28
-      '@flyde/stdlib': 0.1.26
-      '@types/cuid': 1.3.1
-      '@types/node': 11.15.52
-      '@types/require-from-string': 1.2.1
-      axios: 0.21.4
-      body-parser: 1.20.0
-      callsite: 1.0.0
-      cuid: 2.1.8
-      glob: 8.0.3
-      lodash: 4.17.21
-      module-from-string: 3.3.0
-      require-from-string: 2.0.2
-      require-reload: 0.2.2
-      resolve-from: 5.0.0
-      ts-node: 10.9.1(@types/node@11.15.52)(typescript@4.9.4)
-      yaml: 2.1.1
-      zod: 3.17.10
-    transitivePeerDependencies:
-      - '@swc/core'
-      - '@swc/wasm'
-      - debug
-      - supports-color
-      - typescript
-    dev: false
-
-  /@flyde/runtime@0.4.21(typescript@4.9.4):
-    resolution: {integrity: sha512-yDYuSf6HClSUq9pjEZT8rMZlrp/Ngjkw99qSdx0cC2FyzMjzSMb5XbpccNzOV4POtsNhIxmlwDY8KfEKca+pjw==}
-    dependencies:
-      '@flyde/core': 0.1.28
-      '@flyde/remote-debugger': 0.2.25
-      '@flyde/resolver': 0.3.26(@flyde/stdlib@0.1.26)(typescript@4.9.4)
-      '@flyde/stdlib': 0.1.26
-      '@types/callsite': 1.0.31
-      '@types/cuid': 1.3.1
-      '@types/find-root': 1.1.2
-      '@types/node': 11.15.52
-      axios: 0.21.4
-      body-parser: 1.20.0
-      callsite: 1.0.0
-      cuid: 2.1.8
-      find-root: 1.1.0
-      glob: 8.0.3
-      module-from-string: 3.3.0
-      require-from-string: 2.0.2
-      resolve-from: 5.0.0
-      ts-node: 10.9.1(@types/node@11.15.52)(typescript@4.9.4)
-      yaml: 2.1.1
-      zod: 3.17.10
-    transitivePeerDependencies:
-      - '@swc/core'
-      - '@swc/wasm'
-      - aws-crt
-      - bufferutil
-      - debug
-      - encoding
-      - node-notifier
-      - pg-native
-      - supports-color
-      - typescript
-      - utf-8-validate
-    dev: false
-
-  /@flyde/stdlib@0.1.26:
-    resolution: {integrity: sha512-LUQxr1OVa0Ciu/m7XfqrJVTxMNYxzwg/fiEYi18hXVN1nqwvKAGXjhtRY7nAyOwuAUCryPD3zkpnw1QkjcuRKQ==}
-    dependencies:
-      '@flyde/core': 0.1.28
-      '@types/pg': 8.6.6
-      axios: 0.27.2(debug@4.3.2)
-      mongodb: 4.13.0
-      pg: 8.8.0
-      pubsub-js: 1.9.4
-    transitivePeerDependencies:
-      - aws-crt
-      - debug
-      - pg-native
-      - supports-color
-    dev: false
 
   /@fortawesome/fontawesome-common-types@6.2.0:
     resolution: {integrity: sha512-rBevIsj2nclStJ7AxTdfsa3ovHb1H+qApwrxcTVo+NNdeJiB9V75hsKfrkG5AwNcRUNxrPPiScGYCNmLMoh8pg==}
@@ -7421,14 +7245,6 @@ packages:
       '@types/scheduler': 0.16.1
       csstype: 3.0.7
 
-  /@types/react@18.2.6:
-    resolution: {integrity: sha512-wRZClXn//zxCFW+ye/D2qY65UsYP1Fpex2YXorHc8awoNamkMZSvBxwxdYVInsHOZZd2Ppq8isnSzJL5Mpf8OA==}
-    dependencies:
-      '@types/prop-types': 15.7.3
-      '@types/scheduler': 0.16.1
-      csstype: 3.0.7
-    dev: false
-
   /@types/require-from-string@1.2.1:
     resolution: {integrity: sha512-mIDK7lTHc0uW67SxPIqkwCrxmdKBV5aAET560hyZnT8c6Ekp9Aah3GPqe8Pl1Yzn/i2NMYmYv+HiMLwjGDCIAQ==}
     dev: false
@@ -8372,14 +8188,6 @@ packages:
   /axe-core@4.4.3:
     resolution: {integrity: sha512-32+ub6kkdhhWick/UjvEwRchgoetXqTK14INLqbGm5U2TzBkBNF3nQtLYm8ovxSkQWArjEQvftCKryjZaATu3w==}
     engines: {node: '>=4'}
-    dev: false
-
-  /axios@0.21.4:
-    resolution: {integrity: sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==}
-    dependencies:
-      follow-redirects: 1.15.2(debug@4.3.2)
-    transitivePeerDependencies:
-      - debug
     dev: false
 
   /axios@0.25.0:
@@ -20195,6 +20003,7 @@ packages:
     dependencies:
       acorn: 8.8.2
       acorn-walk: 8.2.0
+    dev: true
 
   /vm2@3.9.3:
     resolution: {integrity: sha512-smLS+18RjXYMl9joyJxMNI9l4w7biW8ilSDaVRvFBDwOH8P0BK1ognFQTpg0wyQ6wIKLTblHJvROW692L/E53Q==}
