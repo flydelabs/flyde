@@ -286,7 +286,7 @@ export const filter: Node = fromSimplified({
         part: fn,
         inputs: { item: itemInput },
         outputs: outputs,
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
       outputs.r?.subscribe((bool) => {
         if (bool) {
@@ -349,7 +349,7 @@ export const delay = conciseCodePart({
   },
 });
 
-export const testPartsCollection = {
+export const testNodesCollection = {
   add,
   add1,
   mul2: mul2,
@@ -437,9 +437,9 @@ export const spreadList = conciseCodePart({
   },
 });
 
-export const testPartsCollectionWith = (...parts: Node[]): NodesCollection => {
+export const testNodesCollectionWith = (...parts: Node[]): NodesCollection => {
   return parts.reduce<NodesCollection>(
     (acc, p) => ({ ...acc, [p.id]: p }),
-    testPartsCollection
+    testNodesCollection
   );
 };

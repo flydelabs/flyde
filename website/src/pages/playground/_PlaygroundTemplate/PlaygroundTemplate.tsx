@@ -6,7 +6,7 @@ import { RuntimePlayer } from "@flyde/flow-editor";
 import { fakeVm } from "@site/src/fake-vm";
 import Link from "@docusaurus/Link";
 import {
-  DynamicPartInput,
+  DynamicNodeInput,
   execute,
   FlydeFlow,
   keys,
@@ -64,7 +64,7 @@ export interface PlaygroundTemplateProps {
     extraInfo?: string | JSX.Element;
   };
   flowProps: {
-    inputs: Record<string, DynamicPartInput>;
+    inputs: Record<string, DynamicNodeInput>;
     flow: FlydeFlow;
     dependencies: ResolvedDependencies;
     output: PartOutput;

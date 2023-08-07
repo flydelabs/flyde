@@ -55,7 +55,7 @@ export type Action<T extends ActionType = ActionType> = {
 
 export interface ActionsMenuProps {
   selectedInstances: string[];
-  resolvedParts: NodesDefCollection;
+  resolvedNodes: NodesDefCollection;
   part: VisualNode;
   from?: ConnectionNode;
   to?: ConnectionNode;
@@ -70,7 +70,7 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
   const {
     onAction,
     selectedInstances,
-    resolvedParts,
+    resolvedNodes,
     part,
     from,
     to,
@@ -120,7 +120,7 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
       console.error(`Could not find instance with id ${selectedInstances[0]}`);
     } else {
       try {
-        const part = getPartDef(instance, resolvedParts);
+        const part = getPartDef(instance, resolvedNodes);
         if (isVisualNode(part)) {
           types.push(ActionType.UnGroup);
         }

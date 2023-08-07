@@ -14,7 +14,7 @@ export const menuAnalyticsIcon = `<svg width="24" height="24" viewBox="0 0 24 24
 </g>
 </svg`;
 
-export const menuPartsIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+export const menuNodesIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path fill-rule="evenodd" clip-rule="evenodd" d="M20 5V16C21.1046 16 22 15.1046 22 14V4C22 2.89543 21.1046 2 20 2H10C8.89543 2 8 2.89543 8 4H19C19.5523 4 20 4.44772 20 5ZM17 19V8C17 7.44772 16.5523 7 16 7H5C5 5.89543 5.89543 5 7 5H17C18.1046 5 19 5.89543 19 7V17C19 18.1046 18.1046 19 17 19ZM14 8H4C2.89543 8 2 8.89543 2 10V20C2 21.1046 2.89543 22 4 22H14C15.1046 22 16 21.1046 16 20V10C16 8.89543 15.1046 8 14 8ZM4 20V10H14V20H4Z" fill="#F2F2F2"/>
 </svg>
 `;

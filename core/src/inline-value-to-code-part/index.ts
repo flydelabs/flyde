@@ -78,13 +78,13 @@ export const inlineValuePartToPart = (
   return part;
 };
 
-export const customPartsToPartsCollection = (
-  customParts: NodesCollection,
+export const customNodesToNodesCollection = (
+  customNodes: NodesCollection,
   extraContext: Record<string, any> = {}
 ): NodesCollection => {
   const partsCollection: NodesCollection = {};
-  for (let id in customParts) {
-    const part = customParts[id];
+  for (let id in customNodes) {
+    const part = customNodes[id];
     partsCollection[id] = isInlineValueNode(part)
       ? inlineValuePartToPart(part, extraContext)
       : part;

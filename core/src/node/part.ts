@@ -329,13 +329,13 @@ export const getStaticValue = (
 
 export const getNode = (
   idOrIns: string | NodeInstance,
-  resolvedParts: NodesCollection
+  resolvedNodes: NodesCollection
 ): Node => {
   if (typeof idOrIns !== "string" && isInlinePartInstance(idOrIns)) {
     return idOrIns.part;
   }
   const id = typeof idOrIns === "string" ? idOrIns : idOrIns.partId;
-  const part = resolvedParts[id];
+  const part = resolvedNodes[id];
   if (!part) {
     throw new Error(`Node with id ${id} not found`);
   }
@@ -344,13 +344,13 @@ export const getNode = (
 
 export const getPartDef = (
   idOrIns: string | NodeInstance,
-  resolvedParts: NodesDefCollection
+  resolvedNodes: NodesDefCollection
 ): NodeDefinition => {
   if (typeof idOrIns !== "string" && isInlinePartInstance(idOrIns)) {
     return idOrIns.part;
   }
   const id = typeof idOrIns === "string" ? idOrIns : idOrIns.partId;
-  const part = resolvedParts[id];
+  const part = resolvedNodes[id];
   if (!part) {
     console.error(`Node with id ${id} not found`);
     throw new Error(`Node with id ${id} not found`);

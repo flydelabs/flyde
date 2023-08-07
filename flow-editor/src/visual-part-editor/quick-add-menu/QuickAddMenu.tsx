@@ -134,21 +134,21 @@ export const QuickAddMenu: React.FC<QuickMenuProps> = (props) => {
     onQueryImportables().then((data) => setImportables(data.importables));
   }, [onQueryImportables]);
 
-  const availableParts = values({
+  const availableNodes = values({
     ...resolvedDependencies,
     [part.id]: part,
   });
 
-  const existingPartMatches = availableParts.map<QuickMenuMatch>((curr) => {
+  const existingPartMatches = availableNodes.map<QuickMenuMatch>((curr) => {
     return {
       type: "part",
       part: curr as NodeDefinition,
     };
   });
 
-  const existingIds = new Set(availableParts.map((p) => p.id));
+  const existingIds = new Set(availableNodes.map((p) => p.id));
 
-  const importableParts = importables
+  const importableNodes = importables
     ? importables
         .filter((imp) => !existingIds.has(imp.part.id))
         .map<QuickMenuMatch>((curr) => {
@@ -160,7 +160,7 @@ export const QuickAddMenu: React.FC<QuickMenuProps> = (props) => {
     : [];
 
   const matches: QuickMenuMatch[] = existingPartMatches
-    .concat(importableParts)
+    .concat(importableNodes)
     .concat({ type: "value" });
 
   return (

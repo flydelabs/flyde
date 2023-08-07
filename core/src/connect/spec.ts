@@ -14,7 +14,7 @@ import {
 } from "../node";
 import { execute } from "../execute";
 import { runAddTests } from "../node/add-tests";
-import { add, optAdd, testPartsCollection } from "../fixture";
+import { add, optAdd, testNodesCollection } from "../fixture";
 import { connectionData } from "./helpers";
 
 describe("is connected", () => {});
@@ -31,7 +31,7 @@ describe("connect", () => {
             inputs: {},
             outputs: {},
           },
-          testPartsCollection
+          testNodesCollection
         );
       });
     });
@@ -52,7 +52,7 @@ describe("connect", () => {
             r: nodeOutput(),
           },
         },
-        testPartsCollection
+        testNodesCollection
       );
 
       const n1 = dynamicPartInput();
@@ -63,7 +63,7 @@ describe("connect", () => {
         part: part,
         inputs: { n1 },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
       n1.subject.next(4);
       assert.equal(fn.callCount, 1);
@@ -88,7 +88,7 @@ describe("connect", () => {
             r: nodeOutput(),
           },
         },
-        testPartsCollection
+        testNodesCollection
       );
 
       const n1 = dynamicPartInput();
@@ -100,7 +100,7 @@ describe("connect", () => {
         part: part,
         inputs: { n1, n2 },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
       n2.subject.next(4);
       n1.subject.next(6);
@@ -152,7 +152,7 @@ describe("connect", () => {
             r: nodeOutput(),
           },
         },
-        testPartsCollection
+        testNodesCollection
       );
 
       const fn = spy();
@@ -163,7 +163,7 @@ describe("connect", () => {
         part: part,
         inputs: {},
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
     });
   });
@@ -186,9 +186,9 @@ describe("connect", () => {
           r: nodeOutput(),
         },
       },
-      testPartsCollection
+      testNodesCollection
     );
 
-    runAddTests(part, "connect", testPartsCollection);
+    runAddTests(part, "connect", testNodesCollection);
   });
 });

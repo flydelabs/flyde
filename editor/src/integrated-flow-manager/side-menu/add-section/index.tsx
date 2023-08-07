@@ -12,10 +12,10 @@ const SEARCH_DEBOUNCE = 400;
 export const MenuAddSection: React.FC<MenuAddSectionProps> = (props) => {
   const [searchTerm, setSearchTerm] = useState("");
   const { resolvedDependencies } = useDependenciesContext();
-  const allParts = entries(resolvedDependencies);
+  const allNodes = entries(resolvedDependencies);
   const debouncedSearch = useDebounce(searchTerm, SEARCH_DEBOUNCE);
 
-  const visibleParts = allParts.filter(([k]) => {
+  const visibleNodes = allNodes.filter(([k]) => {
     return k.toLowerCase().includes(debouncedSearch.toLowerCase());
   });
 
@@ -23,7 +23,7 @@ export const MenuAddSection: React.FC<MenuAddSectionProps> = (props) => {
     setSearchTerm(e.target.value);
   }, []);
 
-  const renderedInstances = visibleParts.map(([k, part]) => {
+  const renderedInstances = visibleNodes.map(([k, part]) => {
     return (
       <div
         className="ins-wrapper"
@@ -53,10 +53,10 @@ export const MenuAddSection: React.FC<MenuAddSectionProps> = (props) => {
       </div>
       {renderedInstances}
       {/* <div className='ins-wrapper' onDoubleClick={() => props.onAdd(part1)}>
-			{fakeIns(part1, props.resolvedParts)}
+			{fakeIns(part1, props.resolvedNodes)}
 		</div> */}
       {/* <div className='ins-wrapper' onDoubleClick={() => props.onAdd(part2)}>
-			{fakeIns(part2, props.resolvedParts)}
+			{fakeIns(part2, props.resolvedNodes)}
 		</div> */}
     </div>
   );

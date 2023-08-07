@@ -16,7 +16,7 @@ import classNames from "classnames";
 export type SideBarProps = {
   part: VisualNode;
   selectedIds: string[];
-  resolvedParts: NodesDefCollection;
+  resolvedNodes: NodesDefCollection;
   onSelect: (id: NodeInstance, ev: React.MouseEvent) => void;
   onFocusInput: (id: string, ev: React.MouseEvent) => void;
   onFocusOutput: (id: string, ev: React.MouseEvent) => void;
@@ -95,7 +95,7 @@ export const SideBar: React.FC<SideBarProps> = React.memo(function SideBarInner(
   });
 
   const items: MenuItemProps[] = instances.map((ins) => {
-    const part = getPartDef(ins, props.resolvedParts);
+    const part = getPartDef(ins, props.resolvedNodes);
     const type = isVisualNode(part)
       ? MenuItemType.VISUAL
       : isCodeNode(part)

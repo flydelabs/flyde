@@ -62,11 +62,11 @@ export const createEditorClient = (
   url: string,
   executionId: string
 ): EditorDebuggerClient => {
-  const urlParts = new URL(url);
+  const urlNodes = new URL(url);
 
-  const socket = _io(urlParts.origin, {
+  const socket = _io(urlNodes.origin, {
     path: `${
-      urlParts.pathname === "/" ? "" : urlParts.pathname
+      urlNodes.pathname === "/" ? "" : urlNodes.pathname
     }/socket.io/editor`,
     timeout: 30000,
   });

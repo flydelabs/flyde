@@ -48,7 +48,7 @@ import { debugLogger } from "../common/debug-logger";
 import { isStaticInputPinConfig } from "../node";
 import { Debugger, DebuggerEvent, DebuggerEventType } from "./debugger";
 import {
-  customPartsToPartsCollection,
+  customNodesToNodesCollection,
   inlineValuePartToPart,
 } from "../inline-value-to-code-part";
 
@@ -529,7 +529,7 @@ export const execute: ExecuteFn = ({
 
   const inlineValuePartContext = { ...extraContext, ENV: env };
 
-  const processedParts = customPartsToPartsCollection(
+  const processedNodes = customNodesToNodesCollection(
     resolvedDeps,
     inlineValuePartContext
   );
@@ -565,7 +565,7 @@ export const execute: ExecuteFn = ({
     if (isVisualNode(part)) {
       return connect(
         part,
-        processedParts,
+        processedNodes,
         _debugger,
         fullInsIdPath(insId, ancestorsInsIds),
         mainState,
@@ -621,7 +621,7 @@ export const execute: ExecuteFn = ({
         partId: part.id,
       } as DebuggerEvent);
       const mediator = staticPartInput(
-        getStaticValue(arg.config.value, processedParts, insId)
+        getStaticValue(arg.config.value, processedNodes, insId)
       );
       mediatedInputs[pinId] = mediator;
     }
@@ -653,7 +653,7 @@ export const execute: ExecuteFn = ({
     part: processedPart,
     inputs: mediatedInputs,
     outputs: mediatedOutputs,
-    resolvedDeps: processedParts,
+    resolvedDeps: processedNodes,
     _debugger,
     insId,
     mainState,

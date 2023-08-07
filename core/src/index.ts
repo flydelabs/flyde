@@ -44,4 +44,4 @@ export type NodesCollection = OMap<Node>;
 
 export type NodesDefCollection = OMap<NodeDefinition>;
 
-export type CustomPartsCollection = OMap<CustomNode>;
+export type CustomNodesCollection = OMap<CustomNode>;

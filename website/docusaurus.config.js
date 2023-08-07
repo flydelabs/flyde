@@ -67,7 +67,7 @@ const config = {
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
   organizationName: "flydehq", // Usually your GitHub org/user name.
-  projectName: "flyde", // Usually your resolvedParts name.
+  projectName: "flyde", // Usually your resolvedNodes name.
   deploymentBranch: "website",
   trailingSlash: true,
 
@@ -107,14 +107,14 @@ const config = {
       ({
         docs: {
           sidebarPath: require.resolve("./sidebars.js"),
-          // Please change this to your resolvedParts.
+          // Please change this to your resolvedNodes.
           // Remove this to remove the "edit this page" links.
           editUrl:
             "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/",
         },
         blog: {
           showReadingTime: true,
-          // Please change this to your resolvedParts.
+          // Please change this to your resolvedNodes.
           // Remove this to remove the "edit this page" links.
           editUrl:
             "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/",

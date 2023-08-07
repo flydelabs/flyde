@@ -28,11 +28,11 @@ const getRefPartIds = (part: VisualNode): string[] => {
   const refPartIds = part.instances
     .filter(isRefPartInstance)
     .map((ins) => ins.partId);
-  const inlineParts = part.instances
+  const inlineNodes = part.instances
     .filter(isInlinePartInstance)
     .map((ins) => ins.part);
 
-  const idsFromInline = inlineParts.reduce<string[]>((acc, part) => {
+  const idsFromInline = inlineNodes.reduce<string[]>((acc, part) => {
     if (isVisualNode(part)) {
       acc.push(...getRefPartIds(part));
     }

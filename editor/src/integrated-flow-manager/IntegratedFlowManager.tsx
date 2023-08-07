@@ -95,7 +95,7 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
   const [menuSelectedItem, setMenuSelectedItem] = React.useState<string>();
 
   // to avoid re-resolving imported flows, this holds parts that were imported in the current session
-  const [importedParts, setImportedParts] = React.useState<ImportableSource[]>(
+  const [importedNodes, setImportedNodes] = React.useState<ImportableSource[]>(
     []
   );
 
@@ -288,7 +288,7 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
       const existingModuleImports =
         (flow.imports || {})[importablePart.module] || [];
 
-      setImportedParts((parts) => [...parts, importablePart]);
+      setImportedNodes((parts) => [...parts, importablePart]);
 
       const newDeps = {
         ...resolvedDependencies,
@@ -321,7 +321,7 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
   const onExtractInlinePart = React.useCallback(async () => {}, []);
 
   React.useEffect(() => {
-    const _importedParts = importedParts.reduce((acc, curr) => {
+    const _importedNodes = importedNodes.reduce((acc, curr) => {
       return {
         ...acc,
         [curr.part.id]: { ...curr.part, importPath: curr.module },
@@ -331,10 +331,10 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
     setCurrentResolvedDeps((deps) => {
       return {
         ...deps,
-        ..._importedParts,
+        ..._importedNodes,
       };
     });
-  }, [importedParts]);
+  }, [importedNodes]);
 
   const debuggerContextValue = React.useMemo<DebuggerContextData>(
     () => ({

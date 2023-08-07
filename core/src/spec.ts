@@ -1,4 +1,4 @@
-import { DynamicPartInput, PartInstanceError, VisualNode } from ".";
+import { DynamicNodeInput, PartInstanceError, VisualNode } from ".";
 import { assert } from "chai";
 
 import { spy } from "sinon";
@@ -55,8 +55,8 @@ import {
   filter,
   isEven,
   add1mul2,
-  testPartsCollection,
-  testPartsCollectionWith,
+  testNodesCollection,
+  testNodesCollectionWith,
   peq,
   mul,
   addGroupedQueued,
@@ -116,7 +116,7 @@ describe("main ", () => {
         part: part,
         inputs: { v },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
       v.subject.next(2);
       assert.equal(s.calledOnceWithExactly(2), true);
@@ -145,7 +145,7 @@ describe("main ", () => {
         part: part,
         inputs: { v },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
       v.subject.next(2);
       assert.equal(s.calledOnceWithExactly(2), true);
@@ -178,7 +178,7 @@ describe("main ", () => {
         part: part,
         inputs: { a, b },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
       a.subject.next(2);
       b.subject.next(3);
@@ -201,7 +201,7 @@ describe("main ", () => {
         part: addGrouped,
         inputs: { n1, n2 },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
       const num1 = randomInt(1, 100);
       const num2 = randomInt(1, 100);
@@ -234,7 +234,7 @@ describe("main ", () => {
         },
       };
 
-      const part = connect(add1mul2twice, testPartsCollection);
+      const part = connect(add1mul2twice, testNodesCollection);
 
       const fn = spy();
       const n = dynamicPartInput();
@@ -243,7 +243,7 @@ describe("main ", () => {
         part: part,
         inputs: { n },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
       r.subscribe(fn);
 
@@ -287,7 +287,7 @@ describe("main ", () => {
         part: add1,
         inputs: { n },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
 
       n.subject.next(2);
@@ -312,7 +312,7 @@ describe("main ", () => {
               r: nodeOutput(),
             },
           },
-          testPartsCollection
+          testNodesCollection
         );
 
         const n1 = dynamicPartInput();
@@ -322,7 +322,7 @@ describe("main ", () => {
           part: part,
           inputs: { n1 },
           outputs: { r },
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
         });
         r.subscribe(s);
         n1.subject.next(42);
@@ -347,7 +347,7 @@ describe("main ", () => {
               connectionData("a.r", "r"),
             ],
           },
-          testPartsCollection
+          testNodesCollection
         );
 
         const n1 = dynamicPartInput();
@@ -358,7 +358,7 @@ describe("main ", () => {
           part: part,
           inputs: { n1, n2 },
           outputs: { r },
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
         });
         r.subscribe(s);
         n2.subject.next(1);
@@ -374,7 +374,7 @@ describe("main ", () => {
 
         // eventually I solved it by making sure that the constant for n2 is called first.
         // Not ideal at all!
-        const resolvedDeps = testPartsCollectionWith(Value(42), Value(5));
+        const resolvedDeps = testNodesCollectionWith(Value(42), Value(5));
         const part = connect(
           {
             id: "bob",
@@ -426,7 +426,7 @@ describe("main ", () => {
               connectionData("a.r", "r"),
             ],
           },
-          testPartsCollection
+          testNodesCollection
         );
 
         const n = dynamicPartInput();
@@ -436,7 +436,7 @@ describe("main ", () => {
           part: p1,
           inputs: { n },
           outputs: { r: r1 },
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
         });
         r1.subscribe(s1);
 
@@ -446,7 +446,7 @@ describe("main ", () => {
           part: p1,
           inputs: { n },
           outputs: { r: r2 },
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
         });
         r2.subscribe(s2);
 
@@ -487,7 +487,7 @@ describe("main ", () => {
 
         const fn = spy();
 
-        const part = connect(add1mul2, testPartsCollection, {});
+        const part = connect(add1mul2, testNodesCollection, {});
 
         const n = dynamicPartInput();
         const r = new Subject();
@@ -501,7 +501,7 @@ describe("main ", () => {
           part: part,
           inputs: { n },
           outputs: { r },
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
         });
 
         assert.equal(fn.callCount, 0);
@@ -517,7 +517,7 @@ describe("main ", () => {
 
       it("connects one-off inputs properly", () => {
         const n = randomInt(99);
-        const resolvedDeps = testPartsCollectionWith(Value(n));
+        const resolvedDeps = testNodesCollectionWith(Value(n));
         const part = connect(
           {
             id: "test",
@@ -555,7 +555,7 @@ describe("main ", () => {
 
       it("connects the same output to 2 inputs", () => {
         const n = randomInt(99);
-        const resolvedDeps = testPartsCollectionWith(Value(n));
+        const resolvedDeps = testNodesCollectionWith(Value(n));
         const part = connect(
           {
             id: "test",
@@ -599,7 +599,7 @@ describe("main ", () => {
 
       it("works regardless of the order of the instances and connections with 2 pieces", () => {
         const n = randomInt(99);
-        const resolvedDeps = testPartsCollectionWith(Value(n));
+        const resolvedDeps = testNodesCollectionWith(Value(n));
         const instances = [
           partInstance("a", add1.id),
           partInstance("v", Value(n).id),
@@ -641,7 +641,7 @@ describe("main ", () => {
 
       it("works regardless of the order of the instances and connections with 3 pieces", () => {
         const n = randomInt(99);
-        const resolvedDeps = testPartsCollectionWith(Value(n));
+        const resolvedDeps = testNodesCollectionWith(Value(n));
         const instances: NodeInstance[] = [
           partInstance("a", add.id),
           partInstance("v1", Value(n).id),
@@ -688,7 +688,7 @@ describe("main ", () => {
 
       it("connects const inputs properly", () => {
         const n = randomInt(99);
-        const resolvedDeps = testPartsCollectionWith(Value(n));
+        const resolvedDeps = testNodesCollectionWith(Value(n));
         const part: VisualNode = {
           id: "test",
           inputs: {},
@@ -735,7 +735,7 @@ describe("main ", () => {
             r: nodeOutput(),
           },
         },
-        testPartsCollection
+        testNodesCollection
       );
 
       const s1 = spy();
@@ -751,7 +751,7 @@ describe("main ", () => {
         part: add1,
         inputs: { n: n1 },
         outputs: { r: r1 },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
       r1.subscribe(s1);
       n1.subject.next(4);
@@ -762,7 +762,7 @@ describe("main ", () => {
         part: p,
         inputs: { n: n2 },
         outputs: { r: r2 },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
       r2.subscribe(s2);
       n2.subject.next(4);
@@ -777,7 +777,7 @@ describe("main ", () => {
         part: add1,
         inputs: { n, bob },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
       const res = spy();
       r.subscribe(res);
@@ -788,7 +788,7 @@ describe("main ", () => {
     });
 
     it("supports constant values on connect", () => {
-      const resolvedDeps = testPartsCollectionWith(Value(7));
+      const resolvedDeps = testNodesCollectionWith(Value(7));
       const part = connect(
         {
           id: "test",
@@ -830,7 +830,7 @@ describe("main ", () => {
     });
 
     it("supports static values on raw", () => {
-      const resolvedDeps = testPartsCollectionWith(Value(7));
+      const resolvedDeps = testNodesCollectionWith(Value(7));
 
       const part = connect(
         {
@@ -883,7 +883,7 @@ describe("main ", () => {
           part: id,
           inputs: { v },
           outputs: { r },
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
         });
         r.subscribe(s);
         v.subject.next(5);
@@ -907,7 +907,7 @@ describe("main ", () => {
           },
         });
 
-        const resolvedDeps = testPartsCollectionWith(ids);
+        const resolvedDeps = testNodesCollectionWith(ids);
 
         const part = connect(
           {
@@ -966,7 +966,7 @@ describe("main ", () => {
     });
 
     it("allows same name for input and output", () => {
-      const resolvedDeps = testPartsCollectionWith(Value(1));
+      const resolvedDeps = testNodesCollectionWith(Value(1));
       const part: VisualNode = {
         id: "part",
         inputs: {
@@ -1029,7 +1029,7 @@ describe("main ", () => {
           part: part,
           inputs: { n },
           outputs: { r },
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
         });
 
         const fn = spy();
@@ -1040,7 +1040,7 @@ describe("main ", () => {
       });
 
       it("returns all given pulses to output", async () => {
-        const resolvedDeps = testPartsCollectionWith(Value(1), Value(2));
+        const resolvedDeps = testNodesCollectionWith(Value(1), Value(2));
         const part: VisualNode = {
           id: "part",
           inputs: {},
@@ -1144,7 +1144,7 @@ describe("main ", () => {
           part: filter,
           inputs: { list, fn },
           outputs: { r },
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
         });
         list.subject.next([1, 2, 3, 4, 5, 6]);
         fn.subject.next(isEven);
@@ -1163,7 +1163,7 @@ describe("main ", () => {
           part: filter,
           inputs: { list, fn },
           outputs: { r },
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
         });
         list.subject.next([1, 2, 3, 4, 5, 6]);
 
@@ -1246,7 +1246,7 @@ describe("main ", () => {
             part: wrapper,
             inputs: { v },
             outputs: { r },
-            resolvedDeps: testPartsCollectionWith(part1, part2, wrappedP2),
+            resolvedDeps: testNodesCollectionWith(part1, part2, wrappedP2),
           });
           v.subject.next("");
           assert.deepEqual(s.lastCall.args[0], 2);
@@ -1266,7 +1266,7 @@ describe("main ", () => {
           part: part,
           inputs: { v },
           outputs: { r },
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
         });
         v.subject.next(1);
         v.subject.next(2);
@@ -1289,7 +1289,7 @@ describe("main ", () => {
           part: part,
           inputs: { v: v1 },
           outputs: { r: r1 },
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
         });
         v1.subject.next(1);
         v1.subject.next(2);
@@ -1297,7 +1297,7 @@ describe("main ", () => {
           part: part,
           inputs: { v: v2 },
           outputs: { r: r2 },
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
         });
         v2.subject.next(1);
         v2.subject.next(2);
@@ -1333,7 +1333,7 @@ describe("main ", () => {
           part: part,
           inputs: { n1, n2 },
           outputs: { r },
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
         });
 
         n1.subject.next(1);
@@ -1374,7 +1374,7 @@ describe("main ", () => {
           part: part,
           inputs: { n1, n2 },
           outputs: { r },
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
         });
 
         n1.subject.next(1);
@@ -1425,7 +1425,7 @@ describe("main ", () => {
           part: counterWrapper,
           inputs: { v },
           outputs: { r },
-          resolvedDeps: testPartsCollectionWith(counter),
+          resolvedDeps: testNodesCollectionWith(counter),
         });
         v.subject.next(1);
         v.subject.next(1);
@@ -1481,7 +1481,7 @@ describe("main ", () => {
           part: counterWrapper,
           inputs: { v, v2 },
           outputs: { r, r2 },
-          resolvedDeps: testPartsCollectionWith(counter),
+          resolvedDeps: testNodesCollectionWith(counter),
         });
         v.subject.next(1);
         v.subject.next(1);
@@ -1506,7 +1506,7 @@ describe("main ", () => {
           part: part,
           inputs: { v },
           outputs: { r },
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
           mainState: state,
         });
         v.subject.next(1);
@@ -1544,7 +1544,7 @@ describe("main ", () => {
         part: part,
         inputs: { n },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
       n.subject.next(42);
 
@@ -1572,7 +1572,7 @@ describe("main ", () => {
         part: part,
         inputs: { v },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
       v.subject.next(1);
       v.subject.next(2);
@@ -1606,7 +1606,7 @@ describe("main ", () => {
         outputsPosition: {},
       };
 
-      const resolvedDeps = testPartsCollectionWith(innerPart);
+      const resolvedDeps = testNodesCollectionWith(innerPart);
 
       const n = dynamicPartInput();
       const r = new Subject();
@@ -1651,7 +1651,7 @@ describe("main ", () => {
         part: part,
         inputs: {},
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
       assert.equal(s.lastCall.args[0], "ok");
     });
@@ -1685,7 +1685,7 @@ describe("main ", () => {
         ],
       };
 
-      const resolvedDeps = testPartsCollectionWith(addRec);
+      const resolvedDeps = testNodesCollectionWith(addRec);
 
       const r = new Subject();
       const s = spy();
@@ -1751,7 +1751,7 @@ describe("main ", () => {
         ],
       };
 
-      const resolvedDeps = testPartsCollectionWith(fact);
+      const resolvedDeps = testNodesCollectionWith(fact);
 
       const r = new Subject();
       const s = spy();
@@ -1814,7 +1814,7 @@ describe("main ", () => {
         part: inlineValuePart,
         inputs: { v },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
       v.subject.next(2);
       assert.equal(s.calledOnceWithExactly(2), true);
@@ -1851,7 +1851,7 @@ describe("main ", () => {
         part: part,
         inputs: { a, b },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
       assert.equal(innerSpy.callCount, 0);
       a.subject.next(2);
@@ -1890,7 +1890,7 @@ describe("main ", () => {
         part: part,
         inputs: { v },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
       v.subject.next(2);
       assert.equal(spyFn.calledOnce, false);
@@ -1919,7 +1919,7 @@ describe("main ", () => {
         part: part,
         inputs: {},
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
       await delay(4);
       assert.equal(s.callCount >= 1, true, `call count: ${s.callCount}`);
@@ -1951,7 +1951,7 @@ describe("main ", () => {
         part: part,
         inputs: { v },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
       v.subject.next(2);
       assert.equal(spyFn.calledOnce, false);
@@ -1980,7 +1980,7 @@ describe("main ", () => {
         part: part,
         inputs: {},
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
         extraContext: { bobber },
       });
       assert.equal(s.callCount, 1);
@@ -2006,7 +2006,7 @@ describe("main ", () => {
         part: part,
         inputs: {},
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
         extraContext: { bobber },
       });
       assert.equal(s.callCount, 1);
@@ -2031,7 +2031,7 @@ describe("main ", () => {
         part: add,
         inputs: { n1, n2 },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
       n1.subject.next(num1);
       n1.subject.next(num2);
@@ -2054,7 +2054,7 @@ describe("main ", () => {
         part: addGrouped,
         inputs: { n1, n2 },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
       n1.subject.next(num1);
       assert.equal(s.callCount, 1);
@@ -2086,7 +2086,7 @@ describe("main ", () => {
         part: part,
         inputs: { n1 },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
       const num1 = randomInt(1, 100);
       n1.subject.next(num1);
@@ -2121,7 +2121,7 @@ describe("main ", () => {
         part: part,
         inputs: { n1 },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
       const num1 = randomInt(1, 100);
       n1.subject.next(num1);
@@ -2151,7 +2151,7 @@ describe("main ", () => {
         part: add,
         inputs: { n1, n2 },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
 
       n1.subject.next(1);
@@ -2183,7 +2183,7 @@ describe("main ", () => {
         part: addGroupedQueued,
         inputs: { n1, n2 },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
 
       n1.subject.next(1);
@@ -2221,7 +2221,7 @@ describe("main ", () => {
         part: part,
         inputs: { a, b },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
 
       a.subject.next(1);
@@ -2264,7 +2264,7 @@ describe("main ", () => {
         part: delayer,
         inputs: { item },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
 
       item.subject.next(10);
@@ -2313,7 +2313,7 @@ describe("main ", () => {
           part: delayer,
           inputs: { item },
           outputs: { r, final },
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
         });
 
         item.subject.next(1);
@@ -2369,7 +2369,7 @@ describe("main ", () => {
           part: delayer,
           inputs: { item },
           outputs: { f1, f2, r },
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
         });
 
         item.subject.next(1);
@@ -2427,7 +2427,7 @@ describe("main ", () => {
           part: delayer,
           inputs: { item },
           outputs: { r, final1, final2 },
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
         });
 
         item.subject.next(0);
@@ -2493,7 +2493,7 @@ describe("main ", () => {
           part: delayer,
           inputs: { item },
           outputs: { r, final1 },
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
           onBubbleError: onError,
         });
 
@@ -2539,7 +2539,7 @@ describe("main ", () => {
           part: simpleCompletion,
           inputs: {},
           outputs: { r },
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
           onCompleted: completionSpy,
         });
 
@@ -2565,7 +2565,7 @@ describe("main ", () => {
             const s = spy();
             execute({
               part,
-              resolvedDeps: testPartsCollection,
+              resolvedDeps: testNodesCollection,
               inputs: {},
               outputs: { r: dynamicOutput() },
               onCompleted: s,
@@ -2587,7 +2587,7 @@ describe("main ", () => {
             const [sr, r] = spiedOutput();
             execute({
               part,
-              resolvedDeps: testPartsCollection,
+              resolvedDeps: testNodesCollection,
               inputs: {},
               outputs: { r },
               onCompleted: s,
@@ -2616,7 +2616,7 @@ describe("main ", () => {
             const input = dynamicPartInput();
             execute({
               part,
-              resolvedDeps: testPartsCollection,
+              resolvedDeps: testNodesCollection,
               inputs: { a: input },
               outputs: { r },
               onCompleted: s,
@@ -2671,7 +2671,7 @@ describe("main ", () => {
             const onCompleted = spy();
             execute({
               part: wrapper,
-              resolvedDeps: testPartsCollection,
+              resolvedDeps: testNodesCollection,
               inputs: {},
               outputs: { r },
               onCompleted,
@@ -2728,7 +2728,7 @@ describe("main ", () => {
         part: somePart,
         inputs: { item },
         outputs: { r, final },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
 
       item.subject.next(23423); // call 0
@@ -2783,7 +2783,7 @@ describe("main ", () => {
           part: accumulate,
           inputs: { item, count },
           outputs: { r },
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
         });
 
         count.subject.next(1);
@@ -2807,7 +2807,7 @@ describe("main ", () => {
           part: accumulate,
           inputs: { item, count },
           outputs: { r },
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
         });
 
         item.subject.next(1);
@@ -2837,7 +2837,7 @@ describe("main ", () => {
           part: accumulate,
           inputs: { item, count },
           outputs: { r },
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
         });
 
         item.subject.next(1);
@@ -2883,7 +2883,7 @@ describe("main ", () => {
           part: visualNode,
           inputs: { val, count },
           outputs: { r },
-          resolvedDeps: testPartsCollectionWith(accumulate),
+          resolvedDeps: testNodesCollectionWith(accumulate),
         });
 
         val.subject.next(1);
@@ -2918,7 +2918,7 @@ describe("main ", () => {
           part: visualNode,
           inputs: { val, count },
           outputs: { r },
-          resolvedDeps: testPartsCollectionWith(accumulate),
+          resolvedDeps: testNodesCollectionWith(accumulate),
         });
 
         count.subject.next(2);
@@ -2972,7 +2972,7 @@ describe("main ", () => {
           part: accUntil,
           inputs: { item, until },
           outputs: { r },
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
         });
 
         item.subject.next(22);
@@ -3026,7 +3026,7 @@ describe("main ", () => {
         part: visualNode,
         inputs: { n1 },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
 
       assert.equal(s.getCalls()[0]?.args[0], num1 + num2);
@@ -3065,7 +3065,7 @@ describe("main ", () => {
         part: merge,
         inputs: { a, b },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
 
       const numbers = randomInts(20);
@@ -3112,7 +3112,7 @@ describe("main ", () => {
         part: mergeGrouped,
         inputs: { b, a },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
 
       const valuesCount = randomInt(10, 20);
@@ -3149,13 +3149,13 @@ describe("main ", () => {
           part: dummyPart,
           inputs: { a },
           outputs: {},
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
         });
         execute({
           part: dummyPart,
           inputs: { b },
           outputs: {},
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
         });
 
         a.subject.next(1);
@@ -3167,7 +3167,7 @@ describe("main ", () => {
           part: dummyPart,
           inputs: { a, b },
           outputs: {},
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
         });
 
         a.subject.next(1);
@@ -3192,7 +3192,7 @@ describe("main ", () => {
           part: dummyPart,
           inputs: { a, b },
           outputs: {},
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
         });
 
         a.subject.next(1);
@@ -3203,7 +3203,7 @@ describe("main ", () => {
           part: dummyPart,
           inputs: { a },
           outputs: {},
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
         });
 
         a.subject.next(1);
@@ -3237,7 +3237,7 @@ describe("main ", () => {
         part: errorReportingPart,
         inputs: { a },
         outputs: {},
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
         onBubbleError: s,
         insId: "someIns",
         _debugger: { onEvent },
@@ -3275,7 +3275,7 @@ describe("main ", () => {
         part: p2,
         inputs: { a },
         outputs: {},
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
         _debugger: { onEvent },
         insId: "someIns",
       });
@@ -3307,7 +3307,7 @@ describe("main ", () => {
         part: p2,
         inputs: { a },
         outputs: {},
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
         _debugger: { onEvent },
         insId: "someIns",
       });
@@ -3342,7 +3342,7 @@ describe("main ", () => {
           part: p2,
           inputs: { a },
           outputs: {},
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
           _debugger: { onEvent },
           insId: "someIns",
           // onBubbleError: (e) => {
@@ -3390,7 +3390,7 @@ describe("main ", () => {
         part: badWrapper,
         inputs: { a },
         outputs: {},
-        resolvedDeps: testPartsCollectionWith(p2),
+        resolvedDeps: testNodesCollectionWith(p2),
         _debugger: { onEvent },
         insId: "someIns",
       });
@@ -3438,7 +3438,7 @@ describe("main ", () => {
         part: badWrapper,
         inputs: { a },
         outputs: {},
-        resolvedDeps: testPartsCollectionWith(p2),
+        resolvedDeps: testNodesCollectionWith(p2),
         _debugger: { onEvent },
         insId: "someIns",
       });
@@ -3480,7 +3480,7 @@ describe("main ", () => {
         part: badWrapper,
         inputs: { a },
         outputs: {},
-        resolvedDeps: testPartsCollectionWith(errorReportingPart),
+        resolvedDeps: testNodesCollectionWith(errorReportingPart),
         _debugger: { onEvent },
         insId: "someIns",
       });
@@ -3527,7 +3527,7 @@ describe("main ", () => {
         part: badWrapper,
         inputs: { a },
         outputs: { r },
-        resolvedDeps: testPartsCollectionWith(errorReportingPart),
+        resolvedDeps: testNodesCollectionWith(errorReportingPart),
         _debugger: { onEvent },
         insId: "someIns",
       });
@@ -3553,7 +3553,7 @@ describe("main ", () => {
         part: errorReportingPart,
         inputs: { a },
         outputs: { [ERROR_PIN_ID]: errPin },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
         onBubbleError: s1,
         insId: "someIns",
       });
@@ -3580,7 +3580,7 @@ describe("main ", () => {
         part: errorReportingPart,
         inputs: { a },
         outputs: { [ERROR_PIN_ID]: errPin },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
         insId: "someIns",
         _debugger: { onEvent },
       });
@@ -3624,14 +3624,14 @@ describe("main ", () => {
   describe("bugs found", () => {
     it("works with accumulate and a static input", () => {
       const [s, r] = spiedOutput();
-      const [val] = dynamicPartInputs() as [DynamicPartInput];
+      const [val] = dynamicPartInputs() as [DynamicNodeInput];
       const count = staticPartInput(1);
 
       execute({
         part: accumulate,
         inputs: { val, count },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
       });
 
       assert.equal(s.callCount, 0);
@@ -3644,7 +3644,7 @@ describe("main ", () => {
 
     it("works with spreading a 3 arrayed list into an accumulate 1", () => {
       const [s, r] = spiedOutput();
-      const [list] = dynamicPartInputs() as [DynamicPartInput];
+      const [list] = dynamicPartInputs() as [DynamicNodeInput];
 
       const part = concisePart({
         id: "merger",
@@ -3665,7 +3665,7 @@ describe("main ", () => {
         part: part,
         inputs: { list },
         outputs: { r },
-        resolvedDeps: testPartsCollectionWith(spreadList, accumulate),
+        resolvedDeps: testNodesCollectionWith(spreadList, accumulate),
       });
 
       assert.equal(s.callCount, 0);
@@ -3697,7 +3697,7 @@ describe("main ", () => {
         part: part,
         inputs: {},
         outputs: { r },
-        resolvedDeps: testPartsCollectionWith(id),
+        resolvedDeps: testNodesCollectionWith(id),
       });
 
       // a.subject.next(1);
@@ -3745,7 +3745,7 @@ describe("main ", () => {
         part: wrapperPart,
         inputs: {},
         outputs: { r },
-        resolvedDeps: testPartsCollectionWith(loopValuesPart, asyncId),
+        resolvedDeps: testNodesCollectionWith(loopValuesPart, asyncId),
       });
 
       await eventually(() => {
@@ -3803,7 +3803,7 @@ describe("main ", () => {
         part: visualNode,
         inputs: { n1 },
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
         env,
       });
 
@@ -3837,7 +3837,7 @@ describe("main ", () => {
           part: groupedId,
           inputs: {},
           outputs: { r },
-          resolvedDeps: testPartsCollection,
+          resolvedDeps: testNodesCollection,
           env,
         });
         assert.deepEqual(callsFirstArgs(s), [val]);
@@ -3870,7 +3870,7 @@ describe("main ", () => {
         part: groupedId,
         inputs: {},
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
         env,
       });
       assert.deepEqual(callsFirstArgs(s), ["Albert"]);
@@ -3898,7 +3898,7 @@ describe("main ", () => {
         part: groupedId,
         inputs: {},
         outputs: { r },
-        resolvedDeps: testPartsCollection,
+        resolvedDeps: testNodesCollection,
         onBubbleError: onError,
         env,
       });
@@ -3932,7 +3932,7 @@ describe("main ", () => {
         part: visualNode,
         inputs: { a },
         outputs: { r },
-        resolvedDeps: testPartsCollectionWith(v42),
+        resolvedDeps: testNodesCollectionWith(v42),
         onBubbleError: err,
       });
 
@@ -3978,7 +3978,7 @@ describe("main ", () => {
         part: visualNode,
         inputs: { a },
         outputs: { r },
-        resolvedDeps: testPartsCollectionWith(addPart),
+        resolvedDeps: testNodesCollectionWith(addPart),
         onBubbleError: err,
       });
 
@@ -4023,7 +4023,7 @@ describe("main ", () => {
         part: visualNode,
         inputs: { a },
         outputs: { r },
-        resolvedDeps: testPartsCollectionWith(addPart),
+        resolvedDeps: testNodesCollectionWith(addPart),
         onBubbleError: errSpy,
       });
 
@@ -4058,7 +4058,7 @@ describe("main ", () => {
         part,
         inputs: { a },
         outputs: { r },
-        resolvedDeps: testPartsCollectionWith(part),
+        resolvedDeps: testNodesCollectionWith(part),
       });
 
       const timesToCall = randomInt(3, 10);
@@ -4088,7 +4088,7 @@ describe("main ", () => {
         part,
         inputs: { a },
         outputs: { r },
-        resolvedDeps: testPartsCollectionWith(part),
+        resolvedDeps: testNodesCollectionWith(part),
       });
       assert.equal(s.callCount, 1);
     });

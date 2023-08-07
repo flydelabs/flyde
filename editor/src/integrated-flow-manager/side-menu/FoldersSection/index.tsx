@@ -220,7 +220,7 @@ export const FoldersSection: React.FC<FoldersSectionProps> = (props) => {
       </Collapse>
       {/* <h4 onClick={toggleFlows}>Current Flow - {props.currentFile} </h4>
       <Collapse isOpen={flowsExpanded}>
-        <FlowPartsSection {...props}/>
+        <FlowNodesSection {...props}/>
       </Collapse> */}
 
       {newFlowTarget ? (

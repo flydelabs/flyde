@@ -21,7 +21,7 @@ export const getPartWithDependencies = (
       .filter((i) => resolvedDeps[i])
   );
 
-  const depsPartsWithDeps = deps
+  const depsNodesWithDeps = deps
     .flatMap((id) => resolvedDeps[id] ?? [])
     .reduce<CustomNode[]>((acc, curr) => {
       return [
@@ -33,5 +33,5 @@ export const getPartWithDependencies = (
       ];
     }, []);
 
-  return [part, ...depsPartsWithDeps];
+  return [part, ...depsNodesWithDeps];
 };

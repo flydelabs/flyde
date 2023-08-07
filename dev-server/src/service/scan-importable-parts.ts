@@ -28,7 +28,7 @@ export type ImportablesResult = {
   errors: { path: string; message: string }[];
 };
 
-export async function scanImportableParts(
+export async function scanImportableNodes(
   rootPath: string,
   filename: string
 ): Promise<ImportablesResult> {
@@ -38,7 +38,7 @@ export async function scanImportableParts(
 
   const depsNames = await getFlydeDependencies(rootPath);
 
-  const depsParts = await resolveDependentPackages(rootPath, depsNames);
+  const depsNodes = await resolveDependentPackages(rootPath, depsNames);
 
   let builtInStdLib: Record<string, Record<string, BaseNode>> = {};
   if (!depsNames.includes("@flyde/stdlib")) {
@@ -54,7 +54,7 @@ export async function scanImportableParts(
 
   let allErrors: ImportablesResult["errors"] = [];
 
-  const localParts = localFiles
+  const localNodes = localFiles
     .filter((file) => !file.relativePath.endsWith(filename))
     .reduce<Record<string, Record<string, BaseNode>>>((acc, file) => {
       if (isCodePartPath(file.fullPath)) {
@@ -91,7 +91,7 @@ export async function scanImportableParts(
     }, {});
 
   return {
-    importables: { ...builtInStdLib, ...depsParts, ...localParts },
+    importables: { ...builtInStdLib, ...depsNodes, ...localNodes },
     errors: allErrors,
   };
 }

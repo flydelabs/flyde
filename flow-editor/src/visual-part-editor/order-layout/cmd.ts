@@ -45,14 +45,14 @@ export const layoutToInstances = (
 
 export const orderVisualPart = (
   part: VisualNode,
-  resolvedParts: NodesDefCollection,
+  resolvedNodes: NodesDefCollection,
   itrs: number,
   onStep?: (val: VisualNode, idx: number) => void
 ) => {
   const { instances, connections } = part;
   const insNodes = instances.reduce((prev, curr) => {
     const s = size(
-      calcPartWidth(curr, getPartDef(curr, resolvedParts)),
+      calcPartWidth(curr, getPartDef(curr, resolvedNodes)),
       PART_HEIGHT
     );
     return {

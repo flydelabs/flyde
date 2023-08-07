@@ -1599,8 +1599,8 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             reportEvent("addValueModalOpen", { source: "dblClickPin" });
           } else {
             const part = getPartDef(ins, currResolvedDeps);
-            const partOutputs = getPartOutputs(part);
-            const pin = partOutputs[pinId];
+            const nodeOutputs = getPartOutputs(part);
+            const pin = nodeOutputs[pinId];
 
             if (!pin) {
               throw new Error("Dbl clicked on un-existing pin");
@@ -1744,7 +1744,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             const part = getPartDef(ins, currResolvedDeps);
             if (part) {
               const nodeInputs = getPartInputs(part);
-              const partOutputs = getPartOutputs(part);
+              const nodeOutputs = getPartOutputs(part);
 
               if (ins.visibleInputs) {
                 const invalidInputs = ins.visibleInputs.filter(
@@ -1758,10 +1758,10 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
 
               if (ins.visibleOutputs) {
                 const invalidOutputs = ins.visibleOutputs.filter(
-                  (pinId) => !partOutputs[pinId]
+                  (pinId) => !nodeOutputs[pinId]
                 );
                 if (invalidOutputs.length > 0) {
-                  ins.visibleOutputs = keys(partOutputs);
+                  ins.visibleOutputs = keys(nodeOutputs);
                   invalids.push(...invalidOutputs);
                 }
               }
@@ -2536,7 +2536,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
             </div> */}
 
               <ConnectionView
-                resolvedParts={currResolvedDeps}
+                resolvedNodes={currResolvedDeps}
                 currentInsId={currentInsId}
                 ancestorsInsIds={ancestorsInsIds}
                 size={vpSize}
@@ -2694,7 +2694,7 @@ export const VisualPartEditor: React.FC<VisualPartEditorProps & { ref?: any }> =
               onAction={onAction}
               selectedInstances={selected}
               part={part}
-              resolvedParts={currResolvedDeps}
+              resolvedNodes={currResolvedDeps}
               to={to}
               from={from}
               hotkeysEnabled={isBoardInFocus}

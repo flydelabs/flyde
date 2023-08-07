@@ -11,7 +11,7 @@ import {
   StickyInputPinConfig,
 } from "./pin-config";
 
-export type PinType = 'input' | 'output';
+export type PinType = "input" | "output";
 export type InputMode = "optional" | "required" | "required-if-connected";
 
 export interface BasePinData {
@@ -31,9 +31,7 @@ export interface OutputPin extends BasePinData {
   delayed?: boolean;
 }
 
-export const nodeInput = (
-  mode: InputMode = "required"
-): InputPin => ({
+export const nodeInput = (mode: InputMode = "required"): InputPin => ({
   mode,
 });
 
@@ -46,18 +44,16 @@ export const nodeInputs = (count: number, modes?: InputMode[]): InputPin[] =>
     return nodeInput(modes?.[idx] || "required");
   });
 
-export const nodeOutput = (
-  delayed = false,
-): OutputPin => ({
+export const nodeOutput = (delayed = false): OutputPin => ({
   delayed,
 });
 
-export const partOutputs = (count: number): OutputPin[] =>
+export const nodeOutputs = (count: number): OutputPin[] =>
   repeat(count, () => {
     return nodeOutput();
   });
 
-export type DynamicPartInput = {
+export type DynamicNodeInput = {
   subject: Subject<any>;
   config: StickyInputPinConfig | QueueInputPinConfig;
 };
@@ -66,7 +62,7 @@ export type StaticPartInput = {
   config: StaticInputPinConfig;
 };
 
-export type PartInput = DynamicPartInput | StaticPartInput;
+export type PartInput = DynamicNodeInput | StaticPartInput;
 
 export type PartOutput = Subject<any>;
 
@@ -78,7 +74,7 @@ export interface DynamicOutput extends Subject<any> {}
 
 export const dynamicOutput = (): DynamicOutput => new Subject();
 
-export const dynamicPartInput = testDataCreator<DynamicPartInput>(() => {
+export const dynamicPartInput = testDataCreator<DynamicNodeInput>(() => {
   return {
     subject: new Subject(),
     config: queueInputPinConfig(),
@@ -87,7 +83,7 @@ export const dynamicPartInput = testDataCreator<DynamicPartInput>(() => {
 
 export const dynamicPartInputs = (count: number = 10) =>
   repeat(count, () =>
-    testDataCreator<DynamicPartInput>(() => {
+    testDataCreator<DynamicNodeInput>(() => {
       return {
         subject: new Subject(),
         config: queueInputPinConfig(),
@@ -101,8 +97,8 @@ export const staticPartInput = (value: any): StaticPartInput => ({
 
 export const isDynamicInput = (
   arg: PartInput | undefined
-): arg is DynamicPartInput => {
-  const dArg = arg as DynamicPartInput;
+): arg is DynamicNodeInput => {
+  const dArg = arg as DynamicNodeInput;
   return dArg && dArg.subject && !!dArg.subject.next;
 };
 

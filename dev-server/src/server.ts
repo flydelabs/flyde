@@ -3,7 +3,7 @@ import { createService } from "./service/service";
 
 import { setupRemoteDebuggerServer } from "@flyde/remote-debugger/dist/setup-server";
 import { createServer } from "http";
-import { scanImportableParts } from "./service/scan-importable-parts";
+import { scanImportableNodes } from "./service/scan-importable-parts";
 import { deserializeFlow, resolveDependencies } from "@flyde/resolver";
 import { join } from "path";
 
@@ -60,7 +60,7 @@ export const runDevServer = (
   app.get("/importables", async (req, res) => {
     const { filename } = req.query as { filename: string };
     try {
-      const importables = await scanImportableParts(rootDir, filename);
+      const importables = await scanImportableNodes(rootDir, filename);
       res.send(importables);
     } catch (e) {
       console.error(e);

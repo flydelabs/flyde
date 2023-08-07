@@ -2,7 +2,7 @@
 sidebar_position: 2
 ---
 
-# [ WIP ] Creating Custom Code Parts with Flyde
+# [ WIP ] Creating Custom Code Nodes with Flyde
 
 In this tutorial, we'll guide you step-by-step through creating a custom code part using Flyde.  
 We'll wrap the `validator` npm package into a Flyde code part that validates email addresses, and use it in a visual flow by running it with the Flyde extension.

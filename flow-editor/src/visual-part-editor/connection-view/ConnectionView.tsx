@@ -21,7 +21,7 @@ import { ContextMenu, Menu, MenuItem } from "@blueprintjs/core";
 import { ConnectionViewPath } from "./ConnectionViewPath/ConnectionViewPath";
 
 export interface BaseConnectionViewProps {
-  resolvedParts: NodesDefCollection;
+  resolvedNodes: NodesDefCollection;
   part: VisualNode;
   ancestorsInsIds?: string;
   currentInsId: string;
@@ -65,7 +65,7 @@ export const SingleConnectionView: React.FC<ConnectionItemViewProps> = (
   const {
     connection,
     part,
-    resolvedParts,
+    resolvedNodes,
     instances,
     type,
     viewPort,
@@ -87,7 +87,7 @@ export const SingleConnectionView: React.FC<ConnectionItemViewProps> = (
 
   const fromPart =
     isInternalConnectionNode(from) && fromInstance
-      ? getPartDef(fromInstance, resolvedParts)
+      ? getPartDef(fromInstance, resolvedNodes)
       : part;
 
   const sourcePin = fromPart.outputs[from.pinId];

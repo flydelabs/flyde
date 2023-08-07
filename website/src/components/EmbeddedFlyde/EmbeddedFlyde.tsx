@@ -17,7 +17,7 @@ import {
 } from "@flyde/flow-editor";
 import { fakeVm } from "@site/src/fake-vm";
 import {
-  DynamicPartInput,
+  DynamicNodeInput,
   execute,
   FlydeFlow,
   ImportedNode,
@@ -48,7 +48,7 @@ const initialPadding = [0, 0] as [number, number];
 
 export interface EmbeddedFlydeProps {
   flowProps: {
-    inputs: Record<string, DynamicPartInput>;
+    inputs: Record<string, DynamicNodeInput>;
     flow: FlydeFlow;
     dependencies: ResolvedDependencies;
     output: PartOutput;
