@@ -65,7 +65,7 @@
         "label": "Flyde - watch all",
         "type": "shell",
         "command": "npm",
-        "args": ["run", "watch-all-integrated"],
+        "args": ["run", "dev"],
         "options": {
           "cwd": ".."
         },
