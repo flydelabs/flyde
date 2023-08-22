@@ -39,7 +39,6 @@ export const calcNodeContent = (
         );
 
       const template = Handlebars.compile(node.customViewCode);
-      console.log(template({ name: "Nils" }));
 
       return template({ inputs }).trim();
     } catch (e) {
