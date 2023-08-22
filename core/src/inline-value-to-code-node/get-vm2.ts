@@ -6,16 +6,6 @@
 import { fakeVm } from "./fake-vm2";
 
 export const getVM2Instance = () => {
-  // try {
-  //     const vm2 = require("vm2");
-
-  //     const script = new vm2.VMScript('return "hello world"');
-  //     const vm = new vm2.VM({});
-  //     vm.run(script);
-  //     return vm2;
-  // } catch (e) {
-  //     console.log('424242');
-
+  
   return fakeVm;
-  // }
 };

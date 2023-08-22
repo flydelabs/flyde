@@ -29,8 +29,5 @@
   },
   "devDependencies": {
     "ts-node-dev": "^2.0.0"
-  },
-  "release-it": {
-    "npm": false
   }
 }

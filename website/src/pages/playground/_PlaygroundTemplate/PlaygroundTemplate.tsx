@@ -25,8 +25,6 @@ import "@flyde/flow-editor/src/index.scss";
 import { Resizable } from "react-resizable";
 import { EmbeddedFlyde } from "@site/src/components/EmbeddedFlyde/EmbeddedFlyde";
 
-(global as any).vm2 = fakeVm;
-
 const historyPlayer = createHistoryPlayer();
 
 const EXAMPLES_LIST = [

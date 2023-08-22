@@ -23,10 +23,6 @@ import _ = require("lodash");
 const getFixturePath = (path: string) => join(__dirname, "../../fixture", path);
 
 describe("resolver", () => {
-  beforeEach(() => {
-    (global as any).vm2 = require("vm2");
-  });
-
   it("resolves a simple .flyde file without any dependencies", () => {
     const data = resolveFlowDependenciesByPath(getFixturePath("simple.flyde"));
 

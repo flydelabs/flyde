@@ -40,7 +40,7 @@ import produce from "immer";
 import BrowserOnly from "@docusaurus/BrowserOnly";
 import { EditorDebuggerClient } from "@site/../remote-debugger/dist";
 
-(global as any).vm2 = fakeVm;
+// (global as any).vm2 = fakeVm;
 
 const historyPlayer = createHistoryPlayer();
 
