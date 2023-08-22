@@ -7,9 +7,9 @@
     "postinstall": "npm link @flyde/stdlib @flyde/runtime @flyde/core @flyde/resolver"
   },
   "dependencies": {
-    "@flyde/core": "latest",
-    "@flyde/resolver": "latest",
-    "@flyde/runtime": "latest",
+    "@flyde/core": "workspace:*",
+    "@flyde/resolver": "workspace:*",
+    "@flyde/runtime": "workspace:*",
     "@types/lokijs": "^1.5.7",
     "body-parser": "^1.20.1",
     "dotenv": "^16.0.3",

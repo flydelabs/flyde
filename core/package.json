@@ -23,27 +23,26 @@
     "@types/md5": "^2.3.2",
     "axios": "^0.27.2",
     "cuid": "^3.0.0",
-    "debug": "^4.3.2",
-    "dependency-graph": "^0.8.0",
-    "immer": "^10.0.1",
+    "debug": "^4.3.4",
+    "dependency-graph": "^0.8.1",
+    "immer": "^10.0.2",
     "md5": "^2.3.0",
-    "rxjs": "^6.3.3",
-    "vm2": "^3.9.2",
-    "zod": "^3.17.10"
+    "rxjs": "^6.6.7",
+    "zod": "^3.22.2"
   },
   "devDependencies": {
-    "@types/chai": "^4.1.7",
-    "@types/debug": "^4.1.7",
-    "@types/mocha": "^5.2.5",
-    "@types/node": "^10.12.24",
-    "@types/sinon": "^7.0.3",
-    "chai": "^4.2.0",
-    "jsdom": "^13.1.0",
+    "@types/chai": "^4.3.5",
+    "@types/debug": "^4.1.8",
+    "@types/mocha": "^5.2.7",
+    "@types/node": "^10.17.60",
+    "@types/sinon": "^7.5.2",
+    "chai": "^4.3.7",
+    "jsdom": "^13.2.0",
     "jsdom-global": "^3.0.2",
-    "mocha": "^5.2.0",
-    "sinon": "^7.2.2",
+    "mocha": "^10.2.0",
+    "sinon": "^7.5.0",
     "ts-node": "^10.9.1",
-    "typescript": "^4.9.4"
+    "typescript": "^4.9.5"
   },
   "gitHead": "5f06bd4a0f3da610e64d74c19cc84babc4557f56"
 }

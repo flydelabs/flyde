@@ -12,9 +12,9 @@
     "postinstall": "npm link @flyde/stdlib @flyde/runtime npm link @flyde/core @flyde/resolver"
   },
   "dependencies": {
-    "@flyde/resolver": "latest",
-    "@flyde/runtime": "latest",
-    "@flyde/stdlib": "latest",
+    "@flyde/resolver": "workspace:*",
+    "@flyde/runtime": "workspace:*",
+    "@flyde/stdlib": "workspace:*",
     "axios": "^1.1.3",
     "chalk": "^4.0.0"
   },

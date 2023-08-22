@@ -13,25 +13,25 @@
   "author": "Flyde",
   "license": "MIT",
   "dependencies": {
-    "@flyde/core": "^0.2.0",
-    "@types/mocha": "^10.0.1",
-    "@types/pg": "^8.6.6",
+    "@flyde/core": "workspace:*",
+    "@types/pg": "^8.10.2",
     "axios": "^0.27.2",
-    "mongodb": "^4.13.0",
-    "pg": "^8.8.0",
+    "mongodb": "^4.17.0",
+    "pg": "^8.11.3",
     "pubsub-js": "^1.9.4"
   },
   "devDependencies": {
     "@types/jscodeshift": "^0.11.6",
     "chai": "^4.3.7",
-    "concurrently": "^7.3.0",
+    "concurrently": "^7.6.0",
     "jscodeshift": "^0.15.0",
+    "@types/mocha": "^10.0.1",
     "mocha": "^10.2.0",
-    "nodemon": "^2.0.20",
-    "sinon": "^15.0.1",
+    "nodemon": "^2.0.22",
+    "sinon": "^15.2.0",
     "ts-node": "^10.9.1",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^4.9.4"
+    "typescript": "^4.9.5"
   },
   "gitHead": "5f06bd4a0f3da610e64d74c19cc84babc4557f56",
   "scripts": {
