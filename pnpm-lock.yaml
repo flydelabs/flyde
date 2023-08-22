@@ -374,9 +374,6 @@ importers:
       cuid:
         specifier: ^3.0.0
         version: 3.0.0
-      ejs:
-        specifier: ^3.1.8
-        version: 3.1.8
       handlebars:
         specifier: ^4.7.8
         version: 4.7.8
