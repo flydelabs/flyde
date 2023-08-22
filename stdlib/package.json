@@ -1,48 +1,48 @@
 {
-    "name": "@flyde/stdlib",
-    "version": "0.2.1",
-    "description": "Flyde's StdLib",
-    "flyde": {
-        "exposes": [
-            "dist/**/*.flyde.js"
-        ],
-        "typings": "flyde-typings.d.ts"
-    },
-    "main": "dist/index.js",
-    "typings": "dist/index.d.ts",
-    "scripts": {
-        "test": "mocha src/**/*.spec.ts --require ts-node/register",
-        "echo": "echo 'no watch'",
-        "watch:ts": "tsc -p . -w --incremental",
-        "watch:docs-data": "nodemon --watch scripts --watch src -e ts --exec \"ts-node scripts/docs-data.ts\"",
-        "dev": "concurrently --kill-others \"pnpm run watch:ts\" \"pnpm run watch:docs-data\"",
-        "build": "tsc -p . && pnpm run build:docs-data",
-        "build:docs-data": "ts-node scripts/docs-data.ts",
-        "prod": "node dist/index.js",
-        "__publish": "npm version patch && npm publish"
-    },
-    "author": "Flyde",
-    "license": "MIT",
-    "dependencies": {
-        "@flyde/core": "^0.2.0",
-        "@types/mocha": "^10.0.1",
-        "@types/pg": "^8.6.6",
-        "axios": "^0.27.2",
-        "mongodb": "^4.13.0",
-        "pg": "^8.8.0",
-        "pubsub-js": "^1.9.4"
-    },
-    "devDependencies": {
-        "@types/jscodeshift": "^0.11.6",
-        "chai": "^4.3.7",
-        "concurrently": "^7.3.0",
-        "jscodeshift": "^0.15.0",
-        "mocha": "^10.2.0",
-        "nodemon": "^2.0.20",
-        "sinon": "^15.0.1",
-        "ts-node": "^10.9.1",
-        "ts-node-dev": "^2.0.0",
-        "typescript": "^4.9.4"
-    },
-    "gitHead": "5f06bd4a0f3da610e64d74c19cc84babc4557f56"
+  "name": "@flyde/stdlib",
+  "version": "0.2.1",
+  "description": "Flyde's StdLib",
+  "flyde": {
+    "exposes": [
+      "dist/**/*.flyde.js"
+    ],
+    "typings": "flyde-typings.d.ts"
+  },
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "author": "Flyde",
+  "license": "MIT",
+  "dependencies": {
+    "@flyde/core": "^0.2.0",
+    "@types/mocha": "^10.0.1",
+    "@types/pg": "^8.6.6",
+    "axios": "^0.27.2",
+    "mongodb": "^4.13.0",
+    "pg": "^8.8.0",
+    "pubsub-js": "^1.9.4"
+  },
+  "devDependencies": {
+    "@types/jscodeshift": "^0.11.6",
+    "chai": "^4.3.7",
+    "concurrently": "^7.3.0",
+    "jscodeshift": "^0.15.0",
+    "mocha": "^10.2.0",
+    "nodemon": "^2.0.20",
+    "sinon": "^15.0.1",
+    "ts-node": "^10.9.1",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^4.9.4"
+  },
+  "gitHead": "5f06bd4a0f3da610e64d74c19cc84babc4557f56",
+  "scripts": {
+    "test": "mocha src/**/*.spec.ts --require ts-node/register",
+    "echo": "echo 'no watch'",
+    "watch:ts": "tsc -p . -w --incremental",
+    "watch:docs-data": "nodemon --watch scripts --watch src -e ts --exec \"ts-node scripts/docs-data.ts\"",
+    "dev": "concurrently --kill-others \"pnpm run watch:ts\" \"pnpm run watch:docs-data\"",
+    "build": "tsc -p . && pnpm run build:docs-data",
+    "build:docs-data": "ts-node scripts/docs-data.ts",
+    "prod": "node dist/index.js",
+    "__publish": "npm version patch && npm publish"
+  }
 }

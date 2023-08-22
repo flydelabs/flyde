@@ -1,19 +1,13 @@
 import {
   okeys,
-  OMap,
   NodeInstance,
   NodeDefinition,
-  NodesDefCollection,
-  isInlineValueNode,
   Pos,
-  isStaticInput,
   isStaticInputPinConfig,
-  getStaticValue,
   StaticInputPinConfig,
-  ResolvedFlydeFlowDefinition,
 } from "@flyde/core";
 
-import * as ejs from "ejs";
+import Handlebars from "handlebars";
 
 import { isDefined } from "../../utils";
 
@@ -44,14 +38,10 @@ export const calcNodeContent = (
           {}
         );
 
-      return ejs.render(node.customViewCode, { inputs, isDefined }).trim(); // TODO: render with ejs or equivalent. Removed due to wp5 issues
+      const template = Handlebars.compile(node.customViewCode);
+      console.log(template({ name: "Nils" }));
 
-      // // hack to render detached embedded nodes correctly
-      // if (maybeGetStaticValueNodeId(result)) {
-      //   return toString(result);
-      // } else {
-      //   return result || node.id;
-      // }
+      return template({ inputs }).trim();
     } catch (e) {
       console.error("Error with custom view", e);
       return `Error in custom view [${node.id}]`;

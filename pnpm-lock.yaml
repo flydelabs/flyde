@@ -377,6 +377,9 @@ importers:
       ejs:
         specifier: ^3.1.8
         version: 3.1.8
+      handlebars:
+        specifier: ^4.7.8
+        version: 4.7.8
       hotkeys-js:
         specifier: ^3.7.3
         version: 3.8.3
@@ -12234,8 +12237,8 @@ packages:
   /handle-thing@2.0.1:
     resolution: {integrity: sha512-9Qn4yBxelxoh2Ow62nP+Ka/kMnOXRi8BXnRaUwezLNhqelnN49xKz4F/dPP8OYLxLxq6JDtZb2i9XznUQbNPTg==}
 
-  /handlebars@4.7.7:
-    resolution: {integrity: sha512-aAcXm5OAfE/8IXkcZvCepKU3VzW1/39Fb5ZuqMtgI/hT8X2YgoMvBY5dLhq/cpOvw7Lk1nK/UF71aLG/ZnVYRA==}
+  /handlebars@4.7.8:
+    resolution: {integrity: sha512-vafaFqs8MZkRrSX7sFVUdo3ap/eNiLnb4IakshzvP56X5Nr1iGKAIqdX6tMlm6HcNRIkr6AxO5jFEoJzzpT8aQ==}
     engines: {node: '>=0.4.7'}
     hasBin: true
     dependencies:
@@ -12245,7 +12248,6 @@ packages:
       wordwrap: 1.0.0
     optionalDependencies:
       uglify-js: 3.17.4
-    dev: true
 
   /har-schema@2.0.0:
     resolution: {integrity: sha512-Oqluz6zhGX8cyRaTQlFMPw80bSJVG2x/cFb8ZPhUILGgHka9SsokCCOQgpveePerqidZOrT14ipqfJb7ILcW5Q==}
@@ -19489,7 +19491,7 @@ packages:
     peerDependencies:
       typedoc: '>=0.23.0'
     dependencies:
-      handlebars: 4.7.7
+      handlebars: 4.7.8
       typedoc: 0.23.24(typescript@4.9.4)
     dev: true
 
@@ -19521,7 +19523,6 @@ packages:
     engines: {node: '>=0.8.0'}
     hasBin: true
     requiresBuild: true
-    dev: true
     optional: true
 
   /unbox-primitive@1.0.2:
@@ -20461,7 +20462,6 @@ packages:
 
   /wordwrap@1.0.0:
     resolution: {integrity: sha512-gvVzJFlPycKc5dZN4yPkP8w7Dc37BtP1yczEneOb4uq34pXZcvrtRTmWV8W+Ume+XCxKgbjM+nevkyFPMybd4Q==}
-    dev: true
 
   /workbox-background-sync@6.5.4:
     resolution: {integrity: sha512-0r4INQZMyPky/lj4Ou98qxcThrETucOde+7mRGJl13MPJugQNKeZQOdIJe/1AchOP23cTqHcN/YVpD6r8E6I8g==}
