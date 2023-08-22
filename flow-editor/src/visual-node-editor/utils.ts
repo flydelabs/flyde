@@ -1,5 +1,6 @@
 import * as immer from "immer";
-import cuid from "cuid";
+import { createId } from "@paralleldrive/cuid2";
+
 import { NODE_HEIGHT } from "./VisualNodeEditor";
 import {
   Pos,
@@ -13,9 +14,7 @@ import {
   getNodeDef,
   PinType,
   nodeInstance,
-  stickyInputPinConfig,
   queueInputPinConfig,
-  isStickyInputPinConfig,
   InputMode,
   inlineNodeInstance,
   staticInputPinConfig,
@@ -272,7 +271,7 @@ export const createNewNodeInstance = (
     return acc;
   }, {});
 
-  const ins = nodeInstance(cuid(), node.id, inputsConfig, { x: 0, y: 0 });
+  const ins = nodeInstance(createId(), node.id, inputsConfig, { x: 0, y: 0 });
   const width = calcNodeWidth(ins, node);
 
   const { x, y } = lastMousePos;

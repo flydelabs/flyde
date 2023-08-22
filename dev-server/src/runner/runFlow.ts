@@ -1,6 +1,6 @@
 import { FlydeFlow } from "@flyde/core";
 import { FlowJob } from "./shared";
-import cuid from "cuid";
+import { createId } from "@paralleldrive/cuid2";
 import { loadFlowFromContent } from "@flyde/runtime";
 
 import "dotenv/config";
@@ -15,7 +15,7 @@ export async function runFlow(
   result: Promise<Record<string, any>>;
   destroy: Function;
 }> {
-  const id = cuid();
+  const id = createId();
 
   const execute = loadFlowFromContent(
     flow,

@@ -20,14 +20,14 @@
   },
   "author": "",
   "dependencies": {
-    "concurrently": "^4.1.0",
-    "mixpanel-browser": "^2.45.0"
+    "concurrently": "^4.1.2",
+    "mixpanel-browser": "^2.47.0"
   },
   "private": true,
   "packageManager": "pnpm@8.3.1",
   "devDependencies": {
     "@release-it-plugins/workspaces": "^3.2.0",
-    "release-it": "^15.4.2"
+    "release-it": "^15.11.0"
   },
   "release-it": {
     "plugins": {

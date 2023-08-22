@@ -26,6 +26,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.2.0",
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@monaco-editor/react": "^4.0.10",
+    "@paralleldrive/cuid2": "^2.2.2",
     "@rehooks/component-size": "^1.0.3",
     "@types/jest": "^26.0.15",
     "@types/lodash": "^4.14.168",
