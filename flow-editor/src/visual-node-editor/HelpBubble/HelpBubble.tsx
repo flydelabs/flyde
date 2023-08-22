@@ -41,6 +41,10 @@ function hotkeyToBpHotkey(hotkey: {
 
 const groupsOrder = ["Viewport Controls", "Editing", "Selection"];
 
+type Mutable<Type> = {
+  -readonly [Key in keyof Type]: Type[Key];
+};
+
 export const HelpBubble: React.FC<HelpBubbleProps> = () => {
   const [hotkeysModalOpen, setHotkeysModalOpen] = React.useState(false);
 
@@ -54,7 +58,7 @@ export const HelpBubble: React.FC<HelpBubbleProps> = () => {
     }
     acc[hotkey.group].push(hotkey);
     return acc;
-  }, {} as { [key: string]: HotkeysDialog2Props["hotkeys"] });
+  }, {} as { [key: string]: Mutable<HotkeysDialog2Props["hotkeys"]> });
 
   const groupsArray = Object.entries(groupedHotkeys).sort((a, b) => {
     return groupsOrder.indexOf(b[0]) - groupsOrder.indexOf(a[0]);

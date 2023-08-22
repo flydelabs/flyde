@@ -10,6 +10,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@flyde/runtime": "latest"
+    "@flyde/runtime": "workspace:*"
   }
 }
