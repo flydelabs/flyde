@@ -78,14 +78,6 @@ PERFORMANCE OF THIS SOFTWARE.
 ***************************************************************************** */
 
 /**
- * @file Embedded JavaScript templating engine. {@link http://ejs.co}
- * @author Matthew Eernisse <mde@fleegix.org>
- * @author Tiancheng "Timothy" Gu <timothygu99@gmail.com>
- * @project EJS
- * @license {@link http://www.apache.org/licenses/LICENSE-2.0 Apache License, Version 2.0}
- */
-
-/**
  * @license
  * Lodash <https://lodash.com/>
  * Copyright OpenJS Foundation and other contributors <https://openjsf.org/>
