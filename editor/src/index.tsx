@@ -17,7 +17,7 @@ import "./index.scss";
 disableCookieAccessForVscode();
 FocusStyleManager.onlyShowFocusOnTabs();
 
-const baseName = "/editor";
+const baseName = "";
 
 export enum AppState {
   LOADING,

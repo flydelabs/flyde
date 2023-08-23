@@ -102,9 +102,9 @@ export const runDevServer = (
     }
   });
 
-  app.use("/editor", express.static(editorStaticRoot));
+  app.use("/", express.static(editorStaticRoot));
 
-  app.use(["/editor", "/editor/*"], async (req, res, next) => {
+  app.use(["/", "/*"], async (req, res, next) => {
     const path = join(editorStaticRoot, "index.html");
     res.sendFile(path);
   });

@@ -17,7 +17,6 @@ import {
   HotkeysMenuData,
 } from "../../lib/react-utils/use-hotkeys";
 
-import CustomReactTooltip from "../../lib/tooltip";
 import { helpIcon } from "./icon";
 import { usePorts } from "../../flow-editor/ports";
 
@@ -110,7 +109,6 @@ export const HelpBubble: React.FC<HelpBubbleProps> = () => {
   );
   return (
     <div className="help-bubble" data-tip="Help">
-      <CustomReactTooltip />
       <Popover
         content={menu}
         modifiers={popperModifiers}

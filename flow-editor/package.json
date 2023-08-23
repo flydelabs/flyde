@@ -41,7 +41,6 @@
     "react-draggable": "^4.4.5",
     "react-json-view": "^1.21.3",
     "react-resizable": "^3.0.5",
-    "react-tooltip": "^5.21.1",
     "rooks": "^7.14.1",
     "typescript": "^4.9.5",
     "use-debounce": "^8.0.4",

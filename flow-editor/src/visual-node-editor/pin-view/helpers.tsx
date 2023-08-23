@@ -1,23 +1,46 @@
 import { HistoryPayload, valuePreview } from "@flyde/remote-debugger";
 import React from "react";
 import { useCallback, useRef, useState } from "react";
-import { PinViewProps } from ".";
 import { useDebuggerContext } from "../../flow-editor/DebuggerContext";
 
-export const calcHistoryContent = (history?: HistoryPayload, queuedValues?: number) => {
+export const calcHistoryContent = (
+  history?: HistoryPayload,
+  queuedValues?: number
+) => {
   if (history) {
     const { total, lastSamples } = history;
 
-    const timesActivated = `<strong>Activated ${total} times this session</strong>`;
+    const timesActivated = (
+      <strong>Activated {total} times this session</strong>
+    );
+
     const lastValueData =
-      lastSamples.length > 0
-        ? `<div>Last value: <strong>${valuePreview(lastSamples[0].val).substring(
-            0,
-            200
-          )}</strong></div><em>Inspect instance for the full value</em>`
-        : "";
-    const queuedValuesData = queuedValues ? `<hr/><div>Queued values: <strong>${queuedValues}</strong></div>` : "";
-    return `${timesActivated} ${lastValueData}${queuedValuesData}`;
+      lastSamples.length > 0 ? (
+        <div>
+          Last value:{" "}
+          <strong>{valuePreview(lastSamples[0].val).substring(0, 200)}</strong>
+          <br />
+          <em>Inspect instance for the full value</em>
+        </div>
+      ) : (
+        ""
+      );
+    const queuedValuesData = queuedValues ? (
+      <React.Fragment>
+        <div>
+          Queued values: <strong>{queuedValues}</strong>
+        </div>
+      </React.Fragment>
+    ) : (
+      ""
+    );
+    return (
+      <React.Fragment>
+        {timesActivated}
+        {lastValueData}
+        {queuedValuesData}
+      </React.Fragment>
+    );
   } else {
     return "Loading session data..";
   }
@@ -28,11 +51,11 @@ const INSIGHTS_TOOLTIP_INTERVAL = 500;
 export const useHistoryHelpers = (
   instanceId: string,
   pinId?: string,
-  type?: 'input' | 'output'
+  type?: "input" | "output"
 ) => {
   const historyTimer = useRef<any>();
 
-  const {onRequestHistory} = useDebuggerContext();
+  const { onRequestHistory } = useDebuggerContext();
 
   const [history, setHistory] = useState<HistoryPayload>();
 

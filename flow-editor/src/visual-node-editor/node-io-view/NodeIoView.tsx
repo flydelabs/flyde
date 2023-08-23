@@ -11,11 +11,10 @@ import {
 } from "@flyde/core";
 import { BaseNodeView } from "../base-node-view";
 import classNames from "classnames";
-import { Menu, MenuItem, ContextMenu } from "@blueprintjs/core";
+import { Menu, MenuItem, ContextMenu, Tooltip } from "@blueprintjs/core";
 import { usePrompt } from "../../flow-editor/ports";
 import { calcHistoryContent, useHistoryHelpers } from "../pin-view/helpers";
 import { getInputName } from "@flyde/core";
-import CustomReactTooltip from "../../lib/tooltip";
 import { getPinDomId } from "../dom-ids";
 
 export interface NodeIoViewProps {
@@ -49,8 +48,6 @@ export interface NodeIoViewProps {
 
   // onRequestHistory: (pinId: string, type: PinType) => Promise<HistoryPayload>;
 }
-
-const INSIGHTS_TOOLTIP_INTERVAL = 500;
 
 export const NodeIoView: React.FC<NodeIoViewProps> = React.memo(
   function NodeIoViewInner(props) {
@@ -235,12 +232,6 @@ export const NodeIoView: React.FC<NodeIoViewProps> = React.memo(
         viewPort={viewPort}
       >
         <React.Fragment>
-          <CustomReactTooltip
-            className="pin-info-tooltip"
-            // html
-            id={id + props.currentInsId}
-            // getContent={[calcTooltipContent, INSIGHTS_TOOLTIP_INTERVAL / 20]}
-          />
           <ContextMenu
             onMouseEnter={refreshHistory}
             onMouseOut={resetHistory}
@@ -263,7 +254,7 @@ export const NodeIoView: React.FC<NodeIoViewProps> = React.memo(
             onDoubleClick={onDblClickInner}
             content={getContextMenu()}
           >
-            {id}
+            <Tooltip content={calcTooltipContent()}>{id}</Tooltip>
           </ContextMenu>
         </React.Fragment>
       </BaseNodeView>

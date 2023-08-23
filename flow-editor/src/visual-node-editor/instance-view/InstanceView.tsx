@@ -47,10 +47,15 @@ import {
   VisualNodeEditorProps,
 } from "../VisualNodeEditor";
 import { usePrompt } from "../..";
-import { ContextMenu, MenuItemProps, Menu, MenuItem } from "@blueprintjs/core";
+import {
+  ContextMenu,
+  MenuItemProps,
+  Menu,
+  MenuItem,
+  Tooltip,
+} from "@blueprintjs/core";
 import ReactDOM from "react-dom";
 import { NodeStyleMenu } from "./NodeStyleMenu";
-import CustomReactTooltip from "../../lib/tooltip";
 
 export const PIECE_HORIZONTAL_PADDING = 25;
 export const PIECE_CHAR_WIDTH = 11;
@@ -756,11 +761,15 @@ export const InstanceView: React.FC<InstanceViewProps> =
             onDoubleClick={onDblClick}
             content={getContextMenu()}
             style={styleVarProp}
-            data-tip={node.description}
-            data-tooltip-id={instanceDomId + "__tooltip"}
           >
-            {style.icon ? <FontAwesomeIcon icon={style.icon as any} /> : null}{" "}
-            {content}
+            <Tooltip content={node.description}>
+              <React.Fragment>
+                {style.icon ? (
+                  <FontAwesomeIcon icon={style.icon as any} />
+                ) : null}{" "}
+                {content}
+              </React.Fragment>
+            </Tooltip>
           </ContextMenu>
         );
       }
@@ -780,11 +789,6 @@ export const InstanceView: React.FC<InstanceViewProps> =
           domId={instanceDomId}
         >
           <React.Fragment>
-            <CustomReactTooltip
-              className="instance-info-tooltip"
-              id={instanceDomId + "__tooltip"}
-              delayShow={INSTANCE_INFO_TOOLTIP_DELAY}
-            />
             {renderInputs()}
             {renderContent()}
             {renderOutputs()}
