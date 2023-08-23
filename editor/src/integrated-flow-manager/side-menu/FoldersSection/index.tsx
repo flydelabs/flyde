@@ -108,9 +108,9 @@ export const FoldersSection: React.FC<FoldersSectionProps> = (props) => {
     []
   );
 
-  const onCreateFlowHere = (data: FileOrFolder) => {
-    setNewFlowTarget(data.relativePath);
-  };
+  // const onCreateFlowHere = (data: FileOrFolder) => {
+  //   setNewFlowTarget(data.relativePath);
+  // };
 
   const onNodeContextMenu: TreeEventHandler<FileOrFolder> = React.useCallback(
     (node, _, e) => {
