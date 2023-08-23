@@ -6,10 +6,10 @@ import {
   MenuDivider,
   MenuItem,
 } from "@blueprintjs/core";
-import { HotkeysDialog2Props } from "@blueprintjs/core/lib/cjs/components/hotkeys/hotkeysDialog2";
+import { HotkeysDialogProps } from "@blueprintjs/core/lib/cjs/components/hotkeys/hotkeysDialog2";
 import { Hotkey } from "@blueprintjs/core/lib/cjs/components/hotkeys/hotkey";
 
-import { IPopover2Props, Popover2 } from "@blueprintjs/popover2";
+import { PopoverProps, Popover } from "@blueprintjs/core";
 
 import React from "react";
 import {
@@ -23,7 +23,7 @@ import { usePorts } from "../../flow-editor/ports";
 
 export interface HelpBubbleProps {}
 
-const popperModifiers: IPopover2Props["modifiers"] = {
+const popperModifiers: PopoverProps["modifiers"] = {
   offset: { enabled: true, options: { offset: [0, 20] } },
   preventOverflow: { enabled: true, options: { padding: 10 } },
 };
@@ -31,7 +31,7 @@ const popperModifiers: IPopover2Props["modifiers"] = {
 function hotkeyToBpHotkey(hotkey: {
   key: string;
   menuData: HotkeysMenuData;
-}): HotkeysDialog2Props["hotkeys"][0] {
+}): HotkeysDialogProps["hotkeys"][0] {
   return {
     combo: hotkey.key,
     label: hotkey.menuData.text,
@@ -58,7 +58,7 @@ export const HelpBubble: React.FC<HelpBubbleProps> = () => {
     }
     acc[hotkey.group].push(hotkey);
     return acc;
-  }, {} as { [key: string]: Mutable<HotkeysDialog2Props["hotkeys"]> });
+  }, {} as { [key: string]: Mutable<HotkeysDialogProps["hotkeys"]> });
 
   const groupsArray = Object.entries(groupedHotkeys).sort((a, b) => {
     return groupsOrder.indexOf(b[0]) - groupsOrder.indexOf(a[0]);
@@ -111,13 +111,13 @@ export const HelpBubble: React.FC<HelpBubbleProps> = () => {
   return (
     <div className="help-bubble" data-tip="Help">
       <CustomReactTooltip />
-      <Popover2
+      <Popover
         content={menu}
         modifiers={popperModifiers}
         onOpened={() => reportEvent("helpMenuOpen", {})}
       >
         <div dangerouslySetInnerHTML={{ __html: helpIcon }} />
-      </Popover2>
+      </Popover>
       {hotkeysModal}
     </div>
   );

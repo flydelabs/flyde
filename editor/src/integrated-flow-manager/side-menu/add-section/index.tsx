@@ -19,7 +19,7 @@ export const MenuAddSection: React.FC<MenuAddSectionProps> = (props) => {
     return k.toLowerCase().includes(debouncedSearch.toLowerCase());
   });
 
-  const onSearchChange = useCallback((e) => {
+  const onSearchChange = useCallback((e: any) => {
     setSearchTerm(e.target.value);
   }, []);
 

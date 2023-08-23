@@ -169,7 +169,7 @@ export const DataInspectionModal: React.FC<DataInspectionModalProps> = (
               </>
             ) : null}
             <input
-              className="bp3-input bp3-small bp3-fill"
+              className="bp5-input bp5-small bp5-fill"
               type="search"
               placeholder="Search for values"
               dir="auto"

@@ -47,7 +47,7 @@ import {
   VisualNodeEditorProps,
 } from "../VisualNodeEditor";
 import { usePrompt } from "../..";
-import { ContextMenu, IMenuItemProps, Menu, MenuItem } from "@blueprintjs/core";
+import { ContextMenu, MenuItemProps, Menu, MenuItem } from "@blueprintjs/core";
 import ReactDOM from "react-dom";
 import { NodeStyleMenu } from "./NodeStyleMenu";
 import CustomReactTooltip from "../../lib/tooltip";
@@ -649,7 +649,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
         };
       });
 
-      const contextMenuItems: IMenuItemProps[] = [
+      const contextMenuItems: MenuItemProps[] = [
         ...inputMenuItems,
         ...outputMenuItems,
         ...(isInlineNodeInstance(instance) && isVisualNode(instance.node)
@@ -714,16 +714,6 @@ export const InstanceView: React.FC<InstanceViewProps> =
       onGroupSelected,
     ]);
 
-    const showMenu = React.useCallback(
-      (e: React.MouseEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
-        const menu = getContextMenu();
-        ContextMenu.show(menu, { left: e.clientX, top: e.clientY });
-      },
-      [getContextMenu]
-    );
-
     const styleVarProp = {
       "--node-color": style.color,
       ...(style.cssOverride || {}),
@@ -756,7 +746,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
         );
       } else {
         return (
-          <div
+          <ContextMenu
             className={classNames(
               "ins-view-inner",
               innerCms,
@@ -764,14 +754,14 @@ export const InstanceView: React.FC<InstanceViewProps> =
             )}
             onClick={_onSelect}
             onDoubleClick={onDblClick}
-            onContextMenu={showMenu}
+            content={getContextMenu()}
             style={styleVarProp}
             data-tip={node.description}
-            data-for={instanceDomId + "__tooltip"}
+            data-tooltip-id={instanceDomId + "__tooltip"}
           >
             {style.icon ? <FontAwesomeIcon icon={style.icon as any} /> : null}{" "}
             {content}
-          </div>
+          </ContextMenu>
         );
       }
     };
@@ -789,15 +779,16 @@ export const InstanceView: React.FC<InstanceViewProps> =
           displayMode={displayMode}
           domId={instanceDomId}
         >
-          <CustomReactTooltip
-            className="instance-info-tooltip"
-            html
-            id={instanceDomId + "__tooltip"}
-            delayShow={INSTANCE_INFO_TOOLTIP_DELAY}
-          />
-          {renderInputs()}
-          {renderContent()}
-          {renderOutputs()}
+          <React.Fragment>
+            <CustomReactTooltip
+              className="instance-info-tooltip"
+              id={instanceDomId + "__tooltip"}
+              delayShow={INSTANCE_INFO_TOOLTIP_DELAY}
+            />
+            {renderInputs()}
+            {renderContent()}
+            {renderOutputs()}
+          </React.Fragment>
         </BaseNodeView>
       </div>
     );

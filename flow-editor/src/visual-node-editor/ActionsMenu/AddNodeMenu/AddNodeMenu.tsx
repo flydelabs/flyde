@@ -5,10 +5,10 @@ import {
   Dialog,
   Icon,
   Intent,
-  ITreeNode,
+  TreeNodeInfo,
   Tree,
+  Tooltip,
 } from "@blueprintjs/core";
-import { Tooltip2 } from "@blueprintjs/popover2";
 import { ImportableSource, simplePluralize } from "@flyde/core";
 import classNames from "classnames";
 import React, { useCallback, useEffect } from "react";
@@ -43,7 +43,7 @@ export const AddNodeMenu: React.FC<AddNodeMenuProps> = (props) => {
   const [importablesErrors, setImportablesErrors] = React.useState<
     LocalImportableResult["errors"]
   >([]);
-  const [openNodes, setOpenNodes] = React.useState<Set<ITreeNode["id"]>>(
+  const [openNodes, setOpenNodes] = React.useState<Set<TreeNodeInfo["id"]>>(
     new Set()
   );
 
@@ -62,7 +62,7 @@ export const AddNodeMenu: React.FC<AddNodeMenuProps> = (props) => {
     React.useState<ImportableSource>(null);
 
   const onNodeExpand = useCallback(
-    (node: ITreeNode) => {
+    (node: TreeNodeInfo) => {
       openNodes.add(node.id);
       setOpenNodes(new Set(openNodes));
     },
@@ -70,7 +70,7 @@ export const AddNodeMenu: React.FC<AddNodeMenuProps> = (props) => {
   );
 
   const onNodeCollapse = useCallback(
-    (node: ITreeNode) => {
+    (node: TreeNodeInfo) => {
       openNodes.delete(node.id);
       setOpenNodes(new Set(openNodes));
     },
@@ -202,7 +202,7 @@ export const AddNodeMenu: React.FC<AddNodeMenuProps> = (props) => {
   );
 
   const onNodeClick = useCallback(
-    ({ nodeData }: ITreeNode<AddNodeMenuFilter>) => {
+    ({ nodeData }: TreeNodeInfo<AddNodeMenuFilter>) => {
       if (JSON.stringify(nodeData) === JSON.stringify(filter)) {
         if (nodeData.type === "external") {
           if (nodeData.namespace) {
@@ -302,7 +302,7 @@ export const AddNodeMenu: React.FC<AddNodeMenuProps> = (props) => {
         <aside>
           <div className="filter-header">
             Filter by package{" "}
-            <Tooltip2
+            <Tooltip
               content={
                 <span>
                   Click to learn more about how packages work in Flyde{" "}
@@ -317,7 +317,7 @@ export const AddNodeMenu: React.FC<AddNodeMenuProps> = (props) => {
               >
                 <Icon icon="help" intent="primary" iconSize={12} />
               </a>
-            </Tooltip2>
+            </Tooltip>
           </div>
           <div className="tree-container">
             <AddNodeMenuFilterTree
@@ -344,10 +344,10 @@ export const AddNodeMenu: React.FC<AddNodeMenuProps> = (props) => {
     >
       <main className={classNames(Classes.DIALOG_BODY)}>
         <header>
-          <div className="bp3-input-group">
+          <div className="bp5-input-group">
             <Icon icon="search" />
             <input
-              className="bp3-input"
+              className="bp5-input"
               type="search"
               placeholder="Search input"
               dir="auto"
@@ -391,8 +391,8 @@ export const AddNodeMenu: React.FC<AddNodeMenuProps> = (props) => {
 function renderTreeNodes(
   structure: AddNodeMenuFilterStructure,
   filter: AddNodeMenuFilter | null,
-  expandedNodes: Set<ITreeNode["id"]>
-): ITreeNode<AddNodeMenuFilter>[] {
+  expandedNodes: Set<TreeNodeInfo["id"]>
+): TreeNodeInfo<AddNodeMenuFilter>[] {
   const externals = structure.external.map((external) => {
     return {
       id: external.module,

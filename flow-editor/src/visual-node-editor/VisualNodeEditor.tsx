@@ -1904,105 +1904,85 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         AppToaster.show({ message: "Copied!" });
       }, [node]);
 
-      const getContextMenu = React.useCallback(
-        (pos: Pos) => {
-          const maybeDisabledLabel = nodeIoEditable
-            ? ""
-            : " (cannot edit main node, only visual)";
+      const getContextMenu = React.useCallback(() => {
+        const maybeDisabledLabel = nodeIoEditable
+          ? ""
+          : " (cannot edit main node, only visual)";
 
-          return (
-            <Menu>
-              <MenuItem
-                onMouseDown={(e) => e.stopPropagation()}
-                text={"New Value"}
-                onClick={preventDefaultAnd(() => {
-                  setInlineCodeTarget({
-                    type: "new-floating",
-                    pos: lastMousePos.current,
-                  });
-                  reportEvent("addValueModalOpen", { source: "contextMenu" });
-                })}
-              />
-              <MenuItem
-                text={`New input ${maybeDisabledLabel}`}
-                onMouseDown={(e) => e.stopPropagation()}
-                onClick={preventDefaultAnd(() => onAddIoPin("input"))}
-                disabled={!nodeIoEditable}
-              />
-              <MenuItem
-                onMouseDown={(e) => e.stopPropagation()}
-                text={`New output ${maybeDisabledLabel}`}
-                onClick={preventDefaultAnd(() => onAddIoPin("output"))}
-                disabled={!nodeIoEditable}
-              />
-              <MenuItem
-                onMouseDown={(e) => e.stopPropagation()}
-                text={"Copy node to clipboard"}
-                onClick={preventDefaultAnd(copyNodeToClipboard)}
-              />
-              <MenuItem
-                onMouseDown={(e) => e.stopPropagation()}
-                text={`Edit Completion Outputs (${
-                  node.completionOutputs?.join(",") || "n/a"
-                })`}
-                onClick={preventDefaultAnd(() => editCompletionOutputs())}
-              />
+        return (
+          <Menu>
+            <MenuItem
+              onMouseDown={(e) => e.stopPropagation()}
+              text={"New Value"}
+              onClick={preventDefaultAnd(() => {
+                setInlineCodeTarget({
+                  type: "new-floating",
+                  pos: lastMousePos.current,
+                });
+                reportEvent("addValueModalOpen", { source: "contextMenu" });
+              })}
+            />
+            <MenuItem
+              text={`New input ${maybeDisabledLabel}`}
+              onMouseDown={(e) => e.stopPropagation()}
+              onClick={preventDefaultAnd(() => onAddIoPin("input"))}
+              disabled={!nodeIoEditable}
+            />
+            <MenuItem
+              onMouseDown={(e) => e.stopPropagation()}
+              text={`New output ${maybeDisabledLabel}`}
+              onClick={preventDefaultAnd(() => onAddIoPin("output"))}
+              disabled={!nodeIoEditable}
+            />
+            <MenuItem
+              onMouseDown={(e) => e.stopPropagation()}
+              text={"Copy node to clipboard"}
+              onClick={preventDefaultAnd(copyNodeToClipboard)}
+            />
+            <MenuItem
+              onMouseDown={(e) => e.stopPropagation()}
+              text={`Edit Completion Outputs (${
+                node.completionOutputs?.join(",") || "n/a"
+              })`}
+              onClick={preventDefaultAnd(() => editCompletionOutputs())}
+            />
 
-              <MenuItem
-                onMouseDown={(e) => e.stopPropagation()}
-                text={`Edit Reactive inputs (${
-                  node.reactiveInputs?.join(",") || "n/a"
-                })`}
-                onClick={preventDefaultAnd(() => editReactiveInputs())}
+            <MenuItem
+              onMouseDown={(e) => e.stopPropagation()}
+              text={`Edit Reactive inputs (${
+                node.reactiveInputs?.join(",") || "n/a"
+              })`}
+              onClick={preventDefaultAnd(() => editReactiveInputs())}
+            />
+            <MenuItem
+              onMouseDown={(e) => e.stopPropagation()}
+              text={`Edit description`}
+              onClick={preventDefaultAnd(() => editNodeDescription())}
+            />
+            <MenuDivider />
+            <MenuItem text="Default Style">
+              <NodeStyleMenu
+                style={node.defaultStyle}
+                onChange={onChangeDefaultStyle}
+                promptFn={_prompt}
               />
-              <MenuItem
-                onMouseDown={(e) => e.stopPropagation()}
-                text={`Edit description`}
-                onClick={preventDefaultAnd(() => editNodeDescription())}
-              />
-              <MenuDivider />
-              <MenuItem text="Default Style">
-                <NodeStyleMenu
-                  style={node.defaultStyle}
-                  onChange={onChangeDefaultStyle}
-                  promptFn={_prompt}
-                />
-              </MenuItem>
-            </Menu>
-          );
-        },
-        [
-          nodeIoEditable,
-          copyNodeToClipboard,
-          node.completionOutputs,
-          node.reactiveInputs,
-          node.defaultStyle,
-          onChangeDefaultStyle,
-          _prompt,
-          reportEvent,
-          onAddIoPin,
-          editCompletionOutputs,
-          editReactiveInputs,
-          editNodeDescription,
-        ]
-      );
-
-      const showContextMenu = React.useCallback(
-        (e: any) => {
-          e.preventDefault();
-          if (!isBoardInFocus.current) {
-            return;
-          }
-          const pos = domToViewPort(
-            { x: e.clientX, y: e.clientY },
-            viewPort,
-            parentViewport
-          );
-          const menu = getContextMenu(pos);
-          ContextMenu.show(menu, { left: e.clientX, top: e.clientY });
-        },
-        [getContextMenu, parentViewport, viewPort]
-      );
+            </MenuItem>
+          </Menu>
+        );
+      }, [
+        nodeIoEditable,
+        copyNodeToClipboard,
+        node.completionOutputs,
+        node.reactiveInputs,
+        node.defaultStyle,
+        onChangeDefaultStyle,
+        _prompt,
+        reportEvent,
+        onAddIoPin,
+        editCompletionOutputs,
+        editReactiveInputs,
+        editNodeDescription,
+      ]);
 
       useHotkeys(
         "shift+c",
@@ -2507,10 +2487,11 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
       try {
         return (
-          <div
+          <ContextMenu
             className={classNames("visual-node-editor", props.className)}
             data-id={node.id}
-            onContextMenu={showContextMenu}
+            content={getContextMenu()}
+            disabled={!isBoardInFocus.current}
           >
             <main
               className="board-editor-inner"
@@ -2699,7 +2680,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
               from={from}
               hotkeysEnabled={isBoardInFocus}
             />
-          </div>
+          </ContextMenu>
         );
       } catch (e) {
         console.error(e);

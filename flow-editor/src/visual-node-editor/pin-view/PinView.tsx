@@ -66,7 +66,7 @@ export interface OptionalPinViewProps {
 
 const INSIGHTS_TOOLTIP_INTERVAL = 500;
 
-export const PinView: React.SFC<PinViewProps> = React.memo(function PinView(
+export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
   props
 ) {
   const {
@@ -153,13 +153,6 @@ export const PinView: React.SFC<PinViewProps> = React.memo(function PinView(
         </Menu>
       );
     }
-  };
-
-  const showMenu = (e: any) => {
-    e.preventDefault();
-    e.stopPropagation();
-    const menu = getContextMenu();
-    ContextMenu.show(menu, { left: e.clientX, top: e.clientY });
   };
 
   const onClick = (e: React.MouseEvent) => {
@@ -282,11 +275,11 @@ export const PinView: React.SFC<PinViewProps> = React.memo(function PinView(
     <div className={calcClassNames()} data-pin-id={id}>
       <CustomReactTooltip
         className="pin-info-tooltip"
-        html
+        // html
         id={id + props.currentInsId}
-        getContent={[calcTooltipContent, INSIGHTS_TOOLTIP_INTERVAL / 20]}
+        // getContent={[calcTooltipContent, INSIGHTS_TOOLTIP_INTERVAL / 20]}
       />
-      <div
+      <ContextMenu
         onMouseEnter={refreshHistory}
         onMouseOut={resetHistory}
         onMouseDown={_onMouseDown}
@@ -306,8 +299,8 @@ export const PinView: React.SFC<PinViewProps> = React.memo(function PinView(
         data-place={tooltipDown ? "bottom" : null}
         onDoubleClick={(e) => props.onDoubleClick && props.onDoubleClick(id, e)}
         className={`pin-inner`}
-        onContextMenu={showMenu}
         onClick={onClick}
+        content={getContextMenu()}
       >
         {displayName}{" "}
         {isDefined(maybeConstValue) ? (
@@ -318,7 +311,7 @@ export const PinView: React.SFC<PinViewProps> = React.memo(function PinView(
         ) : null}
         {maybeStickyLabel()}
         {maybeQueueLabel()}
-      </div>
+      </ContextMenu>
       <div className="wire" />
     </div>
   );

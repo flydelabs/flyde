@@ -17,7 +17,12 @@ import { Size } from "../../utils";
 import { useSsr } from "usehooks-ts";
 import { logicalPosToRenderedPos, ViewPort } from "../..";
 import { vDiv } from "../../physics";
-import { ContextMenu, Menu, MenuItem } from "@blueprintjs/core";
+import {
+  ContextMenu,
+  ContextMenuChildrenProps,
+  Menu,
+  MenuItem,
+} from "@blueprintjs/core";
 import { ConnectionViewPath } from "./ConnectionViewPath/ConnectionViewPath";
 
 export interface BaseConnectionViewProps {
@@ -108,36 +113,33 @@ export const SingleConnectionView: React.FC<ConnectionItemViewProps> = (
     type
   );
 
-  const showMenu = React.useCallback(
-    (e: React.MouseEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      const menu = (
-        <Menu>
-          <MenuItem
-            text={connection.hidden ? "Show connection" : "Hide connection"}
-            onClick={() => toggleHidden(connection)}
-          />
-          <MenuItem
-            text="Remove connection"
-            onClick={() => removeConnection(connection)}
-          />
-        </Menu>
-      );
-      ContextMenu.show(menu, { left: e.pageX, top: e.pageY });
-    },
-    [connection, removeConnection, toggleHidden]
+  const menu = (
+    <Menu>
+      <MenuItem
+        text={connection.hidden ? "Show connection" : "Hide connection"}
+        onClick={() => toggleHidden(connection)}
+      />
+      <MenuItem
+        text="Remove connection"
+        onClick={() => removeConnection(connection)}
+      />
+    </Menu>
   );
 
   return (
-    <ConnectionViewPath
-      className={cm}
-      from={{ x: x1, y: y1 }}
-      to={{ x: x2, y: y2 }}
-      dashed={type !== "regular"}
-      zoom={viewPort.zoom}
-      onContextMenu={showMenu}
-    />
+    <ContextMenu content={menu}>
+      {(ctxMenuProps: ContextMenuChildrenProps) => (
+        <ConnectionViewPath
+          className={cm}
+          from={{ x: x1, y: y1 }}
+          to={{ x: x2, y: y2 }}
+          dashed={type !== "regular"}
+          zoom={viewPort.zoom}
+          ref={ctxMenuProps.ref}
+          onContextMenu={ctxMenuProps.onContextMenu}
+        />
+      )}
+    </ContextMenu>
   );
 };
 

@@ -1,15 +1,15 @@
 import { DevServerClient } from "@flyde/dev-server";
 import { EditorPorts, toastMsg } from "@flyde/flow-editor";
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router-dom";
 
 export type WebPortsConfig = {
   devServerClient: DevServerClient;
-  history: ReturnType<typeof useHistory>;
+  navigate: ReturnType<typeof useNavigate>;
 };
 
 export const createWebPorts = ({
   devServerClient,
-  history,
+  navigate,
 }: WebPortsConfig): EditorPorts => {
   return {
     prompt: async ({ text, defaultValue }) => {
@@ -19,11 +19,11 @@ export const createWebPorts = ({
       return confirm(text);
     },
     openFile: async ({ absPath }) => {
-      const params = new URLSearchParams(history.location.search);
+      const params = new URLSearchParams(location.search);
       params.set("fileName", absPath);
       const newUrl = decodeURIComponent(`${location.pathname}?${params}`);
       toastMsg(newUrl);
-      history.push(newUrl);
+      navigate(newUrl);
     },
     readFlow: async ({ absPath }) => {
       return devServerClient.readFile(absPath);

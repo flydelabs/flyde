@@ -1,5 +1,5 @@
 import { Button } from "@blueprintjs/core";
-import { Tooltip2 } from "@blueprintjs/popover2";
+import { Tooltip } from "@blueprintjs/core";
 import {
   ConnectionNode,
   getNodeDef,
@@ -372,14 +372,14 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
   );
   return (
     <div className="action-button" onClick={_onClick}>
-      <Tooltip2
+      <Tooltip
         hoverOpenDelay={100}
         content={text}
         className="icon-wrapper"
         popoverClassName="action-button-tooltip"
       >
         <span dangerouslySetInnerHTML={{ __html: metaData.icon }} />
-      </Tooltip2>
+      </Tooltip>
     </div>
   );
 };

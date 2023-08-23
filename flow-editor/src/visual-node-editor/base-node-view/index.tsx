@@ -10,7 +10,7 @@ import { Pos } from "@flyde/core";
 // export const PIECE_CHAR_WIDTH = 11;
 // export const MIN_WIDTH_PER_PIN = 40;
 
-import { IMenuItemProps } from "@blueprintjs/core";
+import { MenuItemProps } from "@blueprintjs/core";
 
 export interface BaseNodeViewContextItem {
   label: string;
@@ -18,6 +18,7 @@ export interface BaseNodeViewContextItem {
 }
 
 export interface BaseNodeViewProps {
+  children: JSX.Element;
   domId?: string;
   className?: string;
   pos: Pos;
@@ -95,6 +96,14 @@ export const BaseNodeView: React.FC<BaseNodeViewProps> =
       "display-mode": displayMode,
     });
 
+    const draggableContent = (
+      <span className="base-node-view-wrapper">
+        <div className={cm} style={zoomFixStyle} id={props.domId}>
+          {props.children}
+        </div>
+      </span>
+    );
+
     return (
       <div className={outerCm} style={fixerStyle}>
         <Draggable
@@ -104,11 +113,7 @@ export const BaseNodeView: React.FC<BaseNodeViewProps> =
           position={pos}
           cancel=".no-drag"
         >
-          <span className="base-node-view-wrapper">
-            <div className={cm} style={zoomFixStyle} id={props.domId}>
-              {props.children}
-            </div>
-          </span>
+          {draggableContent}
         </Draggable>
       </div>
     );

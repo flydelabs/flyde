@@ -111,6 +111,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
     >(new Set());
 
     const { debuggerClient } = useDebuggerContext();
+    console.log({ rendering: true });
 
     React.useEffect(() => {
       if (debuggerClient) {

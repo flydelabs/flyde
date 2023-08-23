@@ -28,8 +28,8 @@ export const MainInstanceEventsIndicator: React.FC<
   return (
     <div className="main-instance-events-indicator">
       <CustomReactTooltip
-        html
-        getContent={[calcTooltipContent, 200]}
+        // html
+        // getContent={[calcTooltipContent, 200]}
         id={ttId}
       />
       <span
