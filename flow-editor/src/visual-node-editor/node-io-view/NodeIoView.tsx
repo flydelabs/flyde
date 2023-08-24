@@ -197,15 +197,22 @@ export const NodeIoView: React.FC<NodeIoViewProps> = React.memo(
     const calcTooltipContent = () => {
       const historyContent = calcHistoryContent(history);
 
-      const maybeDescription = props.description
-        ? `<em>${props.description}</em>`
-        : "";
+      const maybeDescription = props.description ? (
+        <em>{props.description}</em>
+      ) : (
+        ""
+      );
 
-      return `<div><div><strong>${displayName}</strong> (${type}) </div>
-      ${maybeDescription}
-      <hr/>
-      ${historyContent}
-    `;
+      return (
+        <div>
+          <div>
+            <strong>{displayName}</strong> ({type}){" "}
+          </div>
+          {maybeDescription}
+          <hr />
+          {historyContent}
+        </div>
+      );
     };
 
     const _onMouseUp = React.useCallback(

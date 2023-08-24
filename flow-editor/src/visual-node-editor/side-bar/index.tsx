@@ -12,6 +12,7 @@ import {
   noop,
 } from "@flyde/core";
 import classNames from "classnames";
+import { safelyGetNodeDef } from "../../flow-editor/getNodeDef";
 
 export type SideBarProps = {
   node: VisualNode;
@@ -95,7 +96,7 @@ export const SideBar: React.FC<SideBarProps> = React.memo(function SideBarInner(
   });
 
   const items: MenuItemProps[] = instances.map((ins) => {
-    const node = getNodeDef(ins, props.resolvedNodes);
+    const node = safelyGetNodeDef(ins, props.resolvedNodes);
     const type = isVisualNode(node)
       ? MenuItemType.VISUAL
       : isCodeNode(node)

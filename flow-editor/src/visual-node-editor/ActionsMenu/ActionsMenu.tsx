@@ -28,6 +28,7 @@ import {
 } from "./icons/icons";
 import { PromptAIMenu } from "./PromptAIMenu";
 import { RunFlowModal } from "./RunFlowModal";
+import { safelyGetNodeDef } from "../../flow-editor/getNodeDef";
 
 export enum ActionType {
   AddNode = "add-node",
@@ -120,7 +121,7 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
       console.error(`Could not find instance with id ${selectedInstances[0]}`);
     } else {
       try {
-        const node = getNodeDef(instance, resolvedNodes);
+        const node = safelyGetNodeDef(instance, resolvedNodes);
         if (isVisualNode(node)) {
           types.push(ActionType.UnGroup);
         }

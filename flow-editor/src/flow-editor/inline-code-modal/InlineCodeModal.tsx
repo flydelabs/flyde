@@ -2,9 +2,9 @@ import * as React from "react";
 
 // ;
 
-// import Editor, { OnMount } from "@monaco-editor/react";
+import Editor, { OnMount } from "@monaco-editor/react";
 
-import Editor from "@monaco-editor/react";
+// import Editor from "@monaco-editor/react";
 
 import {
   Button,
@@ -45,14 +45,14 @@ export const InlineCodeModal: React.FC<InlineCodeModalProps> = React.memo(
       initialType || InlineValueNodeType.VALUE
     );
 
-    // const onMonacoMount: OnMount = (editor) => {
-    //   if (editor) {
-    //     editor.updateOptions({
-    //       lineNumbers: "off",
-    //       minimap: { enabled: false },
-    //     });
-    //   }
-    // };
+    const onMonacoMount: OnMount = (editor) => {
+      if (editor) {
+        editor.updateOptions({
+          lineNumbers: "off",
+          minimap: { enabled: false },
+        });
+      }
+    };
 
     const onKeyDown: React.KeyboardEventHandler<any> = (e) => {
       if (e.key === "Enter" && e.metaKey) {
@@ -175,14 +175,14 @@ export const InlineCodeModal: React.FC<InlineCodeModalProps> = React.memo(
               value={InlineValueNodeType.FUNCTION}
             />
           </RadioGroup>
-          {/* <Editor
+          <Editor
             height="80px"
             theme="vs-dark"
             defaultLanguage="javascript"
             value={value}
             onChange={(e) => setValue(e || "")}
             onMount={onMonacoMount}
-          /> */}
+          />
           {maybeWrongTypeWarning()}
           <Callout intent={Intent.NONE}>
             Input pins detected:{" "}

@@ -73,7 +73,7 @@ $half-of-pin-height: 16px;
       padding: 6px 12px 4px;
 
       &:not(:hover):not(.selected):not(.closest) {
-        border-bottom: 3px solid var(--node-color, inherit);
+        border-bottom-color: var(--node-color, transparent);
       }
     }
 
@@ -81,8 +81,10 @@ $half-of-pin-height: 16px;
       font-size: 24px;
       padding: 8px 15px 6px;
       border-radius: 8px;
+      border-width: 3px;
+
       &:not(:hover):not(.selected):not(.closest) {
-        border: 3px solid var(--node-color, inherit);
+        border: 3px solid var(--node-color, transparent);
       }
     }
   }

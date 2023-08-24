@@ -24,6 +24,7 @@ import {
   MenuItem,
 } from "@blueprintjs/core";
 import { ConnectionViewPath } from "./ConnectionViewPath/ConnectionViewPath";
+import { safelyGetNodeDef } from "../../flow-editor/getNodeDef";
 
 export interface BaseConnectionViewProps {
   resolvedNodes: NodesDefCollection;
@@ -92,7 +93,7 @@ export const SingleConnectionView: React.FC<ConnectionItemViewProps> = (
 
   const fromNode =
     isInternalConnectionNode(from) && fromInstance
-      ? getNodeDef(fromInstance, resolvedNodes)
+      ? safelyGetNodeDef(fromInstance, resolvedNodes)
       : node;
 
   const sourcePin = fromNode.outputs[from.pinId];

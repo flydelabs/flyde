@@ -13,6 +13,7 @@ import produce from "immer";
 import { calcNodeIoWidth } from "../node-io-view/utils";
 import { size } from "../../physics";
 import { calcNodeWidth } from "../instance-view/utils";
+import { safelyGetNodeDef } from "../../flow-editor/getNodeDef";
 
 export const layoutToInstances = (
   ld: LayoutData,
@@ -52,7 +53,7 @@ export const orderVisualNode = (
   const { instances, connections } = node;
   const insNodes = instances.reduce((prev, curr) => {
     const s = size(
-      calcNodeWidth(curr, getNodeDef(curr, resolvedNodes)),
+      calcNodeWidth(curr, safelyGetNodeDef(curr, resolvedNodes)),
       NODE_HEIGHT
     );
     return {

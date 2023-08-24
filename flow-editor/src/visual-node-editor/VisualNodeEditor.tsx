@@ -12,7 +12,6 @@ import {
   PinType,
   isStaticInputPinConfig,
   InputMode,
-  getNodeDef,
   isVisualNode,
   connectionDataEquals,
   ConnectionNode,
@@ -41,6 +40,7 @@ import {
   stickyInputPinConfig,
   ROOT_INS_ID,
 } from "@flyde/core";
+
 import { InstanceView, InstanceViewProps } from "./instance-view/InstanceView";
 import {
   ConnectionView,
@@ -120,6 +120,7 @@ import { useDependenciesContext } from "../flow-editor/FlowEditor";
 import { Action, ActionsMenu, ActionType } from "./ActionsMenu/ActionsMenu";
 import { MainInstanceEventsIndicator } from "./MainInstanceEventsIndicator";
 import { HelpBubble } from "./HelpBubble";
+import { safelyGetNodeDef } from "../flow-editor/getNodeDef";
 
 const MemodSlider = React.memo(Slider);
 
@@ -1059,7 +1060,11 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         ]
       );
 
-      const onMouseLeave: React.MouseEventHandler = React.useCallback(() => {
+      const onMouseLeave: React.MouseEventHandler = React.useCallback((e) => {
+        if ((e.relatedTarget as any)?.className === "bp5-menu") {
+          // hack to ignore context menu opening as mouse leave
+          return;
+        }
         setClosestPin(undefined);
         isBoardInFocus.current = false;
       }, []);
@@ -1069,7 +1074,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           if (shift) {
             const node = isInlineNodeInstance(ins)
               ? ins.node
-              : getNodeDef(ins.nodeId, currResolvedDeps);
+              : safelyGetNodeDef(ins.nodeId, currResolvedDeps);
             if (!node) {
               throw new Error(`Impossible state inspecting inexisting node`);
             }
@@ -1082,7 +1087,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             setOpenInlineInstance({ insId: `${currentInsId}.${ins.id}`, node });
           } else {
             if (isRefNodeInstance(ins)) {
-              const node = getNodeDef(ins, currResolvedDeps);
+              const node = safelyGetNodeDef(ins, currResolvedDeps);
 
               onEditNode(node as ImportedNodeDef);
             } else {
@@ -1143,7 +1148,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             // todo - combine the above with below to an atomic action
             onChangeBoardData({ selected: [] });
           } else {
-            const visualNode = getNodeDef(
+            const visualNode = safelyGetNodeDef(
               groupNodeIns.nodeId,
               currResolvedDeps
             );
@@ -1365,7 +1370,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                 (ins) => ins.id === selected[0]
               );
               onUnGroup(instance);
-              const insNode = getNodeDef(
+              const insNode = safelyGetNodeDef(
                 instance,
                 currResolvedDeps
               ) as VisualNode;
@@ -1598,7 +1603,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             });
             reportEvent("addValueModalOpen", { source: "dblClickPin" });
           } else {
-            const node = getNodeDef(ins, currResolvedDeps);
+            const node = safelyGetNodeDef(ins, currResolvedDeps);
             const nodeOutputs = getNodeOutputs(node);
             const pin = nodeOutputs[pinId];
 
@@ -1687,7 +1692,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       // prune orphan connections
       React.useEffect(() => {
         const validInputs = instances.reduce((acc, ins) => {
-          const node = getNodeDef(ins, currResolvedDeps);
+          const node = safelyGetNodeDef(ins, currResolvedDeps);
           if (node) {
             acc.set(ins.id, keys(getNodeInputs(node)));
           }
@@ -1695,7 +1700,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         }, new Map<string, string[]>());
 
         const validOutputs = instances.reduce((acc, ins) => {
-          const node = getNodeDef(ins, currResolvedDeps);
+          const node = safelyGetNodeDef(ins, currResolvedDeps);
           if (node) {
             acc.set(ins.id, keys(getNodeOutputs(node)));
           }
@@ -1741,7 +1746,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         let invalids = [];
         const newNode = produce(node, (draft) => {
           draft.instances = draft.instances.map((ins) => {
-            const node = getNodeDef(ins, currResolvedDeps);
+            const node = safelyGetNodeDef(ins, currResolvedDeps);
             if (node) {
               const nodeInputs = getNodeInputs(node);
               const nodeOutputs = getNodeOutputs(node);
@@ -2547,7 +2552,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                   connectionsPerInput={
                     instancesConnectToPinsRef.current.get(ins.id) || emptyObj
                   }
-                  node={getNodeDef(ins, currResolvedDeps)}
+                  node={safelyGetNodeDef(ins, currResolvedDeps)}
                   ancestorsInsIds={fullInsIdPath(currentInsId, ancestorsInsIds)}
                   onPinClick={onPinClick}
                   onPinDblClick={onPinDblClick}
