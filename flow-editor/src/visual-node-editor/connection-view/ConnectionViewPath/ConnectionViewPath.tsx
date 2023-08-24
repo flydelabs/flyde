@@ -7,16 +7,17 @@ export interface ConnectionViewPathProps {
   from: Pos;
   to: Pos;
   className: string;
-  onContextMenu?: (e: React.MouseEvent<SVGPathElement, MouseEvent>) => void;
+  onContextMenu?: (e: React.MouseEvent<any, MouseEvent>) => void;
   zoom: number;
   label?: string;
   dashed?: boolean;
+  ref?: any;
 }
 
 export const ConnectionViewPath: React.FC<ConnectionViewPathProps> = (
   props
 ) => {
-  const { from, to, className, onContextMenu, zoom, dashed } = props;
+  const { from, to, className, onContextMenu, zoom, dashed, ref } = props;
   const { x: x1, y: y1 } = from;
   const { x: x2, y: y2 } = to;
 
@@ -35,6 +36,7 @@ export const ConnectionViewPath: React.FC<ConnectionViewPathProps> = (
     <>
       <path
         d={d}
+        ref={ref}
         className={classNames("connection", className)}
         style={{ strokeWidth, strokeDasharray }}
         onContextMenu={onContextMenu}
@@ -47,10 +49,10 @@ export const ConnectionViewPath: React.FC<ConnectionViewPathProps> = (
           fontSize="12px"
         />
       ) : null}
-	  <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-			<stop offset="0%" />
-			<stop offset="100%"/>
-	  </linearGradient>
+      <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" />
+        <stop offset="100%" />
+      </linearGradient>
     </>
   );
 };

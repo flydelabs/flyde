@@ -2,7 +2,7 @@ import { FlydeFlow, ResolvedDependenciesDefinitions } from "@flyde/core";
 import { File, FolderStructure } from "@flyde/dev-server";
 import React, { useCallback, useEffect, useRef } from "react";
 
-import { useHistory, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useQueryParam } from "use-query-params";
 import { useDevServerApi } from "../api/dev-server-api";
 import { Loader, PortsContext } from "@flyde/flow-editor"; // ../../common/lib/loader
@@ -23,7 +23,7 @@ export const FlowLoader: React.FC = (props) => {
 
   const [executionId, setExecutionId] = React.useState<string>("n/a");
 
-  const history = useHistory();
+  const navigate = useNavigate();
   const { search } = useLocation();
 
   const devServerClient = useDevServerApi();
@@ -31,7 +31,7 @@ export const FlowLoader: React.FC = (props) => {
   const ports = useRef(
     isEmbedded
       ? createVsCodePorts()
-      : createWebPorts({ devServerClient, history })
+      : createWebPorts({ devServerClient, navigate })
   );
 
   const loadData = useCallback(async () => {

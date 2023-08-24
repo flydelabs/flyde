@@ -155,7 +155,7 @@ export const InstancePanelInputPinView: React.FC<
 
   return (
     <Card className="pin-view">
-      <h5 className="bp3-heading">
+      <h5 className="bp5-heading">
         <span>{id}</span>{" "}
         <em>
           <small>{suffix}</small>

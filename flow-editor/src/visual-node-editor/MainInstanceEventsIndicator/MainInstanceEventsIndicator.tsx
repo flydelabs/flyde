@@ -1,9 +1,8 @@
 import React from "react";
 import { ViewPort } from "../..";
-import { useDebuggerContext } from "../../flow-editor/DebuggerContext";
-import CustomReactTooltip from "../../lib/tooltip";
 import { getMainInstanceIndicatorDomId } from "../dom-ids";
 import { calcHistoryContent, useHistoryHelpers } from "../pin-view/helpers";
+import { Tooltip } from "@blueprintjs/core";
 
 export interface MainInstanceEventsIndicatorProps {
   currentInsId: string;
@@ -27,20 +26,17 @@ export const MainInstanceEventsIndicator: React.FC<
 
   return (
     <div className="main-instance-events-indicator">
-      <CustomReactTooltip
-        html
-        getContent={[calcTooltipContent, 200]}
-        id={ttId}
-      />
-      <span
-        onMouseEnter={refreshHistory}
-        onMouseOut={resetHistory}
-        id={getMainInstanceIndicatorDomId(currentInsId, ancestorsInsIds)}
-        className="status-text"
-        data-tip=""
-        data-html={true}
-        data-for={ttId}
-      ></span>
+      <Tooltip content={calcTooltipContent()}>
+        <span
+          onMouseEnter={refreshHistory}
+          onMouseOut={resetHistory}
+          id={getMainInstanceIndicatorDomId(currentInsId, ancestorsInsIds)}
+          className="status-text"
+          data-tip=""
+          data-html={true}
+          data-for={ttId}
+        ></span>
+      </Tooltip>
     </div>
   );
 };

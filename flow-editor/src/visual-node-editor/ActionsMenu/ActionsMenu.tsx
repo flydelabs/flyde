@@ -1,5 +1,5 @@
 import { Button } from "@blueprintjs/core";
-import { Tooltip2 } from "@blueprintjs/popover2";
+import { Tooltip } from "@blueprintjs/core";
 import {
   ConnectionNode,
   getNodeDef,
@@ -28,6 +28,7 @@ import {
 } from "./icons/icons";
 import { PromptAIMenu } from "./PromptAIMenu";
 import { RunFlowModal } from "./RunFlowModal";
+import { safelyGetNodeDef } from "../../flow-editor/getNodeDef";
 
 export enum ActionType {
   AddNode = "add-node",
@@ -120,7 +121,7 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
       console.error(`Could not find instance with id ${selectedInstances[0]}`);
     } else {
       try {
-        const node = getNodeDef(instance, resolvedNodes);
+        const node = safelyGetNodeDef(instance, resolvedNodes);
         if (isVisualNode(node)) {
           types.push(ActionType.UnGroup);
         }
@@ -372,14 +373,14 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
   );
   return (
     <div className="action-button" onClick={_onClick}>
-      <Tooltip2
+      <Tooltip
         hoverOpenDelay={100}
         content={text}
         className="icon-wrapper"
         popoverClassName="action-button-tooltip"
       >
         <span dangerouslySetInnerHTML={{ __html: metaData.icon }} />
-      </Tooltip2>
+      </Tooltip>
     </div>
   );
 };

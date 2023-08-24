@@ -1,11 +1,17 @@
-import { Intent, IToaster, Position, Toaster } from "@blueprintjs/core";
+import {
+  Intent,
+  OverlayToasterProps,
+  Position,
+  OverlayToaster,
+  Toaster,
+} from "@blueprintjs/core";
 
 /** Singleton toaster instance. Create separate instances for different options. */
 
 // Toaster triggers document as a side effect,
-const createToaster = (): IToaster => {
+const createToaster = (): Toaster => {
   try {
-    return Toaster.create({
+    return OverlayToaster.create({
       className: "app-toaster",
       position: Position.BOTTOM_RIGHT,
     });

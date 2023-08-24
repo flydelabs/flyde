@@ -11,11 +11,10 @@ import {
 } from "@flyde/core";
 import { BaseNodeView } from "../base-node-view";
 import classNames from "classnames";
-import { Menu, MenuItem, ContextMenu } from "@blueprintjs/core";
+import { Menu, MenuItem, ContextMenu, Tooltip } from "@blueprintjs/core";
 import { usePrompt } from "../../flow-editor/ports";
 import { calcHistoryContent, useHistoryHelpers } from "../pin-view/helpers";
 import { getInputName } from "@flyde/core";
-import CustomReactTooltip from "../../lib/tooltip";
 import { getPinDomId } from "../dom-ids";
 
 export interface NodeIoViewProps {
@@ -50,9 +49,7 @@ export interface NodeIoViewProps {
   // onRequestHistory: (pinId: string, type: PinType) => Promise<HistoryPayload>;
 }
 
-const INSIGHTS_TOOLTIP_INTERVAL = 500;
-
-export const NodeIoView: React.SFC<NodeIoViewProps> = React.memo(
+export const NodeIoView: React.FC<NodeIoViewProps> = React.memo(
   function NodeIoViewInner(props) {
     const {
       viewPort,
@@ -185,30 +182,37 @@ export const NodeIoView: React.SFC<NodeIoViewProps> = React.memo(
       );
     }, [contextMenuItems]);
 
-    const showMenu = React.useCallback(
-      (e: React.MouseEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
-        const menu = getContextMenu();
-        ContextMenu.show(menu, { left: e.clientX, top: e.clientY });
-      },
-      [getContextMenu]
-    );
+    // const showMenu = React.useCallback(
+    //   (e: React.MouseEvent) => {
+    //     e.preventDefault();
+    //     e.stopPropagation();
+    //     const menu = getContextMenu();
+    //     ContextMenu.show(menu, { left: e.clientX, top: e.clientY });
+    //   },
+    //   [getContextMenu]
+    // );
 
     const displayName = type === "input" ? getInputName(id) : getOutputName(id);
 
     const calcTooltipContent = () => {
       const historyContent = calcHistoryContent(history);
 
-      const maybeDescription = props.description
-        ? `<em>${props.description}</em>`
-        : "";
+      const maybeDescription = props.description ? (
+        <em>{props.description}</em>
+      ) : (
+        ""
+      );
 
-      return `<div><div><strong>${displayName}</strong> (${type}) </div>
-      ${maybeDescription}
-      <hr/>
-      ${historyContent}
-    `;
+      return (
+        <div>
+          <div>
+            <strong>{displayName}</strong> ({type}){" "}
+          </div>
+          {maybeDescription}
+          <hr />
+          {historyContent}
+        </div>
+      );
     };
 
     const _onMouseUp = React.useCallback(
@@ -234,36 +238,32 @@ export const NodeIoView: React.SFC<NodeIoViewProps> = React.memo(
         onDragMove={onDragMove}
         viewPort={viewPort}
       >
-        <CustomReactTooltip
-          className="pin-info-tooltip"
-          html
-          id={id + props.currentInsId}
-          getContent={[calcTooltipContent, INSIGHTS_TOOLTIP_INTERVAL / 20]}
-        />
-        <div
-          onMouseEnter={refreshHistory}
-          onMouseOut={resetHistory}
-          onMouseUp={_onMouseUp}
-          onMouseDown={_onMouseDown}
-          data-tip=""
-          data-html={true}
-          data-for={id + props.currentInsId}
-          className={classNames("node-io-view-inner", { closest, selected })}
-          id={getPinDomId({
-            fullInsIdPath: fullInsIdPath(
-              props.currentInsId,
-              props.ancestorInsIds
-            ),
-            pinId: id,
-            pinType: type,
-            isMain: true,
-          })}
-          onClick={_onClick}
-          onDoubleClick={onDblClickInner}
-          onContextMenu={showMenu}
-        >
-          {id}
-        </div>
+        <React.Fragment>
+          <ContextMenu
+            onMouseEnter={refreshHistory}
+            onMouseOut={resetHistory}
+            onMouseUp={_onMouseUp}
+            onMouseDown={_onMouseDown}
+            data-tip=""
+            data-html={true}
+            data-for={id + props.currentInsId}
+            className={classNames("node-io-view-inner", { closest, selected })}
+            id={getPinDomId({
+              fullInsIdPath: fullInsIdPath(
+                props.currentInsId,
+                props.ancestorInsIds
+              ),
+              pinId: id,
+              pinType: type,
+              isMain: true,
+            })}
+            onClick={_onClick}
+            onDoubleClick={onDblClickInner}
+            content={getContextMenu()}
+          >
+            <Tooltip content={calcTooltipContent()}>{id}</Tooltip>
+          </ContextMenu>
+        </React.Fragment>
       </BaseNodeView>
     );
   }

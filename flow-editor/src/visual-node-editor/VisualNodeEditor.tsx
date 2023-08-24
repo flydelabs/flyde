@@ -12,7 +12,6 @@ import {
   PinType,
   isStaticInputPinConfig,
   InputMode,
-  getNodeDef,
   isVisualNode,
   connectionDataEquals,
   ConnectionNode,
@@ -41,6 +40,7 @@ import {
   stickyInputPinConfig,
   ROOT_INS_ID,
 } from "@flyde/core";
+
 import { InstanceView, InstanceViewProps } from "./instance-view/InstanceView";
 import {
   ConnectionView,
@@ -120,6 +120,7 @@ import { useDependenciesContext } from "../flow-editor/FlowEditor";
 import { Action, ActionsMenu, ActionType } from "./ActionsMenu/ActionsMenu";
 import { MainInstanceEventsIndicator } from "./MainInstanceEventsIndicator";
 import { HelpBubble } from "./HelpBubble";
+import { safelyGetNodeDef } from "../flow-editor/getNodeDef";
 
 const MemodSlider = React.memo(Slider);
 
@@ -1059,7 +1060,11 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         ]
       );
 
-      const onMouseLeave: React.MouseEventHandler = React.useCallback(() => {
+      const onMouseLeave: React.MouseEventHandler = React.useCallback((e) => {
+        if ((e.relatedTarget as any)?.className === "bp5-menu") {
+          // hack to ignore context menu opening as mouse leave
+          return;
+        }
         setClosestPin(undefined);
         isBoardInFocus.current = false;
       }, []);
@@ -1069,7 +1074,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           if (shift) {
             const node = isInlineNodeInstance(ins)
               ? ins.node
-              : getNodeDef(ins.nodeId, currResolvedDeps);
+              : safelyGetNodeDef(ins.nodeId, currResolvedDeps);
             if (!node) {
               throw new Error(`Impossible state inspecting inexisting node`);
             }
@@ -1082,7 +1087,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             setOpenInlineInstance({ insId: `${currentInsId}.${ins.id}`, node });
           } else {
             if (isRefNodeInstance(ins)) {
-              const node = getNodeDef(ins, currResolvedDeps);
+              const node = safelyGetNodeDef(ins, currResolvedDeps);
 
               onEditNode(node as ImportedNodeDef);
             } else {
@@ -1143,7 +1148,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             // todo - combine the above with below to an atomic action
             onChangeBoardData({ selected: [] });
           } else {
-            const visualNode = getNodeDef(
+            const visualNode = safelyGetNodeDef(
               groupNodeIns.nodeId,
               currResolvedDeps
             );
@@ -1365,7 +1370,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                 (ins) => ins.id === selected[0]
               );
               onUnGroup(instance);
-              const insNode = getNodeDef(
+              const insNode = safelyGetNodeDef(
                 instance,
                 currResolvedDeps
               ) as VisualNode;
@@ -1598,7 +1603,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             });
             reportEvent("addValueModalOpen", { source: "dblClickPin" });
           } else {
-            const node = getNodeDef(ins, currResolvedDeps);
+            const node = safelyGetNodeDef(ins, currResolvedDeps);
             const nodeOutputs = getNodeOutputs(node);
             const pin = nodeOutputs[pinId];
 
@@ -1687,7 +1692,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       // prune orphan connections
       React.useEffect(() => {
         const validInputs = instances.reduce((acc, ins) => {
-          const node = getNodeDef(ins, currResolvedDeps);
+          const node = safelyGetNodeDef(ins, currResolvedDeps);
           if (node) {
             acc.set(ins.id, keys(getNodeInputs(node)));
           }
@@ -1695,7 +1700,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         }, new Map<string, string[]>());
 
         const validOutputs = instances.reduce((acc, ins) => {
-          const node = getNodeDef(ins, currResolvedDeps);
+          const node = safelyGetNodeDef(ins, currResolvedDeps);
           if (node) {
             acc.set(ins.id, keys(getNodeOutputs(node)));
           }
@@ -1741,7 +1746,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         let invalids = [];
         const newNode = produce(node, (draft) => {
           draft.instances = draft.instances.map((ins) => {
-            const node = getNodeDef(ins, currResolvedDeps);
+            const node = safelyGetNodeDef(ins, currResolvedDeps);
             if (node) {
               const nodeInputs = getNodeInputs(node);
               const nodeOutputs = getNodeOutputs(node);
@@ -1904,105 +1909,85 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         AppToaster.show({ message: "Copied!" });
       }, [node]);
 
-      const getContextMenu = React.useCallback(
-        (pos: Pos) => {
-          const maybeDisabledLabel = nodeIoEditable
-            ? ""
-            : " (cannot edit main node, only visual)";
+      const getContextMenu = React.useCallback(() => {
+        const maybeDisabledLabel = nodeIoEditable
+          ? ""
+          : " (cannot edit main node, only visual)";
 
-          return (
-            <Menu>
-              <MenuItem
-                onMouseDown={(e) => e.stopPropagation()}
-                text={"New Value"}
-                onClick={preventDefaultAnd(() => {
-                  setInlineCodeTarget({
-                    type: "new-floating",
-                    pos: lastMousePos.current,
-                  });
-                  reportEvent("addValueModalOpen", { source: "contextMenu" });
-                })}
-              />
-              <MenuItem
-                text={`New input ${maybeDisabledLabel}`}
-                onMouseDown={(e) => e.stopPropagation()}
-                onClick={preventDefaultAnd(() => onAddIoPin("input"))}
-                disabled={!nodeIoEditable}
-              />
-              <MenuItem
-                onMouseDown={(e) => e.stopPropagation()}
-                text={`New output ${maybeDisabledLabel}`}
-                onClick={preventDefaultAnd(() => onAddIoPin("output"))}
-                disabled={!nodeIoEditable}
-              />
-              <MenuItem
-                onMouseDown={(e) => e.stopPropagation()}
-                text={"Copy node to clipboard"}
-                onClick={preventDefaultAnd(copyNodeToClipboard)}
-              />
-              <MenuItem
-                onMouseDown={(e) => e.stopPropagation()}
-                text={`Edit Completion Outputs (${
-                  node.completionOutputs?.join(",") || "n/a"
-                })`}
-                onClick={preventDefaultAnd(() => editCompletionOutputs())}
-              />
+        return (
+          <Menu>
+            <MenuItem
+              onMouseDown={(e) => e.stopPropagation()}
+              text={"New Value"}
+              onClick={preventDefaultAnd(() => {
+                setInlineCodeTarget({
+                  type: "new-floating",
+                  pos: lastMousePos.current,
+                });
+                reportEvent("addValueModalOpen", { source: "contextMenu" });
+              })}
+            />
+            <MenuItem
+              text={`New input ${maybeDisabledLabel}`}
+              onMouseDown={(e) => e.stopPropagation()}
+              onClick={preventDefaultAnd(() => onAddIoPin("input"))}
+              disabled={!nodeIoEditable}
+            />
+            <MenuItem
+              onMouseDown={(e) => e.stopPropagation()}
+              text={`New output ${maybeDisabledLabel}`}
+              onClick={preventDefaultAnd(() => onAddIoPin("output"))}
+              disabled={!nodeIoEditable}
+            />
+            <MenuItem
+              onMouseDown={(e) => e.stopPropagation()}
+              text={"Copy node to clipboard"}
+              onClick={preventDefaultAnd(copyNodeToClipboard)}
+            />
+            <MenuItem
+              onMouseDown={(e) => e.stopPropagation()}
+              text={`Edit Completion Outputs (${
+                node.completionOutputs?.join(",") || "n/a"
+              })`}
+              onClick={preventDefaultAnd(() => editCompletionOutputs())}
+            />
 
-              <MenuItem
-                onMouseDown={(e) => e.stopPropagation()}
-                text={`Edit Reactive inputs (${
-                  node.reactiveInputs?.join(",") || "n/a"
-                })`}
-                onClick={preventDefaultAnd(() => editReactiveInputs())}
+            <MenuItem
+              onMouseDown={(e) => e.stopPropagation()}
+              text={`Edit Reactive inputs (${
+                node.reactiveInputs?.join(",") || "n/a"
+              })`}
+              onClick={preventDefaultAnd(() => editReactiveInputs())}
+            />
+            <MenuItem
+              onMouseDown={(e) => e.stopPropagation()}
+              text={`Edit description`}
+              onClick={preventDefaultAnd(() => editNodeDescription())}
+            />
+            <MenuDivider />
+            <MenuItem text="Default Style">
+              <NodeStyleMenu
+                style={node.defaultStyle}
+                onChange={onChangeDefaultStyle}
+                promptFn={_prompt}
               />
-              <MenuItem
-                onMouseDown={(e) => e.stopPropagation()}
-                text={`Edit description`}
-                onClick={preventDefaultAnd(() => editNodeDescription())}
-              />
-              <MenuDivider />
-              <MenuItem text="Default Style">
-                <NodeStyleMenu
-                  style={node.defaultStyle}
-                  onChange={onChangeDefaultStyle}
-                  promptFn={_prompt}
-                />
-              </MenuItem>
-            </Menu>
-          );
-        },
-        [
-          nodeIoEditable,
-          copyNodeToClipboard,
-          node.completionOutputs,
-          node.reactiveInputs,
-          node.defaultStyle,
-          onChangeDefaultStyle,
-          _prompt,
-          reportEvent,
-          onAddIoPin,
-          editCompletionOutputs,
-          editReactiveInputs,
-          editNodeDescription,
-        ]
-      );
-
-      const showContextMenu = React.useCallback(
-        (e: any) => {
-          e.preventDefault();
-          if (!isBoardInFocus.current) {
-            return;
-          }
-          const pos = domToViewPort(
-            { x: e.clientX, y: e.clientY },
-            viewPort,
-            parentViewport
-          );
-          const menu = getContextMenu(pos);
-          ContextMenu.show(menu, { left: e.clientX, top: e.clientY });
-        },
-        [getContextMenu, parentViewport, viewPort]
-      );
+            </MenuItem>
+          </Menu>
+        );
+      }, [
+        nodeIoEditable,
+        copyNodeToClipboard,
+        node.completionOutputs,
+        node.reactiveInputs,
+        node.defaultStyle,
+        onChangeDefaultStyle,
+        _prompt,
+        reportEvent,
+        onAddIoPin,
+        editCompletionOutputs,
+        editReactiveInputs,
+        editNodeDescription,
+      ]);
 
       useHotkeys(
         "shift+c",
@@ -2507,10 +2492,11 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
       try {
         return (
-          <div
+          <ContextMenu
             className={classNames("visual-node-editor", props.className)}
             data-id={node.id}
-            onContextMenu={showContextMenu}
+            content={getContextMenu()}
+            disabled={!isBoardInFocus.current}
           >
             <main
               className="board-editor-inner"
@@ -2566,7 +2552,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                   connectionsPerInput={
                     instancesConnectToPinsRef.current.get(ins.id) || emptyObj
                   }
-                  node={getNodeDef(ins, currResolvedDeps)}
+                  node={safelyGetNodeDef(ins, currResolvedDeps)}
                   ancestorsInsIds={fullInsIdPath(currentInsId, ancestorsInsIds)}
                   onPinClick={onPinClick}
                   onPinDblClick={onPinDblClick}
@@ -2699,7 +2685,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
               from={from}
               hotkeysEnabled={isBoardInFocus}
             />
-          </div>
+          </ContextMenu>
         );
       } catch (e) {
         console.error(e);

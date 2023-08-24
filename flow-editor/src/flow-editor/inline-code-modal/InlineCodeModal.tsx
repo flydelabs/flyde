@@ -3,6 +3,9 @@ import * as React from "react";
 // ;
 
 import Editor, { OnMount } from "@monaco-editor/react";
+
+// import Editor from "@monaco-editor/react";
+
 import {
   Button,
   Callout,
@@ -17,7 +20,7 @@ import {
 import classNames from "classnames";
 import { getVariables } from "./inline-code-to-node";
 import { InlineValueNodeType, ExecuteEnv, isDefined } from "@flyde/core";
-import { Tooltip2 } from "@blueprintjs/popover2";
+import { Tooltip } from "@blueprintjs/core";
 
 export type InlineCodeModalProps = {
   initialValue?: string;
@@ -153,9 +156,9 @@ export const InlineCodeModal: React.FC<InlineCodeModalProps> = React.memo(
               labelElement={
                 <React.Fragment>
                   Value{" "}
-                  <Tooltip2 content={typeExplanationValue} placement="top">
+                  <Tooltip content={typeExplanationValue} placement="top">
                     <Icon icon="info-sign" intent="primary" />
-                  </Tooltip2>
+                  </Tooltip>
                 </React.Fragment>
               }
               value={InlineValueNodeType.VALUE}
@@ -164,9 +167,9 @@ export const InlineCodeModal: React.FC<InlineCodeModalProps> = React.memo(
               labelElement={
                 <React.Fragment>
                   Function{" "}
-                  <Tooltip2 content={typeExplanationInline} placement="top">
+                  <Tooltip content={typeExplanationInline} placement="top">
                     <Icon icon="info-sign" intent="primary" />
-                  </Tooltip2>
+                  </Tooltip>
                 </React.Fragment>
               }
               value={InlineValueNodeType.FUNCTION}
@@ -184,9 +187,9 @@ export const InlineCodeModal: React.FC<InlineCodeModalProps> = React.memo(
           <Callout intent={Intent.NONE}>
             Input pins detected:{" "}
             {vars.length ? vars.map((v) => <Code key={v}>{v}</Code>) : "None"}
-            <Tooltip2 content={inputPinExplanation}>
+            <Tooltip content={inputPinExplanation}>
               <Icon icon="info-sign" intent={Intent.PRIMARY} />
-            </Tooltip2>
+            </Tooltip>
           </Callout>
         </main>
         <div className={Classes.DIALOG_FOOTER}>

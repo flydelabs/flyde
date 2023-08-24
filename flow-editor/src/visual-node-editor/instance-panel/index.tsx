@@ -93,7 +93,7 @@
 //         >
 //           <React.Fragment>
 //             {/* <h2>Instance Panel</h2> */}
-//             <h3 className="bp3-heading">Inputs</h3>
+//             <h3 className="bp5-heading">Inputs</h3>
 //             {inputs.map((pinId) => (
 //               <InstancePanelInputPinView
 //                 visible={visibleInputs.includes(pinId)}
@@ -108,7 +108,7 @@
 //             ))}
 
 //             <Card>
-//               <h5 className="bp3-heading">
+//               <h5 className="bp5-heading">
 //                 <span>Trigger Pin</span>{" "}
 //                 <Switch
 //                   checked={triggerVisible}

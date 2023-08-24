@@ -1,10 +1,7 @@
 import {
   Classes,
   Collapse,
-  ContextMenu,
-  ITreeNode,
-  Menu,
-  MenuItem,
+  TreeNodeInfo,
   Tree,
   TreeEventHandler,
 } from "@blueprintjs/core";
@@ -15,8 +12,7 @@ import "./styles.scss";
 import { FolderStructure, FileOrFolder } from "@flyde/dev-server";
 import { useDevServerApi } from "../../../api/dev-server-api";
 import { Loader } from "@flyde/flow-editor"; // ../../../../common/lib/loader
-import { toastMsg } from "@flyde/flow-editor"; // ../../../../common/toaster
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { NewFlowModal } from "./NewFlowModal/NewFlowModal";
 import {
   BaseNode,
@@ -41,7 +37,7 @@ const toTreeNode = (
   fileOrFolder: FileOrFolder,
   expanded: Set<string>,
   selected: Set<string>
-): ITreeNode<FileOrFolder> => {
+): TreeNodeInfo<FileOrFolder> => {
   const base = {
     label: fileOrFolder.name,
     id: fileOrFolder.relativePath,
@@ -90,7 +86,7 @@ export const FoldersSection: React.FC<FoldersSectionProps> = (props) => {
     [foldersExpanded]
   );
 
-  const history = useHistory();
+  const navigate = useNavigate();
 
   useEffect(() => {
     devClient.fileStructure().then(setStructure);
@@ -112,9 +108,9 @@ export const FoldersSection: React.FC<FoldersSectionProps> = (props) => {
     []
   );
 
-  const onCreateFlowHere = (data: FileOrFolder) => {
-    setNewFlowTarget(data.relativePath);
-  };
+  // const onCreateFlowHere = (data: FileOrFolder) => {
+  //   setNewFlowTarget(data.relativePath);
+  // };
 
   const onNodeContextMenu: TreeEventHandler<FileOrFolder> = React.useCallback(
     (node, _, e) => {
@@ -126,38 +122,38 @@ export const FoldersSection: React.FC<FoldersSectionProps> = (props) => {
 
       e.preventDefault();
 
-      if (data.isFolder) {
-        const menu = (
-          <Menu>
-            <MenuItem
-              label={`Add new flow here`}
-              onClick={() => onCreateFlowHere(data)}
-              // onClick={preventDefaultAnd(() => onAddIoPin("input"))}
-              // disabled={!nodeIoEditable}
-            />
-          </Menu>
-        );
-        ContextMenu.show(menu, { left: e.pageX, top: e.pageY });
-      } else {
-        const menu = (
-          <Menu>
-            <MenuItem
-              label={`Duplicate flow`}
-              onClick={() => toastMsg("Bob " + data?.fullPath)}
-              // onClick={preventDefaultAnd(() => onAddIoPin("input"))}
-              // disabled={!nodeIoEditable}
-            />
-            <MenuItem
-              label={`Delete flow`}
-              intent="danger"
-              onClick={() => toastMsg("Bob " + data?.fullPath)}
-              // onClick={preventDefaultAnd(() => onAddIoPin("input"))}
-              // disabled={!nodeIoEditable}
-            />
-          </Menu>
-        );
-        ContextMenu.show(menu, { left: e.pageX, top: e.pageY });
-      }
+      // if (data.isFolder) {
+      //   const menu = (
+      //     <Menu>
+      //       <MenuItem
+      //         text={`Add new flow here`}
+      //         onClick={() => onCreateFlowHere(data)}
+      //         // onClick={preventDefaultAnd(() => onAddIoPin("input"))}
+      //         // disabled={!nodeIoEditable}
+      //       />
+      //     </Menu>
+      //   );
+      //   ContextMenu.show(menu, { left: e.pageX, top: e.pageY });
+      // } else {
+      //   const menu = (
+      //     <Menu>
+      //       <MenuItem
+      //         label={`Duplicate flow`}
+      //         onClick={() => toastMsg("Bob " + data?.fullPath)}
+      //         // onClick={preventDefaultAnd(() => onAddIoPin("input"))}
+      //         // disabled={!nodeIoEditable}
+      //       />
+      //       <MenuItem
+      //         label={`Delete flow`}
+      //         intent="danger"
+      //         onClick={() => toastMsg("Bob " + data?.fullPath)}
+      //         // onClick={preventDefaultAnd(() => onAddIoPin("input"))}
+      //         // disabled={!nodeIoEditable}
+      //       />
+      //     </Menu>
+      //   );
+      //   ContextMenu.show(menu, { left: e.pageX, top: e.pageY });
+      // }
     },
     []
   );
@@ -166,10 +162,10 @@ export const FoldersSection: React.FC<FoldersSectionProps> = (props) => {
     (node) => {
       const data = node.nodeData;
       if (data && !data.isFolder && data.isFlyde) {
-        history.push(`/files?fileName=${data.relativePath}`);
+        navigate(`/files?fileName=${data.relativePath}`);
       }
     },
-    [history]
+    [navigate]
   );
 
   const onCreateFlow = useCallback(
@@ -187,9 +183,9 @@ export const FoldersSection: React.FC<FoldersSectionProps> = (props) => {
       };
       devClient.saveFile(path, flow);
 
-      history.push(`/files?fileName=${path}`);
+      navigate(`/files?fileName=${path}`);
     },
-    [devClient, newFlowTarget, history]
+    [devClient, newFlowTarget, navigate]
   );
 
   if (!structure) {

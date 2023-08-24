@@ -1,9 +1,10 @@
 /* eslint-disable no-restricted-globals */
-import * as React from "react";
-import * as ReactDOM from "react-dom";
+
+import { createRoot } from "react-dom/client";
 
 import { FocusStyleManager } from "@blueprintjs/core";
-import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { ReactRouter6Adapter } from "use-query-params/adapters/react-router-6";
 
 import { QueryParamProvider } from "use-query-params";
 
@@ -16,7 +17,7 @@ import "./index.scss";
 disableCookieAccessForVscode();
 FocusStyleManager.onlyShowFocusOnTabs();
 
-const baseName = "/editor";
+const baseName = "";
 
 export enum AppState {
   LOADING,
@@ -26,17 +27,15 @@ export enum AppState {
 const RoutedApp = () => {
   return (
     <BrowserRouter basename={baseName}>
-      <QueryParamProvider ReactRouterRoute={Route}>
-        <Switch>
-          <Route path="/files">
-            <FlowLoader />
-          </Route>
-          <Redirect to="/files" />
-        </Switch>
+      <QueryParamProvider adapter={ReactRouter6Adapter}>
+        <Routes>
+          <Route path="/files" element={<FlowLoader />} />
+          <Route path="*" element={<Navigate to="/files" />} />
+        </Routes>
       </QueryParamProvider>
     </BrowserRouter>
   );
 };
 
-ReactDOM.render(<RoutedApp />, document.getElementById("root") as HTMLElement);
-// registerServiceWorker();
+const root = createRoot(document.getElementById("root") as HTMLElement); // createRoot(container!) if you use TypeScript
+root.render(<RoutedApp />);

@@ -1,7 +1,7 @@
 import * as React from "react";
 import classNames from "classnames";
 
-import { Menu, MenuItem, ContextMenu } from "@blueprintjs/core";
+import { Menu, MenuItem, ContextMenu, Tooltip } from "@blueprintjs/core";
 
 import { isDefined, toString } from "../../utils";
 
@@ -15,7 +15,6 @@ import {
 } from "@flyde/core";
 import { getPinDomId } from "../dom-ids";
 import { valuePreview } from "@flyde/remote-debugger";
-import CustomReactTooltip from "../../lib/tooltip";
 import { calcHistoryContent, useHistoryHelpers } from "./helpers";
 export const PIN_HEIGHT = 23;
 
@@ -66,7 +65,7 @@ export interface OptionalPinViewProps {
 
 const INSIGHTS_TOOLTIP_INTERVAL = 500;
 
-export const PinView: React.SFC<PinViewProps> = React.memo(function PinView(
+export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
   props
 ) {
   const {
@@ -155,13 +154,6 @@ export const PinView: React.SFC<PinViewProps> = React.memo(function PinView(
     }
   };
 
-  const showMenu = (e: any) => {
-    e.preventDefault();
-    e.stopPropagation();
-    const menu = getContextMenu();
-    ContextMenu.show(menu, { left: e.clientX, top: e.clientY });
-  };
-
   const onClick = (e: React.MouseEvent) => {
     const { onShiftClick, onClick, id } = props;
     if (e.shiftKey && onShiftClick) {
@@ -224,22 +216,29 @@ export const PinView: React.SFC<PinViewProps> = React.memo(function PinView(
       type === "input" ? props.queuedValues : undefined
     );
 
-    const maybeDescription = props.description
-      ? `<em>${props.description}</em>`
-      : "";
+    const maybeDescription = props.description ? (
+      <em>{props.description}</em>
+    ) : (
+      ""
+    );
 
-    return `<div><div><strong>${displayName}</strong> (${type}) </div>
-      ${maybeDescription}
-      <hr/>
-      ${
-        isDefined(maybeConstValue)
-          ? `<div>Static value: <strong>${valuePreview(maybeConstValue).substr(
-              0,
-              200
-            )}</strong></div>`
-          : historyContent
-      }
-    `;
+    return (
+      <div>
+        <div>
+          <strong>{displayName}</strong> ({type}){" "}
+        </div>
+        {maybeDescription}
+        <hr />
+        {isDefined(maybeConstValue) ? (
+          <div>
+            Static value:{" "}
+            <strong>{valuePreview(maybeConstValue).substring(0, 200)}</strong>
+          </div>
+        ) : (
+          historyContent
+        )}
+      </div>
+    );
   };
 
   const tooltipDown = rotate && type === "input";
@@ -280,45 +279,43 @@ export const PinView: React.SFC<PinViewProps> = React.memo(function PinView(
 
   return (
     <div className={calcClassNames()} data-pin-id={id}>
-      <CustomReactTooltip
-        className="pin-info-tooltip"
-        html
-        id={id + props.currentInsId}
-        getContent={[calcTooltipContent, INSIGHTS_TOOLTIP_INTERVAL / 20]}
-      />
-      <div
-        onMouseEnter={refreshHistory}
-        onMouseOut={resetHistory}
-        onMouseDown={_onMouseDown}
-        onMouseUp={_onMouseUp}
-        data-tip=""
-        data-html={true}
-        data-for={id + props.currentInsId}
-        id={getPinDomId({
-          fullInsIdPath: fullInsIdPath(
-            props.currentInsId,
-            props.ancestorsInsIds
-          ),
-          pinId: id,
-          pinType: type,
-          isMain: false,
-        })}
-        data-place={tooltipDown ? "bottom" : null}
-        onDoubleClick={(e) => props.onDoubleClick && props.onDoubleClick(id, e)}
-        className={`pin-inner`}
-        onContextMenu={showMenu}
-        onClick={onClick}
-      >
-        {displayName}{" "}
-        {isDefined(maybeConstValue) ? (
-          <React.Fragment>
-            {":"}
-            <span className="value">{toString(maybeConstValue)}</span>
-          </React.Fragment>
-        ) : null}
-        {maybeStickyLabel()}
-        {maybeQueueLabel()}
-      </div>
+      <Tooltip className="pin-info-tooltip" content={calcTooltipContent()}>
+        <ContextMenu
+          onMouseEnter={refreshHistory}
+          onMouseOut={resetHistory}
+          onMouseDown={_onMouseDown}
+          onMouseUp={_onMouseUp}
+          data-tip=""
+          data-html={true}
+          data-for={id + props.currentInsId}
+          id={getPinDomId({
+            fullInsIdPath: fullInsIdPath(
+              props.currentInsId,
+              props.ancestorsInsIds
+            ),
+            pinId: id,
+            pinType: type,
+            isMain: false,
+          })}
+          data-place={tooltipDown ? "bottom" : null}
+          onDoubleClick={(e) =>
+            props.onDoubleClick && props.onDoubleClick(id, e)
+          }
+          className={`pin-inner`}
+          onClick={onClick}
+          content={getContextMenu()}
+        >
+          {displayName}{" "}
+          {isDefined(maybeConstValue) ? (
+            <React.Fragment>
+              {":"}
+              <span className="value">{toString(maybeConstValue)}</span>
+            </React.Fragment>
+          ) : null}
+          {maybeStickyLabel()}
+          {maybeQueueLabel()}
+        </ContextMenu>
+      </Tooltip>
       <div className="wire" />
     </div>
   );

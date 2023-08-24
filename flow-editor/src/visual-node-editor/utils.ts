@@ -41,6 +41,7 @@ import { calcNodeIoWidth as calcIoNodeWidth } from "./node-io-view/utils";
 import { vSub, vAdd, vMul, vDiv } from "../physics";
 import { getLeafInstancesOfSelection } from "./node-graph-utils";
 import { getVisibleInputs, getVisibleOutputs } from "./instance-view";
+import { safelyGetNodeDef } from "../flow-editor/getNodeDef";
 
 export const emptyObj = {}; // for immutability
 export const emptyList = []; // for immutability
@@ -116,7 +117,7 @@ export const findClosestPin = (
   });
 
   const instancesData = node.instances.reduce<any[]>((acc, ins) => {
-    const insNode = getNodeDef(ins, resolvedNodes);
+    const insNode = safelyGetNodeDef(ins, resolvedNodes);
 
     const visibleInputs = getVisibleInputs(ins, insNode, node.connections);
     const visibleOutputs = getVisibleOutputs(ins, insNode, node.connections);
@@ -256,7 +257,7 @@ export const createNewNodeInstance = (
 ): NodeInstance => {
   const node =
     typeof nodeIdOrNode === "string"
-      ? getNodeDef(nodeIdOrNode, resolvedNodes)
+      ? safelyGetNodeDef(nodeIdOrNode, resolvedNodes)
       : nodeIdOrNode;
 
   if (!node) {
@@ -417,7 +418,7 @@ export const calcNodesPositions = (
   resolvedNodes: NodesDefCollection
 ): Points[] => {
   const insNodes = node.instances.map((curr) => {
-    const w = calcNodeWidth(curr, getNodeDef(curr, resolvedNodes));
+    const w = calcNodeWidth(curr, safelyGetNodeDef(curr, resolvedNodes));
     const h = NODE_HEIGHT;
     return calcPoints(w, h, curr.pos, curr.id);
   });
@@ -597,7 +598,7 @@ export const getInstancesInRect = (
     .filter((ins) => {
       const { pos } = ins;
       const w =
-        calcNodeWidth(ins, getNodeDef(ins, resolvedNodes)) *
+        calcNodeWidth(ins, safelyGetNodeDef(ins, resolvedNodes)) *
         viewPort.zoom *
         parentVp.zoom;
       const rec2 = {
