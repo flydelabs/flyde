@@ -175,8 +175,8 @@ export const NodeIoView: React.FC<NodeIoViewProps> = React.memo(
     const getContextMenu = React.useCallback(() => {
       return (
         <Menu>
-          {contextMenuItems().map((item) => (
-            <MenuItem {...item} />
+          {contextMenuItems().map((item, key) => (
+            <MenuItem {...item} key={key} />
           ))}
         </Menu>
       );

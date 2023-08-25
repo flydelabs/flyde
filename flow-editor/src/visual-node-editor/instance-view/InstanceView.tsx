@@ -692,8 +692,8 @@ export const InstanceView: React.FC<InstanceViewProps> =
               promptFn={_prompt}
             />
           </MenuItem>
-          {contextMenuItems.map((item) => (
-            <MenuItem {...item} />
+          {contextMenuItems.map((item, key) => (
+            <MenuItem {...item} key={key} />
           ))}
         </Menu>
       );

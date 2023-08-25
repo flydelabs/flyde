@@ -39,8 +39,8 @@ node:
             fontWeight: "500"
         description: Custom inline value
     - pos:
-        x: -738.0158416748047
-        y: -353.57775328874584
+        x: -760.5914031982422
+        y: -366.36034606218334
       id: Get User's Country-ins
       inputConfig: {}
       node:
@@ -126,8 +126,8 @@ node:
         size: large
         color: "#f15bb5"
     - pos:
-        x: -802.5488879394532
-        y: -231.14159781217575
+        x: -825.1244494628907
+        y: -243.92419058561325
       id: Get Country Name And Capital-ins
       inputConfig: {}
       visibleOutputs:

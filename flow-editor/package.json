@@ -16,6 +16,7 @@
   "license": "agpl-3.0",
   "dependencies": {
     "@blueprintjs/core": "^5.0.0",
+    "@blueprintjs/icons": "^5.1.5",
     "@blueprintjs/select": "^5.0.1",
     "@flyde/core": "workspace:*",
     "@flyde/dev-server": "workspace:*",
@@ -39,8 +40,8 @@
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "react-draggable": "^4.4.5",
-    "react-json-view": "^1.21.3",
     "react-resizable": "^3.0.5",
+    "react18-json-view": "^0.2.1",
     "rooks": "^7.14.1",
     "typescript": "^4.9.5",
     "use-debounce": "^8.0.4",

@@ -125,18 +125,15 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = (props) => {
       await import("@flyde/stdlib/dist/all-browser")
     ).find((p) => isBaseNode(p) && p.id === node.id) as Node;
 
-    setResolvedDeps((flow) => {
+    setResolvedDeps((deps) => {
       return {
-        ...flow,
-        dependencies: {
-          ...flow.dependencies,
-          [depNode.id]: {
-            ...depNode,
-            source: {
-              path: "@flyde/stdlib/dist/all-browser",
-              export: depNode.id,
-            }, // fake, for playground
-          },
+        ...deps,
+        [depNode.id]: {
+          ...depNode,
+          source: {
+            path: "@flyde/stdlib/dist/all-browser",
+            export: depNode.id,
+          }, // fake, for playground
         },
       };
     });
@@ -275,6 +272,8 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = (props) => {
       onRequestHistory: historyPlayer.requestHistory,
     };
   }, [localDebugger]);
+
+  console.log({ resolvedDeps });
 
   return (
     <BrowserOnly>

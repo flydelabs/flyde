@@ -12,7 +12,6 @@ import {
   Classes,
   Code,
   Dialog,
-  Icon,
   Intent,
   Radio,
   RadioGroup,
@@ -21,6 +20,7 @@ import classNames from "classnames";
 import { getVariables } from "./inline-code-to-node";
 import { InlineValueNodeType, ExecuteEnv, isDefined } from "@flyde/core";
 import { Tooltip } from "@blueprintjs/core";
+import { InfoTooltip } from "../../lib/InfoTooltip";
 
 export type InlineCodeModalProps = {
   initialValue?: string;
@@ -155,10 +155,7 @@ export const InlineCodeModal: React.FC<InlineCodeModalProps> = React.memo(
             <Radio
               labelElement={
                 <React.Fragment>
-                  Value{" "}
-                  <Tooltip content={typeExplanationValue} placement="top">
-                    <Icon icon="info-sign" intent="primary" />
-                  </Tooltip>
+                  Value <InfoTooltip content={typeExplanationValue} />
                 </React.Fragment>
               }
               value={InlineValueNodeType.VALUE}
@@ -166,10 +163,7 @@ export const InlineCodeModal: React.FC<InlineCodeModalProps> = React.memo(
             <Radio
               labelElement={
                 <React.Fragment>
-                  Function{" "}
-                  <Tooltip content={typeExplanationInline} placement="top">
-                    <Icon icon="info-sign" intent="primary" />
-                  </Tooltip>
+                  Function <InfoTooltip content={typeExplanationInline} />
                 </React.Fragment>
               }
               value={InlineValueNodeType.FUNCTION}
@@ -187,9 +181,7 @@ export const InlineCodeModal: React.FC<InlineCodeModalProps> = React.memo(
           <Callout intent={Intent.NONE}>
             Input pins detected:{" "}
             {vars.length ? vars.map((v) => <Code key={v}>{v}</Code>) : "None"}
-            <Tooltip content={inputPinExplanation}>
-              <Icon icon="info-sign" intent={Intent.PRIMARY} />
-            </Tooltip>
+            <InfoTooltip content={inputPinExplanation} />
           </Callout>
         </main>
         <div className={Classes.DIALOG_FOOTER}>
