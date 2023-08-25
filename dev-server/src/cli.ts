@@ -13,7 +13,7 @@ args
   .option(
     "editor-statics-root",
     "Root directory for editor static files",
-    join(require.resolve("@flyde/editor"), "..")
+    join(__dirname, "../../editor/build")
   );
 
 const options = args.parse(process.argv) as InitFlydeDevServerOptions;

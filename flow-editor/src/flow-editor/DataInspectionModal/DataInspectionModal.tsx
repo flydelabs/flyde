@@ -67,7 +67,7 @@ export const DataInspectionModal: React.FC<DataInspectionModalProps> = (
     const val = event.val;
 
     if (typeof val === "object") {
-      return <BrowserOnlyReactJson src={val} name={null} />;
+      return <BrowserOnlyReactJson src={val} />;
     }
 
     return <Code>{val.toString()}</Code>;

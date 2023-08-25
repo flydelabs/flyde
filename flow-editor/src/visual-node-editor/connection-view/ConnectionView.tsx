@@ -136,7 +136,6 @@ export const SingleConnectionView: React.FC<ConnectionItemViewProps> = (
           to={{ x: x2, y: y2 }}
           dashed={type !== "regular"}
           zoom={viewPort.zoom}
-          ref={ctxMenuProps.ref}
           onContextMenu={ctxMenuProps.onContextMenu}
         />
       )}

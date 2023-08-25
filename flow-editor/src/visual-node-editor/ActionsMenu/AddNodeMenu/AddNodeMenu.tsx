@@ -18,6 +18,7 @@ import { InfoTooltip } from "../../../lib/InfoTooltip";
 import { Loader } from "../../../lib/loader";
 import { AddNodeMenuListItem } from "./AddNodeMenuListItem";
 import { AddNodeMenuResultsSummary } from "./AddNodeMenuResultsSummary";
+import { Help, Search } from "@blueprintjs/icons";
 
 export interface AddNodeMenuProps {
   onRequestImportables: () => Promise<LocalImportableResult>;
@@ -315,7 +316,7 @@ export const AddNodeMenu: React.FC<AddNodeMenuProps> = (props) => {
                 href="https://www.flyde.dev/docs/packages"
                 rel="noreferrer"
               >
-                <Icon icon="help" intent="primary" iconSize={12} />
+                <Icon icon={<Help />} intent="primary" iconSize={12} />
               </a>
             </Tooltip>
           </div>
@@ -345,7 +346,7 @@ export const AddNodeMenu: React.FC<AddNodeMenuProps> = (props) => {
       <main className={classNames(Classes.DIALOG_BODY)}>
         <header>
           <div className="bp5-input-group">
-            <Icon icon="search" />
+            <Search />
             <input
               className="bp5-input"
               type="search"

@@ -1,3 +1,4 @@
+import { RefNodeInstance } from "@flyde/core";
 import { NodeDefinition, getNodeDef } from "@flyde/core";
 
 export const loadingDef: NodeDefinition = {
@@ -11,6 +12,13 @@ export const safelyGetNodeDef: typeof getNodeDef = (idOrIns, resolved) => {
     return getNodeDef(idOrIns, resolved);
   } catch (e) {
     // console.error(e);
-    return loadingDef;
+    const nodeId =
+      typeof idOrIns === "string"
+        ? idOrIns
+        : (idOrIns as RefNodeInstance).nodeId;
+    return {
+      ...loadingDef,
+      id: nodeId,
+    };
   }
 };

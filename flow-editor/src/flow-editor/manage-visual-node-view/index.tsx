@@ -6,6 +6,7 @@ import React from "react";
 // ;
 
 import { BaseNodeEditor } from "../base-node-editor";
+import { Add } from "@blueprintjs/icons";
 
 export interface ManageVisualNodeViewProps {
   title: string;
@@ -21,7 +22,7 @@ export const renderCreateIOOption = (
   handleClick: React.MouseEventHandler<HTMLElement>
 ) => (
   <MenuItem
-    icon="add"
+    icon={<Add />}
     text={`Create "${query}"`}
     active={active}
     onClick={handleClick}

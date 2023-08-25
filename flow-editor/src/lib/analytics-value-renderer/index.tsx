@@ -19,9 +19,8 @@ export const AnalyticsValueRenderer: React.FC<{ val: any }> = ({ val }) => {
     return (
       <BrowserOnlyReactJson
         src={obj3}
-        name={false}
         collapseStringsAfterLength={50}
-        groupArraysAfterLength={5}
+        // groupArraysAfterLength={5}
         collapsed={isJsx}
       />
     );
@@ -29,9 +28,7 @@ export const AnalyticsValueRenderer: React.FC<{ val: any }> = ({ val }) => {
     return (
       <BrowserOnlyReactJson
         src={{ value: val }}
-        name={false}
         collapseStringsAfterLength={50}
-        groupArraysAfterLength={5}
       />
     );
   }

@@ -102,19 +102,19 @@ export const runDevServer = (
     }
   });
 
-  app.use("/", express.static(editorStaticRoot));
-
-  app.use(["/", "/*"], async (req, res, next) => {
-    const path = join(editorStaticRoot, "index.html");
-    res.sendFile(path);
-  });
-
   setupRemoteDebuggerServer(
     server,
     app,
     () => null,
     () => null
   );
+
+  app.use("/", express.static(editorStaticRoot));
+
+  app.use(["/", "/*"], async (req, res, next) => {
+    const path = join(editorStaticRoot, "index.html");
+    res.sendFile(path);
+  });
 
   server.listen(port);
   return server;

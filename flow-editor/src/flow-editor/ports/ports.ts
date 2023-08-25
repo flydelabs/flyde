@@ -3,9 +3,11 @@ import {
   FlydeFlow,
   ImportableSource,
   ResolvedDependenciesDefinitions,
+  noop,
 } from "@flyde/core";
 import { FlowJob, ImportablesResult } from "@flyde/dev-server";
 import { ReportEvent } from "./analytics";
+import { toastMsg } from "../../toaster";
 
 export * from "./analytics";
 
@@ -52,8 +54,9 @@ export interface EditorPorts {
   hasOpenAiToken: () => Promise<boolean>;
 }
 
-const throwsNotImplemented: any = async () => {
-  throw new Error(`Not implemented`);
+const toastNotImplemented: any = (method: string) => async () => {
+  console.warn(`${method} Not implemented`);
+  toastMsg(`Feature not implemented in this context yet`, "warning");
 };
 
 export const defaultPorts: EditorPorts = {
@@ -62,16 +65,16 @@ export const defaultPorts: EditorPorts = {
     // toastMsg(`Open ${path}`);
   },
   confirm: async ({ text }) => confirm(text),
-  readFlow: throwsNotImplemented,
-  setFlow: throwsNotImplemented,
-  resolveDeps: throwsNotImplemented,
-  getImportables: throwsNotImplemented,
-  onExternalFlowChange: throwsNotImplemented,
-  onInstallRuntimeRequest: throwsNotImplemented,
-  onRunFlow: throwsNotImplemented,
-  onStopFlow: throwsNotImplemented,
-  reportEvent: throwsNotImplemented,
-  generateNodeFromPrompt: throwsNotImplemented,
+  readFlow: toastNotImplemented("readFlow"),
+  setFlow: toastNotImplemented("setFlow"),
+  resolveDeps: toastNotImplemented("resolveDeps"),
+  getImportables: toastNotImplemented("getImportables"),
+  onExternalFlowChange: toastNotImplemented("onExternalFlowChange"),
+  onInstallRuntimeRequest: toastNotImplemented("onInstallRuntimeRequest"),
+  onRunFlow: toastNotImplemented("onRunFlow"),
+  onStopFlow: toastNotImplemented("onStopFlow"),
+  reportEvent: noop,
+  generateNodeFromPrompt: toastNotImplemented("generateNodeFromPrompt"),
   hasOpenAiToken: () => Promise.resolve(false),
 };
 
