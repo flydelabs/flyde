@@ -1,7 +1,5 @@
 import type ReactJsonView from "react18-json-view";
 
-import "react18-json-view/src/style.css";
-
 export type ReactJsonViewProps = Parameters<typeof ReactJsonView>[0];
 
 export const BrowserOnlyReactJson: React.FC<ReactJsonViewProps> = (props) => {
