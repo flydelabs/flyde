@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkwebsite=self.webpackChunkwebsite||[]).push([[2535],{60425:e=>{e.exports=JSON.parse('{"title":"Recent posts","items":[{"title":"Introducing Flyde","permalink":"/blog/introducing-flyde"}]}')}}]);
