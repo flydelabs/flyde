@@ -38,6 +38,33 @@ export const ObjectKeys: CodeNode = {
   run: ({ object }, { keys }) => keys.next(Object.keys(object)),
 };
 
+export const ObjectHasOwnProperty: CodeNode = {
+  id: "Has own property",
+  defaultStyle: {
+    icon: "fa-key",
+  },
+  namespace,
+  description: "Checks if object has property",
+  inputs: {
+    object: { mode: "required", description: "Object to get keys of" },
+    property: { mode: "required", description: "the property to search for" }
+
+  },
+  outputs: {
+    true: { description: "The value is true" },
+    false: { description: "The value is false" },
+  },
+  run: function (inputs, outputs) {
+    const { true: trueOut, false: falseOut } = outputs;
+    const { object, property } = inputs;
+    if (object.hasOwnProperty(property)) {
+      trueOut.next(true);
+    } else {
+      falseOut.next(false);
+    }
+  },
+};
+
 export const ObjectValues: CodeNode = {
   id: "Values",
   namespace,
