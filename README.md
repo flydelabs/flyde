@@ -10,7 +10,7 @@
   
 [![Official Website](https://img.shields.io/badge/Official%20Website-flyde.dev-blue?style=flat&logo=world&logoColor=white)](https://flyde.dev.com)
 [![Discord Follow](https://dcbadge.vercel.app/api/server/x7t4tjZQP8?style=flat)](https://discord.com/invite/x7t4tjZQP8)
-[![GitHub Repo stars](https://img.shields.io/github/stars/flydehq/flyde?style=social)](https://github.com/flydehq/flyde)
+[![GitHub Repo stars](https://img.shields.io/github/stars/flydelabs/flyde?style=social)](https://github.com/flydelabs/flyde)
 [![@FlydeDev](https://img.shields.io/twitter/follow/FlydeDev?style=social)](https://twitter.com/FlydeDev)
 
 <strong>VSCode Extension ✔️</strong> · <strong>Runtime Library ✔️</strong> · <strong>Integrates with Existing Code ✔️</strong>
@@ -23,7 +23,7 @@
 <br/>
 </div>
 
-![Flyde example](https://github.com/FlydeHQ/flyde-vscode/raw/main/media/walkthrough/run-flow.gif)
+![Flyde example](https://github.com/flydelabs/flyde-vscode/raw/main/media/walkthrough/run-flow.gif)
 
 ## Features
 
