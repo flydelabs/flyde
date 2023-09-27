@@ -218,7 +218,7 @@ export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (
                   <span className="star-wrapper">
                     <iframe
                       className="gh-stars-frame"
-                      src="https://ghbtns.com/github-btn.html?user=flydehq&amp;repo=flyde&amp;type=star&amp;count=true&amp;size=small"
+                      src="https://ghbtns.com/github-btn.html?user=flydelabs&amp;repo=flyde&amp;type=star&amp;count=true&amp;size=small"
                       width={100}
                       height={20}
                       title="GitHub Stars"
