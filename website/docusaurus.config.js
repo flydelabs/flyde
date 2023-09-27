@@ -191,7 +191,7 @@ const config = {
               },
               {
                 label: "Twitter",
-                href: "https://twitter.com/flydehq",
+                href: "https://twitter.com/FlydeDev",
               },
             ],
           },
