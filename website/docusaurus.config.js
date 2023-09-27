@@ -66,7 +66,7 @@ const config = {
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: "flydehq", // Usually your GitHub org/user name.
+  organizationName: "flydelabs", // Usually your GitHub org/user name.
   projectName: "flyde", // Usually your resolvedNodes name.
   deploymentBranch: "website",
   trailingSlash: true,
@@ -156,11 +156,11 @@ const config = {
             label: "VSCode Extension",
           },
           {
-            href: "https://github.com/FlydeHQ/flyde/tree/main/examples",
+            href: "https://github.com/flydelabs/flyde/tree/main/examples",
             label: "Examples",
           },
           {
-            href: "https://github.com/flydehq/flyde",
+            href: "https://github.com/flydelabs/flyde",
             label: "GitHub",
             position: "right",
           },
@@ -191,7 +191,7 @@ const config = {
               },
               {
                 label: "Twitter",
-                href: "https://twitter.com/flydehq",
+                href: "https://twitter.com/FlydeDev",
               },
             ],
           },
@@ -208,7 +208,7 @@ const config = {
               },
               {
                 label: "GitHub",
-                href: "https://github.com/flydehq/flyde",
+                href: "https://github.com/flydelabs/flyde",
               },
             ],
           },

@@ -74,7 +74,7 @@ It has some simple examples that showcase the visual editor, and what building a
 
 The next step is to the checkout the tutorials section of this site to learn how to integrate Flyde into real-world projects
 
-If you've read so far I'd appreciate showing support by [starring the project](https://www.github.com/flydehq/flyde) and sending any feedback or comment via a GitHub issue or [Flyde's Discord channel](https://discord.com/invite/x7t4tjZQP8)
+If you've read so far I'd appreciate showing support by [starring the project](https://www.github.com/flydelabs/flyde) and sending any feedback or comment via a GitHub issue or [Flyde's Discord channel](https://discord.com/invite/x7t4tjZQP8)
 
 Thanks and stay tuned for more blog posts!
 
