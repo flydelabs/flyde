@@ -113,4 +113,4 @@ Before moving on to the next tutorial, I highly recommend you to try tinkering w
 
 ---
 
-If you have any feedback or issue please open a [Github issue](https://github.com/FlydeHQ/flyde/issues/new) or ping us on Discord.
+If you have any feedback or issue please open a [Github issue](https://github.com/flydelabs/flyde/issues/new) or ping us on Discord.
