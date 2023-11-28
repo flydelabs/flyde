@@ -93,22 +93,6 @@ export const FlowLoader: React.FC = (props) => {
     loadData();
   }, [fileName, loadData]);
 
-  useEffect(() => {
-    console.log("flow changed");
-  }, [flow]);
-
-  useEffect(() => {
-    console.log("resolvedDependencies changed");
-  }, [resolvedDependencies]);
-
-  useEffect(() => {
-    console.log("fileName changed");
-  }, [fileName]);
-
-  useEffect(() => {
-    console.log("search changed");
-  }, [search]);
-
   // eslint-disable-next-line no-constant-condition
   if (flow && resolvedDependencies) {
     const params = new URLSearchParams(window.location.search);

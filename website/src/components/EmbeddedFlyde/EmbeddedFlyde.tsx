@@ -15,7 +15,6 @@ import {
   useDebounce,
   vAdd,
 } from "@flyde/flow-editor";
-import { fakeVm } from "@site/src/fake-vm";
 import {
   DynamicNodeInput,
   execute,
@@ -272,8 +271,6 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = (props) => {
       onRequestHistory: historyPlayer.requestHistory,
     };
   }, [localDebugger]);
-
-  console.log({ resolvedDeps });
 
   return (
     <BrowserOnly>

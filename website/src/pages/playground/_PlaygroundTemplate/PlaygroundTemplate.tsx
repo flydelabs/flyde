@@ -83,38 +83,6 @@ export type PlaygroundFlowDto = {
   player: RuntimePlayer;
 };
 
-const runFlow = ({
-  flow,
-  output,
-  inputs,
-  onError,
-  debugDelay,
-  player,
-}: PlaygroundFlowDto) => {
-  const localDebugger = createRuntimeClientDebugger(player, historyPlayer);
-
-  localDebugger.debugDelay = debugDelay;
-
-  const firstOutputName = keys(flow.main.outputs)[0];
-
-  return {
-    executeResult: execute({
-      node: flow.main,
-      inputs: inputs,
-      outputs: { [firstOutputName]: output },
-      resolvedDeps: flow.dependencies,
-      _debugger: localDebugger,
-      onBubbleError: (e) => {
-        onError(e);
-      },
-      extraContext: {
-        PubSub,
-      },
-    }),
-    localDebugger,
-  };
-};
-
 export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (
   props
 ) => {
@@ -243,8 +211,8 @@ export const PlaygroundTemplate: React.FC<PlaygroundTemplateProps> = (
             height={0}
             width={childrenWidth}
             onResize={onResizeChildren}
-            axis="x"
             handle={<div className="handle" />}
+            axis="x"
             resizeHandles={["w"]}
           >
             <div

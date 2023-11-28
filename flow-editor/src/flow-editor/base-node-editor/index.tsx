@@ -75,7 +75,6 @@ export const BaseNodeEditor: React.FC<BaseNodeEditorProps> = (props) => {
       if (completionOutputsStr === "[]") {
         array = [];
       }
-      console.log(completionOutputsStr, array);
       onChange({ ...node, completionOutputs: array });
     },
     [node, onChange]

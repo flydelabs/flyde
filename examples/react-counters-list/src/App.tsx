@@ -12,8 +12,6 @@ const CountersListWrapper: React.FC<{}> = (props) => {
   const [child, setChild] = useState(null);
 
   useEffect(() => {
-    console.log(flow);
-
     const cleanPromise = execute(
       {},
       {

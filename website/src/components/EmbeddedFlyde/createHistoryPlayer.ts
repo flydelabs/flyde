@@ -1,6 +1,4 @@
-import { RuntimePlayer } from "@flyde/flow-editor";
 import {
-  Debugger,
   DebuggerEvent,
   DebuggerEventType,
   ERROR_PIN_ID,
@@ -84,7 +82,10 @@ export const createHistoryPlayer = (): HistoryPlayer => {
           }
 
           {
-            const curr = insHistoryMap.get(insId) || { total: 0, lastSamples: [] };
+            const curr = insHistoryMap.get(insId) || {
+              total: 0,
+              lastSamples: [],
+            };
             curr.lastSamples.unshift(event);
             if (curr.lastSamples.length > MAX_EVENTS_HISTORY_LIMIT) {
               curr.lastSamples.splice(
@@ -95,7 +96,6 @@ export const createHistoryPlayer = (): HistoryPlayer => {
             curr.total++;
             pinHistoryMap.set(insId, curr);
           }
-          
         }
       });
     },

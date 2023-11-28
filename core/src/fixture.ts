@@ -389,8 +389,6 @@ export const accumulate = conciseCodeNode({
 
     state.set("list", list);
     if (list.length === state.get("count")) {
-      console.log(list);
-
       r?.next(list);
     }
   },
