@@ -91,13 +91,7 @@ export const NodeIoView: React.FC<NodeIoViewProps> = React.memo(
     };
 
     const onDragMove = (event: any, data: any) => {
-      // const currPos = props.pos;
-      // const dx = (data.x - currPos.x) / viewPort.zoom;
-      // const dy = (data.y - currPos.y) / viewPort.zoom;
-      // const newX = currPos.x + dx;
-      // const newY = currPos.y + dy;
       props.onDragMove(type, id, event, { x: data.x, y: data.y });
-      // props.onDragMove(type, id, event, { ...data, x: daa, y: newY });
     };
 
     const _prompt = usePrompt();
