@@ -11,7 +11,6 @@ import {
   NodesDefCollection,
   NodeDefinition,
   isExternalConnectionNode,
-  getNodeDef,
   PinType,
   nodeInstance,
   queueInputPinConfig,
