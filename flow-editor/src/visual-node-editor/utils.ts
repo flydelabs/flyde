@@ -606,7 +606,6 @@ export const getInstancesInRect = (
         w,
         h: NODE_HEIGHT * viewPort.zoom * parentVp.zoom,
       };
-      console.log(ins.id, rec2, "main", rect);
 
       return intersectRect(rect, rec2) || intersectRect(rec2, rect);
     })
