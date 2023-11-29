@@ -58,7 +58,6 @@ describe("runtime", () => {
       const { res } = await execute({}, { extraContext: { cleanupSpy: spy } })
         .result;
 
-      console.log(res);
       await eventually(() => {
         assert.equal(spy.callCount, 1);
       });

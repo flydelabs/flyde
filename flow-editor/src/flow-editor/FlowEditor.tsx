@@ -86,8 +86,6 @@ export type DataBuilderTarget = {
 
 const ignoreUndoChangeTypes = ["select", "drag-move", "order-step"];
 
-console.log({ rendering: true, React1: React.version });
-
 export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
   React.forwardRef((props, visualEditorRef) => {
     const { state, onChangeEditorState } = props;

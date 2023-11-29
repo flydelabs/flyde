@@ -2,7 +2,7 @@ import { FlydeFlow, ResolvedDependenciesDefinitions } from "@flyde/core";
 import { File, FolderStructure } from "@flyde/dev-server";
 import React, { useCallback, useEffect, useRef } from "react";
 
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useQueryParam } from "use-query-params";
 import { useDevServerApi } from "../api/dev-server-api";
 import { Loader, PortsContext } from "@flyde/flow-editor"; // ../../common/lib/loader
@@ -24,7 +24,6 @@ export const FlowLoader: React.FC = (props) => {
   const [executionId, setExecutionId] = React.useState<string>("n/a");
 
   const navigate = useNavigate();
-  const { search } = useLocation();
 
   const devServerClient = useDevServerApi();
 
@@ -93,22 +92,6 @@ export const FlowLoader: React.FC = (props) => {
     loadData();
   }, [fileName, loadData]);
 
-  useEffect(() => {
-    console.log("flow changed");
-  }, [flow]);
-
-  useEffect(() => {
-    console.log("resolvedDependencies changed");
-  }, [resolvedDependencies]);
-
-  useEffect(() => {
-    console.log("fileName changed");
-  }, [fileName]);
-
-  useEffect(() => {
-    console.log("search changed");
-  }, [search]);
-
   // eslint-disable-next-line no-constant-condition
   if (flow && resolvedDependencies) {
     const params = new URLSearchParams(window.location.search);
@@ -117,8 +100,6 @@ export const FlowLoader: React.FC = (props) => {
     const port =
       Number(params.get("port") || locationPortIfNot3000) ||
       (bootstrapData?.port ?? 8545);
-
-    console.log("Rendering", fileName, flow.node);
 
     return (
       <PortsContext.Provider value={ports.current}>

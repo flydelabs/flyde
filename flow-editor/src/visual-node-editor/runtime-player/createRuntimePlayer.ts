@@ -23,7 +23,6 @@ export const createRuntimePlayer = (): RuntimePlayer => {
   let queue: DebuggerEvent[] = [];
 
   const playEvents = (fromDt: number, untilDt: number) => {
-    // console.log(queue);
     // assumes sorting order
     const toPlay = queue; // .filter((e) => e.dt < untilDt);
     queue = []; // queue.filter((e) => e.dt >= untilDt);

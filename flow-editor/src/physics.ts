@@ -82,7 +82,7 @@ export const itrPhysics = <T extends Entity>(dt: number, e: T): T => {
 
   const newV = vAdd(vMul(a, mod), v);
   const newP = vAdd(vMul(newV, mod), p);
-  // console.log({a, mod, newV, newP});
+
   return { ...(e as any), p: newP, v: newV, f: vec(0, 0) };
 };
 

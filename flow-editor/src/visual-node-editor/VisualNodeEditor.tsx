@@ -970,8 +970,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                 boardPos,
                 parentViewport
               );
-              console.log({ toSelect, selectionBox });
-
               const newSelected = e.shiftKey
                 ? [...selected, ...toSelect]
                 : toSelect;
@@ -1009,10 +1007,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             viewPort,
             parentViewport
           );
-
-          // const posInBoard = normal; //domToViewPort(eventPos, viewPort);
-
-          // console.log({bpy: boardPos.y, ny: normal.y, epy: eventPos.y, py: posInBoard.y});
 
           if (selectionBox) {
             setSelectionBox({ ...selectionBox, to: posInBoard });
@@ -1566,7 +1560,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
           const realFrom = logicalPosToRenderedPos(from, viewPort);
           const realTo = logicalPosToRenderedPos(to, viewPort);
-          console.log(from.x, to.x, " | ", realFrom.x, realTo.x);
 
           const { x, y, w, h } = getSelectionBoxRect(realFrom, realTo);
 
@@ -1727,7 +1720,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             `${orphanConnections.length} orphan connections removed`,
             "warning"
           );
-          console.log(
+          console.warn(
             `${orphanConnections.length} orphan connections removed`,
             orphanConnections
           );
@@ -2427,7 +2420,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         InstanceViewProps["onPinMouseDown"]
       >((ins, pinId, pinType) => {
         if (pinType === "input") {
-          console.log(ins.id, pinId);
           setDraggedConnection({
             to: connectionNode(ins.id, pinId),
             from: undefined,

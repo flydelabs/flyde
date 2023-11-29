@@ -228,8 +228,6 @@ export const connect = (
         const sourceOutput = fromInstanceOutputs[fromInstancePinId];
 
         if (!sourceOutput) {
-          console.log(fromInstancePinId);
-
           throw new Error(
             `Output source - [${fromInstancePinId}] not found in node [${nodeId}]`
           );

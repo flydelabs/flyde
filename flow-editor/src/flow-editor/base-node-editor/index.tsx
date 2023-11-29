@@ -75,7 +75,6 @@ export const BaseNodeEditor: React.FC<BaseNodeEditorProps> = (props) => {
       if (completionOutputsStr === "[]") {
         array = [];
       }
-      console.log(completionOutputsStr, array);
       onChange({ ...node, completionOutputs: array });
     },
     [node, onChange]
@@ -127,29 +126,6 @@ export const BaseNodeEditor: React.FC<BaseNodeEditorProps> = (props) => {
       onChange(newNode);
     },
     [node, onChange]
-  );
-
-  const onChangeTypes = React.useCallback(
-    (code: string) => {
-      try {
-        const p: any = JSON.parse(code);
-        const newNode = produce(node, (draft) => {
-          Object.entries(p).forEach(([k, v]: [string, any]) => {
-            const input = draft.inputs[k];
-            const output = draft.outputs[k];
-            if (input) {
-              draft.inputs[k] = { ...input };
-            } else if (output) {
-              draft.outputs[k] = { ...output };
-            }
-          });
-        });
-        onChange(newNode);
-      } catch (e) {
-        console.error("cannot parse");
-      }
-    },
-    [onChange, node]
   );
 
   return (

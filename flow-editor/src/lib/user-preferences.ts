@@ -48,8 +48,6 @@ export const useUserPref = <T>(
 
   const setAndSave = (val: T) => {
     userPreferences.setItem(key, val);
-    console.log("Saved", key, val);
-
     setVal(val);
   };
 
