@@ -372,7 +372,7 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
     metaData.text
   );
   return (
-    <div className="action-button" onClick={_onClick}>
+    <div className="action-button" onClick={_onClick} data-type={type}>
       <Tooltip
         hoverOpenDelay={100}
         content={text}

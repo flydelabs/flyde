@@ -43,15 +43,15 @@ export const HeroExample: React.FC = () => {
   return (
     <div className="hero-example">
       <div className="buttons-container">
-        <Link className="button button--secondary" to="/playground">
+        <Link className="button button--secondary" to="https://play.flyde.dev">
           Online Playground
         </Link>
-        <Button
+        <button
           className={`button button--success button${!didRun && " nudge"}`}
           onClick={onRunExample}
         >
           Run Example 👇
-        </Button>
+        </button>
         <Link
           className="button button--primary"
           href="https://marketplace.visualstudio.com/items?itemName=flyde.flyde-vscode"

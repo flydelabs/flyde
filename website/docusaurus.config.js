@@ -170,10 +170,14 @@ const config = {
         style: "dark",
         links: [
           {
-            title: "Docs",
+            title: "Getting Started",
             items: [
               {
-                label: "Tutorial",
+                label: "Online Playground",
+                to: "https://play.flyde.dev",
+              },
+              {
+                label: "Tutorials",
                 to: "/docs/tutorials/hello-world-with-flyde",
               },
             ],
