@@ -1674,7 +1674,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       const backgroundStyle: any = {
         backgroundPositionX: roundNumber(-viewPort.pos.x * viewPort.zoom),
         backgroundPositionY: roundNumber(-viewPort.pos.y * viewPort.zoom),
-        backgroundSize: roundNumber(25 * viewPort.zoom) + "px",
+        backgroundSize: roundNumber(10 * viewPort.zoom) + "px",
       };
 
       // unoptimized code to get connected inputs
