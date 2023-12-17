@@ -43,6 +43,7 @@ import { vAdd } from "../physics";
 import { DataInspectionModal } from "./DataInspectionModal";
 import { useDebuggerContext } from "./DebuggerContext";
 import { useDependenciesContext } from "./DependenciesContext";
+import { DarkModeProvider } from "./DarkModeContext";
 
 export * from "./ports";
 export * from "./DebuggerContext";
@@ -69,6 +70,7 @@ export type FlydeFlowEditorProps = {
 
   initialPadding?: [number, number];
   disableScrolling?: boolean;
+  darkMode?: boolean;
 };
 
 const maxUndoStackSize = 50;
@@ -332,45 +334,47 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
         throw new Error("Impossible state");
       } else {
         return (
-          <React.Fragment>
-            {inspectedItem ? (
-              <DataInspectionModal
-                item={inspectedItem}
-                onClose={onCloseInspectedItemModal}
+          <DarkModeProvider value={props.darkMode ?? false}>
+            <React.Fragment>
+              {inspectedItem ? (
+                <DataInspectionModal
+                  item={inspectedItem}
+                  onClose={onCloseInspectedItemModal}
+                />
+              ) : null}
+              <VisualNodeEditor
+                currentInsId={ROOT_INS_ID}
+                ref={visualEditorRef}
+                key={editedNode.id}
+                boardData={editorBoardData}
+                onChangeBoardData={onChangeEditorBoardData}
+                node={editedNode}
+                onGoToNodeDef={onEditNode}
+                onChangeNode={onChangeNode}
+                resolvedDependencies={resolvedDependencies}
+                clipboardData={clipboardData}
+                onCopy={setClipboardData}
+                nodeIoEditable={!editedNode.id.startsWith("Trigger")}
+                onInspectPin={onInspectPin}
+                onShowOmnibar={showOmnibar}
+                onExtractInlineNode={props.onExtractInlineNode}
+                queuedInputsData={queuedInputsData}
+                initialPadding={props.initialPadding}
+                instancesWithErrors={instancesWithErrors}
+                disableScrolling={props.disableScrolling}
               />
-            ) : null}
-            <VisualNodeEditor
-              currentInsId={ROOT_INS_ID}
-              ref={visualEditorRef}
-              key={editedNode.id}
-              boardData={editorBoardData}
-              onChangeBoardData={onChangeEditorBoardData}
-              node={editedNode}
-              onGoToNodeDef={onEditNode}
-              onChangeNode={onChangeNode}
-              resolvedDependencies={resolvedDependencies}
-              clipboardData={clipboardData}
-              onCopy={setClipboardData}
-              nodeIoEditable={!editedNode.id.startsWith("Trigger")}
-              onInspectPin={onInspectPin}
-              onShowOmnibar={showOmnibar}
-              onExtractInlineNode={props.onExtractInlineNode}
-              queuedInputsData={queuedInputsData}
-              initialPadding={props.initialPadding}
-              instancesWithErrors={instancesWithErrors}
-              disableScrolling={props.disableScrolling}
-            />
 
-            {omniBarVisible ? (
-              <Omnibar
-                flow={flow}
-                resolvedNodes={resolvedDependencies}
-                onCommand={onOmnibarCmd}
-                visible={omniBarVisible}
-                onClose={hideOmnibar}
-              />
-            ) : null}
-          </React.Fragment>
+              {omniBarVisible ? (
+                <Omnibar
+                  flow={flow}
+                  resolvedNodes={resolvedDependencies}
+                  onCommand={onOmnibarCmd}
+                  visible={omniBarVisible}
+                  onClose={hideOmnibar}
+                />
+              ) : null}
+            </React.Fragment>
+          </DarkModeProvider>
         );
       }
     };

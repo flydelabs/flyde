@@ -47,7 +47,6 @@ export type PinViewProps = {
   onDoubleClick?: (id: string, e?: React.MouseEvent) => void;
   onShiftClick?: (id: string, e?: React.MouseEvent) => void;
   onClick: (id: string, type: PinType, e?: React.MouseEvent) => void;
-  rotate?: true;
   isClosestToMouse: boolean;
   description?: string;
   onToggleLogged: (insId: string, pinId: string, type: PinType) => void;
@@ -72,7 +71,6 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
     selected,
     type,
     connected,
-    rotate,
     optional,
     currentInsId,
     isClosestToMouse,
@@ -176,7 +174,6 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
           closest: isClosestToMouse,
           optional,
           connected,
-          rotate,
           "const-value": isDefined(constValue),
           "env-value": isDefined(constValue) && isEnvValue(constValue),
           // "is-logged": logged,
@@ -192,15 +189,13 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
           selected,
           connected,
           closest: isClosestToMouse,
-          rotate,
           optional,
           // "is-logged": logged,
           // "has-value": isDefined(runtimeData.lastValues.length)
           minimized: props.minimized,
           "error-pin": id === ERROR_PIN_ID,
         },
-        type,
-        rotate
+        type
       );
     }
   };
@@ -240,8 +235,6 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
       </div>
     );
   };
-
-  const tooltipDown = rotate && type === "input";
 
   const maybeStickyLabel = () => {
     if (props.type === "input" && props.isSticky) {
@@ -297,7 +290,6 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
             pinType: type,
             isMain: false,
           })}
-          data-place={tooltipDown ? "bottom" : null}
           onDoubleClick={(e) =>
             props.onDoubleClick && props.onDoubleClick(id, e)
           }

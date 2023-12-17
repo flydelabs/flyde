@@ -64,28 +64,28 @@ $half-of-pin-height: 16px;
     }
 
     &.size-small {
-      font-size: 14px;
-      padding: 3px 10px 2px;
+      // font-size: 14px;
+      // padding: 3px 10px 2px;
     }
 
     &.size-regular {
-      font-size: 18px;
-      padding: 6px 12px 4px;
+      // font-size: 18px;
+      // padding: 6px 12px 4px;
 
-      &:not(:hover):not(.selected):not(.closest) {
-        border-bottom-color: var(--node-color, transparent);
-      }
+      // &:not(:hover):not(.selected):not(.closest) {
+      // border-bottom-color: var(--node-color, transparent);
+      // }
     }
 
     &.size-large {
-      font-size: 24px;
-      padding: 8px 15px 6px;
-      border-radius: 8px;
-      border-width: 3px;
+      // font-size: 24px;
+      // padding: 8px 15px 6px;
+      // border-radius: 8px;
+      // border-width: 3px;
 
-      &:not(:hover):not(.selected):not(.closest) {
-        border: 3px solid var(--node-color, transparent);
-      }
+      // &:not(:hover):not(.selected):not(.closest) {
+      //   border: 3px solid var(--node-color, transparent);
+      // }
     }
   }
 

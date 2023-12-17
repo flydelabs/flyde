@@ -121,6 +121,7 @@ import { Action, ActionsMenu, ActionType } from "./ActionsMenu/ActionsMenu";
 import { MainInstanceEventsIndicator } from "./MainInstanceEventsIndicator";
 import { HelpBubble } from "./HelpBubble";
 import { safelyGetNodeDef } from "../flow-editor/getNodeDef";
+import { useDarkMode } from "../flow-editor/DarkModeContext";
 
 const MemodSlider = React.memo(Slider);
 
@@ -256,6 +257,8 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       } = props;
 
       const { onImportNode } = useDependenciesContext();
+
+      const darkMode = useDarkMode();
 
       const { reportEvent } = usePorts();
 
@@ -2485,7 +2488,9 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       try {
         return (
           <ContextMenu
-            className={classNames("visual-node-editor", props.className)}
+            className={classNames("visual-node-editor", props.className, {
+              dark: 8,
+            })}
             data-id={node.id}
             content={getContextMenu()}
             disabled={!isBoardInFocus.current}

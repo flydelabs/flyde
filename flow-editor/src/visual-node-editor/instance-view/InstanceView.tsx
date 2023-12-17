@@ -56,6 +56,7 @@ import {
 } from "@blueprintjs/core";
 import ReactDOM from "react-dom";
 import { NodeStyleMenu } from "./NodeStyleMenu";
+import { useDarkMode } from "../../flow-editor/DarkModeContext";
 
 export const PIECE_HORIZONTAL_PADDING = 25;
 export const PIECE_CHAR_WIDTH = 11;
@@ -228,6 +229,8 @@ export const InstanceView: React.FC<InstanceViewProps> =
       onPinMouseUp,
       onPinMouseDown,
     } = props;
+
+    const dark = useDarkMode();
 
     const { id } = instance;
 
@@ -755,7 +758,8 @@ export const InstanceView: React.FC<InstanceViewProps> =
             className={classNames(
               "ins-view-inner",
               innerCms,
-              `size-${theme.size}`
+              `size-${theme.size}`,
+              { dark: dark }
             )}
             onClick={_onSelect}
             onDoubleClick={onDblClick}

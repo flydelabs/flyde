@@ -6,7 +6,7 @@ imports:
 node:
   instances:
     - pos:
-        x: -702.4322045898438
+        x: -701.4322045898438
         y: 137.9009524536133
       id: Inline-value-Hello from ${i76
       inputConfig: {}
@@ -39,7 +39,7 @@ node:
             fontWeight: "500"
         description: Custom inline value
     - pos:
-        x: -760.5914031982422
+        x: -761.5914031982422
         y: -366.36034606218334
       id: Get User's Country-ins
       inputConfig: {}
@@ -126,13 +126,17 @@ node:
         size: large
         color: "#f15bb5"
     - pos:
-        x: -825.1244494628907
+        x: -826.1244494628907
         y: -243.92419058561325
       id: Get Country Name And Capital-ins
       inputConfig: {}
+      visibleInputs:
+        - body
+        - __trigger
       visibleOutputs:
         - name
         - capital
+        - __error
       node:
         id: Get Country Name And Capital
         inputs:
@@ -234,8 +238,8 @@ node:
         size: large
         color: "#9b5de5"
     - pos:
-        x: -482.2963232421875
-        y: -37.000313110351556
+        x: -501.2264990234375
+        y: -43.43125183105468
       id: cl8x5r4qp00074666lb382z1c
       inputConfig: {}
       node:
@@ -492,6 +496,12 @@ node:
       to:
         insId: cl8x5r4qp00074666lb382z1c
         pinId: city
+    - from:
+        insId: Get Country Name And Capital-ins
+        pinId: __error
+      to:
+        insId: cl8x5r4qp00074666lb382z1c
+        pinId: city
   id: ApisCombination
   inputs: {}
   outputs:
@@ -517,8 +527,8 @@ node:
       x: -499.82438378976735
       y: 706.7650396699393
     output:
-      x: -542.1955734198395
-      y: 285.11202786459074
+      x: -545.085343927652
+      y: 260.61263821615324
     response:
       x: -506.3386688159596
       y: 488.67302443385125
