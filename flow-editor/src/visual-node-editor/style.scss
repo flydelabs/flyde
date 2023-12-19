@@ -15,8 +15,6 @@
 @import "../vars.scss";
 
 .visual-node-editor {
-  // background-image: url("https://www.transparenttextures.com/patterns/3px-tile.png");
-
   &:not(.dark) {
     background: $gray-100;
   }
@@ -48,12 +46,11 @@
     flex: 1;
     overflow: hidden;
     // box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.5);
-    background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%2CBCDCF' fill-opacity='0.4' fill-rule='evenodd'%3E%3Ccircle cx='1' cy='1' r='1'/%3E%3C/g%3E%3C/svg%3E");
-    // background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 100 100'%3E%3Crect x='0' y='0' width='98' height='98' fill-opacity='0.8' fill='%2327363E'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%2CBCDCF' fill-opacity='0.2' fill-rule='evenodd'%3E%3Ccircle cx='10' cy='10' r='1'/%3E%3C/g%3E%3C/svg%3E");
   }
 
   &.dark > main {
-    background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%20A0A0A' fill-opacity='0.8' fill-rule='evenodd'%3E%3Ccircle cx='1' cy='1' r='1'/%3E%3C/g%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%20A0A0A' fill-opacity='0.8' fill-rule='evenodd'%3E%3Ccircle cx='10' cy='10' r='1'/%3E%3C/g%3E%3C/svg%3E");
   }
 
   .node-inputs,
