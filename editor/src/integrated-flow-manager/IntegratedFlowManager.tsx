@@ -47,7 +47,6 @@ import { useEffect } from "react";
 import _ from "lodash";
 import { useBootstrapData } from "./use-bootstrap-data";
 import type { ImportablesResult } from "@flyde/dev-server";
-import { useDarkMode } from "usehooks-ts";
 
 export const PIECE_HEIGHT = 28;
 
