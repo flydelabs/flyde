@@ -27,7 +27,7 @@ export const ConnectionViewPath: React.FC<ConnectionViewPathProps> = forwardRef(
       curvature: 0.15,
     });
 
-    const strokeWidth = 3 * zoom;
+    const strokeWidth = 2.5 * zoom;
     const strokeDasharray = dashed ? 6 * zoom : undefined;
 
     return (

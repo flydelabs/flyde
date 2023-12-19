@@ -6,11 +6,7 @@ import Draggable from "react-draggable";
 // ;
 import { Pos } from "@flyde/core";
 
-// export const PIECE_HORIZONTAL_PADDING = 25;
-// export const PIECE_CHAR_WIDTH = 11;
-// export const MIN_WIDTH_PER_PIN = 40;
-
-import { MenuItemProps } from "@blueprintjs/core";
+import { useDarkMode } from "../../flow-editor/DarkModeContext";
 
 export interface BaseNodeViewContextItem {
   label: string;
@@ -47,6 +43,8 @@ export const BaseNodeView: React.FC<BaseNodeViewProps> =
       displayMode,
     } = props;
 
+    const dark = useDarkMode();
+
     const _onDragStart = React.useCallback(
       (event: any, data: any) => {
         onDragStart(event, data);
@@ -79,6 +77,7 @@ export const BaseNodeView: React.FC<BaseNodeViewProps> =
 
     const cm = classNames("base-node-view", props.className, {
       dragged,
+      dark,
       "display-mode": displayMode,
     });
 

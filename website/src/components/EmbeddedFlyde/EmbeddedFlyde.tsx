@@ -38,6 +38,7 @@ import "@flyde/flow-editor/src/index.scss";
 import produce from "immer";
 import BrowserOnly from "@docusaurus/BrowserOnly";
 import { EditorDebuggerClient } from "@site/../remote-debugger/dist";
+import { useDarkMode } from "usehooks-ts";
 
 // (global as any).vm2 = fakeVm;
 
@@ -113,6 +114,8 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = (props) => {
     useState<Pick<EditorDebuggerClient, "onBatchedEvents">>();
 
   const [debouncedFlow] = useDebounce(resolvedDeps, 500);
+
+  const darkMode = useDarkMode();
 
   const onImportNode: DependenciesContextData["onImportNode"] = async (
     importedNode,
@@ -233,6 +236,7 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = (props) => {
     initialPadding,
     onExtractInlineNode: noop as any,
     disableScrolling: true,
+    darkMode: darkMode.isDarkMode,
   };
 
   useEffect(() => {

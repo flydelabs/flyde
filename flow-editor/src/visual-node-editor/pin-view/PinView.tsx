@@ -16,6 +16,7 @@ import {
 import { getPinDomId } from "../dom-ids";
 import { valuePreview } from "@flyde/remote-debugger";
 import { calcHistoryContent, useHistoryHelpers } from "./helpers";
+import { useDarkMode } from "../../flow-editor/DarkModeContext";
 export const PIN_HEIGHT = 23;
 
 export type InputPinViewProps = {
@@ -47,7 +48,6 @@ export type PinViewProps = {
   onDoubleClick?: (id: string, e?: React.MouseEvent) => void;
   onShiftClick?: (id: string, e?: React.MouseEvent) => void;
   onClick: (id: string, type: PinType, e?: React.MouseEvent) => void;
-  rotate?: true;
   isClosestToMouse: boolean;
   description?: string;
   onToggleLogged: (insId: string, pinId: string, type: PinType) => void;
@@ -72,7 +72,6 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
     selected,
     type,
     connected,
-    rotate,
     optional,
     currentInsId,
     isClosestToMouse,
@@ -86,6 +85,8 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
     id,
     type
   );
+
+  const dark = useDarkMode();
 
   const getContextMenu = () => {
     const inspectMenuItem = (
@@ -176,12 +177,12 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
           closest: isClosestToMouse,
           optional,
           connected,
-          rotate,
           "const-value": isDefined(constValue),
           "env-value": isDefined(constValue) && isEnvValue(constValue),
           // "is-logged": logged,
           // "is-breakpoint": breakpoint,
           minimized: props.minimized,
+          dark,
         },
         type
       );
@@ -192,15 +193,14 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
           selected,
           connected,
           closest: isClosestToMouse,
-          rotate,
           optional,
           // "is-logged": logged,
           // "has-value": isDefined(runtimeData.lastValues.length)
           minimized: props.minimized,
           "error-pin": id === ERROR_PIN_ID,
+          dark,
         },
-        type,
-        rotate
+        type
       );
     }
   };
@@ -240,8 +240,6 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
       </div>
     );
   };
-
-  const tooltipDown = rotate && type === "input";
 
   const maybeStickyLabel = () => {
     if (props.type === "input" && props.isSticky) {
@@ -297,11 +295,10 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
             pinType: type,
             isMain: false,
           })}
-          data-place={tooltipDown ? "bottom" : null}
           onDoubleClick={(e) =>
             props.onDoubleClick && props.onDoubleClick(id, e)
           }
-          className={`pin-inner`}
+          className={classNames(`pin-inner`, { dark })}
           onClick={onClick}
           content={getContextMenu()}
         >

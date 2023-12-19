@@ -1,9 +1,10 @@
 @import "react18-json-view/src/style";
+@import "../vars.scss";
 
 $selection-color: #007ec6;
 $selection-text-color: #e9e9e9;
 
-$font-family: Nunito, sans-serif;
+$font-family: Inter, sans-serif;
 
 $shadow-a: 0px 0px 10px 2px rgba(48, 48, 48, 0.15);
 
@@ -22,17 +23,19 @@ $tea-green: #dff2baff;
 
 $output-color: #ffd5c9;
 
+$black: #000000;
+$white: #ffffff;
+
 @mixin base-node($bg-color: white) {
-  color: #000000;
-  background: $bg-color;
   font-family: $font-family;
-  border: 2px solid transparent;
-  box-shadow: $shadow-a;
+  border: 2px solid;
+  border-radius: 5px;
   user-select: none;
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 600;
   text-align: center;
-  padding: 8px 15px 6px;
+  padding: 10px 30px 10px;
+  line-height: 1;
   transition: background-color ease-in-out 0.1s, box-shadow ease-in-out 0.2s;
   max-width: 400px;
   white-space: nowrap;
@@ -48,23 +51,61 @@ $output-color: #ffd5c9;
   position: relative;
   z-index: 1; // added so that it is above pin view when it is retracted when minimized
 
-  &.selected {
-    background: $selection-color;
-    color: $selection-text-color;
-
-    transition: background-color ease-in-out 0.05s;
+  &:not(.selected) {
+    &:hover,
+    &.closest {
+      border-style: dashed;
+    }
   }
 
-  &:hover:not(.selected) {
-    border-color: $selection-color;
+  &:not(.dark) {
+    color: #000000;
+    background: $gray-50;
+    border-color: $gray-300;
+
+    &.closest:not(.selected) {
+      border-color: $gray-400;
+    }
+
+    &:hover:not(.selected) {
+      border-color: $gray-600;
+    }
+
+    &.selected {
+      border-color: $gray-800;
+      border-style: solid;
+      background: white;
+      // color: $selection-text-color;
+
+      transition: background-color ease-in-out 0.05s;
+    }
+  }
+
+  &.dark {
+    color: $neutral-50;
+    background: $neutral-800;
+    border-color: $neutral-500;
+
+    &.closest:not(.selected) {
+      border-color: $neutral-400;
+    }
+
+    &:hover:not(.selected) {
+      border-color: $neutral-300;
+    }
+
+    &.selected {
+      border-color: $neutral-200;
+      border-style: solid;
+      background: $neutral-900;
+      // color: $selection-text-color;
+
+      transition: background-color ease-in-out 0.05s;
+    }
   }
 
   &.dragged {
     opacity: 0.8;
-  }
-
-  &.closest {
-    border: 2px dashed $selection-color;
   }
 }
 

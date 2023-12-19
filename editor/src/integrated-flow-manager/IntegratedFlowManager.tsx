@@ -374,6 +374,7 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
           <div className={classNames("stage-wrapper", { running: false })}>
             <DebuggerContextProvider value={debuggerContextValue}>
               <FlowEditor
+                darkMode={bootstrapData?.darkMode}
                 key={props.integratedSource}
                 state={editorState}
                 onChangeEditorState={setEditorState}

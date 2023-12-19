@@ -7,6 +7,7 @@ export type BootstrapData = {
   dependencies: ResolvedFlydeFlowDefinition["dependencies"];
   port: number;
   executionId: string;
+  darkMode: boolean;
 };
 
 export const useBootstrapData = (): BootstrapData | undefined => {
