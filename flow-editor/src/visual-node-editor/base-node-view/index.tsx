@@ -95,8 +95,6 @@ export const BaseNodeView: React.FC<BaseNodeViewProps> =
       "display-mode": displayMode,
     });
 
-    console.log({ dark });
-
     const draggableContent = (
       <span className="base-node-view-wrapper">
         <div className={cm} style={zoomFixStyle} id={props.domId}>

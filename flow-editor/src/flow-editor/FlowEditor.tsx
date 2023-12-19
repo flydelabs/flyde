@@ -44,6 +44,7 @@ import { DataInspectionModal } from "./DataInspectionModal";
 import { useDebuggerContext } from "./DebuggerContext";
 import { useDependenciesContext } from "./DependenciesContext";
 import { DarkModeProvider } from "./DarkModeContext";
+import { useDarkMode } from "usehooks-ts";
 
 export * from "./ports";
 export * from "./DebuggerContext";
@@ -329,12 +330,14 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
       []
     );
 
+    const { isDarkMode } = useDarkMode();
+
     const renderInner = () => {
       if (isInlineValueNode(editedNode)) {
         throw new Error("Impossible state");
       } else {
         return (
-          <DarkModeProvider value={props.darkMode ?? false}>
+          <DarkModeProvider value={props.darkMode ?? isDarkMode}>
             <React.Fragment>
               {inspectedItem ? (
                 <DataInspectionModal

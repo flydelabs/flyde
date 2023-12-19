@@ -16,6 +16,7 @@ import { usePrompt } from "../../flow-editor/ports";
 import { calcHistoryContent, useHistoryHelpers } from "../pin-view/helpers";
 import { getInputName } from "@flyde/core";
 import { getPinDomId } from "../dom-ids";
+import { useDarkMode } from "../../flow-editor/DarkModeContext";
 
 export interface NodeIoViewProps {
   id: string;
@@ -224,9 +225,11 @@ export const NodeIoView: React.FC<NodeIoViewProps> = React.memo(
       [id, onMouseDown, type]
     );
 
+    const dark = useDarkMode();
+
     return (
       <BaseNodeView
-        className={classNames(`node-io-view`, type)}
+        className={classNames(`node-io-view`, type, { dark })}
         pos={pos}
         onDragEnd={onDragEnd}
         onDragStart={onDragStart}
@@ -246,6 +249,7 @@ export const NodeIoView: React.FC<NodeIoViewProps> = React.memo(
               className={classNames("node-io-view-inner", {
                 closest,
                 selected,
+                dark,
               })}
               id={getPinDomId({
                 fullInsIdPath: fullInsIdPath(
