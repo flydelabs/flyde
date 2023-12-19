@@ -354,8 +354,6 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
     [currentResolvedDeps, onImportNode, queryImportables]
   );
 
-  const darkMode = useDarkMode();
-
   return (
     <div className={classNames("app", { embedded: isEmbedded })}>
       <DependenciesContextProvider value={dependenciesContextValue}>
