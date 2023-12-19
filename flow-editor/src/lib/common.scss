@@ -40,6 +40,7 @@ $white: #ffffff;
   max-width: 400px;
   white-space: nowrap;
   overflow: hidden;
+  -webkit-font-smoothing: antialiased;
 
   // display: -webkit-box;
   // -webkit-box-orient: vertical;
@@ -60,7 +61,7 @@ $white: #ffffff;
 
   &:not(.dark) {
     color: #000000;
-    background: $gray-50;
+    background: $white;
     border-color: $gray-300;
 
     &.closest:not(.selected) {

@@ -8,6 +8,7 @@ $MINIMIZED_WIRE_LENGTH: 6px;
 
 @mixin colored-pin($default, $hover, $selected, $dark-default) {
   .pin-inner {
+    -webkit-font-smoothing: antialiased;
     &:not(.dark) {
       border-color: $default;
     }
