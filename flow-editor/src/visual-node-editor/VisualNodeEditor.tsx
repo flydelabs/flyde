@@ -2489,7 +2489,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         return (
           <ContextMenu
             className={classNames("visual-node-editor", props.className, {
-              dark: 8,
+              dark: darkMode,
             })}
             data-id={node.id}
             content={getContextMenu()}

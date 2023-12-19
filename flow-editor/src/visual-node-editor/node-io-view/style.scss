@@ -3,21 +3,22 @@
 .node-io-view {
   .node-io-view-inner {
     @include base-node;
-    font-size: 20px;
-    font-weight: 600;
-    padding: 3px 8px;
-    border-radius: 5px;
+    line-height: 1;
+    font-size: 18px;
+    padding: 6px 8px;
+    border-radius: 2px;
+    font-weight: 500;
   }
 
   &.input {
     .node-io-view-inner {
-      @include custom-node-color(#e7f8ff);
+      border: 2px solid $tblue-300;
     }
   }
 
   &.output {
     .node-io-view-inner {
-      @include custom-node-color($output-color);
+      border: 2px solid $green-300;
     }
   }
 

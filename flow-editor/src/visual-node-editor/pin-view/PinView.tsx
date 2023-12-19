@@ -16,6 +16,7 @@ import {
 import { getPinDomId } from "../dom-ids";
 import { valuePreview } from "@flyde/remote-debugger";
 import { calcHistoryContent, useHistoryHelpers } from "./helpers";
+import { useDarkMode } from "../../flow-editor/DarkModeContext";
 export const PIN_HEIGHT = 23;
 
 export type InputPinViewProps = {
@@ -84,6 +85,8 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
     id,
     type
   );
+
+  const dark = useDarkMode();
 
   const getContextMenu = () => {
     const inspectMenuItem = (
@@ -179,6 +182,7 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
           // "is-logged": logged,
           // "is-breakpoint": breakpoint,
           minimized: props.minimized,
+          dark,
         },
         type
       );
@@ -194,6 +198,7 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
           // "has-value": isDefined(runtimeData.lastValues.length)
           minimized: props.minimized,
           "error-pin": id === ERROR_PIN_ID,
+          dark,
         },
         type
       );
@@ -293,7 +298,7 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
           onDoubleClick={(e) =>
             props.onDoubleClick && props.onDoubleClick(id, e)
           }
-          className={`pin-inner`}
+          className={classNames(`pin-inner`, { dark })}
           onClick={onClick}
           content={getContextMenu()}
         >

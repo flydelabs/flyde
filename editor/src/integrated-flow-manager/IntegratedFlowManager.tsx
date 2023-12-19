@@ -47,6 +47,7 @@ import { useEffect } from "react";
 import _ from "lodash";
 import { useBootstrapData } from "./use-bootstrap-data";
 import type { ImportablesResult } from "@flyde/dev-server";
+import { useDarkMode } from "usehooks-ts";
 
 export const PIECE_HEIGHT = 28;
 
@@ -353,6 +354,8 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
     [currentResolvedDeps, onImportNode, queryImportables]
   );
 
+  const darkMode = useDarkMode();
+
   return (
     <div className={classNames("app", { embedded: isEmbedded })}>
       <DependenciesContextProvider value={dependenciesContextValue}>
@@ -374,6 +377,7 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
           <div className={classNames("stage-wrapper", { running: false })}>
             <DebuggerContextProvider value={debuggerContextValue}>
               <FlowEditor
+                darkMode={darkMode.isDarkMode}
                 key={props.integratedSource}
                 state={editorState}
                 onChangeEditorState={setEditorState}

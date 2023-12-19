@@ -6,8 +6,8 @@ imports:
 node:
   instances:
     - pos:
-        x: -701.4322045898438
-        y: 137.9009524536133
+        x: -899.0077661132813
+        y: 16.827221984863286
       id: Inline-value-Hello from ${i76
       inputConfig: {}
       node:
@@ -39,8 +39,8 @@ node:
             fontWeight: "500"
         description: Custom inline value
     - pos:
-        x: -761.5914031982422
-        y: -366.36034606218334
+        x: -840.1503631591797
+        y: -319.2442266774177
       id: Get User's Country-ins
       inputConfig: {}
       node:
@@ -126,17 +126,15 @@ node:
         size: large
         color: "#f15bb5"
     - pos:
-        x: -826.1244494628907
-        y: -243.92419058561325
+        x: -884.7177111816407
+        y: -211.29189688444137
       id: Get Country Name And Capital-ins
       inputConfig: {}
       visibleInputs:
         - body
-        - __trigger
       visibleOutputs:
         - name
         - capital
-        - __error
       node:
         id: Get Country Name And Capital
         inputs:
@@ -238,8 +236,8 @@ node:
         size: large
         color: "#9b5de5"
     - pos:
-        x: -501.2264990234375
-        y: -43.43125183105468
+        x: -652.05962890625
+        y: -112.76483947753906
       id: cl8x5r4qp00074666lb382z1c
       inputConfig: {}
       node:
@@ -483,7 +481,7 @@ node:
         pinId: value
       to:
         insId: __this
-        pinId: output
+        pinId: Bob 42
     - from:
         insId: cl8x5r4qp00074666lb382z1c
         pinId: value
@@ -496,16 +494,10 @@ node:
       to:
         insId: cl8x5r4qp00074666lb382z1c
         pinId: city
-    - from:
-        insId: Get Country Name And Capital-ins
-        pinId: __error
-      to:
-        insId: cl8x5r4qp00074666lb382z1c
-        pinId: city
   id: ApisCombination
   inputs: {}
   outputs:
-    output:
+    Bob 42:
       type: any
       optional: false
       delayed: false
@@ -516,6 +508,9 @@ node:
     Bob:
       x: -464.39225613814307
       y: -267.86263932413937
+    גכעכגע:
+      x: -879.2823974609375
+      y: -510.9079638671875
   outputsPosition:
     json:
       x: -441.98276309426666
@@ -527,10 +522,16 @@ node:
       x: -499.82438378976735
       y: 706.7650396699393
     output:
-      x: -545.085343927652
-      y: 260.61263821615324
+      x: -663.9406906073395
+      y: 121.90423367513762
     response:
       x: -506.3386688159596
       y: 488.67302443385125
+    Bob 42:
+      x: -736.217912287027
+      y: 209.40813992513762
+    גככג:
+      x: -589.98
+      y: -561
   completionOutputs:
-    - output
+    - Bob 42

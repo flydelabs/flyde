@@ -23,6 +23,9 @@ $tea-green: #dff2baff;
 
 $output-color: #ffd5c9;
 
+$black: #000000;
+$white: #ffffff;
+
 @mixin base-node($bg-color: white) {
   font-family: $font-family;
   border: 2px solid;

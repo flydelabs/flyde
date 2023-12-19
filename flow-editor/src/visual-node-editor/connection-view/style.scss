@@ -88,7 +88,7 @@ path.connection {
   path {
     stroke-width: 1.5;
     stroke-linecap: round;
-    stroke: url(#gradient);
+    stroke: $neutral-400;
 
     &.future-add {
       stroke: #007dc6a5;
@@ -96,16 +96,6 @@ path.connection {
 
     &.future-remove {
       stroke: #c60000a5;
-    }
-  }
-
-  linearGradient#gradient {
-    stop:nth-child(2) {
-      stop-color: #999999;
-    }
-
-    stop:nth-child(1) {
-      stop-color: #6c6c6c;
     }
   }
 

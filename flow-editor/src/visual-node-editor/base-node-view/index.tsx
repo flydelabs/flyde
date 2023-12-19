@@ -6,7 +6,6 @@ import Draggable from "react-draggable";
 // ;
 import { Pos } from "@flyde/core";
 
-import { MenuItemProps } from "@blueprintjs/core";
 import { useDarkMode } from "../../flow-editor/DarkModeContext";
 
 export interface BaseNodeViewContextItem {
@@ -95,6 +94,8 @@ export const BaseNodeView: React.FC<BaseNodeViewProps> =
     const outerCm = classNames("base-node-view-vp-fixer", {
       "display-mode": displayMode,
     });
+
+    console.log({ dark });
 
     const draggableContent = (
       <span className="base-node-view-wrapper">

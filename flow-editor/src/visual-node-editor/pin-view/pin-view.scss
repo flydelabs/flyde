@@ -6,9 +6,15 @@ $NODE_PIN_HEIGHT: 12px;
 $MINIMIZED_PIN_SIZE: 14px;
 $MINIMIZED_WIRE_LENGTH: 6px;
 
-@mixin colored-pin($default, $hover, $selected) {
+@mixin colored-pin($default, $hover, $selected, $dark-default) {
   .pin-inner {
-    border-color: $default;
+    &:not(.dark) {
+      border-color: $default;
+    }
+
+    &.dark {
+      border-color: $dark-default;
+    }
   }
 
   &.closest:not(.selected),
@@ -21,8 +27,15 @@ $MINIMIZED_WIRE_LENGTH: 6px;
 
   &.selected {
     .pin-inner {
-      border-color: $selected;
-      background: $gray-50;
+      &:not(.dark) {
+        border-color: $selected;
+        background: $gray-50;
+      }
+
+      &.dark {
+        border-color: $default;
+        background: $black;
+      }
     }
   }
 }
@@ -62,8 +75,19 @@ $MINIMIZED_WIRE_LENGTH: 6px;
     padding: 2px 4px 2px 4px;
     line-height: 1;
 
-    background: white;
-    border: 2px solid $gray-300;
+    border-width: 2px;
+    border-style: solid;
+
+    &:not(.dark) {
+      background: white;
+      border-color: $gray-300;
+    }
+
+    &.dark {
+      color: $neutral-50;
+      background: $neutral-800;
+      border-color: $gray-700;
+    }
 
     white-space: nowrap;
 
@@ -75,20 +99,20 @@ $MINIMIZED_WIRE_LENGTH: 6px;
   }
 
   &.input {
-    @include colored-pin($tblue-300, $tblue-500, $tblue-600);
+    @include colored-pin($tblue-300, $tblue-500, $tblue-600, $tblue-700);
   }
 
   &.output {
-    @include colored-pin($green-300, $green-500, $green-600);
+    @include colored-pin($green-300, $green-500, $green-600, $green-700);
     flex-direction: column-reverse;
   }
 
   &[data-pin-id="__trigger"].input {
-    @include colored-pin($purple-300, $purple-500, $purple-600);
+    @include colored-pin($purple-300, $purple-500, $purple-600, $purple-700);
   }
 
   &[data-pin-id="__error"] {
-    @include colored-pin($red-300, $red-500, $red-600);
+    @include colored-pin($red-300, $red-500, $red-600, $red-700);
   }
 
   &.has-value {
@@ -104,7 +128,12 @@ $MINIMIZED_WIRE_LENGTH: 6px;
   &.const-value {
     &.input {
       .pin-inner {
-        background: #ddffe4;
+        &:not(.dark) {
+          background: $green-200;
+        }
+        &.dark {
+          background: $green-800;
+        }
         white-space: nowrap;
         // transition: all ease-out 1.5s;
         max-width: 150px;
@@ -116,19 +145,6 @@ $MINIMIZED_WIRE_LENGTH: 6px;
           font-size: 110%;
         }
       }
-    }
-
-    &.env-value {
-      .pin-inner {
-        background: #f9ffaa;
-      }
-    }
-  }
-
-  &.is-logged {
-    .pin-inner {
-      border: 3px #4ccfec;
-      box-shadow: 0px 0px 4px 0px #4ccfec;
     }
   }
 
