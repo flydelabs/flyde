@@ -134,9 +134,9 @@ export default function Home(): JSX.Element {
 
   return (
     <Layout
-      title={`Flyde | AI-Assisted Visual Programming Tool`}
-      description="Flyde, the AI-assisted visual programming tool for VSCode.
-      Simplifies the development of APIs, webhooks, and bots."
+      title={`Flyde | Visual Programming. For Developers.`}
+      description="Flyde, open-source visual programming language.
+      Runs in the IDE, integrates with existing TypeScript code, browser and Node.js."
     >
       <HomepageHeader />
 

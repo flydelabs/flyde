@@ -340,7 +340,7 @@ export const AddNodeMenu: React.FC<AddNodeMenuProps> = (props) => {
       isOpen={true}
       title="Add Node Menu"
       onClose={props.onClose}
-      className="add-node-menu bp5-light"
+      className="add-node-menu"
       isCloseButtonShown={true}
     >
       <main className={classNames(Classes.DIALOG_BODY)}>
