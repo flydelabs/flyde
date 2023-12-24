@@ -1,104 +1,168 @@
 .flyde-flow-editor {
-    color: black !important;
+  color: black !important;
 
-    max-height: 500px;
-    height: 500px;
-    overflow: hidden;
+  overflow: hidden;
 
-    *, *:before, *:after{
-        box-sizing: border-box;
-    }
-    
-    html, body, div, span, object, iframe, figure, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, code, em, img, small, strike, strong, sub, sup, tt, b, u, i, ol, ul, li, fieldset, form, label, table, caption, tbody, tfoot, thead, tr, th, td, main, canvas, embed, footer, header, nav, section, video{
-        margin: 0;
-        padding: 0;
-        border: 0;
-        font-size: 100%;
-        font: inherit;
-        vertical-align: baseline;
-        text-rendering: optimizeLegibility;
-        -webkit-font-smoothing: antialiased;
-        text-size-adjust: none;
-    }
-    
-    footer, header, nav, section, main{
-        display: block;
-    }
-    
+  *,
+  *:before,
+  *:after {
+    box-sizing: border-box;
+  }
 
-    ol, ul{
-        list-style: none;
-    }
-    
-    blockquote, q{
-        quotes: none;
-    }
-    
-    blockquote:before, blockquote:after, q:before, q:after{
-        content: '';
-        content: none;
-    }
-    
-    table{
-        border-collapse: collapse;
-        border-spacing: 0;
-    }
-    
-    input{
-        -webkit-appearance: none;
-        border-radius: 0;
-    }
+  html,
+  body,
+  div,
+  span,
+  object,
+  iframe,
+  figure,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  blockquote,
+  pre,
+  a,
+  code,
+  em,
+  img,
+  small,
+  strike,
+  strong,
+  sub,
+  sup,
+  tt,
+  b,
+  u,
+  i,
+  ol,
+  ul,
+  li,
+  fieldset,
+  form,
+  label,
+  table,
+  caption,
+  tbody,
+  tfoot,
+  thead,
+  tr,
+  th,
+  td,
+  main,
+  canvas,
+  embed,
+  footer,
+  header,
+  nav,
+  section,
+  video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    text-size-adjust: none;
+  }
+
+  footer,
+  header,
+  nav,
+  section,
+  main {
+    display: block;
+  }
+
+  ol,
+  ul {
+    list-style: none;
+  }
+
+  blockquote,
+  q {
+    quotes: none;
+  }
+
+  blockquote:before,
+  blockquote:after,
+  q:before,
+  q:after {
+    content: "";
+    content: none;
+  }
+
+  table {
+    border-collapse: collapse;
+    border-spacing: 0;
+  }
+
+  input {
+    -webkit-appearance: none;
+    border-radius: 0;
+  }
 }
 
 .fib-btn {
-    margin-right: 5px;
+  margin-right: 5px;
 }
 
 input.input {
-    margin-right: 5px;
-    border: 1px solid var(--ifm-color-primary);
-    color: var(--ifm-color-primary);
-    background-color: var(--ifm-button-background-color);
-    // border: var(--ifm-button-border-width) solid var(--ifm-button-border-color);
-    border-radius: var(--ifm-button-border-radius);
-    // color: var(--ifm-button-color);
-    cursor: pointer;
-    display: inline-block;
-    font-size: calc(0.875rem * var(--ifm-button-size-multiplier));
-    font-weight: var(--ifm-button-font-weight);
-    line-height: 1.5;
-    padding: calc( var(--ifm-button-padding-vertical) * var(--ifm-button-size-multiplier) ) calc( var(--ifm-button-padding-horizontal) * var(--ifm-button-size-multiplier) );
-    text-align: center;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    user-select: none;
-    vertical-align: middle;
-    white-space: nowrap;
+  margin-right: 5px;
+  border: 1px solid var(--ifm-color-primary);
+  color: var(--ifm-color-primary);
+  background-color: var(--ifm-button-background-color);
+  // border: var(--ifm-button-border-width) solid var(--ifm-button-border-color);
+  border-radius: var(--ifm-button-border-radius);
+  // color: var(--ifm-button-color);
+  cursor: pointer;
+  display: inline-block;
+  font-size: calc(0.875rem * var(--ifm-button-size-multiplier));
+  font-weight: var(--ifm-button-font-weight);
+  line-height: 1.5;
+  padding: calc(
+      var(--ifm-button-padding-vertical) * var(--ifm-button-size-multiplier)
+    )
+    calc(
+      var(--ifm-button-padding-horizontal) * var(--ifm-button-size-multiplier)
+    );
+  text-align: center;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  vertical-align: middle;
+  white-space: nowrap;
 }
 
 .react-counter {
-    button {
-        font-size: 20px;
-    }
+  button {
+    font-size: 20px;
+  }
 
-    span {
-        font-size: 50px;
-        font-weight: 600;
-    }
+  span {
+    font-size: 50px;
+    font-weight: 600;
+  }
 }
 
 .integration-points {
-    width: 300px;
-    display: inline-block;
-    text-align: left;
+  width: 300px;
+  display: inline-block;
+  text-align: left;
 }
 
 .hero__subtitle {
-    max-width: 80%;
-    margin: 0 auto 20px;
+  max-width: 80%;
+  margin: 0 auto 20px;
+  font-size: 1.2rem;
 
-    a {
-        color: white;
-        font-weight: bold;
-    }
+  a {
+    color: white;
+    font-weight: bold;
+  }
 }

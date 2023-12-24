@@ -55,7 +55,7 @@ const FixWebpack5Plugin = () => ({
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: "Coding, Simplified: Visual Programming with Flyde",
+  title: "Visual Programming. For Developers.",
   tagline:
     "Experience the next level of abstraction in programming with Flyde's visual, flow-based approach and modular design",
   url: "https://www.flyde.dev",

@@ -44,7 +44,7 @@ import { useDarkMode } from "usehooks-ts";
 
 const historyPlayer = createHistoryPlayer();
 
-const initialPadding = [0, 0] as [number, number];
+const initialPadding = [0, 20] as [number, number];
 
 export interface EmbeddedFlydeProps {
   flowProps: {
@@ -55,6 +55,7 @@ export interface EmbeddedFlydeProps {
   };
   debugDelay: number;
   onOutput: (data: any) => void;
+  onCompleted?: (data: any) => void;
 }
 
 export type PlaygroundFlowDto = {
@@ -65,6 +66,7 @@ export type PlaygroundFlowDto = {
   onError: any;
   debugDelay?: number;
   player: RuntimePlayer;
+  onCompleted?: (data: any) => void;
 };
 
 const runFlow = ({
@@ -73,6 +75,7 @@ const runFlow = ({
   inputs,
   onError,
   debugDelay,
+  onCompleted,
   dependencies,
   player,
 }: PlaygroundFlowDto) => {
@@ -89,6 +92,7 @@ const runFlow = ({
       outputs: { [firstOutputName]: output },
       resolvedDeps: { ...dependencies, [flow.node.id]: flow.node },
       _debugger: localDebugger,
+      onCompleted,
       onBubbleError: (e) => {
         onError(e);
       },
@@ -252,6 +256,7 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = (props) => {
       onError: noop,
       debugDelay: debugDelay,
       player: runtimePlayerRef.current,
+      onCompleted: props.onCompleted,
     });
     const sub = props.flowProps.output.subscribe((data) => onOutput(data));
     setLocalDebugger(localDebugger);

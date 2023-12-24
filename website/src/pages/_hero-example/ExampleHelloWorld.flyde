@@ -1,0 +1,163 @@
+imports:
+  "@flyde/stdlib":
+    - Delay
+    - Concat
+node:
+  instances:
+    - pos:
+        x: -745.6308628148531
+        y: -164.62084499951794
+      id: hvnxp46iusf1g91k6dua576w
+      inputConfig:
+        delay:
+          mode: static
+          value: 4200
+      nodeId: Delay
+      style:
+        size: small
+        icon: fa-clock
+        color: "#00bbf9"
+    - pos:
+        x: -890.0921093750001
+        y: -381.6685205078125
+      id: Inline-value-Hello, -7i048oa
+      inputConfig: {}
+      node:
+        id: "Inline-value-Hello, "
+        inputs: {}
+        outputs:
+          value:
+            delayed: false
+        runFnRawCode: const result = ("Hello, "); Promise.resolve(result).then(val =>
+          outputs.value.next(val))
+        customViewCode: '"Hello, "'
+        dataBuilderSource: IkhlbGxvLCAi
+        templateType: value
+        completionOutputs:
+          - value
+        defaultStyle:
+          size: regular
+          icon: code
+          cssOverride:
+            fontFamily: monospace
+            fontWeight: "500"
+        description: Custom inline value
+      style:
+        size: regular
+        icon: code
+        color: "#00f5d4"
+        cssOverride:
+          fontFamily: monospace
+          fontWeight: "500"
+    - pos:
+        x: -769.3590283203125
+        y: -276.35265625
+      id: ApisCombination-4z1481x
+      inputConfig: {}
+      node:
+        id: Inline-value-World!
+        inputs: {}
+        outputs:
+          value:
+            delayed: false
+        runFnRawCode: const result = ("World!"); Promise.resolve(result).then(val =>
+          outputs.value.next(val))
+        customViewCode: '"World!"'
+        dataBuilderSource: IldvcmxkISI=
+        templateType: value
+        completionOutputs:
+          - value
+        defaultStyle:
+          size: regular
+          icon: code
+          cssOverride:
+            fontFamily: monospace
+            fontWeight: "500"
+        description: Custom inline value
+      style:
+        size: regular
+        icon: code
+        color: "#00f5d4"
+        cssOverride:
+          fontFamily: monospace
+          fontWeight: "500"
+    - pos:
+        x: -798.6117734787176
+        y: -85.88893284501296
+      id: ldrz8aku7b0eiiettjq0q8rt
+      inputConfig: {}
+      nodeId: Concat
+      style:
+        size: small
+        icon: fa-font
+        color: "#fee440"
+  connections:
+    - from:
+        insId: Inline-value-Hello, -7i048oa
+        pinId: value
+      to:
+        insId: ApisCombination-4z1481x
+        pinId: __trigger
+    - from:
+        insId: ApisCombination-4z1481x
+        pinId: value
+      to:
+        insId: hvnxp46iusf1g91k6dua576w
+        pinId: value
+    - from:
+        insId: hvnxp46iusf1g91k6dua576w
+        pinId: delayedValue
+      to:
+        insId: ldrz8aku7b0eiiettjq0q8rt
+        pinId: b
+    - from:
+        insId: ldrz8aku7b0eiiettjq0q8rt
+        pinId: value
+      to:
+        insId: __this
+        pinId: output
+    - from:
+        insId: Inline-value-Hello, -7i048oa
+        pinId: value
+      to:
+        insId: ldrz8aku7b0eiiettjq0q8rt
+        pinId: a
+  id: ApisCombination
+  inputs: {}
+  outputs:
+    output:
+      type: any
+      optional: false
+      delayed: false
+  inputsPosition:
+    city:
+      x: -187.27285824815934
+      y: -14.13215209416181
+    Bob:
+      x: -464.39225613814307
+      y: -267.86263932413937
+    "ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢":
+      x: -879.2823974609375
+      y: -510.9079638671875
+  outputsPosition:
+    json:
+      x: -441.98276309426666
+      y: 480.38719404276554
+    na:
+      x: -441.98276309426666
+      y: 480.38719404276554
+    result:
+      x: -499.82438378976735
+      y: 706.7650396699393
+    output:
+      x: -783.232804865152
+      y: 11.154386263028243
+    response:
+      x: -506.3386688159596
+      y: 488.67302443385125
+    Bob 42:
+      x: -736.217912287027
+      y: 209.40813992513762
+    "ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ":
+      x: -589.98
+      y: -561

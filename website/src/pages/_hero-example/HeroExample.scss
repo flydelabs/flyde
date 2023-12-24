@@ -1,208 +1,220 @@
 .hero-example {
+  position: relative;
 
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  height: 28rem;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1), 0px 3px 8px rgba(0, 0, 0, 0.8);
+  border: 1px solid #5e5e5e;
 
-    position: relative;
-    margin: 10px auto;
-    max-width: 800px;
-    top: -120px;
+  > main {
+    flex: 1;
+  }
+
+  .flow-wrapper {
+    display: flex;
+    flex: 1;
+  }
+
+  .buttons-container {
     z-index: 1;
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0px;
 
-    .buttons-container {
-        z-index: 1;
-        display: flex;
-        gap: 8px;
-        justify-content: center;
-        align-items: center;
-        margin: 20px 0px;
-
-        .gh-stars-wrapper {
-            display: flex;
-          }
+    .gh-stars-wrapper {
+      display: flex;
     }
+  }
 
-    .terminal-emulator {
-        background: #161616;
-        color: white;
-        // font-family: monospace;
-        flex: 1;
-        font-size: .8rem;
-        padding: 3px 8px;
+  .terminal-emulator {
+    background: #161616;
+    color: white;
+    // font-family: monospace;
+    flex: 1;
+    font-size: 0.8rem;
+    padding: 3px 8px;
+  }
+
+  .flyde-hero-example-wrapper {
+    flex-direction: row;
+    display: flex;
+    max-width: 100%;
+    border: 1px solid #d9d9d9;
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: -1px 1px 12px 3px rgb(125 125 125 / 17%);
+  }
+
+  /* animate button.nudge so it will shake a bit on the X axis every 3 seconds */
+  .nudge {
+    animation: nudge 4s infinite;
+    transform-origin: center center;
+    animation-delay: -2s;
+  }
+
+  @keyframes nudge {
+    0% {
+      transform: translateY(0);
+      background-color: var(--ifm-color-success);
     }
-
-    .flyde-hero-example-wrapper {
-        flex-direction: row;
-        display: flex;
-        max-width: 100%;
-        border: 1px solid #d9d9d9;
-        border-radius: 5px;
-        overflow: hidden;
-        box-shadow: -1px 1px 12px 3px rgb(125 125 125 / 17%);
+    46% {
+      transform: translateY(0);
+      background-color: var(--ifm-color-success);
     }
-
-    /* animate button.nudge so it will shake a bit on the X axis every 3 seconds */
-    .nudge {
-        animation: nudge 4s infinite;
-        transform-origin: center center;
-        animation-delay: -2s;
+    48% {
+      transform: translateY(0px) rotate(3deg);
+      background: var(--ifm-color-success-light);
     }
-
-    @keyframes nudge {
-        0% {
-            transform: translateY(0);
-            background-color: var(--ifm-color-success);
-        }
-        46% {
-            transform: translateY(0);
-            background-color: var(--ifm-color-success);
-        }
-        48% {
-            transform: translateY(0px) rotate(3deg);
-            background: var(--ifm-color-success-light);
-        }
-        50% {
-            transform: translateY(0) rotate((0deg));
-            background: var(--ifm-color-success-light);
-        }
-        52% {
-            transform: translateY(0px) rotate(-3deg);
-            background: var(--ifm-color-success-light);
-        }
-        54% {
-            transform: translateY(0) rotate(0deg);
-            background-color: var(--ifm-color-success);
-        }
-        100% {
-            transform: translateY(0);
-            background-color: var(--ifm-color-success);
-        }
+    50% {
+      transform: translateY(0) rotate((0deg));
+      background: var(--ifm-color-success-light);
     }
-
-    .flow-wrapper {
-        flex: 1;
-        flex-shrink: 0;
-        max-height: 320px;
-        min-width: 340px;
-
-        .flyde-flow-editor {
-            max-height: calc(100% - 20px);
-        }
-
-        .file-tag {
-            border-right: 1px solid #4f4f4f;
-        }
+    52% {
+      transform: translateY(0px) rotate(-3deg);
+      background: var(--ifm-color-success-light);
     }
-
-    .code-terminal-wrapper {
-        flex: 0;
-        min-width: 340px;
-        display: flex;
-        flex-direction: column;
+    54% {
+      transform: translateY(0) rotate(0deg);
+      background-color: var(--ifm-color-success);
     }
-
-    .code-wrapper {
-        flex: 0;
-        flex-shrink: 0;
-        // min-width: 340px;
-
-        display: flex;
-        flex-direction: column;
-
-         > span {
-            // code example (has no className)
-            flex: 1;
-            border-radius: 0 !important;
-
-
-            code {
-                background-color: inherit;
-                font-family: inherit;
-                font-size: inherit;
-                padding: inherit;
-                border-radius: 0;
-            }
-
-         }
+    100% {
+      transform: translateY(0);
+      background-color: var(--ifm-color-success);
     }
+  }
 
-    .terminal-wrapper {
-        display: flex;
-        flex-direction: column;
-        flex: 1;
+  .code-terminal-wrapper {
+    flex: 0;
+    min-width: 340px;
+    display: flex;
+    flex-direction: column;
+  }
 
-    } 
+  .code-wrapper {
+    flex: 1;
+    text-align: left;
 
+    display: flex;
+    flex-direction: column;
 
-    .flyde-flow-editor {
-        flex: 1;
-        flex-shrink: 0;
+    > span {
+      // code example (has no className)
+      flex: 1;
+      border-radius: 0 !important;
+
+      code {
+        background-color: inherit;
+        font-family: inherit;
+        font-size: inherit;
+        padding: inherit;
+        border-radius: 0;
+        border: 0;
+      }
     }
+  }
 
-    .code-example {
-        // display: flex;   
-        flex: 1;
-        font-size: 14px;
-    }
+  .terminal-wrapper {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 0;
+    flex-shrink: 0;
+    height: 100px;
+    overflow: auto;
+  }
 
+  .flyde-flow-editor {
+    flex: 1;
+    flex-shrink: 0;
+  }
 
+  .code-example {
+    // display: flex;
+    flex: 1;
+    font-size: 14px;
+  }
 
-    .viewport-controls-and-help {
-        display: none !important;
-    }
+  .viewport-controls-and-help {
+    display: none !important;
+  }
 
-    .actions-menu {
-        display: none;
-    }
+  .hero-example__tabs {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 0;
+    flex-shrink: 0;
+    width: 100%;
 
     .file-tag {
-        flex: 0;
-        // css for a file name tag like in vscode
-        background-color: #383838;
-        color: #cccccc;
-        padding: 0 5px;
-        font-size: 12px;
-        // margin-right: 5px;
-        width: 100%;
-        text-align: center;
-        display: block;
+      flex: 1;
     }
+  }
 
-    @media only screen and (max-width: 700px) {
-        margin: 0;
-        top: -140px;
+  .actions-menu {
+    display: none;
+  }
 
+  .file-tag {
+    flex: 0;
+    // css for a file name tag like in vscode
+    background-color: #383838;
+    color: #cccccc;
+    padding: 0 5px;
+    font-size: 12px;
+    // margin-right: 5px;
+    width: 100%;
+    text-align: center;
+    display: block;
 
-        .flyde-hero-example-wrapper { 
-            flex-direction: column ;
+    border-right: 1px solid #4f4f4f;
+    cursor: pointer;
 
-            .flow-wrapper {
-                max-height: 320px;
-
-                .flyde-flow-editor {
-                    height: 300px;
-                    max-height: 300px;
-                }
-            }
-
-            .code-wrapper {
-                height: 200px;
-            }
-
-            .terminal-emulator {
-                min-height: 100px;
-            }
-        }
-
-        .code-wrapper {
-            > span {
-                min-height: 170px !important;
-            }
-        }
-
-        .buttons-container {
-            flex-wrap: wrap;
-            margin-top: 42px;
-        }
+    &:hover {
+      background-color: #4f4f4f;
     }
+    &.selected {
+      background-color: #4f4f4f;
+      color: #ffffff;
+    }
+  }
 
+  // @media only screen and (max-width: 700px) {
+  //   margin: 0;
+  //   top: -140px;
 
+  //   .flyde-hero-example-wrapper {
+  //     flex-direction: column;
+
+  //     .flow-wrapper {
+  //       // max-height: 320px;
+
+  //       .flyde-flow-editor {
+  //         // height: 300px;
+  //         // max-height: 300px;
+  //       }
+  //     }
+
+  //     .code-wrapper {
+  //       height: 200px;
+  //     }
+
+  //     .terminal-emulator {
+  //       min-height: 100px;
+  //     }
+  //   }
+
+  //   .code-wrapper {
+  //     > span {
+  //       min-height: 170px !important;
+  //     }
+  //   }
+
+  //   .buttons-container {
+  //     flex-wrap: wrap;
+  //     margin-top: 42px;
+  //   }
+  // }
 }
