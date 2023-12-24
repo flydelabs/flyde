@@ -1,19 +1,19 @@
 .main-instance-events-indicator {
-    // small pill-like blue tag on the bottom-center of the screen
-    position: absolute;
-    bottom: max(10px, 5%);
-    left: 50%;
-    transform: translateX(-50%);
-    // background: #e7f8ff;
-    border-radius: 15px;
-    opacity: 0.8;
-    font-weight: 600;
-    color: #333;
-    z-index: 1;
-    
-    .status-text:after {
-      font-size: 12px;
-      padding: 2px 8px;
-      display: inline-block;
-    }
+  // small pill-like blue tag on the bottom-center of the screen
+  position: absolute;
+  bottom: max(10px, 5%);
+  left: 50%;
+  transform: translateX(-50%);
+
+  border-radius: 15px;
+  opacity: 0.8;
+  font-weight: 600;
+  color: #333;
+  z-index: 1;
+
+  .status-text:after {
+    font-size: 12px;
+    padding: 2px 8px;
+    display: inline-block;
   }
+}

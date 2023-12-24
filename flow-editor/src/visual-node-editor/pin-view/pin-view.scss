@@ -80,7 +80,7 @@ $MINIMIZED_WIRE_LENGTH: 6px;
     border-style: solid;
 
     &:not(.dark) {
-      background: white;
+      background: $white;
       border-color: $gray-300;
     }
 

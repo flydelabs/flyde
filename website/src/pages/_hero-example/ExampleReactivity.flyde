@@ -1,0 +1,161 @@
+imports:
+  "@flyde/stdlib":
+    - Interval
+    - Accumulate Values by Count
+    - Loop List
+    - Round Robin 2
+node:
+  instances:
+    - pos:
+        x: -625.8433385185128
+        y: -365.86637967440106
+      id: ghunnjxvc8lzz9ir1n7a5cv9
+      inputConfig:
+        interval:
+          mode: static
+          value: 2400
+        value:
+          mode: static
+          value: 42
+      nodeId: Interval
+    - pos:
+        x: -611.4323277763253
+        y: -266.15934842440106
+      id: zhz7csy5btxnhjsy3k51kj9g
+      inputConfig:
+        count:
+          mode: static
+          value: 2
+      nodeId: Accumulate Values by Count
+    - pos:
+        x: -530.2011876396066
+        y: -193.61387723299478
+      id: i4wm54c6g9jwqd1vqxokka5a
+      inputConfig: {}
+      nodeId: Loop List
+    - pos:
+        x: -596.7870641044503
+        y: -93.41304105135416
+      id: ar5etouisys1ezv3r9d8rljp
+      inputConfig: {}
+      nodeId: Round Robin 2
+    - pos:
+        x: -670.5785205078125
+        y: -12.230288085937502
+      id: Inline-value-beep-d5048it
+      inputConfig: {}
+      node:
+        id: Inline-value-beep
+        inputs: {}
+        outputs:
+          value:
+            delayed: false
+        runFnRawCode: const result = ("beep"); Promise.resolve(result).then(val =>
+          outputs.value.next(val))
+        customViewCode: '"beep"'
+        dataBuilderSource: ImJlZXAi
+        templateType: value
+        completionOutputs:
+          - value
+        defaultStyle:
+          size: regular
+          icon: code
+          cssOverride:
+            fontFamily: monospace
+            fontWeight: "500"
+        description: Custom inline value
+    - pos:
+        x: -516.8583056640625
+        y: -12.834139404296877
+      id: ApisCombination-u01482r
+      inputConfig: {}
+      node:
+        id: Inline-value-boop
+        inputs: {}
+        outputs:
+          value:
+            delayed: false
+        runFnRawCode: const result = ("boop"); Promise.resolve(result).then(val =>
+          outputs.value.next(val))
+        customViewCode: '"boop"'
+        dataBuilderSource: ImJvb3Ai
+        templateType: value
+        completionOutputs:
+          - value
+        defaultStyle:
+          size: regular
+          icon: code
+          cssOverride:
+            fontFamily: monospace
+            fontWeight: "500"
+        description: Custom inline value
+  connections:
+    - from:
+        insId: ghunnjxvc8lzz9ir1n7a5cv9
+        pinId: value
+      to:
+        insId: zhz7csy5btxnhjsy3k51kj9g
+        pinId: value
+    - from:
+        insId: zhz7csy5btxnhjsy3k51kj9g
+        pinId: accumulated
+      to:
+        insId: i4wm54c6g9jwqd1vqxokka5a
+        pinId: list
+    - from:
+        insId: i4wm54c6g9jwqd1vqxokka5a
+        pinId: item
+      to:
+        insId: ar5etouisys1ezv3r9d8rljp
+        pinId: value
+    - from:
+        insId: ar5etouisys1ezv3r9d8rljp
+        pinId: r1
+      to:
+        insId: Inline-value-beep-d5048it
+        pinId: __trigger
+    - from:
+        insId: ar5etouisys1ezv3r9d8rljp
+        pinId: r2
+      to:
+        insId: ApisCombination-u01482r
+        pinId: __trigger
+    - from:
+        insId: Inline-value-beep-d5048it
+        pinId: value
+      to:
+        insId: __this
+        pinId: output
+    - from:
+        insId: ApisCombination-u01482r
+        pinId: value
+      to:
+        insId: __this
+        pinId: output
+  id: ApisCombination
+  inputs: {}
+  outputs:
+    output:
+      type: any
+      optional: false
+      delayed: false
+  inputsPosition:
+    city:
+      x: -187.27285824815934
+      y: -14.13215209416181
+  outputsPosition:
+    json:
+      x: -441.98276309426666
+      y: 480.38719404276554
+    na:
+      x: -441.98276309426666
+      y: 480.38719404276554
+    result:
+      x: -499.82438378976735
+      y: 706.7650396699393
+    output:
+      x: -549.7519604411342
+      y: 83.72064592813797
+    response:
+      x: -500.61566893722795
+      y: 421.9045791861946

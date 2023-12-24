@@ -7,14 +7,115 @@
   --ifm-hero-text-color: #f8f8f8;
 
   .container {
-    padding: 2rem 10rem 6rem 10rem;
-    text-align: center;
-    position: relative;
+    padding: 2rem 2rem 2rem 2rem;
+    display: flex;
+    flex-direction: row;
 
-    @media only screen and (min-width: 600px) {
-      h1 {
-        padding-left: 5rem;
-        padding-right: 5rem;
+    gap: 0rem;
+
+    .content-wrapper {
+      padding-top: 2rem;
+      flex: 4;
+      text-align: left;
+      padding-right: 2rem;
+
+      .hero__title {
+        font-size: 3.5rem;
+        margin: 0;
+        font-weight: 600;
+      }
+
+      .hero__subtitle {
+        font-size: 1.2rem;
+        margin: 10px 0px;
+      }
+
+      .buttons-container {
+        display: flex;
+        margin-top: 3rem;
+        flex-direction: row;
+        gap: 0.5rem;
+
+        margin: 10px auto;
+
+        // padding-right: 0.5rem;
+      }
+    }
+
+    .example-container {
+      flex: 5;
+      display: flex;
+      flex-direction: column;
+      max-width: 800px;
+      // width: 50rem;
+      height: 30rem;
+      min-height: 25rem;
+
+      .example-tip {
+        margin: 10px 0;
+        font-size: 0.8rem;
+        color: #efefef;
+        text-align: right;
+        display: inline-flex;
+        flex-wrap: wrap;
+      }
+
+      .example-actions {
+        display: flex;
+        flex-direction: row;
+        margin-top: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        gap: 6px;
+
+        button {
+          font-size: 12px;
+          padding: 3px 6px;
+        }
+      }
+    }
+
+    .hero-example {
+      flex: 1;
+    }
+    .github-star {
+      display: inline-flex;
+      align-items: center;
+      font-size: 0.8rem;
+      gap: 5px;
+      justify-self: flex-start;
+      padding: 4px 12px;
+      color: #efefef;
+      border: 1px solid #efefef;
+      border-radius: 50px;
+      margin-bottom: 5px;
+      cursor: pointer;
+
+      svg {
+        transform: rotate(0deg);
+        transition: transform 0.2s ease-in-out;
+        transform-origin: center center;
+      }
+
+      &:hover {
+        background: #efefef;
+        color: #0b2d46;
+
+        svg {
+          transform: rotate(72deg); // one rotation of the star
+        }
+      }
+
+      svg {
+        width: 18px;
+        height: 18px;
+      }
+      > span {
+        line-height: 1;
       }
     }
   }
@@ -29,33 +130,44 @@
 }
 
 .hero--primary {
-  --ifm-hero-background-color: #274252;
+  --ifm-hero-background-color: #182732;
 }
 
 .mobile-warning {
   display: none;
 }
 
-.home-page-main-content {
-  padding-top: 80px;
-  margin-top: -224px;
+@media only screen and (max-width: 1440px) {
+  .hero .container {
+    padding: 2rem 1rem 2rem 1rem;
+  }
 }
 
-.video-container {
-  position: absolute;
-  border-radius: 5px;
-  overflow: hidden;
-  /* z-index: 4; */
-  margin: 0 auto;
-  width: 320px;
-  height: 195px;
-  left: 50%;
-  transform: translate(-50%, -30%);
-  z-index: 2;
+@media only screen and (max-width: 1140px) {
+  .hero .container {
+    max-width: 800px;
+    flex-direction: column;
+    gap: 20px;
+
+    .example-container {
+      min-height: 45rem;
+    }
+  }
 }
 
 // mobile
 @media only screen and (max-width: 600px) {
+  .hero .container {
+    padding-top: 1rem;
+    padding-left: 1.5rem;
+
+    .content-wrapper {
+      padding-right: 0;
+    }
+    .example-container {
+      min-height: 35rem;
+    }
+  }
   .home-page-main-content {
     padding-top: 120px;
   }
@@ -68,50 +180,13 @@
     font-size: 1.2rem;
   }
 
-  .integration-points {
-    width: 180px !important;
-  }
-
-  .hero .container {
-    padding: 2rem 1rem 6rem 1rem;
-  }
-
-  .videos-container {
-    left: -200px;
-    filter: blur(1px);
-    pointer-events: none;
-
-    video {
-      pointer-events: none;
-    }
-  }
-
-  .examples__menu {
-    > li a {
-      padding: 5px 10px;
-    }
-  }
-
-  .playground-container {
-    .playground-description,
-    .playground-extra {
-      font-size: 1rem !important;
-    }
-
-    .playground {
-      flex-direction: column !important;
-
-      .actions-menu {
-        bottom: 50px;
-      }
-    }
-  }
-
   .mobile-warning {
     display: block;
   }
+}
 
-  // .heroBanner_src-pages-index-module {
-  //     padding: 1rem;
-  // }
+// lazy-added tailwind
+
+.font-thin {
+  font-weight: 300;
 }

@@ -2,23 +2,33 @@ import { dynamicOutput, dynamicNodeInput, noop } from "@site/../core/dist";
 import { EmbeddedFlyde } from "@site/src/components/EmbeddedFlyde/EmbeddedFlyde";
 import React, { useRef } from "react";
 
-import helloWorldExample from "./Hero.flyde";
+import { CodeBlock, vs2015 } from "react-code-blocks";
 
-import { CodeBlock, dracula } from "react-code-blocks";
+const codeTheme = vs2015;
+
+const flowFileName = "Example.flyde";
+import clsx from "clsx";
 
 const code = `import {loadFlow} from '@flyde/runtime';
 
-const executeFlow = loadFlow('Greet.flyde');
+const executeFlow = loadFlow('${flowFileName}');
 const {result} = executeFlow();
 const {output} = await result;
 console.log(\`Output: \$\{output\}\`);`;
 
 import "./HeroExample.scss";
-import { Button } from "@blueprintjs/core";
-import Link from "@docusaurus/Link";
+import { examples } from "..";
+import { toastMsg } from "@flyde/flow-editor";
 
-export const HeroExample: React.FC = () => {
+const RERUN_INTERVAL = 4200 * 2.5;
+
+export const HeroExample: React.FC = (props: {
+  example: (typeof examples)[0];
+}) => {
+  const currentExample = props.example;
   const [logs, setLogs] = React.useState<any>([]);
+
+  const [fileVisible, setFileVisible] = React.useState("Example.flyde");
 
   const inputs = useRef({
     __trigger: dynamicNodeInput(),
@@ -26,81 +36,87 @@ export const HeroExample: React.FC = () => {
 
   const result = useRef(dynamicOutput());
   const flowProps = {
-    flow: helloWorldExample.flow,
-    dependencies: helloWorldExample.dependencies,
+    flow: currentExample.flow.flow,
+    dependencies: currentExample.flow.dependencies,
     inputs: inputs.current,
     output: result.current,
   };
 
-  const [didRun, setDidRun] = React.useState(false);
-
-  const onRunExample = () => {
-    setLogs(["› ts-node index.ts"]);
+  const onRunExample = React.useCallback(() => {
     inputs.current.__trigger.subject.next("run");
-    setDidRun(true);
-  };
+  }, []);
+
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      onRunExample();
+    }, 1500);
+    const interval = setInterval(() => {
+      onRunExample();
+    }, RERUN_INTERVAL);
+
+    return () => {
+      clearTimeout(timer);
+      clearInterval(interval);
+    };
+  }, [onRunExample]);
 
   return (
     <div className="hero-example">
-      <div className="buttons-container">
-        <Link className="button button--secondary" to="https://play.flyde.dev">
-          Online Playground
-        </Link>
-        <button
-          className={`button button--success button${!didRun && " nudge"}`}
-          onClick={onRunExample}
+      <div className="hero-example__tabs">
+        <div
+          onClick={() => setFileVisible(flowFileName)}
+          className={clsx(
+            "file-tag",
+            fileVisible === flowFileName && "selected"
+          )}
         >
-          Run Example 👇
-        </button>
-        <Link
-          className="button button--primary"
-          href="https://marketplace.visualstudio.com/items?itemName=flyde.flyde-vscode"
+          {flowFileName}
+        </div>
+        <div
+          className={clsx("file-tag", fileVisible === "index.ts" && "selected")}
+          onClick={() => setFileVisible("index.ts")}
         >
-          VSCode Extension
-        </Link>
-        <span className="gh-stars-wrapper">
-          <iframe
-            className="gh-stars-frame"
-            src="https://ghbtns.com/github-btn.html?user=flydelabs&amp;repo=flyde&amp;type=star&amp;count=true&amp;size=large"
-            width={160}
-            height={30}
-            title="GitHub Stars"
-          />
-        </span>
+          index.ts
+        </div>
       </div>
-      <div className="flyde-hero-example-wrapper">
+      {/* <main> */}
+      {fileVisible === flowFileName ? (
         <div className="flow-wrapper">
-          <div className="file-tag">Greet.flyde</div>
           <EmbeddedFlyde
             flowProps={flowProps}
             debugDelay={100}
             onOutput={(output) => {
-              setLogs((logs) => [...logs, `Output: ${output}`]);
+              setLogs((logs) => [
+                `[${new Date().toLocaleTimeString()}] Output: ${output}`,
+                ...logs,
+              ]);
             }}
+            // onCompleted={onCompleted}
           />
         </div>
-        <div className="code-terminal-wrapper">
-          <div className="code-wrapper">
-            <div className="file-tag">index.ts</div>
-            <CodeBlock
-              className="code-example"
-              showLineNumbers={false}
-              text={code}
-              language="typescript"
-              theme={dracula}
-              codeBlock
-            />
-          </div>
-          <div className="terminal-wrapper">
-            <div className="file-tag">Terminal</div>
-            <div className="terminal-emulator">
-              {logs.length ? (
-                logs.map((log, i) => <div>{log}</div>)
-              ) : (
-                <em>Waiting for the example to run..</em>
-              )}
-            </div>
-          </div>
+      ) : null}
+      {fileVisible === "index.ts" ? (
+        <div className="code-wrapper">
+          <CodeBlock
+            className="code-example"
+            showLineNumbers={false}
+            text={code}
+            language="typescript"
+            theme={codeTheme}
+            codeBlock
+            width="100%"
+          />
+        </div>
+      ) : null}
+      {/* </main> */}
+      <div className="terminal-wrapper">
+        <div className="file-tag">Terminal</div>
+        <div className="terminal-emulator">
+          {logs.length ? (
+            logs.map((log, i) => <div>{log}</div>)
+          ) : (
+            <em>Waiting for the example to run..</em>
+          )}
         </div>
       </div>
     </div>

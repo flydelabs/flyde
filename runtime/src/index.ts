@@ -54,7 +54,7 @@ export function loadFlowFromContent<Inputs>(
   deps[mainNode.id] = mainNode;
 
   return (inputs, params = {}) => {
-    const { onOutputs, ...otherParams } = params;
+    const { onOutputs, onCompleted, ...otherParams } = params;
     debugLogger("Executing flow %s", params);
 
     let destroy;
@@ -77,6 +77,9 @@ export function loadFlowFromContent<Inputs>(
                 await _debugger.destroy();
               }
               res(data);
+              if (onCompleted) {
+                onCompleted(data);
+              }
             })();
           },
           onBubbleError: (err) => {

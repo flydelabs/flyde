@@ -553,7 +553,7 @@ export const fitViewPortToNode = (
   const zoom = clamp(FIT_VIEWPORT_MIN_ZOOM, FIT_VIEWPORT_MAX_ZOOM, idealZoom);
 
   const vpX = center.x - vpSize.width / 2 / zoom;
-  const vpY = center.y - vpSize.height / 2 / zoom + 40; // TODO - find out why "+40" is needed
+  const vpY = center.y - vpSize.height / 2 / zoom + 20; // TODO - find out why "+20" is needed
 
   return {
     zoom,
