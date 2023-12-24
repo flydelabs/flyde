@@ -1,6 +1,6 @@
 {
   "name": "@flyde/flow-editor",
-  "version": "0.2.14",
+  "version": "0.2.15",
   "description": "",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
