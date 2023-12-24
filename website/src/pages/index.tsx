@@ -38,7 +38,7 @@ export const examples = [
   {
     label: "Reactivity ",
     flow: exampleReactivity,
-    tip: `TBD`,
+    // tip: `TBD`,
     playgroundUrl: "https://play.flyde.dev/?flow=hello-world",
   },
 ];
@@ -98,12 +98,14 @@ function HomepageHeader() {
         </div>
         <div className="example-container">
           <HeroExample example={currentExample} key={currentExample.label} />
-          <div className="example-tip">
-            Pssst.. {currentExample.tip} &nbsp;
-            {/* <a href={currentExample.playgroundUrl} target="_blank">
+          {currentExample.tip ? (
+            <div className="example-tip">
+              Pssst.. {currentExample.tip} &nbsp;
+              {/* <a href={currentExample.playgroundUrl} target="_blank">
               Open in playground
             </a> */}
-          </div>
+            </div>
+          ) : null}
 
           <div className="example-actions">
             {/* <span className="font-thin">Browse examples:</span> */}

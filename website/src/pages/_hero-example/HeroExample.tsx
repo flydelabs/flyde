@@ -46,26 +46,17 @@ export const HeroExample: React.FC = (props: {
     inputs.current.__trigger.subject.next("run");
   }, []);
 
-  const onCompleted = React.useCallback(() => {
-    console.log("completed!");
-    debugger;
-    toastMsg("Example completed!");
-    // setTimeout(() => {
-    //   onRunExample();
-    // }, 4000);
-  }, [setLogs]);
-
   React.useEffect(() => {
     const timer = setTimeout(() => {
       onRunExample();
     }, 1500);
-    // const interval = setInterval(() => {
-    //   onRunExample();
-    // }, RERUN_INTERVAL);
+    const interval = setInterval(() => {
+      onRunExample();
+    }, RERUN_INTERVAL);
 
     return () => {
       clearTimeout(timer);
-      // clearInterval(interval);
+      clearInterval(interval);
     };
   }, [onRunExample]);
 
@@ -100,7 +91,7 @@ export const HeroExample: React.FC = (props: {
                 ...logs,
               ]);
             }}
-            onCompleted={onCompleted}
+            // onCompleted={onCompleted}
           />
         </div>
       ) : null}
