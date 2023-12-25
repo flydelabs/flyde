@@ -3,45 +3,35 @@ imports:
     - Interval
     - Accumulate Values by Count
     - Loop List
-    - Round Robin 2
+    - Round Robin 3
 node:
   instances:
     - pos:
-        x: -625.8433385185128
-        y: -365.86637967440106
+        x: -631.5591588310128
+        y: -398.1038369497917
       id: ghunnjxvc8lzz9ir1n7a5cv9
       inputConfig:
         interval:
           mode: static
-          value: 2400
+          value: 3141
         value:
           mode: static
-          value: 42
+          value: ""
+      visibleInputs:
+        - interval
       nodeId: Interval
     - pos:
-        x: -611.4323277763253
-        y: -266.15934842440106
+        x: -621.8109288505441
+        y: -147.24308865877606
       id: zhz7csy5btxnhjsy3k51kj9g
       inputConfig:
         count:
           mode: static
-          value: 2
+          value: 3
       nodeId: Accumulate Values by Count
     - pos:
-        x: -530.2011876396066
-        y: -193.61387723299478
-      id: i4wm54c6g9jwqd1vqxokka5a
-      inputConfig: {}
-      nodeId: Loop List
-    - pos:
-        x: -596.7870641044503
-        y: -93.41304105135416
-      id: ar5etouisys1ezv3r9d8rljp
-      inputConfig: {}
-      nodeId: Round Robin 2
-    - pos:
-        x: -670.5785205078125
-        y: -12.230288085937502
+        x: -734.33669921875
+        y: -223.71463256835938
       id: Inline-value-beep-d5048it
       inputConfig: {}
       node:
@@ -64,9 +54,15 @@ node:
             fontFamily: monospace
             fontWeight: "500"
         description: Custom inline value
+      style:
+        size: small
+        icon: code
+        cssOverride:
+          fontFamily: monospace
+          fontWeight: "500"
     - pos:
-        x: -516.8583056640625
-        y: -12.834139404296877
+        x: -606.1128833007813
+        y: -224.51904541015625
       id: ApisCombination-u01482r
       inputConfig: {}
       node:
@@ -89,9 +85,94 @@ node:
             fontFamily: monospace
             fontWeight: "500"
         description: Custom inline value
+      style:
+        size: small
+        icon: code
+        cssOverride:
+          fontFamily: monospace
+          fontWeight: "500"
+    - pos:
+        x: -648.7103934472225
+        y: -316.292033067738
+      id: akc8kvij9dns3euqp01iijtd
+      inputConfig: {}
+      nodeId: Round Robin 3
+    - pos:
+        x: -480.1188427734375
+        y: -225.620185546875
+      id: ApisCombination-wn048ny
+      inputConfig: {}
+      node:
+        id: Inline-value-bop
+        inputs: {}
+        outputs:
+          value:
+            delayed: false
+        runFnRawCode: const result = ("bop"); Promise.resolve(result).then(val =>
+          outputs.value.next(val))
+        customViewCode: '"bop"'
+        dataBuilderSource: ImJvcCI=
+        templateType: value
+        completionOutputs:
+          - value
+        defaultStyle:
+          size: regular
+          icon: code
+          cssOverride:
+            fontFamily: monospace
+            fontWeight: "500"
+        description: Custom inline value
+      style:
+        size: small
+        icon: code
+        cssOverride:
+          fontFamily: monospace
+          fontWeight: "500"
+    - pos:
+        x: -545.0292446458609
+        y: -57.809316679619855
+      id: rjyjsbcahykm15dllqw8tlzj
+      inputConfig: {}
+      nodeId: Loop List
   connections:
     - from:
         insId: ghunnjxvc8lzz9ir1n7a5cv9
+        pinId: value
+      to:
+        insId: akc8kvij9dns3euqp01iijtd
+        pinId: value
+    - from:
+        insId: akc8kvij9dns3euqp01iijtd
+        pinId: r1
+      to:
+        insId: Inline-value-beep-d5048it
+        pinId: __trigger
+    - from:
+        insId: akc8kvij9dns3euqp01iijtd
+        pinId: r2
+      to:
+        insId: ApisCombination-u01482r
+        pinId: __trigger
+    - from:
+        insId: akc8kvij9dns3euqp01iijtd
+        pinId: r3
+      to:
+        insId: ApisCombination-wn048ny
+        pinId: __trigger
+    - from:
+        insId: Inline-value-beep-d5048it
+        pinId: value
+      to:
+        insId: zhz7csy5btxnhjsy3k51kj9g
+        pinId: value
+    - from:
+        insId: ApisCombination-u01482r
+        pinId: value
+      to:
+        insId: zhz7csy5btxnhjsy3k51kj9g
+        pinId: value
+    - from:
+        insId: ApisCombination-wn048ny
         pinId: value
       to:
         insId: zhz7csy5btxnhjsy3k51kj9g
@@ -100,35 +181,11 @@ node:
         insId: zhz7csy5btxnhjsy3k51kj9g
         pinId: accumulated
       to:
-        insId: i4wm54c6g9jwqd1vqxokka5a
+        insId: rjyjsbcahykm15dllqw8tlzj
         pinId: list
     - from:
-        insId: i4wm54c6g9jwqd1vqxokka5a
+        insId: rjyjsbcahykm15dllqw8tlzj
         pinId: item
-      to:
-        insId: ar5etouisys1ezv3r9d8rljp
-        pinId: value
-    - from:
-        insId: ar5etouisys1ezv3r9d8rljp
-        pinId: r1
-      to:
-        insId: Inline-value-beep-d5048it
-        pinId: __trigger
-    - from:
-        insId: ar5etouisys1ezv3r9d8rljp
-        pinId: r2
-      to:
-        insId: ApisCombination-u01482r
-        pinId: __trigger
-    - from:
-        insId: Inline-value-beep-d5048it
-        pinId: value
-      to:
-        insId: __this
-        pinId: output
-    - from:
-        insId: ApisCombination-u01482r
-        pinId: value
       to:
         insId: __this
         pinId: output
@@ -154,8 +211,8 @@ node:
       x: -499.82438378976735
       y: 706.7650396699393
     output:
-      x: -549.7519604411342
-      y: 83.72064592813797
+      x: -565.3591992106655
+      y: 68.60921099161453
     response:
       x: -500.61566893722795
       y: 421.9045791861946

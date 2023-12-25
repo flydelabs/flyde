@@ -18,6 +18,12 @@ import exampleReactivity from "./_hero-example/ExampleReactivity.flyde";
 
 export const examples = [
   {
+    label: "Beep Boop",
+    flow: exampleReactivity,
+    // tip: `TBD`,
+    playgroundUrl: "https://play.flyde.dev/?flow=hello-world",
+  },
+  {
     label: "Hello World",
     flow: exampleHelloWorld,
     tip: `Try double clicking on the "World" node to change the string.`,
@@ -33,12 +39,6 @@ export const examples = [
     label: "HTTP Requests",
     flow: exampleHttpRequests,
     tip: `Double click "Format Response" to see how it is implemented.`,
-    playgroundUrl: "https://play.flyde.dev/?flow=hello-world",
-  },
-  {
-    label: "Reactivity ",
-    flow: exampleReactivity,
-    // tip: `TBD`,
     playgroundUrl: "https://play.flyde.dev/?flow=hello-world",
   },
 ];
