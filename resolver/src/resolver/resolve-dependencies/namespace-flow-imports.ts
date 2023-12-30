@@ -1,9 +1,7 @@
 import {
-  Node,
   isVisualNode,
   ResolvedFlydeFlow,
   isRefNodeInstance,
-  RefNodeInstance,
   isInlineNodeInstance,
   VisualNode,
 } from "@flyde/core";
@@ -24,6 +22,7 @@ const namespaceVisualNode = (
       return { ...ins, nodeId: `${namespace}${ins.nodeId}` };
     }
   });
+
   return {
     ...node,
     instances: namespacedInstances,
@@ -35,11 +34,12 @@ export const namespaceFlowImports = (
   namespace: string = ""
 ): ResolvedFlydeFlow => {
   const node = resolvedFlow.main;
+
   if (isVisualNode(node)) {
     const namespacedNode = namespaceVisualNode(node, namespace);
 
     const namespacedImports = _.chain(resolvedFlow.dependencies)
-      .mapKeys((_, key) => `${namespace}${key}`)
+      .mapKeys((_, key) => (key === node.id ? key : `${namespace}${key}`))
       .mapValues((node) => {
         const newNode = isVisualNode(node)
           ? {
