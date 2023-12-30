@@ -239,8 +239,8 @@ export const ConnectionView: React.FC<ConnectionViewProps> = (props) => {
   }
 
   return (
-    <span className={"connections-view"} style={{ opacity: viewPort.zoom }}>
-      <svg style={{ width: "100%" }}>{connectionPaths}</svg>
-    </span>
+    // <span className="connections-view" style={{ opacity: viewPort.zoom }}>
+    <svg className="connections-view">{connectionPaths}</svg>
+    // </span>
   );
 };

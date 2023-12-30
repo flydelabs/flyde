@@ -42,7 +42,10 @@ export interface EditorPorts {
 
   onInstallRuntimeRequest: () => Promise<void>;
 
-  onRunFlow: (inputs: Record<string, any>) => Promise<FlowJob>;
+  onRunFlow: (
+    inputs: Record<string, any>,
+    executionDelay?: number
+  ) => Promise<FlowJob>;
   onStopFlow: () => Promise<void>;
 
   reportEvent: ReportEvent;

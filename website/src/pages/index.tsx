@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import Layout from "@theme/Layout";
-import HomepageFeatures from "@site/src/components/HomepageFeatures";
 import styles from "./index.module.css";
 import clsx from "clsx";
 
@@ -15,6 +14,7 @@ import exampleHelloWorld from "./_hero-example/ExampleHelloWorld.flyde";
 import exampleDebounceThrottle from "./_hero-example/ExampleDebounceThrottle.flyde";
 import exampleHttpRequests from "./_hero-example/ExampleHTTPRequests.flyde";
 import exampleReactivity from "./_hero-example/ExampleReactivity.flyde";
+import { features } from "./_features";
 
 export const examples = [
   {
@@ -66,14 +66,15 @@ function HomepageHeader() {
             <div>For Developers</div>
           </h1>
           <p className="hero__subtitle">
-            Open-source, runs in{" "}
+            Open source, runs in{" "}
             <a
               href="https://marketplace.visualstudio.com/items?itemName=flyde.flyde-vscode"
               target="_blank"
             >
-              the IDE
+              VS Code
             </a>
-            , integrates with existing TypeScript code, browser and Node.js.
+            , integrates with existing <strong>TypeScript</strong> code, browser
+            and Node.js.
           </p>
           <div className="buttons-container">
             <Link
@@ -132,17 +133,54 @@ function HomepageHeader() {
 export default function Home(): JSX.Element {
   const { siteConfig } = useDocusaurusContext();
 
+  useEffect(() => {
+    document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+      anchor.addEventListener("click", function (e) {
+        e.preventDefault();
+
+        let targetId = this.getAttribute("href");
+        let targetElement = document.querySelector(targetId) as HTMLElement;
+
+        if (targetElement) {
+          window.scrollTo({
+            top: targetElement.offsetTop - 100, // 100px offset
+            behavior: "smooth",
+          });
+        }
+      });
+    });
+  }, []);
+
   return (
     <Layout
-      title={`Flyde | Visual Programming. For Developers.`}
+      title={`Flyde`}
       description="Flyde, open-source visual programming language.
       Runs in the IDE, integrates with existing TypeScript code, browser and Node.js."
     >
       <HomepageHeader />
 
-      <main className="home-page-main-content" data-theme="dark">
-        <HomepageFeatures />
-      </main>
+      <section className="features-strip">
+        {features.map((feature) => (
+          <div className="feature-highlight" key={feature.title}>
+            <a href={`#${feature.id}`}>{feature.preview}</a>
+          </div>
+        ))}
+      </section>
+
+      {features.map((feature) => (
+        <section className="feature-strip" id={feature.id}>
+          <div className="feature-strip-inner">
+            <div className="image-container">
+              <img src={feature.image} />
+              <div className="image-caption">{feature.imageCaption}</div>
+            </div>
+            <div className="content-container">
+              <h3>{feature.title}</h3>
+              <div className="feature-description">{feature.description}</div>
+            </div>
+          </div>
+        </section>
+      ))}
     </Layout>
   );
 }
