@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "scripts": {
-    "test": ":",
+    "test": "mocha src/**/*.spec.ts --require ts-node/register",
     "dev": "tsc -p . -w --incremental",
     "build": "rm -rf dist && tsc -p .",
     "prod": "node dist/index.js",

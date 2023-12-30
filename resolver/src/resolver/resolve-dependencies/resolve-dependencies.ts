@@ -147,11 +147,16 @@ export function resolveDependencies(
             ),
           ];
         } else {
-          const flow = deserializeFlowByPath(path);
-          return [
-            ...acc,
-            { node: flow.node, source: { path, export: "__n/a__visual__" } },
-          ];
+          try {
+            const flow = deserializeFlowByPath(path);
+            return [
+              ...acc,
+              { node: flow.node, source: { path, export: "__n/a__visual__" } },
+            ];
+          } catch (e) {
+            console.error(`Found corrupt flow at ${path}`, e);
+            return acc;
+          }
         }
       }, [])
       .filter((obj) => !!obj)

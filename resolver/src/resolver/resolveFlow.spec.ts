@@ -6,7 +6,6 @@ import {
   NodesCollection,
   randomInt,
   staticNodeInput,
-  values,
 } from "@flyde/core";
 import { assert } from "chai";
 import { readdirSync, readFileSync } from "fs";
@@ -84,6 +83,7 @@ describe("resolver", () => {
       "Add1WrapperTwice__Add1Wrapper__Add1",
       "Add1WrapperTwice__Add1Wrapper",
       "Add1WrapperTwice",
+      "Container",
     ]);
 
     const [s, r] = spiedOutput();
@@ -112,6 +112,7 @@ describe("resolver", () => {
       "Adds1Wrapper",
       "Subs1Wrapper__Special",
       "Subs1Wrapper",
+      "Container",
     ]);
 
     const input = dynamicNodeInput();
