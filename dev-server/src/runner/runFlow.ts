@@ -9,7 +9,8 @@ export async function runFlow(
   flow: FlydeFlow,
   flowPath: string,
   inputs: Record<string, any> = {},
-  port: number
+  port: number,
+  executionDelay: number
 ): Promise<{
   job: FlowJob;
   result: Promise<Record<string, any>>;
@@ -23,7 +24,7 @@ export async function runFlow(
     `http://localhost:${port}`
   );
 
-  const data = execute(inputs);
+  const data = execute(inputs, { executionDelay });
 
   const job: FlowJob = {
     id,

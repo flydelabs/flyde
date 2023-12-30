@@ -3,20 +3,30 @@ import * as React from "react";
 // ;
 
 import Editor, { OnMount } from "@monaco-editor/react";
-import { Button, Callout, Classes, Dialog, Intent } from "@blueprintjs/core";
+import {
+  Button,
+  Callout,
+  Classes,
+  Dialog,
+  Intent,
+  Slider,
+} from "@blueprintjs/core";
 import classNames from "classnames";
 import { BaseNode } from "@flyde/core";
 import { useLocalStorage } from "../../../lib/user-preferences";
+import { InfoTooltip } from "../../../lib/InfoTooltip";
 
 export interface RunFlowModalProps {
   node: BaseNode;
-  onRun: (inputs: Record<string, any>) => void;
+  onRun: (inputs: Record<string, any>, executionDelay: number) => void;
   onClose: () => void;
 }
 
 export const RunFlowModal: React.FC<RunFlowModalProps> = React.memo(
   function RunFlowModal(props) {
     const { onRun, onClose, node } = props;
+
+    const [executionDelay, setExecutionDelay] = React.useState(0);
 
     const [lastValues, setLastValues] = useLocalStorage(
       `run-inputs-${node.id}`,
@@ -26,7 +36,7 @@ export const RunFlowModal: React.FC<RunFlowModalProps> = React.memo(
       }, {})
     );
 
-    const [value, setValue] = React.useState(
+    const [inputsValue, setInputsValue] = React.useState(
       JSON.stringify(lastValues, null, 2)
     );
 
@@ -40,10 +50,10 @@ export const RunFlowModal: React.FC<RunFlowModalProps> = React.memo(
     };
 
     const _onRun = React.useCallback(() => {
-      const inputs = JSON.parse(value);
+      const inputs = JSON.parse(inputsValue);
       setLastValues(inputs);
-      onRun(inputs);
-    }, [onRun, setLastValues, value]);
+      onRun(inputs, executionDelay);
+    }, [onRun, setLastValues, inputsValue, executionDelay]);
 
     const onKeyDown: React.KeyboardEventHandler<any> = (e) => {
       if (e.key === "Enter" && e.metaKey) {
@@ -51,9 +61,41 @@ export const RunFlowModal: React.FC<RunFlowModalProps> = React.memo(
       }
     };
 
-    const optionals = Object.keys(node.inputs).filter(
+    const flowInputs = Object.keys(node.inputs);
+
+    const optionals = flowInputs.filter(
       (key) => node.inputs[key].mode !== "required"
     );
+
+    const maybeInputs = React.useMemo(() => {
+      if (flowInputs.length) {
+        return (
+          <>
+            <strong>
+              This node receives external inputs. Enter values for each input
+              below:
+            </strong>
+
+            <Editor
+              height="80px"
+              theme="vs-dark"
+              defaultLanguage="json"
+              value={inputsValue}
+              onChange={(val) => setInputsValue(val ?? "")}
+              onMount={onMonacoMount}
+            />
+
+            {optionals.length > 0 ? (
+              <Callout intent={Intent.NONE}>
+                Note: input(s) <code>{optionals.join(", ")}</code> are optional
+              </Callout>
+            ) : null}
+          </>
+        );
+      } else {
+        return <strong>This node does not receive any external inputs.</strong>;
+      }
+    }, [flowInputs.length, optionals, inputsValue]);
 
     return (
       <Dialog isOpen={true} onClose={props.onClose} className="run-flow-modal">
@@ -62,25 +104,22 @@ export const RunFlowModal: React.FC<RunFlowModalProps> = React.memo(
           onKeyDown={onKeyDown}
           tabIndex={0}
         >
-          <strong>
-            This node receives external inputs. Enter values for each input
-            below:
-          </strong>
-
-          <Editor
-            height="80px"
-            theme="vs-dark"
-            defaultLanguage="json"
-            value={value}
-            onChange={(val) => setValue(val ?? "")}
-            onMount={onMonacoMount}
-          />
-
-          {optionals.length > 0 ? (
-            <Callout intent={Intent.NONE}>
-              Note: input(s) <code>{optionals.join(", ")}</code> are optional
-            </Callout>
-          ) : null}
+          {maybeInputs}
+          <div className="execution-delay-wrapper">
+            <label>
+              Execution delay:{" "}
+              <InfoTooltip content="Delay between each node execution. Useful for debugging." />
+            </label>
+            <Slider
+              value={executionDelay}
+              onChange={setExecutionDelay}
+              min={0}
+              labelStepSize={500}
+              stepSize={100}
+              labelRenderer={(val) => `${val}ms`}
+              max={1000}
+            />
+          </div>
         </main>
         <div className={Classes.DIALOG_FOOTER}>
           <div className={Classes.DIALOG_FOOTER_ACTIONS}>

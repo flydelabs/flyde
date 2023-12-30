@@ -23,7 +23,8 @@ const withTimeout = <T>(promise: Promise<T>, timeout: number): Promise<T> => {
 
 export const createDebugger = async (
   debuggerUrl: string,
-  executionId: string
+  executionId: string,
+  executionDelay?: number
 ): Promise<Debugger> => {
   debugLogger("Creating runtime debugger");
   let client: RuntimeDebuggerClient;
@@ -39,6 +40,7 @@ export const createDebugger = async (
       destroy: () => {
         return client.destroy();
       },
+      debugDelay: executionDelay,
     };
 
     return _debugger;

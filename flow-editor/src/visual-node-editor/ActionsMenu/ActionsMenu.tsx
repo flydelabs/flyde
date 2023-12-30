@@ -101,9 +101,9 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
   const { onRunFlow, generateNodeFromPrompt, reportEvent } = usePorts();
 
   const _runFlow = useCallback<typeof onRunFlow>(
-    (inputs) => {
+    (inputs, delay) => {
       setShowRunFlowModal(false);
-      return onRunFlow(inputs);
+      return onRunFlow(inputs, delay);
     },
     [onRunFlow]
   );
@@ -190,11 +190,7 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
           break;
         case ActionType.Run:
           void (async function () {
-            if (Object.keys(node.inputs).length > 0) {
-              setShowRunFlowModal(true);
-            } else {
-              onRunFlow({});
-            }
+            setShowRunFlowModal(true);
           })();
           break;
         case ActionType.AI:
@@ -204,7 +200,7 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
           onAction({ type, data: undefined });
       }
     },
-    [hideHotkeyHintMap, onAction, onDismissHotkeyHint, onRunFlow, node.inputs]
+    [hideHotkeyHintMap, onAction, onDismissHotkeyHint, node.inputs]
   );
 
   Object.entries(actionsMetaData).forEach(

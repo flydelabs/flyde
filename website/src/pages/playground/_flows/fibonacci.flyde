@@ -19,13 +19,12 @@ node:
       visibleInputs:
         - a
         - b
-        - __trigger
       nodeId: Equals
       style:
-        size: regular
+        size: small
     - pos:
-        x: 23.226157226562492
-        y: 75.29077667236328
+        x: 6.480124511718742
+        y: 26.28670257568359
       id: Equals-364-d95
       inputConfig:
         compare:
@@ -37,19 +36,22 @@ node:
       visibleInputs:
         - a
         - b
-        - __trigger
       nodeId: Equals
+      style:
+        size: small
     - pos:
-        x: 159.85901489257813
-        y: 471.33189712524415
+        x: 124.14777221679688
+        y: 360.9365419006348
       id: Add-539
       inputConfig: {}
       nodeId: Add
       style:
+        size: small
+        icon: calculator
         color: "#fee440"
     - pos:
-        x: 79.07891723632812
-        y: 236.8349850463867
+        x: 51.170103759765624
+        y: 141.94213226318357
       id: Subtract-210
       inputConfig:
         n2:
@@ -59,10 +61,12 @@ node:
         - n1
       nodeId: Subtract
       style:
+        size: small
+        icon: calculator
         color: "#f15bb5"
     - pos:
-        x: 239.66033813476565
-        y: 230.5940602111816
+        x: 205.81573364257815
+        y: 141.28181961059568
       id: Subtract-210-d215
       inputConfig:
         n2:
@@ -72,16 +76,18 @@ node:
         - n1
       nodeId: Subtract
       style:
+        size: small
+        icon: calculator
         color: "#f15bb5"
     - pos:
-        x: 80.24671997070313
-        y: 340.2993609619141
+        x: 41.46757568359375
+        y: 225.79922363281253
       id: Fibonacci-261
       inputConfig: {}
       nodeId: Fibonacci
     - pos:
-        x: 227.87701416015625
-        y: 340.5600205230713
+        x: 192.5062255859375
+        y: 225.06153114318846
       id: Fibonacci-379
       inputConfig: {}
       nodeId: Fibonacci
@@ -164,12 +170,12 @@ node:
       delayed: false
   inputsPosition:
     n:
-      x: -106.9362911466256
-      y: -160.41603410030714
+      x: -104.99845545326623
+      y: -160.94874894405714
   outputsPosition:
     result:
-      x: -78.51037029153346
-      y: 661.1509464285166
+      x: -27.155817068877212
+      y: 518.2526309988291
   completionOutputs:
     - result
   defaultStyle:

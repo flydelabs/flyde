@@ -23,7 +23,9 @@ export type PromiseWithEmitter<T> = Promise<T> & { on: EventEmitter["on"] };
 export type LoadedFlowExecuteFn<Inputs> = (
   inputs?: Inputs,
   extraParams?: Partial<
-    ExecuteParams & { onOutputs?: (key: string, data: any) => void }
+    ExecuteParams & { onOutputs?: (key: string, data: any) => void } & {
+      executionDelay?: number;
+    }
   >
 ) => {
   result: Promise<Record<string, any>>;
@@ -61,7 +63,11 @@ export function loadFlowFromContent<Inputs>(
     const promise: any = new Promise(async (res, rej) => {
       const _debugger =
         otherParams._debugger ||
-        (await createDebugger(debuggerUrl, fullFlowPath));
+        (await createDebugger(
+          debuggerUrl,
+          fullFlowPath,
+          params.executionDelay
+        ));
 
       debugLogger("Using debugger %o", _debugger);
       destroy = await simplifiedExecute(
