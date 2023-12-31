@@ -3,6 +3,8 @@ import {
   FlydeFlow,
   ImportableSource,
   ResolvedDependenciesDefinitions,
+  ResolvedFlydeFlow,
+  ResolvedFlydeFlowDefinition,
 } from "@flyde/core";
 import { FolderStructure } from "./fs-helper/shared";
 import type { ImportablesResult } from "./service/scan-importable-nodes";
@@ -25,10 +27,10 @@ export const createDevServerClient = (baseUrl: string) => {
     },
     resolveDefinitions: (
       filename: string
-    ): Promise<ResolvedDependenciesDefinitions> => {
+    ): Promise<ResolvedFlydeFlowDefinition> => {
       return axios
-        .get(`${baseUrl}/resolveDefinitions?filename=${filename}`)
-        .then((res) => res.data);
+        .get(`${baseUrl}/resolveFlow?filename=${filename}`)
+        .then((res) => res.data.dependencies);
     },
     getImportables: (filename: string): Promise<ImportablesResult> => {
       return axios

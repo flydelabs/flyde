@@ -5,7 +5,7 @@ import {
   ResolvedDependencies,
   simplifiedExecute,
 } from "@flyde/core";
-import { deserializeFlowByPath, resolveDependencies } from "@flyde/resolver";
+import { deserializeFlowByPath, resolveFlow } from "@flyde/resolver";
 import EventEmitter = require("events");
 
 import findRoot from "find-root";
@@ -42,18 +42,7 @@ export function loadFlowFromContent<Inputs>(
   fullFlowPath: string,
   debuggerUrl: string
 ): LoadedFlowExecuteFn<Inputs> {
-  const deps = resolveDependencies(
-    flow,
-    "implementation",
-    fullFlowPath
-  ) as ResolvedDependencies;
-
-  const mainNode: ImportedNode = {
-    ...flow.node,
-    source: { path: fullFlowPath, export: "n/a" },
-  }; // TODO - fix the need for imported visual nodes to declare an export source.
-
-  deps[mainNode.id] = mainNode;
+  const resFlow = resolveFlow(flow, "implementation", fullFlowPath);
 
   return (inputs, params = {}) => {
     const { onOutputs, onCompleted, ...otherParams } = params;
@@ -71,8 +60,8 @@ export function loadFlowFromContent<Inputs>(
 
       debugLogger("Using debugger %o", _debugger);
       destroy = await simplifiedExecute(
-        flow.node,
-        deps,
+        resFlow.main,
+        resFlow.dependencies as ResolvedDependencies,
         inputs || {},
         onOutputs,
         {

@@ -21,4 +21,4 @@ function _resolveFlow(
   return resolveFlowDependencies(flow, fullFlowPath, mode);
 }
 
-export const resolveFlowDependenciesByPath = _resolveFlow;
+export const resolveFlowByPath = _resolveFlow;

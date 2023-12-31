@@ -16,7 +16,7 @@ import {
 import { existsSync } from "fs";
 import _ = require("lodash");
 import { join } from "path";
-import { ResolveMode, resolveFlowDependenciesByPath } from "../resolve-flow";
+import { ResolveMode, resolveFlowByPath } from "../resolve-flow";
 import { resolveImportablePaths } from "./resolve-importable-paths";
 import { namespaceFlowImports } from "./namespace-flow-imports";
 
@@ -138,10 +138,7 @@ export function resolveFlow(
             }
           } else {
             try {
-              const resolvedImport = resolveFlowDependenciesByPath(
-                importPath,
-                mode
-              );
+              const resolvedImport = resolveFlowByPath(importPath, mode);
 
               const namespacedImport = namespaceFlowImports(
                 resolvedImport,
@@ -280,7 +277,7 @@ export function resolveFlow(
   };
 }
 
-function resolveCodeNodeDependencies(path: string): {
+export function resolveCodeNodeDependencies(path: string): {
   errors: string[];
   nodes: { exportName: string; node: CodeNode }[];
 } {
