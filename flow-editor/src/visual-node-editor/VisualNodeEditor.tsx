@@ -39,6 +39,7 @@ import {
   isStickyInputPinConfig,
   stickyInputPinConfig,
   ROOT_INS_ID,
+  isMacroNodeInstance,
 } from "@flyde/core";
 
 import { InstanceView, InstanceViewProps } from "./instance-view/InstanceView";
@@ -1069,6 +1070,10 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       const onDblClickInstance = React.useCallback(
         (ins: NodeInstance, shift: boolean) => {
           if (shift) {
+            if (isMacroNodeInstance(ins)) {
+              toastMsg("Cannot edit macro node instance");
+              return;
+            }
             const node = isInlineNodeInstance(ins)
               ? ins.node
               : safelyGetNodeDef(ins.nodeId, currResolvedDeps);
@@ -1087,7 +1092,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
               const node = safelyGetNodeDef(ins, currResolvedDeps);
 
               onEditNode(node as ImportedNodeDef);
-            } else {
+            } else if (isInlineNodeInstance(ins)) {
               const node = ins.node;
               if (!isInlineValueNode(node)) {
                 if (isVisualNode(node)) {
@@ -1105,6 +1110,8 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                 type: "existing",
               });
               toastMsg("Editing inline visual node not supported yet");
+            } else {
+              toastMsg("Editing this type of node is not supported");
             }
           }
         },
@@ -1145,18 +1152,10 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             // todo - combine the above with below to an atomic action
             onChangeBoardData({ selected: [] });
           } else {
-            const visualNode = safelyGetNodeDef(
-              groupNodeIns.nodeId,
-              currResolvedDeps
-            );
-
-            if (!isVisualNode(visualNode)) {
-              toastMsg("Not supported", "warning");
-              return;
-            }
+            toastMsg("Cannot ungroup an imported group");
           }
         },
-        [node, onChange, onChangeBoardData, currResolvedDeps]
+        [node, onChange, onChangeBoardData]
       );
 
       const onExtractInlineNode = React.useCallback(

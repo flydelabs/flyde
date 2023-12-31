@@ -30,7 +30,7 @@ export const createDevServerClient = (baseUrl: string) => {
     ): Promise<ResolvedFlydeFlowDefinition> => {
       return axios
         .get(`${baseUrl}/resolveFlow?filename=${filename}`)
-        .then((res) => res.data.dependencies);
+        .then((res) => res.data);
     },
     getImportables: (filename: string): Promise<ImportablesResult> => {
       return axios
