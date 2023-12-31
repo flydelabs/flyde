@@ -172,7 +172,7 @@ describe("resolver", () => {
       const resolvedContainer = resolvedDeps["Container"] as VisualNode;
       const inlineContainer = (
         resolvedContainer.instances[0] as InlineNodeInstance
-      ).node;
+      ).node as VisualNode;
       console.log("inlineContainer", inlineContainer);
 
       assert.equal(

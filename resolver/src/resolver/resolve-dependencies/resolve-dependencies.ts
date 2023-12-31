@@ -2,7 +2,6 @@ import {
   VisualNode,
   isRefNodeInstance,
   isInlineNodeInstance,
-  isVisualNode,
   FlydeFlow,
   ResolvedFlydeFlow,
   isCodeNode,
@@ -10,9 +9,9 @@ import {
   ImportedNodeDef,
   isMacroNode,
   ResolvedVisualNode,
-  ResolvedDependencies,
   MacroNode,
   RefNodeInstance,
+  isVisualNode,
 } from "@flyde/core";
 import { existsSync } from "fs";
 import _ = require("lodash");
@@ -82,15 +81,17 @@ export function resolveFlow(
     for (const instance of instances) {
       if (isInlineNodeInstance(instance)) {
         const inlineNode = instance.node;
-        const resolved = resolveAndProcessVisualNode(
-          inlineNode,
-          namespace,
-          gatheredDependencies
-        );
-        gatheredDependencies = {
-          ...gatheredDependencies,
-          ...resolved.dependencies,
-        };
+        if (isVisualNode(inlineNode)) {
+          const resolved = resolveAndProcessVisualNode(
+            inlineNode,
+            namespace,
+            gatheredDependencies
+          );
+          gatheredDependencies = {
+            ...gatheredDependencies,
+            ...resolved.dependencies,
+          };
+        }
       } else if (isRefNodeInstance(instance)) {
         const { nodeId } = instance;
 
