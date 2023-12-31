@@ -11,7 +11,12 @@ import { Subject } from "rxjs";
 
 import { CancelFn, InnerExecuteFn } from "../execute";
 import { ConnectionData } from "../connect";
-import { isInlineNodeInstance, NodeInstance } from "./node-instance";
+import {
+  isInlineNodeInstance,
+  isRefNodeInstance,
+  NodeInstance,
+  ResolvedNodeInstance,
+} from "./node-instance";
 import {
   InputPin,
   InputPinMap,
@@ -174,6 +179,13 @@ export interface CodeNode extends BaseNode {
   customView?: CustomNodeViewFn;
 }
 
+export interface MacroNode<T> {
+  id: string;
+  description?: string;
+  definitionBuilder: (data: T) => Omit<CodeNodeDefinition, "id">;
+  runFnBuilder: (data: T) => CodeNode["run"];
+}
+
 export enum InlineValueNodeType {
   VALUE = "value",
   FUNCTION = "function",
@@ -211,6 +223,10 @@ export interface VisualNode extends BaseNode {
   customView?: CustomNodeViewFn;
 }
 
+export interface ResolvedVisualNode extends VisualNode {
+  instances: ResolvedNodeInstance[];
+}
+
 export type Node = CodeNode | CustomNode;
 
 export type ImportableSource = {
@@ -238,6 +254,10 @@ export const isBaseNode = (p: any): p is BaseNode => {
 
 export const isCodeNode = (p: Node | NodeDefinition | any): p is CodeNode => {
   return isBaseNode(p) && typeof (p as CodeNode).run === "function";
+};
+
+export const isMacroNode = (p: any): p is MacroNode<any> => {
+  return p && typeof (p as MacroNode<any>).runFnBuilder === "function";
 };
 
 export const isVisualNode = (p: Node | NodeDefinition): p is VisualNode => {
@@ -338,7 +358,12 @@ export const getNode = (
   if (typeof idOrIns !== "string" && isInlineNodeInstance(idOrIns)) {
     return idOrIns.node;
   }
-  const id = typeof idOrIns === "string" ? idOrIns : idOrIns.nodeId;
+  const id =
+    typeof idOrIns === "string"
+      ? idOrIns
+      : isRefNodeInstance(idOrIns)
+      ? idOrIns.nodeId
+      : idOrIns.macroId;
   const node = resolvedNodes[id];
   if (!node) {
     throw new Error(`Node with id ${id} not found`);
@@ -353,7 +378,12 @@ export const getNodeDef = (
   if (typeof idOrIns !== "string" && isInlineNodeInstance(idOrIns)) {
     return idOrIns.node;
   }
-  const id = typeof idOrIns === "string" ? idOrIns : idOrIns.nodeId;
+  const id =
+    typeof idOrIns === "string"
+      ? idOrIns
+      : isRefNodeInstance(idOrIns)
+      ? idOrIns.nodeId
+      : idOrIns.macroId;
   const node = resolvedNodes[id];
   if (!node) {
     console.error(`Node with id ${id} not found`);

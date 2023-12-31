@@ -4,13 +4,14 @@ import {
   isRefNodeInstance,
   isInlineNodeInstance,
   VisualNode,
+  ResolvedVisualNode,
 } from "@flyde/core";
 import _ = require("lodash");
 
 const namespaceVisualNode = (
-  node: VisualNode,
+  node: ResolvedVisualNode,
   namespace: string
-): VisualNode => {
+): ResolvedVisualNode => {
   const namespacedInstances = node.instances.map((ins) => {
     if (isInlineNodeInstance(ins)) {
       if (isVisualNode(ins.node)) {

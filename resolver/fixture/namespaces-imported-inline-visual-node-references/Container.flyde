@@ -1,0 +1,80 @@
+imports:
+  ./Special1.flyde.js:
+    - Special
+node:
+  instances:
+    - pos:
+        x: -155.55731201171875
+        y: 77.64640045166016
+      id: SpecialContainer-u8048ra
+      inputConfig: {}
+      node:
+        id: SpecialContainer
+        inputs:
+          n:
+            mode: required
+        outputs:
+          r:
+            delayed: false
+        instances:
+          - pos:
+              x: -88.5068359375
+              y: 63.66731262207031
+            id: ins1
+            inputConfig: {}
+            nodeId: Special
+        defaultStyle:
+          size: large
+          color: "#fee440"
+        inputsPosition:
+          n:
+            x: 0
+            y: 0
+        outputsPosition:
+          r:
+            x: 0
+            y: 400
+        connections:
+          - from:
+              insId: __this
+              pinId: n
+            to:
+              insId: ins1
+              pinId: n
+          - from:
+              insId: ins1
+              pinId: r
+            to:
+              insId: __this
+              pinId: r
+        completionOutputs:
+          - r
+  connections:
+    - from:
+        insId: __this
+        pinId: n
+      to:
+        insId: SpecialContainer-u8048ra
+        pinId: n
+    - from:
+        insId: SpecialContainer-u8048ra
+        pinId: r
+      to:
+        insId: __this
+        pinId: r
+  id: Container
+  inputs:
+    n:
+      mode: required
+      type: number
+  outputs:
+    r:
+      type: number
+  inputsPosition:
+    n:
+      x: -46.9732666015625
+      y: -15.99993896484375
+  outputsPosition:
+    r:
+      x: -28.16455078125
+      y: 220.80532836914062

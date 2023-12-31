@@ -1,0 +1,54 @@
+imports:
+  ./Special2.flyde.js:
+    - Special
+  ./Container.flyde:
+    - Container
+node:
+  instances:
+    - pos:
+        x: -82.2366943359375
+        y: -90.47157287597656
+      id: ins1
+      inputConfig: {}
+      nodeId: Container
+    - pos:
+        x: -75.96612548828125
+        y: 16.63226318359375
+      id: ins2
+      inputConfig: {}
+      nodeId: Special
+  connections:
+    - from:
+        insId: __this
+        pinId: n
+      to:
+        insId: ins1
+        pinId: n
+    - from:
+        insId: ins1
+        pinId: r
+      to:
+        insId: ins2
+        pinId: n
+    - from:
+        insId: ins2
+        pinId: r
+      to:
+        insId: __this
+        pinId: r
+  id: Flow
+  inputs:
+    n:
+      mode: required
+      type: number
+  outputs:
+    r:
+      type: number
+  inputsPosition:
+    n:
+      x: 12.7835693359375
+      y: -148.30039978027344
+  outputsPosition:
+    r:
+      x: -65.8695068359375
+      y: 141.85977172851562

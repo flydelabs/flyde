@@ -1,4 +1,12 @@
-import { InputPinsConfig, Node, NodeDefinition, NodeStyle, Pos } from "..";
+import {
+  InputPinsConfig,
+  Node,
+  NodeDefinition,
+  NodeStyle,
+  Pos,
+  ResolvedVisualNode,
+  VisualNode,
+} from "..";
 import { slug } from "cuid";
 
 export interface NodeInstanceConfig {
@@ -7,20 +15,33 @@ export interface NodeInstanceConfig {
   visibleOutputs?: string[];
   displayName?: string;
   style?: NodeStyle;
+  id: string;
+  pos: Pos;
 }
 
 export interface RefNodeInstance extends NodeInstanceConfig {
-  id: string;
   nodeId: string;
-  pos: Pos;
 }
 
 export interface InlineNodeInstance extends NodeInstanceConfig {
-  id: string;
-  node: Node;
-  pos: Pos;
+  node: VisualNode;
 }
-export type NodeInstance = RefNodeInstance | InlineNodeInstance;
+
+export interface MacroNodeInstance extends NodeInstanceConfig {
+  macroId: string;
+  macroData: any;
+}
+
+export type NodeInstance =
+  | RefNodeInstance
+  | InlineNodeInstance
+  | MacroNodeInstance;
+
+export type ResolvedInlineNodeInstance = InlineNodeInstance & {
+  node: ResolvedVisualNode;
+};
+
+export type ResolvedNodeInstance = RefNodeInstance | ResolvedInlineNodeInstance;
 
 export const nodeInstance = (
   id: string,
@@ -39,12 +60,13 @@ export const inlineNodeInstance = (
   node: Node,
   config?: InputPinsConfig,
   pos?: Pos
-): NodeInstance => ({
-  id,
-  node,
-  inputConfig: config || {},
-  pos: pos || { x: 0, y: 0 },
-});
+): NodeInstance =>
+  ({
+    id,
+    node,
+    inputConfig: config || {},
+    pos: pos || { x: 0, y: 0 },
+  } as InlineNodeInstance);
 
 export const isInlineNodeInstance = (
   ins: NodeInstance
@@ -52,7 +74,11 @@ export const isInlineNodeInstance = (
   return !!(ins as any).node;
 };
 export const isRefNodeInstance = (ins: NodeInstance): ins is RefNodeInstance =>
-  !isInlineNodeInstance(ins);
+  !!(ins as any).nodeId;
+
+export const isMacroNodeInstance = (
+  ins: NodeInstance
+): ins is MacroNodeInstance => !!(ins as any).macroId;
 
 export const NodeInstance = (
   id: string,
