@@ -203,17 +203,12 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
   }, 500);
 
   const onChangeState = React.useCallback(
-    async (changedState: FlowEditorState, type: FlydeFlowChangeType) => {
-      console.log("onChangeState", type, changedState);
+    (changedState: FlowEditorState, type: FlydeFlowChangeType) => {
       lastChangeReason.current = type.message;
       setEditorState(changedState);
       debouncedSaveFile(changedState.flow, props.integratedSource);
-      const deps = await ports.resolveDeps({
-        absPath: props.integratedSource,
-      });
-      setCurrentResolvedDeps(deps);
     },
-    [debouncedSaveFile, props.integratedSource, ports]
+    [debouncedSaveFile, props.integratedSource]
   );
 
   const onChangeFlow = React.useCallback(

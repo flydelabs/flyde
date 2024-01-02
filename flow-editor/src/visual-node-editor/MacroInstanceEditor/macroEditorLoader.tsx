@@ -1,16 +1,21 @@
 import { MacroNodeDefinition } from "@flyde/core";
+import React from "react";
 
 export function loadMacroEditor(
   macroNode: MacroNodeDefinition<any>
 ): React.FC<any> {
+  const w: any = window;
   const { id, editorComponentBundleContent } = macroNode;
 
   const exportId = `__MacroNode__${id}`;
 
+  // ensure React is available for the window loaded component
+  w.React = React;
+
   try {
     // eslint-disable-next-line no-eval
     eval(editorComponentBundleContent);
-    const w: any = window;
+
     const compModule = w[exportId];
     const comp = compModule?.default || compModule;
 

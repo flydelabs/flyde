@@ -12,11 +12,7 @@ import { FlowLoader } from "./integrated-flow-manager/flow-loader";
 
 import { disableCookieAccessForVscode } from "./disable-cookie-access-for-vscode";
 
-import React from "react";
-
 import "./index.scss";
-
-(window as any).React = React;
 
 disableCookieAccessForVscode();
 FocusStyleManager.onlyShowFocusOnTabs();
