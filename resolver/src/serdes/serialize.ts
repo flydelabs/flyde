@@ -3,7 +3,9 @@ import * as yaml from "yaml";
 import { cleanUnusedImports } from "./cleanUnusedImports";
 
 export const serializeFlow = (flow: FlydeFlow) => {
-  let parsed = flydeFlowSchema.parse(cleanUnusedImports(flow));
+  const importsCleaned = cleanUnusedImports(flow);
+
+  let parsed = flydeFlowSchema.parse(importsCleaned);
 
   return yaml.stringify(parsed, { aliasDuplicateObjects: false });
 };

@@ -43,7 +43,8 @@ const instance = z
       val.nodeId ||
       (val.macroId && typeof val.macroData !== "undefined"),
     {
-      message: "Instance must have either an inline node or refer to a nodeId",
+      message:
+        "Instance must have either an inline node or refer to a nodeId, or be a macro instance",
     }
   );
 

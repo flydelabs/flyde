@@ -33,6 +33,12 @@ export interface MacroNodeInstance extends NodeInstanceConfig {
   macroData: any;
 }
 
+export interface ResolvedMacroNodeInstance extends NodeInstanceConfig {
+  nodeId: string;
+  macroId: string;
+  macroData: any;
+}
+
 export type NodeInstance =
   | RefNodeInstance
   | InlineNodeInstance
@@ -42,7 +48,10 @@ export type ResolvedInlineNodeInstance = InlineNodeInstance & {
   node: ResolvedVisualNode;
 };
 
-export type ResolvedNodeInstance = RefNodeInstance | ResolvedInlineNodeInstance;
+export type ResolvedNodeInstance =
+  | RefNodeInstance
+  | ResolvedInlineNodeInstance
+  | ResolvedMacroNodeInstance;
 
 export const nodeInstance = (
   id: string,
@@ -69,17 +78,38 @@ export const inlineNodeInstance = (
     pos: pos || { x: 0, y: 0 },
   } as InlineNodeInstance);
 
+export const macroNodeInstance = (
+  id: string,
+  macroId: string,
+  macroData: any,
+  config?: InputPinsConfig,
+  pos?: Pos
+): ResolvedMacroNodeInstance =>
+  ({
+    id,
+    macroId,
+    macroData,
+    inputConfig: config || {},
+    nodeId: `${macroId}__${id}`, // TODO: lift this concatenation to a higher level
+    pos: pos || { x: 0, y: 0 },
+  } as ResolvedMacroNodeInstance);
+
 export const isInlineNodeInstance = (
   ins: NodeInstance
 ): ins is InlineNodeInstance => {
   return !!(ins as any).node;
 };
 export const isRefNodeInstance = (ins: NodeInstance): ins is RefNodeInstance =>
-  !!(ins as any).nodeId;
+  !!(ins as any).nodeId && !(ins as any).macroId;
 
 export const isMacroNodeInstance = (
   ins: NodeInstance
 ): ins is MacroNodeInstance => !!(ins as any).macroId;
+
+export const isResolvedMacroNodeInstance = (
+  ins: ResolvedNodeInstance | NodeInstance
+): ins is ResolvedMacroNodeInstance =>
+  !!(ins as any).macroId && !!(ins as any).nodeId;
 
 export const NodeInstance = (
   id: string,

@@ -15,6 +15,7 @@ import {
   getNodeOutputs,
   getInputName,
   getOutputName,
+  NodeDefinition,
 } from "@flyde/core";
 import classNames from "classnames";
 
@@ -32,7 +33,6 @@ import {
 import {
   NodeInstance,
   isVisualNode,
-  NodeDefinition,
   PinType,
   getNodeInputs,
 } from "@flyde/core";

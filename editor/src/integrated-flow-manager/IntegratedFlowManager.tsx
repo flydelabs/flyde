@@ -4,6 +4,7 @@ import "./App.scss";
 import {
   FlydeFlow,
   ImportableSource,
+  isMacroNodeInstance,
   ResolvedDependenciesDefinitions,
 } from "@flyde/core";
 
@@ -122,6 +123,31 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
     });
   }, [editorState.flow, ports]);
 
+  const lastInstancesMacroData = React.useRef<any>([]);
+
+  useEffect(() => {
+    // syncs macro data from instances to the resolved deps
+    const insMacroDatas = flow.node.instances.flatMap((ins) => {
+      if (isMacroNodeInstance(ins)) {
+        return ins.macroData;
+      } else {
+        return [];
+      }
+    });
+
+    if (!_.isEqual(insMacroDatas, lastInstancesMacroData.current)) {
+      lastInstancesMacroData.current = insMacroDatas;
+      ports
+        .resolveDeps({
+          flow: editorState.flow,
+          absPath: props.integratedSource,
+        })
+        .then((deps) => {
+          setCurrentResolvedDeps(deps);
+        });
+    }
+  }, [editorState.flow, flow.node.instances, ports, props.integratedSource]);
+
   const connectToRemoteDebugger = React.useCallback(
     (url: string) => {
       const newClient = createEditorClient(url, executionId);
@@ -177,23 +203,38 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
   }, 500);
 
   const onChangeState = React.useCallback(
-    (changedState: FlowEditorState, type: FlydeFlowChangeType) => {
+    async (changedState: FlowEditorState, type: FlydeFlowChangeType) => {
       console.log("onChangeState", type, changedState);
       lastChangeReason.current = type.message;
       setEditorState(changedState);
       debouncedSaveFile(changedState.flow, props.integratedSource);
+      const deps = await ports.resolveDeps({
+        absPath: props.integratedSource,
+      });
+      setCurrentResolvedDeps(deps);
     },
-    [props.integratedSource, debouncedSaveFile]
+    [debouncedSaveFile, props.integratedSource, ports]
   );
 
   const onChangeFlow = React.useCallback(
-    (changedFlow: FlydeFlow, type: FlydeFlowChangeType) => {
+    async (changedFlow: FlydeFlow, type: FlydeFlowChangeType) => {
       console.log("onChangeFlow", type);
       lastChangeReason.current = type.message;
       setEditorState((state) => ({ ...state, flow: changedFlow }));
-      debouncedSaveFile(changedFlow, props.integratedSource);
+      if (type.message.includes("macro")) {
+        await ports.setFlow({
+          absPath: props.integratedSource,
+          flow: changedFlow,
+        });
+        const deps = await ports.resolveDeps({
+          absPath: props.integratedSource,
+        });
+        setCurrentResolvedDeps(deps);
+      } else {
+        debouncedSaveFile(changedFlow, props.integratedSource);
+      }
     },
-    [props.integratedSource, debouncedSaveFile]
+    [ports, props.integratedSource, debouncedSaveFile]
   );
 
   React.useEffect(() => {

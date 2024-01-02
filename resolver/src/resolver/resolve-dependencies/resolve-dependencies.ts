@@ -12,17 +12,23 @@ import {
   MacroNode,
   RefNodeInstance,
   isVisualNode,
+  ResolvedFlydeFlowDefinition,
+  ResolvedMacroNodeInstance,
+  MacroNodeDefinition,
+  isMacroNodeInstance,
 } from "@flyde/core";
-import { existsSync } from "fs";
+import { existsSync, readFileSync } from "fs";
 import _ = require("lodash");
-import { join } from "path";
+import { isAbsolute, join } from "path";
 import { ResolveMode, resolveFlowByPath } from "../resolve-flow";
 import { resolveImportablePaths } from "./resolve-importable-paths";
 import { namespaceFlowImports } from "./namespace-flow-imports";
+import { sync } from "pkg-up";
 
 import * as StdLib from "@flyde/stdlib/dist/all";
 
 import requireReload from "require-reload";
+import { macroNodeToDefinition } from "./macro-nodes";
 
 const getLocalOrPackagePaths = (fullFlowPath: string, importPath: string) => {
   const fullImportPath = join(fullFlowPath, "..", importPath);
@@ -64,7 +70,9 @@ export function resolveFlow(
     dependencies = {}
   ): {
     resolvedNode: ResolvedVisualNode;
-    dependencies: ResolvedFlydeFlow["dependencies"];
+    dependencies:
+      | ResolvedFlydeFlow["dependencies"]
+      | ResolvedFlydeFlowDefinition["dependencies"];
   } {
     const { instances } = visualNode;
     let gatheredDependencies = { ...dependencies };
@@ -102,6 +110,10 @@ export function resolveFlow(
         const importPath = inverseImports[nodeId];
 
         if (!importPath) {
+          console.error(
+            `${node.id} in ${fullFlowPath} is using referenced node with id ${nodeId} that is not imported`,
+            { instance, inverseImports }
+          );
           throw new Error(
             `${node.id} in ${fullFlowPath} is using referenced node with id ${nodeId} that is not imported`
           );
@@ -178,7 +190,7 @@ export function resolveFlow(
             );
           }
         }
-      } else {
+      } else if (isMacroNodeInstance(instance)) {
         const { macroId, macroData } = instance;
         const importPath = inverseImports[macroId];
 
@@ -205,18 +217,42 @@ export function resolveFlow(
                 );
                 continue;
               }
+
+              if (mode === "definition") {
+                const macroDef = macroNodeToDefinition(
+                  targetMacro.node,
+                  importPath
+                );
+
+                gatheredDependencies[macroDef.id] = {
+                  ...macroDef,
+                  source: {
+                    path: importPath,
+                    export: targetMacro.exportName,
+                  },
+                };
+              } else {
+                gatheredDependencies[targetMacro.node.id] = {
+                  ...targetMacro.node,
+                  source: {
+                    path: importPath,
+                    export: targetMacro.exportName,
+                  },
+                };
+              }
+
               const metaData = targetMacro.node.definitionBuilder(macroData);
               const runFn = targetMacro.node.runFnBuilder(macroData);
 
-              console.log(macroData);
-
-              console.log(metaData.outputs);
-
               const id = `${namespace}${macroId}__${instance.id}`;
+              const displayName = targetMacro.node.displayNameBuilder
+                ? targetMacro.node.displayNameBuilder(macroData)
+                : targetMacro.node.id;
               const resolvedNode: CodeNode = {
                 ...metaData,
                 id,
                 run: runFn,
+                displayName,
               };
 
               gatheredDependencies[id] = {
@@ -227,11 +263,7 @@ export function resolveFlow(
                 },
               };
 
-              console.log("resolvedNode", resolvedNode);
-
-              delete instance.macroId;
-              delete instance.macroData;
-              (instance as any as RefNodeInstance).nodeId = id;
+              (instance as ResolvedMacroNodeInstance).nodeId = id;
 
               found = true;
               break;
@@ -252,6 +284,10 @@ export function resolveFlow(
             `Could not find macro node ${macroId} in ${importPath}. It is imported by ${node.id} (${fullFlowPath})`
           );
         }
+      } else {
+        throw new Error(
+          `Unknown node instance type ${JSON.stringify(instance)}`
+        );
       }
     }
 
@@ -279,7 +315,7 @@ export function resolveFlow(
 
 export function resolveCodeNodeDependencies(path: string): {
   errors: string[];
-  nodes: { exportName: string; node: CodeNode }[];
+  nodes: { exportName: string; node: CodeNode | MacroNodeDefinition<any> }[];
 } {
   const errors = [];
   const nodes = [];
@@ -293,7 +329,7 @@ export function resolveCodeNodeDependencies(path: string): {
         if (isCodeNode(value)) {
           nodes.push({ exportName: key, node: value });
         } else if (isMacroNode(value)) {
-          throw new Error(`Macro nodes are not supported yet`);
+          nodes.push({ exportName: key, node: value });
         } else {
           errors.push(`Exported value "${key}" is not a valid CodeNode`);
         }
@@ -322,8 +358,6 @@ function resolveMacroNodesDependencies(path: string): {
       Object.entries(module).forEach(([key, value]) => {
         if (isMacroNode(value)) {
           nodes.push({ exportName: key, node: value });
-        } else if (isMacroNode(value)) {
-          throw new Error(`Macro nodes are not supported yet`);
         } else {
           errors.push(`Exported value "${key}" is not a valid CodeNode`);
         }

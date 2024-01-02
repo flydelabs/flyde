@@ -3,12 +3,14 @@ import {
   isCodeNodePath,
   resolveCodeNodeDependencies,
   deserializeFlow,
+  macroNodeToDefinition,
 } from "@flyde/resolver";
 
 import {
   BaseNode,
   debugLogger,
   isBaseNode,
+  isMacroNode,
   NodesDefCollection,
 } from "@flyde/core";
 import { scanFolderStructure } from "./scan-folders-structure";
@@ -64,7 +66,12 @@ export async function scanImportableNodes(
         );
 
         const nodesObj = nodes.reduce(
-          (obj, { node }) => ({ ...obj, [node.id]: node }),
+          (obj, { node }) => ({
+            ...obj,
+            [node.id]: isMacroNode(node)
+              ? macroNodeToDefinition(node, file.fullPath)
+              : node,
+          }),
           {}
         );
         const relativePath = relative(join(fileRoot, ".."), file.fullPath);

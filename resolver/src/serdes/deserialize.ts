@@ -27,6 +27,14 @@ export function deserializeFlow(flowContents: string, path: string): FlydeFlow {
 
   data.imports = imports;
 
+  if (!data.node.inputsPosition) {
+    data.node.inputsPosition = {};
+  }
+
+  if (!data.node.outputsPosition) {
+    data.node.outputsPosition = {};
+  }
+
   return data as FlydeFlow;
 }
 

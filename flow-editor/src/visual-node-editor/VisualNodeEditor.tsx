@@ -40,6 +40,9 @@ import {
   stickyInputPinConfig,
   ROOT_INS_ID,
   isMacroNodeInstance,
+  isResolvedMacroNodeInstance,
+  ResolvedMacroNodeInstance,
+  isMacroNodeDefinition,
 } from "@flyde/core";
 
 import { InstanceView, InstanceViewProps } from "./instance-view/InstanceView";
@@ -71,6 +74,7 @@ import {
   getMiddleOfViewPort,
   getInstancePinConfig,
   changePinConfig,
+  createNewMacroNodeInstance,
 } from "./utils";
 
 import { produce } from "immer";
@@ -123,6 +127,11 @@ import { MainInstanceEventsIndicator } from "./MainInstanceEventsIndicator";
 import { HelpBubble } from "./HelpBubble";
 import { safelyGetNodeDef } from "../flow-editor/getNodeDef";
 import { useDarkMode } from "../flow-editor/DarkModeContext";
+import {
+  MacroInstanceEditor,
+  MacroInstanceEditorProps,
+} from "./MacroInstanceEditor";
+import { on } from "events";
 
 const MemodSlider = React.memo(Slider);
 
@@ -313,6 +322,10 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       const [openInlineInstance, setOpenInlineInstance] = useState<{
         node: VisualNode;
         insId: string;
+      }>();
+
+      const [editedMacroInstance, setEditedMacroInstance] = useState<{
+        ins: ResolvedMacroNodeInstance;
       }>();
 
       const inlineEditorPortalRootRef = useRef();
@@ -1110,6 +1123,8 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                 type: "existing",
               });
               toastMsg("Editing inline visual node not supported yet");
+            } else if (isResolvedMacroNodeInstance(ins)) {
+              setEditedMacroInstance({ ins });
             } else {
               toastMsg("Editing this type of node is not supported");
             }
@@ -1393,12 +1408,18 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
                 const targetPos = vSub(pos, { x: 0, y: 50 * viewPort.zoom }); // to account for node
 
-                const newNodeIns = createNewNodeInstance(
-                  importableNode.node.id,
-                  0,
-                  targetPos,
-                  depsWithImport
-                );
+                const newNodeIns = isMacroNodeDefinition(importableNode.node)
+                  ? createNewMacroNodeInstance(
+                      importableNode.node,
+                      0,
+                      targetPos
+                    )
+                  : createNewNodeInstance(
+                      importableNode.node.id,
+                      0,
+                      targetPos,
+                      depsWithImport
+                    );
                 const newNode = produce(node, (draft) => {
                   draft.instances.push(newNodeIns);
                 });
@@ -1414,6 +1435,13 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                 toastMsg(
                   `Node ${importableNode.node.id} successfully imported from ${importableNode.module}`
                 );
+
+                if (isResolvedMacroNodeInstance(newNodeIns)) {
+                  // hack to allow imported macro to appear in deps. TODO: fix
+                  setTimeout(() => {
+                    setEditedMacroInstance({ ins: newNodeIns });
+                  }, 100);
+                }
                 reportEvent("addNode", {
                   nodeId: importableNode.node.id,
                   source: "actionMenu",
@@ -2484,6 +2512,24 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         [draggedConnection, onConnectionClose]
       );
 
+      const onSaveMacroInstance: MacroInstanceEditorProps["onSubmit"] =
+        React.useCallback(
+          (val) => {
+            const newVal = produce(node, (draft) => {
+              const ins = draft.instances.find(
+                (i) => i.id === editedMacroInstance.ins.id
+              );
+              if (!ins || !isMacroNodeInstance(ins)) {
+                throw new Error(`Impossible state`);
+              }
+              ins.macroData = val;
+            });
+            onChange(newVal, functionalChange("save macro instance"));
+            setEditedMacroInstance(undefined);
+          },
+          [node, onChange, editedMacroInstance]
+        );
+
       try {
         return (
           <ContextMenu
@@ -2667,6 +2713,14 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                   }
                   onCancel={() => setInlineCodeTarget(undefined)}
                   onSubmit={onSaveInlineValueNode}
+                />
+              ) : null}
+              {editedMacroInstance ? (
+                <MacroInstanceEditor
+                  onCancel={() => setEditedMacroInstance(undefined)}
+                  onSubmit={onSaveMacroInstance}
+                  ins={editedMacroInstance.ins}
+                  deps={resolvedDependencies}
                 />
               ) : null}
               <div className="inline-editor-portal-root" />

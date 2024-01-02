@@ -15,6 +15,8 @@ import {
   isInlineNodeInstance,
   isRefNodeInstance,
   NodeInstance,
+  RefNodeInstance,
+  ResolvedMacroNodeInstance,
   ResolvedNodeInstance,
 } from "./node-instance";
 import {
@@ -83,6 +85,11 @@ export interface BaseNode {
    * Node's unique id. {@link VisualNode.instances }  refer use this to refer to the correct node
    */
   id: string;
+
+  /**
+   * A human readable name for the node. Used in the visual editor.
+   */
+  displayName?: string;
   /**
    * Is displayed in the visual editor and used to search for nodes.
    */
@@ -181,10 +188,30 @@ export interface CodeNode extends BaseNode {
 
 export interface MacroNode<T> {
   id: string;
+  displayNameBuilder?: (data: T) => string;
+  defaultStyle?: NodeStyle;
   description?: string;
   definitionBuilder: (data: T) => Omit<CodeNodeDefinition, "id">;
   runFnBuilder: (data: T) => CodeNode["run"];
+  defaultData: T;
+
+  /**
+   * Assumes you are bundling the editor component using webpack library+window config.
+   * The name of the window variable that holds the component should be __MacroNode__{id}
+   * The path should be relative to the root of the project (package.json location)
+   */
+  editorComponentBundlePath: string;
 }
+
+export type MacroNodeDefinition<T> = Omit<
+  MacroNode<T>,
+  "definitionBuilder" | "runFnBuilder" | "editorComponentBundlePath"
+> & {
+  /**
+   * Resolver will use this to load the editor component bundle into the editor
+   */
+  editorComponentBundleContent: string;
+};
 
 export enum InlineValueNodeType {
   VALUE = "value",
@@ -240,6 +267,7 @@ export type CustomNode = VisualNode | InlineValueNode;
 export type CodeNodeDefinition = Omit<CodeNode, "run">;
 
 export type NodeDefinition = CustomNode | CodeNodeDefinition;
+export type NodeOrMacroDefinition = NodeDefinition | MacroNodeDefinition<any>;
 
 export type NodeModuleMetaData = {
   imported?: boolean;
@@ -258,6 +286,16 @@ export const isCodeNode = (p: Node | NodeDefinition | any): p is CodeNode => {
 
 export const isMacroNode = (p: any): p is MacroNode<any> => {
   return p && typeof (p as MacroNode<any>).runFnBuilder === "function";
+};
+
+export const isMacroNodeDefinition = (
+  p: any
+): p is MacroNodeDefinition<any> => {
+  return (
+    p &&
+    typeof (p as MacroNodeDefinition<any>).editorComponentBundleContent ===
+      "string"
+  );
 };
 
 export const isVisualNode = (p: Node | NodeDefinition): p is VisualNode => {
@@ -381,9 +419,7 @@ export const getNodeDef = (
   const id =
     typeof idOrIns === "string"
       ? idOrIns
-      : isRefNodeInstance(idOrIns)
-      ? idOrIns.nodeId
-      : idOrIns.macroId;
+      : (idOrIns as RefNodeInstance | ResolvedMacroNodeInstance).nodeId;
   const node = resolvedNodes[id];
   if (!node) {
     console.error(`Node with id ${id} not found`);

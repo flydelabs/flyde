@@ -9,7 +9,6 @@ import {
   VisualNode,
   NodeInstance,
   NodesDefCollection,
-  NodeDefinition,
   isExternalConnectionNode,
   PinType,
   nodeInstance,
@@ -22,6 +21,10 @@ import {
   calcCenter,
   fullInsIdPath,
   InputPinConfig,
+  NodeDefinition,
+  isMacroNodeDefinition,
+  macroNodeInstance,
+  MacroNodeDefinition,
 } from "@flyde/core";
 import { calcPinPosition } from "./connection-view/calc-pin-position";
 import { Size } from "../utils";
@@ -271,8 +274,40 @@ export const createNewNodeInstance = (
     return acc;
   }, {});
 
-  const ins = nodeInstance(createId(), node.id, inputsConfig, { x: 0, y: 0 });
+  const ins = isMacroNodeDefinition(node)
+    ? macroNodeInstance(createId(), node.id, node.defaultData, inputsConfig, {
+        x: 0,
+        y: 0,
+      })
+    : nodeInstance(createId(), node.id, inputsConfig, { x: 0, y: 0 });
   const width = calcNodeWidth(ins, node);
+
+  const { x, y } = lastMousePos;
+  const pos = {
+    x: x - width / 2,
+    y: y + offset,
+  };
+
+  return { ...ins, pos };
+};
+
+export const createNewMacroNodeInstance = (
+  macro: MacroNodeDefinition<any>,
+  offset: number = -1 * NODE_HEIGHT * 1.5,
+  lastMousePos: Pos
+): NodeInstance => {
+  const ins = macroNodeInstance(
+    createId(),
+    macro.id,
+    macro.defaultData,
+    {},
+    {
+      x: 0,
+      y: 0,
+    }
+  );
+
+  const width = 100; // macro are resolved only after they are created, so we don't know their width yet
 
   const { x, y } = lastMousePos;
   const pos = {

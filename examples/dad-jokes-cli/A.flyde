@@ -1,0 +1,10 @@
+imports:
+  src/Tester.flyde: []
+node:
+  instances: []
+  connections: []
+  id: A
+  inputs: {}
+  outputs: {}
+  inputsPosition: {}
+  outputsPosition: {}
