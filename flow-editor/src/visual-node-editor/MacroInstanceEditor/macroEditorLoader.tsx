@@ -1,5 +1,7 @@
 import { MacroNodeDefinition } from "@flyde/core";
 import React from "react";
+import * as Blueprint from "@blueprintjs/core";
+import * as BlueprintSelect from "@blueprintjs/select";
 
 export function loadMacroEditor(
   macroNode: MacroNodeDefinition<any>
@@ -9,8 +11,10 @@ export function loadMacroEditor(
 
   const exportId = `__MacroNode__${id}`;
 
-  // ensure React is available for the window loaded component
+  // ensure React and BP are available for the editor comps
   w.React = React;
+  w.Blueprint = Blueprint;
+  w.BlueprintSelect = BlueprintSelect;
 
   try {
     // eslint-disable-next-line no-eval

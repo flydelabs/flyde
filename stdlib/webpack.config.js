@@ -4,6 +4,7 @@ const pairs = [
   { entry: "./src/Lists/ListFrom.tsx", name: "ListFrom" },
   { entry: "./src/Lists/SpreadList.tsx", name: "SpreadList" },
   { entry: "./src/ControlFlow/RoundRobin.tsx", name: "RoundRobin" },
+  { entry: "./src/Values/InlineValue.tsx", name: "InlineValue" },
   // {
   //   entry: "./src/macro-node-simple/InlineValueEditor.tsx",
   //   name: "InlineValue",
@@ -40,5 +41,12 @@ module.exports = pairs.map(({ entry, name }) => ({
         ],
       },
     ],
+  },
+  externals: {
+    // Do not bundle React and ReactDOM, assume they're available externally
+    react: "React",
+    "react-dom": "ReactDOM",
+    "@blueprintjs/core": "Blueprint",
+    "@blueprintjs/select": "BlueprintSelect",
   },
 }));
