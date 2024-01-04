@@ -13,7 +13,6 @@ import { CancelFn, InnerExecuteFn } from "../execute";
 import { ConnectionData } from "../connect";
 import {
   isInlineNodeInstance,
-  isRefNodeInstance,
   NodeInstance,
   RefNodeInstance,
   ResolvedMacroNodeInstance,
@@ -393,15 +392,18 @@ export const getNode = (
   idOrIns: string | NodeInstance,
   resolvedNodes: NodesCollection
 ): Node => {
-  if (typeof idOrIns !== "string" && isInlineNodeInstance(idOrIns)) {
-    return idOrIns.node;
+  const isOrInsResolved = idOrIns as string | ResolvedNodeInstance; // ugly type hack to avoid fixing the whole Resolved instances cases caused by macros. TODO: fix this by refactoring all places to use "ResolvedNodeInstance"
+  if (
+    typeof isOrInsResolved !== "string" &&
+    isInlineNodeInstance(isOrInsResolved)
+  ) {
+    return isOrInsResolved.node;
   }
   const id =
-    typeof idOrIns === "string"
-      ? idOrIns
-      : isRefNodeInstance(idOrIns)
-      ? idOrIns.nodeId
-      : idOrIns.macroId;
+    typeof isOrInsResolved === "string"
+      ? isOrInsResolved
+      : isOrInsResolved.nodeId;
+
   const node = resolvedNodes[id];
   if (!node) {
     throw new Error(`Node with id ${id} not found`);

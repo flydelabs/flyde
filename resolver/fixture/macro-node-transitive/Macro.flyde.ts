@@ -3,6 +3,8 @@ import { DynamicOutput, MacroNode, OutputPinMap } from "@flyde/core";
 const node: MacroNode<number> = {
   id: "Add",
   description: "Adds the input value",
+  defaultData: 1,
+  editorComponentBundlePath: "./Macro.flyde.ts",
   definitionBuilder: (sum) => {
     return {
       description: `Adds ${sum} to the input value`,

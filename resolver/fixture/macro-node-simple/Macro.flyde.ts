@@ -3,6 +3,8 @@ import { DynamicOutput, MacroNode, OutputPinMap } from "@flyde/core";
 const node: MacroNode<number> = {
   id: "Duplicate",
   description: "Duplicates the input value",
+  editorComponentBundlePath: "./Macro.flyde.ts",
+  defaultData: 1,
   definitionBuilder: (times) => {
     const outputs = "x"
       .repeat(times)

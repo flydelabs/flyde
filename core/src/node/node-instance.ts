@@ -28,6 +28,10 @@ export interface InlineNodeInstance extends NodeInstanceConfig {
   node: VisualNode | CodeNode;
 }
 
+export interface ResolvedInlineNodeInstance extends NodeInstanceConfig {
+  node: ResolvedVisualNode | CodeNode;
+}
+
 export interface MacroNodeInstance extends NodeInstanceConfig {
   macroId: string;
   macroData: any;
@@ -43,10 +47,6 @@ export type NodeInstance =
   | RefNodeInstance
   | InlineNodeInstance
   | MacroNodeInstance;
-
-export type ResolvedInlineNodeInstance = InlineNodeInstance & {
-  node: ResolvedVisualNode;
-};
 
 export type ResolvedNodeInstance =
   | RefNodeInstance
