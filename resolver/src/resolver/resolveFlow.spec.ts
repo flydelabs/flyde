@@ -484,5 +484,23 @@ describe("resolver", () => {
 
       assert.equal(s.lastCall.args[0], 3);
     });
+
+    it("resolves a macro from external packages", async () => {
+      const data = resolveFlowByPath(getFixturePath("macro-node-dep/a.flyde"));
+      const node = data.main;
+      const resolvedDeps = data.dependencies as NodesCollection;
+
+      const [s, r] = spiedOutput();
+
+      execute({
+        node,
+        resolvedDeps: resolvedDeps,
+        inputs: { n: staticNodeInput(2) },
+        outputs: { r },
+      });
+
+      assert.equal(s.lastCall.args[0], 2);
+      assert.equal(s.getCalls().length, 3); // duplicate macro duplicates to 3
+    });
   });
 });

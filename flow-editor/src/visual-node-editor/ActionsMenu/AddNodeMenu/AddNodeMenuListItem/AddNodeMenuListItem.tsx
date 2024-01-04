@@ -17,7 +17,7 @@ export const AddNodeMenuListItem: React.FC<AddNodeMenuListItemProps> = (
 ) => {
   const { importableNode, onSetFilter, onAdd, onSelect } = props;
   const { node, module } = importableNode;
-  const { id, description } = node;
+  const { id, description, displayName } = node;
 
   // auto scroll to element if selected
   const ref = React.useRef<HTMLDivElement>(null);
@@ -45,7 +45,7 @@ export const AddNodeMenuListItem: React.FC<AddNodeMenuListItemProps> = (
     >
       <div className="content">
         <header>
-          <span className="id">{id}</span>
+          <span className="name">{displayName ?? id}</span>
           {/* {node.namespace ? <Tag className='namespace'>Group: {node.namespace}</Tag> : null} */}
           <Tag
             interactive

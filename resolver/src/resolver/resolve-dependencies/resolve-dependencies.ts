@@ -10,25 +10,23 @@ import {
   isMacroNode,
   ResolvedVisualNode,
   MacroNode,
-  RefNodeInstance,
   isVisualNode,
   ResolvedFlydeFlowDefinition,
   ResolvedMacroNodeInstance,
   MacroNodeDefinition,
   isMacroNodeInstance,
 } from "@flyde/core";
-import { existsSync, readFileSync } from "fs";
+import { existsSync } from "fs";
 import _ = require("lodash");
-import { isAbsolute, join } from "path";
+import { join } from "path";
 import { ResolveMode, resolveFlowByPath } from "../resolve-flow";
 import { resolveImportablePaths } from "./resolve-importable-paths";
 import { namespaceFlowImports } from "./namespace-flow-imports";
-import { sync } from "pkg-up";
 
 import * as StdLib from "@flyde/stdlib/dist/all";
 
 import requireReload from "require-reload";
-import { macroNodeToDefinition } from "./macro-nodes";
+import { macroNodeToDefinition, processMacroNode } from "./macro-nodes";
 
 const getLocalOrPackagePaths = (fullFlowPath: string, importPath: string) => {
   const fullImportPath = join(fullFlowPath, "..", importPath);
@@ -203,11 +201,11 @@ export function resolveFlow(
         const paths = getLocalOrPackagePaths(fullFlowPath, importPath);
 
         let found = false;
-
         // Look for the referenced node in each possible file it might be in
         for (const importPath of paths) {
           if (isCodeNodePath(importPath)) {
             const { errors, nodes } = resolveMacroNodesDependencies(importPath);
+
             const targetMacro = nodes.find(({ node }) => node.id === macroId);
 
             if (targetMacro) {
@@ -241,21 +239,13 @@ export function resolveFlow(
                 };
               }
 
-              const metaData = targetMacro.node.definitionBuilder(macroData);
-              const runFn = targetMacro.node.runFnBuilder(macroData);
+              const resolvedNode = processMacroNode(
+                namespace,
+                targetMacro.node,
+                instance
+              );
 
-              const id = `${namespace}${macroId}__${instance.id}`;
-              const displayName = targetMacro.node.displayNameBuilder
-                ? targetMacro.node.displayNameBuilder(macroData)
-                : targetMacro.node.id;
-              const resolvedNode: CodeNode = {
-                ...metaData,
-                id,
-                run: runFn,
-                displayName,
-              };
-
-              gatheredDependencies[id] = {
+              gatheredDependencies[resolvedNode.id] = {
                 ...resolvedNode,
                 source: {
                   path: importPath,
@@ -263,7 +253,7 @@ export function resolveFlow(
                 },
               };
 
-              (instance as ResolvedMacroNodeInstance).nodeId = id;
+              (instance as ResolvedMacroNodeInstance).nodeId = resolvedNode.id;
 
               found = true;
               break;
