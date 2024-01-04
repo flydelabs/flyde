@@ -73,7 +73,6 @@ export const defaultPorts: EditorPorts = {
   readFlow: toastNotImplemented("readFlow"),
   setFlow: toastNotImplemented("setFlow"),
   resolveDeps: toastNotImplemented("resolveDeps"),
-  resolveDepsContent: toastNotImplemented("onResolveDepsContent"),
 
   getImportables: toastNotImplemented("getImportables"),
   onExternalFlowChange: toastNotImplemented("onExternalFlowChange"),
