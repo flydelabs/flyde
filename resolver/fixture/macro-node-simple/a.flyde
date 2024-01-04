@@ -1,0 +1,44 @@
+imports:
+  "./Macro.flyde.ts":
+  - Duplicate
+node:
+  id: Main
+  inputs:
+    n:
+      type: number
+      mode: required
+  outputs:
+    r:
+      type: number
+  instances:
+  - id: ins1
+    macroId: Duplicate
+    macroData: 3
+    pos:
+      x: 0
+      y: 0
+  connections:
+    - from:
+        insId: __this
+        pinId: n
+      to:
+        insId: ins1
+        pinId: value
+    - from:
+        insId: ins1
+        pinId: output0
+      to:
+        insId: __this
+        pinId: r
+    - from:
+        insId: ins1
+        pinId: output1
+      to:
+        insId: __this
+        pinId: r
+    - from:
+        insId: ins1
+        pinId: output2
+      to:
+        insId: __this
+        pinId: r

@@ -4,7 +4,7 @@ import { createService } from "./service/service";
 import { setupRemoteDebuggerServer } from "@flyde/remote-debugger/dist/setup-server";
 import { createServer } from "http";
 import { scanImportableNodes } from "./service/scan-importable-nodes";
-import { deserializeFlow, resolveDependencies } from "@flyde/resolver";
+import { deserializeFlow, resolveFlowByPath } from "@flyde/resolver";
 import { join } from "path";
 
 import resolveFrom = require("resolve-from");
@@ -68,7 +68,7 @@ export const runDevServer = (
     }
   });
 
-  app.get("/resolveDefinitions", async (req, res) => {
+  app.get("/resolveFlow", async (req, res) => {
     try {
       const { filename } = req.query as { filename: string };
       if (!filename) {
@@ -77,9 +77,8 @@ export const runDevServer = (
       }
 
       const fullPath = resolveFrom(rootDir, filename);
-      const flow = deserializeFlow(readFileSync(fullPath, "utf-8"), fullPath);
-      const deps = await resolveDependencies(flow, "definition", fullPath);
-      res.send({ ...deps, [flow.node.id]: flow.node });
+      const resolvedFlow = await resolveFlowByPath(fullPath, "definition");
+      res.send(resolvedFlow);
     } catch (e) {
       console.error(e);
       res.status(400).send(e);

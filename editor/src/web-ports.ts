@@ -32,7 +32,9 @@ export const createWebPorts = ({
       await devServerClient.saveFile(absPath, flow);
     },
     resolveDeps: async ({ absPath }) => {
-      return devServerClient.resolveDefinitions(absPath);
+      return devServerClient
+        .resolveDefinitions(absPath)
+        .then((f) => f.dependencies);
     },
     getImportables: async ({ rootFolder }) => {
       return devServerClient.getImportables(rootFolder);

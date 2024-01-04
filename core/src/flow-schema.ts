@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { VisualNode, NodeDefinition, Node } from "./node";
+import { VisualNode, NodeDefinition, Node, ResolvedVisualNode } from "./node";
 
 const importSchema = z.record(z.string(), z.string().or(z.array(z.string())));
 const position = z.strictObject({ x: z.number(), y: z.number() });
@@ -33,11 +33,20 @@ const instance = z
     visibleOutputs: z.optional(z.array(z.string())),
     nodeId: z.optional(z.string()),
     node: z.optional(z.any()),
+    macroId: z.optional(z.string()),
+    macroData: z.optional(z.any()),
     style: z.optional(nodeStyle),
   })
-  .refine((val) => val.node || val.nodeId, {
-    message: "Instance must have either an inline node or refer to a nodeId",
-  });
+  .refine(
+    (val) =>
+      val.node ||
+      val.nodeId ||
+      (val.macroId && typeof val.macroData !== "undefined"),
+    {
+      message:
+        "Instance must have either an inline node or refer to a nodeId, or be a macro instance",
+    }
+  );
 
 const inputPinSchema = z.union([
   z.string(),
@@ -116,14 +125,14 @@ export type ResolvedDependenciesDefinitions = Record<
 >;
 
 export type ResolvedFlydeFlowDefinition = {
-  main: VisualNode;
+  main: ResolvedVisualNode;
   dependencies: ResolvedDependenciesDefinitions;
 };
 
 export type ResolvedDependencies = Record<string, ImportedNode>;
 
 export type ResolvedFlydeRuntimeFlow = {
-  main: VisualNode;
+  main: ResolvedVisualNode;
   dependencies: ResolvedDependencies;
 };
 

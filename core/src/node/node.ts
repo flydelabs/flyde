@@ -11,7 +11,13 @@ import { Subject } from "rxjs";
 
 import { CancelFn, InnerExecuteFn } from "../execute";
 import { ConnectionData } from "../connect";
-import { isInlineNodeInstance, NodeInstance } from "./node-instance";
+import {
+  isInlineNodeInstance,
+  NodeInstance,
+  RefNodeInstance,
+  ResolvedMacroNodeInstance,
+  ResolvedNodeInstance,
+} from "./node-instance";
 import {
   InputPin,
   InputPinMap,
@@ -78,6 +84,11 @@ export interface BaseNode {
    * Node's unique id. {@link VisualNode.instances }  refer use this to refer to the correct node
    */
   id: string;
+
+  /**
+   * A human readable name for the node. Used in the visual editor.
+   */
+  displayName?: string;
   /**
    * Is displayed in the visual editor and used to search for nodes.
    */
@@ -174,6 +185,33 @@ export interface CodeNode extends BaseNode {
   customView?: CustomNodeViewFn;
 }
 
+export interface MacroNode<T> {
+  id: string;
+  displayNameBuilder?: (data: T) => string;
+  defaultStyle?: NodeStyle;
+  description?: string;
+  definitionBuilder: (data: T) => Omit<CodeNodeDefinition, "id">;
+  runFnBuilder: (data: T) => CodeNode["run"];
+  defaultData: T;
+
+  /**
+   * Assumes you are bundling the editor component using webpack library+window config.
+   * The name of the window variable that holds the component should be __MacroNode__{id}
+   * The path should be relative to the root of the project (package.json location)
+   */
+  editorComponentBundlePath: string;
+}
+
+export type MacroNodeDefinition<T> = Omit<
+  MacroNode<T>,
+  "definitionBuilder" | "runFnBuilder" | "editorComponentBundlePath"
+> & {
+  /**
+   * Resolver will use this to load the editor component bundle into the editor
+   */
+  editorComponentBundleContent: string;
+};
+
 export enum InlineValueNodeType {
   VALUE = "value",
   FUNCTION = "function",
@@ -211,6 +249,10 @@ export interface VisualNode extends BaseNode {
   customView?: CustomNodeViewFn;
 }
 
+export interface ResolvedVisualNode extends VisualNode {
+  instances: ResolvedNodeInstance[];
+}
+
 export type Node = CodeNode | CustomNode;
 
 export type ImportableSource = {
@@ -224,6 +266,7 @@ export type CustomNode = VisualNode | InlineValueNode;
 export type CodeNodeDefinition = Omit<CodeNode, "run">;
 
 export type NodeDefinition = CustomNode | CodeNodeDefinition;
+export type NodeOrMacroDefinition = NodeDefinition | MacroNodeDefinition<any>;
 
 export type NodeModuleMetaData = {
   imported?: boolean;
@@ -238,6 +281,20 @@ export const isBaseNode = (p: any): p is BaseNode => {
 
 export const isCodeNode = (p: Node | NodeDefinition | any): p is CodeNode => {
   return isBaseNode(p) && typeof (p as CodeNode).run === "function";
+};
+
+export const isMacroNode = (p: any): p is MacroNode<any> => {
+  return p && typeof (p as MacroNode<any>).runFnBuilder === "function";
+};
+
+export const isMacroNodeDefinition = (
+  p: any
+): p is MacroNodeDefinition<any> => {
+  return (
+    p &&
+    typeof (p as MacroNodeDefinition<any>).editorComponentBundleContent ===
+      "string"
+  );
 };
 
 export const isVisualNode = (p: Node | NodeDefinition): p is VisualNode => {
@@ -335,10 +392,18 @@ export const getNode = (
   idOrIns: string | NodeInstance,
   resolvedNodes: NodesCollection
 ): Node => {
-  if (typeof idOrIns !== "string" && isInlineNodeInstance(idOrIns)) {
-    return idOrIns.node;
+  const isOrInsResolved = idOrIns as string | ResolvedNodeInstance; // ugly type hack to avoid fixing the whole Resolved instances cases caused by macros. TODO: fix this by refactoring all places to use "ResolvedNodeInstance"
+  if (
+    typeof isOrInsResolved !== "string" &&
+    isInlineNodeInstance(isOrInsResolved)
+  ) {
+    return isOrInsResolved.node;
   }
-  const id = typeof idOrIns === "string" ? idOrIns : idOrIns.nodeId;
+  const id =
+    typeof isOrInsResolved === "string"
+      ? isOrInsResolved
+      : isOrInsResolved.nodeId;
+
   const node = resolvedNodes[id];
   if (!node) {
     throw new Error(`Node with id ${id} not found`);
@@ -353,7 +418,10 @@ export const getNodeDef = (
   if (typeof idOrIns !== "string" && isInlineNodeInstance(idOrIns)) {
     return idOrIns.node;
   }
-  const id = typeof idOrIns === "string" ? idOrIns : idOrIns.nodeId;
+  const id =
+    typeof idOrIns === "string"
+      ? idOrIns
+      : (idOrIns as RefNodeInstance | ResolvedMacroNodeInstance).nodeId;
   const node = resolvedNodes[id];
   if (!node) {
     console.error(`Node with id ${id} not found`);

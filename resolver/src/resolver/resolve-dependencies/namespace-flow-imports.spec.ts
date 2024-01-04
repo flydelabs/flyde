@@ -5,6 +5,7 @@ import {
   RefNodeInstance,
   ResolvedFlydeFlow,
   ResolvedFlydeFlowDefinition,
+  ResolvedVisualNode,
 } from "@flyde/core";
 import { assert } from "chai";
 import _ = require("lodash");
@@ -16,7 +17,7 @@ describe("namespace flows", () => {
       main: visualNode({
         id: "Bob",
         instances: [nodeInstance("i1", "Alice")],
-      }),
+      }) as ResolvedVisualNode,
       dependencies: {
         Alice: {
           ...visualNode({

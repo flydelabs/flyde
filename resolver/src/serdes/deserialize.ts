@@ -1,8 +1,6 @@
-import { CustomNode, FlydeFlow, flydeFlowSchema } from "@flyde/core";
+import { FlydeFlow, flydeFlowSchema } from "@flyde/core";
 import * as yaml from "yaml";
-import * as rfs from "require-from-string";
 import _ = require("lodash");
-import * as path from "path";
 import { readFileSync } from "fs";
 
 require("ts-node").register({
@@ -28,6 +26,14 @@ export function deserializeFlow(flowContents: string, path: string): FlydeFlow {
   });
 
   data.imports = imports;
+
+  if (!data.node.inputsPosition) {
+    data.node.inputsPosition = {};
+  }
+
+  if (!data.node.outputsPosition) {
+    data.node.outputsPosition = {};
+  }
 
   return data as FlydeFlow;
 }

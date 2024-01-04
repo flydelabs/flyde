@@ -27,7 +27,9 @@ export interface EditorPorts {
 
   resolveDeps: (dto: {
     absPath: string;
+    flow?: FlydeFlow;
   }) => Promise<ResolvedDependenciesDefinitions>;
+
   getImportables: (dto: {
     rootFolder: string;
     flowPath: string;
@@ -71,6 +73,7 @@ export const defaultPorts: EditorPorts = {
   readFlow: toastNotImplemented("readFlow"),
   setFlow: toastNotImplemented("setFlow"),
   resolveDeps: toastNotImplemented("resolveDeps"),
+
   getImportables: toastNotImplemented("getImportables"),
   onExternalFlowChange: toastNotImplemented("onExternalFlowChange"),
   onInstallRuntimeRequest: toastNotImplemented("onInstallRuntimeRequest"),

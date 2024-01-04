@@ -2,10 +2,9 @@ import {
   CodeNode,
   ImportableSource,
   ImportedNode,
-  RunNodeFunction,
   randomInt,
 } from "@flyde/core";
-import { resolveCodeNodeDependencies } from "@flyde/resolver";
+import { resolveCodeNodeDependencies, resolveFlow } from "@flyde/resolver";
 import axios from "axios";
 import { existsSync, writeFileSync } from "fs";
 
@@ -77,7 +76,7 @@ export async function generateAndSaveNode(
   }
 
   const node: ImportedNode = {
-    ...maybeNode.node,
+    ...(maybeNode.node as CodeNode),
     source: { path: filePath, export: maybeNode.exportName },
   };
   return { node, module: `./${fileName}.flyde.ts` };

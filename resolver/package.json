@@ -30,6 +30,7 @@
     "glob": "^8.1.0",
     "lodash": "^4.17.21",
     "module-from-string": "^3.3.0",
+    "pkg-up": "^3.1.0",
     "require-from-string": "^2.0.2",
     "require-reload": "^0.2.2",
     "resolve-from": "^5.0.0",

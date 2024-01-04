@@ -1,0 +1,30 @@
+imports:
+  "@flyde/runtime": []
+  "@flyde/stdlib": []
+  InlineValue/InlineValue.flyde.ts:
+    - InlineValue
+node:
+  instances:
+    - pos:
+        x: -50
+        y: -40
+      id: anidxl49lu803pvgmkuvpxcy
+      inputConfig: {}
+      nodeId: InlineValue__anidxl49lu803pvgmkuvpxcy
+      macroId: InlineValue
+      macroData: ""
+  connections: []
+  id: DadJoke
+  inputs: {}
+  outputs: {}
+  inputsPosition:
+    punchDelay:
+      x: -266.0287552679128
+      y: -884.2784519757015
+    test:
+      x: -182.5383681955638
+      y: -903.352979697288
+    punch delay:
+      x: -222.9
+      y: -816.63
+  outputsPosition: {}

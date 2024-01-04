@@ -1,0 +1,68 @@
+imports:
+  Duplicate.flyde.ts:
+    - Duplicate
+  InlineValue.flyde.ts:
+    - InlineValue
+node:
+  instances:
+    - pos:
+        x: -324.34423828125
+        y: 146.57110945459004
+      id: y64a0jw78ftsyxnuiejoyw1u
+      inputConfig: {}
+      nodeId: Duplicate__y64a0jw78ftsyxnuiejoyw1u
+      macroId: Duplicate
+      macroData: 2
+    - pos:
+        x: -625.2645263671875
+        y: 117.16812483544942
+      id: jp4ojzfy3976hqk9ytxsloie
+      inputConfig: {}
+      nodeId: Duplicate__jp4ojzfy3976hqk9ytxsloie
+      macroId: Duplicate
+      macroData: "3"
+    - pos:
+        x: -399.760498046875
+        y: 298.89985625024434
+      id: iw8s5ze0x7o4c831wqx4c7bx
+      inputConfig: {}
+      nodeId: Duplicate__iw8s5ze0x7o4c831wqx4c7bx
+      macroId: Duplicate
+      macroData: 2
+    - pos:
+        x: -379.77978515625
+        y: 47.71357695336934
+      id: bs9sisb4wgugyfx5fpfos1fi
+      inputConfig: {}
+      nodeId: InlineValue__bs9sisb4wgugyfx5fpfos1fi
+      macroId: InlineValue
+      macroData: 2
+    - pos:
+        x: -646.2817993164062
+        y: 252.37303129907247
+      id: hclgk32mvfclxd7ys2j9etit
+      inputConfig: {}
+      nodeId: InlineValue__hclgk32mvfclxd7ys2j9etit
+      macroId: InlineValue
+      macroData: |-
+        dfgdfg
+        dgf dfG >DFG >dfg
+        dwfg
+        d gdwfG>dwfG ?DF.g dFG<dfgd
+  connections: []
+  id: Main
+  inputs:
+    n:
+      mode: required
+      type: number
+  outputs:
+    r:
+      type: number
+  inputsPosition:
+    n:
+      x: -441.2750244140625
+      y: 39.76506805419922
+  outputsPosition:
+    r:
+      x: -444.4544677734375
+      y: 370.590781211853

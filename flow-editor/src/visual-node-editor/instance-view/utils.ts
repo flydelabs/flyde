@@ -1,15 +1,13 @@
 import {
   okeys,
   NodeInstance,
-  NodeDefinition,
   Pos,
   isStaticInputPinConfig,
   StaticInputPinConfig,
+  NodeDefinition,
 } from "@flyde/core";
 
 import Handlebars from "handlebars";
-
-import { isDefined } from "../../utils";
 
 import {
   MAX_INSTANCE_WIDTH,
@@ -47,7 +45,7 @@ export const calcNodeContent = (
     }
   }
 
-  return node.id;
+  return node.displayName ?? node.id;
 };
 
 export const calcNodeWidth = (instance: NodeInstance, node: NodeDefinition) => {
