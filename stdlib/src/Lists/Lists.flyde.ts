@@ -1,4 +1,4 @@
-import { CodeNode } from "@flyde/core";
+import { CodeNode, MacroNode } from "@flyde/core";
 
 const namespace = "Lists";
 
@@ -62,73 +62,28 @@ export const Repeat: CodeNode = {
   },
 };
 
-export const ListFrom2: CodeNode = {
-  id: "List From 2",
-  defaultStyle: {
-    icon: "fa-list",
-  },
+export const ListFrom: MacroNode<number> = {
+  id: "ListFrom",
   namespace,
-  description: "Creates a list from two values",
-  inputs: {
-    value1: { description: "First value" },
-    value2: { description: "Second value" },
-  },
-  outputs: { list: { description: "List containing the 2 values" } },
-  run: ({ value1, value2 }, { list }) => list.next([value1, value2]),
-};
-
-export const ListFrom3: CodeNode = {
-  id: "List From 3",
-  defaultStyle: {
-    icon: "fa-list",
-  },
-  namespace,
-  description: "Creates a list from three values",
-  inputs: {
-    value1: { description: "First value" },
-    value2: { description: "Second value" },
-    value3: { description: "Third value" },
-  },
-  outputs: { list: { description: "List containing all 3 values" } },
-  run: ({ value1, value2, value3 }, { list }) =>
-    list.next([value1, value2, value3]),
-};
-
-export const ListFrom4: CodeNode = {
-  id: "List From 4",
-  defaultStyle: {
-    icon: "fa-list",
-  },
-  namespace,
-  description: "Creates a list from four values",
-  inputs: {
-    value1: { description: "First value" },
-    value2: { description: "Second value" },
-    value3: { description: "Third value" },
-    value4: { description: "Fourth value" },
-  },
-  outputs: { list: { description: "List containing all 4 values" } },
-  run: ({ value1, value2, value3, value4 }, { list }) =>
-    list.next([value1, value2, value3, value4]),
-};
-
-export const ListFrom5: CodeNode = {
-  id: "List From 5",
-  defaultStyle: {
-    icon: "fa-list",
-  },
-  namespace,
-  description: "Creates a list from five values",
-  inputs: {
-    value1: { description: "First value" },
-    value2: { description: "Second value" },
-    value3: { description: "Third value" },
-    value4: { description: "Fourth value" },
-    value5: { description: "Fifth value" },
-  },
-  outputs: { list: { description: "List containing all 5 values" } },
-  run: ({ value1, value2, value3, value4, value5 }, { list }) =>
-    list.next([value1, value2, value3, value4, value5]),
+  runFnBuilder:
+    (count) =>
+    (inputs, { list }) => {
+      const result = [];
+      for (let i = 0; i < count; i++) {
+        result.push(inputs[`item${i + 1}`]);
+      }
+      return list.next(result);
+    },
+  definitionBuilder: (count) => ({
+    description: `Creates a list from ${count} values`,
+    displayName: `List from ${count}`,
+    inputs: Object.fromEntries(
+      Array.from({ length: count }, (_, i) => [`item${i + 1}`, {}])
+    ),
+    outputs: { list: { description: "List containing all values" } },
+  }),
+  defaultData: 3,
+  editorComponentBundlePath: "../../../dist/ui/ListFrom.js",
 };
 
 export const ConcatLists: CodeNode = {
@@ -208,79 +163,27 @@ export const HeadAndRest: CodeNode = {
   },
 };
 
-export const SplitTuple: CodeNode = {
-  id: "Split Pair",
-  defaultStyle: {
-    icon: "fa-list",
-  },
+export const SpreadList: MacroNode<number> = {
+  id: "SpreadList",
   namespace,
-  description:
-    "Receives a list with 2 items and emits two outputs: the first item and the second item",
-  inputs: {
-    pair: { description: "The pair to split" },
-  },
-  outputs: {
-    item1: { description: "The first item in the pair" },
-    item2: { description: "The second item in the pair" },
-  },
-  run: (inputs, outputs) => {
-    const { pair } = inputs;
-    const { item1, item2 } = outputs;
-    item1.next(pair[0]);
-    item2.next(pair[1]);
-  },
-};
-
-export const SplitTriple: CodeNode = {
-  id: "Split Triple",
-  defaultStyle: {
-    icon: "fa-list",
-  },
-  namespace,
-  description:
-    "Receives a list with 3 items and emits three outputs: the first item, the second item and the third item",
-  inputs: {
-    triple: { description: "The triple" },
-  },
-  outputs: {
-    item1: { description: "The first item in the triple" },
-    item2: { description: "The second item in the triple" },
-    item3: { description: "The third item in the triple" },
-  },
-  run: (inputs, outputs) => {
+  displayName: "Spread List",
+  description: "Spreads a list into multiple outputs",
+  runFnBuilder: (count) => (inputs, outputs) => {
     const { list } = inputs;
-    const { item1, item2, item3 } = outputs;
-    item1.next(list[0]);
-    item2.next(list[1]);
-    item3.next(list[2]);
+    for (let i = 0; i < count; i++) {
+      outputs[`item${i + 1}`].next(list[i]);
+    }
   },
-};
-
-export const SplitQuadruple: CodeNode = {
-  id: "Split Quadruple",
-  defaultStyle: {
-    icon: "fa-list",
-  },
-  namespace,
-  description:
-    "Receives a list with 4 items and emits four outputs: the first item, the second item, the third item and the fourth item",
-  inputs: {
-    quadruple: { description: "The quadruple" },
-  },
-  outputs: {
-    item1: { description: "The first item in the quadruple" },
-    item2: { description: "The second item in the quadruple" },
-    item3: { description: "The third item in the quadruple" },
-    item4: { description: "The fourth item in the quadruple" },
-  },
-  run: (inputs, outputs) => {
-    const { list } = inputs;
-    const { item1, item2, item3, item4 } = outputs;
-    item1.next(list[0]);
-    item2.next(list[1]);
-    item3.next(list[2]);
-    item4.next(list[3]);
-  },
+  definitionBuilder: (count) => ({
+    description: `Receives a list with ${count} items and emits ${count} outputs: the first item, the second item, and so on`,
+    displayName: `Spreads List of ${count}`,
+    inputs: { list: { description: "The list" } },
+    outputs: Object.fromEntries(
+      Array.from({ length: count }, (_, i) => [`item${i + 1}`, {}])
+    ),
+  }),
+  defaultData: 3,
+  editorComponentBundlePath: "../../../dist/ui/SpreadList.js",
 };
 
 export const AccumulateValuesUntilTrigger: CodeNode = {

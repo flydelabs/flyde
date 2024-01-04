@@ -1,4 +1,4 @@
-import { CodeNode } from "@flyde/core";
+import { CodeNode, MacroNode, OutputPinMap } from "@flyde/core";
 
 const PubSub = require("pubsub-js");
 
@@ -41,112 +41,50 @@ export const LimitTimes: CodeNode = {
   },
 };
 
-export const RoundRobin3: CodeNode = {
-  id: "Round Robin 3",
+export const RoundRobin: MacroNode<number> = {
+  id: "RoundRobin",
+  displayName: "Round Robin",
   namespace,
-  description:
-    "Item will be emitted to one of the three outputs in a round robin fashion",
-  inputs: { value: { mode: "required", description: "The value to emit" } },
-  outputs: {
-    r1: {
-      description:
-        'The first output in order to emit the value received. After emitting a value, it moves to "r2"\'s turn.',
-    },
-    r2: {
-      description:
-        'The second output in order to emit the value received. After emitting a value, it moves to "r3"\'s turn.',
-    },
-    r3: {
-      description:
-        'The third output in order to emit the value received. After emitting a value, it moves back to "r1"\'s turn.',
-    },
+  defaultData: 3,
+  definitionBuilder: (count) => {
+    return {
+      displayName: `Round Robin ${count}`,
+      description: `Item will be emitted to one of the ${count} outputs in a round robin fashion`,
+      inputs: { value: { mode: "required", description: "The value to emit" } },
+      outputs: Array.from({ length: count }).reduce<OutputPinMap>(
+        (obj, _, i) => ({
+          ...obj,
+          [`r${i + 1}`]: {
+            description: `The ${
+              i + 1
+            } output in order to emit the value received. After emitting a value, it moves to "r${
+              (i + 2) % count
+            }"'s turn.`,
+          },
+        }),
+        {}
+      ),
+    };
   },
-  completionOutputs: [],
-  reactiveInputs: ["value"],
-  run: function (inputs, outputs, adv) {
-    const { state } = adv;
-    const { r1, r2, r3 } = outputs;
-    const curr = state.get("curr") || 0;
+  runFnBuilder: (count) => {
+    return (inputs, _outputs, adv) => {
+      const { state } = adv;
 
-    const o = [r1, r2, r3][curr];
+      const outputs = Array.from({ length: count }).map(
+        (_, i) => _outputs[`r${i + 1}`]
+      );
 
-    const nextCurr = (curr + 1) % 3;
+      const curr = state.get("curr") || 0;
 
-    o.next(inputs.item);
-    state.set("curr", nextCurr);
+      const o = outputs[curr];
+
+      const nextCurr = (curr + 1) % count;
+
+      o.next(inputs.item);
+      state.set("curr", nextCurr);
+    };
   },
-};
-
-export const RoundRobin2: CodeNode = {
-  namespace,
-  id: "Round Robin 2",
-  description:
-    "Item will be emitted to one of the 2 outputs in a round robin fashion",
-  inputs: { value: { mode: "required", description: "The value to emit" } },
-  outputs: {
-    r1: {
-      description:
-        'The first output in order to emit the value received. After emitting a value, it moves to "r2"\'s turn.',
-    },
-    r2: {
-      description:
-        'The second output in order to emit the value received. After emitting a value, it moves to "r3"\'s turn.',
-    },
-  },
-  completionOutputs: [],
-  reactiveInputs: ["value"],
-  run: function (inputs, outputs, adv) {
-    const { state } = adv;
-    const { r1, r2 } = outputs;
-    const curr = state.get("curr") || 0;
-
-    const o = [r1, r2][curr];
-
-    const nextCurr = (curr + 1) % 2;
-
-    o.next(inputs.item);
-    state.set("curr", nextCurr);
-  },
-};
-
-export const RoundRobin4: CodeNode = {
-  id: "Round Robin 4",
-  namespace,
-  description:
-    "Item will be emitted to one of the 4 outputs in a round robin fashion",
-  inputs: { value: { mode: "required", description: "The value to emit" } },
-  outputs: {
-    r1: {
-      description:
-        'The first output in order to emit the value received. After emitting a value, it moves to "r2"\'s turn.',
-    },
-    r2: {
-      description:
-        'The second output in order to emit the value received. After emitting a value, it moves to "r3"\'s turn.',
-    },
-    r3: {
-      description:
-        'The third output in order to emit the value received. After emitting a value, it moves to "r4"\'s turn.',
-    },
-    r4: {
-      description:
-        'The fourth output in order to emit the value received. After emitting a value, it moves back to "r1"\'s turn.',
-    },
-  },
-  completionOutputs: [],
-  reactiveInputs: ["value"],
-  run: function (inputs, outputs, adv) {
-    const { state } = adv;
-    const { r1, r2, r3, r4 } = outputs;
-    const curr = state.get("curr") || 0;
-
-    const o = [r1, r2, r3, r4][curr];
-
-    const nextCurr = (curr + 1) % 4;
-
-    o.next(inputs.item);
-    state.set("curr", nextCurr);
-  },
+  editorComponentBundlePath: "../../../dist/ui/RoundRobin.js",
 };
 
 export const Publish: CodeNode = {

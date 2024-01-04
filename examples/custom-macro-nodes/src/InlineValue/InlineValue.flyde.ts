@@ -6,6 +6,7 @@ const node: MacroNode<any> = {
   definitionBuilder: (val) => {
     return {
       description: `Emits the value ${val}`,
+      displayName: `Inline Value: ${val}`,
       inputs: {},
       outputs: {
         output: {
@@ -18,7 +19,6 @@ const node: MacroNode<any> = {
     const outputPin = outputs.output as DynamicOutput;
     outputPin.next(val);
   },
-  displayNameBuilder: () => `Emit Value`,
   editorComponentBundlePath: "../../../dist/InlineValue.js",
   defaultData: "",
 };

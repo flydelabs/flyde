@@ -1,7 +1,8 @@
-import { NodesDefCollection } from "@flyde/core";
+import { NodesDefCollection, isMacroNode } from "@flyde/core";
 import {
   deserializeFlow,
   isCodeNodePath,
+  macroNodeToDefinition,
   resolveCodeNodeDependencies,
   resolveImportablePaths,
 } from "@flyde/resolver";
@@ -18,9 +19,17 @@ export async function resolveDependentPackages(
         const nodes = paths.reduce((acc, filePath) => {
           if (isCodeNodePath(filePath)) {
             const obj = resolveCodeNodeDependencies(filePath).nodes.reduce(
-              (obj, { node }) => ({ ...obj, [node.id]: node }),
+              (obj, { node }) => {
+                return {
+                  ...obj,
+                  [node.id]: isMacroNode(node)
+                    ? macroNodeToDefinition(node, filePath)
+                    : node,
+                };
+              },
               {}
             );
+
             return { ...acc, ...obj };
           }
           try {

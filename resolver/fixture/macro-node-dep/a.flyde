@@ -1,0 +1,54 @@
+imports:
+  "@acme/macro":
+    - Duplicate
+node:
+  instances:
+    - pos:
+        x: -29.596282958984375
+        y: 63.572052001953125
+      id: ins1
+      inputConfig: {}
+      nodeId: Duplicate__ins1
+      macroId: Duplicate
+      macroData: 3
+  connections:
+    - from:
+        insId: __this
+        pinId: n
+      to:
+        insId: ins1
+        pinId: value
+    - from:
+        insId: ins1
+        pinId: output0
+      to:
+        insId: __this
+        pinId: r
+    - from:
+        insId: ins1
+        pinId: output1
+      to:
+        insId: __this
+        pinId: r
+    - from:
+        insId: ins1
+        pinId: output2
+      to:
+        insId: __this
+        pinId: r
+  id: Main
+  inputs:
+    n:
+      mode: required
+      type: number
+  outputs:
+    r:
+      type: number
+  inputsPosition:
+    n:
+      x: 33.333282470703125
+      y: 16.6668701171875
+  outputsPosition:
+    r:
+      x: 43.333343505859375
+      y: 237.53330993652344

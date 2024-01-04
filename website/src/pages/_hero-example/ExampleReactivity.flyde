@@ -3,12 +3,12 @@ imports:
     - Interval
     - Accumulate Values by Count
     - Loop List
-    - Round Robin 3
+    - RoundRobin
 node:
   instances:
     - pos:
-        x: -631.5591588310128
-        y: -398.1038369497917
+        x: -628.0026402763253
+        y: -420.65284818026043
       id: ghunnjxvc8lzz9ir1n7a5cv9
       inputConfig:
         interval:
@@ -92,12 +92,6 @@ node:
           fontFamily: monospace
           fontWeight: "500"
     - pos:
-        x: -648.7103934472225
-        y: -316.292033067738
-      id: akc8kvij9dns3euqp01iijtd
-      inputConfig: {}
-      nodeId: Round Robin 3
-    - pos:
         x: -480.1188427734375
         y: -225.620185546875
       id: ApisCombination-wn048ny
@@ -134,49 +128,39 @@ node:
       id: rjyjsbcahykm15dllqw8tlzj
       inputConfig: {}
       nodeId: Loop List
+    - pos:
+        x: -640.8146587612097
+        y: -326.7664907403789
+      id: oeum6dqgsprbuef0p9s3b1ye
+      inputConfig: {}
+      nodeId: RoundRobin__oeum6dqgsprbuef0p9s3b1ye
+      macroId: RoundRobin
+      macroData: 3
   connections:
     - from:
-        insId: ghunnjxvc8lzz9ir1n7a5cv9
-        pinId: value
-      to:
-        insId: akc8kvij9dns3euqp01iijtd
-        pinId: value
-    - from:
-        insId: akc8kvij9dns3euqp01iijtd
+        insId: oeum6dqgsprbuef0p9s3b1ye
         pinId: r1
       to:
         insId: Inline-value-beep-d5048it
         pinId: __trigger
     - from:
-        insId: akc8kvij9dns3euqp01iijtd
+        insId: oeum6dqgsprbuef0p9s3b1ye
         pinId: r2
       to:
         insId: ApisCombination-u01482r
         pinId: __trigger
     - from:
-        insId: akc8kvij9dns3euqp01iijtd
+        insId: oeum6dqgsprbuef0p9s3b1ye
         pinId: r3
       to:
         insId: ApisCombination-wn048ny
         pinId: __trigger
     - from:
-        insId: Inline-value-beep-d5048it
-        pinId: value
+        insId: rjyjsbcahykm15dllqw8tlzj
+        pinId: item
       to:
-        insId: zhz7csy5btxnhjsy3k51kj9g
-        pinId: value
-    - from:
-        insId: ApisCombination-u01482r
-        pinId: value
-      to:
-        insId: zhz7csy5btxnhjsy3k51kj9g
-        pinId: value
-    - from:
-        insId: ApisCombination-wn048ny
-        pinId: value
-      to:
-        insId: zhz7csy5btxnhjsy3k51kj9g
-        pinId: value
+        insId: __this
+        pinId: output
     - from:
         insId: zhz7csy5btxnhjsy3k51kj9g
         pinId: accumulated
@@ -184,11 +168,29 @@ node:
         insId: rjyjsbcahykm15dllqw8tlzj
         pinId: list
     - from:
-        insId: rjyjsbcahykm15dllqw8tlzj
-        pinId: item
+        insId: ApisCombination-u01482r
+        pinId: value
       to:
-        insId: __this
-        pinId: output
+        insId: zhz7csy5btxnhjsy3k51kj9g
+        pinId: value
+    - from:
+        insId: Inline-value-beep-d5048it
+        pinId: value
+      to:
+        insId: zhz7csy5btxnhjsy3k51kj9g
+        pinId: value
+    - from:
+        insId: ApisCombination-wn048ny
+        pinId: value
+      to:
+        insId: zhz7csy5btxnhjsy3k51kj9g
+        pinId: value
+    - from:
+        insId: ghunnjxvc8lzz9ir1n7a5cv9
+        pinId: value
+      to:
+        insId: oeum6dqgsprbuef0p9s3b1ye
+        pinId: value
   id: ApisCombination
   inputs: {}
   outputs:

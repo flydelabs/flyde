@@ -117,9 +117,9 @@ export const AddNodeMenu: React.FC<AddNodeMenuProps> = (props) => {
           if (query) {
             const content = `${
               importable.node.searchKeywords?.join(" ") ?? []
-            } ${importable.node.id} ${importable.node.namespace ?? ""} ${
-              importable.node.description
-            }`;
+            } ${importable.node.id} ${importable.node.displayName ?? ""} ${
+              importable.node.namespace ?? ""
+            } ${importable.node.description}`;
             const score = content.toLowerCase().indexOf(query.toLowerCase());
             if (score === -1) {
               return [];

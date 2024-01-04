@@ -187,7 +187,8 @@ export interface CodeNode extends BaseNode {
 
 export interface MacroNode<T> {
   id: string;
-  displayNameBuilder?: (data: T) => string;
+  displayName?: string;
+  namespace?: string;
   defaultStyle?: NodeStyle;
   description?: string;
   definitionBuilder: (data: T) => Omit<CodeNodeDefinition, "id">;
