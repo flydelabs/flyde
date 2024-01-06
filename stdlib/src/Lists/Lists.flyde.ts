@@ -402,7 +402,7 @@ export const Prepend: CodeNode = {
 };
 
 export const Remove: CodeNode = {
-  id: "Remove",
+  id: "Remove Item",
   namespace,
   description: "Removes an item from a list",
   inputs: {
@@ -419,7 +419,7 @@ export const Remove: CodeNode = {
 };
 
 export const RemoveAt: CodeNode = {
-  id: "Remove At",
+  id: "Remove Item At",
   namespace,
   description: "Removes an item from a list at the specified index",
   inputs: {

@@ -5,6 +5,9 @@ const pairs = [
   { entry: "./src/Lists/SpreadList.tsx", name: "SpreadList" },
   { entry: "./src/ControlFlow/RoundRobin.tsx", name: "RoundRobin" },
   { entry: "./src/Values/InlineValue.tsx", name: "InlineValue" },
+  { entry: "./src/Http/HttpConfigEditor.tsx", name: "Http" },
+  { entry: "./src/ControlFlow/Conditional.tsx", name: "Conditional" },
+  { entry: "./src/ControlFlow/Switch.tsx", name: "Switch" },
   // {
   //   entry: "./src/macro-node-simple/InlineValueEditor.tsx",
   //   name: "InlineValue",

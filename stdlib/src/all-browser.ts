@@ -1,5 +1,5 @@
 // consumed by the website playground
-export * from "./Http.flyde";
+export * from "./Http/Http.flyde";
 export * from "./Objects.flyde";
 export * from "./Numbers.flyde";
 export * from "./Strings.flyde";

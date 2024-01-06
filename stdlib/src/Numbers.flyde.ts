@@ -245,43 +245,6 @@ export const ToFixed: CodeNode = {
   run: ({ number, places }, { fixed }) => fixed.next(number.toFixed(places)),
 };
 
-export const ToExponential: CodeNode = {
-  id: "To Exponential",
-  namespace,
-  description:
-    "Emits the specified number of decimal places of a number in exponential notation",
-  inputs: {
-    number: { description: "Number to format" },
-    places: { description: "Number of decimal places to format to" },
-  },
-  outputs: {
-    exponential: {
-      description:
-        "The number with the specified number of decimal places in exponential notation",
-    },
-  },
-  run: ({ number, places }, { exponential }) =>
-    exponential.next(number.toExponential(places)),
-};
-
-export const ToPrecision: CodeNode = {
-  id: "To Precision",
-  namespace,
-  description: "Emits the specified number of significant figures of a number",
-  inputs: {
-    number: { description: "Number to format" },
-    places: { description: "Number of significant figures to format to" },
-  },
-  outputs: {
-    precision: {
-      description:
-        "The number with the specified number of significant figures",
-    },
-  },
-  run: ({ number, places }, { precision }) =>
-    precision.next(number.toPrecision(places)),
-};
-
 export const GreaterThan: CodeNode = {
   id: "Greater Than",
   namespace,

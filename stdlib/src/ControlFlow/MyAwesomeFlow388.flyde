@@ -1,0 +1,32 @@
+imports:
+  "@flyde/stdlib": []
+  ControlFlow.flyde.ts:
+    - Conditional
+node:
+  instances:
+    - pos:
+        x: -30.036102294921875
+        y: -134.16656494140614
+      id: nskuhgoikx5db0a5urse632o
+      inputConfig: {}
+      nodeId: Conditional__nskuhgoikx5db0a5urse632o
+      macroId: Conditional
+      macroData:
+        compareTo:
+          mode: dynamic
+        propertyPath: ""
+        condition:
+          type: EQUAL
+        trueValue:
+          type: value
+        falseValue:
+          type: value
+  connections: []
+  id: Example
+  inputs: {}
+  outputs: {}
+  inputsPosition: {}
+  outputsPosition:
+    result:
+      x: -23.264428942324532
+      y: 237.25953921502617

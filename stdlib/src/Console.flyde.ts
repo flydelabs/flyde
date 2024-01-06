@@ -15,17 +15,3 @@ export const Log: CodeNode = {
   outputs: {},
   run: ({ value }) => console.log(value),
 };
-
-export const Error: CodeNode = {
-  id: "Error",
-  defaultStyle: {
-    icon: "fa-terminal",
-  },
-  namespace,
-  description: "Logs an error to the console",
-  inputs: {
-    value: { description: "Value to log" },
-  },
-  outputs: {},
-  run: ({ value }) => console.error(value),
-};
