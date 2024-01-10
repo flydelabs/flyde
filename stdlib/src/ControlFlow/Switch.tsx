@@ -1,5 +1,4 @@
 import { useMemo } from "react";
-import { SwitchConfig } from "./Switch.flyde";
 import {
   Button,
   Checkbox,
@@ -8,11 +7,12 @@ import {
   InputGroup,
 } from "@blueprintjs/core";
 import React from "react";
+import { MacroEditorComp } from "../lib/MacroEditorComp";
+import { SwitchConfig } from "./Switch.flyde";
 
-function SwitchEditor(props: {
-  value: SwitchConfig;
-  onChange: (value: SwitchConfig) => void;
-}) {
+const SwitchEditor: MacroEditorComp<SwitchConfig> = function SwitchEditor(
+  props
+) {
   const { value, onChange } = props;
 
   const inputsElem = useMemo(() => {
@@ -196,6 +196,6 @@ function SwitchEditor(props: {
       ) : null}
     </>
   );
-}
+};
 
 export default SwitchEditor;

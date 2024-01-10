@@ -1,27 +1,39 @@
 imports:
-  "@flyde/stdlib": []
-  ControlFlow.flyde.ts:
-    - Conditional
+  "@flyde/stdlib":
+    - Interval
+  ControlFlow.flyde.ts: []
+  ../Timing/Timing.flyde.ts:
+    - Debounce
+    - Interval
 node:
   instances:
     - pos:
-        x: -30.036102294921875
-        y: -134.16656494140614
-      id: nskuhgoikx5db0a5urse632o
+        x: -119.45481872558594
+        y: -245.24017333984364
+      id: ccn0ghg90j9u8jqh3h89esyz
       inputConfig: {}
-      nodeId: Conditional__nskuhgoikx5db0a5urse632o
-      macroId: Conditional
+      nodeId: Debounce__ccn0ghg90j9u8jqh3h89esyz
+      macroId: Debounce
       macroData:
-        compareTo:
-          mode: dynamic
-        propertyPath: ""
-        condition:
-          type: EQUAL
-        trueValue:
-          type: value
-        falseValue:
-          type: value
-  connections: []
+        type: static
+        timeMs: 420
+    - pos:
+        x: -122.66471862792969
+        y: -384.31658935546864
+      id: homr2dijmomp045juvu1fq38
+      inputConfig: {}
+      nodeId: Interval__homr2dijmomp045juvu1fq38
+      macroId: Interval
+      macroData:
+        type: static
+        timeMs: 4000
+  connections:
+    - from:
+        insId: homr2dijmomp045juvu1fq38
+        pinId: value
+      to:
+        insId: ccn0ghg90j9u8jqh3h89esyz
+        pinId: value
   id: Example
   inputs: {}
   outputs: {}

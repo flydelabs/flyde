@@ -1,12 +1,12 @@
 import React from "react";
 import { FormGroup, HTMLSelect } from "@blueprintjs/core";
+import { MacroEditorComp } from "../lib/MacroEditorComp";
 
 const MAX_ITEMS = 6;
 
-function RoundRobinEditor(props: {
-  value: number;
-  onChange: (value: number) => void;
-}) {
+const RoundRobinEditor: MacroEditorComp<number> = function RoundRobinEditor(
+  props
+) {
   return (
     <FormGroup label="Outputs count:" inline>
       <HTMLSelect
@@ -21,6 +21,6 @@ function RoundRobinEditor(props: {
       </HTMLSelect>
     </FormGroup>
   );
-}
+};
 
 export default RoundRobinEditor;

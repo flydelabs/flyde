@@ -3,11 +3,11 @@ import { Divider, FormGroup, HTMLSelect, InputGroup } from "@blueprintjs/core";
 
 import type { HttpConfig } from "./Http.flyde";
 import { SimpleJsonEditor } from "../lib/SimpleJsonEditor";
+import { MacroEditorComp } from "../lib/MacroEditorComp";
 
-function HttpConfigEditor(props: {
-  value: HttpConfig;
-  onChange: (value: HttpConfig) => void;
-}) {
+const HttpConfigEditor: MacroEditorComp<HttpConfig> = function HttpConfigEditor(
+  props
+) {
   const { value, onChange } = props;
 
   useEffect(() => {
@@ -191,6 +191,6 @@ function HttpConfigEditor(props: {
       {paramsEditor}
     </>
   );
-}
+};
 
 export default HttpConfigEditor;

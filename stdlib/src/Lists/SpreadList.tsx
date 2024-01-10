@@ -1,12 +1,12 @@
 import React from "react";
 import { FormGroup, HTMLSelect } from "@blueprintjs/core";
+import { MacroEditorComp } from "../lib/MacroEditorComp";
 
 const MAX_ITEMS = 6;
 
-function SplitListEditor(props: {
-  value: number;
-  onChange: (value: number) => void;
-}) {
+const SplitListEditor: MacroEditorComp<number> = function SplitListEditor(
+  props
+) {
   return (
     <FormGroup label="Items count:" inline>
       <HTMLSelect
@@ -21,6 +21,6 @@ function SplitListEditor(props: {
       </HTMLSelect>
     </FormGroup>
   );
-}
+};
 
 export default SplitListEditor;
