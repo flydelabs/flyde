@@ -52,6 +52,8 @@ export const RoundRobin: MacroNode<number> = {
       displayName: `Round Robin ${count}`,
       description: `Item will be emitted to one of the ${count} outputs in a round robin fashion`,
       inputs: { value: { mode: "required", description: "The value to emit" } },
+      completionOutputs: [],
+      reactiveInputs: ["value"],
       outputs: Array.from({ length: count }).reduce<OutputPinMap>(
         (obj, _, i) => ({
           ...obj,
@@ -81,8 +83,8 @@ export const RoundRobin: MacroNode<number> = {
 
       const nextCurr = (curr + 1) % count;
 
-      o.next(inputs.item);
       state.set("curr", nextCurr);
+      o.next(inputs.item);
     };
   },
   editorComponentBundlePath: "../../../dist/ui/RoundRobin.js",

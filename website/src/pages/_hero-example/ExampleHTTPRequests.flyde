@@ -1,8 +1,7 @@
 imports:
   "@flyde/stdlib":
-    - GET Request
-    - POST Request
     - Get Attribute
+    - Http
 node:
   instances:
     - pos:
@@ -19,7 +18,20 @@ node:
       visibleOutputs:
         - data
         - __error
-      nodeId: GET Request
+      nodeId: Http__GET Request-907
+      macroId: Http
+      macroData:
+        method:
+          mode: static
+          value: GET
+        url:
+          mode: dynamic
+        headers:
+          mode: static
+          value: {}
+        params:
+          mode: static
+          value: {}
       style:
         size: regular
         icon: fa-server
@@ -67,12 +79,25 @@ node:
           mode: static
           value: https://countriesnow.space/api/v0.1/countries/capital
       visibleInputs:
-        - url
-        - headers
-        - params
         - data
+        - url
         - __trigger
-      nodeId: POST Request
+      nodeId: Http__POST Request-624
+      macroId: Http
+      macroData:
+        method:
+          mode: static
+          value: POST
+        data:
+          mode: dynamic
+        url:
+          mode: dynamic
+        headers:
+          mode: static
+          value: {}
+        params:
+          mode: static
+          value: {}
       style:
         size: regular
         icon: fa-server

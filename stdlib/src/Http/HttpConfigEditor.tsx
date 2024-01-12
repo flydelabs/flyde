@@ -40,7 +40,7 @@ const HttpConfigEditor: MacroEditorComp<HttpConfig> = function HttpConfigEditor(
             <option value="dynamic">Dynamic (via input)</option>
           </HTMLSelect>
         </FormGroup>
-        {value.data.mode === "static" && (
+        {value.data?.mode === "static" && (
           <SimpleJsonEditor
             label="Data:"
             value={value.data.value}
@@ -77,7 +77,7 @@ const HttpConfigEditor: MacroEditorComp<HttpConfig> = function HttpConfigEditor(
         {value.headers.mode === "static" && (
           <SimpleJsonEditor
             label="Headers:"
-            value={value.headers.value}
+            value={value.headers?.value}
             onChange={(data) =>
               onChange({ ...value, headers: { mode: "static", value: data } })
             }

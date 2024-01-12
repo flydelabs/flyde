@@ -11,15 +11,13 @@ export interface HttpConfig {
       }
     | { mode: "dynamic" };
   url: { mode: "static"; value: string } | { mode: "dynamic" };
-  headers?:
+  headers:
     | { mode: "static"; value: Record<string, string> }
     | { mode: "dynamic" };
-  params?:
+  params:
     | { mode: "static"; value: Record<string, string> }
     | { mode: "dynamic" };
-  data?:
-    | { mode: "static"; value: Record<string, string> }
-    | { mode: "dynamic" };
+  data: { mode: "static"; value: Record<string, string> } | { mode: "dynamic" };
 }
 
 export const Http: MacroNode<HttpConfig> = {
@@ -45,7 +43,7 @@ export const Http: MacroNode<HttpConfig> = {
       };
       return axios
         .request({ url: urlValue, data: dataValue, ...requestConfig })
-        .then((res) => outputs.data.next(res.data))
+        .then((res) => outputs.data!.next(res.data))
         .catch((e) => adv.onError(e));
     };
   },
