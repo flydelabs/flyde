@@ -16,6 +16,8 @@ import exampleHttpRequests from "./_hero-example/ExampleHTTPRequests.flyde";
 import exampleReactivity from "./_hero-example/ExampleReactivity.flyde";
 import { features } from "./_features";
 
+console.log(4242, exampleReactivity);
+
 export const examples = [
   {
     label: "Beep Boop",
@@ -42,10 +44,6 @@ export const examples = [
     playgroundUrl: "https://play.flyde.dev/?flow=hello-world",
   },
 ];
-
-const Gradient: React.FC = ({ children }) => (
-  <span className="gradient">{children}</span>
-);
 
 function HomepageHeader() {
   const [currentExample, setCurrExample] = React.useState(examples[0]);

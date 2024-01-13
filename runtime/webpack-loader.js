@@ -23,6 +23,9 @@ module.exports = async function loader() {
         node.run = `___require('./${requirePath}').${node.source.export}.run___`;
       }
       return { ...acc, [key]: node };
+    } else if (node.editorComponentBundlePath) {
+      // is macro node
+      return { ...acc, [key]: node };
     }
     return acc;
   }, []);

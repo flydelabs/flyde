@@ -137,7 +137,7 @@ const config = {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       colorMode: {
-        disableSwitch: true,
+        // disableSwitch: true,
       },
       navbar: {
         title: "Flyde",
