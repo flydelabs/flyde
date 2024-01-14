@@ -1,10 +1,5 @@
-import { ExecuteEnv } from "..";
 import {
-  extractStaticValue,
-  getEnvKeyFromValue,
-  isEnvValue,
   isQueueInputPinConfig,
-  isStaticInput,
   isStickyInputPinConfig,
   Node,
   NodeInput,
@@ -12,37 +7,13 @@ import {
   NodeState,
 } from "../node";
 
-import { containsAll, entries, isDefined, keys, OMap } from "../common";
+import { containsAll, entries, isDefined, keys } from "../common";
 import { TRIGGER_PIN_ID } from "../connect";
-
-const pickFromObject = (key: string, obj: OMap<any>) => {
-  const path = key.split(".");
-  let o = { ...obj };
-  for (let p of path) {
-    if (o && isDefined(o[p]) && o[p] !== null) {
-      o = o[p];
-    } else {
-      throw new Error(`Cannot find key ${key} inside obj ${obj}`);
-    }
-  }
-  return o;
-};
-
-const getFinalStaticValue = (input: NodeInput, env: ExecuteEnv) => {
-  const value = extractStaticValue(input);
-  if (isEnvValue(value)) {
-    const prop = getEnvKeyFromValue(value);
-    return pickFromObject(prop, env);
-  } else {
-    return value;
-  }
-};
 
 export const peekValueForExecution = (
   key: string,
   input: NodeInput,
   state: NodeState,
-  env: ExecuteEnv,
   nodeId: string
 ) => {
   const stateItem = state.get(key);
@@ -52,9 +23,7 @@ export const peekValueForExecution = (
       `Trying to peek value of inexsting input in key "${key}" in node "${nodeId}"`
     );
   }
-  if (isStaticInput(input)) {
-    val = getFinalStaticValue(input, env);
-  } else if (isQueueInputPinConfig(input.config)) {
+  if (isQueueInputPinConfig(input.config)) {
     val = stateItem ? [...stateItem].shift() : undefined;
   } else {
     val = stateItem;
@@ -66,15 +35,12 @@ export const peekValueForExecution = (
 export const pullValueForExecution = (
   key: string,
   input: NodeInput,
-  state: NodeState,
-  env: ExecuteEnv
+  state: NodeState
 ): unknown => {
   const stateItem = state.get(key);
   let val;
 
-  if (isStaticInput(input)) {
-    val = getFinalStaticValue(input, env);
-  } else if (isQueueInputPinConfig(input.config)) {
+  if (isQueueInputPinConfig(input.config)) {
     val = (stateItem || []).shift();
     state.set(key, stateItem);
   } else {
@@ -90,12 +56,11 @@ export const pullValueForExecution = (
 
 export const pullValuesForExecution = (
   nodeInputs: NodeInputs,
-  state: NodeState,
-  env: ExecuteEnv
+  state: NodeState
 ) => {
   const data = entries(nodeInputs).reduce<Record<string, unknown>>(
     (acc, [key, input]) => {
-      acc[key] = pullValueForExecution(key, input, state, env);
+      acc[key] = pullValueForExecution(key, input, state);
       return acc;
     },
     {}
@@ -107,12 +72,11 @@ export const pullValuesForExecution = (
 export const peekValuesForExecution = (
   nodeInputs: NodeInputs,
   state: NodeState,
-  env: ExecuteEnv,
   nodeId: string
 ) => {
   const data = entries(nodeInputs).reduce<Record<string, unknown>>(
     (acc, [key, input]) => {
-      acc[key] = peekValueForExecution(key, input, state, env, nodeId);
+      acc[key] = peekValueForExecution(key, input, state, nodeId);
       return acc;
     },
     {}
@@ -124,12 +88,11 @@ export const peekValuesForExecution = (
 export const hasNewSignificantValues = (
   nodeInputs: NodeInputs,
   state: NodeState,
-  env: ExecuteEnv,
   nodeId: string
 ) => {
   return entries(nodeInputs).some(([k, i]) => {
     const isQueue = isQueueInputPinConfig(i.config);
-    const value = peekValueForExecution(k, i, state, env, nodeId);
+    const value = peekValueForExecution(k, i, state, nodeId);
 
     return isDefined(value) && isQueue;
   });
@@ -170,9 +133,7 @@ export const isNodeStateValid = (
           return true;
         }
 
-        if (isStaticInput(input)) {
-          return true;
-        } else if (isQueueInputPinConfig(input.config)) {
+        if (isQueueInputPinConfig(input.config)) {
           return isDefined(stateItem) && stateItem.length > 0;
         } else {
           return isDefined(stateItem);
@@ -191,10 +152,6 @@ export const subscribeInputsToState = (
   entries(nodeInputs).forEach(([key, arg]) => {
     if (!arg) {
       // means the node is optional and was not given
-      return;
-    }
-
-    if (isStaticInput(arg)) {
       return;
     }
 

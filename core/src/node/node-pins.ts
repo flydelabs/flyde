@@ -83,10 +83,3 @@ export const dynamicNodeInputs = (count: number = 10) =>
       };
     })()
   );
-
-export const isDynamicInput = (
-  arg: NodeInput | undefined
-): arg is DynamicNodeInput => {
-  const dArg = arg as DynamicNodeInput;
-  return dArg && dArg.subject && !!dArg.subject.next;
-};

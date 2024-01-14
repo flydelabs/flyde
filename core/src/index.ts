@@ -13,7 +13,6 @@ export * from "./execute";
 export * from "./simplified-execute";
 export * from "./node";
 export * from "./node/get-node-with-dependencies";
-export * from "./inline-value-to-code-node";
 export * from "./flow-schema";
 
 export interface InstanceViewData {
