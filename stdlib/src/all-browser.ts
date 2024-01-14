@@ -9,3 +9,4 @@ export * from "./Console.flyde";
 export * from "./Dates.flyde";
 export * from "./State.flyde";
 export * from "./Timing/Timing.flyde";
+export * from "./Values/index";
