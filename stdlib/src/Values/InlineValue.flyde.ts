@@ -1,9 +1,9 @@
 import { MacroNode } from "@flyde/core";
-import { getVariables } from "./getInlineVariables";
 
 export interface InlineValueConfig {
-  type: "string" | "boolean" | "number" | "json" | "expression";
+  type: "string" | "boolean" | "number" | "json";
   value: string;
+  label: string;
 }
 
 export const InlineValue: MacroNode<InlineValueConfig> = {
@@ -11,30 +11,19 @@ export const InlineValue: MacroNode<InlineValueConfig> = {
   displayName: "Inline Value",
   description: "A static value or JS expression",
   runFnBuilder: (config) => {
-    return (inputs, outputs, adv) => {
-      if (config.type === "expression") {
-        try {
-          const resFn = eval(`(inputs) => ${config.value}`);
-          outputs.value.next(resFn(inputs));
-        } catch (e) {
-          adv.onError(e);
-        }
-      } else {
-        outputs.value.next(config.value);
-      }
+    return (_, outputs) => {
+      outputs.value.next(config.value);
     };
   },
   definitionBuilder: (config) => {
-    const inputNames =
-      config.type === "expression" ? getVariables(config.value) : [];
     return {
       defaultStyle: {
         size: "small",
-        icon: "code",
+        icon: "pen",
       },
-      displayName: "Inline Value",
-      description: "A static value or JS expression",
-      inputs: Object.fromEntries(inputNames.map((input) => [input, {}]) ?? []),
+      displayName: config.label || undefined,
+      description: `Emits the value \`${JSON.stringify(config.value)}\``,
+      inputs: {},
       outputs: {
         value: {
           displayName: "Value",
@@ -45,7 +34,8 @@ export const InlineValue: MacroNode<InlineValueConfig> = {
   },
   defaultData: {
     type: "string",
-    value: "",
+    value: "Hello",
+    label: '"Hello"',
   },
   editorComponentBundlePath: "../../../dist/ui/InlineValue.js",
 };

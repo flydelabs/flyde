@@ -4,6 +4,7 @@ imports:
     - Accumulate Values by Count
     - Loop List
     - RoundRobin
+    - InlineValue
 node:
   instances:
     - pos:
@@ -139,6 +140,17 @@ node:
       nodeId: RoundRobin__oeum6dqgsprbuef0p9s3b1ye
       macroId: RoundRobin
       macroData: 3
+    - pos:
+        x: -1028.8315044643346
+        y: -166.46657776344824
+      id: y3fkz37v6e35tkrfzx9nmyt4
+      inputConfig: {}
+      nodeId: InlineValue__y3fkz37v6e35tkrfzx9nmyt4
+      macroId: InlineValue
+      macroData:
+        type: string
+        value: Hello32
+        label: '"Hello32"'
   connections:
     - from:
         insId: oeum6dqgsprbuef0p9s3b1ye

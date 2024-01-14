@@ -7,7 +7,6 @@ import {
 } from "@blueprintjs/core";
 import type { InlineValueConfig } from "./InlineValue.flyde";
 import React, { useCallback, useMemo } from "react";
-import { getVariables } from "./getInlineVariables";
 import { MacroEditorComp } from "../lib/MacroEditorComp";
 
 const types: InlineValueConfig["type"][] = [
@@ -15,7 +14,6 @@ const types: InlineValueConfig["type"][] = [
   "number",
   "json",
   "boolean",
-  "expression",
 ];
 
 const defaultValuePerType = {
@@ -27,20 +25,45 @@ const defaultValuePerType = {
   expression: (currValue: any) => currValue,
 };
 
+const labelMaxLength = 20;
+
+function valToLabel(val: any): string {
+  try {
+    const label = JSON.stringify(val);
+    if (label.length > labelMaxLength) {
+      return `${label.slice(0, labelMaxLength)}...`;
+    }
+    return label;
+  } catch (e) {
+    return `Value`;
+  }
+}
+
 const InlineValueEditor: MacroEditorComp<InlineValueConfig> =
   function InlineValueEditor(props) {
     const { value, onChange } = props;
 
     const changeType = useCallback(
       (type) => {
-        onChange({ value: defaultValuePerType[type](value.value), type });
+        onChange({
+          value: defaultValuePerType[type](value.value),
+          type,
+          label: value.label,
+        });
       },
       [value, onChange]
     );
 
     const changeValue = useCallback(
       (_val) => {
-        onChange({ ...value, value: _val });
+        const newLabel = valToLabel(_val);
+        const oldLabel = valToLabel(value.value);
+
+        const wasUsingDefaultLabel = value.label === oldLabel || !value.label;
+
+        const labelToUse = wasUsingDefaultLabel ? newLabel : value.label;
+
+        onChange({ ...value, value: _val, label: labelToUse });
       },
       [value, onChange]
     );
@@ -87,37 +110,6 @@ const InlineValueEditor: MacroEditorComp<InlineValueConfig> =
               </HTMLSelect>
             </FormGroup>
           );
-        case "expression": {
-          const vars = getVariables(value.value);
-          return (
-            <>
-              <FormGroup
-                label="Value:"
-                helperText={`Accepts any valid JS extension. `}
-              >
-                <TextArea
-                  value={value.value}
-                  fill
-                  onChange={(e) => changeValue(e.target.value)}
-                />
-              </FormGroup>
-              <div>
-                {vars.length > 0 ? (
-                  <small>
-                    External inputs exposed from this expression:{" "}
-                    <em>{vars.join(", ")}</em>
-                  </small>
-                ) : (
-                  <small>
-                    Expose external inputs by using the "inputs" object. For
-                    example, "inputs.a + inputs.b" will expose 2 inputs, a and
-                    b, and sum them.
-                  </small>
-                )}
-              </div>
-            </>
-          );
-        }
       }
     }, [value, changeValue]);
 
@@ -138,6 +130,13 @@ const InlineValueEditor: MacroEditorComp<InlineValueConfig> =
           </HTMLSelect>
         </FormGroup>
         {editorPanel}
+        <FormGroup label="Label:">
+          <InputGroup
+            type="text"
+            value={value.label}
+            onChange={(e) => onChange({ ...value, label: e.target.value })}
+          />
+        </FormGroup>
       </div>
     );
   };
