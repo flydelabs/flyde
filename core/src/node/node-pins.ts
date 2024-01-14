@@ -17,7 +17,6 @@ export interface BasePinData {
 
 export interface InputPin extends BasePinData {
   mode?: InputMode;
-  defaultValue?: any;
 }
 
 export type InputPinMap = Record<string, InputPin>;

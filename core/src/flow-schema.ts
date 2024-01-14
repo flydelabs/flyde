@@ -69,7 +69,6 @@ const flydeBaseNode = z.object({
   outputs: z.record(z.string(), outputPinSchema),
   inputsPosition: z.optional(z.record(z.string(), position)),
   outputsPosition: z.optional(z.record(z.string(), position)),
-  customViewCode: z.optional(z.string()),
   completionOutputs: z.optional(z.array(z.string())),
   reactiveInputs: z.optional(z.array(z.string())),
   defaultStyle: z.optional(nodeStyle),

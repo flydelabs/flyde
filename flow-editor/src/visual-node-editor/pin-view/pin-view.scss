@@ -126,29 +126,6 @@ $MINIMIZED_WIRE_LENGTH: 6px;
     }
   }
 
-  &.const-value {
-    &.input {
-      .pin-inner {
-        &:not(.dark) {
-          background: $green-200;
-        }
-        &.dark {
-          background: $green-800;
-        }
-        white-space: nowrap;
-        // transition: all ease-out 1.5s;
-        max-width: 150px;
-        text-overflow: ellipsis;
-        overflow: hidden;
-
-        .value {
-          // font-style: italic;
-          font-size: 110%;
-        }
-      }
-    }
-  }
-
   &.optional:not(.connected) .pin-inner {
     opacity: 0.7;
   }

@@ -3,7 +3,6 @@ import {
   isVisualNode,
   Pos,
   VisualNode,
-  isInlineValueNode,
   NodeInstance,
   FlydeFlow,
   ImportedNodeDef,
@@ -18,7 +17,6 @@ import {
   defaultViewPort,
   GroupEditorBoardData,
   NODE_HEIGHT,
-  VisualNodeEditorHandle,
 } from "../visual-node-editor/VisualNodeEditor";
 import produce from "immer";
 import { useHotkeys } from "../lib/react-utils/use-hotkeys";
@@ -265,14 +263,6 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
           case OmniBarCmdType.ADD:
             reportEvent("addNode", { nodeId: cmd.data, source: "omnibar" });
             return onAddNodeInstance(cmd.data);
-          case OmniBarCmdType.ADD_VALUE: {
-            const ref: VisualNodeEditorHandle | undefined = (
-              visualEditorRef as any
-            ).current;
-            ref?.requestNewInlineValue();
-
-            break;
-          }
           case OmniBarCmdType.IMPORT: {
             await onImportNode(cmd.data, { pos: editorBoardData.lastMousePos });
             const finalPos = vAdd({ x: 0, y: 0 }, editorBoardData.lastMousePos);
@@ -304,7 +294,6 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
         hideOmnibar,
         reportEvent,
         onAddNodeInstance,
-        visualEditorRef,
         onImportNode,
         editorBoardData.lastMousePos,
         resolvedDependencies,
@@ -333,53 +322,49 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
     const { isDarkMode } = useDarkMode();
 
     const renderInner = () => {
-      if (isInlineValueNode(editedNode)) {
-        throw new Error("Impossible state");
-      } else {
-        return (
-          <DarkModeProvider value={props.darkMode ?? isDarkMode}>
-            <React.Fragment>
-              {inspectedItem ? (
-                <DataInspectionModal
-                  item={inspectedItem}
-                  onClose={onCloseInspectedItemModal}
-                />
-              ) : null}
-              <VisualNodeEditor
-                currentInsId={ROOT_INS_ID}
-                ref={visualEditorRef}
-                key={editedNode.id}
-                boardData={editorBoardData}
-                onChangeBoardData={onChangeEditorBoardData}
-                node={editedNode}
-                onGoToNodeDef={onEditNode}
-                onChangeNode={onChangeNode}
-                resolvedDependencies={resolvedDependencies}
-                clipboardData={clipboardData}
-                onCopy={setClipboardData}
-                nodeIoEditable={!editedNode.id.startsWith("Trigger")}
-                onInspectPin={onInspectPin}
-                onShowOmnibar={showOmnibar}
-                onExtractInlineNode={props.onExtractInlineNode}
-                queuedInputsData={queuedInputsData}
-                initialPadding={props.initialPadding}
-                instancesWithErrors={instancesWithErrors}
-                disableScrolling={props.disableScrolling}
+      return (
+        <DarkModeProvider value={props.darkMode ?? isDarkMode}>
+          <React.Fragment>
+            {inspectedItem ? (
+              <DataInspectionModal
+                item={inspectedItem}
+                onClose={onCloseInspectedItemModal}
               />
+            ) : null}
+            <VisualNodeEditor
+              currentInsId={ROOT_INS_ID}
+              ref={visualEditorRef}
+              key={editedNode.id}
+              boardData={editorBoardData}
+              onChangeBoardData={onChangeEditorBoardData}
+              node={editedNode}
+              onGoToNodeDef={onEditNode}
+              onChangeNode={onChangeNode}
+              resolvedDependencies={resolvedDependencies}
+              clipboardData={clipboardData}
+              onCopy={setClipboardData}
+              nodeIoEditable={!editedNode.id.startsWith("Trigger")}
+              onInspectPin={onInspectPin}
+              onShowOmnibar={showOmnibar}
+              onExtractInlineNode={props.onExtractInlineNode}
+              queuedInputsData={queuedInputsData}
+              initialPadding={props.initialPadding}
+              instancesWithErrors={instancesWithErrors}
+              disableScrolling={props.disableScrolling}
+            />
 
-              {omniBarVisible ? (
-                <Omnibar
-                  flow={flow}
-                  resolvedNodes={resolvedDependencies}
-                  onCommand={onOmnibarCmd}
-                  visible={omniBarVisible}
-                  onClose={hideOmnibar}
-                />
-              ) : null}
-            </React.Fragment>
-          </DarkModeProvider>
-        );
-      }
+            {omniBarVisible ? (
+              <Omnibar
+                flow={flow}
+                resolvedNodes={resolvedDependencies}
+                onCommand={onOmnibarCmd}
+                visible={omniBarVisible}
+                onClose={hideOmnibar}
+              />
+            ) : null}
+          </React.Fragment>
+        </DarkModeProvider>
+      );
     };
 
     return <div className="flyde-flow-editor">{renderInner()}</div>;

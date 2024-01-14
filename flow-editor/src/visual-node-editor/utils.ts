@@ -15,7 +15,6 @@ import {
   queueInputPinConfig,
   InputMode,
   inlineNodeInstance,
-  staticInputPinConfig,
   intersectRect,
   Rect,
   calcCenter,
@@ -268,10 +267,6 @@ export const createNewNodeInstance = (
   }
 
   const inputsConfig = entries(node.inputs).reduce((acc, [k, v]) => {
-    // if (v.)
-    if (v.defaultValue) {
-      acc[k] = staticInputPinConfig(v.defaultValue);
-    }
     return acc;
   }, {});
 

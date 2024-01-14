@@ -10,21 +10,16 @@ import {
   NodeInstance,
   nodeOutput,
   PinType,
-  isStaticInputPinConfig,
   InputMode,
   isVisualNode,
   connectionDataEquals,
   ConnectionNode,
-  staticInputPinConfig,
   delay,
   noop,
   keys,
   TRIGGER_PIN_ID,
-  inlineNodeInstance,
   isInlineNodeInstance,
   isRefNodeInstance,
-  InlineValueNodeType,
-  isInlineValueNode,
   InlineNodeInstance,
   connectionNode,
   ImportedNodeDef,
@@ -32,7 +27,6 @@ import {
   getNodeOutputs,
   Pos,
   getNodeInputs,
-  createInsId,
   externalConnectionNode,
   ResolvedDependenciesDefinitions,
   fullInsIdPath,
@@ -109,16 +103,13 @@ import {
   functionalChange,
   metaChange,
 } from "../flow-editor/flyde-flow-change-type";
-import { InlineCodeModal } from "../flow-editor/inline-code-modal";
-import { createInlineValueNode } from "../flow-editor/inline-code-modal/inline-code-to-node";
-import _ from "lodash";
+
 import { groupSelected } from "../group-selected";
 import { useConfirm, usePorts, usePrompt } from "../flow-editor/ports";
 import classNames from "classnames";
 import { pasteInstancesCommand } from "./commands/paste-instances";
 
 import { handleConnectionCloseEditorCommand } from "./commands/close-connection";
-import { handleDetachConstEditorCommand } from "./commands/detach-const";
 import { handleDuplicateSelectedEditorCommand } from "./commands/duplicate-instances";
 import { NodeStyleMenu } from "./instance-view/NodeStyleMenu";
 import { useDependenciesContext } from "../flow-editor/FlowEditor";
@@ -131,7 +122,6 @@ import {
   MacroInstanceEditor,
   MacroInstanceEditorProps,
 } from "./MacroInstanceEditor";
-import { on } from "events";
 
 const MemodSlider = React.memo(Slider);
 
@@ -207,42 +197,11 @@ export type VisualNodeEditorProps = {
   disableScrolling?: boolean;
 };
 
-type InlineValueTargetExisting = {
-  insId: string;
-  value: string;
-  templateType: InlineValueNodeType;
-  type: "existing";
-};
-type InlineValueTargetNewStatic = {
-  insId: string;
-  pinId: string;
-  value?: string;
-  type: "static-input";
-};
-type InlineValueTargetNewFloating = {
-  pos: Pos;
-  type: "new-floating";
-  value?: string;
-};
-type InlineValueTargetNewOutput = {
-  insId: string;
-  pinId: string;
-  type: "new-output";
-  value?: string;
-};
-
-type InlineValueTarget =
-  | InlineValueTargetExisting
-  | InlineValueTargetNewStatic
-  | InlineValueTargetNewFloating
-  | InlineValueTargetNewOutput;
-
 export interface VisualNodeEditorHandle {
   centerInstance(insId: string): void;
   centerViewPort(): void;
   getViewPort(): ViewPort;
   clearSelection(): void;
-  requestNewInlineValue(): void;
 }
 
 export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
@@ -314,11 +273,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       const [quickAddMenuVisible, setQuickAddMenuVisible] =
         useState<QuickAddMenuData>();
 
-      const [copiedConstValue, setCopiedConstValue] = useState<any>();
-
-      const [inlineCodeTarget, setInlineCodeTarget] =
-        useState<InlineValueTarget>();
-
       const [openInlineInstance, setOpenInlineInstance] = useState<{
         node: VisualNode;
         insId: string;
@@ -372,22 +326,11 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             to,
           });
 
-          const maybeIns = isInternalConnectionNode(to)
-            ? instances.find((i) => i.id === to.insId)
-            : null;
-          const inputConfig = maybeIns ? maybeIns.inputConfig : {};
-          const pinConfig = inputConfig[to.pinId];
-          const isTargetStaticValue = isStaticInputPinConfig(pinConfig);
-
-          const maybeDetachedNode = isTargetStaticValue
-            ? handleDetachConstEditorCommand(newNode, to.insId, to.pinId)
-            : newNode;
-
-          onChange(maybeDetachedNode, functionalChange("close-connection"));
+          onChange(newNode, functionalChange("close-connection"));
           onChangeBoardData({ from: undefined, to: undefined });
           reportEvent("createConnection", { source });
         },
-        [instances, onChange, onChangeBoardData, node, reportEvent]
+        [onChange, onChangeBoardData, node, reportEvent]
       );
 
       const onGroupSelectedInternal = React.useCallback(async () => {
@@ -1107,22 +1050,12 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
               onEditNode(node as ImportedNodeDef);
             } else if (isInlineNodeInstance(ins)) {
               const node = ins.node;
-              if (!isInlineValueNode(node)) {
-                if (isVisualNode(node)) {
-                  setOpenInlineInstance({ insId: ins.id, node });
-                } else {
-                  toastMsg("Editing this type of node is not supported");
-                }
-                return;
+              if (isVisualNode(node)) {
+                setOpenInlineInstance({ insId: ins.id, node });
+              } else {
+                toastMsg("Editing this type of node is not supported");
               }
-              const value = atob(node.dataBuilderSource);
-              setInlineCodeTarget({
-                insId: ins.id,
-                templateType: node.templateType,
-                value,
-                type: "existing",
-              });
-              toastMsg("Editing inline visual node not supported yet");
+              return;
             } else if (isResolvedMacroNodeInstance(ins)) {
               setEditedMacroInstance({ ins });
             } else {
@@ -1176,50 +1109,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       const onExtractInlineNode = React.useCallback(
         async (inlineInstance: InlineNodeInstance) => {},
         []
-      );
-
-      const onDetachConstValue = React.useCallback(
-        (ins: NodeInstance, pinId: string) => {
-          const newNode = handleDetachConstEditorCommand(node, ins.id, pinId);
-          onChange(newNode, functionalChange("detach-const"));
-        },
-        [onChange, node]
-      );
-
-      const onCopyConstValue = React.useCallback(
-        (ins: NodeInstance, pinId: string) => {
-          const config = ins.inputConfig[pinId] || queueInputPinConfig();
-          if (isStaticInputPinConfig(config)) {
-            setCopiedConstValue(config.value);
-            AppToaster.show({ message: "Value copied" });
-          }
-        },
-        []
-      );
-
-      const onPasteConstValue = React.useCallback(
-        (ins: NodeInstance, pinId: string) => {
-          const newValue = produce(node, (draft) => {
-            const insToChange = draft.instances.find(
-              (_ins) => _ins.id === ins.id
-            );
-            if (!insToChange) {
-              throw new Error("Impossible state");
-            }
-            insToChange.inputConfig[pinId] =
-              staticInputPinConfig(copiedConstValue);
-            draft.connections = draft.connections.filter((conn) => {
-              if (isInternalConnectionNode(conn.to)) {
-                return !(conn.to.insId === ins.id && conn.to.pinId === pinId);
-              } else {
-                return true;
-              }
-            });
-          });
-
-          onChange(newValue, functionalChange("paste const value"));
-        },
-        [node, onChange, copiedConstValue]
       );
 
       const onAddIoPin = React.useCallback(
@@ -1391,14 +1280,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
               });
               break;
             }
-            case ActionType.AddInlineValue: {
-              setInlineCodeTarget({
-                type: "new-floating",
-                pos: lastMousePos.current,
-              });
-              reportEvent("addValueModalOpen", { source: "actionMenu" });
-              break;
-            }
+
             case ActionType.AddNode: {
               void (async function () {
                 const pos = getMiddleOfViewPort(viewPort, vpSize);
@@ -1612,19 +1494,8 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           e: React.MouseEvent
         ) => {
           if (type === "input") {
-            const inputConfig = ins.inputConfig[pinId];
-
-            const normalizedValue = isStaticInputPinConfig(inputConfig)
-              ? JSON.stringify(inputConfig.value)
-              : undefined;
-
-            setInlineCodeTarget({
-              type: "static-input",
-              insId: ins.id,
-              pinId,
-              value: normalizedValue ?? JSON.stringify("Some static value"),
-            });
-            reportEvent("addValueModalOpen", { source: "dblClickPin" });
+            // this used to open the static value modal, but now that it was removed, we just do nothing
+            // TODO - support a shortcut to static values here
           } else {
             const node = safelyGetNodeDef(ins, currResolvedDeps);
             const nodeOutputs = getNodeOutputs(node);
@@ -1643,7 +1514,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             });
           }
         },
-        [currResolvedDeps, reportEvent]
+        [currResolvedDeps]
       );
 
       const onMainInputDblClick = React.useCallback(
@@ -1910,8 +1781,9 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                 toastMsg("Cannot add value to main input");
                 return;
               }
-              setInlineCodeTarget({ type: "new-output", insId: ins.id, pinId });
-              reportEvent("addValueModalOpen", { source: "quickAdd" });
+
+              // Do nothing, we don't support static values anymore
+              // TODO - find what to do here
             }
           }
         },
@@ -1939,17 +1811,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
         return (
           <Menu>
-            <MenuItem
-              onMouseDown={(e) => e.stopPropagation()}
-              text={"New Value"}
-              onClick={preventDefaultAnd(() => {
-                setInlineCodeTarget({
-                  type: "new-floating",
-                  pos: lastMousePos.current,
-                });
-                reportEvent("addValueModalOpen", { source: "contextMenu" });
-              })}
-            />
             <MenuItem
               text={`New input ${maybeDisabledLabel}`}
               onMouseDown={(e) => e.stopPropagation()}
@@ -2005,7 +1866,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         node.defaultStyle,
         onChangeDefaultStyle,
         _prompt,
-        reportEvent,
         onAddIoPin,
         editCompletionOutputs,
         editReactiveInputs,
@@ -2268,12 +2128,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           clearSelection: () => {
             clearSelections();
           },
-          requestNewInlineValue: () => {
-            setInlineCodeTarget({
-              type: "new-floating",
-              pos: lastMousePos.current,
-            });
-          },
         };
         return ref;
       });
@@ -2283,129 +2137,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       const [layoutDebuggers, setLayoutDebuggers] = React.useState<
         Array<Omit<LayoutDebuggerProps, "viewPort">>
       >([]);
-
-      const onSaveInlineValueNode = React.useCallback(
-        (type: InlineValueNodeType, code: string) => {
-          const customView = code.trim().substr(0, 100);
-          const nodeId = `Inline-value-${customView
-            .substr(0, 15)
-            .replace(/["'`]/g, "")}`;
-
-          const newNode = createInlineValueNode({
-            code,
-            customView,
-            nodeId,
-            type,
-          });
-
-          switch (inlineCodeTarget.type) {
-            case "existing": {
-              const [existingInlineNode] = node.instances
-                .filter((ins) => ins.id === inlineCodeTarget.insId)
-                .filter((ins) => isInlineNodeInstance(ins))
-                .map((ins: InlineNodeInstance) => ins.node);
-
-              if (!existingInlineNode) {
-                throw new Error(`Unable to find inline node to save to`);
-              }
-
-              const oldInputs = keys(existingInlineNode.inputs);
-              const newInputs = keys(newNode.inputs);
-
-              const removedInputs = new Set(_.difference(oldInputs, newInputs));
-
-              const newVal = produce(node, (draft) => {
-                draft.instances = draft.instances.map((i) => {
-                  return i.id === inlineCodeTarget.insId
-                    ? inlineNodeInstance(i.id, newNode, i.inputConfig, i.pos)
-                    : i;
-                });
-                draft.connections = draft.connections.filter((conn) => {
-                  const wasRemoved =
-                    conn.to.insId === inlineCodeTarget.insId &&
-                    removedInputs.has(conn.to.pinId);
-                  return !wasRemoved;
-                });
-              });
-
-              onChange(newVal, functionalChange("change inline value"));
-
-              setInlineCodeTarget(undefined);
-              break;
-            }
-            case "static-input": {
-              let val: any;
-              try {
-                const normalizeString = code
-                  .replace(/^['`]/, '"')
-                  .replace(/['`]$/, '"');
-                val = JSON.parse(normalizeString);
-              } catch (e) {
-                toastMsg("Input values must not be formulas or code");
-                return;
-              }
-
-              const newVal = produce(node, (draft) => {
-                const ins = draft.instances.find(
-                  (i) => i.id === inlineCodeTarget.insId
-                );
-                ins.inputConfig[inlineCodeTarget.pinId] =
-                  staticInputPinConfig(val);
-              });
-
-              onChange(newVal, functionalChange("set static input value"));
-
-              setInlineCodeTarget(undefined);
-              break;
-            }
-            case "new-floating": {
-              const ins = inlineNodeInstance(
-                createInsId(newNode),
-                newNode,
-                {},
-                inlineCodeTarget.pos
-              );
-              const newVal = produce(node, (draft) => {
-                draft.instances.push(ins);
-              });
-              onChange(newVal, functionalChange("new floating value"));
-              setInlineCodeTarget(undefined);
-              break;
-            }
-            case "new-output": {
-              const { insId, pinId } = inlineCodeTarget;
-              const existingIns = node.instances.find((i) => i.id === insId);
-              if (!existingIns) {
-                throw new Error(`Impossible state`);
-              }
-              const newIns = inlineNodeInstance(
-                createInsId(newNode),
-                newNode,
-                {},
-                vAdd(existingIns.pos, { x: -50, y: 150 })
-              );
-              const newVal = produce(node, (draft) => {
-                draft.instances.push(newIns);
-                draft.connections.push({
-                  from: connectionNode(insId, pinId),
-                  to: connectionNode(newIns.id, TRIGGER_PIN_ID),
-                });
-              });
-              onChange(
-                newVal,
-                functionalChange("new value connected to output")
-              );
-              setInlineCodeTarget(undefined);
-            }
-          }
-
-          reportEvent("addValue", {
-            type,
-            placeholdersCount: keys(newNode.inputs).length,
-          });
-        },
-        [inlineCodeTarget, onChange, node, reportEvent]
-      );
 
       const connectionsToRender = connections.filter((conn) => {
         // do not render on top of a future connection so it shows removal properly
@@ -2587,10 +2318,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                 <InstanceView
                   onUngroup={onUnGroup}
                   onExtractInlineNode={onExtractInlineNode}
-                  onDetachConstValue={onDetachConstValue}
-                  onCopyConstValue={onCopyConstValue}
-                  onPasteConstValue={onPasteConstValue}
-                  copiedConstValue={copiedConstValue}
                   connectionsPerInput={
                     instancesConnectToPinsRef.current.get(ins.id) || emptyObj
                   }
@@ -2702,19 +2429,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                 />
                 {isRootInstance ? <HelpBubble /> : null}
               </div>
-              {inlineCodeTarget ? (
-                <InlineCodeModal
-                  env={emptyObj}
-                  initialValue={inlineCodeTarget.value}
-                  initialType={
-                    inlineCodeTarget.type === "existing"
-                      ? inlineCodeTarget.templateType
-                      : undefined
-                  }
-                  onCancel={() => setInlineCodeTarget(undefined)}
-                  onSubmit={onSaveInlineValueNode}
-                />
-              ) : null}
               {editedMacroInstance ? (
                 <MacroInstanceEditor
                   onCancel={() => setEditedMacroInstance(undefined)}

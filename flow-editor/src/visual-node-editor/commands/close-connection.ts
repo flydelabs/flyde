@@ -1,12 +1,5 @@
-import {
-  ConnectionData,
-  connectionNodeEquals,
-  VisualNode,
-  isInternalConnectionNode,
-  isStaticInputPinConfig,
-} from "@flyde/core";
+import { ConnectionData, connectionNodeEquals, VisualNode } from "@flyde/core";
 import produce from "immer";
-import { handleDetachConstEditorCommand } from "./detach-const";
 
 export const handleConnectionCloseEditorCommand = (
   node: VisualNode,
@@ -28,18 +21,4 @@ export const handleConnectionCloseEditorCommand = (
       });
     }
   });
-
-  //   const maybeIns = isInternalConnectionNode(to) ? instances.find((i) => i.id === to.insId) : null;
-  //   const inputConfig = maybeIns ? maybeIns.inputConfig : {};
-  //   const pinConfig = inputConfig[to.pinId];
-  //   const isTargetStaticValue = isStaticInputPinConfig(pinConfig);
-
-  //   if (isTargetStaticValue) {
-  //     handleDetachConstEditorCommand(
-  //       { insId: to.insId, inputId: to.pinId },
-  //       draft
-  //     );
-  //   }
-  // draft.boardData.from = undefined;
-  // draft.boardData.to = undefined;
 };

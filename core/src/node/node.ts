@@ -137,26 +137,6 @@ export interface BaseNode {
    */
   reactiveInputs?: string[];
   /**
-   * Supply a custom string template (in [Handlebars](https://https://handlebarsjs.com/) format) to control how an instance of this node will be rendered in the visual editor.
-   * The template has access to static values, making it possible to expose valuable information in the instance itself:
-   * @example
-   * A "Delay" node has 2 inputs: value and a time. In many cases, the `time` input will be provided statically.
-   * It can be convenient to show the time input in the instance itself so it shows "Delay 500ms" instead of "Delay" (in the case 500 is the static value of `time`)
-   *
-   * ```
-   * {
-   *   ...,
-   *   customViewCode: `{{#if inputs.time}}
-  Delay {{inputs.time}} ms
-{{else}}
-  Delay
-{{/if}}`
-   * }
-   * ```
-   *
-   */
-  customViewCode?: string;
-  /**
    * All instances of this node will inherit the default style if it is supplied.
    * See {@link NodeStyle} for the full options supported
    */
@@ -174,7 +154,6 @@ export interface CodeNode extends BaseNode {
    * @deprecated use {@link CodeNode['run']} instead
    */
   fn?: RunNodeFunction;
-  customView?: CustomNodeViewFn;
 }
 
 export interface MacroNode<T> {

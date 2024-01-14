@@ -80,11 +80,6 @@ export const GetAttribute: CodeNode = {
       description: "The value of the attribute",
     },
   },
-  customViewCode: `{{#if inputs.attribute}}
-  Get "{{inputs.attribute}}"
-{{else}}
-  Get Attribute
-{{/if}}`,
   run: ({ object, attribute }, { value }) =>
     value.next(attribute.split(".").reduce((obj, i) => obj[i], object)),
 };
@@ -113,11 +108,6 @@ export const SetAttribute: CodeNode = {
       description: "The object with the attribute set",
     },
   },
-  customViewCode: `{{#if inputs.attribute}}
-  Set "{{inputs.attribute}}"
-{{else}}
-  Set Attribute
-{{/if}}`,
   run: ({ object, attribute, value }, { object: outputObject }) => {
     const attributes = attribute.split(".");
     const last = attributes.pop();
@@ -138,11 +128,6 @@ export const DeleteAttribute: CodeNode = {
     object: { description: "Object to delete attribute from" },
     attribute: { description: "Attribute to delete" },
   },
-  customViewCode: `{{#if inputs.attribute.value}}
-  Delete "{{inputs.attribute.value}}"
-{{else}}
-  Delete Attribute
-{{/if}}`,
   outputs: {
     object: {
       description: "The object with the attribute deleted",

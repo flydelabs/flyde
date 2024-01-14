@@ -16,7 +16,6 @@ export type SimpleFnData = Omit<BaseNode, "inputs" | "outputs" | "run"> & {
   symbol?: string;
   icon?: string;
   size?: NodeStyleSize;
-  customViewCode?: string;
   fullRunFn?: RunNodeFunction; // hack to start migrating these back
 };
 
@@ -56,6 +55,5 @@ export function nodeFromSimpleFunction(data: SimpleFnData): CodeNode {
           adv.onError(e);
         }
       },
-    customViewCode: data.customViewCode,
   };
 }

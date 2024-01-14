@@ -233,7 +233,6 @@ export const AccumulateValuesByTime: CodeNode = {
     time: {
       description:
         "Time to wait before emitting the accumulated values. Default is 200ms",
-      defaultValue: 200,
       mode: "required-if-connected",
     },
   },
