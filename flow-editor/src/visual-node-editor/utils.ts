@@ -25,6 +25,7 @@ import {
   isMacroNodeDefinition,
   macroNodeInstance,
   MacroNodeDefinition,
+  createInsId,
 } from "@flyde/core";
 import { calcPinPosition } from "./connection-view/calc-pin-position";
 import { Size } from "../utils";
@@ -275,11 +276,17 @@ export const createNewNodeInstance = (
   }, {});
 
   const ins = isMacroNodeDefinition(node)
-    ? macroNodeInstance(createId(), node.id, node.defaultData, inputsConfig, {
-        x: 0,
-        y: 0,
-      })
-    : nodeInstance(createId(), node.id, inputsConfig, { x: 0, y: 0 });
+    ? macroNodeInstance(
+        createInsId(node),
+        node.id,
+        node.defaultData,
+        inputsConfig,
+        {
+          x: 0,
+          y: 0,
+        }
+      )
+    : nodeInstance(createInsId(node), node.id, inputsConfig, { x: 0, y: 0 });
   const width = calcNodeWidth(ins, node);
 
   const { x, y } = lastMousePos;
