@@ -3,7 +3,7 @@
   "extends": "@tsconfig/docusaurus/tsconfig.json",
   "compilerOptions": {
     "baseUrl": ".",
-    "types": ["mocha"],
+    "types": ["mocha", "node"],
     "lib": ["ES2019", "DOM"],
     "module": "Node16"
   }
