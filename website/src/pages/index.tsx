@@ -16,8 +16,6 @@ import exampleHttpRequests from "./_hero-example/ExampleHTTPRequests.flyde";
 import exampleReactivity from "./_hero-example/ExampleReactivity.flyde";
 import { features } from "./_features";
 
-console.log(4242, exampleReactivity);
-
 export const examples = [
   {
     label: "Beep Boop",
