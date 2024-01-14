@@ -27,7 +27,7 @@ import * as StdLib from "@flyde/stdlib/dist/all";
 
 import requireReload from "require-reload";
 import { macroNodeToDefinition } from "./macro-node-to-definition";
-import { processMacroNodeInstance } from "./process-macro-node";
+import { processMacroNodeInstance } from "./process-macro-node-instance";
 
 const getLocalOrPackagePaths = (fullFlowPath: string, importPath: string) => {
   const fullImportPath = join(fullFlowPath, "..", importPath);
