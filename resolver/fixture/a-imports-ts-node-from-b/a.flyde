@@ -1,35 +1,42 @@
 imports:
-  "./Sub.flyde.ts":
-  - Sub
+  ./Sub.flyde.ts:
+    - Sub
+  Sub.flyde.ts:
+    - Sub
 node:
-  id: Sub1
-  inputs:
-    n:
-      type: number
-      mode: required
-  outputs:
-    r:
-      type: number
   instances:
-  - id: ins1
-    nodeId: Sub
-    inputConfig:
-        b:
-          mode: static
-          value: 1
-    pos:
-      x: 0
-      y: 0
+    - pos:
+        x: 19.03265380859375
+        y: -61.73219299316406
+      id: xyv2im2edn3md8gghwtkmd43
+      inputConfig: {}
+      nodeId: Sub
   connections:
+    - from:
+        insId: xyv2im2edn3md8gghwtkmd43
+        pinId: r
+      to:
+        insId: __this
+        pinId: r
     - from:
         insId: __this
         pinId: n
       to:
-        insId: ins1
+        insId: xyv2im2edn3md8gghwtkmd43
         pinId: a
-    - from:
-        insId: ins1
-        pinId: r
-      to:
-        insId: __this
-        pinId: r
+  id: Sub1
+  inputs:
+    n:
+      mode: required
+      type: number
+  outputs:
+    r:
+      type: number
+  inputsPosition:
+    n:
+      x: 33.34002685546875
+      y: -138.33328247070312
+  outputsPosition:
+    r:
+      x: 44.16668701171875
+      y: 99.13584899902344

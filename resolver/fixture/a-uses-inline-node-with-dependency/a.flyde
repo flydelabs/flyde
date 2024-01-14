@@ -1,52 +1,45 @@
 imports:
-  "./Add.flyde.js":
+  ./Add.flyde.js:
     - Add
 node:
-  id: Add1Wrapper
-  inputs:
-    n:
-      type: number
-      mode: required
-  outputs:
-    r:
-      type: number
   instances:
-  - id: ins1
-    node:
-      id: Add1Ins
-      inputs:
-        n: 
-          type: number
-          mode: required
-      outputs:
-        r: number
-      instances: 
-        - id: ins1
-          nodeId: Add
-          pos: 
-            x: 0
-            y: 0
-          inputConfig:
-            b:
-              mode: static
-              value: 1
-      connections:
-        - from:
-            insId: __this
-            pinId: n
-          to:
-            insId: ins1
-            pinId: a
-        - from:
-            insId: ins1
-            pinId: r
-          to:
-            insId: __this
-            pinId: r
-    inputConfig: {}
-    pos:
-      x: 0
-      y: 0
+    - pos:
+        x: -36.800262451171875
+        y: 129.30023193359375
+      id: ins1
+      inputConfig: {}
+      node:
+        id: Add1Ins
+        inputs:
+          n:
+            type: number
+            mode: required
+        outputs:
+          r: number
+        inputsPosition: {}
+        outputsPosition: {}
+        instances:
+          - id: ins1
+            nodeId: Add
+            pos:
+              x: 0
+              y: 0
+            inputConfig:
+              b:
+                mode: queue
+        connections:
+          - from:
+              insId: __this
+              pinId: n
+            to:
+              insId: ins1
+              pinId: a
+          - from:
+              insId: ins1
+              pinId: r
+            to:
+              insId: __this
+              pinId: r
   connections:
     - from:
         insId: __this
@@ -60,3 +53,16 @@ node:
       to:
         insId: __this
         pinId: r
+  id: Add1Wrapper
+  inputs:
+    n:
+      mode: required
+      type: number
+  outputs:
+    r:
+      type: number
+  inputsPosition: {}
+  outputsPosition:
+    r:
+      x: -44.167633056640625
+      y: 234.29861450195312

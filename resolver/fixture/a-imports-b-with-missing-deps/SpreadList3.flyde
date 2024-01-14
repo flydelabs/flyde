@@ -35,28 +35,16 @@ node:
         x: 65.52127563476563
         y: 153.09548217773437
       id: GetListItem-877
-      inputConfig:
-        idx:
-          mode: static
-          value: 0
     - nodeId: GetListItem
       pos:
         x: 267.9924060058594
         y: 186.69313079833984
       id: GetListItem-877-d285
-      inputConfig:
-        idx:
-          mode: static
-          value: 1
     - nodeId: GetListItem
       pos:
         x: 431.89740478515625
         y: 176.2309420776367
       id: GetListItem-877-d285-d900
-      inputConfig:
-        idx:
-          mode: static
-          value: 2
   connections:
     - from:
         insId: __this
