@@ -5,7 +5,6 @@ import {
   nodeInput,
   nodeOutput,
   CodeNode,
-  InlineValueNode,
   nodeInstance,
   dynamicNodeInput,
   queueInputPinConfig,
@@ -30,20 +29,6 @@ export const add: CodeNode = {
   run: ({ n1, n2 }, { r }) => {
     r?.next(n1 + n2);
   },
-};
-
-export const codeAdd: InlineValueNode = {
-  id: "add",
-  inputs: {
-    n1: nodeInput(),
-    n2: nodeInput(),
-  },
-  outputs: {
-    r: nodeOutput(),
-  },
-  runFnRawCode: `
-  outputs.r?.next(inputs.n1 + inputs.n2);
-    `,
 };
 
 export const add1: CodeNode = {

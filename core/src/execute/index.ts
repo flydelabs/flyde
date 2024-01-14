@@ -8,13 +8,10 @@ import {
   dynamicNodeInput,
   dynamicOutput,
   Node,
-  getStaticValue,
-  isInlineValueNode,
   isVisualNode,
   CodeNode,
   NodeInputs,
   NodeOutputs,
-  staticNodeInput,
   NodeAdvancedContext,
   isQueueInputPinConfig,
   NodeInstanceError,
@@ -45,7 +42,6 @@ import {
   OMapF,
 } from "../common";
 import { debugLogger } from "../common/debug-logger";
-import { isStaticInputPinConfig } from "../node";
 import { Debugger, DebuggerEvent, DebuggerEventType } from "./debugger";
 import {
   customNodesToNodesCollection,
@@ -188,11 +184,7 @@ const executeCodeNode = (data: CodeExecutionData) => {
 
   let lastValues: Record<string, unknown>;
 
-  const reactiveInputs = (node.reactiveInputs || [])
-    /* 
-    Reactive inputs that are static shouldn't get a special treatment 
-  */
-    .filter((inp) => !isStaticInputPinConfig(inputs[inp]?.config));
+  const reactiveInputs = node.reactiveInputs || [];
 
   const cleanState = () => {
     mainState[innerStateId]?.clear();

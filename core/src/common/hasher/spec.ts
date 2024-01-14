@@ -149,38 +149,6 @@ describe("nodes hasher", () => {
       assert.notEqual(h1, h2);
     });
   });
-
-  describe("code node", () => {
-    const base: InlineValueNode = {
-      id: "bob2",
-      runFnRawCode: `some codez`,
-      customViewCode: "bob",
-      inputs: {},
-      outputs: {},
-    };
-
-    it("considers fn code code node properly", () => {
-      const p2 = produce(base, (d) => {
-        d.runFnRawCode = "dbdfgfdg";
-      });
-
-      const h1 = hashNode(base);
-      const h2 = hashNode(p2);
-
-      assert.notEqual(h1, h2);
-    });
-
-    it("considers code view fn properly", () => {
-      const p2 = produce(base, (d) => {
-        d.customViewCode = "dbdfgfdg";
-      });
-
-      const h1 = hashNode(base);
-      const h2 = hashNode(p2);
-
-      assert.notEqual(h1, h2);
-    });
-  });
 });
 
 describe("flow hasher", () => {

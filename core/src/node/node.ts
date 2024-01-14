@@ -1,12 +1,4 @@
-import {
-  OMap,
-  OMapF,
-  entries,
-  isDefined,
-  testDataCreator,
-  noop,
-  Pos,
-} from "../common";
+import { OMap, OMapF, entries, testDataCreator, noop, Pos } from "../common";
 import { Subject } from "rxjs";
 
 import { CancelFn, InnerExecuteFn } from "../execute";
@@ -219,18 +211,6 @@ export enum InlineValueNodeType {
 }
 
 /**
- * InlineValueNode is used by the editor to create inline values and function.
- * @deprecated will turn into a "Macro Node" as soon as that is developed
- */
-
-export interface InlineValueNode extends BaseNode {
-  runFnRawCode: string;
-  fnCode?: string;
-  dataBuilderSource?: string; // quick solution for "Data builder iteration"
-  templateType?: InlineValueNodeType;
-}
-
-/**
  * A visual node is what makes Flyde special. It represents a node created visually in the editor.
  * It consists of node instances and connections. Each node instance will either refer to an imported node (by id), or include the node "inline".
  * Each connection will represent a "wire" between 2 instances, or between an instance and a main input/output pin.
@@ -262,7 +242,7 @@ export type ImportableSource = {
   implicit?: boolean;
 };
 
-export type CustomNode = VisualNode | InlineValueNode;
+export type CustomNode = VisualNode;
 
 export type CodeNodeDefinition = Omit<CodeNode, "run">;
 
@@ -302,12 +282,6 @@ export const isVisualNode = (p: Node | NodeDefinition): p is VisualNode => {
   return !!(p as VisualNode).instances;
 };
 
-export const isInlineValueNode = (
-  p: Node | NodeDefinition | undefined
-): p is InlineValueNode => {
-  return isDefined(p) && isDefined((p as InlineValueNode).runFnRawCode);
-};
-
 export const visualNode = testDataCreator<VisualNode>({
   id: "visual-node",
   inputs: {},
@@ -323,13 +297,6 @@ export const codeNode = testDataCreator<CodeNode>({
   inputs: {},
   outputs: {},
   run: noop as any,
-});
-
-export const inlineValueNode = testDataCreator<InlineValueNode>({
-  id: "node",
-  inputs: {},
-  outputs: {},
-  runFnRawCode: "",
 });
 
 export type SimplifiedNodeParams = {
@@ -359,34 +326,6 @@ export const fromSimplified = ({
     outputs,
     run,
   };
-};
-
-export const maybeGetStaticValueNodeId = (value: string) => {
-  const maybeNodeMatch =
-    typeof value === "string" && value.match(/^__node\:(.*)/);
-  if (maybeNodeMatch) {
-    const nodeId = maybeNodeMatch[1];
-    return nodeId;
-  }
-  return null;
-};
-export const getStaticValue = (
-  value: any,
-  resolvedDeps: NodesDefCollection,
-  calleeId: string
-) => {
-  const maybeNodeId = maybeGetStaticValueNodeId(value);
-  if (maybeNodeId) {
-    const node = resolvedDeps[maybeNodeId];
-    if (!node) {
-      throw new Error(
-        `Instance ${calleeId} referrer to a node reference ${maybeNodeId} that does not exist`
-      );
-    }
-    return node;
-  } else {
-    return value;
-  }
 };
 
 export const getNode = (
