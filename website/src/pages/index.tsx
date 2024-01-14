@@ -43,10 +43,6 @@ export const examples = [
   },
 ];
 
-const Gradient: React.FC = ({ children }) => (
-  <span className="gradient">{children}</span>
-);
-
 function HomepageHeader() {
   const [currentExample, setCurrExample] = React.useState(examples[0]);
 

@@ -1,5 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import * as PubSub from "pubsub-js";
+import _ from "lodash";
+
 import {
   createNewNodeInstance,
   createRuntimePlayer,
@@ -29,9 +31,15 @@ import {
   NodeOutput,
   ResolvedDependencies,
   TRIGGER_PIN_ID,
+  isMacroNodeInstance,
+  CodeNode,
+  isMacroNode,
+  MacroNode,
 } from "@flyde/core";
 import { createHistoryPlayer } from "./createHistoryPlayer";
 import { createRuntimeClientDebugger } from "./createRuntimePlayerDebugger";
+
+import { processMacroNodeInstance } from "@flyde/resolver/dist/resolver/resolve-dependencies/process-macro-node-instance";
 
 import "@flyde/flow-editor/src/index.scss";
 
@@ -49,7 +57,7 @@ const initialPadding = [0, 20] as [number, number];
 export interface EmbeddedFlydeProps {
   flowProps: {
     inputs: Record<string, DynamicNodeInput>;
-    flow: FlydeFlow;
+    initialFlow: FlydeFlow;
     dependencies: ResolvedDependencies;
     output: NodeOutput;
   };
@@ -106,7 +114,7 @@ const runFlow = ({
 
 export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = (props) => {
   const { debugDelay, onOutput, flowProps } = props;
-  const { flow, inputs, output } = flowProps;
+  const { initialFlow: flow, inputs, output } = flowProps;
 
   const runtimePlayerRef = useRef(createRuntimePlayer());
 
@@ -116,8 +124,6 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = (props) => {
 
   const [localDebugger, setLocalDebugger] =
     useState<Pick<EditorDebuggerClient, "onBatchedEvents">>();
-
-  const [debouncedFlow] = useDebounce(resolvedDeps, 500);
 
   const darkMode = useDarkMode();
 
@@ -216,7 +222,10 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = (props) => {
       lastMousePos: { x: 0, y: 0 },
       selected: [],
     },
-  });
+  } as FlowEditorState);
+
+  const [debouncedFlow] = useDebounce(resolvedDeps, 500);
+  const [debouncedState] = useDebounce(editorState, 500);
 
   // update flow when props change (e.g. debounce/throttling)
   useEffect(() => {
@@ -264,7 +273,7 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = (props) => {
       clean();
       sub.unsubscribe();
     };
-  }, [debugDelay, debouncedFlow]);
+  }, [debugDelay, debouncedFlow, debouncedState]);
 
   const depsContextValue = useMemo<DependenciesContextData>(() => {
     return {
@@ -272,7 +281,7 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = (props) => {
       onImportNode,
       onRequestImportables,
     };
-  }, []);
+  }, [resolvedDeps]);
 
   const debuggerContextValue = useMemo<DebuggerContextData>(() => {
     return {
@@ -280,6 +289,51 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = (props) => {
       onRequestHistory: historyPlayer.requestHistory,
     };
   }, [localDebugger]);
+
+  const lastInstancesMacroData = React.useRef<any>([]);
+
+  useEffect(() => {
+    import("@flyde/stdlib/dist/all-browser").then((stdlib) => {
+      // syncs macro data from instances to the resolved deps
+      const insMacroData = editorState.flow.node.instances.flatMap((ins) => {
+        if (isMacroNodeInstance(ins)) {
+          return ins.macroData;
+        } else {
+          return [];
+        }
+      });
+
+      if (!_.isEqual(insMacroData, lastInstancesMacroData.current)) {
+        lastInstancesMacroData.current = insMacroData;
+
+        const newDeps: Record<string, ImportedNode> = {};
+
+        const newInstances = editorState.flow.node.instances.map((ins) => {
+          if (isMacroNodeInstance(ins)) {
+            const macroNode = Object.values(stdlib).find(
+              (p) => isMacroNode(p) && p.id === ins.macroId
+            ) as MacroNode<any>;
+            const newNode = processMacroNodeInstance("", macroNode, ins);
+
+            newDeps[newNode.id] = { ...newNode, source: { path: "" } };
+            return { ...ins, nodeId: newNode.id };
+          } else {
+            return ins;
+          }
+        });
+
+        const newEditorState = produce(editorState, (draft) => {
+          draft.flow.node.instances = newInstances;
+        });
+
+        setFlowEditorState(newEditorState);
+        setResolvedDeps((deps) => ({
+          ...deps,
+          ...newDeps,
+        }));
+      }
+    });
+  }, [editorState.flow.node]);
 
   return (
     <BrowserOnly>

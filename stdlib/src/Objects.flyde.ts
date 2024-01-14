@@ -38,33 +38,6 @@ export const ObjectKeys: CodeNode = {
   run: ({ object }, { keys }) => keys.next(Object.keys(object)),
 };
 
-export const ObjectHasOwnProperty: CodeNode = {
-  id: "Has own property",
-  defaultStyle: {
-    icon: "fa-key",
-  },
-  namespace,
-  description: "Checks if object has property",
-  inputs: {
-    object: { mode: "required", description: "Object to get keys of" },
-    property: { mode: "required", description: "the property to search for" }
-
-  },
-  outputs: {
-    true: { description: "The value is true" },
-    false: { description: "The value is false" },
-  },
-  run: function (inputs, outputs) {
-    const { true: trueOut, false: falseOut } = outputs;
-    const { object, property } = inputs;
-    if (object.hasOwnProperty(property)) {
-      trueOut.next(true);
-    } else {
-      falseOut.next(false);
-    }
-  },
-};
-
 export const ObjectValues: CodeNode = {
   id: "Values",
   namespace,
@@ -84,50 +57,6 @@ export const ObjectEntries: CodeNode = {
   inputs: { object: { description: "Object to get entries of" } },
   outputs: { entries: { description: "The entries of object" } },
   run: ({ object }, { entries }) => entries.next(Object.entries(object)),
-};
-
-export const ObjectFromEntries: CodeNode = {
-  id: "From Entries",
-  namespace,
-  defaultStyle: {
-    icon: "fa-box",
-  },
-  description: "Creates an object from an array of entries",
-  inputs: {
-    entries: {
-      description: "Array of entries to create object from",
-    },
-  },
-  outputs: {
-    object: {
-      description: "The created object",
-    },
-  },
-  run: ({ entries }, { object }) => object.next(Object.fromEntries(entries)),
-};
-
-export const ObjectAssign: CodeNode = {
-  id: "Assign",
-  namespace,
-  defaultStyle: {
-    icon: "fa-box",
-  },
-  description: "Assigns properties from one or more objects to a target object",
-  inputs: {
-    target: {
-      description: "Target object to assign properties to",
-    },
-    sources: {
-      description: "One or more objects to assign properties from",
-    },
-  },
-  outputs: {
-    object: {
-      description: "The target object",
-    },
-  },
-  run: ({ target, sources }, { object }) =>
-    object.next(Object.assign(target, ...sources)),
 };
 
 export const GetAttribute: CodeNode = {
@@ -226,40 +155,5 @@ export const DeleteAttribute: CodeNode = {
     const target = attributes.reduce((obj, i) => obj[i], object.value);
     delete target[last];
     outputObject.next(object.value);
-  },
-};
-
-export const PropertyEquals: CodeNode = {
-  id: "Property Equals",
-  namespace,
-  defaultStyle: {
-    icon: "fa-equals",
-  },
-  description:
-    'Emits the object to the "true" output if an object\'s property equals a value, otherwise emits to the "false" output',
-  inputs: {
-    object: { description: "Object to check property of" },
-    attribute: { description: "Attribute to check" },
-    value: { description: "Value to check attribute against" },
-  },
-  outputs: {
-    true: { description: "Emitted if the attribute equals the value" },
-    false: { description: "Emitted if the attribute does not equal the value" },
-  },
-  customViewCode: `{{#if inputs.attribute}}
-  "{{inputs.attribute}}" equals "{{inputs.value}}"
-{{else}}
-  Property Equals
-{{/if}}`,
-  run: (inputs, outputs) => {
-    // get attribute from object while supporting dot notation
-    const value = inputs.attribute
-      .split(".")
-      .reduce((obj, i) => obj[i], inputs.object);
-    if (value === inputs.value) {
-      outputs.true.next(inputs.object);
-    } else {
-      outputs.false.next(inputs.object);
-    }
   },
 };

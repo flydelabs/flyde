@@ -7,8 +7,8 @@ imports:
 node:
   instances:
     - pos:
-        x: -628.0026402763253
-        y: -420.65284818026043
+        x: -615.4817052177316
+        y: -396.8624123892448
       id: ghunnjxvc8lzz9ir1n7a5cv9
       inputConfig:
         interval:
@@ -17,9 +17,12 @@ node:
         value:
           mode: static
           value: ""
-      visibleInputs:
-        - interval
-      nodeId: Interval
+      visibleInputs: []
+      nodeId: Interval__ghunnjxvc8lzz9ir1n7a5cv9
+      macroId: Interval
+      macroData:
+        type: static
+        timeMs: 4200
     - pos:
         x: -621.8109288505441
         y: -147.24308865877606

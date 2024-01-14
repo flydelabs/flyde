@@ -26,7 +26,8 @@ import { namespaceFlowImports } from "./namespace-flow-imports";
 import * as StdLib from "@flyde/stdlib/dist/all";
 
 import requireReload from "require-reload";
-import { macroNodeToDefinition, processMacroNode } from "./macro-nodes";
+import { macroNodeToDefinition } from "./macro-node-to-definition";
+import { processMacroNodeInstance } from "./process-macro-node-instance";
 
 const getLocalOrPackagePaths = (fullFlowPath: string, importPath: string) => {
   const fullImportPath = join(fullFlowPath, "..", importPath);
@@ -216,30 +217,20 @@ export function resolveFlow(
                 continue;
               }
 
-              if (mode === "definition") {
-                const macroDef = macroNodeToDefinition(
-                  targetMacro.node,
-                  importPath
-                );
+              const macroDef = macroNodeToDefinition(
+                targetMacro.node,
+                importPath
+              );
 
-                gatheredDependencies[macroDef.id] = {
-                  ...macroDef,
-                  source: {
-                    path: importPath,
-                    export: targetMacro.exportName,
-                  },
-                };
-              } else {
-                gatheredDependencies[targetMacro.node.id] = {
-                  ...targetMacro.node,
-                  source: {
-                    path: importPath,
-                    export: targetMacro.exportName,
-                  },
-                };
-              }
+              gatheredDependencies[macroDef.id] = {
+                ...macroDef,
+                source: {
+                  path: importPath,
+                  export: targetMacro.exportName,
+                },
+              };
 
-              const resolvedNode = processMacroNode(
+              const resolvedNode = processMacroNodeInstance(
                 namespace,
                 targetMacro.node,
                 instance

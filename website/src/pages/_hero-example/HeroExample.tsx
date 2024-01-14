@@ -22,10 +22,10 @@ import { toastMsg } from "@flyde/flow-editor";
 
 const RERUN_INTERVAL = 4200 * 2.5;
 
-export const HeroExample: React.FC = (props: {
-  example: (typeof examples)[0];
+export const HeroExample: React.FC<{ example: (typeof examples)[0] }> = ({
+  example,
 }) => {
-  const currentExample = props.example;
+  const currentExample = example;
   const [logs, setLogs] = React.useState<any>([]);
 
   const [fileVisible, setFileVisible] = React.useState("Example.flyde");
@@ -36,7 +36,7 @@ export const HeroExample: React.FC = (props: {
 
   const result = useRef(dynamicOutput());
   const flowProps = {
-    flow: currentExample.flow.flow,
+    initialFlow: currentExample.flow.flow,
     dependencies: currentExample.flow.dependencies,
     inputs: inputs.current,
     output: result.current,

@@ -26,6 +26,14 @@ export const MacroInstanceEditor: React.FC<MacroInstanceEditorProps> = (
 
   const [macroData, setMacroData] = React.useState<any>(ins.macroData);
 
+  const macro = useMemo(() => {
+    const macro = deps[ins.macroId];
+    if (!macro || !isMacroNodeDefinition(macro)) {
+      throw new Error(`Macro ${ins.macroId} not found `);
+    }
+    return macro;
+  }, [deps, ins.macroId]);
+
   const EditorComp = useMemo(() => {
     const macro = deps[ins.macroId];
     if (!macro || !isMacroNodeDefinition(macro)) {
@@ -37,7 +45,7 @@ export const MacroInstanceEditor: React.FC<MacroInstanceEditorProps> = (
   return (
     <Dialog
       isOpen={true}
-      title={"Edit Macro Instance"}
+      title={`Edit ${macro.displayName ?? macro.id} Configuration`}
       onClose={props.onCancel}
       className="macro-instance-editor"
     >
