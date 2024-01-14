@@ -1,4 +1,4 @@
-import { Node, NodesCollection, dynamicOutput, keys, isDynamicInput } from ".";
+import { Node, NodesCollection, dynamicOutput, keys } from ".";
 import { execute, ExecuteParams } from "./execute";
 
 export const simplifiedExecute = (

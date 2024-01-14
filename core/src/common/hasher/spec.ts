@@ -3,7 +3,6 @@ import { randomInt, randomPos, shuffle } from "../../common";
 import { assert } from "chai";
 import { hashFlow, hashNode } from ".";
 import {
-  InlineValueNode,
   nodeInput,
   nodeInstance,
   nodeOutput,

@@ -15,7 +15,7 @@ import { execute, SubjectMap } from "./execute";
 import { isDefined, okeys } from "./common";
 import { Subject } from "rxjs";
 import { NodesCollection } from ".";
-import { conciseCodeNode } from "./test-utils";
+import { conciseCodeNode, valueNode } from "./test-utils";
 
 export const add: CodeNode = {
   id: "add",
@@ -334,6 +334,10 @@ export const delay = conciseCodeNode({
   },
 });
 
+export const zero = valueNode("zero", 0);
+export const one = valueNode("one", 1);
+export const mOne = valueNode("mOne", -1);
+
 export const testNodesCollection = {
   add,
   add1,
@@ -347,6 +351,9 @@ export const testNodesCollection = {
   [transform.id]: transform,
   peq,
   delay,
+  zero,
+  one,
+  mOne,
 };
 
 export const accumulate = conciseCodeNode({

@@ -205,11 +205,6 @@ export type MacroNodeDefinition<T> = Omit<
   editorComponentBundleContent: string;
 };
 
-export enum InlineValueNodeType {
-  VALUE = "value",
-  FUNCTION = "function",
-}
-
 /**
  * A visual node is what makes Flyde special. It represents a node created visually in the editor.
  * It consists of node instances and connections. Each node instance will either refer to an imported node (by id), or include the node "inline".
