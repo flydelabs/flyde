@@ -38,7 +38,6 @@ import {
 } from "@flyde/core";
 import { calcNodeContent } from "./utils";
 import { BaseNodeView } from "../base-node-view";
-import { isStaticInputPinConfig } from "@flyde/core";
 
 import { getInstanceDomId } from "../dom-ids";
 import {
@@ -153,18 +152,12 @@ export interface InstanceViewProps {
   onInspectPin: (insId: string, pin: { id: string; type: PinType }) => void;
 
   onUngroup: (ins: NodeInstance) => void;
-  onDetachConstValue: (ins: NodeInstance, pinId: string) => void;
-  onCopyConstValue: (ins: NodeInstance, pinId: string) => void;
-  onPasteConstValue: (ins: NodeInstance, pinId: string) => void;
-  onConvertConstToEnv?: (ins: NodeInstance, pinId: string) => void;
 
   onChangeVisibleInputs: (ins: NodeInstance, inputs: string[]) => void;
   onChangeVisibleOutputs: (ins: NodeInstance, outputs: string[]) => void;
 
   onDeleteInstance: (ins: NodeInstance) => void;
   onSetDisplayName: (ins: NodeInstance, view: string | undefined) => void;
-
-  copiedConstValue?: any;
 
   displayMode?: true;
 
@@ -198,9 +191,6 @@ export const InstanceView: React.FC<InstanceViewProps> =
       dragged,
       onTogglePinLog,
       onTogglePinBreakpoint,
-      onDetachConstValue,
-      onCopyConstValue,
-      onPasteConstValue,
       displayMode,
       connections,
       instance,
@@ -216,7 +206,6 @@ export const InstanceView: React.FC<InstanceViewProps> =
       onDblClick: onDoubleClick,
       onChangeVisibleInputs,
       onChangeVisibleOutputs,
-      onConvertConstToEnv,
       inlineGroupProps,
       onUngroup,
       onExtractInlineNode,
@@ -319,21 +308,6 @@ export const InstanceView: React.FC<InstanceViewProps> =
     const _onToggleSticky = React.useCallback(
       (pinId: string) => onToggleSticky(instance, pinId),
       [instance, onToggleSticky]
-    );
-
-    const _onDetachConstValue = React.useCallback(
-      (pinId: string) => onDetachConstValue(instance, pinId),
-      [instance, onDetachConstValue]
-    );
-
-    const _onCopyConstValue = React.useCallback(
-      (pinId: string) => onCopyConstValue(instance, pinId),
-      [instance, onCopyConstValue]
-    );
-
-    const _onPasteConstValue = React.useCallback(
-      (pinId: string) => onPasteConstValue(instance, pinId),
-      [instance, onPasteConstValue]
     );
 
     const _onSelect = React.useCallback(
@@ -454,13 +428,6 @@ export const InstanceView: React.FC<InstanceViewProps> =
 
     const content = calcNodeContent(instance, node);
 
-    const getStaticValue = (k: string) => {
-      const config = instance.inputConfig[k];
-      if (isStaticInputPinConfig(config)) {
-        return config.value;
-      }
-    };
-
     const _onChangeVisibleInputs = React.useCallback(async () => {
       const inputs = okeys(node.inputs);
       const res = await _prompt(
@@ -498,15 +465,6 @@ export const InstanceView: React.FC<InstanceViewProps> =
     const inputKeys = Object.keys(getNodeInputs(node));
     const outputKeys = Object.keys(getNodeOutputs(node));
 
-    const _onConvertConstToEnv = React.useCallback(
-      (pinId: string) => {
-        if (onConvertConstToEnv) {
-          onConvertConstToEnv(instance, pinId);
-        }
-      },
-      [instance, onConvertConstToEnv]
-    );
-
     const _onPinMouseUp = React.useCallback(
       (pinId: string, pinType: PinType) => {
         if (onPinMouseUp) {
@@ -540,10 +498,6 @@ export const InstanceView: React.FC<InstanceViewProps> =
               isSticky={stickyInputs[k]}
               minimized={selected ? false : inputsToRender.length === 1}
               onToggleSticky={_onToggleSticky}
-              onDetachConstValue={_onDetachConstValue}
-              onCopyConstValue={_onCopyConstValue}
-              onPasteConstValue={_onPasteConstValue}
-              copiedConstValue={props.copiedConstValue}
               selected={k === selectedInput}
               onClick={onInputClick}
               onDoubleClick={onInputDblClick}
@@ -555,11 +509,6 @@ export const InstanceView: React.FC<InstanceViewProps> =
               onToggleLogged={onTogglePinLog}
               onToggleBreakpoint={onTogglePinBreakpoint}
               onInspect={props.onInspectPin}
-              constValue={getStaticValue(k)}
-              // constValue={constInputs && constInputs.get(k) && (constInputs.get(k) as any).val}
-              onConvertConstToEnv={
-                props.onConvertConstToEnv ? _onConvertConstToEnv : undefined
-              }
               description={v.description}
               queuedValues={props.queuedInputsData[k] ?? 0}
               onMouseUp={_onPinMouseUp}

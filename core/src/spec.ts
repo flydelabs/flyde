@@ -28,16 +28,13 @@ import {
 import {
   CodeNode,
   fromSimplified,
-  staticNodeInput,
   dynamicNodeInput,
   dynamicOutput,
   nodeInstance,
-  InlineValueNode,
   NodeInstance,
   nodeInput,
   nodeOutput,
   queueInputPinConfig,
-  staticInputPinConfig,
   stickyInputPinConfig,
   dynamicNodeInputs,
   inlineNodeInstance,
@@ -63,9 +60,11 @@ import {
   id2,
   accumulate,
   spreadList,
+  zero,
+  one,
+  mOne,
 } from "./fixture";
 
-import { inlineValueNodeToNode } from "./inline-value-to-code-node";
 import {
   conciseNode,
   conciseCodeNode,
@@ -266,7 +265,8 @@ describe("main ", () => {
         inputsPosition: {},
         outputsPosition: {},
         instances: [
-          inlineNodeInstance("a", add, { n1: staticInputPinConfig(1) }),
+          inlineNodeInstance("n1", valueNode("n", 1)),
+          inlineNodeInstance("a", add),
         ],
         connections: [
           {
@@ -276,6 +276,10 @@ describe("main ", () => {
           {
             from: connectionNode("a", "r"),
             to: externalConnectionNode("r"),
+          },
+          {
+            from: connectionNode("n1", "r"),
+            to: connectionNode("a", "n1"),
           },
         ],
       };
@@ -1134,7 +1138,7 @@ describe("main ", () => {
     // });
 
     describe("high order nodes", () => {
-      it("works for a simple case", () => {
+      it("works when node is passed directly", () => {
         const s = spy();
         const list = dynamicNodeInput();
         const fn = dynamicNodeInput();
@@ -1148,24 +1152,6 @@ describe("main ", () => {
         });
         list.subject.next([1, 2, 3, 4, 5, 6]);
         fn.subject.next(isEven);
-
-        assert.equal(s.called, true);
-        assert.deepEqual(s.lastCall.args[0], [2, 4, 6]);
-      });
-
-      it("works using node reference", () => {
-        const s = spy();
-        const list = dynamicNodeInput();
-        const fn = staticNodeInput(`__node:${isEven.id}`);
-        const r = new Subject();
-        r.subscribe(s);
-        execute({
-          node: filter,
-          inputs: { list, fn },
-          outputs: { r },
-          resolvedDeps: testNodesCollection,
-        });
-        list.subject.next([1, 2, 3, 4, 5, 6]);
 
         assert.equal(s.called, true);
         assert.deepEqual(s.lastCall.args[0], [2, 4, 6]);
@@ -1550,38 +1536,6 @@ describe("main ", () => {
 
       assert.equal(s.calledWith(42), true);
     });
-
-    it("allows state in code comp", async () => {
-      const node: InlineValueNode = {
-        id: "fixture",
-        inputs: { v: nodeInput() },
-        outputs: { r: nodeOutput() },
-        runFnRawCode: `
-          const n = inputs.v + (adv.state.get("curr") || 0);
-          outputs.r?.next(n);
-          adv.state.set("curr", n);
-          `,
-        completionOutputs: [],
-        reactiveInputs: ["v"],
-      };
-      const s = spy();
-      const v = dynamicNodeInput();
-      const r = new Subject();
-      r.subscribe(s);
-      execute({
-        node: node,
-        inputs: { v },
-        outputs: { r },
-        resolvedDeps: testNodesCollection,
-      });
-      v.subject.next(1);
-      v.subject.next(2);
-      v.subject.next(3);
-      v.subject.next(4);
-      v.subject.next(5);
-      assert.equal(s.called, true);
-      assert.deepEqual(s.lastCall.args[0], 1 + 2 + 3 + 4 + 5);
-    });
   });
 
   describe("uncontrolled visual nodes", () => {
@@ -1668,11 +1622,14 @@ describe("main ", () => {
         inputsPosition: {},
         outputsPosition: {},
         instances: [
-          nodeInstance("if", peq.id, { compare: staticInputPinConfig(0) }),
+          nodeInstance("zero", zero.id),
+          nodeInstance("one", one.id),
+          nodeInstance("mOne", mOne.id),
+          nodeInstance("if", peq.id),
           nodeInstance("arr", "add-rec"),
-          nodeInstance("add1", add.id, { n2: staticInputPinConfig(-1) }),
-          nodeInstance("add2", add.id, { n2: staticInputPinConfig(1) }),
-          nodeInstance("tr1", transform.id, { to: staticInputPinConfig(1) }),
+          nodeInstance("add1", add.id),
+          nodeInstance("add2", add.id),
+          nodeInstance("tr1", transform.id),
         ],
         connections: [
           connectionData("n", "if.val"),
@@ -1682,6 +1639,10 @@ describe("main ", () => {
           connectionData("if.else", "add1.n1"),
           connectionData("arr.r", "add2.n1"),
           connectionData("add2.r", "r"),
+          connectionData("zero.r", "if.compare"),
+          connectionData("one.r", "tr1.to"),
+          connectionData("mOne.r", "add1.n2"),
+          connectionData("one.r", "add2.n2"),
         ],
       };
 
@@ -1699,6 +1660,9 @@ describe("main ", () => {
         inputs: { n },
         outputs: { r },
         resolvedDeps: resolvedDeps,
+        onBubbleError: (e) => {
+          console.log(e);
+        },
       });
 
       n.subject.next(1);
@@ -1727,24 +1691,24 @@ describe("main ", () => {
         inputsPosition: {},
         outputsPosition: {},
         instances: [
-          // nodeInstance("z", zero),
-          // nodeInstance("one", one),
-          // nodeInstance("m1", mOne),
-          nodeInstance("if", peq.id, { compare: staticInputPinConfig(0) }),
+          inlineNodeInstance("z", valueNode("z", 0)),
+          inlineNodeInstance("one", valueNode("one", 1)),
+          inlineNodeInstance("m1", valueNode("m1", -1)),
+          nodeInstance("if", peq.id),
           nodeInstance("f", "fact"),
-          nodeInstance("add", add.id, { n2: staticInputPinConfig(-1) }),
+          nodeInstance("add", add.id),
           nodeInstance("mul", mul.id),
-          nodeInstance("tr1", transform.id, { to: staticInputPinConfig(1) }),
+          nodeInstance("tr1", transform.id),
         ],
         connections: [
           connectionData("n", "if.val"),
-          // connectionData("z.r", "if.compare"),
+          connectionData("z.r", "if.compare"),
           connectionData("if.r", "tr1.from"),
-          // connectionData("one.r", "tr1.to"),
+          connectionData("one.r", "tr1.to"),
           connectionData("tr1.r", "r"),
           connectionData("if.else", "add.n1"),
           connectionData("if.else", "mul.n2"),
-          // connectionData("m1.r", "add.n2"),
+          connectionData("m1.r", "add.n2"),
           connectionData("add.r", "f.n"),
           connectionData("f.r", "mul.n1"),
           connectionData("mul.r", "r"),
@@ -1783,86 +1747,10 @@ describe("main ", () => {
       n.subject.next(3);
       assert.equal(s.lastCall.args[0], 6);
 
-      n.subject.next(20);
-      assert.equal(s.lastCall.args[0], 2432902008176640000);
+      n.subject.next(10);
+      assert.equal(s.lastCall.args[0], 3628800);
 
       assert.equal(s.callCount, 6);
-    });
-  });
-
-  describe("code node support", () => {
-    it("runs an Id code node properly", () => {
-      const inlineValueNode: InlineValueNode = {
-        id: "id",
-        inputs: {
-          v: nodeInput(),
-        },
-        outputs: {
-          r: nodeInput(),
-        },
-        runFnRawCode: `outputs.r?.next(inputs.v)`,
-      };
-
-      // const node: CodeNode = inlineValueNodeToNode(inlineValueNode);
-
-      const s = spy();
-      const v = dynamicNodeInput();
-      const r = dynamicOutput();
-
-      r.subscribe(s);
-      execute({
-        node: inlineValueNode,
-        inputs: { v },
-        outputs: { r },
-        resolvedDeps: testNodesCollection,
-      });
-      v.subject.next(2);
-      assert.equal(s.calledOnceWithExactly(2), true);
-    });
-
-    it("runs ADD properly on code node", () => {
-      const innerSpy = spy();
-      const inlineValueNode: InlineValueNode = {
-        id: "add",
-        inputs: {
-          a: nodeInput(),
-          b: nodeInput(),
-        },
-        outputs: {
-          r: nodeInput(),
-        },
-        runFnRawCode: `
-        outputs.r?.next(inputs.a + inputs.b);
-        innerSpy();
-          `,
-      };
-
-      const node = inlineValueNodeToNode(inlineValueNode, {
-        innerSpy,
-      });
-
-      const s = spy();
-      const a = dynamicNodeInput();
-      const b = dynamicNodeInput();
-      const r = dynamicOutput();
-
-      r.subscribe(s);
-      execute({
-        node: node,
-        inputs: { a, b },
-        outputs: { r },
-        resolvedDeps: testNodesCollection,
-      });
-      assert.equal(innerSpy.callCount, 0);
-      a.subject.next(2);
-      b.subject.next(3);
-      assert.equal(s.calledOnceWithExactly(5), true);
-      assert.equal(s.callCount, 1);
-      assert.equal(innerSpy.callCount, 1);
-      a.subject.next(3);
-      b.subject.next(4);
-      assert.equal(s.callCount, 2);
-      assert.equal(s.calledWithExactly(7), true);
     });
   });
 
@@ -1896,36 +1784,6 @@ describe("main ", () => {
       assert.equal(spyFn.calledOnce, false);
       clean();
       assert.equal(spyFn.calledOnce, true);
-    });
-
-    it("runs cleanup code of code nodes", async () => {
-      const inlineValueNode: InlineValueNode = {
-        id: "id",
-        inputs: {},
-        outputs: {
-          r: nodeInput(),
-        },
-        runFnRawCode: `
-          const timer = setInterval(() => outputs.r?.next(1), 1);
-          adv.onCleanup(() => clearInterval(timer));
-          `,
-      };
-
-      const node = inlineValueNodeToNode(inlineValueNode);
-      const r = dynamicOutput();
-      const s = spy();
-      r.subscribe(s);
-      const clean = execute({
-        node: node,
-        inputs: {},
-        outputs: { r },
-        resolvedDeps: testNodesCollection,
-      });
-      await delay(4);
-      assert.equal(s.callCount >= 1, true, `call count: ${s.callCount}`);
-      clean();
-      await delay(42);
-      assert.equal(s.callCount <= 5, true, `call count: ${s.callCount}`);
     });
 
     it("calls destroy fn of debugger when cleaning up", () => {
@@ -1963,32 +1821,6 @@ describe("main ", () => {
   describe("extra context", () => {
     it("passes external context forward when running code comps", async () => {
       const bobber = (n: number) => n + 42;
-      const node: InlineValueNode = {
-        id: "tester",
-        inputs: {},
-        outputs: {
-          r: nodeInput(),
-        },
-        runFnRawCode: `
-          outputs.r?.next(bobber(12));
-          `,
-      };
-      const r = dynamicOutput();
-      const s = spy();
-      r.subscribe(s);
-      execute({
-        node: node,
-        inputs: {},
-        outputs: { r },
-        resolvedDeps: testNodesCollection,
-        extraContext: { bobber },
-      });
-      assert.equal(s.callCount, 1);
-      assert.equal(s.lastCall.args[0], 54);
-    });
-
-    it("passes external context forward when running code comps", async () => {
-      const bobber = (n: number) => n + 42;
       const node: CodeNode = {
         id: "tester",
         inputs: {},
@@ -2015,120 +1847,6 @@ describe("main ", () => {
 
     it.skip("passes external context forward to visual nodes", async () => {
       // TODO - write test
-    });
-  });
-
-  describe("const values", () => {
-    it("supports const values on main execution", () => {
-      const num1 = randomInt(1, 100);
-      const num2 = randomInt(1, 100);
-      const n1 = dynamicNodeInput();
-      const n2 = staticNodeInput(num2);
-      const r = new Subject();
-      const s = spy();
-      r.subscribe(s);
-      execute({
-        node: add,
-        inputs: { n1, n2 },
-        outputs: { r },
-        resolvedDeps: testNodesCollection,
-      });
-      n1.subject.next(num1);
-      n1.subject.next(num2);
-      assert.equal(s.callCount, 2);
-      assert.equal(s.getCalls()[0]?.args[0], num1 + num2);
-      assert.equal(s.getCalls()[1]?.args[0], num2 + num2);
-    });
-
-    it("supports const values with inner visual nodes", () => {
-      const num1 = randomInt(1, 100);
-      const num2 = randomInt(1, 100);
-
-      const n1 = dynamicNodeInput();
-      const n2 = staticNodeInput(num2);
-      const r = new Subject();
-      const s = spy();
-      r.subscribe(s);
-
-      execute({
-        node: addGrouped,
-        inputs: { n1, n2 },
-        outputs: { r },
-        resolvedDeps: testNodesCollection,
-      });
-      n1.subject.next(num1);
-      assert.equal(s.callCount, 1);
-      assert.equal(s.getCalls()[0]?.args[0], num1 + num2);
-    });
-
-    it("supports const values defined inside visual nodes", () => {
-      const n1 = dynamicNodeInput();
-      const r = new Subject();
-      const s = spy();
-      r.subscribe(s);
-
-      const n2 = randomInt(20);
-
-      const node = conciseNode({
-        id: "node",
-        inputs: ["n1"],
-        outputs: ["r"],
-        instances: [
-          nodeInstance("a", add.id, { n2: staticInputPinConfig(n2) }),
-        ],
-        connections: [
-          ["n1", "a.n1"],
-          ["a.r", "r"],
-        ],
-      });
-
-      execute({
-        node: node,
-        inputs: { n1 },
-        outputs: { r },
-        resolvedDeps: testNodesCollection,
-      });
-      const num1 = randomInt(1, 100);
-      n1.subject.next(num1);
-      n1.subject.next(n2);
-      assert.equal(s.callCount, 2);
-      assert.equal(s.getCalls()[0]?.args[0], num1 + n2);
-      assert.equal(s.getCalls()[1]?.args[0], n2 + n2);
-    });
-
-    it("supports const values on visual node", () => {
-      const n1 = dynamicNodeInput();
-      const r = new Subject();
-      const s = spy();
-      r.subscribe(s);
-
-      const n2 = randomInt(20);
-
-      const node = conciseNode({
-        id: "node",
-        inputs: ["n1"],
-        outputs: ["r"],
-        instances: [
-          nodeInstance("a", add.id, { n2: staticInputPinConfig(n2) }),
-        ],
-        connections: [
-          ["n1", "a.n1"],
-          ["a.r", "r"],
-        ],
-      });
-
-      execute({
-        node: node,
-        inputs: { n1 },
-        outputs: { r },
-        resolvedDeps: testNodesCollection,
-      });
-      const num1 = randomInt(1, 100);
-      n1.subject.next(num1);
-      n1.subject.next(n2);
-      assert.equal(s.callCount, 2);
-      assert.equal(s.getCalls()[0]?.args[0], num1 + n2);
-      assert.equal(s.getCalls()[1]?.args[0], n2 + n2);
     });
   });
 
@@ -2863,11 +2581,11 @@ describe("main ", () => {
           completionOutputs: ["r"],
           reactiveInputs: ["val"],
           instances: [
-            nodeInstance("i1", accumulate.id, {
-              count: staticInputPinConfig(2),
-            }),
+            inlineNodeInstance("two", valueNode("two", 2)),
+            nodeInstance("i1", accumulate.id),
           ],
           connections: [
+            ["two.r", "i1.count"],
             ["val", "i1.item"],
             ["i1.r", "r"],
           ],
@@ -2984,53 +2702,6 @@ describe("main ", () => {
         // assert.deepEqual(s.getCalls()[1]?.args[0], [2, 3]);
         // assert.deepEqual(s.getCalls()[2]?.args[0], [4, 5, 6]);
       });
-    });
-
-    it("supports running inner nodes with static values", async () => {
-      const num1 = randomInt(100);
-      const num2 = randomInt(100);
-
-      const visualNode: VisualNode = {
-        id: "visual-node",
-        inputsPosition: {},
-        outputsPosition: {},
-        inputs: {},
-        outputs: {
-          r: nodeOutput(),
-        },
-        instances: [
-          nodeInstance("a", add.id, {
-            n1: staticInputPinConfig(num1),
-            n2: staticInputPinConfig(num2),
-          }),
-        ],
-        connections: [
-          {
-            from: connectionNode("a", "r"),
-            to: externalConnectionNode("r"),
-          },
-        ],
-      };
-
-      const [n1] = [
-        dynamicNodeInput({
-          // config: queueInputPinConfig(),
-        }),
-      ];
-
-      const r = new Subject();
-      const s = spy();
-      r.subscribe(s);
-
-      execute({
-        node: visualNode,
-        inputs: { n1 },
-        outputs: { r },
-        resolvedDeps: testNodesCollection,
-      });
-
-      assert.equal(s.getCalls()[0]?.args[0], num1 + num2);
-      assert.equal(s.callCount, 1);
     });
 
     it('supports creation of "merge" node - code', () => {
@@ -3622,26 +3293,6 @@ describe("main ", () => {
   });
 
   describe("bugs found", () => {
-    it("works with accumulate and a static input", () => {
-      const [s, r] = spiedOutput();
-      const [val] = dynamicNodeInputs() as [DynamicNodeInput];
-      const count = staticNodeInput(1);
-
-      execute({
-        node: accumulate,
-        inputs: { val, count },
-        outputs: { r },
-        resolvedDeps: testNodesCollection,
-      });
-
-      assert.equal(s.callCount, 0);
-
-      val.subject.next("2");
-
-      assert.equal(s.callCount, 1);
-      assert.deepEqual(s.lastCall.args[0], ["2"]);
-    });
-
     it("works with spreading a 3 arrayed list into an accumulate 1", () => {
       const [s, r] = spiedOutput();
       const [list] = dynamicNodeInputs() as [DynamicNodeInput];
@@ -3651,10 +3302,12 @@ describe("main ", () => {
         inputs: ["list"],
         outputs: ["r"],
         instances: [
+          nodeInstance("one", one.id),
           nodeInstance("i1", spreadList.id),
-          nodeInstance("i2", accumulate.id, { count: staticInputPinConfig(1) }),
+          nodeInstance("i2", accumulate.id, { count: stickyInputPinConfig() }),
         ],
         connections: [
+          ["one.r", "i2.count"],
           ["list", "i1.list"],
           ["i1.val", "i2.val"],
           ["i2.r", "r"],
@@ -3682,12 +3335,14 @@ describe("main ", () => {
         inputs: [],
         outputs: ["r"],
         instances: [
-          nodeInstance("i1", id.id, { v: staticInputPinConfig("bob") }),
+          inlineNodeInstance("bob", valueNode("bob", "bob")),
+          nodeInstance("i1", id.id),
           nodeInstance("i2", id.id, { v: stickyInputPinConfig() }),
         ],
         connections: [
           ["i1.r", "i2.v"],
           ["i2.r", "r"],
+          ["bob.r", "i1.v"],
         ],
       });
 
@@ -3699,8 +3354,6 @@ describe("main ", () => {
         outputs: { r },
         resolvedDeps: testNodesCollectionWith(id),
       });
-
-      // a.subject.next(1);
 
       assert.equal(s.callCount, 1);
     });
@@ -3755,158 +3408,6 @@ describe("main ", () => {
     });
   });
 
-  describe("environment vars", () => {
-    it("supports reading environment variables if they are defined", async () => {
-      const prop1Name = "prop1";
-      const prop2Name = `prop2`;
-      const prop1Value = `${randomInt(100)}`;
-      const prop2Value = `${randomInt(100)}`;
-
-      const env = {
-        [prop1Name]: prop1Value,
-        [prop2Name]: prop2Value,
-      };
-
-      const visualNode: VisualNode = {
-        id: "visual-node",
-        inputsPosition: {},
-        outputsPosition: {},
-        inputs: {
-          n1: nodeInput(),
-        },
-        outputs: {
-          r: nodeOutput(),
-        },
-        instances: [
-          nodeInstance("a", add.id, {
-            n1: staticInputPinConfig(`$ENV.${prop1Name}`),
-            n2: staticInputPinConfig(`$ENV.${prop2Name}`),
-          }),
-        ],
-        connections: [
-          {
-            from: connectionNode("a", "r"),
-            to: externalConnectionNode("r"),
-          },
-        ],
-      };
-
-      const [n1] = [
-        dynamicNodeInput({
-          // config: queueInputPinConfig(),
-        }),
-      ];
-
-      const [s, r] = spiedOutput();
-
-      execute({
-        node: visualNode,
-        inputs: { n1 },
-        outputs: { r },
-        resolvedDeps: testNodesCollection,
-        env,
-      });
-
-      n1.subject.next(222);
-
-      assert.equal(s.getCalls()[0]?.args[0], prop1Value + prop2Value);
-      assert.equal(s.callCount, 1);
-    });
-
-    it("supports reading non string env variables", async () => {
-      const groupedId = conciseNode({
-        id: "gid",
-        inputs: [],
-        outputs: ["r"],
-        connections: [["i1.r", "r"]],
-        instances: [
-          nodeInstance("i1", id.id, { v: staticInputPinConfig("$ENV.aValue") }),
-        ],
-      });
-
-      const values = [
-        true,
-        false,
-        randomInt(999),
-        { obj: { obj2: randomInt(99) } },
-      ];
-      values.forEach((val) => {
-        const [s, r] = spiedOutput();
-        const env = { aValue: val };
-        execute({
-          node: groupedId,
-          inputs: {},
-          outputs: { r },
-          resolvedDeps: testNodesCollection,
-          env,
-        });
-        assert.deepEqual(callsFirstArgs(s), [val]);
-      });
-    });
-
-    it("supports reading properties from objects in env", async () => {
-      const groupedId = conciseNode({
-        id: "gid",
-        inputs: [],
-        outputs: ["r"],
-        connections: [["i1.r", "r"]],
-        instances: [
-          nodeInstance("i1", id.id, {
-            v: staticInputPinConfig("$ENV.myObj.student.name"),
-          }),
-        ],
-      });
-
-      const env = {
-        myObj: {
-          student: {
-            name: "Albert",
-          },
-        },
-      };
-
-      const [s, r] = spiedOutput();
-      execute({
-        node: groupedId,
-        inputs: {},
-        outputs: { r },
-        resolvedDeps: testNodesCollection,
-        env,
-      });
-      assert.deepEqual(callsFirstArgs(s), ["Albert"]);
-    });
-
-    it("throws error if config value was not found", async () => {
-      const groupedId = conciseNode({
-        id: "gid",
-        inputs: [],
-        outputs: ["r"],
-        connections: [["i1.r", "r"]],
-        instances: [
-          nodeInstance("i1", id.id, {
-            v: staticInputPinConfig("$ENV.myObj.student.name"),
-          }),
-        ],
-      });
-
-      const env = {};
-      const onError = spy();
-
-      const [_, r] = spiedOutput();
-
-      execute({
-        node: groupedId,
-        inputs: {},
-        outputs: { r },
-        resolvedDeps: testNodesCollection,
-        onBubbleError: onError,
-        env,
-      });
-      assert.equal(onError.callCount, 1);
-      assert.include(onError.getCall(0).args[0].message, "myObj.student.name");
-    });
-  });
-
   describe("node level trigger", () => {
     it("waits for __trigger input inside visual node", () => {
       const v42 = valueNode("val", 42);
@@ -3943,97 +3444,6 @@ describe("main ", () => {
       assert.equal(s.callCount, 1);
       assert.equal(s.lastCall.args[0], 42);
     });
-
-    it("trigger input works in combination with static inputs", () => {
-      const addNode = conciseCodeNode({
-        id: "add",
-        inputs: ["a", "b"],
-        outputs: ["r"],
-        run: (inputs, outputs) => outputs.r?.next(inputs.a + inputs.b),
-      });
-
-      const visualNode = conciseNode({
-        id: "visual-node",
-        inputs: ["a|optional"],
-        outputs: ["r"],
-        instances: [
-          nodeInstance("a1", addNode.id, {
-            a: staticInputPinConfig(1),
-            b: staticInputPinConfig(2),
-          }),
-        ],
-        connections: [
-          ["a", "a1.__trigger"],
-          ["a1.r", "r"],
-        ],
-      });
-
-      const [s, r] = spiedOutput();
-      const a = dynamicNodeInput();
-
-      const err = (e: Error) => {
-        throw e;
-      };
-      execute({
-        node: visualNode,
-        inputs: { a },
-        outputs: { r },
-        resolvedDeps: testNodesCollectionWith(addNode),
-        onBubbleError: err,
-      });
-
-      assert.equal(s.callCount, 0);
-
-      a.subject.next("ok");
-
-      assert.equal(s.callCount, 1);
-      assert.equal(s.lastCall.args[0], 3);
-    });
-
-    it("trigger input cannot be static", () => {
-      const addNode = conciseCodeNode({
-        id: "add",
-        inputs: ["a", "b"],
-        outputs: ["r"],
-        run: (inputs, outputs) => outputs.r?.next(inputs.a + inputs.b),
-      });
-
-      const visualNode = conciseNode({
-        id: "visual-node",
-        inputs: ["a"],
-        outputs: ["r"],
-        instances: [
-          nodeInstance("a1", addNode.id, {
-            a: staticInputPinConfig(1),
-            b: staticInputPinConfig(2),
-            __trigger: staticInputPinConfig(2),
-          }),
-        ],
-        connections: [
-          ["a", "a1.__trigger"],
-          ["a1.r", "r"],
-        ],
-      });
-
-      const [s, r] = spiedOutput();
-      const a = dynamicNodeInput();
-
-      const errSpy = spy();
-      execute({
-        node: visualNode,
-        inputs: { a },
-        outputs: { r },
-        resolvedDeps: testNodesCollectionWith(addNode),
-        onBubbleError: errSpy,
-      });
-
-      assert.equal(s.callCount, 0);
-
-      a.subject.next("ok");
-
-      assert.equal(errSpy.called, true);
-      assert.match(errSpy.lastCall.args[0], /Trigger connection can not/);
-    });
   });
 
   describe("misc", () => {
@@ -4068,29 +3478,6 @@ describe("main ", () => {
 
       assert.equal(s.callCount, timesToCall);
       assert.equal(s.lastCall.args[0], timesToCall);
-    });
-
-    it("does not enter a loop when static values are connected to a reactive input", () => {
-      const node = conciseCodeNode({
-        id: "node",
-        inputs: ["a"],
-        outputs: ["r"],
-        reactiveInputs: ["a"],
-        completionOutputs: [],
-        run: (inputs, outputs) => {
-          outputs.r?.next(inputs.a);
-        },
-      });
-
-      const [s, r] = spiedOutput();
-      const a = staticNodeInput(5);
-      execute({
-        node,
-        inputs: { a },
-        outputs: { r },
-        resolvedDeps: testNodesCollectionWith(node),
-      });
-      assert.equal(s.callCount, 1);
     });
   });
 });

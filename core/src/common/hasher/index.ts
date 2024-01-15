@@ -1,6 +1,6 @@
 import _md5 from "md5";
 import { FlydeFlow } from "../../flow-schema";
-import { isInlineValueNode, isVisualNode, Node } from "../../node";
+import { isVisualNode, Node } from "../../node";
 
 const md5 = (str: string) => {
   return _md5(str);
@@ -42,11 +42,6 @@ export const hashNode = (node: Node, ignorePos = true) => {
       ...baseNode,
       maybeIoPos,
     });
-    return md5(str);
-  } else if (isInlineValueNode(node)) {
-    const { customViewCode } = node;
-    const fnCode = node.fnCode ?? node.runFnRawCode;
-    const str = JSON.stringify({ fnCode, customViewCode, ...baseNode });
     return md5(str);
   }
   throw new Error(`Hashing code nodes unsupported`);

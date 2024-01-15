@@ -1,11 +1,4 @@
-import {
-  Node,
-  NodesCollection,
-  dynamicOutput,
-  keys,
-  staticNodeInput,
-  isDynamicInput,
-} from ".";
+import { Node, NodesCollection, dynamicOutput, keys } from ".";
 import { execute, ExecuteParams } from "./execute";
 
 export const simplifiedExecute = (
@@ -21,7 +14,7 @@ export const simplifiedExecute = (
     const input = inputs[curr];
     return {
       ...acc,
-      [curr]: isDynamicInput(input) ? input : staticNodeInput(input),
+      [curr]: input,
     };
   }, {});
 

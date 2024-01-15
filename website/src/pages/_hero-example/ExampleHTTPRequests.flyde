@@ -5,13 +5,12 @@ imports:
 node:
   instances:
     - pos:
-        x: -557.7133227539063
-        y: -247.46853878974912
+        x: -593.7023364257813
+        y: -245.22360470771787
       id: GET Request-907
       inputConfig:
         url:
-          mode: static
-          value: https://api.country.is/
+          mode: queue
       visibleInputs:
         - url
         - __trigger
@@ -76,8 +75,7 @@ node:
       id: POST Request-624
       inputConfig:
         url:
-          mode: static
-          value: https://countriesnow.space/api/v0.1/countries/capital
+          mode: queue
       visibleInputs:
         - data
         - url

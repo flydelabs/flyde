@@ -9,7 +9,6 @@ import {
   nodeInstance,
   dynamicNodeInputs,
   stickyInputPinConfig,
-  staticNodeInput,
   DynamicNodeInput,
 } from "../node";
 import { execute } from ".";
@@ -791,39 +790,6 @@ describe("execute", () => {
         assert.equal(inputSpy.callCount, 4);
         assert.equal(
           inputSpy.calledWithMatch({ insId: "myIns", pinId: "n1", val: 5 }),
-          true
-        );
-        assert.equal(
-          inputSpy.calledWithMatch({ insId: "myIns", pinId: "n2", val: 10 }),
-          true
-        );
-      });
-
-      it("emits input change msgs on static values", () => {
-        const n1 = staticNodeInput(25);
-        const n2 = dynamicNodeInput();
-        const r = new Subject();
-
-        const inputSpy = spy();
-        const onEvent = wrappedOnEvent(
-          DebuggerEventType.INPUT_CHANGE,
-          inputSpy
-        );
-
-        execute({
-          node: addGrouped,
-          inputs: { n1, n2 },
-          outputs: { r },
-          resolvedDeps: testNodesCollection,
-          _debugger: { onEvent },
-          insId: "myIns",
-        });
-        // n1.subject.next(5);
-        n2.subject.next(10);
-
-        assert.equal(inputSpy.callCount, 4);
-        assert.equal(
-          inputSpy.calledWithMatch({ insId: "myIns", pinId: "n1", val: 25 }),
           true
         );
         assert.equal(

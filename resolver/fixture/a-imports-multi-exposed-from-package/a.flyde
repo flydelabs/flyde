@@ -3,33 +3,23 @@ imports:
     - Add
     - Sub
 node:
-  id: MultiWrapper
-  inputs:
-    n:
-      type: number
-      mode: required
-  outputs:
-    r:
-      type: number
   instances:
-    - id: ins1
+    - pos:
+        x: -99.17202758789062
+        y: -137.81661987304688
+      id: ins1
+      inputConfig:
+        b:
+          mode: queue
       nodeId: Add
-      pos: 
-        x: 0
-        y: 0
+    - pos:
+        x: -115.8931884765625
+        y: -7.3731231689453125
+      id: ins2
       inputConfig:
         b:
-          mode: static
-          value: 1
-    - id: ins2
+          mode: queue
       nodeId: Sub
-      pos: 
-        x: 0
-        y: 0
-      inputConfig:
-        b:
-          mode: static
-          value: 2
   connections:
     - from:
         insId: __this
@@ -49,3 +39,19 @@ node:
       to:
         insId: __this
         pinId: r
+  id: MultiWrapper
+  inputs:
+    n:
+      mode: required
+      type: number
+  outputs:
+    r:
+      type: number
+  inputsPosition:
+    n:
+      x: -122.78512573242188
+      y: -222.96578979492188
+  outputsPosition:
+    r:
+      x: -102.49996948242188
+      y: 145.83338928222656

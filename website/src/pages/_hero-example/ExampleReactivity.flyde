@@ -10,13 +10,6 @@ node:
         x: -615.4817052177316
         y: -396.8624123892448
       id: ghunnjxvc8lzz9ir1n7a5cv9
-      inputConfig:
-        interval:
-          mode: static
-          value: 3141
-        value:
-          mode: static
-          value: ""
       visibleInputs: []
       nodeId: Interval__ghunnjxvc8lzz9ir1n7a5cv9
       macroId: Interval
@@ -29,102 +22,8 @@ node:
       id: zhz7csy5btxnhjsy3k51kj9g
       inputConfig:
         count:
-          mode: static
-          value: 3
+          mode: queue
       nodeId: Accumulate Values by Count
-    - pos:
-        x: -734.33669921875
-        y: -223.71463256835938
-      id: Inline-value-beep-d5048it
-      inputConfig: {}
-      node:
-        id: Inline-value-beep
-        inputs: {}
-        outputs:
-          value:
-            delayed: false
-        runFnRawCode: const result = ("beep"); Promise.resolve(result).then(val =>
-          outputs.value.next(val))
-        customViewCode: '"beep"'
-        dataBuilderSource: ImJlZXAi
-        templateType: value
-        completionOutputs:
-          - value
-        defaultStyle:
-          size: regular
-          icon: code
-          cssOverride:
-            fontFamily: monospace
-            fontWeight: "500"
-        description: Custom inline value
-      style:
-        size: small
-        icon: code
-        cssOverride:
-          fontFamily: monospace
-          fontWeight: "500"
-    - pos:
-        x: -606.1128833007813
-        y: -224.51904541015625
-      id: ApisCombination-u01482r
-      inputConfig: {}
-      node:
-        id: Inline-value-boop
-        inputs: {}
-        outputs:
-          value:
-            delayed: false
-        runFnRawCode: const result = ("boop"); Promise.resolve(result).then(val =>
-          outputs.value.next(val))
-        customViewCode: '"boop"'
-        dataBuilderSource: ImJvb3Ai
-        templateType: value
-        completionOutputs:
-          - value
-        defaultStyle:
-          size: regular
-          icon: code
-          cssOverride:
-            fontFamily: monospace
-            fontWeight: "500"
-        description: Custom inline value
-      style:
-        size: small
-        icon: code
-        cssOverride:
-          fontFamily: monospace
-          fontWeight: "500"
-    - pos:
-        x: -480.1188427734375
-        y: -225.620185546875
-      id: ApisCombination-wn048ny
-      inputConfig: {}
-      node:
-        id: Inline-value-bop
-        inputs: {}
-        outputs:
-          value:
-            delayed: false
-        runFnRawCode: const result = ("bop"); Promise.resolve(result).then(val =>
-          outputs.value.next(val))
-        customViewCode: '"bop"'
-        dataBuilderSource: ImJvcCI=
-        templateType: value
-        completionOutputs:
-          - value
-        defaultStyle:
-          size: regular
-          icon: code
-          cssOverride:
-            fontFamily: monospace
-            fontWeight: "500"
-        description: Custom inline value
-      style:
-        size: small
-        icon: code
-        cssOverride:
-          fontFamily: monospace
-          fontWeight: "500"
     - pos:
         x: -545.0292446458609
         y: -57.809316679619855
@@ -141,24 +40,6 @@ node:
       macroData: 3
   connections:
     - from:
-        insId: oeum6dqgsprbuef0p9s3b1ye
-        pinId: r1
-      to:
-        insId: Inline-value-beep-d5048it
-        pinId: __trigger
-    - from:
-        insId: oeum6dqgsprbuef0p9s3b1ye
-        pinId: r2
-      to:
-        insId: ApisCombination-u01482r
-        pinId: __trigger
-    - from:
-        insId: oeum6dqgsprbuef0p9s3b1ye
-        pinId: r3
-      to:
-        insId: ApisCombination-wn048ny
-        pinId: __trigger
-    - from:
         insId: rjyjsbcahykm15dllqw8tlzj
         pinId: item
       to:
@@ -170,24 +51,6 @@ node:
       to:
         insId: rjyjsbcahykm15dllqw8tlzj
         pinId: list
-    - from:
-        insId: ApisCombination-u01482r
-        pinId: value
-      to:
-        insId: zhz7csy5btxnhjsy3k51kj9g
-        pinId: value
-    - from:
-        insId: Inline-value-beep-d5048it
-        pinId: value
-      to:
-        insId: zhz7csy5btxnhjsy3k51kj9g
-        pinId: value
-    - from:
-        insId: ApisCombination-wn048ny
-        pinId: value
-      to:
-        insId: zhz7csy5btxnhjsy3k51kj9g
-        pinId: value
     - from:
         insId: ghunnjxvc8lzz9ir1n7a5cv9
         pinId: value

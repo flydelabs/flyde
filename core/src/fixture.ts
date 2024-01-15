@@ -5,7 +5,6 @@ import {
   nodeInput,
   nodeOutput,
   CodeNode,
-  InlineValueNode,
   nodeInstance,
   dynamicNodeInput,
   queueInputPinConfig,
@@ -16,7 +15,7 @@ import { execute, SubjectMap } from "./execute";
 import { isDefined, okeys } from "./common";
 import { Subject } from "rxjs";
 import { NodesCollection } from ".";
-import { conciseCodeNode } from "./test-utils";
+import { conciseCodeNode, valueNode } from "./test-utils";
 
 export const add: CodeNode = {
   id: "add",
@@ -30,20 +29,6 @@ export const add: CodeNode = {
   run: ({ n1, n2 }, { r }) => {
     r?.next(n1 + n2);
   },
-};
-
-export const codeAdd: InlineValueNode = {
-  id: "add",
-  inputs: {
-    n1: nodeInput(),
-    n2: nodeInput(),
-  },
-  outputs: {
-    r: nodeOutput(),
-  },
-  runFnRawCode: `
-  outputs.r?.next(inputs.n1 + inputs.n2);
-    `,
 };
 
 export const add1: CodeNode = {
@@ -349,6 +334,10 @@ export const delay = conciseCodeNode({
   },
 });
 
+export const zero = valueNode("zero", 0);
+export const one = valueNode("one", 1);
+export const mOne = valueNode("mOne", -1);
+
 export const testNodesCollection = {
   add,
   add1,
@@ -362,6 +351,9 @@ export const testNodesCollection = {
   [transform.id]: transform,
   peq,
   delay,
+  zero,
+  one,
+  mOne,
 };
 
 export const accumulate = conciseCodeNode({

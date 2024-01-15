@@ -4,17 +4,13 @@ import { first } from "rxjs/operators";
 export * from "./debugger";
 
 import {
-  isDynamicInput,
   dynamicNodeInput,
   dynamicOutput,
   Node,
-  getStaticValue,
-  isInlineValueNode,
   isVisualNode,
   CodeNode,
   NodeInputs,
   NodeOutputs,
-  staticNodeInput,
   NodeAdvancedContext,
   isQueueInputPinConfig,
   NodeInstanceError,
@@ -45,20 +41,13 @@ import {
   OMapF,
 } from "../common";
 import { debugLogger } from "../common/debug-logger";
-import { isStaticInputPinConfig } from "../node";
 import { Debugger, DebuggerEvent, DebuggerEventType } from "./debugger";
-import {
-  customNodesToNodesCollection,
-  inlineValueNodeToNode,
-} from "../inline-value-to-code-node";
 
 export type SubjectMap = OMapF<Subject<any>>;
 
 export type ExecutionState = Map<string, any>;
 
 export type CancelFn = () => void;
-
-export type ExecuteEnv = OMap<any>;
 
 export type InnerExecuteFn = (
   node: Node,
@@ -88,7 +77,6 @@ export type CodeExecutionData = {
   mainState: OMap<NodeState>;
   onError: (err: any) => void;
   onBubbleError: (err: any) => void;
-  env: ExecuteEnv;
   // TODO - think of combining these below + onEvent into one
   onCompleted?: (data: any) => void;
   onStarted?: () => void;
@@ -110,7 +98,6 @@ const executeCodeNode = (data: CodeExecutionData) => {
     onError,
     onStarted,
     onCompleted,
-    env,
     extraContext,
   } = data;
   const { run, fn } = node;
@@ -188,11 +175,7 @@ const executeCodeNode = (data: CodeExecutionData) => {
 
   let lastValues: Record<string, unknown>;
 
-  const reactiveInputs = (node.reactiveInputs || [])
-    /* 
-    Reactive inputs that are static shouldn't get a special treatment 
-  */
-    .filter((inp) => !isStaticInputPinConfig(inputs[inp]?.config));
+  const reactiveInputs = node.reactiveInputs || [];
 
   const cleanState = () => {
     mainState[innerStateId]?.clear();
@@ -224,7 +207,7 @@ const executeCodeNode = (data: CodeExecutionData) => {
 
         if (!processing) {
           // this is the "first" run, pull values
-          argValues = pullValuesForExecution(inputs, inputsState, env);
+          argValues = pullValuesForExecution(inputs, inputsState);
 
           lastValues = argValues;
           reportInputStateChange();
@@ -239,8 +222,7 @@ const executeCodeNode = (data: CodeExecutionData) => {
           const value = pullValueForExecution(
             input.key,
             inputs[input.key]!,
-            inputsState,
-            env
+            inputsState
           );
           argValues = { ...lastValues, [input.key]: value };
           reportInputStateChange();
@@ -309,9 +291,7 @@ const executeCodeNode = (data: CodeExecutionData) => {
                 completedOutputs.clear();
                 completedOutputsValues = {};
                 // this avoids an endless loop after triggering an ended node with static inputs
-                if (
-                  hasNewSignificantValues(inputs, inputsState, env, node.id)
-                ) {
+                if (hasNewSignificantValues(inputs, inputsState, node.id)) {
                   maybeRunNode();
                 }
               } else {
@@ -357,9 +337,7 @@ const executeCodeNode = (data: CodeExecutionData) => {
                   onCompleted(completedOutputsValues);
                   cleanState();
 
-                  if (
-                    hasNewSignificantValues(inputs, inputsState, env, node.id)
-                  ) {
+                  if (hasNewSignificantValues(inputs, inputsState, node.id)) {
                     maybeRunNode();
                   }
                 }
@@ -406,7 +384,7 @@ const executeCodeNode = (data: CodeExecutionData) => {
         const maybeReactiveKey = reactiveInputs.find((key) => {
           return (
             inputs[key] &&
-            peekValueForExecution(key, inputs[key]!, inputsState, env, node.id)
+            peekValueForExecution(key, inputs[key]!, inputsState, node.id)
           );
         });
 
@@ -415,7 +393,6 @@ const executeCodeNode = (data: CodeExecutionData) => {
             maybeReactiveKey,
             inputs[maybeReactiveKey]!,
             inputsState,
-            env,
             node.id
           );
           maybeRunNode({ key: maybeReactiveKey, value });
@@ -423,13 +400,7 @@ const executeCodeNode = (data: CodeExecutionData) => {
           const hasStaticValuePending = entries(inputs).find(([k, input]) => {
             const isQueue = isQueueInputPinConfig((input as any).config);
             // const isNotOptional = !isInputPinOptional(node.inputs[k]);
-            const value = peekValueForExecution(
-              k,
-              input,
-              inputsState,
-              env,
-              node.id
-            );
+            const value = peekValueForExecution(k, input, inputsState, node.id);
             if (isQueue) {
               return isDefined(value);
             }
@@ -443,7 +414,6 @@ const executeCodeNode = (data: CodeExecutionData) => {
               key,
               input,
               inputsState,
-              env,
               node.id
             );
 
@@ -495,7 +465,6 @@ export type ExecuteParams = {
   ancestorsInsIds?: string;
   mainState?: OMap<NodeState>;
   onBubbleError?: (err: NodeInstanceError) => void;
-  env?: ExecuteEnv;
   extraContext?: Record<string, any>;
 
   onCompleted?: (data: any) => void;
@@ -517,7 +486,6 @@ export const execute: ExecuteFn = ({
   mainState = {},
   ancestorsInsIds,
   onBubbleError = noop, // (err) => { throw err},
-  env = {},
   onCompleted = noop,
   onStarted = noop,
 }) => {
@@ -527,12 +495,7 @@ export const execute: ExecuteFn = ({
     mainState[GLOBAL_STATE_NS] = new Map();
   }
 
-  const inlineValueNodeContext = { ...extraContext, ENV: env };
-
-  const processedNodes = customNodesToNodesCollection(
-    resolvedDeps,
-    inlineValueNodeContext
-  );
+  const processedNodes = resolvedDeps;
 
   const onError = (err: unknown) => {
     // this means "catch the error"
@@ -570,11 +533,8 @@ export const execute: ExecuteFn = ({
         fullInsIdPath(insId, ancestorsInsIds),
         mainState,
         onError,
-        env,
         extraContext
       );
-    } else if (isInlineValueNode(node)) {
-      return inlineValueNodeToNode(node, inlineValueNodeContext);
     } else {
       return node;
     }
@@ -588,43 +548,28 @@ export const execute: ExecuteFn = ({
   const mediatedInputs: NodeInputs = {};
 
   entries(inputs).forEach(([pinId, arg]) => {
-    if (isDynamicInput(arg)) {
-      const mediator = dynamicNodeInput({ config: arg.config });
-      const subscription = arg.subject.subscribe(async (val) => {
-        const res = onEvent({
-          type: DebuggerEventType.INPUT_CHANGE,
-          insId,
-          pinId,
-          val,
-          ancestorsInsIds,
-          nodeId: node.id,
-        } as DebuggerEvent);
-        if (res) {
-          const interceptedValue = await res.valuePromise;
-          mediator.subject.next(interceptedValue);
-        } else {
-          if (_debugger.debugDelay) {
-            await delay(_debugger.debugDelay);
-          }
-          mediator.subject.next(val);
-        }
-      });
-      toCancel.push(() => subscription.unsubscribe());
-      mediatedInputs[pinId] = mediator;
-    } else {
-      onEvent({
+    const mediator = dynamicNodeInput({ config: arg.config });
+    const subscription = arg.subject.subscribe(async (val) => {
+      const res = onEvent({
         type: DebuggerEventType.INPUT_CHANGE,
         insId,
         pinId,
-        val: arg.config.value,
+        val,
         ancestorsInsIds,
         nodeId: node.id,
       } as DebuggerEvent);
-      const mediator = staticNodeInput(
-        getStaticValue(arg.config.value, processedNodes, insId)
-      );
-      mediatedInputs[pinId] = mediator;
-    }
+      if (res) {
+        const interceptedValue = await res.valuePromise;
+        mediator.subject.next(interceptedValue);
+      } else {
+        if (_debugger.debugDelay) {
+          await delay(_debugger.debugDelay);
+        }
+        mediator.subject.next(val);
+      }
+    });
+    toCancel.push(() => subscription.unsubscribe());
+    mediatedInputs[pinId] = mediator;
   });
 
   entries(outputs).forEach(([pinId, sub]) => {
@@ -660,7 +605,6 @@ export const execute: ExecuteFn = ({
     ancestorsInsIds: ancestorsInsIds,
     onError,
     onBubbleError,
-    env,
     extraContext,
     onCompleted,
     onStarted,

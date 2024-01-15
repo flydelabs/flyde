@@ -6,10 +6,6 @@ const position = z.strictObject({ x: z.number(), y: z.number() });
 
 const inputConfig = z.discriminatedUnion("mode", [
   z.strictObject({
-    mode: z.literal("static"),
-    value: z.any(),
-  }),
-  z.strictObject({
     mode: z.literal("queue"),
   }),
   z.strictObject({
@@ -73,9 +69,6 @@ const flydeBaseNode = z.object({
   outputs: z.record(z.string(), outputPinSchema),
   inputsPosition: z.optional(z.record(z.string(), position)),
   outputsPosition: z.optional(z.record(z.string(), position)),
-  customViewCode: z.optional(z.string()),
-  dataBuilderSource: z.optional(z.string()),
-  templateType: z.optional(z.string()),
   completionOutputs: z.optional(z.array(z.string())),
   reactiveInputs: z.optional(z.array(z.string())),
   defaultStyle: z.optional(nodeStyle),

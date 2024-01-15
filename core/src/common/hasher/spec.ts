@@ -3,7 +3,6 @@ import { randomInt, randomPos, shuffle } from "../../common";
 import { assert } from "chai";
 import { hashFlow, hashNode } from ".";
 import {
-  InlineValueNode,
   nodeInput,
   nodeInstance,
   nodeOutput,
@@ -144,38 +143,6 @@ describe("nodes hasher", () => {
       });
 
       const h1 = hashNode(someNode);
-      const h2 = hashNode(p2);
-
-      assert.notEqual(h1, h2);
-    });
-  });
-
-  describe("code node", () => {
-    const base: InlineValueNode = {
-      id: "bob2",
-      runFnRawCode: `some codez`,
-      customViewCode: "bob",
-      inputs: {},
-      outputs: {},
-    };
-
-    it("considers fn code code node properly", () => {
-      const p2 = produce(base, (d) => {
-        d.runFnRawCode = "dbdfgfdg";
-      });
-
-      const h1 = hashNode(base);
-      const h2 = hashNode(p2);
-
-      assert.notEqual(h1, h2);
-    });
-
-    it("considers code view fn properly", () => {
-      const p2 = produce(base, (d) => {
-        d.customViewCode = "dbdfgfdg";
-      });
-
-      const h1 = hashNode(base);
       const h2 = hashNode(p2);
 
       assert.notEqual(h1, h2);

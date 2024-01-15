@@ -16,7 +16,6 @@ export const ReadFile: CodeNode = {
     encoding: {
       description: "Encoding of the file",
       mode: "optional",
-      defaultValue: "utf8",
     },
   },
   outputs: { contents: { description: "Contents of the file" } },
@@ -38,7 +37,6 @@ export const WriteFile: CodeNode = {
     encoding: {
       description: "Encoding of the file",
       mode: "optional",
-      defaultValue: "utf8",
     },
   },
   outputs: {},
@@ -60,7 +58,6 @@ export const AppendFile: CodeNode = {
     encoding: {
       description: "Encoding of the file",
       mode: "optional",
-      defaultValue: "utf8",
     },
   },
   outputs: {},
