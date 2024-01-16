@@ -39,8 +39,8 @@ node:
         size: regular
         icon: fa-server
     - pos:
-        x: -695.9708081054688
-        y: -90.42672729492188
+        x: -697.3497143554688
+        y: -90.45541381835938
       id: POST Request-624
       inputConfig:
         url:
@@ -78,8 +78,8 @@ node:
         value: "{iso2: inputs.data.country}"
         label: "{iso2: inputs.data.country}"
     - pos:
-        x: -686.1100244394328
-        y: -8.029366019024152
+        x: -687.3848047128703
+        y: -12.155968191875715
       id: Formatted Response-p5049tc
       inputConfig: {}
       node:
@@ -243,8 +243,8 @@ node:
       x: -499.82438378976735
       y: 706.7650396699393
     output:
-      x: -613.2534863200405
-      y: 104.49827744936294
+      x: -614.6323925700405
+      y: 90.70953538393326
     response:
       x: -500.61566893722795
       y: 421.9045791861946
