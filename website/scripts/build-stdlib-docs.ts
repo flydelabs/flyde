@@ -41,9 +41,7 @@ const groupAndTables = entries.map(([ns, nodes]) => {
             ([name, obj]) =>
               `<div><strong>${name}</strong>: ${obj.description} (${
                 obj.mode ?? "required"
-              }) ${
-                obj.defaultValue ? `Default value - ${obj.defaultValue}` : ""
-              }</div>`
+              })</div>`
           )
           .join("") || "*None*",
         Object.entries(node.outputs)

@@ -30,7 +30,7 @@ import { FlowEditor } from "@flyde/flow-editor"; // ../../common/flow-editor/Flo
 import { useDebouncedCallback } from "use-debounce";
 
 import { IntegratedFlowSideMenu } from "./side-menu";
-import { isInlineValueNode, NodeDefinition } from "@flyde/core";
+import { NodeDefinition } from "@flyde/core";
 
 import { AppToaster } from "@flyde/flow-editor"; // ../../common/toaster
 
@@ -259,11 +259,8 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
     if (newNodeIns) {
       const valueChanged = produce(flow, (draft) => {
         const node = draft.node;
-        if (isInlineValueNode(node)) {
-          AppToaster.show({ message: "cannot add node to code node" });
-        } else {
-          node.instances.push(newNodeIns);
-        }
+
+        node.instances.push(newNodeIns);
       });
       onChangeFlow(valueChanged, functionalChange("add-item"));
     }

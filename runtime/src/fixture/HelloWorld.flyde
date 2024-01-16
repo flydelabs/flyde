@@ -1,41 +1,23 @@
-imports: {}
+imports:
+  "@flyde/stdlib":
+    - InlineValue
 node:
   instances:
     - pos:
-        x: -132.15184204101564
-        y: 306.1363830566406
-      id: clacauk7q00024664dvk97m72
+        x: -73.98515502929689
+        y: 355.5457458496094
+      id: ar205nq5xbkfixibwz516z0q
       inputConfig: {}
-      node:
-        id: Inline-value-Hello World
-        inputs: {}
-        outputs:
-          r:
-            type: any
-            delayed: false
-            optional: false
-        runFnRawCode: outputs.r.next(('Hello World'))
-        customViewCode: "'Hello World'"
-        dataBuilderSource: J0hlbGxvIFdvcmxkJw==
-        templateType: value
-        completionOutputs:
-          - r
-        defaultStyle:
-          size: small
-          icon: code
-          cssOverride:
-            fontFamily: monospace
-            fontWeight: "500"
-      style:
-        size: regular
-        icon: code
-        cssOverride:
-          fontFamily: monospace
-          fontWeight: "500"
+      nodeId: InlineValue__ar205nq5xbkfixibwz516z0q
+      macroId: InlineValue
+      macroData:
+        type: string
+        value: Hello
+        label: '"Hello"'
   connections:
     - from:
-        insId: clacauk7q00024664dvk97m72
-        pinId: r
+        insId: ar205nq5xbkfixibwz516z0q
+        pinId: value
       to:
         insId: __this
         pinId: result

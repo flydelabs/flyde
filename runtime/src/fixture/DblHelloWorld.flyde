@@ -1,66 +1,40 @@
-imports: {}
+imports:
+  "@flyde/stdlib":
+    - InlineValue
 node:
   instances:
     - pos:
-        x: -50.477996826171875
-        y: 273.1924496459961
-      id: clachgdym000a46649wnbf5cb
+        x: 116.36697387695312
+        y: 324.61828140258785
+      id: rhtf7w6c3ymqcuesd3c1jmwv
       inputConfig: {}
-      node:
-        id: Inline-value-Hello
-        inputs: {}
-        outputs:
-          r:
-            type: any
-            delayed: false
-            optional: false
-        runFnRawCode: outputs.r.next(('Hello'))
-        customViewCode: "'Hello'"
-        dataBuilderSource: J0hlbGxvJw==
-        templateType: value
-        completionOutputs:
-          - r
-        defaultStyle:
-          size: small
-          icon: code
-          cssOverride:
-            fontFamily: monospace
-            fontWeight: "500"
+      nodeId: InlineValue__rhtf7w6c3ymqcuesd3c1jmwv
+      macroId: InlineValue
+      macroData:
+        type: string
+        value: World
+        label: '"World"'
     - pos:
-        x: 133.62673950195312
-        y: 278.1868420410156
-      id: clachgfqy000d4664i72bcel2
+        x: -69.82091308593749
+        y: 316.8998239135742
+      id: DblHelloWorld-ks0481m
       inputConfig: {}
-      node:
-        id: Inline-value-World
-        inputs: {}
-        outputs:
-          r:
-            type: any
-            delayed: false
-            optional: false
-        runFnRawCode: outputs.r.next(('World'))
-        customViewCode: "'World'"
-        dataBuilderSource: J1dvcmxkJw==
-        templateType: value
-        completionOutputs:
-          - r
-        defaultStyle:
-          size: small
-          icon: code
-          cssOverride:
-            fontFamily: monospace
-            fontWeight: "500"
+      nodeId: InlineValue__DblHelloWorld-ks0481m
+      macroId: InlineValue
+      macroData:
+        type: string
+        value: Hello
+        label: '"Hello"'
   connections:
     - from:
-        insId: clachgdym000a46649wnbf5cb
-        pinId: r
+        insId: DblHelloWorld-ks0481m
+        pinId: value
       to:
         insId: __this
         pinId: res1
     - from:
-        insId: clachgfqy000d4664i72bcel2
-        pinId: r
+        insId: rhtf7w6c3ymqcuesd3c1jmwv
+        pinId: value
       to:
         insId: __this
         pinId: res2
