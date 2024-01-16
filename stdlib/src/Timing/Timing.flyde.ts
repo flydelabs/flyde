@@ -80,10 +80,7 @@ export const Interval: MacroNode<TimingNodeConfig> = {
         clearInterval(existingTimer);
       }
 
-      console.log(43, intervalValue);
-
       const timer = setInterval(() => {
-        console.log(42, value);
         outputs.value.next(value);
       }, intervalValue);
 

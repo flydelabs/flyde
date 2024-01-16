@@ -12,6 +12,7 @@
 @import "./MainInstanceEventsIndicator/MainInstanceEventsIndicator.scss";
 @import "./HelpBubble/HelpBubble.scss";
 @import "../vars.scss";
+@import "./SelectionIndicator/SelectionIndicator.scss";
 
 .visual-node-editor {
   &:not(.dark) {

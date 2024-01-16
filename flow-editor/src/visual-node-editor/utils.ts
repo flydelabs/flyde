@@ -565,19 +565,16 @@ export const centerBoardPosOnTarget = (
 const FIT_VIEWPORT_MIN_ZOOM = 0.3;
 const FIT_VIEWPORT_MAX_ZOOM = 1.2;
 
-export const fitViewPortToNode = (
-  node: VisualNode,
-  resolvedNodes: NodesDefCollection,
+export const fitViewPortToRect = (
+  rect: Rect,
   vpSize: Size,
   padding: [number, number] = [20, 150]
 ): ViewPort => {
-  const { size, center } = getEffectiveNodeDimensions(node, resolvedNodes);
-
   const horPadding = padding[0];
   const verPadding = padding[1];
 
-  const width = size.width + horPadding;
-  const height = size.height + verPadding;
+  const width = rect.w + horPadding;
+  const height = rect.h + verPadding;
 
   const widthFit = vpSize.width / width; // i.e 2 if viewPort is twice as large, 0.5 is viewPort is half
   const heightFit = vpSize.height / height;
@@ -589,13 +586,33 @@ export const fitViewPortToNode = (
 
   const zoom = clamp(FIT_VIEWPORT_MIN_ZOOM, FIT_VIEWPORT_MAX_ZOOM, idealZoom);
 
-  const vpX = center.x - vpSize.width / 2 / zoom;
-  const vpY = center.y - vpSize.height / 2 / zoom + 20; // TODO - find out why "+20" is needed
+  const vpX = rect.x - vpSize.width / 2 / zoom;
+  const vpY = rect.y - vpSize.height / 2 / zoom + 20; // TODO - find out why "+20" is needed
 
   return {
     zoom,
     pos: { x: vpX, y: vpY },
   };
+};
+
+export const fitViewPortToNode = (
+  node: VisualNode,
+  resolvedNodes: NodesDefCollection,
+  vpSize: Size,
+  padding: [number, number] = [20, 150]
+): ViewPort => {
+  const { size, center } = getEffectiveNodeDimensions(node, resolvedNodes);
+
+  return fitViewPortToRect(
+    {
+      x: center.x,
+      y: center.y,
+      w: size.width,
+      h: size.height,
+    },
+    vpSize,
+    padding
+  );
 };
 
 export const getMiddleOfViewPort = (vp: ViewPort, vpSize: Size) => {

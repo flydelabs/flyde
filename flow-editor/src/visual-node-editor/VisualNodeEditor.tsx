@@ -32,7 +32,6 @@ import {
   fullInsIdPath,
   isStickyInputPinConfig,
   stickyInputPinConfig,
-  ROOT_INS_ID,
   isMacroNodeInstance,
   isResolvedMacroNodeInstance,
   ResolvedMacroNodeInstance,
@@ -69,6 +68,7 @@ import {
   getInstancePinConfig,
   changePinConfig,
   createNewMacroNodeInstance,
+  fitViewPortToRect,
 } from "./utils";
 
 import { produce } from "immer";
@@ -122,6 +122,10 @@ import {
   MacroInstanceEditor,
   MacroInstanceEditorProps,
 } from "./MacroInstanceEditor";
+import {
+  SelectionIndicator,
+  SelectionIndicatorProps,
+} from "./SelectionIndicator";
 
 const MemodSlider = React.memo(Slider);
 
@@ -339,10 +343,19 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         );
         onChange(currentNode, functionalChange("group node"));
 
+        onChangeBoardData({ selected: [] });
+
         toastMsg("Node grouped");
 
         reportEvent("groupSelected", { count: boardData.selected.length });
-      }, [_prompt, boardData.selected, onChange, node, reportEvent]);
+      }, [
+        _prompt,
+        boardData.selected,
+        node,
+        onChange,
+        onChangeBoardData,
+        reportEvent,
+      ]);
 
       useEffect(() => {
         if (lastSelectedId) {
@@ -1201,67 +1214,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       const onAction = React.useCallback(
         (action: Action) => {
           switch (action.type) {
-            case ActionType.RemoveNode: {
-              const newValue = produce(node, (draft) => {
-                if (!isVisualNode(node)) {
-                  throw new Error(
-                    `Impossible state, deleting instances opf non visual node`
-                  );
-                }
-                draft.instances = draft.instances.filter(
-                  (ins) => !selected.includes(ins.id)
-                );
-                draft.connections = draft.connections.filter(
-                  (conn) =>
-                    !selected.includes(conn.from.insId) &&
-                    !selected.includes(conn.to.insId)
-                );
-              });
-              onChangeBoardData({ selected: [] });
-              onChange(newValue, functionalChange("remove-instances"));
-
-              toastMsg(`Removed ${selected.length} instances(s)`);
-              reportEvent("deleteInstances", { count: selected.length });
-              break;
-            }
-            case ActionType.Inspect: {
-              if (selected.length === 1) {
-                onInspectPin(selected[0]);
-              } else if (from || to) {
-                const conn = from ?? to;
-                const insId = isExternalConnectionNode(conn)
-                  ? ROOT_INS_ID
-                  : conn.insId;
-                onInspectPin(insId, {
-                  type: from ? "output" : "input",
-                  id: conn.pinId,
-                });
-              }
-              reportEvent("openInspectMenu", { source: "actionMenu" });
-              break;
-            }
-            case ActionType.Group: {
-              void (async () => {
-                await onGroupSelectedInternal();
-              })();
-              break;
-            }
-            case ActionType.UnGroup: {
-              const instance = node.instances.find(
-                (ins) => ins.id === selected[0]
-              );
-              onUnGroup(instance);
-              const insNode = safelyGetNodeDef(
-                instance,
-                currResolvedDeps
-              ) as VisualNode;
-              toastMsg(`Ungrouped inline node ${insNode.id}`);
-              reportEvent("unGroupNode", {
-                instancesCount: insNode.instances.length,
-              });
-              break;
-            }
-
             case ActionType.AddNode: {
               void (async function () {
                 const pos = getMiddleOfViewPort(viewPort, vpSize);
@@ -1356,18 +1308,11 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         },
         [
           boardData,
-          from,
           onChange,
           onChangeBoardData,
-          onGroupSelectedInternal,
           onImportNode,
-          onInspectPin,
-          onUnGroup,
           node,
-          currResolvedDeps,
           reportEvent,
-          selected,
-          to,
           viewPort,
           vpSize,
         ]
@@ -2241,6 +2186,69 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           [node, onChange, editedMacroInstance]
         );
 
+      const selectionIndicatorData: SelectionIndicatorProps["selection"] =
+        React.useMemo(() => {
+          if (from) {
+            return { type: "input" as const, pinId: from.pinId };
+          } else if (to) {
+            return { type: "output" as const, pinId: to.pinId };
+          } else if (selected.length > 0) {
+            return { type: "instances" as const, ids: selected };
+          } else {
+            return undefined;
+          }
+        }, [selected, from, to]);
+
+      const onCenterSelection = React.useCallback(() => {
+        if (selectionIndicatorData) {
+          const { type } = selectionIndicatorData;
+
+          const pos = (() => {
+            switch (type) {
+              case "instances": {
+                const ins = node.instances.find((ins) =>
+                  selected.includes(ins.id)
+                );
+                if (ins) {
+                  return ins.pos;
+                }
+                break;
+              }
+              case "input": {
+                const pos = inputsPosition[selectionIndicatorData.pinId];
+                if (pos) {
+                  return pos;
+                }
+                break;
+              }
+              case "output": {
+                const pos = outputsPosition[selectionIndicatorData.pinId];
+                if (pos) {
+                  return pos;
+                }
+                break;
+              }
+            }
+          })();
+          const vp = fitViewPortToRect(
+            { x: pos.x, y: pos.y, w: 1, h: 1 },
+            vpSize
+          );
+          animateViewPort(viewPort, vp, 500, (vp) => {
+            setViewPort(vp);
+          });
+        }
+      }, [
+        inputsPosition,
+        node.instances,
+        outputsPosition,
+        selected,
+        selectionIndicatorData,
+        setViewPort,
+        viewPort,
+        vpSize,
+      ]);
+
       try {
         return (
           <ContextMenu
@@ -2429,6 +2437,14 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
               from={from}
               hotkeysEnabled={isBoardInFocus}
             />
+            {selectionIndicatorData ? (
+              <SelectionIndicator
+                selection={selectionIndicatorData}
+                onCenter={onCenterSelection}
+                onGroup={onGroupSelectedInternal}
+                onDelete={onDeleteInstances}
+              />
+            ) : null}
           </ContextMenu>
         );
       } catch (e) {
