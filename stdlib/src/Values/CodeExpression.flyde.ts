@@ -14,7 +14,6 @@ export const CodeExpression: MacroNode<CodeExpressionConfig> = {
     return (inputs, outputs, adv) => {
       try {
         const resFn = eval(`(inputs) => (${config.value})`);
-        console.log(45, resFn, inputs, config.value, resFn.toString());
         outputs.value.next(resFn(inputs));
       } catch (e) {
         adv.onError(e);

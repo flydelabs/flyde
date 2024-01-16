@@ -3,7 +3,6 @@ import { Tooltip } from "@blueprintjs/core";
 import {
   ConnectionNode,
   ImportableSource,
-  isVisualNode,
   NodesDefCollection,
   VisualNode,
 } from "@flyde/core";
@@ -15,25 +14,12 @@ import { useLocalStorage } from "../../lib/user-preferences";
 
 import { AppToaster, toastMsg } from "../../toaster";
 import { AddNodeMenu } from "./AddNodeMenu";
-import {
-  addNodeIcon,
-  starIcon,
-  groupIcon,
-  inspectIcon,
-  playIcon,
-  removeNodeIcon,
-  ungroupIcon,
-} from "./icons/icons";
+import { addNodeIcon, starIcon, playIcon } from "./icons/icons";
 import { PromptAIMenu } from "./PromptAIMenu";
 import { RunFlowModal } from "./RunFlowModal";
-import { safelyGetNodeDef } from "../../flow-editor/getNodeDef";
 
 export enum ActionType {
   AddNode = "add-node",
-  RemoveNode = "remove-node",
-  Group = "group",
-  UnGroup = "un-group",
-  Inspect = "inspect",
   Run = "run",
   AI = "ai",
 }
@@ -65,16 +51,7 @@ export interface ActionsMenuProps {
 }
 
 export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
-  const {
-    onAction,
-    selectedInstances,
-    resolvedNodes,
-    node,
-    from,
-    to,
-    hotkeysEnabled,
-    showRunFlowOptions,
-  } = props;
+  const { onAction, node, hotkeysEnabled, showRunFlowOptions } = props;
 
   const { onRequestImportables } = useDependenciesContext();
 
@@ -109,40 +86,8 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
 
   types.push(ActionType.AddNode);
 
-  if (selectedInstances.length === 1) {
-    const instance = node.instances.find(
-      (ins) => ins.id === selectedInstances[0]
-    );
-    if (!instance) {
-      console.error(`Could not find instance with id ${selectedInstances[0]}`);
-    } else {
-      try {
-        const node = safelyGetNodeDef(instance, resolvedNodes);
-        if (isVisualNode(node)) {
-          types.push(ActionType.UnGroup);
-        }
-      } catch (e) {
-        console.error(
-          `Could not find node with id ${selectedInstances[0]} - ${e}`
-        );
-      }
-    }
-  }
-
   if (showRunFlowOptions) {
     types.push(ActionType.Run);
-  }
-
-  if (selectedInstances.length > 0) {
-    types.push(ActionType.Group);
-  }
-
-  if (selectedInstances.length === 1 || from || to) {
-    types.push(ActionType.Inspect);
-  }
-
-  if (selectedInstances.length > 0) {
-    types.push(ActionType.RemoveNode);
   }
 
   types.push(ActionType.AI);
@@ -311,25 +256,7 @@ const actionsMetaData: Record<
     text: 'Open the "add node" menu',
     hotkey: "a",
   },
-  [ActionType.RemoveNode]: {
-    icon: removeNodeIcon,
-    text: `Remove selected instances`,
-    hotkey: "backspace",
-  },
-  [ActionType.Group]: {
-    icon: groupIcon,
-    text: "Group selection into a new node",
-    hotkey: "g",
-  },
-  [ActionType.UnGroup]: {
-    icon: ungroupIcon,
-    text: "Ungroup selected visual node",
-  },
-  [ActionType.Inspect]: {
-    icon: inspectIcon,
-    text: "Inspect data",
-    hotkey: "i",
-  },
+
   [ActionType.Run]: {
     icon: playIcon,
     text: "Run flow",
