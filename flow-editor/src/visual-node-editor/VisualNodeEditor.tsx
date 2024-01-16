@@ -128,7 +128,6 @@ const MemodSlider = React.memo(Slider);
 const sliderRenderer = () => null;
 
 export const NODE_HEIGHT = 28;
-const DBL_CLICK_TIME = 300;
 
 export const defaultViewPort: ViewPort = {
   pos: { x: 0, y: 0 },
@@ -183,8 +182,6 @@ export type VisualNodeEditorProps = {
   onGoToNodeDef: (node: ImportedNodeDef) => void;
   onExtractInlineNode: (instance: InlineNodeInstance) => Promise<void>;
 
-  onShowOmnibar: (e: any) => void;
-
   className?: string;
 
   parentViewport?: ViewPort;
@@ -218,7 +215,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         currentInsId,
         ancestorsInsIds,
         node,
-        onShowOmnibar,
         resolvedDependencies,
         queuedInputsData: queueInputsData,
         initialPadding,
@@ -263,8 +259,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       }>();
 
       const isRootInstance = ancestorsInsIds === undefined;
-
-      const [lastBoardClickTime, setLastBoardClickTime] = useState<number>(0);
 
       const [lastSelectedId, setLastSelectedId] = useState<string>(); // to avoid it disappearing when doubling clicking to edit
 
@@ -887,12 +881,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           }
 
           if (target && target.className === "board-editor-inner") {
-            // dbl click and onMouseDown did not work, so we use onMouseDown to detect double click
-            if (Date.now() - lastBoardClickTime < DBL_CLICK_TIME) {
-              onShowOmnibar(e);
-              return;
-            }
-            setLastBoardClickTime(Date.now());
             const eventPos = { x: e.clientX, y: e.clientY };
             const normalizedPos = vSub(eventPos, boardPos);
             const posInBoard = domToViewPort(
@@ -903,14 +891,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             setSelectionBox({ from: posInBoard, to: posInBoard });
           }
         },
-        [
-          node.id,
-          viewPort,
-          lastBoardClickTime,
-          boardPos,
-          parentViewport,
-          onShowOmnibar,
-        ]
+        [node.id, viewPort, boardPos, parentViewport]
       );
 
       const onMouseUp: React.MouseEventHandler = React.useCallback(
@@ -1986,7 +1967,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             nodeIoEditable: props.nodeIoEditable,
             node: openInlineInstance.node,
             onChangeNode: onChangeInspected,
-            onShowOmnibar: onShowOmnibar,
             parentViewport: defaultViewPort,
             // parentViewport: viewPort, // this was needed when I rendered it completely inline
             parentBoardPos: boardPos,

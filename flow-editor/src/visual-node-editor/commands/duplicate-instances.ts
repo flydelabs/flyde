@@ -1,4 +1,9 @@
-import { createInsId, VisualNode } from "@flyde/core";
+import {
+  createInsId,
+  isMacroNodeInstance,
+  macroNodeInstance,
+  VisualNode,
+} from "@flyde/core";
 import produce from "immer";
 
 export const handleDuplicateSelectedEditorCommand = (
@@ -18,11 +23,16 @@ export const handleDuplicateSelectedEditorCommand = (
 
       if (ins) {
         const { pos } = ins;
-        const newIns = {
-          ...ins,
-          pos: { x: pos.x + 20, y: pos.y + 20 },
-          id: createInsId(node),
-        };
+        const newPos = { x: pos.x + 20, y: pos.y + 20 };
+        const id = createInsId(node);
+
+        const newIns = isMacroNodeInstance(ins)
+          ? macroNodeInstance(id, ins.macroId, ins.macroData, undefined, pos)
+          : {
+              ...ins,
+              pos: newPos,
+              id,
+            };
         instances.push(newIns);
         newInstances.push(newIns.id);
       }

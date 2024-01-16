@@ -2,7 +2,6 @@ import { Button } from "@blueprintjs/core";
 import { Tooltip } from "@blueprintjs/core";
 import {
   ConnectionNode,
-  getNodeDef,
   ImportableSource,
   isVisualNode,
   NodesDefCollection,
@@ -21,7 +20,6 @@ import {
   starIcon,
   groupIcon,
   inspectIcon,
-  pencilIcon,
   playIcon,
   removeNodeIcon,
   ungroupIcon,
@@ -35,7 +33,6 @@ export enum ActionType {
   RemoveNode = "remove-node",
   Group = "group",
   UnGroup = "un-group",
-  AddInlineValue = "add-inline-value",
   Inspect = "inspect",
   Run = "run",
   AI = "ai",
@@ -111,7 +108,6 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
   const types: ActionType[] = [];
 
   types.push(ActionType.AddNode);
-  types.push(ActionType.AddInlineValue);
 
   if (selectedInstances.length === 1) {
     const instance = node.instances.find(
@@ -200,7 +196,7 @@ export const ActionsMenu: React.FC<ActionsMenuProps> = (props) => {
           onAction({ type, data: undefined });
       }
     },
-    [hideHotkeyHintMap, onAction, onDismissHotkeyHint, node.inputs]
+    [hideHotkeyHintMap, onAction, onDismissHotkeyHint]
   );
 
   Object.entries(actionsMetaData).forEach(
@@ -333,11 +329,6 @@ const actionsMetaData: Record<
     icon: inspectIcon,
     text: "Inspect data",
     hotkey: "i",
-  },
-  [ActionType.AddInlineValue]: {
-    icon: pencilIcon,
-    text: "Add value / inline function",
-    hotkey: "v",
   },
   [ActionType.Run]: {
     icon: playIcon,

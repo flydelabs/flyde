@@ -311,12 +311,8 @@ export function resolveCodeNodeDependencies(path: string): {
           nodes.push({ exportName: key, node: value });
         } else if (isMacroNode(value)) {
           nodes.push({ exportName: key, node: value });
-        } else {
-          errors.push(`Exported value "${key}" is not a valid CodeNode`);
         }
       });
-    } else {
-      errors.push(`Exported value is not a valid CodeNode`);
     }
   } catch (e) {
     errors.push(`Error loading module "${path}": ${e.message}`);
@@ -339,12 +335,8 @@ function resolveMacroNodesDependencies(path: string): {
       Object.entries(module).forEach(([key, value]) => {
         if (isMacroNode(value)) {
           nodes.push({ exportName: key, node: value });
-        } else {
-          errors.push(`Exported value "${key}" is not a valid CodeNode`);
         }
       });
-    } else {
-      errors.push(`Exported value is not a valid CodeNode`);
     }
   } catch (e) {
     errors.push(`Error loading module "${path}": ${e.message}`);

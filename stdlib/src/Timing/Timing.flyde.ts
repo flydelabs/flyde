@@ -65,19 +65,25 @@ export const Interval: MacroNode<TimingNodeConfig> = {
       outputs: {
         value: { description: "Emitted value" },
       },
-      reactiveInputs: ["value", "interval"],
+      reactiveInputs:
+        config.type === "dynamic" ? ["value", "interval"] : ["value"],
       completionOutputs: [],
     };
   },
   runFnBuilder: (config) => {
-    return async ({ value, interval }, outputs, adv) => {
+    return ({ value, interval }, outputs, adv) => {
       const intervalValue =
         config.type === "dynamic" ? interval : config.timeMs;
-      if (adv.state.get("timer")) {
-        clearInterval(adv.state.get("timer"));
+
+      const existingTimer = adv.state.get("timer");
+      if (existingTimer) {
+        clearInterval(existingTimer);
       }
 
+      console.log(43, intervalValue);
+
       const timer = setInterval(() => {
+        console.log(42, value);
         outputs.value.next(value);
       }, intervalValue);
 
@@ -113,6 +119,7 @@ export const Debounce: MacroNode<DebounceConfig> = {
         debouncedValue: { description: "Debounced value" },
       },
       reactiveInputs: ["value"],
+      completionOutputs: ["debouncedValue"],
     };
   },
   runFnBuilder: (config) => {

@@ -3,6 +3,7 @@ import { NodeDefinition, getNodeDef } from "@flyde/core";
 
 export const loadingDef: NodeDefinition = {
   id: "Loading",
+  displayName: "Loading definition",
   inputs: {},
   outputs: {},
 };

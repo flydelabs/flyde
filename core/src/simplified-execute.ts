@@ -1,20 +1,26 @@
-import { Node, NodesCollection, dynamicOutput, keys } from ".";
+import {
+  Node,
+  NodeInputs,
+  NodesCollection,
+  dynamicNodeInput,
+  dynamicOutput,
+  keys,
+} from ".";
 import { execute, ExecuteParams } from "./execute";
 
 export const simplifiedExecute = (
   nodeToRun: Node,
   resolvedDependencies: NodesCollection,
-  inputs: Record<string, any>,
+  inputs: Record<string, any> = {},
   onOutput?: (key: string, data: any) => void,
   otherParams: Partial<ExecuteParams> = {}
 ) => {
   const outputKeys = keys(nodeToRun.outputs);
 
-  const _inputs = Object.keys(inputs).reduce((acc, curr) => {
-    const input = inputs[curr];
+  const _inputs = Object.keys(inputs).reduce<NodeInputs>((acc, curr) => {
     return {
       ...acc,
-      [curr]: input,
+      [curr]: dynamicNodeInput(),
     };
   }, {});
 
@@ -28,7 +34,7 @@ export const simplifiedExecute = (
     return { ...acc, [k]: output };
   }, {});
 
-  return execute({
+  const cancelFn = execute({
     node: nodeToRun,
     inputs: _inputs,
     outputs,
@@ -38,4 +44,10 @@ export const simplifiedExecute = (
     },
     ...otherParams,
   });
+
+  Object.entries(inputs).forEach(([k, v]) => {
+    _inputs[k].subject.next(v);
+  });
+
+  return cancelFn;
 };
