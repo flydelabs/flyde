@@ -45,10 +45,14 @@ const InlineValueEditor: MacroEditorComp<InlineValueConfig> =
 
     const changeType = useCallback(
       (type) => {
+        const newValue = defaultValuePerType[type](value.value);
         onChange({
-          value: defaultValuePerType[type](value.value),
+          value: newValue,
           type,
-          label: value.label,
+          label:
+            valToLabel(value.value) === value.label
+              ? valToLabel(newValue)
+              : value.label,
         });
       },
       [value, onChange]

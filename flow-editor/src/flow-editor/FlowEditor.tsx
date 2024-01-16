@@ -1,6 +1,5 @@
 import * as React from "react";
 import {
-  isVisualNode,
   Pos,
   VisualNode,
   NodeInstance,
@@ -16,28 +15,17 @@ import {
   ClipboardData,
   defaultViewPort,
   GroupEditorBoardData,
-  NODE_HEIGHT,
 } from "../visual-node-editor/VisualNodeEditor";
-import produce from "immer";
+
 import { useHotkeys } from "../lib/react-utils/use-hotkeys";
 
-// ;
-import { createNewNodeInstance } from "../visual-node-editor/utils";
-
-import { AppToaster } from "../toaster";
-
-import {
-  FlydeFlowChangeType,
-  functionalChange,
-} from "./flyde-flow-change-type";
-import { Omnibar, OmniBarCmd, OmniBarCmdType } from "./omnibar/Omnibar";
+import { FlydeFlowChangeType } from "./flyde-flow-change-type";
 
 import { usePorts } from "./ports";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fab } from "@fortawesome/free-brands-svg-icons";
 import { fas } from "@fortawesome/free-solid-svg-icons";
-import { vAdd } from "../physics";
 import { DataInspectionModal } from "./DataInspectionModal";
 import { useDebuggerContext } from "./DebuggerContext";
 import { useDependenciesContext } from "./DependenciesContext";
@@ -91,7 +79,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
   React.forwardRef((props, visualEditorRef) => {
     const { state, onChangeEditorState } = props;
 
-    const { resolvedDependencies, onImportNode } = useDependenciesContext();
+    const { resolvedDependencies } = useDependenciesContext();
 
     const [undoStack, setUndoStack] = React.useState<
       Partial<FlowEditorState>[]
@@ -100,7 +88,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
       Partial<FlowEditorState>[]
     >([]);
 
-    const { flow, boardData: editorBoardData } = state;
+    const { boardData: editorBoardData } = state;
     const editedNode = state.flow.node;
 
     const [queuedInputsData, setQueuedInputsData] = React.useState<
@@ -137,7 +125,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
       return undefined;
     }, [debuggerClient]);
 
-    const { openFile, reportEvent } = usePorts();
+    const { openFile } = usePorts();
 
     const onChangeFlow = React.useCallback(
       (newFlow: Partial<FlydeFlow>, changeType: FlydeFlowChangeType) => {
@@ -162,11 +150,6 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
       instances: [],
       connections: [],
     });
-
-    const [omniBarVisible, setOmnibarVisible] = React.useState(false);
-
-    const hideOmnibar = React.useCallback(() => setOmnibarVisible(false), []);
-    const showOmnibar = React.useCallback(() => setOmnibarVisible(true), []);
 
     const onChangeEditorBoardData = React.useCallback(
       (partial: Partial<GroupEditorBoardData>) => {
@@ -225,83 +208,6 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
       [openFile]
     );
 
-    const onAddNodeInstance = React.useCallback(
-      (nodeId: string, offset: number = -1 * NODE_HEIGHT * 1.5) => {
-        const newNodeIns = createNewNodeInstance(
-          nodeId,
-          offset,
-          editorBoardData.lastMousePos,
-          resolvedDependencies
-        );
-        if (newNodeIns) {
-          const valueChanged = produce(flow, (draft) => {
-            const node = draft.node;
-            if (!isVisualNode(node)) {
-              throw new Error(
-                `Impossible state, adding node to non visual node`
-              );
-            }
-            node.instances.push(newNodeIns);
-          });
-          onChangeFlow(valueChanged, functionalChange("add-node"));
-          hideOmnibar();
-          return newNodeIns;
-        }
-      },
-      [
-        editorBoardData.lastMousePos,
-        flow,
-        onChangeFlow,
-        hideOmnibar,
-        resolvedDependencies,
-      ]
-    );
-
-    const onOmnibarCmd = React.useCallback(
-      async (cmd: OmniBarCmd) => {
-        switch (cmd.type) {
-          case OmniBarCmdType.ADD:
-            reportEvent("addNode", { nodeId: cmd.data, source: "omnibar" });
-            return onAddNodeInstance(cmd.data);
-          case OmniBarCmdType.IMPORT: {
-            await onImportNode(cmd.data, { pos: editorBoardData.lastMousePos });
-            const finalPos = vAdd({ x: 0, y: 0 }, editorBoardData.lastMousePos);
-            const newNodeIns = createNewNodeInstance(
-              cmd.data.node,
-              0,
-              finalPos,
-              resolvedDependencies
-            );
-            const newValue = produce(flow, (draft) => {
-              draft.node.instances.push(newNodeIns);
-            });
-            onChangeFlow(newValue, functionalChange("add-imported-node"));
-            reportEvent("addNode", {
-              nodeId: cmd.data.node.id,
-              source: "omnibar",
-            });
-            break;
-          }
-          default:
-            AppToaster.show({
-              intent: "warning",
-              message: "Not supported yet",
-            });
-        }
-        hideOmnibar();
-      },
-      [
-        hideOmnibar,
-        reportEvent,
-        onAddNodeInstance,
-        onImportNode,
-        editorBoardData.lastMousePos,
-        resolvedDependencies,
-        flow,
-        onChangeFlow,
-      ]
-    );
-
     const [inspectedItem, setInspectedItem] = React.useState<{
       insId: string;
       pin?: { type: PinType; id: string };
@@ -345,23 +251,12 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
               onCopy={setClipboardData}
               nodeIoEditable={!editedNode.id.startsWith("Trigger")}
               onInspectPin={onInspectPin}
-              onShowOmnibar={showOmnibar}
               onExtractInlineNode={props.onExtractInlineNode}
               queuedInputsData={queuedInputsData}
               initialPadding={props.initialPadding}
               instancesWithErrors={instancesWithErrors}
               disableScrolling={props.disableScrolling}
             />
-
-            {omniBarVisible ? (
-              <Omnibar
-                flow={flow}
-                resolvedNodes={resolvedDependencies}
-                onCommand={onOmnibarCmd}
-                visible={omniBarVisible}
-                onClose={hideOmnibar}
-              />
-            ) : null}
           </React.Fragment>
         </DarkModeProvider>
       );

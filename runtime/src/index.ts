@@ -1,7 +1,6 @@
 import {
   ExecuteParams,
   FlydeFlow,
-  ImportedNode,
   ResolvedDependencies,
   simplifiedExecute,
 } from "@flyde/core";
@@ -62,7 +61,7 @@ export function loadFlowFromContent<Inputs>(
       destroy = await simplifiedExecute(
         resFlow.main,
         resFlow.dependencies as ResolvedDependencies,
-        inputs || {},
+        inputs ?? {},
         onOutputs,
         {
           _debugger: _debugger,
