@@ -15,6 +15,19 @@
   .flow-wrapper {
     display: flex;
     flex: 1;
+
+    background: #f3f4f6;
+    position: relative;
+
+    .loader-wrapper {
+      display: flex;
+      flex: 1;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+    }
   }
 
   .buttons-container {

@@ -68,10 +68,7 @@ export interface NodeStyle {
   cssOverride?: Record<string, string>;
 }
 
-/**
- * Extended by {@link VisualNode}, {@link CodeNode} and {@link InlineValueNode}
- */
-export interface BaseNode {
+export interface NodeMetadata {
   /**
    * Node's unique id. {@link VisualNode.instances }  refer use this to refer to the correct node
    */
@@ -89,6 +86,22 @@ export interface BaseNode {
    * A list of keywords that can be used to search for the node. Useful for node that users might search using different words.
    */
   searchKeywords?: string[];
+  /**
+   * TBD
+   */
+  namespace?: string;
+
+  /**
+   * All instances of this node will inherit the default style if it is supplied.
+   * See {@link NodeStyle} for the full options supported
+   */
+  defaultStyle?: NodeStyle;
+}
+
+/**
+ * Extended by {@link VisualNode}, {@link CodeNode} and {@link InlineValueNode}
+ */
+export interface BaseNode extends NodeMetadata {
   /**
    * A pin on a node that receives data. Each node can have zero or more input pins.
    *
@@ -114,10 +127,7 @@ export interface BaseNode {
    * ```
    */
   outputs: Record<string, OutputPin>;
-  /**
-   * TBD
-   */
-  namespace?: string;
+
   /**
    * Instructs Flyde that the node is in "explicit completion" mode and describes which outputs trigger the node's completion. Receives a list of outputs that should trigger an explicit completion of the node when they emit a value. Any of the listed outputs will trigger a completion (i.e. completionOutput[0] `OR` completionOutput[1])
    * Leave empty for implicit completion. This should work best for 99% of the case.
@@ -136,11 +146,6 @@ export interface BaseNode {
    * @deprecated - TBD
    */
   reactiveInputs?: string[];
-  /**
-   * All instances of this node will inherit the default style if it is supplied.
-   * See {@link NodeStyle} for the full options supported
-   */
-  defaultStyle?: NodeStyle;
 }
 
 export interface CodeNode extends BaseNode {
@@ -156,12 +161,7 @@ export interface CodeNode extends BaseNode {
   fn?: RunNodeFunction;
 }
 
-export interface MacroNode<T> {
-  id: string;
-  displayName?: string;
-  namespace?: string;
-  defaultStyle?: NodeStyle;
-  description?: string;
+export interface MacroNode<T> extends NodeMetadata {
   definitionBuilder: (data: T) => Omit<CodeNodeDefinition, "id">;
   runFnBuilder: (data: T) => CodeNode["run"];
   defaultData: T;
@@ -240,6 +240,27 @@ export const isCodeNode = (p: Node | NodeDefinition | any): p is CodeNode => {
 
 export const isMacroNode = (p: any): p is MacroNode<any> => {
   return p && typeof (p as MacroNode<any>).runFnBuilder === "function";
+};
+
+export const extractMetadata: <N extends NodeMetadata>(
+  node: N
+) => NodeMetadata = (node) => {
+  const {
+    id,
+    displayName,
+    description,
+    namespace,
+    defaultStyle,
+    searchKeywords,
+  } = node;
+  return {
+    id,
+    displayName,
+    description,
+    namespace,
+    defaultStyle,
+    searchKeywords,
+  };
 };
 
 export const isMacroNodeDefinition = (

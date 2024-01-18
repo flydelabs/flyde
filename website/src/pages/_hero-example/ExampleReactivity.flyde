@@ -43,7 +43,7 @@ node:
       macroData: 3
     - pos:
         x: -715.5202523019706
-        y: -255.0162649882792
+        y: -257.26144321093545
       id: rh3ug7oqoze1rvn4k17kc556
       inputConfig: {}
       nodeId: InlineValue__rh3ug7oqoze1rvn4k17kc556
@@ -94,8 +94,8 @@ node:
       macroId: InlineValue
       macroData:
         type: string
-        value: 🤖
-        label: '"🤖"'
+        value: "ð¤"
+        label: "\"ð¤\""
   connections:
     - from:
         insId: rjyjsbcahykm15dllqw8tlzj

@@ -36,6 +36,7 @@ import {
   isResolvedMacroNodeInstance,
   ResolvedMacroNodeInstance,
   isMacroNodeDefinition,
+  ImportableSource,
 } from "@flyde/core";
 
 import { InstanceView, InstanceViewProps } from "./instance-view/InstanceView";
@@ -64,7 +65,6 @@ import {
   emptyList,
   animateViewPort,
   logicalPosToRenderedPos,
-  getMiddleOfViewPort,
   getInstancePinConfig,
   changePinConfig,
   createNewMacroNodeInstance,
@@ -113,7 +113,6 @@ import { handleConnectionCloseEditorCommand } from "./commands/close-connection"
 import { handleDuplicateSelectedEditorCommand } from "./commands/duplicate-instances";
 import { NodeStyleMenu } from "./instance-view/NodeStyleMenu";
 import { useDependenciesContext } from "../flow-editor/FlowEditor";
-import { Action, ActionsMenu, ActionType } from "./ActionsMenu/ActionsMenu";
 import { MainInstanceEventsIndicator } from "./MainInstanceEventsIndicator";
 import { HelpBubble } from "./HelpBubble";
 import { safelyGetNodeDef } from "../flow-editor/getNodeDef";
@@ -126,6 +125,8 @@ import {
   SelectionIndicator,
   SelectionIndicatorProps,
 } from "./SelectionIndicator";
+import { NodesLibrary } from "./NodesLibrary";
+import { library } from "@fortawesome/fontawesome-svg-core";
 
 const MemodSlider = React.memo(Slider);
 
@@ -225,7 +226,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         disableScrolling,
       } = props;
 
-      const { onImportNode } = useDependenciesContext();
+      const { onImportNode, libraryData } = useDependenciesContext();
 
       const darkMode = useDarkMode();
 
@@ -1211,110 +1212,54 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         [node, onChange]
       );
 
-      const onAction = React.useCallback(
-        (action: Action) => {
-          switch (action.type) {
-            case ActionType.AddNode: {
-              void (async function () {
-                const pos = getMiddleOfViewPort(viewPort, vpSize);
+      const onAddNode = React.useCallback(
+        async (importableNode: ImportableSource) => {
+          const depsWithImport = await onImportNode(importableNode);
 
-                const { importableNode } = action.data;
-                const depsWithImport = await onImportNode(importableNode);
+          const targetPos = vSub(lastMousePos.current, {
+            x: 200,
+            y: 50 * viewPort.zoom,
+          }); // to account for node
 
-                const targetPos = vSub(pos, { x: 0, y: 50 * viewPort.zoom }); // to account for node
+          const newNodeIns = isMacroNodeDefinition(importableNode.node)
+            ? createNewMacroNodeInstance(importableNode.node, 0, targetPos)
+            : createNewNodeInstance(
+                importableNode.node.id,
+                0,
+                targetPos,
+                depsWithImport
+              );
+          const newNode = produce(node, (draft) => {
+            draft.instances.push(newNodeIns);
+          });
 
-                const newNodeIns = isMacroNodeDefinition(importableNode.node)
-                  ? createNewMacroNodeInstance(
-                      importableNode.node,
-                      0,
-                      targetPos
-                    )
-                  : createNewNodeInstance(
-                      importableNode.node.id,
-                      0,
-                      targetPos,
-                      depsWithImport
-                    );
-                const newNode = produce(node, (draft) => {
-                  draft.instances.push(newNodeIns);
-                });
+          const newState = produce(boardData, (draft) => {
+            draft.selected = [newNodeIns.id];
+          });
 
-                const newState = produce(boardData, (draft) => {
-                  draft.selected = [newNodeIns.id];
-                });
+          onChange(newNode, functionalChange("add new instance"));
 
-                onChange(newNode, functionalChange("add new instance"));
+          onChangeBoardData(newState);
 
-                onChangeBoardData(newState);
-
-                toastMsg(
-                  `Node ${importableNode.node.id} successfully imported from ${importableNode.module}`
-                );
-
-                if (isResolvedMacroNodeInstance(newNodeIns)) {
-                  // hack to allow imported macro to appear in deps. TODO: fix
-                  setTimeout(() => {
-                    setEditedMacroInstance({ ins: newNodeIns });
-                  }, 100);
-                }
-                reportEvent("addNode", {
-                  nodeId: importableNode.node.id,
-                  source: "actionMenu",
-                });
-              })();
-              break;
-            }
-            case ActionType.AI: {
-              void (async function () {
-                const pos = getMiddleOfViewPort(viewPort, vpSize);
-
-                const { importableNode } = action.data;
-                const depsWithImport = await onImportNode(importableNode);
-
-                const targetPos = vSub(pos, { x: 0, y: 50 * viewPort.zoom }); // to account for node
-
-                const newNodeIns = createNewNodeInstance(
-                  importableNode.node.id,
-                  0,
-                  targetPos,
-                  depsWithImport
-                );
-                const newNode = produce(node, (draft) => {
-                  draft.instances.push(newNodeIns);
-                });
-
-                const newState = produce(boardData, (draft) => {
-                  draft.selected = [newNodeIns.id];
-                });
-
-                onChange(newNode, functionalChange("add new instance"));
-
-                onChangeBoardData(newState);
-
-                toastMsg(
-                  `Node ${importableNode.node.id} successfully imported from ${importableNode.module}`
-                );
-                reportEvent("addNode", {
-                  nodeId: importableNode.node.id,
-                  source: "actionMenu",
-                });
-              })();
-              break;
-            }
-            default: {
-              toastMsg(`${action.type} not supported yet`);
-            }
+          if (isResolvedMacroNodeInstance(newNodeIns)) {
+            // hack to allow imported macro to appear in deps. TODO: fix
+            setTimeout(() => {
+              setEditedMacroInstance({ ins: newNodeIns });
+            }, 100);
           }
+          reportEvent("addNode", {
+            nodeId: importableNode.node.id,
+            source: "actionMenu",
+          });
         },
         [
           boardData,
+          node,
           onChange,
           onChangeBoardData,
           onImportNode,
-          node,
           reportEvent,
-          viewPort,
-          vpSize,
+          viewPort.zoom,
         ]
       );
 
@@ -2234,6 +2179,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             { x: pos.x, y: pos.y, w: 1, h: 1 },
             vpSize
           );
+          vp.zoom = viewPort.zoom;
           animateViewPort(viewPort, vp, 500, (vp) => {
             setViewPort(vp);
           });
@@ -2427,16 +2373,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
               ) : null}
               <div className="inline-editor-portal-root" />
             </main>
-            <ActionsMenu
-              showRunFlowOptions={isRootInstance}
-              onAction={onAction}
-              selectedInstances={selected}
-              node={node}
-              resolvedNodes={currResolvedDeps}
-              to={to}
-              from={from}
-              hotkeysEnabled={isBoardInFocus}
-            />
             {selectionIndicatorData ? (
               <SelectionIndicator
                 selection={selectionIndicatorData}
@@ -2444,6 +2380,9 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                 onGroup={onGroupSelectedInternal}
                 onDelete={onDeleteInstances}
               />
+            ) : null}
+            {libraryData.groups.length ? (
+              <NodesLibrary {...libraryData} onAddNode={onAddNode} />
             ) : null}
           </ContextMenu>
         );

@@ -75,7 +75,7 @@ export const FlowLoader: React.FC = (props) => {
         throw new Error("No .flyde file found in project");
       }
       const resolvedDeps = await ports.current.resolveDeps({
-        absPath: file.fullPath,
+        relativePath: file.relativePath,
       });
       setResolvedDependencies(resolvedDeps);
 

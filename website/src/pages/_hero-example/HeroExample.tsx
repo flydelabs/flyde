@@ -18,7 +18,7 @@ console.log(\`Output: \$\{output\}\`);`;
 
 import "./HeroExample.scss";
 import { examples } from "..";
-import { toastMsg } from "@flyde/flow-editor";
+import { Loader } from "@flyde/flow-editor";
 
 const RERUN_INTERVAL = 4200 * 2.5;
 
@@ -82,6 +82,9 @@ export const HeroExample: React.FC<{ example: (typeof examples)[0] }> = ({
       {/* <main> */}
       {fileVisible === flowFileName ? (
         <div className="flow-wrapper">
+          <div className="loader-wrapper">
+            <Loader />
+          </div>
           <EmbeddedFlyde
             flowProps={flowProps}
             debugDelay={100}

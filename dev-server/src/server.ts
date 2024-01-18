@@ -4,12 +4,12 @@ import { createService } from "./service/service";
 import { setupRemoteDebuggerServer } from "@flyde/remote-debugger/dist/setup-server";
 import { createServer } from "http";
 import { scanImportableNodes } from "./service/scan-importable-nodes";
-import { deserializeFlow, resolveFlowByPath } from "@flyde/resolver";
+import { resolveFlowByPath } from "@flyde/resolver";
 import { join } from "path";
 
-import resolveFrom = require("resolve-from");
-import { readFileSync } from "fs";
 import { generateAndSaveNode } from "./service/generate-node-from-prompt";
+
+import { getLibraryData } from "./service/get-library-data";
 
 export const runDevServer = (
   port: number,
@@ -76,7 +76,9 @@ export const runDevServer = (
         return;
       }
 
-      const fullPath = resolveFrom(rootDir, filename);
+      const fullPath = join(rootDir, filename);
+      // const fullPath = filename; //j oin(rootDir, filename);
+
       const resolvedFlow = await resolveFlowByPath(fullPath, "definition");
       res.send(resolvedFlow);
     } catch (e) {
@@ -99,6 +101,11 @@ export const runDevServer = (
     } catch (e) {
       res.status(400).send(e);
     }
+  });
+
+  app.get("/library", async (req, res) => {
+    const library = getLibraryData();
+    res.send(library);
   });
 
   setupRemoteDebuggerServer(

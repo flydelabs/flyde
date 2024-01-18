@@ -1,0 +1,143 @@
+@import "./AddNodeMenu/AddNodeMenu.scss";
+
+.nodes-library {
+  background: white;
+  display: flex;
+  width: 134px;
+  padding: 6px;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  position: absolute;
+  right: 0px;
+  top: 40%;
+  font-size: 10px;
+  transform-origin: top right;
+  border-radius: 5px;
+  max-height: 50%;
+  z-index: 2;
+
+  &.dark {
+    background: $neutral-950;
+
+    .group-title {
+      background: $neutral-900;
+      color: $neutral-300;
+
+      &:hover,
+      &.selected {
+        background: $neutral-800;
+      }
+    }
+
+    .group-item {
+      background: $neutral-700;
+      color: $gray-200;
+
+      &:hover,
+      &.selected {
+        background: $neutral-600;
+      }
+    }
+
+    .list {
+      border-radius: 5px;
+      border: 1px solid $neutral-700;
+    }
+  }
+
+  .header {
+    color: $gray-400;
+    cursor: pointer;
+    transition: color 0.15s linear;
+    width: 100%;
+    padding: 2px;
+    text-align: center;
+    user-select: none;
+  }
+
+  &.open {
+    &.animate {
+      animation: rotateReverse 0.15s ease-out forwards;
+    }
+  }
+
+  &.closed {
+    &.animate {
+      animation: rotate 0.15s ease-in forwards;
+    }
+    .header {
+      color: $gray-700;
+    }
+
+    &.dark {
+      .header {
+        color: $gray-300;
+      }
+    }
+  }
+
+  .list {
+    border-radius: 5px;
+    border: 1px solid $gray-300;
+    overflow: auto;
+    width: 100%;
+    .list-item {
+      background: $neutral-200;
+    }
+  }
+
+  .group-title {
+    padding: 4px 4px;
+    background: $gray-200;
+    color: $neutral-600;
+    font-weight: 400;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .group-item {
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 8px;
+    cursor: pointer;
+    user-select: none;
+
+    &.selected,
+    &:hover {
+      background: $gray-100;
+    }
+  }
+
+  .view-all-container {
+    width: 100%;
+    text-align: right;
+  }
+
+  .view-all button {
+    font-size: 10px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    height: 16px;
+    min-height: 16px;
+  }
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg) translateY(0px);
+  }
+  100% {
+    transform: rotate(-90deg) translateY(-25px);
+  }
+}
+
+@keyframes rotateReverse {
+  100% {
+    transform: rotate(0deg) translateY(0px);
+  }
+
+  0% {
+    transform: rotate(-90deg) translateY(-25px);
+  }
+}

@@ -18,7 +18,7 @@ const SwitchEditor: MacroEditorComp<SwitchConfig> = function SwitchEditor(
   const inputsElem = useMemo(() => {
     const inputs = value.inputs.map((input, i) => {
       return (
-        <FormGroup key={i} label={`Input name no ${i + 1}:`} inline>
+        <FormGroup key={i} label={`Input name no. ${i + 1}:`} inline>
           <InputGroup
             value={input}
             onChange={(e) => {

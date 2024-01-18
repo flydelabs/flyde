@@ -93,6 +93,9 @@ export const createVsCodePorts = (): EditorPorts => {
     hasOpenAiToken: async () => {
       return postMessageCallback("hasOpenAiToken", {});
     },
+    getLibraryData: async () => {
+      return postMessageCallback("getLibraryData", {});
+    },
   };
 };
 

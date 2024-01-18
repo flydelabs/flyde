@@ -91,18 +91,13 @@ export const Switch: MacroNode<SwitchConfig> = {
     cases: [
       {
         name: "case1",
-        conditionExpression: "inputs.value > 42",
-        outputExpression: "inputs.value * 2",
-      },
-      {
-        name: "case2",
-        conditionExpression: "inputs.value < 42",
-        outputExpression: "inputs.value / 2",
+        conditionExpression: "",
+        outputExpression: "inputs.value",
       },
     ],
     defaultCase: {
       enabled: true,
-      outputExpression: "'Something else'",
+      outputExpression: "input.value",
     },
   },
   editorComponentBundlePath: "../../../dist/ui/Switch.js",
