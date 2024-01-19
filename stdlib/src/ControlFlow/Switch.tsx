@@ -10,6 +10,8 @@ import React from "react";
 import { MacroEditorComp } from "../lib/MacroEditorComp";
 import { SwitchConfig } from "./Switch.flyde";
 
+const MAX_CASES = 6;
+
 const SwitchEditor: MacroEditorComp<SwitchConfig> = function SwitchEditor(
   props
 ) {
@@ -68,7 +70,7 @@ const SwitchEditor: MacroEditorComp<SwitchConfig> = function SwitchEditor(
     const cases = value.cases.map((case_, i) => {
       return (
         <>
-          <FormGroup key={i} label={`Case no ${i + 1} name:`}>
+          <FormGroup key={i} label={`Case no. ${i + 1} name:`}>
             <InputGroup
               value={case_.name}
               rightElement={
@@ -96,7 +98,7 @@ const SwitchEditor: MacroEditorComp<SwitchConfig> = function SwitchEditor(
           </FormGroup>
           <FormGroup
             key={i}
-            label={`Case no ${i + 1} condition expression:`}
+            label={`Case no. ${i + 1} condition expression:`}
             helperText="The condition to evaluate to check whether this case should be activated. any JS expression. You can access the inputs data using the inputs object. For example, `inputs.name !== inputs['city of birth']`"
           >
             <InputGroup
@@ -113,7 +115,7 @@ const SwitchEditor: MacroEditorComp<SwitchConfig> = function SwitchEditor(
           </FormGroup>
           <FormGroup
             key={i}
-            label={`Case no ${i + 1} output expression:`}
+            label={`Case no. ${i + 1} output expression:`}
             helperText="The expression to output if this case is activated. Accepts any JS expression. You can access the inputs data using the inputs object. For example, `inputs.name`"
           >
             <InputGroup
@@ -134,7 +136,7 @@ const SwitchEditor: MacroEditorComp<SwitchConfig> = function SwitchEditor(
     return (
       <>
         {cases}
-        {cases.length < 6 ? (
+        {cases.length < MAX_CASES ? (
           <Button
             onClick={() => {
               const newCases = [...value.cases];

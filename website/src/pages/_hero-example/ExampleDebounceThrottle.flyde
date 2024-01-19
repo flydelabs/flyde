@@ -5,8 +5,6 @@ imports:
     - Debounce
     - Loop List
     - InlineValue
-    - Conditional
-    - Set Global State
 node:
   instances:
     - pos:
@@ -77,31 +75,6 @@ node:
         value: 2
         type: number
         label: "2"
-    - pos:
-        x: -551.24662109375
-        y: -391.1538330078125
-      id: kranyeov6mwwbizmthiwzl32
-      inputConfig: {}
-      nodeId: Conditional__kranyeov6mwwbizmthiwzl32
-      macroId: Conditional
-      macroData:
-        compareTo:
-          mode: static
-          value: ""
-          type: string
-        propertyPath: ""
-        condition:
-          type: EQUAL
-        trueValue:
-          type: value
-        falseValue:
-          type: value
-    - pos:
-        x: -464.5328515625
-        y: -216.0344921875
-      id: Set Global State-hf03hb1
-      inputConfig: {}
-      nodeId: Set Global State
   connections:
     - from:
         insId: dimxqnz6n9uhawffzb6urp0y

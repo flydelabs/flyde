@@ -28,7 +28,7 @@ const instance = z
     visibleInputs: z.optional(z.array(z.string())),
     visibleOutputs: z.optional(z.array(z.string())),
     nodeId: z.optional(z.string()),
-    node: z.optional(z.any()),
+    node: z.optional(z.lazy(() => visualNode)),
     macroId: z.optional(z.string()),
     macroData: z.optional(z.any()),
     style: z.optional(nodeStyle),

@@ -4,8 +4,8 @@ imports:
 node:
   instances:
     - pos:
-        x: -36.800262451171875
-        y: 129.30023193359375
+        x: -47.599151611328125
+        y: 80.13563537597656
       id: ins1
       inputConfig: {}
       node:
@@ -15,15 +15,21 @@ node:
             type: number
             mode: required
         outputs:
-          r: number
-        inputsPosition: {}
-        outputsPosition: {}
+          r: {}
+        inputsPosition:
+          n:
+            x: 102.92330932617188
+            y: -51.256927490234375
+        outputsPosition:
+          r:
+            x: 76.64471435546875
+            y: 151.6722412109375
         instances:
           - id: ins1
             nodeId: Add
             pos:
-              x: 0
-              y: 0
+              x: 71.9603271484375
+              y: 5.00689697265625
             inputConfig:
               b:
                 mode: queue

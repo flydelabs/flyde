@@ -13,6 +13,7 @@
 @import "../vars.scss";
 @import "./SelectionIndicator/SelectionIndicator.scss";
 @import "./NodesLibrary/NodesLibrary.scss";
+@import "./RunFlowModal/RunFlowModal.scss";
 
 .visual-node-editor {
   &:not(.dark) {
@@ -194,5 +195,11 @@
     border-radius: 5px;
     font-size: 12px;
     font-family: monospace;
+  }
+
+  .run-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
   }
 }

@@ -112,7 +112,7 @@ export const Conditional: MacroNode<ConditionalConfig> = {
     };
   },
   defaultData: {
-    compareTo: { mode: "static", value: "", type: "string" },
+    compareTo: { mode: "dynamic", propertyPath: "" },
     propertyPath: "",
     condition: {
       type: ConditionType.Equal,

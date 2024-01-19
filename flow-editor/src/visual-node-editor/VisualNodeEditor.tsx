@@ -127,6 +127,9 @@ import {
 } from "./SelectionIndicator";
 import { NodesLibrary } from "./NodesLibrary";
 import { library } from "@fortawesome/fontawesome-svg-core";
+import { RunFlowModal } from "./RunFlowModal";
+
+import { Play } from "@blueprintjs/icons";
 
 const MemodSlider = React.memo(Slider);
 
@@ -268,6 +271,8 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       const [lastSelectedId, setLastSelectedId] = useState<string>(); // to avoid it disappearing when doubling clicking to edit
 
       const [didCenterInitially, setDidCenterInitially] = useState(false);
+
+      const [runModalVisible, setRunModalVisible] = useState(false);
 
       const [quickAddMenuVisible, setQuickAddMenuVisible] =
         useState<QuickAddMenuData>();
@@ -2195,6 +2200,14 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         vpSize,
       ]);
 
+      const closeRunModal = React.useCallback(() => {
+        setRunModalVisible(false);
+      }, []);
+
+      const openRunModal = React.useCallback(() => {
+        setRunModalVisible(true);
+      }, []);
+
       try {
         return (
           <ContextMenu
@@ -2381,8 +2394,21 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                 onDelete={onDeleteInstances}
               />
             ) : null}
-            {libraryData.groups.length ? (
+            {!openInlineInstance && libraryData.groups.length ? (
               <NodesLibrary {...libraryData} onAddNode={onAddNode} />
+            ) : null}
+            <div className="run-btn-container">
+              <Button
+                className="run-btn"
+                onClick={openRunModal}
+                rightIcon={<Play />}
+                small
+              >
+                Test Flow
+              </Button>
+            </div>
+            {runModalVisible ? (
+              <RunFlowModal node={node} onClose={closeRunModal} />
             ) : null}
           </ContextMenu>
         );

@@ -4,6 +4,7 @@ import "./App.scss";
 import {
   FlydeFlow,
   ImportableSource,
+  isInlineNodeInstance,
   isMacroNodeInstance,
   NodeLibraryData,
   ResolvedDependenciesDefinitions,
@@ -141,6 +142,9 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
     const insMacroDatas = flow.node.instances.flatMap((ins) => {
       if (isMacroNodeInstance(ins)) {
         return ins.macroData;
+      } else if (isInlineNodeInstance(ins)) {
+        // hack so this covers also inline nodes, probably inefficient (such as everything in this section)
+        return ins.node;
       } else {
         return [];
       }

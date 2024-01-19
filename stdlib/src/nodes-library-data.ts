@@ -1,4 +1,3 @@
-import { NodeLibraryData, extractMetadata } from "@flyde/core";
 import {
   AccumulateValuesByCount,
   CodeExpression,
@@ -25,7 +24,7 @@ export function getUnresolvedNodesLibraryData() {
         nodes: [Conditional, Switch, LoopList],
       },
       {
-        title: "Custom Code",
+        title: "Values & Custom Code",
         nodes: [InlineValue, CodeExpression],
       },
       {

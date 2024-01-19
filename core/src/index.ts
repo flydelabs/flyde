@@ -6,7 +6,6 @@ import {
   InputPinsConfig,
   Node,
   NodeDefinition,
-  NodeMetadata,
   NodeOrMacroDefinition,
 } from "./node";
 

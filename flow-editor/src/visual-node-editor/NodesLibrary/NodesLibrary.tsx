@@ -5,6 +5,8 @@ import React, { memo, useEffect, useState } from "react";
 import { useDependenciesContext } from "../../flow-editor/DependenciesContext";
 import { AddNodeMenu } from "./AddNodeMenu";
 import { useDarkMode } from "../../flow-editor/DarkModeContext";
+import { useIsFirstRender } from "usehooks-ts";
+import p from "@blueprintjs/icons/lib/esm/generated/16px/paths/blank";
 
 export interface NodesLibraryProps extends NodeLibraryData {
   onAddNode: (node: ImportableSource) => void;
@@ -15,6 +17,7 @@ export const NodesLibrary: React.FC<NodesLibraryProps> = memo((props) => {
   const [isClosed, setIsClosed] = React.useState(false);
 
   const [shouldAnimate, setShouldAnimate] = React.useState(false);
+  const isFirstRender = useIsFirstRender();
 
   const [showAddNodeMenu, setShowAddNodeMenu] = React.useState(false);
 
@@ -22,11 +25,14 @@ export const NodesLibrary: React.FC<NodesLibraryProps> = memo((props) => {
 
   const darkMode = useDarkMode();
 
-  useEffect(() => {
-    setShouldAnimate(true);
-  }, [isClosed]);
-
   const [openGroup, setOpenGroup] = useState(groups[0]?.title ?? "");
+
+  useEffect(() => {
+    if (!isFirstRender) {
+      setShouldAnimate(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isClosed]);
 
   useEffect(() => {
     if (groups.length) {
@@ -58,23 +64,23 @@ export const NodesLibrary: React.FC<NodesLibraryProps> = memo((props) => {
             >
               {group.title}
             </div>
-            {openGroup === group.title ? (
-              <div className="group-items">
-                {group.nodes.map((node) => (
-                  <div
-                    className="group-item"
-                    onClick={() =>
-                      props.onAddNode({
-                        module: "@flyde/stdlib",
-                        node: node as ImportedNode,
-                      })
-                    }
-                  >
-                    {node.displayName ?? node.id}
-                  </div>
-                ))}
-              </div>
-            ) : null}
+            {/* {openGroup === group.title ? ( */}
+            <div className="group-items">
+              {group.nodes.map((node) => (
+                <div
+                  className="group-item"
+                  onClick={() =>
+                    props.onAddNode({
+                      module: "@flyde/stdlib",
+                      node: node as ImportedNode,
+                    })
+                  }
+                >
+                  {node.displayName ?? node.id}
+                </div>
+              ))}
+            </div>
+            {/* ) : null} */}
           </div>
         ))}
       </div>
