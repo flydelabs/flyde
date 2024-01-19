@@ -94,8 +94,8 @@ node:
       macroId: InlineValue
       macroData:
         type: string
-        value: "ð¤"
-        label: "\"ð¤\""
+        value: 🤖
+        label: '"🤖"'
   connections:
     - from:
         insId: rjyjsbcahykm15dllqw8tlzj

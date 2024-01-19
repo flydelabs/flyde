@@ -77,7 +77,6 @@ export const runDevServer = (
       }
 
       const fullPath = join(rootDir, filename);
-      // const fullPath = filename; //j oin(rootDir, filename);
 
       const resolvedFlow = await resolveFlowByPath(fullPath, "definition");
       res.send(resolvedFlow);
