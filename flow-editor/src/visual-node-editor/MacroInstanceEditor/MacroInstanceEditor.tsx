@@ -47,7 +47,7 @@ export const MacroInstanceEditor: React.FC<MacroInstanceEditorProps> = (
       isOpen={true}
       title={`Edit ${macro.displayName ?? macro.id} Configuration`}
       onClose={props.onCancel}
-      className="macro-instance-editor"
+      className="macro-instance-editor no-drag"
     >
       <main className={classNames(Classes.DIALOG_BODY)} tabIndex={0}>
         <ErrorBoundary fallback={<span>bob</span>}>

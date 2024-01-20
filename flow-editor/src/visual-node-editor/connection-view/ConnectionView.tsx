@@ -86,9 +86,8 @@ export const SingleConnectionView: React.FC<ConnectionItemViewProps> = (
     instances.find((i) => i.id === from.insId);
 
   if (!fromInstance && isInternalConnectionNode(from)) {
-    throw new Error(
-      `impossible state  - "from instance id - [${from.insId}] does not exist"`
-    );
+    console.warn(`Could not find instance ${from.insId} for connection`, from);
+    return null;
   }
 
   const fromNode =

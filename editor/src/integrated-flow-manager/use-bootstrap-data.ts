@@ -22,7 +22,8 @@ export const useBootstrapData = (): BootstrapData | undefined => {
   if (isBrowser) {
     try {
       const rawData = (window as any).__bootstrapData;
-      const parsedData = JSON.parse(atob(rawData));
+      const decodedData = decodeURIComponent(escape(atob(rawData)));
+      const parsedData = JSON.parse(decodedData);
       setCachedData(parsedData);
       return parsedData;
     } catch {

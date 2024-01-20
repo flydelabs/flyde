@@ -51,8 +51,6 @@ export const Node: CodeNode = {
 
   const fileName = id.replace(/[^a-zA-Z0-9]/g, "-").toLowerCase();
 
-  console.log({ code, functionBody });
-
   return { code, fileName };
 }
 
@@ -63,7 +61,6 @@ export async function generateAndSaveNode(
 ): Promise<ImportableSource> {
   const { fileName, code } = await generateNode(prompt);
 
-  console.log({ fileName, code });
   let filePath = join(rootDir, `${fileName}.flyde.ts`);
   if (existsSync(filePath)) {
     filePath = filePath.replace(/\.flyde\.ts$/, `${randomInt(9999)}.flyde.ts`);

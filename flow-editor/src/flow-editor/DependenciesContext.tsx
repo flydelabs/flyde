@@ -2,6 +2,7 @@ import {
   ResolvedDependenciesDefinitions,
   ImportableSource,
   Pos,
+  NodeLibraryData,
 } from "@flyde/core";
 import type { ImportablesResult } from "@flyde/dev-server";
 import { createContext, useContext } from "react";
@@ -23,12 +24,14 @@ export interface DependenciesContextData {
     }
   ) => Promise<ResolvedDependenciesDefinitions>;
   onRequestImportables: () => Promise<LocalImportableResult>;
+  libraryData: NodeLibraryData;
 }
 
 const DependenciesContext = createContext<DependenciesContextData>({
   resolvedDependencies: {},
   onImportNode: () => Promise.reject(new Error("Not implemented")),
   onRequestImportables: () => Promise.reject(new Error("Not implemented")),
+  libraryData: { groups: [] },
 });
 
 export const DependenciesContextProvider = DependenciesContext.Provider;

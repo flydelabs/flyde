@@ -4,7 +4,9 @@ import "./App.scss";
 import {
   FlydeFlow,
   ImportableSource,
+  isInlineNodeInstance,
   isMacroNodeInstance,
+  NodeLibraryData,
   ResolvedDependenciesDefinitions,
 } from "@flyde/core";
 
@@ -77,6 +79,16 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
 
   const lastChangeReason = React.useRef("");
 
+  const [libraryData, setLibraryData] = React.useState<NodeLibraryData>({
+    groups: [],
+  });
+
+  useEffect(() => {
+    ports.getLibraryData().then((data) => {
+      setLibraryData(data);
+    });
+  }, [ports]);
+
   const [editorState, setEditorState] = React.useState<FlowEditorState>({
     flow: initialFlow,
     boardData: {
@@ -130,6 +142,9 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
     const insMacroDatas = flow.node.instances.flatMap((ins) => {
       if (isMacroNodeInstance(ins)) {
         return ins.macroData;
+      } else if (isInlineNodeInstance(ins)) {
+        // hack so this covers also inline nodes, probably inefficient (such as everything in this section)
+        return ins.node;
       } else {
         return [];
       }
@@ -140,7 +155,7 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
       ports
         .resolveDeps({
           flow: editorState.flow,
-          absPath: props.integratedSource,
+          relativePath: props.integratedSource,
         })
         .then((deps) => {
           setCurrentResolvedDeps(deps);
@@ -222,7 +237,7 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
           flow: changedFlow,
         });
         const deps = await ports.resolveDeps({
-          absPath: props.integratedSource,
+          relativePath: props.integratedSource,
         });
         setCurrentResolvedDeps(deps);
       } else {
@@ -382,8 +397,9 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
       resolvedDependencies: currentResolvedDeps,
       onImportNode,
       onRequestImportables: queryImportables,
+      libraryData,
     }),
-    [currentResolvedDeps, onImportNode, queryImportables]
+    [currentResolvedDeps, onImportNode, queryImportables, libraryData]
   );
 
   return (

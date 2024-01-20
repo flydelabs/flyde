@@ -2,8 +2,8 @@ import axios from "axios";
 import {
   FlydeFlow,
   ImportableSource,
-  ResolvedDependenciesDefinitions,
-  ResolvedFlydeFlow,
+  NodeLibraryData,
+  NodeLibraryGroup,
   ResolvedFlydeFlowDefinition,
 } from "@flyde/core";
 import { FolderStructure } from "./fs-helper/shared";
@@ -43,6 +43,9 @@ export const createDevServerClient = (baseUrl: string) => {
       return axios
         .post(`${baseUrl}/generateNode`, { prompt })
         .then((res) => res.data);
+    },
+    getLibraryData: (): Promise<NodeLibraryData> => {
+      return axios.get(`${baseUrl}/library`).then((res) => res.data);
     },
   };
 };

@@ -13,18 +13,20 @@ import {
 } from "@blueprintjs/core";
 import classNames from "classnames";
 import { BaseNode } from "@flyde/core";
-import { useLocalStorage } from "../../../lib/user-preferences";
-import { InfoTooltip } from "../../../lib/InfoTooltip";
+import { useLocalStorage } from "../../lib/user-preferences";
+import { InfoTooltip } from "../../lib/InfoTooltip";
+import { usePorts } from "../../flow-editor/ports";
 
 export interface RunFlowModalProps {
   node: BaseNode;
-  onRun: (inputs: Record<string, any>, executionDelay: number) => void;
   onClose: () => void;
 }
 
 export const RunFlowModal: React.FC<RunFlowModalProps> = React.memo(
   function RunFlowModal(props) {
-    const { onRun, onClose, node } = props;
+    const { onClose, node } = props;
+
+    const { onRunFlow } = usePorts();
 
     const [executionDelay, setExecutionDelay] = React.useState(0);
 
@@ -52,8 +54,9 @@ export const RunFlowModal: React.FC<RunFlowModalProps> = React.memo(
     const _onRun = React.useCallback(() => {
       const inputs = JSON.parse(inputsValue);
       setLastValues(inputs);
-      onRun(inputs, executionDelay);
-    }, [onRun, setLastValues, inputsValue, executionDelay]);
+      onRunFlow(inputs, executionDelay);
+      onClose();
+    }, [inputsValue, setLastValues, onRunFlow, executionDelay, onClose]);
 
     const onKeyDown: React.KeyboardEventHandler<any> = (e) => {
       if (e.key === "Enter" && e.metaKey) {

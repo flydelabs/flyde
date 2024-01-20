@@ -280,6 +280,7 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = (props) => {
       resolvedDependencies: resolvedDeps,
       onImportNode,
       onRequestImportables,
+      libraryData: { groups: [] },
     };
   }, [resolvedDeps]);
 

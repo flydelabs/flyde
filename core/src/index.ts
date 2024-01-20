@@ -6,6 +6,7 @@ import {
   InputPinsConfig,
   Node,
   NodeDefinition,
+  NodeOrMacroDefinition,
 } from "./node";
 
 export * from "./connect";
@@ -28,3 +29,12 @@ export type NodesCollection = OMap<Node>;
 export type NodesDefCollection = OMap<NodeDefinition>;
 
 export type CustomNodesCollection = OMap<CustomNode>;
+
+export interface NodeLibraryGroup {
+  title: string;
+  nodes: NodeOrMacroDefinition[];
+}
+
+export interface NodeLibraryData {
+  groups: NodeLibraryGroup[];
+}

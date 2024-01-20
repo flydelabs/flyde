@@ -24,7 +24,7 @@ export const Switch: MacroNode<SwitchConfig> = {
     "Allows you to switch between multiple outputs based on the value of one input or more, using code expressions",
   runFnBuilder: (config) => {
     function evalExpression(expression: string, inputs: any) {
-      return eval(`(inputs) => ${expression}`)(inputs);
+      return eval(`(inputs) => (${expression})`)(inputs);
     }
     return (inputs, outputs, adv) => {
       const { defaultCase, cases: cases } = config;
@@ -33,8 +33,11 @@ export const Switch: MacroNode<SwitchConfig> = {
 
       for (const { name, conditionExpression, outputExpression } of cases) {
         try {
-          if (evalExpression(conditionExpression, inputs)) {
+          const condition = evalExpression(conditionExpression, inputs);
+          console.log({ condition, conditionExpression, inputs });
+          if (condition) {
             try {
+              console.log(4242, condition);
               outputs[name].next(evalExpression(outputExpression, inputs));
               foundCase = true;
             } catch (e) {
@@ -91,18 +94,13 @@ export const Switch: MacroNode<SwitchConfig> = {
     cases: [
       {
         name: "case1",
-        conditionExpression: "inputs.value > 42",
-        outputExpression: "inputs.value * 2",
-      },
-      {
-        name: "case2",
-        conditionExpression: "inputs.value < 42",
-        outputExpression: "inputs.value / 2",
+        conditionExpression: "",
+        outputExpression: "inputs.value",
       },
     ],
     defaultCase: {
       enabled: true,
-      outputExpression: "'Something else'",
+      outputExpression: "input.value",
     },
   },
   editorComponentBundlePath: "../../../dist/ui/Switch.js",
