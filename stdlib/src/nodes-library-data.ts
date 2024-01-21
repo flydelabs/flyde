@@ -1,5 +1,4 @@
 import {
-  AccumulateValuesByCount,
   CodeExpression,
   Conditional,
   Debounce,
@@ -15,6 +14,7 @@ import {
   Throttle,
 } from "./all-browser";
 import { Switch } from "./ControlFlow/Switch.flyde";
+import { Collect } from "./Lists/Collect/Collect.flyde";
 
 export function getUnresolvedNodesLibraryData() {
   return {
@@ -29,7 +29,7 @@ export function getUnresolvedNodesLibraryData() {
       },
       {
         title: "Objects & Arrays",
-        nodes: [GetAttribute, SpreadList, AccumulateValuesByCount],
+        nodes: [GetAttribute, Collect, SpreadList],
       },
       {
         title: "State",

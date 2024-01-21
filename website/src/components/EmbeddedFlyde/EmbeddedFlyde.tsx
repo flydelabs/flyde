@@ -314,6 +314,13 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = (props) => {
             const macroNode = Object.values(stdlib).find(
               (p) => isMacroNode(p) && p.id === ins.macroId
             ) as MacroNode<any>;
+
+            if (!macroNode) {
+              throw new Error(
+                `Could not find macro node ${ins.macroId} in embedded stdlib`
+              );
+            }
+
             const newNode = processMacroNodeInstance("", macroNode, ins);
 
             newDeps[newNode.id] = { ...newNode, source: { path: "" } };

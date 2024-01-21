@@ -8,8 +8,8 @@ imports:
 node:
   instances:
     - pos:
-        x: -814.9549389648437
-        y: -260.40238008916066
+        x: -856.5851879882812
+        y: -266.96704683720753
       id: wj31gd73i5l111q999pv4kor
       inputConfig: {}
       visibleOutputs:
@@ -21,8 +21,8 @@ node:
         type: static
         timeMs: 1000
     - pos:
-        x: -975.6379223632812
-        y: -260.09256563603566
+        x: -1015.6390209960937
+        y: -264.1740170520513
       id: eaa2b80mmdusjvxi3fve0du1
       inputConfig: {}
       nodeId: Debounce__eaa2b80mmdusjvxi3fve0du1
@@ -54,8 +54,8 @@ node:
         size: small
         icon: fa-list
     - pos:
-        x: -939.2706879343361
-        y: -508.02298894543446
+        x: -933.5155609812111
+        y: -500.67691960949696
       id: d3spgd53a3y1slhtrofzwvaj
       inputConfig: {}
       nodeId: InlineValue__d3spgd53a3y1slhtrofzwvaj
@@ -65,8 +65,8 @@ node:
         type: string
         label: '"Hello!"'
     - pos:
-        x: -815.1555322265625
-        y: -507.41057861328125
+        x: -814.3413232421875
+        y: -501.70553100585937
       id: ApisCombination-z904924
       inputConfig: {}
       nodeId: InlineValue__ApisCombination-z904924
@@ -75,6 +75,28 @@ node:
         value: 2
         type: number
         label: "2"
+    - pos:
+        x: -796.528125
+        y: -167.17826256800234
+      id: scs3pycv9lz28ykunbkqn9to
+      inputConfig: {}
+      nodeId: InlineValue__scs3pycv9lz28ykunbkqn9to
+      macroId: InlineValue
+      macroData:
+        type: string
+        value: Throttled
+        label: '"Throttled"'
+    - pos:
+        x: -1023.210234375
+        y: -165.48671508789062
+      id: ApisCombination-3k049q4
+      inputConfig: {}
+      nodeId: InlineValue__ApisCombination-3k049q4
+      macroId: InlineValue
+      macroData:
+        type: string
+        value: Debounced
+        label: '"Debounced"'
   connections:
     - from:
         insId: dimxqnz6n9uhawffzb6urp0y
@@ -107,14 +129,26 @@ node:
         insId: dimxqnz6n9uhawffzb6urp0y
         pinId: times
     - from:
-        insId: eaa2b80mmdusjvxi3fve0du1
-        pinId: debouncedValue
+        insId: scs3pycv9lz28ykunbkqn9to
+        pinId: value
       to:
         insId: __this
         pinId: output
     - from:
         insId: wj31gd73i5l111q999pv4kor
         pinId: __error
+      to:
+        insId: scs3pycv9lz28ykunbkqn9to
+        pinId: __trigger
+    - from:
+        insId: eaa2b80mmdusjvxi3fve0du1
+        pinId: debouncedValue
+      to:
+        insId: ApisCombination-3k049q4
+        pinId: __trigger
+    - from:
+        insId: ApisCombination-3k049q4
+        pinId: value
       to:
         insId: __this
         pinId: output
@@ -149,8 +183,8 @@ node:
       x: -499.82438378976735
       y: 706.7650396699393
     output:
-      x: -855.9336105292145
-      y: -95.50906588540926
+      x: -873.3930831854645
+      y: -55.83529879556551
     response:
       x: -506.3386688159596
       y: 488.67302443385125

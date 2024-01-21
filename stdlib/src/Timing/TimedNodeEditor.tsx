@@ -1,7 +1,8 @@
 import { FormGroup, HTMLSelect, NumericInput } from "@blueprintjs/core";
 import { MacroEditorComp } from "../lib/MacroEditorComp";
-import { TimingNodeConfig } from "./Timing.flyde";
+
 import React from "react";
+import { TimingNodeConfig } from "./common";
 
 export const TimedNodeEditor: MacroEditorComp<TimingNodeConfig> =
   function TimedNodeEditor(props) {
@@ -15,11 +16,11 @@ export const TimedNodeEditor: MacroEditorComp<TimingNodeConfig> =
           helperText="If dynamic mode is chosen, a new input pin will be exposed for the time value."
         >
           <HTMLSelect
-            value={value.type}
+            value={value.mode}
             onChange={(e) =>
               onChange({
                 ...value,
-                type: e.target.value as any,
+                mode: e.target.value as any,
               })
             }
           >
@@ -27,7 +28,7 @@ export const TimedNodeEditor: MacroEditorComp<TimingNodeConfig> =
             <option value="dynamic">Dynamic (via input)</option>
           </HTMLSelect>
         </FormGroup>
-        {value.type === "static" ? (
+        {value.mode === "static" ? (
           <FormGroup label="Time (in milliseconds):" inline>
             <NumericInput
               value={value.timeMs}

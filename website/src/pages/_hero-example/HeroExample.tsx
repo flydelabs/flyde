@@ -51,7 +51,7 @@ export const HeroExample: React.FC<{ example: (typeof examples)[0] }> = ({
       onRunExample();
     }, 1500);
     const interval = setInterval(() => {
-      onRunExample();
+      // onRunExample();
     }, RERUN_INTERVAL);
 
     return () => {
@@ -59,6 +59,23 @@ export const HeroExample: React.FC<{ example: (typeof examples)[0] }> = ({
       clearInterval(interval);
     };
   }, [onRunExample]);
+
+  const logsContainerRef = React.useRef<HTMLDivElement>(null);
+
+  const onLogOutput = React.useCallback(
+    (output) => {
+      setLogs((logs) => [
+        ...logs,
+        `[${new Date().toLocaleTimeString()}] Output: ${output}`,
+      ]);
+
+      if (logsContainerRef.current) {
+        logsContainerRef.current.scrollTop =
+          logsContainerRef.current.scrollHeight;
+      }
+    },
+    [setLogs]
+  );
 
   return (
     <div className="hero-example">
@@ -88,12 +105,7 @@ export const HeroExample: React.FC<{ example: (typeof examples)[0] }> = ({
           <EmbeddedFlyde
             flowProps={flowProps}
             debugDelay={100}
-            onOutput={(output) => {
-              setLogs((logs) => [
-                `[${new Date().toLocaleTimeString()}] Output: ${output}`,
-                ...logs,
-              ]);
-            }}
+            onOutput={onLogOutput}
             // onCompleted={onCompleted}
           />
         </div>
@@ -114,7 +126,7 @@ export const HeroExample: React.FC<{ example: (typeof examples)[0] }> = ({
       {/* </main> */}
       <div className="terminal-wrapper">
         <div className="file-tag">Terminal</div>
-        <div className="terminal-emulator">
+        <div className="terminal-emulator" ref={logsContainerRef}>
           {logs.length ? (
             logs.map((log, i) => <div>{log}</div>)
           ) : (

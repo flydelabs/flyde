@@ -33,7 +33,6 @@ export const createHistoryPlayer = (): HistoryPlayer => {
         pinType === "input"
           ? DebuggerEventType.INPUT_CHANGE
           : DebuggerEventType.OUTPUT_CHANGE;
-      console.log({ insId, pinId, type });
 
       if (pinId) {
         const id = `${insId}.${pinId}.${type}`;

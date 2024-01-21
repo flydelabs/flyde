@@ -1,7 +1,7 @@
 import { MacroEditorComp } from "../lib/MacroEditorComp";
-import { IntervalConfig } from "./Timing.flyde";
 import { TimedNodeEditor } from "./TimedNodeEditor";
+import { TimingNodeConfig } from "./common";
 
-const DebounceEditor: MacroEditorComp<IntervalConfig> = TimedNodeEditor;
+const DebounceEditor: MacroEditorComp<TimingNodeConfig> = TimedNodeEditor;
 
 export default DebounceEditor;

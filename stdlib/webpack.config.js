@@ -9,14 +9,11 @@ const pairs = [
   { entry: "./src/Http/HttpConfigEditor.tsx", name: "Http" },
   { entry: "./src/ControlFlow/Conditional.tsx", name: "Conditional" },
   { entry: "./src/ControlFlow/Switch.tsx", name: "Switch" },
-  { entry: "./src/Timing/Delay.tsx", name: "Delay" },
+  { entry: "./src/Timing/Delay/Delay.tsx", name: "Delay" },
   { entry: "./src/Timing/Debounce.tsx", name: "Debounce" },
   { entry: "./src/Timing/Throttle.tsx", name: "Throttle" },
-  { entry: "./src/Timing/Interval.tsx", name: "Interval" },
-  // {
-  //   entry: "./src/macro-node-simple/InlineValueEditor.tsx",
-  //   name: "InlineValue",
-  // },
+  { entry: "./src/Timing/Interval/Interval.tsx", name: "Interval" },
+  { entry: "./src/Lists/Collect/Collect.tsx", name: "Collect" },
 ];
 
 module.exports = pairs.map(({ entry, name }) => ({

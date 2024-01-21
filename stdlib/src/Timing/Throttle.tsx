@@ -1,7 +1,7 @@
 import { MacroEditorComp } from "../lib/MacroEditorComp";
-import { IntervalConfig } from "./Timing.flyde";
 import { TimedNodeEditor } from "./TimedNodeEditor";
+import { TimingNodeConfig } from "./common";
 
-const ThrottleEditor: MacroEditorComp<IntervalConfig> = TimedNodeEditor;
+const ThrottleEditor: MacroEditorComp<TimingNodeConfig> = TimedNodeEditor;
 
 export default ThrottleEditor;

@@ -5,8 +5,8 @@ imports:
 node:
   instances:
     - pos:
-        x: -748.8837925023531
-        y: -181.52578274365857
+        x: -765.7574497289156
+        y: -199.0254470502992
       id: hvnxp46iusf1g91k6dua576w
       inputConfig: {}
       nodeId: Delay__hvnxp46iusf1g91k6dua576w
@@ -19,8 +19,8 @@ node:
         icon: fa-clock
         color: "#00bbf9"
     - pos:
-        x: -863.0521042795979
-        y: -280.813338010823
+        x: -938.1923630686604
+        y: -328.3055560284011
       id: qi81a3d3zqj4reik3qaogcx9
       inputConfig: {}
       nodeId: InlineValue__qi81a3d3zqj4reik3qaogcx9
@@ -29,9 +29,12 @@ node:
         type: string
         value: Hello
         label: '"Hello"'
+      style:
+        size: regular
+        icon: pen
     - pos:
-        x: -750.891484375
-        y: -240.04368041992188
+        x: -772.773564453125
+        y: -276.86698364257813
       id: ApisCombination-o5049mg
       inputConfig: {}
       nodeId: InlineValue__ApisCombination-o5049mg
@@ -40,6 +43,9 @@ node:
         type: string
         value: World
         label: '"World"'
+      style:
+        size: regular
+        icon: pen
   connections:
     - from:
         insId: ApisCombination-o5049mg
