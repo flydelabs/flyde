@@ -128,6 +128,13 @@
   }
 }
 
+@at-root {
+  .menu-tooltip {
+    max-width: 300px;
+    font-size: 12px;
+  }
+}
+
 @keyframes rotate {
   0% {
     transform: rotate(0deg) translateY(0px);

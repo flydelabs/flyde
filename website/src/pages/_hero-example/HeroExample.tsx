@@ -18,7 +18,9 @@ console.log(\`Output: \$\{output\}\`);`;
 
 import "./HeroExample.scss";
 import { examples } from "..";
-import { Loader } from "@flyde/flow-editor";
+import { Loader, createRuntimePlayer } from "@flyde/flow-editor";
+import { createHistoryPlayer } from "@site/src/components/EmbeddedFlyde/createHistoryPlayer";
+import { runFlow } from "./runFlow";
 
 const RERUN_INTERVAL = 4200 * 2.5;
 
@@ -30,33 +32,56 @@ export const HeroExample: React.FC<{ example: (typeof examples)[0] }> = ({
 
   const [fileVisible, setFileVisible] = React.useState("Example.flyde");
 
-  const inputs = useRef({
-    __trigger: dynamicNodeInput(),
-  });
+  const runtimeHandle = useRef<{ stop?: () => void }>({});
 
-  const result = useRef(dynamicOutput());
+  const [historyPlayer, setHistoryPlayer] = React.useState<any>(
+    createHistoryPlayer()
+  );
+
+  const [runtimePlayer, setRuntimePlayer] = React.useState<any>(
+    createRuntimePlayer()
+  );
+
   const flowProps = {
     initialFlow: currentExample.flow.flow,
     dependencies: currentExample.flow.dependencies,
-    inputs: inputs.current,
-    output: result.current,
   };
 
   const onRunExample = React.useCallback(() => {
-    inputs.current.__trigger.subject.next("run");
+    console.log(4242, runtimeHandle.current);
+
+    const { executeResult } = runFlow({
+      flow: currentExample.flow.flow,
+      dependencies: currentExample.flow.dependencies,
+      inputs: {},
+      output: dynamicOutput(),
+      onError: noop,
+      historyPlayer,
+      runtimePlayer,
+    });
+
+    // (window as any).__Bbo = runtimeHandle.current;
+    // runtimeHandle.current.stop?.();
+    // inputs.current.__trigger.subject.next("run");
   }, []);
+
+  // const onCompleted = React.useCallback(() => {
+  //   setLogs((logs) => [
+  //     ...logs,
+  //     "-- Flow completed, re-running in 3 seconds -- ",
+  //   ]);
+  //   setTimeout(() => {
+  //     onRunExample();
+  //   }, 3000);
+  // }, []);
 
   React.useEffect(() => {
     const timer = setTimeout(() => {
       onRunExample();
     }, 1500);
-    const interval = setInterval(() => {
-      // onRunExample();
-    }, RERUN_INTERVAL);
 
     return () => {
       clearTimeout(timer);
-      clearInterval(interval);
     };
   }, [onRunExample]);
 
@@ -104,9 +129,8 @@ export const HeroExample: React.FC<{ example: (typeof examples)[0] }> = ({
           </div>
           <EmbeddedFlyde
             flowProps={flowProps}
-            debugDelay={100}
-            onOutput={onLogOutput}
-            // onCompleted={onCompleted}
+            localDebugger={undefined as any}
+            historyPlayer={historyPlayer}
           />
         </div>
       ) : null}

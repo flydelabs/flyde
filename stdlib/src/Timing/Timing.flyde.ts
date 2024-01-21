@@ -1,5 +1,5 @@
 import { InputPinMap, MacroNode } from "@flyde/core";
-import { TIMING_NAMESPACE, TimingNodeConfig } from "./common";
+import { TIMING_NAMESPACE, TimingNodeConfig, timeToString } from "./common";
 
 export { Delay } from "./Delay/Delay.flyde";
 export { Interval } from "./Interval/Interval.flyde";
@@ -22,8 +22,17 @@ export const Debounce: MacroNode<DebounceConfig> = {
       inputs.delay = { description: "Delay in milliseconds" };
     }
 
+    const displayName = (() => {
+      if (config.mode === "dynamic") {
+        return "Debounce";
+      } else {
+        return `Debounce ${timeToString(config.timeMs)}`;
+      }
+    })();
+
     return {
       inputs,
+      displayName,
       outputs: {
         debouncedValue: { description: "Debounced value" },
       },
@@ -32,7 +41,7 @@ export const Debounce: MacroNode<DebounceConfig> = {
     };
   },
   runFnBuilder: (config) => {
-    return async ({ value, delay }, outputs, adv) => {
+    return ({ value, delay }, outputs, adv) => {
       const { debouncedValue } = outputs;
 
       const timer = adv.state.get("timer");
@@ -79,30 +88,43 @@ export const Throttle: MacroNode<ThrottleConfig> = {
     if (config.mode === "dynamic") {
       inputs.limitTime = { description: "Interval in milliseconds" };
     }
+
+    const displayName = (() => {
+      if (config.mode === "dynamic") {
+        return "Throttle";
+      } else {
+        return `Throttle ${timeToString(config.timeMs)}`;
+      }
+    })();
     return {
       inputs,
+      displayName,
       outputs: {
-        throttledValue: { description: "Throttled value" },
+        unthrottledValue: { description: "Unthrottled value" },
       },
       reactiveInputs: ["value"],
     };
   },
   runFnBuilder: (config) => {
-    return async ({ value, limitTime }, outputs, adv) => {
-      const { throttledValue } = outputs;
+    return async (inputs, outputs, adv) => {
+      const timeMs =
+        config.mode === "dynamic" ? inputs.limitTime : config.timeMs;
 
-      const timeMs = config.mode === "dynamic" ? limitTime : config.timeMs;
-
-      const timer = adv.state.get("timer");
-      if (timer) {
-        adv.onError(new ThrottleError(value));
+      const promise = adv.state.get("promise");
+      if (promise) {
+        adv.onError(new ThrottleError(inputs.value));
         return;
       } else {
-        throttledValue.next(value);
-        const newTimer = setTimeout(() => {
-          adv.state.set("timer", null);
-        }, timeMs);
-        adv.state.set("timer", newTimer);
+        outputs.unthrottledValue.next(inputs.value);
+        const promise = new Promise<void>((resolve) => {
+          setTimeout(() => {
+            resolve();
+          }, timeMs);
+        });
+        adv.state.set("promise", promise);
+
+        await promise;
+        adv.state.set("promise", undefined);
       }
     };
   },

@@ -20,7 +20,7 @@ export const examples = [
   {
     label: "Beep Boop",
     flow: exampleReactivity,
-    // tip: `TBD`,
+    tip: `Try changing the collection count and see the output change.`,
     playgroundUrl: "https://play.flyde.dev/?flow=hello-world",
   },
   {
@@ -32,7 +32,7 @@ export const examples = [
   {
     label: "Debounce/Throttle",
     flow: exampleDebounceThrottle,
-    tip: "Try changing the delay time.",
+    tip: "Try changing the delay time of the debounce/throttle nodes.",
     playgroundUrl: "https://play.flyde.dev/?flow=hello-world",
   },
   {
@@ -44,7 +44,7 @@ export const examples = [
 ];
 
 function HomepageHeader() {
-  const [currentExample, setCurrExample] = React.useState(examples[0]);
+  const [currentExample, setCurrExample] = React.useState(examples[2]);
 
   return (
     <div className={clsx("hero hero--primary", styles.heroBanner)}>

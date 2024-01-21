@@ -1,83 +1,40 @@
 imports:
   "@flyde/stdlib":
-    - Repeat
     - Throttle
     - Debounce
-    - Loop List
     - InlineValue
+    - Interval
+    - Collect
 node:
   instances:
     - pos:
-        x: -856.5851879882812
-        y: -266.96704683720753
+        x: -849.9802075195312
+        y: -293.42520723759816
       id: wj31gd73i5l111q999pv4kor
       inputConfig: {}
       visibleOutputs:
-        - throttledValue
+        - unthrottledValue
         - __error
       nodeId: Throttle__wj31gd73i5l111q999pv4kor
       macroId: Throttle
       macroData:
         type: static
-        timeMs: 1000
+        timeMs: 4000
+        mode: static
     - pos:
-        x: -1015.6390209960937
-        y: -264.1740170520513
+        x: -1038.8195629882812
+        y: -292.4507504504888
       id: eaa2b80mmdusjvxi3fve0du1
       inputConfig: {}
       nodeId: Debounce__eaa2b80mmdusjvxi3fve0du1
       macroId: Debounce
       macroData:
         mode: static
-        timeMs: 4200
+        timeMs: 2000
         type: static
     - pos:
-        x: -875.192960205078
-        y: -409.4281504330898
-      id: dimxqnz6n9uhawffzb6urp0y
-      inputConfig:
-        value:
-          mode: queue
-        times:
-          mode: queue
-      nodeId: Repeat
-      style:
-        size: small
-        icon: fa-list
-    - pos:
-        x: -882.643474601553
-        y: -350.2880555829314
-      id: dsqx2xve1xghrrhtx1o0ep60
-      inputConfig: {}
-      nodeId: Loop List
-      style:
-        size: small
-        icon: fa-list
-    - pos:
-        x: -933.5155609812111
-        y: -500.67691960949696
-      id: d3spgd53a3y1slhtrofzwvaj
-      inputConfig: {}
-      nodeId: InlineValue__d3spgd53a3y1slhtrofzwvaj
-      macroId: InlineValue
-      macroData:
-        value: '"Hello!"'
-        type: string
-        label: '"Hello!"'
-    - pos:
-        x: -814.3413232421875
-        y: -501.70553100585937
-      id: ApisCombination-z904924
-      inputConfig: {}
-      nodeId: InlineValue__ApisCombination-z904924
-      macroId: InlineValue
-      macroData:
-        value: 2
-        type: number
-        label: "2"
-    - pos:
-        x: -796.528125
-        y: -167.17826256800234
+        x: -781.25517578125
+        y: -169.78922448206484
       id: scs3pycv9lz28ykunbkqn9to
       inputConfig: {}
       nodeId: InlineValue__scs3pycv9lz28ykunbkqn9to
@@ -87,8 +44,8 @@ node:
         value: Throttled
         label: '"Throttled"'
     - pos:
-        x: -1023.210234375
-        y: -165.48671508789062
+        x: -1028.1461474609375
+        y: -173.36171508789062
       id: ApisCombination-3k049q4
       inputConfig: {}
       nodeId: InlineValue__ApisCombination-3k049q4
@@ -97,43 +54,164 @@ node:
         type: string
         value: Debounced
         label: '"Debounced"'
+    - pos:
+        x: -963.5435205078124
+        y: -375.7129255999589
+      id: ygnqzwi1stiki29lavj6wu2w
+      inputConfig: {}
+      nodeId: Interval__ygnqzwi1stiki29lavj6wu2w
+      macroId: Interval
+      macroData:
+        time:
+          time:
+            time:
+              time:
+                time:
+                  time:
+                    time:
+                      time:
+                        time:
+                          time:
+                            time:
+                              time:
+                                time:
+                                  time:
+                                    time:
+                                      mode: static
+                                      timeMs: 1000
+                                    value:
+                                      time:
+                                        mode: static
+                                        timeMs: 1000
+                                      value: beep
+                                      mode: static
+                                    timeMs: 3
+                                    mode: static
+                                  value:
+                                    time:
+                                      mode: static
+                                      timeMs: 1000
+                                    value: beep
+                                    mode: static
+                                  timeMs: 39
+                                  mode: static
+                                value:
+                                  time:
+                                    mode: static
+                                    timeMs: 1000
+                                  value: beep
+                                  mode: static
+                                timeMs: 3
+                                mode: static
+                              value:
+                                time:
+                                  mode: static
+                                  timeMs: 1000
+                                value: beep
+                                mode: static
+                              timeMs: 39
+                              mode: static
+                            value:
+                              time:
+                                mode: static
+                                timeMs: 1000
+                              value: beep
+                              mode: static
+                            timeMs: 3
+                            mode: static
+                          value:
+                            time:
+                              mode: static
+                              timeMs: 1000
+                            value: beep
+                            mode: static
+                          timeMs: 30
+                          mode: static
+                        value:
+                          time:
+                            mode: static
+                            timeMs: 1000
+                          value: beep
+                          mode: static
+                        timeMs: 300
+                        mode: static
+                      value:
+                        time:
+                          mode: static
+                          timeMs: 1000
+                        value: beep
+                        mode: static
+                      timeMs: 3000
+                      mode: static
+                    value:
+                      time:
+                        mode: static
+                        timeMs: 1000
+                      value: beep
+                      mode: static
+                    timeMs: 3001
+                    mode: static
+                  value:
+                    time:
+                      mode: static
+                      timeMs: 1000
+                    value: beep
+                    mode: static
+                  timeMs: 3002
+                  mode: static
+                value:
+                  time:
+                    mode: static
+                    timeMs: 1000
+                  value: beep
+                  mode: static
+                timeMs: 3001
+                mode: static
+              value:
+                time:
+                  mode: static
+                  timeMs: 1000
+                value: beep
+                mode: static
+              timeMs: 3000
+              mode: static
+            value:
+              time:
+                mode: static
+                timeMs: 1000
+              value: beep
+              mode: static
+            timeMs: 30000
+            mode: static
+          value:
+            time:
+              mode: static
+              timeMs: 1000
+            value: beep
+            mode: static
+          timeMs: 3000
+          mode: static
+        value:
+          time:
+            mode: static
+            timeMs: 1000
+          value: beep
+          mode: static
+    - pos:
+        x: -928.755859375
+        y: -90.7339411755601
+      id: lfrwwz35676vn1hb9ykzpewd
+      inputConfig: {}
+      nodeId: Collect__lfrwwz35676vn1hb9ykzpewd
+      macroId: Collect
+      macroData:
+        strategy: count
+        count:
+          mode: static
+          count: 3
+      style:
+        size: small
   connections:
-    - from:
-        insId: dimxqnz6n9uhawffzb6urp0y
-        pinId: list
-      to:
-        insId: dsqx2xve1xghrrhtx1o0ep60
-        pinId: list
-    - from:
-        insId: dsqx2xve1xghrrhtx1o0ep60
-        pinId: item
-      to:
-        insId: eaa2b80mmdusjvxi3fve0du1
-        pinId: value
-    - from:
-        insId: dsqx2xve1xghrrhtx1o0ep60
-        pinId: item
-      to:
-        insId: wj31gd73i5l111q999pv4kor
-        pinId: value
-    - from:
-        insId: d3spgd53a3y1slhtrofzwvaj
-        pinId: value
-      to:
-        insId: dimxqnz6n9uhawffzb6urp0y
-        pinId: value
-    - from:
-        insId: ApisCombination-z904924
-        pinId: value
-      to:
-        insId: dimxqnz6n9uhawffzb6urp0y
-        pinId: times
-    - from:
-        insId: scs3pycv9lz28ykunbkqn9to
-        pinId: value
-      to:
-        insId: __this
-        pinId: output
     - from:
         insId: wj31gd73i5l111q999pv4kor
         pinId: __error
@@ -147,14 +225,38 @@ node:
         insId: ApisCombination-3k049q4
         pinId: __trigger
     - from:
+        insId: ygnqzwi1stiki29lavj6wu2w
+        pinId: value
+      to:
+        insId: eaa2b80mmdusjvxi3fve0du1
+        pinId: value
+    - from:
+        insId: ygnqzwi1stiki29lavj6wu2w
+        pinId: value
+      to:
+        insId: wj31gd73i5l111q999pv4kor
+        pinId: value
+    - from:
         insId: ApisCombination-3k049q4
         pinId: value
       to:
-        insId: __this
-        pinId: output
+        insId: lfrwwz35676vn1hb9ykzpewd
+        pinId: value
     - from:
         insId: wj31gd73i5l111q999pv4kor
-        pinId: throttledValue
+        pinId: unthrottledValue
+      to:
+        insId: lfrwwz35676vn1hb9ykzpewd
+        pinId: value
+    - from:
+        insId: scs3pycv9lz28ykunbkqn9to
+        pinId: value
+      to:
+        insId: lfrwwz35676vn1hb9ykzpewd
+        pinId: value
+    - from:
+        insId: lfrwwz35676vn1hb9ykzpewd
+        pinId: list
       to:
         insId: __this
         pinId: output
@@ -183,8 +285,8 @@ node:
       x: -499.82438378976735
       y: 706.7650396699393
     output:
-      x: -873.3930831854645
-      y: -55.83529879556551
+      x: -892.9243331854645
+      y: 9.226056795254806
     response:
       x: -506.3386688159596
       y: 488.67302443385125

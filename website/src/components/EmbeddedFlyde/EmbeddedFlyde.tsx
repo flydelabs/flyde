@@ -1,5 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import * as PubSub from "pubsub-js";
+import React, { createRef, useEffect, useMemo, useRef, useState } from "react";
 import _ from "lodash";
 
 import {
@@ -12,32 +11,29 @@ import {
   FlowEditor,
   FlowEditorState,
   FlydeFlowEditorProps,
-  RuntimePlayer,
   toastMsg,
   useDebounce,
   vAdd,
 } from "@flyde/flow-editor";
 import {
   DynamicNodeInput,
-  execute,
   FlydeFlow,
   ImportedNode,
   isBaseNode,
-  keys,
   noop,
   Node,
-  NodeInputs,
   NodeInstance,
   NodeOutput,
   ResolvedDependencies,
   TRIGGER_PIN_ID,
   isMacroNodeInstance,
-  CodeNode,
   isMacroNode,
   MacroNode,
+  VisualNode,
+  isInlineNodeInstance,
+  isVisualNode,
 } from "@flyde/core";
-import { createHistoryPlayer } from "./createHistoryPlayer";
-import { createRuntimeClientDebugger } from "./createRuntimePlayerDebugger";
+import { HistoryPlayer } from "./createHistoryPlayer";
 
 import { processMacroNodeInstance } from "@flyde/resolver/dist/resolver/resolve-dependencies/process-macro-node-instance";
 
@@ -48,82 +44,24 @@ import BrowserOnly from "@docusaurus/BrowserOnly";
 import { EditorDebuggerClient } from "@site/../remote-debugger/dist";
 import { useDarkMode } from "usehooks-ts";
 
-// (global as any).vm2 = fakeVm;
-
-const historyPlayer = createHistoryPlayer();
-
 const initialPadding = [0, 20] as [number, number];
 
 export interface EmbeddedFlydeProps {
   flowProps: {
-    inputs: Record<string, DynamicNodeInput>;
     initialFlow: FlydeFlow;
     dependencies: ResolvedDependencies;
-    output: NodeOutput;
   };
-  debugDelay: number;
-  onOutput: (data: any) => void;
-  onCompleted?: (data: any) => void;
+  localDebugger: Pick<EditorDebuggerClient, "onBatchedEvents">;
+  historyPlayer: HistoryPlayer;
 }
 
-export type PlaygroundFlowDto = {
-  flow: FlydeFlow;
-  dependencies: ResolvedDependencies;
-  output: NodeOutput;
-  inputs: NodeInputs;
-  onError: any;
-  debugDelay?: number;
-  player: RuntimePlayer;
-  onCompleted?: (data: any) => void;
-};
-
-const runFlow = ({
-  flow,
-  output,
-  inputs,
-  onError,
-  debugDelay,
-  onCompleted,
-  dependencies,
-  player,
-}: PlaygroundFlowDto) => {
-  const localDebugger = createRuntimeClientDebugger(player, historyPlayer);
-
-  localDebugger.debugDelay = debugDelay;
-
-  const firstOutputName = keys(flow.node.outputs)[0];
-
-  return {
-    executeResult: execute({
-      node: flow.node,
-      inputs: inputs,
-      outputs: { [firstOutputName]: output },
-      resolvedDeps: { ...dependencies, [flow.node.id]: flow.node },
-      _debugger: localDebugger,
-      onCompleted,
-      onBubbleError: (e) => {
-        onError(e);
-      },
-      extraContext: {
-        PubSub,
-      },
-    }),
-    localDebugger,
-  };
-};
-
 export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = (props) => {
-  const { debugDelay, onOutput, flowProps } = props;
-  const { initialFlow: flow, inputs, output } = flowProps;
-
-  const runtimePlayerRef = useRef(createRuntimePlayer());
+  const { flowProps, localDebugger, historyPlayer } = props;
+  const { initialFlow: flow } = flowProps;
 
   const [resolvedDeps, setResolvedDeps] = useState<ResolvedDependencies>(
     props.flowProps.dependencies
   );
-
-  const [localDebugger, setLocalDebugger] =
-    useState<Pick<EditorDebuggerClient, "onBatchedEvents">>();
 
   const darkMode = useDarkMode();
 
@@ -252,29 +190,6 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = (props) => {
     darkMode: darkMode.isDarkMode,
   };
 
-  useEffect(() => {
-    runtimePlayerRef.current.start();
-  }, []);
-
-  useEffect(() => {
-    const { executeResult: clean, localDebugger } = runFlow({
-      flow: editorState.flow,
-      dependencies: resolvedDeps,
-      output,
-      inputs,
-      onError: noop,
-      debugDelay: debugDelay,
-      player: runtimePlayerRef.current,
-      onCompleted: props.onCompleted,
-    });
-    const sub = props.flowProps.output.subscribe((data) => onOutput(data));
-    setLocalDebugger(localDebugger);
-    return () => {
-      clean();
-      sub.unsubscribe();
-    };
-  }, [debugDelay, debouncedFlow, debouncedState]);
-
   const depsContextValue = useMemo<DependenciesContextData>(() => {
     return {
       resolvedDependencies: resolvedDeps,
@@ -309,29 +224,39 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = (props) => {
 
         const newDeps: Record<string, ImportedNode> = {};
 
-        const newInstances = editorState.flow.node.instances.map((ins) => {
-          if (isMacroNodeInstance(ins)) {
-            const macroNode = Object.values(stdlib).find(
-              (p) => isMacroNode(p) && p.id === ins.macroId
-            ) as MacroNode<any>;
+        function maybeProcessMacroNodeInstances(node: VisualNode) {
+          const newInstances = node.instances.map((ins) => {
+            if (isMacroNodeInstance(ins)) {
+              const macroNode = Object.values(stdlib).find(
+                (p) => isMacroNode(p) && p.id === ins.macroId
+              ) as MacroNode<any>;
 
-            if (!macroNode) {
-              throw new Error(
-                `Could not find macro node ${ins.macroId} in embedded stdlib`
-              );
+              if (!macroNode) {
+                throw new Error(
+                  `Could not find macro node ${ins.macroId} in embedded stdlib`
+                );
+              }
+
+              const newNode = processMacroNodeInstance("", macroNode, ins);
+
+              newDeps[newNode.id] = { ...newNode, source: { path: "" } };
+              return { ...ins, nodeId: newNode.id };
+            } else if (isInlineNodeInstance(ins) && isVisualNode(ins.node)) {
+              return {
+                ...ins,
+                node: maybeProcessMacroNodeInstances(ins.node),
+              };
+            } else {
+              return ins;
             }
-
-            const newNode = processMacroNodeInstance("", macroNode, ins);
-
-            newDeps[newNode.id] = { ...newNode, source: { path: "" } };
-            return { ...ins, nodeId: newNode.id };
-          } else {
-            return ins;
-          }
-        });
+          });
+          return { ...node, instances: newInstances };
+        }
 
         const newEditorState = produce(editorState, (draft) => {
-          draft.flow.node.instances = newInstances;
+          draft.flow.node = maybeProcessMacroNodeInstances(
+            editorState.flow.node
+          );
         });
 
         setFlowEditorState(newEditorState);
