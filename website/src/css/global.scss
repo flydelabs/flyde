@@ -43,7 +43,8 @@
 
         margin: 10px auto;
 
-        // padding-right: 0.5rem;
+        .example-btn {
+        }
       }
     }
 
@@ -68,7 +69,7 @@
       .example-actions {
         display: flex;
         flex-direction: row;
-        margin-top: 10px;
+        margin-bottom: 10px;
         align-items: center;
         flex-wrap: wrap;
         display: flex;
@@ -132,6 +133,74 @@
     -webkit-text-fill-color: transparent;
   }
   // padding-bottom: 20px; // for video
+
+  .horizontal-finger {
+    display: inline-block;
+    &.nudge {
+      animation: shake-hor 1.5s infinite;
+      transform-origin: center center;
+    }
+  }
+
+  .vertical-finger {
+    display: inline-block;
+    &.nudge {
+      animation: shake-ver 1.5s infinite;
+      transform-origin: center center;
+    }
+  }
+}
+
+@keyframes shake-hor {
+  0% {
+    transform: translateX(0);
+  }
+  46% {
+    transform: translateX(0);
+  }
+  48% {
+    transform: translateX(5px);
+  }
+  50% {
+    transform: translateX(0);
+  }
+  52% {
+    transform: translateX(-4px);
+  }
+
+  54% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes shake-ver {
+  0% {
+    transform: translateY(0);
+  }
+  46% {
+    transform: translateY(0);
+  }
+  48% {
+    transform: translateY(6px);
+  }
+  50% {
+    transform: translateY(0);
+  }
+  52% {
+    transform: translateY(-3px);
+  }
+
+  54% {
+    transform: translateY(0);
+  }
+
+  100% {
+    transform: translateY(0);
+  }
 }
 
 .hero--primary {
@@ -230,7 +299,17 @@
   }
 }
 
+@media only screen and (min-width: 1141px) {
+  .hero-vertical-only {
+    display: none !important;
+  }
+}
+
 @media only screen and (max-width: 1140px) {
+  .hero-horizontal-only {
+    display: none !important;
+  }
+
   .hero .container {
     max-width: 800px;
     flex-direction: column;
@@ -253,7 +332,6 @@
   }
 }
 
-// mobile
 @media only screen and (max-width: 600px) {
   .features-strip {
     font-size: 1.2rem;

@@ -1,7 +1,7 @@
 const { readFileSync } = require("fs");
 const { resolveFlow, deserializeFlow } = require("@flyde/resolver");
 
-const { relative, dirname } = require("path");
+const { relative, dirname, join } = require("path");
 
 module.exports = async function loader() {
   const contents = readFileSync(this.resourcePath, "utf-8");
@@ -24,6 +24,14 @@ module.exports = async function loader() {
       }
       return { ...acc, [key]: node };
     } else if (node.editorComponentBundlePath) {
+      const resolvedBundlePath = join(
+        node.source.path,
+        node.editorComponentBundlePath
+      );
+      node.editorComponentBundleContent = readFileSync(
+        resolvedBundlePath,
+        "utf-8"
+      );
       // is macro node
       return { ...acc, [key]: node };
     }

@@ -1,4 +1,12 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import _ from "lodash";
 
 import * as stdLibBrowser from "@flyde/stdlib/dist/all-browser";
@@ -50,186 +58,179 @@ export interface EmbeddedFlydeProps {
   };
   onLog: (msg: string) => void;
   onCompleted: () => void;
+  ref?: any;
 }
 
 const historyPlayer = createHistoryPlayer();
 const runtimePlayer = createRuntimePlayer();
 
-export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = (props) => {
-  const { flowProps, onCompleted: onComplete } = props;
-  const { initialFlow: flow } = flowProps;
-  const darkMode = useDarkMode();
+export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = forwardRef(
+  function EmbeddedFlyde(props, ref) {
+    const { flowProps, onCompleted: onComplete } = props;
+    const { initialFlow: flow } = flowProps;
+    const darkMode = useDarkMode();
 
-  const [resolvedDeps, setResolvedDeps] = useState<ResolvedDependencies>(
-    props.flowProps.dependencies
-  );
+    const [resolvedDeps, setResolvedDeps] = useState<ResolvedDependencies>(
+      props.flowProps.dependencies
+    );
 
-  const [editorState, setFlowEditorState] = useState<FlowEditorState>({
-    flow,
-    boardData: defaultBoardData,
-  } as FlowEditorState);
+    const [editorState, setFlowEditorState] = useState<FlowEditorState>({
+      flow,
+      boardData: defaultBoardData,
+    } as FlowEditorState);
 
-  const runtimeEditorState = useDebounce(editorState, RUNTIME_STATE_DEBOUNCE);
+    const [localDebugger, setLocalDebugger] =
+      useState<Pick<EditorDebuggerClient, "onBatchedEvents">>();
 
-  const [localDebugger, setLocalDebugger] =
-    useState<Pick<EditorDebuggerClient, "onBatchedEvents">>();
+    const cleanRunRef = useRef(() => {});
 
-  const _onImportNode: DependenciesContextData["onImportNode"] = useCallback(
-    async (importedNode, target) => {
-      const { newDeps, newState } = await onImportNode(
-        importedNode,
-        target,
-        editorState,
-        resolvedDeps
-      );
-      setResolvedDeps(newDeps);
-      setFlowEditorState(newState);
+    const _onImportNode: DependenciesContextData["onImportNode"] = useCallback(
+      async (importedNode, target) => {
+        const { newDeps, newState } = await onImportNode(
+          importedNode,
+          target,
+          editorState,
+          resolvedDeps
+        );
+        setResolvedDeps(newDeps);
+        setFlowEditorState(newState);
 
-      toastMsg(
-        `Node ${importedNode.node.id} successfully imported from ${importedNode.module}`
-      );
+        toastMsg(
+          `Node ${importedNode.node.id} successfully imported from ${importedNode.module}`
+        );
 
-      return resolvedDeps;
-    },
-    [editorState, resolvedDeps]
-  );
+        return resolvedDeps;
+      },
+      [editorState, resolvedDeps]
+    );
 
-  const depsContextValue = useMemo<DependenciesContextData>(() => {
-    return {
-      resolvedDependencies: resolvedDeps,
-      onImportNode: _onImportNode,
-      onRequestImportables: onRequestImportables,
-      libraryData: { groups: [] },
-    };
-  }, [resolvedDeps]);
-
-  const debuggerContextValue = useMemo<DebuggerContextData>(() => {
-    return {
-      debuggerClient: localDebugger,
-      onRequestHistory: (...args) => historyPlayer.requestHistory(...args),
-    };
-  }, [localDebugger, historyPlayer]);
-
-  const lastInstancesMacroData = React.useRef<any>(
-    getMacroData(editorState.flow.node)
-  );
-
-  // resolve macro nodes
-  useEffect(() => {
-    const insMacroData = getMacroData(editorState.flow.node);
-
-    if (!_.isEqual(insMacroData, lastInstancesMacroData.current)) {
-      lastInstancesMacroData.current = insMacroData;
-
-      const { newDeps, newNode } = processMacroNodes(
-        editorState.flow.node,
-        stdLibBrowser
-      );
-
-      const newEditorState = produce(editorState, (draft) => {
-        draft.flow.node = newNode;
-      });
-
-      setFlowEditorState(newEditorState);
-      setResolvedDeps((deps) => ({
-        ...deps,
-        ...newDeps,
-        main: editorState.flow.node as ImportedNode,
-      }));
-    }
-  }, [editorState.flow.node]);
-
-  const runFlowInternal = useCallback(
-    (node: VisualNode, deps: ResolvedDependencies) => {
-      const localDebugger = createRuntimeClientDebugger(
-        runtimePlayer,
-        historyPlayer
-      );
-
-      runtimePlayer.start();
-
-      setLocalDebugger(localDebugger);
-
-      const firstOutputName = keys(node.outputs)[0];
-
-      const output = dynamicOutput();
-
-      const sub = output.subscribe((v) => {
-        props.onLog(v);
-      });
-
-      let completionTimeout: any = null;
-
-      const clean = execute({
-        node,
-        inputs: {},
-        outputs: { [firstOutputName]: output },
-        resolvedDeps: { ...deps, [node.id]: node },
-        _debugger: localDebugger,
-        onBubbleError: (e) => {
-          console.error(e);
-        },
-        onCompleted: () => {
-          sub.unsubscribe();
-          onComplete();
-          completionTimeout = setTimeout(() => {
-            setFlowEditorState((state) => ({ ...state })); // force re-run
-          }, RE_RUN_DELAY);
-        },
-      });
-      return () => {
-        clean();
-        sub.unsubscribe();
-        runtimePlayer.clear();
-        historyPlayer.clear();
-        localDebugger.destroy();
-        clearTimeout(completionTimeout);
+    const depsContextValue = useMemo<DependenciesContextData>(() => {
+      return {
+        resolvedDependencies: resolvedDeps,
+        onImportNode: _onImportNode,
+        onRequestImportables: onRequestImportables,
+        libraryData: { groups: [] },
       };
-    },
-    []
-  );
+    }, [resolvedDeps]);
 
-  useEffect(() => {
-    console.info("runFlow changed");
-  }, [runFlowInternal]);
+    const debuggerContextValue = useMemo<DebuggerContextData>(() => {
+      return {
+        debuggerClient: localDebugger,
+        onRequestHistory: (...args) => historyPlayer.requestHistory(...args),
+      };
+    }, [localDebugger, historyPlayer]);
 
-  useEffect(() => {
-    console.info("resolvedDeps changed");
-  }, [resolvedDeps]);
+    const lastInstancesMacroData = React.useRef<any>(
+      getMacroData(editorState.flow.node)
+    );
 
-  useEffect(() => {
-    console.info("runtimeEditorState changed");
-  }, [runtimeEditorState]);
+    // resolve macro nodes
+    useEffect(() => {
+      const insMacroData = getMacroData(editorState.flow.node);
 
-  useEffect(() => {
-    let clean = () => {};
+      if (!_.isEqual(insMacroData, lastInstancesMacroData.current)) {
+        lastInstancesMacroData.current = insMacroData;
 
-    const timer = setTimeout(() => {
-      clean = runFlowInternal(runtimeEditorState.flow.node, resolvedDeps);
-    }, FIRST_RUN_DELAY);
+        const { newDeps, newNode } = processMacroNodes(
+          editorState.flow.node,
+          stdLibBrowser
+        );
 
-    return () => {
-      clearTimeout(timer);
-      clean();
-    };
-  }, [runFlowInternal, runtimeEditorState, resolvedDeps]);
+        const newEditorState = produce(editorState, (draft) => {
+          draft.flow.node = newNode;
+        });
 
-  return (
-    <BrowserOnly>
-      {() => (
-        <DependenciesContextProvider value={depsContextValue}>
-          <DebuggerContextProvider value={debuggerContextValue}>
-            <FlowEditor
-              state={editorState}
-              onChangeEditorState={setFlowEditorState}
-              initialPadding={initialPadding}
-              onExtractInlineNode={noop as any}
-              disableScrolling={true}
-              darkMode={darkMode.isDarkMode}
-            />
-          </DebuggerContextProvider>
-        </DependenciesContextProvider>
-      )}
-    </BrowserOnly>
-  );
-};
+        setFlowEditorState(newEditorState);
+        setResolvedDeps((deps) => ({
+          ...deps,
+          ...newDeps,
+          main: editorState.flow.node as ImportedNode,
+        }));
+      }
+    }, [editorState.flow.node]);
+
+    const runFlowInternal = useCallback(
+      (node: VisualNode, deps: ResolvedDependencies) => {
+        const localDebugger = createRuntimeClientDebugger(
+          runtimePlayer,
+          historyPlayer
+        );
+
+        runtimePlayer.start();
+
+        setLocalDebugger(localDebugger);
+
+        const firstOutputName = keys(node.outputs)[0];
+
+        const output = dynamicOutput();
+
+        const sub = output.subscribe((v) => {
+          props.onLog(v);
+        });
+
+        let completionTimeout: any = null;
+
+        const clean = execute({
+          node,
+          inputs: {},
+          outputs: { [firstOutputName]: output },
+          resolvedDeps: { ...deps, [node.id]: node },
+          _debugger: localDebugger,
+          onBubbleError: (e) => {
+            console.error(e);
+          },
+          onCompleted: () => {
+            sub.unsubscribe();
+            onComplete();
+            completionTimeout = setTimeout(() => {
+              setFlowEditorState((state) => ({ ...state })); // force re-run
+            }, RE_RUN_DELAY);
+          },
+        });
+        const cleanAll = () => {
+          clean();
+          sub.unsubscribe();
+          runtimePlayer.clear();
+          historyPlayer.clear();
+          localDebugger.destroy();
+          clearTimeout(completionTimeout);
+        };
+
+        cleanRunRef.current = cleanAll;
+      },
+      []
+    );
+
+    useImperativeHandle(
+      ref,
+      () => {
+        return {
+          runFlow: () => {
+            cleanRunRef.current();
+            runFlowInternal(editorState.flow.node, resolvedDeps);
+          },
+        };
+      },
+      [editorState, resolvedDeps]
+    );
+
+    return (
+      <BrowserOnly>
+        {() => (
+          <DependenciesContextProvider value={depsContextValue}>
+            <DebuggerContextProvider value={debuggerContextValue}>
+              <FlowEditor
+                state={editorState}
+                onChangeEditorState={setFlowEditorState}
+                initialPadding={initialPadding}
+                onExtractInlineNode={noop as any}
+                disableScrolling={true}
+                darkMode={darkMode.isDarkMode}
+              />
+            </DebuggerContextProvider>
+          </DependenciesContextProvider>
+        )}
+      </BrowserOnly>
+    );
+  }
+);

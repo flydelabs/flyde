@@ -33,16 +33,16 @@ node:
         timeMs: 4000
         type: static
     - pos:
-        x: -781.25517578125
-        y: -169.78922448206484
+        x: -776.2780029296875
+        y: -173.65079674768984
       id: scs3pycv9lz28ykunbkqn9to
       inputConfig: {}
       nodeId: InlineValue__scs3pycv9lz28ykunbkqn9to
       macroId: InlineValue
       macroData:
         type: string
-        value: Throttled
-        label: '"Throttled"'
+        value: ❌
+        label: '"❌"'
     - pos:
         x: -1028.1461474609375
         y: -173.36171508789062
@@ -52,11 +52,11 @@ node:
       macroId: InlineValue
       macroData:
         type: string
-        value: Debounced
-        label: '"Debounced"'
+        value: 🕐
+        label: '"🕐"'
     - pos:
-        x: -963.5435205078124
-        y: -374.7129255999589
+        x: -965.5435205078124
+        y: -376.7129255999589
       id: ygnqzwi1stiki29lavj6wu2w
       inputConfig: {}
       nodeId: Interval__ygnqzwi1stiki29lavj6wu2w
@@ -264,10 +264,7 @@ node:
           timeMs: 6000
           mode: static
         value:
-          time:
-            mode: static
-            timeMs: 1000
-          value: beep
+          jsonValue: ⭐️
           mode: static
     - pos:
         x: -928.755859375
@@ -283,6 +280,17 @@ node:
           count: 3
       style:
         size: small
+    - pos:
+        x: -894.184619140625
+        y: -174.2404573922211
+      id: DebounceThrottle-xy049dv
+      inputConfig: {}
+      nodeId: InlineValue__DebounceThrottle-xy049dv
+      macroId: InlineValue
+      macroData:
+        type: string
+        value: ✅
+        label: '"✅"'
   connections:
     - from:
         insId: wj31gd73i5l111q999pv4kor
@@ -315,12 +323,6 @@ node:
         insId: lfrwwz35676vn1hb9ykzpewd
         pinId: value
     - from:
-        insId: wj31gd73i5l111q999pv4kor
-        pinId: unthrottledValue
-      to:
-        insId: lfrwwz35676vn1hb9ykzpewd
-        pinId: value
-    - from:
         insId: scs3pycv9lz28ykunbkqn9to
         pinId: value
       to:
@@ -332,6 +334,18 @@ node:
       to:
         insId: __this
         pinId: output
+    - from:
+        insId: wj31gd73i5l111q999pv4kor
+        pinId: unthrottledValue
+      to:
+        insId: DebounceThrottle-xy049dv
+        pinId: __trigger
+    - from:
+        insId: DebounceThrottle-xy049dv
+        pinId: value
+      to:
+        insId: lfrwwz35676vn1hb9ykzpewd
+        pinId: value
   id: DebounceThrottle
   inputs: {}
   outputs:
@@ -365,3 +379,5 @@ node:
     Bob 42:
       x: -736.217912287027
       y: 209.40813992513762
+  completionOutputs:
+    - output

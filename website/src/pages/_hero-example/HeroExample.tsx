@@ -1,5 +1,5 @@
 import { EmbeddedFlyde } from "@site/src/components/EmbeddedFlyde/EmbeddedFlyde";
-import React, { useMemo } from "react";
+import React, { forwardRef, useMemo } from "react";
 
 import { CodeBlock, vs2015 } from "react-code-blocks";
 
@@ -21,9 +21,10 @@ import { Loader } from "@flyde/flow-editor";
 import { processMacroNodes } from "@site/src/components/EmbeddedFlyde/macroHelpers";
 import * as stdLibBrowser from "@flyde/stdlib/dist/all-browser";
 
-export const HeroExample: React.FC<{ example: (typeof examples)[0] }> = ({
-  example,
-}) => {
+export const HeroExample: React.FC<{
+  example: (typeof examples)[0];
+  ref: any;
+}> = forwardRef(function HeroExample({ example }, ref) {
   const currentExample = example;
   const [logs, setLogs] = React.useState<any>([]);
 
@@ -90,6 +91,7 @@ export const HeroExample: React.FC<{ example: (typeof examples)[0] }> = ({
             <Loader />
           </div>
           <EmbeddedFlyde
+            ref={ref}
             flowProps={flowProps}
             onLog={onLogOutput}
             onCompleted={onCompleted}
@@ -122,4 +124,4 @@ export const HeroExample: React.FC<{ example: (typeof examples)[0] }> = ({
       </div>
     </div>
   );
-};
+});

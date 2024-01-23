@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import Layout from "@theme/Layout";
 import styles from "./index.module.css";
@@ -43,8 +43,42 @@ export const examples = [
   },
 ];
 
+const FIRST_EXAMPLE_IDX = 0;
+
 function HomepageHeader() {
-  const [currentExample, setCurrExample] = React.useState(examples[1]);
+  const [currentExample, setCurrExample] = React.useState(
+    examples[FIRST_EXAMPLE_IDX]
+  );
+
+  const exampleRef = React.useRef(null);
+
+  const [didRunExample, setDidRunExample] = useState(false);
+
+  const runExample = useCallback(() => {
+    setDidRunExample(true);
+    exampleRef.current?.runFlow();
+  }, []);
+
+  const examplesContainer = useMemo(() => {
+    return (
+      <div className="example-actions">
+        {/* <span className="font-thin">Browse examples:</span> */}
+        {examples.map((ex) => (
+          <button
+            key={ex.label}
+            className={`button button--sm example-button ${
+              ex.label === currentExample.label
+                ? "button--primary"
+                : "button--secondary"
+            }`}
+            onClick={() => setCurrExample(ex)}
+          >
+            {ex.label}
+          </button>
+        ))}
+      </div>
+    );
+  }, [currentExample]);
 
   return (
     <div className={clsx("hero hero--primary", styles.heroBanner)}>
@@ -77,24 +111,37 @@ function HomepageHeader() {
               className="button button--primary button--lg "
               href="https://marketplace.visualstudio.com/items?itemName=flyde.flyde-vscode"
             >
-              Quickstart
+              Quick Start
             </Link>
             <Link
-              className="button button--secondary button--lg "
-              to="https://play.flyde.dev"
+              className="button button--secondary button--lg example-btn"
+              onClick={runExample}
             >
-              Playground
+              Run Example{" "}
+              <span
+                className={clsx("hero-horizontal-only horizontal-finger", {
+                  nudge: !didRunExample,
+                })}
+              >
+                👉
+              </span>
+              <span
+                className={clsx("hero-vertical-only vertical-finger", {
+                  nudge: !didRunExample,
+                })}
+              >
+                👇
+              </span>
             </Link>
-            {/* <button
-              className={`button button--success button${!didRun && " nudge"}`}
-              onClick={onRunExample}
-            >
-              Run Example 👇
-            </button> */}
           </div>
         </div>
         <div className="example-container">
-          <HeroExample example={currentExample} key={currentExample.label} />
+          <div className="hero-horizontal-only">{examplesContainer}</div>
+          <HeroExample
+            example={currentExample}
+            key={currentExample.label}
+            ref={exampleRef}
+          />
           {currentExample.tip ? (
             <div className="example-tip">
               Pssst.. {currentExample.tip} &nbsp;
@@ -103,23 +150,7 @@ function HomepageHeader() {
             </a> */}
             </div>
           ) : null}
-
-          <div className="example-actions">
-            {/* <span className="font-thin">Browse examples:</span> */}
-            {examples.map((ex) => (
-              <button
-                key={ex.label}
-                className={`button button--sm example-button ${
-                  ex.label === currentExample.label
-                    ? "button--primary"
-                    : "button--secondary"
-                }`}
-                onClick={() => setCurrExample(ex)}
-              >
-                {ex.label}
-              </button>
-            ))}
-          </div>
+          <div className="hero-vertical-only">{examplesContainer}</div>
         </div>
       </div>
     </div>
