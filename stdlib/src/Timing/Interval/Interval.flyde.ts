@@ -4,7 +4,7 @@ import { ConfigurableInput } from "../../lib/ConfigurableInput";
 
 export type IntervalConfig = {
   time: ConfigurableInput<{ timeMs: number }>;
-  value: ConfigurableInput<{ value: any }>;
+  value: ConfigurableInput<{ jsonValue: any }>;
 };
 
 export const Interval: MacroNode<IntervalConfig> = {
@@ -14,7 +14,7 @@ export const Interval: MacroNode<IntervalConfig> = {
 
   defaultData: {
     time: { mode: "static", timeMs: 1000 },
-    value: { mode: "static", value: "" },
+    value: { mode: "static", jsonValue: "" },
   },
   description:
     "Emits a value every interval. Supports both static and dynamic intervals.",
@@ -33,7 +33,7 @@ export const Interval: MacroNode<IntervalConfig> = {
       const value =
         config.value.mode === "dynamic"
           ? "a value"
-          : JSON.stringify(config.value.value);
+          : JSON.stringify(config.value.jsonValue);
       if (config.time.mode === "static") {
         return `Emit ${value} each ${timeToString(config.time.timeMs)}`;
       } else {
@@ -59,7 +59,7 @@ export const Interval: MacroNode<IntervalConfig> = {
         config.time.mode === "dynamic" ? interval : config.time.timeMs;
 
       const value =
-        config.value.mode === "dynamic" ? _value : config.value.value;
+        config.value.mode === "dynamic" ? _value : config.value.jsonValue;
 
       const existingTimer = adv.state.get("timer");
       if (existingTimer) {

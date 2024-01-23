@@ -60,174 +60,18 @@ node:
           mode: static
           count: 3
     - pos:
-        x: -629.1187915039063
-        y: -424.51003308857025
+        x: -630.6297778320313
+        y: -425.5123219069296
       id: bczfob5ymeh27ufao57egapl
       inputConfig: {}
       nodeId: Interval__bczfob5ymeh27ufao57egapl
       macroId: Interval
       macroData:
         time:
-          time:
-            time:
-              time:
-                time:
-                  time:
-                    time:
-                      time:
-                        time:
-                          time:
-                            time:
-                              time:
-                                time:
-                                  time:
-                                    time:
-                                      time:
-                                        time:
-                                          time:
-                                            mode: static
-                                            timeMs: 1000
-                                          value:
-                                            time:
-                                              mode: static
-                                              timeMs: 1000
-                                            value: 🤖
-                                            mode: static
-                                          timeMs: 4
-                                          mode: static
-                                        value:
-                                          time:
-                                            mode: static
-                                            timeMs: 1000
-                                          value: 🤖
-                                          mode: static
-                                        timeMs: 3
-                                        mode: static
-                                      value:
-                                        time:
-                                          mode: static
-                                          timeMs: 1000
-                                        value: 🤖
-                                        mode: static
-                                      timeMs: 4
-                                      mode: static
-                                    value:
-                                      time:
-                                        mode: static
-                                        timeMs: 1000
-                                      value: 🤖
-                                      mode: static
-                                    timeMs: 42
-                                    mode: static
-                                  value:
-                                    time:
-                                      mode: static
-                                      timeMs: 1000
-                                    value: 🤖
-                                    mode: static
-                                  timeMs: 420
-                                  mode: static
-                                value:
-                                  time:
-                                    mode: static
-                                    timeMs: 1000
-                                  value: 🤖
-                                  mode: static
-                                timeMs: 421
-                                mode: static
-                              value:
-                                time:
-                                  mode: static
-                                  timeMs: 1000
-                                value: 🤖
-                                mode: static
-                              timeMs: 42
-                              mode: static
-                            value:
-                              time:
-                                mode: static
-                                timeMs: 1000
-                              value: 🤖
-                              mode: static
-                            timeMs: 420
-                            mode: static
-                          value:
-                            time:
-                              mode: static
-                              timeMs: 1000
-                            value: 🤖
-                            mode: static
-                          timeMs: 4200
-                          mode: static
-                        value:
-                          time:
-                            mode: static
-                            timeMs: 1000
-                          value: 🤖
-                          mode: static
-                        timeMs: 3
-                        mode: static
-                      value:
-                        time:
-                          mode: static
-                          timeMs: 1000
-                        value: 🤖
-                        mode: static
-                      timeMs: 4
-                      mode: static
-                    value:
-                      time:
-                        mode: static
-                        timeMs: 1000
-                      value: 🤖
-                      mode: static
-                    timeMs: 5
-                    mode: static
-                  value:
-                    time:
-                      mode: static
-                      timeMs: 1000
-                    value: 🤖
-                    mode: static
-                  timeMs: 6
-                  mode: static
-                value:
-                  time:
-                    mode: static
-                    timeMs: 1000
-                  value: 🤖
-                  mode: static
-                timeMs: 3
-                mode: static
-              value:
-                time:
-                  mode: static
-                  timeMs: 1000
-                value: 🤖
-                mode: static
-              timeMs: 30
-              mode: static
-            value:
-              time:
-                mode: static
-                timeMs: 1000
-              value: 🤖
-              mode: static
-            timeMs: 300
-            mode: static
-          value:
-            time:
-              mode: static
-              timeMs: 1000
-            value: 🤖
-            mode: static
           timeMs: 3000
           mode: static
         value:
-          time:
-            mode: static
-            timeMs: 1000
-          value: 🤖
+          jsonValue: 🤖
           mode: static
       style:
         size: small

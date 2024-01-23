@@ -13,11 +13,13 @@ const IntervalEditor: MacroEditorComp<IntervalConfig> =
         <ConfigurableInputEditor
           value={value.time}
           onChange={(time) => onChange({ ...value, time })}
-          valueRenderer={(props) => (
+          valueRenderer={(rendererProps) => (
             <FormGroup label="Time (in milliseconds):" inline>
               <NumericInput
-                value={props.value.timeMs}
-                onValueChange={(e) => props.onChange({ ...value, timeMs: e })}
+                value={rendererProps.value.timeMs}
+                onValueChange={(number) =>
+                  rendererProps.onChange({ timeMs: number })
+                }
               />
             </FormGroup>
           )}
@@ -28,19 +30,17 @@ const IntervalEditor: MacroEditorComp<IntervalConfig> =
         <ConfigurableInputEditor
           value={value.value}
           onChange={(_value) => onChange({ ...value, value: _value })}
-          valueRenderer={(props) => (
+          valueRenderer={(rendererProps) => (
             <FormGroup label="Value:" inline>
               <SimpleJsonEditor
-                value={props.value.value}
-                onChange={(newValue) =>
-                  props.onChange({ ...value, value: newValue })
-                }
+                value={rendererProps.value.jsonValue}
+                onChange={(jsonValue) => rendererProps.onChange({ jsonValue })}
                 label=""
               />
             </FormGroup>
           )}
           modeLabel="Value mode:"
-          defaultStaticValue={{ value: "" }}
+          defaultStaticValue={{ jsonValue: "" }}
         />
       </>
     );
