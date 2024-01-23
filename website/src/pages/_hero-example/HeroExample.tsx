@@ -1,6 +1,5 @@
-import { dynamicOutput, dynamicNodeInput, noop } from "@site/../core/dist";
 import { EmbeddedFlyde } from "@site/src/components/EmbeddedFlyde/EmbeddedFlyde";
-import React, { useRef } from "react";
+import React, { useMemo } from "react";
 
 import { CodeBlock, vs2015 } from "react-code-blocks";
 
@@ -19,8 +18,8 @@ console.log(\`Output: \$\{output\}\`);`;
 import "./HeroExample.scss";
 import { examples } from "..";
 import { Loader } from "@flyde/flow-editor";
-
-const RERUN_INTERVAL = 4200 * 2.5;
+import { processMacroNodes } from "@site/src/components/EmbeddedFlyde/macroHelpers";
+import * as stdLibBrowser from "@flyde/stdlib/dist/all-browser";
 
 export const HeroExample: React.FC<{ example: (typeof examples)[0] }> = ({
   example,
@@ -30,35 +29,41 @@ export const HeroExample: React.FC<{ example: (typeof examples)[0] }> = ({
 
   const [fileVisible, setFileVisible] = React.useState("Example.flyde");
 
-  const inputs = useRef({
-    __trigger: dynamicNodeInput(),
-  });
+  const flowProps = useMemo(() => {
+    const { newDeps, newNode } = processMacroNodes(
+      currentExample.flow.flow.node,
+      stdLibBrowser
+    );
 
-  const result = useRef(dynamicOutput());
-  const flowProps = {
-    initialFlow: currentExample.flow.flow,
-    dependencies: currentExample.flow.dependencies,
-    inputs: inputs.current,
-    output: result.current,
-  };
-
-  const onRunExample = React.useCallback(() => {
-    inputs.current.__trigger.subject.next("run");
-  }, []);
-
-  React.useEffect(() => {
-    const timer = setTimeout(() => {
-      onRunExample();
-    }, 1500);
-    const interval = setInterval(() => {
-      onRunExample();
-    }, RERUN_INTERVAL);
-
-    return () => {
-      clearTimeout(timer);
-      clearInterval(interval);
+    return {
+      initialFlow: { ...currentExample.flow.flow, node: newNode },
+      dependencies: { ...currentExample.flow.dependencies, ...newDeps },
     };
-  }, [onRunExample]);
+  }, [currentExample]);
+
+  const logsContainerRef = React.useRef<HTMLDivElement>(null);
+
+  const onLogOutput = React.useCallback(
+    (output) => {
+      setLogs((logs) => [
+        ...logs,
+        `[${new Date().toLocaleTimeString()}] Output: ${output}`,
+      ]);
+
+      if (logsContainerRef.current) {
+        logsContainerRef.current.scrollTop =
+          logsContainerRef.current.scrollHeight;
+      }
+    },
+    [setLogs]
+  );
+
+  const onCompleted = React.useCallback(() => {
+    setLogs((logs) => [
+      ...logs,
+      "-- Flow completed, re-running in 3 seconds -- ",
+    ]);
+  }, []);
 
   return (
     <div className="hero-example">
@@ -79,7 +84,6 @@ export const HeroExample: React.FC<{ example: (typeof examples)[0] }> = ({
           index.ts
         </div>
       </div>
-      {/* <main> */}
       {fileVisible === flowFileName ? (
         <div className="flow-wrapper">
           <div className="loader-wrapper">
@@ -87,14 +91,8 @@ export const HeroExample: React.FC<{ example: (typeof examples)[0] }> = ({
           </div>
           <EmbeddedFlyde
             flowProps={flowProps}
-            debugDelay={100}
-            onOutput={(output) => {
-              setLogs((logs) => [
-                `[${new Date().toLocaleTimeString()}] Output: ${output}`,
-                ...logs,
-              ]);
-            }}
-            // onCompleted={onCompleted}
+            onLog={onLogOutput}
+            onCompleted={onCompleted}
           />
         </div>
       ) : null}
@@ -114,11 +112,11 @@ export const HeroExample: React.FC<{ example: (typeof examples)[0] }> = ({
       {/* </main> */}
       <div className="terminal-wrapper">
         <div className="file-tag">Terminal</div>
-        <div className="terminal-emulator">
+        <div className="terminal-emulator" ref={logsContainerRef}>
           {logs.length ? (
-            logs.map((log, i) => <div>{log}</div>)
+            logs.map((log, i) => <div key={i}>{log}</div>)
           ) : (
-            <em>Waiting for the example to run..</em>
+            <em>Values sent to `output` will appear here once received.</em>
           )}
         </div>
       </div>

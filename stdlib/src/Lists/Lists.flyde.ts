@@ -1,5 +1,7 @@
 import { CodeNode, MacroNode } from "@flyde/core";
 
+export { Collect } from "./Collect/Collect.flyde";
+
 const namespace = "Lists";
 
 export const ListLength: CodeNode = {
@@ -184,141 +186,6 @@ export const SpreadList: MacroNode<number> = {
   }),
   defaultData: 3,
   editorComponentBundlePath: "../../../dist/ui/SpreadList.js",
-};
-
-export const AccumulateValuesUntilTrigger: CodeNode = {
-  id: "Accumulate Values by Trigger",
-  defaultStyle: {
-    icon: "fa-basket-shopping",
-  },
-  namespace,
-  description:
-    'Accumulates values sent to the "value" input, until the "reset" input is triggered. Then it emits the accumulated values and resets the accumulator.',
-  inputs: {
-    value: { description: "The value to accumulate" },
-    reset: { description: "Resets the accumulator" },
-  },
-  reactiveInputs: ["value", "reset"],
-  outputs: {
-    accumulated: { description: "The accumulated values" },
-  },
-  run: (inputs, outputs, adv) => {
-    const { item, until } = inputs;
-    const { r } = outputs;
-    const { state } = adv;
-
-    let list = state.get("list") || [];
-
-    if (typeof item !== "undefined") {
-      list.push(item);
-      state.set("list", list);
-    }
-
-    if (typeof until !== "undefined") {
-      r.next(list);
-    }
-  },
-};
-
-export const AccumulateValuesByTime: CodeNode = {
-  id: "Accumulate Values by Time",
-  defaultStyle: {
-    icon: "fa-basket-shopping",
-  },
-  namespace,
-  description:
-    'Accumulates values sent to the "value" input. After the specified time it emits the accumulated values and resets the accumulator.',
-  inputs: {
-    value: { description: "The value to accumulate" },
-    time: {
-      description:
-        "Time to wait before emitting the accumulated values. Default is 200ms",
-      mode: "required-if-connected",
-    },
-  },
-  reactiveInputs: ["value"],
-  outputs: {
-    accumulated: { description: "The accumulated values" },
-  },
-  run: (inputs, outputs, adv) => {
-    const { value, time } = inputs;
-    const { accumulated } = outputs;
-    const { state } = adv;
-
-    let list = state.get("list") || [];
-
-    const bob = Date.now() % 1000;
-    console.log("called", inputs.value, inputs.time, bob);
-    state.set("bob", 2);
-    console.log(Array.from(state.entries()));
-
-    if (typeof value !== "undefined") {
-      list.push(value);
-      state.set("list", list);
-    }
-
-    if (state.get("timeout")) {
-      clearTimeout(state.get("timeout"));
-    }
-
-    const promise = new Promise<void>((resolve) => {
-      state.set("resolve", resolve);
-    });
-
-    state.set(
-      "timeout",
-      setTimeout(() => {
-        console.log("emitting", list, bob, Date.now() % 1000);
-        accumulated.next(list);
-
-        state.set("list", []);
-        const resolve = state.get("resolve");
-        if (!resolve) {
-          throw new Error("resolve is undefined");
-        }
-        resolve();
-      }, time)
-    );
-
-    return promise;
-  },
-};
-
-export const AccumulateValuesByCount: CodeNode = {
-  id: "Accumulate Values by Count",
-  defaultStyle: {
-    icon: "fa-basket-shopping",
-  },
-  namespace,
-  description:
-    'Accumulates values sent to the "value" input. After the specified count it emits the accumulated values and resets the accumulator.',
-  inputs: {
-    value: { description: "The value to accumulate" },
-    count: {
-      description: "Number of values to accumulate before emitting them",
-    },
-  },
-  reactiveInputs: ["value"],
-  outputs: {
-    accumulated: { description: "The accumulated values" },
-  },
-  completionOutputs: ["accumulated"],
-  run: (inputs, outputs, adv) => {
-    const { value, count } = inputs;
-    const { accumulated } = outputs;
-    const { state } = adv;
-
-    let list = state.get("list") || [];
-
-    if (typeof value !== "undefined") {
-      list.push(value);
-      state.set("list", list);
-    }
-
-    if (list.length >= count) {
-      accumulated.next(list);
-    }
-  },
 };
 
 export const AccumulateSomeValuesByCount: CodeNode = {

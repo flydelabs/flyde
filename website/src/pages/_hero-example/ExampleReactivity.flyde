@@ -1,38 +1,11 @@
 imports:
   "@flyde/stdlib":
     - Interval
-    - Accumulate Values by Count
-    - Loop List
     - RoundRobin
     - InlineValue
+    - Collect
 node:
   instances:
-    - pos:
-        x: -616.1155553153878
-        y: -420.06315701815106
-      id: ghunnjxvc8lzz9ir1n7a5cv9
-      inputConfig: {}
-      visibleInputs:
-        - value
-      nodeId: Interval__ghunnjxvc8lzz9ir1n7a5cv9
-      macroId: Interval
-      macroData:
-        type: static
-        timeMs: 1500
-    - pos:
-        x: -624.8063512138253
-        y: -180.2481545767448
-      id: zhz7csy5btxnhjsy3k51kj9g
-      inputConfig:
-        count:
-          mode: queue
-      nodeId: Accumulate Values by Count
-    - pos:
-        x: -547.9998867357046
-        y: -106.27797512688548
-      id: rjyjsbcahykm15dllqw8tlzj
-      inputConfig: {}
-      nodeId: Loop List
     - pos:
         x: -639.1495586635534
         y: -356.7075307794414
@@ -75,40 +48,34 @@ node:
         value: bop
         label: '"bop"'
     - pos:
-        x: -379.18411474617915
-        y: -258.8908399524888
-      id: yo8zvu74f9cxwqaqrnf18j77
+        x: -644.9241528320313
+        y: -168.45148509621887
+      id: lqx9nk7f5fr4evl7dpoh6mff
       inputConfig: {}
-      nodeId: InlineValue__yo8zvu74f9cxwqaqrnf18j77
-      macroId: InlineValue
+      nodeId: Collect__lqx9nk7f5fr4evl7dpoh6mff
+      macroId: Collect
       macroData:
-        value: 3
-        type: number
-        label: "3"
+        strategy: count
+        count:
+          mode: static
+          count: 3
     - pos:
-        x: -599.4727081834906
-        y: -492.3031134665573
-      id: upg7tgc5veleaa108ofohevd
+        x: -630.6297778320313
+        y: -425.5123219069296
+      id: bczfob5ymeh27ufao57egapl
       inputConfig: {}
-      nodeId: InlineValue__upg7tgc5veleaa108ofohevd
-      macroId: InlineValue
+      nodeId: Interval__bczfob5ymeh27ufao57egapl
+      macroId: Interval
       macroData:
-        type: string
-        value: 🤖
-        label: '"🤖"'
+        time:
+          timeMs: 3000
+          mode: static
+        value:
+          jsonValue: 🤖
+          mode: static
+      style:
+        size: small
   connections:
-    - from:
-        insId: rjyjsbcahykm15dllqw8tlzj
-        pinId: item
-      to:
-        insId: __this
-        pinId: output
-    - from:
-        insId: zhz7csy5btxnhjsy3k51kj9g
-        pinId: accumulated
-      to:
-        insId: rjyjsbcahykm15dllqw8tlzj
-        pinId: list
     - from:
         insId: oeum6dqgsprbuef0p9s3b1ye
         pinId: r1
@@ -116,23 +83,11 @@ node:
         insId: rh3ug7oqoze1rvn4k17kc556
         pinId: __trigger
     - from:
-        insId: rh3ug7oqoze1rvn4k17kc556
-        pinId: value
-      to:
-        insId: zhz7csy5btxnhjsy3k51kj9g
-        pinId: value
-    - from:
         insId: oeum6dqgsprbuef0p9s3b1ye
         pinId: r2
       to:
         insId: ApisCombination-69049ap
         pinId: __trigger
-    - from:
-        insId: ApisCombination-69049ap
-        pinId: value
-      to:
-        insId: zhz7csy5btxnhjsy3k51kj9g
-        pinId: value
     - from:
         insId: oeum6dqgsprbuef0p9s3b1ye
         pinId: r3
@@ -140,30 +95,36 @@ node:
         insId: ApisCombination-ts149e2
         pinId: __trigger
     - from:
+        insId: rh3ug7oqoze1rvn4k17kc556
+        pinId: value
+      to:
+        insId: lqx9nk7f5fr4evl7dpoh6mff
+        pinId: value
+    - from:
+        insId: ApisCombination-69049ap
+        pinId: value
+      to:
+        insId: lqx9nk7f5fr4evl7dpoh6mff
+        pinId: value
+    - from:
         insId: ApisCombination-ts149e2
         pinId: value
       to:
-        insId: zhz7csy5btxnhjsy3k51kj9g
+        insId: lqx9nk7f5fr4evl7dpoh6mff
         pinId: value
     - from:
-        insId: yo8zvu74f9cxwqaqrnf18j77
-        pinId: value
-      to:
-        insId: zhz7csy5btxnhjsy3k51kj9g
-        pinId: count
-    - from:
-        insId: ghunnjxvc8lzz9ir1n7a5cv9
+        insId: bczfob5ymeh27ufao57egapl
         pinId: value
       to:
         insId: oeum6dqgsprbuef0p9s3b1ye
         pinId: value
     - from:
-        insId: upg7tgc5veleaa108ofohevd
-        pinId: value
+        insId: lqx9nk7f5fr4evl7dpoh6mff
+        pinId: list
       to:
-        insId: ghunnjxvc8lzz9ir1n7a5cv9
-        pinId: value
-  id: ApisCombination
+        insId: __this
+        pinId: output
+  id: Reactivity
   inputs: {}
   outputs:
     output:
@@ -185,8 +146,10 @@ node:
       x: -499.82438378976735
       y: 706.7650396699393
     output:
-      x: -564.5185620036342
-      y: 1.8644218680793756
+      x: -588.0203320231655
+      y: -62.15245435262375
     response:
       x: -500.61566893722795
       y: 421.9045791861946
+  completionOutputs:
+    - output

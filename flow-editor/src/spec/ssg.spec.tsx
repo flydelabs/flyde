@@ -40,7 +40,6 @@ describe("ssg/ssr support", () => {
         },
       },
       onChangeEditorState: noop,
-      hideTemplatingTips: false,
       onExtractInlineNode: noop as any,
     };
 

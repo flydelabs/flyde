@@ -1,130 +1,338 @@
 imports:
   "@flyde/stdlib":
-    - Repeat
     - Throttle
     - Debounce
-    - Loop List
     - InlineValue
+    - Interval
+    - Collect
 node:
   instances:
     - pos:
-        x: -814.9549389648437
-        y: -260.40238008916066
+        x: -849.9802075195312
+        y: -293.42520723759816
       id: wj31gd73i5l111q999pv4kor
       inputConfig: {}
       visibleOutputs:
-        - throttledValue
+        - unthrottledValue
         - __error
       nodeId: Throttle__wj31gd73i5l111q999pv4kor
       macroId: Throttle
       macroData:
         type: static
-        timeMs: 1000
+        timeMs: 8000
+        mode: static
     - pos:
-        x: -975.6379223632812
-        y: -260.09256563603566
+        x: -1038.8195629882812
+        y: -292.4507504504888
       id: eaa2b80mmdusjvxi3fve0du1
       inputConfig: {}
       nodeId: Debounce__eaa2b80mmdusjvxi3fve0du1
       macroId: Debounce
       macroData:
         mode: static
-        timeMs: 4200
+        timeMs: 4000
         type: static
     - pos:
-        x: -875.192960205078
-        y: -409.4281504330898
-      id: dimxqnz6n9uhawffzb6urp0y
-      inputConfig:
-        value:
-          mode: queue
-        times:
-          mode: queue
-      nodeId: Repeat
-      style:
-        size: small
-        icon: fa-list
-    - pos:
-        x: -882.643474601553
-        y: -350.2880555829314
-      id: dsqx2xve1xghrrhtx1o0ep60
+        x: -781.25517578125
+        y: -169.78922448206484
+      id: scs3pycv9lz28ykunbkqn9to
       inputConfig: {}
-      nodeId: Loop List
-      style:
-        size: small
-        icon: fa-list
-    - pos:
-        x: -939.2706879343361
-        y: -508.02298894543446
-      id: d3spgd53a3y1slhtrofzwvaj
-      inputConfig: {}
-      nodeId: InlineValue__d3spgd53a3y1slhtrofzwvaj
+      nodeId: InlineValue__scs3pycv9lz28ykunbkqn9to
       macroId: InlineValue
       macroData:
-        value: '"Hello!"'
         type: string
-        label: '"Hello!"'
+        value: Throttled
+        label: '"Throttled"'
     - pos:
-        x: -815.1555322265625
-        y: -507.41057861328125
-      id: ApisCombination-z904924
+        x: -1028.1461474609375
+        y: -173.36171508789062
+      id: ApisCombination-3k049q4
       inputConfig: {}
-      nodeId: InlineValue__ApisCombination-z904924
+      nodeId: InlineValue__ApisCombination-3k049q4
       macroId: InlineValue
       macroData:
-        value: 2
-        type: number
-        label: "2"
+        type: string
+        value: Debounced
+        label: '"Debounced"'
+    - pos:
+        x: -963.5435205078124
+        y: -374.7129255999589
+      id: ygnqzwi1stiki29lavj6wu2w
+      inputConfig: {}
+      nodeId: Interval__ygnqzwi1stiki29lavj6wu2w
+      macroId: Interval
+      macroData:
+        time:
+          time:
+            time:
+              time:
+                time:
+                  time:
+                    time:
+                      time:
+                        time:
+                          time:
+                            time:
+                              time:
+                                time:
+                                  time:
+                                    time:
+                                      time:
+                                        time:
+                                          time:
+                                            time:
+                                              time:
+                                                time:
+                                                  time:
+                                                    time:
+                                                      mode: static
+                                                      timeMs: 1000
+                                                    value:
+                                                      time:
+                                                        mode: static
+                                                        timeMs: 1000
+                                                      value: beep
+                                                      mode: static
+                                                    timeMs: 3
+                                                    mode: static
+                                                  value:
+                                                    time:
+                                                      mode: static
+                                                      timeMs: 1000
+                                                    value: beep
+                                                    mode: static
+                                                  timeMs: 39
+                                                  mode: static
+                                                value:
+                                                  time:
+                                                    mode: static
+                                                    timeMs: 1000
+                                                  value: beep
+                                                  mode: static
+                                                timeMs: 3
+                                                mode: static
+                                              value:
+                                                time:
+                                                  mode: static
+                                                  timeMs: 1000
+                                                value: beep
+                                                mode: static
+                                              timeMs: 39
+                                              mode: static
+                                            value:
+                                              time:
+                                                mode: static
+                                                timeMs: 1000
+                                              value: beep
+                                              mode: static
+                                            timeMs: 3
+                                            mode: static
+                                          value:
+                                            time:
+                                              mode: static
+                                              timeMs: 1000
+                                            value: beep
+                                            mode: static
+                                          timeMs: 30
+                                          mode: static
+                                        value:
+                                          time:
+                                            mode: static
+                                            timeMs: 1000
+                                          value: beep
+                                          mode: static
+                                        timeMs: 300
+                                        mode: static
+                                      value:
+                                        time:
+                                          mode: static
+                                          timeMs: 1000
+                                        value: beep
+                                        mode: static
+                                      timeMs: 3000
+                                      mode: static
+                                    value:
+                                      time:
+                                        mode: static
+                                        timeMs: 1000
+                                      value: beep
+                                      mode: static
+                                    timeMs: 3001
+                                    mode: static
+                                  value:
+                                    time:
+                                      mode: static
+                                      timeMs: 1000
+                                    value: beep
+                                    mode: static
+                                  timeMs: 3002
+                                  mode: static
+                                value:
+                                  time:
+                                    mode: static
+                                    timeMs: 1000
+                                  value: beep
+                                  mode: static
+                                timeMs: 3001
+                                mode: static
+                              value:
+                                time:
+                                  mode: static
+                                  timeMs: 1000
+                                value: beep
+                                mode: static
+                              timeMs: 3000
+                              mode: static
+                            value:
+                              time:
+                                mode: static
+                                timeMs: 1000
+                              value: beep
+                              mode: static
+                            timeMs: 30000
+                            mode: static
+                          value:
+                            time:
+                              mode: static
+                              timeMs: 1000
+                            value: beep
+                            mode: static
+                          timeMs: 3000
+                          mode: static
+                        value:
+                          time:
+                            mode: static
+                            timeMs: 1000
+                          value: beep
+                          mode: static
+                        timeMs: 5
+                        mode: static
+                      value:
+                        time:
+                          mode: static
+                          timeMs: 1000
+                        value: beep
+                        mode: static
+                      timeMs: 50
+                      mode: static
+                    value:
+                      time:
+                        mode: static
+                        timeMs: 1000
+                      value: beep
+                      mode: static
+                    timeMs: 500
+                    mode: static
+                  value:
+                    time:
+                      mode: static
+                      timeMs: 1000
+                    value: beep
+                    mode: static
+                  timeMs: 5000
+                  mode: static
+                value:
+                  time:
+                    mode: static
+                    timeMs: 1000
+                  value: beep
+                  mode: static
+                timeMs: 6
+                mode: static
+              value:
+                time:
+                  mode: static
+                  timeMs: 1000
+                value: beep
+                mode: static
+              timeMs: 60
+              mode: static
+            value:
+              time:
+                mode: static
+                timeMs: 1000
+              value: beep
+              mode: static
+            timeMs: 600
+            mode: static
+          value:
+            time:
+              mode: static
+              timeMs: 1000
+            value: beep
+            mode: static
+          timeMs: 6000
+          mode: static
+        value:
+          time:
+            mode: static
+            timeMs: 1000
+          value: beep
+          mode: static
+    - pos:
+        x: -928.755859375
+        y: -90.7339411755601
+      id: lfrwwz35676vn1hb9ykzpewd
+      inputConfig: {}
+      nodeId: Collect__lfrwwz35676vn1hb9ykzpewd
+      macroId: Collect
+      macroData:
+        strategy: count
+        count:
+          mode: static
+          count: 3
+      style:
+        size: small
   connections:
-    - from:
-        insId: dimxqnz6n9uhawffzb6urp0y
-        pinId: list
-      to:
-        insId: dsqx2xve1xghrrhtx1o0ep60
-        pinId: list
-    - from:
-        insId: dsqx2xve1xghrrhtx1o0ep60
-        pinId: item
-      to:
-        insId: eaa2b80mmdusjvxi3fve0du1
-        pinId: value
-    - from:
-        insId: dsqx2xve1xghrrhtx1o0ep60
-        pinId: item
-      to:
-        insId: wj31gd73i5l111q999pv4kor
-        pinId: value
-    - from:
-        insId: d3spgd53a3y1slhtrofzwvaj
-        pinId: value
-      to:
-        insId: dimxqnz6n9uhawffzb6urp0y
-        pinId: value
-    - from:
-        insId: ApisCombination-z904924
-        pinId: value
-      to:
-        insId: dimxqnz6n9uhawffzb6urp0y
-        pinId: times
-    - from:
-        insId: eaa2b80mmdusjvxi3fve0du1
-        pinId: debouncedValue
-      to:
-        insId: __this
-        pinId: output
     - from:
         insId: wj31gd73i5l111q999pv4kor
         pinId: __error
       to:
-        insId: __this
-        pinId: output
+        insId: scs3pycv9lz28ykunbkqn9to
+        pinId: __trigger
+    - from:
+        insId: eaa2b80mmdusjvxi3fve0du1
+        pinId: debouncedValue
+      to:
+        insId: ApisCombination-3k049q4
+        pinId: __trigger
+    - from:
+        insId: ygnqzwi1stiki29lavj6wu2w
+        pinId: value
+      to:
+        insId: eaa2b80mmdusjvxi3fve0du1
+        pinId: value
+    - from:
+        insId: ygnqzwi1stiki29lavj6wu2w
+        pinId: value
+      to:
+        insId: wj31gd73i5l111q999pv4kor
+        pinId: value
+    - from:
+        insId: ApisCombination-3k049q4
+        pinId: value
+      to:
+        insId: lfrwwz35676vn1hb9ykzpewd
+        pinId: value
     - from:
         insId: wj31gd73i5l111q999pv4kor
-        pinId: throttledValue
+        pinId: unthrottledValue
+      to:
+        insId: lfrwwz35676vn1hb9ykzpewd
+        pinId: value
+    - from:
+        insId: scs3pycv9lz28ykunbkqn9to
+        pinId: value
+      to:
+        insId: lfrwwz35676vn1hb9ykzpewd
+        pinId: value
+    - from:
+        insId: lfrwwz35676vn1hb9ykzpewd
+        pinId: list
       to:
         insId: __this
         pinId: output
-  id: ApisCombination
+  id: DebounceThrottle
   inputs: {}
   outputs:
     output:
@@ -149,8 +357,8 @@ node:
       x: -499.82438378976735
       y: 706.7650396699393
     output:
-      x: -855.9336105292145
-      y: -95.50906588540926
+      x: -892.9243331854645
+      y: 9.226056795254806
     response:
       x: -506.3386688159596
       y: 488.67302443385125

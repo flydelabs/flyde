@@ -1,3 +1,6 @@
-.-macro-instance-editor {
-	color: pink;
+.macro-instance-editor {
+  > main {
+    max-height: 65vh;
+    overflow-y: auto;
+  }
 }

@@ -20,7 +20,7 @@ export const examples = [
   {
     label: "Beep Boop",
     flow: exampleReactivity,
-    // tip: `TBD`,
+    tip: `Try changing the collection count and see the output change accordingly.`,
     playgroundUrl: "https://play.flyde.dev/?flow=hello-world",
   },
   {
@@ -32,7 +32,7 @@ export const examples = [
   {
     label: "Debounce/Throttle",
     flow: exampleDebounceThrottle,
-    tip: "Try changing the delay time.",
+    tip: "Try changing the delay time of the debounce/throttle nodes.",
     playgroundUrl: "https://play.flyde.dev/?flow=hello-world",
   },
   {
@@ -44,7 +44,7 @@ export const examples = [
 ];
 
 function HomepageHeader() {
-  const [currentExample, setCurrExample] = React.useState(examples[0]);
+  const [currentExample, setCurrExample] = React.useState(examples[1]);
 
   return (
     <div className={clsx("hero hero--primary", styles.heroBanner)}>
@@ -164,7 +164,7 @@ export default function Home(): JSX.Element {
       </section>
 
       {features.map((feature) => (
-        <section className="feature-strip" id={feature.id}>
+        <section className="feature-strip" id={feature.id} key={feature.id}>
           <div className="feature-strip-inner">
             <div className="image-container">
               <img src={feature.image} />

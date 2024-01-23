@@ -26,5 +26,8 @@ export const createRuntimeClientDebugger = (
       listeners.add(cb);
       return () => listeners.delete(cb);
     },
+    destroy: () => {
+      listeners.clear();
+    },
   };
 };

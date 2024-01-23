@@ -427,7 +427,6 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
                 key={props.integratedSource}
                 state={editorState}
                 onChangeEditorState={setEditorState}
-                hideTemplatingTips={false}
                 onExtractInlineNode={onExtractInlineNode}
                 ref={boardRef}
               />

@@ -46,7 +46,7 @@
   .terminal-emulator {
     background: #161616;
     color: white;
-    // font-family: monospace;
+    overflow: auto;
     flex: 1;
     font-size: 0.8rem;
     padding: 3px 8px;
@@ -166,7 +166,7 @@
     }
   }
 
-  .actions-menu {
+  .run-btn-container {
     display: none;
   }
 

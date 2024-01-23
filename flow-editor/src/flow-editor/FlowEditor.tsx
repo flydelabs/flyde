@@ -53,8 +53,6 @@ export type FlydeFlowEditorProps = {
 
   ref?: React.Ref<any>;
 
-  hideTemplatingTips?: boolean;
-
   initialPadding?: [number, number];
   disableScrolling?: boolean;
   darkMode?: boolean;
@@ -106,7 +104,6 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
         return debuggerClient.onBatchedEvents((events) => {
           events.forEach((event) => {
             if (event.type === DebuggerEventType.INPUTS_STATE_CHANGE) {
-              console.log("INPUTS_STATE_CHANGE", event.insId, event.val);
               setQueuedInputsData((obj) => {
                 return { ...obj, [event.insId]: event.val };
               });

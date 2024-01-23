@@ -1,4 +1,4 @@
-import { Button } from "@blueprintjs/core";
+import { Button, Tooltip } from "@blueprintjs/core";
 import { ImportableSource, ImportedNode, NodeLibraryData } from "@flyde/core";
 import classNames from "classnames";
 import React, { memo, useEffect, useState } from "react";
@@ -76,7 +76,14 @@ export const NodesLibrary: React.FC<NodesLibraryProps> = memo((props) => {
                     })
                   }
                 >
-                  {node.displayName ?? node.id}
+                  <Tooltip
+                    content={node.description}
+                    portalClassName="menu-tooltip"
+                    compact
+                    minimal
+                  >
+                    {node.displayName ?? node.id}
+                  </Tooltip>
                 </div>
               ))}
             </div>

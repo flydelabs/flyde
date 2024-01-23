@@ -51,7 +51,7 @@ export const features: FeatureDescription[] = [
     id: "open-source",
   },
   {
-    preview: "CI/CD & Git Friendly",
+    preview: "Seamless Integration",
     title: "Integrates With Existing Workflows. Doesn’t Replace them.",
     description: (
       <>
@@ -62,8 +62,8 @@ export const features: FeatureDescription[] = [
           and even front-end code.
         </p>
         <p>
-          Flows can be version-controlled, and be part <strong>CI/CD</strong>{" "}
-          pipelines, just like regular text-based code.
+          Flows can be <strong>version-controlled</strong>, and be part{" "}
+          <strong>CI/CD</strong> pipelines, just like regular text-based code.
         </p>
       </>
     ),

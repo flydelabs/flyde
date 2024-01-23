@@ -1,98 +1,10 @@
 import { InputPinMap, MacroNode } from "@flyde/core";
+import { TIMING_NAMESPACE, TimingNodeConfig, timeToString } from "./common";
 
-const namespace = "Timing";
+export { Delay } from "./Delay/Delay.flyde";
+export { Interval } from "./Interval/Interval.flyde";
 
-export type TimingNodeConfig =
-  | { type: "dynamic"; timeMs?: number }
-  | { type: "static"; timeMs: number };
-
-export type DelayConfig = TimingNodeConfig;
-
-export const Delay: MacroNode<DelayConfig> = {
-  id: "Delay",
-  displayName: "Delay",
-  namespace,
-  defaultData: { type: "static", timeMs: 420 },
-  description:
-    "Delays a value by a given amount of time. Supports both static and dynamic delays.",
-  definitionBuilder: (config) => {
-    const inputs: InputPinMap = { value: { description: "Value to delay" } };
-
-    if (config.type === "dynamic") {
-      inputs.delay = { description: "Delay in milliseconds" };
-    }
-
-    return {
-      inputs,
-      outputs: {
-        delayedValue: { description: "Delayed value" },
-      },
-      run: async ({ value, delay }, { delayedValue }) => {
-        await new Promise((resolve) => setTimeout(resolve, delay));
-        delayedValue.next(value);
-      },
-    };
-  },
-  runFnBuilder: (config) => {
-    return async ({ value, delay }, outputs) => {
-      const delayValue = config.type === "dynamic" ? delay : config.timeMs;
-      await new Promise((resolve) => setTimeout(resolve, delayValue));
-      outputs.delayedValue.next(value);
-    };
-  },
-  editorComponentBundlePath: "../../../dist/ui/Delay.js",
-};
-
-export type IntervalConfig = TimingNodeConfig;
-
-export const Interval: MacroNode<TimingNodeConfig> = {
-  id: "Interval",
-  displayName: "Interval",
-  namespace,
-
-  defaultData: { type: "static", timeMs: 420 },
-  description:
-    "Emits a value every interval. Supports both static and dynamic intervals.",
-  definitionBuilder: (config) => {
-    const inputs: InputPinMap = { value: { description: "Value to emit" } };
-
-    if (config.type === "dynamic") {
-      inputs.interval = { description: "Interval in milliseconds" };
-    }
-
-    return {
-      inputs,
-      outputs: {
-        value: { description: "Emitted value" },
-      },
-      reactiveInputs:
-        config.type === "dynamic" ? ["value", "interval"] : ["value"],
-      completionOutputs: [],
-    };
-  },
-  runFnBuilder: (config) => {
-    return ({ value, interval }, outputs, adv) => {
-      const intervalValue =
-        config.type === "dynamic" ? interval : config.timeMs;
-
-      const existingTimer = adv.state.get("timer");
-      if (existingTimer) {
-        clearInterval(existingTimer);
-      }
-
-      const timer = setInterval(() => {
-        outputs.value.next(value);
-      }, intervalValue);
-
-      adv.state.set("timer", timer);
-
-      adv.onCleanup(() => {
-        clearInterval(timer);
-      });
-    };
-  },
-  editorComponentBundlePath: "../../../dist/ui/Interval.js",
-};
+const namespace = TIMING_NAMESPACE;
 
 export type DebounceConfig = TimingNodeConfig;
 
@@ -100,18 +12,27 @@ export const Debounce: MacroNode<DebounceConfig> = {
   id: "Debounce",
   displayName: "Debounce",
   namespace,
-  defaultData: { type: "static", timeMs: 420 },
+  defaultData: { mode: "static", timeMs: 420 },
   description:
     "Emits the last value received after being idle for a given amount of milliseconds. Supports both static and dynamic delays.",
   definitionBuilder: (config) => {
     const inputs: InputPinMap = { value: { description: "Value to debounce" } };
 
-    if (config.type === "dynamic") {
+    if (config.mode === "dynamic") {
       inputs.delay = { description: "Delay in milliseconds" };
     }
 
+    const displayName = (() => {
+      if (config.mode === "dynamic") {
+        return "Debounce";
+      } else {
+        return `Debounce ${timeToString(config.timeMs)}`;
+      }
+    })();
+
     return {
       inputs,
+      displayName,
       outputs: {
         debouncedValue: { description: "Debounced value" },
       },
@@ -120,7 +41,7 @@ export const Debounce: MacroNode<DebounceConfig> = {
     };
   },
   runFnBuilder: (config) => {
-    return async ({ value, delay }, outputs, adv) => {
+    return ({ value, delay }, outputs, adv) => {
       const { debouncedValue } = outputs;
 
       const timer = adv.state.get("timer");
@@ -132,7 +53,7 @@ export const Debounce: MacroNode<DebounceConfig> = {
         () => {
           debouncedValue.next(value);
         },
-        config.type === "dynamic" ? delay : config.timeMs
+        config.mode === "dynamic" ? delay : config.timeMs
       );
 
       adv.state.set("timer", newTimer);
@@ -159,38 +80,51 @@ export const Throttle: MacroNode<ThrottleConfig> = {
   id: "Throttle",
   displayName: "Throttle",
   namespace,
-  defaultData: { type: "static", timeMs: 420 },
+  defaultData: { mode: "static", timeMs: 420 },
   description:
     "Limits the number of times a value is emitted to once per time configured. Supports both static and dynamic intervals.",
   definitionBuilder: (config) => {
     const inputs: InputPinMap = { value: { description: "Value to throttle" } };
-    if (config.type === "dynamic") {
+    if (config.mode === "dynamic") {
       inputs.limitTime = { description: "Interval in milliseconds" };
     }
+
+    const displayName = (() => {
+      if (config.mode === "dynamic") {
+        return "Throttle";
+      } else {
+        return `Throttle ${timeToString(config.timeMs)}`;
+      }
+    })();
     return {
       inputs,
+      displayName,
       outputs: {
-        throttledValue: { description: "Throttled value" },
+        unthrottledValue: { description: "Unthrottled value" },
       },
       reactiveInputs: ["value"],
     };
   },
   runFnBuilder: (config) => {
-    return async ({ value, limitTime }, outputs, adv) => {
-      const { throttledValue } = outputs;
+    return async (inputs, outputs, adv) => {
+      const timeMs =
+        config.mode === "dynamic" ? inputs.limitTime : config.timeMs;
 
-      const timeMs = config.type === "dynamic" ? limitTime : config.timeMs;
-
-      const timer = adv.state.get("timer");
-      if (timer) {
-        adv.onError(new ThrottleError(value));
+      const promise = adv.state.get("promise");
+      if (promise) {
+        adv.onError(new ThrottleError(inputs.value));
         return;
       } else {
-        throttledValue.next(value);
-        const newTimer = setTimeout(() => {
-          adv.state.set("timer", null);
-        }, timeMs);
-        adv.state.set("timer", newTimer);
+        outputs.unthrottledValue.next(inputs.value);
+        const promise = new Promise<void>((resolve) => {
+          setTimeout(() => {
+            resolve();
+          }, timeMs);
+        });
+        adv.state.set("promise", promise);
+
+        await promise;
+        adv.state.set("promise", undefined);
       }
     };
   },
