@@ -16,7 +16,7 @@ export const createRuntimeClientDebugger = (
         time: Date.now(),
         executionId: "n/a",
       } as DebuggerEvent;
-      console.info(`Got debugger event`, e);
+      // console.info(`Got debugger event`, e);
       historyPlayer.addEvents([fullEvent]);
       runtimePlayer.addEvents([fullEvent]);
 
@@ -25,6 +25,9 @@ export const createRuntimeClientDebugger = (
     onBatchedEvents: (cb: (events: DebuggerEvent[]) => void) => {
       listeners.add(cb);
       return () => listeners.delete(cb);
+    },
+    destroy: () => {
+      listeners.clear();
     },
   };
 };

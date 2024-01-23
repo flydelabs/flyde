@@ -53,8 +53,6 @@ export type FlydeFlowEditorProps = {
 
   ref?: React.Ref<any>;
 
-  hideTemplatingTips?: boolean;
-
   initialPadding?: [number, number];
   disableScrolling?: boolean;
   darkMode?: boolean;

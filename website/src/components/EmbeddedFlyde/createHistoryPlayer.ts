@@ -21,6 +21,7 @@ export type HistoryPlayer = {
     pinId: string,
     type: PinType
   ) => Promise<HistoryPayload>;
+  clear: () => void;
 };
 
 export const createHistoryPlayer = (): HistoryPlayer => {
@@ -97,6 +98,10 @@ export const createHistoryPlayer = (): HistoryPlayer => {
           }
         }
       });
+    },
+    clear: () => {
+      pinHistoryMap.clear();
+      insHistoryMap.clear();
     },
   };
 };

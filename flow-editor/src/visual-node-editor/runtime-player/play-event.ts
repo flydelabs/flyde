@@ -13,7 +13,7 @@ import {
   getPinDomId,
 } from "../dom-ids";
 
-const BLINK_TIMEOUT = 5000; // also change animation time in scss
+const BLINK_TIMEOUT = 1500; // also change animation time in scss
 
 const debug = debugLogger("runtime-player:play-event");
 
@@ -76,7 +76,6 @@ export const playEvent = (event: DebuggerEvent) => {
             ? document.querySelectorAll(`[data-from-id="${connDomIdAttr}"]`)
             : [];
         if (!element) {
-          console.warn(`No DOM element with Id [${domId}] found to play event`);
           debug(`No DOM element with Id [${domId}] found to play event`, event);
         } else {
           clearTimeout(cancelTimers.get(cancelTimerKey));

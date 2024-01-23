@@ -70,7 +70,7 @@ const matchTitle = (match: QuickMenuMatch) => {
 
 const renderNode: ItemRenderer<QuickMenuMatch> = (
   match,
-  { handleClick, modifiers, query }
+  { handleClick, modifiers, query, index }
 ) => {
   if (!modifiers.matchesPredicate) {
     return null;
@@ -79,7 +79,7 @@ const renderNode: ItemRenderer<QuickMenuMatch> = (
 
   if (match.type === "value") {
     return (
-      <React.Fragment>
+      <React.Fragment key={index}>
         <MenuDivider />
         <MenuItem
           active={modifiers.active}
