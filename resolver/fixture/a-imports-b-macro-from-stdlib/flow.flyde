@@ -1,0 +1,45 @@
+imports:
+  "@flyde/stdlib":
+    - InlineValue
+node:
+  instances:
+    - pos:
+        x: -11.30609130859375
+        y: -3.8911108398437477
+      id: zue8ekkmpkisgom61s2i3yqs
+      inputConfig: {}
+      nodeId: InlineValue__zue8ekkmpkisgom61s2i3yqs
+      macroId: InlineValue
+      macroData:
+        type: string
+        value: Hello
+        label: '"Hello"'
+  connections:
+    - from:
+        insId: __this
+        pinId: n
+      to:
+        insId: zue8ekkmpkisgom61s2i3yqs
+        pinId: __trigger
+    - from:
+        insId: zue8ekkmpkisgom61s2i3yqs
+        pinId: value
+      to:
+        insId: __this
+        pinId: r
+  id: Add1Wrapped
+  inputs:
+    n:
+      mode: required
+      type: number
+  outputs:
+    r:
+      type: number
+  inputsPosition:
+    n:
+      x: 26.400238037109375
+      y: -66.00590515136719
+  outputsPosition:
+    r:
+      x: 27.59765625
+      y: 110.82328796386719

@@ -261,9 +261,37 @@ export function resolveFlow(
         }
 
         if (!found) {
-          throw new Error(
-            `Could not find macro node ${macroId} in ${importPath}. It is imported by ${node.id} (${fullFlowPath})`
-          );
+          if (importPath === "@flyde/stdlib" && StdLib[macroId]) {
+            const targetMacroNode = StdLib[macroId];
+
+            const macroDef = macroNodeToDefinition(targetMacroNode, importPath);
+
+            gatheredDependencies[macroDef.id] = {
+              ...macroDef,
+              source: {
+                path: importPath,
+                export: targetMacroNode.id,
+              },
+            };
+
+            const resolvedNode = processMacroNodeInstance(
+              namespace,
+              targetMacroNode,
+              instance
+            );
+
+            gatheredDependencies[resolvedNode.id] = {
+              ...resolvedNode,
+              source: {
+                path: importPath,
+                export: targetMacroNode.id,
+              },
+            };
+          } else {
+            throw new Error(
+              `Could not find macro node ${macroId} in ${importPath}. It is imported by ${node.id} (${fullFlowPath})`
+            );
+          }
         }
       } else {
         throw new Error(

@@ -150,14 +150,13 @@ const config = {
             to: "/docs",
             label: "Documentation",
           },
-          { to: "/blog", label: "Blog", position: "left" },
           {
             href: "https://marketplace.visualstudio.com/items?itemName=flyde.flyde-vscode",
             label: "VSCode Extension",
           },
           {
-            href: "https://github.com/flydelabs/flyde/tree/main/examples",
-            label: "Examples",
+            href: "https://play.flyde.dev",
+            label: "Online Playground",
           },
           {
             href: "https://github.com/flydelabs/flyde",
@@ -186,16 +185,16 @@ const config = {
             title: "Community",
             items: [
               {
-                label: "Stack Overflow",
-                href: "https://stackoverflow.com/questions/tagged/flyde",
-              },
-              {
                 label: "Discord",
                 href: "https://discord.gg/x7t4tjZQP8",
               },
               {
                 label: "Twitter",
                 href: "https://twitter.com/FlydeDev",
+              },
+              {
+                label: "Stack Overflow",
+                href: "https://stackoverflow.com/questions/tagged/flyde",
               },
             ],
           },
