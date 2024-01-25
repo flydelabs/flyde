@@ -552,5 +552,26 @@ describe("resolver", () => {
       assert.equal(s.lastCall.args[0], 2);
       assert.equal(s.getCalls().length, 3); // duplicate macro duplicates to 3
     });
+
+    it('resolves stdlib macros from the internal copy of "@flyde/stdlib"', async () => {
+      const data = resolveFlowByPath(
+        getFixturePath("a-imports-b-macro-from-stdlib/flow.flyde")
+      );
+
+      const resolvedDeps = data.dependencies as NodesCollection;
+
+      const [s, r] = spiedOutput();
+
+      const n = dynamicNodeInput();
+
+      execute({
+        node: data.main,
+        resolvedDeps: resolvedDeps,
+        inputs: { n },
+        outputs: { r },
+      });
+      n.subject.next("");
+      assert.equal(s.lastCall.args[0], "Hello");
+    });
   });
 });

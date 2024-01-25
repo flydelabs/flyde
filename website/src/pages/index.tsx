@@ -20,14 +20,14 @@ export const examples = [
   {
     label: "Beep Boop",
     flow: exampleReactivity,
-    tip: `Try changing the collection count and see the output change accordingly.`,
-    playgroundUrl: "https://play.flyde.dev/?flow=hello-world",
+    tip: `Try changing the collection count and see the output change.`,
   },
   {
     label: "Hello World",
     flow: exampleHelloWorld,
     tip: `Try double clicking on the "World" node to change the string.`,
-    playgroundUrl: "https://play.flyde.dev/?flow=hello-world",
+    playgroundUrl:
+      "https://play.flyde.dev/apps/974a3913-1b3b-4a0a-9ca7-4e2a69d0fddb",
   },
   {
     label: "Debounce/Throttle",
@@ -62,7 +62,7 @@ function HomepageHeader() {
   const examplesContainer = useMemo(() => {
     return (
       <div className="example-actions">
-        {/* <span className="font-thin">Browse examples:</span> */}
+        <span className="font-thin label">Examples:</span>
         {examples.map((ex) => (
           <button
             key={ex.label}
@@ -144,10 +144,18 @@ function HomepageHeader() {
           />
           {currentExample.tip ? (
             <div className="example-tip">
-              Pssst.. {currentExample.tip} &nbsp;
-              {/* <a href={currentExample.playgroundUrl} target="_blank">
-              Open in playground
-            </a> */}
+              Challenge:{" "}
+              {currentExample.tip.replace(/^[A-Z]/, (s) => s.toLowerCase())}{" "}
+              &nbsp;
+              {currentExample.playgroundUrl ? (
+                <a
+                  href={currentExample.playgroundUrl}
+                  className="open-in-playground"
+                  target="_blank"
+                >
+                  Open example in playground
+                </a>
+              ) : null}
             </div>
           ) : null}
           <div className="hero-vertical-only">{examplesContainer}</div>
