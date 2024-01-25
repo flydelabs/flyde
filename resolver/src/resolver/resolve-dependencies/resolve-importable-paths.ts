@@ -1,4 +1,3 @@
-import { existsSync } from "fs";
 import { join, dirname } from "path";
 import * as glob from "glob";
 

@@ -16,7 +16,7 @@ import {
   MacroNodeDefinition,
   isMacroNodeInstance,
 } from "@flyde/core";
-import { existsSync } from "fs";
+import { existsSync, readFileSync } from "fs";
 import _ = require("lodash");
 import { join } from "path";
 import { ResolveMode, resolveFlowByPath } from "../resolve-flow";
@@ -264,7 +264,36 @@ export function resolveFlow(
           if (importPath === "@flyde/stdlib" && StdLib[macroId]) {
             const targetMacroNode = StdLib[macroId];
 
+            if (!isMacroNode(targetMacroNode)) {
+              throw new Error(
+                `Found node ${macroId} in ${importPath}, but it is not a macro node`
+              );
+            }
+
             const macroDef = macroNodeToDefinition(targetMacroNode, importPath);
+
+            const hardcodedStdLibLocation = require.resolve(
+              "@flyde/stdlib/dist/all-browser"
+            );
+
+            const bundleFileName = targetMacroNode.editorComponentBundlePath
+              .split("/")
+              .pop()!;
+            const bundlePath = join(
+              hardcodedStdLibLocation,
+              "../ui",
+              bundleFileName
+            );
+
+            macroDef.editorComponentBundleContent = readFileSync(
+              bundlePath,
+              "utf-8"
+            );
+
+            /*
+              mega hack to read the content's of the bundled node when using built-in stdlib
+              TODO - once real-world macro nodes are implemented, this should be rethought of
+            */
 
             gatheredDependencies[macroDef.id] = {
               ...macroDef,
