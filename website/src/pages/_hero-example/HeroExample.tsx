@@ -16,10 +16,11 @@ const {output} = await result;
 console.log(\`Output: \$\{output\}\`);`;
 
 import "./HeroExample.scss";
-import { examples } from "..";
 import { Loader } from "@flyde/flow-editor";
 import { processMacroNodes } from "@site/src/components/EmbeddedFlyde/macroHelpers";
 import * as stdLibBrowser from "@flyde/stdlib/dist/all-browser";
+import { noop } from "@flyde/core";
+import { examples } from "../_examples";
 
 export const HeroExample: React.FC<{
   example: (typeof examples)[0];
@@ -59,13 +60,6 @@ export const HeroExample: React.FC<{
     [setLogs]
   );
 
-  const onCompleted = React.useCallback(() => {
-    setLogs((logs) => [
-      ...logs,
-      "-- Flow completed, re-running in 3 seconds -- ",
-    ]);
-  }, []);
-
   return (
     <div className="hero-example">
       <div className="hero-example__tabs">
@@ -94,7 +88,7 @@ export const HeroExample: React.FC<{
             ref={ref}
             flowProps={flowProps}
             onLog={onLogOutput}
-            onCompleted={onCompleted}
+            onCompleted={noop}
           />
         </div>
       ) : null}

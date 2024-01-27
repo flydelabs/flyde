@@ -9,39 +9,8 @@ import { HeroExample } from "./_hero-example/HeroExample";
 
 import Link from "@docusaurus/Link";
 import { IconStar } from "../components/IconStar";
-
-import exampleHelloWorld from "./_hero-example/ExampleHelloWorld.flyde";
-import exampleDebounceThrottle from "./_hero-example/ExampleDebounceThrottle.flyde";
-import exampleHttpRequests from "./_hero-example/ExampleHTTPRequests.flyde";
-import exampleReactivity from "./_hero-example/ExampleReactivity.flyde";
 import { features } from "./_features";
-
-export const examples = [
-  {
-    label: "Beep Boop",
-    flow: exampleReactivity,
-    tip: `Try changing the collection count and see the output change.`,
-  },
-  {
-    label: "Hello World",
-    flow: exampleHelloWorld,
-    tip: `Try double clicking on the "World" node to change the string.`,
-    playgroundUrl:
-      "https://play.flyde.dev/apps/974a3913-1b3b-4a0a-9ca7-4e2a69d0fddb",
-  },
-  {
-    label: "Debounce/Throttle",
-    flow: exampleDebounceThrottle,
-    tip: "Try changing the delay time of the debounce/throttle nodes.",
-    playgroundUrl: "https://play.flyde.dev/?flow=hello-world",
-  },
-  {
-    label: "HTTP Requests",
-    flow: exampleHttpRequests,
-    tip: `Double click "Format Response" to see how it is implemented.`,
-    playgroundUrl: "https://play.flyde.dev/?flow=hello-world",
-  },
-];
+import { examples } from "./_examples";
 
 const FIRST_EXAMPLE_IDX = 0;
 
@@ -153,7 +122,7 @@ function HomepageHeader() {
                   className="open-in-playground"
                   target="_blank"
                 >
-                  Open example in playground
+                  Open in playground
                 </a>
               ) : null}
             </div>
