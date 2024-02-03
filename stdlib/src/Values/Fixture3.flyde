@@ -1,0 +1,46 @@
+imports:
+  "@flyde/stdlib":
+    - CodeExpression
+node:
+  instances:
+    - pos:
+        x: -163.24603759765625
+        y: -17.4033013916016
+      id: vgfkmgitsirzego7i4gksg3w
+      inputConfig: {}
+      nodeId: CodeExpression__vgfkmgitsirzego7i4gksg3w
+      macroId: CodeExpression
+      macroData:
+        value: inputs.a + adv.context.magicNumber
+        label: inputs.a + adv.context.magicNumber
+  connections:
+    - from:
+        insId: vgfkmgitsirzego7i4gksg3w
+        pinId: value
+      to:
+        insId: __this
+        pinId: output
+    - from:
+        insId: __this
+        pinId: input
+      to:
+        insId: vgfkmgitsirzego7i4gksg3w
+        pinId: a
+  id: Fixture
+  inputs:
+    input:
+      mode: required
+  outputs:
+    output:
+      delayed: false
+  inputsPosition:
+    input:
+      x: -51.5743212890625
+      y: -94.65135314941406
+  outputsPosition:
+    result:
+      x: -23.264428942324532
+      y: 237.25953921502617
+    output:
+      x: -58.35034790039063
+      y: 114.3506103515625

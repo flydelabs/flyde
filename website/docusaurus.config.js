@@ -55,7 +55,7 @@ const FixWebpack5Plugin = () => ({
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: "Visual Programming. For Developers.",
+  title: "Flyde | Visual Programming. For Developers.",
   tagline:
     "Experience the next level of abstraction in programming with Flyde's visual, flow-based approach and modular design",
   url: "https://www.flyde.dev",
@@ -79,21 +79,21 @@ const config = {
     locales: ["en"],
   },
   plugins: [
-    [
-      "docusaurus-plugin-typedoc",
-      // Plugin / TypeDoc options
-      {
-        entryPoints: ["../core/src/index.ts"],
-        tsconfig: "../core/tsconfig.json",
-        out: "api-reference",
-        watch: process.env.TYPEDOC_WATCH,
-        sidebar: {
-          position: 20,
-          categoryLabel: "API Reference",
-          fullNames: true,
-        },
-      },
-    ],
+    // [
+    //   "docusaurus-plugin-typedoc",
+    //   // Plugin / TypeDoc options
+    //   {
+    //     entryPoints: ["../core/src/index.ts"],
+    //     tsconfig: "../core/tsconfig.json",
+    //     out: "api-reference",
+    //     watch: process.env.TYPEDOC_WATCH,
+    //     sidebar: {
+    //       position: 20,
+    //       categoryLabel: "API Reference",
+    //       fullNames: true,
+    //     },
+    //   },
+    // ],
     "docusaurus-plugin-sass",
     "docusaurus-plugin-hotjar",
     // @ts-ignore

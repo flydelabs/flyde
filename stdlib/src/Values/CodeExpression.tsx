@@ -68,6 +68,7 @@ const CodeExpressionEditor: MacroEditorComp<InlineValueConfig> =
             type="text"
             value={value.label}
             onChange={(e) => onChange({ ...value, label: e.target.value })}
+            placeholder="Code Expression"
           />
         </FormGroup>
       </div>

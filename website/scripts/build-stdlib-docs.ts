@@ -64,6 +64,6 @@ const groupAndTables = entries.map(([ns, nodes]) => {
     { groups: groupAndTables }
   );
 
-  writeFileSync("docs/StdLib/index.md", contents);
-  console.log(`Done writing docs/StdLib/index.md`);
+  writeFileSync("docs/reference/StdLib/index.md", contents);
+  console.log(`Done writing docs/reference/StdLib/index.md`);
 })();

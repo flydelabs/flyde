@@ -76,11 +76,8 @@ function HomepageHeader() {
             and Node.js.
           </p>
           <div className="buttons-container">
-            <Link
-              className="button button--primary button--lg "
-              href="https://marketplace.visualstudio.com/items?itemName=flyde.flyde-vscode"
-            >
-              Quick Start
+            <Link className="button button--primary button--lg " href="/docs">
+              Learn More
             </Link>
             <Link
               className="button button--secondary button--lg example-btn"
@@ -157,7 +154,6 @@ export default function Home(): JSX.Element {
 
   return (
     <Layout
-      title={`Flyde`}
       description="Flyde, open-source visual programming language.
       Runs in the IDE, integrates with existing TypeScript code, browser and Node.js."
     >

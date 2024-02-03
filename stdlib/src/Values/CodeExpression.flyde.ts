@@ -13,8 +13,8 @@ export const CodeExpression: MacroNode<CodeExpressionConfig> = {
   runFnBuilder: (config) => {
     return (inputs, outputs, adv) => {
       try {
-        const resFn = eval(`(inputs) => (${config.value})`);
-        outputs.value.next(resFn(inputs));
+        const resFn = eval(`(inputs, adv) => (${config.value})`);
+        outputs.value.next(resFn(inputs, adv));
       } catch (e) {
         adv.onError(e);
       }

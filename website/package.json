@@ -20,7 +20,7 @@
     "write-translations": "docusaurus write-translations",
     "write-heading-ids": "docusaurus write-heading-ids",
     "typecheck": "tsc",
-    "test": "mocha --require ts-node/register 'src/**/*.spec.ts'"
+    "test": "mocha --fail-zero=false --require ts-node/register 'src/**/*.spec.ts'"
   },
   "dependencies": {
     "@blueprintjs/core": "^5.0.0",
