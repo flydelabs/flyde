@@ -9,7 +9,8 @@ import { assert } from "chai";
 
 import { spiedOutput } from "@flyde/core/dist/test-utils";
 
-import { resolveFlowByPath } from "@flyde/resolver";
+// ugly hack to avoid a circular dependency with resolver
+import { resolveFlowByPath } from "../../../resolver/dist";
 
 describe.only("Values", () => {
   describe("Code Expression", () => {
