@@ -51,7 +51,7 @@
     "dev": "pnpm run watch",
     "bundle": "webpack --config webpack.config.js",
     "bundle:watch": "webpack --config webpack.config.js --watch",
-    "build": "rm -rf dist && tsc -p . && pnpm run bundle && pnpm run build:docs-data",
+    "build": "rm -rf dist && tsc -p tsconfig.build.json && pnpm run bundle && pnpm run build:docs-data",
     "build:docs-data": "ts-node scripts/docs-data.ts",
     "prod": "node dist/index.js",
     "__publish": "npm version patch && npm publish"

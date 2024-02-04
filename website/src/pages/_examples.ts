@@ -1,4 +1,3 @@
-// https://play.flyde.dev/apps/5860e97d-8e3c-4751-baf2-367bcd768852
 import exampleHelloWorld from "./_hero-example/ExampleHelloWorld.flyde";
 import exampleDebounceThrottle from "./_hero-example/ExampleDebounceThrottle.flyde";
 import exampleHttpRequests from "./_hero-example/ExampleHTTPRequests.flyde";

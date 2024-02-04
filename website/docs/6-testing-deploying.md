@@ -1,12 +1,11 @@
-# Testing & Deploying
+# Testing, Deploying & Versioning
 
-:::warning
-This article is a work in progress. It will be updated with more information soon.
+Although Flyde is a visual programming language, it's just a library. This means that **you can test, version control and deploy your flows using any tool you like.**
+
+A great example is the standard library, which has some tests that use Flyde flows as fixtures. The flows are loaded and then tested like any other code. You can find them [here](https://github.com/flydelabs/flyde/blob/main/stdlib/src/Values/Values.spec.ts).
+
+Same goes for deployment, you can use any deployment tool you like. You can use a CI/CD pipeline, a serverless framework, or even a simple bash script.
+
+:::info
+If you're looking for a way to deploy your flows as a service, check out [Trigg](https://www.trigg.dev), a serverless platform for Flyde.
 :::
-
-Topics this will cover:
-
-- it's just a library
-- test with any framework
-- deploy with any framework
-- version control with any VCS
