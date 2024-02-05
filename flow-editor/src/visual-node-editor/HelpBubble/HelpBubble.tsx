@@ -1,4 +1,5 @@
 import {
+  Button,
   Classes,
   Dialog,
   H4,
@@ -17,7 +18,6 @@ import {
   HotkeysMenuData,
 } from "../../lib/react-utils/use-hotkeys";
 
-import { helpIcon } from "./icon";
 import { usePorts } from "../../flow-editor/ports";
 
 export interface HelpBubbleProps {}
@@ -43,6 +43,25 @@ const groupsOrder = ["Viewport Controls", "Editing", "Selection"];
 type Mutable<Type> = {
   -readonly [Key in keyof Type]: Type[Key];
 };
+
+const mainDocItems = [
+  {
+    title: "Core Concepts",
+    link: "https://www.flyde.dev/docs/core-concepts/",
+  },
+  {
+    title: "Integrate With Existing Code",
+    link: "https://www.flyde.dev/docs/integrate-flows/",
+  },
+  {
+    title: "Creating Custom Nodes",
+    link: "https://www.flyde.dev/docs/custom-nodes/",
+  },
+  {
+    title: "TroubleShooting",
+    link: "https://www.flyde.dev/docs/troubleshooting/",
+  },
+];
 
 export const HelpBubble: React.FC<HelpBubbleProps> = () => {
   const [hotkeysModalOpen, setHotkeysModalOpen] = React.useState(false);
@@ -85,6 +104,24 @@ export const HelpBubble: React.FC<HelpBubbleProps> = () => {
 
   const menu = (
     <Menu>
+      {mainDocItems.map((item) => (
+        <MenuItem
+          key={item.title}
+          text={item.title}
+          onClick={() => {
+            reportEvent("helpMenuItem", { item: item.title });
+          }}
+          href={item.link}
+          target="_blank"
+        />
+      ))}
+      <MenuDivider />
+      <MenuItem
+        text="Discord"
+        onClick={() => reportEvent("helpMenuItem", { item: "discord" })}
+        href="https://discord.gg/x7t4tjZQP8"
+        target="_blank"
+      />
       <MenuItem
         text="Hotkeys"
         onClick={() => {
@@ -93,16 +130,9 @@ export const HelpBubble: React.FC<HelpBubbleProps> = () => {
         }}
       />
       <MenuItem
-        text="Documentation"
+        text="Full Documentation"
         onClick={() => reportEvent("helpMenuItem", { item: "documentation" })}
         href="https://www.flyde.dev/docs"
-        target="_blank"
-      />
-      <MenuDivider />
-      <MenuItem
-        text="Discord"
-        onClick={() => reportEvent("helpMenuItem", { item: "discord" })}
-        href="https://discord.gg/x7t4tjZQP8"
         target="_blank"
       />
     </Menu>
@@ -114,7 +144,7 @@ export const HelpBubble: React.FC<HelpBubbleProps> = () => {
         modifiers={popperModifiers}
         onOpened={() => reportEvent("helpMenuOpen", {})}
       >
-        <div dangerouslySetInnerHTML={{ __html: helpIcon }} />
+        <Button>Help</Button>
       </Popover>
       {hotkeysModal}
     </div>
