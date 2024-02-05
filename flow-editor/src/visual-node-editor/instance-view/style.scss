@@ -98,26 +98,17 @@ $half-of-pin-height: 16px;
     }
 
     @at-root {
-      .inline-editor-portal-root .inline-group-editor-container {
+      .inline-group-editor-container {
         // width: 400px;
         // height: 300px;
         // max-width: 600px;
 
         width: 80%;
-        height: 85%;
+        height: 85vh;
         left: 10%;
         top: 7.5%;
 
-        background: #ffffff;
-
-        box-shadow: $shadow-a;
         // position: relative;
-
-        z-index: 2;
-        display: flex;
-        flex-direction: column;
-        position: absolute;
-        overflow: hidden;
 
         > header {
           font-size: 20px;
@@ -129,7 +120,15 @@ $half-of-pin-height: 16px;
           z-index: 1;
         }
 
-        > .visual-node-editor {
+        > main {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          position: relative;
+          overflow: hidden;
+        }
+
+        > main > .visual-node-editor {
           flex: 1;
           display: flex;
           position: relative;

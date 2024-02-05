@@ -52,6 +52,8 @@ import {
   Menu,
   MenuItem,
   Tooltip,
+  Dialog,
+  Classes,
 } from "@blueprintjs/core";
 import ReactDOM from "react-dom";
 import { NodeStyleMenu } from "./NodeStyleMenu";
@@ -682,25 +684,25 @@ export const InstanceView: React.FC<InstanceViewProps> =
       if (inlineGroupProps) {
         return (
           // ReactDOM.createPortal((<Resizable width={inlineEditorSize.w} height={inlineEditorSize.h} onResize={onResizeInline} handle={<span className='no-drag react-resizable-handle react-resizable-handle-se'/>}>
-          ReactDOM.createPortal(
-            <div
-              className="inline-group-editor-container no-drag"
-              // style={{ width: `${inlineEditorSize.w}px`, height: `${inlineEditorSize.h}px` }}
-            >
-              <header>
-                {content}{" "}
-                <button onClick={props.onCloseInlineEditor}>close</button>
-              </header>
+          <Dialog
+            isOpen={true}
+            onClose={props.onCloseInlineEditor}
+            className="inline-group-editor-container no-drag"
+            title={`Editing inline node ${content}`}
+
+            // style={{ width: `${inlineEditorSize.w}px`, height: `${inlineEditorSize.h}px` }}
+          >
+            <main className={classNames(Classes.DIALOG_BODY)} tabIndex={0}>
               <VisualNodeEditor
                 {...props.inlineGroupProps}
                 className="no-drag"
                 ref={inlineEditorRef}
               />
-            </div>,
-            inlineEditorPortalDomNode
-          )
-          // </Resizable>), inlineEditorPortalDomNode)
+            </main>
+          </Dialog>
         );
+
+        // </Resizable>), inlineEditorPortalDomNode)
       } else {
         return (
           <ContextMenu

@@ -126,10 +126,10 @@ import {
   SelectionIndicatorProps,
 } from "./SelectionIndicator";
 import { NodesLibrary } from "./NodesLibrary";
-import { library } from "@fortawesome/fontawesome-svg-core";
 import { RunFlowModal } from "./RunFlowModal";
 
 import { Play } from "@blueprintjs/icons";
+import { AddMainPinModal } from "./AddMainPinModal";
 
 const MemodSlider = React.memo(Slider);
 
@@ -273,6 +273,9 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       const [didCenterInitially, setDidCenterInitially] = useState(false);
 
       const [runModalVisible, setRunModalVisible] = useState(false);
+
+      const [addMainPinModalVisibleType, setAddMainPinModalVisibleType] =
+        useState<PinType | undefined>();
 
       const [quickAddMenuVisible, setQuickAddMenuVisible] =
         useState<QuickAddMenuData>();
@@ -1111,10 +1114,8 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         []
       );
 
-      const onAddIoPin = React.useCallback(
-        async (type: PinType) => {
-          const newPinId = await _prompt("New name?");
-
+      const onAddMainPin = React.useCallback(
+        (type: PinType, newPinId: string) => {
           if (!newPinId) {
             // name selection dismissed, cancelling
             return;
@@ -1144,9 +1145,14 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
           onChange(newValue, functionalChange("add new io pin"));
           reportEvent("addIoPin", { type });
+          setAddMainPinModalVisibleType(undefined);
         },
-        [_prompt, node, onChange, reportEvent]
+        [node, onChange, reportEvent]
       );
+
+      const onCloseAddMainPinModal = React.useCallback(() => {
+        setAddMainPinModalVisibleType(undefined);
+      }, []);
 
       const editCompletionOutputs = React.useCallback(async () => {
         const curr = node.completionOutputs?.join(",");
@@ -1688,15 +1694,26 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         return (
           <Menu>
             <MenuItem
-              text={`New input ${maybeDisabledLabel}`}
+              text={`New main input ${maybeDisabledLabel}`}
               onMouseDown={(e) => e.stopPropagation()}
-              onClick={preventDefaultAnd(() => onAddIoPin("input"))}
+              onClick={preventDefaultAnd(() =>
+                setAddMainPinModalVisibleType("input")
+              )}
               disabled={!nodeIoEditable}
             />
             <MenuItem
               onMouseDown={(e) => e.stopPropagation()}
-              text={`New output ${maybeDisabledLabel}`}
-              onClick={preventDefaultAnd(() => onAddIoPin("output"))}
+              text={`New main output ${maybeDisabledLabel}`}
+              onClick={preventDefaultAnd(() =>
+                setAddMainPinModalVisibleType("input")
+              )}
+              disabled={!nodeIoEditable}
+            />
+            <MenuItem
+              onMouseDown={(e) => e.stopPropagation()}
+              text={`Integrate with existing code (docs link)`}
+              href="https://www.flyde.dev/docs/integrate-flows/"
+              target="_blank"
               disabled={!nodeIoEditable}
             />
             <MenuItem
@@ -1742,7 +1759,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         node.defaultStyle,
         onChangeDefaultStyle,
         _prompt,
-        onAddIoPin,
         editCompletionOutputs,
         editReactiveInputs,
         editNodeDescription,
@@ -2409,6 +2425,13 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             </div>
             {runModalVisible ? (
               <RunFlowModal node={node} onClose={closeRunModal} />
+            ) : null}
+            {addMainPinModalVisibleType ? (
+              <AddMainPinModal
+                type={addMainPinModalVisibleType}
+                onAdd={onAddMainPin}
+                onClose={onCloseAddMainPinModal}
+              />
             ) : null}
           </ContextMenu>
         );
