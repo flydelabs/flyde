@@ -6,6 +6,6 @@ A great example is the standard library, which has some tests that use Flyde flo
 
 Same goes for deployment, you can use any deployment tool you like. You can use a CI/CD pipeline, a serverless framework, or even a simple bash script.
 
-:::info
+<!-- :::info
 If you're looking for a way to deploy your flows as a service, check out [Trigg](https://www.trigg.dev), a serverless platform for Flyde.
-:::
+::: -->
