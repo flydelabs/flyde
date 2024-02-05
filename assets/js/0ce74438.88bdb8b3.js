@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkwebsite=self.webpackChunkwebsite||[]).push([[6342],{3629:(e,s,t)=>{t.r(s),t.d(s,{default:()=>f});var l=t(70079);const f=()=>((0,l.useEffect)((()=>{window.location.href="https://play.flyde.dev"}),[]),null)}}]);
