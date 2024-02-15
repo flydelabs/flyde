@@ -32,7 +32,7 @@ body:
     id: system-info
     attributes:
       label: System Info
-      description: Output of `npx envinfo --system --npmPackages svelte,rollup,webpack --binaries --browsers`
+      description: Output of `npx envinfo --system --npmPackages @flyde/* --binaries --browsers --IDEs`
       render: shell
       placeholder: System, Binaries, Browsers
     validations:
@@ -45,6 +45,6 @@ body:
       options:
         - annoyance
         - blocking an upgrade
-        - blocking all usage of svelte
+        - blocking all usage of Flyde
     validations:
       required: true
