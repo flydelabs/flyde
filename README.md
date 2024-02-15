@@ -9,7 +9,7 @@
 <br/>
   
 [![Official Website](https://img.shields.io/badge/Official%20Website-flyde.dev-blue?style=flat&logo=world&logoColor=white)](https://flyde.dev.com)
-[![Discord Follow](https://dcbadge.vercel.app/api/server/x7t4tjZQP8?style=flat)](https://discord.com/invite/x7t4tjZQP8)
+[![Discord Follow](https://dcbadge.vercel.app/api/server/x7t4tjZQP8?style=flat)](https://flyde.dev/discord)
 [![GitHub Repo stars](https://img.shields.io/github/stars/flydelabs/flyde?style=social)](https://github.com/flydelabs/flyde)
 [![@FlydeDev](https://img.shields.io/twitter/follow/FlydeDev?style=social)](https://twitter.com/FlydeDev)
 
