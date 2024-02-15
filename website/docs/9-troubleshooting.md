@@ -25,4 +25,4 @@ DEBUG=flyde:* node my-flow.js
 We're always looking to improve Flyde, and we'd love to hear from you. If you find a bug, have a feature request, or just want to ask a question, feel free to:
 
 - open an issue on the [Flyde GitHub repository](https://www.github.com/flydelabs/flyde)
-- join our [Discord server](https://discord.com/invite/x7t4tjZQP8) and ask in the #flyde channel
+- join our [Discord server](https://www.flyde.dev/discord) and ask in the #flyde channel

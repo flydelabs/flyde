@@ -1,3 +1,17 @@
+# License for @flyde/flow-editor
+
+## Open Source License (AGPL-3.0)
+
+The @flyde/flow-editor is available under the GNU Affero General Public License version 3 (AGPL-3.0), which allows you to use, modify, and distribute the editor under the AGPL-3.0 terms. The full text of the AGPL-3.0 can be found below.
+
+## Commercial License
+
+If you are unable to comply with the AGPL-3.0 license or require different licensing terms for commercial use, a commercial license is available. The commercial license offers more flexibility for proprietary use and integration into non-open source applications.
+
+For more information on obtaining a commercial license, please contact an admin on our [Discord server](https://www.flyde.dev/discord).
+
+### License Terms
+
                     GNU AFFERO GENERAL PUBLIC LICENSE
                        Version 3, 19 November 2007
 
