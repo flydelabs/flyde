@@ -43,7 +43,7 @@ const CollectEditor: MacroEditorComp<CollectConfig> = function CollectEditor({
             value={value.count}
             onChange={(count) => onChange({ ...value, count })}
             valueRenderer={(props) => (
-              <FormGroup label="Time:" inline>
+              <FormGroup label="Count:" inline>
                 <NumericInput
                   value={props.value.count}
                   onValueChange={(e) =>

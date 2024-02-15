@@ -58,8 +58,12 @@ const mainDocItems = [
     link: "https://www.flyde.dev/docs/custom-nodes/",
   },
   {
-    title: "TroubleShooting",
+    title: "Trouble-shooting",
     link: "https://www.flyde.dev/docs/troubleshooting/",
+  },
+  {
+    title: "Trigg - Cloud Managed Flyde",
+    link: "https://www.trigg.dev/?ref=help-menu",
   },
 ];
 

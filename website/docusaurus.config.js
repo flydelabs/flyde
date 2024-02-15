@@ -159,6 +159,10 @@ const config = {
             label: "Online Playground",
           },
           {
+            href: "https://www.trigg.dev?ref=flyde-header",
+            label: "Trigg",
+          },
+          {
             href: "https://github.com/flydelabs/flyde",
             label: "GitHub",
             position: "right",
@@ -212,6 +216,10 @@ const config = {
               {
                 label: "GitHub",
                 href: "https://github.com/flydelabs/flyde",
+              },
+              {
+                label: "Trigg - Cloud-Managed Flyde for APIs",
+                href: "https://www.trigg.dev?ref=flyde-footer",
               },
             ],
           },
