@@ -1,18 +1,10 @@
 const path = require("path");
 
 const pairs = [
-  { entry: "./src/Lists/ListFrom.tsx", name: "ListFrom" },
-  { entry: "./src/Lists/SpreadList.tsx", name: "SpreadList" },
-  { entry: "./src/ControlFlow/RoundRobin.tsx", name: "RoundRobin" },
   { entry: "./src/Values/InlineValue.tsx", name: "InlineValue" },
   { entry: "./src/Values/CodeExpression.tsx", name: "CodeExpression" },
-  { entry: "./src/Http/HttpConfigEditor.tsx", name: "Http" },
   { entry: "./src/ControlFlow/Conditional.tsx", name: "Conditional" },
   { entry: "./src/ControlFlow/Switch.tsx", name: "Switch" },
-  { entry: "./src/Timing/Delay/Delay.tsx", name: "Delay" },
-  { entry: "./src/Timing/Debounce.tsx", name: "Debounce" },
-  { entry: "./src/Timing/Throttle.tsx", name: "Throttle" },
-  { entry: "./src/Timing/Interval/Interval.tsx", name: "Interval" },
   { entry: "./src/Lists/Collect/Collect.tsx", name: "Collect" },
 ];
 

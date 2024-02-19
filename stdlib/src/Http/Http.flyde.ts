@@ -1,23 +1,14 @@
-import { MacroNode } from "@flyde/core";
+import { ConfigurableInput, MacroNode } from "@flyde/core";
 import axios, { AxiosRequestConfig } from "axios";
 
 const namespace = "HTTP";
 
 export interface HttpConfig {
-  method:
-    | {
-        mode: "static";
-        value: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
-      }
-    | { mode: "dynamic" };
-  url: { mode: "static"; value: string } | { mode: "dynamic" };
-  headers:
-    | { mode: "static"; value: Record<string, string> }
-    | { mode: "dynamic" };
-  params:
-    | { mode: "static"; value: Record<string, string> }
-    | { mode: "dynamic" };
-  data: { mode: "static"; value: Record<string, string> } | { mode: "dynamic" };
+  method: ConfigurableInput<"GET" | "POST" | "PUT" | "DELETE" | "PATCH">;
+  url: ConfigurableInput<string>;
+  headers: ConfigurableInput<Record<string, string>> | undefined;
+  params: ConfigurableInput<Record<string, string>> | undefined;
+  data: ConfigurableInput<Record<string, any>> | undefined;
 }
 
 export const Http: MacroNode<HttpConfig> = {
@@ -75,7 +66,49 @@ export const Http: MacroNode<HttpConfig> = {
     data: { mode: "static", value: {} },
   },
   editorConfig: {
-    type: "custom",
-    editorComponentBundlePath: "../../../dist/ui/Http.js",
+    type: "structured",
+    fields: [
+      {
+        type: { value: "string" },
+        configKey: "url",
+        label: "URL",
+        defaultValue: "https://www.example.com",
+        allowDynamic: true,
+      },
+      {
+        type: {
+          value: "select",
+          items: ["GET", "POST", "PUT", "DELETE", "PATCH"].map((i) => ({
+            label: i,
+            value: i,
+          })),
+        },
+        configKey: "method",
+        label: "Method",
+        defaultValue: "GET",
+        allowDynamic: true,
+      },
+      {
+        type: { value: "json", label: "" },
+        configKey: "headers",
+        label: "Headers",
+        defaultValue: {},
+        allowDynamic: true,
+      },
+      {
+        type: { value: "json" },
+        configKey: "params",
+        label: "Query Parameters",
+        defaultValue: {},
+        allowDynamic: true,
+      },
+      {
+        type: { value: "json" },
+        configKey: "data",
+        label: "Request Body",
+        defaultValue: {},
+        allowDynamic: true,
+      },
+    ],
   },
 };

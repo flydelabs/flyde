@@ -14,8 +14,9 @@ export type MacroEditorFieldDefinitionTypeBoolean = {
   value: "boolean";
 };
 
-export type MacroEditorFieldDefinitionTypeObject = {
-  value: "object";
+export type MacroEditorFieldDefinitionTypeJson = {
+  value: "json";
+  label?: string;
 };
 
 export type MacroEditorFieldDefinitionTypeSelect = {
@@ -27,7 +28,7 @@ export type MacroEditorFieldDefinitionType =
   | MacroEditorFieldDefinitionTypeString
   | MacroEditorFieldDefinitionTypeNumber
   | MacroEditorFieldDefinitionTypeBoolean
-  | MacroEditorFieldDefinitionTypeObject
+  | MacroEditorFieldDefinitionTypeJson
   | MacroEditorFieldDefinitionTypeSelect;
 
 export interface MacroEditorFieldDefinition {

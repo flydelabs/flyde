@@ -2,8 +2,8 @@ import { MacroNode, InputPinMap, ConfigurableInput } from "@flyde/core";
 import { TIMING_NAMESPACE, timeToString } from "../common";
 
 export type IntervalConfig = {
-  time: ConfigurableInput<{ timeMs: number }>;
-  value: ConfigurableInput<{ jsonValue: any }>;
+  time: ConfigurableInput<number>;
+  value: ConfigurableInput<any>;
 };
 
 export const Interval: MacroNode<IntervalConfig> = {
@@ -12,8 +12,8 @@ export const Interval: MacroNode<IntervalConfig> = {
   namespace: TIMING_NAMESPACE,
 
   defaultData: {
-    time: { mode: "static", timeMs: 1000 },
-    value: { mode: "static", jsonValue: "" },
+    time: { mode: "static", value: 1000 },
+    value: { mode: "static", value: "" },
   },
   description:
     "Emits a value every interval. Supports both static and dynamic intervals.",
@@ -32,9 +32,9 @@ export const Interval: MacroNode<IntervalConfig> = {
       const value =
         config.value.mode === "dynamic"
           ? "a value"
-          : JSON.stringify(config.value.jsonValue);
+          : JSON.stringify(config.value.value);
       if (config.time.mode === "static") {
-        return `Emit ${value} each ${timeToString(config.time.timeMs)}`;
+        return `Emit ${value} each ${timeToString(config.time.value)}`;
       } else {
         return "Interval";
       }
@@ -55,10 +55,10 @@ export const Interval: MacroNode<IntervalConfig> = {
   runFnBuilder: (config) => {
     return ({ value: _value, interval }, outputs, adv) => {
       const intervalValue =
-        config.time.mode === "dynamic" ? interval : config.time.timeMs;
+        config.time.mode === "dynamic" ? interval : config.time.value;
 
       const value =
-        config.value.mode === "dynamic" ? _value : config.value.jsonValue;
+        config.value.mode === "dynamic" ? _value : config.value.value;
 
       const existingTimer = adv.state.get("timer");
       if (existingTimer) {
@@ -77,7 +77,27 @@ export const Interval: MacroNode<IntervalConfig> = {
     };
   },
   editorConfig: {
-    type: "custom",
-    editorComponentBundlePath: "../../../../dist/ui/Interval.js",
+    type: "structured",
+    fields: [
+      {
+        type: {
+          value: "number",
+        },
+        configKey: "time",
+        label: "Interval",
+        defaultValue: 1000,
+        allowDynamic: true,
+      },
+      {
+        type: {
+          value: "json",
+          label: "Any JSON value:",
+        },
+        configKey: "value",
+        label: "Value",
+        defaultValue: "",
+        allowDynamic: true,
+      },
+    ],
   },
 };

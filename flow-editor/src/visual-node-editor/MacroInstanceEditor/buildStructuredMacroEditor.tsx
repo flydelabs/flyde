@@ -33,12 +33,12 @@ export function MacroEditorBaseValueComp(
           onChange={(e) => props.onChange(e.target.value)}
         />
       );
-    case "object":
+    case "json":
       return (
         <SimpleJsonEditor
           value={props.value}
           onChange={(e) => props.onChange(e)}
-          label={""}
+          label={props.config.label}
         />
       );
     case "boolean":

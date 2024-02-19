@@ -64,11 +64,11 @@ export const Repeat: CodeNode = {
   },
 };
 
-export const ListFrom: MacroNode<number> = {
+export const ListFrom: MacroNode<{ count: number }> = {
   id: "ListFrom",
   namespace,
   runFnBuilder:
-    (count) =>
+    ({ count }) =>
     (inputs, { list }) => {
       const result = [];
       for (let i = 0; i < count; i++) {
@@ -76,7 +76,7 @@ export const ListFrom: MacroNode<number> = {
       }
       return list.next(result);
     },
-  definitionBuilder: (count) => ({
+  definitionBuilder: ({ count }) => ({
     description: `Creates a list from ${count} values`,
     displayName: `List from ${count}`,
     inputs: Object.fromEntries(
@@ -84,10 +84,20 @@ export const ListFrom: MacroNode<number> = {
     ),
     outputs: { list: { description: "List containing all values" } },
   }),
-  defaultData: 3,
+  defaultData: { count: 3 },
   editorConfig: {
-    type: "custom",
-    editorComponentBundlePath: "../../../dist/ui/ListFrom.js",
+    type: "structured",
+    fields: [
+      {
+        type: {
+          value: "number",
+        },
+        configKey: "count",
+        label: "Count",
+        defaultValue: 3,
+        allowDynamic: false,
+      },
+    ],
   },
 };
 
@@ -168,18 +178,20 @@ export const HeadAndRest: CodeNode = {
   },
 };
 
-export const SpreadList: MacroNode<number> = {
+export const SpreadList: MacroNode<{ count: number }> = {
   id: "SpreadList",
   namespace,
   displayName: "Spread List",
   description: "Spreads a list into multiple outputs",
-  runFnBuilder: (count) => (inputs, outputs) => {
-    const { list } = inputs;
-    for (let i = 0; i < count; i++) {
-      outputs[`item${i + 1}`].next(list[i]);
-    }
-  },
-  definitionBuilder: (count) => ({
+  runFnBuilder:
+    ({ count }) =>
+    (inputs, outputs) => {
+      const { list } = inputs;
+      for (let i = 0; i < count; i++) {
+        outputs[`item${i + 1}`].next(list[i]);
+      }
+    },
+  definitionBuilder: ({ count }) => ({
     description: `Receives a list with ${count} items and emits ${count} outputs: the first item, the second item, and so on`,
     displayName: `Spreads List of ${count}`,
     inputs: { list: { description: "The list" } },
@@ -187,10 +199,20 @@ export const SpreadList: MacroNode<number> = {
       Array.from({ length: count }, (_, i) => [`item${i + 1}`, {}])
     ),
   }),
-  defaultData: 3,
+  defaultData: { count: 3 },
   editorConfig: {
-    type: "custom",
-    editorComponentBundlePath: "../../../dist/ui/SpreadList.js",
+    type: "structured",
+    fields: [
+      {
+        type: {
+          value: "number",
+        },
+        configKey: "count",
+        label: "Count",
+        defaultValue: 3,
+        allowDynamic: false,
+      },
+    ],
   },
 };
 

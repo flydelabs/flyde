@@ -1,32 +1,32 @@
-import { InputPinMap, MacroNode } from "@flyde/core";
-import { TIMING_NAMESPACE, TimingNodeConfig, timeToString } from "./common";
+import { ConfigurableInput, InputPinMap, MacroNode } from "@flyde/core";
+import { TIMING_NAMESPACE, timeToString } from "./common";
 
 export { Delay } from "./Delay/Delay.flyde";
 export { Interval } from "./Interval/Interval.flyde";
 
 const namespace = TIMING_NAMESPACE;
 
-export type DebounceConfig = TimingNodeConfig;
+export type DebounceConfig = { delayMs: ConfigurableInput<number> };
 
 export const Debounce: MacroNode<DebounceConfig> = {
   id: "Debounce",
   displayName: "Debounce",
   namespace,
-  defaultData: { mode: "static", timeMs: 420 },
+  defaultData: { delayMs: { mode: "static", value: 420 } },
   description:
     "Emits the last value received after being idle for a given amount of milliseconds. Supports both static and dynamic delays.",
-  definitionBuilder: (config) => {
+  definitionBuilder: ({ delayMs }) => {
     const inputs: InputPinMap = { value: { description: "Value to debounce" } };
 
-    if (config.mode === "dynamic") {
+    if (delayMs.mode === "dynamic") {
       inputs.delay = { description: "Delay in milliseconds" };
     }
 
     const displayName = (() => {
-      if (config.mode === "dynamic") {
+      if (delayMs.mode === "dynamic") {
         return "Debounce";
       } else {
-        return `Debounce ${timeToString(config.timeMs)}`;
+        return `Debounce ${timeToString(delayMs.value)}`;
       }
     })();
 
@@ -40,7 +40,7 @@ export const Debounce: MacroNode<DebounceConfig> = {
       completionOutputs: ["debouncedValue"],
     };
   },
-  runFnBuilder: (config) => {
+  runFnBuilder: ({ delayMs }) => {
     return ({ value, delay }, outputs, adv) => {
       const { debouncedValue } = outputs;
 
@@ -53,7 +53,7 @@ export const Debounce: MacroNode<DebounceConfig> = {
         () => {
           debouncedValue.next(value);
         },
-        config.mode === "dynamic" ? delay : config.timeMs
+        delayMs.mode === "dynamic" ? delay : delayMs.value
       );
 
       adv.state.set("timer", newTimer);
@@ -64,8 +64,18 @@ export const Debounce: MacroNode<DebounceConfig> = {
     };
   },
   editorConfig: {
-    type: "custom",
-    editorComponentBundlePath: "../../../dist/ui/Debounce.js",
+    type: "structured",
+    fields: [
+      {
+        type: {
+          value: "number",
+        },
+        configKey: "delayMs",
+        label: "Delay in milliseconds",
+        defaultValue: 420,
+        allowDynamic: true,
+      },
+    ],
   },
 };
 
@@ -77,26 +87,26 @@ export class ThrottleError extends Error {
   }
 }
 
-export type ThrottleConfig = TimingNodeConfig;
+export type ThrottleConfig = { delayMs: ConfigurableInput<number> };
 
 export const Throttle: MacroNode<ThrottleConfig> = {
   id: "Throttle",
   displayName: "Throttle",
   namespace,
-  defaultData: { mode: "static", timeMs: 420 },
+  defaultData: { delayMs: { mode: "static", value: 420 } },
   description:
     "Limits the number of times a value is emitted to once per time configured. Supports both static and dynamic intervals.",
-  definitionBuilder: (config) => {
+  definitionBuilder: ({ delayMs }) => {
     const inputs: InputPinMap = { value: { description: "Value to throttle" } };
-    if (config.mode === "dynamic") {
+    if (delayMs.mode === "dynamic") {
       inputs.limitTime = { description: "Interval in milliseconds" };
     }
 
     const displayName = (() => {
-      if (config.mode === "dynamic") {
+      if (delayMs.mode === "dynamic") {
         return "Throttle";
       } else {
-        return `Throttle ${timeToString(config.timeMs)}`;
+        return `Throttle ${timeToString(delayMs.value)}`;
       }
     })();
     return {
@@ -108,10 +118,10 @@ export const Throttle: MacroNode<ThrottleConfig> = {
       reactiveInputs: ["value"],
     };
   },
-  runFnBuilder: (config) => {
+  runFnBuilder: ({ delayMs }) => {
     return async (inputs, outputs, adv) => {
       const timeMs =
-        config.mode === "dynamic" ? inputs.limitTime : config.timeMs;
+        delayMs.mode === "dynamic" ? inputs.limitTime : delayMs.value;
 
       const promise = adv.state.get("promise");
       if (promise) {
@@ -132,7 +142,17 @@ export const Throttle: MacroNode<ThrottleConfig> = {
     };
   },
   editorConfig: {
-    type: "custom",
-    editorComponentBundlePath: "../../../dist/ui/Throttle.js",
+    type: "structured",
+    fields: [
+      {
+        type: {
+          value: "number",
+        },
+        configKey: "delayMs",
+        label: "Interval (ms)",
+        defaultValue: 420,
+        allowDynamic: true,
+      },
+    ],
   },
 };
