@@ -4,7 +4,6 @@ import { ConfigurableInput } from "./ConfigurableInput";
 import { ConfigurableInputEditor } from "./ConfigurableInputEditor";
 import { MacroEditorComp } from "./MacroEditorComp";
 
-// Updated type definition to accept an object with a single specified key of type ConfigurableInput<{ value: string }>
 export function SimpleStringMacroEditor<K extends string>(
   key: K,
   label: string
