@@ -1,6 +1,34 @@
 import { CodeNode } from "@flyde/core";
 
+export * from "./GetAttribute/GetAttribute.flyde";
+
 const namespace = "Objects";
+
+/** @deprecated */
+export const GetAttributeOld: CodeNode = {
+  id: "Get Attribute",
+  searchKeywords: ["pick", "dot"],
+  namespace,
+  defaultStyle: {
+    icon: "fa-magnifying-glass",
+  },
+  description: "Gets an attribute from an object",
+  inputs: {
+    object: {
+      description: "Object to get attribute from",
+    },
+    attribute: {
+      description: "Attribute to get",
+    },
+  },
+  outputs: {
+    value: {
+      description: "The value of the attribute",
+    },
+  },
+  run: ({ object, attribute }, { value }) =>
+    value.next(attribute.split(".").reduce((obj, i) => obj[i], object)),
+};
 
 export const JSONParse: CodeNode = {
   id: "JSON Parse",
@@ -57,31 +85,6 @@ export const ObjectEntries: CodeNode = {
   inputs: { object: { description: "Object to get entries of" } },
   outputs: { entries: { description: "The entries of object" } },
   run: ({ object }, { entries }) => entries.next(Object.entries(object)),
-};
-
-export const GetAttribute: CodeNode = {
-  id: "Get Attribute",
-  searchKeywords: ["pick", "dot"],
-  namespace,
-  defaultStyle: {
-    icon: "fa-magnifying-glass",
-  },
-  description: "Gets an attribute from an object",
-  inputs: {
-    object: {
-      description: "Object to get attribute from",
-    },
-    attribute: {
-      description: "Attribute to get",
-    },
-  },
-  outputs: {
-    value: {
-      description: "The value of the attribute",
-    },
-  },
-  run: ({ object, attribute }, { value }) =>
-    value.next(attribute.split(".").reduce((obj, i) => obj[i], object)),
 };
 
 export const SetAttribute: CodeNode = {
