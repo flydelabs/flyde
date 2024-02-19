@@ -45,13 +45,13 @@
   "scripts": {
     "test": "mocha src/**/*.spec.ts --require ts-node/register",
     "echo": "echo 'no watch'",
-    "watch": "concurrently --kill-others \"pnpm run watch:ts\" \"pnpm run watch:docs-data\" \"pnpm run bundle:watch\"",
+    "watch": "concurrently --kill-others \"pnpm run watch:ts\" \"pnpm run watch:docs-data\" \"pnpm run macros:watch\"",
     "watch:ts": "tsc -p . -w --incremental",
     "watch:docs-data": "nodemon --watch scripts --watch src -e ts --exec \"ts-node scripts/docs-data.ts\"",
     "dev": "pnpm run watch",
-    "bundle": "webpack --config webpack.config.js",
-    "bundle:watch": "webpack --config webpack.config.js --watch",
-    "build": "rm -rf dist && tsc -p tsconfig.build.json && pnpm run bundle && pnpm run build:docs-data",
+    "macros:bundle": "webpack --config webpack.config.js",
+    "macros:watch": "webpack --config webpack.config.js --watch",
+    "build": "rm -rf dist && tsc -p tsconfig.build.json && pnpm run macros:bundle && pnpm run build:docs-data",
     "build:docs-data": "ts-node scripts/docs-data.ts",
     "prod": "node dist/index.js",
     "__publish": "npm version patch && npm publish"

@@ -35,6 +35,8 @@ export const ConfigurableInputEditor = <T extends Record<string, any>>({
       mode: "static",
     });
   };
+
+  const MemoValueRenderer = React.useMemo(() => ValueRenderer, []);
   return (
     <>
       <RadioGroup
@@ -47,7 +49,7 @@ export const ConfigurableInputEditor = <T extends Record<string, any>>({
         <Radio label="Dynamic" value="dynamic" />
       </RadioGroup>
       {value.mode === "static" ? (
-        <ValueRenderer value={value} onChange={handleValueChange} />
+        <MemoValueRenderer value={value} onChange={handleValueChange} />
       ) : null}
     </>
   );
