@@ -74,5 +74,8 @@ export const Http: MacroNode<HttpConfig> = {
     params: { mode: "static", value: {} },
     data: { mode: "static", value: {} },
   },
-  editorComponentBundlePath: "../../../dist/ui/Http.js",
+  editorConfig: {
+    type: "custom",
+    editorComponentBundlePath: "../../../dist/ui/Http.js",
+  },
 };

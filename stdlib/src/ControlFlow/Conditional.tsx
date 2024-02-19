@@ -9,7 +9,7 @@ import {
 import { ConditionType, ConditionalConfig } from "./ControlFlow.flyde";
 import React, { useMemo } from "react";
 import { SimpleJsonEditor } from "../lib/SimpleJsonEditor";
-import { MacroEditorComp } from "../lib/MacroEditorComp";
+import { MacroEditorComp } from "@flyde/core";
 
 const conditionEnumToLabel: Record<
   ConditionalConfig["condition"]["type"],

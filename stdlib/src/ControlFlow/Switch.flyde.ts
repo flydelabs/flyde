@@ -103,5 +103,8 @@ export const Switch: MacroNode<SwitchConfig> = {
       outputExpression: "input.value",
     },
   },
-  editorComponentBundlePath: "../../../dist/ui/Switch.js",
+  editorConfig: {
+    type: "custom",
+    editorComponentBundlePath: "../../../dist/ui/Switch.js",
+  },
 };

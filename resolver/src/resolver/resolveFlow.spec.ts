@@ -10,9 +10,9 @@ import {
   VisualNode,
 } from "@flyde/core";
 import { assert } from "chai";
-import { readdirSync, readFileSync } from "fs";
+import { readdirSync } from "fs";
 import { join } from "path";
-import { deserializeFlow, deserializeFlowByPath } from "../serdes";
+import { deserializeFlowByPath } from "../serdes";
 import { resolveFlowByPath, resolveFlowDependencies } from "./resolve-flow";
 
 import { spiedOutput } from "@flyde/core/dist/test-utils";

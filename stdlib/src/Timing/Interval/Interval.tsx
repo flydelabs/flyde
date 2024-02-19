@@ -1,6 +1,6 @@
 import React from "react";
 import { ConfigurableInputEditor } from "../../lib/ConfigurableInputEditor";
-import { MacroEditorComp } from "../../lib/MacroEditorComp";
+import { MacroEditorComp } from "@flyde/core";
 
 import { FormGroup, NumericInput } from "@blueprintjs/core";
 import { IntervalConfig } from "./Interval.flyde";

@@ -87,7 +87,10 @@ export const RoundRobin: MacroNode<number> = {
       o.next(inputs.item);
     };
   },
-  editorComponentBundlePath: "../../../dist/ui/RoundRobin.js",
+  editorConfig: {
+    type: "custom",
+    editorComponentBundlePath: "../../../dist/ui/RoundRobin.js",
+  },
 };
 
 export const Publish: CodeNode = {

@@ -1,6 +1,6 @@
 import React from "react";
 import { FormGroup, HTMLSelect } from "@blueprintjs/core";
-import { MacroEditorComp } from "../lib/MacroEditorComp";
+import { MacroEditorComp } from "@flyde/core";
 
 const MAX_ITEMS = 6;
 

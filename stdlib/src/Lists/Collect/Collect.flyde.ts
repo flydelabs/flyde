@@ -133,5 +133,8 @@ export const Collect: MacroNode<CollectConfig> = {
       }
     };
   },
-  editorComponentBundlePath: "../../../../dist/ui/Collect.js",
+  editorConfig: {
+    type: "custom",
+    editorComponentBundlePath: "../../../../dist/ui/Collect.js",
+  },
 };

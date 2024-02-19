@@ -1,11 +1,7 @@
 import { Radio, RadioGroup } from "@blueprintjs/core";
 import React from "react";
+import { ValueCompProps } from "./ValueCompProps";
 import { ConfigurableInput } from "@flyde/core";
-
-export interface ValueCompProps<T> {
-  value: T;
-  onChange: (value: T) => void;
-}
 
 export interface ConfigurableInputEditorProps<T extends Record<string, any>> {
   value: ConfigurableInput<T>;

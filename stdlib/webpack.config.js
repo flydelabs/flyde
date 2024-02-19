@@ -14,10 +14,6 @@ const pairs = [
   { entry: "./src/Timing/Throttle.tsx", name: "Throttle" },
   { entry: "./src/Timing/Interval/Interval.tsx", name: "Interval" },
   { entry: "./src/Lists/Collect/Collect.tsx", name: "Collect" },
-  {
-    entry: "./src/Objects/GetAttribute/GetAttribute.tsx",
-    name: "GetAttribute",
-  },
 ];
 
 module.exports = pairs.map(({ entry, name }) => ({

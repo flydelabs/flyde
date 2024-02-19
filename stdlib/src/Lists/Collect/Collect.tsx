@@ -1,5 +1,5 @@
 import { FormGroup, NumericInput, Radio, RadioGroup } from "@blueprintjs/core";
-import { MacroEditorComp } from "../../lib/MacroEditorComp";
+import { MacroEditorComp } from "@flyde/core";
 import { CollectConfig } from "./Collect.flyde";
 
 import React from "react";

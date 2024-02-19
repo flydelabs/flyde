@@ -7,7 +7,7 @@ import {
 } from "@blueprintjs/core";
 import type { InlineValueConfig } from "./InlineValue.flyde";
 import React, { useCallback, useMemo } from "react";
-import { MacroEditorComp } from "../lib/MacroEditorComp";
+import { MacroEditorComp } from "@flyde/core";
 
 const types: InlineValueConfig["type"][] = [
   "string",

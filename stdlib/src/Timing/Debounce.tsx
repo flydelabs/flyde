@@ -1,4 +1,4 @@
-import { MacroEditorComp } from "../lib/MacroEditorComp";
+import { MacroEditorComp } from "@flyde/core";
 import { TimedNodeEditor } from "./TimedNodeEditor";
 import { TimingNodeConfig } from "./common";
 

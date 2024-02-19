@@ -1,8 +1,7 @@
 import React from "react";
 import { FormGroup, InputGroup } from "@blueprintjs/core";
-import { ConfigurableInput } from "./ConfigurableInput";
 import { ConfigurableInputEditor } from "./ConfigurableInputEditor";
-import { MacroEditorComp } from "./MacroEditorComp";
+import { ConfigurableInput, MacroEditorComp } from "@flyde/core";
 
 export function SimpleStringMacroEditor<K extends string>(
   key: K,

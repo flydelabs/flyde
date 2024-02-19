@@ -1,6 +1,5 @@
-import { MacroNode, InputPinMap } from "@flyde/core";
+import { MacroNode, InputPinMap, ConfigurableInput } from "@flyde/core";
 import { TIMING_NAMESPACE, timeToString } from "../common";
-import { ConfigurableInput } from "../../lib/ConfigurableInput";
 
 export type IntervalConfig = {
   time: ConfigurableInput<{ timeMs: number }>;
@@ -77,5 +76,8 @@ export const Interval: MacroNode<IntervalConfig> = {
       });
     };
   },
-  editorComponentBundlePath: "../../../../dist/ui/Interval.js",
+  editorConfig: {
+    type: "custom",
+    editorComponentBundlePath: "../../../../dist/ui/Interval.js",
+  },
 };

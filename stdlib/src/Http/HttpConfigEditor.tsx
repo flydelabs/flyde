@@ -3,7 +3,7 @@ import { Divider, FormGroup, HTMLSelect, InputGroup } from "@blueprintjs/core";
 
 import type { HttpConfig } from "./Http.flyde";
 import { SimpleJsonEditor } from "../lib/SimpleJsonEditor";
-import { MacroEditorComp } from "../lib/MacroEditorComp";
+import { MacroEditorComp } from "@flyde/core";
 
 const HttpConfigEditor: MacroEditorComp<HttpConfig> = function HttpConfigEditor(
   props

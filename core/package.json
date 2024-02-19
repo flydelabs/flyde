@@ -21,6 +21,7 @@
   "dependencies": {
     "@types/jsdom-global": "^3.0.4",
     "@types/md5": "^2.3.2",
+    "@types/react": "^18.2.0",
     "axios": "^0.27.2",
     "cuid": "^3.0.0",
     "debug": "^4.3.4",

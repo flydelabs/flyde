@@ -85,7 +85,10 @@ export const ListFrom: MacroNode<number> = {
     outputs: { list: { description: "List containing all values" } },
   }),
   defaultData: 3,
-  editorComponentBundlePath: "../../../dist/ui/ListFrom.js",
+  editorConfig: {
+    type: "custom",
+    editorComponentBundlePath: "../../../dist/ui/ListFrom.js",
+  },
 };
 
 export const ConcatLists: CodeNode = {
@@ -185,7 +188,10 @@ export const SpreadList: MacroNode<number> = {
     ),
   }),
   defaultData: 3,
-  editorComponentBundlePath: "../../../dist/ui/SpreadList.js",
+  editorConfig: {
+    type: "custom",
+    editorComponentBundlePath: "../../../dist/ui/SpreadList.js",
+  },
 };
 
 export const AccumulateSomeValuesByCount: CodeNode = {

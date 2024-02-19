@@ -44,5 +44,8 @@ export const Delay: MacroNode<DelayConfig> = {
       outputs.delayedValue.next(value);
     };
   },
-  editorComponentBundlePath: "../../../../dist/ui/Delay.js",
+  editorConfig: {
+    type: "custom",
+    editorComponentBundlePath: "../../../../dist/ui/Delay.js",
+  },
 };

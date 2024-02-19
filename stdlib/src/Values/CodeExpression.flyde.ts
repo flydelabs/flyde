@@ -42,5 +42,8 @@ export const CodeExpression: MacroNode<CodeExpressionConfig> = {
     value: "inputs.a + inputs.b",
     label: '"inputs.a + inputs.b"',
   },
-  editorComponentBundlePath: "../../../dist/ui/CodeExpression.js",
+  editorConfig: {
+    type: "custom",
+    editorComponentBundlePath: "../../../dist/ui/CodeExpression.js",
+  },
 };

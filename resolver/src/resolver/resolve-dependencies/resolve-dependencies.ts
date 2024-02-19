@@ -276,19 +276,22 @@ export function resolveFlow(
               "@flyde/stdlib/dist/all-browser"
             );
 
-            const bundleFileName = targetMacroNode.editorComponentBundlePath
-              .split("/")
-              .pop()!;
-            const bundlePath = join(
-              hardcodedStdLibLocation,
-              "../ui",
-              bundleFileName
-            );
+            if (targetMacroNode.editorConfig.type === "custom") {
+              const bundleFileName =
+                targetMacroNode.editorConfig.editorComponentBundlePath
+                  .split("/")
+                  .pop()!;
+              const bundlePath = join(
+                hardcodedStdLibLocation,
+                "../ui",
+                bundleFileName
+              );
 
-            macroDef.editorComponentBundleContent = readFileSync(
-              bundlePath,
-              "utf-8"
-            );
+              macroDef.editorConfig = {
+                type: "custom",
+                editorComponentBundleContent: readFileSync(bundlePath, "utf-8"),
+              };
+            }
 
             /*
               mega hack to read the content's of the bundled node when using built-in stdlib

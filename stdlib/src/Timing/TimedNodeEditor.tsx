@@ -1,5 +1,5 @@
 import { FormGroup, HTMLSelect, NumericInput } from "@blueprintjs/core";
-import { MacroEditorComp } from "../lib/MacroEditorComp";
+import { MacroEditorComp } from "@flyde/core";
 
 import React from "react";
 import { TimingNodeConfig } from "./common";

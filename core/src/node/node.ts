@@ -19,6 +19,7 @@ import {
   nodeOutput,
 } from "./node-pins";
 import { ImportedNode } from "../flow-schema";
+import { MacroNode, MacroNodeDefinition } from "./macro-node";
 
 export type NodesCollection = OMap<Node>;
 
@@ -161,28 +162,7 @@ export interface CodeNode extends BaseNode {
   fn?: RunNodeFunction;
 }
 
-export interface MacroNode<T> extends NodeMetadata {
-  definitionBuilder: (data: T) => Omit<CodeNodeDefinition, "id">;
-  runFnBuilder: (data: T) => CodeNode["run"];
-  defaultData: T;
-
-  /**
-   * Assumes you are bundling the editor component using webpack library+window config.
-   * The name of the window variable that holds the component should be __MacroNode__{id}
-   * The path should be relative to the root of the project (package.json location)
-   */
-  editorComponentBundlePath: string;
-}
-
-export type MacroNodeDefinition<T> = Omit<
-  MacroNode<T>,
-  "definitionBuilder" | "runFnBuilder" | "editorComponentBundlePath"
-> & {
-  /**
-   * Resolver will use this to load the editor component bundle into the editor
-   */
-  editorComponentBundleContent: string;
-};
+export * from "./macro-node";
 
 /**
  * A visual node is what makes Flyde special. It represents a node created visually in the editor.
@@ -266,11 +246,7 @@ export const extractMetadata: <N extends NodeMetadata>(
 export const isMacroNodeDefinition = (
   p: any
 ): p is MacroNodeDefinition<any> => {
-  return (
-    p &&
-    typeof (p as MacroNodeDefinition<any>).editorComponentBundleContent ===
-      "string"
-  );
+  return p && typeof (p as MacroNode<any>).definitionBuilder === "undefined";
 };
 
 export const isVisualNode = (p: Node | NodeDefinition): p is VisualNode => {

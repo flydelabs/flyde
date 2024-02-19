@@ -63,7 +63,10 @@ export const Debounce: MacroNode<DebounceConfig> = {
       });
     };
   },
-  editorComponentBundlePath: "../../../dist/ui/Debounce.js",
+  editorConfig: {
+    type: "custom",
+    editorComponentBundlePath: "../../../dist/ui/Debounce.js",
+  },
 };
 
 export class ThrottleError extends Error {
@@ -128,5 +131,8 @@ export const Throttle: MacroNode<ThrottleConfig> = {
       }
     };
   },
-  editorComponentBundlePath: "../../../dist/ui/Throttle.js",
+  editorConfig: {
+    type: "custom",
+    editorComponentBundlePath: "../../../dist/ui/Throttle.js",
+  },
 };

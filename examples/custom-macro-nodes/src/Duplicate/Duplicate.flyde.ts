@@ -35,7 +35,10 @@ const node: MacroNode<number> = {
       outputPin.next(value);
     }
   },
-  editorComponentBundlePath: "../../../dist/Duplicate.js",
+  editorConfig: {
+    type: "custom",
+    editorComponentBundlePath: "../../../dist/Duplicate.js",
+  },
   defaultData: 2,
 };
 
