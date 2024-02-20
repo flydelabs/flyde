@@ -19,7 +19,10 @@ const node: MacroNode<any> = {
     outputPin.next(val);
   },
   displayNameBuilder: () => `Emit Value`,
-  editorComponentBundlePath: "../../../dist/InlineValue.js",
+  editorConfig: {
+    type: "custom",
+    editorComponentBundlePath: "../../../dist/InlineValue.js",
+  },
   defaultData: "",
 };
 

@@ -1,14 +1,13 @@
-import { InputPinMap, MacroNode } from "@flyde/core";
-import { ConfigurableInput } from "../../lib/ConfigurableInput";
-
+import { ConfigurableInput, InputPinMap, MacroNode } from "@flyde/core";
 export interface GetAttributeConfig {
-  key: ConfigurableInput<{ value: string }>;
+  key: ConfigurableInput<string>;
 }
 
 export const GetAttribute: MacroNode<GetAttributeConfig> = {
   id: "GetAttribute",
+  displayName: "Get Attribute",
   searchKeywords: ["pick", "dot"],
-  namespace: "Lists",
+  namespace: "Objects",
   defaultStyle: {
     icon: "fa-magnifying-glass",
   },
@@ -45,5 +44,18 @@ export const GetAttribute: MacroNode<GetAttributeConfig> = {
       value.next(_attribute.split(".").reduce((obj, i) => obj[i], object));
     },
   defaultData: { key: { mode: "static", value: "" } },
-  editorComponentBundlePath: "../../../../dist/ui/GetAttribute.js",
+  editorConfig: {
+    type: "structured",
+    fields: [
+      {
+        type: {
+          value: "string",
+        },
+        configKey: "key",
+        label: "Key",
+        defaultValue: "",
+        allowDynamic: true,
+      },
+    ],
+  },
 };

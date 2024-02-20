@@ -9,6 +9,7 @@ import {
   InlineValue,
   Interval,
   LoopList,
+  RoundRobin,
   SetGlobalState,
   SpreadList,
   Throttle,
@@ -21,7 +22,7 @@ export function getUnresolvedNodesLibraryData() {
     groups: [
       {
         title: "Control Flow",
-        nodes: [Conditional, Switch, LoopList],
+        nodes: [Conditional, Switch, LoopList, RoundRobin],
       },
       {
         title: "Values & Custom Code",

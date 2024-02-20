@@ -7,7 +7,7 @@ import {
   InputGroup,
 } from "@blueprintjs/core";
 import React from "react";
-import { MacroEditorComp } from "../lib/MacroEditorComp";
+import { MacroEditorComp } from "@flyde/core";
 import { SwitchConfig } from "./Switch.flyde";
 
 const MAX_CASES = 6;

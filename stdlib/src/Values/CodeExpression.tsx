@@ -2,7 +2,7 @@ import { FormGroup, InputGroup, TextArea } from "@blueprintjs/core";
 import type { InlineValueConfig } from "./InlineValue.flyde";
 import React, { useCallback } from "react";
 import { getVariables } from "./getInlineVariables";
-import { MacroEditorComp } from "../lib/MacroEditorComp";
+import { MacroEditorComp } from "@flyde/core";
 
 const labelMaxLength = 20;
 

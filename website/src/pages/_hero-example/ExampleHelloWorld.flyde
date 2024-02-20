@@ -13,8 +13,9 @@ node:
       nodeId: Delay__hvnxp46iusf1g91k6dua576w
       macroId: Delay
       macroData:
-        timeMs: 4200
-        mode: static
+        delayMs:
+          value: 3000
+          mode: static
       style:
         size: small
         icon: fa-clock

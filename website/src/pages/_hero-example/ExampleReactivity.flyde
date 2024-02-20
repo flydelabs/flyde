@@ -13,7 +13,8 @@ node:
       inputConfig: {}
       nodeId: RoundRobin__oeum6dqgsprbuef0p9s3b1ye
       macroId: RoundRobin
-      macroData: 3
+      macroData:
+        count: 3
     - pos:
         x: -715.5202523019706
         y: -257.26144321093545
@@ -58,7 +59,7 @@ node:
         strategy: count
         count:
           mode: static
-          count: 3
+          value: 3
     - pos:
         x: -630.6297778320313
         y: -425.5123219069296
@@ -68,32 +69,14 @@ node:
       macroId: Interval
       macroData:
         time:
-          timeMs: 3000
+          value: 3000
           mode: static
         value:
-          jsonValue: 🤖
+          value: 🤖
           mode: static
       style:
         size: small
   connections:
-    - from:
-        insId: oeum6dqgsprbuef0p9s3b1ye
-        pinId: r1
-      to:
-        insId: rh3ug7oqoze1rvn4k17kc556
-        pinId: __trigger
-    - from:
-        insId: oeum6dqgsprbuef0p9s3b1ye
-        pinId: r2
-      to:
-        insId: ApisCombination-69049ap
-        pinId: __trigger
-    - from:
-        insId: oeum6dqgsprbuef0p9s3b1ye
-        pinId: r3
-      to:
-        insId: ApisCombination-ts149e2
-        pinId: __trigger
     - from:
         insId: rh3ug7oqoze1rvn4k17kc556
         pinId: value
@@ -124,6 +107,24 @@ node:
       to:
         insId: __this
         pinId: output
+    - from:
+        insId: oeum6dqgsprbuef0p9s3b1ye
+        pinId: r3
+      to:
+        insId: ApisCombination-ts149e2
+        pinId: __trigger
+    - from:
+        insId: oeum6dqgsprbuef0p9s3b1ye
+        pinId: r2
+      to:
+        insId: ApisCombination-69049ap
+        pinId: __trigger
+    - from:
+        insId: oeum6dqgsprbuef0p9s3b1ye
+        pinId: r1
+      to:
+        insId: rh3ug7oqoze1rvn4k17kc556
+        pinId: __trigger
   id: Reactivity
   inputs: {}
   outputs:

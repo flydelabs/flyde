@@ -4,7 +4,10 @@ const node: MacroNode<number> = {
   id: "Add",
   description: "Adds the input value",
   defaultData: 1,
-  editorComponentBundlePath: "./Macro.flyde.ts",
+  editorConfig: {
+    type: "custom",
+    editorComponentBundlePath: "./Macro.flyde.ts",
+  },
   definitionBuilder: (sum) => {
     return {
       description: `Adds ${sum} to the input value`,

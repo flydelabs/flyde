@@ -18,9 +18,9 @@ node:
       nodeId: Throttle__wj31gd73i5l111q999pv4kor
       macroId: Throttle
       macroData:
-        type: static
-        timeMs: 8000
-        mode: static
+        delayMs:
+          value: 8000
+          mode: static
     - pos:
         x: -1038.8195629882812
         y: -292.4507504504888
@@ -29,9 +29,9 @@ node:
       nodeId: Debounce__eaa2b80mmdusjvxi3fve0du1
       macroId: Debounce
       macroData:
-        mode: static
-        timeMs: 4000
-        type: static
+        delayMs:
+          value: 8000
+          mode: static
     - pos:
         x: -776.2780029296875
         y: -173.65079674768984
@@ -63,208 +63,10 @@ node:
       macroId: Interval
       macroData:
         time:
-          time:
-            time:
-              time:
-                time:
-                  time:
-                    time:
-                      time:
-                        time:
-                          time:
-                            time:
-                              time:
-                                time:
-                                  time:
-                                    time:
-                                      time:
-                                        time:
-                                          time:
-                                            time:
-                                              time:
-                                                time:
-                                                  time:
-                                                    time:
-                                                      mode: static
-                                                      timeMs: 1000
-                                                    value:
-                                                      time:
-                                                        mode: static
-                                                        timeMs: 1000
-                                                      value: beep
-                                                      mode: static
-                                                    timeMs: 3
-                                                    mode: static
-                                                  value:
-                                                    time:
-                                                      mode: static
-                                                      timeMs: 1000
-                                                    value: beep
-                                                    mode: static
-                                                  timeMs: 39
-                                                  mode: static
-                                                value:
-                                                  time:
-                                                    mode: static
-                                                    timeMs: 1000
-                                                  value: beep
-                                                  mode: static
-                                                timeMs: 3
-                                                mode: static
-                                              value:
-                                                time:
-                                                  mode: static
-                                                  timeMs: 1000
-                                                value: beep
-                                                mode: static
-                                              timeMs: 39
-                                              mode: static
-                                            value:
-                                              time:
-                                                mode: static
-                                                timeMs: 1000
-                                              value: beep
-                                              mode: static
-                                            timeMs: 3
-                                            mode: static
-                                          value:
-                                            time:
-                                              mode: static
-                                              timeMs: 1000
-                                            value: beep
-                                            mode: static
-                                          timeMs: 30
-                                          mode: static
-                                        value:
-                                          time:
-                                            mode: static
-                                            timeMs: 1000
-                                          value: beep
-                                          mode: static
-                                        timeMs: 300
-                                        mode: static
-                                      value:
-                                        time:
-                                          mode: static
-                                          timeMs: 1000
-                                        value: beep
-                                        mode: static
-                                      timeMs: 3000
-                                      mode: static
-                                    value:
-                                      time:
-                                        mode: static
-                                        timeMs: 1000
-                                      value: beep
-                                      mode: static
-                                    timeMs: 3001
-                                    mode: static
-                                  value:
-                                    time:
-                                      mode: static
-                                      timeMs: 1000
-                                    value: beep
-                                    mode: static
-                                  timeMs: 3002
-                                  mode: static
-                                value:
-                                  time:
-                                    mode: static
-                                    timeMs: 1000
-                                  value: beep
-                                  mode: static
-                                timeMs: 3001
-                                mode: static
-                              value:
-                                time:
-                                  mode: static
-                                  timeMs: 1000
-                                value: beep
-                                mode: static
-                              timeMs: 3000
-                              mode: static
-                            value:
-                              time:
-                                mode: static
-                                timeMs: 1000
-                              value: beep
-                              mode: static
-                            timeMs: 30000
-                            mode: static
-                          value:
-                            time:
-                              mode: static
-                              timeMs: 1000
-                            value: beep
-                            mode: static
-                          timeMs: 3000
-                          mode: static
-                        value:
-                          time:
-                            mode: static
-                            timeMs: 1000
-                          value: beep
-                          mode: static
-                        timeMs: 5
-                        mode: static
-                      value:
-                        time:
-                          mode: static
-                          timeMs: 1000
-                        value: beep
-                        mode: static
-                      timeMs: 50
-                      mode: static
-                    value:
-                      time:
-                        mode: static
-                        timeMs: 1000
-                      value: beep
-                      mode: static
-                    timeMs: 500
-                    mode: static
-                  value:
-                    time:
-                      mode: static
-                      timeMs: 1000
-                    value: beep
-                    mode: static
-                  timeMs: 5000
-                  mode: static
-                value:
-                  time:
-                    mode: static
-                    timeMs: 1000
-                  value: beep
-                  mode: static
-                timeMs: 6
-                mode: static
-              value:
-                time:
-                  mode: static
-                  timeMs: 1000
-                value: beep
-                mode: static
-              timeMs: 60
-              mode: static
-            value:
-              time:
-                mode: static
-                timeMs: 1000
-              value: beep
-              mode: static
-            timeMs: 600
-            mode: static
-          value:
-            time:
-              mode: static
-              timeMs: 1000
-            value: beep
-            mode: static
-          timeMs: 6000
+          value: 6000
           mode: static
         value:
-          jsonValue: ⭐️
+          value: ⭐️
           mode: static
     - pos:
         x: -928.755859375
@@ -277,7 +79,7 @@ node:
         strategy: count
         count:
           mode: static
-          count: 3
+          value: 3
       style:
         size: small
     - pos:

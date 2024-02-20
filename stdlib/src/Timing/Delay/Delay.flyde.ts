@@ -1,34 +1,33 @@
-import { MacroNode, InputPinMap } from "@flyde/core";
+import { MacroNode, InputPinMap, ConfigurableInput } from "@flyde/core";
 import { timeToString } from "../common";
-import { ConfigurableInput } from "../../lib/ConfigurableInput";
 
-export type DelayConfig = ConfigurableInput<{ timeMs?: number }>;
+export type DelayConfig = ConfigurableInput<number>;
 
-export const Delay: MacroNode<DelayConfig> = {
+export const Delay: MacroNode<{ delayMs: DelayConfig }> = {
   id: "Delay",
   displayName: "Delay",
   namespace: "Timing",
-  defaultData: { mode: "static", timeMs: 420 },
+  defaultData: { delayMs: { mode: "static", value: 420 } },
   description:
     "Delays a value by a given amount of time. Supports both static and dynamic delays.",
-  definitionBuilder: (config) => {
+  definitionBuilder: ({ delayMs }) => {
     const inputs: InputPinMap = { value: { description: "Value to delay" } };
 
-    if (config.mode === "dynamic") {
+    if (delayMs.mode === "dynamic") {
       inputs.delay = { description: "Delay in milliseconds" };
     }
 
     const displayName =
-      config.mode === "dynamic"
+      delayMs.mode === "dynamic"
         ? "Delay"
-        : `Delay ${timeToString(config.timeMs)}`;
+        : `Delay ${timeToString(delayMs.value)}`;
 
     return {
       inputs,
       displayName,
       description: `Delays a value by ${
-        config.mode === "static"
-          ? timeToString(config.timeMs)
+        delayMs.mode === "static"
+          ? timeToString(delayMs.value)
           : "a dynamic amount of time"
       }.`,
       outputs: {
@@ -37,12 +36,25 @@ export const Delay: MacroNode<DelayConfig> = {
       completionOutputs: ["delayedValue"],
     };
   },
-  runFnBuilder: (config) => {
+  runFnBuilder: ({ delayMs }) => {
     return async ({ value, delay }, outputs) => {
-      const delayValue = config.mode === "dynamic" ? delay : config.timeMs;
+      const delayValue = delayMs.mode === "dynamic" ? delay : delayMs.value;
       await new Promise((resolve) => setTimeout(resolve, delayValue));
       outputs.delayedValue.next(value);
     };
   },
-  editorComponentBundlePath: "../../../../dist/ui/Delay.js",
+  editorConfig: {
+    type: "structured",
+    fields: [
+      {
+        type: {
+          value: "number",
+        },
+        configKey: "delayMs",
+        label: "Delay (ms)",
+        defaultValue: 420,
+        allowDynamic: true,
+      },
+    ],
+  },
 };

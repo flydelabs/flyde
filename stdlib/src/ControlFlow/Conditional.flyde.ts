@@ -124,7 +124,10 @@ export const Conditional: MacroNode<ConditionalConfig> = {
       type: "value",
     },
   },
-  editorComponentBundlePath: "../../../dist/ui/Conditional.js",
+  editorConfig: {
+    type: "custom",
+    editorComponentBundlePath: "../../../dist/ui/Conditional.js",
+  },
 };
 
 function calculateCondition(

@@ -23,6 +23,9 @@ importers:
       '@types/md5':
         specifier: ^2.3.2
         version: 2.3.2
+      '@types/react':
+        specifier: ^18.2.0
+        version: 18.2.21
       axios:
         specifier: ^0.27.2
         version: 0.27.2(debug@4.3.4)

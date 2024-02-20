@@ -42,12 +42,12 @@ export const LimitTimes: CodeNode = {
   },
 };
 
-export const RoundRobin: MacroNode<number> = {
+export const RoundRobin: MacroNode<{ count: number }> = {
   id: "RoundRobin",
   displayName: "Round Robin",
   namespace,
-  defaultData: 3,
-  definitionBuilder: (count) => {
+  defaultData: { count: 3 },
+  definitionBuilder: ({ count }) => {
     return {
       displayName: `Round Robin ${count}`,
       description: `Item will be emitted to one of the ${count} outputs in a round robin fashion`,
@@ -69,7 +69,7 @@ export const RoundRobin: MacroNode<number> = {
       ),
     };
   },
-  runFnBuilder: (count) => {
+  runFnBuilder: ({ count }) => {
     return (inputs, _outputs, adv) => {
       const { state } = adv;
 
@@ -87,7 +87,20 @@ export const RoundRobin: MacroNode<number> = {
       o.next(inputs.item);
     };
   },
-  editorComponentBundlePath: "../../../dist/ui/RoundRobin.js",
+  editorConfig: {
+    type: "structured",
+    fields: [
+      {
+        type: {
+          value: "number",
+        },
+        configKey: "count",
+        label: "Count",
+        defaultValue: 3,
+        allowDynamic: false,
+      },
+    ],
+  },
 };
 
 export const Publish: CodeNode = {

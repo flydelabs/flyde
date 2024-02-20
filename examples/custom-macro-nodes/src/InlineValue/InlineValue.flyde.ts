@@ -19,7 +19,10 @@ const node: MacroNode<any> = {
     const outputPin = outputs.output as DynamicOutput;
     outputPin.next(val);
   },
-  editorComponentBundlePath: "../../../dist/InlineValue.js",
+  editorConfig: {
+    type: "custom",
+    editorComponentBundlePath: "../../../dist/InlineValue.js",
+  },
   defaultData: "",
 };
 
