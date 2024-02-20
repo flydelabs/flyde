@@ -15,7 +15,7 @@
 
 <strong>VSCode Extension ✔️</strong> · <strong>Runtime Library ✔️</strong> · <strong>Integrates with Existing Code ✔️</strong>
 <br/>
-<strong>✔Rich Standard Library ✔️</strong> · <strong>Visual Debugger ✔️</strong> · <strong>AI-Assisted Node Creation ✔️</strong>
+<strong>Rich Standard Library ✔️</strong> · <strong>Visual Debugger ✔️</strong> · <strong>AI-Assisted Node Creation ✔️</strong>
 <br/>
 <strong>TypeScript Support ✔️</strong> · <strong>TypeScript Support ✔️</strong>
 
