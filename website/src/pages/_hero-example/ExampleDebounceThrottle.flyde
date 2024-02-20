@@ -79,7 +79,7 @@ node:
         strategy: count
         count:
           mode: static
-          count: 3
+          value: 3
       style:
         size: small
     - pos:

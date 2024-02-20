@@ -11,9 +11,13 @@ import {
   MacroEditorFieldDefinition,
   MacroEditorFieldDefinitionType,
 } from "@flyde/core";
-import { ValueCompProps } from "./ValueCompProps";
 import { SimpleJsonEditor } from "./SimpleJsonEditor";
 import { ConfigurableInputEditor } from "./ConfigurableInputEditor";
+
+export interface ValueCompProps<T> {
+  value: T;
+  onChange: (value: T) => void;
+}
 
 export function MacroEditorBaseValueComp(
   props: ValueCompProps<any> & { config: MacroEditorFieldDefinitionType }
@@ -120,79 +124,3 @@ export function buildStructuredMacroEditorComp<T>(
     );
   };
 }
-
-// export const TimedNodeEditor: MacroEditorComp<TimingNodeConfig> =
-//   function TimedNodeEditor(props) {
-//     const { value, onChange } = props;
-
-//     return (
-//       <>
-//         <FormGroup
-//           label="Time mode:"
-//           inline
-//           helperText="If dynamic mode is chosen, a new input pin will be exposed for the time value."
-//         >
-//           <HTMLSelect
-//             value={value.mode}
-//             onChange={(e) =>
-//               onChange({
-//                 ...value,
-//                 mode: e.target.value as any,
-//               })
-//             }
-//           >
-//             <option value="static">Static</option>
-//             <option value="dynamic">Dynamic (via input)</option>
-//           </HTMLSelect>
-//         </FormGroup>
-//         {value.mode === "static" ? (
-//           <FormGroup label="Time (in milliseconds):" inline>
-//             <NumericInput
-//               value={value.timeMs}
-//               onValueChange={(e) => onChange({ ...value, timeMs: e })}
-//             />
-//           </FormGroup>
-//         ) : null}
-//       </>
-//     );
-//   };
-
-// const IntervalEditor: MacroEditorComp<IntervalConfig> =
-//   function IntervalEditor({ value, onChange }) {
-//     return (
-//       <>
-//         <ConfigurableInputEditor
-//           value={value.time}
-//           onChange={(time) => onChange({ ...value, time })}
-//           valueRenderer={(rendererProps) => (
-//             <FormGroup label="Time (in milliseconds):" inline>
-//               <NumericInput
-//                 value={rendererProps.value.timeMs}
-//                 onValueChange={(number) =>
-//                   rendererProps.onChange({ timeMs: number })
-//                 }
-//               />
-//             </FormGroup>
-//           )}
-//           modeLabel="Interval mode:"
-//           defaultStaticValue={{ timeMs: 2000 }}
-//         />
-
-//         <ConfigurableInputEditor
-//           value={value.value}
-//           onChange={(_value) => onChange({ ...value, value: _value })}
-//           valueRenderer={(rendererProps) => (
-//             <FormGroup label="Value:" inline>
-//               <SimpleJsonEditor
-//                 value={rendererProps.value.jsonValue}
-//                 onChange={(jsonValue) => rendererProps.onChange({ jsonValue })}
-//                 label=""
-//               />
-//             </FormGroup>
-//           )}
-//           modeLabel="Value mode:"
-//           defaultStaticValue={{ jsonValue: "" }}
-//         />
-//       </>
-//     );
-//   };

@@ -11,11 +11,11 @@ const defaultValuePerStrategy: Record<
 > = {
   count: {
     strategy: "count",
-    count: { mode: "static", count: 2 },
+    count: { mode: "static", value: 2 },
   },
   time: {
     strategy: "time",
-    time: { mode: "static", timeMs: 2000 },
+    time: { mode: "static", value: 2000 },
   },
   trigger: {
     strategy: "trigger",
@@ -45,18 +45,18 @@ const CollectEditor: MacroEditorComp<CollectConfig> = function CollectEditor({
             valueRenderer={(props) => (
               <FormGroup label="Count:" inline>
                 <NumericInput
-                  value={props.value.count}
+                  value={props.value}
                   onValueChange={(e) =>
                     onChange({
                       ...value,
-                      count: { mode: "static", count: e },
+                      count: { mode: "static", value: e },
                     })
                   }
                 />
               </FormGroup>
             )}
             modeLabel="Count mode:"
-            defaultStaticValue={{ count: 2 }}
+            defaultStaticValue={2}
           />
         );
       case "time":
@@ -67,18 +67,18 @@ const CollectEditor: MacroEditorComp<CollectConfig> = function CollectEditor({
             valueRenderer={(props) => (
               <FormGroup label="Time:" inline>
                 <NumericInput
-                  value={props.value.timeMs}
+                  value={props.value}
                   onValueChange={(e) =>
                     onChange({
                       ...value,
-                      time: { mode: "static", timeMs: e },
+                      time: { mode: "static", value: e },
                     })
                   }
                 />
               </FormGroup>
             )}
             modeLabel="Time mode:"
-            defaultStaticValue={{ timeMs: 2000 }}
+            defaultStaticValue={2000}
           />
         );
     }

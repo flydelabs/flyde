@@ -1,15 +1,15 @@
 import { InputPinMap, MacroNode, isDefined } from "@flyde/core";
-import { ConfigurableInput } from "../../lib/ConfigurableInput";
 import { timeToString } from "../../Timing/common";
+import { ConfigurableInput } from "@flyde/core";
 
 export type CollectConfigTime = {
   strategy: "time";
-  time: ConfigurableInput<{ timeMs?: number }>;
+  time: ConfigurableInput<number>;
 };
 
 export type CollectConfigCount = {
   strategy: "count";
-  count: ConfigurableInput<{ count?: number }>;
+  count: ConfigurableInput<number>;
 };
 
 export type CollectConfigTrigger = {
@@ -26,7 +26,7 @@ export const Collect: MacroNode<CollectConfig> = {
   displayName: "Collect",
   description: "Collects values into a list. Over time, count, or trigger.",
   namespace: "Lists",
-  defaultData: { strategy: "count", count: { mode: "static", count: 3 } },
+  defaultData: { strategy: "count", count: { mode: "static", value: 3 } },
   definitionBuilder: (config) => {
     const inputs = {
       value: { description: "Value to collect" },
@@ -47,13 +47,13 @@ export const Collect: MacroNode<CollectConfig> = {
     const displayName = (() => {
       if (config.strategy === "time") {
         if (config.time.mode === "static") {
-          return `Collect over ${timeToString(config.time.timeMs)}`;
+          return `Collect over ${timeToString(config.time.value)}`;
         } else {
           return "Collect over time";
         }
       } else if (config.strategy === "count") {
         if (config.count.mode === "static") {
-          return `Collect ${config.count.count} values`;
+          return `Collect ${config.count.value} values`;
         } else {
           return "Collect values";
         }
@@ -66,14 +66,14 @@ export const Collect: MacroNode<CollectConfig> = {
       if (config.strategy === "time") {
         if (config.time.mode === "static") {
           return `Emits a list of all values received, from the first value and until ${timeToString(
-            config.time.timeMs
+            config.time.value
           )} pass.`;
         } else {
           return "Emits a list of all values received, from the first value and until the specified amount of time passes.";
         }
       } else if (config.strategy === "count") {
         if (config.count.mode === "static") {
-          return `Collect ${config.count.count} values and emit a list of them.`;
+          return `Collect ${config.count.value} values and emit a list of them.`;
         } else {
           return "Collect a specified amount of values and emit a list of them.";
         }
@@ -107,7 +107,7 @@ export const Collect: MacroNode<CollectConfig> = {
 
       if (config.strategy === "time") {
         const timeValue =
-          config.time.mode === "dynamic" ? time : config.time.timeMs;
+          config.time.mode === "dynamic" ? time : config.time.value;
 
         const timer = adv.state.get("timer");
         if (!timer) {
@@ -120,7 +120,7 @@ export const Collect: MacroNode<CollectConfig> = {
         }
       } else if (config.strategy === "count") {
         const countValue =
-          config.count.mode === "dynamic" ? count : config.count.count;
+          config.count.mode === "dynamic" ? count : config.count.value;
         if (list.length >= countValue) {
           outputs.list.next(list);
           adv.state.set("list", []);

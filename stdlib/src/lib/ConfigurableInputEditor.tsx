@@ -7,7 +7,7 @@ export interface ValueCompProps<T> {
   onChange: (value: T) => void;
 }
 
-export interface ConfigurableInputEditorProps<T extends Record<string, any>> {
+export interface ConfigurableInputEditorProps<T> {
   value: ConfigurableInput<T>;
   onChange: (value: ConfigurableInput<T>) => void;
   valueRenderer: React.FC<ValueCompProps<T>>;
@@ -15,13 +15,13 @@ export interface ConfigurableInputEditorProps<T extends Record<string, any>> {
   defaultStaticValue: T;
 }
 
-export const ConfigurableInputEditor = <T extends Record<string, any>>({
+export const ConfigurableInputEditor = function <T>({
   value,
   onChange,
   valueRenderer: ValueRenderer,
   defaultStaticValue,
   modeLabel,
-}: ConfigurableInputEditorProps<T>) => {
+}: ConfigurableInputEditorProps<T>) {
   const handleModeChange = (e: React.FormEvent<HTMLInputElement>) => {
     onChange({
       mode: e.currentTarget.value as "static" | "dynamic",

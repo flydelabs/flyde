@@ -59,7 +59,7 @@ node:
         strategy: count
         count:
           mode: static
-          count: 3
+          value: 3
     - pos:
         x: -630.6297778320313
         y: -425.5123219069296
