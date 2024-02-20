@@ -5,18 +5,18 @@ import exampleReactivity from "./_hero-example/ExampleReactivity.flyde";
 
 export const examples = [
   {
-    label: "Beep Boop",
-    flow: exampleReactivity,
-    tip: `Try changing the collection count and see the output change.`,
-    playgroundUrl:
-      "https://play.flyde.dev/apps/5860e97d-8e3c-4751-baf2-367bcd768852",
-  },
-  {
     label: "Hello World",
     flow: exampleHelloWorld,
     tip: `Try double clicking on the "World" node to change the string.`,
     playgroundUrl:
       "https://play.flyde.dev/apps/974a3913-1b3b-4a0a-9ca7-4e2a69d0fddb",
+  },
+  {
+    label: "Beep Boop",
+    flow: exampleReactivity,
+    tip: `Try changing the collection count and see the output change.`,
+    playgroundUrl:
+      "https://play.flyde.dev/apps/5860e97d-8e3c-4751-baf2-367bcd768852",
   },
   {
     label: "Debounce/Throttle",
