@@ -42,6 +42,9 @@ export const Conditional: MacroNode<ConditionalConfig> = {
   id: "Conditional",
   namespace: "Control Flow",
   description: "Evaluates a condition and emits the value of the matching case",
+  defaultStyle: {
+    icon: "circle-question",
+  },
   runFnBuilder: (config) => {
     return (inputs, outputs, adv) => {
       const {

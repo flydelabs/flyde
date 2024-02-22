@@ -26,6 +26,9 @@ export const Collect: MacroNode<CollectConfig> = {
   displayName: "Collect",
   description: "Collects values into a list. Over time, count, or trigger.",
   namespace: "Lists",
+  defaultStyle: {
+    icon: "bucket",
+  },
   defaultData: { strategy: "count", count: { mode: "static", value: 3 } },
   definitionBuilder: (config) => {
     const inputs = {

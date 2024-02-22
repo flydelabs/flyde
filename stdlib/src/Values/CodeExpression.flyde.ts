@@ -8,7 +8,10 @@ export interface CodeExpressionConfig {
 
 export const CodeExpression: MacroNode<CodeExpressionConfig> = {
   id: "CodeExpression",
-  displayName: "Code Expression",
+  displayName: "Inline Code",
+  defaultStyle: {
+    icon: "code",
+  },
   description: "A static value or JS expression",
   runFnBuilder: (config) => {
     return (inputs, outputs, adv) => {

@@ -181,6 +181,9 @@ export const HeadAndRest: CodeNode = {
 export const SpreadList: MacroNode<{ count: number }> = {
   id: "SpreadList",
   namespace,
+  defaultStyle: {
+    icon: "sitemap",
+  },
   displayName: "Spread List",
   description: "Spreads a list into multiple outputs",
   runFnBuilder:

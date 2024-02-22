@@ -3,7 +3,10 @@ import { CodeNode } from "@flyde/core";
 const namespace = "State";
 
 export const SetGlobalState: CodeNode = {
-  id: "Set Global State",
+  id: "Set State",
+  defaultStyle: {
+    icon: "fa-pen",
+  },
   namespace,
   description: "Sets a value in the global state",
   inputs: {
@@ -20,7 +23,10 @@ export const SetGlobalState: CodeNode = {
 };
 
 export const GetGlobalState: CodeNode = {
-  id: "Get Global State",
+  id: "Get State",
+  defaultStyle: {
+    icon: "fa-eye",
+  },
   namespace,
   description: "Gets a value from the global state",
   inputs: {

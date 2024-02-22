@@ -21,16 +21,20 @@ export function getUnresolvedNodesLibraryData() {
   return {
     groups: [
       {
-        title: "Control Flow",
-        nodes: [Conditional, Switch, LoopList, RoundRobin],
-      },
-      {
         title: "Values & Custom Code",
         nodes: [InlineValue, CodeExpression],
       },
       {
+        title: "Control Flow",
+        nodes: [Conditional, Switch, LoopList, RoundRobin],
+      },
+      {
         title: "Objects & Arrays",
         nodes: [GetAttribute, Collect, SpreadList],
+      },
+      {
+        title: "HTTP",
+        nodes: [Http],
       },
       {
         title: "State",
@@ -39,10 +43,6 @@ export function getUnresolvedNodesLibraryData() {
       {
         title: "Timing",
         nodes: [Delay, Throttle, Debounce, Interval],
-      },
-      {
-        title: "HTTP",
-        nodes: [Http],
       },
     ],
   };

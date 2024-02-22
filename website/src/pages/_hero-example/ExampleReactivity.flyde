@@ -7,8 +7,8 @@ imports:
 node:
   instances:
     - pos:
-        x: -639.1495586635534
-        y: -356.7075307794414
+        x: -648.3432842494909
+        y: -354.8758657403789
       id: oeum6dqgsprbuef0p9s3b1ye
       inputConfig: {}
       nodeId: RoundRobin__oeum6dqgsprbuef0p9s3b1ye
@@ -16,8 +16,8 @@ node:
       macroData:
         count: 3
     - pos:
-        x: -715.5202523019706
-        y: -257.26144321093545
+        x: -713.3349495675956
+        y: -257.26351840624795
       id: rh3ug7oqoze1rvn4k17kc556
       inputConfig: {}
       nodeId: InlineValue__rh3ug7oqoze1rvn4k17kc556
@@ -26,6 +26,9 @@ node:
         type: string
         value: beep
         label: '"beep"'
+      style:
+        size: small
+        icon: pen
     - pos:
         x: -602.4942700195312
         y: -257.6317993164063
@@ -37,9 +40,12 @@ node:
         type: string
         value: boop
         label: '"boop"'
+      style:
+        size: small
+        icon: pen
     - pos:
         x: -490.38597900390624
-        y: -258.06144042968754
+        y: -258.0616235351563
       id: ApisCombination-ts149e2
       inputConfig: {}
       nodeId: InlineValue__ApisCombination-ts149e2
@@ -48,9 +54,12 @@ node:
         type: string
         value: bop
         label: '"bop"'
+      style:
+        size: small
+        icon: pen
     - pos:
-        x: -644.9241528320313
-        y: -168.45148509621887
+        x: -653.198505859375
+        y: -174.88709300637512
       id: lqx9nk7f5fr4evl7dpoh6mff
       inputConfig: {}
       nodeId: Collect__lqx9nk7f5fr4evl7dpoh6mff
@@ -61,8 +70,8 @@ node:
           mode: static
           value: 3
     - pos:
-        x: -630.6297778320313
-        y: -425.5123219069296
+        x: -636.6844042968751
+        y: -416.3564381178671
       id: bczfob5ymeh27ufao57egapl
       inputConfig: {}
       nodeId: Interval__bczfob5ymeh27ufao57egapl
@@ -147,8 +156,8 @@ node:
       x: -499.82438378976735
       y: 706.7650396699393
     output:
-      x: -588.0203320231655
-      y: -62.15245435262375
+      x: -589.8591381755092
+      y: -61.23308179403
     response:
       x: -500.61566893722795
       y: 421.9045791861946

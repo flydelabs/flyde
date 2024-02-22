@@ -20,6 +20,9 @@ export interface SwitchConfig {
 export const Switch: MacroNode<SwitchConfig> = {
   id: "Switch",
   namespace: "Control Flow",
+  defaultStyle: {
+    icon: "sitemap",
+  },
   description:
     "Allows you to switch between multiple outputs based on the value of one input or more, using code expressions",
   runFnBuilder: (config) => {

@@ -236,12 +236,13 @@ export const InstanceView: React.FC<InstanceViewProps> =
 
     const inlineEditorRef = React.useRef();
 
-    const style = React.useMemo(
-      () => instance.style || node.defaultStyle || {},
-      [node, instance]
-    );
-
-    const size = style.size || "regular";
+    const style = React.useMemo(() => {
+      return {
+        icon: instance.style?.icon ?? node.defaultStyle?.icon,
+        color: instance.style?.color ?? node.defaultStyle?.color,
+        size: instance.style?.size ?? node.defaultStyle?.color ?? "regular",
+      } as NodeStyle;
+    }, [node, instance]);
 
     const connectedInputs = React.useMemo(() => {
       return new Map(
@@ -402,7 +403,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
         dragged,
         closest: closestPin && closestPin.ins.id === instance.id,
       },
-      `size-${size}`
+      `size-${style.size}`
     );
 
     const optionalInputs = new Set(
@@ -720,7 +721,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
             <Tooltip content={node.description}>
               <React.Fragment>
                 {style.icon ? (
-                  <FontAwesomeIcon icon={style.icon as any} />
+                  <FontAwesomeIcon icon={style.icon as any} size="xs" />
                 ) : null}{" "}
                 {content}
               </React.Fragment>

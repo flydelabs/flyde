@@ -44,6 +44,9 @@ export const LimitTimes: CodeNode = {
 
 export const RoundRobin: MacroNode<{ count: number }> = {
   id: "RoundRobin",
+  defaultStyle: {
+    icon: "rotate",
+  },
   displayName: "Round Robin",
   namespace,
   defaultData: { count: 3 },

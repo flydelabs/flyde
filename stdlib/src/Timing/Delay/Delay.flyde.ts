@@ -7,6 +7,9 @@ export const Delay: MacroNode<{ delayMs: DelayConfig }> = {
   id: "Delay",
   displayName: "Delay",
   namespace: "Timing",
+  defaultStyle: {
+    icon: "clock",
+  },
   defaultData: { delayMs: { mode: "static", value: 420 } },
   description:
     "Delays a value by a given amount of time. Supports both static and dynamic delays.",

@@ -12,6 +12,9 @@ export const Debounce: MacroNode<DebounceConfig> = {
   id: "Debounce",
   displayName: "Debounce",
   namespace,
+  defaultStyle: {
+    icon: "hourglass",
+  },
   defaultData: { delayMs: { mode: "static", value: 420 } },
   description:
     "Emits the last value received after being idle for a given amount of milliseconds. Supports both static and dynamic delays.",
@@ -92,6 +95,9 @@ export type ThrottleConfig = { delayMs: ConfigurableInput<number> };
 export const Throttle: MacroNode<ThrottleConfig> = {
   id: "Throttle",
   displayName: "Throttle",
+  defaultStyle: {
+    icon: "fa-hand",
+  },
   namespace,
   defaultData: { delayMs: { mode: "static", value: 420 } },
   description:
