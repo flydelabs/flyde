@@ -8,6 +8,13 @@
   box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1), 0px 3px 8px rgba(0, 0, 0, 0.8);
   border: 1px solid #5e5e5e;
 
+  .run-flow-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 1;
+  }
+
   > main {
     flex: 1;
   }
@@ -166,10 +173,6 @@
     }
   }
 
-  .run-btn-container {
-    display: none;
-  }
-
   .file-tag {
     flex: 0;
     // css for a file name tag like in vscode
@@ -230,4 +233,8 @@
   //     margin-top: 42px;
   //   }
   // }
+}
+
+.run-btn-container {
+  display: none;
 }

@@ -60,7 +60,7 @@ Check out the official website at [https://flyde.dev](https://flyde.dev) for mor
 
 ## License
 
-Everything needed to run a Flyde file is _MIT_ licensed. That includes:
+Everything needed to run a Flyde file is _MIT-licensed_. That includes:
 
 - `@flyde/core`
 - `@flyde/resolver`

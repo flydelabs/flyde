@@ -25,7 +25,8 @@ import { examples } from "../_examples";
 export const HeroExample: React.FC<{
   example: (typeof examples)[0];
   ref: any;
-}> = forwardRef(function HeroExample({ example }, ref) {
+  children?: React.ReactNode;
+}> = forwardRef(function HeroExample({ example, children }, ref) {
   const currentExample = example;
   const [logs, setLogs] = React.useState<any>([]);
 
@@ -61,7 +62,7 @@ export const HeroExample: React.FC<{
   );
 
   return (
-    <div className="hero-example">
+    <div className="hero-example relative">
       <div className="hero-example__tabs">
         <div
           onClick={() => setFileVisible(flowFileName)}
@@ -90,6 +91,7 @@ export const HeroExample: React.FC<{
             onLog={onLogOutput}
             onCompleted={noop}
           />
+          {children}
         </div>
       ) : null}
       {fileVisible === "index.ts" ? (
