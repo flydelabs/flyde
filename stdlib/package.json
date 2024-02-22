@@ -1,6 +1,6 @@
 {
   "name": "@flyde/stdlib",
-  "version": "0.2.36",
+  "version": "0.2.37",
   "description": "Flyde's StdLib",
   "flyde": {
     "exposes": [
