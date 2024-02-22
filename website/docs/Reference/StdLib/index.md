@@ -162,10 +162,10 @@ For simplicity, all parts of Flyde's standard library reside in the same package
 
 ## State
 
-| Id                   | Description                        | Inputs                                                                                                                                                  | Outputs                                                  |
-| -------------------- | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| **Set Global State** | Sets a value in the global state   | <div><strong>key</strong>: Key to set (required)</div><div><strong>value</strong>: Value to set (required)</div>                                        | <div><strong>setValue</strong>: Value that was set</div> |
-| **Get Global State** | Gets a value from the global state | <div><strong>key</strong>: Key to get (required)</div><div><strong>defaultValue</strong>: Default value if key is not set (required-if-connected)</div> | <div><strong>value</strong>: Value of the key</div>      |
+| Id            | Description                        | Inputs                                                                                                                                                  | Outputs                                                  |
+| ------------- | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| **Set State** | Sets a value in the global state   | <div><strong>key</strong>: Key to set (required)</div><div><strong>value</strong>: Value to set (required)</div>                                        | <div><strong>setValue</strong>: Value that was set</div> |
+| **Get State** | Gets a value from the global state | <div><strong>key</strong>: Key to get (required)</div><div><strong>defaultValue</strong>: Default value if key is not set (required-if-connected)</div> | <div><strong>value</strong>: Value of the key</div>      |
 
 ## MongoDB
 
