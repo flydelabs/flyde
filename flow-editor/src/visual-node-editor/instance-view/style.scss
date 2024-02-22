@@ -57,10 +57,11 @@ $half-of-pin-height: 16px;
 
     .svg-inline--fa {
       // color: hsl(var(--node-color), 10%);
-      color: var(--node-color);
-      filter: brightness(
-        0.75
-      ); // might be possible using css vars but it's conflicting with scss in a way (https://blog.jim-nielsen.com/2019/dynamically-darken-a-color-in-css/)
+      // color: $tblue-800;
+      // color: var(--node-color);
+      // filter: brightness(
+      //   0.75
+      // ); // might be possible using css vars but it's conflicting with scss in a way (https://blog.jim-nielsen.com/2019/dynamically-darken-a-color-in-css/)
     }
 
     &.size-small {

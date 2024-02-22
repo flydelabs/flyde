@@ -10,6 +10,9 @@ export const Interval: MacroNode<IntervalConfig> = {
   id: "Interval",
   displayName: "Interval",
   namespace: TIMING_NAMESPACE,
+  defaultStyle: {
+    icon: "stopwatch",
+  },
 
   defaultData: {
     time: { mode: "static", value: 1000 },

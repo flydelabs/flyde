@@ -16,6 +16,9 @@ export const Http: MacroNode<HttpConfig> = {
   namespace,
   displayName: "HTTP Request",
   description: "Performs a HTTP request to a URL and emits the response data",
+  defaultStyle: {
+    icon: "globe",
+  },
   runFnBuilder: (config) => {
     return (inputs, outputs, adv) => {
       const { method, url, headers, params, data } = config;

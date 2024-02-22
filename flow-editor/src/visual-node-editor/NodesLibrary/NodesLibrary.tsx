@@ -6,7 +6,9 @@ import { useDependenciesContext } from "../../flow-editor/DependenciesContext";
 import { AddNodeMenu } from "./AddNodeMenu";
 import { useDarkMode } from "../../flow-editor/DarkModeContext";
 import { useIsFirstRender } from "usehooks-ts";
-import p from "@blueprintjs/icons/lib/esm/generated/16px/paths/blank";
+import { Maximize, Minimize, Plus } from "@blueprintjs/icons";
+import { useScrollWithShadow } from "../../lib/react-utils/use-shadow-scroll";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export interface NodesLibraryProps extends NodeLibraryData {
   onAddNode: (node: ImportableSource) => void;
@@ -40,6 +42,8 @@ export const NodesLibrary: React.FC<NodesLibraryProps> = memo((props) => {
     }
   }, [groups]);
 
+  const { boxShadow, onScrollHandler } = useScrollWithShadow(darkMode);
+
   return (
     <div
       className={classNames("nodes-library", {
@@ -49,11 +53,23 @@ export const NodesLibrary: React.FC<NodesLibraryProps> = memo((props) => {
         dark: darkMode,
       })}
     >
-      <div className="header" onClick={() => setIsClosed(!isClosed)}>
-        <strong>Nodes Library</strong>
+      {isClosed ? (
+        <div className="header" onClick={() => setIsClosed(!isClosed)}>
+          <strong>Nodes Library</strong>
+        </div>
+      ) : null}
+      <div className="minimize-btn-container">
+        <Button
+          minimal
+          small
+          onClick={() => setIsClosed(!isClosed)}
+          // intent="primary"
+        >
+          {isClosed ? <Maximize size={12} /> : <Minimize size={12} />}
+        </Button>
       </div>
-      <div className="list">
-        {groups.map((group) => (
+      <div className="list" style={{ boxShadow }} onScroll={onScrollHandler}>
+        {groups.map((group, groupIdx) => (
           <div>
             <div
               className={classNames("group-title", {
@@ -82,7 +98,10 @@ export const NodesLibrary: React.FC<NodesLibraryProps> = memo((props) => {
                     compact
                     minimal
                   >
-                    {node.displayName ?? node.id}
+                    <div className="group-item-inner">
+                      <FontAwesomeIcon icon={node.defaultStyle?.icon as any} />
+                      {node.displayName ?? node.id}
+                    </div>
                   </Tooltip>
                 </div>
               ))}

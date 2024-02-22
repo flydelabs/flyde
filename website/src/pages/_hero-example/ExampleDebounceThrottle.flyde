@@ -8,8 +8,8 @@ imports:
 node:
   instances:
     - pos:
-        x: -849.9802075195312
-        y: -293.42520723759816
+        x: -884.2089672851562
+        y: -298.4133969348638
       id: wj31gd73i5l111q999pv4kor
       inputConfig: {}
       visibleOutputs:
@@ -21,9 +21,11 @@ node:
         delayMs:
           value: 8000
           mode: static
+      style:
+        size: regular
     - pos:
-        x: -1038.8195629882812
-        y: -292.4507504504888
+        x: -1090.1673413085937
+        y: -297.6969967883794
       id: eaa2b80mmdusjvxi3fve0du1
       inputConfig: {}
       nodeId: Debounce__eaa2b80mmdusjvxi3fve0du1
@@ -33,8 +35,8 @@ node:
           value: 8000
           mode: static
     - pos:
-        x: -776.2780029296875
-        y: -173.65079674768984
+        x: -781.8923828125
+        y: -170.0860384469086
       id: scs3pycv9lz28ykunbkqn9to
       inputConfig: {}
       nodeId: InlineValue__scs3pycv9lz28ykunbkqn9to
@@ -43,9 +45,13 @@ node:
         type: string
         value: ❌
         label: '"❌"'
+      style:
+        size: small
+        icon: pen
+        color: "#f15bb5"
     - pos:
-        x: -1028.1461474609375
-        y: -173.36171508789062
+        x: -995.8424365234375
+        y: -168.312734375
       id: ApisCombination-3k049q4
       inputConfig: {}
       nodeId: InlineValue__ApisCombination-3k049q4
@@ -54,9 +60,12 @@ node:
         type: string
         value: 🕐
         label: '"🕐"'
+      style:
+        size: small
+        icon: pen
     - pos:
-        x: -965.5435205078124
-        y: -376.7129255999589
+        x: -1005.08294921875
+        y: -397.30365435972453
       id: ygnqzwi1stiki29lavj6wu2w
       inputConfig: {}
       nodeId: Interval__ygnqzwi1stiki29lavj6wu2w
@@ -69,7 +78,7 @@ node:
           value: ⭐️
           mode: static
     - pos:
-        x: -928.755859375
+        x: -917.6480712890625
         y: -90.7339411755601
       id: lfrwwz35676vn1hb9ykzpewd
       inputConfig: {}
@@ -83,8 +92,8 @@ node:
       style:
         size: small
     - pos:
-        x: -894.184619140625
-        y: -174.2404573922211
+        x: -882.0670654296875
+        y: -168.18171105433046
       id: DebounceThrottle-xy049dv
       inputConfig: {}
       nodeId: InlineValue__DebounceThrottle-xy049dv
@@ -93,6 +102,9 @@ node:
         type: string
         value: ✅
         label: '"✅"'
+      style:
+        size: small
+        icon: pen
   connections:
     - from:
         insId: wj31gd73i5l111q999pv4kor
@@ -173,8 +185,8 @@ node:
       x: -499.82438378976735
       y: 706.7650396699393
     output:
-      x: -892.9243331854645
-      y: 9.226056795254806
+      x: -874.7480636542145
+      y: 6.196668367520431
     response:
       x: -506.3386688159596
       y: 488.67302443385125

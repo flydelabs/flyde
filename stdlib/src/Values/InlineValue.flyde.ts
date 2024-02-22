@@ -9,6 +9,9 @@ export interface InlineValueConfig {
 export const InlineValue: MacroNode<InlineValueConfig> = {
   id: "InlineValue",
   displayName: "Inline Value",
+  defaultStyle: {
+    icon: "pen",
+  },
   description: "A static value or JS expression",
   runFnBuilder: (config) => {
     return (_, outputs) => {

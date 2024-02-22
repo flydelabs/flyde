@@ -12,6 +12,7 @@ export function processMacroNodeInstance(
 
   const resolvedNode: CodeNode = {
     ...metaData,
+    defaultStyle: metaData.defaultStyle ?? macro.defaultStyle,
     displayName: metaData.displayName ?? macro.id,
     namespace: macro.namespace,
     id,
