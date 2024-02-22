@@ -293,6 +293,43 @@
   }
 }
 
+.use-cases {
+  h2 {
+    font-size: 2rem;
+    margin: 3rem 0 5rem;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .use-case {
+    background: #f3f4f6;
+
+    .use-case-inner {
+      display: flex;
+      flex-direction: row;
+      gap: 3rem;
+      margin: 0 auto;
+      padding: 2rem 3rem;
+      max-width: var(--ifm-container-width-xl);
+
+      h3 {
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+        font-weight: 600;
+        flex: 1;
+      }
+
+      .use-case-description {
+        flex: 1;
+      }
+    }
+
+    &:nth-child(odd) {
+      background: white;
+    }
+  }
+}
+
 @media only screen and (max-width: 1440px) {
   .hero .container {
     padding: 2rem 1rem 2rem 1rem;
@@ -336,6 +373,15 @@
     .feature-strip-inner {
       // display: flex;
       flex-direction: column-reverse !important;
+    }
+  }
+
+  .use-cases {
+    .use-case {
+      .use-case-inner {
+        flex-direction: column !important;
+        gap: 1rem;
+      }
     }
   }
 }

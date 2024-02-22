@@ -11,6 +11,9 @@ import Link from "@docusaurus/Link";
 import { IconStar } from "../components/IconStar";
 import { features } from "./_features";
 import { examples } from "./_examples";
+import { Button } from "@blueprintjs/core";
+import { Play } from "@blueprintjs/icons";
+import { useCases } from "./_useCases";
 
 const FIRST_EXAMPLE_IDX = 0;
 
@@ -21,10 +24,7 @@ function HomepageHeader() {
 
   const exampleRef = React.useRef(null);
 
-  const [didRunExample, setDidRunExample] = useState(false);
-
   const runExample = useCallback(() => {
-    setDidRunExample(true);
     exampleRef.current?.runFlow();
   }, []);
 
@@ -77,27 +77,13 @@ function HomepageHeader() {
           </p>
           <div className="buttons-container">
             <Link className="button button--primary button--lg " href="/docs">
-              Learn More
+              Quick Start
             </Link>
             <Link
               className="button button--secondary button--lg example-btn"
-              onClick={runExample}
+              href={currentExample.playgroundUrl}
             >
-              Run Example{" "}
-              <span
-                className={clsx("hero-horizontal-only horizontal-finger", {
-                  nudge: !didRunExample,
-                })}
-              >
-                👉
-              </span>
-              <span
-                className={clsx("hero-vertical-only vertical-finger", {
-                  nudge: !didRunExample,
-                })}
-              >
-                👇
-              </span>
+              Playground
             </Link>
           </div>
         </div>
@@ -107,7 +93,17 @@ function HomepageHeader() {
             example={currentExample}
             key={currentExample.label}
             ref={exampleRef}
-          />
+          >
+            <Button
+              onClick={runExample}
+              // large
+              // intent=""
+              className="run-flow-btn"
+              icon={<Play />}
+            >
+              Run
+            </Button>
+          </HeroExample>
           {currentExample.tip ? (
             <div className="example-tip">
               Challenge:{" "}
@@ -181,6 +177,18 @@ export default function Home(): JSX.Element {
           </div>
         </section>
       ))}
+
+      <section className="use-cases">
+        <h2>Use Cases</h2>
+        {useCases.map((useCase) => (
+          <div className="use-case" key={useCase.title}>
+            <div className="use-case-inner">
+              <h3>{useCase.title}</h3>
+              <div className="use-case-description">{useCase.content}</div>
+            </div>
+          </div>
+        ))}
+      </section>
     </Layout>
   );
 }

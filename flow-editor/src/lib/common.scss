@@ -29,7 +29,7 @@ $white: #ffffff;
 @mixin base-node($bg-color: white) {
   font-family: $font-family;
   border: 2px solid;
-  border-radius: 5px;
+  border-radius: 8px;
   user-select: none;
   font-size: 16px;
   font-weight: 600;

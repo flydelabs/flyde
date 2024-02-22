@@ -190,7 +190,7 @@ const config = {
             items: [
               {
                 label: "Discord",
-                href: "https://discord.gg/x7t4tjZQP8",
+                href: "https://www.flyde.dev/discord",
               },
               {
                 label: "Twitter",
