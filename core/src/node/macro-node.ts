@@ -111,7 +111,7 @@ export type ConfigurableInput<T> =
   | ConfigurableInputDynamic;
 
 export const isMacroNode = (p: any): p is MacroNode<any> => {
-  return p && typeof (p as MacroNode<any>).runFnBuilder === "object";
+  return p && typeof (p as MacroNode<any>).runFnBuilder === "function";
 };
 
 export const isMacroNodeDefinition = (
