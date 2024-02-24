@@ -55,7 +55,7 @@ import {
   Dialog,
   Classes,
 } from "@blueprintjs/core";
-import ReactDOM from "react-dom";
+
 import { NodeStyleMenu } from "./NodeStyleMenu";
 import { useDarkMode } from "../../flow-editor/DarkModeContext";
 

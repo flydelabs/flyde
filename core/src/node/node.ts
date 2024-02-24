@@ -19,7 +19,7 @@ import {
   nodeOutput,
 } from "./node-pins";
 import { ImportedNode } from "../flow-schema";
-import { MacroNode, MacroNodeDefinition } from "./macro-node";
+import { MacroNodeDefinition } from "./macro-node";
 
 export type NodesCollection = OMap<Node>;
 
@@ -218,10 +218,6 @@ export const isCodeNode = (p: Node | NodeDefinition | any): p is CodeNode => {
   return isBaseNode(p) && typeof (p as CodeNode).run === "function";
 };
 
-export const isMacroNode = (p: any): p is MacroNode<any> => {
-  return p && typeof (p as MacroNode<any>).runFnBuilder === "function";
-};
-
 export const extractMetadata: <N extends NodeMetadata>(
   node: N
 ) => NodeMetadata = (node) => {
@@ -241,12 +237,6 @@ export const extractMetadata: <N extends NodeMetadata>(
     defaultStyle,
     searchKeywords,
   };
-};
-
-export const isMacroNodeDefinition = (
-  p: any
-): p is MacroNodeDefinition<any> => {
-  return p && typeof (p as MacroNode<any>).definitionBuilder === "undefined";
 };
 
 export const isVisualNode = (p: Node | NodeDefinition): p is VisualNode => {
