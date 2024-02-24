@@ -109,3 +109,21 @@ export type ConfigurableInputDynamic = {
 export type ConfigurableInput<T> =
   | ConfigurableInputStatic<T>
   | ConfigurableInputDynamic;
+
+export const isMacroNode = (p: any): p is MacroNode<any> => {
+  return p && typeof (p as MacroNode<any>).runFnBuilder === "object";
+};
+
+export const isMacroNodeDefinition = (
+  p: any
+): p is MacroNodeDefinition<any> => {
+  const { editorConfig } = (p ?? {}) as MacroNodeDefinition<any>;
+  if (editorConfig?.type === "custom") {
+    return (
+      typeof (editorConfig as MacroEditorConfigCustomDefinition)
+        .editorComponentBundleContent === "string"
+    );
+  } else {
+    return editorConfig?.type === "structured";
+  }
+};
