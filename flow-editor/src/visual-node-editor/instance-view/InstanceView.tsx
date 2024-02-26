@@ -9,8 +9,6 @@ import {
   keys,
   isInlineNodeInstance,
   InlineNodeInstance,
-  randomInt,
-  pickRandom,
   NodeStyle,
   getNodeOutputs,
   getInputName,
@@ -224,15 +222,6 @@ export const InstanceView: React.FC<InstanceViewProps> =
     const dark = useDarkMode();
 
     const { id } = instance;
-
-    const theme = React.useMemo(() => {
-      const icons = [["fab", "discord"], ["fab", "slack"], "bug", "cube"];
-      const color = randomInt(6, 1);
-      const icon = pickRandom(icons);
-      const size = randomInt(3, 1);
-
-      return { icon, color, size, variation: randomInt(5, 1) };
-    }, []);
 
     const inlineEditorRef = React.useRef();
 
@@ -710,7 +699,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
             className={classNames(
               "ins-view-inner",
               innerCms,
-              `size-${theme.size}`,
+              `size-${style.size}`,
               { dark: dark }
             )}
             onClick={_onSelect}
@@ -720,10 +709,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
           >
             <Tooltip content={node.description}>
               <React.Fragment>
-                {style.icon ? (
-                  <FontAwesomeIcon icon={style.icon as any} size="xs" />
-                ) : null}{" "}
-                {content}
+                <InstanceIcon icon={style.icon as string} /> {content}
               </React.Fragment>
             </Tooltip>
           </ContextMenu>
@@ -753,3 +739,18 @@ export const InstanceView: React.FC<InstanceViewProps> =
       </div>
     );
   };
+
+export const InstanceIcon: React.FC<{ icon?: string }> = function InstanceIcon({
+  icon,
+}) {
+  if (typeof icon === "string" && icon.trim().startsWith("<")) {
+    return (
+      <span
+        className="svg-icon-container"
+        dangerouslySetInnerHTML={{ __html: icon }}
+      />
+    );
+  } else {
+    return <FontAwesomeIcon icon={icon as any} size="xs" />;
+  }
+};

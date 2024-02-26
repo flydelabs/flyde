@@ -8,7 +8,7 @@ import { useDarkMode } from "../../flow-editor/DarkModeContext";
 import { useIsFirstRender } from "usehooks-ts";
 import { Maximize, Minimize, Plus } from "@blueprintjs/icons";
 import { useScrollWithShadow } from "../../lib/react-utils/use-shadow-scroll";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { InstanceIcon } from "../instance-view";
 
 export interface NodesLibraryProps extends NodeLibraryData {
   onAddNode: (node: ImportableSource) => void;
@@ -99,7 +99,7 @@ export const NodesLibrary: React.FC<NodesLibraryProps> = memo((props) => {
                     minimal
                   >
                     <div className="group-item-inner">
-                      <FontAwesomeIcon icon={node.defaultStyle?.icon as any} />
+                      <InstanceIcon icon={node.defaultStyle?.icon as string} />
                       {node.displayName ?? node.id}
                     </div>
                   </Tooltip>

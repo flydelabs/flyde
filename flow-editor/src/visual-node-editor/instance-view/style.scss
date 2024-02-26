@@ -64,6 +64,17 @@ $half-of-pin-height: 16px;
       // ); // might be possible using css vars but it's conflicting with scss in a way (https://blog.jim-nielsen.com/2019/dynamically-darken-a-color-in-css/)
     }
 
+    .svg-icon-container {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      svg {
+        width: 22px;
+        height: 22px;
+      }
+    }
+
     &.size-small {
       font-size: 14px;
       padding: 6px 18px 6px;

@@ -38,6 +38,62 @@ export interface ConditionalConfig {
     | { type: "value" | "compareTo" }
     | { type: "expression"; data: string };
 }
+
+function conditionalConfigToDisplayName(config: ConditionalConfig) {
+  const { type } = config.condition;
+
+  const compareTo =
+    config.compareTo.mode === "static"
+      ? JSON.stringify(config.compareTo.value)
+      : "`compareTo`";
+  switch (type) {
+    case ConditionType.Equal:
+      return `Equals ${compareTo}`;
+    case ConditionType.NotEqual:
+      return `Does not equal ${compareTo}`;
+    case ConditionType.GreaterThan:
+      return `Greater than ${compareTo}`;
+    case ConditionType.GreaterThanOrEqual:
+      return `Greater than or equal to ${compareTo}`;
+    case ConditionType.LessThan:
+      return `Less than ${compareTo}`;
+    case ConditionType.LessThanOrEqual:
+      return `Less than or equal to ${compareTo}`;
+    case ConditionType.Contains:
+      return `Contains ${compareTo}`;
+    case ConditionType.NotContains:
+      return `Does not contain ${compareTo}`;
+    case ConditionType.RegexMatches:
+      return `Matches regex ${compareTo}`;
+    case ConditionType.IsEmpty:
+      return `Is empty`;
+    case ConditionType.IsNotEmpty:
+      return `Is not empty`;
+    case ConditionType.IsNull:
+      return `Is null`;
+    case ConditionType.IsNotNull:
+      return `Is not null`;
+    case ConditionType.IsUndefined:
+      return `Is undefined`;
+    case ConditionType.IsNotUndefined:
+      return `Is not undefined`;
+    case ConditionType.HasProperty:
+      return `Has property ${compareTo}`;
+    case ConditionType.LengthEqual:
+      return `Length equals ${compareTo}`;
+    case ConditionType.LengthNotEqual:
+      return `Length does not equal ${compareTo}`;
+    case ConditionType.LengthGreaterThan:
+      return `Length greater than ${compareTo}`;
+    case ConditionType.LengthLessThan:
+      return `Length less than ${compareTo}`;
+    case ConditionType.TypeEquals:
+      return `Type equals ${compareTo}`;
+    case ConditionType.Expression:
+      return config.condition.data;
+  }
+}
+
 export const Conditional: MacroNode<ConditionalConfig> = {
   id: "Conditional",
   namespace: "Control Flow",
@@ -107,7 +163,7 @@ export const Conditional: MacroNode<ConditionalConfig> = {
     };
 
     return {
-      displayName: "Conditional",
+      displayName: conditionalConfigToDisplayName(config),
       description:
         "Evaluates a condition and emits the value of the matching case",
       inputs: Object.fromEntries(inputs.map((input) => [input, {}])),
