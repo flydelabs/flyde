@@ -19,7 +19,7 @@ node:
       macroId: Throttle
       macroData:
         delayMs:
-          value: 8000
+          value: 3000
           mode: static
       style:
         size: regular
@@ -32,7 +32,7 @@ node:
       macroId: Debounce
       macroData:
         delayMs:
-          value: 8000
+          value: 2000
           mode: static
     - pos:
         x: -781.8923828125
@@ -72,7 +72,7 @@ node:
       macroId: Interval
       macroData:
         time:
-          value: 6000
+          value: 2500
           mode: static
         value:
           value: ⭐️

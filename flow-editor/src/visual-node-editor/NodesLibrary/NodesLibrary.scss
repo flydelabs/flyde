@@ -142,8 +142,15 @@
     padding: 5px 8px 3px;
     margin-bottom: 2px;
 
-    svg {
+    svg.svg-inline--fa {
       color: $tblue-700;
+    }
+
+    .svg-icon-container {
+      svg {
+        width: 18px;
+        height: 18px;
+      }
     }
 
     .group-item-inner {
