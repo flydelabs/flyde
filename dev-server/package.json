@@ -1,6 +1,6 @@
 {
   "name": "@flyde/dev-server",
-  "version": "0.5.40",
+  "version": "0.5.41",
   "description": "",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
