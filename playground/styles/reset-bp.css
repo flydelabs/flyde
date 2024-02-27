@@ -1,0 +1,94 @@
+// Apply a natural box layout model to all elements, but allow components to change as necessary
+html {
+  box-sizing: inherit;
+}
+
+// adjust box-sizing for every element ever
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+// Style resets on top of Normalize.css
+
+body {
+  font-size: inherit;
+  font-weight: inherit;
+  letter-spacing: inherit;
+  line-height: inherit;
+  text-transform: inherit;
+  color: inherit;
+  font-family: inherit;
+}
+
+p {
+  margin-bottom: inherit;
+  margin-top: inherit;
+}
+
+small {
+  font-size: inherit;
+}
+
+strong {
+  font-weight: inherit;
+}
+
+// consistent cross-browser text selection
+::selection {
+  background: inherit;
+}
+
+// REVIVE RESETS FOR BP COMPS
+// Apply a natural box layout model to all elements, but allow components to change as necessary
+.bp5-portal,
+.flyde-flow-editor {
+  box-sizing: border-box;
+}
+
+// adjust box-sizing for every element ever
+.bp5-portal *,
+.bp5-portal *::before,
+.bp5-portal *::after,
+.flyde-flow-editor *,
+.flyde-flow-editor *::before,
+.flyde-flow-editor *::after {
+  box-sizing: border-box;
+}
+
+// Style resets on top of Normalize.css
+
+.bp5-portal,
+.flyde-flow-editor body {
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.28581 !default;
+  text-transform: none;
+  color: #1c2127;
+  font-family: -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto",
+    "Oxygen", "Ubuntu", "Cantarell", "Open Sans", "Helvetica Neue";
+}
+
+.bp5-portal p,
+.flyde-flow-editor p {
+  margin-bottom: 10px;
+  margin-top: 0;
+}
+
+.bp5-portal small,
+.flyde-flow-editor small {
+  font-size: 12px;
+}
+
+.bp5-portal strong,
+.flyde-flow-editor strong {
+  font-weight: 600;
+}
+
+// consistent cross-browser text selection
+.bp5-portal ::selection,
+.flyde-flow-editor ::selection {
+  background: rgba(125, 188, 255, 60%) !default;
+}
