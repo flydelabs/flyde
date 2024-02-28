@@ -8,4 +8,5 @@ packages:
   - "remote-debugger"
   - "resolver"
   - "runtime"
+  - "playground"
   - "!examples/*"
