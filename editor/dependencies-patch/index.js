@@ -17,18 +17,25 @@ if (!basePath) {
 basePath = path.join(basePath, '..');
 
 
-[
-  'react-scripts/config/webpack.config.js',
-  'react-scripts/config/webpackDevServer.config.js',
-  'webpack/lib/web/JsonpChunkLoadingRuntimeModule.js'
-].forEach((filename) => {
+try {
 
-  const original = path.join(basePath, filename);
-  const patched = path.join(__dirname, filename);
-  console.log(`Patching ${filename}`);
-  fs.writeFileSync(original, fs.readFileSync(patched));
-  console.log(`Patched ${filename}`);
-})
+  [
+    'react-scripts/config/webpack.config.js',
+    'react-scripts/config/webpackDevServer.config.js',
+    'webpack/lib/web/JsonpChunkLoadingRuntimeModule.js'
+  ].forEach((filename) => {
+  
+    const original = path.join(basePath, filename);
+    const patched = path.join(__dirname, filename);
+    console.log(`Patching ${filename}`);
+    fs.writeFileSync(original, fs.readFileSync(patched));
+    console.log(`Patched ${filename}`);
+  })
+  
+} catch (e) {
+  console.error(`Failed to patch react-scripts`)
+  console.error(e);
+}
 
 
 
