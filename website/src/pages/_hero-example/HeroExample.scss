@@ -7,7 +7,9 @@
   height: 28rem;
   box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1), 0px 3px 8px rgba(0, 0, 0, 0.8);
   border: 1px solid #5e5e5e;
+  overflow: hidden;
 
+  border-radius: 8px;
   .run-flow-btn {
     position: absolute;
     top: 20px;
@@ -51,12 +53,17 @@
   }
 
   .terminal-emulator {
-    background: #161616;
+    background: #010101;
     color: white;
     overflow: auto;
     flex: 1;
     font-size: 0.8rem;
     padding: 3px 8px;
+  }
+
+  .terminal-header {
+    font-size: 12px;
+    background: #383838;
   }
 
   .flyde-hero-example-wrapper {
@@ -178,21 +185,22 @@
     // css for a file name tag like in vscode
     background-color: #383838;
     color: #cccccc;
-    padding: 0 5px;
-    font-size: 12px;
+    padding: 4px 5px;
+    font-size: 14px;
     // margin-right: 5px;
     width: 100%;
     text-align: center;
     display: block;
 
-    border-right: 1px solid #4f4f4f;
+    border-right: 1px solid #101010;
+
     cursor: pointer;
 
     &:hover {
       background-color: #4f4f4f;
     }
     &.selected {
-      background-color: #4f4f4f;
+      background-color: #1e1e1e;
       color: #ffffff;
     }
   }

@@ -18,6 +18,7 @@ import { useCases } from "./_useCases";
 const FIRST_EXAMPLE_IDX = 0;
 
 function HomepageHeader() {
+  const [visibleTips, setVisibleTips] = useState(new Set());
   const [currentExample, setCurrExample] = React.useState(
     examples[FIRST_EXAMPLE_IDX]
   );
@@ -26,27 +27,7 @@ function HomepageHeader() {
 
   const runExample = useCallback(() => {
     exampleRef.current?.runFlow();
-  }, []);
-
-  const examplesContainer = useMemo(() => {
-    return (
-      <div className="example-actions">
-        <span className="font-thin label">Examples:</span>
-        {examples.map((ex) => (
-          <button
-            key={ex.label}
-            className={`button button--sm example-button ${
-              ex.label === currentExample.label
-                ? "button--primary"
-                : "button--secondary"
-            }`}
-            onClick={() => setCurrExample(ex)}
-          >
-            {ex.label}
-          </button>
-        ))}
-      </div>
-    );
+    setVisibleTips((tips) => new Set([...tips, currentExample.fileName]));
   }, [currentExample]);
 
   return (
@@ -77,7 +58,7 @@ function HomepageHeader() {
           </p>
           <div className="buttons-container">
             <Link className="button button--primary button--lg " href="/docs">
-              Quick Start
+              Documentation
             </Link>
             <Link
               className="button button--secondary button--lg example-btn"
@@ -88,8 +69,8 @@ function HomepageHeader() {
           </div>
         </div>
         <div className="example-container">
-          <div className="hero-horizontal-only">{examplesContainer}</div>
           <HeroExample
+            onChangeExample={(ex) => setCurrExample(ex)}
             example={currentExample}
             key={currentExample.label}
             ref={exampleRef}
@@ -104,23 +85,23 @@ function HomepageHeader() {
               Run
             </Button>
           </HeroExample>
-          {currentExample.tip ? (
-            <div className="example-tip">
-              Challenge:{" "}
-              {currentExample.tip.replace(/^[A-Z]/, (s) => s.toLowerCase())}{" "}
-              &nbsp;
-              {currentExample.playgroundUrl ? (
-                <a
-                  href={currentExample.playgroundUrl}
-                  className="open-in-playground"
-                  target="_blank"
-                >
-                  Open in playground
-                </a>
-              ) : null}
-            </div>
-          ) : null}
-          <div className="hero-vertical-only">{examplesContainer}</div>
+
+          <div
+            className={clsx("example-tip", {
+              hidden: !visibleTips.has(currentExample.fileName),
+            })}
+          >
+            <strong>Challenge:</strong>&nbsp;
+            {currentExample.tip.replace(/^[A-Z]/, (s) => s.toLowerCase())}{" "}
+            &nbsp;
+            <a
+              href={currentExample.playgroundUrl}
+              className="open- button button--sm button--secondary"
+              target="_blank"
+            >
+              Open in Playground
+            </a>
+          </div>
         </div>
       </div>
     </div>

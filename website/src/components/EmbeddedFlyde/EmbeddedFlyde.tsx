@@ -74,6 +74,8 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = forwardRef(
       props.flowProps.dependencies
     );
 
+    console.log({ resolvedDeps });
+
     const [editorState, setFlowEditorState] = useState<FlowEditorState>({
       flow,
       boardData: defaultBoardData,
