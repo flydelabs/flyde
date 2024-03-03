@@ -51,7 +51,7 @@
       flex-direction: column;
       max-width: 800px;
       // width: 50rem;
-      height: 30rem;
+      height: 35rem;
       min-height: 25rem;
 
       .example-tip {
@@ -61,6 +61,11 @@
         text-align: right;
         display: inline-flex;
         flex-wrap: wrap;
+        align-items: center;
+
+        &.hidden {
+          visibility: hidden;
+        }
       }
 
       .open-in-playground {

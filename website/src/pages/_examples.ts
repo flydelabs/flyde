@@ -6,6 +6,7 @@ import exampleReactivity from "./_hero-example/ExampleReactivity.flyde";
 export const examples = [
   {
     label: "Hello World",
+    fileName: "hello.flyde",
     flow: exampleHelloWorld,
     tip: `Try double clicking on the "World" node to change the string.`,
     playgroundUrl:
@@ -13,6 +14,7 @@ export const examples = [
   },
   {
     label: "Beep Boop",
+    fileName: "beep.flyde",
     flow: exampleReactivity,
     tip: `Try changing the collection count and see the output change.`,
     playgroundUrl:
@@ -20,6 +22,7 @@ export const examples = [
   },
   {
     label: "Debounce/Throttle",
+    fileName: "debounce.flyde",
     flow: exampleDebounceThrottle,
     tip: "Try changing the delay time of the debounce/throttle nodes.",
     playgroundUrl:
@@ -27,6 +30,7 @@ export const examples = [
   },
   {
     label: "HTTP Requests",
+    fileName: "http.flyde",
     flow: exampleHttpRequests,
     tip: `Double click "Format Response" to see how it is implemented.`,
     playgroundUrl:

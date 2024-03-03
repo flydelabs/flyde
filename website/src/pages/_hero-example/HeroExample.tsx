@@ -1,7 +1,7 @@
 import { EmbeddedFlyde } from "@site/src/components/EmbeddedFlyde/EmbeddedFlyde";
 import React, { forwardRef, useMemo } from "react";
 
-import { CodeBlock, vs2015 } from "react-code-blocks";
+import { vs2015 } from "react-code-blocks";
 
 const codeTheme = vs2015;
 
@@ -26,11 +26,13 @@ export const HeroExample: React.FC<{
   example: (typeof examples)[0];
   ref: any;
   children?: React.ReactNode;
-}> = forwardRef(function HeroExample({ example, children }, ref) {
+  onChangeExample: (example: (typeof examples)[0]) => void;
+}> = forwardRef(function HeroExample(
+  { example, children, onChangeExample },
+  ref
+) {
   const currentExample = example;
   const [logs, setLogs] = React.useState<any>([]);
-
-  const [fileVisible, setFileVisible] = React.useState("Example.flyde");
 
   const flowProps = useMemo(() => {
     const { newDeps, newNode } = processMacroNodes(
@@ -64,52 +66,29 @@ export const HeroExample: React.FC<{
   return (
     <div className="hero-example relative">
       <div className="hero-example__tabs">
-        <div
-          onClick={() => setFileVisible(flowFileName)}
-          className={clsx(
-            "file-tag",
-            fileVisible === flowFileName && "selected"
-          )}
-        >
-          {flowFileName}
-        </div>
-        <div
-          className={clsx("file-tag", fileVisible === "index.ts" && "selected")}
-          onClick={() => setFileVisible("index.ts")}
-        >
-          index.ts
-        </div>
-      </div>
-      {fileVisible === flowFileName ? (
-        <div className="flow-wrapper">
-          <div className="loader-wrapper">
-            <Loader />
+        {examples.map((ex) => (
+          <div
+            onClick={() => onChangeExample(ex)}
+            className={clsx("file-tag", ex === example && "selected")}
+          >
+            {ex.fileName}
           </div>
-          <EmbeddedFlyde
-            ref={ref}
-            flowProps={flowProps}
-            onLog={onLogOutput}
-            onCompleted={noop}
-          />
-          {children}
+        ))}
+      </div>
+
+      <div className="flow-wrapper">
+        <div className="loader-wrapper">
+          <Loader />
         </div>
-      ) : null}
-      {fileVisible === "index.ts" ? (
-        <div className="code-wrapper">
-          <CodeBlock
-            className="code-example"
-            showLineNumbers={false}
-            text={code}
-            language="typescript"
-            theme={codeTheme}
-            codeBlock
-            width="100%"
-          />
-        </div>
-      ) : null}
-      {/* </main> */}
+        <EmbeddedFlyde
+          ref={ref}
+          flowProps={flowProps}
+          onLog={onLogOutput}
+          onCompleted={noop}
+        />
+        {children}
+      </div>
       <div className="terminal-wrapper">
-        <div className="file-tag">Terminal</div>
         <div className="terminal-emulator" ref={logsContainerRef}>
           {logs.length ? (
             logs.map((log, i) => <div key={i}>{log}</div>)

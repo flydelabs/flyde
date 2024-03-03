@@ -23,16 +23,7 @@ module.exports = async function loader() {
         node.run = `___require('./${requirePath}').${node.source.export}.run___`;
       }
       return { ...acc, [key]: node };
-    } else if (node.editorComponentBundlePath) {
-      const resolvedBundlePath = join(
-        node.source.path,
-        node.editorComponentBundlePath
-      );
-      node.editorComponentBundleContent = readFileSync(
-        resolvedBundlePath,
-        "utf-8"
-      );
-      // is macro node
+    } else if (node.editorConfig) {
       return { ...acc, [key]: node };
     }
     return acc;
