@@ -4,25 +4,22 @@
     </a>
 </h1>
 
-
-
-
-
 <p align="center">
     <i>Visual Programming. For Developers.</i> Open-source, runs in <strong>VS Code</strong>.<br/>Integrates with existing <strong>TypeScript</strong> code, browser and Node.js.
 </p>
 
 <h4 align="center">
-<a href="https://opensource.org/licenses/MIT">
+  <a href="https://opensource.org/licenses/MIT">
     <img src="https://img.shields.io/npm/l/@flyde/runtime" alt="license" style="height: 20px;">
   </a>
-  
+  <a href="https://github.com/flydelabs/flyde/blob/main/core/src/spec.ts">
+    <img src="core/coverage-badge.svg" alt="coverage"/>
+  </a>
 
   <a href="https://www.flyde.dev">
     <img src="https://img.shields.io/badge/Website-007ec6?style=flat&logo=world&logoColor=white"/>
   </a>
 
-  
   <a href="https://play.flyde.dev">
     <img src="https://img.shields.io/badge/Playground-007ec6?style=flat&logo=world&logoColor=white"/>
   </a>
@@ -47,7 +44,6 @@
 <br/>
 <strong>Rich Standard Library ✔️</strong> · <strong>Visual Debugger ✔️</strong> · <strong>TypeScript Support ✔️</strong>
 </h5>
-
 
 ## Features
 
@@ -94,7 +90,6 @@ Not sure where to start? Join our discord and we will help you get started!
     <img src="https://img.shields.io/badge/discord-7289da.svg?style=flat-square&logo=discord" alt="discord" style="height: 20px;">
   </a>
 
-
 ## Learn more
 
 Check out the official website at [https://flyde.dev](https://flyde.dev) for more information.
@@ -111,4 +106,3 @@ Everything needed to run a Flyde file is _MIT-licensed_. That includes:
 The UI library and other nodes of the toolkit are GNU AGPLv3 licensed.
 
 In other words, using Flyde flows in your software is permitted without any limitation. However, if you use Flyde's visual editor in your own work, it must be open-sourced as well. More about [GNU APGLv3](https://choosealicense.com/licenses/agpl-3.0/) here
-
