@@ -1,29 +1,53 @@
-<div align="center">
-<h1>Flyde: Visual Flow-Based Programming</h1>
-</div>
+<h1 align="center">
+    <a href="https://www.flyde.dev" style="color: black">
+    <img src="https://github.com/flydelabs/flyde/assets/3727015/eb1afa4a-0887-4cf2-99b5-35d4f1f6ee2a" height="40"/>
+    </a>
+</h1>
 
-<div align="center">
-<a href="https://flyde.dev">Flyde</a> is a powerful visual flow-based programming toolkit that enables you to create and edit code using a visual flow-based programming interface. With Flyde, you can build backend flows quickly and intuitively, making it ideal for novice developers, non-developer technical teams, and experienced developers who want to prototype and test ideas fast.
-<br/>
 
-<br/>
+<p align="center">
+    Visual Programming. For Developers. <br/>
+Open source, runs in <strong>VS Code</strong>, integrates with existing <strong>TypeScript</strong> code, browser and Node.js.
+</p>
+
+<h4 align="center">
+<a href="https://opensource.org/licenses/MIT">
+    <img src="https://img.shields.io/npm/l/@flyde/runtime" alt="license" style="height: 20px;">
+  </a>
   
-[![Official Website](https://img.shields.io/badge/Official%20Website-flyde.dev-blue?style=flat&logo=world&logoColor=white)](https://flyde.dev.com)
-[![Discord Follow](https://dcbadge.vercel.app/api/server/x7t4tjZQP8?style=flat)](https://flyde.dev/discord)
-[![GitHub Repo stars](https://img.shields.io/github/stars/flydelabs/flyde?style=social)](https://github.com/flydelabs/flyde)
-[![@FlydeDev](https://img.shields.io/twitter/follow/FlydeDev?style=social)](https://twitter.com/FlydeDev)
 
+  <a href="https://www.flyde.dev">
+    <img src="https://img.shields.io/badge/Website-007ec6?style=flat&logo=world&logoColor=white"/>
+  </a>
+
+  
+  <a href="https://play.flyde.dev">
+    <img src="https://img.shields.io/badge/Playground-007ec6?style=flat&logo=world&logoColor=white"/>
+  </a>
+  <br>
+  <a href="https://flyde.dev/discord">
+    <img src="https://img.shields.io/badge/discord-7289da.svg?style=flat-square&logo=discord" alt="discord" style="height: 20px;">
+  </a>
+
+  <a href="https://twitter.com/FlydeDev">
+    <img src="https://img.shields.io/twitter/follow/FlydeDev?style=social"/>
+  </a>
+
+</h4>
+
+
+![Flyde example](https://github.com/flydelabs/flyde-vscode/raw/main/media/walkthrough/run-flow.gif)
+
+
+<h5 align="center">
+  
 <strong>VSCode Extension ✔️</strong> · <strong>Runtime Library ✔️</strong> · <strong>Integrates with Existing Code ✔️</strong>
 <br/>
 <strong>Rich Standard Library ✔️</strong> · <strong>Visual Debugger ✔️</strong> · <strong>AI-Assisted Node Creation ✔️</strong>
 <br/>
 <strong>TypeScript Support ✔️</strong> · <strong>TypeScript Support ✔️</strong>
+</h5>
 
-<br/>
-<br/>
-</div>
-
-![Flyde example](https://github.com/flydelabs/flyde-vscode/raw/main/media/walkthrough/run-flow.gif)
 
 ## Features
 
