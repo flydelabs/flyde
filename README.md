@@ -5,6 +5,9 @@
 </h1>
 
 
+
+
+
 <p align="center">
     <i>Visual Programming. For Developers.</i> Open-source, runs in <strong>VS Code</strong>.<br/>Integrates with existing <strong>TypeScript</strong> code, browser and Node.js.
 </p>
@@ -34,9 +37,9 @@
 
 </h4>
 
-
-![Flyde example](https://github.com/flydelabs/flyde-vscode/raw/main/media/walkthrough/run-flow.gif)
-
+<div align="center">
+    <img src="https://github.com/flydelabs/flyde/assets/3727015/1044aac0-25e1-49ef-b783-6f42ad5780b2"/>
+</div>
 
 <h5 align="center">
   
