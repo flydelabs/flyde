@@ -1225,7 +1225,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
       const onAddNode = React.useCallback(
         async (importableNode: ImportableSource) => {
-          console.log(42, { importableNode });
           const depsWithImport = await onImportNode(importableNode);
 
           const targetPos = vSub(lastMousePos.current, {
@@ -1241,7 +1240,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                 targetPos,
                 depsWithImport
               );
-          console.log(43, { newNodeIns });
           const newNode = produce(node, (draft) => {
             draft.instances.push(newNodeIns);
           });
