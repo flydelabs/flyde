@@ -1,5 +1,6 @@
 {
   "private": true,
+  "name": "@flyde/playground",
   "scripts": {
     "dev": "npm run bundle-types && npm run build:inline-macros && open http://localhost:3030 && next dev --port 3030",
     "build": "npm run bundle-types && npm run build:inline-macros && next build",
