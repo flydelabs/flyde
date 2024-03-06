@@ -5,6 +5,7 @@ module.exports = {
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   // important: ".react-tooltip",
+  darkMode: "false",
   theme: {
     extend: {
       fontSize: {

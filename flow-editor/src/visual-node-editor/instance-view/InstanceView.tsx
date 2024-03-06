@@ -14,6 +14,7 @@ import {
   getInputName,
   getOutputName,
   NodeDefinition,
+  isMacroNodeInstance,
 } from "@flyde/core";
 import classNames from "classnames";
 
@@ -211,7 +212,6 @@ export const InstanceView: React.FC<InstanceViewProps> =
       onExtractInlineNode,
       onGroupSelected,
       isConnectedInstanceSelected,
-      inlineEditorPortalDomNode,
       onChangeStyle,
       onDeleteInstance,
       onSetDisplayName,
@@ -617,10 +617,12 @@ export const InstanceView: React.FC<InstanceViewProps> =
               },
             ]
           : []),
+
         { text: "Reorder inputs", onClick: _onChangeVisibleInputs },
         { text: "Reorder outputs", onClick: _onChangeVisibleOutputs },
         { text: `Set display name`, onClick: _onSetDisplayName },
         { text: "Group selected instances", onClick: onGroupSelected },
+
         {
           text: "Delete instance",
           intent: "danger",
@@ -629,6 +631,12 @@ export const InstanceView: React.FC<InstanceViewProps> =
       ];
       return (
         <Menu>
+          {isMacroNodeInstance(instance) ? (
+            <MenuItem
+              text="Change configuration"
+              onClick={(e) => onDblClick(e)}
+            />
+          ) : null}
           <MenuItem text="Style">
             <NodeStyleMenu
               style={style}
@@ -649,6 +657,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
       _onChangeVisibleOutputs,
       _onSetDisplayName,
       _onDeleteInstance,
+      onDblClick,
       style,
       _onChangeStyle,
       _prompt,

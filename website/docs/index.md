@@ -8,7 +8,21 @@ Flyde is visual, flow-based, programming toolkit that **integrates with your exi
 
 Flyde integrates with TypeScript (and JavaScript) on Node.js and frontend projects.
 
-## Why?
+## Quick Start
+
+### Playground
+
+The easiest way to experiment with Flyde is to visit the [online playground](https://flyde.dev/playground), which allows you to create and run flows in the browser.
+
+### Running locally
+
+1. Install the [VSCode extension](https://marketplace.visualstudio.com/items?itemName=flyde.flyde-vscode)
+2. `mkdir my-flyde-project && cd my-flyde-project`
+3. Open your project in VSCode
+4. Command Palette (Ctrl+Shift+P) -> `Flyde: New visual flow`
+5. Check out the [Integrating with Existing Code](./integrate-flows) guide to learn how to integrate your flows with your code
+
+## Motivation
 
 Modern development involves asynchronous and concurrency actions, which are more difficult to convey with text-based coding, and **easier, and more intuitive** to build, visualize and debug using a visual programming language.
 
@@ -26,8 +40,6 @@ Flyde's main building blocks are:
 - The standard library, an npm package `@flyde/stdlib`, which contains a set of built-in nodes that can be used to create flows. Note: `@flyde/runtime` depends on `@flyde/stdlib`, so you don't need to install it separately.
 
 ## Getting Started
-
-The easiest way to experiment with Flyde is to visit the [online playground](https://flyde.dev/playground), which allows you to create and run flows in the browser.
 
 If you want to learn how to integrate Flyde with your code, jump straight to the the [Integrating with Existing Code](./integrate-flows) guide.
 

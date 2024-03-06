@@ -1532,7 +1532,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                   (pinId) => !nodeInputs[pinId]
                 );
                 if (invalidInputs.length > 0) {
-                  ins.visibleInputs = keys(nodeInputs);
+                  ins.visibleInputs = undefined;
                   invalids.push(...invalidInputs);
                 }
               }
@@ -1542,7 +1542,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                   (pinId) => !nodeOutputs[pinId]
                 );
                 if (invalidOutputs.length > 0) {
-                  ins.visibleOutputs = keys(nodeOutputs);
+                  ins.visibleOutputs = undefined;
                   invalids.push(...invalidOutputs);
                 }
               }
@@ -1556,9 +1556,10 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
               invalids.length
             } invalid visible inputs/outputs: ${invalids.join(
               ", "
-            )}. Reset them`,
+            )}. Resetting to full list`,
             "warning"
           );
+
           onChange(
             newNode,
             functionalChange("reset corrupt visible inputs/outputs")

@@ -43,6 +43,9 @@ jobs:
         run: pnpm install
       - name: Build
         run: pnpm run build
+        env: 
+          NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
       - name: Test
         run: pnpm run test
       - name: Lint

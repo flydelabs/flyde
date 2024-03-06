@@ -1,8 +1,8 @@
 {
   "name": "flyde",
   "version": "0.0.1",
-  "description": "",
   "main": "index.js",
+  "description": "",
   "proxy": "http://localhost:8484",
   "scripts": {
     "start": "pnpm run open-vscode",
