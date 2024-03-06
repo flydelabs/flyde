@@ -480,6 +480,9 @@ importers:
       '@types/file-saver':
         specifier: ^2.0.5
         version: 2.0.5
+      '@types/react-resizable':
+        specifier: ^3.0.7
+        version: 3.0.7
       '@uidotdev/usehooks':
         specifier: ^2.1.0
         version: 2.1.0(react-dom@18.2.0)(react@18.2.0)
@@ -8012,6 +8015,12 @@ packages:
     resolution: {integrity: sha512-x3pBRgYVjdpnUEcE+gEgzin07y8MQr6HrSGn81XY1Hc2XTSmHOkoHgJtDo5oKmQj7QIyP5Oau50yv1RpksGHaA==}
     dependencies:
       '@types/react': 18.2.21
+    dev: false
+
+  /@types/react-resizable@3.0.7:
+    resolution: {integrity: sha512-V4N7/xDUME+cxKya/A73MmFrHofTupVdE45boRxeA8HL4Q5pJh3AuG0FWCEy2GB84unIMSRISyEAS/GHWum9EQ==}
+    dependencies:
+      '@types/react': 18.2.12
     dev: false
 
   /@types/react-router-config@5.0.7:

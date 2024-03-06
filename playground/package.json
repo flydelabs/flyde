@@ -25,6 +25,7 @@
     "@supabase/auth-helpers-nextjs": "latest",
     "@supabase/supabase-js": "^2.39.0",
     "@types/file-saver": "^2.0.5",
+    "@types/react-resizable": "^3.0.7",
     "@uidotdev/usehooks": "^2.1.0",
     "@uiw/react-codemirror": "^4.21.9",
     "autoprefixer": "10.4.14",
