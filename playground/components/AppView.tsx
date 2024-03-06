@@ -185,7 +185,7 @@ export default function AppView(props: AppViewProps) {
   }, [historyPlayer, runtimePlayer]);
 
   useEffect(() => {
-    _debugger.onBatchedEvents((events) => {
+    _debugger.onBatchedEvents((events: any[]) => {
       setEvents((prev) => [...events.reverse(), ...prev]);
     });
   }, [_debugger]);

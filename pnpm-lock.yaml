@@ -456,6 +456,9 @@ importers:
       '@flyde/flow-editor':
         specifier: ^0.2.4
         version: link:../flow-editor
+      '@flyde/remote-debugger':
+        specifier: ^0.3.44
+        version: link:../remote-debugger
       '@flyde/resolver':
         specifier: workspace:^
         version: link:../resolver
@@ -480,6 +483,9 @@ importers:
       '@types/file-saver':
         specifier: ^2.0.5
         version: 2.0.5
+      '@types/nprogress':
+        specifier: ^0.2.3
+        version: 0.2.3
       '@types/react-resizable':
         specifier: ^3.0.7
         version: 3.0.7
