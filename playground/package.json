@@ -3,8 +3,8 @@
   "name": "@flyde/playground",
   "scripts": {
     "dev": "npm run bundle-types && npm run build:inline-macros && open http://localhost:3030 && next dev --port 3030",
-    "build": "npm run bundle-types && npm run build:inline-macros && next build",
     "start": "next start",
+    "build": "npm run bundle-types && npm run build:inline-macros && next build",
     "lint": "next lint",
     "update:flyde": "npm update --scope @flyde",
     "types": "npx --yes supabase gen types typescript --project-id rfvvslzvfkyaoyngcjti --schema public > types/supabase.ts",
