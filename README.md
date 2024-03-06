@@ -47,7 +47,7 @@
 
 ## Introduction
 
-`Flyde` is an open-source visual programming language built to integrate with your existing codebase. It allows you to create and run visual programs and is designed to complement and enhance traditional textual coding, not to replace it. It includes a [VSCode extension](https://marketplace.visualstudio.com/items?itemName=flyde.flyde-vscode), it seamlessly integrates with existing TypeScript/JavaScript code and runs on Node.js and in the browser.
+`Flyde` is an open-source visual programming language built to integrate with your existing codebase. It allows you to create and run visual programs and is designed to complement and enhance traditional textual coding, not to replace it. It includes a [VSCode extension](https://marketplace.visualstudio.com/items?itemName=flyde.flyde-vscode), seamlessly integrates with existing TypeScript/JavaScript code and runs on Node.js and in the browser.
 
 ## Quick Start
 
@@ -61,7 +61,7 @@ The easiest way to experiment with Flyde is to visit the [online playground](htt
 2. `mkdir my-flyde-project && cd my-flyde-project`
 3. Open your project in VSCode
 4. Command Palette (Ctrl+Shift+P) -> `Flyde: New visual flow`
-5. Check out the [Integrating with Existing Code](./integrate-flows) guide to learn how to integrate your flows with your code
+5. Check out the [Integrating with Existing Code](https://www.flyde.dev/docs/integrate-flows) guide to learn how to integrate your flows with your code
 
 ## Who is Flyde for?
 
@@ -71,7 +71,7 @@ The easiest way to experiment with Flyde is to visit the [online playground](htt
 
 - **For Educators in Programming:** Flyde is a compelling resource for educators aiming to provide hands-on, practical programming education. It's a tool that blends the ease of visual learning with the robustness of real-world programming concepts, making it a valuable addition to any curriculum that seeks to engage students in the fundamentals of coding through an interactive and visually driven experience.
 
-- **For Seasoned Developers** Even experienced developers can benefit from Flyde's visual approach to building APIs and microservices. It offers a new dimension of efficiency, enabling seasoned professionals to design, prototype, and manage their services visually while retaining the flexibility and power of traditional coding. Flyde's open-source nature invites extension and customization, and for those seeking a managed cloud solution, [Trigg.dev](https://Trigg.dev?ref=readme) provides a commercial platform with robust, cloud-hosted capabilities.
+- **For Seasoned Developers** Even experienced developers can benefit from Flyde's visual approach to building APIs and microservices. It offers a new dimension of efficiency, enabling seasoned professionals to design, prototype, and manage their services visually while retaining the flexibility and power of traditional coding. Flyde's open-source nature invites extension and customization, and for those seeking a managed cloud solution, [Trigg.dev](https://www.trigg.dev?ref=readme) provides a commercial platform with robust, cloud-hosted capabilities.
 
 And many more!
 
@@ -81,7 +81,7 @@ Flyde is an open-source project. We are committed to a fully transparent develop
 
 - Bug Report: If you see an error message or encounter an issue while using Flyde, please create a [bug report](https://github.com/flydelabs/flyde/issues/new?assignees=&labels=type%3A+bug&template=bug.yaml&title=%F0%9F%90%9B+Bug+Report%3A+).
 
-- Feature Request: If you have an idea or if there is a capability that is missing, please submit a[feature request](https://github.com/flydelabs/flyde/issues/new?assignees=&labels=type%3A+feature+request&template=feature.yml).
+- Feature Request: If you have an idea or if there is a capability that is missing, please submit a [feature request](https://github.com/flydelabs/flyde/issues/new?assignees=&labels=type%3A+feature+request&template=feature.yml).
 
 - Documentation Request: If you're reading the Flyde docs and feel like you're missing something, please submit a [documentation request](https://github.com/flydelabs/flyde/issues/new).
 

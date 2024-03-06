@@ -11,10 +11,26 @@ interface FeatureDescription {
 
 export const features: FeatureDescription[] = [
   {
+    preview: "Flexible & Powerful",
+    title: "Flexible and Powerful",
+    description: (
+      <>
+        <p>
+          Built on a functional-reactive foundation, Flyde enables more than
+          simple input/output flows. It supports everything you'd expect from a
+          textual-based language; recursions, loops and conditionals.
+        </p>
+      </>
+    ),
+    image: require("@site/static/img/fibo.gif").default,
+    imageCaption: "Fibonacci sequence in Flyde - a recursive flow example.",
+    id: "flexible-powerful",
+  },
+  {
     preview: "Visual Editor",
     title: "Reason About Programs in New Ways",
     image: require("@site/static/img/visual.gif").default,
-    imageCaption: "Visualize data flow and view data passing through nodes",
+    imageCaption: "Visualize data flow and view data passing through nodes.",
     description: (
       <>
         <p>
@@ -47,7 +63,7 @@ export const features: FeatureDescription[] = [
       </>
     ),
     image: require("@site/static/img/transparent.gif").default,
-    imageCaption: "Double click on nodes to jump to their implementation",
+    imageCaption: "Double click on nodes to jump to their implementation.",
     id: "open-source",
   },
   {
@@ -68,24 +84,7 @@ export const features: FeatureDescription[] = [
       </>
     ),
     image: require("@site/static/img/integrates.gif").default,
-    imageCaption: "Flyde flows and TypeScript code live side by side",
+    imageCaption: "Flyde flows and TypeScript code live side by side.",
     id: "git-friendly",
-  },
-
-  {
-    preview: "Flexible & Powerful",
-    title: "Flexible and Powerful",
-    description: (
-      <>
-        <p>
-          Built on a functional-reactive foundation, Flyde enables more than
-          simple input/output flows. It supports everything you'd expect from a
-          textual-based language; recursions, loops and conditionals.
-        </p>
-      </>
-    ),
-    image: require("@site/static/img/fibo.gif").default,
-    imageCaption: "Fibonacci sequence in Flyde - a recursive flow example",
-    id: "flexible-powerful",
   },
 ];

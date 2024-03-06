@@ -12,6 +12,19 @@ export interface OutputViewerStringProps {
   clearEvents: () => void;
 }
 
+function normalizeOutput(val: any): JSX.Element {
+  if (val === undefined) {
+    return <span className="text-slate-400">undefined</span>;
+  }
+  if (val === null) {
+    return <span className="text-slate-400">null</span>;
+  }
+  if (typeof val === "object") {
+    return <pre>{JSON.stringify(val, null, 2)}</pre>;
+  }
+  return <span>{val}</span>;
+}
+
 export function OutputViewerString(props: OutputViewerStringProps) {
   const { events, clearEvents } = props;
 
@@ -31,7 +44,7 @@ export function OutputViewerString(props: OutputViewerStringProps) {
     return (
       <div className="my-0 flex flex-row py-0.5 px-3" key={idx}>
         <Timestamp timestamp={ev.timestamp} />{" "}
-        <div className="ml-1">{ev.value}</div>
+        <div className="ml-1">{normalizeOutput(ev.value)}</div>
       </div>
     );
   });
