@@ -45,32 +45,33 @@
 <strong>Rich Standard Library ✔️</strong> · <strong>Visual Debugger ✔️</strong> · <strong>TypeScript Support ✔️</strong>
 </h5>
 
-## Features
+## Introduction
 
-- Intuitive flow-based programming interface for creating and editing programs
-- Real-time visual debugger for easy error handling and debugging
-- Integrates with your existing codebase and workflows
-- Supports TypeScript and JavaScript
-- Build custom nodes visually, or use custom code
-- Pre-built templates to help you get started quickly
-- Split complex flows into sub-flows for better readability and maintainability
-- A rich standard library of nodes for common tasks
+`Flyde` is an open-source visual programming language built to integrate with your existing codebase. It allows you to create and run visual programs and is designed to complement and enhance traditional textual coding, not to replace it. It includes a [VSCode extension](https://marketplace.visualstudio.com/items?itemName=flyde.flyde-vscode), it seamlessly integrates with existing TypeScript/JavaScript code and runs on Node.js and in the browser.
 
-## Getting started
+## Quick Start
 
-- Install the Flyde extension from the Visual Studio Code marketplace
-- Right-click on a folder in the Explorer and select "Flyde: New Visual Flow"
-- Choose a template and name your flow
-- Start creating your flow by adding nodes, connecting them, and writing code
+### Playground
 
-## Use cases
+The easiest way to experiment with Flyde is to visit the [online playground](https://flyde.dev/playground), which allows you to create and run flows in the browser.
 
-Flyde is versatile and can be used for a wide range of applications. Some example use cases include:
+### Running locally
 
-- Building an internal Slack bot
-- Creating a simple web scraper
-- Connecting several APIs
-- Building CLI tools
+1. Install the [VSCode extension](https://marketplace.visualstudio.com/items?itemName=flyde.flyde-vscode)
+2. `mkdir my-flyde-project && cd my-flyde-project`
+3. Open your project in VSCode
+4. Command Palette (Ctrl+Shift+P) -> `Flyde: New visual flow`
+5. Check out the [Integrating with Existing Code](./integrate-flows) guide to learn how to integrate your flows with your code
+
+## Who is Flyde for?
+
+- **For Novice Developers and Non-Technical Users:** Flyde offers a welcoming entry point into programming by simplifying the creation and management of applications. It allows those new to development, or from non-technical roles, to construct complex logic through a visual interface. By transforming intricate code concepts into accessible, visual blocks, Flyde makes programming more intuitive and approachable.
+
+- **For Team Collaboration Across Roles:** Flyde fosters a collaborative environment that transcends technical barriers. It is a tool that empowers team members like product managers and data engineers to contribute directly to the codebase. Through visual programming, Flyde turns business logic and data processes into shared projects that everyone can contribute to and understand, thus democratizing innovation.
+
+- **For Educators in Programming:** Flyde is a compelling resource for educators aiming to provide hands-on, practical programming education. It's a tool that blends the ease of visual learning with the robustness of real-world programming concepts, making it a valuable addition to any curriculum that seeks to engage students in the fundamentals of coding through an interactive and visually driven experience.
+
+- **For Seasoned Developers** Even experienced developers can benefit from Flyde's visual approach to building APIs and microservices. It offers a new dimension of efficiency, enabling seasoned professionals to design, prototype, and manage their services visually while retaining the flexibility and power of traditional coding. Flyde's open-source nature invites extension and customization, and for those seeking a managed cloud solution, [Trigg.dev](https://Trigg.dev?ref=readme) provides a commercial platform with robust, cloud-hosted capabilities.
 
 And many more!
 
