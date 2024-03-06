@@ -49,9 +49,16 @@ export const Http: MacroNode<HttpConfig> = {
     const method =
       config.method.mode === "static" ? config.method.value : undefined;
     const methodStr = method ? ` ${method}` : "";
+
+    const urlStr =
+      config.url.mode === "static"
+        ? ` ${config.url.value.replace(/https?\:\/\//, "")}`
+        : "";
     return {
-      displayName: `HTTP${methodStr} Request`,
-      description: `Performs a ${methodStr} HTTP request to a URL and emits the response data`,
+      displayName: `HTTP${methodStr}${urlStr}`,
+      description: `Performs a ${methodStr} HTTP request to ${
+        config.url.mode === "static" ? config.url.value : "the received URL"
+      } and emits the response data`,
       inputs: Object.fromEntries(inputs.map((input) => [input, {}])),
       outputs: {
         data: {

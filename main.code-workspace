@@ -35,6 +35,9 @@
     },
     {
       "path": "examples"
+    },
+    {
+      "path": "playground"
     }
   ],
   "settings": {

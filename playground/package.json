@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "dev": "npm run bundle-types && npm run build:inline-macros && next dev --port 3030",
+    "dev": "npm run bundle-types && npm run build:inline-macros && open http://localhost:3030 && next dev --port 3030",
     "build": "npm run bundle-types && npm run build:inline-macros && next build",
     "start": "next start",
     "lint": "next lint",
@@ -10,12 +10,15 @@
     "bundle-types": "npm run bundle-types:core && npm run bundle-types:runtime",
     "bundle-types:core": "dts-bundle --name @flyde/core --main node_modules/@flyde/core/dist/index.d.ts --out ../../../../types/@flyde-core.d.ts",
     "bundle-types:runtime": "dts-bundle --name @flyde/runtime --main node_modules/@flyde/runtime/dist/index.d.ts --out ../../../../types/@flyde-runtime.d.ts",
-    "build:inline-macros": "ts-node --esm scripts/build-inline-macros.mts"
+    "build:inline-macros": "tsx scripts/build-inline-macros.mts",
+    "link-all": "npm link @flyde/core @flyde/flow-editor @flyde/stdlib @flyde/runtime @flyde/resolver"
   },
   "dependencies": {
     "@codemirror/lang-javascript": "^6.1.9",
     "@flyde/core": "^0.2.1",
     "@flyde/flow-editor": "^0.2.4",
+    "@flyde/resolver": "workspace:^",
+    "@flyde/runtime": "^0.5.44",
     "@flyde/stdlib": "^0.2.8",
     "@monaco-editor/react": "^4.5.2",
     "@react-hook/size": "^2.1.2",
@@ -48,6 +51,7 @@
     "encoding": "^0.1.13",
     "eslint": "8.50.0",
     "eslint-config-next": "13.5.2",
-    "raw-loader": "^4.0.2"
+    "raw-loader": "^4.0.2",
+    "tsx": "^4.7.1"
   }
 }

@@ -10,7 +10,7 @@ export const examples = [
     flow: exampleHelloWorld,
     tip: `Try double clicking on the "World" node to change the string.`,
     playgroundUrl:
-      "https://play.flyde.dev/apps/974a3913-1b3b-4a0a-9ca7-4e2a69d0fddb",
+      "http://localhost:3030/apps/bec05712-1fbb-4f40-b688-dc5790c8b5ea",
   },
   {
     label: "Beep Boop",

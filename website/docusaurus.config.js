@@ -137,7 +137,9 @@ const config = {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       colorMode: {
-        // disableSwitch: true,
+        disableSwitch: true,
+        respectPrefersColorScheme: false,
+        defaultMode: "light",
       },
       navbar: {
         title: "Flyde",
@@ -220,6 +222,15 @@ const config = {
               {
                 label: "Trigg - Cloud-Managed Flyde for APIs",
                 href: "https://www.trigg.dev?ref=flyde-footer",
+              },
+            ],
+          },
+          {
+            title: "Contact",
+            items: [
+              {
+                label: "Email",
+                href: "mailto:hello@flyde.dev",
               },
             ],
           },
