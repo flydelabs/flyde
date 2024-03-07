@@ -29,7 +29,11 @@
   </a>
 
   <a href="https://twitter.com/FlydeDev">
-    <img src="https://img.shields.io/twitter/follow/FlydeDev?style=social"/>
+    <img src="https://img.shields.io/twitter/follow/FlydeLabs?style=social"/>
+  </a>
+
+  <a href="https://play.flyde.dev">
+    <img src="https://img.shields.io/badge/Trigg:Managed Flyde-FEDD4E?style=flat&logo=world&logoColor=white"/>
   </a>
 
 </h4>
