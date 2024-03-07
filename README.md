@@ -35,7 +35,7 @@
 </h4>
 
 <div align="center">
-    <img src="https://github.com/flydelabs/flyde/assets/3727015/1044aac0-25e1-49ef-b783-6f42ad5780b2"/>
+    <img src="https://github.com/flydelabs/flyde/assets/3727015/e7ea3ddd-7c42-4797-87fe-8f2b61f28669"/>
 </div>
 
 <h5 align="center">
