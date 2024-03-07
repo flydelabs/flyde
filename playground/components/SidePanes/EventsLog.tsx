@@ -42,8 +42,8 @@ export function EventsLog(props: EventsLogProps) {
   );
 
   return (
-    <SidePane header={header} grow>
-      <div className="flex-1">
+    <SidePane header={header}>
+      <div className="flex-1 max-h-52">
         <EventsViewer events={events} showAllEvents={showAllEvents} />
       </div>
     </SidePane>

@@ -20,7 +20,7 @@ export function OutputViewerJsx(props: OutputViewerJsxProps) {
   );
 
   return (
-    <SidePane header={header}>
+    <SidePane header={header} grow>
       <div className="flex flex-row justify-center py-10 px-2">{inner}</div>
     </SidePane>
   );
