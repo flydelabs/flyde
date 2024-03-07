@@ -28,7 +28,7 @@
     <img src="https://img.shields.io/badge/discord-7289da.svg?style=flat-square&logo=discord" alt="discord" style="height: 20px;">
   </a>
 
-  <a href="https://twitter.com/FlydeDev">
+  <a href="https://twitter.com/FlydeLabs">
     <img src="https://img.shields.io/twitter/follow/FlydeLabs?style=social"/>
   </a>
 
