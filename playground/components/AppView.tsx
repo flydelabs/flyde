@@ -190,7 +190,7 @@ export default function AppView(props: AppViewProps) {
     });
   }, [_debugger]);
 
-  const [outputWidth, setOutputWidth] = useLocalStorage("outputWidth", 500);
+  const [outputWidth, setOutputWidth] = useLocalStorage("outputWidth", 350);
 
   const unsavedFiles = React.useMemo(() => {
     const unsavedFiles = new Set<AppFile>();
@@ -475,7 +475,7 @@ export default function AppView(props: AppViewProps) {
               style={{ width: `calc(100% - ${outputWidth}px)` }}
             >
               <header
-                className="w-full border-b border-b-foreground/10 flex flex-row items-center overflow-x-auto scroll-b"
+                className="w-full border-b border-b-foreground/10 flex flex-row items-center overflow-x-auto scroll-b pt-1"
                 style={{ scrollbarWidth: "thin" }}
               >
                 <Tabs
@@ -519,7 +519,7 @@ export default function AppView(props: AppViewProps) {
               onResize={(_m, { size: { width } }) => setOutputWidth(width)}
               axis="x"
               resizeHandles={["w"]}
-              minConstraints={[450, 0]}
+              minConstraints={[350, 0]}
               maxConstraints={[2000, 0]}
               handle={resizeHandle}
             >
@@ -531,11 +531,11 @@ export default function AppView(props: AppViewProps) {
                   stop={stopExecution}
                   status={runtimeStatus}
                 />
-                <InputsPane
+                {/* <InputsPane
                   flow={mainFlydeFlow}
                   inputs={outputHandle.inputs}
                   status={runtimeStatus}
-                />
+                /> */}
                 {outputMode === "string" ? (
                   <OutputViewerString
                     events={outputs}

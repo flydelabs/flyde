@@ -55,8 +55,12 @@ export function OutputViewerString(props: OutputViewerStringProps) {
         Values sent to main output pins will appear here
       </div>
     ) : (
-      <div className="flex flex-col flex-1">{eventItems}</div>
+      <div className="flex flex-col flex-1 py-2">{eventItems}</div>
     );
 
-  return <SidePane header={header}>{inner}</SidePane>;
+  return (
+    <SidePane header={header} grow>
+      {inner}
+    </SidePane>
+  );
 }

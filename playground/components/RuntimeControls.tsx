@@ -41,13 +41,6 @@ export function RuntimeControls(props: RuntimeControlsProps) {
         </span>
       </div>
       <div className="flex flex-row flex-nowrap justify-center items-center">
-        <label
-          htmlFor="labels-range-input"
-          className="text-sm mr-2 translate-y-[1px] flex-1"
-        >
-          Debug delay &nbsp;
-          <InfoTooltip content="Delays the execution of the flow by the specified amount of milliseconds. Useful for debugging and visualizing data flows." />
-        </label>
         <div className="flex flex-col translate-y-[8px] items-center">
           <input
             id="labels-range-input"
@@ -62,10 +55,11 @@ export function RuntimeControls(props: RuntimeControlsProps) {
           />
           <span className="text-[10px] mt-0.5">
             {props.delay ? (
-              <Fragment>{props.delay}ms</Fragment>
+              <Fragment>{props.delay}ms delay</Fragment>
             ) : (
               <Fragment>No delay</Fragment>
             )}
+            <InfoTooltip content="Delays the execution of the flow by the specified amount of milliseconds. Useful for debugging and visualizing data flows." />
           </span>
         </div>
       </div>

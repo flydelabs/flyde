@@ -40,10 +40,10 @@ export function AppCard({ app }: { app: PlaygroundApp }) {
             Modified <TimeAgo date={updated} /> ago
           </div>
         </div>
-        <span> · </span>
-        <div className="text-sm text-slate-500">
+        {/* <span> · </span> */}
+        {/* <div className="text-sm text-slate-500">
           Forked {app.forks_count} time{app.forks_count === 1 ? "" : "s"}
-        </div>
+        </div> */}
       </div>
     </div>
   );
