@@ -475,7 +475,7 @@ export default function AppView(props: AppViewProps) {
               style={{ width: `calc(100% - ${outputWidth}px)` }}
             >
               <header
-                className="w-full border-b border-b-foreground/10 flex flex-row items-center overflow-x-auto scroll-b"
+                className="w-full border-b border-b-foreground/10 flex flex-row items-center overflow-x-auto scroll-b pt-1"
                 style={{ scrollbarWidth: "thin" }}
               >
                 <Tabs

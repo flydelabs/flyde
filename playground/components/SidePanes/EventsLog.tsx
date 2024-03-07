@@ -16,7 +16,7 @@ export function EventsLog(props: EventsLogProps) {
 
   const header = (
     <React.Fragment>
-      <span className="font-semibold">Runtime Events Log</span>
+      <span className="font-semibold">Debug Events</span>
       <div className="flex items-center">
         <input
           id="default-checkbox"
