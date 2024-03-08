@@ -1706,7 +1706,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
               onMouseDown={(e) => e.stopPropagation()}
               text={`New main output ${maybeDisabledLabel}`}
               onClick={preventDefaultAnd(() =>
-                setAddMainPinModalVisibleType("input")
+                setAddMainPinModalVisibleType("output")
               )}
               disabled={!nodeIoEditable}
             />

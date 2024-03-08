@@ -182,8 +182,8 @@ const config = {
                 to: "https://play.flyde.dev",
               },
               {
-                label: "Tutorials",
-                to: "/docs/tutorials/hello-world-with-flyde",
+                label: "Documentation",
+                to: "/docs",
               },
             ],
           },
@@ -196,7 +196,7 @@ const config = {
               },
               {
                 label: "Twitter",
-                href: "https://twitter.com/FlydeDev",
+                href: "https://twitter.com/FlydeLabs",
               },
               {
                 label: "Stack Overflow",
