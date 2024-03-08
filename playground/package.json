@@ -17,8 +17,8 @@
   "dependencies": {
     "@codemirror/lang-javascript": "^6.1.9",
     "@flyde/core": "^0.2.1",
-    "@flyde/flow-editor": "^0.2.4",
     "@flyde/remote-debugger": "^0.3.44",
+    "@flyde/flow-editor": "^0.2.4",
     "@flyde/resolver": "workspace:^",
     "@flyde/runtime": "^0.5.44",
     "@flyde/stdlib": "^0.2.8",
