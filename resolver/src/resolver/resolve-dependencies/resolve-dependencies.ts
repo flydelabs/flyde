@@ -15,6 +15,8 @@ import {
   ResolvedMacroNodeInstance,
   MacroNodeDefinition,
   isMacroNodeInstance,
+  isBaseNode,
+  Node,
 } from "@flyde/core";
 import { existsSync, readFileSync } from "fs";
 import _ = require("lodash");
@@ -23,11 +25,22 @@ import { ResolveMode, resolveFlowByPath } from "../resolve-flow";
 import { resolveImportablePaths } from "./resolve-importable-paths";
 import { namespaceFlowImports } from "./namespace-flow-imports";
 
-import * as StdLib from "@flyde/stdlib/dist/all";
+import * as _StdLib from "@flyde/stdlib/dist/all";
 
 import requireReload from "require-reload";
 import { macroNodeToDefinition } from "./macro-node-to-definition";
 import { processMacroNodeInstance } from "./process-macro-node-instance";
+
+const StdLib = Object.values(_StdLib).reduce<Record<string, any>>(
+  (acc, curr) => {
+    if (isBaseNode(curr) || isMacroNode(curr)) {
+      return { ...acc, [curr.id]: curr };
+    } else {
+      return acc;
+    }
+  },
+  {}
+);
 
 const getLocalOrPackagePaths = (fullFlowPath: string, importPath: string) => {
   const fullImportPath = join(fullFlowPath, "..", importPath);
