@@ -1,6 +1,8 @@
 import { CodeNode, MacroNode, OutputPinMap } from "@flyde/core";
 
 export * from "./Conditional.flyde";
+export * from "./Switch.flyde";
+
 const PubSub = require("pubsub-js");
 
 const namespace = "Control Flow";
