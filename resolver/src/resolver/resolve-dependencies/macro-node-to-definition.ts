@@ -33,10 +33,6 @@ export function macroNodeToDefinition<T>(
       editorComponentBundleContent: content,
     };
   } catch (e) {
-    console.warn(
-      `Could not load editor component bundle for ${macro.id} in ${importPath} at ${editorComponentPath}`
-    );
-
     macroDef.editorConfig = {
       type: "custom",
       editorComponentBundleContent: `throw new Error("Could not load editor component bundle for ${macro.id} in ${importPath} at ${editorComponentPath}")`,
