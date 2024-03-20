@@ -887,7 +887,7 @@ importers:
         specifier: ^0.2.4
         version: link:../editor
       '@flyde/remote-debugger':
-        specifier: workspace:^
+        specifier: ^0.3.55
         version: link:../remote-debugger
       '@flyde/resolver':
         specifier: ^0.4.4
