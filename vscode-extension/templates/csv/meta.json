@@ -1,0 +1,11 @@
+{
+    "name": "CSV Parsing",
+    "description": "Reads and parses a CSV file, filters the data and returns a sum of the values in the specified column.",
+    "tags": [
+        "Files",
+        "CSV",
+        "Conditionals",
+        "Grouped Nodes",
+        "Loops"
+    ]
+}

@@ -1,0 +1,217 @@
+{
+  "name": "flyde-vscode",
+  "displayName": "Flyde",
+  "description": "Flyde is an open-source, visual programming language. It runs in the IDE, integrates with existing TypeScript code, both browser and Node.js.",
+  "version": "0.60.0",
+  "publisher": "flyde",
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "icon": "icon.png",
+  "repository": "https://github.com/flydelabs/flyde-vscode",
+  "categories": [
+    "Programming Languages",
+    "Visualization",
+    "Testing",
+    "Education"
+  ],
+  "keywords": [
+    "visual programming",
+    "flow-based",
+    "low-code",
+    "reactive",
+    "FBP"
+  ],
+  "scripts": {
+    "vscode:prepackage": "npm run build",
+    "link-all": "npm link @flyde/core @flyde/resolver @flyde/dev-server @flyde/runtime @flyde/remote-debugger @flyde/editor @flyde/stdlib",
+    "update-all": "npm update @flyde/core @flyde/resolver @flyde/dev-server @flyde/runtime @flyde/remote-debugger @flyde/editor",
+    "compile": "tsc -p ./",
+    "build": "npm run compile && npm run copy-editor",
+    "copy-editor": "ts-node ./scripts/copy-editor.ts",
+    "watch": "tsc -watch -p ./",
+    "dev": "npm watch",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "npm run compile-tests && npm run build && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js",
+    "release": "vsce package --no-yarn && vsce publish minor"
+  },
+  "main": "./out/extension.js",
+  "activationEvents": [],
+  "contributes": {
+    "customEditors": [
+      {
+        "viewType": "flydeEditor",
+        "displayName": "Flyde Flow Editor",
+        "selector": [
+          {
+            "filenamePattern": "*.flyde"
+          }
+        ],
+        "priority": "default"
+      }
+    ],
+    "languages": [
+      {
+        "id": "flyde",
+        "extensions": [
+          ".flyde"
+        ],
+        "aliases": [
+          "Flyde",
+          "flyde"
+        ],
+        "icon": {
+          "light": "./fileicons/icon.svg",
+          "dark": "./fileicons/icon.svg"
+        }
+      }
+    ],
+    "commands": [
+      {
+        "command": "flyde.openAsText",
+        "title": "Flyde: Open Flow as Text"
+      },
+      {
+        "command": "flyde.newVisualFlow",
+        "title": "Flyde: New Visual Flow"
+      },
+      {
+        "command": "flyde.setOpenAiToken",
+        "title": "Flyde: Set OpenAI Token"
+      },
+      {
+        "command": "flyde.clearOpenAiToken",
+        "title": "Flyde: Clear OpenAI Token"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "when": "resourceLangId == flyde",
+          "command": "flyde.openAsText",
+          "group": "flyde"
+        },
+        {
+          "command": "flyde.newVisualFlow",
+          "group": "flyde"
+        }
+      ],
+      "file/newFile": [
+        {
+          "command": "flyde.newVisualFlow",
+          "group": "flyde"
+        }
+      ]
+    },
+    "walkthroughs": [
+      {
+        "id": "quick-start",
+        "title": "Flyde Quick Start",
+        "description": "This walkthrough will help you get started with Flyde.",
+        "steps": [
+          {
+            "id": "install",
+            "title": "Install Flyde Extension",
+            "media": {
+              "image": "media/walkthrough/icon.png",
+              "altText": "Flyde icon"
+            },
+            "description": "Install the Flyde extension from the marketplace",
+            "completionEvents": [
+              "onExtensionInstalled:flyde-vscode"
+            ]
+          },
+          {
+            "id": "create-flow",
+            "title": "Create your first visual flow",
+            "description": "Create a new visual flow by opening the file explorer's context menu and selecting `New Visual Flow`. Or by using the command palette and selecting `Flyde: New Visual Flow`.",
+            "media": {
+              "image": "media/walkthrough/new-flow.gif",
+              "altText": "Create a new visual flow"
+            },
+            "completionEvents": [
+              "onCommand:flyde.newVisualFlow"
+            ]
+          },
+          {
+            "id": "open-flow",
+            "title": "Open your first visual flow",
+            "description": "Open a visual flow by double clicking on it in the file explorer.",
+            "media": {
+              "markdown": "media/walkthrough/open-flow.md"
+            },
+            "completionEvents": [
+              "onContext:flyde.flowLoaded"
+            ]
+          },
+          {
+            "id": "run-flow",
+            "title": "Run flow",
+            "description": "Run your flow by clicking on the `Run` button in the right actions bar.",
+            "media": {
+              "image": "media/walkthrough/run-flow.gif",
+              "altText": "Run a flow"
+            },
+            "completionEvents": [
+              "onContext:flyde.ranFlow"
+            ]
+          },
+          {
+            "id": "learn-more",
+            "title": "Integrate Flyde into your project",
+            "description": "Learn more about how to integrate Flyde into your project by reading the [documentation](https://www.flyde.dev/docs/integrate-flows).",
+            "media": {
+              "image": "media/walkthrough/icon.png",
+              "altText": "Flyde icon"
+            },
+            "completionEvents": [
+              "onLink:https://www.flyde.dev/docs/integrate-flows"
+            ]
+          }
+        ]
+      }
+    ],
+    "configuration": {
+      "title": "Flyde",
+      "properties": {}
+    }
+  },
+  "devDependencies": {
+    "@types/glob": "^8.0.0",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "18.11.9",
+    "@types/sinon": "^10.0.14",
+    "@types/vscode": "^1.69.0",
+    "@typescript-eslint/eslint-plugin": "^5.30.0",
+    "@typescript-eslint/parser": "^5.30.0",
+    "@vscode/test-electron": "^2.1.5",
+    "eslint": "^8.18.0",
+    "fs-extra": "^10.1.0",
+    "glob": "^8.0.3",
+    "mocha": "^10.0.0",
+    "sinon": "^15.0.4",
+    "typescript": "^4.7.4"
+  },
+  "dependencies": {
+    "@flyde/core": "^0.2.4",
+    "@flyde/dev-server": "^0.5.4",
+    "@flyde/editor": "^0.2.4",
+    "@flyde/resolver": "^0.4.4",
+    "@flyde/runtime": "^0.5.4",
+    "@tsconfig/node16": "^1.0.3",
+    "@types/fs-extra": "^11.0.1",
+    "@vscode/extension-telemetry": "^0.7.5",
+    "@vscode/vsce": "^2.19.0",
+    "callsite": "^1.0.0",
+    "chalk": "^4.1.2",
+    "cuid": "^2.1.8",
+    "execa": "^6.1.0",
+    "find-free-port": "^2.0.0",
+    "resolve-from": "^5.0.0",
+    "ts-node": "^10.9.2"
+  },
+  "packageManager": "yarn@3.3.1"
+}

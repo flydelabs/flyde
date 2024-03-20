@@ -1,0 +1,84 @@
+imports:
+  "@flyde/stdlib":
+    - Concat
+    - Delay
+    - InlineValue
+node:
+  instances:
+    - pos:
+        x: -81.97281901041657
+        y: -34.10539417085215
+      id: clftmb8cw000b4668nw8u5qr9
+      inputConfig: {}
+      nodeId: Concat
+    - pos:
+        x: -9.520884195963447
+        y: -141.39515857514903
+      id: clftmbihe000j4668newg9ius
+      inputConfig: {}
+      nodeId: Delay__clftmbihe000j4668newg9ius
+      macroId: Delay
+      macroData:
+        delayMs:
+          type: static
+          value: 1000
+      style:
+        size: small
+        icon: fa-clock
+    - pos:
+        x: -135.902451171875
+        y: -279.659629312447
+      id: nu1ietfs4qclohm23tufugsi
+      inputConfig: {}
+      nodeId: InlineValue__nu1ietfs4qclohm23tufugsi
+      macroId: InlineValue
+      macroData:
+        type: string
+        value: "Hello, "
+        label: '"Hello, "'
+    - pos:
+        x: -18.05991455078125
+        y: -217.2445288085937
+      id: HelloWorld-pf049m0
+      inputConfig: {}
+      nodeId: InlineValue__HelloWorld-pf049m0
+      macroId: InlineValue
+      macroData:
+        type: string
+        value: world!
+        label: '"world!"'
+  connections:
+    - from:
+        insId: clftmbihe000j4668newg9ius
+        pinId: delayedValue
+      to:
+        insId: clftmb8cw000b4668nw8u5qr9
+        pinId: b
+    - from:
+        insId: clftmb8cw000b4668nw8u5qr9
+        pinId: value
+      to:
+        insId: __this
+        pinId: result
+    - from:
+        insId: nu1ietfs4qclohm23tufugsi
+        pinId: value
+      to:
+        insId: clftmb8cw000b4668nw8u5qr9
+        pinId: a
+    - from:
+        insId: HelloWorld-pf049m0
+        pinId: value
+      to:
+        insId: clftmbihe000j4668newg9ius
+        pinId: value
+  id: HelloWorld
+  inputs: {}
+  outputs:
+    result:
+      delayed: false
+  inputsPosition: {}
+  outputsPosition:
+    result:
+      x: -49.5060976434964
+      y: 98.28042849725273

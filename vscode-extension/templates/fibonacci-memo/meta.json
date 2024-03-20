@@ -1,0 +1,9 @@
+{
+    "name": "Memoized Fibonacci",
+    "description": "Uses global state to memoize the Fibonacci sequence.",
+    "tags": [
+        "Recursion",
+        "Memoization",
+        "Global State"
+    ]
+}

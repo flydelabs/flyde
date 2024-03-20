@@ -1,0 +1,13 @@
+Product,Region,Quarter,Sales
+Laptop,North America,Q1,10000
+Laptop,Europe,Q1,12000
+Laptop,Asia,Q1,8000
+Laptop,North America,Q2,11000
+Laptop,Europe,Q2,14000
+Laptop,Asia,Q2,9000
+Smartphone,North America,Q1,20000
+Smartphone,Europe,Q1,18000
+Smartphone,Asia,Q1,22000
+Smartphone,North America,Q2,21000
+Smartphone,Europe,Q2,19000
+Smartphone,Asia,Q2,23000

@@ -1,0 +1,56 @@
+name: Build, test and publish extension
+
+on:
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies and update @flyde/* packages
+        working-directory: ./vscode-extension
+        run: |
+          npm ci
+          npm update --scope=@flyde\
+
+      - name: Commit package.json if updated
+        working-directory: ./vscode-extension
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "github-actions@users.noreply.github.com"
+          git add package.json package-lock.json
+          git diff-index --quiet HEAD || git commit -m "Update @flyde/* packages"
+          git push origin main
+
+      - name: Build extension
+        working-directory: ./vscode-extension
+        run: npm run build
+
+      - name: Test extension
+        working-directory: ./vscode-extension
+        run: xvfb-run -a npm run test
+
+      - name: Bump minor version
+        working-directory: ./vscode-extension
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "github-actions@users.noreply.github.com"
+          npm version minor -m "Bump version to %s"
+          git push origin main
+
+      - name: Package and publish extension
+        working-directory: ./vscode-extension
+        env:
+          VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
+        run: |
+          npm install -g @vscode/vsce
+          vsce publish -p $VSCE_TOKEN

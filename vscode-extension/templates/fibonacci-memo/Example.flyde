@@ -1,0 +1,250 @@
+imports:
+  "@flyde/stdlib":
+    - Subtract
+    - Add
+    - Set State
+    - Get State
+    - InlineValue
+    - Switch
+node:
+  instances:
+    - pos:
+        x: -34.16388854980468
+        y: 260.1413701629639
+      id: Add-539
+      inputConfig: {}
+      nodeId: Add
+      style:
+        color: "#fee440"
+    - pos:
+        x: -135.26147583007813
+        y: 36.80620697021482
+      id: Subtract-210
+      inputConfig:
+        n2:
+          mode: sticky
+      visibleInputs:
+        - n1
+        - n2
+      nodeId: Subtract
+      style:
+        color: "#f15bb5"
+    - pos:
+        x: 32.872145385742215
+        y: 34.94542816162107
+      id: Subtract-210-d215
+      inputConfig:
+        n2:
+          mode: sticky
+      visibleInputs:
+        - n1
+        - n2
+      nodeId: Subtract
+      style:
+        color: "#f15bb5"
+    - pos:
+        x: -128.2442010498047
+        y: 133.93417033672335
+      id: Fibonacci-261
+      inputConfig: {}
+      visibleInputs:
+        - n
+      nodeId: Fibonacci
+    - pos:
+        x: 49.44488525390625
+        y: 138.53467710494994
+      id: Fibonacci-379
+      inputConfig: {}
+      visibleInputs:
+        - n
+      nodeId: Fibonacci
+    - pos:
+        x: -709.9789821104919
+        y: -387.298208745054
+      id: clfv4afmf00084668r9nuoaoe
+      inputConfig:
+        defaultValue:
+          mode: queue
+      visibleOutputs:
+        - value
+        - __error
+      nodeId: Get State
+    - pos:
+        x: -185.79304344347224
+        y: 355.92854414911244
+      id: clfv4epnt001o4668lpvrlux1
+      inputConfig:
+        key:
+          mode: sticky
+      nodeId: Set State
+    - pos:
+        x: -78.93533325195312
+        y: -27.267557983398433
+      id: cakhy4xeflrv7mec1spzru8a
+      inputConfig: {}
+      visibleInputs: []
+      nodeId: InlineValue__cakhy4xeflrv7mec1spzru8a
+      macroId: InlineValue
+      macroData:
+        value: 1
+        type: number
+        label: "1"
+    - pos:
+        x: 74.54631713867187
+        y: -32.13064453125
+      id: Fibonacci-nf049eh
+      inputConfig: {}
+      visibleInputs: []
+      nodeId: InlineValue__Fibonacci-nf049eh
+      macroId: InlineValue
+      macroData:
+        value: 2
+        type: number
+        label: "2"
+    - pos:
+        x: -342.77766357421876
+        y: -230.55667785644533
+      id: o97dpv9ilum2i4n47m2bxdtw
+      inputConfig: {}
+      visibleInputs:
+        - value
+        - __trigger
+      nodeId: Switch__o97dpv9ilum2i4n47m2bxdtw
+      macroId: Switch
+      macroData:
+        inputs:
+          - value
+        cases:
+          - name: is0
+            conditionExpression: inputs.value == 0
+            outputExpression: inputs.value
+          - name: is1
+            conditionExpression: inputs.value == 1
+            outputExpression: inputs.value
+        defaultCase:
+          enabled: true
+          outputExpression: inputs.value
+  connections:
+    - from:
+        insId: Fibonacci-261
+        pinId: result
+      to:
+        insId: Add-539
+        pinId: n1
+    - from:
+        insId: Add-539
+        pinId: sum
+      to:
+        insId: clfv4epnt001o4668lpvrlux1
+        pinId: value
+    - from:
+        insId: clfv4epnt001o4668lpvrlux1
+        pinId: setValue
+      to:
+        insId: __this
+        pinId: result
+    - from:
+        insId: Fibonacci-379
+        pinId: result
+      to:
+        insId: Add-539
+        pinId: n2
+    - from:
+        insId: clfv4afmf00084668r9nuoaoe
+        pinId: value
+      to:
+        insId: __this
+        pinId: result
+    - from:
+        insId: Fibonacci-nf049eh
+        pinId: value
+      to:
+        insId: Subtract-210-d215
+        pinId: n2
+    - from:
+        insId: cakhy4xeflrv7mec1spzru8a
+        pinId: value
+      to:
+        insId: Subtract-210
+        pinId: n2
+    - from:
+        insId: o97dpv9ilum2i4n47m2bxdtw
+        pinId: is0
+      to:
+        insId: __this
+        pinId: result
+    - from:
+        insId: o97dpv9ilum2i4n47m2bxdtw
+        pinId: is1
+      to:
+        insId: __this
+        pinId: result
+    - from:
+        insId: o97dpv9ilum2i4n47m2bxdtw
+        pinId: default
+      to:
+        insId: Subtract-210
+        pinId: n1
+    - from:
+        insId: o97dpv9ilum2i4n47m2bxdtw
+        pinId: default
+      to:
+        insId: Subtract-210-d215
+        pinId: n1
+    - from:
+        insId: __this
+        pinId: n
+      to:
+        insId: clfv4afmf00084668r9nuoaoe
+        pinId: key
+    - from:
+        insId: clfv4afmf00084668r9nuoaoe
+        pinId: __error
+      to:
+        insId: o97dpv9ilum2i4n47m2bxdtw
+        pinId: __trigger
+    - from:
+        insId: __this
+        pinId: n
+      to:
+        insId: o97dpv9ilum2i4n47m2bxdtw
+        pinId: value
+    - from:
+        insId: __this
+        pinId: n
+      to:
+        insId: clfv4epnt001o4668lpvrlux1
+        pinId: key
+    - from:
+        insId: Subtract-210
+        pinId: difference
+      to:
+        insId: Fibonacci-261
+        pinId: n
+    - from:
+        insId: Subtract-210-d215
+        pinId: difference
+      to:
+        insId: Fibonacci-379
+        pinId: n
+  id: Fibonacci
+  inputs:
+    n:
+      mode: required
+      type: any
+  outputs:
+    result:
+      type: any
+      optional: false
+      delayed: false
+  inputsPosition:
+    n:
+      x: -313.93844991449174
+      y: -580.2133427174213
+  outputsPosition:
+    result:
+      x: -250.21811925181652
+      y: 593.4836247190466
+  defaultStyle:
+    size: large
+    color: "#00bbf9"
