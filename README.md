@@ -69,13 +69,13 @@ The easiest way to experiment with Flyde is to visit the [online playground](htt
 
 ## Who is Flyde for?
 
-- **For Novice Developers and Non-Technical Users:** Flyde offers a welcoming entry point into programming by simplifying the creation and management of applications. It allows those new to development, or from non-technical roles, to construct complex logic through a visual interface. By transforming intricate code concepts into accessible, visual blocks, Flyde makes programming more intuitive and approachable.
+- **Novice Developers and Non-Technical Users:** Flyde simplifies programming by transforming complex code into accessible visual blocks, making it an ideal entry point for those new to development or from non-technical backgrounds.
 
-- **For Team Collaboration Across Roles:** Flyde fosters a collaborative environment that transcends technical barriers. It is a tool that empowers team members like product managers and data engineers to contribute directly to the codebase. Through visual programming, Flyde turns business logic and data processes into shared projects that everyone can contribute to and understand, thus democratizing innovation.
+- **Team Collaboration Across Roles:** Flyde democratizes innovation by enabling team members like product managers and data engineers to contribute directly to the codebase through visual programming, fostering collaboration and understanding.
 
-- **For Educators in Programming:** Flyde is a compelling resource for educators aiming to provide hands-on, practical programming education. It's a tool that blends the ease of visual learning with the robustness of real-world programming concepts, making it a valuable addition to any curriculum that seeks to engage students in the fundamentals of coding through an interactive and visually driven experience.
+- **Educators in Programming:** Flyde is a valuable resource for educators seeking to provide hands-on, interactive programming education by blending visual learning with real-world coding concepts.
 
-- **For Seasoned Developers** Even experienced developers can benefit from Flyde's visual approach to building APIs and microservices. It offers a new dimension of efficiency, enabling seasoned professionals to design, prototype, and manage their services visually while retaining the flexibility and power of traditional coding. Flyde's open-source nature invites extension and customization, and for those seeking a managed cloud solution, [Trigg.dev](https://www.trigg.dev?ref=readme) provides a commercial platform with robust, cloud-hosted capabilities.
+- **Seasoned Developers:** Flyde offers experienced developers a new dimension of efficiency for designing, prototyping, and managing APIs and microservices visually, while retaining the flexibility and power of traditional coding. Its open-source nature and the commercial platform [Trigg.dev](https://www.trigg.dev?ref=readme) provide further customization and cloud-hosted capabilities.
 
 And many more!
 
