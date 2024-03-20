@@ -1,0 +1,9 @@
+{
+    "name": "Combine 2 APIs",
+    "description": "Calls 2 APIs from https://random-data-api.com/",
+    "tags": [
+        "Concurrency",
+        "HTTP",
+        "Loops"
+    ]
+}

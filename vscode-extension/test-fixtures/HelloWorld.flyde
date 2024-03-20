@@ -1,0 +1,87 @@
+imports:
+  "@flyde/stdlib":
+    - Concat
+    - Delay
+    - InlineValue
+  ./undefined.flyde.ts: []
+node:
+  instances:
+    - pos:
+        x: -43.04081217447907
+        y: 65.3379041689916
+      id: clftmb8cw000b4668nw8u5qr9
+      inputConfig: {}
+      nodeId: Concat
+    - pos:
+        x: 14.759389241536553
+        y: -34.26689319428965
+      id: clftmbihe000j4668newg9ius
+      inputConfig:
+        delay:
+          mode: queue
+      nodeId: Delay__clftmbihe000j4668newg9ius
+      macroId: Delay
+      macroData:
+        delayMs:
+          mode: static
+          value: 1000
+      style:
+        size: small
+        icon: fa-clock
+    - pos:
+        x: -113.84091796874998
+        y: -75.13641764252512
+      id: amsqg1strnxzxulfuwydz998
+      inputConfig: {}
+      nodeId: InlineValue__amsqg1strnxzxulfuwydz998
+      macroId: InlineValue
+      macroData:
+        type: string
+        value: Hello
+        label: '"Hello"'
+    - pos:
+        x: 14.624100341796861
+        y: -129.59303141205638
+      id: c574cklre7s0epev24x40rxo
+      inputConfig: {}
+      nodeId: InlineValue__c574cklre7s0epev24x40rxo
+      macroId: InlineValue
+      macroData:
+        type: string
+        value: World
+        label: '"World"'
+  connections:
+    - from:
+        insId: clftmbihe000j4668newg9ius
+        pinId: delayedValue
+      to:
+        insId: clftmb8cw000b4668nw8u5qr9
+        pinId: b
+    - from:
+        insId: clftmb8cw000b4668nw8u5qr9
+        pinId: value
+      to:
+        insId: __this
+        pinId: result
+    - from:
+        insId: amsqg1strnxzxulfuwydz998
+        pinId: value
+      to:
+        insId: clftmb8cw000b4668nw8u5qr9
+        pinId: a
+    - from:
+        insId: c574cklre7s0epev24x40rxo
+        pinId: value
+      to:
+        insId: clftmbihe000j4668newg9ius
+        pinId: value
+  id: HelloWorld
+  inputs: {}
+  outputs:
+    result:
+      delayed: false
+  inputsPosition: {}
+  outputsPosition:
+    result:
+      x: -23.264428942324532
+      y: 237.25953921502617

@@ -9,4 +9,5 @@ packages:
   - "resolver"
   - "runtime"
   - "playground"
+  - "vscode-extension"
   - "!examples/*"

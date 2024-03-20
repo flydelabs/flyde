@@ -1,0 +1,315 @@
+imports:
+  "@flyde/stdlib":
+    - InlineValue
+    - CodeExpression
+    - Http
+    - Loop List
+    - Collect
+    - GetAttribute
+node:
+  instances:
+    - pos:
+        x: -86.86109741210936
+        y: -332.4004211425781
+      id: lppjv85ixcde390hug6eonj5
+      inputConfig: {}
+      nodeId: InlineValue__lppjv85ixcde390hug6eonj5
+      macroId: InlineValue
+      macroData:
+        value: 5
+        type: number
+        label: "5"
+    - pos:
+        x: 57.393768310546875
+        y: -13.628143310546875
+      id: Loop List-a2149ei
+      inputConfig: {}
+      nodeId: Loop List
+    - pos:
+        x: -257.25370971679683
+        y: -38.7403533935547
+      id: Example-er2490w
+      inputConfig: {}
+      nodeId: Loop List
+    - pos:
+        x: -203.3569860839844
+        y: 242.0537305481027
+      id: zfhcgwxnesaxpux6bgjwnan2
+      inputConfig: {}
+      nodeId: CodeExpression__zfhcgwxnesaxpux6bgjwnan2
+      macroId: CodeExpression
+      macroData:
+        value: "{name: inputs.user, beer: inputs.beer}"
+        label: "{name: inputs.user, beer: inputs.beer}"
+    - pos:
+        x: 4.522508544921877
+        y: -162.09458923339844
+      id: Fetch Random Users-8i0496g
+      inputConfig: {}
+      node:
+        instances:
+          - pos:
+              x: -39.622965087890634
+              y: -144.00405883789062
+            id: pyiyhtxsh3b5b7qhuuncqv9u
+            inputConfig: {}
+            nodeId: CodeExpression__pyiyhtxsh3b5b7qhuuncqv9u
+            macroId: CodeExpression
+            macroData:
+              value: "`https://random-data-api.com/api/v2/users?size=${inputs.count}`"
+              label: "`https://random-data-api.com/api/v2/users?size=${inputs.count}`"
+          - pos:
+              x: 90
+              y: -45
+            id: rxuwi8y3zmoabq64tqybypf9
+            inputConfig: {}
+            nodeId: Http__rxuwi8y3zmoabq64tqybypf9
+            macroId: Http
+            macroData:
+              method:
+                mode: static
+                value: GET
+              url:
+                mode: dynamic
+              headers:
+                mode: static
+                value: {}
+              params:
+                mode: static
+                value: {}
+              data:
+                mode: static
+                value: {}
+        connections:
+          - from:
+              insId: pyiyhtxsh3b5b7qhuuncqv9u
+              pinId: value
+            to:
+              insId: rxuwi8y3zmoabq64tqybypf9
+              pinId: url
+          - from:
+              insId: __this
+              pinId: count
+            to:
+              insId: pyiyhtxsh3b5b7qhuuncqv9u
+              pinId: count
+          - from:
+              insId: rxuwi8y3zmoabq64tqybypf9
+              pinId: data
+            to:
+              insId: __this
+              pinId: data
+        id: Fetch Random Users
+        inputs:
+          count:
+            mode: required
+        outputs:
+          data:
+            delayed: false
+        inputsPosition:
+          count:
+            x: 0
+            y: 0
+        outputsPosition:
+          data:
+            x: 0
+            y: 400
+        completionOutputs:
+          - data
+        defaultStyle:
+          size: large
+          color: "#ff7f00"
+      style:
+        size: large
+        icon: user
+        color: "#ff7f00"
+    - pos:
+        x: -315.26334503173825
+        y: -161.8971856689453
+      id: Fetch Random Beers-6l1491s
+      inputConfig: {}
+      node:
+        instances:
+          - pos:
+              x: -461.01594482421876
+              y: -142.90456542968747
+            id: lmfgntghsb9grf4urevt19zm
+            inputConfig: {}
+            nodeId: CodeExpression__lmfgntghsb9grf4urevt19zm
+            macroId: CodeExpression
+            macroData:
+              value: "`https://random-data-api.com/api/v2/beers?size=${inputs.count}`"
+              label: "`https://random-data-api.com/api/v2/beers?size=${inputs.count}`"
+          - pos:
+              x: -368.1310766601562
+              y: -37.4415606689453
+            id: Example-d3049ww
+            inputConfig: {}
+            nodeId: Http__Example-d3049ww
+            macroId: Http
+            macroData:
+              method:
+                mode: static
+                value: GET
+              url:
+                mode: dynamic
+              headers:
+                mode: static
+                value: {}
+              params:
+                mode: static
+                value: {}
+              data:
+                mode: static
+                value: {}
+        connections:
+          - from:
+              insId: lmfgntghsb9grf4urevt19zm
+              pinId: value
+            to:
+              insId: Example-d3049ww
+              pinId: url
+          - from:
+              insId: __this
+              pinId: count
+            to:
+              insId: lmfgntghsb9grf4urevt19zm
+              pinId: count
+          - from:
+              insId: Example-d3049ww
+              pinId: data
+            to:
+              insId: __this
+              pinId: data
+        id: Fetch Random Beers
+        inputs:
+          count:
+            mode: required
+        outputs:
+          data:
+            delayed: false
+        inputsPosition:
+          count:
+            x: 0
+            y: 0
+        outputsPosition:
+          data:
+            x: 0
+            y: 400
+        completionOutputs:
+          - data
+        defaultStyle:
+          size: large
+          color: "#ff7f00"
+      style:
+        size: large
+        icon: beer
+        color: "#fee440"
+    - pos:
+        x: -117.35210815429684
+        y: 348.5079768797496
+      id: n38bkbjwe57oxvd1nvztu9gv
+      inputConfig: {}
+      nodeId: Collect__n38bkbjwe57oxvd1nvztu9gv
+      macroId: Collect
+      macroData:
+        strategy: count
+        count:
+          mode: static
+          value: 5
+    - pos:
+        x: -66.03905883789065
+        y: 113.72089470890216
+      id: pcld2qma2841gzcfyqurwu4a
+      inputConfig: {}
+      nodeId: GetAttribute__pcld2qma2841gzcfyqurwu4a
+      macroId: GetAttribute
+      macroData:
+        key:
+          value: first_name
+          mode: static
+    - pos:
+        x: -346.9323999023437
+        y: 112.26985473632811
+      id: Example-w0049zu
+      inputConfig: {}
+      nodeId: GetAttribute__Example-w0049zu
+      macroId: GetAttribute
+      macroData:
+        key:
+          value: name
+          mode: static
+  connections:
+    - from:
+        insId: lppjv85ixcde390hug6eonj5
+        pinId: value
+      to:
+        insId: Fetch Random Beers-6l1491s
+        pinId: count
+    - from:
+        insId: lppjv85ixcde390hug6eonj5
+        pinId: value
+      to:
+        insId: Fetch Random Users-8i0496g
+        pinId: count
+    - from:
+        insId: Fetch Random Users-8i0496g
+        pinId: data
+      to:
+        insId: Loop List-a2149ei
+        pinId: list
+    - from:
+        insId: Fetch Random Beers-6l1491s
+        pinId: data
+      to:
+        insId: Example-er2490w
+        pinId: list
+    - from:
+        insId: zfhcgwxnesaxpux6bgjwnan2
+        pinId: value
+      to:
+        insId: n38bkbjwe57oxvd1nvztu9gv
+        pinId: value
+    - from:
+        insId: n38bkbjwe57oxvd1nvztu9gv
+        pinId: list
+      to:
+        insId: __this
+        pinId: data
+    - from:
+        insId: pcld2qma2841gzcfyqurwu4a
+        pinId: value
+      to:
+        insId: zfhcgwxnesaxpux6bgjwnan2
+        pinId: beer
+    - from:
+        insId: Loop List-a2149ei
+        pinId: item
+      to:
+        insId: pcld2qma2841gzcfyqurwu4a
+        pinId: object
+    - from:
+        insId: Example-er2490w
+        pinId: item
+      to:
+        insId: Example-w0049zu
+        pinId: object
+    - from:
+        insId: Example-w0049zu
+        pinId: value
+      to:
+        insId: zfhcgwxnesaxpux6bgjwnan2
+        pinId: user
+  id: Example
+  inputs: {}
+  outputs:
+    data:
+      delayed: false
+  inputsPosition: {}
+  outputsPosition:
+    result:
+      x: -23.264428942324532
+      y: 237.25953921502617
+    data:
+      x: -35.6508837890625
+      y: 469.41647628784176

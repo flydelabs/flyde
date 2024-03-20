@@ -1,0 +1,411 @@
+imports:
+  "@flyde/stdlib":
+    - Read File
+    - Split
+    - Head and rest
+    - Loop List
+    - Get List Element
+    - Sum List
+    - Parse Int
+    - InlineValue
+    - Conditional
+    - CodeExpression
+    - Collect
+node:
+  instances:
+    - pos:
+        x: -104.57907918294268
+        y: -21.54625789137549
+      id: clfuqs69n00014668p8jg106j
+      inputConfig: {}
+      visibleInputs:
+        - path
+        - encoding
+      visibleOutputs:
+        - contents
+        - __error
+      nodeId: Read File
+      style:
+        icon: fa-file
+        color: "#00f5d4"
+    - pos:
+        x: -144.38379420923934
+        y: 90.02541512543138
+      id: Parse CSV-bn0462h
+      inputConfig: {}
+      node:
+        instances:
+          - pos:
+              x: -118.06916251947007
+              y: -242.0581984195877
+            id: clfur381u000e46680qngrrv0
+            inputConfig:
+              separator:
+                mode: sticky
+            nodeId: Split
+          - pos:
+              x: -143.34856082088254
+              y: -127.92327522136146
+            id: clfur3wrb000n4668tzjs5lcw
+            inputConfig: {}
+            nodeId: Head and rest
+          - pos:
+              x: -123.38416757304788
+              y: 40.55221890874138
+            id: clfur49eg000w4668ahvwk2ib
+            inputConfig: {}
+            nodeId: Loop List
+          - pos:
+              x: -149.01732026369052
+              y: 223.5823753019469
+            id: clfur4n31001346682iyika2o
+            inputConfig:
+              separator:
+                mode: sticky
+            nodeId: Split
+          - pos:
+              x: 69.25510009765625
+              y: 89.8313360595703
+            id: Parse CSV-lz0496s
+            inputConfig: {}
+            nodeId: InlineValue__Parse CSV-lz0496s
+            macroId: InlineValue
+            macroData:
+              value: ","
+              type: string
+              label: '","'
+          - pos:
+              x: 1.8964953613281352
+              y: -362.0457109563053
+            id: d5t7eb2n0pu2pxn52tnhbepy
+            inputConfig: {}
+            nodeId: CodeExpression__d5t7eb2n0pu2pxn52tnhbepy
+            macroId: CodeExpression
+            macroData:
+              value: '"\n"'
+              label: \n
+          - pos:
+              x: -102.36408203124995
+              y: 349.9501273273129
+            id: qiojvdu7phtarj77inj7kevf
+            inputConfig: {}
+            nodeId: Collect__qiojvdu7phtarj77inj7kevf
+            macroId: Collect
+            macroData:
+              strategy: count
+              count:
+                mode: dynamic
+        connections:
+          - from:
+              insId: clfur381u000e46680qngrrv0
+              pinId: value
+            to:
+              insId: clfur3wrb000n4668tzjs5lcw
+              pinId: list
+          - from:
+              insId: clfur3wrb000n4668tzjs5lcw
+              pinId: rest
+            to:
+              insId: clfur49eg000w4668ahvwk2ib
+              pinId: list
+          - from:
+              insId: clfur49eg000w4668ahvwk2ib
+              pinId: item
+            to:
+              insId: clfur4n31001346682iyika2o
+              pinId: string
+          - from:
+              insId: __this
+              pinId: contents
+            to:
+              insId: clfur381u000e46680qngrrv0
+              pinId: string
+          - from:
+              insId: Parse CSV-lz0496s
+              pinId: value
+            to:
+              insId: clfur4n31001346682iyika2o
+              pinId: separator
+          - from:
+              insId: d5t7eb2n0pu2pxn52tnhbepy
+              pinId: value
+            to:
+              insId: clfur381u000e46680qngrrv0
+              pinId: separator
+          - from:
+              insId: clfur49eg000w4668ahvwk2ib
+              pinId: length
+            to:
+              insId: qiojvdu7phtarj77inj7kevf
+              pinId: count
+          - from:
+              insId: clfur4n31001346682iyika2o
+              pinId: value
+            to:
+              insId: qiojvdu7phtarj77inj7kevf
+              pinId: value
+          - from:
+              insId: qiojvdu7phtarj77inj7kevf
+              pinId: list
+            to:
+              insId: __this
+              pinId: parsed
+        id: Parse CSV
+        inputs:
+          contents:
+            mode: required
+        outputs:
+          parsed:
+            delayed: false
+        inputsPosition:
+          string:
+            x: -125.91370946045086
+            y: -338.8222372977071
+          contents:
+            x: -125.91370946045086
+            y: -338.8222372977071
+        outputsPosition:
+          parsed:
+            x: -56.849183340289116
+            y: 533.9258730367221
+        completionOutputs:
+          - parsed
+      style:
+        size: regular
+        icon: file-csv
+        color: "#f15bb5"
+    - pos:
+        x: -75
+        y: 315
+      id: clfuu4wdv00074668lyl7gtnw
+      inputConfig: {}
+      nodeId: Sum List
+    - pos:
+        x: -119
+        y: 226
+      id: Get Prices By Continent-e4046ap
+      inputConfig:
+        value:
+          mode: sticky
+      node:
+        instances:
+          - pos:
+              x: -214.98781494140627
+              y: 187.7970252609253
+            id: clfutxtvk00174668slofeqax
+            inputConfig: {}
+            nodeId: Loop List
+          - pos:
+              x: -299.183955078125
+              y: 515.4710998535156
+            id: clfuu1kkq0024466856fkuiyi
+            inputConfig:
+              index:
+                mode: sticky
+            nodeId: Get List Element
+          - pos:
+              x: -230.44541137695307
+              y: 607.3148419189453
+            id: Get Prices By Continent-cs0461a
+            inputConfig: {}
+            nodeId: Parse Int
+          - pos:
+              x: -193.59365478515628
+              y: 356.2506675313104
+            id: xiusd3g6bhi8nw3h50gvkz7q
+            inputConfig:
+              compareTo:
+                mode: sticky
+            nodeId: Conditional__xiusd3g6bhi8nw3h50gvkz7q
+            macroId: Conditional
+            macroData:
+              compareTo:
+                mode: dynamic
+                propertyPath: ""
+              propertyPath: "1"
+              condition:
+                type: EQUAL
+              trueValue:
+                type: value
+              falseValue:
+                type: value
+          - pos:
+              x: -36.846899414062506
+              y: 393.65142558795105
+            id: k537z31orw8cwh8emq1ukhs8
+            inputConfig: {}
+            nodeId: InlineValue__k537z31orw8cwh8emq1ukhs8
+            macroId: InlineValue
+            macroData:
+              value: 3
+              type: number
+              label: "3"
+          - pos:
+              x: -239.2752465820313
+              y: 714.719063221283
+            id: pwusa11s2p7eyz100p4ilpwx
+            inputConfig: {}
+            nodeId: Collect__pwusa11s2p7eyz100p4ilpwx
+            macroId: Collect
+            macroData:
+              strategy: time
+              time:
+                mode: static
+                timeMs: 100
+        connections:
+          - from:
+              insId: __this
+              pinId: list
+            to:
+              insId: clfutxtvk00174668slofeqax
+              pinId: list
+          - from:
+              insId: clfuu1kkq0024466856fkuiyi
+              pinId: element
+            to:
+              insId: Get Prices By Continent-cs0461a
+              pinId: str
+          - from:
+              insId: __this
+              pinId: value
+            to:
+              insId: xiusd3g6bhi8nw3h50gvkz7q
+              pinId: compareTo
+          - from:
+              insId: clfutxtvk00174668slofeqax
+              pinId: item
+            to:
+              insId: xiusd3g6bhi8nw3h50gvkz7q
+              pinId: value
+          - from:
+              insId: xiusd3g6bhi8nw3h50gvkz7q
+              pinId: "true"
+            to:
+              insId: clfuu1kkq0024466856fkuiyi
+              pinId: list
+          - from:
+              insId: k537z31orw8cwh8emq1ukhs8
+              pinId: value
+            to:
+              insId: clfuu1kkq0024466856fkuiyi
+              pinId: index
+          - from:
+              insId: Get Prices By Continent-cs0461a
+              pinId: int
+            to:
+              insId: pwusa11s2p7eyz100p4ilpwx
+              pinId: value
+          - from:
+              insId: pwusa11s2p7eyz100p4ilpwx
+              pinId: list
+            to:
+              insId: __this
+              pinId: accumulated
+        id: Get Prices By Continent
+        inputs:
+          list:
+            mode: required
+          value:
+            mode: required
+        outputs:
+          accumulated:
+            delayed: false
+        inputsPosition:
+          list:
+            x: -224.4720619253199
+            y: -6.734161457821966
+          value:
+            x: 34.775870532686554
+            y: -18.943240165004866
+        outputsPosition:
+          accumulated:
+            x: -203.37937417252186
+            y: 865.83859895635
+        completionOutputs:
+          - accumulated
+    - pos:
+        x: -3.230906982421857
+        y: -149.24164254964097
+      id: oy7esxhnpcl5dje5f2p035ur
+      inputConfig: {}
+      nodeId: InlineValue__oy7esxhnpcl5dje5f2p035ur
+      macroId: InlineValue
+      macroData:
+        type: string
+        value: utf-8
+        label: '"utf-8"'
+    - pos:
+        x: -241.46504150390626
+        y: -198.59092163085938
+      id: CsvExample-ek049t4
+      inputConfig: {}
+      nodeId: InlineValue__CsvExample-ek049t4
+      macroId: InlineValue
+      macroData:
+        type: string
+        value: data/sales.csv
+        label: '"data/sales.csv"'
+    - pos:
+        x: 53.1795654296875
+        y: 124.39317321777344
+      id: wwh26ryrt4yqh71m26vevjyj
+      inputConfig: {}
+      nodeId: InlineValue__wwh26ryrt4yqh71m26vevjyj
+      macroId: InlineValue
+      macroData:
+        type: string
+        value: Europe
+        label: '"Europe"'
+  connections:
+    - from:
+        insId: clfuqs69n00014668p8jg106j
+        pinId: contents
+      to:
+        insId: Parse CSV-bn0462h
+        pinId: contents
+    - from:
+        insId: Parse CSV-bn0462h
+        pinId: parsed
+      to:
+        insId: Get Prices By Continent-e4046ap
+        pinId: list
+    - from:
+        insId: Get Prices By Continent-e4046ap
+        pinId: accumulated
+      to:
+        insId: clfuu4wdv00074668lyl7gtnw
+        pinId: list
+    - from:
+        insId: clfuu4wdv00074668lyl7gtnw
+        pinId: sum
+      to:
+        insId: __this
+        pinId: result
+    - from:
+        insId: oy7esxhnpcl5dje5f2p035ur
+        pinId: value
+      to:
+        insId: clfuqs69n00014668p8jg106j
+        pinId: encoding
+    - from:
+        insId: CsvExample-ek049t4
+        pinId: value
+      to:
+        insId: clfuqs69n00014668p8jg106j
+        pinId: path
+    - from:
+        insId: wwh26ryrt4yqh71m26vevjyj
+        pinId: value
+      to:
+        insId: Get Prices By Continent-e4046ap
+        pinId: value
+  id: CsvExample
+  inputs: {}
+  outputs:
+    result:
+      delayed: false
+  inputsPosition: {}
+  outputsPosition:
+    result:
+      x: -30
+      y: 420
