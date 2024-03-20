@@ -22,7 +22,7 @@
       "path": "stdlib"
     },
     {
-      "path": "../flyde-vscode"
+      "path": "vscode-extension"
     },
     {
       "path": "examples/discord-tasks-manager"
