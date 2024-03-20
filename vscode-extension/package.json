@@ -199,7 +199,7 @@
     "@flyde/core": "^0.2.4",
     "@flyde/dev-server": "^0.5.4",
     "@flyde/editor": "^0.2.4",
-    "@flyde/remote-debugger": "workspace:^",
+    "@flyde/remote-debugger": "^0.3.55",
     "@flyde/resolver": "^0.4.4",
     "@flyde/runtime": "^0.5.4",
     "@tsconfig/node16": "^1.0.3",
