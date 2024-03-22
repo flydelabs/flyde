@@ -30,7 +30,7 @@
     "build": "npm run compile && npm run copy-editor",
     "copy-editor": "ts-node ./scripts/copy-editor.ts",
     "watch": "tsc -watch -p ./",
-    "dev": "npm watch",
+    "dev": ":",
     "compile-tests": "tsc -p . --outDir out",
     "watch-tests": "tsc -p . -w --outDir out",
     "pretest": "npm run compile-tests && npm run build && npm run lint",
