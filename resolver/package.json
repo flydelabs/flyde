@@ -1,6 +1,6 @@
 {
   "name": "@flyde/resolver",
-  "version": "0.4.56",
+  "version": "0.4.57",
   "description": "",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
