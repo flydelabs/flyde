@@ -37,6 +37,7 @@ describe("ssg/ssr support", () => {
           selected: [],
           viewPort: defaultViewPort,
           lastMousePos: { x: 0, y: 0 },
+          selectedConnections: [],
         },
       },
       onChangeEditorState: noop,
