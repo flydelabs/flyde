@@ -95,6 +95,7 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
       viewPort: defaultViewPort,
       lastMousePos: { x: 0, y: 0 },
       selected: [],
+      selectedConnections: [],
     },
   });
 

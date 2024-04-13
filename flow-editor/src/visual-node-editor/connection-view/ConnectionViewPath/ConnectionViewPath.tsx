@@ -7,15 +7,15 @@ export interface ConnectionViewPathProps {
   from: Pos;
   to: Pos;
   className: string;
-  onContextMenu?: (e: React.MouseEvent<any, MouseEvent>) => void;
+  onClick?: (e: React.MouseEvent<any, MouseEvent>) => void;
+  onMouseProximity?: (isMouseClose: boolean) => void;
   zoom: number;
-  label?: string;
   dashed?: boolean;
 }
 
 export const ConnectionViewPath: React.FC<ConnectionViewPathProps> = forwardRef(
   (props, ref) => {
-    const { from, to, className, onContextMenu, zoom, dashed } = props;
+    const { from, to, className, zoom, dashed } = props;
     const { x: x1, y: y1 } = from;
     const { x: x2, y: y2 } = to;
 
@@ -30,23 +30,29 @@ export const ConnectionViewPath: React.FC<ConnectionViewPathProps> = forwardRef(
     const strokeWidth = 2.5 * zoom;
     const strokeDasharray = dashed ? 6 * zoom : undefined;
 
+    const pathProximityMask = (
+      <path
+        onClick={props.onClick}
+        onMouseEnter={() => props.onMouseProximity(true)}
+        onMouseLeave={() => props.onMouseProximity(false)}
+        d={d}
+        style={{ cursor: "pointer", opacity: 0, strokeWidth: 40 * zoom }}
+      />
+    );
+
+    const path = (
+      <path
+        d={d}
+        ref={ref as any}
+        className={classNames("connection", className)}
+        style={{ strokeWidth, strokeDasharray }}
+      />
+    );
+
     return (
       <>
-        <path
-          d={d}
-          ref={ref as any}
-          className={classNames("connection", className)}
-          style={{ strokeWidth, strokeDasharray }}
-          onContextMenu={onContextMenu}
-        />
-        {props.label ? (
-          <text
-            className="label"
-            x={(x1 + x2) / 2}
-            y={(y1 + y2) / 2}
-            fontSize="12px"
-          />
-        ) : null}
+        {path}
+        {pathProximityMask}
         <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
           <stop offset="0%" />
           <stop offset="100%" />

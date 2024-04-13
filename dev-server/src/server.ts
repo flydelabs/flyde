@@ -1,4 +1,5 @@
 import express from "express";
+import cors from 'cors';
 import { createService } from "./service/service";
 
 import { setupRemoteDebuggerServer } from "@flyde/remote-debugger/dist/setup-server";
@@ -23,6 +24,7 @@ export const runDevServer = (
   const server = createServer(app);
 
   app.use(express.json());
+  app.use(cors())
 
   app.use((_, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", "*");

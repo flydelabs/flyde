@@ -83,6 +83,7 @@ const defaultState: FlowEditorState = {
       zoom: 1,
     },
     selected: [],
+    selectedConnections: [],
     lastMousePos: { x: 0, y: 0 },
   },
 };
