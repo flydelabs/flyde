@@ -50,13 +50,29 @@ path.connection {
   }
 }
 
-.connection.selected {
-  stroke: $neutral-200;
+:not(.dark) {
+  .connection.selected {
+    stroke: $gray-800;
+  }
+
+  .connection.pending-selection {
+    stroke: $gray-800;
+  }
+}
+
+.dark {
+  .connection.selected {
+    stroke: $neutral-200;
+  }
+  
+  .connection.pending-selection {
+    stroke-dasharray: 6;
+    stroke: $neutral-200;
+  }
 }
 
 .connection.pending-selection {
   stroke-dasharray: 6;
-  stroke: $neutral-200;
 }
 
 .connection.future-removal {
