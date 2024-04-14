@@ -645,7 +645,6 @@ declare module '@flyde/core/connect/helpers' {
     export function connectionData(from: [string, string], to: [string, string], delayed?: boolean): ConnectionData;
     export function connectionData(from: [string, string], to: [string], delayed?: boolean): ConnectionData;
     export function connectionData(from: [string], to: [string, string], delayed?: boolean): ConnectionData;
-    export const getConnectionId: (connectionData: ConnectionData) => string;
     export const connection: (from: ConnectionNode, to: ConnectionNode, delayed?: boolean) => ConnectionData;
 }
 

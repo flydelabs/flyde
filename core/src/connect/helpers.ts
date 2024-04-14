@@ -131,14 +131,6 @@ export function connectionData(fromRaw: any, toRaw: any, delayed?: any): any {
   };
 }
 
-export const getConnectionId = (connectionData: ConnectionData) => {
-  const { from, to } = connectionData;
-  const { insId: fromInsId, pinId: fromPinId } = from;
-  const { insId: toInsId, pinId: toPinId } = to;
-
-  return `${fromInsId}${fromPinId}${toInsId}${toPinId}`;
-};
-
 export const connection = (
   from: ConnectionNode,
   to: ConnectionNode,

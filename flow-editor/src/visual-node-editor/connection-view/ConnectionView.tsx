@@ -8,21 +8,13 @@ import {
   isInternalConnectionNode,
   ConnectionData,
   ConnectionNode,
-  getConnectionId,
 } from "@flyde/core";
 import { calcStartPos, calcTargetPos } from "./calc-pin-position";
 import { Size } from "../../utils";
-// ;
 
 import { useSsr } from "usehooks-ts";
-import { logicalPosToRenderedPos, ViewPort } from "../..";
+import { getConnectionId, logicalPosToRenderedPos, ViewPort } from "../..";
 import { vDiv } from "../../physics";
-import {
-  ContextMenu,
-  ContextMenuChildrenProps,
-  Menu,
-  MenuItem,
-} from "@blueprintjs/core";
 import { ConnectionViewPath } from "./ConnectionViewPath/ConnectionViewPath";
 import { safelyGetNodeDef } from "../../flow-editor/getNodeDef";
 

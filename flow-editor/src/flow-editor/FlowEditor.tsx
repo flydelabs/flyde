@@ -160,7 +160,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
     // clear board data that isn't related to node when it changes
     React.useEffect(() => {
       onChangeEditorBoardData({
-        selected: [],
+        selectedInstances: [],
         viewPort: defaultViewPort,
         from: undefined,
         to: undefined,
