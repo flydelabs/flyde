@@ -69,6 +69,7 @@ import {
   changePinConfig,
   createNewMacroNodeInstance,
   fitViewPortToRect,
+  getConnectionId
 } from "./utils";
 
 import { produce } from "immer";
@@ -143,7 +144,8 @@ export const defaultViewPort: ViewPort = {
 };
 
 export const defaultBoardData: GroupEditorBoardData = {
-  selected: [],
+  selectedInstances: [],
+  selectedConnections: [],
   viewPort: defaultViewPort,
   lastMousePos: { x: 0, y: 0 },
 };
@@ -161,7 +163,8 @@ export type ClipboardData = {
 
 export type GroupEditorBoardData = {
   viewPort: ViewPort;
-  selected: string[];
+  selectedInstances: string[];
+  selectedConnections: string[];
   lastMousePos: Pos;
   from?: ConnectionNode;
   to?: ConnectionNode;
@@ -249,7 +252,12 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         });
       }, [resolvedDependencies, node]);
 
-      const { selected, from, to } = boardData;
+      const {
+        selectedConnections,
+        selectedInstances,
+        from,
+        to,
+      } = boardData;
       const {
         instances,
         connections,
@@ -344,7 +352,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         const name = await _prompt("New visual node name?");
         if (!name) return;
         const { currentNode } = await groupSelected(
-          boardData.selected,
+          boardData.selectedInstances,
           node,
           name,
           "inline",
@@ -352,14 +360,16 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         );
         onChange(currentNode, functionalChange("group node"));
 
-        onChangeBoardData({ selected: [] });
+        onChangeBoardData({ selectedInstances: [] });
 
         toastMsg("Node grouped");
 
-        reportEvent("groupSelected", { count: boardData.selected.length });
+        reportEvent("groupSelected", {
+          count: boardData.selectedInstances.length,
+        });
       }, [
         _prompt,
-        boardData.selected,
+        boardData.selectedInstances,
         node,
         onChange,
         onChangeBoardData,
@@ -465,7 +475,11 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             } else if (from) {
               onConnectionClose(from, to, "pinClick");
             } else {
-              onChangeBoardData({ to, selected: [] });
+              onChangeBoardData({
+                to,
+                selectedInstances: [],
+                selectedConnections: [],
+              });
             }
           } else {
             const from = { insId: ins.id, pinId };
@@ -481,7 +495,11 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             } else if (to) {
               onConnectionClose(from, to, "pinClick");
             } else {
-              onChangeBoardData({ from, selected: [] });
+              onChangeBoardData({
+                from,
+                selectedInstances: [],
+                selectedConnections: [],
+              });
             }
           }
         },
@@ -524,12 +542,12 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       ]);
 
       const onCopyInner = React.useCallback(() => {
-        const { selected } = boardData;
+        const { selectedInstances } = boardData;
         const instances = node.instances
-          .filter((ins) => selected.includes(ins.id))
+          .filter((ins) => selectedInstances.includes(ins.id))
           .map((ins) => ({ ...ins, id: ins.id + "-copy" }));
         const connections = node.connections.filter(({ from, to }) => {
-          return selected.includes(from.insId) && selected.includes(to.insId);
+          return selectedInstances.includes(from.insId) && selectedInstances.includes(to.insId);
         });
         onCopy({ instances, connections });
       }, [boardData, onCopy, node]);
@@ -542,7 +560,10 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         );
         onChange(newNode, functionalChange("paste instances"));
 
-        onChangeBoardData({ selected: newInstances.map((ins) => ins.id) });
+        onChangeBoardData({
+          selectedInstances: newInstances.map((ins) => ins.id),
+          selectedConnections: [],
+        });
       }, [onChange, onChangeBoardData, node, props.clipboardData]);
 
       const selectClosest = React.useCallback(() => {
@@ -655,7 +676,8 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         onChangeBoardData({
           from: undefined,
           to: undefined,
-          selected: [],
+          selectedInstances: [],
+          selectedConnections: [],
         });
       };
 
@@ -676,15 +698,18 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             ins,
             pos,
             event,
-            selected,
+            selectedInstances,
             draggingId
           );
           onChange(newValue, metaChange("drag-move"));
           if (newSelected) {
-            onChangeBoardData({ selected: newSelected });
+            onChangeBoardData({
+              selectedInstances: newSelected,
+              selectedConnections: [],
+            });
           }
         },
-        [draggingId, onChange, onChangeBoardData, selected, node]
+        [draggingId, onChange, onChangeBoardData, selectedInstances, node]
       );
 
       const onInstanceDragEnd = React.useCallback((_, event) => {
@@ -742,37 +767,60 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         []
       );
 
+      const onSelectConnection = React.useCallback(
+        (connection: ConnectionData, ev: React.MouseEvent) => {
+          const connectionId = getConnectionId(connection);
+          const newSelected = selectedConnections.includes(connectionId)
+            ? selectedConnections.filter((id) => id !== connectionId)
+            : [...(ev.shiftKey ? selectedConnections : []), connectionId];
+
+          onChangeBoardData({
+            selectedConnections: newSelected,
+            selectedInstances: [],
+          });
+        },
+        [onChangeBoardData, selectedConnections]
+      );
+
       const onSelectInstance = React.useCallback(
         ({ id }: NodeInstance, ev: React.MouseEvent) => {
           const newSelectedIfSelectionExists = ev.shiftKey
-            ? selected.filter((sid) => sid !== id)
+            ? selectedInstances.filter((sid) => sid !== id)
             : [];
           const newSelectedIfSelectionIsNew = ev.shiftKey
-            ? [...selected, id]
+            ? [...selectedInstances, id]
             : [id];
-          const newSelected = selected.includes(id)
+          const newSelected = selectedInstances.includes(id)
             ? newSelectedIfSelectionExists
             : newSelectedIfSelectionIsNew;
 
           onChangeBoardData({
-            selected: newSelected,
+            selectedInstances: newSelected,
+            selectedConnections: [],
             from: undefined,
             to: undefined,
           });
         },
-        [onChangeBoardData, selected]
+        [onChangeBoardData, selectedInstances]
       );
 
       const selectAll = React.useCallback(() => {
         const allIds = node.instances.map((i) => i.id);
-        onChangeBoardData({ selected: allIds, from: undefined, to: undefined });
+        onChangeBoardData({
+          selectedInstances: allIds,
+          selectedConnections: [],
+          from: undefined,
+          to: undefined,
+        });
       }, [onChangeBoardData, node.instances]);
 
       const onDeleteInstances = React.useCallback(
         (ids: string[]) => {
           const newConnections = connections.filter(({ from, to }) => {
             return (
-              ids.indexOf(from.insId) === -1 && ids.indexOf(to.insId) === -1
+              !ids.includes(getConnectionId({ from, to })) &&
+              !ids.includes(from.insId) &&
+              !ids.includes(to.insId)
             );
           });
 
@@ -783,7 +831,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             );
           });
 
-          onChangeBoardData({ selected: [] });
+          onChangeBoardData({ selectedInstances: [], selectedConnections: [] });
           onChange(newValue, functionalChange("delete-ins"));
         },
         [connections, onChange, onChangeBoardData, node]
@@ -837,8 +885,14 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       );
 
       const deleteSelection = React.useCallback(async () => {
-        const { selected, from, to } = boardData;
-        if (selected.length === 0) {
+        const {
+          selectedConnections,
+          selectedInstances,
+          from,
+          to,
+        } = boardData;
+        const idsToDelete = [...selectedInstances, ...selectedConnections];
+        if (idsToDelete.length === 0) {
           if (from && isExternalConnectionNode(from)) {
             if (
               await _confirm(
@@ -857,7 +911,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             }
           }
         } else {
-          onDeleteInstances(selected);
+          onDeleteInstances(idsToDelete);
         }
       }, [_confirm, boardData, onDeleteInstances, onRemoveIoPin]);
 
@@ -882,13 +936,15 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       const duplicate = React.useCallback(() => {
         const { newNode, newInstances } = handleDuplicateSelectedEditorCommand(
           node,
-          selected
+          selectedInstances
         );
 
         onChange(newNode, functionalChange("duplicated instances"));
-        onChangeBoardData({ selected: newInstances.map((ins) => ins.id) });
+        onChangeBoardData({
+          selectedInstances: newInstances.map((ins) => ins.id),
+        });
         // onChange(duplicateSelected(value), functionalChange("duplicate"));
-      }, [onChange, onChangeBoardData, node, selected]);
+      }, [onChange, onChangeBoardData, node, selectedInstances]);
 
       const onMouseDown: React.MouseEventHandler = React.useCallback(
         (e) => {
@@ -902,7 +958,15 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             return;
           }
 
-          if (target && target.className === "board-editor-inner") {
+          const allowedSelectionBoxClasses = [
+            "board-editor-inner",
+            "connections-view",
+          ];
+
+          if (
+            target &&
+            allowedSelectionBoxClasses.includes(target.getAttribute("class"))
+          ) {
             const eventPos = { x: e.clientX, y: e.clientY };
             const normalizedPos = vSub(eventPos, boardPos);
             const posInBoard = domToViewPort(
@@ -934,9 +998,9 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                 parentViewport
               );
               const newSelected = e.shiftKey
-                ? [...selected, ...toSelect]
+                ? [...selectedInstances, ...toSelect]
                 : toSelect;
-              onChangeBoardData({ selected: newSelected });
+              onChangeBoardData({ selectedInstances: newSelected });
             }
 
             setSelectionBox(undefined);
@@ -950,7 +1014,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           viewPort,
           boardPos,
           parentViewport,
-          selected,
+          selectedInstances,
           onChangeBoardData,
         ]
       );
@@ -1101,7 +1165,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
             onChange(newNode, { type: "functional", message: "ungroup" });
             // todo - combine the above with below to an atomic action
-            onChangeBoardData({ selected: [] });
+            onChangeBoardData({ selectedInstances: [] });
           } else {
             toastMsg("Cannot ungroup an imported group");
           }
@@ -1245,7 +1309,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           });
 
           const newState = produce(boardData, (draft) => {
-            draft.selected = [newNodeIns.id];
+            draft.selectedInstances = [newNodeIns.id];
           });
 
           onChange(newNode, functionalChange("add new instance"));
@@ -1853,7 +1917,8 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
       const [inspectedBoardData, setInspectedBoardData] =
         useState<GroupEditorBoardData>({
-          selected: [],
+          selectedInstances: [],
+          selectedConnections: [],
           viewPort: defaultViewPort,
           lastMousePos: { x: 0, y: 0 },
         });
@@ -2159,12 +2224,14 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             return { type: "input" as const, pinId: from.pinId };
           } else if (to) {
             return { type: "output" as const, pinId: to.pinId };
-          } else if (selected.length > 0) {
-            return { type: "instances" as const, ids: selected };
+          } else if (selectedInstances.length > 0) {
+            return { type: "instances" as const, ids: selectedInstances };
+          } else if (selectedConnections.length > 0) {
+            return { type: "connections" as const, ids: selectedConnections };
           } else {
             return undefined;
           }
-        }, [selected, from, to]);
+        }, [selectedInstances, from, to]);
 
       const onCenterSelection = React.useCallback(() => {
         if (selectionIndicatorData) {
@@ -2174,7 +2241,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             switch (type) {
               case "instances": {
                 const ins = node.instances.find((ins) =>
-                  selected.includes(ins.id)
+                  selectedInstances.includes(ins.id)
                 );
                 if (ins) {
                   return ins.pos;
@@ -2210,7 +2277,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         inputsPosition,
         node.instances,
         outputsPosition,
-        selected,
+        selectedInstances,
         selectionIndicatorData,
         setViewPort,
         viewPort,
@@ -2271,9 +2338,11 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                 onDblClick={noop}
                 viewPort={viewPort}
                 parentVp={parentViewport}
-                selectedInstances={selected}
+                selectedInstances={selectedInstances}
+                selectedConnections={selectedConnections}
                 toggleHidden={toggleConnectionHidden}
                 removeConnection={removeConnection}
+                onSelectConnection={onSelectConnection}
                 lastMousePos={lastMousePos.current}
                 draggedSource={draggedConnection}
               />
@@ -2296,7 +2365,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                   onDblClick={onDblClickInstance}
                   onSelect={onSelectInstance}
                   onToggleSticky={onToggleSticky}
-                  selected={selected.indexOf(ins.id) !== -1}
+                  selected={selectedInstances.indexOf(ins.id) !== -1}
                   dragged={draggingId === ins.id}
                   onInspectPin={_onInspectPin}
                   selectedInput={
@@ -2337,7 +2406,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                       ? "output"
                       : undefined
                   }
-                  isConnectedInstanceSelected={selected.some((selInsId) =>
+                  isConnectedInstanceSelected={selectedInstances.some((selInsId) =>
                     connections.some(({ from, to }) => {
                       return (
                         (from.insId === ins.id && to.insId === selInsId) ||

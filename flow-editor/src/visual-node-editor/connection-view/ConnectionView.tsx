@@ -4,7 +4,6 @@ import {
   VisualNode,
   Pos,
   NodesDefCollection,
-  getNodeDef,
   NodeInstance,
   isInternalConnectionNode,
   ConnectionData,
@@ -12,17 +11,10 @@ import {
 } from "@flyde/core";
 import { calcStartPos, calcTargetPos } from "./calc-pin-position";
 import { Size } from "../../utils";
-// ;
 
 import { useSsr } from "usehooks-ts";
-import { logicalPosToRenderedPos, ViewPort } from "../..";
+import { getConnectionId, logicalPosToRenderedPos, ViewPort } from "../..";
 import { vDiv } from "../../physics";
-import {
-  ContextMenu,
-  ContextMenuChildrenProps,
-  Menu,
-  MenuItem,
-} from "@blueprintjs/core";
 import { ConnectionViewPath } from "./ConnectionViewPath/ConnectionViewPath";
 import { safelyGetNodeDef } from "../../flow-editor/getNodeDef";
 
@@ -46,6 +38,7 @@ export interface ConnectionViewProps extends BaseConnectionViewProps {
     type: "future-add" | "future-remove";
   };
   selectedInstances: string[];
+  selectedConnections: string[];
   lastMousePos: Pos;
   draggedSource:
     | null
@@ -53,6 +46,10 @@ export interface ConnectionViewProps extends BaseConnectionViewProps {
     | { to: ConnectionNode; from: undefined };
   toggleHidden: (connection: ConnectionData) => void;
   removeConnection: (connection: ConnectionData) => void;
+  onSelectConnection: (
+    connectionData: ConnectionData,
+    ev: React.MouseEvent
+  ) => void;
 }
 
 export interface ConnectionItemViewProps extends BaseConnectionViewProps {
@@ -61,6 +58,11 @@ export interface ConnectionItemViewProps extends BaseConnectionViewProps {
   toggleHidden: (connection: ConnectionData) => void;
   removeConnection: (connection: ConnectionData) => void;
   parentSelected: boolean;
+  onSelectConnection: (
+    connectionData: ConnectionData,
+    ev: React.MouseEvent
+  ) => void;
+  isConnectionSelected?: boolean;
 }
 
 export const SingleConnectionView: React.FC<ConnectionItemViewProps> = (
@@ -78,7 +80,12 @@ export const SingleConnectionView: React.FC<ConnectionItemViewProps> = (
     toggleHidden,
     parentSelected,
     removeConnection,
+    onSelectConnection,
+    isConnectionSelected,
   } = props;
+
+  const [isPendingSelection, setIsPendingSelection] = React.useState(false);
+
   const { from } = connection;
 
   const fromInstance =
@@ -109,36 +116,30 @@ export const SingleConnectionView: React.FC<ConnectionItemViewProps> = (
   const { x: x2, y: y2 } = vDiv(endPos, props.parentVp.zoom);
 
   const cm = classNames(
-    { delayed, hidden: connection.hidden, "parent-selected": parentSelected },
+    {
+      delayed,
+      hidden: connection.hidden,
+      "parent-selected": parentSelected,
+      selected: isConnectionSelected,
+      "pending-selection": !isConnectionSelected && isPendingSelection,
+    },
     type
   );
 
-  const menu = (
-    <Menu>
-      <MenuItem
-        text={connection.hidden ? "Show connection" : "Hide connection"}
-        onClick={() => toggleHidden(connection)}
-      />
-      <MenuItem
-        text="Remove connection"
-        onClick={() => removeConnection(connection)}
-      />
-    </Menu>
-  );
+  const onConnectionPathClick = (e: React.MouseEvent) => {
+    onSelectConnection(connection, e);
+  };
 
   return (
-    <ContextMenu content={menu}>
-      {(ctxMenuProps: ContextMenuChildrenProps) => (
-        <ConnectionViewPath
-          className={cm}
-          from={{ x: x1, y: y1 }}
-          to={{ x: x2, y: y2 }}
-          dashed={type !== "regular"}
-          zoom={viewPort.zoom}
-          onContextMenu={ctxMenuProps.onContextMenu}
-        />
-      )}
-    </ContextMenu>
+    <ConnectionViewPath
+      className={cm}
+      from={{ x: x1, y: y1 }}
+      to={{ x: x2, y: y2 }}
+      dashed={type !== "regular"}
+      zoom={viewPort.zoom}
+      onMouseProximity={setIsPendingSelection}
+      onClick={onConnectionPathClick}
+    />
   );
 };
 
@@ -149,6 +150,8 @@ export const ConnectionView: React.FC<ConnectionViewProps> = (props) => {
     toggleHidden,
     selectedInstances,
     draggedSource,
+    selectedConnections,
+    onSelectConnection,
   } = props;
 
   const [renderTrigger, setRenderTrigger] = React.useState(0);
@@ -189,6 +192,7 @@ export const ConnectionView: React.FC<ConnectionViewProps> = (props) => {
   }, [requestRerender, renderTrigger]);
 
   const connectionPaths = props.connections.map((conn) => {
+    const connectionId = getConnectionId(conn);
     const parentSelected =
       selectedInstances.includes(conn.from.insId) ||
       selectedInstances.includes(conn.to.insId);
@@ -198,7 +202,9 @@ export const ConnectionView: React.FC<ConnectionViewProps> = (props) => {
         connection={conn}
         type="regular"
         parentSelected={parentSelected}
-        key={conn.from.insId + conn.from.pinId + conn.to.insId + conn.to.pinId}
+        onSelectConnection={onSelectConnection}
+        isConnectionSelected={selectedConnections.includes(connectionId)}
+        key={connectionId}
       />
     );
   });
@@ -211,6 +217,7 @@ export const ConnectionView: React.FC<ConnectionViewProps> = (props) => {
         type={futureConnection.type}
         toggleHidden={toggleHidden}
         parentSelected={false}
+        onSelectConnection={onSelectConnection}
         key={"future"}
       />
     );

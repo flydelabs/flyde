@@ -50,6 +50,31 @@ path.connection {
   }
 }
 
+:not(.dark) {
+  .connection.selected {
+    stroke: $gray-800;
+  }
+
+  .connection.pending-selection {
+    stroke: $gray-800;
+  }
+}
+
+.dark {
+  .connection.selected {
+    stroke: $neutral-200;
+  }
+  
+  .connection.pending-selection {
+    stroke-dasharray: 6;
+    stroke: $neutral-200;
+  }
+}
+
+.connection.pending-selection {
+  stroke-dasharray: 6;
+}
+
 .connection.future-removal {
   stroke-dasharray: 6;
 
@@ -77,7 +102,6 @@ path.connection {
   position: absolute;
   width: 100%;
   height: 100%;
-  pointer-events: none;
 
   .connection.delayed polyline {
     stroke-dasharray: 6;

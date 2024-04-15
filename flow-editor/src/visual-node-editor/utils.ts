@@ -44,6 +44,7 @@ import { vSub, vAdd, vMul, vDiv } from "../physics";
 import { getLeafInstancesOfSelection } from "./node-graph-utils";
 import { getVisibleInputs, getVisibleOutputs } from "./instance-view";
 import { safelyGetNodeDef } from "../flow-editor/getNodeDef";
+import { ConnectionData } from "@flyde/core";
 
 export const emptyObj = {}; // for immutability
 export const emptyList = []; // for immutability
@@ -763,4 +764,11 @@ export const handleChangeNodeInputType = (
     }
     input.mode = mode;
   });
+};
+export const getConnectionId = (connectionData: ConnectionData) => {
+  const { from, to } = connectionData;
+  const { insId: fromInsId, pinId: fromPinId } = from;
+  const { insId: toInsId, pinId: toPinId } = to;
+
+  return `${fromInsId}${fromPinId}${toInsId}${toPinId}`;
 };

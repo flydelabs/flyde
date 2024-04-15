@@ -18,8 +18,15 @@ export type SelectionTypeInstances = {
   ids: string[];
 };
 
+export type SelectionTypeConnections = {
+  type: "connections";
+  ids: string[];
+};
+
+export type SelectionType = SelectionTypeInput | SelectionTypeOutput | SelectionTypeInstances | SelectionTypeConnections;
+
 export interface SelectionIndicatorProps {
-  selection: SelectionTypeInput | SelectionTypeOutput | SelectionTypeInstances;
+  selection: SelectionType;
   onCenter: () => void;
   onGroup: () => void;
   onDelete: (ids: string[]) => void;
@@ -53,31 +60,44 @@ export const SelectionIndicator: React.FC<SelectionIndicatorProps> = (
             {selection.ids.length > 1 ? "s" : ""} selected
           </span>
         );
+      case "connections":
+        return (
+          <span>
+            {selection.ids.length} connection
+            {selection.ids.length > 1 ? "s" : ""} selected
+          </span>
+        );
     }
   }, [selection]);
+
+  const onDeleteClick = () => {
+    switch (selection.type) {
+      case "instances":
+        onDelete(selection.ids);
+        break;
+      case "connections":
+        onDelete(selection.ids);
+        break;
+    }
+  }
+
+  const actions = {
+    center: (<Button onClick={onCenter} small minimal outlined>Center</Button>),
+    group: (<Button onClick={onGroup} small minimal outlined>Group</Button>),
+    delete: (<Button onClick={onDeleteClick} small minimal outlined intent="danger">Delete</Button>),
+  }
+
+  const actionsMap = {
+    instances: [actions.center, actions.group, actions.delete],
+    connections: [actions.delete],
+    input: [actions.center],
+    output: [actions.center],
+  }
 
   return (
     <div className={classNames("selection-indicator", { dark })}>
       {inner}{" "}
-      <Button onClick={onCenter} small minimal outlined>
-        Center
-      </Button>
-      {selection.type === "instances" ? (
-        <>
-          <Button onClick={onGroup} small minimal outlined>
-            Group
-          </Button>
-          <Button
-            onClick={() => onDelete(selection.ids)}
-            small
-            minimal
-            outlined
-            intent="danger"
-          >
-            Delete
-          </Button>
-        </>
-      ) : null}
+      {actionsMap[selection.type]}
     </div>
   );
 };
