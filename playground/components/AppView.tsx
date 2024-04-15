@@ -90,8 +90,6 @@ function getFileToShow(app: PlaygroundApp): AppFile {
   return firstVisualFile ?? app.files[0];
 }
 
-const supabase = createClientComponentClient<Database>();
-
 export default function AppView(props: AppViewProps) {
   const { app, user } = props;
 
@@ -115,6 +113,8 @@ export default function AppView(props: AppViewProps) {
     // player.start();
     return player;
   }, []);
+
+  const supabase = useMemo(() => createClientComponentClient<Database>(), []);
 
   const [events, setEvents] = React.useState<DebuggerEvent[]>([]);
 

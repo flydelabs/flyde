@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useMemo,
+} from "react";
 import { User } from "@supabase/supabase-js";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Database } from "@/types/supabase";
@@ -14,13 +20,12 @@ const UserContext = createContext<UserContextType>({
   loading: true,
 });
 
-const supabase = createClientComponentClient<Database>();
-
 export function UserProvider({ children }: any) {
   const [user, setUser] = useState<SimpleUser | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const supabase = createClientComponentClient<Database>();
     const fetchUser = async () => {
       const currentUser = (await supabase.auth.getUser()).data.user;
       if (currentUser) {
