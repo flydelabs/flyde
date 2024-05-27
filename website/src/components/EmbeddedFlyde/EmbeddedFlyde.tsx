@@ -47,9 +47,7 @@ import { onRequestImportables } from "./requestImportables";
 
 const initialPadding = [0, 20] as [number, number];
 
-const FIRST_RUN_DELAY = 1500;
 const RE_RUN_DELAY = 3000;
-const RUNTIME_STATE_DEBOUNCE = 500;
 
 export interface EmbeddedFlydeProps {
   flowProps: {
