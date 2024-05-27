@@ -69,7 +69,7 @@ import {
   changePinConfig,
   createNewMacroNodeInstance,
   fitViewPortToRect,
-  getConnectionId
+  getConnectionId,
 } from "./utils";
 
 import { produce } from "immer";
@@ -192,6 +192,7 @@ export type VisualNodeEditorProps = {
 
   onGoToNodeDef: (node: ImportedNodeDef) => void;
   onExtractInlineNode: (instance: InlineNodeInstance) => Promise<void>;
+  onGenerateNodeWithAI: (prompt: string) => Promise<void>;
 
   className?: string;
 
@@ -230,6 +231,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         queuedInputsData: queueInputsData,
         initialPadding,
         disableScrolling,
+        onGenerateNodeWithAI: onGenerateWithAI,
       } = props;
 
       const { onImportNode, libraryData } = useDependenciesContext();
@@ -252,12 +254,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         });
       }, [resolvedDependencies, node]);
 
-      const {
-        selectedConnections,
-        selectedInstances,
-        from,
-        to,
-      } = boardData;
+      const { selectedConnections, selectedInstances, from, to } = boardData;
       const {
         instances,
         connections,
@@ -547,7 +544,10 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           .filter((ins) => selectedInstances.includes(ins.id))
           .map((ins) => ({ ...ins, id: ins.id + "-copy" }));
         const connections = node.connections.filter(({ from, to }) => {
-          return selectedInstances.includes(from.insId) && selectedInstances.includes(to.insId);
+          return (
+            selectedInstances.includes(from.insId) &&
+            selectedInstances.includes(to.insId)
+          );
         });
         onCopy({ instances, connections });
       }, [boardData, onCopy, node]);
@@ -885,12 +885,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       );
 
       const deleteSelection = React.useCallback(async () => {
-        const {
-          selectedConnections,
-          selectedInstances,
-          from,
-          to,
-        } = boardData;
+        const { selectedConnections, selectedInstances, from, to } = boardData;
         const idsToDelete = [...selectedInstances, ...selectedConnections];
         if (idsToDelete.length === 0) {
           if (from && isExternalConnectionNode(from)) {
@@ -1949,6 +1944,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             parentBoardPos: boardPos,
             onExtractInlineNode: props.onExtractInlineNode,
             queuedInputsData: props.queuedInputsData,
+            onGenerateNodeWithAI: onGenerateWithAI,
           };
         } else {
           return undefined;
@@ -2406,13 +2402,14 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                       ? "output"
                       : undefined
                   }
-                  isConnectedInstanceSelected={selectedInstances.some((selInsId) =>
-                    connections.some(({ from, to }) => {
-                      return (
-                        (from.insId === ins.id && to.insId === selInsId) ||
-                        (from.insId === selInsId && to.insId === ins.id)
-                      );
-                    })
+                  isConnectedInstanceSelected={selectedInstances.some(
+                    (selInsId) =>
+                      connections.some(({ from, to }) => {
+                        return (
+                          (from.insId === ins.id && to.insId === selInsId) ||
+                          (from.insId === selInsId && to.insId === ins.id)
+                        );
+                      })
                   )}
                   inlineGroupProps={maybeGetInlineProps(ins)}
                   onCloseInlineEditor={closeInlineEditor}
@@ -2481,7 +2478,11 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
               />
             ) : null}
             {!openInlineInstance && libraryData.groups.length ? (
-              <NodesLibrary {...libraryData} onAddNode={onAddNode} />
+              <NodesLibrary
+                {...libraryData}
+                onAddNode={onAddNode}
+                onGenerateWithAI={onGenerateWithAI}
+              />
             ) : null}
             <div className="run-btn-container">
               <Button

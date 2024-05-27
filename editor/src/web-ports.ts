@@ -63,6 +63,9 @@ export const createWebPorts = ({
     hasOpenAiToken: async () => {
       return true;
     },
+    promptForOpenAiToken: async () => {
+      alert("Not implemented");
+    },
     getLibraryData: async () => {
       return devServerClient.getLibraryData();
     },

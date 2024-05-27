@@ -1,0 +1,70 @@
+imports:
+  "@flyde/stdlib":
+    - InlineValue
+  add.flyde.ts: []
+  greetjonathan.flyde.ts: []
+  ./sumlist.flyde.ts: []
+  ./greetandthank.flyde.ts:
+    - GreetAndThank
+  ./uppercaseandspace.flyde.ts:
+    - UppercaseAndSpace
+  ./countcharacters.flyde.ts:
+    - CountCharacters
+node:
+  instances:
+    - pos:
+        x: 102.89243530273438
+        y: 119.71569519042973
+      id: GreetAndThank-2314adr
+      inputConfig: {}
+      nodeId: GreetAndThank
+    - pos:
+        x: 127.56368225097657
+        y: 3.204972534179717
+      id: e6uuh2v345b2h8sp72wgab06
+      inputConfig: {}
+      nodeId: InlineValue__e6uuh2v345b2h8sp72wgab06
+      macroId: InlineValue
+      macroData:
+        type: string
+        value: Gavriel
+        label: '"Gavriel"'
+    - pos:
+        x: 89.16011352539061
+        y: 238.66034866333007
+      id: UppercaseAndSpace-vk04abx
+      inputConfig: {}
+      nodeId: UppercaseAndSpace
+    - pos:
+        x: 101.75330810546876
+        y: 344.70041183471676
+      id: CountCharacters-jn04ayl
+      inputConfig: {}
+      nodeId: CountCharacters
+  connections:
+    - from:
+        insId: e6uuh2v345b2h8sp72wgab06
+        pinId: value
+      to:
+        insId: GreetAndThank-2314adr
+        pinId: name
+    - from:
+        insId: GreetAndThank-2314adr
+        pinId: message
+      to:
+        insId: UppercaseAndSpace-vk04abx
+        pinId: str
+    - from:
+        insId: UppercaseAndSpace-vk04abx
+        pinId: result
+      to:
+        insId: CountCharacters-jn04ayl
+        pinId: str
+  id: Example
+  inputs: {}
+  outputs: {}
+  inputsPosition: {}
+  outputsPosition:
+    result:
+      x: -23.264428942324532
+      y: 237.25953921502617

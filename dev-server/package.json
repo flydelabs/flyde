@@ -46,7 +46,7 @@
     "find-git-root": "^1.0.4",
     "glob": "^8.1.0",
     "ignore": "^5.2.4",
-    "openai": "^3.3.0",
+    "openai": "^4.47.1",
     "pkg-up": "^3.1.0",
     "resolve-from": "^5.0.0",
     "source-map-support": "^0.5.21",

@@ -189,8 +189,11 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.commands.registerCommand("flyde.setOpenAiToken", async () => {
       const token = await vscode.window.showInputBox({
-        title: "OpenAI API Token",
+        title:
+          "Please enter your OpenAI API key (will be stored in your settings for future use, you can also set it manually or clear it in the settings)",
         value: "",
+        ignoreFocusOut: true,
+        password: true,
       });
 
       if (!token) {

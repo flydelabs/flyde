@@ -175,8 +175,15 @@
       }
     ],
     "configuration": {
-      "title": "Flyde",
-      "properties": {}
+      "type": "object",
+      "title": "Flyde Configuration",
+      "properties": {
+        "flyde.openAiToken": {
+          "type": "string",
+          "default": "",
+          "description": "The OpenAI API Token used in AI node creation"
+        }
+      }
     }
   },
   "devDependencies": {

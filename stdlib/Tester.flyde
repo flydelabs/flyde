@@ -1,0 +1,30 @@
+imports:
+  "@flyde/stdlib":
+    - InlineValue
+  src/Objects/Objects.flyde.ts: []
+  src/Http/Http.flyde.ts: []
+  src/Values/CodeExpression.flyde.ts: []
+  src/Values/InlineValue.flyde.ts:
+    - InlineValue
+node:
+  instances:
+    - pos:
+        x: -146.3008874511719
+        y: -6.194792220495685
+      id: etlzysubuneru9sgqk4r2p81
+      inputConfig: {}
+      nodeId: InlineValue__etlzysubuneru9sgqk4r2p81
+      macroId: InlineValue
+      macroData:
+        type: string
+        value: Hello
+        label: '"Hello"'
+  connections: []
+  id: Example
+  inputs: {}
+  outputs: {}
+  inputsPosition: {}
+  outputsPosition:
+    result:
+      x: -23.264428942324532
+      y: 237.25953921502617

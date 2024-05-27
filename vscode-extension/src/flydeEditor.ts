@@ -4,7 +4,7 @@ import { getWebviewContent } from "./editor/open-flyde-panel";
 var fp = require("find-free-port");
 
 import { scanImportableNodes } from "@flyde/dev-server/dist/service/scan-importable-nodes";
-import { generateAndSaveNode } from "@flyde/dev-server/dist/service/generate-node-from-prompt";
+import { generateAndSaveNode } from "@flyde/dev-server/dist/service/ai/generate-node-from-prompt";
 import { getLibraryData } from "@flyde/dev-server/dist/service/get-library-data";
 
 import {
@@ -327,6 +327,9 @@ export class FlydeEditorEditorProvider
 
                 messageResponse(event, { importableNode });
                 break;
+              }
+              case "promptForOpenAiToken": {
+                await vscode.commands.executeCommand("flyde.setOpenAiToken");
               }
               case "setFlow": {
                 const { flow } = event.params;

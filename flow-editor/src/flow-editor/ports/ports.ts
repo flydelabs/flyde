@@ -59,6 +59,7 @@ export interface EditorPorts {
   }) => Promise<{ importableNode: ImportableSource }>;
 
   hasOpenAiToken: () => Promise<boolean>;
+  promptForOpenAiToken: () => Promise<void>;
   getLibraryData: () => Promise<NodeLibraryData>;
 }
 
@@ -85,6 +86,7 @@ export const defaultPorts: EditorPorts = {
   reportEvent: noop,
   generateNodeFromPrompt: toastNotImplemented("generateNodeFromPrompt"),
   hasOpenAiToken: () => Promise.resolve(false),
+  promptForOpenAiToken: toastNotImplemented("promptForOpenAiToken"),
   getLibraryData: () => Promise.resolve({ groups: [] }),
 };
 
