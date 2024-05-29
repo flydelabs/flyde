@@ -57,7 +57,6 @@ Small pull requests are much easier to review and more likely to get merged.
 1. Ensure you have [pnpm](https://pnpm.io/installation) installed. After cloning the repository, run `pnpm install`.
 2. Ensure you have [VSCode](https://code.visualstudio.com/) installed.
 3. Ensure you have enabled the `code` command in your PATH. You can do this by opening the Command Palette (Ctrl+Shift+P) and searching for "Shell Command: Install 'code' command in PATH".
-4. Clone https://github.com/flydelabs/flyde-vscode and make sure it is next to the `flyde` repository. For example, if you cloned `flyde` in `~/projects/flyde`, clone `flyde-vscode` in `~/projects/flyde-vscode`. This is a temporary hack until https://github.com/flydelabs/flyde-vscode/issues/10 is done.
 
 ### Running Locally
 
