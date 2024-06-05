@@ -1,6 +1,6 @@
 {
   "name": "@flyde/editor",
-  "version": "0.2.63",
+  "version": "0.2.64",
   "main": "build/index.html",
   "files": [
     "build/**/*",
