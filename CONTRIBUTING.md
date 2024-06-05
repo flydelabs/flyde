@@ -65,7 +65,11 @@ Small pull requests are much easier to review and more likely to get merged.
 3.  Run `pnpm install` again - this will make ensure the binary dependencies are properly linked
 4.  Run `pnpm start` - this will open VSCode with the main workspace, and also open the extension's development instance.
 
+**Windows users** - please check [this issue](https://github.com/flydelabs/flyde/issues/123) for a potential workaround if something goes wrong.
+
 Note: this is still early days for Flyde, therefore issues running Flyde locally are expected. Please ping us on Discord at [flyde.dev/discord](https://www.flyde.dev/discord) if you need help. Any question or issue you have is valuable to us and will help us document the process better.
+
+
 
 ### Creating a branch
 
