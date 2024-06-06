@@ -23,7 +23,8 @@ export function macroNodeToDefinition<T>(
   };
   const editorComponentPath = join(
     importPath,
-    macro.editorConfig.editorComponentBundlePath
+    "..",
+    macro.editorConfig.editorComponentBundlePath,
   );
 
   try {

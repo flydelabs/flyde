@@ -47,6 +47,6 @@ export const CodeExpression: MacroNode<CodeExpressionConfig> = {
   },
   editorConfig: {
     type: "custom",
-    editorComponentBundlePath: "../../../dist/ui/CodeExpression.js",
+    editorComponentBundlePath: "../../dist/ui/CodeExpression.js",
   },
 };

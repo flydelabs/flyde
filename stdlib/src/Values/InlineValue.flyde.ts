@@ -42,6 +42,6 @@ export const InlineValue: MacroNode<InlineValueConfig> = {
   },
   editorConfig: {
     type: "custom",
-    editorComponentBundlePath: "../../../dist/ui/InlineValue.js",
+    editorComponentBundlePath: "../../dist/ui/InlineValue.js",
   },
 };
