@@ -3,7 +3,7 @@ import {
   MacroNode,
   MacroNodeDefinition,
 } from "@flyde/core";
-import { readFileSync } from "fs";
+import { readFileSync, existsSync } from "fs";
 import { join } from "path";
 
 export function macroNodeToDefinition<T>(
@@ -21,11 +21,20 @@ export function macroNodeToDefinition<T>(
       editorComponentBundleContent: "",
     } as MacroEditorConfigCustomDefinition,
   };
-  const editorComponentPath = join(
-    importPath,
+  const BundlePathPlusOne = join(
     "..",
     macro.editorConfig.editorComponentBundlePath,
   );
+  let editorComponentPath = join(
+    importPath,
+    BundlePathPlusOne,
+  );
+  if (!existsSync(editorComponentPath)) {
+    editorComponentPath = join(
+      importPath,
+      macro.editorConfig.editorComponentBundlePath,
+    )
+  }
 
   try {
     const content = readFileSync(editorComponentPath, "utf8");
