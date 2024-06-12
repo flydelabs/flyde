@@ -21,14 +21,12 @@ export function macroNodeToDefinition<T>(
       editorComponentBundleContent: "",
     } as MacroEditorConfigCustomDefinition,
   };
-  const BundlePathPlusOne = join(
+  let editorComponentPath = join(
+    importPath,
     "..",
     macro.editorConfig.editorComponentBundlePath,
   );
-  let editorComponentPath = join(
-    importPath,
-    BundlePathPlusOne,
-  );
+  // fallback for backwards compatibility (see issue #120)
   if (!existsSync(editorComponentPath)) {
     editorComponentPath = join(
       importPath,
