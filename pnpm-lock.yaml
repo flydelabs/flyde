@@ -454,22 +454,22 @@ importers:
         specifier: ^6.1.9
         version: 6.1.9
       '@flyde/core':
-        specifier: ^0.2.1
+        specifier: workspace:*
         version: link:../core
       '@flyde/flow-editor':
-        specifier: ^0.2.4
+        specifier: workspace:*
         version: link:../flow-editor
       '@flyde/remote-debugger':
-        specifier: ^0.3.44
+        specifier: workspace:*
         version: link:../remote-debugger
       '@flyde/resolver':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../resolver
       '@flyde/runtime':
-        specifier: ^0.5.44
+        specifier: workspace:*
         version: link:../runtime
       '@flyde/stdlib':
-        specifier: ^0.2.8
+        specifier: workspace:*
         version: link:../stdlib
       '@monaco-editor/react':
         specifier: ^4.5.2
@@ -881,22 +881,22 @@ importers:
   vscode-extension:
     dependencies:
       '@flyde/core':
-        specifier: ^0.2.4
+        specifier: workspace:*
         version: link:../core
       '@flyde/dev-server':
-        specifier: ^0.5.4
+        specifier: workspace:*
         version: link:../dev-server
       '@flyde/editor':
-        specifier: ^0.2.4
+        specifier: workspace:*
         version: link:../editor
       '@flyde/remote-debugger':
-        specifier: ^0.3.55
+        specifier: workspace:*
         version: link:../remote-debugger
       '@flyde/resolver':
-        specifier: ^0.4.4
+        specifier: workspace:*
         version: link:../resolver
       '@flyde/runtime':
-        specifier: ^0.5.4
+        specifier: workspace:*
         version: link:../runtime
       '@tsconfig/node16':
         specifier: ^1.0.3
@@ -2594,6 +2594,16 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.22.10
+      '@babel/helper-plugin-utils': 7.22.5
+    dev: true
+
+  /@babel/plugin-syntax-flow@7.22.5(@babel/core@7.22.11):
+    resolution: {integrity: sha512-9RdCl0i+q0QExayk2nOS7853w08yLucnnPML6EN9S8fgMPVtdLDCdx/cOQ/i44Lb9UeQX9A35yaqBBOMMZxPxQ==}
+    engines: {node: '>=6.9.0'}
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+    dependencies:
+      '@babel/core': 7.22.11
       '@babel/helper-plugin-utils': 7.22.5
     dev: true
 
@@ -4417,6 +4427,7 @@ packages:
     engines: {node: '>=6.9.0'}
     dependencies:
       regenerator-runtime: 0.14.0
+    dev: false
 
   /@babel/runtime@7.22.11:
     resolution: {integrity: sha512-ee7jVNlWN09+KftVOu9n7S8gQzD/Z6hN/I8VBRXW4P1+Xe7kJGXMwu8vds4aGIMHZnNbdpSWCfZZtinytpcAvA==}
@@ -9665,7 +9676,7 @@ packages:
     resolution: {integrity: sha512-Cg7TFGpIr01vOQNODXOOaGz2NpCU5gl8x1qJFbb6hbZxR7XrcE2vtbAsTAbJ7/xwJtUuJEw8K8Zr/AE0LHlesg==}
     engines: {node: '>=10', npm: '>=6'}
     dependencies:
-      '@babel/runtime': 7.22.10
+      '@babel/runtime': 7.22.11
       cosmiconfig: 7.1.0
       resolve: 1.22.4
     dev: true
@@ -9845,7 +9856,7 @@ packages:
       '@babel/preset-env': 7.22.10(@babel/core@7.22.10)
       '@babel/preset-react': 7.22.5(@babel/core@7.22.10)
       '@babel/preset-typescript': 7.22.5(@babel/core@7.22.10)
-      '@babel/runtime': 7.22.10
+      '@babel/runtime': 7.22.11
       babel-plugin-macros: 3.1.0
       babel-plugin-transform-react-remove-prop-types: 0.4.24
     transitivePeerDependencies:
@@ -11629,7 +11640,7 @@ packages:
   /dom-helpers@5.2.1:
     resolution: {integrity: sha512-nRCa7CK3VTrM2NmGkIy4cbK7IZlgBE/PYMn55rrXefr5xXDP0LdtfPnblFDoVdcAfslJ7or6iqAUnx0CCGIWQA==}
     dependencies:
-      '@babel/runtime': 7.22.10
+      '@babel/runtime': 7.22.11
       csstype: 3.1.2
     dev: false
 
@@ -12466,8 +12477,8 @@ packages:
       '@babel/plugin-transform-react-jsx': ^7.14.9
       eslint: ^8.1.0
     dependencies:
-      '@babel/plugin-syntax-flow': 7.22.5(@babel/core@7.22.10)
-      '@babel/plugin-transform-react-jsx': 7.22.5(@babel/core@7.22.10)
+      '@babel/plugin-syntax-flow': 7.22.5(@babel/core@7.22.11)
+      '@babel/plugin-transform-react-jsx': 7.22.5(@babel/core@7.22.11)
       eslint: 8.50.0
       lodash: 4.17.21
       string-natural-compare: 3.0.1
@@ -15022,8 +15033,8 @@ packages:
       '@babel/core': 7.22.11
       '@babel/generator': 7.22.10
       '@babel/plugin-syntax-typescript': 7.22.5(@babel/core@7.22.11)
-      '@babel/traverse': 7.22.10
-      '@babel/types': 7.22.10
+      '@babel/traverse': 7.22.11(supports-color@5.5.0)
+      '@babel/types': 7.22.11
       '@jest/transform': 27.5.1
       '@jest/types': 27.5.1
       '@types/babel__traverse': 7.20.1
