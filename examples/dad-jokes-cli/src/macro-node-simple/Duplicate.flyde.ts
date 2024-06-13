@@ -37,7 +37,7 @@ const node: MacroNode<number> = {
   displayNameBuilder: (times) => `Duplicate x ${times}`,
   editorConfig: {
     type: "custom",
-    editorComponentBundlePath: "../../../dist/Duplicate.js",
+    editorComponentBundlePath: "../../dist/Duplicate.js",
   },
   defaultData: 2,
 };

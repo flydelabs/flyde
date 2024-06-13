@@ -8,13 +8,13 @@ export interface SwitchConfig {
     outputExpression: string;
   }[];
   defaultCase:
-    | {
-        enabled: true;
-        outputExpression: string;
-      }
-    | {
-        enabled: false;
-      };
+  | {
+    enabled: true;
+    outputExpression: string;
+  }
+  | {
+    enabled: false;
+  };
 }
 
 export const Switch: MacroNode<SwitchConfig> = {
@@ -108,6 +108,6 @@ export const Switch: MacroNode<SwitchConfig> = {
   },
   editorConfig: {
     type: "custom",
-    editorComponentBundlePath: "../../../dist/ui/Switch.js",
+    editorComponentBundlePath: "../../dist/ui/Switch.js",
   },
 };
