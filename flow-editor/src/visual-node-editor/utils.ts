@@ -775,6 +775,5 @@ export const getConnectionId = (connectionData: ConnectionData) => {
 
 export function isMac() {
   const platform = window.navigator.platform ?? "n/a";
-  return false;
-  // return /Mac|iPod|iPhone|iPad/.test(platform);
+  return /Mac|iPod|iPhone|iPad/.test(platform);
 }
