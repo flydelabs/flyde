@@ -27,8 +27,7 @@ export const useHotkeysPropagationVsCode = () => {
           e.key.toLowerCase() === serializableEvent.key.toLowerCase()
       )
     ) {
-      // console.log('ignorng', originalEvent);
-
+      // ignore
       return;
     } else {
       window.parent.postMessage(
