@@ -69,7 +69,7 @@ import {
   changePinConfig,
   createNewMacroNodeInstance,
   fitViewPortToRect,
-  getConnectionId
+  getConnectionId,
 } from "./utils";
 
 import { produce } from "immer";
@@ -252,12 +252,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         });
       }, [resolvedDependencies, node]);
 
-      const {
-        selectedConnections,
-        selectedInstances,
-        from,
-        to,
-      } = boardData;
+      const { selectedConnections, selectedInstances, from, to } = boardData;
       const {
         instances,
         connections,
@@ -547,7 +542,10 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           .filter((ins) => selectedInstances.includes(ins.id))
           .map((ins) => ({ ...ins, id: ins.id + "-copy" }));
         const connections = node.connections.filter(({ from, to }) => {
-          return selectedInstances.includes(from.insId) && selectedInstances.includes(to.insId);
+          return (
+            selectedInstances.includes(from.insId) &&
+            selectedInstances.includes(to.insId)
+          );
         });
         onCopy({ instances, connections });
       }, [boardData, onCopy, node]);
@@ -613,7 +611,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       );
 
       useHotkeys(
-        "cmd+=",
+        "cmd+=, ctrl+=",
         (e: any) => {
           onZoom(viewPort.zoom + 0.1, "hotkey");
           e.preventDefault();
@@ -624,7 +622,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       );
 
       useHotkeys(
-        "cmd+-",
+        "cmd+-, ctrl+-",
         (e) => {
           onZoom(viewPort.zoom - 0.1, "hotkey");
           e.preventDefault();
@@ -635,7 +633,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       );
 
       useHotkeys(
-        "cmd+o",
+        "cmd+o, ctrl+o",
         (e) => {
           e.preventDefault();
           toastMsg("Ordering");
@@ -662,7 +660,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       );
 
       useHotkeys(
-        "cmd+0",
+        "cmd+0, ctrl+0",
         (e) => {
           onZoom(1);
           e.preventDefault();
@@ -885,12 +883,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       );
 
       const deleteSelection = React.useCallback(async () => {
-        const {
-          selectedConnections,
-          selectedInstances,
-          from,
-          to,
-        } = boardData;
+        const { selectedConnections, selectedInstances, from, to } = boardData;
         const idsToDelete = [...selectedInstances, ...selectedConnections];
         if (idsToDelete.length === 0) {
           if (from && isExternalConnectionNode(from)) {
@@ -1838,14 +1831,14 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       );
 
       useHotkeys(
-        "cmd+c",
+        "cmd+c, ctrl+c",
         onCopyInner,
         { text: "Copy instances", group: "Editing" },
         [],
         isBoardInFocus
       );
       useHotkeys(
-        "cmd+v",
+        "cmd+v, ctrl+v",
         onPaste,
         { text: "Paste instances", group: "Editing" },
         [],
@@ -1873,7 +1866,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         isBoardInFocus
       );
       useHotkeys(
-        "cmd+a",
+        "cmd+a, ctrl+a",
         selectAll,
         { text: "Select all", group: "Selection" },
         [],
@@ -2406,13 +2399,14 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                       ? "output"
                       : undefined
                   }
-                  isConnectedInstanceSelected={selectedInstances.some((selInsId) =>
-                    connections.some(({ from, to }) => {
-                      return (
-                        (from.insId === ins.id && to.insId === selInsId) ||
-                        (from.insId === selInsId && to.insId === ins.id)
-                      );
-                    })
+                  isConnectedInstanceSelected={selectedInstances.some(
+                    (selInsId) =>
+                      connections.some(({ from, to }) => {
+                        return (
+                          (from.insId === ins.id && to.insId === selInsId) ||
+                          (from.insId === selInsId && to.insId === ins.id)
+                        );
+                      })
                   )}
                   inlineGroupProps={maybeGetInlineProps(ins)}
                   onCloseInlineEditor={closeInlineEditor}
