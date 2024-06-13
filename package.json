@@ -4,6 +4,9 @@
   "main": "index.js",
   "description": "",
   "proxy": "http://localhost:8484",
+  "resolutions": {
+    "minimist": ">=0.2.4"
+  },
   "scripts": {
     "start": "pnpm run open-vscode",
     "open-vscode": "code main.code-workspace",

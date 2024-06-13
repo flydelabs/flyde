@@ -49,7 +49,8 @@
     "postinstall-postinstall": "^2.1.0",
     "sass": "^1.66.1",
     "typescript": "^4.9.5",
-    "react-scripts": "5.0.0"
+    "react-scripts": "5.0.0",
+    "@babel/traverse": "^7.23.2"
   },
   "scripts": {
     "build": "PUBLIC_URL=/ REACT_APP_FLYDE_MODE=production react-scripts build --debug --log --verbose",
