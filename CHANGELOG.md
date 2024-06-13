@@ -6,6 +6,16 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [0.100.0] - 2024-06-13
 
-- Aligned all versions towards better versioning and visibility
-- Added the ability to select and remove node connections by [@Tokyros](https://github.com/Tokyros) in [#116](https://github.com/flydelabs/flyde/pull/116 from)
-- Fixed hotkeys not working on Windows by
+Note: this is the first up-to-date changelog for Flyde. Beforehand, versions for the various npm packages and extension were not in sync. Starting with this change, all Flyde-related artifacts will have the same version.
+
+## What's Changed
+
+- adds the ability to select and remove connections, fixes #107 by @Tokyros in https://github.com/flydelabs/flyde/pull/116
+- resolving of ui bundle missed path by 1 level #120 by @akim-muto in https://github.com/flydelabs/flyde/pull/124
+- fixes hotkeys on windows, resolves #127 by @GabiGrin in https://github.com/flydelabs/flyde/pull/128
+
+## New Contributors
+
+- @akim-muto made their first contribution in https://github.com/flydelabs/flyde/pull/124
+
+**Full Changelog**: https://github.com/flydelabs/flyde/commits/v0.100.0
