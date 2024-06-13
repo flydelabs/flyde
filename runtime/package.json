@@ -52,7 +52,7 @@
   },
   "devDependencies": {
     "@types/mocha": "^10.0.1",
-    "chai": "^4.3.7",
+    "chai": "^4.4.1",
     "concurrently": "^5.3.0",
     "mocha": "^10.2.0",
     "nodemon": "^2.0.22",

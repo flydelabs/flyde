@@ -40,7 +40,7 @@
     "@types/node": "^10.17.60",
     "@types/sinon": "^7.5.2",
     "badge-maker": "^3.3.1",
-    "chai": "^4.3.7",
+    "chai": "^4.4.1",
     "jsdom": "^13.2.0",
     "jsdom-global": "^3.0.2",
     "mocha": "^10.2.0",
