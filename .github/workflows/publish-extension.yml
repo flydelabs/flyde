@@ -19,6 +19,7 @@ jobs:
       - name: Install dependencies and update @flyde/* packages
         working-directory: ./vscode-extension
         run: |
+          ./prepublish.sh
           npm ci
           npm update --scope=@flyde\
 
