@@ -1,2 +1,11 @@
-# convert local workspaces version latest, as the github action doesn't run on the full monorepo but just on the vscode-extension folder
-sed -i '' 's/"workspace:\*"/"latest"/g' package.json
+# Navigate to the vscode-extension folder
+cd path/to/your/monorepo/vscode-extension
+
+# Detect the operating system and set the appropriate sed command
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  # macOS
+  sed -i '' 's/"workspace:\*"/"latest"/g' package.json
+else
+  # Linux
+  sed -i 's/"workspace:\*"/"latest"/g' package.json
+fi
