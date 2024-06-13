@@ -19,7 +19,7 @@
     "@types/pg": "^8.10.2",
     "@types/react": "^18.2.0",
     "axios": "^0.27.2",
-    "mongodb": "^4.17.0",
+    "mongodb": "^4.17.2",
     "pg": "^8.11.3",
     "pubsub-js": "^1.9.4",
     "react": "^18.2.0"
@@ -27,7 +27,7 @@
   "devDependencies": {
     "@types/jscodeshift": "^0.11.6",
     "@types/mocha": "^10.0.1",
-    "chai": "^4.3.7",
+    "chai": "^4.4.1",
     "concurrently": "^7.6.0",
     "css-loader": "^6.8.1",
     "jscodeshift": "^0.15.0",
