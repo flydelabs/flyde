@@ -170,7 +170,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
     }, [editedNode.id]);
 
     useHotkeys(
-      "cmd+z",
+      "cmd+z, ctrl+z",
       (e) => {
         setRedoStack([...redoStack, state]);
         const [last, ...rest] = undoStack;

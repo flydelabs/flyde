@@ -12,13 +12,14 @@ import { Hotkey } from "@blueprintjs/core/lib/cjs/components/hotkeys/hotkey";
 
 import { PopoverProps, Popover } from "@blueprintjs/core";
 
-import React from "react";
+import React, { useMemo } from "react";
 import {
   currentHotkeys,
   HotkeysMenuData,
 } from "../../lib/react-utils/use-hotkeys";
 
 import { usePorts } from "../../flow-editor/ports";
+import { isMac } from "../..";
 
 export interface HelpBubbleProps {}
 
@@ -70,8 +71,17 @@ const mainDocItems = [
 export const HelpBubble: React.FC<HelpBubbleProps> = () => {
   const [hotkeysModalOpen, setHotkeysModalOpen] = React.useState(false);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const _isMac = useMemo(isMac, []);
+
   const bpHotkeys = Array.from(currentHotkeys.entries()).map(
-    ([keys, menuData]) => hotkeyToBpHotkey({ key: keys, menuData })
+    ([_keys, menuData]) => {
+      const keys = _keys.split(/,\s*/).find((key) => {
+        // when using multiple keys, we assume it's for cmd/ctrl differentiation - so we only show the cmd key
+        return _isMac && key.includes("cmd") ? true : !key.includes("cmd");
+      });
+      return hotkeyToBpHotkey({ key: keys!, menuData });
+    }
   );
 
   const groupedHotkeys = bpHotkeys.reduce((acc, hotkey) => {

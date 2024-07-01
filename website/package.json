@@ -1,6 +1,6 @@
 {
   "name": "website",
-  "version": "1.0.2",
+  "version": "0.100.0",
   "private": true,
   "license": "MIT",
   "scripts": {

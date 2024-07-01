@@ -54,16 +54,22 @@ Small pull requests are much easier to review and more likely to get merged.
 
 ### Pre-requisites
 
-1. Ensure you have [pnpm](https://pnpm.io/installation) installed. After cloning the repository, run `pnpm install`.
+1. Ensure you have [pnpm](https://pnpm.io/installation) installed.
 2. Ensure you have [VSCode](https://code.visualstudio.com/) installed.
 3. Ensure you have enabled the `code` command in your PATH. You can do this by opening the Command Palette (Ctrl+Shift+P) and searching for "Shell Command: Install 'code' command in PATH".
-4. Clone https://github.com/flydelabs/flyde-vscode and make sure it is next to the `flyde` repository. For example, if you cloned `flyde` in `~/projects/flyde`, clone `flyde-vscode` in `~/projects/flyde-vscode`. This is a temporary hack until https://github.com/flydelabs/flyde-vscode/issues/10 is done.
 
 ### Running Locally
 
-Run `pnpm start` - this will open VSCode with the main workspace, and also open the extension's development instance.
+1.  After cloning the repository, run `pnpm install`
+2.  Run `pnpm build` - this will build the project, including some binary dependencies you will be warned about in step 2.
+3.  Run `pnpm install` again - this will make ensure the binary dependencies are properly linked
+4.  Run `pnpm start` - this will open VSCode with the main workspace, and also open the extension's development instance.
+
+**Windows users** - please check [this issue](https://github.com/flydelabs/flyde/issues/123) for a potential workaround if something goes wrong.
 
 Note: this is still early days for Flyde, therefore issues running Flyde locally are expected. Please ping us on Discord at [flyde.dev/discord](https://www.flyde.dev/discord) if you need help. Any question or issue you have is valuable to us and will help us document the process better.
+
+
 
 ### Creating a branch
 

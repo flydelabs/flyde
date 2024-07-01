@@ -51,7 +51,7 @@ jobs:
       - name: Lint
         run: pnpm run lint
       - name: Bump patch version, Publish to NPM (excluding private packages), and Commit changes
-        if: github.ref == 'refs/heads/main'
+        if: false && github.ref == 'refs/heads/main'
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "github-actions@users.noreply.github.com"
@@ -99,7 +99,7 @@ jobs:
           done
 
       - name: Deploy Website to GitHub Pages
-        if: github.ref == 'refs/heads/main'
+        if: false && github.ref == 'refs/heads/main'
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}

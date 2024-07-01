@@ -37,7 +37,7 @@ const node: MacroNode<number> = {
   },
   editorConfig: {
     type: "custom",
-    editorComponentBundlePath: "../../../dist/Duplicate.js",
+    editorComponentBundlePath: "../../dist/Duplicate.js",
   },
   defaultData: 2,
 };

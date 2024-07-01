@@ -611,7 +611,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       );
 
       useHotkeys(
-        "cmd+=",
+        "cmd+=, ctrl+=",
         (e: any) => {
           onZoom(viewPort.zoom + 0.1, "hotkey");
           e.preventDefault();
@@ -622,7 +622,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       );
 
       useHotkeys(
-        "cmd+-",
+        "cmd+-, ctrl+-",
         (e) => {
           onZoom(viewPort.zoom - 0.1, "hotkey");
           e.preventDefault();
@@ -633,7 +633,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       );
 
       useHotkeys(
-        "cmd+o",
+        "cmd+o, ctrl+o",
         (e) => {
           e.preventDefault();
           toastMsg("Ordering");
@@ -660,7 +660,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       );
 
       useHotkeys(
-        "cmd+0",
+        "cmd+0, ctrl+0",
         (e) => {
           onZoom(1);
           e.preventDefault();
@@ -1831,14 +1831,14 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       );
 
       useHotkeys(
-        "cmd+c",
+        "cmd+c, ctrl+c",
         onCopyInner,
         { text: "Copy instances", group: "Editing" },
         [],
         isBoardInFocus
       );
       useHotkeys(
-        "cmd+v",
+        "cmd+v, ctrl+v",
         onPaste,
         { text: "Paste instances", group: "Editing" },
         [],
@@ -1866,7 +1866,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         isBoardInFocus
       );
       useHotkeys(
-        "cmd+a",
+        "cmd+a, ctrl+a",
         selectAll,
         { text: "Select all", group: "Selection" },
         [],

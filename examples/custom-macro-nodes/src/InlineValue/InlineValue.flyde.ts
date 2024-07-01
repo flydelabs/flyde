@@ -21,7 +21,7 @@ const node: MacroNode<any> = {
   },
   editorConfig: {
     type: "custom",
-    editorComponentBundlePath: "../../../dist/InlineValue.js",
+    editorComponentBundlePath: "../../dist/InlineValue.js",
   },
   defaultData: "",
 };
