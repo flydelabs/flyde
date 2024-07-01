@@ -32,6 +32,8 @@ async function generateNode(
   const code = response.choices[0].message.content;
   const usage = response.usage?.total_tokens ?? -1;
 
+  console.info(`Flyde node generation used a total of ${usage} tokens`);
+
   const nodeId = code.match(/export const (\w+)/)?.[1];
 
   const fileName = nodeId?.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
