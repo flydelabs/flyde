@@ -4,7 +4,7 @@ import { getWebviewContent } from "./editor/open-flyde-panel";
 var fp = require("find-free-port");
 
 import { scanImportableNodes } from "@flyde/dev-server/dist/service/scan-importable-nodes";
-import { generateAndSaveNode } from "@flyde/dev-server/dist/service/generate-node-from-prompt";
+import { generateAndSaveNode } from "@flyde/dev-server/dist/service/ai/generate-node-from-prompt";
 import { getLibraryData } from "@flyde/dev-server/dist/service/get-library-data";
 
 import {
@@ -312,7 +312,16 @@ export class FlydeEditorEditorProvider
               }
               case "generateNodeFromPrompt": {
                 const config = vscode.workspace.getConfiguration("flyde");
-                const openAiToken = config.get<string>("openAiToken");
+                let openAiToken = config.get<string>("openAiToken");
+
+                if (!openAiToken) {
+                  await vscode.commands.executeCommand("flyde.setOpenAiToken");
+                  openAiToken = config.get<string>("openAiToken");
+                }
+
+                if (!openAiToken) {
+                  throw new Error("OpenAI token is required");
+                }
 
                 const { prompt } = event.params;
                 if (prompt.trim().length === 0) {

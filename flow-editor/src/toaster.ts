@@ -36,3 +36,7 @@ export const updateToast = (
 ) => {
   return AppToaster.show({ message: newMessage, intent }, key);
 };
+
+export const clearToast = (key: string) => {
+  return AppToaster.dismiss(key);
+};

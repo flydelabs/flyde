@@ -1,5 +1,5 @@
 import express from "express";
-import cors from 'cors';
+import cors from "cors";
 import { createService } from "./service/service";
 
 import { setupRemoteDebuggerServer } from "@flyde/remote-debugger/dist/setup-server";
@@ -8,7 +8,7 @@ import { scanImportableNodes } from "./service/scan-importable-nodes";
 import { resolveFlowByPath } from "@flyde/resolver";
 import { join } from "path";
 
-import { generateAndSaveNode } from "./service/generate-node-from-prompt";
+import { generateAndSaveNode } from "./service/ai/generate-node-from-prompt";
 
 import { getLibraryData } from "./service/get-library-data";
 
@@ -24,7 +24,7 @@ export const runDevServer = (
   const server = createServer(app);
 
   app.use(express.json());
-  app.use(cors())
+  app.use(cors());
 
   app.use((_, res, next) => {
     res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
@@ -80,22 +80,6 @@ export const runDevServer = (
       res.send(resolvedFlow);
     } catch (e) {
       console.error(e);
-      res.status(400).send(e);
-    }
-  });
-
-  app.post("/generateNode", async (req, res) => {
-    const { prompt } = req.body as { prompt: string };
-
-    if (prompt.trim().length === 0) {
-      res.status(400).send("prompt is empty");
-      return;
-    }
-
-    try {
-      const data = await generateAndSaveNode(rootDir, prompt);
-      res.send(data);
-    } catch (e) {
       res.status(400).send(e);
     }
   });

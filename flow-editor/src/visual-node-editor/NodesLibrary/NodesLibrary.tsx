@@ -1,21 +1,23 @@
 import { Button, Tooltip } from "@blueprintjs/core";
 import { ImportableSource, ImportedNode, NodeLibraryData } from "@flyde/core";
 import classNames from "classnames";
-import React, { memo, useEffect, useState } from "react";
+import React, { memo, useCallback, useEffect, useState } from "react";
 import { useDependenciesContext } from "../../flow-editor/DependenciesContext";
 import { AddNodeMenu } from "./AddNodeMenu";
 import { useDarkMode } from "../../flow-editor/DarkModeContext";
 import { useIsFirstRender } from "usehooks-ts";
-import { Maximize, Minimize, Plus } from "@blueprintjs/icons";
+import { Maximize, Minimize } from "@blueprintjs/icons";
 import { useScrollWithShadow } from "../../lib/react-utils/use-shadow-scroll";
 import { InstanceIcon } from "../instance-view";
+import { usePorts } from "../../flow-editor/ports";
+import { clearToast, toastMsg } from "../../toaster";
 
 export interface NodesLibraryProps extends NodeLibraryData {
   onAddNode: (node: ImportableSource) => void;
 }
 
 export const NodesLibrary: React.FC<NodesLibraryProps> = memo((props) => {
-  const { groups } = props;
+  const { groups, onAddNode } = props;
   const [isClosed, setIsClosed] = React.useState(false);
 
   const [shouldAnimate, setShouldAnimate] = React.useState(false);
@@ -28,6 +30,25 @@ export const NodesLibrary: React.FC<NodesLibraryProps> = memo((props) => {
   const darkMode = useDarkMode();
 
   const [openGroup, setOpenGroup] = useState(groups[0]?.title ?? "");
+
+  const { prompt, generateNodeFromPrompt } = usePorts();
+
+  const _onGenerateWithAI = useCallback(async () => {
+    const promptText = await prompt({
+      text: "Describe the node you want to generate",
+      defaultValue: "",
+    });
+    if (promptText) {
+      const toast = toastMsg("Generating node...", "none", 0);
+      const node = await generateNodeFromPrompt({ prompt: promptText });
+
+      clearToast(toast);
+      toastMsg("Node generated successfully", "success", 2000);
+      if (node) {
+        onAddNode(node.importableNode);
+      }
+    }
+  }, [generateNodeFromPrompt, onAddNode, prompt]);
 
   useEffect(() => {
     if (!isFirstRender) {
@@ -69,7 +90,7 @@ export const NodesLibrary: React.FC<NodesLibraryProps> = memo((props) => {
         </Button>
       </div>
       <div className="list" style={{ boxShadow }} onScroll={onScrollHandler}>
-        {groups.map((group, groupIdx) => (
+        {groups.map((group) => (
           <div>
             <div
               className={classNames("group-title", {
@@ -105,6 +126,21 @@ export const NodesLibrary: React.FC<NodesLibraryProps> = memo((props) => {
                   </Tooltip>
                 </div>
               ))}
+              {group.title === "Values & Custom Code" ? (
+                <div className="group-item ai" onClick={_onGenerateWithAI}>
+                  <Tooltip
+                    content="Generate a custom node using AI"
+                    portalClassName="menu-tooltip"
+                    compact
+                    minimal
+                  >
+                    <div className="group-item-inner">
+                      <InstanceIcon icon="fa-solid fa-wand-magic-sparkles" />
+                      Generate using AI
+                    </div>
+                  </Tooltip>
+                </div>
+              ) : null}
             </div>
             {/* ) : null} */}
           </div>

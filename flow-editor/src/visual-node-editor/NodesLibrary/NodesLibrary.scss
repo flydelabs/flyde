@@ -31,17 +31,22 @@
     .group-title {
       // background: $neutral-900;
       color: $neutral-300;
-
-      // &:hover,
-      // &.selected {
-      //   background: $neutral-800;
-      // }
     }
 
     .group-item {
       // background: $neutral-700;
       color: $gray-200;
       border-color: $neutral-600;
+
+      &.ai {
+        font-weight: 600;
+
+        &:not(:hover) {
+          background: linear-gradient(45deg, $tblue-200, $tblue-400);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+        }
+      }
 
       svg {
         color: $tblue-400;
@@ -142,6 +147,16 @@
     padding: 5px 8px 3px;
     margin-bottom: 2px;
 
+    &.ai {
+      font-weight: 600;
+
+      &:not(:hover) {
+        background: linear-gradient(45deg, $tblue-600, $tblue-800);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+    }
+
     svg.svg-inline--fa {
       color: $tblue-700;
     }
@@ -163,6 +178,7 @@
 
     &.selected,
     &:hover {
+      color: $neutral-600;
       background: $gray-100;
     }
   }

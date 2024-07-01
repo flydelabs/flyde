@@ -37,13 +37,6 @@ export const createDevServerClient = (baseUrl: string) => {
         .get(`${baseUrl}/importables?filename=${filename}`)
         .then((res) => res.data);
     },
-    generateNodeFromPrompt: (
-      prompt: string
-    ): Promise<{ importableNode: ImportableSource }> => {
-      return axios
-        .post(`${baseUrl}/generateNode`, { prompt })
-        .then((res) => res.data);
-    },
     getLibraryData: (): Promise<NodeLibraryData> => {
       return axios.get(`${baseUrl}/library`).then((res) => res.data);
     },

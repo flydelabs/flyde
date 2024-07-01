@@ -10,11 +10,9 @@ var fp = require("find-free-port");
 import { initFlydeDevServer } from "@flyde/dev-server/dist/lib";
 
 import { join } from "path";
-import { randomInt } from "@flyde/core";
 
 import TelemetryReporter from "@vscode/extension-telemetry";
 import { activateReporter, reportEvent } from "./telemetry";
-import path = require("path");
 
 import { Template, getTemplates, scaffoldTemplate } from "./templateUtils";
 
@@ -189,8 +187,11 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.commands.registerCommand("flyde.setOpenAiToken", async () => {
       const token = await vscode.window.showInputBox({
-        title: "OpenAI API Token",
+        title:
+          "Please enter your OpenAI API key (will be stored in your settings for future use, you can also set it manually or clear it in the settings)",
         value: "",
+        ignoreFocusOut: true,
+        password: true,
       });
 
       if (!token) {
