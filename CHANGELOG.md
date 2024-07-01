@@ -4,9 +4,11 @@ All notable changes to the "vscode-extension" extension will be documented in th
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
-## Unreleased
+## [0.101.0] - 2024-07-01
 
-- adds the ability to generate nodes using AI 🚀✨ Currently only supported in the VSCode extension, and using an OpenAI key
+- AI node generator by @GabiGrin in https://github.com/flydelabs/flyde/pull/132
+
+**Full Changelog**: https://github.com/flydelabs/flyde/compare/v0.100.0...v0.101.0
 
 ## [0.100.0] - 2024-06-13
 

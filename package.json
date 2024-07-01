@@ -1,6 +1,6 @@
 {
   "name": "flyde",
-  "version": "0.100.0",
+  "version": "0.101.0",
   "main": "index.js",
   "description": "",
   "proxy": "http://localhost:8484",
@@ -15,6 +15,7 @@
     "clean": "pnpm run -r -y",
     "clean-dist": "pnpm exec -r \"rm -rf dist\"",
     "bump-all-patch": "pnpm -r version patch",
+    "bump-all-minor": "pnpm -r version minor",
     "publish-all": "./publish-all-with-otp.sh",
     "release": "pnpm run build && pnpm run bump-all-patch && pnpm run publish-all"
   },
