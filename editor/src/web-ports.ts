@@ -58,13 +58,7 @@ export const createWebPorts = ({
       console.info(`Analytics event: ${name}`, data);
     },
     generateNodeFromPrompt: async ({ prompt }) => {
-      return devServerClient.generateNodeFromPrompt(prompt);
-    },
-    hasOpenAiToken: async () => {
-      return true;
-    },
-    promptForOpenAiToken: async () => {
-      alert("Not implemented");
+      throw new Error("Not implemented");
     },
     getLibraryData: async () => {
       return devServerClient.getLibraryData();

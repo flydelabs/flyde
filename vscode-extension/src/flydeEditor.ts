@@ -312,7 +312,16 @@ export class FlydeEditorEditorProvider
               }
               case "generateNodeFromPrompt": {
                 const config = vscode.workspace.getConfiguration("flyde");
-                const openAiToken = config.get<string>("openAiToken");
+                let openAiToken = config.get<string>("openAiToken");
+
+                if (!openAiToken) {
+                  await vscode.commands.executeCommand("flyde.setOpenAiToken");
+                  openAiToken = config.get<string>("openAiToken");
+                }
+
+                if (!openAiToken) {
+                  throw new Error("OpenAI token is required");
+                }
 
                 const { prompt } = event.params;
                 if (prompt.trim().length === 0) {
@@ -327,9 +336,6 @@ export class FlydeEditorEditorProvider
 
                 messageResponse(event, { importableNode });
                 break;
-              }
-              case "promptForOpenAiToken": {
-                await vscode.commands.executeCommand("flyde.setOpenAiToken");
               }
               case "setFlow": {
                 const { flow } = event.params;

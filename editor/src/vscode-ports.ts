@@ -68,9 +68,6 @@ export const createVsCodePorts = (): EditorPorts => {
     generateNodeFromPrompt: async (dto) => {
       return postMessageCallback("generateNodeFromPrompt", dto);
     },
-    promptForOpenAiToken: async () => {
-      return postMessageCallback("promptForOpenAiToken", {});
-    },
     onExternalFlowChange: (cb) => {
       const handler = (event: MessageEvent) => {
         const { data } = event;
@@ -92,9 +89,6 @@ export const createVsCodePorts = (): EditorPorts => {
     },
     reportEvent: (name, data) => {
       return postMessageCallback("reportEvent", { name, data });
-    },
-    hasOpenAiToken: async () => {
-      return postMessageCallback("hasOpenAiToken", {});
     },
     getLibraryData: async () => {
       return postMessageCallback("getLibraryData", {});

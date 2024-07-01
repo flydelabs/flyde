@@ -10,11 +10,9 @@ var fp = require("find-free-port");
 import { initFlydeDevServer } from "@flyde/dev-server/dist/lib";
 
 import { join } from "path";
-import { randomInt } from "@flyde/core";
 
 import TelemetryReporter from "@vscode/extension-telemetry";
 import { activateReporter, reportEvent } from "./telemetry";
-import path = require("path");
 
 import { Template, getTemplates, scaffoldTemplate } from "./templateUtils";
 

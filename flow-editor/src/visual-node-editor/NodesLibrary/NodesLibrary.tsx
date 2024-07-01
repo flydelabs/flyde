@@ -31,17 +31,9 @@ export const NodesLibrary: React.FC<NodesLibraryProps> = memo((props) => {
 
   const [openGroup, setOpenGroup] = useState(groups[0]?.title ?? "");
 
-  const {
-    prompt,
-    generateNodeFromPrompt,
-    hasOpenAiToken,
-    promptForOpenAiToken,
-  } = usePorts();
+  const { prompt, generateNodeFromPrompt } = usePorts();
 
   const _onGenerateWithAI = useCallback(async () => {
-    if (!(await hasOpenAiToken())) {
-      await promptForOpenAiToken();
-    }
     const promptText = await prompt({
       text: "Describe the node you want to generate",
       defaultValue: "",

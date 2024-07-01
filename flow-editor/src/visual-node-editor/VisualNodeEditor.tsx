@@ -192,7 +192,6 @@ export type VisualNodeEditorProps = {
 
   onGoToNodeDef: (node: ImportedNodeDef) => void;
   onExtractInlineNode: (instance: InlineNodeInstance) => Promise<void>;
-  onGenerateNodeWithAI: (prompt: string) => Promise<void>;
 
   className?: string;
 
@@ -231,7 +230,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         queuedInputsData: queueInputsData,
         initialPadding,
         disableScrolling,
-        onGenerateNodeWithAI: onGenerateWithAI,
       } = props;
 
       const { onImportNode, libraryData } = useDependenciesContext();
@@ -1944,7 +1942,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             parentBoardPos: boardPos,
             onExtractInlineNode: props.onExtractInlineNode,
             queuedInputsData: props.queuedInputsData,
-            onGenerateNodeWithAI: onGenerateWithAI,
           };
         } else {
           return undefined;
@@ -2478,11 +2475,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
               />
             ) : null}
             {!openInlineInstance && libraryData.groups.length ? (
-              <NodesLibrary
-                {...libraryData}
-                onAddNode={onAddNode}
-                onGenerateWithAI={onGenerateWithAI}
-              />
+              <NodesLibrary {...libraryData} onAddNode={onAddNode} />
             ) : null}
             <div className="run-btn-container">
               <Button

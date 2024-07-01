@@ -3,7 +3,6 @@ import {
   FlydeFlow,
   ImportableSource,
   NodeLibraryData,
-  NodeLibraryGroup,
   ResolvedDependenciesDefinitions,
   noop,
 } from "@flyde/core";
@@ -57,9 +56,6 @@ export interface EditorPorts {
   generateNodeFromPrompt: (dto: {
     prompt: string;
   }) => Promise<{ importableNode: ImportableSource }>;
-
-  hasOpenAiToken: () => Promise<boolean>;
-  promptForOpenAiToken: () => Promise<void>;
   getLibraryData: () => Promise<NodeLibraryData>;
 }
 
@@ -85,8 +81,6 @@ export const defaultPorts: EditorPorts = {
   onStopFlow: toastNotImplemented("onStopFlow"),
   reportEvent: noop,
   generateNodeFromPrompt: toastNotImplemented("generateNodeFromPrompt"),
-  hasOpenAiToken: () => Promise.resolve(false),
-  promptForOpenAiToken: toastNotImplemented("promptForOpenAiToken"),
   getLibraryData: () => Promise.resolve({ groups: [] }),
 };
 

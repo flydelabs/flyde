@@ -84,22 +84,6 @@ export const runDevServer = (
     }
   });
 
-  app.post("/generateNode", async (req, res) => {
-    const { prompt } = req.body as { prompt: string };
-
-    if (prompt.trim().length === 0) {
-      res.status(400).send("prompt is empty");
-      return;
-    }
-
-    try {
-      const data = await generateAndSaveNode(rootDir, prompt);
-      res.send(data);
-    } catch (e) {
-      res.status(400).send(e);
-    }
-  });
-
   app.get("/library", async (req, res) => {
     const library = getLibraryData();
     res.send(library);
