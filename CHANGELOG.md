@@ -4,6 +4,10 @@ All notable changes to the "vscode-extension" extension will be documented in th
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.101.1] - 2024-07-01
+
+- Fixes broken npm release
+
 ## [0.101.0] - 2024-07-01
 
 - AI node generator by @GabiGrin in https://github.com/flydelabs/flyde/pull/132
