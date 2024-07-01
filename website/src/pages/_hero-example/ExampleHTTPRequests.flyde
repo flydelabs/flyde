@@ -203,16 +203,6 @@ node:
       style:
         size: large
         color: "#fee440"
-    - pos:
-        x: -374.56
-        y: -25.076120990267373
-      id: tj2eccd0q82b1m7l4lhkdn9g
-      inputConfig: {}
-      nodeId: CodeExpression__tj2eccd0q82b1m7l4lhkdn9g
-      macroId: CodeExpression
-      macroData:
-        value: inputs.a + inputs.b
-        label: '"inputs.a + inputs.b"'
   connections:
     - from:
         insId: GET Request-907
