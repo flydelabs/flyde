@@ -119,7 +119,6 @@ const InlineValueEditor: MacroEditorComp<InlineValueConfig> =
 
     return (
       <div>
-        <h1>Hello Akim</h1>
         <FormGroup label="Value type:">
           <HTMLSelect
             value={value.type}

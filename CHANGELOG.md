@@ -4,6 +4,10 @@ All notable changes to the "vscode-extension" extension will be documented in th
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.101.2] - 2024-07-02
+
+- Removes hardcoded debugging string that slipped into the version by mistake
+
 ## [0.101.1] - 2024-07-01
 
 - Fixes broken npm release
