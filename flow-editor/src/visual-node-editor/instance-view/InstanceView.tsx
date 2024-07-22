@@ -230,9 +230,6 @@ export const InstanceView: React.FC<InstanceViewProps> =
         icon: instance.style?.icon ?? node.defaultStyle?.icon,
         color: instance.style?.color ?? node.defaultStyle?.color,
         size: instance.style?.size ?? node.defaultStyle?.color ?? "regular",
-        wrapperCssOverride:
-          instance.style?.wrapperCssOverride ??
-          node.defaultStyle?.wrapperCssOverride,
         cssOverride:
           instance.style?.cssOverride ?? node.defaultStyle?.cssOverride,
       } as NodeStyle;
