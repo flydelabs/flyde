@@ -470,6 +470,7 @@ declare module '@flyde/core/node/node' {
             size?: NodeStyleSize;
             color?: string | [string, string];
             cssOverride?: Record<string, string>;
+            wrapperCssOverride?: Record<string, string>;
     }
     export interface NodeMetadata {
             /**

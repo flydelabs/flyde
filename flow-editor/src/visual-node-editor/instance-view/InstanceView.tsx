@@ -230,6 +230,11 @@ export const InstanceView: React.FC<InstanceViewProps> =
         icon: instance.style?.icon ?? node.defaultStyle?.icon,
         color: instance.style?.color ?? node.defaultStyle?.color,
         size: instance.style?.size ?? node.defaultStyle?.color ?? "regular",
+        wrapperCssOverride:
+          instance.style?.wrapperCssOverride ??
+          node.defaultStyle?.wrapperCssOverride,
+        cssOverride:
+          instance.style?.cssOverride ?? node.defaultStyle?.cssOverride,
       } as NodeStyle;
     }, [node, instance]);
 
@@ -718,7 +723,10 @@ export const InstanceView: React.FC<InstanceViewProps> =
           >
             <Tooltip content={node.description}>
               <React.Fragment>
-                <InstanceIcon icon={style.icon as string} /> {content}
+                {style.icon ? (
+                  <InstanceIcon icon={style.icon as string} />
+                ) : null}
+                <span dangerouslySetInnerHTML={{ __html: content }} />
               </React.Fragment>
             </Tooltip>
           </ContextMenu>
@@ -726,8 +734,16 @@ export const InstanceView: React.FC<InstanceViewProps> =
       }
     };
 
+    const nodeIdForDomDataAttr = isMacroNodeInstance(instance)
+      ? instance.macroId
+      : node.id;
+
     return (
-      <div className={cm}>
+      <div
+        className={cm}
+        data-node-id={nodeIdForDomDataAttr}
+        data-instance-id={instance.id}
+      >
         <BaseNodeView
           pos={instance.pos}
           viewPort={viewPort}
