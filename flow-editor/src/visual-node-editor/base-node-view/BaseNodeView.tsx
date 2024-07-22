@@ -29,8 +29,6 @@ export interface BaseNodeViewProps {
   onDragEnd: (...data: any[]) => void;
   onDragStart: (...data: any[]) => void;
   onDragMove: (ev: React.MouseEvent, pos: Pos) => void;
-
-  externalCssOverride?: React.CSSProperties;
 }
 
 export const BaseNodeView: React.FC<BaseNodeViewProps> =
@@ -74,9 +72,8 @@ export const BaseNodeView: React.FC<BaseNodeViewProps> =
       [onDragMove]
     );
 
-    const innerStyle = {
-      transform: `scale(${viewPort.zoom})`, // zoom fixer
-      ...(props.externalCssOverride || {}),
+    const zoomFixStyle = {
+      transform: `scale(${viewPort.zoom})`,
     };
 
     const cm = classNames("base-node-view", props.className, {
@@ -91,8 +88,8 @@ export const BaseNodeView: React.FC<BaseNodeViewProps> =
     const dx = correctX - pos.x;
     const dy = correctY - pos.y;
 
-    const style: any = {
-      transform: `translate(${dx}px, ${dy}px)`, // drag fixer
+    const fixerStyle: any = {
+      transform: `translate(${dx}px, ${dy}px)`,
     };
 
     const outerCm = classNames("base-node-view-vp-fixer", {
@@ -101,14 +98,14 @@ export const BaseNodeView: React.FC<BaseNodeViewProps> =
 
     const draggableContent = (
       <span className="base-node-view-wrapper">
-        <div className={cm} style={innerStyle} id={props.domId}>
+        <div className={cm} style={zoomFixStyle} id={props.domId}>
           {props.children}
         </div>
       </span>
     );
 
     return (
-      <div className={outerCm} style={style}>
+      <div className={outerCm} style={fixerStyle}>
         <Draggable
           onStop={_onDragEnd}
           onStart={_onDragStart}
