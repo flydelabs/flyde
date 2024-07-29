@@ -19,16 +19,16 @@ export const Comment: MacroNode<CommentConfig> = {
   definitionBuilder: (config) => {
     return {
       defaultStyle: {
-        // icon: "comment",
         cssOverride: {
           fontSize: "10px",
           borderRadius: "0",
           fontFamily: "monospace",
-          minHeight: "80px",
+          minHeight: "40px",
           padding: "6px 8px",
           textAlign: "left",
           fontWeight: "normal",
-          maxWidth: "100%",
+          display: "inline-flex",
+          alignItems: "center",
         },
       },
 
