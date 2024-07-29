@@ -33,7 +33,7 @@ export const Comment: MacroNode<CommentConfig> = {
       },
 
       displayName: config.content,
-      description: "",
+      description: "Comment node",
       inputs: {},
       outputs: {},
     };
