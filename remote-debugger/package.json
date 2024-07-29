@@ -34,7 +34,7 @@
     "socket.io": "^4.7.2",
     "socket.io-client": "^4.7.2",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^4.9.5"
+    "typescript": "^5.5.4"
   },
   "gitHead": "5f06bd4a0f3da610e64d74c19cc84babc4557f56"
 }
