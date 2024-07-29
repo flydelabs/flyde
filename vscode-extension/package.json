@@ -194,7 +194,7 @@
     "@types/vscode": "^1.69.0",
     "@typescript-eslint/eslint-plugin": "^5.30.0",
     "@typescript-eslint/parser": "^5.30.0",
-    "@vscode/test-electron": "^2.1.5",
+    "@vscode/test-electron": "^2.4.1",
     "eslint": "^8.18.0",
     "fs-extra": "^10.1.0",
     "glob": "^8.0.3",

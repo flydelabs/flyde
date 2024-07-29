@@ -129,4 +129,34 @@ suite("Extension Test Suite", () => {
         .retries(3);
     });
   });
+
+  suite("Comment node", () => {
+    test("renders comment node", async () => {
+      const testFile = vscode.Uri.file(
+        path.resolve(__dirname, "../../test-fixtures/CommentFixture.flyde")
+      );
+
+      await vscode.commands.executeCommand(
+        "vscode.openWith",
+        testFile,
+        "flydeEditor"
+      );
+
+      await eventually(async () => {
+        const instances = await webviewTestingCommand("$$", {
+          selector: ".ins-view-inner",
+        });
+
+        assert(
+          instances.length === 1,
+          "Expected fixture flow to have 1 instance"
+        );
+
+        assert(
+          instances[0].innerHTML.includes("<h1>Hello comment</h1>"),
+          "Expected the comment node to render the comment in html"
+        );
+      });
+    }).timeout(5000);
+  });
 });
