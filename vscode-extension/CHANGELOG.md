@@ -4,6 +4,24 @@ All notable changes to the "vscode-extension" extension will be documented in th
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.102.0] - 2024-07-29
+
+- adds comment node by @GabiGrin in https://github.com/flydelabs/flyde/pull/133
+
+## [0.101.2] - 2024-07-02
+
+- Removes hardcoded debugging string that slipped into the version by mistake
+
+## [0.101.1] - 2024-07-01
+
+- Fixes broken npm release
+
+## [0.101.0] - 2024-07-01
+
+- AI node generator by @GabiGrin in https://github.com/flydelabs/flyde/pull/132
+
+**Full Changelog**: https://github.com/flydelabs/flyde/compare/v0.100.0...v0.101.0
+
 ## [0.100.0] - 2024-06-13
 
 Note: this is the first up-to-date changelog for Flyde. Beforehand, versions for the various npm packages and extension were not in sync. Starting with this change, all Flyde-related artifacts will have the same version.
