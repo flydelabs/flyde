@@ -1,0 +1,20 @@
+imports:
+  "@flyde/stdlib":
+    - Comment
+node:
+  instances:
+    - pos:
+        x: -87.5
+        y: -173.75
+      id: xyuadhcy2g8clb59jz54jph2
+      inputConfig: {}
+      nodeId: Comment__xyuadhcy2g8clb59jz54jph2
+      macroId: Comment
+      macroData:
+        content: <h1>Hello comment</h1>
+  connections: []
+  id: CommentFixture
+  inputs: {}
+  outputs: {}
+  inputsPosition: {}
+  outputsPosition: {}

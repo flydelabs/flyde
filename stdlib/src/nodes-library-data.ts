@@ -16,13 +16,14 @@ import {
 } from "./all-browser";
 import { Switch } from "./ControlFlow/Switch.flyde";
 import { Collect } from "./Lists/Collect/Collect.flyde";
+import { Comment } from "./Misc/Comment.flyde";
 
 export function getUnresolvedNodesLibraryData() {
   return {
     groups: [
       {
         title: "Values & Custom Code",
-        nodes: [InlineValue, CodeExpression],
+        nodes: [InlineValue, CodeExpression, Comment],
       },
       {
         title: "Control Flow",

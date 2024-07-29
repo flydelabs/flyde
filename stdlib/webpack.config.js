@@ -6,6 +6,7 @@ const pairs = [
   { entry: "./src/ControlFlow/Conditional.tsx", name: "Conditional" },
   { entry: "./src/ControlFlow/Switch.tsx", name: "Switch" },
   { entry: "./src/Lists/Collect/Collect.tsx", name: "Collect" },
+  { entry: "./src/Misc/Comment.tsx", name: "Comment" },
 ];
 
 module.exports = pairs.map(({ entry, name }) => ({

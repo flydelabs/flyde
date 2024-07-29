@@ -11,7 +11,7 @@ async function getLastWebview(): Promise<vscode.Webview> {
 export type WebViewTestingCommands = {
   $$: {
     params: { selector: string };
-    response: { innerHtml: string; textContent: string }[];
+    response: { innerHTML: string; textContent: string }[];
   };
   click: { params: { selector: string }; response: void };
 };

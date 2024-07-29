@@ -108,9 +108,9 @@ window.addEventListener("message", (event) => {
         const elements = document.querySelectorAll(selector);
         response = Array.from(elements).map((element) => {
           return {
-            html: element.innerHTML,
-            text: element.textContent,
-            outerHtml: element.outerHTML,
+            innerHTML: element.innerHTML,
+            textContent: element.textContent,
+            outerHTML: element.outerHTML,
           };
         });
         break;
