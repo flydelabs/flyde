@@ -20,7 +20,7 @@ jobs:
         working-directory: ./vscode-extension
         run: |
           ./prepublish.sh
-          npm ci
+          npm install
           npm update --scope=@flyde\
 
       - name: Commit package.json if updated
