@@ -17,8 +17,8 @@
   "dependencies": {
     "@codemirror/lang-javascript": "^6.1.9",
     "@flyde/core": "workspace:*",
-    "@flyde/remote-debugger": "workspace:*",
     "@flyde/flow-editor": "workspace:*",
+    "@flyde/remote-debugger": "workspace:*",
     "@flyde/resolver": "workspace:*",
     "@flyde/runtime": "workspace:*",
     "@flyde/stdlib": "workspace:*",
@@ -46,7 +46,7 @@
     "react-tooltip": "^5.21.4",
     "sass": "^1.66.1",
     "tailwindcss": "3.3.2",
-    "typescript": "5.1.3"
+    "typescript": "5.5.4"
   },
   "devDependencies": {
     "@types/node": "20.3.1",

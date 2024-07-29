@@ -225,8 +225,8 @@ declare module '@flyde/core/common/utils' {
     export const keys: <V>(map: OMap<V>) => string[];
     export const values: <V>(map: OMap<V>) => V[];
     export const okeys: <V>(map: OMap<V>) => string[];
-    export const entries: <V>(map: OMap<V>) => [string, V][];
-    export const fromEntries: <V>(entries: [string, V][]) => OMap<V>;
+    export const entries: <V>(map: OMap<V>) => Array<[string, V]>;
+    export const fromEntries: <V>(entries: Array<[string, V]>) => OMap<V>;
     export const pickFirst: <K>(v: [K, any]) => K;
     export const pickSecond: <K>(v: [any, K]) => K;
     export type RandomFunction = {
