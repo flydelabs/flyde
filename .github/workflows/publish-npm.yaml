@@ -1,0 +1,68 @@
+name: Build and Publish to NPM
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - uses: pnpm/action-setup@v2
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: 8
+          run_install: false
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+      - name: Install dependencies
+        run: pnpm install
+      - name: Build
+        run: pnpm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+      - name: Test
+        run: xvfb-run -a pnpm run test
+      - name: Lint
+        run: pnpm run lint
+      - name: Publish to NPM (excluding private packages)
+        if: github.ref == 'refs/heads/main'
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "github-actions@users.noreply.github.com"
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
+          for package in $(pnpm list --json --only-projects -r | jq -c '.[]'); do
+            name=$(echo $package | jq -r '.name')
+            path=$(echo $package | jq -r '.path')
+            cd $path
+            is_private=$(echo $package | jq '.private')
+            if [[ "$is_private" == "true" ]]; then
+              echo "Skipping private package: $name"
+              cd $root
+              continue
+            fi  
+            echo "Publishing $name"
+            pnpm publish --access public --force --no-git-checks
+            echo "Published $name\n\n"
+            cd $root
+          done
