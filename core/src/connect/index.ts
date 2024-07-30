@@ -13,7 +13,7 @@ import {
   getNode,
 } from "../node";
 import { CancelFn, execute, Debugger } from "../execute";
-import { DepGraph, isDefined, noop, okeys, OMap, randomInt } from "../common";
+import { DepGraph, isDefined, noop, keys, OMap, randomInt } from "../common";
 import {
   ERROR_PIN_ID,
   isExternalConnection,
@@ -260,7 +260,7 @@ export const connect = (
       });
 
       // connect the external outputs to the outputs that are left hanging
-      okeys(fnOutputs).forEach((key) => {
+      keys(fnOutputs).forEach((key) => {
         const outputs = externalOutputConnections.get(key) || [];
         outputs.forEach((output) => {
           const sub = output.subscribe(async (val: any) => {

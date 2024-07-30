@@ -63,10 +63,8 @@ export const values = <V>(map: OMap<V>): V[] => {
   return Object.values(map) as V[];
 };
 
-export const okeys = keys;
-
 export const entries = <V>(map: OMap<V>): Array<[string, V]> => {
-  return okeys(map).map<[string, V]>((k) => [k, map[k] as V]);
+  return keys(map).map<[string, V]>((k) => [k, map[k] as V]);
 };
 
 export const fromEntries = <V>(entries: Array<[string, V]>): OMap<V> => {
