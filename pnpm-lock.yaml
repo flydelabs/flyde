@@ -24,6 +24,9 @@ importers:
       '@types/md5':
         specifier: ^2.3.2
         version: 2.3.2
+      '@types/react':
+        specifier: ^18.3.3
+        version: 18.3.3
       cuid:
         specifier: ^3.0.0
         version: 3.0.0
@@ -55,9 +58,6 @@ importers:
       '@types/node':
         specifier: ^10.17.60
         version: 10.17.60
-      '@types/react':
-        specifier: ^18.3.3
-        version: 18.3.3
       '@types/sinon':
         specifier: ^7.5.2
         version: 7.5.2
@@ -5857,7 +5857,7 @@ packages:
     peerDependencies:
       react: '*'
     dependencies:
-      '@types/react': 18.3.3
+      '@types/react': 18.2.12
       prop-types: 15.8.1
       react: 18.2.0
 
@@ -8784,6 +8784,7 @@ packages:
     dependencies:
       '@types/prop-types': 15.7.5
       csstype: 3.1.2
+    dev: false
 
   /@types/require-from-string@1.2.1:
     resolution: {integrity: sha512-mIDK7lTHc0uW67SxPIqkwCrxmdKBV5aAET560hyZnT8c6Ekp9Aah3GPqe8Pl1Yzn/i2NMYmYv+HiMLwjGDCIAQ==}
@@ -9963,7 +9964,7 @@ packages:
       caniuse-lite: 1.0.30001523
       fraction.js: 4.2.1
       normalize-range: 0.1.2
-      picocolors: 1.0.1
+      picocolors: 1.0.0
       postcss: 8.4.28
       postcss-value-parser: 4.2.0
     dev: true
