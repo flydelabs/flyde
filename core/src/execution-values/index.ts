@@ -69,22 +69,6 @@ export const pullValuesForExecution = (
   return data;
 };
 
-export const peekValuesForExecution = (
-  nodeInputs: NodeInputs,
-  state: NodeState,
-  nodeId: string
-) => {
-  const data = entries(nodeInputs).reduce<Record<string, unknown>>(
-    (acc, [key, input]) => {
-      acc[key] = peekValueForExecution(key, input, state, nodeId);
-      return acc;
-    },
-    {}
-  );
-
-  return data;
-};
-
 export const hasNewSignificantValues = (
   nodeInputs: NodeInputs,
   state: NodeState,

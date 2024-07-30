@@ -14,24 +14,21 @@ import {
 import { connectionNode, externalConnectionNode } from "./connect";
 
 import { DebuggerEventType, DebuggerEvent, Debugger } from "./execute/debugger";
-
-export interface ConciseBaseNode
-  extends Omit<BaseNode, "inputs" | "outputs" | "id"> {
+interface ConciseBaseNode extends Omit<BaseNode, "inputs" | "outputs" | "id"> {
   inputs?: string[];
   outputs?: string[];
   id?: string;
 }
 
-export interface ConciseVisualNode extends ConciseBaseNode {
+interface ConciseVisualNode extends ConciseBaseNode {
   connections: Array<[string, string]>;
   instances: NodeInstance[];
 }
 
-export interface ConciseCodeNode extends ConciseBaseNode {
+interface ConciseCodeNode extends ConciseBaseNode {
   run: CodeNode["run"];
 }
-
-export const conciseBaseNode = (concise: ConciseBaseNode): BaseNode => {
+const conciseBaseNode = (concise: ConciseBaseNode): BaseNode => {
   return {
     id: "a-node",
     ...concise,

@@ -1,6 +1,6 @@
 import { NODE_HEIGHT } from "../VisualNodeEditor";
 import {
-  okeys,
+  keys,
   isExternalConnectionNode,
   entries,
   VisualNode,
@@ -62,13 +62,13 @@ export const orderVisualNode = (
     };
   }, {});
 
-  const nodeInputNodes = okeys(node.inputsPosition).reduce((prev, curr) => {
+  const nodeInputNodes = keys(node.inputsPosition).reduce((prev, curr) => {
     const p = node.inputsPosition[curr];
     const s = size(calcNodeIoWidth(curr), NODE_HEIGHT);
     return { ...prev, [`node-input-${curr}`]: { p, s } };
   }, {});
 
-  const nodeOutputNodes = okeys(node.outputsPosition).reduce((prev, curr) => {
+  const nodeOutputNodes = keys(node.outputsPosition).reduce((prev, curr) => {
     const p = node.outputsPosition[curr];
     const s = size(calcNodeIoWidth(curr), NODE_HEIGHT);
     return { ...prev, [`node-output-${curr}`]: { p, s } };

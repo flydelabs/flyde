@@ -1,0 +1,17 @@
+{
+    "$schema": "https://unpkg.com/knip@5/schema.json",
+    "mocha": {
+        "entry": [
+            "src/**/spec.{ts,tsx,js,jsx}"
+        ]
+    },
+    "entry": [
+        "{index,main,cli}.{js,cjs,mjs,jsx,ts,cts,mts,tsx}",
+        "src/{index,main,cli}.{js,cjs,mjs,jsx,ts,cts,mts,tsx}",
+        "wallaby.js"
+    ],
+    "project": [
+        "**/*.{js,ts,tsx}",
+        "!dist/**/*"
+    ]
+}

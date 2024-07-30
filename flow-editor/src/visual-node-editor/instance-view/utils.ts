@@ -1,4 +1,4 @@
-import { okeys, NodeInstance, Pos, NodeDefinition } from "@flyde/core";
+import { keys, NodeInstance, Pos, NodeDefinition } from "@flyde/core";
 
 import {
   MAX_INSTANCE_WIDTH,
@@ -22,7 +22,7 @@ export const calcNodeContent = (
 };
 
 export const calcNodeWidth = (instance: NodeInstance, node: NodeDefinition) => {
-  const allInputKeys = okeys(node.inputs);
+  const allInputKeys = keys(node.inputs);
   const visibleInputs = allInputKeys.length;
   const minWidth = visibleInputs * MIN_WIDTH_PER_PIN;
   const nodeContent = calcNodeContent(instance, node);

@@ -1,4 +1,4 @@
-import { OMap, okeys, nodeOutput, pickRandom } from "@flyde/core";
+import { OMap, keys, nodeOutput, pickRandom } from "@flyde/core";
 import {
   ConnectionData,
   externalConnectionNode,
@@ -158,16 +158,16 @@ export const createGroup = async (
       size: "large",
       color: pickRandom(nodeStylePresetColors.map((c) => c.color)),
     },
-    inputsPosition: okeys(inputs).reduce(
+    inputsPosition: keys(inputs).reduce(
       (acc, curr, idx) => ({ ...acc, [curr]: { x: 0 + 100 * idx, y: 0 } }),
       {}
     ),
-    outputsPosition: okeys(outputs).reduce(
+    outputsPosition: keys(outputs).reduce(
       (acc, curr, idx) => ({ ...acc, [curr]: { x: 0 + 100 * idx, y: 400 } }),
       {}
     ),
     connections: [...internalConnections, ...externalConnections],
-    completionOutputs: okeys(outputs),
+    completionOutputs: keys(outputs),
   };
 
   return { visualNode, renamedInputs, renamedOutputs };
