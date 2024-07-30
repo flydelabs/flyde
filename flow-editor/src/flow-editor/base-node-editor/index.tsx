@@ -3,7 +3,7 @@ import {
   BaseNode,
   entries,
   InputMode,
-  okeys,
+  keys,
   nodeInput,
   nodeOutput,
 } from "@flyde/core";
@@ -58,7 +58,7 @@ export const BaseNodeEditor: React.FC<BaseNodeEditorProps> = (props) => {
 
   const [showAdvancedOptions, setShowAdvancedOptions] = React.useState(false);
 
-  const outputs = okeys(node.outputs);
+  const outputs = keys(node.outputs);
 
   const onChangeId = React.useCallback(
     (id) => {

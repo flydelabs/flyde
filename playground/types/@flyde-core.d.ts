@@ -3,6 +3,7 @@
 //   ../../../../rxjs
 //   ../../../../zod
 //   ../../../../debug
+//   ../../../../react
 
 declare module '@flyde/core' {
     export * from "@flyde/core/common";
@@ -224,7 +225,6 @@ declare module '@flyde/core/common/utils' {
     export const filterOMap: <T>(map: OMap<T>, cb: (key: string, item: T) => boolean) => OMap<T>;
     export const keys: <V>(map: OMap<V>) => string[];
     export const values: <V>(map: OMap<V>) => V[];
-    export const okeys: <V>(map: OMap<V>) => string[];
     export const entries: <V>(map: OMap<V>) => Array<[string, V]>;
     export const fromEntries: <V>(entries: Array<[string, V]>) => OMap<V>;
     export const pickFirst: <K>(v: [K, any]) => K;
@@ -695,6 +695,7 @@ declare module '@flyde/core/execute/debugger' {
 
 declare module '@flyde/core/node/macro-node' {
     import { CodeNode, CodeNodeDefinition, NodeMetadata } from "@flyde/core/node/node";
+    import type React from "react";
     export type MacroEditorFieldDefinitionTypeString = {
             value: "string";
     };

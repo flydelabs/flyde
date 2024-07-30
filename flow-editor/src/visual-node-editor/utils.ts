@@ -31,7 +31,7 @@ import { Size } from "../utils";
 import {
   isOptionalType,
   randomInt,
-  okeys,
+  keys,
   OMap,
   entries,
   fromEntries,
@@ -93,7 +93,7 @@ export const findClosestPin = (
   viewPort: ViewPort
 ) => {
   const rootInstance: NodeInstance = nodeInstance(node.id, node.id);
-  const mainInputsData = okeys(node.inputs).map((pinId) => {
+  const mainInputsData = keys(node.inputs).map((pinId) => {
     const pos = calcPinPosition({
       insId: currentInsId,
       ancestorsInsIds,
@@ -106,7 +106,7 @@ export const findClosestPin = (
     return { id: pinId, type: "input", pos, ins: rootInstance };
   });
 
-  const mainOutputsData = okeys(node.outputs).map((pinId) => {
+  const mainOutputsData = keys(node.outputs).map((pinId) => {
     const pos = calcPinPosition({
       insId: currentInsId,
       ancestorsInsIds,
@@ -460,14 +460,14 @@ export const calcNodesPositions = (
     return calcPoints(w, h, curr.pos, curr.id);
   });
 
-  const inputsCenter = okeys(node.inputs).map((curr) => {
+  const inputsCenter = keys(node.inputs).map((curr) => {
     const w = calcIoNodeWidth(curr);
     const h = NODE_HEIGHT;
     const pos = node.inputsPosition[curr] || { x: 0, y: 0 };
     return calcPoints(w, h, pos, "input_" + curr);
   });
 
-  const outputsCenter = okeys(node.outputs).map((curr) => {
+  const outputsCenter = keys(node.outputs).map((curr) => {
     const w = calcIoNodeWidth(curr);
     const h = NODE_HEIGHT;
     const pos = node.outputsPosition[curr] || { x: 0, y: 0 };
