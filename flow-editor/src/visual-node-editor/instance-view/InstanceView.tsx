@@ -4,9 +4,8 @@ import {
   entries,
   pickFirst,
   OMap,
-  okeys,
-  nodeInput,
   keys,
+  nodeInput,
   isInlineNodeInstance,
   InlineNodeInstance,
   NodeStyle,
@@ -423,7 +422,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
     const content = calcNodeContent(instance, node);
 
     const _onChangeVisibleInputs = React.useCallback(async () => {
-      const inputs = okeys(node.inputs);
+      const inputs = keys(node.inputs);
       const res = await _prompt(
         "New order?",
         (instance.visibleInputs || inputs).join(",")
@@ -434,7 +433,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
     }, [node.inputs, _prompt, instance, onChangeVisibleInputs]);
 
     const _onChangeVisibleOutputs = React.useCallback(async () => {
-      const outputs = okeys(node.outputs);
+      const outputs = keys(node.outputs);
       const res = await _prompt(
         "New order?",
         (instance.visibleOutputs || outputs).join(",")
