@@ -1,4 +1,5 @@
 import { CodeNode, CodeNodeDefinition, NodeMetadata } from "./node";
+import type React from "react";
 
 export type MacroEditorFieldDefinitionTypeString = {
   value: "string";

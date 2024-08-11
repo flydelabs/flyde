@@ -12,7 +12,7 @@ import {
 import { externalConnectionNode, connectionNode } from "./connect";
 import { execute, SubjectMap } from "./execute";
 
-import { isDefined, okeys } from "./common";
+import { isDefined, keys } from "./common";
 import { Subject } from "rxjs";
 import { NodesCollection } from ".";
 import { conciseCodeNode, valueNode } from "./test-utils";
@@ -263,7 +263,7 @@ export const filter: Node = fromSimplified({
 
     list.forEach((item: any, idx: number) => {
       const itemInput = dynamicNodeInput();
-      const outputs = okeys(fn.outputs).reduce<SubjectMap>(
+      const outputs = keys(fn.outputs).reduce<SubjectMap>(
         (p, k) => ({ ...p, [k]: new Subject() }),
         {}
       );
@@ -279,7 +279,7 @@ export const filter: Node = fromSimplified({
         }
       });
 
-      okeys(outputs)
+      keys(outputs)
         .filter((k) => k !== "r")
         .forEach((k) => {
           outputs[k]?.subscribe(() => {
@@ -385,31 +385,6 @@ export const accumulate = conciseCodeNode({
     }
   },
 });
-
-export const accUntil: CodeNode = {
-  id: "accUntil",
-  inputs: {
-    item: nodeInput("optional"),
-    until: nodeInput("optional"),
-  },
-  outputs: {
-    r: nodeOutput(),
-  },
-  reactiveInputs: ["item", "until"],
-  completionOutputs: ["r"],
-  run: ({ item, until }, { r }, { state }) => {
-    let list = state.get("list") || [];
-
-    if (isDefined(item)) {
-      list.push(item);
-      state.set("list", list);
-    }
-
-    if (isDefined(until)) {
-      r?.next(list);
-    }
-  },
-};
 
 export const spreadList = conciseCodeNode({
   id: "SpreadList",
