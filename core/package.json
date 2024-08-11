@@ -16,7 +16,8 @@
     "dev": "tsc -p . -w --incremental",
     "__publish": "npm version patch && npm publish",
     "bts": "tsc -p .",
-    "build": "rm -rf dist && tsc -p ."
+    "build": "rm -rf dist && tsc -p .",
+    "lint": "knip"
   },
   "author": "",
   "license": "MIT",
@@ -26,6 +27,7 @@
     "cuid": "^3.0.0",
     "debug": "^4.3.4",
     "dependency-graph": "^0.8.1",
+    "knip": "^5.27.0",
     "md5": "^2.3.0",
     "rxjs": "^6.6.7",
     "zod": "^3.22.2"
