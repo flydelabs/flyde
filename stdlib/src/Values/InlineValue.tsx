@@ -6,7 +6,7 @@ import {
   TextArea,
 } from "@blueprintjs/core";
 import type { InlineValueConfig } from "./InlineValue.flyde";
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { MacroEditorComp } from "@flyde/core";
 
 const types: InlineValueConfig["type"][] = [
@@ -25,7 +25,7 @@ const defaultValuePerType = {
   expression: (currValue: any) => currValue,
 };
 
-const labelMaxLength = 20;
+const labelMaxLength = 50;
 
 function valToLabel(val: any): string {
   try {
@@ -42,6 +42,7 @@ function valToLabel(val: any): string {
 const InlineValueEditor: MacroEditorComp<InlineValueConfig> =
   function InlineValueEditor(props) {
     const { value, onChange } = props;
+    const [isLabelCustom, setIsLabelCustom] = useState(false);
 
     const changeType = useCallback(
       (type) => {
@@ -60,14 +61,17 @@ const InlineValueEditor: MacroEditorComp<InlineValueConfig> =
 
     const changeValue = useCallback(
       (_val) => {
-        const newLabel = valToLabel(_val);
-        const oldLabel = valToLabel(value.value);
-
-        const wasUsingDefaultLabel = value.label === oldLabel || !value.label;
-
-        const labelToUse = wasUsingDefaultLabel ? newLabel : value.label;
+        const labelToUse = isLabelCustom ? value.label : valToLabel(_val);
 
         onChange({ ...value, value: _val, label: labelToUse });
+      },
+      [value, onChange]
+    );
+
+    const changeLabel = useCallback(
+      (newLabel) => {
+        setIsLabelCustom(newLabel ? true : false);
+        onChange({ ...value, label: newLabel });
       },
       [value, onChange]
     );
@@ -138,7 +142,7 @@ const InlineValueEditor: MacroEditorComp<InlineValueConfig> =
           <InputGroup
             type="text"
             value={value.label}
-            onChange={(e) => onChange({ ...value, label: e.target.value })}
+            onChange={(e) => changeLabel(e.target.value)}
           />
         </FormGroup>
       </div>
