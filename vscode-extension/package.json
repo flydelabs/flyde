@@ -116,7 +116,7 @@
             "id": "install",
             "title": "Install Flyde Extension",
             "media": {
-              "image": "media/walkthrough/icon.png",
+              "image": "icon.png",
               "altText": "Flyde icon"
             },
             "description": "Install the Flyde extension from the marketplace",
@@ -164,7 +164,7 @@
             "title": "Integrate Flyde into your project",
             "description": "Learn more about how to integrate Flyde into your project by reading the [documentation](https://www.flyde.dev/docs/integrate-flows).",
             "media": {
-              "image": "media/walkthrough/icon.png",
+              "image": "icon.png",
               "altText": "Flyde icon"
             },
             "completionEvents": [

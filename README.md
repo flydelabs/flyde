@@ -1,6 +1,9 @@
 <h1 align="center">
-    <a href="https://www.flyde.dev" style="color: black">
-    <img src="https://github.com/flydelabs/flyde/assets/3727015/eb1afa4a-0887-4cf2-99b5-35d4f1f6ee2a" height="40"/>
+    <a href="https://www.flyde.dev/#gh-light-mode-only" style="color: black">
+    <img src="https://github.com/user-attachments/assets/febdbeda-b437-4280-bb7d-0dcb396612ce" height="40"/>
+    </a>
+    <a href="https://www.flyde.dev/#gh-dark-mode-only" style="color: black">
+    <img src="https://github.com/user-attachments/assets/77711d3a-6e4f-444d-9994-aec6bf0bb1e8" height="40"/>
     </a>
 </h1>
 
