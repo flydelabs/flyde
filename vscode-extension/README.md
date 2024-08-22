@@ -55,10 +55,6 @@ Flyde is an open-source project. We are committed to a fully transparent develop
 
 Not sure where to start? Join our discord and we will help you get started!
 
-<a href="https://flyde.dev/discord">
-    <img src="https://img.shields.io/badge/discord-7289da.svg?style=flat-square&logo=discord" alt="discord" style="height: 20px;">
-  </a>
-
 ## Learn more
 
 Check out the official website at [https://flyde.dev](https://flyde.dev) for more information.

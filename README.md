@@ -92,7 +92,7 @@ Flyde is an open-source project. We are committed to a fully transparent develop
 
 - Documentation Request: If you're reading the Flyde docs and feel like you're missing something, please submit a [documentation request](https://github.com/flydelabs/flyde/issues/new).
 
-Not sure where to start? Join our discord and we will help you get started!
+Not sure where to start? Join our [discord](https://www.flyde.dev/discord) and we will help you get started!
 
 <a href="https://flyde.dev/discord">
     <img src="https://img.shields.io/badge/discord-7289da.svg?style=flat-square&logo=discord" alt="discord" style="height: 20px;">
