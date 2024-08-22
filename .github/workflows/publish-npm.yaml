@@ -60,7 +60,12 @@ jobs:
               echo "Skipping private package: $name"
               cd $root
               continue
-            fi  
+            fi
+            if [[ "$name" == "website" || "$name" == "flyde-vscode" ]]; then
+                echo "Skipping package: $name"
+                cd $root
+                continue
+            fi
             echo "Publishing $name"
             pnpm publish --access public --force --no-git-checks
             echo "Published $name\n\n"

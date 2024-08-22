@@ -1,4 +1,4 @@
-name: Build, Test, Lint and Publish (only on Main)
+name: Build, Test, Lint
 
 on:
   push:
@@ -50,65 +50,3 @@ jobs:
         run: xvfb-run -a pnpm run test
       - name: Lint
         run: pnpm run lint
-      - name: Bump patch version, Publish to NPM (excluding private packages), and Commit changes
-        if: false && github.ref == 'refs/heads/main'
-        run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "github-actions@users.noreply.github.com"
-          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
-
-          root=$(pwd)
-
-          echo "Bumping all versions"
-          for package in $(pnpm list --json --only-projects -r | jq -c '.[]'); do
-            name=$(echo $package | jq -r '.name')
-            path=$(echo $package | jq -r '.path')
-            cd $path
-            is_private=$(echo $package | jq '.private')
-            if [[ "$is_private" == "true" ]]; then
-              echo "Skipping private package: $name"
-              cd $root
-              continue
-            fi  
-            echo "Bumping version of $name"
-            pnpm version patch
-            cd $root
-          done
-
-          echo "Commiting and pushing changes"
-
-          git add -A
-          git commit -m "chore(release): bump package versions"
-          git push origin main
-
-          echo "Publishing"
-          for package in $(pnpm list --json --only-projects -r | jq -c '.[]'); do
-            name=$(echo $package | jq -r '.name')
-            path=$(echo $package | jq -r '.path')
-            cd $path
-            is_private=$(echo $package | jq '.private')
-            if [[ "$is_private" == "true" ]]; then
-              echo "Skipping private package: $name"
-              cd $root
-              continue
-            fi  
-            echo "Publishing $name"
-            pnpm publish --access public --force --no-git-checks
-            echo "Published $name\n\n"
-            cd $root
-          done
-
-      - name: Deploy Website to GitHub Pages
-        if: false && github.ref == 'refs/heads/main'
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          # Build output to publish to the `gh-pages` branch:
-          publish_dir: ./website/build
-          # The following lines assign commit authorship to the official
-          # GH-Actions bot for deploys to `gh-pages` branch:
-          # https://github.com/actions/checkout/issues/13#issuecomment-724415212
-          # The GH actions bot is used by default if you didn't specify the two fields.
-          # You can swap them out with your own user credentials.
-          user_name: github-actions[bot]
-          user_email: 41898282+github-actions[bot]@users.noreply.github.com
