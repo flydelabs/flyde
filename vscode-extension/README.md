@@ -2,36 +2,6 @@
     <i>Visual Programming. For Developers.</i> Open-source, runs in <strong>VS Code</strong>.<br/>Integrates with existing <strong>TypeScript</strong> code, browser and Node.js.
 </p>
 
-<h4 align="center">
-  <a href="https://opensource.org/licenses/MIT">
-    <img src="https://img.shields.io/npm/l/@flyde/runtime" alt="license" style="height: 20px;">
-  </a>
-  <a href="https://github.com/flydelabs/flyde/blob/main/core/src/spec.ts">
-    <img src="core/coverage-badge.svg" alt="coverage"/>
-  </a>
-
-  <a href="https://www.flyde.dev">
-    <img src="https://img.shields.io/badge/Website-007ec6?style=flat&logo=world&logoColor=white"/>
-  </a>
-
-  <a href="https://play.flyde.dev">
-    <img src="https://img.shields.io/badge/Playground-007ec6?style=flat&logo=world&logoColor=white"/>
-  </a>
-  <br>
-  <a href="https://flyde.dev/discord">
-    <img src="https://img.shields.io/badge/discord-7289da.svg?style=flat-square&logo=discord" alt="discord" style="height: 20px;">
-  </a>
-
-  <a href="https://twitter.com/FlydeLabs">
-    <img src="https://img.shields.io/twitter/follow/FlydeLabs?style=social"/>
-  </a>
-
-  <a href="https://play.flyde.dev">
-    <img src="https://img.shields.io/badge/Trigg:Managed Flyde-FEDD4E?style=flat&logo=world&logoColor=white"/>
-  </a>
-
-</h4>
-
 <div align="center">
     <img src="https://github.com/flydelabs/flyde/assets/3727015/5d2d917b-48f6-49db-a1a9-e7fe685c408f"/>
 </div>

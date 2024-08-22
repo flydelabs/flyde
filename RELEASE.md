@@ -9,3 +9,4 @@ The release step is semi-manual at the moment and consists of the following step
 5. Run the ״publish to vscode״ workflow
 6. Update CHANGELOG.md with the new version
 7. copy CHANGELOG.md to vscode-extension/CHANGELOG.md
+8. If README.md was changed, copy changes to vscode-extension/README.md but remove the badges section and the logo at the top

@@ -1,8 +1,15 @@
 # Changelog
 
-All notable changes to the "vscode-extension" extension will be documented in this file.
+All notable changes to Flyde will be documented in this file.
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
+## [0.102.2] - 2024-08-22
+
+- upgrades Typescript by @GabiGrin in https://github.com/flydelabs/flyde/pull/134
+- @flyde/core cleanups by @GabiGrin in https://github.com/flydelabs/flyde/pull/135
+- fixes inline value label not updating by @GabiGrin in https://github.com/flydelabs/flyde/pull/136
+- new logo by @GabiGrin in https://github.com/flydelabs/flyde/pull/137
+
+**Full Changelog**: https://github.com/flydelabs/flyde/compare/v0.102.0...v0.102.1
 
 ## [0.102.0] - 2024-07-29
 
