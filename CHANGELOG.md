@@ -2,6 +2,10 @@
 
 All notable changes to Flyde will be documented in this file.
 
+## [0.102.3] - 2024-08-27
+
+- fixes issue #138 by @GabiGrin in https://github.com/flydelabs/flyde/pull/140
+
 ## [0.102.2] - 2024-08-22
 
 - upgrades Typescript by @GabiGrin in https://github.com/flydelabs/flyde/pull/134
