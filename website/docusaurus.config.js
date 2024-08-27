@@ -220,8 +220,8 @@ const config = {
                 href: "https://github.com/flydelabs/flyde",
               },
               {
-                label: "Cloud-Managed Flyde for APIs",
-                href: "https://www.flyde.app?ref=flyde-footer",
+                label: "Flowcode - API Builder",
+                href: "https://www.getflowcode.io?ref=flyde-footer",
               },
             ],
           },
