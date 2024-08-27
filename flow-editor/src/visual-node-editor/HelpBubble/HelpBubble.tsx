@@ -63,8 +63,8 @@ const mainDocItems = [
     link: "https://www.flyde.dev/docs/troubleshooting/",
   },
   {
-    title: "Trigg - Cloud Managed Flyde",
-    link: "https://www.trigg.dev/?ref=help-menu",
+    title: "Flowcode - Hosted API Builder",
+    link: "https://www.getflowcode.io/?ref=help-menu",
   },
 ];
 
