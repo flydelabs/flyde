@@ -12,6 +12,7 @@ require("ts-node").register({
   transpileOnly: true,
   compilerOptions: {
     moduleResolution: "NodeNext",
+    module: "NodeNext",
   },
 });
 
