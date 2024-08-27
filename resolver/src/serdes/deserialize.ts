@@ -9,11 +9,10 @@ import _ = require("lodash");
 import { readFileSync } from "fs";
 
 require("ts-node").register({
-  // Most ts-node options can be specified here using their programmatic names.
   transpileOnly: true,
-  // It is faster to skip typechecking.
-  // Remove if you want ts-node to do typechecking.
-  // }
+  compilerOptions: {
+    moduleResolution: "NodeNext",
+  },
 });
 
 const macroMigrationsMap = {
