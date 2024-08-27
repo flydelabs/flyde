@@ -161,8 +161,8 @@ const config = {
             label: "Online Playground",
           },
           {
-            href: "https://www.flyde.app?ref=flyde-header",
-            label: "Flyde Backend Builder",
+            href: "https://www.getflowcode.io?ref=flyde-header",
+            label: "Flowcode",
           },
           {
             href: "https://github.com/flydelabs/flyde",
