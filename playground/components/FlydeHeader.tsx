@@ -45,12 +45,12 @@ export function FlydeHeader() {
             </svg>
           </a>
           <a
-            href="https://www.trigg.dev?ref=playground"
+            href="https://www.getflowcode.io?ref=playground"
             target="_blank"
             rel="noopener noreferrer"
             className="navbar__item navbar__link"
           >
-            Trigg
+            Flowcode
             <svg
               width="13.5"
               height="13.5"
