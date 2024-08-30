@@ -23,7 +23,7 @@ export function getUnresolvedNodesLibraryData() {
     groups: [
       {
         title: "Values & Custom Code",
-        nodes: [InlineValue, CodeExpression, Comment],
+        nodes: [InlineValue, CodeExpression],
       },
       {
         title: "Control Flow",
@@ -44,6 +44,10 @@ export function getUnresolvedNodesLibraryData() {
       {
         title: "Timing",
         nodes: [Delay, Throttle, Debounce, Interval],
+      },
+      {
+        title: "Misc",
+        nodes: [Comment],
       },
     ],
   };

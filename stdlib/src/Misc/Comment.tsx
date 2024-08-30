@@ -20,7 +20,7 @@ export const CommentEditor: MacroEditorComp<CommentConfig> = ({
         onChange={(e) => setContent(e.target.value)}
         placeholder="Enter your comment here (HTML supported)"
         rows={10}
-        style={{ width: "100%" }}
+        style={{ width: "100%", padding: "8px 6px" }}
       />
       <Callout intent="primary" icon={null}>
         HTML formatting is supported

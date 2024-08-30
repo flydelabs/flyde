@@ -136,7 +136,7 @@ export const NodesLibrary: React.FC<NodesLibraryProps> = memo((props) => {
                   >
                     <div className="group-item-inner">
                       <InstanceIcon icon="fa-solid fa-wand-magic-sparkles" />
-                      Generate using AI
+                      Generate Node using AI
                     </div>
                   </Tooltip>
                 </div>
