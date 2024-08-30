@@ -1,4 +1,4 @@
-import { MacroNode } from "@flyde/core";
+import { MacroNode, nodeInput } from "@flyde/core";
 
 export interface CommentConfig {
   content: string;
@@ -34,7 +34,9 @@ export const Comment: MacroNode<CommentConfig> = {
 
       displayName: config.content,
       description: "Comment node",
-      inputs: {},
+      inputs: {
+        never: nodeInput(), // this is a hack to make the node never trigger
+      },
       outputs: {},
     };
   },

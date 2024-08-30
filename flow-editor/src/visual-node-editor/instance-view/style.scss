@@ -37,8 +37,8 @@ $half-of-pin-height: 16px;
   z-index: 1;
 
   &[data-node-id="Comment"] {
-    [data-pin-id="__trigger"] {
-      display: none; // mega ugly hack to hide the trigger pin on the comment node
+    [data-pin-id] {
+      display: none; // mega ugly hack to hide pins on comment node
     }
   }
 
