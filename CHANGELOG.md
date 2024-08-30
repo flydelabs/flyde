@@ -2,6 +2,14 @@
 
 All notable changes to Flyde will be documented in this file.
 
+## [0.102.4] - 2024-08-30
+
+- improve set attribute node by @GabiGrin in https://github.com/flydelabs/flyde/pull/142
+- Comment Node tweaks + AI generation refinement by @GabiGrin in https://github.com/flydelabs/flyde/pull/143
+- Fixes comment node lighting up when flow runs by @GabiGrin in https://github.com/flydelabs/flyde/pull/144
+
+**Full Changelog**: https://github.com/flydelabs/flyde/compare/v0.102.3...v0.102.4
+
 ## [0.102.3] - 2024-08-27
 
 - fixes issue #138 by @GabiGrin in https://github.com/flydelabs/flyde/pull/140
