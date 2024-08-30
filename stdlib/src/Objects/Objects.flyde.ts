@@ -1,4 +1,9 @@
-import { CodeNode } from "@flyde/core";
+import {
+  CodeNode,
+  ConfigurableInput,
+  InputPinMap,
+  MacroNode,
+} from "@flyde/core";
 
 export * from "./GetAttribute/GetAttribute.flyde";
 
@@ -87,36 +92,93 @@ export const ObjectEntries: CodeNode = {
   run: ({ object }, { entries }) => entries.next(Object.entries(object)),
 };
 
-export const SetAttribute: CodeNode = {
-  id: "Set Attribute",
+export const SetAttribute: MacroNode<{
+  key: ConfigurableInput<string>;
+  value: ConfigurableInput<any>;
+}> = {
+  id: "SetAttribute",
+  displayName: "Set Attribute",
   searchKeywords: ["dot"],
   namespace,
   defaultStyle: {
     icon: "fa-box",
   },
   description: "Sets an attribute on an object",
-  inputs: {
-    object: {
-      description: "Object to set attribute on",
-    },
-    attribute: {
-      description: "Attribute to set",
-    },
-    value: {
-      description: "Value to set attribute to",
-    },
+  definitionBuilder: (config) => {
+    const inputs: InputPinMap = {
+      object: {
+        description: "Object to set attribute on",
+      },
+    };
+    if (config.key.mode === "dynamic") {
+      inputs.attribute = {
+        description: "Attribute to set",
+      };
+    }
+    if (config.value.mode === "dynamic") {
+      inputs.value = {
+        description: "Value to set attribute to",
+      };
+    }
+    return {
+      inputs,
+      outputs: {
+        object: {
+          description: "The object with the attribute set",
+        },
+      },
+      displayName: `Set Attribute${
+        config.key.mode === "static" ? ` "${config.key.value}"` : ""
+      }${
+        config.value.mode === "static"
+          ? ` = ${JSON.stringify(config.value.value)}`
+          : ""
+      }`,
+    };
   },
-  outputs: {
-    object: {
-      description: "The object with the attribute set",
+  runFnBuilder:
+    (config) =>
+    ({ object, attribute, value }, { object: outputObject }) => {
+      const _attribute =
+        config.key.mode === "static" ? config.key.value : attribute;
+      const _value =
+        config.value.mode === "static" ? config.value.value : value;
+      const attributes = _attribute.split(".");
+      const last = attributes.pop();
+      const target = attributes.reduce((obj, i) => obj[i], object);
+      target[last] = _value;
+      outputObject.next(object);
     },
+  defaultData: {
+    key: { mode: "static", value: "" },
+    value: { mode: "dynamic" },
   },
-  run: ({ object, attribute, value }, { object: outputObject }) => {
-    const attributes = attribute.split(".");
-    const last = attributes.pop();
-    const target = attributes.reduce((obj, i) => obj[i], object);
-    target[last] = value;
-    return outputObject.next(object);
+  editorConfig: {
+    type: "structured",
+    fields: [
+      {
+        type: {
+          value: "string",
+        },
+        configKey: "key",
+        label: "Key",
+        defaultValue: {
+          mode: "dynamic",
+        },
+        allowDynamic: true,
+      },
+      {
+        type: {
+          value: "json",
+        },
+        configKey: "value",
+        label: "Value",
+        defaultValue: {
+          mode: "dynamic",
+        },
+        allowDynamic: true,
+      },
+    ],
   },
 };
 
