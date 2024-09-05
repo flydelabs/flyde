@@ -42,10 +42,7 @@ const CodeExpressionEditor: MacroEditorComp<InlineValueConfig> =
 
     return (
       <div>
-        <FormGroup
-          label="Value:"
-          helperText={`Accepts any valid JS extension. `}
-        >
+        <FormGroup label="Value:" helperText={`Accepts any valid JS code`}>
           <TextArea
             value={value.value}
             fill
