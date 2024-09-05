@@ -8,7 +8,7 @@ export interface InlineValueConfig {
 
 export const InlineValue: MacroNode<InlineValueConfig> = {
   id: "InlineValue",
-  displayName: "Inline Value",
+  displayName: "Value",
   defaultStyle: {
     icon: "pen",
   },

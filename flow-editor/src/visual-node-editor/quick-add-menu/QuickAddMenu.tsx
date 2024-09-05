@@ -60,7 +60,7 @@ const matchTitle = (match: QuickMenuMatch) => {
       return `${match.node.id}`;
     }
     case "value": {
-      return "Add inline value or function";
+      return "Add value or function";
     }
     case "import": {
       return `Import ${match.importableNode.node.id} from ${match.importableNode.module}`;
