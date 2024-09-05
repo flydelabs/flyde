@@ -18,7 +18,7 @@ Flyde comes with a set of built-in nodes that can be used to build flows. All of
 
 ### Loop List
 
-## Inline Value
+## Value
 
 This is Flyde's version of a constant. It emits a single value to its output.
 

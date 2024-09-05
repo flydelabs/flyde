@@ -72,8 +72,6 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = forwardRef(
       props.flowProps.dependencies
     );
 
-    console.log({ resolvedDeps });
-
     const [editorState, setFlowEditorState] = useState<FlowEditorState>({
       flow,
       boardData: defaultBoardData,
@@ -190,7 +188,7 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = forwardRef(
         const cleanAll = () => {
           clean();
           sub.unsubscribe();
-          runtimePlayer.clear();
+          // runtimePlayer.clear();
           historyPlayer.clear();
           localDebugger.destroy();
           clearTimeout(completionTimeout);

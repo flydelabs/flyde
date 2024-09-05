@@ -46,7 +46,6 @@ export const AddNodeMenuListItem: React.FC<AddNodeMenuListItemProps> = (
       <div className="content">
         <header>
           <span className="name">{displayName ?? id}</span>
-          {/* {node.namespace ? <Tag className='namespace'>Group: {node.namespace}</Tag> : null} */}
           <Tag
             interactive
             onClick={() =>

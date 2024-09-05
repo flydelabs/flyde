@@ -13,7 +13,7 @@ import {
   getPinDomId,
 } from "../dom-ids";
 
-const BLINK_TIMEOUT = 1500; // also change animation time in scss
+const BLINK_TIMEOUT = 8000; // also change animation time in scss
 
 const debug = debugLogger("runtime-player:play-event");
 

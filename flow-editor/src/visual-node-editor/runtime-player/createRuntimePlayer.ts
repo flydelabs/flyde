@@ -34,15 +34,6 @@ export const createRuntimePlayer = (): RuntimePlayer => {
     toPlay.forEach((e) => {
       debug(`Playing event`, e);
       playEvent(e);
-
-      if (
-        e.insId === ROOT_INS_ID &&
-        e.type === DebuggerEventType.PROCESSING_CHANGE &&
-        e.val === false
-      ) {
-        debug(`Main instance is done processing, clearing runtime UI`, e);
-        clear();
-      }
     });
   };
 
@@ -71,6 +62,7 @@ export const createRuntimePlayer = (): RuntimePlayer => {
 
   const clear = () => {
     document.querySelectorAll("[data-runtime]").forEach((elem) => {
+      console.log("removing data-runtime #1c", elem);
       elem.removeAttribute("data-runtime");
     });
 
@@ -83,6 +75,7 @@ export const createRuntimePlayer = (): RuntimePlayer => {
   return {
     stop,
     start: (dt = 0) => {
+      clear();
       running = true;
       currDt = dt;
       last = Date.now();
