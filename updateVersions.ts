@@ -1,6 +1,7 @@
 import { execSync } from "child_process";
 import { readFileSync, writeFileSync } from "fs";
 import { join } from "path";
+import readline from "readline";
 
 const bumpType = process.argv[2]; // 'patch' or 'minor'
 
@@ -13,26 +14,87 @@ const workspacePackages = JSON.parse(
   execSync("pnpm list -r --json").toString()
 );
 
+const versions = new Set<string>();
+
 workspacePackages.forEach((pkg: any) => {
   try {
     const packageJsonPath = join(pkg.path, "package.json");
     const packageJson = JSON.parse(readFileSync(packageJsonPath, "utf-8"));
 
-    if (!packageJson.version) {
+    if (packageJson.version) {
+      versions.add(packageJson.version);
+      console.log(`Package: ${pkg.name}, Version: ${packageJson.version}`);
+    } else {
       console.info(`Skipping package [${pkg.path}], no version present`);
     }
-
-    const [major, minor, patch] = packageJson.version.split(".").map(Number);
-
-    if (bumpType === "patch") {
-      packageJson.version = `${major}.${minor}.${patch + 1}`;
-    } else if (bumpType === "minor") {
-      packageJson.version = `${major}.${minor + 1}.0`;
-    }
-
-    writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
-    console.log(`Updated ${pkg.name} to version ${packageJson.version}`);
   } catch (e) {
-    console.error(`Failed to bump package ${pkg.path}`);
+    console.error(`Failed to read package ${pkg.path}`);
   }
 });
+
+if (versions.size > 1) {
+  console.error("Not all package versions are the same. Aborting.");
+  process.exit(1);
+}
+
+const currentVersion = Array.from(versions)[0];
+const [major, minor, patch] = currentVersion.split(".").map(Number);
+let newVersion = "";
+
+if (bumpType === "patch") {
+  newVersion = `${major}.${minor}.${patch + 1}`;
+} else if (bumpType === "minor") {
+  newVersion = `${major}.${minor + 1}.0`;
+}
+
+console.log(`Current version: ${currentVersion}`);
+console.log(`New version: ${newVersion}`);
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+
+rl.question(
+  `Do you want to proceed with the version bump to ${newVersion}? This will push changes to GitHub and create a new tag. (yes/no) `,
+  (answer) => {
+    if (answer.toLowerCase() !== "yes") {
+      console.log("Aborted.");
+      rl.close();
+      process.exit(0);
+    }
+
+    workspacePackages.forEach((pkg: any) => {
+      try {
+        const packageJsonPath = join(pkg.path, "package.json");
+        const packageJson = JSON.parse(readFileSync(packageJsonPath, "utf-8"));
+
+        if (!packageJson.version) {
+          console.info(`Skipping package [${pkg.path}], no version present`);
+          return;
+        }
+
+        packageJson.version = newVersion;
+        writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
+        console.log(`Updated ${pkg.name} to version ${packageJson.version}`);
+      } catch (e) {
+        console.error(`Failed to bump package ${pkg.path}`);
+      }
+    });
+
+    try {
+      execSync("git add .");
+      execSync(
+        `git commit -m "Bump versions to ${newVersion} for ${bumpType} release"`
+      );
+      execSync("git push");
+      execSync(`git tag v${newVersion}`);
+      execSync("git push --tags");
+      console.log("Changes pushed to GitHub and new tag created.");
+    } catch (e) {
+      console.error("Failed to push changes to GitHub or create a new tag.");
+    }
+
+    rl.close();
+  }
+);
