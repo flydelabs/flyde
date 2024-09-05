@@ -12,6 +12,7 @@ const namespace = "Objects";
 /** @deprecated */
 export const GetAttributeOld: CodeNode = {
   id: "Get Attribute",
+  displayName: "Get Attribute (deprecated)",
   searchKeywords: ["pick", "dot"],
   namespace,
   defaultStyle: {

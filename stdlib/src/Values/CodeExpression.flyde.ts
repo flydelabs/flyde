@@ -8,7 +8,7 @@ export interface CodeExpressionConfig {
 
 export const CodeExpression: MacroNode<CodeExpressionConfig> = {
   id: "CodeExpression",
-  displayName: "Inline Code",
+  displayName: "Function",
   defaultStyle: {
     icon: "code",
   },

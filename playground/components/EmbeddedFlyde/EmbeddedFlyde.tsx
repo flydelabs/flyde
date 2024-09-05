@@ -115,7 +115,7 @@ export function EmbeddedFlyde(props: EmbeddedFlydeProps) {
     useCallback(async () => {
       const stdLibNodes = Object.values(
         await import("@flyde/stdlib/dist/all-browser")
-      ).filter(isBaseNode) as ImportedNode[];
+      ).filter((n) => isBaseNode(n) || isMacroNode(n)) as ImportedNode[];
 
       const _stdLibNodes = stdLibNodes.map((b) => ({
         node: { ...b, source: { path: "n/a", export: "n/a" } },

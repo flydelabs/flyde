@@ -23,7 +23,11 @@ export type SelectionTypeConnections = {
   ids: string[];
 };
 
-export type SelectionType = SelectionTypeInput | SelectionTypeOutput | SelectionTypeInstances | SelectionTypeConnections;
+export type SelectionType =
+  | SelectionTypeInput
+  | SelectionTypeOutput
+  | SelectionTypeInstances
+  | SelectionTypeConnections;
 
 export interface SelectionIndicatorProps {
   selection: SelectionType;
@@ -79,25 +83,36 @@ export const SelectionIndicator: React.FC<SelectionIndicatorProps> = (
         onDelete(selection.ids);
         break;
     }
-  }
+  };
 
   const actions = {
-    center: (<Button onClick={onCenter} small minimal outlined>Center</Button>),
-    group: (<Button onClick={onGroup} small minimal outlined>Group</Button>),
-    delete: (<Button onClick={onDeleteClick} small minimal outlined intent="danger">Delete</Button>),
-  }
+    center: (
+      <Button onClick={onCenter} small minimal outlined>
+        Center
+      </Button>
+    ),
+    group: (
+      <Button onClick={onGroup} small minimal outlined>
+        Group
+      </Button>
+    ),
+    delete: (
+      <Button onClick={onDeleteClick} small minimal outlined intent="danger">
+        Delete
+      </Button>
+    ),
+  };
 
   const actionsMap = {
     instances: [actions.center, actions.group, actions.delete],
     connections: [actions.delete],
     input: [actions.center],
     output: [actions.center],
-  }
+  };
 
   return (
     <div className={classNames("selection-indicator", { dark })}>
-      {inner}{" "}
-      {actionsMap[selection.type]}
+      {inner} {actionsMap[selection.type]}
     </div>
   );
 };
