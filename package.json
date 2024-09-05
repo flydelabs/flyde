@@ -1,6 +1,6 @@
 {
   "name": "flyde",
-  "version": "0.102.4",
+  "version": "0.102.5",
   "main": "index.js",
   "description": "",
   "proxy": "http://localhost:8484",
@@ -17,12 +17,15 @@
     "bump-all-patch": "pnpm -r version patch",
     "bump-all-minor": "pnpm -r version minor",
     "publish-all": "./publish-all-with-otp.sh",
-    "release": "pnpm run build && pnpm run bump-all-patch && pnpm run publish-all"
+    "release": "pnpm run build && pnpm run bump-all-patch && pnpm run publish-all",
+    "bump:minor": "tsx updateVersions.ts minor",
+    "bump:patch": "tsx updateVersions.ts patch"
   },
   "author": "",
   "dependencies": {
     "concurrently": "^4.1.2",
-    "mixpanel-browser": "^2.47.0"
+    "mixpanel-browser": "^2.47.0",
+    "tsx": "^4.7.1"
   },
   "private": true,
   "packageManager": "pnpm@8.3.1"
