@@ -17,18 +17,36 @@ import { useCases } from "./_useCases";
 
 const FIRST_EXAMPLE_IDX = 0;
 
+// Add this function at the top of the file, outside of any component
+async function fetchGitHubStars() {
+  try {
+    const response = await fetch(
+      "https://api.github.com/repos/flydelabs/flyde"
+    );
+    const data = await response.json();
+    return data.stargazers_count;
+  } catch (error) {
+    console.error("Error fetching GitHub stars:", error);
+    return null;
+  }
+}
+
 function HomepageHeader() {
   const [visibleTips, setVisibleTips] = useState(new Set());
   const [currentExample, setCurrExample] = React.useState(
     examples[FIRST_EXAMPLE_IDX]
   );
+  const [starCount, setStarCount] = useState<number | null>(1941);
 
   const exampleRef = React.useRef(null);
-
   const runExample = useCallback(() => {
     exampleRef.current?.runFlow();
     setVisibleTips((tips) => new Set([...tips, currentExample.fileName]));
   }, [currentExample]);
+
+  useEffect(() => {
+    fetchGitHubStars().then(setStarCount);
+  }, []);
 
   return (
     <div className={clsx("hero hero--primary", styles.heroBanner)}>
@@ -38,8 +56,11 @@ function HomepageHeader() {
             className="github-star"
             href="https://www.github.com/flydelabs/flyde"
             target="_blank"
+            rel="noopener noreferrer"
           >
-            <IconStar /> <span>Star us on GitHub</span>
+            <IconStar />
+            <span className="star-text">Star</span>
+            <span className="star-count">{starCount.toLocaleString()}</span>
           </a>
           <h1 className="hero__title">
             <div className="font-thin">Visual Programming.</div>

@@ -104,7 +104,7 @@
     .github-star {
       display: inline-flex;
       align-items: center;
-      font-size: 0.8rem;
+      font-size: 1rem;
       gap: 5px;
       justify-self: flex-start;
       padding: 4px 12px;
@@ -452,4 +452,28 @@
 
 .font-thin {
   font-weight: 300;
+}
+
+.github-star {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  text-decoration: none;
+  color: #333;
+  // font-weight: bold;
+}
+
+.github-star {
+  text-decoration: none !important;
+}
+
+.star-text {
+  margin-right: 4px;
+}
+
+.star-count {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 2px 6px;
+  font-size: 0.9em;
 }
