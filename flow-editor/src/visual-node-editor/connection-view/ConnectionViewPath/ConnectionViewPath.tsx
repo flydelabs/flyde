@@ -8,14 +8,16 @@ export interface ConnectionViewPathProps {
   to: Pos;
   className: string;
   onClick?: (e: React.MouseEvent<any, MouseEvent>) => void;
-  onMouseProximity?: (isMouseClose: boolean) => void;
+  onMouseEnter?: (e: React.MouseEvent<any, MouseEvent>) => void;
+  onMouseLeave?: (e: React.MouseEvent<any, MouseEvent>) => void;
   zoom: number;
   dashed?: boolean;
 }
 
 export const ConnectionViewPath: React.FC<ConnectionViewPathProps> = forwardRef(
   (props, ref) => {
-    const { from, to, className, zoom, dashed } = props;
+    const { from, to, className, zoom, dashed, onMouseEnter, onMouseLeave } =
+      props;
     const { x: x1, y: y1 } = from;
     const { x: x2, y: y2 } = to;
 
@@ -33,8 +35,8 @@ export const ConnectionViewPath: React.FC<ConnectionViewPathProps> = forwardRef(
     const pathProximityMask = (
       <path
         onClick={props.onClick}
-        onMouseEnter={() => props.onMouseProximity(true)}
-        onMouseLeave={() => props.onMouseProximity(false)}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
         d={d}
         style={{ cursor: "pointer", opacity: 0, strokeWidth: 40 * zoom }}
       />
