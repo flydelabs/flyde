@@ -11,6 +11,7 @@ import { useScrollWithShadow } from "../../lib/react-utils/use-shadow-scroll";
 import { InstanceIcon } from "../instance-view";
 import { usePorts } from "../../flow-editor/ports";
 import { clearToast, toastMsg } from "../../toaster";
+import { DragEvent } from "react";
 
 export interface NodesLibraryProps extends NodeLibraryData {
   onAddNode: (node: ImportableSource) => void;
@@ -65,6 +66,13 @@ export const NodesLibrary: React.FC<NodesLibraryProps> = memo((props) => {
 
   const { boxShadow, onScrollHandler } = useScrollWithShadow(darkMode);
 
+  const onDragStart = useCallback(
+    (e: DragEvent<HTMLDivElement>, node: ImportedNode) => {
+      e.dataTransfer.setData("application/json", JSON.stringify(node));
+    },
+    []
+  );
+
   return (
     <div
       className={classNames("nodes-library", {
@@ -91,7 +99,7 @@ export const NodesLibrary: React.FC<NodesLibraryProps> = memo((props) => {
       </div>
       <div className="list" style={{ boxShadow }} onScroll={onScrollHandler}>
         {groups.map((group) => (
-          <div>
+          <div key={group.title}>
             <div
               className={classNames("group-title", {
                 open: openGroup === group.title,
@@ -101,17 +109,13 @@ export const NodesLibrary: React.FC<NodesLibraryProps> = memo((props) => {
             >
               {group.title}
             </div>
-            {/* {openGroup === group.title ? ( */}
             <div className="group-items">
               {group.nodes.map((node) => (
                 <div
+                  key={node.id}
                   className="group-item"
-                  onClick={() =>
-                    props.onAddNode({
-                      module: "@flyde/stdlib",
-                      node: node as ImportedNode,
-                    })
-                  }
+                  draggable
+                  onDragStart={(e) => onDragStart(e, node as ImportedNode)}
                 >
                   <Tooltip
                     content={node.description}
@@ -142,7 +146,6 @@ export const NodesLibrary: React.FC<NodesLibraryProps> = memo((props) => {
                 </div>
               ) : null}
             </div>
-            {/* ) : null} */}
           </div>
         ))}
       </div>
