@@ -77,14 +77,12 @@ export const SingleConnectionView: React.FC<ConnectionItemViewProps> = (
     instances,
     type,
     viewPort,
-    toggleHidden,
     parentSelected,
-    removeConnection,
     onSelectConnection,
     isConnectionSelected,
   } = props;
 
-  const [isPendingSelection, setIsPendingSelection] = React.useState(false);
+  const [isHovered, setIsHovered] = React.useState(false);
 
   const { from } = connection;
 
@@ -121,7 +119,7 @@ export const SingleConnectionView: React.FC<ConnectionItemViewProps> = (
       hidden: connection.hidden,
       "parent-selected": parentSelected,
       selected: isConnectionSelected,
-      "pending-selection": !isConnectionSelected && isPendingSelection,
+      "pending-selection": !isConnectionSelected && isHovered,
     },
     type
   );
@@ -137,7 +135,8 @@ export const SingleConnectionView: React.FC<ConnectionItemViewProps> = (
       to={{ x: x2, y: y2 }}
       dashed={type !== "regular"}
       zoom={viewPort.zoom}
-      onMouseProximity={setIsPendingSelection}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       onClick={onConnectionPathClick}
     />
   );
