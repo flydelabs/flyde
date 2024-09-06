@@ -116,6 +116,12 @@ export const NodesLibrary: React.FC<NodesLibraryProps> = memo((props) => {
                   className="group-item"
                   draggable
                   onDragStart={(e) => onDragStart(e, node as ImportedNode)}
+                  onClick={() =>
+                    props.onAddNode({
+                      module: "@flyde/stdlib",
+                      node: node as ImportedNode,
+                    })
+                  }
                 >
                   <Tooltip
                     content={node.description}

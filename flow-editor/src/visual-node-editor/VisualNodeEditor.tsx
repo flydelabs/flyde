@@ -14,7 +14,6 @@ import {
   ConnectionNode,
   delay,
   noop,
-  keys,
   TRIGGER_PIN_ID,
   isInlineNodeInstance,
   isRefNodeInstance,
@@ -122,6 +121,7 @@ import { RunFlowModal } from "./RunFlowModal";
 
 import { Play } from "@blueprintjs/icons";
 import { EditorContextMenu } from "./EditorContextMenu/EditorContextMenu";
+import { usePruneOrphanConnections } from "./usePruneOrphanConnections";
 
 const MemodSlider = React.memo(Slider);
 
@@ -1224,15 +1224,19 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         ]
       );
 
-      const renderNodeInputs = () => {
+      const renderMainPins = (type: PinType) => {
         const from = boardData.from;
 
-        return entries(inputs).map(([k, v]) => (
+        const pins = type === "input" ? inputs : outputs;
+        const positionMap = type === "input" ? inputsPosition : outputsPosition;
+        const selectionPinId = type === "input" ? from?.pinId : to?.pinId;
+
+        return entries(pins).map(([k, v]) => (
           <NodeIoView
             currentInsId={currentInsId}
             ancestorInsIds={props.ancestorsInsIds}
-            type="input"
-            pos={inputsPosition[k] || { x: 0, y: 0 }}
+            type={type}
+            pos={positionMap[k] || { x: 0, y: 0 }}
             id={k}
             onDelete={nodeIoEditable ? onRemoveIoPin : undefined}
             onRename={nodeIoEditable ? onRenameIoPin : undefined}
@@ -1240,14 +1244,14 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             closest={
               !!(
                 closestPin &&
-                closestPin.type === "input" &&
+                closestPin.type === type &&
                 closestPin.ins.id === node.id &&
                 closestPin.pin === k
               )
             }
             connected={false}
             inputMode={v.mode}
-            onChangeInputMode={onChangeInputMode}
+            onChangeInputMode={type === "input" ? onChangeInputMode : undefined}
             key={k}
             viewPort={viewPort}
             onDragStart={onStartDraggingNodeIo}
@@ -1255,43 +1259,8 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             onDragMove={onDragMoveNodeIo}
             onSelect={onNodeIoPinClick}
             onSetDescription={onNodeIoSetDescription}
-            selected={from?.pinId === k}
+            selected={selectionPinId === k}
             description={v.description}
-            onMouseUp={onNodeIoMouseUp}
-            onMouseDown={onNodeIoMouseDown}
-          />
-        ));
-      };
-
-      const renderNodeOutputs = () => {
-        const { to } = boardData;
-        return entries(outputs).map(([k, v]) => (
-          <NodeIoView
-            currentInsId={currentInsId}
-            ancestorInsIds={props.ancestorsInsIds}
-            type="output"
-            pos={outputsPosition[k] || { x: 0, y: 0 }}
-            id={k}
-            onDelete={nodeIoEditable ? onRemoveIoPin : undefined}
-            onRename={nodeIoEditable ? onRenameIoPin : undefined}
-            closest={
-              !!(
-                closestPin &&
-                closestPin.type === "output" &&
-                closestPin.ins.id === node.id &&
-                closestPin.pin === k
-              )
-            }
-            connected={false}
-            key={k}
-            viewPort={viewPort}
-            onDragStart={onStartDraggingNodeIo}
-            onDragEnd={onDragEndNodeIo}
-            onDragMove={onDragMoveNodeIo}
-            onSelect={onNodeIoPinClick}
-            onSetDescription={onNodeIoSetDescription}
-            description={v.description}
-            selected={to?.pinId === k}
             onMouseUp={onNodeIoMouseUp}
             onMouseDown={onNodeIoMouseDown}
           />
@@ -1415,57 +1384,14 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         new Map<string, Record<string, NodeInstance[]>>()
       );
 
-      // prune orphan connections
-      React.useEffect(() => {
-        const validInputs = instances.reduce((acc, ins) => {
-          const node = safelyGetNodeDef(ins, currResolvedDeps);
-          if (node) {
-            acc.set(ins.id, keys(getNodeInputs(node)));
-          }
-          return acc;
-        }, new Map<string, string[]>());
-
-        const validOutputs = instances.reduce((acc, ins) => {
-          const node = safelyGetNodeDef(ins, currResolvedDeps);
-          if (node) {
-            acc.set(ins.id, keys(getNodeOutputs(node)));
-          }
-          return acc;
-        }, new Map<string, string[]>());
-
-        /* the nodes output are targets for connections therefore they are fed into the "validInputs" map */
-        validInputs.set(THIS_INS_ID, keys(node.outputs));
-        /* the nodes inputs are targets for connections therefore they are fed into the "validOutputs" map */
-        validOutputs.set(THIS_INS_ID, keys(node.inputs));
-
-        const orphanConnections = connections.filter((conn) => {
-          const inputsExist =
-            validInputs.get(conn.to.insId) &&
-            validInputs.get(conn.to.insId).includes(conn.to.pinId);
-          const outputsExist =
-            validOutputs.get(conn.from.insId) &&
-            validOutputs.get(conn.from.insId).includes(conn.from.pinId);
-          return !(inputsExist && outputsExist);
-        });
-
-        if (orphanConnections.length > 0) {
-          toastMsg(
-            `${orphanConnections.length} orphan connections removed`,
-            "warning"
-          );
-          console.warn(
-            `${orphanConnections.length} orphan connections removed`,
-            orphanConnections
-          );
-
-          const newNode = produce(node, (draft) => {
-            draft.connections = node.connections.filter(
-              (conn) => !orphanConnections.includes(conn)
-            );
-          });
-          onChange(newNode, functionalChange("prune orphan connections"));
-        }
-      }, [instances, onChange, connections, node, currResolvedDeps]);
+      // auto prune orphan connections if their inputs/outputs no longer exist
+      usePruneOrphanConnections(
+        instances,
+        connections,
+        node,
+        currResolvedDeps,
+        onChange
+      );
 
       // for each instance, if there's a visible input or output that doesn't exist, reset the visible inputs/outputs to be the full list
       React.useEffect(() => {
@@ -2160,7 +2086,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                 lastMousePos={lastMousePos.current}
                 draggedSource={draggedConnection}
               />
-              {renderNodeInputs()}
+              {renderMainPins("input")}
               {instances.map((ins) => (
                 <InstanceView
                   onUngroup={onUnGroup}
@@ -2243,7 +2169,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
               ))}
               {maybeRenderSelectionBox()}
               {/* {maybeRenderEditGroupModal()} */}
-              {renderNodeOutputs()}
+              {renderMainPins("output")}
               <MainInstanceEventsIndicator
                 currentInsId={currentInsId}
                 ancestorsInsIds={ancestorsInsIds}
