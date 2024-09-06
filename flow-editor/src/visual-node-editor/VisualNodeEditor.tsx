@@ -6,9 +6,7 @@ import {
   ConnectionData,
   isInternalConnectionNode,
   VisualNode,
-  nodeInput,
   NodeInstance,
-  nodeOutput,
   PinType,
   InputMode,
   isVisualNode,
@@ -44,7 +42,7 @@ import {
   ConnectionView,
   ConnectionViewProps,
 } from "./connection-view/ConnectionView";
-import { entries, isDefined, preventDefaultAnd, Size } from "../utils";
+import { entries, Size } from "../utils";
 import { useBoundingclientrect, useDidMount } from "rooks";
 
 import {
@@ -77,14 +75,7 @@ import { useState, useRef, useEffect } from "react";
 import { useHotkeys } from "../lib/react-utils/use-hotkeys";
 import useComponentSize from "@rehooks/component-size";
 
-import {
-  Slider,
-  Menu,
-  MenuItem,
-  ContextMenu,
-  MenuDivider,
-  Button,
-} from "@blueprintjs/core";
+import { Slider, ContextMenu, Button } from "@blueprintjs/core";
 import { NodeIoView, NodeIoViewProps } from "./node-io-view";
 
 import { vAdd, vec, vSub, vZero } from "../physics";
@@ -98,7 +89,7 @@ import { orderVisualNode } from "./order-layout/cmd";
 import { LayoutDebugger, LayoutDebuggerProps } from "./layout-debugger";
 import { preloadMonaco } from "../lib/preload-monaco";
 // import { InstancePanel } from "./instance-panel";
-import { toastMsg, AppToaster } from "../toaster";
+import { toastMsg } from "../toaster";
 import {
   FlydeFlowChangeType,
   functionalChange,
@@ -112,7 +103,6 @@ import { pasteInstancesCommand } from "./commands/paste-instances";
 
 import { handleConnectionCloseEditorCommand } from "./commands/close-connection";
 import { handleDuplicateSelectedEditorCommand } from "./commands/duplicate-instances";
-import { NodeStyleMenu } from "./instance-view/NodeStyleMenu";
 import { useDependenciesContext } from "../flow-editor/FlowEditor";
 import { MainInstanceEventsIndicator } from "./MainInstanceEventsIndicator";
 import { HelpBubble } from "./HelpBubble";
@@ -130,7 +120,7 @@ import { NodesLibrary } from "./NodesLibrary";
 import { RunFlowModal } from "./RunFlowModal";
 
 import { Play } from "@blueprintjs/icons";
-import { AddMainPinModal } from "./AddMainPinModal";
+import { EditorContextMenu } from "./EditorContextMenu/EditorContextMenu";
 
 const MemodSlider = React.memo(Slider);
 
@@ -1171,98 +1161,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         []
       );
 
-      const onAddMainPin = React.useCallback(
-        (type: PinType, newPinId: string) => {
-          if (!newPinId) {
-            // name selection dismissed, cancelling
-            return;
-          }
-
-          const newValue = produce(node, (draft) => {
-            if (type === "input") {
-              if (!node.inputs) {
-                draft.inputs = {};
-              }
-              draft.inputs[newPinId] = nodeInput();
-              draft.inputsPosition[newPinId] = lastMousePos.current;
-            } else {
-              if (!node.outputs) {
-                draft.outputs = {};
-              }
-              draft.outputs[newPinId] = nodeOutput();
-              draft.outputsPosition[newPinId] = lastMousePos.current;
-
-              if (draft.completionOutputs?.length) {
-                toastMsg(
-                  "Note that this node has explicit completion outputs set. You may need to update them."
-                );
-              }
-            }
-          });
-
-          onChange(newValue, functionalChange("add new io pin"));
-          reportEvent("addIoPin", { type });
-          setAddMainPinModalVisibleType(undefined);
-        },
-        [node, onChange, reportEvent]
-      );
-
-      const onCloseAddMainPinModal = React.useCallback(() => {
-        setAddMainPinModalVisibleType(undefined);
-      }, []);
-
-      const editCompletionOutputs = React.useCallback(async () => {
-        const curr = node.completionOutputs?.join(",");
-        const newVal = await _prompt(`Edit completion outputs`, curr);
-        if (isDefined(newVal) && newVal !== null) {
-          const newValue = produce(node, (draft) => {
-            draft.completionOutputs =
-              newVal === "" ? undefined : newVal.split(",");
-          });
-
-          onChange(newValue, functionalChange("change node completions"));
-          reportEvent("editCompletionOutputs", {
-            count: newVal ? newVal.split(",").length : 0,
-          });
-        }
-      }, [_prompt, onChange, node, reportEvent]);
-
-      const editReactiveInputs = React.useCallback(async () => {
-        const curr = node.reactiveInputs?.join(",");
-        const newVal = await _prompt(`Edit reactive inputs`, curr);
-        if (isDefined(newVal) && newVal !== null) {
-          const newValue = produce(node, (draft) => {
-            draft.reactiveInputs =
-              newVal === "" ? undefined : newVal.split(",");
-          });
-
-          onChange(newValue, functionalChange("change reactive inputs"));
-          reportEvent("editReactiveInputs", {
-            count: newVal ? newVal.split(",").length : 0,
-          });
-        }
-      }, [_prompt, onChange, node, reportEvent]);
-
-      const editNodeDescription = React.useCallback(async () => {
-        const description = await _prompt(`Description?`, node.description);
-        const newValue = produce(node, (draft) => {
-          draft.description = description;
-        });
-
-        onChange(newValue, functionalChange("Edit node description"));
-      }, [_prompt, onChange, node]);
-
-      const onChangeDefaultStyle = React.useCallback(
-        (style: NodeStyle) => {
-          const newNode = produce(node, (draft) => {
-            draft.defaultStyle = style;
-          });
-          onChange(newNode, functionalChange("change default style"));
-          reportEvent("changeStyle", { isDefault: true });
-        },
-        [onChange, node, reportEvent]
-      );
-
       const onRenameIoPin = React.useCallback(
         async (type: PinType, pinId: string) => {
           const newName = (await _prompt("New name?", pinId)) || pinId;
@@ -1738,89 +1636,16 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         ]
       );
 
-      const copyNodeToClipboard = React.useCallback(async () => {
-        const str = JSON.stringify(node);
-        await navigator.clipboard.writeText(str);
-        AppToaster.show({ message: "Copied!" });
-      }, [node]);
-
       const getContextMenu = React.useCallback(() => {
-        const maybeDisabledLabel = nodeIoEditable
-          ? ""
-          : " (cannot edit main node, only visual)";
-
         return (
-          <Menu>
-            <MenuItem
-              text={`New main input ${maybeDisabledLabel}`}
-              onMouseDown={(e) => e.stopPropagation()}
-              onClick={preventDefaultAnd(() =>
-                setAddMainPinModalVisibleType("input")
-              )}
-              disabled={!nodeIoEditable}
-            />
-            <MenuItem
-              onMouseDown={(e) => e.stopPropagation()}
-              text={`New main output ${maybeDisabledLabel}`}
-              onClick={preventDefaultAnd(() =>
-                setAddMainPinModalVisibleType("output")
-              )}
-              disabled={!nodeIoEditable}
-            />
-            <MenuItem
-              onMouseDown={(e) => e.stopPropagation()}
-              text={`Integrate with existing code (docs link)`}
-              href="https://www.flyde.dev/docs/integrate-flows/"
-              target="_blank"
-              disabled={!nodeIoEditable}
-            />
-            <MenuItem
-              onMouseDown={(e) => e.stopPropagation()}
-              text={"Copy node to clipboard"}
-              onClick={preventDefaultAnd(copyNodeToClipboard)}
-            />
-            <MenuItem
-              onMouseDown={(e) => e.stopPropagation()}
-              text={`Edit Completion Outputs (${
-                node.completionOutputs?.join(",") || "n/a"
-              })`}
-              onClick={preventDefaultAnd(() => editCompletionOutputs())}
-            />
-
-            <MenuItem
-              onMouseDown={(e) => e.stopPropagation()}
-              text={`Edit Reactive inputs (${
-                node.reactiveInputs?.join(",") || "n/a"
-              })`}
-              onClick={preventDefaultAnd(() => editReactiveInputs())}
-            />
-            <MenuItem
-              onMouseDown={(e) => e.stopPropagation()}
-              text={`Edit description`}
-              onClick={preventDefaultAnd(() => editNodeDescription())}
-            />
-            <MenuDivider />
-            <MenuItem text="Default Style">
-              <NodeStyleMenu
-                style={node.defaultStyle}
-                onChange={onChangeDefaultStyle}
-                promptFn={_prompt}
-              />
-            </MenuItem>
-          </Menu>
+          <EditorContextMenu
+            node={node}
+            onChangeNode={onChange}
+            nodeIoEditable={nodeIoEditable}
+            lastMousePos={lastMousePos}
+          />
         );
-      }, [
-        nodeIoEditable,
-        copyNodeToClipboard,
-        node.completionOutputs,
-        node.reactiveInputs,
-        node.defaultStyle,
-        onChangeDefaultStyle,
-        _prompt,
-        editCompletionOutputs,
-        editReactiveInputs,
-        editNodeDescription,
-      ]);
+      }, [node, onChange, nodeIoEditable]);
 
       useHotkeys(
         "shift+c",
@@ -2224,7 +2049,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           } else {
             return undefined;
           }
-        }, [selectedInstances, from, to]);
+        }, [from, to, selectedInstances, selectedConnections]);
 
       const onCenterSelection = React.useCallback(() => {
         if (selectionIndicatorData) {
@@ -2284,7 +2109,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       const openRunModal = React.useCallback(() => {
         setRunModalVisible(true);
       }, []);
-
       try {
         return (
           <ContextMenu
@@ -2489,13 +2313,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             </div>
             {runModalVisible ? (
               <RunFlowModal node={node} onClose={closeRunModal} />
-            ) : null}
-            {addMainPinModalVisibleType ? (
-              <AddMainPinModal
-                type={addMainPinModalVisibleType}
-                onAdd={onAddMainPin}
-                onClose={onCloseAddMainPinModal}
-              />
             ) : null}
           </ContextMenu>
         );
