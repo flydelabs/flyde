@@ -35,6 +35,7 @@ import {
   ResolvedMacroNodeInstance,
   isMacroNodeDefinition,
   ImportableSource,
+  ImportedNode,
 } from "@flyde/core";
 
 import { InstanceView, InstanceViewProps } from "./instance-view/InstanceView";
@@ -71,7 +72,7 @@ import {
 } from "./utils";
 
 import { produce } from "immer";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, DragEvent } from "react";
 import { useHotkeys } from "../lib/react-utils/use-hotkeys";
 import useComponentSize from "@rehooks/component-size";
 
@@ -266,9 +267,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       const [didCenterInitially, setDidCenterInitially] = useState(false);
 
       const [runModalVisible, setRunModalVisible] = useState(false);
-
-      const [addMainPinModalVisibleType, setAddMainPinModalVisibleType] =
-        useState<PinType | undefined>();
 
       const [quickAddMenuVisible, setQuickAddMenuVisible] =
         useState<QuickAddMenuData>();
@@ -1156,11 +1154,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         [node, onChange, onChangeBoardData]
       );
 
-      const onExtractInlineNode = React.useCallback(
-        async (inlineInstance: InlineNodeInstance) => {},
-        []
-      );
-
       const onRenameIoPin = React.useCallback(
         async (type: PinType, pinId: string) => {
           const newName = (await _prompt("New name?", pinId)) || pinId;
@@ -1179,13 +1172,15 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       );
 
       const onAddNode = React.useCallback(
-        async (importableNode: ImportableSource) => {
+        async (importableNode: ImportableSource, position?: Pos) => {
           const depsWithImport = await onImportNode(importableNode);
 
-          const targetPos = vSub(lastMousePos.current, {
-            x: 200,
-            y: 50 * viewPort.zoom,
-          }); // to account for node
+          const targetPos =
+            position ||
+            vSub(lastMousePos.current, {
+              x: 200,
+              y: 50 * viewPort.zoom,
+            });
 
           const newNodeIns = isMacroNodeDefinition(importableNode.node)
             ? createNewMacroNodeInstance(importableNode.node, 0, targetPos)
@@ -1588,32 +1583,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
               });
               break;
             }
-            // case "import": {
-            //   const deps = await onImportNode(match.importableNode);
-            //   const newNodeIns = createNewNodeInstance(
-            //     match.importableNode.node,
-            //     100,
-            //     lastMousePos.current,
-            //     deps
-            //   );
-
-            //   const newValue = produce(node, (draft) => {
-            //     draft.instances.push(newNodeIns);
-            //     draft.connections.push({
-            //       from: { insId: ins ? ins.id : THIS_INS_ID, pinId },
-            //       to: { insId: newNodeIns.id, pinId: TRIGGER_PIN_ID },
-            //     });
-            //   });
-
-            //   onChange(newValue, functionalChange("import-node-quick-menu"));
-
-            //   onCloseQuickAdd();
-            //   reportEvent("addNode", {
-            //     nodeId: match.importableNode.node.id,
-            //     source: "quickAdd",
-            //   });
-            //   break;
-            // }
             case "value": {
               if (!ins) {
                 toastMsg("Cannot add value to main input");
@@ -1763,7 +1732,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             node: openInlineInstance.node,
             onChangeNode: onChangeInspected,
             parentViewport: defaultViewPort,
-            // parentViewport: viewPort, // this was needed when I rendered it completely inline
             parentBoardPos: boardPos,
             onExtractInlineNode: props.onExtractInlineNode,
             queuedInputsData: props.queuedInputsData,
@@ -2109,6 +2077,33 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       const openRunModal = React.useCallback(() => {
         setRunModalVisible(true);
       }, []);
+
+      const onDragOver = React.useCallback((e: DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+      }, []);
+
+      const onDrop = React.useCallback(
+        (e: DragEvent<HTMLDivElement>) => {
+          e.preventDefault();
+          const data = e.dataTransfer.getData("application/json");
+          if (data) {
+            const droppedNode = JSON.parse(data) as ImportedNode;
+            const rect = boardRef.current.getBoundingClientRect();
+            const x = (e.clientX - rect.left) / viewPort.zoom + viewPort.pos.x;
+            const y = (e.clientY - rect.top) / viewPort.zoom + viewPort.pos.y;
+
+            onAddNode(
+              {
+                module: "@flyde/stdlib",
+                node: droppedNode,
+              },
+              { x, y }
+            );
+          }
+        },
+        [onAddNode, viewPort]
+      );
+
       try {
         return (
           <ContextMenu
@@ -2125,6 +2120,8 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
               onMouseUp={onMouseUp}
               onMouseMove={onMouseMove}
               onMouseLeave={onMouseLeave}
+              onDragOver={onDragOver}
+              onDrop={onDrop}
               ref={boardRef as any}
               style={backgroundStyle}
             >
@@ -2167,7 +2164,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
               {instances.map((ins) => (
                 <InstanceView
                   onUngroup={onUnGroup}
-                  onExtractInlineNode={onExtractInlineNode}
                   connectionsPerInput={
                     instancesConnectToPinsRef.current.get(ins.id) || emptyObj
                   }

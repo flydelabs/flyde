@@ -7,7 +7,6 @@ import {
   keys,
   nodeInput,
   isInlineNodeInstance,
-  InlineNodeInstance,
   NodeStyle,
   getNodeOutputs,
   getInputName,
@@ -168,8 +167,6 @@ export interface InstanceViewProps {
   inlineGroupProps?: VisualNodeEditorProps;
   onCloseInlineEditor: () => void;
 
-  onExtractInlineNode: (instance: InlineNodeInstance) => Promise<void>;
-
   inlineEditorPortalDomNode: HTMLElement;
 
   onChangeStyle: (instance: NodeInstance, style: NodeStyle) => void;
@@ -208,7 +205,6 @@ export const InstanceView: React.FC<InstanceViewProps> =
       onChangeVisibleOutputs,
       inlineGroupProps,
       onUngroup,
-      onExtractInlineNode,
       onGroupSelected,
       isConnectedInstanceSelected,
       onChangeStyle,
@@ -610,14 +606,6 @@ export const InstanceView: React.FC<InstanceViewProps> =
               },
             ]
           : []),
-        ...(isInlineNodeInstance(instance)
-          ? [
-              {
-                text: "Extract inline node to file",
-                onClick: () => onExtractInlineNode(instance),
-              },
-            ]
-          : []),
 
         { text: "Reorder inputs", onClick: _onChangeVisibleInputs },
         { text: "Reorder outputs", onClick: _onChangeVisibleOutputs },
@@ -669,7 +657,6 @@ export const InstanceView: React.FC<InstanceViewProps> =
       connectedOutputs,
       onChangeVisibleOutputs,
       onUngroup,
-      onExtractInlineNode,
       onGroupSelected,
     ]);
 
