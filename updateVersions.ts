@@ -89,7 +89,7 @@ rl.question(
       );
       execSync("git push");
       execSync(`git tag v${newVersion}`);
-      execSync("git push --tags");
+      execSync(`git push origin tag v${newVersion}`);
       console.log("Changes pushed to GitHub and new tag created.");
     } catch (e) {
       console.error("Failed to push changes to GitHub or create a new tag.");
