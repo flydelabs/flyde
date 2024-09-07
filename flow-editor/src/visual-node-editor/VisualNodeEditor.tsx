@@ -1,14 +1,12 @@
 import * as React from "react";
 
 import {
-  isExternalConnectionNode,
   THIS_INS_ID,
   ConnectionData,
   isInternalConnectionNode,
   VisualNode,
   NodeInstance,
   PinType,
-  InputMode,
   isVisualNode,
   connectionDataEquals,
   ConnectionNode,
@@ -20,14 +18,11 @@ import {
   InlineNodeInstance,
   connectionNode,
   ImportedNodeDef,
-  NodeStyle,
   getNodeOutputs,
   Pos,
   getNodeInputs,
   externalConnectionNode,
   fullInsIdPath,
-  isStickyInputPinConfig,
-  stickyInputPinConfig,
   isMacroNodeInstance,
   isResolvedMacroNodeInstance,
   ResolvedMacroNodeInstance,
@@ -51,16 +46,13 @@ import {
   roundNumber,
   fitViewPortToNode,
   handleInstanceDrag,
-  handleIoPinRename,
-  handleChangeNodeInputType,
   centerBoardPosOnTarget,
   emptyList,
   animateViewPort,
-  getInstancePinConfig,
-  changePinConfig,
   createNewMacroNodeInstance,
   fitViewPortToRect,
   getConnectionId,
+  isEventOnCurrentBoard,
 } from "./utils";
 
 import { produce } from "immer";
@@ -77,7 +69,6 @@ import {
   QuickAddMenuData,
   QuickMenuMatch,
 } from "./quick-add-menu";
-import { queueInputPinConfig } from "@flyde/core";
 import { orderVisualNode } from "./order-layout/cmd";
 import { LayoutDebugger, LayoutDebuggerProps } from "./layout-debugger";
 import { preloadMonaco } from "../lib/preload-monaco";
@@ -121,6 +112,7 @@ import {
   useVisualNodeEditorContext,
   VisualNodeEditorContextType,
 } from "./VisualNodeEditorContext";
+import { useEditorCommands } from "./useEditorCommands";
 
 const MemodSlider = React.memo(Slider);
 
@@ -279,7 +271,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         );
       });
 
-      const _confirm = useConfirm();
       const _prompt = usePrompt();
 
       const viewPort = boardData.viewPort;
@@ -392,6 +383,22 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         parentViewport
       );
 
+      const {
+        onRenameIoPin,
+        onChangeInputMode,
+        onToggleSticky,
+        onRemoveIoPin,
+        onUnGroup,
+        onNodeIoSetDescription,
+        onChangeInstanceDisplayName,
+        onChangeVisibleInputs,
+        onChangeVisibleOutputs,
+        onChangeInstanceStyle,
+        deleteSelection,
+        onDeleteInstances,
+        onAddNode,
+      } = useEditorCommands(lastMousePos, setEditedMacroInstance);
+
       const fitToScreen = () => {
         const vp = fitViewPortToNode(node, currResolvedDeps, vpSize);
 
@@ -427,20 +434,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           }
         },
         [boardData, onChangeBoardData, onConnectionClose]
-      );
-
-      const onNodeIoSetDescription = React.useCallback(
-        (type: PinType, pinId: string, description: string) => {
-          const newNode = produce(node, (draft) => {
-            if (type === "input") {
-              draft.inputs[pinId].description = description;
-            } else {
-              draft.outputs[pinId].description = description;
-            }
-          });
-          onChange(newNode, functionalChange("Node io description"));
-        },
-        [onChange, node]
       );
 
       const onPinClick = React.useCallback(
@@ -813,118 +806,11 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         });
       }, [onChangeBoardData, node.instances]);
 
-      const onDeleteInstances = React.useCallback(
-        (ids: string[]) => {
-          const newConnections = connections.filter(({ from, to }) => {
-            return (
-              !ids.includes(getConnectionId({ from, to })) &&
-              !ids.includes(from.insId) &&
-              !ids.includes(to.insId)
-            );
-          });
-
-          const newValue = produce(node, (draft) => {
-            draft.connections = newConnections;
-            draft.instances = draft.instances.filter(
-              (_ins) => !ids.includes(_ins.id)
-            );
-          });
-
-          onChangeBoardData({ selectedInstances: [], selectedConnections: [] });
-          onChange(newValue, functionalChange("delete-ins"));
-        },
-        [connections, onChange, onChangeBoardData, node]
-      );
-
       const onDeleteInstance = React.useCallback(
         (ins: NodeInstance) => {
           onDeleteInstances([ins.id]);
         },
         [onDeleteInstances]
-      );
-
-      const onRemoveIoPin = React.useCallback(
-        (type: PinType, pinId: string) => {
-          const newValue = produce(node, (draft) => {
-            if (type === "input") {
-              delete draft.inputs[pinId];
-              draft.connections = draft.connections.filter(
-                (conn) =>
-                  !(
-                    isExternalConnectionNode(conn.from) &&
-                    conn.from.pinId === pinId
-                  )
-              );
-            } else {
-              draft.connections = draft.connections.filter(
-                (conn) =>
-                  !(
-                    isExternalConnectionNode(conn.to) && conn.to.pinId === pinId
-                  )
-              );
-              draft.completionOutputs = (draft.completionOutputs || [])
-                .map((comp) => {
-                  const arr = comp.split("+"); // due to the r1+r1,r3 hack, see core tests
-                  return arr.filter((pin) => pin !== pinId).join("+");
-                })
-                .filter((i) => !!i);
-              delete draft.outputs[pinId];
-            }
-          });
-
-          if (from && from.insId === THIS_INS_ID && from.pinId === pinId) {
-            onChangeBoardData({ from: undefined });
-          } else if (to && to.insId === THIS_INS_ID && to.pinId === pinId) {
-            onChangeBoardData({ to: undefined });
-          }
-
-          onChange(newValue, functionalChange("remove io pin"));
-        },
-        [node, from, to, onChange, onChangeBoardData]
-      );
-
-      const deleteSelection = React.useCallback(async () => {
-        const { selectedConnections, selectedInstances, from, to } = boardData;
-        const idsToDelete = [...selectedInstances, ...selectedConnections];
-        if (idsToDelete.length === 0) {
-          if (from && isExternalConnectionNode(from)) {
-            if (
-              await _confirm(
-                `Are you sure you want to remove main input ${from.pinId}?`
-              )
-            ) {
-              onRemoveIoPin("input", from.pinId);
-            }
-          } else if (to && isExternalConnectionNode(to)) {
-            if (
-              await _confirm(
-                `Are you sure you want to remove main output ${to.pinId}?`
-              )
-            ) {
-              onRemoveIoPin("output", to.pinId);
-            }
-          }
-        } else {
-          onDeleteInstances(idsToDelete);
-        }
-      }, [_confirm, boardData, onDeleteInstances, onRemoveIoPin]);
-
-      const onToggleSticky = React.useCallback(
-        (ins: NodeInstance, pinId: string, forceValue?: boolean) => {
-          const currConfig = getInstancePinConfig(node, ins.id, pinId);
-          const newConfig = isStickyInputPinConfig(currConfig)
-            ? queueInputPinConfig()
-            : stickyInputPinConfig();
-          onChange(
-            changePinConfig(node, ins.id, pinId, newConfig),
-            functionalChange("toggle-sticky")
-          );
-          reportEvent("togglePinSticky", {
-            isSticky: isStickyInputPinConfig(newConfig),
-          });
-        },
-
-        [onChange, node, reportEvent]
       );
 
       const duplicate = React.useCallback(() => {
@@ -1043,117 +929,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           }
         },
         [onEditNode, currResolvedDeps, currentInsId]
-      );
-
-      const onUnGroup = React.useCallback(
-        (groupNodeIns: NodeInstance) => {
-          if (isInlineNodeInstance(groupNodeIns)) {
-            const visualNode = groupNodeIns.node;
-            if (!isVisualNode(visualNode)) {
-              toastMsg("Not supported", "warning");
-              return;
-            }
-
-            const newNode = produce(node, (draft) => {
-              draft.instances = draft.instances.filter(
-                (ins) => ins.id !== groupNodeIns.id
-              );
-
-              draft.connections = draft.connections.filter(
-                ({ from, to }) =>
-                  from.insId !== groupNodeIns.id && to.insId !== groupNodeIns.id
-              );
-
-              draft.instances.push(...visualNode.instances);
-              draft.connections.push(
-                ...visualNode.connections.filter((conn) => {
-                  return (
-                    isInternalConnectionNode(conn.from) &&
-                    isInternalConnectionNode(conn.to)
-                  );
-                })
-              );
-            });
-
-            onChange(newNode, { type: "functional", message: "ungroup" });
-            // todo - combine the above with below to an atomic action
-            onChangeBoardData({ selectedInstances: [] });
-          } else {
-            toastMsg("Cannot ungroup an imported group");
-          }
-        },
-        [node, onChange, onChangeBoardData]
-      );
-
-      const onRenameIoPin = React.useCallback(
-        async (type: PinType, pinId: string) => {
-          const newName = (await _prompt("New name?", pinId)) || pinId;
-          const newValue = handleIoPinRename(node, type, pinId, newName);
-          onChange(newValue, functionalChange("rename io pin"));
-        },
-        [node, onChange, _prompt]
-      );
-
-      const onChangeInputMode = React.useCallback(
-        (pinId: string, mode: InputMode) => {
-          const newValue = handleChangeNodeInputType(node, pinId, mode);
-          onChange(newValue, functionalChange("toggle io pin optional"));
-        },
-        [node, onChange]
-      );
-
-      const onAddNode = React.useCallback(
-        async (importableNode: ImportableSource, position?: Pos) => {
-          const depsWithImport = await onImportNode(importableNode);
-
-          const targetPos =
-            position ||
-            vSub(lastMousePos.current, {
-              x: 200,
-              y: 50 * viewPort.zoom,
-            });
-
-          const newNodeIns = isMacroNodeDefinition(importableNode.node)
-            ? createNewMacroNodeInstance(importableNode.node, 0, targetPos)
-            : createNewNodeInstance(
-                importableNode.node.id,
-                0,
-                targetPos,
-                depsWithImport
-              );
-          const newNode = produce(node, (draft) => {
-            draft.instances.push(newNodeIns);
-          });
-
-          const newState = produce(boardData, (draft) => {
-            draft.selectedInstances = [newNodeIns.id];
-          });
-
-          onChange(newNode, functionalChange("add new instance"));
-
-          onChangeBoardData(newState);
-
-          if (isResolvedMacroNodeInstance(newNodeIns)) {
-            // hack to allow imported macro to appear in deps. TODO: fix
-            setTimeout(() => {
-              setEditedMacroInstance({ ins: newNodeIns });
-            }, 100);
-          }
-          reportEvent("addNode", {
-            nodeId: importableNode.node.id,
-            source: "actionMenu",
-          });
-        },
-        [
-          boardData,
-          lastMousePos,
-          node,
-          onChange,
-          onChangeBoardData,
-          onImportNode,
-          reportEvent,
-          viewPort.zoom,
-        ]
       );
 
       const renderMainPins = (type: PinType) => {
@@ -1635,58 +1410,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           }
         };
 
-      const onChangeVisibleInputs = React.useCallback(
-        (ins: NodeInstance, inputs: string[]) => {
-          const newNode = produce(node, (draft) => {
-            draft.instances = draft.instances.map((i) => {
-              return i.id === ins.id ? { ...i, visibleInputs: inputs } : i;
-            });
-          });
-          onChange(newNode, functionalChange("change instance visible inputs"));
-        },
-        [node, onChange]
-      );
-
-      const onChangeInstanceStyle = React.useCallback(
-        (instance: NodeInstance, style: NodeStyle) => {
-          const newNode = produce(node, (draft) => {
-            draft.instances = draft.instances.map((ins) => {
-              return ins.id === instance.id ? { ...ins, style } : ins;
-            });
-          });
-          onChange(newNode, functionalChange("change instance style"));
-          reportEvent("changeStyle", { isDefault: false });
-        },
-        [onChange, node, reportEvent]
-      );
-
-      const onChangeVisibleOutputs = React.useCallback(
-        (ins: NodeInstance, outputs: string[]) => {
-          const newNode = produce(node, (draft) => {
-            draft.instances = draft.instances.map((i) => {
-              return i.id === ins.id ? { ...i, visibleOutputs: outputs } : i;
-            });
-          });
-          onChange(
-            newNode,
-            functionalChange("change instance visible outputs")
-          );
-        },
-        [node, onChange]
-      );
-
-      const onChangeInstanceDisplayName = React.useCallback(
-        (ins: NodeInstance, name: string) => {
-          const newNode = produce(node, (draft) => {
-            draft.instances = draft.instances.map((i) => {
-              return i.id === ins.id ? { ...i, displayName: name } : i;
-            });
-          });
-          onChange(newNode, functionalChange("change instance display name"));
-        },
-        [node, onChange]
-      );
-
       React.useImperativeHandle(thisRef, () => {
         const ref: VisualNodeEditorHandle = {
           centerInstance(insId: string) {
@@ -2155,13 +1878,3 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       }
     })
   );
-
-const isEventOnCurrentBoard = (
-  e: KeyboardEvent | MouseEvent,
-  nodeId: string
-) => {
-  const targetElem = e.target as Element;
-  const closestBoard = targetElem.closest(".visual-node-editor");
-
-  return closestBoard && closestBoard.getAttribute("data-id") === nodeId;
-};

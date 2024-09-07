@@ -779,3 +779,13 @@ export function isMac() {
     return false;
   }
 }
+
+export const isEventOnCurrentBoard = (
+  e: KeyboardEvent | MouseEvent,
+  nodeId: string
+) => {
+  const targetElem = e.target as Element;
+  const closestBoard = targetElem.closest(".visual-node-editor");
+
+  return closestBoard && closestBoard.getAttribute("data-id") === nodeId;
+};
