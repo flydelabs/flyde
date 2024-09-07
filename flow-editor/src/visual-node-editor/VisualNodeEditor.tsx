@@ -72,12 +72,10 @@ import {
   metaChange,
 } from "../flow-editor/flyde-flow-change-type";
 
-import { groupSelected } from "../group-selected";
-import { usePorts, usePrompt } from "../flow-editor/ports";
+import { usePorts } from "../flow-editor/ports";
 import classNames from "classnames";
 import { pasteInstancesCommand } from "./commands/paste-instances";
 
-import { handleConnectionCloseEditorCommand } from "./commands/close-connection";
 import { useDependenciesContext } from "../flow-editor/FlowEditor";
 import { MainInstanceEventsIndicator } from "./MainInstanceEventsIndicator";
 import { HelpBubble } from "./HelpBubble";
@@ -263,8 +261,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         );
       });
 
-      const _prompt = usePrompt();
-
       const viewPort = boardData.viewPort;
 
       const isBoardInFocus = useRef(true);
@@ -290,48 +286,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         },
         [onInspectPin]
       );
-
-      const onConnectionClose = React.useCallback(
-        (from: ConnectionNode, to: ConnectionNode, source: string) => {
-          const newNode = handleConnectionCloseEditorCommand(node, {
-            from,
-            to,
-          });
-
-          onChange(newNode, functionalChange("close-connection"));
-          onChangeBoardData({ from: undefined, to: undefined });
-          reportEvent("createConnection", { source });
-        },
-        [onChange, onChangeBoardData, node, reportEvent]
-      );
-
-      const onGroupSelectedInternal = React.useCallback(async () => {
-        const name = await _prompt("New visual node name?");
-        if (!name) return;
-        const { currentNode } = await groupSelected(
-          boardData.selectedInstances,
-          node,
-          name,
-          "inline",
-          _prompt
-        );
-        onChange(currentNode, functionalChange("group node"));
-
-        onChangeBoardData({ selectedInstances: [] });
-
-        toastMsg("Node grouped");
-
-        reportEvent("groupSelected", {
-          count: boardData.selectedInstances.length,
-        });
-      }, [
-        _prompt,
-        boardData.selectedInstances,
-        node,
-        onChange,
-        onChangeBoardData,
-        reportEvent,
-      ]);
 
       useEffect(() => {
         if (lastSelectedId) {
@@ -393,6 +347,10 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         onSelectConnection,
         onZoom,
         clearSelections,
+        onConnectionClose,
+        onGroupSelectedInternal,
+        onNodeIoPinClick,
+        onPinClick,
       } = useEditorCommands(
         lastMousePos,
         vpSize,
@@ -407,88 +365,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           setViewPort(vp);
         });
       };
-
-      const onNodeIoPinClick = React.useCallback(
-        (pinId: string, type: PinType) => {
-          const { to: currTo, from: currFrom } = boardData;
-
-          const relevantCurrPin = type === "input" ? currFrom : currTo;
-          const relevantTargetPin = type === "input" ? currTo : currFrom;
-
-          const newPin = { pinId, insId: THIS_INS_ID };
-          const targetObj =
-            type === "input" ? { from: newPin } : { to: newPin };
-
-          if (relevantCurrPin && relevantCurrPin.pinId === pinId) {
-            // selecting the same pin so deselect both
-            onChangeBoardData({ from: undefined, to: undefined });
-          } else if (!relevantTargetPin) {
-            // nothing was selected, selecting a new pin
-            onChangeBoardData(targetObj);
-          } else {
-            //close the connection if we have a target match
-            if (type === "input" && currTo) {
-              onConnectionClose(newPin, currTo, "nodeIoClick");
-            } else if (currFrom) {
-              onConnectionClose(currFrom, newPin, "nodeIoClick");
-            }
-          }
-        },
-        [boardData, onChangeBoardData, onConnectionClose]
-      );
-
-      const onPinClick = React.useCallback(
-        (ins: NodeInstance, pinId: string, type: PinType) => {
-          const { from: currFrom, to: currTo } = boardData;
-
-          if ((from && from.insId === ins.id) || (to && to.insId === ins.id)) {
-            // trying to connect the same instance to itself, so clear selection
-            onChangeBoardData({ from: undefined, to: undefined });
-          } else if (type === "input") {
-            const to = { insId: ins.id, pinId };
-
-            // is selecting same one
-            if (
-              currTo &&
-              currTo.pinId === pinId &&
-              (isInternalConnectionNode(currTo)
-                ? currTo.insId === ins.id
-                : true)
-            ) {
-              onChangeBoardData({ to: undefined });
-            } else if (from) {
-              onConnectionClose(from, to, "pinClick");
-            } else {
-              onChangeBoardData({
-                to,
-                selectedInstances: [],
-                selectedConnections: [],
-              });
-            }
-          } else {
-            const from = { insId: ins.id, pinId };
-
-            if (
-              currFrom &&
-              currFrom.pinId === pinId &&
-              (isInternalConnectionNode(currFrom)
-                ? currFrom.insId === ins.id
-                : true)
-            ) {
-              onChangeBoardData({ from: undefined });
-            } else if (to) {
-              onConnectionClose(from, to, "pinClick");
-            } else {
-              onChangeBoardData({
-                from,
-                selectedInstances: [],
-                selectedConnections: [],
-              });
-            }
-          }
-        },
-        [boardData, from, onChangeBoardData, onConnectionClose, to]
-      );
 
       useEffect(() => {
         if (!didCenterInitially && vpSize.width) {
