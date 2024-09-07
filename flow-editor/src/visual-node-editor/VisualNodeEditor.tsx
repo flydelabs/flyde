@@ -122,6 +122,8 @@ import { RunFlowModal } from "./RunFlowModal";
 import { Play } from "@blueprintjs/icons";
 import { EditorContextMenu } from "./EditorContextMenu/EditorContextMenu";
 import { usePruneOrphanConnections } from "./usePruneOrphanConnections";
+import { SelectionBox } from "./SelectionBox/SelectionBox";
+import { useSelectionBox } from "./useSelectionBox";
 
 const MemodSlider = React.memo(Slider);
 
@@ -255,10 +257,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
       // hooks area
       const [draggingId, setDraggingId] = useState<string>();
-      const [selectionBox, setSelectionBox] = useState<{
-        from: Pos;
-        to: Pos;
-      }>();
 
       const isRootInstance = ancestorsInsIds === undefined;
 
@@ -384,6 +382,19 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       const lastMousePos = React.useRef({ x: 400, y: 400 });
 
       const boardPos = useBoundingclientrect(boardRef) || vZero;
+
+      const {
+        selectionBox,
+        startSelectionBox,
+        updateSelectionBox,
+        endSelectionBox,
+      } = useSelectionBox(
+        node,
+        currResolvedDeps,
+        boardData.viewPort,
+        boardPos,
+        parentViewport
+      );
 
       const fitToScreen = () => {
         const vp = fitViewPortToNode(node, currResolvedDeps, vpSize);
@@ -929,36 +940,15 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
       const onMouseDown: React.MouseEventHandler = React.useCallback(
         (e) => {
-          const target = e.nativeEvent.target as HTMLElement;
-
-          if (e.button !== 0) {
-            // right click
-            return;
-          }
-          if (!isEventOnCurrentBoard(e.nativeEvent, node.id)) {
-            return;
-          }
-
-          const allowedSelectionBoxClasses = [
-            "board-editor-inner",
-            "connections-view",
-          ];
-
           if (
-            target &&
-            allowedSelectionBoxClasses.includes(target.getAttribute("class"))
+            e.button !== 0 ||
+            !isEventOnCurrentBoard(e.nativeEvent, node.id)
           ) {
-            const eventPos = { x: e.clientX, y: e.clientY };
-            const normalizedPos = vSub(eventPos, boardPos);
-            const posInBoard = domToViewPort(
-              normalizedPos,
-              viewPort,
-              parentViewport
-            );
-            setSelectionBox({ from: posInBoard, to: posInBoard });
+            return;
           }
+          startSelectionBox(e);
         },
-        [node.id, viewPort, boardPos, parentViewport]
+        [node.id, startSelectionBox]
       );
 
       const onMouseUp: React.MouseEventHandler = React.useCallback(
@@ -967,37 +957,12 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           if (!isEventOnCurrentBoard(e.nativeEvent, node.id)) {
             return;
           }
-          if (selectionBox) {
-            if (calcSelectionBoxArea(selectionBox) > 50) {
-              const toSelect = getInstancesInRect(
-                selectionBox,
-                currResolvedDeps,
-                viewPort,
-                instancesConnectToPinsRef.current,
-                node.instances,
-                boardPos,
-                parentViewport
-              );
-              const newSelected = e.shiftKey
-                ? [...selectedInstances, ...toSelect]
-                : toSelect;
-              onChangeBoardData({ selectedInstances: newSelected });
-            }
 
-            setSelectionBox(undefined);
-          }
+          endSelectionBox(e.shiftKey, (ids) => {
+            onChangeBoardData({ selectedInstances: ids });
+          });
         },
-        [
-          node.id,
-          node.instances,
-          selectionBox,
-          currResolvedDeps,
-          viewPort,
-          boardPos,
-          parentViewport,
-          selectedInstances,
-          onChangeBoardData,
-        ]
+        [node.id, endSelectionBox, onChangeBoardData]
       );
 
       const onMouseMove: React.MouseEventHandler = React.useCallback(
@@ -1017,7 +982,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           );
 
           if (selectionBox) {
-            setSelectionBox({ ...selectionBox, to: posInBoard });
+            updateSelectionBox(posInBoard);
           }
 
           const closest = findClosestPin(
@@ -1059,6 +1024,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           ancestorsInsIds,
           closestPin,
           onChangeBoardData,
+          updateSelectionBox,
         ]
       );
 
@@ -1265,26 +1231,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             onMouseDown={onNodeIoMouseDown}
           />
         ));
-      };
-
-      const maybeRenderSelectionBox = () => {
-        if (selectionBox) {
-          const { from, to } = selectionBox;
-
-          const realFrom = logicalPosToRenderedPos(from, viewPort);
-          const realTo = logicalPosToRenderedPos(to, viewPort);
-
-          const { x, y, w, h } = getSelectionBoxRect(realFrom, realTo);
-
-          return (
-            <div
-              className="selection-box"
-              style={{ top: y, left: x, width: w, height: h }}
-            />
-          );
-        } else {
-          return null;
-        }
       };
 
       const onPinDblClick = React.useCallback(
@@ -2167,7 +2113,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                   }
                 />
               ))}
-              {maybeRenderSelectionBox()}
+              <SelectionBox selectionBox={selectionBox} viewPort={viewPort} />
               {/* {maybeRenderEditGroupModal()} */}
               {renderMainPins("output")}
               <MainInstanceEventsIndicator

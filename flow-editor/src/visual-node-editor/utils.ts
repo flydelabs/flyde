@@ -640,9 +640,7 @@ export const getInstancesInRect = (
   selectionBox: { from: Pos; to: Pos },
   resolvedNodes: NodesDefCollection,
   viewPort: ViewPort,
-  instancesConnectToPins: any,
   instances: NodeInstance[],
-  boardPos: Pos,
   parentVp: ViewPort
 ) => {
   const { from, to } = selectionBox;
