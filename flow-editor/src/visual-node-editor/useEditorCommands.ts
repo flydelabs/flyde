@@ -15,6 +15,7 @@ import {
   isMacroNodeDefinition,
   isResolvedMacroNodeInstance,
   Pos,
+  ConnectionData,
 } from "@flyde/core";
 import React from "react";
 import {
@@ -31,13 +32,19 @@ import {
   createNewNodeInstance,
   vSub,
   useDependenciesContext,
+  centerBoardPosOnTarget,
+  Size,
+  useHotkeys,
 } from "..";
 import { functionalChange } from "../flow-editor/flyde-flow-change-type";
 import { useVisualNodeEditorContext } from "./VisualNodeEditorContext";
 import produce from "immer";
+import { handleDuplicateSelectedEditorCommand } from "./commands/duplicate-instances";
 
 export function useEditorCommands(
   lastMousePos: React.MutableRefObject<Pos>,
+  vpSize: Size,
+  isBoardInFocus: React.MutableRefObject<boolean>,
   setEditedMacroInstance: React.Dispatch<
     React.SetStateAction<{ ins: NodeInstance } | undefined>
   >
@@ -49,7 +56,8 @@ export function useEditorCommands(
     boardData,
   } = useVisualNodeEditorContext();
 
-  const { from, to, viewPort } = boardData;
+  const { from, to, viewPort, selectedInstances, selectedConnections } =
+    boardData;
 
   const _prompt = usePrompt();
   const _confirm = useConfirm();
@@ -337,6 +345,170 @@ export function useEditorCommands(
     ]
   );
 
+  const onSelectInstance = React.useCallback(
+    ({ id }: NodeInstance, ev: React.MouseEvent) => {
+      const newSelectedIfSelectionExists = ev.shiftKey
+        ? selectedInstances.filter((sid) => sid !== id)
+        : [];
+      const newSelectedIfSelectionIsNew = ev.shiftKey
+        ? [...selectedInstances, id]
+        : [id];
+      const newSelected = selectedInstances.includes(id)
+        ? newSelectedIfSelectionExists
+        : newSelectedIfSelectionIsNew;
+
+      onChangeBoardData({
+        selectedInstances: newSelected,
+        selectedConnections: [],
+        from: undefined,
+        to: undefined,
+      });
+    },
+    [onChangeBoardData, selectedInstances]
+  );
+
+  const selectAll = React.useCallback(() => {
+    const allIds = node.instances.map((i) => i.id);
+    onChangeBoardData({
+      selectedInstances: allIds,
+      selectedConnections: [],
+      from: undefined,
+      to: undefined,
+    });
+  }, [onChangeBoardData, node.instances]);
+
+  const onDeleteInstance = React.useCallback(
+    (ins: NodeInstance) => {
+      onDeleteInstances([ins.id]);
+    },
+    [onDeleteInstances]
+  );
+
+  const duplicate = React.useCallback(() => {
+    const { newNode, newInstances } = handleDuplicateSelectedEditorCommand(
+      node,
+      selectedInstances
+    );
+
+    onChange(newNode, functionalChange("duplicated instances"));
+    onChangeBoardData({
+      selectedInstances: newInstances.map((ins) => ins.id),
+    });
+    // onChange(duplicateSelected(value), functionalChange("duplicate"));
+  }, [onChange, onChangeBoardData, node, selectedInstances]);
+
+  const onSelectConnection = React.useCallback(
+    (connection: ConnectionData, ev: React.MouseEvent) => {
+      const connectionId = getConnectionId(connection);
+      const newSelected = selectedConnections.includes(connectionId)
+        ? selectedConnections.filter((id) => id !== connectionId)
+        : [...(ev.shiftKey ? selectedConnections : []), connectionId];
+
+      onChangeBoardData({
+        selectedConnections: newSelected,
+        selectedInstances: [],
+      });
+    },
+    [onChangeBoardData, selectedConnections]
+  );
+
+  const onZoom = React.useCallback(
+    (_newZoom: number, source?: "hotkey" | "mouse") => {
+      const newZoom = Math.min(Math.max(_newZoom, 0.1), 3);
+      const targetPos =
+        source === "mouse"
+          ? lastMousePos.current
+          : {
+              x: viewPort.pos.x + vpSize.width / 2,
+              y: viewPort.pos.y + vpSize.height / 2,
+            };
+      const newPos = centerBoardPosOnTarget(
+        targetPos,
+        vpSize,
+        newZoom,
+        viewPort
+      );
+
+      onChangeBoardData({
+        viewPort: { ...viewPort, zoom: newZoom, pos: newPos },
+        // const newCenter = centerBoardPosOnTarget(lastMousePos.current, vpSize, newZoom, viewPort);
+      });
+    },
+    [lastMousePos, onChangeBoardData, viewPort, vpSize]
+  );
+
+  const clearSelections = React.useCallback(() => {
+    onChangeBoardData({
+      from: undefined,
+      to: undefined,
+      selectedInstances: [],
+      selectedConnections: [],
+    });
+  }, [onChangeBoardData]);
+
+  useHotkeys(
+    "cmd+=, ctrl+=",
+    (e: any) => {
+      onZoom(viewPort.zoom + 0.1, "hotkey");
+      e.preventDefault();
+    },
+    { text: "Zoom in board", group: "Viewport Controls" },
+    [viewPort, onZoom],
+    isBoardInFocus
+  );
+
+  useHotkeys(
+    "cmd+-, ctrl+-",
+    (e) => {
+      onZoom(viewPort.zoom - 0.1, "hotkey");
+      e.preventDefault();
+    },
+    { text: "Zoom out board", group: "Viewport Controls" },
+    [onZoom, viewPort.zoom],
+    isBoardInFocus
+  );
+
+  useHotkeys(
+    "cmd+0, ctrl+0",
+    (e) => {
+      onZoom(1);
+      e.preventDefault();
+    },
+    { text: "Reset zoom", group: "Viewport Controls" },
+    [viewPort, onZoom],
+    isBoardInFocus
+  );
+
+  useHotkeys(
+    "backspace",
+    deleteSelection,
+    { text: "Delete instances", group: "Editing" },
+    [],
+    isBoardInFocus
+  );
+  useHotkeys(
+    "shift+d",
+    duplicate,
+    { text: "Duplicate selected instances", group: "Editing" },
+    [],
+    isBoardInFocus
+  );
+  useHotkeys(
+    "cmd+a, ctrl+a",
+    selectAll,
+    { text: "Select all", group: "Selection" },
+    [],
+    isBoardInFocus
+  );
+
+  useHotkeys(
+    "esc",
+    clearSelections,
+    { text: "Clear selections", group: "Selection" },
+    [],
+    isBoardInFocus
+  );
+
   return {
     onRenameIoPin,
     onChangeInputMode,
@@ -351,5 +523,12 @@ export function useEditorCommands(
     onChangeInstanceStyle,
     deleteSelection,
     onAddNode,
+    onSelectInstance,
+    selectAll,
+    onDeleteInstance,
+    duplicate,
+    onSelectConnection,
+    onZoom,
+    clearSelections,
   };
 }

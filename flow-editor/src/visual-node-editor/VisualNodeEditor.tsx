@@ -10,7 +10,6 @@ import {
   isVisualNode,
   connectionDataEquals,
   ConnectionNode,
-  delay,
   noop,
   TRIGGER_PIN_ID,
   isInlineNodeInstance,
@@ -26,8 +25,6 @@ import {
   isMacroNodeInstance,
   isResolvedMacroNodeInstance,
   ResolvedMacroNodeInstance,
-  isMacroNodeDefinition,
-  ImportableSource,
   ImportedNode,
 } from "@flyde/core";
 
@@ -46,12 +43,9 @@ import {
   roundNumber,
   fitViewPortToNode,
   handleInstanceDrag,
-  centerBoardPosOnTarget,
   emptyList,
   animateViewPort,
-  createNewMacroNodeInstance,
   fitViewPortToRect,
-  getConnectionId,
   isEventOnCurrentBoard,
 } from "./utils";
 
@@ -69,7 +63,6 @@ import {
   QuickAddMenuData,
   QuickMenuMatch,
 } from "./quick-add-menu";
-import { orderVisualNode } from "./order-layout/cmd";
 import { LayoutDebugger, LayoutDebuggerProps } from "./layout-debugger";
 import { preloadMonaco } from "../lib/preload-monaco";
 // import { InstancePanel } from "./instance-panel";
@@ -80,12 +73,11 @@ import {
 } from "../flow-editor/flyde-flow-change-type";
 
 import { groupSelected } from "../group-selected";
-import { useConfirm, usePorts, usePrompt } from "../flow-editor/ports";
+import { usePorts, usePrompt } from "../flow-editor/ports";
 import classNames from "classnames";
 import { pasteInstancesCommand } from "./commands/paste-instances";
 
 import { handleConnectionCloseEditorCommand } from "./commands/close-connection";
-import { handleDuplicateSelectedEditorCommand } from "./commands/duplicate-instances";
 import { useDependenciesContext } from "../flow-editor/FlowEditor";
 import { MainInstanceEventsIndicator } from "./MainInstanceEventsIndicator";
 import { HelpBubble } from "./HelpBubble";
@@ -394,10 +386,19 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         onChangeVisibleInputs,
         onChangeVisibleOutputs,
         onChangeInstanceStyle,
-        deleteSelection,
         onDeleteInstances,
         onAddNode,
-      } = useEditorCommands(lastMousePos, setEditedMacroInstance);
+        onSelectInstance,
+        onDeleteInstance,
+        onSelectConnection,
+        onZoom,
+        clearSelections,
+      } = useEditorCommands(
+        lastMousePos,
+        vpSize,
+        isBoardInFocus,
+        setEditedMacroInstance
+      );
 
       const fitToScreen = () => {
         const vp = fitViewPortToNode(node, currResolvedDeps, vpSize);
@@ -581,98 +582,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         }
       }, [node.id, closestPin, onNodeIoPinClick, onPinClick]);
 
-      const onZoom = React.useCallback(
-        (_newZoom: number, source?: "hotkey" | "mouse") => {
-          const newZoom = Math.min(Math.max(_newZoom, 0.1), 3);
-          const targetPos =
-            source === "mouse"
-              ? lastMousePos.current
-              : {
-                  x: viewPort.pos.x + vpSize.width / 2,
-                  y: viewPort.pos.y + vpSize.height / 2,
-                };
-          const newPos = centerBoardPosOnTarget(
-            targetPos,
-            vpSize,
-            newZoom,
-            viewPort
-          );
-
-          // const newCenter = centerBoardPosOnTarget(lastMousePos.current, vpSize, newZoom, viewPort);
-          setViewPort({ ...viewPort, zoom: newZoom, pos: newPos });
-        },
-        [lastMousePos, setViewPort, viewPort, vpSize]
-      );
-
-      useHotkeys(
-        "cmd+=, ctrl+=",
-        (e: any) => {
-          onZoom(viewPort.zoom + 0.1, "hotkey");
-          e.preventDefault();
-        },
-        { text: "Zoom in board", group: "Viewport Controls" },
-        [viewPort, onZoom],
-        isBoardInFocus
-      );
-
-      useHotkeys(
-        "cmd+-, ctrl+-",
-        (e) => {
-          onZoom(viewPort.zoom - 0.1, "hotkey");
-          e.preventDefault();
-        },
-        { text: "Zoom out board", group: "Viewport Controls" },
-        [onZoom, viewPort.zoom],
-        isBoardInFocus
-      );
-
-      useHotkeys(
-        "cmd+o, ctrl+o",
-        (e) => {
-          e.preventDefault();
-          toastMsg("Ordering");
-          const steps: any[] = [];
-          orderVisualNode(node, currResolvedDeps, 200, (step, idx) => {
-            if (idx % 3 === 0) {
-              steps.push(step);
-            }
-          });
-
-          (async () => {
-            while (steps.length) {
-              const s = steps.shift();
-              toastMsg(`Step ${steps.length}!`);
-              await delay(200);
-              onChange(s, metaChange("order-step"));
-              toastMsg(`Step ${steps.length}! done`);
-            }
-          })();
-        },
-        { text: "Auto-layout (experimental)", group: "Misc." },
-        [onChange, node, resolvedDependencies],
-        isBoardInFocus
-      );
-
-      useHotkeys(
-        "cmd+0, ctrl+0",
-        (e) => {
-          onZoom(1);
-          e.preventDefault();
-        },
-        { text: "Reset zoom", group: "Viewport Controls" },
-        [viewPort, onZoom],
-        isBoardInFocus
-      );
-
-      const clearSelections = () => {
-        onChangeBoardData({
-          from: undefined,
-          to: undefined,
-          selectedInstances: [],
-          selectedConnections: [],
-        });
-      };
-
       const onStartDraggingInstance = React.useCallback(
         (ins: NodeInstance, event: React.MouseEvent) => {
           // event.preventDefault();
@@ -758,73 +667,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         },
         []
       );
-
-      const onSelectConnection = React.useCallback(
-        (connection: ConnectionData, ev: React.MouseEvent) => {
-          const connectionId = getConnectionId(connection);
-          const newSelected = selectedConnections.includes(connectionId)
-            ? selectedConnections.filter((id) => id !== connectionId)
-            : [...(ev.shiftKey ? selectedConnections : []), connectionId];
-
-          onChangeBoardData({
-            selectedConnections: newSelected,
-            selectedInstances: [],
-          });
-        },
-        [onChangeBoardData, selectedConnections]
-      );
-
-      const onSelectInstance = React.useCallback(
-        ({ id }: NodeInstance, ev: React.MouseEvent) => {
-          const newSelectedIfSelectionExists = ev.shiftKey
-            ? selectedInstances.filter((sid) => sid !== id)
-            : [];
-          const newSelectedIfSelectionIsNew = ev.shiftKey
-            ? [...selectedInstances, id]
-            : [id];
-          const newSelected = selectedInstances.includes(id)
-            ? newSelectedIfSelectionExists
-            : newSelectedIfSelectionIsNew;
-
-          onChangeBoardData({
-            selectedInstances: newSelected,
-            selectedConnections: [],
-            from: undefined,
-            to: undefined,
-          });
-        },
-        [onChangeBoardData, selectedInstances]
-      );
-
-      const selectAll = React.useCallback(() => {
-        const allIds = node.instances.map((i) => i.id);
-        onChangeBoardData({
-          selectedInstances: allIds,
-          selectedConnections: [],
-          from: undefined,
-          to: undefined,
-        });
-      }, [onChangeBoardData, node.instances]);
-
-      const onDeleteInstance = React.useCallback(
-        (ins: NodeInstance) => {
-          onDeleteInstances([ins.id]);
-        },
-        [onDeleteInstances]
-      );
-
-      const duplicate = React.useCallback(() => {
-        const { newNode, newInstances } = handleDuplicateSelectedEditorCommand(
-          node,
-          selectedInstances
-        );
-
-        onChange(newNode, functionalChange("duplicated instances"));
-        onChangeBoardData({
-          selectedInstances: newInstances.map((ins) => ins.id),
-        });
-        // onChange(duplicateSelected(value), functionalChange("duplicate"));
-      }, [onChange, onChangeBoardData, node, selectedInstances]);
 
       const onMouseDown: React.MouseEventHandler = React.useCallback(
         (e) => {
@@ -1222,13 +1064,11 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       const getContextMenu = React.useCallback(() => {
         return (
           <EditorContextMenu
-            node={node}
-            onChangeNode={onChange}
             nodeIoEditable={nodeIoEditable}
             lastMousePos={lastMousePos}
           />
         );
-      }, [node, onChange, nodeIoEditable, lastMousePos]);
+      }, [nodeIoEditable, lastMousePos]);
 
       useHotkeys(
         "shift+c",
@@ -1252,34 +1092,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         [],
         isBoardInFocus
       );
-      useHotkeys(
-        "esc",
-        clearSelections,
-        { text: "Clear selections", group: "Selection" },
-        [],
-        isBoardInFocus
-      );
-      useHotkeys(
-        "backspace",
-        deleteSelection,
-        { text: "Delete instances", group: "Editing" },
-        [],
-        isBoardInFocus
-      );
-      useHotkeys(
-        "shift+d",
-        duplicate,
-        { text: "Duplicate selected instances", group: "Editing" },
-        [],
-        isBoardInFocus
-      );
-      useHotkeys(
-        "cmd+a, ctrl+a",
-        selectAll,
-        { text: "Select all", group: "Selection" },
-        [],
-        isBoardInFocus
-      );
+
       useHotkeys(
         "s",
         selectClosest,
