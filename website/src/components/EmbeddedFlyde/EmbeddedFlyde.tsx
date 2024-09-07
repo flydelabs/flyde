@@ -222,7 +222,6 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = forwardRef(
                 onChangeEditorState={setFlowEditorState}
                 initialPadding={initialPadding}
                 onExtractInlineNode={noop as any}
-                disableScrolling={true}
                 darkMode={darkMode.isDarkMode}
               />
             </DebuggerContextProvider>

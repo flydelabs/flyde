@@ -50,7 +50,7 @@ import {
 } from "./utils";
 
 import { produce } from "immer";
-import { useState, useRef, useEffect, DragEvent } from "react";
+import { useState, useRef, useEffect, DragEvent, MouseEvent } from "react";
 import { useHotkeys } from "../lib/react-utils/use-hotkeys";
 import useComponentSize from "@rehooks/component-size";
 
@@ -166,7 +166,6 @@ export type VisualNodeEditorProps = {
   instancesWithErrors?: Set<string>;
 
   initialPadding?: [number, number];
-  disableScrolling?: boolean;
 };
 
 export interface VisualNodeEditorHandle {
@@ -188,7 +187,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         ancestorsInsIds,
         queuedInputsData: queueInputsData,
         initialPadding,
-        disableScrolling,
       } = props;
 
       const { resolvedDependencies } = useDependenciesContext();
@@ -544,6 +542,10 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         []
       );
 
+      const [isPanning, setIsPanning] = useState(false);
+      const [isSpacePressed, setIsSpacePressed] = useState(false);
+      const panStartPos = useRef<Pos | null>(null);
+
       const onMouseDown: React.MouseEventHandler = React.useCallback(
         (e) => {
           if (
@@ -552,23 +554,32 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           ) {
             return;
           }
-          startSelectionBox(e);
+          if (isSpacePressed) {
+            setIsPanning(true);
+            panStartPos.current = { x: e.clientX, y: e.clientY };
+          } else {
+            startSelectionBox(e);
+          }
         },
-        [node.id, startSelectionBox]
+        [node.id, startSelectionBox, isSpacePressed]
       );
 
       const onMouseUp: React.MouseEventHandler = React.useCallback(
         (e) => {
           setDraggedConnection(null);
+          setIsPanning(false);
+          panStartPos.current = null;
           if (!isEventOnCurrentBoard(e.nativeEvent, node.id)) {
             return;
           }
 
-          endSelectionBox(e.shiftKey, (ids) => {
-            onChangeBoardData({ selectedInstances: ids });
-          });
+          if (!isSpacePressed) {
+            endSelectionBox(e.shiftKey, (ids) => {
+              onChangeBoardData({ selectedInstances: ids });
+            });
+          }
         },
-        [node.id, endSelectionBox, onChangeBoardData]
+        [node.id, endSelectionBox, onChangeBoardData, isSpacePressed]
       );
 
       const onMouseMove: React.MouseEventHandler = React.useCallback(
@@ -581,7 +592,18 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
           updateClosestPinAndMousePos(e);
 
-          if (selectionBox) {
+          if (isPanning && panStartPos.current) {
+            const dx = (panStartPos.current.x - e.clientX) / viewPort.zoom;
+            const dy = (panStartPos.current.y - e.clientY) / viewPort.zoom;
+            setViewPort({
+              ...viewPort,
+              pos: {
+                x: viewPort.pos.x + dx,
+                y: viewPort.pos.y + dy,
+              },
+            });
+            panStartPos.current = { x: e.clientX, y: e.clientY };
+          } else if (selectionBox) {
             updateSelectionBox(lastMousePos.current);
           }
 
@@ -594,6 +616,9 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           onChangeBoardData,
           lastMousePos,
           updateSelectionBox,
+          isPanning,
+          viewPort,
+          setViewPort,
         ]
       );
 
@@ -743,28 +768,12 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
       const onMaybeZoomOrPan = React.useCallback(
         (e: WheelEvent) => {
-          if (e.metaKey || e.ctrlKey) {
-            const zoomDiff = e.deltaY * -0.005;
-            onZoom(viewPort.zoom + zoomDiff, "mouse");
-            e.preventDefault();
-            e.stopPropagation();
-          } else {
-            if (disableScrolling) {
-              return;
-            }
-            const dx = e.deltaX;
-            const dy = e.deltaY;
-
-            const newViewPort = produce(viewPort, (vp) => {
-              vp.pos.x = vp.pos.x + dx / vp.zoom;
-              vp.pos.y = vp.pos.y + dy / vp.zoom;
-            });
-            setViewPort(newViewPort);
-            e.stopPropagation();
-            e.preventDefault();
-          }
+          const zoomDiff = e.deltaY * -0.005;
+          onZoom(viewPort.zoom + zoomDiff, "mouse");
+          e.preventDefault();
+          e.stopPropagation();
         },
-        [disableScrolling, onZoom, setViewPort, viewPort]
+        [onZoom, viewPort]
       );
 
       useEffect(() => {
@@ -1353,6 +1362,35 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         [onAddNode, viewPort]
       );
 
+      useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+          if (e.code === "Space" && !isSpacePressed) {
+            setIsSpacePressed(true);
+          }
+        };
+
+        const handleKeyUp = (e: KeyboardEvent) => {
+          if (e.code === "Space") {
+            setIsSpacePressed(false);
+            setIsPanning(false);
+          }
+        };
+
+        window.addEventListener("keydown", handleKeyDown);
+        window.addEventListener("keyup", handleKeyUp);
+
+        return () => {
+          window.removeEventListener("keydown", handleKeyDown);
+          window.removeEventListener("keyup", handleKeyUp);
+        };
+      }, [isSpacePressed]);
+
+      const cursorStyle = isSpacePressed
+        ? isPanning
+          ? "grabbing"
+          : "grab"
+        : "default";
+
       try {
         return (
           <ContextMenu
@@ -1372,7 +1410,10 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
               onDragOver={onDragOver}
               onDrop={onDrop}
               ref={boardRef as any}
-              style={backgroundStyle}
+              style={{
+                ...backgroundStyle,
+                cursor: cursorStyle,
+              }}
             >
               <React.Fragment>
                 <LayoutDebugger
