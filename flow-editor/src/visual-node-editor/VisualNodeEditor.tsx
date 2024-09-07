@@ -46,23 +46,17 @@ import { entries, Size } from "../utils";
 import { useBoundingclientrect, useDidMount } from "rooks";
 
 import {
-  findClosestPin,
-  getSelectionBoxRect,
   emptyObj,
   createNewNodeInstance,
   ViewPort,
-  domToViewPort,
   roundNumber,
   fitViewPortToNode,
-  getInstancesInRect,
   handleInstanceDrag,
   handleIoPinRename,
   handleChangeNodeInputType,
-  calcSelectionBoxArea,
   centerBoardPosOnTarget,
   emptyList,
   animateViewPort,
-  logicalPosToRenderedPos,
   getInstancePinConfig,
   changePinConfig,
   createNewMacroNodeInstance,
@@ -78,7 +72,7 @@ import useComponentSize from "@rehooks/component-size";
 import { Slider, ContextMenu, Button } from "@blueprintjs/core";
 import { NodeIoView, NodeIoViewProps } from "./node-io-view";
 
-import { vAdd, vec, vSub, vZero } from "../physics";
+import { vec, vSub, vZero } from "../physics";
 import {
   QuickAddMenu,
   QuickAddMenuData,
@@ -124,6 +118,7 @@ import { EditorContextMenu } from "./EditorContextMenu/EditorContextMenu";
 import { usePruneOrphanConnections } from "./usePruneOrphanConnections";
 import { SelectionBox } from "./SelectionBox/SelectionBox";
 import { useSelectionBox } from "./useSelectionBox";
+import { useClosestPinAndMousePos } from "./useClosestPinAndMousePos";
 
 const MemodSlider = React.memo(Slider);
 
@@ -367,21 +362,24 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         }
       }, [lastSelectedId]);
 
-      const [closestPin, setClosestPin] = useState<{
-        ins: NodeInstance;
-        pin: string;
-        type: "input" | "output";
-      }>();
+      const boardRef = useRef<HTMLDivElement>();
+      const vpSize: Size = useComponentSize(boardRef);
+      const boardPos = useBoundingclientrect(boardRef) || vZero;
+
+      const { closestPin, lastMousePos, updateClosestPinAndMousePos } =
+        useClosestPinAndMousePos(
+          node,
+          currResolvedDeps,
+          currentInsId,
+          ancestorsInsIds,
+          viewPort,
+          boardPos,
+          parentViewport
+        );
 
       useEffect(() => {
         preloadMonaco();
       }, []);
-
-      const boardRef = useRef<HTMLDivElement>();
-      const vpSize: Size = useComponentSize(boardRef);
-      const lastMousePos = React.useRef({ x: 400, y: 400 });
-
-      const boardPos = useBoundingclientrect(boardRef) || vZero;
 
       const {
         selectionBox,
@@ -561,7 +559,13 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           selectedInstances: newInstances.map((ins) => ins.id),
           selectedConnections: [],
         });
-      }, [onChange, onChangeBoardData, node, props.clipboardData]);
+      }, [
+        node,
+        lastMousePos,
+        props.clipboardData,
+        onChange,
+        onChangeBoardData,
+      ]);
 
       const selectClosest = React.useCallback(() => {
         const rootId = node.id;
@@ -606,7 +610,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           // const newCenter = centerBoardPosOnTarget(lastMousePos.current, vpSize, newZoom, viewPort);
           setViewPort({ ...viewPort, zoom: newZoom, pos: newPos });
         },
-        [setViewPort, viewPort, vpSize]
+        [lastMousePos, setViewPort, viewPort, vpSize]
       );
 
       useHotkeys(
@@ -973,57 +977,20 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           }
           isBoardInFocus.current = true;
 
-          const eventPos = { x: e.clientX, y: e.clientY };
-          const normalizedPos = vSub(eventPos, vAdd(boardPos, vZero));
-          const posInBoard = domToViewPort(
-            normalizedPos,
-            viewPort,
-            parentViewport
-          );
+          updateClosestPinAndMousePos(e);
 
           if (selectionBox) {
-            updateSelectionBox(posInBoard);
+            updateSelectionBox(lastMousePos.current);
           }
 
-          const closest = findClosestPin(
-            node,
-            currResolvedDeps,
-            normalizedPos,
-            boardPos,
-            currentInsId,
-            ancestorsInsIds,
-            viewPort
-          );
-          const currClosest = closestPin;
-          if (closest) {
-            const isNewClosest =
-              !currClosest ||
-              currClosest.ins !== closest.ins ||
-              (currClosest.ins === closest.ins &&
-                currClosest.pin !== closest.pin);
-            if (isNewClosest) {
-              setClosestPin({
-                ins: closest.ins,
-                type: closest.type,
-                pin: closest.id,
-              });
-            }
-          }
-
-          lastMousePos.current = posInBoard;
           onChangeBoardData({ lastMousePos: lastMousePos.current });
         },
         [
-          node,
-          boardPos,
-          viewPort,
-          parentViewport,
+          node.id,
+          updateClosestPinAndMousePos,
           selectionBox,
-          currResolvedDeps,
-          currentInsId,
-          ancestorsInsIds,
-          closestPin,
           onChangeBoardData,
+          lastMousePos,
           updateSelectionBox,
         ]
       );
@@ -1033,7 +1000,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           // hack to ignore context menu opening as mouse leave
           return;
         }
-        setClosestPin(undefined);
+
         isBoardInFocus.current = false;
       }, []);
 
@@ -1181,6 +1148,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         },
         [
           boardData,
+          lastMousePos,
           node,
           onChange,
           onChangeBoardData,
@@ -1468,12 +1436,13 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         },
         [
           quickAddMenuVisible,
+          onImportNode,
           currResolvedDeps,
+          lastMousePos,
           reportEvent,
           node,
           onChange,
           onCloseQuickAdd,
-          onImportNode,
         ]
       );
 
@@ -1486,7 +1455,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             lastMousePos={lastMousePos}
           />
         );
-      }, [node, onChange, nodeIoEditable]);
+      }, [node, onChange, nodeIoEditable, lastMousePos]);
 
       useHotkeys(
         "shift+c",
