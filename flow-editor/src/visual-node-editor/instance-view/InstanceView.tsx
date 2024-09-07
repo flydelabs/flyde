@@ -55,6 +55,10 @@ import {
 
 import { NodeStyleMenu } from "./NodeStyleMenu";
 import { useDarkMode } from "../../flow-editor/DarkModeContext";
+import {
+  VisualNodeEditorContextType,
+  VisualNodeEditorProvider,
+} from "../VisualNodeEditorContext";
 
 export const PIECE_HORIZONTAL_PADDING = 25;
 export const PIECE_CHAR_WIDTH = 11;
@@ -164,7 +168,7 @@ export interface InstanceViewProps {
 
   isConnectedInstanceSelected: boolean;
 
-  inlineGroupProps?: VisualNodeEditorProps;
+  inlineGroupProps?: VisualNodeEditorProps & VisualNodeEditorContextType;
   onCloseInlineEditor: () => void;
 
   inlineEditorPortalDomNode: HTMLElement;
@@ -680,11 +684,18 @@ export const InstanceView: React.FC<InstanceViewProps> =
             // style={{ width: `${inlineEditorSize.w}px`, height: `${inlineEditorSize.h}px` }}
           >
             <main className={classNames(Classes.DIALOG_BODY)} tabIndex={0}>
-              <VisualNodeEditor
-                {...props.inlineGroupProps}
-                className="no-drag"
-                ref={inlineEditorRef}
-              />
+              <VisualNodeEditorProvider
+                boardData={inlineGroupProps.boardData}
+                onChangeBoardData={inlineGroupProps.onChangeBoardData}
+                node={inlineGroupProps.node}
+                onChangeNode={inlineGroupProps.onChangeNode}
+              >
+                <VisualNodeEditor
+                  {...props.inlineGroupProps}
+                  className="no-drag"
+                  ref={inlineEditorRef}
+                />
+              </VisualNodeEditorProvider>
             </main>
           </Dialog>
         );

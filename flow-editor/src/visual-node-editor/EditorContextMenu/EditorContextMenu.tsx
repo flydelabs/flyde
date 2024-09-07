@@ -1,28 +1,20 @@
 import { Menu, MenuDivider, MenuItem } from "@blueprintjs/core";
 import { isDefined, preventDefaultAnd } from "../../utils";
-import {
-  NodeStyle,
-  PinType,
-  VisualNode,
-  nodeInput,
-  nodeOutput,
-} from "@flyde/core";
+import { NodeStyle, PinType, nodeInput, nodeOutput } from "@flyde/core";
 import produce from "immer";
 import React from "react";
 import { usePrompt, AppToaster, usePorts, toastMsg } from "../..";
 import { functionalChange } from "../../flow-editor/flyde-flow-change-type";
 import { NodeStyleMenu } from "../instance-view/NodeStyleMenu";
-import { VisualNodeEditorProps } from "../VisualNodeEditor";
+import { useVisualNodeEditorContext } from "../VisualNodeEditorContext";
 
 export interface EditorContextMenuProps {
   nodeIoEditable: boolean;
-  node: VisualNode;
-  onChangeNode: VisualNodeEditorProps["onChangeNode"];
   lastMousePos: React.RefObject<{ x: number; y: number }>;
 }
 
 export function EditorContextMenu(props: EditorContextMenuProps) {
-  const { nodeIoEditable, node, onChangeNode: onChange, lastMousePos } = props;
+  const { nodeIoEditable, lastMousePos } = props;
   const maybeDisabledLabel = nodeIoEditable
     ? ""
     : " (cannot edit main node, only visual)";
@@ -30,6 +22,8 @@ export function EditorContextMenu(props: EditorContextMenuProps) {
   const _prompt = usePrompt();
 
   const { reportEvent } = usePorts();
+
+  const { node, onChangeNode: onChange } = useVisualNodeEditorContext();
 
   const editCompletionOutputs = React.useCallback(async () => {
     const curr = node.completionOutputs?.join(",");
@@ -120,7 +114,7 @@ export function EditorContextMenu(props: EditorContextMenuProps) {
       onChange(newValue, functionalChange("add new io pin"));
       reportEvent("addIoPin", { type });
     },
-    [node, onChange, reportEvent]
+    [_prompt, lastMousePos, node, onChange, reportEvent]
   );
 
   return (

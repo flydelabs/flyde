@@ -1,0 +1,12 @@
+imports:
+  "@flyde/stdlib": []
+node:
+  instances: []
+  connections: []
+  id: A
+  inputs: {}
+  outputs: {}
+  inputsPosition: {}
+  outputsPosition: {}
+  completionOutputs:
+    - aaa
