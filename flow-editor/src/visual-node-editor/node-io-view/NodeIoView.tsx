@@ -46,7 +46,6 @@ export interface NodeIoViewProps {
 
   description: string;
   onSetDescription: (type: PinType, pin: string, description: string) => void;
-
   // onRequestHistory: (pinId: string, type: PinType) => Promise<HistoryPayload>;
 }
 

@@ -25,7 +25,6 @@ import {
   Pos,
   getNodeInputs,
   externalConnectionNode,
-  ResolvedDependenciesDefinitions,
   fullInsIdPath,
   isStickyInputPinConfig,
   stickyInputPinConfig,
@@ -85,7 +84,6 @@ import { preloadMonaco } from "../lib/preload-monaco";
 // import { InstancePanel } from "./instance-panel";
 import { toastMsg } from "../toaster";
 import {
-  FlydeFlowChangeType,
   functionalChange,
   metaChange,
 } from "../flow-editor/flyde-flow-change-type";
@@ -119,6 +117,10 @@ import { usePruneOrphanConnections } from "./usePruneOrphanConnections";
 import { SelectionBox } from "./SelectionBox/SelectionBox";
 import { useSelectionBox } from "./useSelectionBox";
 import { useClosestPinAndMousePos } from "./useClosestPinAndMousePos";
+import {
+  useVisualNodeEditorContext,
+  VisualNodeEditorContextType,
+} from "./VisualNodeEditorContext";
 
 const MemodSlider = React.memo(Slider);
 
@@ -159,21 +161,13 @@ export type GroupEditorBoardData = {
 };
 
 export type VisualNodeEditorProps = {
-  node: VisualNode;
   currentInsId: string;
   ancestorsInsIds?: string;
 
   clipboardData: ClipboardData;
-  resolvedDependencies: ResolvedDependenciesDefinitions;
 
   nodeIoEditable: boolean;
   thumbnailMode?: true;
-
-  boardData: GroupEditorBoardData;
-
-  onChangeBoardData: (data: Partial<GroupEditorBoardData>) => void;
-
-  onChangeNode: (val: VisualNode, type: FlydeFlowChangeType) => void;
 
   onCopy: (data: ClipboardData) => void;
   onInspectPin: (insId: string, pin?: { id: string; type: PinType }) => void;
@@ -204,21 +198,25 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
   React.memo(
     React.forwardRef((props, thisRef) => {
       const {
-        onChangeNode: onChange,
         nodeIoEditable,
         onCopy,
         onGoToNodeDef: onEditNode,
         onInspectPin,
-        boardData,
-        onChangeBoardData,
         currentInsId,
         ancestorsInsIds,
-        node,
-        resolvedDependencies,
         queuedInputsData: queueInputsData,
         initialPadding,
         disableScrolling,
       } = props;
+
+      const { resolvedDependencies } = useDependenciesContext();
+
+      const {
+        node,
+        onChangeNode: onChange,
+        boardData,
+        onChangeBoardData,
+      } = useVisualNodeEditorContext();
 
       const { onImportNode, libraryData } = useDependenciesContext();
 
@@ -748,9 +746,9 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             }
           });
 
-          props.onChangeNode(newValue, metaChange("node-io-drag-move"));
+          onChange(newValue, metaChange("node-io-drag-move"));
         },
-        [props, node]
+        [onChange, node]
       );
 
       const onDragEndNodeIo = React.useCallback(
@@ -1515,7 +1513,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         isBoardInFocus
       );
 
-      const onChangeInspected: VisualNodeEditorProps["onChangeNode"] =
+      const onChangeInspected: VisualNodeEditorContextType["onChangeNode"] =
         React.useCallback(
           (changedInlineNode, type) => {
             if (!openInlineInstance) {
@@ -1557,14 +1555,13 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
       const maybeGetInlineProps = (
         ins: NodeInstance
-      ): VisualNodeEditorProps => {
+      ): VisualNodeEditorProps & VisualNodeEditorContextType => {
         if (openInlineInstance && openInlineInstance.insId === ins.id) {
           return {
             currentInsId: openInlineInstance.insId,
             ancestorsInsIds: fullInsIdPath(currentInsId, ancestorsInsIds),
             boardData: inspectedBoardData,
             onChangeBoardData: onChangeInspectedBoardData,
-            resolvedDependencies,
             onCopy: onCopy,
             clipboardData: props.clipboardData,
             onInspectPin: props.onInspectPin,
@@ -1581,7 +1578,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           return undefined;
         }
       };
-
       const maybeGetFutureConnection = () => {
         if (
           from &&

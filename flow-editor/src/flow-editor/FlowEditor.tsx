@@ -28,9 +28,10 @@ import { fab } from "@fortawesome/free-brands-svg-icons";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { DataInspectionModal } from "./DataInspectionModal";
 import { useDebuggerContext } from "./DebuggerContext";
-import { useDependenciesContext } from "./DependenciesContext";
 import { DarkModeProvider } from "./DarkModeContext";
 import { useDarkMode } from "usehooks-ts";
+
+import { VisualNodeEditorProvider } from "../visual-node-editor/VisualNodeEditorContext";
 
 export * from "./ports";
 export * from "./DebuggerContext";
@@ -76,8 +77,6 @@ const ignoreUndoChangeTypes = ["select", "drag-move", "order-step"];
 export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
   React.forwardRef((props, visualEditorRef) => {
     const { state, onChangeEditorState } = props;
-
-    const { resolvedDependencies } = useDependenciesContext();
 
     const [undoStack, setUndoStack] = React.useState<
       Partial<FlowEditorState>[]
@@ -227,34 +226,36 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
     const renderInner = () => {
       return (
         <DarkModeProvider value={props.darkMode ?? isDarkMode}>
-          <React.Fragment>
-            {inspectedItem ? (
-              <DataInspectionModal
-                item={inspectedItem}
-                onClose={onCloseInspectedItemModal}
+          <VisualNodeEditorProvider
+            boardData={editorBoardData}
+            onChangeBoardData={onChangeEditorBoardData}
+            node={editedNode}
+            onChangeNode={onChangeNode}
+          >
+            <React.Fragment>
+              {inspectedItem ? (
+                <DataInspectionModal
+                  item={inspectedItem}
+                  onClose={onCloseInspectedItemModal}
+                />
+              ) : null}
+              <VisualNodeEditor
+                currentInsId={ROOT_INS_ID}
+                ref={visualEditorRef}
+                key={editedNode.id}
+                onGoToNodeDef={onEditNode}
+                clipboardData={clipboardData}
+                onCopy={setClipboardData}
+                nodeIoEditable={!editedNode.id.startsWith("Trigger")}
+                onInspectPin={onInspectPin}
+                onExtractInlineNode={props.onExtractInlineNode}
+                queuedInputsData={queuedInputsData}
+                initialPadding={props.initialPadding}
+                instancesWithErrors={instancesWithErrors}
+                disableScrolling={props.disableScrolling}
               />
-            ) : null}
-            <VisualNodeEditor
-              currentInsId={ROOT_INS_ID}
-              ref={visualEditorRef}
-              key={editedNode.id}
-              boardData={editorBoardData}
-              onChangeBoardData={onChangeEditorBoardData}
-              node={editedNode}
-              onGoToNodeDef={onEditNode}
-              onChangeNode={onChangeNode}
-              resolvedDependencies={resolvedDependencies}
-              clipboardData={clipboardData}
-              onCopy={setClipboardData}
-              nodeIoEditable={!editedNode.id.startsWith("Trigger")}
-              onInspectPin={onInspectPin}
-              onExtractInlineNode={props.onExtractInlineNode}
-              queuedInputsData={queuedInputsData}
-              initialPadding={props.initialPadding}
-              instancesWithErrors={instancesWithErrors}
-              disableScrolling={props.disableScrolling}
-            />
-          </React.Fragment>
+            </React.Fragment>
+          </VisualNodeEditorProvider>
         </DarkModeProvider>
       );
     };
