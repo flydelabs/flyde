@@ -157,7 +157,7 @@ export const OnboardingTips: React.FC<OnboardingTipsProps> = () => {
     }
   }, [currentTip, advanceTip, isCompleted, node, boardData, isAdvancing]);
 
-  return (
+  return isCompleted ? null : (
     <div className={`onboarding-tips ${isDark ? "dark" : ""}`}>
       {showFeedback ? (
         <div className="onboarding-tip-feedback">
