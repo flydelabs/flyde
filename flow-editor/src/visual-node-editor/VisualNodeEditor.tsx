@@ -49,8 +49,10 @@ import {
   isEventOnCurrentBoard,
 } from "./utils";
 
+import { OnboardingTips } from "./OnboardingTips";
+
 import { produce } from "immer";
-import { useState, useRef, useEffect, DragEvent, MouseEvent } from "react";
+import { useState, useRef, useEffect, DragEvent } from "react";
 import { useHotkeys } from "../lib/react-utils/use-hotkeys";
 import useComponentSize from "@rehooks/component-size";
 
@@ -768,12 +770,25 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
       const onMaybeZoomOrPan = React.useCallback(
         (e: WheelEvent) => {
-          const zoomDiff = e.deltaY * -0.005;
-          onZoom(viewPort.zoom + zoomDiff, "mouse");
-          e.preventDefault();
-          e.stopPropagation();
+          if (e.metaKey || e.ctrlKey) {
+            const zoomDiff = e.deltaY * -0.005;
+            onZoom(viewPort.zoom + zoomDiff, "mouse");
+            e.preventDefault();
+            e.stopPropagation();
+          } else {
+            const dx = e.deltaX;
+            const dy = e.deltaY;
+
+            const newViewPort = produce(viewPort, (vp) => {
+              vp.pos.x = vp.pos.x + dx / vp.zoom;
+              vp.pos.y = vp.pos.y + dy / vp.zoom;
+            });
+            setViewPort(newViewPort);
+            e.stopPropagation();
+            e.preventDefault();
+          }
         },
-        [onZoom, viewPort]
+        [onZoom, setViewPort, viewPort]
       );
 
       useEffect(() => {
@@ -1584,6 +1599,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                 onDelete={onDeleteInstances}
               />
             ) : null}
+            <OnboardingTips />
             {!openInlineInstance && libraryData.groups.length ? (
               <NodesLibrary {...libraryData} onAddNode={onAddNode} />
             ) : null}
