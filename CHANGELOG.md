@@ -2,6 +2,24 @@
 
 All notable changes to Flyde will be documented in this file.
 
+## [0.103.0] - 2024-09-08
+
+- allow panning using space+drag, adds onboarding tips by @GabiGrin in https://github.com/flydelabs/flyde/pull/152, fixes #60
+- enables adding nodes by dragging from the nodes library by @GabiGrin in https://github.com/flydelabs/flyde/pull/149
+- fixes connection hover errors, fixes #145 by @GabiGrin in https://github.com/flydelabs/flyde/pull/147
+
+- visual nodes logic refactor by @GabiGrin in https://github.com/flydelabs/flyde/pull/150
+- refactor visual node editor context menu by @GabiGrin in https://github.com/flydelabs/flyde/pull/148
+- editor refactors by @GabiGrin in https://github.com/flydelabs/flyde/pull/151
+
+## [0.102.5] - 2024-09-06
+
+- rename "Inline Value" to "Value"
+- rename "Inline Code" to "Function"
+- Lengthen time of visual feedback of the remote debugger
+
+**Full Changelog**: https://github.com/flydelabs/flyde/compare/v0.102.4...v0.102.5
+
 ## [0.102.4] - 2024-08-30
 
 - improve set attribute node by @GabiGrin in https://github.com/flydelabs/flyde/pull/142
