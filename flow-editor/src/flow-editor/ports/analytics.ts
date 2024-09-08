@@ -26,6 +26,7 @@ export interface AnalyticsEventsMap {
     outputs: string[];
   };
   "generateNodeFromPrompt:failure": { error: string };
+  onBoardingTipCompleted: { tip: string };
 }
 
 export type AnalyticsEvent = keyof AnalyticsEventsMap;

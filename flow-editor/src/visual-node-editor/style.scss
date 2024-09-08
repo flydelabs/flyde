@@ -203,4 +203,39 @@
     top: 20px;
     right: 20px;
   }
+
+  .onboarding-tips {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    color: #0a649a;
+    background: rgba(255, 255, 255, 0.5);
+    padding: 6px 12px;
+    border-radius: 5px;
+    font-size: 12px;
+    line-height: 0;
+
+    &.dark {
+      background: rgba(255, 255, 255, 0.1);
+      color: #87c7e7;
+    }
+
+    .onboarding-tip-feedback {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      color: #0a649a;
+    }
+
+    .onboarding-tip-text {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      font-weight: normal;
+    }
+  }
 }

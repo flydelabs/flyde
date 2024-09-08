@@ -55,7 +55,6 @@ export type FlydeFlowEditorProps = {
   ref?: React.Ref<any>;
 
   initialPadding?: [number, number];
-  disableScrolling?: boolean;
   darkMode?: boolean;
 };
 
@@ -252,7 +251,6 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
                 queuedInputsData={queuedInputsData}
                 initialPadding={props.initialPadding}
                 instancesWithErrors={instancesWithErrors}
-                disableScrolling={props.disableScrolling}
               />
             </React.Fragment>
           </VisualNodeEditorProvider>
