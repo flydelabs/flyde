@@ -10,6 +10,32 @@ if (!["patch", "minor"].includes(bumpType)) {
   process.exit(1);
 }
 
+// Check if current branch is main
+const currentBranch = execSync("git rev-parse --abbrev-ref HEAD")
+  .toString()
+  .trim();
+if (currentBranch !== "main") {
+  console.error(
+    "Not on main branch. Please switch to main branch before running this script."
+  );
+  process.exit(1);
+}
+
+// Check for upstream changes
+try {
+  execSync("git fetch");
+  const status = execSync("git status -uno").toString();
+  if (status.includes("Your branch is behind")) {
+    console.error(
+      "There are upstream changes. Please pull changes before running this script."
+    );
+    process.exit(1);
+  }
+} catch (error) {
+  console.error("Failed to check for upstream changes:", error);
+  process.exit(1);
+}
+
 const workspacePackages = JSON.parse(
   execSync("pnpm list -r --json").toString()
 );
