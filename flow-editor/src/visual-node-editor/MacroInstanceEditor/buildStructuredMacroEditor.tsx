@@ -4,12 +4,14 @@ import {
   HTMLSelect,
   InputGroup,
   NumericInput,
+  TextArea,
 } from "@blueprintjs/core";
 import {
   MacroEditorComp,
   MacroEditorConfigStructured,
   MacroEditorFieldDefinition,
   MacroEditorFieldDefinitionType,
+  MacroEditorFieldDefinitionTypeLongText,
 } from "@flyde/core";
 import { SimpleJsonEditor } from "./SimpleJsonEditor";
 import { ConfigurableInputEditor } from "./ConfigurableInputEditor";
@@ -63,6 +65,17 @@ export function MacroEditorBaseValueComp(
         </HTMLSelect>
       );
     }
+    case "longtext":
+      return (
+        <TextArea
+          value={props.value}
+          onChange={(e) => props.onChange(e.target.value)}
+          rows={
+            (props.config as MacroEditorFieldDefinitionTypeLongText).rows ?? 5
+          }
+          fill
+        />
+      );
   }
 }
 

@@ -25,12 +25,18 @@ export type MacroEditorFieldDefinitionTypeSelect = {
   items: { value: string | number; label: string }[];
 };
 
+export type MacroEditorFieldDefinitionTypeLongText = {
+  value: "longtext";
+  rows?: number;
+};
+
 export type MacroEditorFieldDefinitionType =
   | MacroEditorFieldDefinitionTypeString
   | MacroEditorFieldDefinitionTypeNumber
   | MacroEditorFieldDefinitionTypeBoolean
   | MacroEditorFieldDefinitionTypeJson
-  | MacroEditorFieldDefinitionTypeSelect;
+  | MacroEditorFieldDefinitionTypeSelect
+  | MacroEditorFieldDefinitionTypeLongText;
 
 export interface MacroEditorFieldDefinition {
   label: string;
