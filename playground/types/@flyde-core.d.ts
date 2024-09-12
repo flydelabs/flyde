@@ -718,7 +718,11 @@ declare module '@flyde/core/node/macro-node' {
                     label: string;
             }[];
     };
-    export type MacroEditorFieldDefinitionType = MacroEditorFieldDefinitionTypeString | MacroEditorFieldDefinitionTypeNumber | MacroEditorFieldDefinitionTypeBoolean | MacroEditorFieldDefinitionTypeJson | MacroEditorFieldDefinitionTypeSelect;
+    export type MacroEditorFieldDefinitionTypeLongText = {
+            value: "longtext";
+            rows?: number;
+    };
+    export type MacroEditorFieldDefinitionType = MacroEditorFieldDefinitionTypeString | MacroEditorFieldDefinitionTypeNumber | MacroEditorFieldDefinitionTypeBoolean | MacroEditorFieldDefinitionTypeJson | MacroEditorFieldDefinitionTypeSelect | MacroEditorFieldDefinitionTypeLongText;
     export interface MacroEditorFieldDefinition {
             label: string;
             description?: string;

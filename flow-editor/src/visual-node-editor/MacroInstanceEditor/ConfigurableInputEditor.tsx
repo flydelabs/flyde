@@ -1,6 +1,7 @@
 import { Radio, RadioGroup } from "@blueprintjs/core";
 import React from "react";
 import { ConfigurableInput } from "@flyde/core";
+import { InfoTooltip } from "../../lib/InfoTooltip";
 
 export interface ValueCompProps<T> {
   value: T;
@@ -42,7 +43,22 @@ export const ConfigurableInputEditor = function <T>({
   return (
     <>
       <RadioGroup
-        label={modeLabel}
+        label={
+          <span className="macro-label-container">
+            <span>{modeLabel}</span>
+            <InfoTooltip
+              content={
+                <div>
+                  <strong>Static</strong> - can be configured with a fixed
+                  value, using this form
+                  <br />
+                  <strong>Dynamic</strong> - a new input will be exposed so this
+                  value can be controlled at runtime
+                </div>
+              }
+            />
+          </span>
+        }
         onChange={handleModeChange}
         selectedValue={value.mode}
         inline

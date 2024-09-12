@@ -12,9 +12,12 @@ import {
   MacroEditorFieldDefinition,
   MacroEditorFieldDefinitionType,
   MacroEditorFieldDefinitionTypeLongText,
+  MacroEditorFieldDefinitionTypeSelect,
 } from "@flyde/core";
 import { SimpleJsonEditor } from "./SimpleJsonEditor";
 import { ConfigurableInputEditor } from "./ConfigurableInputEditor";
+import { useState, useEffect } from "react";
+import { usePrompt } from "../../flow-editor/ports";
 
 export interface ValueCompProps<T> {
   value: T;
@@ -24,12 +27,42 @@ export interface ValueCompProps<T> {
 export function MacroEditorBaseValueComp(
   props: ValueCompProps<any> & { config: MacroEditorFieldDefinitionType }
 ) {
+  const _prompt = usePrompt();
+  const [options, setOptions] = useState<
+    { value: string | number; label: string }[]
+  >((props.config as MacroEditorFieldDefinitionTypeSelect).items || []);
+
+  useEffect(() => {
+    if (
+      props.config.value === "select" &&
+      !options.some((option) => option.value === props.value)
+    ) {
+      setOptions([
+        ...options,
+        { value: props.value, label: String(props.value) },
+      ]);
+    }
+  }, [props.value, options, props.config.value]);
+
+  const handleAddOption = async () => {
+    const newOption = await _prompt("Enter a new option:");
+    if (newOption && !options.some((option) => option.value === newOption)) {
+      const updatedOptions = [
+        ...options,
+        { value: newOption, label: newOption },
+      ];
+      setOptions(updatedOptions);
+      props.onChange(newOption);
+    }
+  };
+
   switch (props.config.value) {
     case "number":
       return (
         <NumericInput
           value={props.value}
           onValueChange={(e) => props.onChange(e)}
+          fill
         />
       );
     case "string":
@@ -37,6 +70,7 @@ export function MacroEditorBaseValueComp(
         <InputGroup
           value={props.value}
           onChange={(e) => props.onChange(e.target.value)}
+          fill
         />
       );
     case "json":
@@ -49,19 +83,32 @@ export function MacroEditorBaseValueComp(
       );
     case "boolean":
       return (
-        <Checkbox checked={props.value} onChange={(e) => props.onChange(e)} />
+        <Checkbox
+          checked={props.value}
+          onChange={(e) =>
+            props.onChange((e.target as HTMLInputElement).checked)
+          }
+        />
       );
     case "select": {
       return (
         <HTMLSelect
           value={props.value}
-          onChange={(e) => props.onChange(e.target.value)}
+          onChange={(e) => {
+            if (e.target.value === "__other__") {
+              handleAddOption();
+            } else {
+              props.onChange(e.target.value);
+            }
+          }}
+          fill
         >
-          {props.config.items.map((option) => (
+          {options.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
             </option>
           ))}
+          <option value="__other__">Other (add new option)</option>
         </HTMLSelect>
       );
     }
@@ -89,7 +136,7 @@ export function MacroEditorFieldDefinitionRenderer(
         value={props.value}
         onChange={props.onChange}
         valueRenderer={(rendererProps) => (
-          <FormGroup label={`${config.label}:`} inline>
+          <FormGroup label={`${config.label}:`}>
             <MacroEditorBaseValueComp
               value={rendererProps.value}
               onChange={rendererProps.onChange}
@@ -103,7 +150,7 @@ export function MacroEditorFieldDefinitionRenderer(
     );
   } else {
     return (
-      <FormGroup label={`${config.label}:`} inline>
+      <FormGroup label={`${config.label}:`}>
         <MacroEditorBaseValueComp
           value={props.value}
           onChange={props.onChange}
@@ -119,7 +166,7 @@ export function buildStructuredMacroEditorComp<T>(
 ): MacroEditorComp<T> {
   return (props) => {
     return (
-      <>
+      <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
         {editorConfig.fields.map((field) => (
           <MacroEditorFieldDefinitionRenderer
             key={field.configKey}
@@ -133,7 +180,7 @@ export function buildStructuredMacroEditorComp<T>(
             config={field}
           />
         ))}
-      </>
+      </div>
     );
   };
 }
