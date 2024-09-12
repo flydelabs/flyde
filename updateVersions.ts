@@ -110,9 +110,7 @@ rl.question(
 
     try {
       execSync("git add .");
-      execSync(
-        `git commit -m "Bump versions to ${newVersion} for ${bumpType} release"`
-      );
+      execSync(`git commit -m "Prepare for v${newVersion} release"`);
       execSync("git push");
       execSync(`git tag v${newVersion}`);
       execSync(`git push origin tag v${newVersion}`);
