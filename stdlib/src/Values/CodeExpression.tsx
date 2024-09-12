@@ -1,39 +1,16 @@
-import { FormGroup, InputGroup, TextArea } from "@blueprintjs/core";
-import type { InlineValueConfig } from "./InlineValue.flyde";
-import React, { useCallback, useState } from "react";
+import { FormGroup, TextArea } from "@blueprintjs/core";
+import type { CodeExpressionConfig } from "./CodeExpression.flyde";
+import React, { useCallback } from "react";
 import { getVariables } from "./getInlineVariables";
 import { MacroEditorComp } from "@flyde/core";
 
-const labelMaxLength = 50;
-
-function valToLabel(val: any): string {
-  try {
-    if (val.length > labelMaxLength) {
-      return `${val.slice(0, labelMaxLength)}...`;
-    }
-    return val;
-  } catch (e) {
-    return `Value`;
-  }
-}
-
-const CodeExpressionEditor: MacroEditorComp<InlineValueConfig> =
+const CodeExpressionEditor: MacroEditorComp<CodeExpressionConfig> =
   function CodeExpressionEditor(props) {
     const { value, onChange } = props;
-    const [isLabelCustom, setIsLabelCustom] = useState(false);
 
     const changeValue = useCallback(
       (_val) => {
-        const labelToUse = isLabelCustom ? value.label : valToLabel(_val);
-        onChange({ ...value, value: _val, label: labelToUse });
-      },
-      [value, onChange]
-    );
-
-    const changeLabel = useCallback(
-      (newLabel) => {
-        setIsLabelCustom(newLabel ? true : false);
-        onChange({ ...value, label: newLabel });
+        onChange({ ...value, value: _val });
       },
       [value, onChange]
     );
@@ -42,7 +19,9 @@ const CodeExpressionEditor: MacroEditorComp<InlineValueConfig> =
 
     return (
       <div>
-        <FormGroup label="Value:" helperText={`Accepts any valid JS code`}>
+        <FormGroup
+          helperText={`Accepts any valid JS code that returns an expression`}
+        >
           <TextArea
             value={value.value}
             fill
@@ -62,14 +41,6 @@ const CodeExpressionEditor: MacroEditorComp<InlineValueConfig> =
             </small>
           )}
         </div>
-        <FormGroup label="Label:">
-          <InputGroup
-            type="text"
-            value={value.label}
-            onChange={(e) => changeLabel(e.target.value)}
-            placeholder="Code Expression"
-          />
-        </FormGroup>
       </div>
     );
   };

@@ -3,7 +3,6 @@ import { getVariables } from "./getInlineVariables";
 
 export interface CodeExpressionConfig {
   value: string;
-  label: string;
 }
 
 export const CodeExpression: MacroNode<CodeExpressionConfig> = {
@@ -30,7 +29,6 @@ export const CodeExpression: MacroNode<CodeExpressionConfig> = {
         size: "small",
         icon: "code",
       },
-      displayName: config.label || undefined,
       description: `Evaluates the expression \`${config.value}\``,
       inputs: Object.fromEntries(inputNames.map((input) => [input, {}]) ?? []),
       outputs: {
@@ -43,7 +41,6 @@ export const CodeExpression: MacroNode<CodeExpressionConfig> = {
   },
   defaultData: {
     value: "inputs.a + inputs.b",
-    label: "inputs.a + inputs.b",
   },
   editorConfig: {
     type: "custom",
