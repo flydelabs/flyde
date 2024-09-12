@@ -30,13 +30,19 @@ export type MacroEditorFieldDefinitionTypeLongText = {
   rows?: number;
 };
 
+export type MacroEditorFieldDefinitionTypeEnum = {
+  value: "enum";
+  options: string[];
+};
+
 export type MacroEditorFieldDefinitionType =
   | MacroEditorFieldDefinitionTypeString
   | MacroEditorFieldDefinitionTypeNumber
   | MacroEditorFieldDefinitionTypeBoolean
   | MacroEditorFieldDefinitionTypeJson
   | MacroEditorFieldDefinitionTypeSelect
-  | MacroEditorFieldDefinitionTypeLongText;
+  | MacroEditorFieldDefinitionTypeLongText
+  | MacroEditorFieldDefinitionTypeEnum;
 
 export interface MacroEditorFieldDefinition {
   label: string;
