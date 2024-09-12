@@ -54,7 +54,6 @@ export const NodeIoView: React.FC<NodeIoViewProps> = React.memo(
     const {
       viewPort,
       selected,
-      pos,
       type,
       id,
       onDblClick,
@@ -69,6 +68,9 @@ export const NodeIoView: React.FC<NodeIoViewProps> = React.memo(
       onMouseUp,
       onMouseDown,
       currentInsId,
+      onDragStart,
+      onDragEnd,
+      pos,
     } = props;
 
     const { history, resetHistory, refreshHistory } = useHistoryHelpers(
@@ -77,18 +79,32 @@ export const NodeIoView: React.FC<NodeIoViewProps> = React.memo(
       type
     );
 
-    const onDragStart = (event: any, data: any) => {
-      props.onDragStart(id, event, data);
-    };
+    const lastDrafEndTimeRef = React.useRef<number>(0);
 
-    const onDragEnd = (event: any, data: any) => {
-      const currPos = props.pos;
-      const dx = (data.x - currPos.x) / viewPort.zoom;
-      const dy = (data.y - currPos.y) / viewPort.zoom;
-      const newX = currPos.x + dx;
-      const newY = currPos.y + dy;
-      props.onDragEnd(type, id, event, { ...data, x: newX, y: newY });
-    };
+    const _onDragStart = React.useCallback(
+      (event: any, data: any) => {
+        onDragStart(id, event, data);
+      },
+      [id, onDragStart]
+    );
+
+    const _onDragEnd = React.useCallback(
+      (event: any, data: any) => {
+        const currPos = pos;
+        const dx = (data.x - currPos.x) / viewPort.zoom;
+        const dy = (data.y - currPos.y) / viewPort.zoom;
+        const newX = currPos.x + dx;
+        const newY = currPos.y + dy;
+
+        const pixelsMoved = Math.abs(dx) + Math.abs(dy);
+
+        onDragEnd(type, id, event, { ...data, x: newX, y: newY });
+        if (pixelsMoved > 5) {
+          lastDrafEndTimeRef.current = Date.now();
+        }
+      },
+      [pos, viewPort.zoom, onDragEnd, type, id]
+    );
 
     const onDragMove = (event: any, data: any) => {
       props.onDragMove(type, id, event, { x: data.x, y: data.y });
@@ -164,7 +180,10 @@ export const NodeIoView: React.FC<NodeIoViewProps> = React.memo(
     );
 
     const _onClick = React.useCallback(() => {
-      onSelect(id, type);
+      // very hacky way to prevent the pin from being selected when dragging
+      if (Date.now() - lastDrafEndTimeRef.current > 200) {
+        onSelect(id, type);
+      }
     }, [id, type, onSelect]);
 
     const getContextMenu = React.useCallback(() => {
@@ -230,8 +249,8 @@ export const NodeIoView: React.FC<NodeIoViewProps> = React.memo(
       <BaseNodeView
         className={classNames(`node-io-view`, type, { dark })}
         pos={pos}
-        onDragEnd={onDragEnd}
-        onDragStart={onDragStart}
+        onDragEnd={_onDragEnd}
+        onDragStart={_onDragStart}
         onDragMove={onDragMove}
         viewPort={viewPort}
       >

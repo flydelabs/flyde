@@ -1077,13 +1077,11 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
               ? { pinId: closestPin.pin, insId: THIS_INS_ID }
               : { insId: closestPin.ins.id, pinId: closestPin.pin };
 
-          if (
-            !isInternalConnectionNode(to) &&
-            !isInternalConnectionNode(from)
-          ) {
-            // hack to fix the fact main output / main input could connect to each other
+          // Prevent connection between main input and output
+          if (from.insId === THIS_INS_ID && to.insId === THIS_INS_ID) {
             return undefined;
           }
+
           return { from, to };
         } else if (
           to &&
@@ -1095,11 +1093,8 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
               ? { pinId: closestPin.pin, insId: THIS_INS_ID }
               : { insId: closestPin.ins.id, pinId: closestPin.pin };
 
-          if (
-            !isInternalConnectionNode(to) &&
-            !isInternalConnectionNode(from)
-          ) {
-            // hack to fix the fact main output / main input could connect to each other
+          // Prevent connection between main input and output
+          if (from.insId === THIS_INS_ID && to.insId === THIS_INS_ID) {
             return undefined;
           }
 

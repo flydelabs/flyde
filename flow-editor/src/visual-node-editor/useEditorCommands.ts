@@ -451,6 +451,12 @@ export function useEditorCommands(
 
   const onConnectionClose = React.useCallback(
     (from: ConnectionNode, to: ConnectionNode, source: string) => {
+      // Prevent connection between main input and output
+      if (from.insId === THIS_INS_ID && to.insId === THIS_INS_ID) {
+        toastMsg("Cannot connect main input to main output", "warning");
+        return;
+      }
+
       const newNode = handleConnectionCloseEditorCommand(node, {
         from,
         to,
