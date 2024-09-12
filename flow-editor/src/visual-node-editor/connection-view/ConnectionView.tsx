@@ -1,22 +1,17 @@
 import * as React from "react";
-import classNames from "classnames";
 import {
   VisualNode,
   Pos,
   NodesDefCollection,
   NodeInstance,
-  isInternalConnectionNode,
   ConnectionData,
   ConnectionNode,
 } from "@flyde/core";
-import { calcStartPos, calcTargetPos } from "./calc-pin-position";
 import { Size } from "../../utils";
-
-import { useSsr } from "usehooks-ts";
 import { getConnectionId, logicalPosToRenderedPos, ViewPort } from "../..";
-import { vDiv } from "../../physics";
 import { ConnectionViewPath } from "./ConnectionViewPath/ConnectionViewPath";
-import { safelyGetNodeDef } from "../../flow-editor/getNodeDef";
+import { SingleConnectionView } from "./SingleConnectionView";
+import { calcStartPos, calcTargetPos } from "./calc-pin-position";
 
 export interface BaseConnectionViewProps {
   resolvedNodes: NodesDefCollection;
@@ -52,96 +47,6 @@ export interface ConnectionViewProps extends BaseConnectionViewProps {
   ) => void;
 }
 
-export interface ConnectionItemViewProps extends BaseConnectionViewProps {
-  connection: ConnectionData;
-  type: "regular" | "future-add" | "future-remove";
-  toggleHidden: (connection: ConnectionData) => void;
-  removeConnection: (connection: ConnectionData) => void;
-  parentSelected: boolean;
-  onSelectConnection: (
-    connectionData: ConnectionData,
-    ev: React.MouseEvent
-  ) => void;
-  isConnectionSelected?: boolean;
-}
-
-export const SingleConnectionView: React.FC<ConnectionItemViewProps> = (
-  props
-) => {
-  const { isBrowser } = useSsr();
-
-  const {
-    connection,
-    node,
-    resolvedNodes,
-    instances,
-    type,
-    viewPort,
-    parentSelected,
-    onSelectConnection,
-    isConnectionSelected,
-  } = props;
-
-  const [isHovered, setIsHovered] = React.useState(false);
-
-  const { from } = connection;
-
-  const fromInstance =
-    isInternalConnectionNode(from) &&
-    instances.find((i) => i.id === from.insId);
-
-  if (!fromInstance && isInternalConnectionNode(from)) {
-    console.warn(`Could not find instance ${from.insId} for connection`, from);
-    return null;
-  }
-
-  const fromNode =
-    isInternalConnectionNode(from) && fromInstance
-      ? safelyGetNodeDef(fromInstance, resolvedNodes)
-      : node;
-
-  const sourcePin = fromNode.outputs[from.pinId];
-  const delayed = sourcePin && sourcePin.delayed;
-
-  const startPos = isBrowser
-    ? calcStartPos({ ...props, connectionNode: from })
-    : { x: 0, y: 0 };
-  const endPos = isBrowser
-    ? calcTargetPos({ ...props, connectionNode: connection.to })
-    : { x: 0, y: 0 };
-
-  const { x: x1, y: y1 } = vDiv(startPos, props.parentVp.zoom);
-  const { x: x2, y: y2 } = vDiv(endPos, props.parentVp.zoom);
-
-  const cm = classNames(
-    {
-      delayed,
-      hidden: connection.hidden,
-      "parent-selected": parentSelected,
-      selected: isConnectionSelected,
-      "pending-selection": !isConnectionSelected && isHovered,
-    },
-    type
-  );
-
-  const onConnectionPathClick = (e: React.MouseEvent) => {
-    onSelectConnection(connection, e);
-  };
-
-  return (
-    <ConnectionViewPath
-      className={cm}
-      from={{ x: x1, y: y1 }}
-      to={{ x: x2, y: y2 }}
-      dashed={type !== "regular"}
-      zoom={viewPort.zoom}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      onClick={onConnectionPathClick}
-    />
-  );
-};
-
 export const ConnectionView: React.FC<ConnectionViewProps> = (props) => {
   const {
     viewPort,
@@ -151,6 +56,7 @@ export const ConnectionView: React.FC<ConnectionViewProps> = (props) => {
     draggedSource,
     selectedConnections,
     onSelectConnection,
+    removeConnection,
   } = props;
 
   const [renderTrigger, setRenderTrigger] = React.useState(0);
@@ -199,11 +105,12 @@ export const ConnectionView: React.FC<ConnectionViewProps> = (props) => {
       <SingleConnectionView
         {...props}
         connection={conn}
-        type="regular"
+        connectionType="regular"
         parentSelected={parentSelected}
         onSelectConnection={onSelectConnection}
         isConnectionSelected={selectedConnections.includes(connectionId)}
         key={connectionId}
+        onDelete={removeConnection}
       />
     );
   });
@@ -213,7 +120,7 @@ export const ConnectionView: React.FC<ConnectionViewProps> = (props) => {
       <SingleConnectionView
         {...props}
         connection={futureConnection.connection}
-        type={futureConnection.type}
+        connectionType={futureConnection.type}
         toggleHidden={toggleHidden}
         parentSelected={false}
         onSelectConnection={onSelectConnection}
@@ -243,9 +150,5 @@ export const ConnectionView: React.FC<ConnectionViewProps> = (props) => {
     );
   }
 
-  return (
-    // <span className="connections-view" style={{ opacity: viewPort.zoom }}>
-    <svg className="connections-view">{connectionPaths}</svg>
-    // </span>
-  );
+  return <svg className="connections-view">{connectionPaths}</svg>;
 };

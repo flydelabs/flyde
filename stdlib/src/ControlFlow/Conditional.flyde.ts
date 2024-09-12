@@ -29,14 +29,14 @@ export interface ConditionalConfig {
   propertyPath: string;
   condition: { type: ConditionType; data?: string };
   compareTo:
-  | { mode: "static"; value: any; type: "number" | "string" | "json" }
-  | { mode: "dynamic"; propertyPath: string };
+    | { mode: "static"; value: any; type: "number" | "string" | "json" }
+    | { mode: "dynamic"; propertyPath: string };
   trueValue:
-  | { type: "value" | "compareTo" }
-  | { type: "expression"; data: string };
+    | { type: "value" | "compareTo" }
+    | { type: "expression"; data: string };
   falseValue:
-  | { type: "value" | "compareTo" }
-  | { type: "expression"; data: string };
+    | { type: "value" | "compareTo" }
+    | { type: "expression"; data: string };
 }
 
 function conditionalConfigToDisplayName(config: ConditionalConfig) {

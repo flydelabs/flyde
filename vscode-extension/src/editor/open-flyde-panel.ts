@@ -112,7 +112,7 @@ export async function getWebviewContent(params: WebviewContentParams) {
       <link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto|Roboto+Condensed|Roboto+Mono"
         rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro|Source+Sans+Pro" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
       <style>
       body {
 

@@ -12,6 +12,7 @@ export const CodeExpression: MacroNode<CodeExpressionConfig> = {
     icon: "code",
   },
   description: "A static value or JS expression",
+
   runFnBuilder: (config) => {
     return (inputs, outputs, adv) => {
       try {
@@ -29,6 +30,7 @@ export const CodeExpression: MacroNode<CodeExpressionConfig> = {
         size: "small",
         icon: "code",
       },
+      displayName: `${config.value}`,
       description: `Evaluates the expression \`${config.value}\``,
       inputs: Object.fromEntries(inputNames.map((input) => [input, {}]) ?? []),
       outputs: {
@@ -40,7 +42,7 @@ export const CodeExpression: MacroNode<CodeExpressionConfig> = {
     };
   },
   defaultData: {
-    value: "inputs.a + inputs.b",
+    value: "`Hello ${inputs.firstName} ${inputs.lastName}`",
   },
   editorConfig: {
     type: "custom",
