@@ -1513,9 +1513,9 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                   onDeleteInstance={onDeleteInstance}
                   key={ins.id}
                   forceShowMinimized={
-                    from || draggedConnection?.to?.insId === ins.id
+                    from || draggedConnection?.from
                       ? "input"
-                      : to || draggedConnection?.from?.insId === ins.id
+                      : to || draggedConnection?.to
                       ? "output"
                       : undefined
                   }

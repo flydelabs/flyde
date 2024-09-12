@@ -79,7 +79,7 @@ export const NodeIoView: React.FC<NodeIoViewProps> = React.memo(
       type
     );
 
-    const lastDrafEndTimeRef = React.useRef<number>(0);
+    const lastDragEndTimeRef = React.useRef<number>(0);
 
     const _onDragStart = React.useCallback(
       (event: any, data: any) => {
@@ -99,8 +99,8 @@ export const NodeIoView: React.FC<NodeIoViewProps> = React.memo(
         const pixelsMoved = Math.abs(dx) + Math.abs(dy);
 
         onDragEnd(type, id, event, { ...data, x: newX, y: newY });
-        if (pixelsMoved > 5) {
-          lastDrafEndTimeRef.current = Date.now();
+        if (pixelsMoved > 0) {
+          lastDragEndTimeRef.current = Date.now();
         }
       },
       [pos, viewPort.zoom, onDragEnd, type, id]
@@ -181,7 +181,8 @@ export const NodeIoView: React.FC<NodeIoViewProps> = React.memo(
 
     const _onClick = React.useCallback(() => {
       // very hacky way to prevent the pin from being selected when dragging
-      if (Date.now() - lastDrafEndTimeRef.current > 200) {
+      console.log({ lastDrafEndTimeRef: lastDragEndTimeRef.current });
+      if (Date.now() - lastDragEndTimeRef.current > 200) {
         onSelect(id, type);
       }
     }, [id, type, onSelect]);
