@@ -42,7 +42,7 @@ export const CodeExpression: MacroNode<CodeExpressionConfig> = {
     };
   },
   defaultData: {
-    value: "inputs.a + inputs.b",
+    value: "`Hello ${inputs.firstName} ${inputs.lastName}`",
   },
   editorConfig: {
     type: "custom",
