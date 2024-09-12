@@ -722,7 +722,11 @@ declare module '@flyde/core/node/macro-node' {
             value: "longtext";
             rows?: number;
     };
-    export type MacroEditorFieldDefinitionType = MacroEditorFieldDefinitionTypeString | MacroEditorFieldDefinitionTypeNumber | MacroEditorFieldDefinitionTypeBoolean | MacroEditorFieldDefinitionTypeJson | MacroEditorFieldDefinitionTypeSelect | MacroEditorFieldDefinitionTypeLongText;
+    export type MacroEditorFieldDefinitionTypeEnum = {
+            value: "enum";
+            options: string[];
+    };
+    export type MacroEditorFieldDefinitionType = MacroEditorFieldDefinitionTypeString | MacroEditorFieldDefinitionTypeNumber | MacroEditorFieldDefinitionTypeBoolean | MacroEditorFieldDefinitionTypeJson | MacroEditorFieldDefinitionTypeSelect | MacroEditorFieldDefinitionTypeLongText | MacroEditorFieldDefinitionTypeEnum;
     export interface MacroEditorFieldDefinition {
             label: string;
             description?: string;

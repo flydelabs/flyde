@@ -3,7 +3,6 @@ import { MacroNode } from "@flyde/core";
 export interface InlineValueConfig {
   type: "string" | "boolean" | "number" | "json";
   value: string;
-  label: string;
 }
 
 export const InlineValue: MacroNode<InlineValueConfig> = {
@@ -24,7 +23,7 @@ export const InlineValue: MacroNode<InlineValueConfig> = {
         size: "small",
         icon: "pen",
       },
-      displayName: config.label || undefined,
+      displayName: JSON.stringify(config.value),
       description: `Emits the value \`${JSON.stringify(config.value)}\``,
       inputs: {},
       outputs: {
@@ -38,7 +37,6 @@ export const InlineValue: MacroNode<InlineValueConfig> = {
   defaultData: {
     type: "string",
     value: "Hello",
-    label: '"Hello"',
   },
   editorConfig: {
     type: "custom",

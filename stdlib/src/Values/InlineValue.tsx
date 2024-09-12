@@ -6,7 +6,7 @@ import {
   TextArea,
 } from "@blueprintjs/core";
 import type { InlineValueConfig } from "./InlineValue.flyde";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo } from "react";
 import { MacroEditorComp } from "@flyde/core";
 
 const types: InlineValueConfig["type"][] = [
@@ -22,56 +22,23 @@ const defaultValuePerType = {
     isNaN(Number(currValue)) ? 0 : Number(currValue),
   json: (currValue: any) => JSON.stringify(currValue),
   boolean: (currValue: any) => !!currValue,
-  expression: (currValue: any) => currValue,
 };
-
-const labelMaxLength = 50;
-
-function valToLabel(val: any): string {
-  try {
-    const label = JSON.stringify(val);
-    if (label.length > labelMaxLength) {
-      return `${label.slice(0, labelMaxLength)}...`;
-    }
-    return label;
-  } catch (e) {
-    return `Value`;
-  }
-}
 
 const InlineValueEditor: MacroEditorComp<InlineValueConfig> =
   function InlineValueEditor(props) {
     const { value, onChange } = props;
-    const [isLabelCustom, setIsLabelCustom] = useState(false);
 
     const changeType = useCallback(
       (type) => {
         const newValue = defaultValuePerType[type](value.value);
-        onChange({
-          value: newValue,
-          type,
-          label:
-            valToLabel(value.value) === value.label
-              ? valToLabel(newValue)
-              : value.label,
-        });
+        onChange({ value: newValue, type });
       },
       [value, onChange]
     );
 
     const changeValue = useCallback(
       (_val) => {
-        const labelToUse = isLabelCustom ? value.label : valToLabel(_val);
-
-        onChange({ ...value, value: _val, label: labelToUse });
-      },
-      [value, onChange]
-    );
-
-    const changeLabel = useCallback(
-      (newLabel) => {
-        setIsLabelCustom(newLabel ? true : false);
-        onChange({ ...value, label: newLabel });
+        onChange({ ...value, value: _val });
       },
       [value, onChange]
     );
@@ -138,13 +105,6 @@ const InlineValueEditor: MacroEditorComp<InlineValueConfig> =
           </HTMLSelect>
         </FormGroup>
         {editorPanel}
-        <FormGroup label="Label:">
-          <InputGroup
-            type="text"
-            value={value.label}
-            onChange={(e) => changeLabel(e.target.value)}
-          />
-        </FormGroup>
       </div>
     );
   };
