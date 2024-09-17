@@ -716,12 +716,12 @@ export const InstanceView: React.FC<InstanceViewProps> =
             style={styleVarProp}
           >
             <Tooltip content={node.description}>
-              <React.Fragment>
+              <span className="content-and-icon">
                 {style.icon ? (
                   <InstanceIcon icon={style.icon as string} />
                 ) : null}
                 <span dangerouslySetInnerHTML={{ __html: content }} />
-              </React.Fragment>
+              </span>
             </Tooltip>
           </ContextMenu>
         );

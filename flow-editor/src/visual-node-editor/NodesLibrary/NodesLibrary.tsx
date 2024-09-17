@@ -5,8 +5,7 @@ import React, { memo, useCallback, useEffect, useState } from "react";
 import { useDependenciesContext } from "../../flow-editor/DependenciesContext";
 import { AddNodeMenu } from "./AddNodeMenu";
 import { useDarkMode } from "../../flow-editor/DarkModeContext";
-import { useIsFirstRender } from "usehooks-ts";
-import { Maximize, Minimize } from "@blueprintjs/icons";
+
 import { useScrollWithShadow } from "../../lib/react-utils/use-shadow-scroll";
 import { InstanceIcon } from "../instance-view";
 import { usePorts } from "../../flow-editor/ports";
@@ -19,10 +18,6 @@ export interface NodesLibraryProps extends NodeLibraryData {
 
 export const NodesLibrary: React.FC<NodesLibraryProps> = memo((props) => {
   const { groups, onAddNode } = props;
-  const [isClosed, setIsClosed] = React.useState(false);
-
-  const [shouldAnimate, setShouldAnimate] = React.useState(false);
-  const isFirstRender = useIsFirstRender();
 
   const [showAddNodeMenu, setShowAddNodeMenu] = React.useState(false);
 
@@ -52,13 +47,6 @@ export const NodesLibrary: React.FC<NodesLibraryProps> = memo((props) => {
   }, [generateNodeFromPrompt, onAddNode, prompt]);
 
   useEffect(() => {
-    if (!isFirstRender) {
-      setShouldAnimate(true);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isClosed]);
-
-  useEffect(() => {
     if (groups.length) {
       setOpenGroup(groups[0].title);
     }
@@ -76,27 +64,9 @@ export const NodesLibrary: React.FC<NodesLibraryProps> = memo((props) => {
   return (
     <div
       className={classNames("nodes-library", {
-        closed: isClosed,
-        open: !isClosed,
-        animate: shouldAnimate,
         dark: darkMode,
       })}
     >
-      {isClosed ? (
-        <div className="header" onClick={() => setIsClosed(!isClosed)}>
-          <strong>Nodes Library</strong>
-        </div>
-      ) : null}
-      <div className="minimize-btn-container">
-        <Button
-          minimal
-          small
-          onClick={() => setIsClosed(!isClosed)}
-          // intent="primary"
-        >
-          {isClosed ? <Maximize size={12} /> : <Minimize size={12} />}
-        </Button>
-      </div>
       <div className="list" style={{ boxShadow }} onScroll={onScrollHandler}>
         {groups.map((group) => (
           <div key={group.title}>
@@ -130,27 +100,16 @@ export const NodesLibrary: React.FC<NodesLibraryProps> = memo((props) => {
                     minimal
                   >
                     <div className="group-item-inner">
-                      <InstanceIcon icon={node.defaultStyle?.icon as string} />
+                      {node.defaultStyle?.icon && (
+                        <InstanceIcon
+                          icon={node.defaultStyle?.icon as string}
+                        />
+                      )}
                       {node.displayName ?? node.id}
                     </div>
                   </Tooltip>
                 </div>
               ))}
-              {group.title === "Values & Custom Code" ? (
-                <div className="group-item ai" onClick={_onGenerateWithAI}>
-                  <Tooltip
-                    content="Generate a custom node using AI"
-                    portalClassName="menu-tooltip"
-                    compact
-                    minimal
-                  >
-                    <div className="group-item-inner">
-                      <InstanceIcon icon="fa-solid fa-wand-magic-sparkles" />
-                      Generate Node using AI
-                    </div>
-                  </Tooltip>
-                </div>
-              ) : null}
             </div>
           </div>
         ))}

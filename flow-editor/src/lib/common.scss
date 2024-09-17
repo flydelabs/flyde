@@ -52,16 +52,12 @@ $white: #ffffff;
   position: relative;
   z-index: 1; // added so that it is above pin view when it is retracted when minimized
 
-  svg {
-    margin-right: 2px;
-  }
-
-  &:not(.selected) {
-    &:hover,
-    &.closest {
-      border-style: dashed;
-    }
-  }
+  // &:not(.selected) {
+  //   &:hover,
+  //   &.closest {
+  //     // border-style: dashed;
+  //   }
+  // }
 
   &:not(.dark) {
     svg {
@@ -71,7 +67,7 @@ $white: #ffffff;
 
   &.dark {
     svg {
-      color: $tblue-400;
+      color: $tblue-500;
     }
   }
 

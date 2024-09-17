@@ -3,7 +3,7 @@
 .nodes-library {
   background: white;
   display: flex;
-  width: 220px;
+  width: 280px;
   padding: 6px;
   flex-direction: column;
   align-items: center;
@@ -16,14 +16,6 @@
   border-radius: 5px;
   max-height: 70%;
   z-index: 1;
-
-  .minimize-btn-container {
-    position: absolute;
-    top: 2px;
-    right: 2px;
-    // padding: 2px;
-    cursor: pointer;
-  }
 
   &.dark {
     background: $neutral-800;
@@ -49,7 +41,7 @@
       }
 
       svg {
-        color: $tblue-400;
+        color: $tblue-500;
       }
 
       &:hover,
@@ -67,27 +59,6 @@
     padding: 3px 0;
     text-align: center;
     user-select: none;
-  }
-
-  &.open {
-    &.animate {
-      animation: rotateReverse 0.15s ease-out forwards;
-    }
-  }
-
-  &.closed {
-    &.animate {
-      animation: rotate 0.15s ease-in forwards;
-    }
-    .header {
-      color: $gray-700;
-    }
-
-    &.dark {
-      .header {
-        color: $gray-300;
-      }
-    }
   }
 
   .list {
@@ -129,10 +100,9 @@
   }
 
   .group-items {
-    display: flex;
-    flex-direction: row;
+    display: grid;
+    grid-template-columns: 50% 50%;
     gap: 4px;
-    flex-wrap: wrap;
     margin-bottom: 12px;
     padding: 0px 4px;
   }
@@ -146,6 +116,11 @@
     border: 1px solid $neutral-200;
     padding: 5px 8px 3px;
     margin-bottom: 2px;
+    width: 100%;
+    box-sizing: border-box;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 
     &.ai {
       font-weight: 600;
@@ -158,22 +133,22 @@
     }
 
     svg.svg-inline--fa {
-      color: $tblue-700;
+      color: $tblue-500;
     }
 
     .svg-icon-container {
       svg {
-        width: 18px;
-        height: 18px;
+        width: 22px;
+        height: 22px;
       }
     }
 
     .group-item-inner {
       display: flex;
       align-items: center;
-      justify-content: center;
-      line-height: 0;
-      gap: 4px;
+      justify-content: flex-start;
+      gap: 5px;
+      width: 100%;
     }
 
     &.selected,

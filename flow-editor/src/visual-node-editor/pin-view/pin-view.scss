@@ -22,7 +22,7 @@ $MINIMIZED_WIRE_LENGTH: 6px;
   &:hover:not(.selected) {
     .pin-inner {
       border-color: $hover;
-      border-style: dashed;
+      // border-style: dashed;
     }
   }
 
@@ -139,6 +139,10 @@ $MINIMIZED_WIRE_LENGTH: 6px;
   .__react_component_tooltip.pin-info-tooltip {
     font-size: 14px;
     // min-width: 300px;
+    max-width: 400px;
+  }
+
+  .pin-info-tooltip {
     max-width: 400px;
   }
 }

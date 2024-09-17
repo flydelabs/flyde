@@ -35,11 +35,11 @@ export const calcHistoryContent = (
       ""
     );
     return (
-      <React.Fragment>
+      <div className="history-tooltip">
         {timesActivated}
         {lastValueData}
         {queuedValuesData}
-      </React.Fragment>
+      </div>
     );
   } else {
     return "Loading session data..";

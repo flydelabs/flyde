@@ -66,15 +66,6 @@ $half-of-pin-height: 16px;
   .ins-view-inner {
     @include base-node;
 
-    .svg-inline--fa {
-      // color: hsl(var(--node-color), 10%);
-      // color: $tblue-800;
-      // color: var(--node-color);
-      // filter: brightness(
-      //   0.75
-      // ); // might be possible using css vars but it's conflicting with scss in a way (https://blog.jim-nielsen.com/2019/dynamically-darken-a-color-in-css/)
-    }
-
     .svg-icon-container {
       display: inline-flex;
       align-items: center;
@@ -109,6 +100,12 @@ $half-of-pin-height: 16px;
       // &:not(:hover):not(.selected):not(.closest) {
       //   border: 3px solid var(--node-color, transparent);
       // }
+    }
+
+    .content-and-icon {
+      display: flex;
+      align-items: center;
+      gap: 5px;
     }
   }
 
