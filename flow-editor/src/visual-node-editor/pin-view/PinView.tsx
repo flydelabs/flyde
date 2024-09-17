@@ -172,7 +172,7 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
     );
 
     return (
-      <div>
+      <div className="pin-info-tooltip">
         <div>
           <strong>{displayName}</strong> ({type}){" "}
         </div>

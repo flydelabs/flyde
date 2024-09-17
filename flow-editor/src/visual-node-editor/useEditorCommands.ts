@@ -610,7 +610,7 @@ export function useEditorCommands(
   );
 
   useHotkeys(
-    "backspace",
+    "backspace, delete",
     deleteSelection,
     { text: "Delete instances", group: "Editing" },
     [],

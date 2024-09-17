@@ -560,10 +560,22 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             setIsPanning(true);
             panStartPos.current = { x: e.clientX, y: e.clientY };
           } else {
-            startSelectionBox(e);
+            if (e.target) {
+              const el = e.target as HTMLElement;
+              // hacky way to say "only when the actual board is clicked"
+              if (el.classList.contains("connections-view")) {
+                onChangeBoardData({
+                  selectedInstances: [],
+                  selectedConnections: [],
+                  from: undefined,
+                  to: undefined,
+                });
+                startSelectionBox(e);
+              }
+            }
           }
         },
-        [node.id, startSelectionBox, isSpacePressed]
+        [node.id, isSpacePressed, onChangeBoardData, startSelectionBox]
       );
 
       const onMouseUp: React.MouseEventHandler = React.useCallback(

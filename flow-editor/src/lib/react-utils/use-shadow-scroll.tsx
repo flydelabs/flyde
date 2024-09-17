@@ -17,15 +17,18 @@ export function useScrollWithShadow(darkMode: boolean) {
     const isBottom = clientHeight === scrollHeight - scrollTop;
     const isTop = scrollTop === 0;
     const isBetween = scrollTop > 0 && clientHeight < scrollHeight - scrollTop;
+    const isScrollable = scrollHeight > clientHeight;
 
     let boxShadow = "none";
     const top = `inset 0 8px 5px -5px ${color}`;
     const bottom = `inset 0 -8px 5px -5px ${color}`;
 
+    if (!isScrollable) {
+      return boxShadow;
+    }
+
     if (isTop) {
-      if (scrollHeight > clientHeight) {
-        boxShadow = bottom;
-      }
+      boxShadow = bottom;
     } else if (isBetween) {
       boxShadow = `${top}, ${bottom}`;
     } else if (isBottom) {
