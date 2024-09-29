@@ -711,6 +711,9 @@ declare module '@flyde/core/node/macro-node' {
     }
     export interface JsonFieldDefinition extends BaseFieldDefinition {
             type: "json";
+            typeData?: {
+                    helperText?: string;
+            };
     }
     export interface LongTextFieldDefinition extends BaseFieldDefinition {
             type: "longtext";

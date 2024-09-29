@@ -8,12 +8,6 @@ import {
   MacroEditorFieldDefinition,
 } from "@flyde/core";
 
-export interface InputPinV2 extends InputPin {
-  type?: "text" | "number" | "boolean" | "json" | "longtext" | "enum";
-}
-
-export interface OutputPinV2 extends OutputPin {}
-
 export type StaticOrDerived<T, Config> = T | ((config: Config) => T);
 
 export interface MacroNodeV2<Config = {}> {
@@ -39,15 +33,28 @@ export interface InlineValue2Config {
   value: any;
 }
 
+// Add this new helper function
+function extractInputNameAndPath(match: string): {
+  inputName: string;
+  path: string[];
+} {
+  const cleaned = match.replace(/[{}]/g, "").trim();
+  const parts = cleaned.split(".");
+  return {
+    inputName: parts[0],
+    path: parts.slice(1),
+  };
+}
+
 export function extractInputsFromValue(val: unknown): Record<string, InputPin> {
   const inputs = {};
 
   function extractFromValue(value: any) {
     if (typeof value === "string") {
-      const matches = value.match(/({{(.*?)}})/g);
+      const matches = value.match(/({{.*?}})/g);
       if (matches) {
         for (const match of matches) {
-          const inputName = match.replace(/[{}]/g, "").trim();
+          const { inputName } = extractInputNameAndPath(match);
           inputs[inputName] = nodeInput();
         }
       }
@@ -59,10 +66,10 @@ export function extractInputsFromValue(val: unknown): Record<string, InputPin> {
   } else {
     try {
       const jsonString = JSON.stringify(val);
-      const matches = jsonString.match(/({{(.*?)}})/g);
+      const matches = jsonString.match(/({{.*?}})/g);
       if (matches) {
         for (const match of matches) {
-          const inputName = match.replace(/[{}]/g, "").trim();
+          const { inputName } = extractInputNameAndPath(match);
           inputs[inputName] = nodeInput();
         }
       }
@@ -76,21 +83,35 @@ export function extractInputsFromValue(val: unknown): Record<string, InputPin> {
 
 export function replaceInputsInValue<
   V extends string | object | boolean | number
->(inputs: Record<string, string>, value: V): V {
+>(inputs: Record<string, any>, value: V): V {
   if (typeof value === "string") {
-    return value.replace(/({{(.*?)}})/g, (match, _, inputName) => {
-      return inputs[inputName.trim()] ?? match;
+    return value.replace(/({{.*?}})/g, (match) => {
+      const { inputName, path } = extractInputNameAndPath(match);
+      let result = inputs[inputName];
+      for (const key of path) {
+        if (result && typeof result === "object" && key in result) {
+          result = result[key];
+        } else {
+          return match; // Return original match if path is invalid
+        }
+      }
+      return result !== undefined ? result : match;
     }) as V;
   }
 
   const jsonString = JSON.stringify(value);
-  const replacedJsonString = jsonString.replace(
-    /({{(.*?)}})/g,
-    (match, _, inputName) => {
-      const inputValue = inputs[inputName.trim()];
-      return inputValue !== undefined ? inputValue : match;
+  const replacedJsonString = jsonString.replace(/({{.*?}})/g, (match) => {
+    const { inputName, path } = extractInputNameAndPath(match);
+    let result = inputs[inputName];
+    for (const key of path) {
+      if (result && typeof result === "object" && key in result) {
+        result = result[key];
+      } else {
+        return match; // Return original match if path is invalid
+      }
     }
-  );
+    return result !== undefined ? JSON.stringify(result) : match;
+  });
 
   try {
     return JSON.parse(replacedJsonString);

@@ -25,7 +25,6 @@ const delay: MacroNodeV2<DelayConfig> = {
   },
   inputs: {
     value: { description: "Value to delay" },
-    delay: { description: "Delay in milliseconds (for dynamic delay)" },
   },
   outputs: {
     delayedValue: { description: "Delayed value" },

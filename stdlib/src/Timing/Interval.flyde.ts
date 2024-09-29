@@ -35,7 +35,6 @@ const interval: MacroNodeV2<IntervalConfig> = {
     )}.`;
   },
   inputs: (config) => ({
-    interval: { description: "Interval in milliseconds (optional)" },
     ...extractInputsFromValue(config.value),
   }),
   outputs: {

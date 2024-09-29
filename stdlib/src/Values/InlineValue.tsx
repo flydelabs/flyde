@@ -8,6 +8,7 @@ import {
 import type { InlineValueConfig } from "./InlineValue.flyde";
 import React, { useCallback, useMemo } from "react";
 import { MacroEditorComp } from "@flyde/core";
+import { SimpleJsonEditor } from "../lib/SimpleJsonEditor";
 
 const types: InlineValueConfig["type"][] = [
   "string",
@@ -67,10 +68,7 @@ const InlineValueEditor: MacroEditorComp<InlineValueConfig> =
         case "json":
           return (
             <FormGroup label="Value:">
-              <TextArea
-                value={value.value}
-                onChange={(e) => changeValue(e.target.value)}
-              />
+              <SimpleJsonEditor value={value.value} onChange={changeValue} />
             </FormGroup>
           );
         case "boolean":

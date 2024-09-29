@@ -37,9 +37,7 @@ const getAttribute: MacroNodeV2<GetAttributeConfig> = {
     type: "structured",
     fields: [
       {
-        type: {
-          value: "string",
-        },
+        type: "string",
         configKey: "key",
         label: "Key",
       },
