@@ -1,9 +1,9 @@
 import axios, { AxiosRequestConfig } from "axios";
-import { replaceTemplateVars } from "../macroHelpers";
 import {
   extractInputsFromValue,
   macro2toMacro,
   MacroNodeV2,
+  replaceInputsInValue,
 } from "../ImprovedMacros/improvedMacros";
 
 const namespace = "HTTP";
@@ -62,10 +62,10 @@ const http: MacroNodeV2<HttpConfig> = {
   run: (inputs, outputs, adv) => {
     const { method, url, headers, params, data } = adv.context.config;
 
-    const urlValue = replaceTemplateVars(url, inputs);
-    const headersValue = replaceTemplateVars(headers, inputs);
-    const paramsValue = replaceTemplateVars(params, inputs);
-    const dataValue = replaceTemplateVars(data, inputs);
+    const urlValue = replaceInputsInValue(inputs, url);
+    const headersValue = replaceInputsInValue(inputs, headers);
+    const paramsValue = replaceInputsInValue(inputs, params);
+    const dataValue = replaceInputsInValue(inputs, data);
 
     const requestConfig: AxiosRequestConfig = {
       method,

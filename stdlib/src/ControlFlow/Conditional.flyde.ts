@@ -59,7 +59,7 @@ const conditional: MacroNodeV2<ConditionalConfig> = {
     rightOperand: { value: "Some value" },
   },
   menuDescription:
-    "Evaluates a condition and emits the value of the matching case",
+    "Evaluates the condition, and if it's true, emits the left operand value to the 'true' output, otherwise emits the left operand value to the 'false' output",
   displayName: (config) => conditionalConfigToDisplayName(config),
   description: (config) =>
     `Evaluates if ${JSON.stringify(
@@ -74,10 +74,10 @@ const conditional: MacroNodeV2<ConditionalConfig> = {
   }),
   outputs: {
     true: {
-      description: "Emits the value if the condition is true",
+      description: "Emits the left operand value if the condition is true",
     },
     false: {
-      description: "Emits the value if the condition is false",
+      description: "Emits the left operand value if the condition is false",
     },
   },
   run: (inputs, outputs, adv) => {

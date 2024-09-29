@@ -15,8 +15,8 @@ const getAttribute: MacroNodeV2<GetAttributeConfig> = {
   defaultConfig: {
     key: "",
   },
-  menuDisplayName: "Get Attribute",
-  menuDescription: "Gets an attribute from an object",
+  menuDisplayName: "Get Property",
+  menuDescription: "Used to retrieve a property from an object.",
   defaultStyle: {
     icon: "fa-magnifying-glass",
   },

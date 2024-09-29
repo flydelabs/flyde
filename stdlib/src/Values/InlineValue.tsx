@@ -3,7 +3,6 @@ import {
   HTMLSelect,
   InputGroup,
   NumericInput,
-  TextArea,
 } from "@blueprintjs/core";
 import type { InlineValueConfig } from "./InlineValue.flyde";
 import React, { useCallback, useMemo } from "react";
