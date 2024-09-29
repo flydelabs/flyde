@@ -731,9 +731,7 @@ declare module '@flyde/core/node/macro-node' {
             label: string;
             description?: string;
             configKey: string;
-            allowDynamic?: boolean;
             type: MacroEditorFieldDefinitionType;
-            defaultValue?: any;
     }
     export interface MacroEditorConfigCustomResolved {
             type: "custom";

@@ -1,56 +1,72 @@
 import { CodeNode, CodeNodeDefinition, NodeMetadata } from "./node";
 import type React from "react";
 
-export type MacroEditorFieldDefinitionTypeString = {
-  value: "string";
-};
-
-export type MacroEditorFieldDefinitionTypeNumber = {
-  value: "number";
-  min?: number;
-  max?: number;
-};
-
-export type MacroEditorFieldDefinitionTypeBoolean = {
-  value: "boolean";
-};
-
-export type MacroEditorFieldDefinitionTypeJson = {
-  value: "json";
-  label?: string;
-};
-
-export type MacroEditorFieldDefinitionTypeSelect = {
-  value: "select";
-  items: { value: string | number; label: string }[];
-};
-
-export type MacroEditorFieldDefinitionTypeLongText = {
-  value: "longtext";
-  rows?: number;
-};
-
-export type MacroEditorFieldDefinitionTypeEnum = {
-  value: "enum";
-  options: string[];
-};
-
 export type MacroEditorFieldDefinitionType =
-  | MacroEditorFieldDefinitionTypeString
-  | MacroEditorFieldDefinitionTypeNumber
-  | MacroEditorFieldDefinitionTypeBoolean
-  | MacroEditorFieldDefinitionTypeJson
-  | MacroEditorFieldDefinitionTypeSelect
-  | MacroEditorFieldDefinitionTypeLongText
-  | MacroEditorFieldDefinitionTypeEnum;
+  | "string"
+  | "number"
+  | "boolean"
+  | "json"
+  | "select"
+  | "longtext"
+  | "enum";
 
-export interface MacroEditorFieldDefinition {
+export type MacroEditorFieldDefinition =
+  | StringFieldDefinition
+  | NumberFieldDefinition
+  | BooleanFieldDefinition
+  | JsonFieldDefinition
+  | SelectFieldDefinition
+  | LongTextFieldDefinition
+  | EnumFieldDefinition;
+
+interface BaseFieldDefinition {
   label: string;
   description?: string;
   configKey: string;
-  allowDynamic?: boolean;
-  type: MacroEditorFieldDefinitionType;
-  defaultValue?: any;
+}
+
+interface StringFieldDefinition extends BaseFieldDefinition {
+  type: "string";
+}
+
+interface BooleanFieldDefinition extends BaseFieldDefinition {
+  type: "boolean";
+}
+
+interface JsonFieldDefinition extends BaseFieldDefinition {
+  type: "json";
+}
+
+interface LongTextFieldDefinition extends BaseFieldDefinition {
+  type: "longtext";
+}
+
+interface NumberFieldDefinition extends BaseFieldDefinition {
+  type: "number";
+  typeData?: NumberTypeData;
+}
+
+interface SelectFieldDefinition extends BaseFieldDefinition {
+  type: "select";
+  typeData: SelectTypeData;
+}
+
+interface EnumFieldDefinition extends BaseFieldDefinition {
+  type: "enum";
+  typeData: EnumTypeData;
+}
+
+export interface NumberTypeData {
+  min?: number;
+  max?: number;
+}
+
+export interface SelectTypeData {
+  items: { value: string | number; label: string }[];
+}
+
+export interface EnumTypeData {
+  options: string[];
 }
 
 export interface MacroEditorConfigCustomResolved {

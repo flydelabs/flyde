@@ -48,7 +48,6 @@ const setAttribute2: MacroNodeV2<SetAttributeConfig> = {
         },
         configKey: "key",
         label: "Key",
-        defaultValue: "",
       },
       {
         type: {
@@ -56,7 +55,6 @@ const setAttribute2: MacroNodeV2<SetAttributeConfig> = {
         },
         configKey: "value",
         label: "Value",
-        defaultValue: "",
       },
     ],
   },

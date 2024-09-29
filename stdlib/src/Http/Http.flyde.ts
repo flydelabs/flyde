@@ -16,7 +16,7 @@ export interface HttpConfig {
   data?: Record<string, any>;
 }
 
-const http2: MacroNodeV2<HttpConfig> = {
+const http: MacroNodeV2<HttpConfig> = {
   id: "Http",
   menuDisplayName: "HTTP Request",
   defaultConfig: {
@@ -82,15 +82,13 @@ const http2: MacroNodeV2<HttpConfig> = {
     type: "structured",
     fields: [
       {
-        type: { value: "string" },
+        type: "string",
         configKey: "url",
         label: "URL",
-        defaultValue: "https://www.example.com",
-        allowDynamic: false,
       },
       {
-        type: {
-          value: "select",
+        type: "select",
+        typeData: {
           items: ["GET", "POST", "PUT", "DELETE", "PATCH"].map((i) => ({
             label: i,
             value: i,
@@ -98,28 +96,24 @@ const http2: MacroNodeV2<HttpConfig> = {
         },
         configKey: "method",
         label: "Method",
-        defaultValue: "GET",
       },
       {
-        type: { value: "json", label: "" },
+        type: "json",
         configKey: "headers",
         label: "Headers",
-        defaultValue: {},
       },
       {
-        type: { value: "json" },
+        type: "json",
         configKey: "params",
         label: "Query Parameters",
-        defaultValue: {},
       },
       {
-        type: { value: "json" },
+        type: "json",
         configKey: "data",
         label: "Request Body",
-        defaultValue: {},
       },
     ],
   },
 };
 
-export const Http = macro2toMacro(http2);
+export const Http = macro2toMacro(http);

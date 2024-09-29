@@ -1,5 +1,5 @@
 import { MacroNode, InputPinMap, ConfigurableInput } from "@flyde/core";
-import { TIMING_NAMESPACE, timeToString } from "../common";
+import { timeToString } from "./common";
 
 export type IntervalConfig = {
   time: ConfigurableInput<number>;
@@ -9,7 +9,7 @@ export type IntervalConfig = {
 export const Interval: MacroNode<IntervalConfig> = {
   id: "Interval",
   displayName: "Interval",
-  namespace: TIMING_NAMESPACE,
+  namespace: "Timing",
   defaultStyle: {
     icon: "stopwatch",
   },
@@ -83,23 +83,14 @@ export const Interval: MacroNode<IntervalConfig> = {
     type: "structured",
     fields: [
       {
-        type: {
-          value: "number",
-        },
+        type: "number",
         configKey: "time",
         label: "Interval",
-        defaultValue: 1000,
-        allowDynamic: true,
       },
       {
-        type: {
-          value: "json",
-          label: "Any JSON value:",
-        },
+        type: "json",
+        label: "Any JSON value:",
         configKey: "value",
-        label: "Value",
-        defaultValue: "",
-        allowDynamic: true,
       },
     ],
   },

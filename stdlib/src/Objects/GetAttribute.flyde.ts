@@ -1,50 +1,39 @@
-import { ConfigurableInput, InputPinMap, MacroNode } from "@flyde/core";
+import {
+  MacroNodeV2,
+  extractInputsFromValue,
+  replaceInputsInValue,
+  macro2toMacro,
+} from "../ImprovedMacros/improvedMacros";
+
 export interface GetAttributeConfig {
-  key: ConfigurableInput<string>;
+  key: string;
 }
 
-export const GetAttribute: MacroNode<GetAttributeConfig> = {
+const getAttribute: MacroNodeV2<GetAttributeConfig> = {
   id: "GetAttribute",
-  displayName: "Get Attribute",
-  searchKeywords: ["pick", "dot"],
   namespace: "Objects",
+  defaultConfig: {
+    key: "",
+  },
+  menuDisplayName: "Get Attribute",
+  menuDescription: "Gets an attribute from an object",
   defaultStyle: {
     icon: "fa-magnifying-glass",
   },
-  description: "Gets an attribute from an object",
-  definitionBuilder: (config) => {
-    const inputs: InputPinMap = {
-      object: {
-        description: "Object to get attribute from",
-      },
-    };
-    if (config.key.mode === "dynamic") {
-      inputs.attribute = {
-        description: "Attribute to get",
-      };
-    }
-    return {
-      inputs,
-      outputs: {
-        value: {
-          description: "The value of the attribute",
-        },
-      },
-      displayName: `Get Attribute${
-        config.key.mode === "static" ? ` "${config.key.value}"` : ""
-      }`,
-    };
-  },
-
-  runFnBuilder:
-    (config) =>
-    ({ object, attribute }, { value }) => {
-      const _attribute =
-        config.key.mode === "static" ? config.key.value : attribute;
-      value.next(_attribute.split(".").reduce((obj, i) => obj[i], object));
+  inputs: (config) => ({
+    object: {
+      description: "Object to get attribute from",
     },
-  defaultData: { key: { mode: "static", value: "" } },
-  editorConfig: {
+    ...extractInputsFromValue(config.key),
+  }),
+  outputs: {
+    value: {
+      description: "The value of the attribute",
+    },
+  },
+  displayName: (config) => `Get Attribute "${config.key}"`,
+  description: (config) => `Gets the attribute "${config.key}" from an object`,
+  configEditor: {
     type: "structured",
     fields: [
       {
@@ -53,9 +42,17 @@ export const GetAttribute: MacroNode<GetAttributeConfig> = {
         },
         configKey: "key",
         label: "Key",
-        defaultValue: "",
-        allowDynamic: true,
       },
     ],
   },
+  run: (inputs, outputs, adv) => {
+    const { key } = adv.context.config;
+    const { object } = inputs;
+
+    const _key = replaceInputsInValue(inputs, key);
+
+    outputs.value.next(_key.split(".").reduce((obj, i) => obj[i], object));
+  },
 };
+
+export const GetAttribute = macro2toMacro(getAttribute);

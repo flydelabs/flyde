@@ -5,6 +5,7 @@ import {
   RunNodeFunction,
   nodeInput,
   MacroNode,
+  MacroEditorFieldDefinition,
 } from "@flyde/core";
 
 export interface InputPinV2 extends InputPin {
@@ -29,7 +30,7 @@ export interface MacroNodeV2<Config = {}> {
   displayName?: StaticOrDerived<string, Config>;
   description?: StaticOrDerived<string, Config>;
 
-  configEditor: MacroNode<Config>["editorConfig"];
+  configEditor?: MacroNode<Config>["editorConfig"];
   run: (inputs, outputs, ctx) => ReturnType<RunNodeFunction>;
 }
 
@@ -143,6 +144,54 @@ export function macro2toMacro<Config>(
         });
       };
     },
-    editorConfig: node.configEditor,
+    editorConfig: node.configEditor ?? generateConfigEditor(node.defaultConfig),
+  };
+}
+
+export function generateConfigEditor<Config>(
+  config: Config,
+  overrides?: Partial<Record<keyof Config, any>>
+): MacroNode<Config>["editorConfig"] {
+  const fields = Object.keys(config).map((key) => {
+    const value = config[key];
+    const override = overrides && overrides[key];
+    let fieldType: MacroEditorFieldDefinition["type"];
+
+    if (override) {
+      fieldType = override.type || (typeof value as any);
+    } else {
+      switch (typeof value) {
+        case "string":
+          fieldType = "string";
+          break;
+        case "number":
+          fieldType = "number";
+          break;
+        case "boolean":
+          fieldType = "boolean";
+          break;
+        case "object":
+          fieldType = "json";
+          break;
+        default:
+          fieldType = "string";
+          break;
+      }
+    }
+
+    return {
+      type: fieldType,
+      configKey: key,
+      label:
+        override?.label ||
+        key
+          .replace(/([A-Z])/g, " $1")
+          .replace(/^./, (str) => str.toUpperCase()),
+    };
+  });
+
+  return {
+    type: "structured",
+    fields: fields as MacroEditorFieldDefinition[],
   };
 }
