@@ -25,33 +25,36 @@ interface BaseFieldDefinition {
   configKey: string;
 }
 
-interface StringFieldDefinition extends BaseFieldDefinition {
+export interface StringFieldDefinition extends BaseFieldDefinition {
   type: "string";
 }
 
-interface BooleanFieldDefinition extends BaseFieldDefinition {
+export interface BooleanFieldDefinition extends BaseFieldDefinition {
   type: "boolean";
 }
 
-interface JsonFieldDefinition extends BaseFieldDefinition {
+export interface JsonFieldDefinition extends BaseFieldDefinition {
   type: "json";
 }
 
-interface LongTextFieldDefinition extends BaseFieldDefinition {
+export interface LongTextFieldDefinition extends BaseFieldDefinition {
   type: "longtext";
+  typeData?: {
+    rows?: number;
+  };
 }
 
-interface NumberFieldDefinition extends BaseFieldDefinition {
+export interface NumberFieldDefinition extends BaseFieldDefinition {
   type: "number";
   typeData?: NumberTypeData;
 }
 
-interface SelectFieldDefinition extends BaseFieldDefinition {
+export interface SelectFieldDefinition extends BaseFieldDefinition {
   type: "select";
   typeData: SelectTypeData;
 }
 
-interface EnumFieldDefinition extends BaseFieldDefinition {
+export interface EnumFieldDefinition extends BaseFieldDefinition {
   type: "enum";
   typeData: EnumTypeData;
 }

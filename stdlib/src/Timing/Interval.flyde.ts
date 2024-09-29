@@ -1,85 +1,70 @@
-import { MacroNode, InputPinMap, ConfigurableInput } from "@flyde/core";
-import { timeToString } from "./common";
+import { TIMING_NAMESPACE, timeToString } from "./common";
+import {
+  MacroNodeV2,
+  macro2toMacro,
+  extractInputsFromValue,
+  replaceInputsInValue,
+} from "../ImprovedMacros/improvedMacros";
 
-export type IntervalConfig = {
-  time: ConfigurableInput<number>;
-  value: ConfigurableInput<any>;
-};
+const namespace = TIMING_NAMESPACE;
 
-export const Interval: MacroNode<IntervalConfig> = {
+export interface IntervalConfig {
+  time: number;
+  value: any;
+}
+
+const interval: MacroNodeV2<IntervalConfig> = {
   id: "Interval",
-  displayName: "Interval",
-  namespace: "Timing",
+  menuDisplayName: "Interval",
+  namespace,
   defaultStyle: {
     icon: "stopwatch",
   },
-
-  defaultData: {
-    time: { mode: "static", value: 1000 },
-    value: { mode: "static", value: "" },
+  defaultConfig: {
+    time: 1000,
+    value: "",
   },
-  description:
-    "Emits a value every interval. Supports both static and dynamic intervals.",
-  definitionBuilder: (config) => {
-    const inputs: InputPinMap = {};
+  menuDescription: "Emits a value every interval",
+  displayName: (config) => {
+    const value = JSON.stringify(config.value);
+    return `Emit ${value} each ${timeToString(config.time)}`;
+  },
+  description: (config) => {
+    return `Emits ${JSON.stringify(config.value)} every ${timeToString(
+      config.time
+    )}.`;
+  },
+  inputs: (config) => ({
+    interval: { description: "Interval in milliseconds (optional)" },
+    ...extractInputsFromValue(config.value),
+  }),
+  outputs: {
+    value: { description: "Emitted value" },
+  },
+  reactiveInputs: ["interval"],
+  completionOutputs: [],
+  run: (inputs, outputs, adv) => {
+    const { time, value } = adv.context.config;
 
-    if (config.value.mode === "dynamic") {
-      inputs.value = { description: "Value to emit" };
+    const intervalValue = inputs.interval ?? time;
+    const emitValue = replaceInputsInValue(inputs, value);
+
+    const existingTimer = adv.state.get("timer");
+    if (existingTimer) {
+      clearInterval(existingTimer);
     }
 
-    if (config.time.mode === "dynamic") {
-      inputs.interval = { description: "Interval in milliseconds" };
-    }
+    const timer = setInterval(() => {
+      outputs.value.next(emitValue);
+    }, intervalValue);
 
-    const displayName = (() => {
-      const value =
-        config.value.mode === "dynamic"
-          ? "a value"
-          : JSON.stringify(config.value.value);
-      if (config.time.mode === "static") {
-        return `Emit ${value} each ${timeToString(config.time.value)}`;
-      } else {
-        return "Interval";
-      }
-    })();
+    adv.state.set("timer", timer);
 
-    return {
-      inputs,
-      displayName,
-      outputs: {
-        value: { description: "Emitted value" },
-      },
-      reactiveInputs:
-        config.time.mode === "dynamic" ? ["value", "interval"] : ["value"],
-      completionOutputs: [],
-      description: "Emits a value every interval.",
-    };
+    adv.onCleanup(() => {
+      clearInterval(timer);
+    });
   },
-  runFnBuilder: (config) => {
-    return ({ value: _value, interval }, outputs, adv) => {
-      const intervalValue =
-        config.time.mode === "dynamic" ? interval : config.time.value;
-
-      const value =
-        config.value.mode === "dynamic" ? _value : config.value.value;
-
-      const existingTimer = adv.state.get("timer");
-      if (existingTimer) {
-        clearInterval(existingTimer);
-      }
-
-      const timer = setInterval(() => {
-        outputs.value.next(value);
-      }, intervalValue);
-
-      adv.state.set("timer", timer);
-
-      adv.onCleanup(() => {
-        clearInterval(timer);
-      });
-    };
-  },
-  editorConfig: {
+  configEditor: {
     type: "structured",
     fields: [
       {
@@ -89,9 +74,11 @@ export const Interval: MacroNode<IntervalConfig> = {
       },
       {
         type: "json",
-        label: "Any JSON value:",
         configKey: "value",
+        label: "Value to emit (supports templates)",
       },
     ],
   },
 };
+
+export const Interval = macro2toMacro(interval);

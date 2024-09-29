@@ -1,34 +1,37 @@
-import { MacroNode } from "@flyde/core";
+import { MacroNodeV2, macro2toMacro } from "../ImprovedMacros/improvedMacros";
 
-export const ListFrom: MacroNode<{ count: number }> = {
+export interface ListFromConfig {
+  count: number;
+}
+
+const listFrom: MacroNodeV2<ListFromConfig> = {
   id: "ListFrom",
   namespace: "Lists",
-  runFnBuilder:
-    ({ count }) =>
-    (inputs, { list }) => {
-      const result = [];
-      for (let i = 0; i < count; i++) {
-        result.push(inputs[`item${i + 1}`]);
-      }
-      return list.next(result);
-    },
-  definitionBuilder: ({ count }) => ({
-    description: `Creates a list from ${count} values`,
-    displayName: `List from ${count}`,
-    inputs: Object.fromEntries(
-      Array.from({ length: count }, (_, i) => [`item${i + 1}`, {}])
+  menuDisplayName: "List From",
+  defaultConfig: {
+    count: 3,
+  },
+  menuDescription: "Creates a list from a specified number of values",
+  displayName: (config) => `List from ${config.count}`,
+  description: (config) => `Creates a list from ${config.count} values`,
+  defaultStyle: {
+    icon: "list",
+  },
+  inputs: (config) =>
+    Object.fromEntries(
+      Array.from({ length: config.count }, (_, i) => [`item${i + 1}`, {}])
     ),
-    outputs: { list: { description: "List containing all values" } },
-  }),
-  defaultData: { count: 3 },
-  editorConfig: {
-    type: "structured",
-    fields: [
-      {
-        type: "number",
-        configKey: "count",
-        label: "Count",
-      },
-    ],
+  outputs: {
+    list: { description: "List containing all values" },
+  },
+  run: (inputs, outputs, adv) => {
+    const { count } = adv.context.config;
+    const result = [];
+    for (let i = 0; i < count; i++) {
+      result.push(inputs[`item${i + 1}`]);
+    }
+    outputs.list.next(result);
   },
 };
+
+export const ListFrom = macro2toMacro(listFrom);

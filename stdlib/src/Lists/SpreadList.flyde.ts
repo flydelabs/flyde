@@ -29,13 +29,9 @@ export const SpreadList: MacroNode<{ count: number }> = {
     type: "structured",
     fields: [
       {
-        type: {
-          value: "number",
-        },
+        type: "number",
         configKey: "count",
         label: "Count",
-        defaultValue: 3,
-        allowDynamic: false,
       },
     ],
   },

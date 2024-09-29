@@ -7,7 +7,7 @@ export interface RoundRobinConfig {
   count: number;
 }
 
-const roundRobin2: MacroNodeV2<RoundRobinConfig> = {
+const roundRobin: MacroNodeV2<RoundRobinConfig> = {
   id: "RoundRobin",
   defaultConfig: { count: 3 },
   namespace,
@@ -43,13 +43,9 @@ const roundRobin2: MacroNodeV2<RoundRobinConfig> = {
     type: "structured",
     fields: [
       {
-        type: {
-          value: "number",
-        },
+        type: "number",
         configKey: "count",
         label: "Count",
-        defaultValue: 3,
-        allowDynamic: false,
       },
     ],
   },
@@ -69,4 +65,4 @@ const roundRobin2: MacroNodeV2<RoundRobinConfig> = {
   },
 };
 
-export const RoundRobin = macro2toMacro(roundRobin2);
+export const RoundRobin = macro2toMacro(roundRobin);

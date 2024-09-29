@@ -7,15 +7,12 @@ import {
   TextArea,
 } from "@blueprintjs/core";
 import {
+  LongTextFieldDefinition,
   MacroEditorComp,
   MacroEditorConfigStructured,
   MacroEditorFieldDefinition,
-  MacroEditorFieldDefinitionType,
-  MacroEditorFieldDefinitionTypeLongText,
-  MacroEditorFieldDefinitionTypeSelect,
 } from "@flyde/core";
 import { SimpleJsonEditor } from "./SimpleJsonEditor";
-import { ConfigurableInputEditor } from "./ConfigurableInputEditor";
 import { useState, useEffect } from "react";
 import { usePrompt } from "../../flow-editor/ports";
 
@@ -25,16 +22,20 @@ export interface ValueCompProps<T> {
 }
 
 export function MacroEditorBaseValueComp(
-  props: ValueCompProps<any> & { config: MacroEditorFieldDefinitionType }
+  props: ValueCompProps<any> & { fieldDefinition: MacroEditorFieldDefinition }
 ) {
   const _prompt = usePrompt();
   const [options, setOptions] = useState<
     { value: string | number; label: string }[]
-  >((props.config as MacroEditorFieldDefinitionTypeSelect).items || []);
+  >(
+    (props.fieldDefinition.type === "select"
+      ? props.fieldDefinition.typeData.items
+      : []) || []
+  );
 
   useEffect(() => {
     if (
-      props.config.value === "select" &&
+      props.fieldDefinition.type === "select" &&
       !options.some((option) => option.value === props.value)
     ) {
       setOptions([
@@ -42,7 +43,7 @@ export function MacroEditorBaseValueComp(
         { value: props.value, label: String(props.value) },
       ]);
     }
-  }, [props.value, options, props.config.value]);
+  }, [props.value, options, props.fieldDefinition.type]);
 
   const handleAddOption = async () => {
     const newOption = await _prompt("Enter a new option:");
@@ -56,7 +57,7 @@ export function MacroEditorBaseValueComp(
     }
   };
 
-  switch (props.config.value) {
+  switch (props.fieldDefinition.type) {
     case "number":
       return (
         <NumericInput
@@ -78,7 +79,7 @@ export function MacroEditorBaseValueComp(
         <SimpleJsonEditor
           value={props.value}
           onChange={(e) => props.onChange(e)}
-          label={props.config.label}
+          label={props.fieldDefinition.label}
         />
       );
     case "boolean":
@@ -118,7 +119,8 @@ export function MacroEditorBaseValueComp(
           value={props.value}
           onChange={(e) => props.onChange(e.target.value)}
           rows={
-            (props.config as MacroEditorFieldDefinitionTypeLongText).rows ?? 5
+            (props.fieldDefinition as LongTextFieldDefinition).typeData?.rows ??
+            5
           }
           fill
         />
@@ -130,35 +132,15 @@ export function MacroEditorFieldDefinitionRenderer(
   props: ValueCompProps<any> & { config: MacroEditorFieldDefinition }
 ) {
   const { config } = props;
-  if (props.config.allowDynamic) {
-    return (
-      <ConfigurableInputEditor
+  return (
+    <FormGroup label={`${config.label}:`}>
+      <MacroEditorBaseValueComp
         value={props.value}
         onChange={props.onChange}
-        valueRenderer={(rendererProps) => (
-          <FormGroup label={`${config.label}:`}>
-            <MacroEditorBaseValueComp
-              value={rendererProps.value}
-              onChange={rendererProps.onChange}
-              config={props.config.type}
-            />
-          </FormGroup>
-        )}
-        modeLabel={`${props.config.label} mode:`}
-        defaultStaticValue={props.config.defaultValue}
+        fieldDefinition={props.config}
       />
-    );
-  } else {
-    return (
-      <FormGroup label={`${config.label}:`}>
-        <MacroEditorBaseValueComp
-          value={props.value}
-          onChange={props.onChange}
-          config={props.config.type}
-        />
-      </FormGroup>
-    );
-  }
+    </FormGroup>
+  );
 }
 
 export function buildStructuredMacroEditorComp<T>(
