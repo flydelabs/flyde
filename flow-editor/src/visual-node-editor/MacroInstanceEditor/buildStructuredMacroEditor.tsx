@@ -70,7 +70,7 @@ export function MacroEditorBaseValueComp(
         <InputGroup
           value={props.value}
           onChange={(e) => props.onChange(e.target.value)}
-          fill
+          // fill
         />
       );
     case "json":

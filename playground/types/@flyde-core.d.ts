@@ -731,7 +731,7 @@ declare module '@flyde/core/node/macro-node' {
             label: string;
             description?: string;
             configKey: string;
-            allowDynamic: boolean;
+            allowDynamic?: boolean;
             type: MacroEditorFieldDefinitionType;
             defaultValue?: any;
     }

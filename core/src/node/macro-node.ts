@@ -48,7 +48,7 @@ export interface MacroEditorFieldDefinition {
   label: string;
   description?: string;
   configKey: string;
-  allowDynamic: boolean;
+  allowDynamic?: boolean;
   type: MacroEditorFieldDefinitionType;
   defaultValue?: any;
 }
