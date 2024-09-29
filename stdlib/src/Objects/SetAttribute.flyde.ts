@@ -43,16 +43,12 @@ const setAttribute2: MacroNodeV2<SetAttributeConfig> = {
     type: "structured",
     fields: [
       {
-        type: {
-          value: "string",
-        },
+        type: "string",
         configKey: "key",
         label: "Key",
       },
       {
-        type: {
-          value: "json",
-        },
+        type: "json",
         configKey: "value",
         label: "Value",
       },

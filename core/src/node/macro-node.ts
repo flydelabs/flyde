@@ -35,6 +35,9 @@ export interface BooleanFieldDefinition extends BaseFieldDefinition {
 
 export interface JsonFieldDefinition extends BaseFieldDefinition {
   type: "json";
+  typeData?: {
+    helperText?: string;
+  };
 }
 
 export interface LongTextFieldDefinition extends BaseFieldDefinition {

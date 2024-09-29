@@ -7,6 +7,7 @@ import {
   TextArea,
 } from "@blueprintjs/core";
 import {
+  JsonFieldDefinition,
   LongTextFieldDefinition,
   MacroEditorComp,
   MacroEditorConfigStructured,
@@ -79,7 +80,9 @@ export function MacroEditorBaseValueComp(
         <SimpleJsonEditor
           value={props.value}
           onChange={(e) => props.onChange(e)}
-          label={props.fieldDefinition.label}
+          label={
+            (props.fieldDefinition as JsonFieldDefinition)?.typeData?.helperText
+          }
         />
       );
     case "boolean":

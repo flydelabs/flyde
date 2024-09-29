@@ -1,38 +1,37 @@
-import { MacroNode } from "@flyde/core";
+import { macro2toMacro, MacroNodeV2 } from "../ImprovedMacros/improvedMacros";
 
-export const SpreadList: MacroNode<{ count: number }> = {
+export interface SpreadListConfig {
+  count: number;
+}
+
+const spreadList: MacroNodeV2<SpreadListConfig> = {
   id: "SpreadList",
   namespace: "Lists",
+  menuDisplayName: "Spread List",
+  defaultConfig: {
+    count: 3,
+  },
+  menuDescription: "Spreads a list into multiple outputs",
+  displayName: (config) => `Spreads List of ${config.count}`,
+  description: (config) =>
+    `Receives a list with ${config.count} items and emits ${config.count} outputs: the first item, the second item, and so on`,
   defaultStyle: {
     icon: "sitemap",
   },
-  displayName: "Spread List",
-  description: "Spreads a list into multiple outputs",
-  runFnBuilder:
-    ({ count }) =>
-    (inputs, outputs) => {
-      const { list } = inputs;
-      for (let i = 0; i < count; i++) {
-        outputs[`item${i + 1}`].next(list[i]);
-      }
-    },
-  definitionBuilder: ({ count }) => ({
-    description: `Receives a list with ${count} items and emits ${count} outputs: the first item, the second item, and so on`,
-    displayName: `Spreads List of ${count}`,
-    inputs: { list: { description: "The list" } },
-    outputs: Object.fromEntries(
-      Array.from({ length: count }, (_, i) => [`item${i + 1}`, {}])
+  inputs: {
+    list: { description: "The list" },
+  },
+  outputs: (config) =>
+    Object.fromEntries(
+      Array.from({ length: config.count }, (_, i) => [`item${i + 1}`, {}])
     ),
-  }),
-  defaultData: { count: 3 },
-  editorConfig: {
-    type: "structured",
-    fields: [
-      {
-        type: "number",
-        configKey: "count",
-        label: "Count",
-      },
-    ],
+  run: (inputs, outputs, adv) => {
+    const { count } = adv.context.config;
+    const { list } = inputs;
+    for (let i = 0; i < count; i++) {
+      outputs[`item${i + 1}`].next(list[i]);
+    }
   },
 };
+
+export const SpreadList = macro2toMacro(spreadList);

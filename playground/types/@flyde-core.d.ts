@@ -696,42 +696,52 @@ declare module '@flyde/core/execute/debugger' {
 declare module '@flyde/core/node/macro-node' {
     import { CodeNode, CodeNodeDefinition, NodeMetadata } from "@flyde/core/node/node";
     import type React from "react";
-    export type MacroEditorFieldDefinitionTypeString = {
-            value: "string";
-    };
-    export type MacroEditorFieldDefinitionTypeNumber = {
-            value: "number";
+    export type MacroEditorFieldDefinitionType = "string" | "number" | "boolean" | "json" | "select" | "longtext" | "enum";
+    export type MacroEditorFieldDefinition = StringFieldDefinition | NumberFieldDefinition | BooleanFieldDefinition | JsonFieldDefinition | SelectFieldDefinition | LongTextFieldDefinition | EnumFieldDefinition;
+    interface BaseFieldDefinition {
+            label: string;
+            description?: string;
+            configKey: string;
+    }
+    export interface StringFieldDefinition extends BaseFieldDefinition {
+            type: "string";
+    }
+    export interface BooleanFieldDefinition extends BaseFieldDefinition {
+            type: "boolean";
+    }
+    export interface JsonFieldDefinition extends BaseFieldDefinition {
+            type: "json";
+    }
+    export interface LongTextFieldDefinition extends BaseFieldDefinition {
+            type: "longtext";
+            typeData?: {
+                    rows?: number;
+            };
+    }
+    export interface NumberFieldDefinition extends BaseFieldDefinition {
+            type: "number";
+            typeData?: NumberTypeData;
+    }
+    export interface SelectFieldDefinition extends BaseFieldDefinition {
+            type: "select";
+            typeData: SelectTypeData;
+    }
+    export interface EnumFieldDefinition extends BaseFieldDefinition {
+            type: "enum";
+            typeData: EnumTypeData;
+    }
+    export interface NumberTypeData {
             min?: number;
             max?: number;
-    };
-    export type MacroEditorFieldDefinitionTypeBoolean = {
-            value: "boolean";
-    };
-    export type MacroEditorFieldDefinitionTypeJson = {
-            value: "json";
-            label?: string;
-    };
-    export type MacroEditorFieldDefinitionTypeSelect = {
-            value: "select";
+    }
+    export interface SelectTypeData {
             items: {
                     value: string | number;
                     label: string;
             }[];
-    };
-    export type MacroEditorFieldDefinitionTypeLongText = {
-            value: "longtext";
-            rows?: number;
-    };
-    export type MacroEditorFieldDefinitionTypeEnum = {
-            value: "enum";
+    }
+    export interface EnumTypeData {
             options: string[];
-    };
-    export type MacroEditorFieldDefinitionType = MacroEditorFieldDefinitionTypeString | MacroEditorFieldDefinitionTypeNumber | MacroEditorFieldDefinitionTypeBoolean | MacroEditorFieldDefinitionTypeJson | MacroEditorFieldDefinitionTypeSelect | MacroEditorFieldDefinitionTypeLongText | MacroEditorFieldDefinitionTypeEnum;
-    export interface MacroEditorFieldDefinition {
-            label: string;
-            description?: string;
-            configKey: string;
-            type: MacroEditorFieldDefinitionType;
     }
     export interface MacroEditorConfigCustomResolved {
             type: "custom";
@@ -780,6 +790,7 @@ declare module '@flyde/core/node/macro-node' {
     export type ConfigurableInput<T> = ConfigurableInputStatic<T> | ConfigurableInputDynamic;
     export const isMacroNode: (p: any) => p is MacroNode<any>;
     export const isMacroNodeDefinition: (p: any) => p is MacroNodeDefinition<any>;
+    export {};
 }
 
 declare module '@flyde/core/execute/debugger/events' {
