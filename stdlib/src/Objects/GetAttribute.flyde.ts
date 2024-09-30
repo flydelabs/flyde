@@ -3,7 +3,7 @@ import {
   ImprovedMacroNode,
   extractInputsFromValue,
   replaceInputsInValue,
-  macro2toMacro,
+  improvedMacroToOldMacro,
 } from "../ImprovedMacros/improvedMacros";
 
 export interface GetAttributeConfig {
@@ -54,4 +54,4 @@ const getAttribute: ImprovedMacroNode<GetAttributeConfig> = {
   },
 };
 
-export const GetAttribute = macro2toMacro(getAttribute);
+export const GetAttribute = improvedMacroToOldMacro(getAttribute);

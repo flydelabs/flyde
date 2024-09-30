@@ -2,7 +2,7 @@ import { TIMING_NAMESPACE, timeToString } from "./common";
 import {
   ImprovedMacroNode,
   replaceInputsInValue,
-  macro2toMacro,
+  improvedMacroToOldMacro,
 } from "../ImprovedMacros/improvedMacros";
 import { MacroConfigurableValue } from "@flyde/core";
 
@@ -56,4 +56,4 @@ const delay: ImprovedMacroNode<DelayConfig> = {
   },
 };
 
-export const Delay = macro2toMacro(delay);
+export const Delay = improvedMacroToOldMacro(delay);

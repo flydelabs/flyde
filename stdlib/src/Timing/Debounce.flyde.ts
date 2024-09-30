@@ -2,7 +2,7 @@ import { TIMING_NAMESPACE, timeToString } from "./common";
 import {
   ImprovedMacroNode,
   extractInputsFromValue,
-  macro2toMacro,
+  improvedMacroToOldMacro,
 } from "../ImprovedMacros/improvedMacros";
 import { macroConfigurableValue, MacroConfigurableValue } from "@flyde/core";
 
@@ -65,4 +65,4 @@ const debounce: ImprovedMacroNode<DebounceConfig> = {
   },
 };
 
-export const Debounce = macro2toMacro(debounce);
+export const Debounce = improvedMacroToOldMacro(debounce);

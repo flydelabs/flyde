@@ -1,7 +1,7 @@
 import { macroConfigurableValue, MacroConfigurableValue } from "@flyde/core";
 import {
   extractInputsFromValue,
-  macro2toMacro,
+  improvedMacroToOldMacro,
   ImprovedMacroNode,
   replaceInputsInValue,
 } from "../ImprovedMacros/improvedMacros";
@@ -129,4 +129,4 @@ function calculateCondition(
   }
 }
 
-export const Conditional = macro2toMacro(conditional);
+export const Conditional = improvedMacroToOldMacro(conditional);

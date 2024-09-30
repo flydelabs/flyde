@@ -136,7 +136,7 @@ export function replaceInputsInValue(
   }
 }
 
-export function macro2toMacro<Config>(
+export function improvedMacroToOldMacro<Config>(
   node: ImprovedMacroNode<Config>
 ): MacroNode<Config> {
   return {

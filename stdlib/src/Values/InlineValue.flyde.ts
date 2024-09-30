@@ -1,7 +1,7 @@
 import { macroConfigurableValue, MacroConfigurableValue } from "@flyde/core";
 import {
   extractInputsFromValue,
-  macro2toMacro,
+  improvedMacroToOldMacro,
   replaceInputsInValue,
 } from "../ImprovedMacros/improvedMacros";
 
@@ -9,7 +9,7 @@ export interface InlineValueConfig {
   value: MacroConfigurableValue;
 }
 
-export const InlineValue = macro2toMacro<InlineValueConfig>({
+export const InlineValue = improvedMacroToOldMacro<InlineValueConfig>({
   id: "InlineValue",
   defaultConfig: {
     value: macroConfigurableValue("string", "Hello, {{name}}"),

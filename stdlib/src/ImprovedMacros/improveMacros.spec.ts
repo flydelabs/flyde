@@ -9,7 +9,7 @@ import { assert } from "chai";
 import { spiedOutput } from "@flyde/core/dist/test-utils";
 import {
   extractInputsFromValue,
-  macro2toMacro,
+  improvedMacroToOldMacro,
   ImprovedMacroNode,
   replaceInputsInValue,
 } from "./improvedMacros";
@@ -42,7 +42,7 @@ describe("ImprovedMacros", () => {
         },
       };
 
-      const macro = macro2toMacro(SimpleMacro);
+      const macro = improvedMacroToOldMacro(SimpleMacro);
 
       const definition = macro.definitionBuilder(macro.defaultData);
       assert.deepEqual(Object.keys(definition.inputs), ["person"]);

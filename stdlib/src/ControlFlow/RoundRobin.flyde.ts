@@ -4,7 +4,7 @@ import {
   OutputPin,
 } from "@flyde/core";
 import {
-  macro2toMacro,
+  improvedMacroToOldMacro,
   ImprovedMacroNode,
 } from "../ImprovedMacros/improvedMacros";
 
@@ -77,4 +77,4 @@ const roundRobin: ImprovedMacroNode<RoundRobinConfig> = {
   },
 };
 
-export const RoundRobin = macro2toMacro(roundRobin);
+export const RoundRobin = improvedMacroToOldMacro(roundRobin);

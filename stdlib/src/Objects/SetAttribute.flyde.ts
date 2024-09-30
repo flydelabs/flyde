@@ -1,6 +1,6 @@
 import { macroConfigurableValue, MacroConfigurableValue } from "@flyde/core";
 import {
-  macro2toMacro,
+  improvedMacroToOldMacro,
   ImprovedMacroNode,
   extractInputsFromValue,
   replaceInputsInValue,
@@ -71,4 +71,4 @@ const setAttribute2: ImprovedMacroNode<SetAttributeConfig> = {
   },
 };
 
-export const SetAttribute = macro2toMacro(setAttribute2);
+export const SetAttribute = improvedMacroToOldMacro(setAttribute2);

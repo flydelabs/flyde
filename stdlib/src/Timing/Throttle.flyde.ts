@@ -1,7 +1,7 @@
 import { TIMING_NAMESPACE, timeToString } from "./common";
 import {
   ImprovedMacroNode,
-  macro2toMacro,
+  improvedMacroToOldMacro,
   replaceInputsInValue,
 } from "../ImprovedMacros/improvedMacros";
 import { macroConfigurableValue, MacroConfigurableValue } from "@flyde/core";
@@ -61,4 +61,4 @@ const throttle: ImprovedMacroNode<ThrottleConfig> = {
   },
 };
 
-export const Throttle = macro2toMacro(throttle);
+export const Throttle = improvedMacroToOldMacro(throttle);

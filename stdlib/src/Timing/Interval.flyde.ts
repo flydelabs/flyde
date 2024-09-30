@@ -1,7 +1,7 @@
 import { TIMING_NAMESPACE, timeToString } from "./common";
 import {
   ImprovedMacroNode,
-  macro2toMacro,
+  improvedMacroToOldMacro,
   extractInputsFromValue,
   replaceInputsInValue,
 } from "../ImprovedMacros/improvedMacros";
@@ -82,4 +82,4 @@ const interval: ImprovedMacroNode<IntervalConfig> = {
   },
 };
 
-export const Interval = macro2toMacro(interval);
+export const Interval = improvedMacroToOldMacro(interval);

@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig } from "axios";
 import {
   extractInputsFromValue,
-  macro2toMacro,
+  improvedMacroToOldMacro,
   ImprovedMacroNode,
   replaceInputsInValue,
 } from "../ImprovedMacros/improvedMacros";
@@ -132,4 +132,4 @@ const http: ImprovedMacroNode<HttpConfig> = {
   },
 };
 
-export const Http = macro2toMacro(http);
+export const Http = improvedMacroToOldMacro(http);
