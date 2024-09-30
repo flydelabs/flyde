@@ -1,6 +1,6 @@
 import { TIMING_NAMESPACE, timeToString } from "./common";
 import {
-  MacroNodeV2,
+  ImprovedMacroNode,
   macro2toMacro,
   replaceInputsInValue,
 } from "../ImprovedMacros/improvedMacros";
@@ -12,7 +12,7 @@ export interface ThrottleConfig {
   delayMs: MacroConfigurableValue;
 }
 
-const throttle: MacroNodeV2<ThrottleConfig> = {
+const throttle: ImprovedMacroNode<ThrottleConfig> = {
   id: "Throttle",
   menuDisplayName: "Throttle",
   namespace,
@@ -37,11 +37,10 @@ const throttle: MacroNodeV2<ThrottleConfig> = {
     unthrottledValue: { description: "Unthrottled value" },
   },
   reactiveInputs: ["value"],
+  completionOutputs: [],
   run: async (inputs, outputs, adv) => {
     const { unthrottledValue } = outputs;
-    const { delayMs } = adv.context.config;
-
-    const _delayMs = replaceInputsInValue(inputs, delayMs);
+    const delayMs = replaceInputsInValue(inputs, adv.context.config.delayMs);
 
     const promise = adv.state.get("promise");
     if (promise) {
@@ -52,7 +51,7 @@ const throttle: MacroNodeV2<ThrottleConfig> = {
       const promise = new Promise<void>((resolve) => {
         setTimeout(() => {
           resolve();
-        }, _delayMs);
+        }, delayMs);
       });
       adv.state.set("promise", promise);
 

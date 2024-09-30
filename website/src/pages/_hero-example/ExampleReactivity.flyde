@@ -88,7 +88,7 @@ node:
         strategy: count
         count:
           mode: static
-          value: 2
+          value: 3
     - pos:
         x: -636.6844042968751
         y: -416.3564381178671
@@ -99,7 +99,7 @@ node:
       macroData:
         time:
           type: number
-          value: 3000
+          value: 1500
         value:
           type: string
           value: 🤖

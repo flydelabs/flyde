@@ -1,6 +1,6 @@
 import { TIMING_NAMESPACE, timeToString } from "./common";
 import {
-  MacroNodeV2,
+  ImprovedMacroNode,
   extractInputsFromValue,
   macro2toMacro,
 } from "../ImprovedMacros/improvedMacros";
@@ -12,7 +12,7 @@ export interface DebounceConfig {
   delayMs: MacroConfigurableValue;
 }
 
-const debounce: MacroNodeV2<DebounceConfig> = {
+const debounce: ImprovedMacroNode<DebounceConfig> = {
   id: "Debounce",
   menuDisplayName: "Debounce",
   namespace,

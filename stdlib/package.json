@@ -26,6 +26,7 @@
     "react": "^18.2.0"
   },
   "devDependencies": {
+    "@flyde/runtime": "workspace:^",
     "@types/jscodeshift": "^0.11.6",
     "@types/mocha": "^10.0.1",
     "chai": "^4.3.7",

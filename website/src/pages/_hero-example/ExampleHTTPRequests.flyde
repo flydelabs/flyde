@@ -1,34 +1,94 @@
 imports:
-  "@flyde/stdlib": []
+  "@flyde/stdlib":
+    - Http
+    - InlineValue
 node:
-  instances: []
-  connections: []
-  id: ApisCombination
+  instances:
+    - pos:
+        x: -204.88215672692564
+        y: -153.74664398903062
+      id: vph1fv2lncdu30287ctgq53d
+      inputConfig: {}
+      nodeId: Http__vph1fv2lncdu30287ctgq53d
+      macroId: Http
+      macroData:
+        method:
+          type: select
+          value: GET
+        url:
+          type: string
+          value: https://api.country.is/
+        headers:
+          type: json
+          value: {}
+        params:
+          type: json
+          value: {}
+        data:
+          type: json
+          value: {}
+    - pos:
+        x: -230.6447618878592
+        y: -39.521925739344425
+      id: a6ystcm1cdas1zdg7e96awid
+      inputConfig: {}
+      nodeId: Http__a6ystcm1cdas1zdg7e96awid
+      macroId: Http
+      macroData:
+        method:
+          type: select
+          value: POST
+        url:
+          type: string
+          value: https://countriesnow.space/api/v0.1/countries/capital
+        headers:
+          type: json
+          value: {}
+        params:
+          type: json
+          value: {}
+        data:
+          type: json
+          value:
+            iso2: "{{data.country}}"
+    - pos:
+        x: -231.14535888671878
+        y: 80.89538871022626
+      id: axr92uotaov2i3jzbsuowiyv
+      inputConfig: {}
+      nodeId: InlineValue__axr92uotaov2i3jzbsuowiyv
+      macroId: InlineValue
+      macroData:
+        value:
+          type: string
+          value: You're in {{response.data.name}}, whose capital is
+            {{response.data.capital}}
+  connections:
+    - from:
+        insId: vph1fv2lncdu30287ctgq53d
+        pinId: response
+      to:
+        insId: a6ystcm1cdas1zdg7e96awid
+        pinId: data
+    - from:
+        insId: a6ystcm1cdas1zdg7e96awid
+        pinId: response
+      to:
+        insId: axr92uotaov2i3jzbsuowiyv
+        pinId: response
+    - from:
+        insId: axr92uotaov2i3jzbsuowiyv
+        pinId: value
+      to:
+        insId: __this
+        pinId: output
+  id: ExampleHTTPRequest
   inputs: {}
   outputs:
     output:
-      type: any
-      optional: false
       delayed: false
-  inputsPosition:
-    city:
-      x: -187.27285824815934
-      y: -14.13215209416181
+  inputsPosition: {}
   outputsPosition:
-    json:
-      x: -441.98276309426666
-      y: 480.38719404276554
-    na:
-      x: -441.98276309426666
-      y: 480.38719404276554
-    result:
-      x: -499.82438378976735
-      y: 706.7650396699393
     output:
-      x: -628.0405346598842
-      y: 187.77400376772232
-    response:
-      x: -500.61566893722795
-      y: 421.9045791861946
-  completionOutputs:
-    - output
+      x: -70.91838134765625
+      y: 224.53147338867188

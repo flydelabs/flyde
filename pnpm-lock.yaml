@@ -835,6 +835,9 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0
     devDependencies:
+      '@flyde/runtime':
+        specifier: workspace:^
+        version: link:../runtime
       '@types/jscodeshift':
         specifier: ^0.11.6
         version: 0.11.6
@@ -1110,6 +1113,9 @@ importers:
       sass-loader:
         specifier: ^13.3.2
         version: 13.3.2(sass@1.66.1)(webpack@5.94.0)
+      sinon:
+        specifier: ^19.0.2
+        version: 19.0.2
       ts-node:
         specifier: ^10.9.1
         version: 10.9.1(@types/node@12.20.55)(typescript@5.2.2)
@@ -7434,10 +7440,22 @@ packages:
       type-detect: 4.0.8
     dev: true
 
+  /@sinonjs/commons@3.0.1:
+    resolution: {integrity: sha512-K3mCHKQ9sVh8o1C9cxkwxaOmXoAMlDxC1mYyHrjqOWEcBjYr76t96zL2zlj5dUGZ3HSw240X1qgH3Mjf1yJWpQ==}
+    dependencies:
+      type-detect: 4.0.8
+    dev: true
+
   /@sinonjs/fake-timers@10.3.0:
     resolution: {integrity: sha512-V4BG07kuYSUkTCSBHG8G8TNhM+F19jXFWnQtzj+we8DrkpSBCee9Z3Ms8yiGer/dlmhe35/Xdgyo3/0rQKg7YA==}
     dependencies:
       '@sinonjs/commons': 3.0.0
+    dev: true
+
+  /@sinonjs/fake-timers@13.0.2:
+    resolution: {integrity: sha512-4Bb+oqXZTSTZ1q27Izly9lv8B9dlV61CROxPiVtywwzv5SnytJqhvYe6FclHYuXml4cd1VHPo1zd5PmTeJozvA==}
+    dependencies:
+      '@sinonjs/commons': 3.0.1
     dev: true
 
   /@sinonjs/fake-timers@8.1.0:
@@ -7483,8 +7501,20 @@ packages:
       type-detect: 4.0.8
     dev: true
 
+  /@sinonjs/samsam@8.0.2:
+    resolution: {integrity: sha512-v46t/fwnhejRSFTGqbpn9u+LQ9xJDse10gNnPgAcxgdoCDMXj/G2asWAC/8Qs+BAZDicX+MNZouXT1A7c83kVw==}
+    dependencies:
+      '@sinonjs/commons': 3.0.1
+      lodash.get: 4.4.2
+      type-detect: 4.1.0
+    dev: true
+
   /@sinonjs/text-encoding@0.7.2:
     resolution: {integrity: sha512-sXXKG+uL9IrKqViTtao2Ws6dy0znu9sOaP1di/jKGW1M6VssO8vlpXCQcpZ+jisQ1tTFAC5Jo/EOzFbggBagFQ==}
+    dev: true
+
+  /@sinonjs/text-encoding@0.7.3:
+    resolution: {integrity: sha512-DE427ROAphMQzU4ENbliGYrBSYPXF+TtLg9S8vzeA+OF4ZKzoDdzfL8sxuMUGS/lgRhM6j1URSk9ghf7Xo1tyA==}
     dev: true
 
   /@slorber/static-site-generator-webpack-plugin@4.0.7:
@@ -12096,6 +12126,11 @@ packages:
     engines: {node: '>=0.3.1'}
     dev: true
 
+  /diff@7.0.0:
+    resolution: {integrity: sha512-PJWHUb1RFevKCwaFA9RlG5tCd+FO5iRh9A8HEtkmBH2Li03iJriB6m6JIN4rGz3K3JLawI7/veA1xzRKP6ISBw==}
+    engines: {node: '>=0.3.1'}
+    dev: true
+
   /dir-glob@3.0.1:
     resolution: {integrity: sha512-WkrWp9GR4KXfKGYzOLmTuGVi1UWFfws377n9cc55/tb6DuqyF6pcQ5AbiHEshaDpY9v6oaSr2XCDidGmMwdzIA==}
     engines: {node: '>=8'}
@@ -16059,6 +16094,10 @@ packages:
     resolution: {integrity: sha512-g3UB796vUFIY90VIv/WX3L2c8CS2MdWUww3CNrYmqza1Fg0DURc2K/O4YrnklBdQarSJ/y8JnJYDGc+1iumQjg==}
     dev: true
 
+  /just-extend@6.2.0:
+    resolution: {integrity: sha512-cYofQu2Xpom82S6qD778jBDpwvvy39s1l/hrYij2u9AMdQcGRpaBu6kY4mVhuno5kJVi1DAz4aiphA2WI1/OAw==}
+    dev: true
+
   /keytar@7.9.0:
     resolution: {integrity: sha512-VPD8mtVtm5JNtA2AErl6Chp06JBfy7diFQ7TQQhdpWOl6MrCRB+eRbvAZUsbGQS9kiMq0coJsy0W0vHpDCkWsQ==}
     requiresBuild: true
@@ -16850,6 +16889,16 @@ packages:
       path-to-regexp: 1.8.0
     dev: true
 
+  /nise@6.1.1:
+    resolution: {integrity: sha512-aMSAzLVY7LyeM60gvBS423nBmIPP+Wy7St7hsb+8/fc1HmeoHJfLO8CKse4u3BtOZvQLJghYPI2i/1WZrEj5/g==}
+    dependencies:
+      '@sinonjs/commons': 3.0.1
+      '@sinonjs/fake-timers': 13.0.2
+      '@sinonjs/text-encoding': 0.7.3
+      just-extend: 6.2.0
+      path-to-regexp: 8.2.0
+    dev: true
+
   /no-case@3.0.4:
     resolution: {integrity: sha512-fgAN3jGAh+RoxUGZHTSOLJIqUc2wmoBwGR4tbpNAKmmovFoWq0OdRkb0VkldReO2a2iBT/OEulG9XSUc10r3zg==}
     dependencies:
@@ -17559,6 +17608,11 @@ packages:
 
   /path-to-regexp@2.2.1:
     resolution: {integrity: sha512-gu9bD6Ta5bwGrrU8muHzVOBFFREpp2iRkVfhBJahwJ6p6Xw20SjT0MxLnwkjOibQmGSYhiUnf2FLe7k+jcFmGQ==}
+
+  /path-to-regexp@8.2.0:
+    resolution: {integrity: sha512-TdrF7fW9Rphjq4RjrW0Kp2AW0Ahwu9sRGTkS6bvDi0SCwZlEZYmcfDbEsTz8RVk0EHIS/Vd1bv3JhG+1xZuAyQ==}
+    engines: {node: '>=16'}
+    dev: true
 
   /path-type@4.0.0:
     resolution: {integrity: sha512-gDKb8aZMDeD/tZWs9P6+q0J9Mwkdl6xMV8TjnGP3qJVJ06bdMgkbBlLU8IdfOsIsFz2BW1rNVT3XuNEl8zPAvw==}
@@ -20345,6 +20399,17 @@ packages:
       supports-color: 7.2.0
     dev: true
 
+  /sinon@19.0.2:
+    resolution: {integrity: sha512-euuToqM+PjO4UgXeLETsfQiuoyPXlqFezr6YZDFwHR3t4qaX0fZUe1MfPMznTL5f8BWrVS89KduLdMUsxFCO6g==}
+    dependencies:
+      '@sinonjs/commons': 3.0.1
+      '@sinonjs/fake-timers': 13.0.2
+      '@sinonjs/samsam': 8.0.2
+      diff: 7.0.0
+      nise: 6.1.1
+      supports-color: 7.2.0
+    dev: true
+
   /sinon@7.5.0:
     resolution: {integrity: sha512-AoD0oJWerp0/rY9czP/D6hDTTUYGpObhZjMpd7Cl/A6+j0xBE+ayL/ldfggkBXUs0IkvIiM1ljM8+WkOc5k78Q==}
     dependencies:
@@ -21825,6 +21890,11 @@ packages:
 
   /type-detect@4.0.8:
     resolution: {integrity: sha512-0fr/mIH1dlO+x7TlcMy+bIDqKPsw/70tVyeHW787goQjhmqaZe10uwLujubK9q9Lg6Fiho1KUKDYz0Z7k7g5/g==}
+    engines: {node: '>=4'}
+    dev: true
+
+  /type-detect@4.1.0:
+    resolution: {integrity: sha512-Acylog8/luQ8L7il+geoSxhEkazvkslg7PSNKOX59mbB9cOveP5aq9h74Y7YU8yDpJwetzQQrfIwtf4Wp4LKcw==}
     engines: {node: '>=4'}
     dev: true
 

@@ -1,11 +1,14 @@
 import { macroConfigurableValue, MacroConfigurableValue } from "@flyde/core";
-import { MacroNodeV2, macro2toMacro } from "../ImprovedMacros/improvedMacros";
+import {
+  ImprovedMacroNode,
+  macro2toMacro,
+} from "../ImprovedMacros/improvedMacros";
 
 export interface ListFromConfig {
   count: MacroConfigurableValue;
 }
 
-const listFrom: MacroNodeV2<ListFromConfig> = {
+const listFrom: ImprovedMacroNode<ListFromConfig> = {
   id: "ListFrom",
   namespace: "Lists",
   menuDisplayName: "Merge to List",

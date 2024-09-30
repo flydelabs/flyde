@@ -1,6 +1,6 @@
 import { TIMING_NAMESPACE, timeToString } from "./common";
 import {
-  MacroNodeV2,
+  ImprovedMacroNode,
   macro2toMacro,
   extractInputsFromValue,
   replaceInputsInValue,
@@ -14,7 +14,7 @@ export interface IntervalConfig {
   value: MacroConfigurableValue;
 }
 
-const interval: MacroNodeV2<IntervalConfig> = {
+const interval: ImprovedMacroNode<IntervalConfig> = {
   id: "Interval",
   menuDisplayName: "Interval",
   namespace,
@@ -47,7 +47,7 @@ const interval: MacroNodeV2<IntervalConfig> = {
   run: (inputs, outputs, adv) => {
     const { time, value } = adv.context.config;
 
-    const intervalValue = inputs.interval ?? time;
+    const intervalValue = replaceInputsInValue(inputs, time);
     const emitValue = replaceInputsInValue(inputs, value);
 
     const existingTimer = adv.state.get("timer");

@@ -1,7 +1,7 @@
 import { macroConfigurableValue, MacroConfigurableValue } from "@flyde/core";
 import {
   macro2toMacro,
-  MacroNodeV2,
+  ImprovedMacroNode,
   extractInputsFromValue,
   replaceInputsInValue,
 } from "../ImprovedMacros/improvedMacros";
@@ -13,7 +13,7 @@ export interface SetAttributeConfig {
   value: MacroConfigurableValue;
 }
 
-const setAttribute2: MacroNodeV2<SetAttributeConfig> = {
+const setAttribute2: ImprovedMacroNode<SetAttributeConfig> = {
   id: "SetAttribute",
   defaultConfig: {
     key: macroConfigurableValue("string", "someKey"),

@@ -1,11 +1,14 @@
 import { macroConfigurableValue, MacroConfigurableValue } from "@flyde/core";
-import { macro2toMacro, MacroNodeV2 } from "../ImprovedMacros/improvedMacros";
+import {
+  macro2toMacro,
+  ImprovedMacroNode,
+} from "../ImprovedMacros/improvedMacros";
 
 export interface SpreadListConfig {
   count: MacroConfigurableValue;
 }
 
-const spreadList: MacroNodeV2<SpreadListConfig> = {
+const spreadList: ImprovedMacroNode<SpreadListConfig> = {
   id: "SpreadList",
   namespace: "Lists",
   menuDisplayName: "Spread List",

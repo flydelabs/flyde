@@ -1,10 +1,16 @@
-import { dynamicNodeInput, eventually, nodeOutput } from "@flyde/core";
+import {
+  dynamicNodeInput,
+  eventually,
+  MacroConfigurableValue,
+  macroConfigurableValue,
+  nodeOutput,
+} from "@flyde/core";
 import { assert } from "chai";
 import { spiedOutput } from "@flyde/core/dist/test-utils";
 import {
   extractInputsFromValue,
   macro2toMacro,
-  MacroNodeV2,
+  ImprovedMacroNode,
   replaceInputsInValue,
 } from "./improvedMacros";
 
@@ -12,12 +18,17 @@ describe("ImprovedMacros", () => {
   describe("SimpleMacro with dot notation", () => {
     it("processes input with dot notation template", async () => {
       // Define a simple macro node
-      const SimpleMacro: MacroNodeV2<{ message: string }> = {
+      const SimpleMacro: ImprovedMacroNode<{
+        message: MacroConfigurableValue;
+      }> = {
         id: "SimpleMacro",
         defaultConfig: {
-          message: "Hello, {{person.name}}! Your age is {{person.age}}.",
+          message: macroConfigurableValue(
+            "string",
+            "Hello, {{person.name}}! Your age is {{person.age}}."
+          ),
         },
-        inputs: (config) => extractInputsFromValue(config.message),
+        inputs: (config) => extractInputsFromValue(config.message, "message"),
         outputs: {
           result: nodeOutput(),
         },

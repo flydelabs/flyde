@@ -697,25 +697,29 @@ declare module '@flyde/core/node/macro-node' {
     import { CodeNode, CodeNodeDefinition, NodeMetadata } from "@flyde/core/node/node";
     import type React from "react";
     import { MacroNodeInstance } from "@flyde/core/node/node-instance";
-    export type MacroEditorFieldDefinitionType = "string" | "number" | "boolean" | "json" | "select" | "longtext" | "enum";
+    export type MacroEditorFieldDefinitionType = "string" | "number" | "boolean" | "json" | "select" | "longtext" | "enum" | "dynamic";
     export type MacroConfigurableValueTypeMap = {
             string: string;
             number: number;
             boolean: boolean;
             json: any;
             select: string | number;
-            longtext: string;
-            enum: string;
+            dynamic: undefined;
     };
-    export interface MacroConfigurableValue<T extends MacroEditorFieldDefinitionType> {
-            type: T | "dynamic";
-            value: MacroConfigurableValueTypeMap[T];
-    }
+    export type MacroConfigurableValue = {
+            [K in keyof MacroConfigurableValueTypeMap]: {
+                    type: K;
+                    value: MacroConfigurableValueTypeMap[K];
+            };
+    }[keyof MacroConfigurableValueTypeMap];
+    export function macroConfigurableValue(type: MacroConfigurableValue["type"], value: MacroConfigurableValue["value"]): MacroConfigurableValue;
     export type MacroEditorFieldDefinition = StringFieldDefinition | NumberFieldDefinition | BooleanFieldDefinition | JsonFieldDefinition | SelectFieldDefinition | LongTextFieldDefinition | EnumFieldDefinition;
     interface BaseFieldDefinition {
             label: string;
             description?: string;
             configKey: string;
+            templateSupport?: boolean;
+            typeConfigurable?: boolean;
     }
     export interface StringFieldDefinition extends BaseFieldDefinition {
             type: "string";

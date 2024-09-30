@@ -63,7 +63,9 @@ const ConditionalEditor: MacroEditorComp<ConditionalConfig> =
         </FormGroup>
         {(value.condition.type === ConditionType.Contains ||
           value.condition.type === ConditionType.NotContains) && (
-          <FormGroup helperText="For 'Contains' and 'Not Contains', the input value can be a string or an array. If it's a string, it checks if the string contains the compared value. If it's an array, it checks if the array includes the compared value." />
+          <FormGroup
+            helperText={`For "Contains" and "Not Contains", the input value can be a string or an array. If it's a string, it checks if the string contains the compared value. If it's an array, it checks if the array includes the compared value.`}
+          />
         )}
         <Divider />
 

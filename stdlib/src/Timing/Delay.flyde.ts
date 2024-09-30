@@ -1,5 +1,9 @@
 import { TIMING_NAMESPACE, timeToString } from "./common";
-import { MacroNodeV2, macro2toMacro } from "../ImprovedMacros/improvedMacros";
+import {
+  ImprovedMacroNode,
+  replaceInputsInValue,
+  macro2toMacro,
+} from "../ImprovedMacros/improvedMacros";
 import { MacroConfigurableValue } from "@flyde/core";
 
 const namespace = TIMING_NAMESPACE;
@@ -8,7 +12,7 @@ export interface DelayConfig {
   delayMs: MacroConfigurableValue;
 }
 
-const delay: MacroNodeV2<DelayConfig> = {
+const delay: ImprovedMacroNode<DelayConfig> = {
   id: "Delay",
   menuDisplayName: "Delay",
   namespace,
@@ -42,13 +46,13 @@ const delay: MacroNodeV2<DelayConfig> = {
   },
   reactiveInputs: ["value"],
   completionOutputs: ["delayedValue"],
-  run: async ({ value, delay }, outputs, adv) => {
+  run: async (inputs, outputs, adv) => {
     const { delayedValue } = outputs;
     const { delayMs } = adv.context.config;
 
-    const delayValue = delay !== undefined ? delay : delayMs;
+    const delayValue = replaceInputsInValue(inputs, delayMs);
     await new Promise((resolve) => setTimeout(resolve, delayValue));
-    delayedValue.next(value);
+    delayedValue.next(inputs.value);
   },
 };
 

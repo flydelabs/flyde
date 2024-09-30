@@ -11,7 +11,11 @@ import {
 
 export type StaticOrDerived<T, Config> = T | ((config: Config) => T);
 
-export interface MacroNodeV2<Config = {}> {
+/* This is a draft of a new MacroNode interface that is less verbose and more flexible.
+   Will be used to replace the current MacroNode interface in the future.
+*/
+
+export interface ImprovedMacroNode<Config = {}> {
   id: string;
   defaultConfig: Config;
   namespace?: string;
@@ -121,7 +125,7 @@ export function replaceInputsInValue(
         return match; // Return original match if path is invalid
       }
     }
-    return result !== undefined ? JSON.stringify(result) : match;
+    return result !== undefined ? result : match;
   });
 
   try {
@@ -133,7 +137,7 @@ export function replaceInputsInValue(
 }
 
 export function macro2toMacro<Config>(
-  node: MacroNodeV2<Config>
+  node: ImprovedMacroNode<Config>
 ): MacroNode<Config> {
   return {
     id: node.id,
@@ -170,7 +174,7 @@ export function macro2toMacro<Config>(
     },
     runFnBuilder: (config) => {
       return (inputs, outputs, ctx) => {
-        node.run(inputs, outputs, {
+        return node.run(inputs, outputs, {
           ...ctx,
           context: { ...ctx.context, config },
         });

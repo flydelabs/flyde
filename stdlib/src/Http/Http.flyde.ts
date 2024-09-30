@@ -2,7 +2,7 @@ import axios, { AxiosRequestConfig } from "axios";
 import {
   extractInputsFromValue,
   macro2toMacro,
-  MacroNodeV2,
+  ImprovedMacroNode,
   replaceInputsInValue,
 } from "../ImprovedMacros/improvedMacros";
 import { macroConfigurableValue, MacroConfigurableValue } from "@flyde/core";
@@ -17,7 +17,7 @@ export interface HttpConfig {
   data?: MacroConfigurableValue;
 }
 
-const http: MacroNodeV2<HttpConfig> = {
+const http: ImprovedMacroNode<HttpConfig> = {
   id: "Http",
   menuDisplayName: "HTTP Request",
   defaultConfig: {
@@ -56,7 +56,7 @@ const http: MacroNodeV2<HttpConfig> = {
     }, {});
   },
   outputs: {
-    data: {
+    response: {
       description: "Emits the response data",
     },
   },
@@ -67,17 +67,32 @@ const http: MacroNodeV2<HttpConfig> = {
     const headersValue = replaceInputsInValue(inputs, headers);
     const paramsValue = replaceInputsInValue(inputs, params);
     const dataValue = replaceInputsInValue(inputs, data);
+    const methodValue = replaceInputsInValue(inputs, method);
 
     const requestConfig: AxiosRequestConfig = {
-      method,
+      url: urlValue,
+      method: methodValue,
       headers: headersValue,
       params: paramsValue,
     };
 
+    if (methodValue !== "GET") {
+      requestConfig.data = dataValue;
+    }
     return axios
-      .request({ url: urlValue, data: dataValue, ...requestConfig })
-      .then((res) => outputs.data!.next(res.data))
-      .catch((e) => adv.onError(e));
+      .request(requestConfig)
+      .then((res) => outputs.response.next(res.data))
+      .catch((e) => {
+        if (e.response) {
+          adv.onError(
+            `HTTP Error ${e.response.status}: ${e.response.statusText}`
+          );
+        } else if (e.request) {
+          adv.onError("No response received from the server");
+        } else {
+          adv.onError(`Error: ${e.message}`);
+        }
+      });
   },
   configEditor: {
     type: "structured",
@@ -100,6 +115,11 @@ const http: MacroNodeV2<HttpConfig> = {
       },
       {
         type: "json",
+        configKey: "data",
+        label: "Request Body",
+      },
+      {
+        type: "json",
         configKey: "headers",
         label: "Headers",
       },
@@ -107,11 +127,6 @@ const http: MacroNodeV2<HttpConfig> = {
         type: "json",
         configKey: "params",
         label: "Query Parameters",
-      },
-      {
-        type: "json",
-        configKey: "data",
-        label: "Request Body",
       },
     ],
   },

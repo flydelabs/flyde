@@ -1,6 +1,6 @@
 import { macroConfigurableValue, MacroConfigurableValue } from "@flyde/core";
 import {
-  MacroNodeV2,
+  ImprovedMacroNode,
   extractInputsFromValue,
   replaceInputsInValue,
   macro2toMacro,
@@ -10,7 +10,7 @@ export interface GetAttributeConfig {
   key: MacroConfigurableValue;
 }
 
-const getAttribute: MacroNodeV2<GetAttributeConfig> = {
+const getAttribute: ImprovedMacroNode<GetAttributeConfig> = {
   id: "GetAttribute",
   namespace: "Objects",
   defaultConfig: {

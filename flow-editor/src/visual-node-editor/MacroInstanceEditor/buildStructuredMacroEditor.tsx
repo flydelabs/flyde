@@ -95,7 +95,7 @@ export function StructuredMacroEditorComp<T>(
 ): MacroEditorComp<T> {
   return (props) => {
     return (
-      <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
         {editorConfig.fields.map((field) => (
           <MacroEditorFieldDefinitionRenderer
             key={field.configKey}
