@@ -835,9 +835,6 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0
     devDependencies:
-      '@flyde/runtime':
-        specifier: workspace:^
-        version: link:../runtime
       '@types/jscodeshift':
         specifier: ^0.11.6
         version: 0.11.6
