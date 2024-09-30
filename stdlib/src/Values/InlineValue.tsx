@@ -1,5 +1,5 @@
 import type { InlineValueConfig } from "./InlineValue.flyde";
-import React, { useCallback, useMemo } from "react";
+import React from "react";
 import { MacroEditorComp } from "@flyde/core";
 import { MacroConfigurableFieldEditor } from "@flyde/flow-editor";
 
