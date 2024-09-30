@@ -1,10 +1,15 @@
 import { TIMING_NAMESPACE, timeToString } from "./common";
-import { MacroNodeV2, macro2toMacro } from "../ImprovedMacros/improvedMacros";
+import {
+  MacroNodeV2,
+  extractInputsFromValue,
+  macro2toMacro,
+} from "../ImprovedMacros/improvedMacros";
+import { macroConfigurableValue, MacroConfigurableValue } from "@flyde/core";
 
 const namespace = TIMING_NAMESPACE;
 
 export interface DebounceConfig {
-  delayMs: number;
+  delayMs: MacroConfigurableValue;
 }
 
 const debounce: MacroNodeV2<DebounceConfig> = {
@@ -14,20 +19,23 @@ const debounce: MacroNodeV2<DebounceConfig> = {
   defaultStyle: {
     icon: "hourglass",
   },
-  defaultConfig: { delayMs: 420 },
+  defaultConfig: { delayMs: macroConfigurableValue("number", 420) },
   menuDescription:
     "Emits the last value received after being idle for a given amount of milliseconds. Supports both static and dynamic delays.",
   displayName: (config) => {
-    return `Debounce ${timeToString(config.delayMs)}`;
+    return `Debounce ${timeToString(config.delayMs.value)}`;
   },
   description: (config) => {
     return `Debounces input values with a delay of ${timeToString(
-      config.delayMs
+      config.delayMs.value
     )}.`;
   },
-  inputs: {
-    value: { description: "Value to debounce" },
-  },
+  inputs: (config) => ({
+    value: {
+      description: "Value to debounce",
+    },
+    ...extractInputsFromValue(config.delayMs, "delayMs"),
+  }),
   outputs: {
     debouncedValue: { description: "Debounced value" },
   },

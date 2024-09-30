@@ -1,8 +1,9 @@
 import { Divider, FormGroup, HTMLSelect } from "@blueprintjs/core";
 import { ConditionType, ConditionalConfig } from "./Conditional.flyde";
 import React from "react";
-import { SimpleJsonEditor } from "../lib/SimpleJsonEditor";
-import { MacroEditorComp } from "@flyde/core";
+import { MacroEditorComp, MacroEditorFieldDefinition } from "@flyde/core";
+
+import { MacroConfigurableFieldEditor } from "@flyde/flow-editor";
 
 const conditionEnumToLabel: Record<
   ConditionalConfig["condition"]["type"],
@@ -15,6 +16,18 @@ const conditionEnumToLabel: Record<
   [ConditionType.NotContains]: "Not Contains (string or array)",
   [ConditionType.Exists]: "Exists (not null, undefined, or empty)",
   [ConditionType.NotExists]: "Does Not Exist (null, undefined, or empty)",
+};
+
+const leftConfig: MacroEditorFieldDefinition = {
+  type: "string",
+  configKey: "leftOperand",
+  label: "Left Operand",
+};
+
+const rightConfig: MacroEditorFieldDefinition = {
+  type: "string",
+  configKey: "rightOperand",
+  label: "Right Operand",
 };
 
 const ConditionalEditor: MacroEditorComp<ConditionalConfig> =
@@ -53,34 +66,29 @@ const ConditionalEditor: MacroEditorComp<ConditionalConfig> =
           <FormGroup helperText="For 'Contains' and 'Not Contains', the input value can be a string or an array. If it's a string, it checks if the string contains the compared value. If it's an array, it checks if the array includes the compared value." />
         )}
         <Divider />
-        <FormGroup label="Left Operand">
-          <SimpleJsonEditor
-            value={value.leftOperand.value}
+
+        <MacroConfigurableFieldEditor
+          value={value.leftOperand}
+          onChange={(val) => {
+            onChange({
+              ...value,
+              leftOperand: val,
+            });
+          }}
+          config={leftConfig}
+        />
+
+        {showRightOperand && (
+          <MacroConfigurableFieldEditor
+            value={value.rightOperand}
             onChange={(val) => {
               onChange({
                 ...value,
-                leftOperand: {
-                  value: val,
-                },
+                rightOperand: val,
               });
             }}
+            config={rightConfig}
           />
-        </FormGroup>
-
-        {showRightOperand && (
-          <FormGroup label="Right Operand">
-            <SimpleJsonEditor
-              value={value.rightOperand.value}
-              onChange={(val) => {
-                onChange({
-                  ...value,
-                  rightOperand: {
-                    value: val,
-                  },
-                });
-              }}
-            />
-          </FormGroup>
         )}
       </>
     );

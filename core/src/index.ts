@@ -1,8 +1,8 @@
 export * from "./common";
 import { Pos, OMap } from "./common";
 import {
-  CustomNode,
   VisualNode,
+  CustomNode,
   InputPinsConfig,
   Node,
   NodeDefinition,

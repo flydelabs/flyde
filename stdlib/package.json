@@ -16,6 +16,7 @@
     "@blueprintjs/core": "^5.0.0",
     "@blueprintjs/select": "^5.0.20",
     "@flyde/core": "workspace:*",
+    "@flyde/flow-editor": "workspace:^",
     "@types/pg": "^8.10.2",
     "@types/react": "^18.2.0",
     "axios": "^0.27.2",

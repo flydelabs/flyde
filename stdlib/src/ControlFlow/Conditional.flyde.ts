@@ -1,3 +1,4 @@
+import { macroConfigurableValue, MacroConfigurableValue } from "@flyde/core";
 import {
   extractInputsFromValue,
   macro2toMacro,
@@ -17,12 +18,8 @@ export enum ConditionType {
 
 export interface ConditionalConfig {
   condition: { type: ConditionType; data?: string };
-  leftOperand: {
-    value: any;
-  };
-  rightOperand: {
-    value: any;
-  };
+  leftOperand: MacroConfigurableValue;
+  rightOperand: MacroConfigurableValue;
 }
 
 function conditionalConfigToDisplayName(config: ConditionalConfig) {
@@ -55,8 +52,8 @@ const conditional: MacroNodeV2<ConditionalConfig> = {
     condition: {
       type: ConditionType.Equal,
     },
-    leftOperand: { value: "{{value}}" },
-    rightOperand: { value: "Some value" },
+    leftOperand: macroConfigurableValue("string", "{{value}}"),
+    rightOperand: macroConfigurableValue("string", "Some value"),
   },
   menuDescription:
     "Evaluates the condition, and if it's true, emits the left operand value to the 'true' output, otherwise emits the left operand value to the 'false' output",
@@ -69,8 +66,8 @@ const conditional: MacroNodeV2<ConditionalConfig> = {
     icon: "circle-question",
   },
   inputs: (config) => ({
-    ...extractInputsFromValue(config.leftOperand.value),
-    ...extractInputsFromValue(config.rightOperand.value),
+    ...extractInputsFromValue(config.leftOperand.value, "leftOperand"),
+    ...extractInputsFromValue(config.rightOperand.value, "rightOperand"),
   }),
   outputs: {
     true: {

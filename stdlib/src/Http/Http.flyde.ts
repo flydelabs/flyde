@@ -5,40 +5,41 @@ import {
   MacroNodeV2,
   replaceInputsInValue,
 } from "../ImprovedMacros/improvedMacros";
+import { macroConfigurableValue, MacroConfigurableValue } from "@flyde/core";
 
 const namespace = "HTTP";
 
 export interface HttpConfig {
-  method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
-  url: string;
-  headers?: Record<string, string>;
-  params?: Record<string, string>;
-  data?: Record<string, any>;
+  method: MacroConfigurableValue;
+  url: MacroConfigurableValue;
+  headers?: MacroConfigurableValue;
+  params?: MacroConfigurableValue;
+  data?: MacroConfigurableValue;
 }
 
 const http: MacroNodeV2<HttpConfig> = {
   id: "Http",
   menuDisplayName: "HTTP Request",
   defaultConfig: {
-    method: "GET",
-    url: "https://www.example.com",
-    headers: {},
-    params: {},
-    data: {},
+    method: macroConfigurableValue("select", "GET"),
+    url: macroConfigurableValue("string", "https://www.example.com"),
+    headers: macroConfigurableValue("json", {}),
+    params: macroConfigurableValue("json", {}),
+    data: macroConfigurableValue("json", {}),
   },
   namespace,
-  displayName: (config) => `HTTP ${config.method} to ${config.url}`,
+  displayName: (config) => `HTTP ${config.method.value} to ${config.url.value}`,
   menuDescription:
     "Performs a HTTP request to a URL and emits the response data",
   description: (config) => {
-    let desc = `Performs a HTTP ${config.method} request to ${config.url}`;
-    if (Object.keys(config.headers || {}).length > 0) {
+    let desc = `Performs a HTTP ${config.method.value} request to ${config.url.value}`;
+    if (Object.keys(config.headers.value || {}).length > 0) {
       desc += ` with custom headers`;
     }
-    if (Object.keys(config.params || {}).length > 0) {
+    if (Object.keys(config.params.value || {}).length > 0) {
       desc += `, including query parameters`;
     }
-    if (Object.keys(config.data || {}).length > 0) {
+    if (Object.keys(config.data.value || {}).length > 0) {
       desc += `, and request body data`;
     }
     return desc;
@@ -50,7 +51,7 @@ const http: MacroNodeV2<HttpConfig> = {
     return Object.keys(config).reduce((acc, key) => {
       return {
         ...acc,
-        ...extractInputsFromValue(config[key]),
+        ...extractInputsFromValue(config[key], key),
       };
     }, {});
   },

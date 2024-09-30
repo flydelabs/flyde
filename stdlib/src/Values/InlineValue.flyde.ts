@@ -1,3 +1,4 @@
+import { macroConfigurableValue, MacroConfigurableValue } from "@flyde/core";
 import {
   extractInputsFromValue,
   macro2toMacro,
@@ -5,25 +6,29 @@ import {
 } from "../ImprovedMacros/improvedMacros";
 
 export interface InlineValueConfig {
-  type: "string" | "boolean" | "number" | "json";
-  value: string;
+  value: MacroConfigurableValue;
 }
 
 export const InlineValue = macro2toMacro<InlineValueConfig>({
   id: "InlineValue",
   defaultConfig: {
-    type: "string",
-    value: "",
+    value: macroConfigurableValue("string", "Hello, {{name}}"),
   },
-  inputs: (config) => extractInputsFromValue(config.value),
+  inputs: (config) => extractInputsFromValue(config.value, "value"),
   outputs: {
     value: {
       description: "Emits the value configured",
     },
   },
-  displayName: (config) => JSON.stringify(config.value),
+  menuDisplayName: "Inline Value",
+  menuDescription:
+    "Emits a value each time it's called. Supports dynamic variables",
+  defaultStyle: {
+    icon: "pencil",
+  },
+  displayName: (config) => JSON.stringify(config.value.value),
   description: (config) =>
-    `Emits the value \`${JSON.stringify(config.value)}\``,
+    `Emits the value \`${JSON.stringify(config.value.value)}\``,
   run: (inputs, outputs, ctx) => {
     const value = replaceInputsInValue(inputs, ctx.context.config.value);
     outputs.value.next(value);

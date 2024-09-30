@@ -6,6 +6,7 @@ import {
   nodeInput,
   MacroNode,
   MacroEditorFieldDefinition,
+  MacroConfigurableValue,
 } from "@flyde/core";
 
 export type StaticOrDerived<T, Config> = T | ((config: Config) => T);
@@ -46,7 +47,10 @@ function extractInputNameAndPath(match: string): {
   };
 }
 
-export function extractInputsFromValue(val: unknown): Record<string, InputPin> {
+export function extractInputsFromValue(
+  val: MacroConfigurableValue,
+  key: string
+): Record<string, InputPin> {
   const inputs = {};
 
   function extractFromValue(value: any) {
@@ -61,11 +65,13 @@ export function extractInputsFromValue(val: unknown): Record<string, InputPin> {
     }
   }
 
-  if (typeof val === "string") {
-    extractFromValue(val);
+  if (val.type === "string") {
+    extractFromValue(val.value);
+  } else if (val.type === "dynamic") {
+    return { [key]: nodeInput() };
   } else {
     try {
-      const jsonString = JSON.stringify(val);
+      const jsonString = JSON.stringify(val.value);
       const matches = jsonString.match(/({{.*?}})/g);
       if (matches) {
         for (const match of matches) {
@@ -81,11 +87,12 @@ export function extractInputsFromValue(val: unknown): Record<string, InputPin> {
   return inputs;
 }
 
-export function replaceInputsInValue<
-  V extends string | object | boolean | number
->(inputs: Record<string, any>, value: V): V {
-  if (typeof value === "string") {
-    return value.replace(/({{.*?}})/g, (match) => {
+export function replaceInputsInValue(
+  inputs: Record<string, any>,
+  value: MacroConfigurableValue
+): MacroConfigurableValue["value"] {
+  if (value.type === "string") {
+    return value.value.replace(/({{.*?}})/g, (match) => {
       const { inputName, path } = extractInputNameAndPath(match);
       let result = inputs[inputName];
       for (const key of path) {
@@ -96,10 +103,14 @@ export function replaceInputsInValue<
         }
       }
       return result !== undefined ? result : match;
-    }) as V;
+    });
   }
 
-  const jsonString = JSON.stringify(value);
+  if (value.type === "dynamic") {
+    return;
+  }
+
+  const jsonString = JSON.stringify(value.value);
   const replacedJsonString = jsonString.replace(/({{.*?}})/g, (match) => {
     const { inputName, path } = extractInputNameAndPath(match);
     let result = inputs[inputName];

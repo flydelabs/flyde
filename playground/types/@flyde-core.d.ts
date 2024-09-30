@@ -8,7 +8,7 @@
 declare module '@flyde/core' {
     export * from "@flyde/core/common";
     import { Pos, OMap } from "@flyde/core/common";
-    import { CustomNode, VisualNode, InputPinsConfig, Node, NodeDefinition, NodeOrMacroDefinition } from "@flyde/core/node";
+    import { VisualNode, CustomNode, InputPinsConfig, Node, NodeDefinition, NodeOrMacroDefinition } from "@flyde/core/node";
     export * from "@flyde/core/connect";
     export * from "@flyde/core/execute";
     export * from "@flyde/core/simplified-execute";
@@ -651,7 +651,7 @@ declare module '@flyde/core/connect/helpers' {
 declare module '@flyde/core/' {
     export * from "@flyde/core/common";
     import { Pos, OMap } from "@flyde/core/common";
-    import { CustomNode, VisualNode, InputPinsConfig, Node, NodeDefinition, NodeOrMacroDefinition } from "@flyde/core/node";
+    import { VisualNode, CustomNode, InputPinsConfig, Node, NodeDefinition, NodeOrMacroDefinition } from "@flyde/core/node";
     export * from "@flyde/core/connect";
     export * from "@flyde/core/execute";
     export * from "@flyde/core/simplified-execute";
@@ -696,7 +696,21 @@ declare module '@flyde/core/execute/debugger' {
 declare module '@flyde/core/node/macro-node' {
     import { CodeNode, CodeNodeDefinition, NodeMetadata } from "@flyde/core/node/node";
     import type React from "react";
+    import { MacroNodeInstance } from "@flyde/core/node/node-instance";
     export type MacroEditorFieldDefinitionType = "string" | "number" | "boolean" | "json" | "select" | "longtext" | "enum";
+    export type MacroConfigurableValueTypeMap = {
+            string: string;
+            number: number;
+            boolean: boolean;
+            json: any;
+            select: string | number;
+            longtext: string;
+            enum: string;
+    };
+    export interface MacroConfigurableValue<T extends MacroEditorFieldDefinitionType> {
+            type: T | "dynamic";
+            value: MacroConfigurableValueTypeMap[T];
+    }
     export type MacroEditorFieldDefinition = StringFieldDefinition | NumberFieldDefinition | BooleanFieldDefinition | JsonFieldDefinition | SelectFieldDefinition | LongTextFieldDefinition | EnumFieldDefinition;
     interface BaseFieldDefinition {
             label: string;
@@ -793,6 +807,7 @@ declare module '@flyde/core/node/macro-node' {
     export type ConfigurableInput<T> = ConfigurableInputStatic<T> | ConfigurableInputDynamic;
     export const isMacroNode: (p: any) => p is MacroNode<any>;
     export const isMacroNodeDefinition: (p: any) => p is MacroNodeDefinition<any>;
+    export function processMacroNodeInstance(namespace: string, macro: MacroNode<any>, instance: MacroNodeInstance): CodeNode;
     export {};
 }
 

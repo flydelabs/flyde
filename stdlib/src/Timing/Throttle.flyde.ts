@@ -1,10 +1,15 @@
 import { TIMING_NAMESPACE, timeToString } from "./common";
-import { MacroNodeV2, macro2toMacro } from "../ImprovedMacros/improvedMacros";
+import {
+  MacroNodeV2,
+  macro2toMacro,
+  replaceInputsInValue,
+} from "../ImprovedMacros/improvedMacros";
+import { macroConfigurableValue, MacroConfigurableValue } from "@flyde/core";
 
 const namespace = TIMING_NAMESPACE;
 
 export interface ThrottleConfig {
-  delayMs: number;
+  delayMs: MacroConfigurableValue;
 }
 
 const throttle: MacroNodeV2<ThrottleConfig> = {
@@ -14,15 +19,15 @@ const throttle: MacroNodeV2<ThrottleConfig> = {
   defaultStyle: {
     icon: "fa-hand",
   },
-  defaultConfig: { delayMs: 420 },
+  defaultConfig: { delayMs: macroConfigurableValue("number", 420) },
   menuDescription:
     "Limits the number of times a value is emitted to once per time configured. Supports both static and dynamic intervals.",
   displayName: (config) => {
-    return `Throttle ${timeToString(config.delayMs)}`;
+    return `Throttle ${timeToString(config.delayMs.value)}`;
   },
   description: (config) => {
     return `Throttles input values with an interval of ${timeToString(
-      config.delayMs
+      config.delayMs.value
     )}.`;
   },
   inputs: {
@@ -32,20 +37,22 @@ const throttle: MacroNodeV2<ThrottleConfig> = {
     unthrottledValue: { description: "Unthrottled value" },
   },
   reactiveInputs: ["value"],
-  run: async ({ value }, outputs, adv) => {
+  run: async (inputs, outputs, adv) => {
     const { unthrottledValue } = outputs;
     const { delayMs } = adv.context.config;
+
+    const _delayMs = replaceInputsInValue(inputs, delayMs);
 
     const promise = adv.state.get("promise");
     if (promise) {
       adv.onError(new Error(`Throttle: Value dropped`));
       return;
     } else {
-      unthrottledValue.next(value);
+      unthrottledValue.next(inputs.value);
       const promise = new Promise<void>((resolve) => {
         setTimeout(() => {
           resolve();
-        }, delayMs);
+        }, _delayMs);
       });
       adv.state.set("promise", promise);
 

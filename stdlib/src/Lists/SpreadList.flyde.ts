@@ -1,7 +1,8 @@
+import { macroConfigurableValue, MacroConfigurableValue } from "@flyde/core";
 import { macro2toMacro, MacroNodeV2 } from "../ImprovedMacros/improvedMacros";
 
 export interface SpreadListConfig {
-  count: number;
+  count: MacroConfigurableValue;
 }
 
 const spreadList: MacroNodeV2<SpreadListConfig> = {
@@ -9,9 +10,9 @@ const spreadList: MacroNodeV2<SpreadListConfig> = {
   namespace: "Lists",
   menuDisplayName: "Spread List",
   defaultConfig: {
-    count: 3,
+    count: macroConfigurableValue("number", 3),
   },
-  menuDescription: "Spreads a list into multiple outputs",
+  menuDescription: "Receives an array and emits its values as separate outputs",
   displayName: (config) => `Spreads List of ${config.count}`,
   description: (config) =>
     `Receives a list with ${config.count} items and emits ${config.count} outputs: the first item, the second item, and so on`,
@@ -23,7 +24,7 @@ const spreadList: MacroNodeV2<SpreadListConfig> = {
   },
   outputs: (config) =>
     Object.fromEntries(
-      Array.from({ length: config.count }, (_, i) => [`item${i + 1}`, {}])
+      Array.from({ length: config.count.value }, (_, i) => [`item${i + 1}`, {}])
     ),
   run: (inputs, outputs, adv) => {
     const { count } = adv.context.config;
@@ -31,6 +32,17 @@ const spreadList: MacroNodeV2<SpreadListConfig> = {
     for (let i = 0; i < count; i++) {
       outputs[`item${i + 1}`].next(list[i]);
     }
+  },
+  configEditor: {
+    type: "structured",
+    fields: [
+      {
+        configKey: "count",
+        label: "Count",
+        type: "number",
+        typeConfigurable: false,
+      },
+    ],
   },
 };
 

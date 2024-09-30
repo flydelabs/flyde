@@ -5,12 +5,13 @@ import {
   extractInputsFromValue,
   replaceInputsInValue,
 } from "../ImprovedMacros/improvedMacros";
+import { macroConfigurableValue, MacroConfigurableValue } from "@flyde/core";
 
 const namespace = TIMING_NAMESPACE;
 
 export interface IntervalConfig {
-  time: number;
-  value: any;
+  time: MacroConfigurableValue;
+  value: MacroConfigurableValue;
 }
 
 const interval: MacroNodeV2<IntervalConfig> = {
@@ -21,21 +22,22 @@ const interval: MacroNodeV2<IntervalConfig> = {
     icon: "stopwatch",
   },
   defaultConfig: {
-    time: 1000,
-    value: "",
+    time: macroConfigurableValue("number", 1000),
+    value: macroConfigurableValue("string", "sparkles"),
   },
   menuDescription: "Emits a value every interval",
   displayName: (config) => {
-    const value = JSON.stringify(config.value);
-    return `Emit ${value} each ${timeToString(config.time)}`;
+    const value = JSON.stringify(config.value.value);
+    return `Emit ${value} each ${timeToString(config.time.value)}`;
   },
   description: (config) => {
-    return `Emits ${JSON.stringify(config.value)} every ${timeToString(
-      config.time
+    return `Emits ${JSON.stringify(config.value.value)} every ${timeToString(
+      config.time.value
     )}.`;
   },
   inputs: (config) => ({
-    ...extractInputsFromValue(config.value),
+    ...extractInputsFromValue(config.value, "value"),
+    ...extractInputsFromValue(config.time, "time"),
   }),
   outputs: {
     value: { description: "Emitted value" },

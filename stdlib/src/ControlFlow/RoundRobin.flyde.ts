@@ -1,15 +1,19 @@
-import { OutputPin } from "@flyde/core";
+import {
+  macroConfigurableValue,
+  MacroConfigurableValue,
+  OutputPin,
+} from "@flyde/core";
 import { macro2toMacro, MacroNodeV2 } from "../ImprovedMacros/improvedMacros";
 
 const namespace = "Control Flow";
 
 export interface RoundRobinConfig {
-  count: number;
+  count: MacroConfigurableValue;
 }
 
 const roundRobin: MacroNodeV2<RoundRobinConfig> = {
   id: "RoundRobin",
-  defaultConfig: { count: 3 },
+  defaultConfig: { count: macroConfigurableValue("number", 3) },
   namespace,
   menuDisplayName: "Round Robin",
   menuDescription:
@@ -21,14 +25,16 @@ const roundRobin: MacroNodeV2<RoundRobinConfig> = {
     value: { mode: "required", description: "The value to emit" },
   },
   outputs: (config) =>
-    Array.from({ length: config.count }).reduce<Record<string, OutputPin>>(
+    Array.from({ length: config.count.value }).reduce<
+      Record<string, OutputPin>
+    >(
       (obj, _, i) => ({
         ...obj,
         [`r${i + 1}`]: {
           description: `The ${
             i + 1
           } output in order to emit the value received. After emitting a value, it moves to "r${
-            (i + 2) % config.count
+            (i + 2) % config.count.value
           }"'s turn.`,
         },
       }),
@@ -36,9 +42,9 @@ const roundRobin: MacroNodeV2<RoundRobinConfig> = {
     ),
   completionOutputs: [],
   reactiveInputs: ["value"],
-  displayName: (config) => `Round Robin ${config.count}`,
+  displayName: (config) => `Round Robin ${config.count.value}`,
   description: (config) =>
-    `Item will be emitted to one of the ${config.count} outputs in a round robin fashion`,
+    `Item will be emitted to one of the ${config.count.value} outputs in a round robin fashion`,
   configEditor: {
     type: "structured",
     fields: [
@@ -46,6 +52,7 @@ const roundRobin: MacroNodeV2<RoundRobinConfig> = {
         type: "number",
         configKey: "count",
         label: "Count",
+        // typeConfigurable: false,
       },
     ],
   },
@@ -53,7 +60,9 @@ const roundRobin: MacroNodeV2<RoundRobinConfig> = {
     const { state } = adv;
     const { count } = adv.context.config;
 
-    const outputKeys = Array.from({ length: count }).map((_, i) => `r${i + 1}`);
+    const outputKeys = Array.from({ length: count.value }).map(
+      (_, i) => `r${i + 1}`
+    );
 
     const curr = state.get("curr") || 0;
 

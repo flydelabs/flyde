@@ -1,3 +1,4 @@
+import { macroConfigurableValue, MacroConfigurableValue } from "@flyde/core";
 import {
   macro2toMacro,
   MacroNodeV2,
@@ -8,15 +9,15 @@ import {
 const namespace = "Objects";
 
 export interface SetAttributeConfig {
-  key: string;
-  value: unknown;
+  key: MacroConfigurableValue;
+  value: MacroConfigurableValue;
 }
 
 const setAttribute2: MacroNodeV2<SetAttributeConfig> = {
   id: "SetAttribute",
   defaultConfig: {
-    key: "",
-    value: "",
+    key: macroConfigurableValue("string", "someKey"),
+    value: macroConfigurableValue("string", "someValue"),
   },
   namespace,
   menuDisplayName: "Set Attribute",
@@ -28,17 +29,17 @@ const setAttribute2: MacroNodeV2<SetAttributeConfig> = {
     object: {
       description: "Object to set attribute on",
     },
-    ...extractInputsFromValue(config.key),
-    ...extractInputsFromValue(config.value),
+    ...extractInputsFromValue(config.key, "key"),
+    ...extractInputsFromValue(config.value, "value"),
   }),
   outputs: {
     object: {
       description: "The object with the attribute set",
     },
   },
-  displayName: (config) => `Set Attribute "${config.key}"`,
+  displayName: (config) => `Set Attribute "${config.key.value}"`,
   description: (config) =>
-    `Sets the attribute "${config.key}" on an object to the provided value`,
+    `Sets the attribute "${config.key.value}" on an object to the provided value`,
   configEditor: {
     type: "structured",
     fields: [
@@ -48,7 +49,7 @@ const setAttribute2: MacroNodeV2<SetAttributeConfig> = {
         label: "Key",
       },
       {
-        type: "json",
+        type: "string",
         configKey: "value",
         label: "Value",
       },

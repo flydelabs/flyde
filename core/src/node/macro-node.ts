@@ -9,7 +9,32 @@ export type MacroEditorFieldDefinitionType =
   | "json"
   | "select"
   | "longtext"
-  | "enum";
+  | "enum"
+  | "dynamic";
+
+// Replace the conditional type with this mapped type
+export type MacroConfigurableValueTypeMap = {
+  string: string;
+  number: number;
+  boolean: boolean;
+  json: any;
+  select: string | number;
+  dynamic: undefined;
+};
+
+export type MacroConfigurableValue = {
+  [K in keyof MacroConfigurableValueTypeMap]: {
+    type: K;
+    value: MacroConfigurableValueTypeMap[K];
+  };
+}[keyof MacroConfigurableValueTypeMap];
+
+export function macroConfigurableValue(
+  type: MacroConfigurableValue["type"],
+  value: MacroConfigurableValue["value"]
+): MacroConfigurableValue {
+  return { type, value };
+}
 
 export type MacroEditorFieldDefinition =
   | StringFieldDefinition
@@ -24,6 +49,8 @@ interface BaseFieldDefinition {
   label: string;
   description?: string;
   configKey: string;
+  templateSupport?: boolean;
+  typeConfigurable?: boolean;
 }
 
 export interface StringFieldDefinition extends BaseFieldDefinition {

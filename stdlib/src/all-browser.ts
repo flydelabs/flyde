@@ -8,6 +8,6 @@ export * from "./Lists/Lists.flyde";
 export * from "./Console.flyde";
 export * from "./Dates.flyde";
 export * from "./State.flyde";
-export * from "./Timing/Timing.flyde";
+export * from "./Timing";
 export * from "./Values/index";
 export * from "./Misc/Misc.flyde";

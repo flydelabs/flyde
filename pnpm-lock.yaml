@@ -810,6 +810,9 @@ importers:
       '@flyde/core':
         specifier: workspace:*
         version: link:../core
+      '@flyde/flow-editor':
+        specifier: workspace:^
+        version: link:../flow-editor
       '@types/pg':
         specifier: ^8.10.2
         version: 8.10.2

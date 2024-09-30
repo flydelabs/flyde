@@ -1,17 +1,19 @@
+import { macroConfigurableValue, MacroConfigurableValue } from "@flyde/core";
 import { MacroNodeV2, macro2toMacro } from "../ImprovedMacros/improvedMacros";
 
 export interface ListFromConfig {
-  count: number;
+  count: MacroConfigurableValue;
 }
 
 const listFrom: MacroNodeV2<ListFromConfig> = {
   id: "ListFrom",
   namespace: "Lists",
-  menuDisplayName: "List From",
+  menuDisplayName: "Merge to List",
   defaultConfig: {
-    count: 3,
+    count: macroConfigurableValue("number", 2),
   },
-  menuDescription: "Creates a list from a specified number of values",
+  menuDescription:
+    "Receives a list of values and creates a list (array) from them",
   displayName: (config) => `List from ${config.count}`,
   description: (config) => `Creates a list from ${config.count} values`,
   defaultStyle: {
@@ -19,7 +21,7 @@ const listFrom: MacroNodeV2<ListFromConfig> = {
   },
   inputs: (config) =>
     Object.fromEntries(
-      Array.from({ length: config.count }, (_, i) => [`item${i + 1}`, {}])
+      Array.from({ length: config.count.value }, (_, i) => [`item${i + 1}`, {}])
     ),
   outputs: {
     list: { description: "List containing all values" },
@@ -31,6 +33,18 @@ const listFrom: MacroNodeV2<ListFromConfig> = {
       result.push(inputs[`item${i + 1}`]);
     }
     outputs.list.next(result);
+  },
+  configEditor: {
+    type: "structured",
+    fields: [
+      {
+        type: "number",
+        label: "Count",
+        description: "Number of items to create",
+        configKey: "count",
+        typeConfigurable: false,
+      },
+    ],
   },
 };
 

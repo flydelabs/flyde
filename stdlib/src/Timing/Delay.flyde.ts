@@ -1,10 +1,11 @@
 import { TIMING_NAMESPACE, timeToString } from "./common";
 import { MacroNodeV2, macro2toMacro } from "../ImprovedMacros/improvedMacros";
+import { MacroConfigurableValue } from "@flyde/core";
 
 const namespace = TIMING_NAMESPACE;
 
 export interface DelayConfig {
-  delayMs: number;
+  delayMs: MacroConfigurableValue;
 }
 
 const delay: MacroNodeV2<DelayConfig> = {
@@ -14,14 +15,24 @@ const delay: MacroNodeV2<DelayConfig> = {
   defaultStyle: {
     icon: "clock",
   },
-  defaultConfig: { delayMs: 420 },
+  defaultConfig: {
+    delayMs: { type: "number", value: 1000 },
+  },
   menuDescription:
     "Delays a value by a given amount of time. Supports both static and dynamic delays.",
   displayName: (config) => {
-    return `Delay ${timeToString(config.delayMs)}`;
+    if (config.delayMs.type === "number") {
+      return `Delay ${timeToString(config.delayMs.value)}`;
+    } else {
+      return `Delay ${config.delayMs.value}`;
+    }
   },
   description: (config) => {
-    return `Delays a value by ${timeToString(config.delayMs)}.`;
+    if (config.delayMs.type === "number") {
+      return `Delays a value by ${timeToString(config.delayMs.value)}.`;
+    } else {
+      return `Delays a value by ${config.delayMs.value}.`;
+    }
   },
   inputs: {
     value: { description: "Value to delay" },

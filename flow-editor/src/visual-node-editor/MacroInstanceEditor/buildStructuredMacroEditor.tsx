@@ -1,152 +1,96 @@
+import { Button, FormGroup } from "@blueprintjs/core";
 import {
-  Checkbox,
-  FormGroup,
-  HTMLSelect,
-  InputGroup,
-  NumericInput,
-  TextArea,
-} from "@blueprintjs/core";
-import {
-  JsonFieldDefinition,
-  LongTextFieldDefinition,
+  MacroConfigurableValue,
   MacroEditorComp,
   MacroEditorConfigStructured,
   MacroEditorFieldDefinition,
 } from "@flyde/core";
-import { SimpleJsonEditor } from "./SimpleJsonEditor";
-import { useState, useEffect } from "react";
-import { usePrompt } from "../../flow-editor/ports";
+import { MacroConfigurableValueBaseEditor } from "./MacroConfigurableValueBaseEditor";
+import { useCallback } from "react";
 
-export interface ValueCompProps<T> {
-  value: T;
-  onChange: (value: T) => void;
-}
-
-export function MacroEditorBaseValueComp(
-  props: ValueCompProps<any> & { fieldDefinition: MacroEditorFieldDefinition }
-) {
-  const _prompt = usePrompt();
-  const [options, setOptions] = useState<
-    { value: string | number; label: string }[]
-  >(
-    (props.fieldDefinition.type === "select"
-      ? props.fieldDefinition.typeData.items
-      : []) || []
-  );
-
-  useEffect(() => {
-    if (
-      props.fieldDefinition.type === "select" &&
-      !options.some((option) => option.value === props.value)
-    ) {
-      setOptions([
-        ...options,
-        { value: props.value, label: String(props.value) },
-      ]);
+function convertValue(
+  oldType: MacroConfigurableValue["type"],
+  newType: MacroConfigurableValue["type"],
+  value: any
+): any {
+  switch (newType) {
+    case "string": {
+      switch (oldType) {
+        case "json": {
+          return JSON.stringify(value);
+        }
+        default: {
+          return value.toString();
+        }
+      }
     }
-  }, [props.value, options, props.fieldDefinition.type]);
-
-  const handleAddOption = async () => {
-    const newOption = await _prompt("Enter a new option:");
-    if (newOption && !options.some((option) => option.value === newOption)) {
-      const updatedOptions = [
-        ...options,
-        { value: newOption, label: newOption },
-      ];
-      setOptions(updatedOptions);
-      props.onChange(newOption);
+    case "number": {
+      switch (oldType) {
+        case "string":
+        case "json": {
+          const parsed = parseFloat(value);
+          if (isNaN(parsed)) {
+            return 0;
+          }
+          return parsed;
+        }
+        default: {
+          return value;
+        }
+      }
     }
-  };
-
-  switch (props.fieldDefinition.type) {
-    case "number":
-      return (
-        <NumericInput
-          value={props.value}
-          onValueChange={(e) => props.onChange(e)}
-          fill
-        />
-      );
-    case "string":
-      return (
-        <InputGroup
-          value={props.value}
-          onChange={(e) => props.onChange(e.target.value)}
-          // fill
-        />
-      );
-    case "json":
-      return (
-        <SimpleJsonEditor
-          value={props.value}
-          onChange={(e) => props.onChange(e)}
-          label={
-            (props.fieldDefinition as JsonFieldDefinition)?.typeData?.helperText
-          }
-        />
-      );
-    case "boolean":
-      return (
-        <Checkbox
-          checked={props.value}
-          onChange={(e) =>
-            props.onChange((e.target as HTMLInputElement).checked)
-          }
-        />
-      );
-    case "select": {
-      return (
-        <HTMLSelect
-          value={props.value}
-          onChange={(e) => {
-            if (e.target.value === "__other__") {
-              handleAddOption();
-            } else {
-              props.onChange(e.target.value);
-            }
-          }}
-          fill
-        >
-          {options.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-          <option value="__other__">Other (add new option)</option>
-        </HTMLSelect>
-      );
+    case "boolean": {
+      switch (oldType) {
+        case "json":
+        case "string": {
+          return value === "true" || value === "1";
+        }
+        default: {
+          return !!value;
+        }
+      }
     }
-    case "longtext":
-      return (
-        <TextArea
-          value={props.value}
-          onChange={(e) => props.onChange(e.target.value)}
-          rows={
-            (props.fieldDefinition as LongTextFieldDefinition).typeData?.rows ??
-            5
-          }
-          fill
-        />
-      );
+    case "json": {
+      return JSON.stringify(value);
+    }
+    default: {
+      return value;
+    }
   }
 }
 
-export function MacroEditorFieldDefinitionRenderer(
-  props: ValueCompProps<any> & { config: MacroEditorFieldDefinition }
-) {
-  const { config } = props;
+export function MacroEditorFieldDefinitionRenderer(props: {
+  value: MacroConfigurableValue;
+  onChange: (value: MacroConfigurableValue) => void;
+  config: MacroEditorFieldDefinition;
+}) {
+  const { config, value, onChange } = props;
+
+  const changeType = useCallback(
+    (newType: MacroConfigurableValue["type"]) => {
+      const newValue = convertValue(value.type, newType, value.value);
+      onChange({ type: newType, value: newValue });
+    },
+    [value, onChange]
+  );
+
   return (
     <FormGroup label={`${config.label}:`}>
-      <MacroEditorBaseValueComp
+      <MacroConfigurableValueBaseEditor
         value={props.value}
         onChange={props.onChange}
         fieldDefinition={props.config}
       />
+      <div>
+        <span>Type: {props.value.type}</span>
+        <Button onClick={() => changeType("dynamic")}>Make dynamic</Button>
+        <Button onClick={() => changeType("number")}>Make number</Button>
+      </div>
     </FormGroup>
   );
 }
 
-export function buildStructuredMacroEditorComp<T>(
+export function StructuredMacroEditorComp<T>(
   editorConfig: MacroEditorConfigStructured
 ): MacroEditorComp<T> {
   return (props) => {

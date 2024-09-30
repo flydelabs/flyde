@@ -1,3 +1,4 @@
+import { macroConfigurableValue, MacroConfigurableValue } from "@flyde/core";
 import {
   MacroNodeV2,
   extractInputsFromValue,
@@ -6,14 +7,14 @@ import {
 } from "../ImprovedMacros/improvedMacros";
 
 export interface GetAttributeConfig {
-  key: string;
+  key: MacroConfigurableValue;
 }
 
 const getAttribute: MacroNodeV2<GetAttributeConfig> = {
   id: "GetAttribute",
   namespace: "Objects",
   defaultConfig: {
-    key: "",
+    key: macroConfigurableValue("string", "someProperty"),
   },
   menuDisplayName: "Get Property",
   menuDescription: "Used to retrieve a property from an object.",
@@ -24,7 +25,7 @@ const getAttribute: MacroNodeV2<GetAttributeConfig> = {
     object: {
       description: "Object to get attribute from",
     },
-    ...extractInputsFromValue(config.key),
+    ...extractInputsFromValue(config.key, "key"),
   }),
   outputs: {
     value: {
