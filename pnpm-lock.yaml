@@ -329,9 +329,6 @@ importers:
       '@flyde/core':
         specifier: workspace:*
         version: link:../core
-      '@flyde/dev-server':
-        specifier: workspace:*
-        version: link:../dev-server
       '@flyde/remote-debugger':
         specifier: workspace:*
         version: link:../remote-debugger
