@@ -12,6 +12,7 @@ import {
   isBaseNode,
   isMacroNode,
   NodesDefCollection,
+  ImportablesResult,
 } from "@flyde/core";
 import { scanFolderStructure } from "./scan-folders-structure";
 import { FlydeFile } from "../fs-helper/shared";
@@ -24,11 +25,6 @@ export interface CorruptScannedNode {
   type: "corrupt";
   error: string;
 }
-
-export type ImportablesResult = {
-  importables: Record<string, NodesDefCollection>;
-  errors: { path: string; message: string }[];
-};
 
 export async function scanImportableNodes(
   rootPath: string,

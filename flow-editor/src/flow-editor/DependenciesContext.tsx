@@ -3,15 +3,9 @@ import {
   ImportableSource,
   Pos,
   NodeLibraryData,
+  ImportablesResult,
 } from "@flyde/core";
-import type { ImportablesResult } from "@flyde/dev-server";
 import { createContext, useContext } from "react";
-
-// TODO - merge this interface with the one from the dev-server
-export interface LocalImportableResult {
-  importables: ImportableSource[];
-  errors: ImportablesResult["errors"];
-}
 
 export interface DependenciesContextData {
   resolvedDependencies: ResolvedDependenciesDefinitions;
@@ -23,7 +17,7 @@ export interface DependenciesContextData {
       connectTo?: { insId: string; outputId: string };
     }
   ) => Promise<ResolvedDependenciesDefinitions>;
-  onRequestImportables: () => Promise<LocalImportableResult>;
+  onRequestImportables: () => Promise<ImportablesResult>;
   libraryData: NodeLibraryData;
 }
 

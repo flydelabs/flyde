@@ -19,7 +19,6 @@
     "@blueprintjs/icons": "^5.1.5",
     "@blueprintjs/select": "^5.0.1",
     "@flyde/core": "workspace:*",
-    "@flyde/dev-server": "workspace:*",
     "@flyde/remote-debugger": "workspace:*",
     "@fortawesome/fontawesome-svg-core": "^6.4.2",
     "@fortawesome/free-brands-svg-icons": "^6.4.2",

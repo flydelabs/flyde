@@ -2,7 +2,7 @@
 import { fork } from "child_process";
 import { join } from "path";
 import { runFlow } from "./runFlow";
-import { FlowJob } from "./shared";
+import type { FlowJob } from "@flyde/core";
 import { onMessage, sendMessage } from "./typedProcessMessage";
 
 export function forkRunFlow(data: {
