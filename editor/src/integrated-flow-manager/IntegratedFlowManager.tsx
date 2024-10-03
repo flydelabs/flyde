@@ -32,7 +32,7 @@ import { FlowEditor } from "@flyde/flow-editor"; // ../../common/flow-editor/Flo
 import { useDebouncedCallback } from "use-debounce";
 
 import { IntegratedFlowSideMenu } from "./side-menu";
-import { NodeDefinition } from "@flyde/core";
+import { NodeDefinition, ImportablesResult } from "@flyde/core";
 
 import { AppToaster } from "@flyde/flow-editor"; // ../../common/toaster
 
@@ -49,7 +49,6 @@ import { useState } from "react";
 import { useEffect } from "react";
 import _ from "lodash";
 import { useBootstrapData } from "./use-bootstrap-data";
-import type { ImportablesResult } from "@flyde/dev-server";
 
 export const PIECE_HEIGHT = 28;
 
