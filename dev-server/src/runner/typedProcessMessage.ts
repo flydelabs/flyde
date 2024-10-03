@@ -1,6 +1,6 @@
 import { ChildProcess } from "child_process";
 import type { runFlow } from "./runFlow";
-import { FlowJob } from "./shared";
+import { FlowJob } from "@flyde/core";
 
 export interface ProcessMessageEventsMap {
   runFlow: Parameters<typeof runFlow>;

@@ -1,11 +1,11 @@
 import type { InlineValueConfig } from "./InlineValue.flyde";
 import React from "react";
 import { MacroEditorComp } from "@flyde/core";
-import { MacroConfigurableFieldEditor } from "@flyde/flow-editor";
+import { MacroConfigurableFieldEditor } from "../lib/MacroConfigurableFieldEditor/MacroConfigurableFieldEditor";
 
 const InlineValueEditor: MacroEditorComp<InlineValueConfig> =
   function InlineValueEditor(props) {
-    const { value, onChange } = props;
+    const { value, onChange, prompt } = props;
 
     return (
       <div>
@@ -17,6 +17,7 @@ const InlineValueEditor: MacroEditorComp<InlineValueConfig> =
             label: "Value",
             configKey: "value",
           }}
+          prompt={prompt}
         />
       </div>
     );

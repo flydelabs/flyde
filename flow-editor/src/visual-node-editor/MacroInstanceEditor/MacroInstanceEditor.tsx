@@ -12,6 +12,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import React, { useMemo } from "react";
 import { loadMacroEditor } from "./macroEditorLoader";
 import { InfoSign } from "@blueprintjs/icons";
+import { usePrompt } from "../../flow-editor/ports";
 
 export interface MacroInstanceEditorProps {
   deps: ResolvedDependenciesDefinitions;
@@ -43,6 +44,8 @@ export const MacroInstanceEditor: React.FC<MacroInstanceEditorProps> = (
     return loadMacroEditor(macro as any as MacroNodeDefinition<any>);
   }, [deps, ins]);
 
+  const prompt = usePrompt();
+
   return (
     <Dialog isOpen={true} className="macro-instance-editor no-drag">
       <main className={classNames(Classes.DIALOG_BODY)} tabIndex={0}>
@@ -66,7 +69,11 @@ export const MacroInstanceEditor: React.FC<MacroInstanceEditorProps> = (
             </span>
           }
         >
-          <EditorComp value={macroData} onChange={setMacroData} />
+          <EditorComp
+            value={macroData}
+            onChange={setMacroData}
+            prompt={prompt}
+          />
         </ErrorBoundary>
       </main>
       <div className={Classes.DIALOG_FOOTER}>

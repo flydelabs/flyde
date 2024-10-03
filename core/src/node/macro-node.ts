@@ -154,24 +154,10 @@ export type MacroNodeDefinition<T> = Omit<
 export interface MacroEditorCompProps<T> {
   value: T;
   onChange: (value: T) => void;
+  prompt: (message: string) => Promise<string>;
 }
 
 export interface MacroEditorComp<T> extends React.FC<MacroEditorCompProps<T>> {}
-
-/* helpers, used flow-editor macro editor builder */
-
-export type ConfigurableInputStatic<T> = {
-  mode: "static";
-  value: T;
-};
-
-export type ConfigurableInputDynamic = {
-  mode: "dynamic";
-};
-
-export type ConfigurableInput<T> =
-  | ConfigurableInputStatic<T>
-  | ConfigurableInputDynamic;
 
 export const isMacroNode = (p: any): p is MacroNode<any> => {
   return p && typeof (p as MacroNode<any>).runFnBuilder === "function";

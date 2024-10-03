@@ -16,4 +16,3 @@ export * from "./flow-editor/base-node-editor";
 export * from "./visual-node-editor/utils";
 export * from "./lib/logger";
 export * from "./visual-node-editor/MacroInstanceEditor/SimpleJsonEditor";
-export * from "./visual-node-editor/MacroInstanceEditor/MacroConfigurableFieldEditor";

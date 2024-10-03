@@ -24,7 +24,6 @@ import { randomInt } from "crypto";
 import { reportEvent, reportException } from "./telemetry";
 
 import { Uri } from "vscode";
-import { FlowJob } from "@flyde/dev-server";
 
 import { forkRunFlow } from "@flyde/dev-server/dist/runner/runFlow.host";
 import { createEditorClient } from "@flyde/remote-debugger";
@@ -63,8 +62,6 @@ const tryOrThrow = (fn: Function, msg: string) => {
     return new Error(`Flyde editor error: ${msg}: ${e}`);
   }
 };
-
-let runningJobs = <{ [webviewId: string]: FlowJob }>{};
 
 let lastWebview: any = null;
 

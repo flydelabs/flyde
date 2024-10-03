@@ -7,6 +7,12 @@ import {
 } from "@flyde/core";
 import { createContext, useContext } from "react";
 
+// TODO - merge this interface with the one from the dev-server
+export interface LocalImportableResult {
+  importables: ImportableSource[];
+  errors: ImportablesResult["errors"];
+}
+
 export interface DependenciesContextData {
   resolvedDependencies: ResolvedDependenciesDefinitions;
   onImportNode: (
@@ -17,7 +23,7 @@ export interface DependenciesContextData {
       connectTo?: { insId: string; outputId: string };
     }
   ) => Promise<ResolvedDependenciesDefinitions>;
-  onRequestImportables: () => Promise<ImportablesResult>;
+  onRequestImportables: () => Promise<LocalImportableResult>;
   libraryData: NodeLibraryData;
 }
 

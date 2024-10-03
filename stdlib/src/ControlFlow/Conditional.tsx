@@ -3,7 +3,7 @@ import { ConditionType, ConditionalConfig } from "./Conditional.flyde";
 import React from "react";
 import { MacroEditorComp, MacroEditorFieldDefinition } from "@flyde/core";
 
-import { MacroConfigurableFieldEditor } from "@flyde/flow-editor";
+import { MacroConfigurableFieldEditor } from "../lib/MacroConfigurableFieldEditor/MacroConfigurableFieldEditor";
 
 const conditionEnumToLabel: Record<
   ConditionalConfig["condition"]["type"],
@@ -32,7 +32,7 @@ const rightConfig: MacroEditorFieldDefinition = {
 
 const ConditionalEditor: MacroEditorComp<ConditionalConfig> =
   function ConditionalEditor(props) {
-    const { value, onChange } = props;
+    const { value, onChange, prompt } = props;
 
     const showRightOperand = ![
       ConditionType.Exists,
@@ -70,6 +70,7 @@ const ConditionalEditor: MacroEditorComp<ConditionalConfig> =
         <Divider />
 
         <MacroConfigurableFieldEditor
+          prompt={prompt}
           value={value.leftOperand}
           onChange={(val) => {
             onChange({
@@ -82,6 +83,7 @@ const ConditionalEditor: MacroEditorComp<ConditionalConfig> =
 
         {showRightOperand && (
           <MacroConfigurableFieldEditor
+            prompt={prompt}
             value={value.rightOperand}
             onChange={(val) => {
               onChange({
