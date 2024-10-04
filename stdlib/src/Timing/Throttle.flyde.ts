@@ -40,7 +40,11 @@ const throttle: ImprovedMacroNode<ThrottleConfig> = {
   completionOutputs: [],
   run: async (inputs, outputs, adv) => {
     const { unthrottledValue } = outputs;
-    const delayMs = replaceInputsInValue(inputs, adv.context.config.delayMs);
+    const delayMs = replaceInputsInValue(
+      inputs,
+      adv.context.config.delayMs,
+      "delayMs"
+    );
 
     const promise = adv.state.get("promise");
     if (promise) {

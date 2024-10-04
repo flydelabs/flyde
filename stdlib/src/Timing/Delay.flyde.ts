@@ -50,7 +50,7 @@ const delay: ImprovedMacroNode<DelayConfig> = {
     const { delayedValue } = outputs;
     const { delayMs } = adv.context.config;
 
-    const delayValue = replaceInputsInValue(inputs, delayMs);
+    const delayValue = replaceInputsInValue(inputs, delayMs, "delayMs");
     await new Promise((resolve) => setTimeout(resolve, delayValue));
     delayedValue.next(inputs.value);
   },

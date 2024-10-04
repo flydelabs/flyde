@@ -47,8 +47,8 @@ const interval: ImprovedMacroNode<IntervalConfig> = {
   run: (inputs, outputs, adv) => {
     const { time, value } = adv.context.config;
 
-    const intervalValue = replaceInputsInValue(inputs, time);
-    const emitValue = replaceInputsInValue(inputs, value);
+    const intervalValue = replaceInputsInValue(inputs, time, "time");
+    const emitValue = replaceInputsInValue(inputs, value, "value");
 
     const existingTimer = adv.state.get("timer");
     if (existingTimer) {

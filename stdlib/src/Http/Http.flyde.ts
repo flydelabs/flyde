@@ -4,6 +4,7 @@ import {
   improvedMacroToOldMacro,
   ImprovedMacroNode,
   replaceInputsInValue,
+  renderConfigurableValue,
 } from "../ImprovedMacros/improvedMacros";
 import { macroConfigurableValue, MacroConfigurableValue } from "@flyde/core";
 
@@ -28,7 +29,11 @@ const http: ImprovedMacroNode<HttpConfig> = {
     data: macroConfigurableValue("json", {}),
   },
   namespace,
-  displayName: (config) => `HTTP ${config.method.value} to ${config.url.value}`,
+  displayName: (config) =>
+    `HTTP ${renderConfigurableValue(
+      config.method,
+      "method"
+    )} to ${renderConfigurableValue(config.url, "url")}`,
   menuDescription:
     "Performs a HTTP request to a URL and emits the response data",
   description: (config) => {
@@ -56,18 +61,18 @@ const http: ImprovedMacroNode<HttpConfig> = {
     }, {});
   },
   outputs: {
-    response: {
+    data: {
       description: "Emits the response data",
     },
   },
   run: (inputs, outputs, adv) => {
     const { method, url, headers, params, data } = adv.context.config;
 
-    const urlValue = replaceInputsInValue(inputs, url);
-    const headersValue = replaceInputsInValue(inputs, headers);
-    const paramsValue = replaceInputsInValue(inputs, params);
-    const dataValue = replaceInputsInValue(inputs, data);
-    const methodValue = replaceInputsInValue(inputs, method);
+    const urlValue = replaceInputsInValue(inputs, url, "url");
+    const headersValue = replaceInputsInValue(inputs, headers, "headers");
+    const paramsValue = replaceInputsInValue(inputs, params, "params");
+    const dataValue = replaceInputsInValue(inputs, data, "data");
+    const methodValue = replaceInputsInValue(inputs, method, "method");
 
     const requestConfig: AxiosRequestConfig = {
       url: urlValue,
@@ -81,7 +86,7 @@ const http: ImprovedMacroNode<HttpConfig> = {
     }
     return axios
       .request(requestConfig)
-      .then((res) => outputs.response.next(res.data))
+      .then((res) => outputs.data.next(res.data))
       .catch((e) => {
         if (e.response) {
           adv.onError(

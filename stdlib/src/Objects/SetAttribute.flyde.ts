@@ -59,8 +59,8 @@ const setAttribute2: ImprovedMacroNode<SetAttributeConfig> = {
     const { key, value } = adv.context.config;
     const { object } = inputs;
 
-    const _key = replaceInputsInValue(inputs, key);
-    const _value = replaceInputsInValue(inputs, value);
+    const _key = replaceInputsInValue(inputs, key, "key");
+    const _value = replaceInputsInValue(inputs, value, "value");
 
     const attributes = _key.split(".");
     const last = attributes.pop();

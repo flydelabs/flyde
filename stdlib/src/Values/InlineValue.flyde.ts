@@ -30,7 +30,11 @@ export const InlineValue = improvedMacroToOldMacro<InlineValueConfig>({
   description: (config) =>
     `Emits the value \`${JSON.stringify(config.value.value)}\``,
   run: (inputs, outputs, ctx) => {
-    const value = replaceInputsInValue(inputs, ctx.context.config.value);
+    const value = replaceInputsInValue(
+      inputs,
+      ctx.context.config.value,
+      "value"
+    );
     outputs.value.next(value);
   },
   configEditor: {

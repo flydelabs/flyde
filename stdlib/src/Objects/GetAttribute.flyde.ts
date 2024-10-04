@@ -32,8 +32,9 @@ const getAttribute: ImprovedMacroNode<GetAttributeConfig> = {
       description: "The value of the attribute",
     },
   },
-  displayName: (config) => `Get Attribute "${config.key}"`,
-  description: (config) => `Gets the attribute "${config.key}" from an object`,
+  displayName: (config) => `Get Attribute "${config.key.value}"`,
+  description: (config) =>
+    `Gets the attribute "${config.key.value}" from an object`,
   configEditor: {
     type: "structured",
     fields: [
@@ -48,7 +49,7 @@ const getAttribute: ImprovedMacroNode<GetAttributeConfig> = {
     const { key } = adv.context.config;
     const { object } = inputs;
 
-    const _key = replaceInputsInValue(inputs, key);
+    const _key = replaceInputsInValue(inputs, key, "key");
 
     outputs.value.next(_key.split(".").reduce((obj, i) => obj[i], object));
   },

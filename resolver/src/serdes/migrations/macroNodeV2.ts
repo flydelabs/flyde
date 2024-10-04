@@ -1,7 +1,12 @@
-import { isMacroNodeInstance, macroConfigurableValue } from "@flyde/core";
+import {
+  isInlineNodeInstance,
+  isMacroNodeInstance,
+  macroConfigurableValue,
+} from "@flyde/core";
+import { ConditionType } from "@flyde/stdlib/dist/ControlFlow";
 
 export function migrateMacroNodeV2(data: { node?: any; imports?: any }) {
-  const skippedMacros = ["Collect"];
+  const skippedMacros = ["Collect", "CodeExpression", "Switch", "Comment"];
 
   // migrate old stdlib nodes
   for (const ins of data.node?.instances) {
@@ -9,9 +14,17 @@ export function migrateMacroNodeV2(data: { node?: any; imports?: any }) {
       if (skippedMacros.includes(ins.macroId)) {
         continue;
       }
+
+      if (ins.macroId === "Conditional") {
+        ins.macroData.leftOperand = macroConfigurableValue("string", "");
+        ins.macroData.rightOperand = macroConfigurableValue("string", "");
+        ins.macroData.condition.type = ConditionType.Equal;
+      }
+
       for (const key in ins.macroData) {
         const value = ins.macroData[key];
         const isOld = value && !value.type;
+
         if (isOld) {
           const mode = value.mode ?? "static";
           const oldValue = value.value ?? value;
@@ -25,11 +38,13 @@ export function migrateMacroNodeV2(data: { node?: any; imports?: any }) {
                 ? "boolean"
                 : "string";
             ins.macroData[key] = macroConfigurableValue(newType, oldValue);
-          } else if (value.mode === "dynamic") {
+          } else if (mode === "dynamic") {
             ins.macroData[key] = macroConfigurableValue("dynamic", undefined);
           }
         }
       }
+    } else if (isInlineNodeInstance(ins)) {
+      migrateMacroNodeV2({ node: ins.node });
     }
   }
 }

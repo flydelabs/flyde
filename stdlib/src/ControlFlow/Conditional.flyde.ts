@@ -66,8 +66,8 @@ const conditional: ImprovedMacroNode<ConditionalConfig> = {
     icon: "circle-question",
   },
   inputs: (config) => ({
-    ...extractInputsFromValue(config.leftOperand.value, "leftOperand"),
-    ...extractInputsFromValue(config.rightOperand.value, "rightOperand"),
+    ...extractInputsFromValue(config.leftOperand, "leftOperand"),
+    ...extractInputsFromValue(config.rightOperand, "rightOperand"),
   }),
   outputs: {
     true: {
@@ -81,8 +81,12 @@ const conditional: ImprovedMacroNode<ConditionalConfig> = {
     const { condition, leftOperand, rightOperand } = adv.context.config;
     const { true: trueOutput, false: falseOutput } = outputs;
 
-    const leftSide = replaceInputsInValue(inputs, leftOperand.value);
-    const rightSide = replaceInputsInValue(inputs, rightOperand.value);
+    const leftSide = replaceInputsInValue(inputs, leftOperand, "leftOperand");
+    const rightSide = replaceInputsInValue(
+      inputs,
+      rightOperand,
+      "rightOperand"
+    );
 
     const result = calculateCondition(leftSide, rightSide, condition);
 

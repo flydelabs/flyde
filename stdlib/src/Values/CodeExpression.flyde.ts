@@ -24,7 +24,7 @@ export const CodeExpression: MacroNode<CodeExpressionConfig> = {
     };
   },
   definitionBuilder: (config) => {
-    const inputNames = getVariables(config.value);
+    const inputNames = getVariables(config.value ?? "");
     return {
       defaultStyle: {
         size: "small",

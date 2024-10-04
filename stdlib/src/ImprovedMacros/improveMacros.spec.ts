@@ -35,7 +35,8 @@ describe("ImprovedMacros", () => {
         run: (inputs, outputs, ctx) => {
           const message = replaceInputsInValue(
             inputs,
-            ctx.context.config.message
+            ctx.context.config.message,
+            "message"
           );
 
           outputs.result.next(message);

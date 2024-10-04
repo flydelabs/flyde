@@ -93,7 +93,8 @@ export function extractInputsFromValue(
 
 export function replaceInputsInValue(
   inputs: Record<string, any>,
-  value: MacroConfigurableValue
+  value: MacroConfigurableValue,
+  fieldName: string
 ): MacroConfigurableValue["value"] {
   if (value.type === "string") {
     return value.value.replace(/({{.*?}})/g, (match) => {
@@ -111,7 +112,7 @@ export function replaceInputsInValue(
   }
 
   if (value.type === "dynamic") {
-    return;
+    return inputs[fieldName];
   }
 
   const jsonString = JSON.stringify(value.value);
@@ -134,6 +135,15 @@ export function replaceInputsInValue(
     console.error("Error parsing replaced JSON:", error);
     return value;
   }
+}
+
+export function renderConfigurableValue(
+  value: MacroConfigurableValue,
+  fieldName: string
+) {
+  if (value.type === "dynamic") {
+    return `{{${fieldName}}}`;
+  } else return `${value.value}`;
 }
 
 export function improvedMacroToOldMacro<Config>(
