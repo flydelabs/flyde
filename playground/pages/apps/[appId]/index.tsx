@@ -1,3 +1,4 @@
+import { AppFileType } from "@/components/AppView";
 import { FullPageLoader } from "@/components/FullPageLoader";
 import { SimpleUser, simplifiedUser } from "@/lib/user";
 import { PlaygroundApp } from "@/types/entities";
@@ -6,6 +7,7 @@ import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import { runMigrations } from "@flyde/resolver/dist/serdes/migrations/runMigrations";
 
 export const getServerSideProps: GetServerSideProps<{
   app: PlaygroundApp | null;
@@ -28,9 +30,19 @@ export const getServerSideProps: GetServerSideProps<{
   const user =
     userResult.status === "fulfilled" ? userResult.value.data.user : null;
 
-  const app = appResult.value.data;
+  const app = appResult.value.data as PlaygroundApp;
 
   const baseDomain = `https://${context.req.headers.host ?? "play.flyde.dev"}`;
+
+  // run migrations on Flyde flows
+
+  app.files.forEach((file) => {
+    if (file.type === AppFileType.VISUAL_FLOW) {
+      const flydeFlow = JSON.parse(file.content);
+      const migratedFlow = runMigrations(flydeFlow);
+      file.content = JSON.stringify(migratedFlow, null, 2);
+    }
+  });
 
   return {
     props: {

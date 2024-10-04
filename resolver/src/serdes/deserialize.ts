@@ -1,14 +1,9 @@
-import {
-  FlydeFlow,
-  NodeInstance,
-  flydeFlowSchema,
-  isRefNodeInstance,
-} from "@flyde/core";
+import { FlydeFlow, flydeFlowSchema } from "@flyde/core";
 import * as yaml from "yaml";
 import _ = require("lodash");
 import { readFileSync } from "fs";
-import { migrateOldStdlibNodes } from "./migrations/oldStdlibNods";
-import { migrateMacroNodeV2 } from "./migrations/macroNodeV2";
+
+import { runMigrations } from "./migrations/runMigrations";
 
 require("ts-node").register({
   transpileOnly: true,
@@ -34,8 +29,7 @@ export function deserializeFlow(flowContents: string, path: string): FlydeFlow {
 
   data.imports = imports;
 
-  migrateOldStdlibNodes(data);
-  migrateMacroNodeV2(data);
+  runMigrations(data);
   if (!data.node.inputsPosition) {
     data.node.inputsPosition = {};
   }
