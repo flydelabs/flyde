@@ -65,23 +65,23 @@ node:
             {{response.data.capital}}
   connections:
     - from:
-        insId: vph1fv2lncdu30287ctgq53d
-        pinId: response
-      to:
-        insId: a6ystcm1cdas1zdg7e96awid
-        pinId: data
-    - from:
-        insId: a6ystcm1cdas1zdg7e96awid
-        pinId: response
-      to:
-        insId: axr92uotaov2i3jzbsuowiyv
-        pinId: response
-    - from:
         insId: axr92uotaov2i3jzbsuowiyv
         pinId: value
       to:
         insId: __this
         pinId: output
+    - from:
+        insId: a6ystcm1cdas1zdg7e96awid
+        pinId: data
+      to:
+        insId: axr92uotaov2i3jzbsuowiyv
+        pinId: response
+    - from:
+        insId: vph1fv2lncdu30287ctgq53d
+        pinId: data
+      to:
+        insId: a6ystcm1cdas1zdg7e96awid
+        pinId: data
   id: ExampleHTTPRequest
   inputs: {}
   outputs:
