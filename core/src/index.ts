@@ -1,8 +1,9 @@
 export * from "./common";
 import { Pos, OMap } from "./common";
+import { FlydeFlow } from "./flow-schema";
 import {
-  CustomNode,
   VisualNode,
+  CustomNode,
   InputPinsConfig,
   Node,
   NodeDefinition,
@@ -37,4 +38,14 @@ export interface NodeLibraryGroup {
 
 export interface NodeLibraryData {
   groups: NodeLibraryGroup[];
+}
+
+export type ImportablesResult = {
+  importables: Record<string, NodesDefCollection>;
+  errors: { path: string; message: string }[];
+};
+
+export interface FlowJob {
+  flow: FlydeFlow;
+  id: string;
 }

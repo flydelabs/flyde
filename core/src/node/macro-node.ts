@@ -1,56 +1,106 @@
 import { CodeNode, CodeNodeDefinition, NodeMetadata } from "./node";
 import type React from "react";
-
-export type MacroEditorFieldDefinitionTypeString = {
-  value: "string";
-};
-
-export type MacroEditorFieldDefinitionTypeNumber = {
-  value: "number";
-  min?: number;
-  max?: number;
-};
-
-export type MacroEditorFieldDefinitionTypeBoolean = {
-  value: "boolean";
-};
-
-export type MacroEditorFieldDefinitionTypeJson = {
-  value: "json";
-  label?: string;
-};
-
-export type MacroEditorFieldDefinitionTypeSelect = {
-  value: "select";
-  items: { value: string | number; label: string }[];
-};
-
-export type MacroEditorFieldDefinitionTypeLongText = {
-  value: "longtext";
-  rows?: number;
-};
-
-export type MacroEditorFieldDefinitionTypeEnum = {
-  value: "enum";
-  options: string[];
-};
+import { MacroNodeInstance } from "./node-instance";
 
 export type MacroEditorFieldDefinitionType =
-  | MacroEditorFieldDefinitionTypeString
-  | MacroEditorFieldDefinitionTypeNumber
-  | MacroEditorFieldDefinitionTypeBoolean
-  | MacroEditorFieldDefinitionTypeJson
-  | MacroEditorFieldDefinitionTypeSelect
-  | MacroEditorFieldDefinitionTypeLongText
-  | MacroEditorFieldDefinitionTypeEnum;
+  | "string"
+  | "number"
+  | "boolean"
+  | "json"
+  | "select"
+  | "longtext"
+  | "enum"
+  | "dynamic";
 
-export interface MacroEditorFieldDefinition {
+// Replace the conditional type with this mapped type
+export type MacroConfigurableValueTypeMap = {
+  string: string;
+  number: number;
+  boolean: boolean;
+  json: any;
+  select: string | number;
+  dynamic: undefined;
+};
+
+export type MacroConfigurableValue = {
+  [K in keyof MacroConfigurableValueTypeMap]: {
+    type: K;
+    value: MacroConfigurableValueTypeMap[K];
+  };
+}[keyof MacroConfigurableValueTypeMap];
+
+export function macroConfigurableValue(
+  type: MacroConfigurableValue["type"],
+  value: MacroConfigurableValue["value"]
+): MacroConfigurableValue {
+  return { type, value };
+}
+
+export type MacroEditorFieldDefinition =
+  | StringFieldDefinition
+  | NumberFieldDefinition
+  | BooleanFieldDefinition
+  | JsonFieldDefinition
+  | SelectFieldDefinition
+  | LongTextFieldDefinition
+  | EnumFieldDefinition;
+
+interface BaseFieldDefinition {
   label: string;
   description?: string;
   configKey: string;
-  allowDynamic: boolean;
-  type: MacroEditorFieldDefinitionType;
-  defaultValue?: any;
+  templateSupport?: boolean;
+  typeConfigurable?: boolean;
+}
+
+export interface StringFieldDefinition extends BaseFieldDefinition {
+  type: "string";
+}
+
+export interface BooleanFieldDefinition extends BaseFieldDefinition {
+  type: "boolean";
+}
+
+export interface JsonFieldDefinition extends BaseFieldDefinition {
+  type: "json";
+  typeData?: {
+    helperText?: string;
+  };
+}
+
+export interface LongTextFieldDefinition extends BaseFieldDefinition {
+  type: "longtext";
+  typeData?: {
+    rows?: number;
+  };
+}
+
+export interface NumberFieldDefinition extends BaseFieldDefinition {
+  type: "number";
+  typeData?: NumberTypeData;
+}
+
+export interface SelectFieldDefinition extends BaseFieldDefinition {
+  type: "select";
+  typeData: SelectTypeData;
+}
+
+export interface EnumFieldDefinition extends BaseFieldDefinition {
+  type: "enum";
+  typeData: EnumTypeData;
+}
+
+export interface NumberTypeData {
+  min?: number;
+  max?: number;
+}
+
+export interface SelectTypeData {
+  items: { value: string | number; label: string }[];
+}
+
+export interface EnumTypeData {
+  options: string[];
 }
 
 export interface MacroEditorConfigCustomResolved {
@@ -104,24 +154,10 @@ export type MacroNodeDefinition<T> = Omit<
 export interface MacroEditorCompProps<T> {
   value: T;
   onChange: (value: T) => void;
+  prompt: (message: string) => Promise<string>;
 }
 
 export interface MacroEditorComp<T> extends React.FC<MacroEditorCompProps<T>> {}
-
-/* helpers, used flow-editor macro editor builder */
-
-export type ConfigurableInputStatic<T> = {
-  mode: "static";
-  value: T;
-};
-
-export type ConfigurableInputDynamic = {
-  mode: "dynamic";
-};
-
-export type ConfigurableInput<T> =
-  | ConfigurableInputStatic<T>
-  | ConfigurableInputDynamic;
 
 export const isMacroNode = (p: any): p is MacroNode<any> => {
   return p && typeof (p as MacroNode<any>).runFnBuilder === "function";
@@ -140,3 +176,25 @@ export const isMacroNodeDefinition = (
     return editorConfig?.type === "structured";
   }
 };
+
+export function processMacroNodeInstance(
+  namespace: string,
+  macro: MacroNode<any>,
+  instance: MacroNodeInstance
+) {
+  const metaData = macro.definitionBuilder(instance.macroData);
+  const runFn = macro.runFnBuilder(instance.macroData);
+
+  const id = `${namespace}${macro.id}__${instance.id}`;
+
+  const resolvedNode: CodeNode = {
+    ...metaData,
+    defaultStyle: metaData.defaultStyle ?? macro.defaultStyle,
+    displayName: metaData.displayName ?? macro.id,
+    namespace: macro.namespace,
+    id,
+    run: runFn,
+  };
+
+  return resolvedNode;
+}

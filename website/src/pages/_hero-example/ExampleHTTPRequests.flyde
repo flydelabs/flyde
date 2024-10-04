@@ -1,259 +1,94 @@
 imports:
   "@flyde/stdlib":
     - Http
-    - CodeExpression
     - InlineValue
-    - Get Attribute
 node:
   instances:
     - pos:
-        x: -720.380009765625
-        y: -276.40269711494443
-      id: GET Request-907
-      inputConfig:
-        url:
-          mode: queue
-      visibleInputs:
-        - __trigger
-      visibleOutputs:
-        - data
-      nodeId: Http__GET Request-907
+        x: -204.88215672692564
+        y: -153.74664398903062
+      id: vph1fv2lncdu30287ctgq53d
+      inputConfig: {}
+      nodeId: Http__vph1fv2lncdu30287ctgq53d
       macroId: Http
       macroData:
         method:
-          mode: static
+          type: select
           value: GET
         url:
-          mode: static
+          type: string
           value: https://api.country.is/
         headers:
-          mode: static
+          type: json
           value: {}
         params:
-          mode: static
+          type: json
           value: {}
         data:
-          mode: static
+          type: json
           value: {}
-      style:
-        size: regular
-        icon: fa-server
     - pos:
-        x: -780.1691723632813
-        y: -92.39764404296875
-      id: POST Request-624
-      inputConfig:
-        url:
-          mode: queue
-      visibleInputs:
-        - data
-      nodeId: Http__POST Request-624
+        x: -230.6447618878592
+        y: -39.521925739344425
+      id: a6ystcm1cdas1zdg7e96awid
+      inputConfig: {}
+      nodeId: Http__a6ystcm1cdas1zdg7e96awid
       macroId: Http
       macroData:
         method:
-          mode: static
+          type: select
           value: POST
-        data:
-          mode: dynamic
         url:
-          mode: static
+          type: string
           value: https://countriesnow.space/api/v0.1/countries/capital
         headers:
-          mode: static
+          type: json
           value: {}
         params:
-          mode: static
+          type: json
           value: {}
-      style:
-        size: regular
-        icon: fa-server
+        data:
+          type: json
+          value:
+            iso2: "{{data.country}}"
     - pos:
-        x: -727.7590351299609
-        y: -183.1587427807403
-      id: voq2pt830zt74hnzlgjo3oea
+        x: -231.14535888671878
+        y: 80.89538871022626
+      id: axr92uotaov2i3jzbsuowiyv
       inputConfig: {}
-      nodeId: CodeExpression__voq2pt830zt74hnzlgjo3oea
-      macroId: CodeExpression
+      nodeId: InlineValue__axr92uotaov2i3jzbsuowiyv
+      macroId: InlineValue
       macroData:
-        value: "{iso2: inputs.data.country}"
-        label: "{iso2: inputs.data.country}"
-    - pos:
-        x: -711.7029676309611
-        y: -1.9025583293574044
-      id: Formatted Response-xn049cy
-      inputConfig: {}
-      node:
-        instances:
-          - pos:
-              x: -753.2273578838674
-              y: 170.2144483565396
-            id: sznjntqrup6mwx9hr26d58tl
-            inputConfig: {}
-            nodeId: CodeExpression__sznjntqrup6mwx9hr26d58tl
-            macroId: CodeExpression
-            macroData:
-              value: "`Looks like you're from ${inputs.country} (capital -
-                ${inputs.capital})`"
-              label: "`Looks like you're from ${inputs.country} (capital -
-                ${inputs.capital})`"
-          - pos:
-              x: -382.62579538386717
-              y: -65.13273570717877
-            id: xlmmcvlcdpgpix33mv40yzpr
-            inputConfig: {}
-            nodeId: InlineValue__xlmmcvlcdpgpix33mv40yzpr
-            macroId: InlineValue
-            macroData:
-              type: string
-              value: data.capital
-              label: '"data.capital"'
-          - pos:
-              x: -801.60179056088
-              y: 25.242486114137805
-            id: Get Attribute-4p049fr
-            inputConfig:
-              attribute:
-                mode: sticky
-            visibleInputs:
-              - attribute
-              - object
-            nodeId: Get Attribute
-          - pos:
-              x: -460.770003451505
-              y: 18.543191070192492
-            id: ApisCombination-06149he
-            inputConfig:
-              attribute:
-                mode: sticky
-            nodeId: Get Attribute
-          - pos:
-              x: -836.6549243164063
-              y: -82.7263525390625
-            id: ApisCombination-4t249pe
-            inputConfig: {}
-            nodeId: InlineValue__ApisCombination-4t249pe
-            macroId: InlineValue
-            macroData:
-              type: string
-              value: data.name
-              label: '"data.name"'
-        connections:
-          - from:
-              insId: xlmmcvlcdpgpix33mv40yzpr
-              pinId: value
-            to:
-              insId: ApisCombination-06149he
-              pinId: attribute
-          - from:
-              insId: Get Attribute-4p049fr
-              pinId: value
-            to:
-              insId: sznjntqrup6mwx9hr26d58tl
-              pinId: country
-          - from:
-              insId: ApisCombination-4t249pe
-              pinId: value
-            to:
-              insId: Get Attribute-4p049fr
-              pinId: attribute
-          - from:
-              insId: ApisCombination-06149he
-              pinId: value
-            to:
-              insId: sznjntqrup6mwx9hr26d58tl
-              pinId: capital
-          - from:
-              insId: __this
-              pinId: object
-            to:
-              insId: Get Attribute-4p049fr
-              pinId: object
-          - from:
-              insId: __this
-              pinId: object
-            to:
-              insId: ApisCombination-06149he
-              pinId: object
-          - from:
-              insId: sznjntqrup6mwx9hr26d58tl
-              pinId: value
-            to:
-              insId: __this
-              pinId: value
-        id: Formatted Response
-        inputs:
-          object:
-            mode: required
-        outputs:
-          value:
-            delayed: false
-        inputsPosition:
-          object:
-            x: -554.16943359375
-            y: -185.74574279785156
-        outputsPosition:
-          value:
-            x: -593.2343139648438
-            y: 319.9629592895508
-        completionOutputs:
-          - value
-        defaultStyle:
-          size: large
-          color: "#fee440"
-      style:
-        size: large
-        color: "#fee440"
+        value:
+          type: string
+          value: You're in {{response.data.name}}, whose capital is
+            {{response.data.capital}}
   connections:
     - from:
-        insId: GET Request-907
-        pinId: data
-      to:
-        insId: voq2pt830zt74hnzlgjo3oea
-        pinId: data
-    - from:
-        insId: voq2pt830zt74hnzlgjo3oea
-        pinId: value
-      to:
-        insId: POST Request-624
-        pinId: data
-    - from:
-        insId: POST Request-624
-        pinId: data
-      to:
-        insId: Formatted Response-xn049cy
-        pinId: object
-    - from:
-        insId: Formatted Response-xn049cy
+        insId: axr92uotaov2i3jzbsuowiyv
         pinId: value
       to:
         insId: __this
         pinId: output
-  id: ApisCombination
+    - from:
+        insId: a6ystcm1cdas1zdg7e96awid
+        pinId: data
+      to:
+        insId: axr92uotaov2i3jzbsuowiyv
+        pinId: response
+    - from:
+        insId: vph1fv2lncdu30287ctgq53d
+        pinId: data
+      to:
+        insId: a6ystcm1cdas1zdg7e96awid
+        pinId: data
+  id: ExampleHTTPRequest
   inputs: {}
   outputs:
     output:
-      type: any
-      optional: false
       delayed: false
-  inputsPosition:
-    city:
-      x: -187.27285824815934
-      y: -14.13215209416181
+  inputsPosition: {}
   outputsPosition:
-    json:
-      x: -441.98276309426666
-      y: 480.38719404276554
-    na:
-      x: -441.98276309426666
-      y: 480.38719404276554
-    result:
-      x: -499.82438378976735
-      y: 706.7650396699393
     output:
-      x: -618.2645336833217
-      y: 113.21177842592544
-    response:
-      x: -500.61566893722795
-      y: 421.9045791861946
-  completionOutputs:
-    - output
+      x: -70.91838134765625
+      y: 224.53147338867188

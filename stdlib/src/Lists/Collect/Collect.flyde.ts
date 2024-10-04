@@ -1,6 +1,6 @@
 import { InputPinMap, MacroNode, isDefined } from "@flyde/core";
 import { timeToString } from "../../Timing/common";
-import { ConfigurableInput } from "@flyde/core";
+import { ConfigurableInput } from "../../lib/ConfigurableInputEditor";
 
 export type CollectConfigTime = {
   strategy: "time";

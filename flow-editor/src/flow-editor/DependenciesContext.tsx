@@ -3,8 +3,8 @@ import {
   ImportableSource,
   Pos,
   NodeLibraryData,
+  ImportablesResult,
 } from "@flyde/core";
-import type { ImportablesResult } from "@flyde/dev-server";
 import { createContext, useContext } from "react";
 
 // TODO - merge this interface with the one from the dev-server

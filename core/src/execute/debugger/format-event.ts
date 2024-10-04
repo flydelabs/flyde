@@ -13,7 +13,7 @@ function eventBody(event: DebuggerEvent) {
         .map(([pinId, size]) => `${pinId}: ${size}`)
         .join(", ")}`;
     case DebuggerEventType.ERROR:
-      return `Error: ${event.val}`;
+      return `Error: ${JSON.stringify(event.val)}`;
   }
 }
 

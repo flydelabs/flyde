@@ -1,93 +1,115 @@
-import { ConfigurableInput, MacroNode } from "@flyde/core";
 import axios, { AxiosRequestConfig } from "axios";
+import {
+  extractInputsFromValue,
+  improvedMacroToOldMacro,
+  ImprovedMacroNode,
+  replaceInputsInValue,
+  renderConfigurableValue,
+} from "../ImprovedMacros/improvedMacros";
+import { macroConfigurableValue, MacroConfigurableValue } from "@flyde/core";
 
 const namespace = "HTTP";
 
 export interface HttpConfig {
-  method: ConfigurableInput<"GET" | "POST" | "PUT" | "DELETE" | "PATCH">;
-  url: ConfigurableInput<string>;
-  headers: ConfigurableInput<Record<string, string>> | undefined;
-  params: ConfigurableInput<Record<string, string>> | undefined;
-  data: ConfigurableInput<Record<string, any>> | undefined;
+  method: MacroConfigurableValue;
+  url: MacroConfigurableValue;
+  headers?: MacroConfigurableValue;
+  params?: MacroConfigurableValue;
+  data?: MacroConfigurableValue;
 }
 
-export const Http: MacroNode<HttpConfig> = {
+const http: ImprovedMacroNode<HttpConfig> = {
   id: "Http",
+  menuDisplayName: "HTTP Request",
+  defaultConfig: {
+    method: macroConfigurableValue("select", "GET"),
+    url: macroConfigurableValue("string", "https://www.example.com"),
+    headers: macroConfigurableValue("json", {}),
+    params: macroConfigurableValue("json", {}),
+    data: macroConfigurableValue("json", {}),
+  },
   namespace,
-  displayName: "HTTP Request",
-  description: "Performs a HTTP request to a URL and emits the response data",
+  displayName: (config) =>
+    `HTTP ${renderConfigurableValue(
+      config.method,
+      "method"
+    )} to ${renderConfigurableValue(config.url, "url")}`,
+  menuDescription:
+    "Performs a HTTP request to a URL and emits the response data",
+  description: (config) => {
+    let desc = `Performs a HTTP ${config.method.value} request to ${config.url.value}`;
+    if (Object.keys(config.headers.value || {}).length > 0) {
+      desc += ` with custom headers`;
+    }
+    if (Object.keys(config.params.value || {}).length > 0) {
+      desc += `, including query parameters`;
+    }
+    if (Object.keys(config.data.value || {}).length > 0) {
+      desc += `, and request body data`;
+    }
+    return desc;
+  },
   defaultStyle: {
     icon: "globe",
   },
-  runFnBuilder: (config) => {
-    return (inputs, outputs, adv) => {
-      const { method, url, headers, params, data } = config;
-      const methodValue =
-        method.mode === "dynamic" ? inputs.method : method.value;
-      const urlValue = url.mode === "dynamic" ? inputs.url : url.value;
-      const headersValue =
-        headers?.mode === "dynamic" ? inputs.headers : headers?.value;
-      const paramsValue =
-        params?.mode === "dynamic" ? inputs.params : params?.value;
-      const dataValue = data?.mode === "dynamic" ? inputs.data : data?.value;
-      const requestConfig: AxiosRequestConfig = {
-        method: methodValue,
-        headers: headersValue,
-        params: paramsValue,
+  inputs: (config) => {
+    return Object.keys(config).reduce((acc, key) => {
+      return {
+        ...acc,
+        ...extractInputsFromValue(config[key], key),
       };
-      return axios
-        .request({ url: urlValue, data: dataValue, ...requestConfig })
-        .then((res) => outputs.data!.next(res.data))
-        .catch((e) => adv.onError(e));
-    };
+    }, {});
   },
-  definitionBuilder: (config) => {
-    const inputs = Object.entries(config)
-      .filter(([_, v]) => v.mode === "dynamic")
-      .map(([k]) => k);
+  outputs: {
+    data: {
+      description: "Emits the response data",
+    },
+  },
+  run: (inputs, outputs, adv) => {
+    const { method, url, headers, params, data } = adv.context.config;
 
-    const method =
-      config.method.mode === "static" ? config.method.value : undefined;
-    const methodStr = method ? ` ${method}` : "";
+    const urlValue = replaceInputsInValue(inputs, url, "url");
+    const headersValue = replaceInputsInValue(inputs, headers, "headers");
+    const paramsValue = replaceInputsInValue(inputs, params, "params");
+    const dataValue = replaceInputsInValue(inputs, data, "data");
+    const methodValue = replaceInputsInValue(inputs, method, "method");
 
-    const urlStr =
-      config.url.mode === "static"
-        ? ` ${config.url.value.replace(/https?\:\/\//, "")}`
-        : "";
-    return {
-      displayName: `HTTP${methodStr}${urlStr}`,
-      description: `Performs a ${methodStr} HTTP request to ${
-        config.url.mode === "static" ? config.url.value : "the received URL"
-      } and emits the response data`,
-      inputs: Object.fromEntries(inputs.map((input) => [input, {}])),
-      outputs: {
-        data: {
-          displayName: "Data",
-          description: "Emits the response data",
-        },
-      },
+    const requestConfig: AxiosRequestConfig = {
+      url: urlValue,
+      method: methodValue,
+      headers: headersValue,
+      params: paramsValue,
     };
+
+    if (methodValue !== "GET") {
+      requestConfig.data = dataValue;
+    }
+    return axios
+      .request(requestConfig)
+      .then((res) => outputs.data.next(res.data))
+      .catch((e) => {
+        if (e.response) {
+          adv.onError(
+            `HTTP Error ${e.response.status}: ${e.response.statusText}`
+          );
+        } else if (e.request) {
+          adv.onError("No response received from the server");
+        } else {
+          adv.onError(`Error: ${e.message}`);
+        }
+      });
   },
-  defaultData: {
-    method: { mode: "static", value: "GET" },
-    url: { mode: "static", value: "https://www.example.com" },
-    headers: { mode: "static", value: {} },
-    params: { mode: "static", value: {} },
-    data: { mode: "static", value: {} },
-  },
-  editorConfig: {
+  configEditor: {
     type: "structured",
     fields: [
       {
-        type: { value: "string" },
+        type: "string",
         configKey: "url",
         label: "URL",
-        defaultValue: "https://www.example.com",
-        allowDynamic: true,
       },
       {
-        type: {
-          value: "select",
+        type: "select",
+        typeData: {
           items: ["GET", "POST", "PUT", "DELETE", "PATCH"].map((i) => ({
             label: i,
             value: i,
@@ -95,30 +117,24 @@ export const Http: MacroNode<HttpConfig> = {
         },
         configKey: "method",
         label: "Method",
-        defaultValue: "GET",
-        allowDynamic: true,
       },
       {
-        type: { value: "json", label: "" },
-        configKey: "headers",
-        label: "Headers",
-        defaultValue: {},
-        allowDynamic: true,
-      },
-      {
-        type: { value: "json" },
-        configKey: "params",
-        label: "Query Parameters",
-        defaultValue: {},
-        allowDynamic: true,
-      },
-      {
-        type: { value: "json" },
+        type: "json",
         configKey: "data",
         label: "Request Body",
-        defaultValue: {},
-        allowDynamic: true,
+      },
+      {
+        type: "json",
+        configKey: "headers",
+        label: "Headers",
+      },
+      {
+        type: "json",
+        configKey: "params",
+        label: "Query Parameters",
       },
     ],
   },
 };
+
+export const Http = improvedMacroToOldMacro(http);

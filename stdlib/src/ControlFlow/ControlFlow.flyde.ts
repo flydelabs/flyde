@@ -1,7 +1,8 @@
-import { CodeNode, MacroNode, OutputPinMap } from "@flyde/core";
+import { CodeNode } from "@flyde/core";
 
 export * from "./Conditional.flyde";
 export * from "./Switch.flyde";
+export * from "./RoundRobin.flyde";
 
 const PubSub = require("pubsub-js");
 
@@ -41,70 +42,6 @@ export const LimitTimes: CodeNode = {
     } else {
       ok.next(item);
     }
-  },
-};
-
-export const RoundRobin: MacroNode<{ count: number }> = {
-  id: "RoundRobin",
-  defaultStyle: {
-    icon: "rotate",
-  },
-  displayName: "Round Robin",
-  namespace,
-  defaultData: { count: 3 },
-  definitionBuilder: ({ count }) => {
-    return {
-      displayName: `Round Robin ${count}`,
-      description: `Item will be emitted to one of the ${count} outputs in a round robin fashion`,
-      inputs: { value: { mode: "required", description: "The value to emit" } },
-      completionOutputs: [],
-      reactiveInputs: ["value"],
-      outputs: Array.from({ length: count }).reduce<OutputPinMap>(
-        (obj, _, i) => ({
-          ...obj,
-          [`r${i + 1}`]: {
-            description: `The ${
-              i + 1
-            } output in order to emit the value received. After emitting a value, it moves to "r${
-              (i + 2) % count
-            }"'s turn.`,
-          },
-        }),
-        {}
-      ),
-    };
-  },
-  runFnBuilder: ({ count }) => {
-    return (inputs, _outputs, adv) => {
-      const { state } = adv;
-
-      const outputs = Array.from({ length: count }).map(
-        (_, i) => _outputs[`r${i + 1}`]
-      );
-
-      const curr = state.get("curr") || 0;
-
-      const o = outputs[curr];
-
-      const nextCurr = (curr + 1) % count;
-
-      state.set("curr", nextCurr);
-      o.next(inputs.item);
-    };
-  },
-  editorConfig: {
-    type: "structured",
-    fields: [
-      {
-        type: {
-          value: "number",
-        },
-        configKey: "count",
-        label: "Count",
-        defaultValue: 3,
-        allowDynamic: false,
-      },
-    ],
   },
 };
 

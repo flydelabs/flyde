@@ -7,11 +7,11 @@ export interface CodeExpressionConfig {
 
 export const CodeExpression: MacroNode<CodeExpressionConfig> = {
   id: "CodeExpression",
-  displayName: "Function",
+  displayName: "JS Expression",
   defaultStyle: {
     icon: "code",
   },
-  description: "A static value or JS expression",
+  description: "Evaluates a JS expression. Supports dynamic variables",
 
   runFnBuilder: (config) => {
     return (inputs, outputs, adv) => {
@@ -24,7 +24,7 @@ export const CodeExpression: MacroNode<CodeExpressionConfig> = {
     };
   },
   definitionBuilder: (config) => {
-    const inputNames = getVariables(config.value);
+    const inputNames = getVariables(config.value ?? "");
     return {
       defaultStyle: {
         size: "small",

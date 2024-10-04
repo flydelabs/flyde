@@ -13,8 +13,8 @@ node:
       macroId: Delay
       macroData:
         delayMs:
+          type: number
           value: 3000
-          mode: static
       style:
         size: small
         icon: fa-clock
@@ -27,9 +27,15 @@ node:
       nodeId: InlineValue__qi81a3d3zqj4reik3qaogcx9
       macroId: InlineValue
       macroData:
-        type: string
-        value: Hello
-        label: '"Hello"'
+        type:
+          type: string
+          value: string
+        value:
+          type: string
+          value: Hello
+        label:
+          type: string
+          value: '"Hello"'
       style:
         size: regular
         icon: pen
@@ -41,9 +47,15 @@ node:
       nodeId: InlineValue__ApisCombination-o5049mg
       macroId: InlineValue
       macroData:
-        type: string
-        value: World!
-        label: '"World!"'
+        type:
+          type: string
+          value: string
+        value:
+          type: string
+          value: World!
+        label:
+          type: string
+          value: '"World!"'
       style:
         size: regular
         icon: pen

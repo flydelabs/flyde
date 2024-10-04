@@ -2,7 +2,7 @@ import { MacroNodeDefinition } from "@flyde/core";
 import React from "react";
 import * as Blueprint from "@blueprintjs/core";
 import * as BlueprintSelect from "@blueprintjs/select";
-import { buildStructuredMacroEditorComp } from "./buildStructuredMacroEditor";
+import { StructuredMacroEditorComp } from "./StructuredMacroEditorComp";
 
 export function loadMacroEditor(
   macroNode: MacroNodeDefinition<any>
@@ -51,6 +51,6 @@ export function loadMacroEditor(
       };
     }
   } else {
-    return buildStructuredMacroEditorComp(editorConfig);
+    return StructuredMacroEditorComp(editorConfig);
   }
 }

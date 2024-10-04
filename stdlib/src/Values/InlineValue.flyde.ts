@@ -1,45 +1,44 @@
-import { MacroNode } from "@flyde/core";
+import { macroConfigurableValue, MacroConfigurableValue } from "@flyde/core";
+import {
+  extractInputsFromValue,
+  improvedMacroToOldMacro,
+  replaceInputsInValue,
+} from "../ImprovedMacros/improvedMacros";
 
 export interface InlineValueConfig {
-  type: "string" | "boolean" | "number" | "json";
-  value: string;
+  value: MacroConfigurableValue;
 }
 
-export const InlineValue: MacroNode<InlineValueConfig> = {
+export const InlineValue = improvedMacroToOldMacro<InlineValueConfig>({
   id: "InlineValue",
-  displayName: "Value",
+  defaultConfig: {
+    value: macroConfigurableValue("string", "Hello, {{name}}"),
+  },
+  inputs: (config) => extractInputsFromValue(config.value, "value"),
+  outputs: {
+    value: {
+      description: "Emits the value configured",
+    },
+  },
+  menuDisplayName: "Inline Value",
+  menuDescription:
+    "Emits a value each time it's called. Supports dynamic variables",
   defaultStyle: {
-    icon: "pen",
+    icon: "pencil",
   },
-  description: "A static value or JS expression",
-  runFnBuilder: (config) => {
-    return (_, outputs) => {
-      outputs.value.next(config.value);
-    };
+  displayName: (config) => JSON.stringify(config.value.value),
+  description: (config) =>
+    `Emits the value \`${JSON.stringify(config.value.value)}\``,
+  run: (inputs, outputs, ctx) => {
+    const value = replaceInputsInValue(
+      inputs,
+      ctx.context.config.value,
+      "value"
+    );
+    outputs.value.next(value);
   },
-  definitionBuilder: (config) => {
-    return {
-      defaultStyle: {
-        size: "small",
-        icon: "pen",
-      },
-      displayName: JSON.stringify(config.value),
-      description: `Emits the value \`${JSON.stringify(config.value)}\``,
-      inputs: {},
-      outputs: {
-        value: {
-          displayName: "Value",
-          description: "Emits the value configured",
-        },
-      },
-    };
-  },
-  defaultData: {
-    type: "string",
-    value: "Hello",
-  },
-  editorConfig: {
+  configEditor: {
     type: "custom",
     editorComponentBundlePath: "../../dist/ui/InlineValue.js",
   },
-};
+});

@@ -16,7 +16,7 @@ import {
   MacroNodeDefinition,
   isMacroNodeInstance,
   isBaseNode,
-  Node,
+  processMacroNodeInstance,
 } from "@flyde/core";
 import { existsSync, readFileSync } from "fs";
 import _ = require("lodash");
@@ -29,7 +29,6 @@ import * as _StdLib from "@flyde/stdlib/dist/all";
 
 import requireReload from "require-reload";
 import { macroNodeToDefinition } from "./macro-node-to-definition";
-import { processMacroNodeInstance } from "./process-macro-node-instance";
 
 const StdLib = Object.values(_StdLib).reduce<Record<string, any>>(
   (acc, curr) => {

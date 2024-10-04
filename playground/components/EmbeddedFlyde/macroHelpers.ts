@@ -7,8 +7,8 @@ import {
   isMacroNode,
   isMacroNodeInstance,
   isVisualNode,
+  processMacroNodeInstance,
 } from "@flyde/core";
-import { processMacroNodeInstance } from "@flyde/resolver/dist/resolver/resolve-dependencies/process-macro-node-instance";
 
 export function getMacroData(node: VisualNode): any[] {
   return node.instances.flatMap((ins) => {

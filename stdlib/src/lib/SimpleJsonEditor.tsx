@@ -4,7 +4,7 @@ import React, { useCallback } from "react";
 export function SimpleJsonEditor(props: {
   value: any;
   onChange: (value: any) => void;
-  label: string;
+  label?: string;
 }) {
   const [tempDataValue, setTempDataValue] = React.useState<string>(
     JSON.stringify(props.value, null, 2)

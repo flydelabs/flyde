@@ -1,5 +1,4 @@
-import { FlydeFlow } from "@flyde/core";
-import { FlowJob } from "./shared";
+import { FlowJob, FlydeFlow } from "@flyde/core";
 import { createId } from "@paralleldrive/cuid2";
 import { loadFlowFromContent } from "@flyde/runtime";
 

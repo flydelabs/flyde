@@ -8,7 +8,7 @@ imports:
 node:
   instances:
     - pos:
-        x: -884.2089672851562
+        x: -885.5499096679687
         y: -298.4133969348638
       id: wj31gd73i5l111q999pv4kor
       inputConfig: {}
@@ -19,21 +19,21 @@ node:
       macroId: Throttle
       macroData:
         delayMs:
-          value: 3000
-          mode: static
+          type: number
+          value: 1500
       style:
         size: regular
     - pos:
-        x: -1090.1673413085937
-        y: -297.6969967883794
+        x: -1139.2979565429687
+        y: -297.5884762805669
       id: eaa2b80mmdusjvxi3fve0du1
       inputConfig: {}
       nodeId: Debounce__eaa2b80mmdusjvxi3fve0du1
       macroId: Debounce
       macroData:
         delayMs:
-          value: 2000
-          mode: static
+          type: number
+          value: 700
     - pos:
         x: -781.8923828125
         y: -170.0860384469086
@@ -42,9 +42,15 @@ node:
       nodeId: InlineValue__scs3pycv9lz28ykunbkqn9to
       macroId: InlineValue
       macroData:
-        type: string
-        value: ❌
-        label: '"❌"'
+        type:
+          type: string
+          value: string
+        value:
+          type: string
+          value: ❌
+        label:
+          type: string
+          value: '"❌"'
       style:
         size: small
         icon: pen
@@ -57,9 +63,15 @@ node:
       nodeId: InlineValue__ApisCombination-3k049q4
       macroId: InlineValue
       macroData:
-        type: string
-        value: 🕐
-        label: '"🕐"'
+        type:
+          type: string
+          value: string
+        value:
+          type: string
+          value: 🕐
+        label:
+          type: string
+          value: '"🕐"'
       style:
         size: small
         icon: pen
@@ -72,11 +84,11 @@ node:
       macroId: Interval
       macroData:
         time:
-          value: 2500
-          mode: static
+          type: number
+          value: 1000
         value:
+          type: string
           value: ⭐️
-          mode: static
     - pos:
         x: -917.6480712890625
         y: -90.7339411755601
@@ -99,9 +111,15 @@ node:
       nodeId: InlineValue__DebounceThrottle-xy049dv
       macroId: InlineValue
       macroData:
-        type: string
-        value: ✅
-        label: '"✅"'
+        type:
+          type: string
+          value: string
+        value:
+          type: string
+          value: ✅
+        label:
+          type: string
+          value: '"✅"'
       style:
         size: small
         icon: pen

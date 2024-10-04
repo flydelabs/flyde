@@ -1,6 +1,18 @@
 import { Radio, RadioGroup } from "@blueprintjs/core";
 import React from "react";
-import { ConfigurableInput } from "@flyde/core";
+
+export type ConfigurableInputStatic<T> = {
+  mode: "static";
+  value: T;
+};
+
+export type ConfigurableInputDynamic = {
+  mode: "dynamic";
+};
+
+export type ConfigurableInput<T> =
+  | ConfigurableInputStatic<T>
+  | ConfigurableInputDynamic;
 
 export interface ValueCompProps<T> {
   value: T;

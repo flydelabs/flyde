@@ -1,6 +1,7 @@
-import { CodeNode, MacroNode } from "@flyde/core";
-
+import { CodeNode } from "@flyde/core";
 export { Collect } from "./Collect/Collect.flyde";
+export { ListFrom } from "./ListFrom.flyde";
+export { SpreadList } from "./SpreadList.flyde";
 
 const namespace = "Lists";
 
@@ -61,43 +62,6 @@ export const Repeat: CodeNode = {
       result.push(value);
     }
     return list.next(result);
-  },
-};
-
-export const ListFrom: MacroNode<{ count: number }> = {
-  id: "ListFrom",
-  namespace,
-  runFnBuilder:
-    ({ count }) =>
-    (inputs, { list }) => {
-      const result = [];
-      for (let i = 0; i < count; i++) {
-        result.push(inputs[`item${i + 1}`]);
-      }
-      return list.next(result);
-    },
-  definitionBuilder: ({ count }) => ({
-    description: `Creates a list from ${count} values`,
-    displayName: `List from ${count}`,
-    inputs: Object.fromEntries(
-      Array.from({ length: count }, (_, i) => [`item${i + 1}`, {}])
-    ),
-    outputs: { list: { description: "List containing all values" } },
-  }),
-  defaultData: { count: 3 },
-  editorConfig: {
-    type: "structured",
-    fields: [
-      {
-        type: {
-          value: "number",
-        },
-        configKey: "count",
-        label: "Count",
-        defaultValue: 3,
-        allowDynamic: false,
-      },
-    ],
   },
 };
 
@@ -175,47 +139,6 @@ export const HeadAndRest: CodeNode = {
     const { head, rest } = outputs;
     head.next(list[0]);
     rest.next(list.slice(1));
-  },
-};
-
-export const SpreadList: MacroNode<{ count: number }> = {
-  id: "SpreadList",
-  namespace,
-  defaultStyle: {
-    icon: "sitemap",
-  },
-  displayName: "Spread List",
-  description: "Spreads a list into multiple outputs",
-  runFnBuilder:
-    ({ count }) =>
-    (inputs, outputs) => {
-      const { list } = inputs;
-      for (let i = 0; i < count; i++) {
-        outputs[`item${i + 1}`].next(list[i]);
-      }
-    },
-  definitionBuilder: ({ count }) => ({
-    description: `Receives a list with ${count} items and emits ${count} outputs: the first item, the second item, and so on`,
-    displayName: `Spreads List of ${count}`,
-    inputs: { list: { description: "The list" } },
-    outputs: Object.fromEntries(
-      Array.from({ length: count }, (_, i) => [`item${i + 1}`, {}])
-    ),
-  }),
-  defaultData: { count: 3 },
-  editorConfig: {
-    type: "structured",
-    fields: [
-      {
-        type: {
-          value: "number",
-        },
-        configKey: "count",
-        label: "Count",
-        defaultValue: 3,
-        allowDynamic: false,
-      },
-    ],
   },
 };
 

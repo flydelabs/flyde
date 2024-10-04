@@ -31,7 +31,6 @@ export function EmbeddedFlydeFileWrapper(props: EmbeddedFlydeFileWrapperProps) {
     if (parsed.type === "ok") {
       const isChanged = JSON.stringify(parsed.data) !== JSON.stringify(flow);
       if (!flow || isChanged) {
-        console.log("isChanged", isChanged);
         setFlow(parsed.data);
       }
     } else {

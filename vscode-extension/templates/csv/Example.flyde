@@ -71,9 +71,15 @@ node:
             nodeId: InlineValue__Parse CSV-lz0496s
             macroId: InlineValue
             macroData:
-              value: ","
-              type: string
-              label: '","'
+              value:
+                type: string
+                value: ","
+              type:
+                type: string
+                value: string
+              label:
+                type: string
+                value: '","'
           - pos:
               x: 1.8964953613281352
               y: -362.0457109563053
@@ -210,8 +216,8 @@ node:
             inputConfig: {}
             nodeId: Parse Int
           - pos:
-              x: -193.59365478515628
-              y: 356.2506675313104
+              x: -227.98379150390628
+              y: 336.4735145161737
             id: xiusd3g6bhi8nw3h50gvkz7q
             inputConfig:
               compareTo:
@@ -220,15 +226,22 @@ node:
             macroId: Conditional
             macroData:
               compareTo:
-                mode: dynamic
-                propertyPath: ""
-              propertyPath: "1"
+                type: dynamic
+              propertyPath:
+                type: string
+                value: "1"
               condition:
                 type: EQUAL
               trueValue:
                 type: value
               falseValue:
                 type: value
+              leftOperand:
+                type: string
+                value: "{{value.continent}}"
+              rightOperand:
+                type: string
+                value: "{{continent}}"
           - pos:
               x: -36.846899414062506
               y: 393.65142558795105
@@ -237,9 +250,15 @@ node:
             nodeId: InlineValue__k537z31orw8cwh8emq1ukhs8
             macroId: InlineValue
             macroData:
-              value: 3
-              type: number
-              label: "3"
+              value:
+                type: number
+                value: 3
+              type:
+                type: string
+                value: number
+              label:
+                type: string
+                value: "3"
           - pos:
               x: -239.2752465820313
               y: 714.719063221283
@@ -251,7 +270,7 @@ node:
               strategy: time
               time:
                 mode: static
-                timeMs: 100
+                value: 2000
         connections:
           - from:
               insId: __this
@@ -265,18 +284,6 @@ node:
             to:
               insId: Get Prices By Continent-cs0461a
               pinId: str
-          - from:
-              insId: __this
-              pinId: value
-            to:
-              insId: xiusd3g6bhi8nw3h50gvkz7q
-              pinId: compareTo
-          - from:
-              insId: clfutxtvk00174668slofeqax
-              pinId: item
-            to:
-              insId: xiusd3g6bhi8nw3h50gvkz7q
-              pinId: value
           - from:
               insId: xiusd3g6bhi8nw3h50gvkz7q
               pinId: "true"
@@ -315,8 +322,8 @@ node:
             x: -224.4720619253199
             y: -6.734161457821966
           value:
-            x: 34.775870532686554
-            y: -18.943240165004866
+            x: 28.829459399874054
+            y: -16.001467704067352
         outputsPosition:
           accumulated:
             x: -203.37937417252186
@@ -331,9 +338,15 @@ node:
       nodeId: InlineValue__oy7esxhnpcl5dje5f2p035ur
       macroId: InlineValue
       macroData:
-        type: string
-        value: utf-8
-        label: '"utf-8"'
+        type:
+          type: string
+          value: string
+        value:
+          type: string
+          value: utf-8
+        label:
+          type: string
+          value: '"utf-8"'
     - pos:
         x: -241.46504150390626
         y: -198.59092163085938
@@ -342,9 +355,15 @@ node:
       nodeId: InlineValue__CsvExample-ek049t4
       macroId: InlineValue
       macroData:
-        type: string
-        value: data/sales.csv
-        label: '"data/sales.csv"'
+        type:
+          type: string
+          value: string
+        value:
+          type: string
+          value: data/sales.csv
+        label:
+          type: string
+          value: '"data/sales.csv"'
     - pos:
         x: 53.1795654296875
         y: 124.39317321777344
@@ -353,9 +372,15 @@ node:
       nodeId: InlineValue__wwh26ryrt4yqh71m26vevjyj
       macroId: InlineValue
       macroData:
-        type: string
-        value: Europe
-        label: '"Europe"'
+        type:
+          type: string
+          value: string
+        value:
+          type: string
+          value: Europe
+        label:
+          type: string
+          value: '"Europe"'
   connections:
     - from:
         insId: clfuqs69n00014668p8jg106j

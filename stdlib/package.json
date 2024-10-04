@@ -14,6 +14,7 @@
   "license": "MIT",
   "dependencies": {
     "@blueprintjs/core": "^5.0.0",
+    "@blueprintjs/icons": "^5.13.0",
     "@blueprintjs/select": "^5.0.20",
     "@flyde/core": "workspace:*",
     "@types/pg": "^8.10.2",

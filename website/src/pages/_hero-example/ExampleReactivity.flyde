@@ -14,7 +14,9 @@ node:
       nodeId: RoundRobin__oeum6dqgsprbuef0p9s3b1ye
       macroId: RoundRobin
       macroData:
-        count: 3
+        count:
+          type: number
+          value: 3
     - pos:
         x: -713.3349495675956
         y: -257.26351840624795
@@ -23,9 +25,15 @@ node:
       nodeId: InlineValue__rh3ug7oqoze1rvn4k17kc556
       macroId: InlineValue
       macroData:
-        type: string
-        value: beep
-        label: '"beep"'
+        type:
+          type: string
+          value: string
+        value:
+          type: string
+          value: beep
+        label:
+          type: string
+          value: '"beep"'
       style:
         size: small
         icon: pen
@@ -37,9 +45,15 @@ node:
       nodeId: InlineValue__ApisCombination-69049ap
       macroId: InlineValue
       macroData:
-        type: string
-        value: boop
-        label: '"boop"'
+        type:
+          type: string
+          value: string
+        value:
+          type: string
+          value: boop
+        label:
+          type: string
+          value: '"boop"'
       style:
         size: small
         icon: pen
@@ -51,9 +65,15 @@ node:
       nodeId: InlineValue__ApisCombination-ts149e2
       macroId: InlineValue
       macroData:
-        type: string
-        value: bop
-        label: '"bop"'
+        type:
+          type: string
+          value: string
+        value:
+          type: string
+          value: bop
+        label:
+          type: string
+          value: '"bop"'
       style:
         size: small
         icon: pen
@@ -78,11 +98,11 @@ node:
       macroId: Interval
       macroData:
         time:
-          value: 3000
-          mode: static
+          type: number
+          value: 1500
         value:
+          type: string
           value: 🤖
-          mode: static
       style:
         size: small
   connections:
