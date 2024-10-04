@@ -48,12 +48,23 @@ describe("Hero examples", () => {
   }).timeout(6000);
 
   it("runs http example", async () => {
+    // Mock the first API call to get the country
     nock("https://api.country.is").get("/").reply(200, { country: "IL" });
+
+    // Mock the second API call to get the capital
+    nock("https://countriesnow.space")
+      .post("/api/v0.1/countries/capital", { iso2: "IL" })
+      .reply(200, {
+        data: {
+          name: "Denmark",
+          capital: "Copenhagen",
+        },
+      });
 
     const execute = await loadFlow("./ExampleHTTPRequests.flyde", __dirname);
 
     const { output } = await execute().result;
 
-    assert.deepEqual(output, "You're in Israel, whose capital is Jerusalem");
+    assert.deepEqual(output, "You're in Denmark, whose capital is Copenhagen");
   }).timeout(6000);
 });
