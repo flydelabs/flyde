@@ -36,7 +36,7 @@ async function bundleMacros() {
     const bundle = await fs.readFile(join(probePathStart, fileName), "utf-8");
     try {
       // Use Buffer to handle non-ASCII characters
-      acc[macro.id] = Buffer.from(bundle).toString("base64");
+      acc[macro.id] = Buffer.from(bundle, "utf-8").toString("base64");
     } catch (e) {
       throw new Error(`Failed to bundle macro ${macro.id}: ${e}`);
     }
