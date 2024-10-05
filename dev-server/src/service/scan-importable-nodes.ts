@@ -82,7 +82,10 @@ export async function scanImportableNodes(
 
         const relativePath = relative(join(fileRoot, ".."), file.fullPath);
 
-        return { ...acc, [relativePath]: { [flow.node.id]: flow.node } };
+        acc[relativePath] ??= {};
+        acc[relativePath][flow.node.id] = flow.node;
+
+        return acc;
       } catch (e) {
         allErrors.push({
           path: file.fullPath,
