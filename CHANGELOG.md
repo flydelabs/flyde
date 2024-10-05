@@ -2,6 +2,33 @@
 
 All notable changes to Flyde will be documented in this file.
 
+## [0.105.0] - 2024-10-05
+
+## What's Changed
+
+- various ux tweaks by @GabiGrin in https://github.com/flydelabs/flyde/pull/159
+- improved macro node by @GabiGrin in https://github.com/flydelabs/flyde/pull/162
+- Update JSONStringify.flyde.ts by @akim-muto in https://github.com/flydelabs/flyde/pull/163
+
+### Breaking changes
+
+- Most macro nodes in the stdlib were converted to [an improved version](https://github.com/flydelabs/flyde/blob/main/stdlib/src/ImprovedMacros/improvedMacros.ts), most cases should be fixed automatically by [this migration](https://github.com/flydelabs/flyde/blob/main/resolver/src/serdes/migrations/macroNodeV2.ts)
+- Conditional node was simplified and changed (see #162 -> Conditional), will require manual fixing
+
+**Full Changelog**: https://github.com/flydelabs/flyde/compare/v0.104.0...v0.105.0
+
+## [0.104.0] - 2024-09-15
+
+## What's Changed
+
+- support longtext in macro editor by @GabiGrin in https://github.com/flydelabs/flyde/pull/153
+- macro editor tweaks by @GabiGrin in https://github.com/flydelabs/flyde/pull/155
+- fixes dragging main pin ends being selected + ability to connect main input to output by @GabiGrin in https://github.com/flydelabs/flyde/pull/154
+- simplify value and function node by @GabiGrin in https://github.com/flydelabs/flyde/pull/156
+- various tweaks by @GabiGrin in https://github.com/flydelabs/flyde/pull/157
+
+**Full Changelog**: https://github.com/flydelabs/flyde/compare/v0.103.0...v0.104.0
+
 ## [0.103.0] - 2024-09-08
 
 - allow panning using space+drag, adds onboarding tips by @GabiGrin in https://github.com/flydelabs/flyde/pull/152, fixes #60
