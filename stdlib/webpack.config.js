@@ -11,7 +11,7 @@ const pairs = [
 
 module.exports = pairs.map(({ entry, name }) => ({
   entry,
-  mode: "development",
+  mode: "production",
   output: {
     path: path.resolve(__dirname, "dist", "ui"),
     filename: name + ".js",
