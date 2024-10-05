@@ -107,12 +107,12 @@ const config = {
       ({
         docs: {
           sidebarPath: require.resolve("./sidebars.js"),
-          editUrl: "https://github.com/flydelabs/flyde/tree/main/website/docs",
+          editUrl: "https://github.com/flydelabs/flyde/tree/main/website",
         },
         blog: {
           showReadingTime: true,
 
-          editUrl: "https://github.com/flydelabs/flyde/tree/main/website/blog",
+          editUrl: "https://github.com/flydelabs/flyde/tree/main/website",
         },
         theme: {
           customCss: [
