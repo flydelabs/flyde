@@ -11,5 +11,5 @@ export const JSONStringify: CodeNode = {
   description: "Stringifies an object into a JSON string",
   inputs: { object: { description: "Object to stringify" } },
   outputs: { json: { description: "The stringified JSON" } },
-  run: ({ object }, { json }) => json.next(JSON.stringify(object)),
+  run: ({ object }, { json }) => json.next(JSON.stringify(object, null, "\t")),
 };
