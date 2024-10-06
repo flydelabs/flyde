@@ -26,6 +26,9 @@ $output-color: #ffd5c9;
 $black: #000000;
 $white: #ffffff;
 
+$selected-light: #9bd0ff;
+$selected-dark: darken($selected-light, 10%);
+
 @mixin base-node($bg-color: white) {
   font-family: $font-family;
   border: 2px solid;
@@ -37,6 +40,7 @@ $white: #ffffff;
   padding: 10px 30px 10px;
   line-height: 1;
   transition: background-color ease-in-out 0.1s, box-shadow ease-in-out 0.2s;
+  will-change: background-color, box-shadow;
   max-width: 400px;
   white-space: nowrap;
   overflow: hidden;
@@ -51,13 +55,6 @@ $white: #ffffff;
 
   position: relative;
   z-index: 1; // added so that it is above pin view when it is retracted when minimized
-
-  // &:not(.selected) {
-  //   &:hover,
-  //   &.closest {
-  //     // border-style: dashed;
-  //   }
-  // }
 
   &:not(.dark) {
     svg {
@@ -87,7 +84,7 @@ $white: #ffffff;
     &.selected {
       border-color: $gray-800;
       border-style: solid;
-      background: white;
+      background: $selected-light;
       // color: $selection-text-color;
 
       transition: background-color ease-in-out 0.05s;
@@ -108,9 +105,9 @@ $white: #ffffff;
     }
 
     &.selected {
-      border-color: $neutral-200;
+      border-color: $selected-dark;
       border-style: solid;
-      background: $neutral-900;
+      background: $selected-dark;
       // color: $selection-text-color;
 
       transition: background-color ease-in-out 0.05s;
