@@ -4,7 +4,7 @@ import {
   improvedMacroToOldMacro,
   ImprovedMacroNode,
   replaceInputsInValue,
-} from "../ImprovedMacros/improvedMacros";
+} from "../../ImprovedMacros/improvedMacros";
 
 export enum ConditionType {
   Equal = "EQUAL",
@@ -81,21 +81,27 @@ const conditional: ImprovedMacroNode<ConditionalConfig> = {
     const { condition, leftOperand, rightOperand } = adv.context.config;
     const { true: trueOutput, false: falseOutput } = outputs;
 
-    const leftSide = replaceInputsInValue(inputs, leftOperand, "leftOperand");
+    const leftSide = replaceInputsInValue(
+      inputs,
+      leftOperand,
+      "leftOperand",
+      false
+    );
     const rightSide = replaceInputsInValue(
       inputs,
       rightOperand,
-      "rightOperand"
+      "rightOperand",
+      false
     );
 
     const result = calculateCondition(leftSide, rightSide, condition);
 
     const outputToUse = result ? trueOutput : falseOutput;
-    outputToUse.next(inputs.value);
+    outputToUse.next(leftSide);
   },
   configEditor: {
     type: "custom",
-    editorComponentBundlePath: "../../dist/ui/Conditional.js",
+    editorComponentBundlePath: "../../../dist/ui/Conditional.js",
   },
 };
 

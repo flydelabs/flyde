@@ -3,7 +3,10 @@ const path = require("path");
 const pairs = [
   { entry: "./src/Values/InlineValue.tsx", name: "InlineValue" },
   { entry: "./src/Values/CodeExpression.tsx", name: "CodeExpression" },
-  { entry: "./src/ControlFlow/Conditional.tsx", name: "Conditional" },
+  {
+    entry: "./src/ControlFlow/Conditional/Conditional.tsx",
+    name: "Conditional",
+  },
   { entry: "./src/ControlFlow/Switch.tsx", name: "Switch" },
   { entry: "./src/Lists/Collect/Collect.tsx", name: "Collect" },
   { entry: "./src/Misc/Comment/Comment.tsx", name: "Comment" },

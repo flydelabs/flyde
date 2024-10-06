@@ -3,7 +3,7 @@ import { ConditionType, ConditionalConfig } from "./Conditional.flyde";
 import React from "react";
 import { MacroEditorComp, MacroEditorFieldDefinition } from "@flyde/core";
 
-import { MacroConfigurableFieldEditor } from "../lib/MacroConfigurableFieldEditor/MacroConfigurableFieldEditor";
+import { MacroConfigurableFieldEditor } from "../../lib/MacroConfigurableFieldEditor/MacroConfigurableFieldEditor";
 
 const conditionEnumToLabel: Record<
   ConditionalConfig["condition"]["type"],
