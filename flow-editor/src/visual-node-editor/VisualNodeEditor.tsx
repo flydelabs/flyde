@@ -278,6 +278,8 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         [onChangeBoardData]
       );
 
+      const isLikelyTrackpad = React.useRef(false);
+
       const _onInspectPin = React.useCallback<
         VisualNodeEditorProps["onInspectPin"]
       >(
@@ -296,6 +298,11 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           return () => clearTimeout(t);
         }
       }, [lastSelectedId]);
+
+      const onTouchMove = React.useCallback((e: React.TouchEvent) => {
+        console.log("onTouchMove", e);
+        isLikelyTrackpad.current = true;
+      }, []);
 
       const boardRef = useRef<HTMLDivElement>();
       const vpSize: Size = useComponentSize(boardRef);
@@ -782,22 +789,32 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
       const onMaybeZoomOrPan = React.useCallback(
         (e: WheelEvent) => {
-          if (e.metaKey || e.ctrlKey) {
-            const zoomDiff = e.deltaY * -0.005;
-            onZoom(viewPort.zoom + zoomDiff, "mouse");
-            e.preventDefault();
-            e.stopPropagation();
-          } else {
-            const dx = e.deltaX;
-            const dy = e.deltaY;
+          if (Math.abs(e.deltaX) > 0) {
+            isLikelyTrackpad.current = true;
+          }
 
-            const newViewPort = produce(viewPort, (vp) => {
-              vp.pos.x = vp.pos.x + dx / vp.zoom;
-              vp.pos.y = vp.pos.y + dy / vp.zoom;
-            });
-            setViewPort(newViewPort);
-            e.stopPropagation();
-            e.preventDefault();
+          if (!isLikelyTrackpad.current) {
+            const mod = e.deltaY > 0 ? 1 : -1;
+            const zoomDiff = mod * -0.25; // because e.deltaY accumulates, I will just treat every scroll the same. Not ideal for UX but it's better than current behavior
+            onZoom(viewPort.zoom + zoomDiff, "mouse");
+          } else {
+            if (e.metaKey || e.ctrlKey) {
+              const zoomDiff = e.deltaY * -0.005;
+              onZoom(viewPort.zoom + zoomDiff, "mouse");
+              e.preventDefault();
+              e.stopPropagation();
+            } else {
+              const dx = e.deltaX;
+              const dy = e.deltaY;
+
+              const newViewPort = produce(viewPort, (vp) => {
+                vp.pos.x = vp.pos.x + dx / vp.zoom;
+                vp.pos.y = vp.pos.y + dy / vp.zoom;
+              });
+              setViewPort(newViewPort);
+              e.stopPropagation();
+              e.preventDefault();
+            }
           }
         },
         [onZoom, setViewPort, viewPort]
@@ -1430,6 +1447,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
               onMouseMove={onMouseMove}
               onMouseLeave={onMouseLeave}
               onDragOver={onDragOver}
+              onTouchMove={onTouchMove}
               onDrop={onDrop}
               ref={boardRef as any}
               style={{
