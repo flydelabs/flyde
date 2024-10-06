@@ -1,5 +1,5 @@
 # Navigate to the vscode-extension folder
-cd path/to/your/monorepo/vscode-extension
+cd vscode-extension
 
 # Detect the operating system and set the appropriate sed command
 if [[ "$OSTYPE" == "darwin"* ]]; then
