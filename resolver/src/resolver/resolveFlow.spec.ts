@@ -321,7 +321,7 @@ describe("resolver", () => {
     n.subject.next(2);
 
     assert.equal(s.lastCall.args[0], 2 + 1 + 2);
-  }).timeout(20);
+  });
 
   it("properly resolves recursions", async () => {
     const path = getFixturePath("recursive.flyde");
@@ -329,7 +329,7 @@ describe("resolver", () => {
     assert.doesNotThrow(() => {
       resolveFlowByPath(path);
     });
-  }).timeout(20);
+  });
 
   it("resolves dependencies of inline nodes", async () => {
     const flow = resolveFlowByPath(
