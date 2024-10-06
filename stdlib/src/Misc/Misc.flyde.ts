@@ -1,1 +1,1 @@
-export * from "./Comment.flyde";
+export * from "./Comment/Comment.flyde";
