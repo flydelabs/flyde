@@ -102,8 +102,6 @@ export async function scanImportableNodes(
       }
     }, {});
 
-  console.log({ builtInStdLib, depsNodes, localNodes });
-
   return {
     importables: { ...builtInStdLib, ...depsNodes, ...localNodes },
     errors: allErrors,

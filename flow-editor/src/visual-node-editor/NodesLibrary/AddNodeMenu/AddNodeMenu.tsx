@@ -148,9 +148,11 @@ export const AddNodeMenu: React.FC<AddNodeMenuProps> = (props) => {
           return acc;
         }, {});
 
-      const internalFiles = importables
-        .filter(isInternal)
-        .map((importable) => importable.module);
+      const internalFiles = Array.from(
+        new Set(
+          importables.filter(isInternal).map((importable) => importable.module)
+        )
+      );
 
       setFilterStructure({
         external: Object.entries(namespacedExternals).map(
