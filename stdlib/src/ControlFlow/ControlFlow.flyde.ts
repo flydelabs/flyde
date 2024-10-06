@@ -1,6 +1,6 @@
 import { CodeNode } from "@flyde/core";
 
-export * from "./Conditional.flyde";
+export * from "./Conditional/Conditional.flyde";
 export * from "./Switch.flyde";
 export * from "./RoundRobin.flyde";
 

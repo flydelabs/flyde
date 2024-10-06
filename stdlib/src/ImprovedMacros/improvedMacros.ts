@@ -94,7 +94,8 @@ export function extractInputsFromValue(
 export function replaceInputsInValue(
   inputs: Record<string, any>,
   value: MacroConfigurableValue,
-  fieldName: string
+  fieldName: string,
+  ignoreMissingInputs: boolean = true
 ): MacroConfigurableValue["value"] {
   if (value.type === "string") {
     return value.value.replace(/({{.*?}})/g, (match) => {
@@ -104,7 +105,7 @@ export function replaceInputsInValue(
         if (result && typeof result === "object" && key in result) {
           result = result[key];
         } else {
-          return match; // Return original match if path is invalid
+          return ignoreMissingInputs ? match : "";
         }
       }
       return result !== undefined ? result : match;
