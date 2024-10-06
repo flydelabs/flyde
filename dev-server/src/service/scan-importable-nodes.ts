@@ -71,7 +71,13 @@ export async function scanImportableNodes(
           {}
         );
         const relativePath = relative(join(fileRoot, ".."), file.fullPath);
-        return { ...acc, [relativePath]: nodesObj };
+        acc[relativePath] ??= {};
+        acc[relativePath] = {
+          ...acc[relativePath],
+          ...nodesObj,
+        };
+
+        return acc;
       }
 
       try {
@@ -95,6 +101,8 @@ export async function scanImportableNodes(
         return acc;
       }
     }, {});
+
+  console.log({ builtInStdLib, depsNodes, localNodes });
 
   return {
     importables: { ...builtInStdLib, ...depsNodes, ...localNodes },
