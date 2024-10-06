@@ -156,6 +156,19 @@ suite("Extension Test Suite", () => {
           instances[0].innerHTML.includes("<h1>Hello comment</h1>"),
           "Expected the comment node to render the comment in html"
         );
+
+        assert(
+          instances[0].innerHTML.includes("<strong>bold</strong>"),
+          "Expected the comment node to render bold text"
+        );
+        assert(
+          instances[0].innerHTML.includes("not bold"),
+          "Expected the comment node to render not bold text"
+        );
+        assert(
+          !instances[0].innerHTML.includes("<strong>not bold</strong>"),
+          "Expected the comment node to not render 'not bold' as bold text"
+        );
       });
     }).timeout(5000);
   });

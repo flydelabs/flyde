@@ -21,7 +21,7 @@ import {
 import * as Strings from "./Strings.flyde";
 import { Switch } from "./ControlFlow/Switch.flyde";
 import { Collect } from "./Lists/Collect/Collect.flyde";
-import { Comment } from "./Misc/Comment.flyde";
+import { Comment } from "./Misc/Comment/Comment.flyde";
 import * as Numbers from "./Numbers.flyde";
 import * as Lists from "./Lists/Lists.flyde";
 import * as Objects from "./Objects/Objects.flyde";
@@ -38,6 +38,7 @@ export function getUnresolvedNodesLibraryData() {
           Http,
           Conditional,
           Switch,
+          Comment,
         ],
       },
       {
@@ -106,10 +107,6 @@ export function getUnresolvedNodesLibraryData() {
           Numbers.Modulo,
           Numbers.Power,
         ],
-      },
-      {
-        title: "Misc",
-        nodes: [Comment],
       },
     ],
   };
