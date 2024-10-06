@@ -22,7 +22,13 @@ jobs:
           ./prepublish.sh
           npm install
           npm update --scope=@flyde\
-
+      - name: Print flyde versions
+        working-directory: ./vscode-extension
+        run: |
+          cat node_modules/@flyde/core/package.json | jq -r '.version'
+          cat node_modules/@flyde/stdlib/package.json | jq -r '.version'
+          cat node_modules/@flyde/runtime/package.json | jq -r '.version'
+          cat node_modules/@flyde/resolver/package.json | jq -r '.version'
       - name: Build extension
         working-directory: ./vscode-extension
         run: npm run build
