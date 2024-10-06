@@ -299,11 +299,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         }
       }, [lastSelectedId]);
 
-      const onTouchMove = React.useCallback((e: React.TouchEvent) => {
-        console.log("onTouchMove", e);
-        isLikelyTrackpad.current = true;
-      }, []);
-
       const boardRef = useRef<HTMLDivElement>();
       const vpSize: Size = useComponentSize(boardRef);
       const boardPos = useBoundingclientrect(boardRef) || vZero;
@@ -1447,7 +1442,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
               onMouseMove={onMouseMove}
               onMouseLeave={onMouseLeave}
               onDragOver={onDragOver}
-              onTouchMove={onTouchMove}
               onDrop={onDrop}
               ref={boardRef as any}
               style={{
