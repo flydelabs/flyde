@@ -1,7 +1,36 @@
 imports:
-  "@flyde/stdlib": []
+  "@flyde/stdlib":
+    - Conditional
+    - Debounce
 node:
-  instances: []
+  instances:
+    - pos:
+        x: -95.83333333333337
+        y: -97.5
+      id: e92ocd3okg9yo5y2benq95p3
+      inputConfig: {}
+      nodeId: Conditional__e92ocd3okg9yo5y2benq95p3
+      macroId: Conditional
+      macroData:
+        condition:
+          type: EQUAL
+        leftOperand:
+          type: string
+          value: "{{value}}"
+        rightOperand:
+          type: string
+          value: Some value
+    - pos:
+        x: -83
+        y: -228.5
+      id: p4bho91w1j249xlzvmzz7bmt
+      inputConfig: {}
+      nodeId: Debounce__p4bho91w1j249xlzvmzz7bmt
+      macroId: Debounce
+      macroData:
+        delayMs:
+          type: number
+          value: 1000
   connections: []
   id: Example
   inputs: {}

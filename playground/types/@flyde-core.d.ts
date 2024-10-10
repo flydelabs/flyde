@@ -803,7 +803,7 @@ declare module '@flyde/core/node/macro-node' {
     export type MacroEditorConfigResolved = MacroEditorConfigCustomResolved | MacroEditorConfigStructured;
     export type MacroEditorConfigDefinition = MacroEditorConfigCustomDefinition | MacroEditorConfigStructured;
     export interface MacroNode<T> extends NodeMetadata {
-            definitionBuilder: (data: T) => Omit<CodeNodeDefinition, "id">;
+            definitionBuilder: (data: T) => Omit<CodeNodeDefinition, "id" | "namespace">;
             runFnBuilder: (data: T) => CodeNode["run"];
             defaultData: T;
             /**
@@ -828,7 +828,7 @@ declare module '@flyde/core/node/macro-node' {
     }
     export const isMacroNode: (p: any) => p is MacroNode<any>;
     export const isMacroNodeDefinition: (p: any) => p is MacroNodeDefinition<any>;
-    export function processMacroNodeInstance(namespace: string, macro: MacroNode<any>, instance: MacroNodeInstance): CodeNode;
+    export function processMacroNodeInstance(prefix: string, macro: MacroNode<any>, instance: MacroNodeInstance): CodeNode;
     export {};
 }
 

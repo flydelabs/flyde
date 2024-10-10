@@ -7,6 +7,7 @@ import {
   noop,
   FlowJob,
   ImportablesResult,
+  MacroNodeDefinition,
 } from "@flyde/core";
 import { ReportEvent } from "./analytics";
 import { toastMsg } from "../../toaster";
@@ -58,6 +59,10 @@ export interface EditorPorts {
     prompt: string;
   }) => Promise<{ importableNode: ImportableSource }>;
   getLibraryData: () => Promise<NodeLibraryData>;
+
+  onRequestSiblingNodes: (dto: {
+    macro: MacroNodeDefinition<any>;
+  }) => Promise<MacroNodeDefinition<any>[]>;
 }
 
 const toastNotImplemented: any = (method: string) => async () => {
@@ -83,6 +88,7 @@ export const defaultPorts: EditorPorts = {
   reportEvent: noop,
   generateNodeFromPrompt: toastNotImplemented("generateNodeFromPrompt"),
   getLibraryData: () => Promise.resolve({ groups: [] }),
+  onRequestSiblingNodes: () => Promise.resolve([]),
 };
 
 export const PortsContext = createContext<EditorPorts>(defaultPorts);

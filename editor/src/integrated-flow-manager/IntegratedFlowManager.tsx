@@ -392,14 +392,30 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
     [_onRequestHistory, debuggerClient]
   );
 
+  const onRequestSiblingNodes = React.useCallback<
+    DependenciesContextData["onRequestSiblingNodes"]
+  >(
+    (macro) => {
+      return ports.onRequestSiblingNodes({ macro });
+    },
+    [ports]
+  );
+
   const dependenciesContextValue = React.useMemo<DependenciesContextData>(
     () => ({
       resolvedDependencies: currentResolvedDeps,
       onImportNode,
       onRequestImportables: queryImportables,
       libraryData,
+      onRequestSiblingNodes,
     }),
-    [currentResolvedDeps, onImportNode, queryImportables, libraryData]
+    [
+      currentResolvedDeps,
+      onImportNode,
+      queryImportables,
+      libraryData,
+      onRequestSiblingNodes,
+    ]
   );
 
   return (

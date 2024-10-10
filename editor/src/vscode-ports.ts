@@ -93,6 +93,9 @@ export const createVsCodePorts = (): EditorPorts => {
     getLibraryData: async () => {
       return postMessageCallback("getLibraryData", {});
     },
+    onRequestSiblingNodes: async (dto) => {
+      return postMessageCallback("onRequestSiblingNodes", dto);
+    },
   };
 };
 

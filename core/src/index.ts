@@ -8,6 +8,7 @@ import {
   Node,
   NodeDefinition,
   NodeOrMacroDefinition,
+  MacroNodeDefinition,
 } from "./node";
 
 export * from "./connect";
@@ -29,6 +30,8 @@ export type NodesCollection = OMap<Node>;
 
 export type NodesDefCollection = OMap<NodeDefinition>;
 
+export type MacrosDefCollection = OMap<MacroNodeDefinition<any>>;
+
 export type CustomNodesCollection = OMap<CustomNode>;
 
 export interface NodeLibraryGroup {
@@ -42,6 +45,11 @@ export interface NodeLibraryData {
 
 export type ImportablesResult = {
   importables: Record<string, NodesDefCollection>;
+  errors: { path: string; message: string }[];
+};
+
+export type ImportableMacrosResult = {
+  importableMacros: Record<string, MacrosDefCollection>;
   errors: { path: string; message: string }[];
 };
 

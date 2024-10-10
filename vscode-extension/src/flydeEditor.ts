@@ -4,6 +4,7 @@ import { getWebviewContent } from "./editor/open-flyde-panel";
 var fp = require("find-free-port");
 
 import { scanImportableNodes } from "@flyde/dev-server/dist/service/scan-importable-nodes";
+import { scanImportableMacros } from "@flyde/dev-server/dist/service/scan-importable-macros";
 import { generateAndSaveNode } from "@flyde/dev-server/dist/service/ai/generate-node-from-prompt";
 import { getLibraryData } from "@flyde/dev-server/dist/service/get-library-data";
 
@@ -16,7 +17,9 @@ import {
 import {
   FlydeFlow,
   MAJOR_DEBUGGER_EVENT_TYPES,
+  MacroNodeDefinition,
   formatEvent,
+  isMacroNodeDefinition,
   keys,
 } from "@flyde/core";
 import { findPackageRoot } from "./find-package-root";
@@ -437,6 +440,27 @@ export class FlydeEditorEditorProvider
               case "getLibraryData": {
                 const libraryData = getLibraryData();
                 messageResponse(event, libraryData);
+                break;
+              }
+              case "onRequestSiblingNodes": {
+                const { macro } = event.params;
+                const maybePackageRoot = await findPackageRoot(document.uri);
+                const root =
+                  maybePackageRoot ?? Uri.joinPath(document.uri, "..");
+
+                const { importableMacros, errors } = await scanImportableMacros(
+                  root.fsPath,
+                  path.relative(root.fsPath, fullDocumentPath)
+                );
+
+                const siblings = Object.entries(importableMacros).flatMap(
+                  ([_module, nodes]) => {
+                    return Object.values(nodes).filter(
+                      (node) => node?.namespace === macro.namespace
+                    ) as MacroNodeDefinition<any>[];
+                  }
+                );
+                messageResponse(event, siblings);
                 break;
               }
               default: {
