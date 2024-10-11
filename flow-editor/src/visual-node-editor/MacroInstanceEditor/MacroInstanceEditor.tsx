@@ -61,7 +61,7 @@ export const MacroInstanceEditor: React.FC<MacroInstanceEditorProps> = (
 
   const EditorComp = useMemo(() => {
     const macro = deps[ins.macroId];
-    if (!macro || !isMacroNodeDefinition(macro)) {
+    if (!macro) {
       throw new Error(`Macro ${ins.macroId} not found `);
     }
     return loadMacroEditor(macro as any as MacroNodeDefinition<any>);

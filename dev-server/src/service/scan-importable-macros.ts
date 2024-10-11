@@ -7,19 +7,16 @@ import {
 } from "@flyde/resolver";
 
 import {
-  BaseNode,
   debugLogger,
-  isBaseNode,
   isMacroNode,
-  NodesDefCollection,
   ImportablesResult,
   ImportableMacrosResult,
   MacrosDefCollection,
+  MacroNode,
 } from "@flyde/core";
 import { scanFolderStructure } from "./scan-folders-structure";
 import { FlydeFile } from "../fs-helper/shared";
 import { getFlydeDependencies } from "./get-flyde-dependencies";
-import { resolveDependentPackages } from "./resolve-dependent-packages";
 import * as StdLib from "@flyde/stdlib/dist/all";
 import { resolveDependentPackagesMacros } from "./resolve-dependent-packages-macros";
 
@@ -45,7 +42,12 @@ export async function scanImportableMacros(
     debugLogger("Using built-in stdlib");
 
     const nodes = Object.fromEntries(
-      Object.entries(StdLib).filter((pair) => isMacroNode(pair[1])) // Filter for macro nodes
+      Object.entries(StdLib)
+        .filter((pair) => isMacroNode(pair[1]))
+        .map(([id, node]) => [
+          id,
+          macroNodeToDefinition(node as MacroNode<any>, ""),
+        ])
     ) as MacrosDefCollection;
     builtInStdLib = {
       "@flyde/stdlib": nodes,
@@ -65,7 +67,7 @@ export async function scanImportableMacros(
 
         const nodesObj = nodes.reduce((obj, { node }) => {
           if (isMacroNode(node)) {
-            obj[node.id] = node;
+            obj[node.id] = macroNodeToDefinition(node, file.fullPath);
           }
           return obj;
         }, {});
