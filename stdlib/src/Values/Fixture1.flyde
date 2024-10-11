@@ -1,9 +1,6 @@
 imports:
   "@flyde/stdlib":
     - CodeExpression
-    - Http
-    - Collect
-    - Throttle
 node:
   instances:
     - pos:
@@ -16,52 +13,6 @@ node:
       macroData:
         value: 1 + 1
         label: 1 + 1
-    - pos:
-        x: 64.95785034179687
-        y: -68.23439646402994
-      id: jjaq7cgkt0zrejjcnlleqk2d
-      inputConfig: {}
-      nodeId: Http__jjaq7cgkt0zrejjcnlleqk2d
-      macroId: Http
-      macroData:
-        method:
-          type: select
-          value: GET
-        url:
-          type: string
-          value: https://www.example.com
-        headers:
-          type: json
-          value: {}
-        params:
-          type: json
-          value: {}
-        data:
-          type: json
-          value: {}
-    - pos:
-        x: 158.36248295069777
-        y: 76.84720634432605
-      id: vcw3w0hcwwg8wri0k8r8ump7
-      inputConfig: {}
-      nodeId: Collect__vcw3w0hcwwg8wri0k8r8ump7
-      macroId: Collect
-      macroData:
-        strategy: count
-        count:
-          mode: static
-          value: 3
-    - pos:
-        x: 8.044795692165394
-        y: 210.1338310652684
-      id: lqyzvj5y420erx95ii69rkyr
-      inputConfig: {}
-      nodeId: Throttle__lqyzvj5y420erx95ii69rkyr
-      macroId: Throttle
-      macroData:
-        delayMs:
-          type: number
-          value: 420
   connections:
     - from:
         insId: vgfkmgitsirzego7i4gksg3w
