@@ -9,7 +9,7 @@ declare module '@flyde/core' {
     export * from "@flyde/core/common";
     import { Pos, OMap } from "@flyde/core/common";
     import { FlydeFlow } from "@flyde/core/flow-schema";
-    import { VisualNode, CustomNode, InputPinsConfig, Node, NodeDefinition, NodeOrMacroDefinition } from "@flyde/core/node";
+    import { VisualNode, CustomNode, InputPinsConfig, Node, NodeDefinition, NodeOrMacroDefinition, MacroNodeDefinition } from "@flyde/core/node";
     export * from "@flyde/core/connect";
     export * from "@flyde/core/execute";
     export * from "@flyde/core/simplified-execute";
@@ -25,6 +25,7 @@ declare module '@flyde/core' {
     }
     export type NodesCollection = OMap<Node>;
     export type NodesDefCollection = OMap<NodeDefinition>;
+    export type MacrosDefCollection = OMap<MacroNodeDefinition<any>>;
     export type CustomNodesCollection = OMap<CustomNode>;
     export interface NodeLibraryGroup {
         title: string;
@@ -35,6 +36,13 @@ declare module '@flyde/core' {
     }
     export type ImportablesResult = {
         importables: Record<string, NodesDefCollection>;
+        errors: {
+            path: string;
+            message: string;
+        }[];
+    };
+    export type ImportableMacrosResult = {
+        importableMacros: Record<string, MacrosDefCollection>;
         errors: {
             path: string;
             message: string;
@@ -664,7 +672,7 @@ declare module '@flyde/core/' {
     export * from "@flyde/core/common";
     import { Pos, OMap } from "@flyde/core/common";
     import { FlydeFlow } from "@flyde/core/flow-schema";
-    import { VisualNode, CustomNode, InputPinsConfig, Node, NodeDefinition, NodeOrMacroDefinition } from "@flyde/core/node";
+    import { VisualNode, CustomNode, InputPinsConfig, Node, NodeDefinition, NodeOrMacroDefinition, MacroNodeDefinition } from "@flyde/core/node";
     export * from "@flyde/core/connect";
     export * from "@flyde/core/execute";
     export * from "@flyde/core/simplified-execute";
@@ -680,6 +688,7 @@ declare module '@flyde/core/' {
     }
     export type NodesCollection = OMap<Node>;
     export type NodesDefCollection = OMap<NodeDefinition>;
+    export type MacrosDefCollection = OMap<MacroNodeDefinition<any>>;
     export type CustomNodesCollection = OMap<CustomNode>;
     export interface NodeLibraryGroup {
         title: string;
@@ -690,6 +699,13 @@ declare module '@flyde/core/' {
     }
     export type ImportablesResult = {
         importables: Record<string, NodesDefCollection>;
+        errors: {
+            path: string;
+            message: string;
+        }[];
+    };
+    export type ImportableMacrosResult = {
+        importableMacros: Record<string, MacrosDefCollection>;
         errors: {
             path: string;
             message: string;
@@ -803,7 +819,7 @@ declare module '@flyde/core/node/macro-node' {
     export type MacroEditorConfigResolved = MacroEditorConfigCustomResolved | MacroEditorConfigStructured;
     export type MacroEditorConfigDefinition = MacroEditorConfigCustomDefinition | MacroEditorConfigStructured;
     export interface MacroNode<T> extends NodeMetadata {
-            definitionBuilder: (data: T) => Omit<CodeNodeDefinition, "id">;
+            definitionBuilder: (data: T) => Omit<CodeNodeDefinition, "id" | "namespace">;
             runFnBuilder: (data: T) => CodeNode["run"];
             defaultData: T;
             /**
@@ -828,7 +844,7 @@ declare module '@flyde/core/node/macro-node' {
     }
     export const isMacroNode: (p: any) => p is MacroNode<any>;
     export const isMacroNodeDefinition: (p: any) => p is MacroNodeDefinition<any>;
-    export function processMacroNodeInstance(namespace: string, macro: MacroNode<any>, instance: MacroNodeInstance): CodeNode;
+    export function processMacroNodeInstance(prefix: string, macro: MacroNode<any>, instance: MacroNodeInstance): CodeNode;
     export {};
 }
 

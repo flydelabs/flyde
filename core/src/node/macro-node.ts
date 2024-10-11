@@ -126,7 +126,7 @@ export type MacroEditorConfigDefinition =
   | MacroEditorConfigStructured;
 
 export interface MacroNode<T> extends NodeMetadata {
-  definitionBuilder: (data: T) => Omit<CodeNodeDefinition, "id">;
+  definitionBuilder: (data: T) => Omit<CodeNodeDefinition, "id" | "namespace">;
   runFnBuilder: (data: T) => CodeNode["run"];
   defaultData: T;
 
@@ -178,14 +178,14 @@ export const isMacroNodeDefinition = (
 };
 
 export function processMacroNodeInstance(
-  namespace: string,
+  prefix: string,
   macro: MacroNode<any>,
   instance: MacroNodeInstance
 ) {
   const metaData = macro.definitionBuilder(instance.macroData);
   const runFn = macro.runFnBuilder(instance.macroData);
 
-  const id = `${namespace}${macro.id}__${instance.id}`;
+  const id = `${prefix}${macro.id}__${instance.id}`;
 
   const resolvedNode: CodeNode = {
     ...metaData,

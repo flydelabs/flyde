@@ -138,6 +138,7 @@ export function EmbeddedFlyde(props: EmbeddedFlydeProps) {
       resolvedDependencies,
       onImportNode: noop as any,
       onRequestImportables,
+      onRequestSiblingNodes: () => Promise.resolve([]),
       libraryData: getLibraryData(),
     };
   }, [resolvedDependencies, onRequestImportables]);

@@ -26,6 +26,8 @@ import {
   isResolvedMacroNodeInstance,
   ResolvedMacroNodeInstance,
   ImportedNode,
+  MacroNodeDefinition,
+  isMacroNodeDefinition,
 } from "@flyde/core";
 
 import { InstanceView, InstanceViewProps } from "./instance-view/InstanceView";
@@ -47,6 +49,7 @@ import {
   animateViewPort,
   fitViewPortToRect,
   isEventOnCurrentBoard,
+  createNewMacroNodeInstance,
 } from "./utils";
 
 import { OnboardingTips } from "./OnboardingTips";
@@ -1296,6 +1299,47 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           [node, onChange, editedMacroInstance]
         );
 
+      const onSwitchToSiblingMacro = React.useCallback(
+        async (newMacro: MacroNodeDefinition<any>) => {
+          if (!editedMacroInstance) {
+            throw new Error("Impossible state - no edited macro instance");
+          }
+
+          const importableNode = {
+            module: "@flyde/stdlib",
+            node: newMacro as any,
+          };
+          await onImportNode(importableNode);
+
+          const newNodeIns = createNewMacroNodeInstance(
+            importableNode.node,
+            0,
+            editedMacroInstance.ins.pos
+          ) as ResolvedMacroNodeInstance;
+
+          const newNode = produce(node, (draft) => {
+            const index = draft.instances.findIndex(
+              (ins) => ins.id === editedMacroInstance.ins.id
+            );
+            if (index !== -1) {
+              draft.instances[index] = newNodeIns;
+            }
+          });
+
+          onChange(newNode, functionalChange("switch to sibling macro"));
+
+          setEditedMacroInstance(undefined);
+
+          setTimeout(() => {
+            setEditedMacroInstance({
+              ...editedMacroInstance,
+              ins: newNodeIns,
+            });
+          }, 10);
+        },
+        [editedMacroInstance, node, onChange, onImportNode]
+      );
+
       const selectionIndicatorData: SelectionIndicatorProps["selection"] =
         React.useMemo(() => {
           if (from) {
@@ -1606,6 +1650,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                   onSubmit={onSaveMacroInstance}
                   ins={editedMacroInstance.ins}
                   deps={resolvedDependencies}
+                  onSwitchToSiblingMacro={onSwitchToSiblingMacro}
                 />
               ) : null}
               <div className="inline-editor-portal-root" />

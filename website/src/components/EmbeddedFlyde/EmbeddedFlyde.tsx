@@ -108,6 +108,7 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = forwardRef(
         onImportNode: _onImportNode,
         onRequestImportables: onRequestImportables,
         libraryData: { groups: [] },
+        onRequestSiblingNodes: (macro) => Promise.resolve([]),
       };
     }, [resolvedDeps]);
 

@@ -63,5 +63,8 @@ export const createWebPorts = ({
     getLibraryData: async () => {
       return devServerClient.getLibraryData();
     },
+    onRequestSiblingNodes: async () => {
+      return [];
+    },
   };
 };

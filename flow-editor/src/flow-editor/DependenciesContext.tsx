@@ -4,6 +4,7 @@ import {
   Pos,
   NodeLibraryData,
   ImportablesResult,
+  MacroNodeDefinition,
 } from "@flyde/core";
 import { createContext, useContext } from "react";
 
@@ -25,6 +26,9 @@ export interface DependenciesContextData {
   ) => Promise<ResolvedDependenciesDefinitions>;
   onRequestImportables: () => Promise<LocalImportableResult>;
   libraryData: NodeLibraryData;
+  onRequestSiblingNodes: (
+    macro: MacroNodeDefinition<any>
+  ) => Promise<MacroNodeDefinition<any>[]>;
 }
 
 const DependenciesContext = createContext<DependenciesContextData>({
@@ -32,6 +36,7 @@ const DependenciesContext = createContext<DependenciesContextData>({
   onImportNode: () => Promise.reject(new Error("Not implemented")),
   onRequestImportables: () => Promise.reject(new Error("Not implemented")),
   libraryData: { groups: [] },
+  onRequestSiblingNodes: () => Promise.resolve([]),
 });
 
 export const DependenciesContextProvider = DependenciesContext.Provider;

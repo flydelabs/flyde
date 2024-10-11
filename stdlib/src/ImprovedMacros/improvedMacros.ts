@@ -156,6 +156,7 @@ export function improvedMacroToOldMacro<Config>(
     defaultStyle: node.defaultStyle,
     displayName: node.menuDisplayName,
     description: node.menuDescription,
+    namespace: node.namespace,
     definitionBuilder: (config) => {
       return {
         inputs:
