@@ -1,4 +1,8 @@
-import { MacroEditorComp, MacroEditorConfigStructured } from "@flyde/core";
+import {
+  macroConfigurableValue,
+  MacroEditorComp,
+  MacroEditorConfigStructured,
+} from "@flyde/core";
 import { MacroConfigurableFieldEditor } from "@flyde/stdlib";
 import { usePrompt } from "../../flow-editor/ports";
 
@@ -13,7 +17,10 @@ export function StructuredMacroEditorComp<T>(
         {editorConfig.fields.map((field) => (
           <MacroConfigurableFieldEditor
             key={field.configKey}
-            value={props.value[field.configKey]}
+            value={
+              props.value[field.configKey] ??
+              macroConfigurableValue("dynamic", "")
+            }
             onChange={(newValue) =>
               props.onChange({
                 ...props.value,

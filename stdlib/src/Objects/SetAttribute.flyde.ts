@@ -1,74 +1,46 @@
-import { macroConfigurableValue, MacroConfigurableValue } from "@flyde/core";
 import {
-  improvedMacroToOldMacro,
-  ImprovedMacroNode,
-  extractInputsFromValue,
-  replaceInputsInValue,
-} from "../ImprovedMacros/improvedMacros";
+  improvedMacro2ToOldMacro,
+  ImprovedMacroNode2,
+} from "../ImprovedMacros/improvedMacros2";
 
 const namespace = "Objects";
 
-export interface SetAttributeConfig {
-  key: MacroConfigurableValue;
-  value: MacroConfigurableValue;
-}
-
-const setAttribute2: ImprovedMacroNode<SetAttributeConfig> = {
+const setAttribute2: ImprovedMacroNode2 = {
   id: "SetAttribute",
-  defaultConfig: {
-    key: macroConfigurableValue("string", "someKey"),
-    value: macroConfigurableValue("string", "someValue"),
-  },
   namespace,
   menuDisplayName: "Set Attribute",
   menuDescription: "Sets an attribute on an object",
-  defaultStyle: {
-    icon: "fa-box",
-  },
-  inputs: (config) => ({
+  icon: "fa-box",
+  inputs: {
     object: {
       description: "Object to set attribute on",
     },
-    ...extractInputsFromValue(config.key, "key"),
-    ...extractInputsFromValue(config.value, "value"),
-  }),
+    key: {
+      defaultValue: "someKey",
+      description: "Key of the attribute to set",
+      editorType: "string",
+    },
+    value: {
+      defaultValue: "someValue",
+      description: "Value to set the attribute to",
+      editorType: "string",
+    },
+  },
   outputs: {
     object: {
       description: "The object with the attribute set",
     },
   },
-  displayName: (config) => `Set Attribute "${config.key.value}"`,
-  description: (config) =>
-    `Sets the attribute "${config.key.value}" on an object to the provided value`,
-  configEditor: {
-    type: "structured",
-    fields: [
-      {
-        type: "string",
-        configKey: "key",
-        label: "Key",
-      },
-      {
-        type: "string",
-        configKey: "value",
-        label: "Value",
-      },
-    ],
-  },
-  run: (inputs, outputs, adv) => {
-    const { key, value } = adv.context.config;
-    const { object } = inputs;
+  run: (inputs, outputs) => {
+    const { key, value, object } = inputs;
 
-    const _key = replaceInputsInValue(inputs, key, "key");
-    const _value = replaceInputsInValue(inputs, value, "value");
-
-    const attributes = _key.split(".");
+    const attributes = key.split(".");
     const last = attributes.pop();
     const target = attributes.reduce((obj, i) => obj[i], object);
-    target[last] = _value;
+    target[last] = value;
 
     outputs.object.next(object);
   },
 };
 
-export const SetAttribute = improvedMacroToOldMacro(setAttribute2);
+export const SetAttribute = improvedMacro2ToOldMacro(setAttribute2);

@@ -9,7 +9,6 @@ export type MacroEditorFieldDefinitionType =
   | "json"
   | "select"
   | "longtext"
-  | "enum"
   | "dynamic";
 
 // Replace the conditional type with this mapped type
@@ -42,8 +41,7 @@ export type MacroEditorFieldDefinition =
   | BooleanFieldDefinition
   | JsonFieldDefinition
   | SelectFieldDefinition
-  | LongTextFieldDefinition
-  | EnumFieldDefinition;
+  | LongTextFieldDefinition;
 
 interface BaseFieldDefinition {
   label: string;
@@ -85,22 +83,13 @@ export interface SelectFieldDefinition extends BaseFieldDefinition {
   typeData: SelectTypeData;
 }
 
-export interface EnumFieldDefinition extends BaseFieldDefinition {
-  type: "enum";
-  typeData: EnumTypeData;
-}
-
 export interface NumberTypeData {
   min?: number;
   max?: number;
 }
 
 export interface SelectTypeData {
-  items: { value: string | number; label: string }[];
-}
-
-export interface EnumTypeData {
-  options: string[];
+  options: { value: string | number; label: string }[];
 }
 
 export interface MacroEditorConfigCustomResolved {
