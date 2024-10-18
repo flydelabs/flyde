@@ -24,8 +24,12 @@ export function MacroConfigurableValueBaseEditor(props: {
   const [options, setOptions] = useState<
     { value: string | number; label: string }[]
   >(
-    (fieldDefinition.type === "select" ? fieldDefinition.typeData.items : []) ||
-      []
+    (fieldDefinition.type === "select"
+      ? fieldDefinition.typeData.options
+      : []
+    ).map((opt) =>
+      typeof opt === "object" ? opt : { value: opt, label: String(opt) }
+    ) || []
   );
 
   useEffect(() => {
