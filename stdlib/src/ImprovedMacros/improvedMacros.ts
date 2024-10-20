@@ -12,6 +12,7 @@ import {
 import {
   extractInputsFromValue,
   generateConfigEditor,
+  renderDerivedString,
   replaceInputsInValue,
 } from "./improvedMacroUtils";
 
@@ -122,6 +123,18 @@ export function improvedMacroToOldMacro(
 ): MacroNode<any> {
   const isAdvanced = isAdvancedMacroNode(node);
 
+  const displayName =
+    typeof node.displayName === "function"
+      ? node.displayName
+      : (config: any) =>
+          renderDerivedString(node.displayName as string, config);
+
+  const description =
+    typeof node.description === "function"
+      ? node.description
+      : (config: any) =>
+          renderDerivedString(node.description as string, config);
+
   if (isAdvanced) {
     return {
       id: node.id,
@@ -140,14 +153,8 @@ export function improvedMacroToOldMacro(
             typeof node.outputs === "function"
               ? node.outputs(config)
               : node.outputs,
-          displayName:
-            typeof node.displayName === "function"
-              ? node.displayName(config)
-              : node.displayName,
-          description:
-            typeof node.description === "function"
-              ? node.description(config)
-              : node.description,
+          displayName: displayName(config),
+          description: description(config),
           defaultStyle: node.defaultStyle,
           reactiveInputs:
             typeof node.reactiveInputs === "function"
@@ -218,14 +225,8 @@ export function improvedMacroToOldMacro(
           reactiveInputs: Object.keys(node.inputs).filter(
             (key) => node.inputs[key].mode === "reactive"
           ),
-          description:
-            typeof node.description === "function"
-              ? node.description(config)
-              : node.description,
-          displayName:
-            typeof node.displayName === "function"
-              ? node.displayName(config)
-              : node.displayName,
+          description: description(config),
+          displayName: displayName(config),
         };
       },
       runFnBuilder: (config) => {

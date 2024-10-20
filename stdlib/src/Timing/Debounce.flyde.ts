@@ -11,6 +11,7 @@ const debounce: ImprovedMacroNode = {
   namespace,
   menuDisplayName: "Debounce",
   icon: "hourglass",
+  displayName: "Debounce {{delayMs}}ms",
   menuDescription:
     "Emits the last value received after being idle for a given amount of milliseconds. Supports both static and dynamic delays.",
   description: (config) => {

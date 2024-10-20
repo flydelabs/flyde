@@ -11,6 +11,8 @@ const http: ImprovedMacroNode = {
   menuDisplayName: "HTTP Request",
   namespace,
   icon: "globe",
+  displayName: "HTTP {{method}} to {{url}}",
+  description: "Sends an HTTP request",
   inputs: {
     method: {
       defaultValue: "GET",

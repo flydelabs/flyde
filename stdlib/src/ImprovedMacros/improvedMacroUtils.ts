@@ -161,3 +161,29 @@ export function generateConfigEditor<Config>(
     fields: fields as MacroEditorFieldDefinition[],
   };
 }
+
+export function renderDerivedString(displayName: string, config: any) {
+  const string = displayName?.replace(/{{.*?}}/g, (match) => {
+    const { inputName } = extractInputNameAndPath(match);
+    const value = config[inputName];
+    const isMacroConfigurableValue =
+      value && typeof value === "object" && "type" in value && "value" in value;
+    if (isMacroConfigurableValue) {
+      if (value.type === "dynamic") {
+        return match;
+      } else {
+        return value.value;
+      }
+    }
+    return match;
+  });
+
+  // Format time values in the final string
+  return string?.replace(/(\d+)ms/g, (match, p1) => {
+    const num = parseInt(p1, 10);
+    if (num >= 1000) {
+      return num / 1000 + "s";
+    }
+    return match;
+  });
+}

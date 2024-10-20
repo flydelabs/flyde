@@ -13,6 +13,7 @@ const interval: ImprovedMacroNode = {
   icon: "stopwatch",
   menuDescription: "Emits a value every interval",
   description: "Emits a value every interval",
+  displayName: "Emits {{value}} every {{time}}ms",
   inputs: {
     value: {
       description: "Value to emit (supports templates)",

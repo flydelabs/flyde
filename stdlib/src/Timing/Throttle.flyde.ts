@@ -11,6 +11,7 @@ const throttle: ImprovedMacroNode = {
   namespace,
   menuDisplayName: "Throttle",
   icon: "fa-hand",
+  displayName: "Throttle {{delayMs}}ms",
   menuDescription:
     "Limits the number of times a value is emitted to once per time configured. Supports both static and dynamic intervals.",
   description: (config) => {
