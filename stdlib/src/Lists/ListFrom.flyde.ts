@@ -1,7 +1,7 @@
 import { macroConfigurableValue, MacroConfigurableValue } from "@flyde/core";
 import {
-  ImprovedMacroNode,
   improvedMacroToOldMacro,
+  ImprovedMacroNode,
 } from "../ImprovedMacros/improvedMacros";
 
 export interface ListFromConfig {
@@ -37,7 +37,7 @@ const listFrom: ImprovedMacroNode<ListFromConfig> = {
     }
     outputs.list.next(result);
   },
-  configEditor: {
+  editorConfig: {
     type: "structured",
     fields: [
       {

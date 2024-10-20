@@ -21,6 +21,9 @@ node:
         delayMs:
           type: number
           value: 1500
+        value:
+          type: dynamic
+          value: ""
       style:
         size: regular
     - pos:
@@ -34,6 +37,9 @@ node:
         delayMs:
           type: number
           value: 700
+        value:
+          type: dynamic
+          value: ""
     - pos:
         x: -781.8923828125
         y: -170.0860384469086
@@ -137,18 +143,6 @@ node:
         insId: ApisCombination-3k049q4
         pinId: __trigger
     - from:
-        insId: ygnqzwi1stiki29lavj6wu2w
-        pinId: value
-      to:
-        insId: eaa2b80mmdusjvxi3fve0du1
-        pinId: value
-    - from:
-        insId: ygnqzwi1stiki29lavj6wu2w
-        pinId: value
-      to:
-        insId: wj31gd73i5l111q999pv4kor
-        pinId: value
-    - from:
         insId: ApisCombination-3k049q4
         pinId: value
       to:
@@ -177,6 +171,18 @@ node:
         pinId: value
       to:
         insId: lfrwwz35676vn1hb9ykzpewd
+        pinId: value
+    - from:
+        insId: ygnqzwi1stiki29lavj6wu2w
+        pinId: value
+      to:
+        insId: wj31gd73i5l111q999pv4kor
+        pinId: value
+    - from:
+        insId: ygnqzwi1stiki29lavj6wu2w
+        pinId: value
+      to:
+        insId: eaa2b80mmdusjvxi3fve0du1
         pinId: value
   id: DebounceThrottle
   inputs: {}

@@ -1,61 +1,51 @@
 import { TIMING_NAMESPACE, timeToString } from "./common";
 import {
-  ImprovedMacroNode,
-  extractInputsFromValue,
   improvedMacroToOldMacro,
+  ImprovedMacroNode,
 } from "../ImprovedMacros/improvedMacros";
-import { macroConfigurableValue, MacroConfigurableValue } from "@flyde/core";
 
 const namespace = TIMING_NAMESPACE;
 
-export interface DebounceConfig {
-  delayMs: MacroConfigurableValue;
-}
-
-const debounce: ImprovedMacroNode<DebounceConfig> = {
+const debounce: ImprovedMacroNode = {
   id: "Debounce",
-  menuDisplayName: "Debounce",
   namespace,
-  defaultStyle: {
-    icon: "hourglass",
-  },
-  defaultConfig: { delayMs: macroConfigurableValue("number", 420) },
+  menuDisplayName: "Debounce",
+  icon: "hourglass",
+  displayName: "Debounce {{delayMs}}ms",
   menuDescription:
     "Emits the last value received after being idle for a given amount of milliseconds. Supports both static and dynamic delays.",
-  displayName: (config) => {
-    return `Debounce ${timeToString(config.delayMs.value)}`;
-  },
   description: (config) => {
     return `Debounces input values with a delay of ${timeToString(
-      config.delayMs.value
+      config.delayMs
     )}.`;
   },
-  inputs: (config) => ({
+  inputs: {
     value: {
       description: "Value to debounce",
+      mode: "reactive",
     },
-    ...extractInputsFromValue(config.delayMs, "delayMs"),
-  }),
+    delayMs: {
+      defaultValue: 420,
+      description: "Debounce delay in milliseconds",
+      editorType: "number",
+      editorTypeData: { min: 0 },
+    },
+  },
   outputs: {
     debouncedValue: { description: "Debounced value" },
   },
-  reactiveInputs: ["value"],
   completionOutputs: ["debouncedValue"],
-  run: ({ value, delay }, outputs, adv) => {
+  run: ({ value, delayMs }, outputs, adv) => {
     const { debouncedValue } = outputs;
-    const { delayMs } = adv.context.config;
 
     const timer = adv.state.get("timer");
     if (timer) {
       clearTimeout(timer);
     }
 
-    const newTimer = setTimeout(
-      () => {
-        debouncedValue.next(value);
-      },
-      delayMs.mode === "dynamic" ? delay : delayMs.value
-    );
+    const newTimer = setTimeout(() => {
+      debouncedValue.next(value);
+    }, delayMs);
 
     adv.state.set("timer", newTimer);
 

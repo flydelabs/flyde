@@ -1,64 +1,47 @@
 import axios, { AxiosRequestConfig } from "axios";
 import {
-  extractInputsFromValue,
   improvedMacroToOldMacro,
   ImprovedMacroNode,
-  replaceInputsInValue,
-  renderConfigurableValue,
 } from "../ImprovedMacros/improvedMacros";
-import { macroConfigurableValue, MacroConfigurableValue } from "@flyde/core";
 
 const namespace = "HTTP";
 
-export interface HttpConfig {
-  method: MacroConfigurableValue;
-  url: MacroConfigurableValue;
-  headers?: MacroConfigurableValue;
-  params?: MacroConfigurableValue;
-  data?: MacroConfigurableValue;
-}
-
-const http: ImprovedMacroNode<HttpConfig> = {
+const http: ImprovedMacroNode = {
   id: "Http",
   menuDisplayName: "HTTP Request",
-  defaultConfig: {
-    method: macroConfigurableValue("select", "GET"),
-    url: macroConfigurableValue("string", "https://www.example.com"),
-    headers: macroConfigurableValue("json", {}),
-    params: macroConfigurableValue("json", {}),
-    data: macroConfigurableValue("json", {}),
-  },
   namespace,
-  displayName: (config) =>
-    `HTTP ${renderConfigurableValue(
-      config.method,
-      "method"
-    )} to ${renderConfigurableValue(config.url, "url")}`,
-  menuDescription:
-    "Performs a HTTP request to a URL and emits the response data",
-  description: (config) => {
-    let desc = `Performs a HTTP ${config.method.value} request to ${config.url.value}`;
-    if (Object.keys(config.headers.value || {}).length > 0) {
-      desc += ` with custom headers`;
-    }
-    if (Object.keys(config.params.value || {}).length > 0) {
-      desc += `, including query parameters`;
-    }
-    if (Object.keys(config.data.value || {}).length > 0) {
-      desc += `, and request body data`;
-    }
-    return desc;
-  },
-  defaultStyle: {
-    icon: "globe",
-  },
-  inputs: (config) => {
-    return Object.keys(config).reduce((acc, key) => {
-      return {
-        ...acc,
-        ...extractInputsFromValue(config[key], key),
-      };
-    }, {});
+  icon: "globe",
+  displayName: "HTTP {{method}} to {{url}}",
+  description: "Sends an HTTP request",
+  inputs: {
+    method: {
+      defaultValue: "GET",
+      description: "The HTTP method to use",
+      editorType: "select",
+      editorTypeData: {
+        options: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+      },
+    },
+    url: {
+      defaultValue: "https://www.example.com",
+      description: "The URL to send the request to",
+      editorType: "string",
+    },
+    headers: {
+      defaultValue: {},
+      description: "The headers to send with the request",
+      editorType: "json",
+    },
+    params: {
+      defaultValue: {},
+      description: "The query parameters to send with the request",
+      editorType: "json",
+    },
+    data: {
+      defaultValue: {},
+      description: "The request body data",
+      editorType: "json",
+    },
   },
   outputs: {
     data: {
@@ -66,23 +49,17 @@ const http: ImprovedMacroNode<HttpConfig> = {
     },
   },
   run: (inputs, outputs, adv) => {
-    const { method, url, headers, params, data } = adv.context.config;
-
-    const urlValue = replaceInputsInValue(inputs, url, "url");
-    const headersValue = replaceInputsInValue(inputs, headers, "headers");
-    const paramsValue = replaceInputsInValue(inputs, params, "params");
-    const dataValue = replaceInputsInValue(inputs, data, "data");
-    const methodValue = replaceInputsInValue(inputs, method, "method");
+    const { method, url, headers, params, data } = inputs;
 
     const requestConfig: AxiosRequestConfig = {
-      url: urlValue,
-      method: methodValue,
-      headers: headersValue,
-      params: paramsValue,
+      url,
+      method,
+      headers,
+      params,
     };
 
-    if (methodValue !== "GET") {
-      requestConfig.data = dataValue;
+    if (method !== "GET") {
+      requestConfig.data = data;
     }
     return axios
       .request(requestConfig)
@@ -98,42 +75,6 @@ const http: ImprovedMacroNode<HttpConfig> = {
           adv.onError(`Error: ${e.message}`);
         }
       });
-  },
-  configEditor: {
-    type: "structured",
-    fields: [
-      {
-        type: "string",
-        configKey: "url",
-        label: "URL",
-      },
-      {
-        type: "select",
-        typeData: {
-          items: ["GET", "POST", "PUT", "DELETE", "PATCH"].map((i) => ({
-            label: i,
-            value: i,
-          })),
-        },
-        configKey: "method",
-        label: "Method",
-      },
-      {
-        type: "json",
-        configKey: "data",
-        label: "Request Body",
-      },
-      {
-        type: "json",
-        configKey: "headers",
-        label: "Headers",
-      },
-      {
-        type: "json",
-        configKey: "params",
-        label: "Query Parameters",
-      },
-    ],
   },
 };
 

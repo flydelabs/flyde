@@ -1,57 +1,47 @@
 import { TIMING_NAMESPACE, timeToString } from "./common";
 import {
-  ImprovedMacroNode,
   improvedMacroToOldMacro,
-  replaceInputsInValue,
+  ImprovedMacroNode,
 } from "../ImprovedMacros/improvedMacros";
-import { macroConfigurableValue, MacroConfigurableValue } from "@flyde/core";
 
 const namespace = TIMING_NAMESPACE;
 
-export interface ThrottleConfig {
-  delayMs: MacroConfigurableValue;
-}
-
-const throttle: ImprovedMacroNode<ThrottleConfig> = {
+const throttle: ImprovedMacroNode = {
   id: "Throttle",
-  menuDisplayName: "Throttle",
   namespace,
-  defaultStyle: {
-    icon: "fa-hand",
-  },
-  defaultConfig: { delayMs: macroConfigurableValue("number", 420) },
+  menuDisplayName: "Throttle",
+  icon: "fa-hand",
+  displayName: "Throttle {{delayMs}}ms",
   menuDescription:
     "Limits the number of times a value is emitted to once per time configured. Supports both static and dynamic intervals.",
-  displayName: (config) => {
-    return `Throttle ${timeToString(config.delayMs.value)}`;
-  },
   description: (config) => {
     return `Throttles input values with an interval of ${timeToString(
-      config.delayMs.value
+      config.delayMs
     )}.`;
   },
   inputs: {
-    value: { description: "Value to throttle" },
+    value: { description: "Value to throttle", mode: "reactive" },
+    delayMs: {
+      defaultValue: 420,
+      description: "Throttle interval in milliseconds",
+      editorType: "number",
+      editorTypeData: { min: 0 },
+    },
   },
   outputs: {
     unthrottledValue: { description: "Unthrottled value" },
   },
-  reactiveInputs: ["value"],
   completionOutputs: [],
   run: async (inputs, outputs, adv) => {
     const { unthrottledValue } = outputs;
-    const delayMs = replaceInputsInValue(
-      inputs,
-      adv.context.config.delayMs,
-      "delayMs"
-    );
+    const { value, delayMs } = inputs;
 
     const promise = adv.state.get("promise");
     if (promise) {
       adv.onError(new Error(`Throttle: Value dropped`));
       return;
     } else {
-      unthrottledValue.next(inputs.value);
+      unthrottledValue.next(value);
       const promise = new Promise<void>((resolve) => {
         setTimeout(() => {
           resolve();

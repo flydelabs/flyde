@@ -36,7 +36,7 @@ const spreadList: ImprovedMacroNode<SpreadListConfig> = {
       outputs[`item${i + 1}`].next(list[i]);
     }
   },
-  configEditor: {
+  editorConfig: {
     type: "structured",
     fields: [
       {

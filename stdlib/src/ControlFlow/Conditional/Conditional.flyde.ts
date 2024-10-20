@@ -1,10 +1,12 @@
 import { macroConfigurableValue, MacroConfigurableValue } from "@flyde/core";
 import {
-  extractInputsFromValue,
   improvedMacroToOldMacro,
   ImprovedMacroNode,
-  replaceInputsInValue,
 } from "../../ImprovedMacros/improvedMacros";
+import {
+  extractInputsFromValue,
+  replaceInputsInValue,
+} from "../../ImprovedMacros/improvedMacroUtils";
 
 export enum ConditionType {
   Equal = "EQUAL",
@@ -99,7 +101,7 @@ const conditional: ImprovedMacroNode<ConditionalConfig> = {
     const outputToUse = result ? trueOutput : falseOutput;
     outputToUse.next(leftSide);
   },
-  configEditor: {
+  editorConfig: {
     type: "custom",
     editorComponentBundlePath: "../../../dist/ui/Conditional.js",
   },

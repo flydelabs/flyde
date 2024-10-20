@@ -7,12 +7,12 @@ import {
 } from "@flyde/core";
 import { assert } from "chai";
 import { spiedOutput } from "@flyde/core/dist/test-utils";
+
+import { improvedMacroToOldMacro, ImprovedMacroNode } from "./improvedMacros";
 import {
   extractInputsFromValue,
-  improvedMacroToOldMacro,
-  ImprovedMacroNode,
   replaceInputsInValue,
-} from "./improvedMacros";
+} from "./improvedMacroUtils";
 
 describe("ImprovedMacros", () => {
   describe("SimpleMacro with dot notation", () => {

@@ -48,7 +48,7 @@ const roundRobin: ImprovedMacroNode<RoundRobinConfig> = {
   displayName: (config) => `Round Robin ${config.count.value}`,
   description: (config) =>
     `Item will be emitted to one of the ${config.count.value} outputs in a round robin fashion`,
-  configEditor: {
+  editorConfig: {
     type: "structured",
     fields: [
       {

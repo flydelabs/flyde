@@ -1,245 +1,247 @@
 import {
+  CodeNode,
+  InputMode,
   InputPin,
-  OutputPin,
-  NodeStyle,
-  RunNodeFunction,
-  nodeInput,
-  MacroNode,
-  MacroEditorFieldDefinition,
   MacroConfigurableValue,
+  macroConfigurableValue,
+  MacroEditorFieldDefinition,
+  MacroNode,
+  NodeStyle,
+  OutputPin,
 } from "@flyde/core";
+import {
+  extractInputsFromValue,
+  generateConfigEditor,
+  renderDerivedString,
+  replaceInputsInValue,
+} from "./improvedMacroUtils";
 
 export type StaticOrDerived<T, Config> = T | ((config: Config) => T);
 
-/* This is a draft of a new MacroNode interface that is less verbose and more flexible.
-   Will be used to replace the current MacroNode interface in the future.
-*/
-
-export interface ImprovedMacroNode<Config = {}> {
+export interface BaseMacroNodeData<Config = any> {
   id: string;
-  defaultConfig: Config;
   namespace?: string;
   menuDisplayName?: string;
   menuDescription?: string;
-  defaultStyle?: NodeStyle;
-  inputs: StaticOrDerived<Record<string, InputPin>, Config>;
-  outputs: StaticOrDerived<Record<string, OutputPin>, Config>;
-  completionOutputs?: StaticOrDerived<string[], Config>;
-  reactiveInputs?: StaticOrDerived<string[], Config>;
   displayName?: StaticOrDerived<string, Config>;
   description?: StaticOrDerived<string, Config>;
+  icon?: string;
 
-  configEditor?: MacroNode<Config>["editorConfig"];
-  run: (inputs, outputs, ctx) => ReturnType<RunNodeFunction>;
+  completionOutputs?: StaticOrDerived<string[], Config>;
+  run: CodeNode["run"];
 }
 
-export interface InlineValue2Config {
-  type: "string" | "boolean" | "number" | "json";
-  value: any;
+export interface SimplifiedMacroNode<Config> extends BaseMacroNodeData<Config> {
+  inputs: Record<string, InputConfig>;
+  outputs: Record<
+    string,
+    {
+      description?: string;
+    }
+  >;
 }
 
-// Add this new helper function
-function extractInputNameAndPath(match: string): {
-  inputName: string;
-  path: string[];
-} {
-  const cleaned = match.replace(/[{}]/g, "").trim();
-  const parts = cleaned.split(".");
-  return {
-    inputName: parts[0],
-    path: parts.slice(1),
+export interface AdvancedMacroNode<Config> extends BaseMacroNodeData<Config> {
+  inputs: StaticOrDerived<Record<string, InputPin>, Config>;
+  outputs: StaticOrDerived<Record<string, OutputPin>, Config>;
+  reactiveInputs?: StaticOrDerived<string[], Config>;
+  defaultConfig: Config;
+  editorConfig?: MacroNode<Config>["editorConfig"];
+  defaultStyle?: NodeStyle;
+}
+
+export type ImprovedMacroNode<Config = any> =
+  | SimplifiedMacroNode<Config>
+  | AdvancedMacroNode<Config>;
+
+type InputConfig = {
+  defaultValue?: any;
+  description?: string;
+  mode?: InputMode | "reactive";
+} & EditorTypeConfig;
+
+type EditorTypeConfig = {
+  [K in EditorType]: {
+    editorType?: K;
+    editorTypeData?: EditorTypeDataMap[K];
   };
-}
+}[EditorType];
 
-export function extractInputsFromValue(
-  val: MacroConfigurableValue,
-  key: string
-): Record<string, InputPin> {
-  const inputs = {};
+type EditorType =
+  | "string"
+  | "number"
+  | "boolean"
+  | "json"
+  | "select"
+  | "longtext"
+  | "enum";
 
-  function extractFromValue(value: any) {
-    if (typeof value === "string") {
-      const matches = value.match(/({{.*?}})/g);
-      if (matches) {
-        for (const match of matches) {
-          const { inputName } = extractInputNameAndPath(match);
-          inputs[inputName] = nodeInput();
-        }
+type EditorTypeDataMap = {
+  string: undefined;
+  number: { min?: number; max?: number };
+  boolean: undefined;
+  json: undefined;
+  select: { options: string[] | { value: string | number; label: string }[] };
+  longtext: { rows?: number };
+  enum: { options: string[] };
+};
+
+function inferTypeFromInput(
+  input: InputConfig
+): MacroConfigurableValue["type"] {
+  const rawType = typeof input.defaultValue;
+  switch (rawType) {
+    case "undefined":
+      return "dynamic";
+    case "object":
+      if (input.defaultValue !== null) {
+        return "json";
       }
-    }
-  }
-
-  if (val.type === "string") {
-    extractFromValue(val.value);
-  } else if (val.type === "dynamic") {
-    return { [key]: nodeInput() };
-  } else {
-    try {
-      const jsonString = JSON.stringify(val.value);
-      const matches = jsonString.match(/({{.*?}})/g);
-      if (matches) {
-        for (const match of matches) {
-          const { inputName } = extractInputNameAndPath(match);
-          inputs[inputName] = nodeInput();
-        }
+      break;
+    case "string":
+      if (input.editorType === "select") {
+        return "select";
       }
-    } catch (error) {
-      console.error("Error stringifying value:", error);
-    }
-  }
-
-  return inputs;
-}
-
-export function replaceInputsInValue(
-  inputs: Record<string, any>,
-  value: MacroConfigurableValue,
-  fieldName: string,
-  ignoreMissingInputs: boolean = true
-): MacroConfigurableValue["value"] {
-  if (value.type === "string") {
-    return value.value.replace(/({{.*?}})/g, (match) => {
-      const { inputName, path } = extractInputNameAndPath(match);
-      let result = inputs[inputName];
-      for (const key of path) {
-        if (result && typeof result === "object" && key in result) {
-          result = result[key];
-        } else {
-          return ignoreMissingInputs ? match : "";
-        }
-      }
-      return result !== undefined ? result : match;
-    });
-  }
-
-  if (value.type === "dynamic") {
-    return inputs[fieldName];
-  }
-
-  const jsonString = JSON.stringify(value.value);
-  const replacedJsonString = jsonString.replace(/({{.*?}})/g, (match) => {
-    const { inputName, path } = extractInputNameAndPath(match);
-    let result = inputs[inputName];
-    for (const key of path) {
-      if (result && typeof result === "object" && key in result) {
-        result = result[key];
-      } else {
-        return match; // Return original match if path is invalid
-      }
-    }
-    return result !== undefined ? result : match;
-  });
-
-  try {
-    return JSON.parse(replacedJsonString);
-  } catch (error) {
-    console.error("Error parsing replaced JSON:", error);
-    return value;
+      return "string";
+    case "number":
+      return "number";
+    case "boolean":
+      return "boolean";
+    default:
+      return "json";
   }
 }
 
-export function renderConfigurableValue(
-  value: MacroConfigurableValue,
-  fieldName: string
-) {
-  if (value.type === "dynamic") {
-    return `{{${fieldName}}}`;
-  } else return `${value.value}`;
-}
-
-export function improvedMacroToOldMacro<Config>(
+export function isAdvancedMacroNode<Config>(
   node: ImprovedMacroNode<Config>
-): MacroNode<Config> {
-  return {
-    id: node.id,
-    defaultData: node.defaultConfig,
-    defaultStyle: node.defaultStyle,
-    displayName: node.menuDisplayName,
-    description: node.menuDescription,
-    namespace: node.namespace,
-    definitionBuilder: (config) => {
-      return {
-        inputs:
-          typeof node.inputs === "function" ? node.inputs(config) : node.inputs,
-        outputs:
-          typeof node.outputs === "function"
-            ? node.outputs(config)
-            : node.outputs,
-        displayName:
-          typeof node.displayName === "function"
-            ? node.displayName(config)
-            : node.displayName,
-        description:
-          typeof node.description === "function"
-            ? node.description(config)
-            : node.description,
-        defaultStyle: node.defaultStyle,
-        reactiveInputs:
-          typeof node.reactiveInputs === "function"
-            ? node.reactiveInputs(config)
-            : node.reactiveInputs,
-        completionOutputs:
-          typeof node.completionOutputs === "function"
-            ? node.completionOutputs(config)
-            : node.completionOutputs,
-      };
-    },
-    runFnBuilder: (config) => {
-      return (inputs, outputs, ctx) => {
-        return node.run(inputs, outputs, {
-          ...ctx,
-          context: { ...ctx.context, config },
-        });
-      };
-    },
-    editorConfig: node.configEditor ?? generateConfigEditor(node.defaultConfig),
-  };
+): node is AdvancedMacroNode<Config> {
+  return (node as AdvancedMacroNode<Config>).defaultConfig !== undefined;
 }
 
-export function generateConfigEditor<Config>(
-  config: Config,
-  overrides?: Partial<Record<keyof Config, any>>
-): MacroNode<Config>["editorConfig"] {
-  const fields = Object.keys(config).map((key) => {
-    const value = config[key];
-    const override = overrides && overrides[key];
-    let fieldType: MacroEditorFieldDefinition["type"];
+export function improvedMacroToOldMacro(
+  node: ImprovedMacroNode
+): MacroNode<any> {
+  const isAdvanced = isAdvancedMacroNode(node);
 
-    if (override) {
-      fieldType = override.type || (typeof value as any);
-    } else {
-      switch (typeof value) {
-        case "string":
-          fieldType = "string";
-          break;
-        case "number":
-          fieldType = "number";
-          break;
-        case "boolean":
-          fieldType = "boolean";
-          break;
-        case "object":
-          fieldType = "json";
-          break;
-        default:
-          fieldType = "string";
-          break;
-      }
-    }
+  const displayName =
+    typeof node.displayName === "function"
+      ? node.displayName
+      : (config: any) =>
+          renderDerivedString(node.displayName as string, config);
+
+  const description =
+    typeof node.description === "function"
+      ? node.description
+      : (config: any) =>
+          renderDerivedString(node.description as string, config);
+
+  if (isAdvanced) {
+    return {
+      id: node.id,
+      defaultData: node.defaultConfig,
+      defaultStyle: node.defaultStyle,
+      displayName: node.menuDisplayName,
+      description: node.menuDescription,
+      namespace: node.namespace,
+      definitionBuilder: (config) => {
+        return {
+          inputs:
+            typeof node.inputs === "function"
+              ? node.inputs(config)
+              : node.inputs,
+          outputs:
+            typeof node.outputs === "function"
+              ? node.outputs(config)
+              : node.outputs,
+          displayName: displayName(config),
+          description: description(config),
+          defaultStyle: node.defaultStyle,
+          reactiveInputs:
+            typeof node.reactiveInputs === "function"
+              ? node.reactiveInputs(config)
+              : node.reactiveInputs,
+          completionOutputs:
+            typeof node.completionOutputs === "function"
+              ? node.completionOutputs(config)
+              : node.completionOutputs,
+        };
+      },
+      runFnBuilder: (config) => {
+        return (inputs, outputs, ctx) => {
+          return node.run(inputs, outputs, {
+            ...ctx,
+            context: { ...ctx.context, config },
+          });
+        };
+      },
+      editorConfig:
+        node.editorConfig ?? generateConfigEditor(node.defaultConfig),
+    };
+  } else {
+    const defaultData = Object.keys(node.inputs).reduce((acc, key) => {
+      const input = node.inputs[key];
+      const type = inferTypeFromInput(input);
+      acc[key] = macroConfigurableValue(
+        type,
+        input.defaultValue ?? `{{${key}}}`
+      );
+      return acc;
+    }, {} as Record<string, any>);
+
+    const editorFields: MacroEditorFieldDefinition[] = Object.keys(
+      node.inputs
+    ).map((key) => {
+      const input = node.inputs[key];
+      const type = input.editorType ?? inferTypeFromInput(input);
+      return {
+        type,
+        configKey: key,
+        typeData: input.editorTypeData,
+        label: input.description,
+      } as MacroEditorFieldDefinition;
+    });
 
     return {
-      type: fieldType,
-      configKey: key,
-      label:
-        override?.label ||
-        key
-          .replace(/([A-Z])/g, " $1")
-          .replace(/^./, (str) => str.toUpperCase()),
+      id: node.id,
+      namespace: node.namespace,
+      displayName: node.menuDisplayName,
+      defaultStyle: {
+        icon: node.icon,
+      },
+      defaultData,
+      definitionBuilder: (config) => {
+        return {
+          inputs: Object.keys(config).reduce((acc, key) => {
+            return {
+              ...acc,
+              ...extractInputsFromValue(config[key], key),
+            };
+          }, {}),
+          outputs: node.outputs,
+          completionOutputs:
+            typeof node.completionOutputs === "function"
+              ? node.completionOutputs(config)
+              : node.completionOutputs,
+          reactiveInputs: Object.keys(node.inputs).filter(
+            (key) => node.inputs[key].mode === "reactive"
+          ),
+          description: description(config),
+          displayName: displayName(config),
+        };
+      },
+      runFnBuilder: (config) => {
+        return (inputs, outputs, adv) => {
+          const inputValues = Object.keys(config).reduce((acc, key) => {
+            acc[key] = replaceInputsInValue(inputs, config[key], key);
+            return acc;
+          }, {} as Record<string, any>);
+          return node.run(inputValues, outputs, adv);
+        };
+      },
+      editorConfig: {
+        type: "structured",
+        fields: editorFields,
+      },
     };
-  });
-
-  return {
-    type: "structured",
-    fields: fields as MacroEditorFieldDefinition[],
-  };
+  }
 }

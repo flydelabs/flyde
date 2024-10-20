@@ -5,8 +5,8 @@ imports:
 node:
   instances:
     - pos:
-        x: -749.0568882054781
-        y: -182.03499905225232
+        x: -742.4235874242281
+        y: -161.23617092725232
       id: hvnxp46iusf1g91k6dua576w
       inputConfig: {}
       nodeId: Delay__hvnxp46iusf1g91k6dua576w
@@ -15,6 +15,9 @@ node:
         delayMs:
           type: number
           value: 3000
+        value:
+          type: dynamic
+          value: ""
       style:
         size: small
         icon: fa-clock
@@ -40,7 +43,7 @@ node:
         size: regular
         icon: pen
     - pos:
-        x: -764.2692919921875
+        x: -766.9360400390625
         y: -261.869638671875
       id: ApisCombination-o5049mg
       inputConfig: {}
@@ -61,12 +64,6 @@ node:
         icon: pen
   connections:
     - from:
-        insId: ApisCombination-o5049mg
-        pinId: value
-      to:
-        insId: hvnxp46iusf1g91k6dua576w
-        pinId: value
-    - from:
         insId: hvnxp46iusf1g91k6dua576w
         pinId: delayedValue
       to:
@@ -78,6 +75,12 @@ node:
       to:
         insId: __this
         pinId: output
+    - from:
+        insId: ApisCombination-o5049mg
+        pinId: value
+      to:
+        insId: hvnxp46iusf1g91k6dua576w
+        pinId: value
   id: HelloWorld
   inputs: {}
   outputs:
