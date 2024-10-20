@@ -7,18 +7,21 @@ import {
 } from "@flyde/core";
 import { assert } from "chai";
 import { spiedOutput } from "@flyde/core/dist/test-utils";
+
+import {
+  improvedMacro2ToOldMacro,
+  ImprovedMacroNode2,
+} from "./improvedMacros2";
 import {
   extractInputsFromValue,
-  improvedMacroToOldMacro,
-  ImprovedMacroNode,
   replaceInputsInValue,
-} from "./improvedMacros";
+} from "./improvedMacroUtils";
 
 describe("ImprovedMacros", () => {
   describe("SimpleMacro with dot notation", () => {
     it("processes input with dot notation template", async () => {
       // Define a simple macro node
-      const SimpleMacro: ImprovedMacroNode<{
+      const SimpleMacro: ImprovedMacroNode2<{
         message: MacroConfigurableValue;
       }> = {
         id: "SimpleMacro",
@@ -43,7 +46,7 @@ describe("ImprovedMacros", () => {
         },
       };
 
-      const macro = improvedMacroToOldMacro(SimpleMacro);
+      const macro = improvedMacro2ToOldMacro(SimpleMacro);
 
       const definition = macro.definitionBuilder(macro.defaultData);
       assert.deepEqual(Object.keys(definition.inputs), ["person"]);

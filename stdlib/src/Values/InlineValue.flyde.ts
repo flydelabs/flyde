@@ -1,15 +1,18 @@
 import { macroConfigurableValue, MacroConfigurableValue } from "@flyde/core";
 import {
   extractInputsFromValue,
-  improvedMacroToOldMacro,
   replaceInputsInValue,
-} from "../ImprovedMacros/improvedMacros";
+} from "../ImprovedMacros/improvedMacroUtils";
+import {
+  improvedMacro2ToOldMacro,
+  ImprovedMacroNode2,
+} from "../ImprovedMacros/improvedMacros2";
 
 export interface InlineValueConfig {
   value: MacroConfigurableValue;
 }
 
-export const InlineValue = improvedMacroToOldMacro<InlineValueConfig>({
+const inlineValue: ImprovedMacroNode2<InlineValueConfig> = {
   id: "InlineValue",
   defaultConfig: {
     value: macroConfigurableValue("string", "Hello, {{name}}"),
@@ -37,8 +40,10 @@ export const InlineValue = improvedMacroToOldMacro<InlineValueConfig>({
     );
     outputs.value.next(value);
   },
-  configEditor: {
+  editorConfig: {
     type: "custom",
     editorComponentBundlePath: "../../dist/ui/InlineValue.js",
   },
-});
+};
+
+export const InlineValue = improvedMacro2ToOldMacro(inlineValue);

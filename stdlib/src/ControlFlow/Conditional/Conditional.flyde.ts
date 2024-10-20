@@ -1,10 +1,12 @@
 import { macroConfigurableValue, MacroConfigurableValue } from "@flyde/core";
 import {
+  improvedMacro2ToOldMacro,
+  ImprovedMacroNode2,
+} from "../../ImprovedMacros/improvedMacros2";
+import {
   extractInputsFromValue,
-  improvedMacroToOldMacro,
-  ImprovedMacroNode,
   replaceInputsInValue,
-} from "../../ImprovedMacros/improvedMacros";
+} from "../../ImprovedMacros/improvedMacroUtils";
 
 export enum ConditionType {
   Equal = "EQUAL",
@@ -44,7 +46,7 @@ function conditionalConfigToDisplayName(config: ConditionalConfig) {
   }
 }
 
-const conditional: ImprovedMacroNode<ConditionalConfig> = {
+const conditional: ImprovedMacroNode2<ConditionalConfig> = {
   id: "Conditional",
   namespace: "Control Flow",
   menuDisplayName: "Conditional",
@@ -99,7 +101,7 @@ const conditional: ImprovedMacroNode<ConditionalConfig> = {
     const outputToUse = result ? trueOutput : falseOutput;
     outputToUse.next(leftSide);
   },
-  configEditor: {
+  editorConfig: {
     type: "custom",
     editorComponentBundlePath: "../../../dist/ui/Conditional.js",
   },
@@ -139,4 +141,4 @@ function calculateCondition(
   }
 }
 
-export const Conditional = improvedMacroToOldMacro(conditional);
+export const Conditional = improvedMacro2ToOldMacro(conditional);

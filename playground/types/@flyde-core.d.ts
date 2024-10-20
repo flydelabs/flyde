@@ -737,7 +737,7 @@ declare module '@flyde/core/node/macro-node' {
     import { CodeNode, CodeNodeDefinition, NodeMetadata } from "@flyde/core/node/node";
     import type React from "react";
     import { MacroNodeInstance } from "@flyde/core/node/node-instance";
-    export type MacroEditorFieldDefinitionType = "string" | "number" | "boolean" | "json" | "select" | "longtext" | "enum" | "dynamic";
+    export type MacroEditorFieldDefinitionType = "string" | "number" | "boolean" | "json" | "select" | "longtext" | "dynamic";
     export type MacroConfigurableValueTypeMap = {
             string: string;
             number: number;
@@ -753,7 +753,7 @@ declare module '@flyde/core/node/macro-node' {
             };
     }[keyof MacroConfigurableValueTypeMap];
     export function macroConfigurableValue(type: MacroConfigurableValue["type"], value: MacroConfigurableValue["value"]): MacroConfigurableValue;
-    export type MacroEditorFieldDefinition = StringFieldDefinition | NumberFieldDefinition | BooleanFieldDefinition | JsonFieldDefinition | SelectFieldDefinition | LongTextFieldDefinition | EnumFieldDefinition;
+    export type MacroEditorFieldDefinition = StringFieldDefinition | NumberFieldDefinition | BooleanFieldDefinition | JsonFieldDefinition | SelectFieldDefinition | LongTextFieldDefinition;
     interface BaseFieldDefinition {
             label: string;
             description?: string;
@@ -787,22 +787,15 @@ declare module '@flyde/core/node/macro-node' {
             type: "select";
             typeData: SelectTypeData;
     }
-    export interface EnumFieldDefinition extends BaseFieldDefinition {
-            type: "enum";
-            typeData: EnumTypeData;
-    }
     export interface NumberTypeData {
             min?: number;
             max?: number;
     }
     export interface SelectTypeData {
-            items: {
+            options: {
                     value: string | number;
                     label: string;
             }[];
-    }
-    export interface EnumTypeData {
-            options: string[];
     }
     export interface MacroEditorConfigCustomResolved {
             type: "custom";

@@ -1,66 +1,80 @@
 imports:
   "@flyde/stdlib":
+    - Concat
+    - Delay
     - InlineValue
-    - GetAttribute
   ./undefined.flyde.ts: []
 node:
   instances:
     - pos:
-        x: -31.652745124839043
-        y: -22.526951695267343
-      id: q06xo21ixh8m6xm7i6le0ru9
+        x: -43.04081217447907
+        y: 65.3379041689916
+      id: clftmb8cw000b4668nw8u5qr9
       inputConfig: {}
-      nodeId: InlineValue__q06xo21ixh8m6xm7i6le0ru9
+      nodeId: Concat
+    - pos:
+        x: 14.759389241536553
+        y: -34.26689319428965
+      id: clftmbihe000j4668newg9ius
+      inputConfig:
+        delay:
+          mode: queue
+      nodeId: Delay__clftmbihe000j4668newg9ius
+      macroId: Delay
+      macroData:
+        delayMs:
+          mode: static
+          value: 1000
+      style:
+        size: small
+        icon: fa-clock
+    - pos:
+        x: -113.84091796874998
+        y: -75.13641764252512
+      id: amsqg1strnxzxulfuwydz998
+      inputConfig: {}
+      nodeId: InlineValue__amsqg1strnxzxulfuwydz998
       macroId: InlineValue
       macroData:
-        value:
-          type: json
-          value:
-            bob: dfgdfg
+        type: string
+        value: Hello
+        label: '"Hello"'
     - pos:
-        x: -22.68459340106739
-        y: 161.87739933157138
-      id: rpjcilwlwvt18cm0kae31k1h
+        x: 14.624100341796861
+        y: -129.59303141205638
+      id: c574cklre7s0epev24x40rxo
       inputConfig: {}
-      nodeId: GetAttribute__rpjcilwlwvt18cm0kae31k1h
-      macroId: GetAttribute
-      macroData:
-        object:
-          type: dynamic
-          value: "{{object}}"
-        key:
-          type: string
-          value: bo{{B}}
-    - pos:
-        x: 210.02424072265626
-        y: 21.15987089641298
-      id: bakd3zkvb941pdy93r0mqvnj
-      inputConfig: {}
-      nodeId: InlineValue__bakd3zkvb941pdy93r0mqvnj
+      nodeId: InlineValue__c574cklre7s0epev24x40rxo
       macroId: InlineValue
       macroData:
-        value:
-          type: string
-          value: b
+        type: string
+        value: World
+        label: '"World"'
   connections:
     - from:
-        insId: q06xo21ixh8m6xm7i6le0ru9
-        pinId: value
+        insId: clftmbihe000j4668newg9ius
+        pinId: delayedValue
       to:
-        insId: rpjcilwlwvt18cm0kae31k1h
-        pinId: object
+        insId: clftmb8cw000b4668nw8u5qr9
+        pinId: b
     - from:
-        insId: rpjcilwlwvt18cm0kae31k1h
+        insId: clftmb8cw000b4668nw8u5qr9
         pinId: value
       to:
         insId: __this
         pinId: result
     - from:
-        insId: bakd3zkvb941pdy93r0mqvnj
+        insId: amsqg1strnxzxulfuwydz998
         pinId: value
       to:
-        insId: rpjcilwlwvt18cm0kae31k1h
-        pinId: B
+        insId: clftmb8cw000b4668nw8u5qr9
+        pinId: a
+    - from:
+        insId: c574cklre7s0epev24x40rxo
+        pinId: value
+      to:
+        insId: clftmbihe000j4668newg9ius
+        pinId: value
   id: HelloWorld
   inputs: {}
   outputs:
@@ -69,5 +83,5 @@ node:
   inputsPosition: {}
   outputsPosition:
     result:
-      x: -3.640832750918282
-      y: 372.0605951232293
+      x: -23.264428942324532
+      y: 237.25953921502617

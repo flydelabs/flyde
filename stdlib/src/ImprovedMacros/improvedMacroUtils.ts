@@ -1,44 +1,11 @@
 import {
   InputPin,
-  OutputPin,
-  NodeStyle,
-  RunNodeFunction,
-  nodeInput,
-  MacroNode,
-  MacroEditorFieldDefinition,
   MacroConfigurableValue,
+  MacroEditorFieldDefinition,
+  MacroNode,
+  nodeInput,
 } from "@flyde/core";
 
-export type StaticOrDerived<T, Config> = T | ((config: Config) => T);
-
-/* This is a draft of a new MacroNode interface that is less verbose and more flexible.
-   Will be used to replace the current MacroNode interface in the future.
-*/
-
-export interface ImprovedMacroNode<Config = {}> {
-  id: string;
-  defaultConfig: Config;
-  namespace?: string;
-  menuDisplayName?: string;
-  menuDescription?: string;
-  defaultStyle?: NodeStyle;
-  inputs: StaticOrDerived<Record<string, InputPin>, Config>;
-  outputs: StaticOrDerived<Record<string, OutputPin>, Config>;
-  completionOutputs?: StaticOrDerived<string[], Config>;
-  reactiveInputs?: StaticOrDerived<string[], Config>;
-  displayName?: StaticOrDerived<string, Config>;
-  description?: StaticOrDerived<string, Config>;
-
-  configEditor?: MacroNode<Config>["editorConfig"];
-  run: (inputs, outputs, ctx) => ReturnType<RunNodeFunction>;
-}
-
-export interface InlineValue2Config {
-  type: "string" | "boolean" | "number" | "json";
-  value: any;
-}
-
-// Add this new helper function
 function extractInputNameAndPath(match: string): {
   inputName: string;
   path: string[];
@@ -145,55 +112,6 @@ export function renderConfigurableValue(
   if (value.type === "dynamic") {
     return `{{${fieldName}}}`;
   } else return `${value.value}`;
-}
-
-export function improvedMacroToOldMacro<Config>(
-  node: ImprovedMacroNode<Config>
-): MacroNode<Config> {
-  return {
-    id: node.id,
-    defaultData: node.defaultConfig,
-    defaultStyle: node.defaultStyle,
-    displayName: node.menuDisplayName,
-    description: node.menuDescription,
-    namespace: node.namespace,
-    definitionBuilder: (config) => {
-      return {
-        inputs:
-          typeof node.inputs === "function" ? node.inputs(config) : node.inputs,
-        outputs:
-          typeof node.outputs === "function"
-            ? node.outputs(config)
-            : node.outputs,
-        displayName:
-          typeof node.displayName === "function"
-            ? node.displayName(config)
-            : node.displayName,
-        description:
-          typeof node.description === "function"
-            ? node.description(config)
-            : node.description,
-        defaultStyle: node.defaultStyle,
-        reactiveInputs:
-          typeof node.reactiveInputs === "function"
-            ? node.reactiveInputs(config)
-            : node.reactiveInputs,
-        completionOutputs:
-          typeof node.completionOutputs === "function"
-            ? node.completionOutputs(config)
-            : node.completionOutputs,
-      };
-    },
-    runFnBuilder: (config) => {
-      return (inputs, outputs, ctx) => {
-        return node.run(inputs, outputs, {
-          ...ctx,
-          context: { ...ctx.context, config },
-        });
-      };
-    },
-    editorConfig: node.configEditor ?? generateConfigEditor(node.defaultConfig),
-  };
 }
 
 export function generateConfigEditor<Config>(
