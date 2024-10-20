@@ -4,15 +4,15 @@ import {
   replaceInputsInValue,
 } from "../ImprovedMacros/improvedMacroUtils";
 import {
-  improvedMacro2ToOldMacro,
-  ImprovedMacroNode2,
-} from "../ImprovedMacros/improvedMacros2";
+  improvedMacroToOldMacro,
+  ImprovedMacroNode,
+} from "../ImprovedMacros/improvedMacros";
 
 export interface InlineValueConfig {
   value: MacroConfigurableValue;
 }
 
-const inlineValue: ImprovedMacroNode2<InlineValueConfig> = {
+const inlineValue: ImprovedMacroNode<InlineValueConfig> = {
   id: "InlineValue",
   defaultConfig: {
     value: macroConfigurableValue("string", "Hello, {{name}}"),
@@ -46,4 +46,4 @@ const inlineValue: ImprovedMacroNode2<InlineValueConfig> = {
   },
 };
 
-export const InlineValue = improvedMacro2ToOldMacro(inlineValue);
+export const InlineValue = improvedMacroToOldMacro(inlineValue);

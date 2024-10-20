@@ -1,12 +1,12 @@
 import { TIMING_NAMESPACE } from "./common";
 import {
-  ImprovedMacroNode2,
-  improvedMacro2ToOldMacro,
-} from "../ImprovedMacros/improvedMacros2";
+  ImprovedMacroNode,
+  improvedMacroToOldMacro,
+} from "../ImprovedMacros/improvedMacros";
 
 const namespace = TIMING_NAMESPACE;
 
-const interval: ImprovedMacroNode2 = {
+const interval: ImprovedMacroNode = {
   id: "Interval",
   namespace,
   menuDisplayName: "Interval",
@@ -48,4 +48,4 @@ const interval: ImprovedMacroNode2 = {
   },
 };
 
-export const Interval = improvedMacro2ToOldMacro(interval);
+export const Interval = improvedMacroToOldMacro(interval);

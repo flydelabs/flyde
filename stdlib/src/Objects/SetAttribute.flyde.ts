@@ -1,11 +1,11 @@
 import {
-  improvedMacro2ToOldMacro,
-  ImprovedMacroNode2,
-} from "../ImprovedMacros/improvedMacros2";
+  improvedMacroToOldMacro,
+  ImprovedMacroNode,
+} from "../ImprovedMacros/improvedMacros";
 
 const namespace = "Objects";
 
-const setAttribute2: ImprovedMacroNode2 = {
+const setAttribute2: ImprovedMacroNode = {
   id: "SetAttribute",
   namespace,
   menuDisplayName: "Set Attribute",
@@ -43,4 +43,4 @@ const setAttribute2: ImprovedMacroNode2 = {
   },
 };
 
-export const SetAttribute = improvedMacro2ToOldMacro(setAttribute2);
+export const SetAttribute = improvedMacroToOldMacro(setAttribute2);

@@ -1,8 +1,8 @@
 import { macroConfigurableValue, MacroConfigurableValue } from "@flyde/core";
 import {
-  improvedMacro2ToOldMacro,
-  ImprovedMacroNode2,
-} from "../../ImprovedMacros/improvedMacros2";
+  improvedMacroToOldMacro,
+  ImprovedMacroNode,
+} from "../../ImprovedMacros/improvedMacros";
 import {
   extractInputsFromValue,
   replaceInputsInValue,
@@ -46,7 +46,7 @@ function conditionalConfigToDisplayName(config: ConditionalConfig) {
   }
 }
 
-const conditional: ImprovedMacroNode2<ConditionalConfig> = {
+const conditional: ImprovedMacroNode<ConditionalConfig> = {
   id: "Conditional",
   namespace: "Control Flow",
   menuDisplayName: "Conditional",
@@ -141,4 +141,4 @@ function calculateCondition(
   }
 }
 
-export const Conditional = improvedMacro2ToOldMacro(conditional);
+export const Conditional = improvedMacroToOldMacro(conditional);

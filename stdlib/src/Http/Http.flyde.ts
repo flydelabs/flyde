@@ -1,12 +1,12 @@
 import axios, { AxiosRequestConfig } from "axios";
 import {
-  improvedMacro2ToOldMacro,
-  ImprovedMacroNode2,
-} from "../ImprovedMacros/improvedMacros2";
+  improvedMacroToOldMacro,
+  ImprovedMacroNode,
+} from "../ImprovedMacros/improvedMacros";
 
 const namespace = "HTTP";
 
-const http: ImprovedMacroNode2 = {
+const http: ImprovedMacroNode = {
   id: "Http",
   menuDisplayName: "HTTP Request",
   namespace,
@@ -76,4 +76,4 @@ const http: ImprovedMacroNode2 = {
   },
 };
 
-export const Http = improvedMacro2ToOldMacro(http);
+export const Http = improvedMacroToOldMacro(http);

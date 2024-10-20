@@ -4,9 +4,9 @@ import {
   OutputPin,
 } from "@flyde/core";
 import {
-  improvedMacro2ToOldMacro,
-  ImprovedMacroNode2,
-} from "../ImprovedMacros/improvedMacros2";
+  improvedMacroToOldMacro,
+  ImprovedMacroNode,
+} from "../ImprovedMacros/improvedMacros";
 
 const namespace = "Control Flow";
 
@@ -14,7 +14,7 @@ export interface RoundRobinConfig {
   count: MacroConfigurableValue;
 }
 
-const roundRobin: ImprovedMacroNode2<RoundRobinConfig> = {
+const roundRobin: ImprovedMacroNode<RoundRobinConfig> = {
   id: "RoundRobin",
   defaultConfig: { count: macroConfigurableValue("number", 3) },
   namespace,
@@ -77,4 +77,4 @@ const roundRobin: ImprovedMacroNode2<RoundRobinConfig> = {
   },
 };
 
-export const RoundRobin = improvedMacro2ToOldMacro(roundRobin);
+export const RoundRobin = improvedMacroToOldMacro(roundRobin);

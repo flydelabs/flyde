@@ -49,7 +49,7 @@ export interface AdvancedMacroNode<Config> extends BaseMacroNodeData<Config> {
   defaultStyle?: NodeStyle;
 }
 
-export type ImprovedMacroNode2<Config = any> =
+export type ImprovedMacroNode<Config = any> =
   | SimplifiedMacroNode<Config>
   | AdvancedMacroNode<Config>;
 
@@ -112,13 +112,13 @@ function inferTypeFromInput(
 }
 
 export function isAdvancedMacroNode<Config>(
-  node: ImprovedMacroNode2<Config>
+  node: ImprovedMacroNode<Config>
 ): node is AdvancedMacroNode<Config> {
   return (node as AdvancedMacroNode<Config>).defaultConfig !== undefined;
 }
 
-export function improvedMacro2ToOldMacro(
-  node: ImprovedMacroNode2
+export function improvedMacroToOldMacro(
+  node: ImprovedMacroNode
 ): MacroNode<any> {
   const isAdvanced = isAdvancedMacroNode(node);
 

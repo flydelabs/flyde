@@ -1,9 +1,9 @@
 import {
-  ImprovedMacroNode2,
-  improvedMacro2ToOldMacro,
-} from "../ImprovedMacros/improvedMacros2";
+  ImprovedMacroNode,
+  improvedMacroToOldMacro,
+} from "../ImprovedMacros/improvedMacros";
 
-const getAttribute: ImprovedMacroNode2 = {
+const getAttribute: ImprovedMacroNode = {
   id: "GetAttribute",
   namespace: "Objects",
   menuDisplayName: "Get Property",
@@ -29,4 +29,4 @@ const getAttribute: ImprovedMacroNode2 = {
     outputs.value.next(key.split(".").reduce((obj, i) => obj[i], object));
   },
 };
-export const GetAttribute = improvedMacro2ToOldMacro(getAttribute);
+export const GetAttribute = improvedMacroToOldMacro(getAttribute);

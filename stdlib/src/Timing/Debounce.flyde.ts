@@ -1,12 +1,12 @@
 import { TIMING_NAMESPACE, timeToString } from "./common";
 import {
-  improvedMacro2ToOldMacro,
-  ImprovedMacroNode2,
-} from "../ImprovedMacros/improvedMacros2";
+  improvedMacroToOldMacro,
+  ImprovedMacroNode,
+} from "../ImprovedMacros/improvedMacros";
 
 const namespace = TIMING_NAMESPACE;
 
-const debounce: ImprovedMacroNode2 = {
+const debounce: ImprovedMacroNode = {
   id: "Debounce",
   namespace,
   menuDisplayName: "Debounce",
@@ -54,4 +54,4 @@ const debounce: ImprovedMacroNode2 = {
   },
 };
 
-export const Debounce = improvedMacro2ToOldMacro(debounce);
+export const Debounce = improvedMacroToOldMacro(debounce);

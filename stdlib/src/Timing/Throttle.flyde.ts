@@ -1,12 +1,12 @@
 import { TIMING_NAMESPACE, timeToString } from "./common";
 import {
-  improvedMacro2ToOldMacro,
-  ImprovedMacroNode2,
-} from "../ImprovedMacros/improvedMacros2";
+  improvedMacroToOldMacro,
+  ImprovedMacroNode,
+} from "../ImprovedMacros/improvedMacros";
 
 const namespace = TIMING_NAMESPACE;
 
-const throttle: ImprovedMacroNode2 = {
+const throttle: ImprovedMacroNode = {
   id: "Throttle",
   namespace,
   menuDisplayName: "Throttle",
@@ -54,4 +54,4 @@ const throttle: ImprovedMacroNode2 = {
   },
 };
 
-export const Throttle = improvedMacro2ToOldMacro(throttle);
+export const Throttle = improvedMacroToOldMacro(throttle);
