@@ -1,19 +1,7 @@
 imports:
-  "@flyde/stdlib":
-    - InlineValue
+  "@flyde/stdlib": []
 node:
-  instances:
-    - pos:
-        x: -500.63782958984376
-        y: -341.93562744140627
-      id: wsnqxcv2cdorqbbg5tnktc4m
-      inputConfig: {}
-      nodeId: InlineValue__wsnqxcv2cdorqbbg5tnktc4m
-      macroId: InlineValue
-      macroData:
-        value:
-          type: string
-          value: Ze
+  instances: []
   connections: []
   id: Example
   inputs: {}
