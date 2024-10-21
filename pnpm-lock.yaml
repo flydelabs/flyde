@@ -901,6 +901,9 @@ importers:
       '@flyde/runtime':
         specifier: workspace:*
         version: link:../runtime
+      '@flyde/stdlib':
+        specifier: workspace:*
+        version: link:../stdlib
       '@tsconfig/node16':
         specifier: ^1.0.3
         version: 1.0.4

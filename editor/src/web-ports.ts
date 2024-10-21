@@ -66,5 +66,8 @@ export const createWebPorts = ({
     onRequestSiblingNodes: async () => {
       return [];
     },
+    onCreateCustomNode: async () => {
+      throw new Error("Not implemented");
+    },
   };
 };

@@ -5,6 +5,7 @@ import {
   NodeLibraryData,
   ImportablesResult,
   MacroNodeDefinition,
+  NodeOrMacroDefinition,
 } from "@flyde/core";
 import { createContext, useContext } from "react";
 
@@ -29,6 +30,7 @@ export interface DependenciesContextData {
   onRequestSiblingNodes: (
     macro: MacroNodeDefinition<any>
   ) => Promise<MacroNodeDefinition<any>[]>;
+  onForkNode?: (params: { node: NodeOrMacroDefinition }) => Promise<void>;
 }
 
 const DependenciesContext = createContext<DependenciesContextData>({

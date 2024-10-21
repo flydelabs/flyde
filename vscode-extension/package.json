@@ -209,6 +209,7 @@
     "@flyde/remote-debugger": "workspace:*",
     "@flyde/resolver": "workspace:*",
     "@flyde/runtime": "workspace:*",
+    "@flyde/stdlib": "workspace:*",
     "@tsconfig/node16": "^1.0.3",
     "@types/fs-extra": "^11.0.1",
     "@vscode/extension-telemetry": "^0.7.5",

@@ -8,16 +8,15 @@ import { useDarkMode } from "../../flow-editor/DarkModeContext";
 
 import { useScrollWithShadow } from "../../lib/react-utils/use-shadow-scroll";
 import { InstanceIcon } from "../instance-view";
-import { usePorts } from "../../flow-editor/ports";
-import { clearToast, toastMsg } from "../../toaster";
 import { DragEvent } from "react";
 
 export interface NodesLibraryProps extends NodeLibraryData {
   onAddNode: (node: ImportableSource) => void;
+  onClickCustomNode: () => void;
 }
 
 export const NodesLibrary: React.FC<NodesLibraryProps> = memo((props) => {
-  const { groups, onAddNode } = props;
+  const { groups, onAddNode, onClickCustomNode } = props;
 
   const [showAddNodeMenu, setShowAddNodeMenu] = React.useState(false);
 
@@ -26,25 +25,6 @@ export const NodesLibrary: React.FC<NodesLibraryProps> = memo((props) => {
   const darkMode = useDarkMode();
 
   const [openGroup, setOpenGroup] = useState(groups[0]?.title ?? "");
-
-  const { prompt, generateNodeFromPrompt } = usePorts();
-
-  const _onGenerateWithAI = useCallback(async () => {
-    const promptText = await prompt({
-      text: "Describe the node you want to generate",
-      defaultValue: "",
-    });
-    if (promptText) {
-      const toast = toastMsg("Generating node...", "none", 0);
-      const node = await generateNodeFromPrompt({ prompt: promptText });
-
-      clearToast(toast);
-      toastMsg("Node generated successfully", "success", 2000);
-      if (node) {
-        onAddNode(node.importableNode);
-      }
-    }
-  }, [generateNodeFromPrompt, onAddNode, prompt]);
 
   useEffect(() => {
     if (groups.length) {
@@ -68,7 +48,7 @@ export const NodesLibrary: React.FC<NodesLibraryProps> = memo((props) => {
       })}
     >
       <div className="list" style={{ boxShadow }} onScroll={onScrollHandler}>
-        {groups.map((group) => (
+        {groups.map((group, idx) => (
           <div key={group.title}>
             <div
               className={classNames("group-title", {
@@ -80,6 +60,15 @@ export const NodesLibrary: React.FC<NodesLibraryProps> = memo((props) => {
               {group.title}
             </div>
             <div className="group-items">
+              {idx === 0 && (
+                <div
+                  className="group-item"
+                  draggable
+                  onClick={onClickCustomNode}
+                >
+                  <InstanceIcon icon="cow" /> Custom Node
+                </div>
+              )}
               {group.nodes.map((node) => (
                 <div
                   key={node.id}
@@ -87,7 +76,7 @@ export const NodesLibrary: React.FC<NodesLibraryProps> = memo((props) => {
                   draggable
                   onDragStart={(e) => onDragStart(e, node as ImportedNode)}
                   onClick={() =>
-                    props.onAddNode({
+                    onAddNode({
                       module: "@flyde/stdlib",
                       node: node as ImportedNode,
                     })

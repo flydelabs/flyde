@@ -16,9 +16,9 @@ import classNames from "classnames";
 
 import { ErrorBoundary } from "react-error-boundary";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { loadMacroEditor } from "./macroEditorLoader";
-import { DoubleCaretVertical, InfoSign } from "@blueprintjs/icons";
+import { DoubleCaretVertical, Fork, InfoSign } from "@blueprintjs/icons";
 import { usePrompt } from "../../flow-editor/ports";
 import { Select } from "@blueprintjs/select";
 import { useDependenciesContext } from "../../flow-editor/DependenciesContext";
@@ -35,13 +35,21 @@ export interface MacroInstanceEditorProps {
 export const MacroInstanceEditor: React.FC<MacroInstanceEditorProps> = (
   props
 ) => {
-  const { deps, ins } = props;
+  const { deps, ins, onCancel } = props;
 
-  const { onRequestSiblingNodes } = useDependenciesContext();
+  const { onRequestSiblingNodes, onForkNode } = useDependenciesContext();
 
   const [macroSiblings, setMacroSiblings] = useState<
     MacroNodeDefinition<any>[]
   >([]);
+
+  const _onForkNode = useCallback(
+    (node: MacroNodeDefinition<any>) => {
+      onForkNode({ node });
+      onCancel();
+    },
+    [onForkNode, onCancel]
+  );
 
   const macro: MacroNodeDefinition<any> = useMemo(() => {
     const macro = deps[ins.macroId];
@@ -82,6 +90,13 @@ export const MacroInstanceEditor: React.FC<MacroInstanceEditorProps> = (
   return (
     <Dialog isOpen={true} className="macro-instance-editor no-drag">
       <main className={classNames(Classes.DIALOG_BODY)} tabIndex={0}>
+        {onForkNode ? (
+          <div className="fork-btn-container">
+            <Button onClick={() => _onForkNode(macro)} small icon={<Fork />}>
+              Fork
+            </Button>
+          </div>
+        ) : null}
         {macroSiblings.length > 1 ? (
           <Select
             items={macroSiblings}
