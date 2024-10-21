@@ -1,6 +1,5 @@
 import { isCodeNode, isMacroNode, MacroNode, Node } from "@flyde/core";
 import { transpileFile } from "./transpileFile/transpileFile";
-import axios from "axios";
 import { improvedMacroToOldMacro } from "@flyde/stdlib/dist/ImprovedMacros/improvedMacros";
 
 export function customCodeNodeFromCode(
@@ -16,9 +15,7 @@ export function customCodeNodeFromCode(
       ${transpiledCode}
   `;
 
-  const result = new Function(wrappedCode)({
-    axios: axios,
-  });
+  const result = new Function(wrappedCode)({});
 
   if (isCodeNode(result.default) || isMacroNode(result.default)) {
     if (result.default.icon) {
