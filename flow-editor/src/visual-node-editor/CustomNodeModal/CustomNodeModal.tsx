@@ -2,7 +2,7 @@ import { useState, useCallback, useMemo, useEffect } from "react";
 import { Dialog, Classes, Button, Callout, Intent } from "@blueprintjs/core";
 import { Editor, useMonaco } from "@monaco-editor/react";
 import { NodeOrMacroDefinition } from "@flyde/core";
-// import { configureMonaco } from "@/lib/customCodeNode/configureMonaco";
+import { configureMonaco } from "../../lib/customCodeNode/configureMonaco";
 
 interface CustomNodeModalProps {
   isOpen: boolean;
@@ -21,7 +21,7 @@ import type { CodeNode } from "@flyde/core";
  Full API reference: https://www.flyde.dev/docs/custom-nodes/
  */
 
-export default {
+const node: CodeNode = {
   id: "Add",
   displayName: "Add",
   defaultStyle: {
@@ -36,7 +36,7 @@ export default {
   run: ({ n1, n2 }, { sum }) => sum.next(n1 + n2),
 };
 
-
+export default node;
 `;
 
 export function CustomNodeModal({
@@ -74,7 +74,7 @@ export function CustomNodeModal({
 
   useEffect(() => {
     if (monaco) {
-      //   configureMonaco(monaco);
+      configureMonaco(monaco);
     }
   }, [monaco]);
 

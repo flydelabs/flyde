@@ -65,6 +65,9 @@ export interface EditorPorts {
     macro: MacroNodeDefinition<any>;
   }) => Promise<MacroNodeDefinition<any>[]>;
 
+  onRequestNodeSource: (dto: {
+    node: NodeOrMacroDefinition;
+  }) => Promise<string>;
   onCreateCustomNode: (dto: { code: string }) => Promise<ImportableSource>;
 }
 
@@ -93,6 +96,7 @@ export const defaultPorts: EditorPorts = {
   getLibraryData: () => Promise.resolve({ groups: [] }),
   onRequestSiblingNodes: () => Promise.resolve([]),
   onCreateCustomNode: toastNotImplemented("onCreateCustomNode"),
+  onRequestNodeSource: toastNotImplemented("getNodeSource"),
 };
 
 export const PortsContext = createContext<EditorPorts>(defaultPorts);

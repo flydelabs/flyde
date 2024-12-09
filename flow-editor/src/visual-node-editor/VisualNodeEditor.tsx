@@ -76,7 +76,7 @@ import {
   metaChange,
 } from "../flow-editor/flyde-flow-change-type";
 
-import { PortsContext, usePorts } from "../flow-editor/ports";
+import { usePorts } from "../flow-editor/ports";
 import classNames from "classnames";
 import { pasteInstancesCommand } from "./commands/paste-instances";
 

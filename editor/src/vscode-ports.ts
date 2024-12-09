@@ -96,6 +96,9 @@ export const createVsCodePorts = (): EditorPorts => {
     onRequestSiblingNodes: async (dto) => {
       return postMessageCallback("onRequestSiblingNodes", dto);
     },
+    onRequestNodeSource: async (dto) => {
+      return postMessageCallback("getNodeSource", dto);
+    },
     onCreateCustomNode: async (dto) => {
       return postMessageCallback("onCreateCustomNode", dto);
     },

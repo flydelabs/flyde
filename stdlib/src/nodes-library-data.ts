@@ -17,11 +17,9 @@ import {
   GetAttribute,
 } from "./all-browser";
 
-import * as Strings from "./Strings.flyde";
 import { Switch } from "./ControlFlow/Switch.flyde";
 import { Collect } from "./Lists/Collect/Collect.flyde";
-import { Comment } from "./Misc/Comment/Comment.flyde";
-import * as Numbers from "./Numbers.flyde";
+import { Comment } from "./Comment/Comment.flyde";
 import * as Lists from "./Lists/Lists.flyde";
 import * as Objects from "./Objects/Objects.flyde";
 
@@ -83,29 +81,6 @@ export function getUnresolvedNodesLibraryData() {
       {
         title: "Timing",
         nodes: [Delay, Throttle, Debounce, Interval, RoundRobin],
-      },
-      {
-        title: "Strings",
-        nodes: [
-          Strings.ToLowerCase,
-          Strings.ToUpperCase,
-          Strings.Substring,
-          Strings.Length,
-          Strings.IndexOf,
-          Strings.Replace,
-          Strings.Split,
-        ],
-      },
-      {
-        title: "Math",
-        nodes: [
-          Numbers.Add,
-          Numbers.Subtract,
-          Numbers.Multiply,
-          Numbers.Divide,
-          Numbers.Modulo,
-          Numbers.Power,
-        ],
       },
     ],
   };
