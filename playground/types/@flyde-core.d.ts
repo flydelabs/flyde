@@ -16,7 +16,6 @@ declare module '@flyde/core' {
     export * from "@flyde/core/node";
     export * from "@flyde/core/node/get-node-with-dependencies";
     export * from "@flyde/core/flow-schema";
-    export * from "@flyde/core/misc/custom-code-node-from-code";
     export interface InstanceViewData {
         id: string;
         nodeIdOrGroup: string | VisualNode;
@@ -216,11 +215,6 @@ declare module '@flyde/core/node/get-node-with-dependencies' {
     import { CustomNode } from "@flyde/core/node";
     import { CustomNodeCollection } from "@flyde/core/";
     export const getNodeWithDependencies: (node: CustomNode, resolvedDeps: CustomNodeCollection, existingIds?: string[]) => CustomNode[];
-}
-
-declare module '@flyde/core/misc/custom-code-node-from-code' {
-    import { MacroNode, Node } from "@flyde/core/";
-    export function customCodeNodeFromCode(code: string, suffixId?: string): Node | MacroNode<any>;
 }
 
 declare module '@flyde/core/common/test-data-creator' {
@@ -685,7 +679,6 @@ declare module '@flyde/core/' {
     export * from "@flyde/core/node";
     export * from "@flyde/core/node/get-node-with-dependencies";
     export * from "@flyde/core/flow-schema";
-    export * from "@flyde/core/misc/custom-code-node-from-code";
     export interface InstanceViewData {
         id: string;
         nodeIdOrGroup: string | VisualNode;

@@ -4,7 +4,7 @@
   "description": "Flyde's StdLib",
   "flyde": {
     "exposes": [
-      "src/**/*.flyde.ts"
+      "dist/**/*.flyde.js"
     ],
     "typings": "flyde-typings.d.ts"
   },

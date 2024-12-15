@@ -69,12 +69,6 @@ node:
       to:
         insId: clftmb8cw000b4668nw8u5qr9
         pinId: a
-    - from:
-        insId: c574cklre7s0epev24x40rxo
-        pinId: value
-      to:
-        insId: clftmbihe000j4668newg9ius
-        pinId: value
   id: HelloWorld
   inputs: {}
   outputs:
