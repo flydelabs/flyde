@@ -17,7 +17,6 @@ export * from "./simplified-execute";
 export * from "./node";
 export * from "./node/get-node-with-dependencies";
 export * from "./flow-schema";
-export * from "./misc/custom-code-node-from-code";
 
 export interface InstanceViewData {
   id: string;

@@ -32,7 +32,7 @@ import { Uri } from "vscode";
 import { forkRunFlow } from "@flyde/dev-server/dist/runner/runFlow.host";
 import { createEditorClient } from "@flyde/remote-debugger";
 import { maybeAskToStarProject } from "./maybeAskToStarProject";
-import { customCodeNodeFromCode } from "@flyde/core";
+import { customCodeNodeFromCode } from "@flyde/core/dist/misc/custom-code-node-from-code";
 
 // export type EditorPortType = keyof any;
 

@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 
-import { customCodeNodeFromCode } from "@flyde/core";
+import { customCodeNodeFromCode } from "@flyde/core/dist/misc/custom-code-node-from-code";
 
 const srcDir = path.join(__dirname, "..", "src");
 const distDir = path.join(__dirname, "..", "dist", "sources");
