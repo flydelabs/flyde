@@ -1,4 +1,4 @@
-import { isCodeNode, isMacroNode, MacroNode, Node } from "@flyde/core";
+import { isCodeNode, isMacroNode, MacroNode, Node } from "../";
 import { transpileFile } from "./transpile-file/transpile-file";
 import { improvedMacroToOldMacro } from "./improved-macros.ts/improved-macros";
 
