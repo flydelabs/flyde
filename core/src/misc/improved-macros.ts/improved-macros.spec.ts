@@ -6,7 +6,7 @@ import {
   extractInputsFromValue,
   replaceInputsInValue,
 } from "./improved-macro-utils";
-import { eventually } from "@flyde/core";
+import { eventually } from "../../";
 import {
   MacroConfigurableValue,
   macroConfigurableValue,
