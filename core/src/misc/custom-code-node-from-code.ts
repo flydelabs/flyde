@@ -18,11 +18,7 @@ export function customCodeNodeFromCode(
   })(arguments)
   `;
 
-  // const wrappedCode = transpiledCode;
-
   const result = new Function(wrappedCode)({});
-
-  console.log(wrappedCode);
 
   if (isCodeNode(result.default) || isMacroNode(result.default)) {
     if (result.default.icon) {
