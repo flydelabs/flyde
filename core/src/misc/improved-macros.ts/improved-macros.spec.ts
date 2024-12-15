@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { spiedOutput } from "@flyde/core/dist/test-utils";
+import { spiedOutput } from "../../test-utils";
 
 import { improvedMacroToOldMacro, ImprovedMacroNode } from "./improved-macros";
 import {
