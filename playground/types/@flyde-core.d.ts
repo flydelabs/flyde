@@ -2,7 +2,6 @@
 // Dependencies for this module:
 //   ../../../../zod
 //   ../../../../rxjs
-//   ../../../../@flyde/core
 //   ../../../../debug
 //   ../../../../react
 
@@ -220,7 +219,7 @@ declare module '@flyde/core/node/get-node-with-dependencies' {
 }
 
 declare module '@flyde/core/misc/custom-code-node-from-code' {
-    import { MacroNode, Node } from "@flyde/core";
+    import { MacroNode, Node } from "@flyde/core/";
     export function customCodeNodeFromCode(code: string, suffixId?: string): Node | MacroNode<any>;
 }
 
