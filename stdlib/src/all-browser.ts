@@ -2,6 +2,7 @@
 export * from "./Http/Http.flyde";
 export * from "./Objects/Objects.flyde";
 export * from "./Numbers.flyde";
+export * from "./Strings.flyde";
 export * from "./ControlFlow";
 export * from "./Lists/Lists.flyde";
 export * from "./Console.flyde";
