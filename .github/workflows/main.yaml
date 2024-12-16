@@ -41,6 +41,8 @@ jobs:
             ${{ runner.os }}-pnpm-store-
       - name: Install dependencies
         run: pnpm install
+      - name: Lint
+        run: pnpm run lint
       - name: Build
         run: pnpm run build
         env:
@@ -48,8 +50,6 @@ jobs:
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
       - name: Test
         run: xvfb-run -a pnpm run test
-      - name: Lint
-        run: pnpm run lint
       - name: If release, Publish to NPM
         if: github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, 'Prepare for v')
         run: |
