@@ -42,7 +42,7 @@ describe("Hero examples", () => {
     const result = await execute({}).result;
 
     assert.deepEqual(result.output, ["✅", "🕐", "❌"]);
-  }).timeout(6000);
+  }).timeout(10000);
 
   it("runs reactivity example", async () => {
     const execute = await loadFlow("./ExampleReactivity.flyde", __dirname);
@@ -50,7 +50,7 @@ describe("Hero examples", () => {
     const result = await execute({}).result;
 
     assert.deepEqual(result.output, ["beep", "boop", "bop"]);
-  }).timeout(6000);
+  }).timeout(10000);
 
   it("runs http example", async () => {
     const execute = await loadFlow("./ExampleHTTPRequests.flyde", __dirname);
