@@ -4,6 +4,12 @@
     overflow-y: auto;
   }
 
+  .fork-btn-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 4px;
+  }
+
   .macro-label-container {
     display: flex;
     flex-direction: row;

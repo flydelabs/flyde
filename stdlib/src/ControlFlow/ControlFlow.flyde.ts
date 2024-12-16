@@ -59,7 +59,6 @@ export const Publish: CodeNode = {
   },
   outputs: {},
   run: function (inputs, _, adv) {
-    // magic here
     const nsKey = `${adv.ancestorsInsIds}__${inputs.key}`;
 
     PubSub.publish(nsKey, inputs.value);
@@ -97,55 +96,5 @@ export const Subscribe: CodeNode = {
     adv.onCleanup(() => {
       PubSub.unsubscribe(token);
     });
-  },
-};
-
-export const BooleanSplit: CodeNode = {
-  namespace,
-  id: "Boolean Split",
-  description: "Splits a boolean value into two outputs",
-  inputs: {
-    value: { mode: "required", description: "Boolean value" },
-    trueValue: {
-      mode: "required-if-connected",
-      description: "Value to emit if the input is true. Defaults to true",
-    },
-    falseValue: {
-      mode: "required-if-connected",
-      description: "Value to emit if the input is false. Defaults to false",
-    },
-  },
-  outputs: {
-    true: { description: "The value is true" },
-    false: { description: "The value is false" },
-  },
-  run: function (inputs, outputs) {
-    const { true: trueOutput, false: falseOutput } = outputs;
-    const { value, trueValue, falseValue } = inputs;
-    if (value) {
-      trueOutput.next(trueValue ?? true);
-    } else {
-      falseOutput.next(falseValue ?? false);
-    }
-  },
-};
-
-export const EmitOnTrigger: CodeNode = {
-  namespace,
-  id: "Emit on Trigger",
-  description: "Emits the value when the trigger input receives any value",
-  inputs: {
-    value: { mode: "required", description: "The value to emit" },
-    trigger: { mode: "required", description: "The trigger to emit the value" },
-  },
-  outputs: {
-    result: { description: "The value emitted" },
-  },
-  run: function (inputs, outputs) {
-    const { result } = outputs;
-    const { value, trigger } = inputs;
-    if (trigger !== undefined) {
-      result.next(value);
-    }
   },
 };

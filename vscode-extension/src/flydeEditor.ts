@@ -16,6 +16,7 @@ import {
 } from "@flyde/resolver";
 import {
   FlydeFlow,
+  ImportableSource,
   MAJOR_DEBUGGER_EVENT_TYPES,
   MacroNodeDefinition,
   formatEvent,
@@ -31,6 +32,7 @@ import { Uri } from "vscode";
 import { forkRunFlow } from "@flyde/dev-server/dist/runner/runFlow.host";
 import { createEditorClient } from "@flyde/remote-debugger";
 import { maybeAskToStarProject } from "./maybeAskToStarProject";
+import { customCodeNodeFromCode } from "@flyde/core/dist/misc/custom-code-node-from-code";
 
 // export type EditorPortType = keyof any;
 
@@ -461,6 +463,37 @@ export class FlydeEditorEditorProvider
                   }
                 );
                 messageResponse(event, siblings);
+                break;
+              }
+              case "onCreateCustomNode": {
+                const { code } = event.params;
+
+                const node = customCodeNodeFromCode(code);
+                const flowDir = path.dirname(fullDocumentPath);
+                const nodeFileName = `${node.id}.flyde.ts`;
+                const nodeFilePath = path.join(flowDir, nodeFileName);
+
+                try {
+                  await vscode.workspace.fs.writeFile(
+                    vscode.Uri.file(nodeFilePath),
+                    Buffer.from(code)
+                  );
+                  vscode.window.showInformationMessage(
+                    `Custom node saved as ${nodeFileName}`
+                  );
+                } catch (error) {
+                  console.error("Error saving custom node file:", error);
+                  vscode.window.showErrorMessage(
+                    `Failed to save custom node: ${
+                      error instanceof Error ? error.message : "Unknown error"
+                    }`
+                  );
+                }
+                const importableSource: ImportableSource = {
+                  node: node as any,
+                  module: nodeFileName,
+                };
+                messageResponse(event, importableSource);
                 break;
               }
               default: {

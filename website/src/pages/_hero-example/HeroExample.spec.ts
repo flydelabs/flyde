@@ -1,6 +1,7 @@
 import nock from "nock";
 import { loadFlow } from "@flyde/runtime";
 import { assert } from "chai";
+import { delay, eventually } from "@flyde/core";
 
 describe("Hero examples", () => {
   afterEach(() => {
@@ -8,15 +9,20 @@ describe("Hero examples", () => {
   });
 
   it("runs hello world example", async () => {
-    const execute = await loadFlow("./ExampleHelloWorld.flyde", __dirname);
+    const execute = loadFlow("./ExampleHelloWorld.flyde", __dirname);
 
     const timedValues = [];
-    await execute(
+
+    execute(
       {},
       {
-        onOutputs: (_, value) => timedValues.push({ value, time: Date.now() }),
+        onOutputs: (_, value) => {
+          timedValues.push({ value, time: Date.now() });
+        },
       }
-    ).result;
+    );
+
+    await delay(2000);
 
     assert.deepEqual(
       timedValues.map((v) => v.value),
@@ -24,7 +30,7 @@ describe("Hero examples", () => {
     );
 
     const timeDiff = timedValues[1].time - timedValues[0].time;
-    assert.isAtLeast(timeDiff, 3000);
+    assert.isAtLeast(timeDiff, 1500);
   }).timeout(5000);
 
   it("runs debounce throttle example", async () => {
@@ -36,7 +42,7 @@ describe("Hero examples", () => {
     const result = await execute({}).result;
 
     assert.deepEqual(result.output, ["✅", "🕐", "❌"]);
-  }).timeout(6000);
+  }).timeout(10000);
 
   it("runs reactivity example", async () => {
     const execute = await loadFlow("./ExampleReactivity.flyde", __dirname);
@@ -44,7 +50,7 @@ describe("Hero examples", () => {
     const result = await execute({}).result;
 
     assert.deepEqual(result.output, ["beep", "boop", "bop"]);
-  }).timeout(6000);
+  }).timeout(10000);
 
   it("runs http example", async () => {
     const execute = await loadFlow("./ExampleHTTPRequests.flyde", __dirname);

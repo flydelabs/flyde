@@ -27,7 +27,6 @@ import {
   ResolvedMacroNodeInstance,
   ImportedNode,
   MacroNodeDefinition,
-  isMacroNodeDefinition,
 } from "@flyde/core";
 
 import { InstanceView, InstanceViewProps } from "./instance-view/InstanceView";
@@ -108,6 +107,7 @@ import {
   VisualNodeEditorContextType,
 } from "./VisualNodeEditorContext";
 import { useEditorCommands } from "./useEditorCommands";
+import { CustomNodeModal } from "./CustomNodeModal/CustomNodeModal";
 
 const MemodSlider = React.memo(Slider);
 
@@ -207,7 +207,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
       const darkMode = useDarkMode();
 
-      const { reportEvent } = usePorts();
+      const { reportEvent, onCreateCustomNode } = usePorts();
 
       const parentViewport = props.parentViewport || defaultViewPort;
 
@@ -255,6 +255,8 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       const [editedMacroInstance, setEditedMacroInstance] = useState<{
         ins: ResolvedMacroNodeInstance;
       }>();
+
+      const [isAddingCustomNode, setIsAddingCustomNode] = useState(false);
 
       const inlineEditorPortalRootRef = useRef();
 
@@ -1463,6 +1465,17 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         };
       }, [isSpacePressed]);
 
+      const onSaveCustomNode = React.useCallback(
+        async (code: string) => {
+          const node = await onCreateCustomNode({ code });
+          // console.log("node", node);
+          // await onImportNode(node);
+          await onAddNode(node);
+          setIsAddingCustomNode(false);
+        },
+        [onAddNode, onCreateCustomNode]
+      );
+
       const cursorStyle = isSpacePressed
         ? isPanning
           ? "grabbing"
@@ -1665,7 +1678,18 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             ) : null}
             <OnboardingTips />
             {!openInlineInstance && libraryData.groups.length ? (
-              <NodesLibrary {...libraryData} onAddNode={onAddNode} />
+              <NodesLibrary
+                {...libraryData}
+                onAddNode={onAddNode}
+                onClickCustomNode={() => setIsAddingCustomNode(true)}
+              />
+            ) : null}
+            {isAddingCustomNode ? (
+              <CustomNodeModal
+                isOpen={isAddingCustomNode}
+                onClose={() => setIsAddingCustomNode(false)}
+                onSave={onSaveCustomNode}
+              />
             ) : null}
             <div className="run-btn-container">
               <Button

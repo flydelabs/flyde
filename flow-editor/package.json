@@ -8,9 +8,13 @@
     "test": "mocha src/**/*.spec.tsx --require ts-node/register",
     "dev": "tsc -p . -w --incremental",
     "__publish": "npm version patch && npm publish",
+    "prebuild": "pnpm run bundle-types",
     "build": "rm -rf dist && tsc -p .",
     "start": "npm run watch",
-    "storybook": "start-storybook"
+    "storybook": "start-storybook",
+    "bundle-types:core": "dts-bundle --name @flyde/core --main node_modules/@flyde/core/dist/index.d.ts --out ../../../../src/types/@flyde-core.d.ts",
+    "bundle-types:stringify": "tsx scripts/generate-types-file.ts",
+    "bundle-types": "pnpm run bundle-types:core && pnpm run bundle-types:stringify"
   },
   "author": "",
   "license": "agpl-3.0",
@@ -59,7 +63,9 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "sinon": "^14.0.2",
-    "ts-node-dev": "^2.0.0"
+    "ts-node-dev": "^2.0.0",
+    "dts-bundle": "^0.7.3",
+    "tsx": "^4.7.1"
   },
   "peerDependencies": {
     "@types/react": "^18.2.0",

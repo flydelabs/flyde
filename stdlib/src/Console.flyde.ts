@@ -12,6 +12,11 @@ export const Log: CodeNode = {
   inputs: {
     value: { description: "Value to log" },
   },
-  outputs: {},
-  run: ({ value }) => console.log(value),
+  outputs: {
+    loggedValue: { description: "The value that was logged" },
+  },
+  run: ({ value }, { loggedValue }) => {
+    console.log(value);
+    loggedValue.next(value);
+  },
 };

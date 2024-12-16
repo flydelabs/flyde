@@ -426,6 +426,9 @@ importers:
       chai:
         specifier: ^4.3.7
         version: 4.3.7
+      dts-bundle:
+        specifier: ^0.7.3
+        version: 0.7.3
       mocha:
         specifier: ^10.2.0
         version: 10.2.0
@@ -447,6 +450,9 @@ importers:
       ts-node-dev:
         specifier: ^2.0.0
         version: 2.0.0(@types/node@12.20.55)(typescript@5.5.4)
+      tsx:
+        specifier: ^4.7.1
+        version: 4.7.1
 
   playground:
     dependencies:
@@ -901,6 +907,9 @@ importers:
       '@flyde/runtime':
         specifier: workspace:*
         version: link:../runtime
+      '@flyde/stdlib':
+        specifier: workspace:*
+        version: link:../stdlib
       '@tsconfig/node16':
         specifier: ^1.0.3
         version: 1.0.4
@@ -995,6 +1004,9 @@ importers:
       '@docusaurus/preset-classic':
         specifier: 2.4.1
         version: 2.4.1(@algolia/client-search@5.1.1)(@types/react@18.2.21)(encoding@0.1.13)(eslint@8.50.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(search-insights@2.17.0)(typescript@5.2.2)
+      '@flyde/core':
+        specifier: workspace:*
+        version: link:../core
       '@flyde/dev-server':
         specifier: workspace:*
         version: link:../dev-server
@@ -1059,9 +1071,6 @@ importers:
         specifier: ^2.9.1
         version: 2.9.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
     devDependencies:
-      '@flyde/core':
-        specifier: workspace:*
-        version: link:../core
       '@tsconfig/docusaurus':
         specifier: ^1.0.7
         version: 1.0.7
@@ -6350,6 +6359,7 @@ packages:
   eslint@8.50.0:
     resolution: {integrity: sha512-FOnOGSuFuFLv/Sa+FDVRZl4GGVAAFFi8LecRsI5a1tMO5HIE8nCm4ivAlzt4dT3ol/PaaGC0rJEEXQmHJBGoOg==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+    deprecated: This version is no longer supported. Please see https://eslint.org/version-support for other options.
     hasBin: true
 
   espree@9.6.1:

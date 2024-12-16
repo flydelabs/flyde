@@ -8,13 +8,13 @@ export interface SwitchConfig {
     outputExpression: string;
   }[];
   defaultCase:
-  | {
-    enabled: true;
-    outputExpression: string;
-  }
-  | {
-    enabled: false;
-  };
+    | {
+        enabled: true;
+        outputExpression: string;
+      }
+    | {
+        enabled: false;
+      };
 }
 
 export const Switch: MacroNode<SwitchConfig> = {
@@ -37,10 +37,8 @@ export const Switch: MacroNode<SwitchConfig> = {
       for (const { name, conditionExpression, outputExpression } of cases) {
         try {
           const condition = evalExpression(conditionExpression, inputs);
-          console.log({ condition, conditionExpression, inputs });
           if (condition) {
             try {
-              console.log(4242, condition);
               outputs[name].next(evalExpression(outputExpression, inputs));
               foundCase = true;
             } catch (e) {

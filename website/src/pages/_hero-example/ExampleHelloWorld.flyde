@@ -14,7 +14,7 @@ node:
       macroData:
         delayMs:
           type: number
-          value: 3000
+          value: 1500
         value:
           type: dynamic
           value: ""

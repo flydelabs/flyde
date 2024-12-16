@@ -12,6 +12,7 @@
     ],
     "project": [
         "**/*.{js,ts,tsx}",
-        "!dist/**/*"
+        "!dist/**/*",
+        "!src/misc/**/*"
     ]
 }

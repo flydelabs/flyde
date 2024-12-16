@@ -10,4 +10,4 @@ export * from "./Dates.flyde";
 export * from "./State.flyde";
 export * from "./Timing";
 export * from "./Values/index";
-export * from "./Misc/Misc.flyde";
+export * from "./Comment/Comment.flyde";

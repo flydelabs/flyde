@@ -33,6 +33,7 @@
     "@flyde/resolver": "workspace:*",
     "@flyde/runtime": "workspace:*",
     "@flyde/stdlib": "workspace:*",
+    "@flyde/core": "workspace:*",
     "@mdx-js/react": "^1.6.22",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
@@ -51,7 +52,6 @@
     "usehooks-ts": "^2.9.1"
   },
   "devDependencies": {
-    "@flyde/core": "workspace:*",
     "@tsconfig/docusaurus": "^1.0.7",
     "@types/chai": "^4.3.5",
     "@types/mocha": "^10.0.1",
