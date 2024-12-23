@@ -3,6 +3,7 @@ import { Dialog, Classes, Button, Callout, Intent } from "@blueprintjs/core";
 import { Editor, useMonaco } from "@monaco-editor/react";
 import { NodeOrMacroDefinition } from "@flyde/core";
 import { configureMonaco } from "../../lib/customCodeNode/configureMonaco";
+import { useConfirm } from "../../flow-editor/ports/ports";
 
 interface CustomNodeModalProps {
   isOpen: boolean;
@@ -45,14 +46,29 @@ export function CustomNodeModal({
   onSave,
   forkMode,
 }: CustomNodeModalProps) {
+  const confirm = useConfirm();
   const [code, setCode] = useState<string>(
     forkMode?.initialCode || defaultContent
   );
   const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [hasChanges, setHasChanges] = useState(false);
 
   const handleEditorChange = useCallback((value: string | undefined) => {
-    setCode(value || "");
+    const newCode = value || "";
+    setCode(newCode);
+    setHasChanges(true);
   }, []);
+
+  const handleClose = useCallback(async () => {
+    if (
+      !hasChanges ||
+      (await confirm(
+        "You have unsaved changes. Are you sure you want to close?"
+      ))
+    ) {
+      onClose();
+    }
+  }, [hasChanges, onClose, confirm]);
 
   const editorOptions = useMemo(() => {
     return {
@@ -81,7 +97,9 @@ export function CustomNodeModal({
   return (
     <Dialog
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={handleClose}
+      canEscapeKeyClose={!hasChanges}
+      canOutsideClickClose={!hasChanges}
       className="custom-node-modal no-drag"
     >
       <div className={Classes.DIALOG_HEADER}>
@@ -110,7 +128,7 @@ export function CustomNodeModal({
       </div>
       <div className={Classes.DIALOG_FOOTER}>
         <div className={Classes.DIALOG_FOOTER_ACTIONS}>
-          <Button onClick={onClose} disabled={isSaving}>
+          <Button onClick={handleClose} disabled={isSaving}>
             Cancel
           </Button>
           <Button

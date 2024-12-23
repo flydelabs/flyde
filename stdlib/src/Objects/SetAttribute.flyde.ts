@@ -1,7 +1,4 @@
-import {
-  improvedMacroToOldMacro,
-  ImprovedMacroNode,
-} from "../ImprovedMacros/improvedMacros";
+import { processImprovedMacro, ImprovedMacroNode } from "@flyde/core";
 
 const namespace = "Objects";
 
@@ -43,4 +40,4 @@ const setAttribute2: ImprovedMacroNode = {
   },
 };
 
-export const SetAttribute = improvedMacroToOldMacro(setAttribute2);
+export const SetAttribute = processImprovedMacro(setAttribute2);

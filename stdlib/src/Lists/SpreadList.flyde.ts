@@ -1,8 +1,5 @@
 import { macroConfigurableValue, MacroConfigurableValue } from "@flyde/core";
-import {
-  improvedMacroToOldMacro,
-  ImprovedMacroNode,
-} from "../ImprovedMacros/improvedMacros";
+import { processImprovedMacro, ImprovedMacroNode } from "@flyde/core";
 
 export interface SpreadListConfig {
   count: MacroConfigurableValue;
@@ -49,4 +46,4 @@ const spreadList: ImprovedMacroNode<SpreadListConfig> = {
   },
 };
 
-export const SpreadList = improvedMacroToOldMacro(spreadList);
+export const SpreadList = processImprovedMacro(spreadList);

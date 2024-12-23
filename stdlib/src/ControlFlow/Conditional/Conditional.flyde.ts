@@ -1,12 +1,10 @@
 import { macroConfigurableValue, MacroConfigurableValue } from "@flyde/core";
 import {
-  improvedMacroToOldMacro,
+  processImprovedMacro,
   ImprovedMacroNode,
-} from "../../ImprovedMacros/improvedMacros";
-import {
   extractInputsFromValue,
   replaceInputsInValue,
-} from "../../ImprovedMacros/improvedMacroUtils";
+} from "@flyde/core";
 
 export enum ConditionType {
   Equal = "EQUAL",
@@ -141,4 +139,4 @@ function calculateCondition(
   }
 }
 
-export const Conditional = improvedMacroToOldMacro(conditional);
+export const Conditional = processImprovedMacro(conditional);

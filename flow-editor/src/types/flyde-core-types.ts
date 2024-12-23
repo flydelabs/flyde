@@ -17,6 +17,7 @@ declare module '@flyde/core' {
     export * from "@flyde/core/node";
     export * from "@flyde/core/node/get-node-with-dependencies";
     export * from "@flyde/core/flow-schema";
+    export * from "@flyde/core/improved-macros/improved-macros";
     export interface InstanceViewData {
         id: string;
         nodeIdOrGroup: string | VisualNode;
@@ -216,6 +217,73 @@ declare module '@flyde/core/node/get-node-with-dependencies' {
     import { CustomNode } from "@flyde/core/node";
     import { CustomNodeCollection } from "@flyde/core/";
     export const getNodeWithDependencies: (node: CustomNode, resolvedDeps: CustomNodeCollection, existingIds?: string[]) => CustomNode[];
+}
+
+declare module '@flyde/core/improved-macros/improved-macros' {
+    import { CodeNode, InputPin, OutputPin, MacroNode, NodeStyle, InputMode } from "@flyde/core/";
+    export * from "@flyde/core/improved-macros/improved-macro-utils";
+    export type StaticOrDerived<T, Config> = T | ((config: Config) => T);
+    export interface BaseMacroNodeData<Config = any> {
+        id: string;
+        namespace?: string;
+        menuDisplayName?: string;
+        menuDescription?: string;
+        displayName?: StaticOrDerived<string, Config>;
+        description?: StaticOrDerived<string, Config>;
+        icon?: string;
+        completionOutputs?: StaticOrDerived<string[], Config>;
+        run: CodeNode["run"];
+    }
+    export interface SimplifiedMacroNode<Config> extends BaseMacroNodeData<Config> {
+        inputs: Record<string, InputConfig>;
+        outputs: Record<string, {
+            description?: string;
+        }>;
+    }
+    export interface AdvancedMacroNode<Config> extends BaseMacroNodeData<Config> {
+        inputs: StaticOrDerived<Record<string, InputPin>, Config>;
+        outputs: StaticOrDerived<Record<string, OutputPin>, Config>;
+        reactiveInputs?: StaticOrDerived<string[], Config>;
+        defaultConfig: Config;
+        editorConfig?: MacroNode<Config>["editorConfig"];
+        defaultStyle?: NodeStyle;
+    }
+    export type ImprovedMacroNode<Config = any> = SimplifiedMacroNode<Config> | AdvancedMacroNode<Config>;
+    type InputConfig = {
+        defaultValue?: any;
+        description?: string;
+        mode?: InputMode | "reactive";
+    } & EditorTypeConfig;
+    type EditorTypeConfig = {
+        [K in EditorType]: {
+            editorType?: K;
+            editorTypeData?: EditorTypeDataMap[K];
+        };
+    }[EditorType];
+    type EditorType = "string" | "number" | "boolean" | "json" | "select" | "longtext" | "enum";
+    type EditorTypeDataMap = {
+        string: undefined;
+        number: {
+            min?: number;
+            max?: number;
+        };
+        boolean: undefined;
+        json: undefined;
+        select: {
+            options: string[] | {
+                value: string | number;
+                label: string;
+            }[];
+        };
+        longtext: {
+            rows?: number;
+        };
+        enum: {
+            options: string[];
+        };
+    };
+    export function isAdvancedMacroNode<Config>(node: ImprovedMacroNode<Config>): node is AdvancedMacroNode<Config>;
+    export function processImprovedMacro(node: ImprovedMacroNode): MacroNode<any>;
 }
 
 declare module '@flyde/core/common/test-data-creator' {
@@ -680,6 +748,7 @@ declare module '@flyde/core/' {
     export * from "@flyde/core/node";
     export * from "@flyde/core/node/get-node-with-dependencies";
     export * from "@flyde/core/flow-schema";
+    export * from "@flyde/core/improved-macros/improved-macros";
     export interface InstanceViewData {
         id: string;
         nodeIdOrGroup: string | VisualNode;
@@ -732,6 +801,15 @@ declare module '@flyde/core/execute/debugger' {
         debugDelay?: number;
         destroy?: () => void;
     };
+}
+
+declare module '@flyde/core/improved-macros/improved-macro-utils' {
+    import { InputPin, MacroConfigurableValue, MacroNode } from "@flyde/core/";
+    export function extractInputsFromValue(val: MacroConfigurableValue, key: string): Record<string, InputPin>;
+    export function replaceInputsInValue(inputs: Record<string, any>, value: MacroConfigurableValue, fieldName: string, ignoreMissingInputs?: boolean): MacroConfigurableValue["value"];
+    export function renderConfigurableValue(value: MacroConfigurableValue, fieldName: string): string;
+    export function generateConfigEditor<Config>(config: Config, overrides?: Partial<Record<keyof Config, any>>): MacroNode<Config>["editorConfig"];
+    export function renderDerivedString(displayName: string, config: any): string;
 }
 
 declare module '@flyde/core/node/macro-node' {

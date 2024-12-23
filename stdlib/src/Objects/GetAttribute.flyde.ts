@@ -1,7 +1,4 @@
-import {
-  ImprovedMacroNode,
-  improvedMacroToOldMacro,
-} from "../ImprovedMacros/improvedMacros";
+import { ImprovedMacroNode, processImprovedMacro } from "@flyde/core";
 
 const getAttribute: ImprovedMacroNode = {
   id: "GetAttribute",
@@ -29,4 +26,4 @@ const getAttribute: ImprovedMacroNode = {
     outputs.value.next(key.split(".").reduce((obj, i) => obj[i], object));
   },
 };
-export const GetAttribute = improvedMacroToOldMacro(getAttribute);
+export const GetAttribute = processImprovedMacro(getAttribute);
