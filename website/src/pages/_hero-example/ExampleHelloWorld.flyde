@@ -2,6 +2,8 @@ imports:
   "@flyde/stdlib":
     - Delay
     - InlineValue
+  Addr.flyde.ts:
+    - Addr
 node:
   instances:
     - pos:
@@ -62,6 +64,12 @@ node:
       style:
         size: regular
         icon: pen
+    - pos:
+        x: -593.19
+        y: -350.22
+      id: Addr-3r04c74
+      inputConfig: {}
+      nodeId: Addr
   connections:
     - from:
         insId: hvnxp46iusf1g91k6dua576w

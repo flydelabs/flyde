@@ -3,10 +3,7 @@ import {
   MacroConfigurableValue,
   OutputPin,
 } from "@flyde/core";
-import {
-  improvedMacroToOldMacro,
-  ImprovedMacroNode,
-} from "../ImprovedMacros/improvedMacros";
+import { processImprovedMacro, ImprovedMacroNode } from "@flyde/core";
 
 const namespace = "Control Flow";
 
@@ -77,4 +74,4 @@ const roundRobin: ImprovedMacroNode<RoundRobinConfig> = {
   },
 };
 
-export const RoundRobin = improvedMacroToOldMacro(roundRobin);
+export const RoundRobin = processImprovedMacro(roundRobin);

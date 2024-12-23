@@ -1,8 +1,5 @@
 import axios, { AxiosRequestConfig } from "axios";
-import {
-  improvedMacroToOldMacro,
-  ImprovedMacroNode,
-} from "../ImprovedMacros/improvedMacros";
+import { processImprovedMacro, ImprovedMacroNode } from "@flyde/core";
 
 const namespace = "HTTP";
 
@@ -78,4 +75,4 @@ const http: ImprovedMacroNode = {
   },
 };
 
-export const Http = improvedMacroToOldMacro(http);
+export const Http = processImprovedMacro(http);

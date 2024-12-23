@@ -1,10 +1,10 @@
 import {
-  MacroConfigurableValue,
   InputPin,
-  nodeInput,
-  MacroNode,
+  MacroConfigurableValue,
   MacroEditorFieldDefinition,
-} from "../..";
+  MacroNode,
+  nodeInput,
+} from "..";
 
 function extractInputNameAndPath(match: string): {
   inputName: string;

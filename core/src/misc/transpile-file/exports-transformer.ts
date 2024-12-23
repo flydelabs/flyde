@@ -11,46 +11,33 @@ export function exportToGlobalTransformer(
       ) {
         const declarations = node.declarationList.declarations;
 
-        return ts.factory.createVariableStatement(
-          undefined,
-          ts.factory.createVariableDeclarationList(
-            [
-              ts.factory.createVariableDeclaration(
+        return declarations.map((declaration) => {
+          const name = (declaration.name as ts.Identifier).text;
+          const initializer = declaration.initializer;
+
+          if (!initializer) {
+            console.warn(`Initializer is undefined for declaration: ${name}`);
+            return node;
+          }
+
+          return ts.factory.createExpressionStatement(
+            ts.factory.createAssignment(
+              ts.factory.createPropertyAccessExpression(
                 ts.factory.createIdentifier("__exports"),
-                undefined,
-                undefined,
-                ts.factory.createObjectLiteralExpression(
-                  declarations.map((declaration) => {
-                    const name = (declaration.name as ts.Identifier).text;
-                    const initializer = declaration.initializer;
-
-                    if (!initializer) {
-                      console.warn(
-                        `Initializer is undefined for declaration: ${name}`
-                      );
-                      return ts.factory.createShorthandPropertyAssignment(name);
-                    }
-
-                    return ts.factory.createPropertyAssignment(
-                      name,
-                      initializer
-                    );
-                  })
-                )
+                ts.factory.createIdentifier(name)
               ),
-            ],
-            ts.NodeFlags.Const
-          )
-        );
+              initializer
+            )
+          );
+        });
       }
 
-      // Handle default export assignments
       if (ts.isExportAssignment(node)) {
         const expression = node.expression;
 
         if (!expression) {
           console.warn("Expression is undefined for export assignment");
-          return node; // Skip transformation if expression is undefined
+          return node;
         }
 
         return ts.factory.createExpressionStatement(
@@ -71,9 +58,9 @@ export function exportToGlobalTransformer(
         return node;
       }
     };
+
     return (node: ts.SourceFile) => {
       const transformedNode = ts.visitNode(node, visit) as ts.SourceFile;
-      // Add a return statement for the __exports object at the end of the file
       const returnStatement = ts.factory.createReturnStatement(
         ts.factory.createIdentifier("__exports")
       );

@@ -1,18 +1,18 @@
 import { assert } from "chai";
-import { spiedOutput } from "../../test-utils";
+import { spiedOutput } from "../test-utils";
 
-import { improvedMacroToOldMacro, ImprovedMacroNode } from "./improved-macros";
+import { processImprovedMacro, ImprovedMacroNode } from "./improved-macros";
 import {
   extractInputsFromValue,
   replaceInputsInValue,
 } from "./improved-macro-utils";
-import { eventually } from "../../";
+import { eventually } from "..";
 import {
   MacroConfigurableValue,
   macroConfigurableValue,
   nodeOutput,
   dynamicNodeInput,
-} from "../..";
+} from "..";
 
 describe("ImprovedMacros", () => {
   describe("SimpleMacro with dot notation", () => {
@@ -43,7 +43,7 @@ describe("ImprovedMacros", () => {
         },
       };
 
-      const macro = improvedMacroToOldMacro(SimpleMacro);
+      const macro = processImprovedMacro(SimpleMacro);
 
       const definition = macro.definitionBuilder(macro.defaultData);
       assert.deepEqual(Object.keys(definition.inputs), ["person"]);

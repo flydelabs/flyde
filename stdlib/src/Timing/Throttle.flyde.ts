@@ -1,8 +1,5 @@
 import { TIMING_NAMESPACE, timeToString } from "./common";
-import {
-  improvedMacroToOldMacro,
-  ImprovedMacroNode,
-} from "../ImprovedMacros/improvedMacros";
+import { processImprovedMacro, ImprovedMacroNode } from "@flyde/core";
 
 const namespace = TIMING_NAMESPACE;
 
@@ -55,4 +52,4 @@ const throttle: ImprovedMacroNode = {
   },
 };
 
-export const Throttle = improvedMacroToOldMacro(throttle);
+export const Throttle = processImprovedMacro(throttle);

@@ -8,13 +8,15 @@ import {
   MacroConfigurableValue,
   macroConfigurableValue,
   MacroEditorFieldDefinition,
-} from "../..";
+} from "..";
 import {
   extractInputsFromValue,
   generateConfigEditor,
   renderDerivedString,
   replaceInputsInValue,
 } from "./improved-macro-utils";
+
+export * from "./improved-macro-utils";
 
 export type StaticOrDerived<T, Config> = T | ((config: Config) => T);
 
@@ -118,9 +120,7 @@ export function isAdvancedMacroNode<Config>(
   return (node as AdvancedMacroNode<Config>).defaultConfig !== undefined;
 }
 
-export function improvedMacroToOldMacro(
-  node: ImprovedMacroNode
-): MacroNode<any> {
+export function processImprovedMacro(node: ImprovedMacroNode): MacroNode<any> {
   const isAdvanced = isAdvancedMacroNode(node);
 
   const displayName =

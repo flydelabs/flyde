@@ -18,6 +18,8 @@ export * from "./node";
 export * from "./node/get-node-with-dependencies";
 export * from "./flow-schema";
 
+export * from "./improved-macros/improved-macros";
+
 export interface InstanceViewData {
   id: string;
   nodeIdOrGroup: string | VisualNode;

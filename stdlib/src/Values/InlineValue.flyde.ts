@@ -1,12 +1,11 @@
-import { macroConfigurableValue, MacroConfigurableValue } from "@flyde/core";
 import {
+  macroConfigurableValue,
+  MacroConfigurableValue,
+  processImprovedMacro,
+  ImprovedMacroNode,
   extractInputsFromValue,
   replaceInputsInValue,
-} from "../ImprovedMacros/improvedMacroUtils";
-import {
-  improvedMacroToOldMacro,
-  ImprovedMacroNode,
-} from "../ImprovedMacros/improvedMacros";
+} from "@flyde/core";
 
 export interface InlineValueConfig {
   value: MacroConfigurableValue;
@@ -46,4 +45,4 @@ const inlineValue: ImprovedMacroNode<InlineValueConfig> = {
   },
 };
 
-export const InlineValue = improvedMacroToOldMacro(inlineValue);
+export const InlineValue = processImprovedMacro(inlineValue);

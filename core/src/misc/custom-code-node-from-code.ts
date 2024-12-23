@@ -1,28 +1,26 @@
 import { isCodeNode, isMacroNode, MacroNode, Node } from "../";
 import { transpileFile } from "./transpile-file/transpile-file";
-import { improvedMacroToOldMacro } from "./improved-macros.ts/improved-macros";
+import { processImprovedMacro } from "../improved-macros/improved-macros";
 
 export function customCodeNodeFromCode(
   code: string,
-  suffixId?: string
+  suffixId?: string,
+  imports?: { [key: string]: any }
 ): Node | MacroNode<any> {
   const transpiledCode = transpileFile("", code);
 
   // Wrap the transpiled code to handle default export
-  const wrappedCode = `(function () {
+  const wrappedCode = `
       const __imports = arguments[0];
-      const __exports = {};
+      let __exports = {};
       ${transpiledCode}
-
-      return __exports;
-  })(arguments)
   `;
 
-  const result = new Function(wrappedCode)({});
+  const result = new Function(wrappedCode)(imports);
 
   if (isCodeNode(result.default) || isMacroNode(result.default)) {
     if (result.default.icon) {
-      const macro = improvedMacroToOldMacro(result.default) as MacroNode<any>;
+      const macro = processImprovedMacro(result.default) as MacroNode<any>;
       macro.id = `${macro.id}${suffixId ? `-${suffixId}` : ""}`;
       return macro;
     }
