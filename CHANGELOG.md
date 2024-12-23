@@ -2,9 +2,28 @@
 
 All notable changes to Flyde will be documented in this file.
 
+## [0.106.1] - 2024-12-23
+
+### What's Changed
+
+- custom node related fixes by @GabiGrin in https://github.com/flydelabs/flyde/pull/177
+
+**Full Changelog**: https://github.com/flydelabs/flyde/compare/v0.106.0...v0.106.1
+
+## [0.106.0] - 2024-12-23
+
+### What's Changed
+
+- custom nodes creation + stdlib cleanup + fork any node preps by @GabiGrin in https://github.com/flydelabs/flyde/pull/175
+- allow switching between macros in the same namespace by @GabiGrin in https://github.com/flydelabs/flyde/pull/172
+- fix display of custom svg icons by @GabiGrin in https://github.com/flydelabs/flyde/pull/173
+- Improved macro node API by @GabiGrin in https://github.com/flydelabs/flyde/pull/174
+
+**Full Changelog**: https://github.com/flydelabs/flyde/compare/v0.105.2...v0.106.0
+
 ## [0.105.0] - 2024-10-05
 
-## What's Changed
+### What's Changed
 
 - various ux tweaks by @GabiGrin in https://github.com/flydelabs/flyde/pull/159
 - improved macro node by @GabiGrin in https://github.com/flydelabs/flyde/pull/162
@@ -19,7 +38,7 @@ All notable changes to Flyde will be documented in this file.
 
 ## [0.104.0] - 2024-09-15
 
-## What's Changed
+### What's Changed
 
 - support longtext in macro editor by @GabiGrin in https://github.com/flydelabs/flyde/pull/153
 - macro editor tweaks by @GabiGrin in https://github.com/flydelabs/flyde/pull/155
@@ -90,13 +109,13 @@ All notable changes to Flyde will be documented in this file.
 
 Note: this is the first up-to-date changelog for Flyde. Beforehand, versions for the various npm packages and extension were not in sync. Starting with this change, all Flyde-related artifacts will have the same version.
 
-## What's Changed
+### What's Changed
 
 - adds the ability to select and remove connections, fixes #107 by @Tokyros in https://github.com/flydelabs/flyde/pull/116
 - resolving of ui bundle missed path by 1 level #120 by @akim-muto in https://github.com/flydelabs/flyde/pull/124
 - fixes hotkeys on windows, resolves #127 by @GabiGrin in https://github.com/flydelabs/flyde/pull/128
 
-## New Contributors
+### New Contributors
 
 - @akim-muto made their first contribution in https://github.com/flydelabs/flyde/pull/124
 
