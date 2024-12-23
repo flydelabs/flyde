@@ -28,9 +28,13 @@
   "devDependencies": {
     "@types/jscodeshift": "^0.11.6",
     "@types/mocha": "^10.0.1",
+    "@typescript-eslint/eslint-plugin": "^7.3.1",
+    "@typescript-eslint/parser": "^7.3.1",
     "chai": "^4.3.7",
     "concurrently": "^7.6.0",
     "css-loader": "^6.8.1",
+    "eslint": "^8.57.0",
+    "eslint-plugin-local-rules": "^2.0.1",
     "jscodeshift": "^0.15.0",
     "mocha": "^10.2.0",
     "nodemon": "^2.0.22",
@@ -56,6 +60,7 @@
     "build:docs-data": "ts-node scripts/docs-data.ts",
     "build:node-sources": "ts-node scripts/build-node-sources.ts",
     "prod": "node dist/index.js",
-    "__publish": "npm version patch && npm publish"
+    "__publish": "npm version patch && npm publish",
+    "lint": "eslint . --ext .ts"
   }
 }

@@ -4,6 +4,7 @@ export * from "./Conditional/Conditional.flyde";
 export * from "./Switch.flyde";
 export * from "./RoundRobin.flyde";
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const PubSub = require("pubsub-js");
 
 const namespace = "Control Flow";

@@ -4,7 +4,7 @@ import { isCodeNode, isVisualNode, Node } from "@flyde/core";
 
 const nodes = Object.fromEntries(
   Object.entries(allExported).filter(
-    ([_, value]: [string, unknown]) =>
+    ([, value]: [string, unknown]) =>
       isCodeNode(value as Node) || isVisualNode(value as Node)
   )
 );

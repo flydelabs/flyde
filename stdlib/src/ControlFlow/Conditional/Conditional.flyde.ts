@@ -106,7 +106,9 @@ const conditional: ImprovedMacroNode<ConditionalConfig> = {
 };
 
 function calculateCondition(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   val1: any,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   val2: any,
   condition: ConditionalConfig["condition"]
 ) {
