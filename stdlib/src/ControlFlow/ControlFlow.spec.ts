@@ -13,7 +13,8 @@ import {
   spiedOutput,
   valueNode,
 } from "@flyde/core/dist/test-utils";
-import { Publish, Subscribe } from "./ControlFlow.flyde";
+import { Publish } from "./Publish.flyde";
+import { Subscribe } from "./Subscribe.flyde";
 
 describe("ControlFlow", () => {
   describe("Publish & Subscribe", () => {

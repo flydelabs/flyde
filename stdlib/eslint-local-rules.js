@@ -133,7 +133,18 @@ module.exports = {
           if (isNodeExport) {
             validNodeExportFound = true;
           } else {
-            otherExports.push(node);
+            // Get the export name
+            let exportName;
+            if (node.declaration?.type === "FunctionDeclaration") {
+              exportName = node.declaration.id.name;
+            } else if (node.declaration?.type === "VariableDeclaration") {
+              exportName = node.declaration.declarations[0].id.name;
+            } else if (node.specifiers?.length > 0) {
+              exportName = node.specifiers[0].exported.name;
+            } else {
+              exportName = sourceCode.getText(node);
+            }
+            otherExports.push({ node, exportName });
           }
         },
 
@@ -145,11 +156,10 @@ module.exports = {
             });
           }
 
-          otherExports.forEach((node) => {
+          otherExports.forEach(({ node, exportName }) => {
             context.report({
               node,
-              message:
-                "Flyde files should only export a node and its types. Move other exports to a separate file.",
+              message: `Invalid export '${exportName}' in Flyde file. Only a node and its types should be exported.`,
             });
           });
         },

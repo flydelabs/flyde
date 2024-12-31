@@ -49,7 +49,7 @@ export const Comment: MacroNode<CommentConfig> = {
   },
 };
 
-export function parseMarkdown(markdown: string): string {
+function parseMarkdown(markdown: string): string {
   // Replace headers
   markdown = markdown.replace(/^(#{1,6})\s(.+)$/gm, (_, hashes, content) => {
     const level = hashes.length;

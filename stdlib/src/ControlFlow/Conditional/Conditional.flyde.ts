@@ -6,7 +6,7 @@ import {
   replaceInputsInValue,
 } from "@flyde/core";
 
-export enum ConditionType {
+enum ConditionType {
   Equal = "EQUAL",
   NotEqual = "NOT_EQUAL",
   Contains = "CONTAINS",
