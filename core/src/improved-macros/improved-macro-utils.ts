@@ -83,26 +83,62 @@ export function replaceInputsInValue(
     return inputs[fieldName];
   }
 
-  const jsonString = JSON.stringify(value.value);
-  const replacedJsonString = jsonString.replace(/({{.*?}})/g, (match) => {
-    const { inputName, path } = extractInputNameAndPath(match);
-    let result = inputs[inputName];
-    for (const key of path) {
-      if (result && typeof result === "object" && key in result) {
-        result = result[key];
-      } else {
-        return match; // Return original match if path is invalid
-      }
-    }
-    return result !== undefined ? result : match;
-  });
+  if (value.type === "json") {
+    let parsed =
+      typeof value.value === "string" ? JSON.parse(value.value) : value.value;
 
-  try {
-    return JSON.parse(replacedJsonString);
-  } catch (error) {
-    console.error("Error parsing replaced JSON:", error);
-    return value;
+    function replaceInObject(obj: any): any {
+      if (typeof obj === "string") {
+        return obj.replace(/({{.*?}})/g, (match) => {
+          const { inputName, path } = extractInputNameAndPath(match);
+          let result = inputs[inputName];
+          for (const key of path) {
+            if (result && typeof result === "object" && key in result) {
+              result = result[key];
+            } else {
+              return match;
+            }
+          }
+          return result !== undefined ? result : match;
+        });
+      }
+
+      if (Array.isArray(obj)) {
+        return obj.map((item) => replaceInObject(item));
+      }
+
+      if (obj && typeof obj === "object") {
+        const result = {};
+        for (const key in obj) {
+          const value = obj[key];
+          if (typeof value === "string" && value.trim().match(/^{{.*}}$/)) {
+            const { inputName, path } = extractInputNameAndPath(value.trim());
+            let replacementValue = inputs[inputName];
+            for (const pathKey of path) {
+              if (
+                replacementValue &&
+                typeof replacementValue === "object" &&
+                pathKey in replacementValue
+              ) {
+                replacementValue = replacementValue[pathKey];
+              }
+            }
+            result[key] =
+              replacementValue !== undefined ? replacementValue : value;
+          } else {
+            result[key] = replaceInObject(value);
+          }
+        }
+        return result;
+      }
+
+      return obj;
+    }
+
+    return replaceInObject(parsed);
   }
+
+  return value.value;
 }
 
 export function renderConfigurableValue(
