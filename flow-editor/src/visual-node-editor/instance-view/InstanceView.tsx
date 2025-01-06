@@ -162,6 +162,8 @@ export interface InstanceViewProps {
   onDeleteInstance: (ins: NodeInstance) => void;
   onSetDisplayName: (ins: NodeInstance, view: string | undefined) => void;
 
+  onViewForkCode: (ins: NodeInstance) => void;
+
   displayMode?: true;
 
   forceShowMinimized?: PinType | "both";
@@ -615,7 +617,10 @@ export const InstanceView: React.FC<InstanceViewProps> =
         { text: "Reorder outputs", onClick: _onChangeVisibleOutputs },
         { text: `Set display name`, onClick: _onSetDisplayName },
         { text: "Group selected instances", onClick: onGroupSelected },
-
+        {
+          text: "View/fork code",
+          onClick: () => props.onViewForkCode(instance),
+        },
         {
           text: "Delete instance",
           intent: "danger",

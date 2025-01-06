@@ -27,6 +27,7 @@ import {
   ResolvedMacroNodeInstance,
   ImportedNode,
   MacroNodeDefinition,
+  NodeOrMacroDefinition,
 } from "@flyde/core";
 
 import { InstanceView, InstanceViewProps } from "./instance-view/InstanceView";
@@ -207,7 +208,8 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
       const darkMode = useDarkMode();
 
-      const { reportEvent, onCreateCustomNode } = usePorts();
+      const { reportEvent, onCreateCustomNode, onRequestNodeSource } =
+        usePorts();
 
       const parentViewport = props.parentViewport || defaultViewPort;
 
@@ -257,6 +259,10 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       }>();
 
       const [isAddingCustomNode, setIsAddingCustomNode] = useState(false);
+      const [customNodeForkData, setCustomNodeForkData] = useState<{
+        node: NodeOrMacroDefinition;
+        initialCode: string;
+      }>();
 
       const inlineEditorPortalRootRef = useRef();
 
@@ -1482,6 +1488,20 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           : "grab"
         : "default";
 
+      const onViewForkCode = React.useCallback(
+        async (instance: NodeInstance) => {
+          const nodeDef = safelyGetNodeDef(instance, currResolvedDeps);
+          try {
+            const code = await onRequestNodeSource({ node: nodeDef });
+            setCustomNodeForkData({ node: nodeDef, initialCode: code });
+            setIsAddingCustomNode(true);
+          } catch (e) {
+            console.error("Failed to get node source:", e);
+          }
+        },
+        [currResolvedDeps, onRequestNodeSource]
+      );
+
       try {
         return (
           <ContextMenu
@@ -1616,6 +1636,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                   onGroupSelected={onGroupSelectedInternal}
                   onPinMouseDown={onPinMouseDown}
                   onPinMouseUp={onPinMouseUp}
+                  onViewForkCode={onViewForkCode}
                   hadError={
                     props.instancesWithErrors?.has(fullInsIdPath(ins.id)) ??
                     false
@@ -1687,8 +1708,12 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             {isAddingCustomNode ? (
               <CustomNodeModal
                 isOpen={isAddingCustomNode}
-                onClose={() => setIsAddingCustomNode(false)}
+                onClose={() => {
+                  setIsAddingCustomNode(false);
+                  setCustomNodeForkData(undefined);
+                }}
                 onSave={onSaveCustomNode}
+                forkMode={customNodeForkData}
               />
             ) : null}
             <div className="run-btn-container">

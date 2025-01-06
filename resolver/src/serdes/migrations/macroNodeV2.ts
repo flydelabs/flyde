@@ -3,7 +3,7 @@ import {
   isMacroNodeInstance,
   macroConfigurableValue,
 } from "@flyde/core";
-import { ConditionType } from "@flyde/stdlib/dist/ControlFlow";
+import { ConditionType } from "@flyde/stdlib/dist/ControlFlow/Conditional/ConditionType";
 
 export function migrateMacroNodeV2(data: { node?: any; imports?: any }) {
   const skippedMacros = ["Collect", "CodeExpression", "Switch", "Comment"];
