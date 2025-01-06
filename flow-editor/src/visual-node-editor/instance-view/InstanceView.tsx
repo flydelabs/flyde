@@ -162,7 +162,7 @@ export interface InstanceViewProps {
   onDeleteInstance: (ins: NodeInstance) => void;
   onSetDisplayName: (ins: NodeInstance, view: string | undefined) => void;
 
-  onViewForkCode: (ins: NodeInstance) => void;
+  onViewForkCode?: (ins: NodeInstance) => void;
 
   displayMode?: true;
 
