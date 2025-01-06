@@ -15,3 +15,4 @@ export * from "./Repeat.flyde";
 export * from "./Reverse.flyde";
 export * from "./Slice.flyde";
 export * from "./SpreadList.flyde";
+export * from "./Collect/Collect.flyde";
