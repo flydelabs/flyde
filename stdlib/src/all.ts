@@ -1,2 +1,2 @@
 export * from "./all-browser";
-export * from "./FileSystem.flyde";
+export * from "./FileSystem";
