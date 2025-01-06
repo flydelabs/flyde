@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { MacroConfigurableValue } from "@flyde/core";
 
 export function convertValue(
   oldType: MacroConfigurableValue["type"],
   newType: MacroConfigurableValue["type"],
-  value: unknown
-): unknown {
+  value: any
+): any {
   switch (newType) {
     case "string": {
       switch (oldType) {
