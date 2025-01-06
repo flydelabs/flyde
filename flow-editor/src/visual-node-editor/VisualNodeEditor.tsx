@@ -28,6 +28,7 @@ import {
   ImportedNode,
   MacroNodeDefinition,
   NodeOrMacroDefinition,
+  CodeNodeDefinition,
 } from "@flyde/core";
 
 import { InstanceView, InstanceViewProps } from "./instance-view/InstanceView";
@@ -208,8 +209,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
       const darkMode = useDarkMode();
 
-      const { reportEvent, onCreateCustomNode, onRequestNodeSource } =
-        usePorts();
+      const { reportEvent, onCreateCustomNode } = usePorts();
 
       const parentViewport = props.parentViewport || defaultViewPort;
 
@@ -1490,16 +1490,23 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
       const onViewForkCode = React.useCallback(
         async (instance: NodeInstance) => {
-          const nodeDef = safelyGetNodeDef(instance, currResolvedDeps);
+          const nodeDef = safelyGetNodeDef(
+            instance,
+            currResolvedDeps
+          ) as CodeNodeDefinition;
           try {
-            const code = await onRequestNodeSource({ node: nodeDef });
+            const code = nodeDef.sourceCode;
+            if (!code) {
+              toastMsg("No source code found");
+              return;
+            }
             setCustomNodeForkData({ node: nodeDef, initialCode: code });
             setIsAddingCustomNode(true);
           } catch (e) {
             console.error("Failed to get node source:", e);
           }
         },
-        [currResolvedDeps, onRequestNodeSource]
+        [currResolvedDeps]
       );
 
       try {

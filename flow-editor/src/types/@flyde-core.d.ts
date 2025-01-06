@@ -672,10 +672,14 @@ declare module '@flyde/core/node/node' {
     export type ImportableSource = {
             module: string;
             node: ImportedNode;
-            implicit?: boolean;
     };
     export type CustomNode = VisualNode;
-    export type CodeNodeDefinition = Omit<CodeNode, "run">;
+    export type CodeNodeDefinition = Omit<CodeNode, "run"> & {
+            /**
+                * The source code of the node, if available. Used for editing and forking nodes in the editor.
+                */
+            sourceCode?: string;
+    };
     export type NodeDefinition = CustomNode | CodeNodeDefinition;
     export type NodeOrMacroDefinition = NodeDefinition | MacroNodeDefinition<any>;
     export type NodeModuleMetaData = {

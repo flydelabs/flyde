@@ -250,6 +250,7 @@ export function resolveFlow(
 
               gatheredDependencies[resolvedNode.id] = {
                 ...resolvedNode,
+                sourceCode: (targetMacro.node as any).sourceCode,
                 source: {
                   path: importPath,
                   export: targetMacro.exportName,
@@ -326,6 +327,7 @@ export function resolveFlow(
 
             gatheredDependencies[resolvedNode.id] = {
               ...resolvedNode,
+              sourceCode: (targetMacroNode as any).sourceCode,
               source: {
                 path: importPath,
                 export: targetMacroNode.id,
@@ -366,6 +368,22 @@ export function resolveFlow(
   };
 }
 
+export function findTypeScriptSource(jsPath: string): string | null {
+  if (!jsPath.includes("/dist/") || !jsPath.endsWith(".js")) {
+    return null;
+  }
+
+  const potentialTsPath = jsPath
+    .replace("/dist/", "/src/")
+    .replace(/\.js$/, ".ts");
+
+  try {
+    return readFileSync(potentialTsPath, "utf-8");
+  } catch {
+    return null;
+  }
+}
+
 export function resolveCodeNodeDependencies(path: string): {
   errors: string[];
   nodes: { exportName: string; node: CodeNode | MacroNodeDefinition<any> }[];
@@ -375,12 +393,28 @@ export function resolveCodeNodeDependencies(path: string): {
 
   try {
     let module = requireReload(path);
+    // Try to find TypeScript source if it's a JS file in dist
+    const sourceCode =
+      findTypeScriptSource(path) || readFileSync(path, "utf-8");
+
     if (isCodeNode(module)) {
-      nodes.push({ exportName: "default", node: module });
+      nodes.push({
+        exportName: "default",
+        node: {
+          ...module,
+          sourceCode,
+        },
+      });
     } else if (typeof module === "object") {
       Object.entries(module).forEach(([key, value]) => {
         if (isCodeNode(value)) {
-          nodes.push({ exportName: key, node: value });
+          nodes.push({
+            exportName: key,
+            node: {
+              ...value,
+              sourceCode,
+            },
+          });
         } else if (isMacroNode(value)) {
           nodes.push({ exportName: key, node: value });
         }
@@ -401,12 +435,28 @@ function resolveMacroNodesDependencies(path: string): {
 
   try {
     let module = requireReload(path);
+    // Try to find TypeScript source if it's a JS file in dist
+    const sourceCode =
+      findTypeScriptSource(path) || readFileSync(path, "utf-8");
+
     if (isMacroNode(module)) {
-      nodes.push({ exportName: "default", node: module });
+      nodes.push({
+        exportName: "default",
+        node: {
+          ...module,
+          sourceCode,
+        },
+      });
     } else if (typeof module === "object") {
       Object.entries(module).forEach(([key, value]) => {
         if (isMacroNode(value)) {
-          nodes.push({ exportName: key, node: value });
+          nodes.push({
+            exportName: key,
+            node: {
+              ...value,
+              sourceCode,
+            },
+          });
         }
       });
     }
