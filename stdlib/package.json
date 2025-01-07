@@ -61,6 +61,6 @@
     "build:node-sources": "ts-node scripts/build-node-sources.ts",
     "prod": "node dist/index.js",
     "__publish": "npm version patch && npm publish",
-    "lint": "eslint . --ext .ts"
+    "lint": "eslint . --ext .ts && ts-node scripts/check-unique-node-ids.ts"
   }
 }
