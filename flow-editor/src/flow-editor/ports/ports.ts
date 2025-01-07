@@ -96,7 +96,9 @@ export const defaultPorts: EditorPorts = {
   getLibraryData: () => Promise.resolve({ groups: [] }),
   onRequestSiblingNodes: () => Promise.resolve([]),
   onCreateCustomNode: toastNotImplemented("onCreateCustomNode"),
-  onRequestNodeSource: toastNotImplemented("getNodeSource"),
+  onRequestNodeSource: () => {
+    throw new Error("Not implemented");
+  },
 };
 
 export const PortsContext = createContext<EditorPorts>(defaultPorts);

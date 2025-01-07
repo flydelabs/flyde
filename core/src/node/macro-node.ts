@@ -138,6 +138,7 @@ export type MacroNodeDefinition<T> = Omit<
    * Resolver will use this to load the editor component bundle into the editor
    */
   editorConfig: MacroEditorConfigDefinition;
+  sourceCode?: string;
 };
 
 export interface MacroEditorCompProps<T> {

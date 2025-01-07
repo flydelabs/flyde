@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { MacroConfigurableValue } from "@flyde/core";
 
 export function convertValue(
@@ -20,7 +21,7 @@ export function convertValue(
       switch (oldType) {
         case "string":
         case "json": {
-          const parsed = parseFloat(value);
+          const parsed = parseFloat(value as string);
           if (isNaN(parsed)) {
             return 0;
           }

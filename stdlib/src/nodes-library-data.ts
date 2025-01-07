@@ -20,8 +20,8 @@ import {
 import { Switch } from "./ControlFlow/Switch.flyde";
 import { Collect } from "./Lists/Collect/Collect.flyde";
 import { Comment } from "./Comment/Comment.flyde";
-import * as Lists from "./Lists/Lists.flyde";
-import * as Objects from "./Objects/Objects.flyde";
+import * as Lists from "./Lists";
+import * as Objects from "./Objects";
 
 export function getUnresolvedNodesLibraryData() {
   return {

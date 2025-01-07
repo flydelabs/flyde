@@ -19,9 +19,13 @@ import {
   ImportableSource,
   MAJOR_DEBUGGER_EVENT_TYPES,
   MacroNodeDefinition,
+  extractInputsFromValue,
   formatEvent,
   isMacroNodeDefinition,
   keys,
+  macroConfigurableValue,
+  processImprovedMacro,
+  replaceInputsInValue,
 } from "@flyde/core";
 import { findPackageRoot } from "./find-package-root";
 import { randomInt } from "crypto";
@@ -468,7 +472,15 @@ export class FlydeEditorEditorProvider
               case "onCreateCustomNode": {
                 const { code } = event.params;
 
-                const node = customCodeNodeFromCode(code);
+                const node = customCodeNodeFromCode(code, undefined, {
+                  // eslint-disable-next-line @typescript-eslint/naming-convention
+                  "@flyde/core": {
+                    processImprovedMacro: processImprovedMacro,
+                    macroConfigurableValue: macroConfigurableValue,
+                    extractInputsFromValue: extractInputsFromValue,
+                    replaceInputsInValue: replaceInputsInValue,
+                  },
+                });
                 const flowDir = path.dirname(fullDocumentPath);
                 const nodeFileName = `${node.id}.flyde.ts`;
                 const nodeFilePath = path.join(flowDir, nodeFileName);

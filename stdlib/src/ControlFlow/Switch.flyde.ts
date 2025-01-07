@@ -26,6 +26,7 @@ export const Switch: MacroNode<SwitchConfig> = {
   description:
     "Allows you to switch between multiple outputs based on the value of one input or more, using code expressions",
   runFnBuilder: (config) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     function evalExpression(expression: string, inputs: any) {
       return eval(`(inputs) => (${expression})`)(inputs);
     }

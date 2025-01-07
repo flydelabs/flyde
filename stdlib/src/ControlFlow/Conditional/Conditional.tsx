@@ -1,5 +1,6 @@
 import { Divider, FormGroup, HTMLSelect } from "@blueprintjs/core";
-import { ConditionType, ConditionalConfig } from "./Conditional.flyde";
+import { ConditionalConfig } from "./Conditional.flyde";
+import { ConditionType } from "./ConditionType";
 import React from "react";
 import { MacroEditorComp, MacroEditorFieldDefinition } from "@flyde/core";
 

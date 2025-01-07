@@ -1,6 +1,9 @@
 import { isCodeNode, isMacroNode, MacroNode, Node } from "../";
 import { transpileFile } from "./transpile-file/transpile-file";
-import { processImprovedMacro } from "../improved-macros/improved-macros";
+import {
+  ImprovedMacroNode,
+  processImprovedMacro,
+} from "../improved-macros/improved-macros";
 
 export function customCodeNodeFromCode(
   code: string,
@@ -18,13 +21,28 @@ export function customCodeNodeFromCode(
 
   const result = new Function(wrappedCode)(imports);
 
-  if (isCodeNode(result.default) || isMacroNode(result.default)) {
-    if (result.default.icon) {
-      const macro = processImprovedMacro(result.default) as MacroNode<any>;
+  const validNodes = Object.values(result).filter(
+    (node) => isCodeNode(node) || isMacroNode(node)
+  );
+
+  if (validNodes.length === 0) {
+    throw new Error("No valid nodes found");
+  }
+
+  if (validNodes.length > 1) {
+    throw new Error("Multiple valid nodes found");
+  }
+
+  const node = validNodes[0];
+
+  if (isCodeNode(node) || isMacroNode(node)) {
+    if ((node as ImprovedMacroNode).icon) {
+      const macro = processImprovedMacro(
+        node as ImprovedMacroNode
+      ) as MacroNode<any>;
       macro.id = `${macro.id}${suffixId ? `-${suffixId}` : ""}`;
       return macro;
     }
-    const node = result.default as Node;
     node.id = `${node.id}${suffixId ? `-${suffixId}` : ""}`;
     return node;
   } else {

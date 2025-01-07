@@ -1,0 +1,20 @@
+import { CodeNode } from "@flyde/core";
+
+const namespace = "Lists";
+
+export const Append: CodeNode = {
+  id: "Append",
+  namespace,
+  description: "Appends an item to a list",
+  inputs: {
+    list: { description: "The list" },
+    item: { description: "The item to append" },
+  },
+  outputs: { list: { description: "The resulting list" } },
+  run: ({ list, item }, { list: outputList }) => {
+    outputList.next([...list, item]);
+  },
+  defaultStyle: {
+    icon: "fa-plus",
+  },
+};

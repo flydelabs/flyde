@@ -5,16 +5,7 @@ import {
   extractInputsFromValue,
   replaceInputsInValue,
 } from "@flyde/core";
-
-export enum ConditionType {
-  Equal = "EQUAL",
-  NotEqual = "NOT_EQUAL",
-  Contains = "CONTAINS",
-  NotContains = "NOT_CONTAINS",
-  RegexMatches = "REGEX_MATCHES",
-  Exists = "EXISTS",
-  NotExists = "NOT_EXISTS",
-}
+import { ConditionType } from "./ConditionType";
 
 export interface ConditionalConfig {
   condition: { type: ConditionType; data?: string };
@@ -106,7 +97,9 @@ const conditional: ImprovedMacroNode<ConditionalConfig> = {
 };
 
 function calculateCondition(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   val1: any,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   val2: any,
   condition: ConditionalConfig["condition"]
 ) {
