@@ -1,0 +1,186 @@
+@import "../../lib/common.scss";
+
+$const-color: #fcf0ff;
+$trigger-pin-width: 40px;
+$half-of-pin-height: 16px;
+
+.ins-view {
+  display: inline-block;
+  position: absolute;
+  // transform: rotate(45deg);
+
+  .inputs,
+  .outputs {
+    display: flex;
+    width: 100%;
+    align-content: space-between;
+    align-items: center;
+    justify-content: space-around;
+  }
+
+  // .inputs {f
+  //   padding-right: $trigger-pin-width + 10px;
+
+  //   .pin[data-pin-id="__trigger"] {
+  //     position: absolute;
+  //     right: 0px;
+  //   }
+  // }
+}
+
+.ins-view {
+  transform-origin: top left;
+  display: inline-block;
+  position: absolute;
+  transition: box-shadow ease-in-out 0.15s;
+  will-change: transform, width;
+  z-index: 1;
+
+  &[data-node-id="Comment"] {
+    [data-pin-id] {
+      display: none; // mega ugly hack to hide pins on comment node
+    }
+  }
+
+  ul,
+  ol {
+    padding-left: 16px;
+  }
+
+  &.display-mode {
+    position: initial;
+  }
+
+  &.dragged {
+    opacity: 0.8;
+  }
+
+  &.no-inputs {
+    padding-top: 15px;
+  }
+
+  &.no-outputs {
+    padding-bottom: 15px;
+  }
+
+  .ins-view-inner {
+    @include base-node;
+
+    .svg-icon-container {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      svg {
+        width: 14px;
+        height: 14px;
+      }
+    }
+
+    &.size-small {
+      font-size: 14px;
+      padding: 6px 18px 6px;
+    }
+
+    &.size-regular {
+      // font-size: 18px;
+      // padding: 6px 12px 4px;
+
+      // &:not(:hover):not(.selected):not(.closest) {
+      // border-bottom-color: var(--node-color, transparent);
+      // }
+    }
+
+    &.size-large {
+      font-size: 20px;
+      padding: 12px 30px 12px;
+      // border-radius: 8px;
+      // border-width: 3px;
+
+      // &:not(:hover):not(.selected):not(.closest) {
+      //   border: 3px solid var(--node-color, transparent);
+      // }
+    }
+
+    .content-and-icon {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+  }
+
+  &.inline-node-edited {
+    z-index: 2; // otherwise other instances get rendered on top of inline node editor
+
+    > .base-node-view .base-node-view-inner {
+      // padding: 0;
+      overflow: hidden;
+    }
+
+    @at-root {
+      .inline-group-editor-container {
+        // width: 400px;
+        // height: 300px;
+        // max-width: 600px;
+
+        width: 80%;
+        height: 85vh;
+        left: 10%;
+        top: 7.5%;
+
+        // position: relative;
+
+        > header {
+          font-size: 20px;
+          font-weight: 600;
+          text-align: center;
+          padding: 4px 15px 3px;
+          // cursor: move;
+          user-select: none;
+          z-index: 1;
+        }
+
+        > main {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          position: relative;
+          overflow: hidden;
+        }
+
+        > main > .visual-node-editor {
+          flex: 1;
+          display: flex;
+          position: relative;
+          overflow: hidden;
+        }
+      }
+    }
+  }
+
+  .pin {
+    transition: transform 0.1s ease-in-out;
+  }
+
+  &:not(:hover) {
+    &:not(.force-minimized-input) {
+      .pin.input.minimized:not(.selected) {
+        // the -half of pin thing + scale Y 0 is for the connections to be drawn to the center of the intance
+        transform: translateY(calc(100% - #{$half-of-pin-height})) scaleY(0);
+      }
+    }
+
+    &:not(.force-minimized-output) {
+      .pin.output.minimized:not(.selected) {
+        // the -half of pin thing + scale Y 0 is for the connections to be drawn to the center of the intance
+        transform: translateY(calc(-100% + #{$half-of-pin-height})) scaleY(0);
+      }
+    }
+  }
+}
+
+.__react_component_tooltip.instance-info-tooltip {
+  font-size: 14px;
+  max-width: 400px;
+  // min-width: 300px;
+}

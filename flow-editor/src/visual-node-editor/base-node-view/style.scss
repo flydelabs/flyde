@@ -5,28 +5,14 @@
 
 .base-node-view-wrapper {
   position: absolute;
-  transform-origin: top left;
-  transition: background-color ease-out 3s, box-shadow ease-out 3s;
-}
-
-.base-node-view-vp-fixer.display-mode {
-  position: initial;
-
-  .base-node-view-wrapper {
-    position: initial;
-  }
-
-  .base-node-view {
-    position: initial;
-  }
+  transform-origin: center center;
 }
 
 .base-node-view {
-  transform-origin: top left;
+  transform-origin: center center;
   display: inline-block;
   position: absolute;
-  transition: box-shadow ease-in-out 0.5s;
-  will-change: transform, width;
+  will-change: transform;
 }
 
 .base-node-view.dragged {

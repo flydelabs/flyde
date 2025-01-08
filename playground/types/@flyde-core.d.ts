@@ -909,6 +909,7 @@ declare module '@flyde/core/node/macro-node' {
                 * Resolver will use this to load the editor component bundle into the editor
                 */
             editorConfig: MacroEditorConfigDefinition;
+            sourceCode?: string;
     };
     export interface MacroEditorCompProps<T> {
             value: T;

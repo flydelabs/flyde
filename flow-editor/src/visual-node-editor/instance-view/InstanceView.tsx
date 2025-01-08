@@ -59,6 +59,7 @@ import {
   VisualNodeEditorContextType,
   VisualNodeEditorProvider,
 } from "../VisualNodeEditorContext";
+import { render } from "react-dom";
 
 export const PIECE_HORIZONTAL_PADDING = 25;
 export const PIECE_CHAR_WIDTH = 11;
@@ -755,9 +756,16 @@ export const InstanceView: React.FC<InstanceViewProps> =
           domId={instanceDomId}
         >
           <React.Fragment>
-            {renderInputs()}
-            {renderContent()}
-            {renderOutputs()}
+            <div className="ins-view-inner">
+              <div className="node-header">{content}</div>
+              <div className="node-body">
+                {renderInputs()}
+                {style.icon ? (
+                  <InstanceIcon icon={style.icon as string} />
+                ) : null}
+                {renderOutputs()}
+              </div>
+            </div>
           </React.Fragment>
         </BaseNodeView>
       </div>
@@ -775,6 +783,6 @@ export const InstanceIcon: React.FC<{ icon?: string }> = function InstanceIcon({
       />
     );
   } else {
-    return <FontAwesomeIcon icon={icon as any} size="xs" />;
+    return <FontAwesomeIcon icon={icon as any} size="lg" />;
   }
 };
