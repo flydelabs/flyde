@@ -1705,7 +1705,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
               />
             ) : null}
             <OnboardingTips />
-            {!openInlineInstance && libraryData.groups.length ? (
+            {!openInlineInstance && libraryData.groups.length && false ? (
               <NodesLibrary
                 {...libraryData}
                 onAddNode={onAddNode}

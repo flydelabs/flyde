@@ -16,7 +16,12 @@ $key-1: #2887f4;
       font-weight: bold;
       color: #fff;
       text-align: center;
-      padding: 2px 4px;
+      padding: 3px 4px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .node-body {
@@ -24,15 +29,32 @@ $key-1: #2887f4;
       flex-direction: row;
       justify-content: space-between;
       align-items: center;
-      padding: 5px 8px;
+      padding: 8px 0px;
       gap: 5px;
       color: $key-1;
+
+      .icon-container {
+        text-align: center;
+        width: 40px;
+      }
 
       .inputs,
       .outputs {
         flex: 1;
         flex-shrink: 0;
       }
+    }
+  }
+
+  .pin-container {
+    position: relative;
+
+    &.inputs {
+      padding-left: 6px;
+    }
+
+    &.outputs {
+      padding-right: 6px;
     }
   }
 }

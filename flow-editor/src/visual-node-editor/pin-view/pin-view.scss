@@ -1,6 +1,76 @@
 .pin {
+  cursor: pointer;
+
+  &.input {
+    .pin-inner {
+      max-width: 60px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  &.output {
+    .pin-inner {
+      max-width: 60px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      margin-left: auto;
+    }
+  }
+
   user-select: none;
   color: #fff;
+}
+
+.pin-handle {
+  position: absolute;
+  z-index: -1;
+  box-sizing: border-box;
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  top: 50%;
+  border-radius: 50%;
+  transition: width 0.15s ease-out, height 0.15s ease-out,
+    transform 0.15s ease-out;
+
+  background: #ffffff;
+  border: 1px solid #aaaaaa;
+
+  &::before {
+    content: "";
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    top: 50%;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+  }
+
+  &.input {
+    left: -1px;
+    transform: translateX(-50%) translateY(-50%);
+    &::before {
+      left: 50%;
+    }
+  }
+
+  &.output {
+    right: -1px;
+    transform: translateX(50%) translateY(-50%);
+    &::before {
+      right: 50%;
+      transform: translate(50%, -50%);
+    }
+  }
+
+  &:hover {
+    width: 12px;
+    height: 12px;
+  }
 }
 
 @at-root {

@@ -224,7 +224,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
 
     const renderInner = () => {
       return (
-        <DarkModeProvider value={props.darkMode ?? isDarkMode}>
+        <DarkModeProvider value={props.darkMode ?? true}>
           <VisualNodeEditorProvider
             boardData={editorBoardData}
             onChangeBoardData={onChangeEditorBoardData}

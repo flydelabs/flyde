@@ -1,7 +1,7 @@
 import { Pos } from "@flyde/core";
 import classNames from "classnames";
 import React, { forwardRef } from "react";
-import { calcBezierPath } from "../bezier";
+import { calcBezierPath, Position } from "../bezier";
 import { ContextMenu, Menu, MenuItem } from "@blueprintjs/core";
 
 export interface ConnectionViewPathProps {
@@ -34,9 +34,11 @@ export const ConnectionViewPath: React.FC<ConnectionViewPathProps> = forwardRef(
     const d = calcBezierPath({
       sourceX: x1,
       sourceY: y1,
+      sourcePosition: Position.Right,
       targetX: x2,
       targetY: y2,
-      curvature: 0.15,
+      targetPosition: Position.Left,
+      curvature: 0.3,
     });
 
     const strokeWidth = 2.5 * zoom;
@@ -52,12 +54,26 @@ export const ConnectionViewPath: React.FC<ConnectionViewPathProps> = forwardRef(
       />
     );
 
-    const path = (
+    const borderPath = (
       <path
         d={d}
         ref={ref as any}
-        className={classNames("connection", className)}
-        style={{ strokeWidth, strokeDasharray }}
+        style={{
+          stroke: "#6A6A6A",
+          strokeWidth: 3 * zoom,
+          fill: "none",
+        }}
+      />
+    );
+
+    const path = (
+      <path
+        d={d}
+        style={{
+          stroke: "#D0D0D0",
+          strokeWidth: zoom,
+          fill: "none",
+        }}
       />
     );
 
@@ -79,12 +95,9 @@ export const ConnectionViewPath: React.FC<ConnectionViewPathProps> = forwardRef(
             ref={ctxMenuProps.ref as any}
           >
             {ctxMenuProps.popover}
+            {borderPath}
             {path}
             {pathProximityMask}
-            <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" />
-              <stop offset="100%" />
-            </linearGradient>
           </g>
         )}
       </ContextMenu>

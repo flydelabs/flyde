@@ -483,33 +483,36 @@ export const InstanceView: React.FC<InstanceViewProps> =
       return (
         <div className="inputs no-drag">
           {inputsToRender.map(([k, v]) => (
-            <PinView
-              type="input"
-              currentInsId={instance.id}
-              ancestorsInsIds={props.ancestorsInsIds}
-              id={k}
-              key={k}
-              optional={optionalInputs.has(k)}
-              connected={connectedInputs.has(k)}
-              isSticky={stickyInputs[k]}
-              minimized={selected ? false : inputsToRender.length === 1}
-              onToggleSticky={_onToggleSticky}
-              selected={k === selectedInput}
-              onClick={onInputClick}
-              onDoubleClick={onInputDblClick}
-              isClosestToMouse={
-                !!closestPin &&
-                closestPin.type === "input" &&
-                closestPin.pin === k
-              }
-              onToggleLogged={onTogglePinLog}
-              onToggleBreakpoint={onTogglePinBreakpoint}
-              onInspect={props.onInspectPin}
-              description={v.description}
-              queuedValues={props.queuedInputsData[k] ?? 0}
-              onMouseUp={_onPinMouseUp}
-              onMouseDown={_onPinMouseDown}
-            />
+            <div className="pin-container inputs">
+              <PinView
+                type="input"
+                currentInsId={instance.id}
+                ancestorsInsIds={props.ancestorsInsIds}
+                id={k}
+                key={k}
+                optional={optionalInputs.has(k)}
+                connected={connectedInputs.has(k)}
+                isSticky={stickyInputs[k]}
+                minimized={selected ? false : inputsToRender.length === 1}
+                onToggleSticky={_onToggleSticky}
+                selected={k === selectedInput}
+                onClick={onInputClick}
+                onDoubleClick={onInputDblClick}
+                isClosestToMouse={
+                  !!closestPin &&
+                  closestPin.type === "input" &&
+                  closestPin.pin === k
+                }
+                onToggleLogged={onTogglePinLog}
+                onToggleBreakpoint={onTogglePinBreakpoint}
+                onInspect={props.onInspectPin}
+                description={v.description}
+                queuedValues={props.queuedInputsData[k] ?? 0}
+                onMouseUp={_onPinMouseUp}
+                onMouseDown={_onPinMouseDown}
+              />
+              {/* <div className="pin-handle input" /> */}
+            </div>
           ))}
         </div>
       );
@@ -519,29 +522,32 @@ export const InstanceView: React.FC<InstanceViewProps> =
       return (
         <div className="outputs no-drag">
           {outputsToRender.map(([k, v]) => (
-            <PinView
-              currentInsId={instance.id}
-              ancestorsInsIds={props.ancestorsInsIds}
-              connected={connectedOutputs.has(k)}
-              key={k}
-              type="output"
-              id={k}
-              minimized={selected ? false : outputsToRender.length === 1}
-              isClosestToMouse={
-                !!closestPin &&
-                closestPin.type === "output" &&
-                closestPin.pin === k
-              }
-              selected={k === selectedOutput}
-              onClick={onOutputClick}
-              onDoubleClick={onOutputDblClick}
-              onToggleLogged={onTogglePinLog}
-              onToggleBreakpoint={onTogglePinBreakpoint}
-              onInspect={props.onInspectPin}
-              description={v.description}
-              onMouseUp={_onPinMouseUp}
-              onMouseDown={_onPinMouseDown}
-            />
+            <div className="pin-container outputs">
+              <PinView
+                currentInsId={instance.id}
+                ancestorsInsIds={props.ancestorsInsIds}
+                connected={connectedOutputs.has(k)}
+                key={k}
+                type="output"
+                id={k}
+                minimized={selected ? false : outputsToRender.length === 1}
+                isClosestToMouse={
+                  !!closestPin &&
+                  closestPin.type === "output" &&
+                  closestPin.pin === k
+                }
+                selected={k === selectedOutput}
+                onClick={onOutputClick}
+                onDoubleClick={onOutputDblClick}
+                onToggleLogged={onTogglePinLog}
+                onToggleBreakpoint={onTogglePinBreakpoint}
+                onInspect={props.onInspectPin}
+                description={v.description}
+                onMouseUp={_onPinMouseUp}
+                onMouseDown={_onPinMouseDown}
+              />
+              {/* <div className="pin-handle output" /> */}
+            </div>
           ))}
         </div>
       );
@@ -760,9 +766,9 @@ export const InstanceView: React.FC<InstanceViewProps> =
               <div className="node-header">{content}</div>
               <div className="node-body">
                 {renderInputs()}
-                {style.icon ? (
+                <div className="icon-container">
                   <InstanceIcon icon={style.icon as string} />
-                ) : null}
+                </div>
                 {renderOutputs()}
               </div>
             </div>
@@ -775,6 +781,9 @@ export const InstanceView: React.FC<InstanceViewProps> =
 export const InstanceIcon: React.FC<{ icon?: string }> = function InstanceIcon({
   icon,
 }) {
+  if (!icon) {
+    return <FontAwesomeIcon icon="code" size="lg" />;
+  }
   if (typeof icon === "string" && icon.trim().startsWith("<")) {
     return (
       <span

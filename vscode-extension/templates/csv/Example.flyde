@@ -14,8 +14,8 @@ imports:
 node:
   instances:
     - pos:
-        x: -104.57907918294268
-        y: -21.54625789137549
+        x: -217.08194783528643
+        y: -10.844872393328615
       id: clfuqs69n00014668p8jg106j
       inputConfig: {}
       visibleInputs:
@@ -331,8 +331,8 @@ node:
         completionOutputs:
           - accumulated
     - pos:
-        x: -3.230906982421857
-        y: -149.24164254964097
+        x: -115.7337756347656
+        y: -138.5402570515941
       id: oy7esxhnpcl5dje5f2p035ur
       inputConfig: {}
       nodeId: InlineValue__oy7esxhnpcl5dje5f2p035ur
@@ -348,8 +348,8 @@ node:
           type: string
           value: '"utf-8"'
     - pos:
-        x: -241.46504150390626
-        y: -198.59092163085938
+        x: -622.073134765625
+        y: -12.914545288085947
       id: CsvExample-ek049t4
       inputConfig: {}
       nodeId: InlineValue__CsvExample-ek049t4

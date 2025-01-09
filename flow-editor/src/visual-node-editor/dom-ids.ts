@@ -4,8 +4,14 @@ export const getInstanceDomId = (insId: string, ancestorsInsIds?: string) => {
   return `ins:${fullInsIdPath(insId, ancestorsInsIds)}`.replace(/\s+/g, "-");
 };
 
-export const getMainInstanceIndicatorDomId = (insId: string, ancestorsInsIds?: string) => {
-  return `main-ins:${fullInsIdPath(insId, ancestorsInsIds)}`.replace(/\s+/g, "-");
+export const getMainInstanceIndicatorDomId = (
+  insId: string,
+  ancestorsInsIds?: string
+) => {
+  return `main-ins:${fullInsIdPath(insId, ancestorsInsIds)}`.replace(
+    /\s+/g,
+    "-"
+  );
 };
 
 export interface GetPinDomIdParams {
@@ -15,6 +21,24 @@ export interface GetPinDomIdParams {
   isMain: boolean;
 }
 
-export const getPinDomId = ({pinType, fullInsIdPath, pinId, isMain}: GetPinDomIdParams) => {
-  return `${isMain ? 'main-' : ''}pin:${pinType}:${fullInsIdPath}:${pinId}`.replace(/\s+/g, "-");
+export const getPinDomId = ({
+  pinType,
+  fullInsIdPath,
+  pinId,
+  isMain,
+}: GetPinDomIdParams) => {
+  return `${
+    isMain ? "main-" : ""
+  }pin:${pinType}:${fullInsIdPath}:${pinId}`.replace(/\s+/g, "-");
+};
+
+export const getPinDomHandleId = ({
+  pinType,
+  fullInsIdPath,
+  pinId,
+  isMain,
+}: GetPinDomIdParams) => {
+  return `${
+    isMain ? "main-" : ""
+  }pin-handle:${pinType}:${fullInsIdPath}:${pinId}`.replace(/\s+/g, "-");
 };
