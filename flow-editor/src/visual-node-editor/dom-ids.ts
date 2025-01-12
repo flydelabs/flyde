@@ -38,7 +38,7 @@ export const getPinDomHandleId = ({
   pinId,
   isMain,
 }: GetPinDomIdParams) => {
-  return `${
+  return `pin-handle:${pinType}:${fullInsIdPath}:${
     isMain ? "main-" : ""
-  }pin-handle:${pinType}:${fullInsIdPath}:${pinId}`.replace(/\s+/g, "-");
+  }${pinId}`.replace(/\s+/g, "-");
 };

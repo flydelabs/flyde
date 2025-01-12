@@ -34,7 +34,7 @@ import {
   getNodeInputs,
 } from "@flyde/core";
 import { calcNodeContent } from "./utils";
-import { BaseNodeView, BaseNodeIcon } from "../base-node-view";
+import { BaseNodeView } from "../base-node-view";
 
 import { getInstanceDomId } from "../dom-ids";
 import {
@@ -663,6 +663,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
                 queuedValues={props.queuedInputsData[k] ?? 0}
                 onMouseUp={_onPinMouseUp}
                 onMouseDown={_onPinMouseDown}
+                isMain={false}
               />
             </div>
           ))}
@@ -699,6 +700,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
                 description={v.description}
                 onMouseUp={_onPinMouseUp}
                 onMouseDown={_onPinMouseDown}
+                isMain={false}
               />
             </div>
           ))}

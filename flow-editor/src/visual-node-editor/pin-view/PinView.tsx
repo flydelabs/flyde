@@ -45,6 +45,7 @@ export type PinViewProps = {
 
   onMouseUp: (id: string, type: PinType, e: React.MouseEvent) => void;
   onMouseDown: (id: string, type: PinType, e: React.MouseEvent) => void;
+  isMain: boolean;
 } & (InputPinViewProps | OutputPinViewProps);
 
 export interface OptionalPinViewProps {
@@ -67,6 +68,7 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
     id,
     onMouseDown,
     onMouseUp,
+    isMain,
   } = props;
 
   const { history, resetHistory, refreshHistory } = useHistoryHelpers(
@@ -209,8 +211,8 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
   const idParams = {
     fullInsIdPath: fullInsIdPath(props.currentInsId, props.ancestorsInsIds),
     pinId: id,
-    pinType: type,
-    isMain: false,
+    pinType: isMain ? (type === "input" ? "output" : "input") : type,
+    isMain,
   };
 
   return (

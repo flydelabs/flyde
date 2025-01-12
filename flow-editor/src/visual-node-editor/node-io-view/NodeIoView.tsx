@@ -1,22 +1,13 @@
 import * as React from "react";
-
-// ;
-import {
-  fullInsIdPath,
-  getOutputName,
-  InputMode,
-  noop,
-  PinType,
-  Pos,
-} from "@flyde/core";
+import { getOutputName, InputMode, noop, PinType, Pos } from "@flyde/core";
 import { BaseNodeView } from "../base-node-view";
 import classNames from "classnames";
-import { Menu, MenuItem, ContextMenu, Tooltip } from "@blueprintjs/core";
+import { Menu, MenuItem } from "@blueprintjs/core";
 import { usePrompt } from "../../flow-editor/ports";
 import { calcHistoryContent, useHistoryHelpers } from "../pin-view/helpers";
 import { getInputName } from "@flyde/core";
-import { getPinDomId } from "../dom-ids";
 import { useDarkMode } from "../../flow-editor/DarkModeContext";
+import { PinView } from "../pin-view/PinView";
 
 export interface NodeIoViewProps {
   id: string;
@@ -46,7 +37,6 @@ export interface NodeIoViewProps {
 
   description: string;
   onSetDescription: (type: PinType, pin: string, description: string) => void;
-  // onRequestHistory: (pinId: string, type: PinType) => Promise<HistoryPayload>;
 }
 
 export const NodeIoView: React.FC<NodeIoViewProps> = React.memo(
@@ -180,8 +170,6 @@ export const NodeIoView: React.FC<NodeIoViewProps> = React.memo(
     );
 
     const _onClick = React.useCallback(() => {
-      // very hacky way to prevent the pin from being selected when dragging
-      console.log({ lastDrafEndTimeRef: lastDragEndTimeRef.current });
       if (Date.now() - lastDragEndTimeRef.current > 200) {
         onSelect(id, type);
       }
@@ -236,50 +224,74 @@ export const NodeIoView: React.FC<NodeIoViewProps> = React.memo(
 
     const dark = useDarkMode();
 
-    // return (
-    //   <BaseNodeView
-    //     className={classNames(`node-io-view`, type, { dark })}
-    //     pos={pos}
-    //     onDragEnd={_onDragEnd}
-    //     onDragStart={_onDragStart}
-    //     onDragMove={onDragMove}
-    //     viewPort={viewPort}
-    //   >
-    //     <React.Fragment>
-    //       <Tooltip content={calcTooltipContent()}>
-    //         <ContextMenu
-    //           onMouseEnter={refreshHistory}
-    //           onMouseOut={resetHistory}
-    //           onMouseUp={_onMouseUp}
-    //           onMouseDown={_onMouseDown}
-    //           data-tip=""
-    //           data-html={true}
-    //           data-for={id + props.currentInsId}
-    //           className={classNames("node-io-view-inner", {
-    //             closest,
-    //             selected,
-    //             dark,
-    //           })}
-    //           id={getPinDomId({
-    //             fullInsIdPath: fullInsIdPath(
-    //               props.currentInsId,
-    //               props.ancestorInsIds
-    //             ),
-    //             pinId: id,
-    //             pinType: type,
-    //             isMain: true,
-    //           })}
-    //           onClick={_onClick}
-    //           onDoubleClick={onDblClickInner}
-    //           content={getContextMenu()}
-    //         >
-    //           {id}
-    //         </ContextMenu>
-    //       </Tooltip>
-    //     </React.Fragment>
-    //   </BaseNodeView>
-    // );
+    const pinContent = (
+      <div className={classNames("pin-container", type)}>
+        {type === "input" ? (
+          <PinView
+            type="output"
+            currentInsId={currentInsId}
+            ancestorsInsIds={props.ancestorInsIds}
+            id={id}
+            connected={props.connected}
+            minimized={false}
+            isClosestToMouse={closest}
+            selected={selected}
+            onClick={(pinId, pinType) => onSelect(pinId, pinType)}
+            onDoubleClick={(pinId, e) => onDblClick && onDblClick(pinId, e)}
+            onToggleLogged={noop}
+            onToggleBreakpoint={noop}
+            onInspect={noop}
+            description={description}
+            onMouseUp={(pinId, pinType, e) => _onMouseUp(e)}
+            onMouseDown={(pinId, pinType, e) => _onMouseDown(e)}
+            isMain={true}
+          />
+        ) : (
+          <PinView
+            type="input"
+            currentInsId={currentInsId}
+            ancestorsInsIds={props.ancestorInsIds}
+            id={id}
+            connected={props.connected}
+            minimized={false}
+            isClosestToMouse={closest}
+            selected={selected}
+            onClick={(pinId, pinType) => onSelect(pinId, pinType)}
+            onDoubleClick={(pinId, e) => onDblClick && onDblClick(pinId, e)}
+            onToggleLogged={noop}
+            onToggleBreakpoint={noop}
+            onInspect={noop}
+            description={description}
+            onMouseUp={(pinId, pinType, e) => _onMouseUp(e)}
+            onMouseDown={(pinId, pinType, e) => _onMouseDown(e)}
+            onToggleSticky={noop}
+            isSticky={false}
+            queuedValues={0}
+            isMain={true}
+          />
+        )}
+      </div>
+    );
 
-    return <div>22 {id}</div>;
+    return (
+      <BaseNodeView
+        className={classNames(`node-io-view`, type, { dark })}
+        pos={pos}
+        icon={type === "output" ? "paper-plane" : "arrow-right-long"}
+        description={description ?? `Main ${type} pin - ${id}`}
+        onDragEnd={_onDragEnd}
+        onDragStart={_onDragStart}
+        onDragMove={onDragMove}
+        viewPort={viewPort}
+        heading={displayName}
+        leftSide={type === "output" ? pinContent : undefined}
+        rightSide={type === "input" ? pinContent : undefined}
+        contextMenuContent={getContextMenu()}
+        onClick={_onClick}
+        onDoubleClick={onDblClickInner}
+        selected={selected}
+        dark={dark}
+      />
+    );
   }
 );

@@ -6,7 +6,7 @@ import {
   Pos,
 } from "@flyde/core";
 import { logger, ViewPort } from "../..";
-import { getPinDomHandleId, getPinDomId } from "../dom-ids";
+import { getPinDomHandleId } from "../dom-ids";
 
 const elemPos = (elem: Element, boardPos: Pos): Pos => {
   const { x, y, width, height } = elem.getBoundingClientRect();
@@ -35,11 +35,10 @@ export function calcPinPosition(params: {
     pinType: params.pinType,
     isMain: params.isMain,
   };
-  const domId = params.isMain
-    ? getPinDomId(fullParams)
-    : getPinDomHandleId(fullParams);
+  const domId = getPinDomHandleId(fullParams);
   const elem = document.getElementById(domId);
   if (!elem) {
+    console.log("calcPinPosition: cannot find element", { domId });
     logger("calcPinPosition: cannot find element", { domId });
     return { x: 99999, y: 99999 };
   }
