@@ -1,23 +1,17 @@
 $blink-duration: 8s; // change also BLINK_TIMEOUT in play-event.ts
 
-$runtime-processing-color: #88f8ff;
-$runtime-active-color: #c8ffc7;
+$runtime-processing-color: #2887f4;
+$runtime-active-color: #39bf15;
+$runtime-error-color: #e10000;
+$runtime-waiting-color: #e1ac00;
 
-@mixin event-vars(
-  $bg-color-light,
-  $border-color-light,
-  $bg-color-dark,
-  $border-color-dark
-) {
+@mixin event-vars($bg-color-light, $bg-color-dark) {
   &:not(.dark) {
     --event-bg-color: #{$bg-color-light};
-    --event-border-color: #{$border-color-light};
   }
 
   &.dark {
     --event-bg-color: #{$bg-color-dark};
-    --event-border-color: #{$border-color-dark};
-    // --event-bg-color-transition: #{lighten(#{$bg-color-dark}, 20%)};
   }
 }
 
@@ -25,59 +19,61 @@ $runtime-active-color: #c8ffc7;
   // background: var(--event-bg-color);
   // border-color: var(--event-border-color);
 
-  .ins-view-inner {
-    @include event-vars($tblue-300, $tblue-500, $tblue-700, $tblue-500);
+  @include event-vars($runtime-processing-color, $runtime-processing-color);
+  .node-header {
     animation: pulse 1.5s infinite;
+  }
+
+  .node-body .icon-container {
+    animation: pulse-text 1.5s infinite;
   }
 }
 
 .base-node-view-wrapper[data-runtime="done"] {
-  .ins-view-inner {
-    @include event-vars($green-300, $green-500, $green-700, $green-500);
+  @include event-vars($runtime-active-color, $runtime-active-color);
+  .node-header {
     animation: blink $blink-duration;
+  }
+
+  .node-body .icon-container {
+    animation: blink-text $blink-duration;
+  }
+}
+
+.base-node-view-wrapper[data-runtime="waiting"] {
+  @include event-vars($runtime-waiting-color, $runtime-waiting-color);
+  .node-header {
+    animation: pulse $blink-duration;
+  }
+
+  .node-body .icon-container {
+    animation: pulse-text $blink-duration;
   }
 }
 
 .ins-view:not(.error-caught) {
   .base-node-view-wrapper[data-runtime="error"] {
-    .ins-view-inner {
-      @include event-vars($red-300, $red-500, $red-700, $red-500);
+    @include event-vars($runtime-error-color, $runtime-error-color);
+    .node-header {
       animation: blink $blink-duration;
+    }
+
+    .node-body .icon-container {
+      animation: blink-text $blink-duration;
     }
   }
 }
 
 .ins-view.error-caught {
   .base-node-view-wrapper[data-runtime="error"] {
-    .ins-view-inner {
-      @include event-vars($green-300, $green-500, $green-700, $green-500);
+    @include event-vars($runtime-active-color, $runtime-active-color);
+    .node-header {
       animation: blink-error $blink-duration * 2;
     }
-  }
-}
 
-.main-instance-events-indicator[data-runtime="processing"] {
-  animation: pulse 1.5s infinite;
-  background: $runtime-processing-color;
-
-  .status-text:after {
-    content: "Processing";
-  }
-}
-
-.main-instance-events-indicator[data-runtime="error"] {
-  animation: blink-error $blink-duration * 2;
-
-  .status-text:after {
-    content: "Error";
-  }
-}
-
-.main-instance-events-indicator[data-runtime="done"] {
-  animation: blink-done $blink-duration * 2;
-
-  .status-text:after {
-    content: "Completed";
+    .node-body .icon-container {
+      animation: blink-text-error $blink-duration * 2;
+    }
   }
 }
 
@@ -85,14 +81,14 @@ $runtime-active-color: #c8ffc7;
 .pin.error-pin.connected .pin-inner[data-runtime="active"],
 .node-io-view-inner[data-runtime="active"] {
   &:not([data-runtime-queue]) {
-    @include event-vars($green-300, $green-500, $green-700, $green-500);
-    animation: blink $blink-duration;
+    @include event-vars($runtime-active-color, $runtime-active-color);
+    animation: blink-text $blink-duration;
   }
 }
 
 .pin.error-pin:not(.connected) .pin-inner[data-runtime="active"] {
-  @include event-vars($red-300, $red-500, $red-700, $red-500);
-  animation: blink $blink-duration * 2;
+  @include event-vars($runtime-error-color, $runtime-error-color);
+  animation: blink-text $blink-duration * 2;
   // transition: background-color ease-in-out 0.05s, box-shadow ease-in-out 0.2s;
   // background: #C1FF91 !important;
   // box-shadow: 0px 0px 10px 2px rgba(10, 126, 0, 0.5);
@@ -100,28 +96,45 @@ $runtime-active-color: #c8ffc7;
 
 .node-io-view-inner[data-runtime-queue],
 .pin-inner[data-runtime-queue] {
-  @include event-vars($purple-300, $purple-500, $purple-700, $purple-500);
-  animation: pulse 1.5s infinite;
+  @include event-vars($runtime-waiting-color, $runtime-waiting-color);
+  animation: pulse-text 1.5s infinite;
 }
 
 @keyframes pulse {
   0% {
     background: var(--event-bg-color);
-    border-color: var(--event-border-color);
-    transform: scale(0.98);
-    filter: brightness(1);
+    // transform: scale(0.98);
+    filter: brightness(0.95);
   }
 
   50% {
     background: var(--event-bg-color);
-    border-color: var(--event-border-color);
-    transform: scale(1.01);
+    // transform: scale(1.01);
     filter: brightness(1.1);
   }
 
   100% {
     background: var(--event-bg-color);
-    border-color: var(--event-border-color);
+    // transform: scale(0.98);
+    filter: brightness(0.95);
+  }
+}
+
+@keyframes pulse-text {
+  0% {
+    color: var(--event-bg-color);
+    transform: scale(0.98);
+    filter: brightness(1);
+  }
+
+  50% {
+    color: var(--event-bg-color);
+    transform: scale(1.01);
+    filter: brightness(1.1);
+  }
+
+  100% {
+    color: var(--event-bg-color);
     transform: scale(0.98);
     filter: brightness(1);
   }
@@ -133,11 +146,25 @@ $runtime-active-color: #c8ffc7;
   }
   3% {
     background-color: var(--event-bg-color);
-    border-color: var(--event-border-color);
   }
   30% {
     background-color: var(--event-bg-color);
-    border-color: var(--event-border-color);
+    filter: brightness(1.2);
+  }
+  100% {
+    // background-color: $base-color;
+  }
+}
+
+@keyframes blink-text {
+  0% {
+    // background-color: $base-color;
+  }
+  3% {
+    color: var(--event-bg-color);
+  }
+  30% {
+    color: var(--event-bg-color);
     filter: brightness(1.2);
   }
   100% {

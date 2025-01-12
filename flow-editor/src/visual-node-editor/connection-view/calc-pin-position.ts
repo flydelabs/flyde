@@ -38,7 +38,6 @@ export function calcPinPosition(params: {
   const domId = getPinDomHandleId(fullParams);
   const elem = document.getElementById(domId);
   if (!elem) {
-    console.log("calcPinPosition: cannot find element", { domId });
     logger("calcPinPosition: cannot find element", { domId });
     return { x: 99999, y: 99999 };
   }

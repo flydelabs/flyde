@@ -183,8 +183,8 @@ export const playEvent = (event: DebuggerEvent) => {
       break;
     }
     case DebuggerEventType.INPUTS_STATE_CHANGE: {
+      const { insId, ancestorsInsIds } = event;
       entries(event.val).forEach(([k, v]) => {
-        const { insId, ancestorsInsIds } = event;
         const domId = getPinDomId({
           fullInsIdPath: fullInsIdPath(insId, ancestorsInsIds),
           pinId: k,
@@ -202,6 +202,21 @@ export const playEvent = (event: DebuggerEvent) => {
           element.removeAttribute("data-runtime-queue");
         }
       });
+      const someWaiting = Object.values(event.val).some((v) => v > 0);
+      const instanceDomId = getInstanceDomId(insId, ancestorsInsIds);
+      const instanceElem =
+        document.getElementById(instanceDomId)?.parentElement;
+      if (!instanceElem) {
+        debug(
+          `No DOM element with Id [${instanceDomId}] found to play event`,
+          event
+        );
+        return;
+      }
+      console.log("instanceElem", instanceElem);
+      if (someWaiting && !instanceElem.getAttribute("data-runtime")) {
+        instanceElem.setAttribute("data-runtime", "waiting");
+      }
       break;
     }
   }
