@@ -197,16 +197,6 @@ export const NodeIoView: React.FC<NodeIoViewProps> = React.memo(
       );
     }, [contextMenuItems]);
 
-    // const showMenu = React.useCallback(
-    //   (e: React.MouseEvent) => {
-    //     e.preventDefault();
-    //     e.stopPropagation();
-    //     const menu = getContextMenu();
-    //     ContextMenu.show(menu, { left: e.clientX, top: e.clientY });
-    //   },
-    //   [getContextMenu]
-    // );
-
     const displayName = type === "input" ? getInputName(id) : getOutputName(id);
 
     const calcTooltipContent = () => {

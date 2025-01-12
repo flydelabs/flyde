@@ -91,10 +91,6 @@ export const getVisibleInputs = (
     return isConnected || (!isOptional && k !== TRIGGER_PIN_ID);
   });
 
-  if (visiblePins.length === 0) {
-    return [TRIGGER_PIN_ID];
-  }
-
   return visiblePins;
 };
 
@@ -377,8 +373,8 @@ export const InstanceView: React.FC<InstanceViewProps> =
     );
 
     const cm = classNames("ins-view", {
-      "no-inputs": is.length === 0,
-      "no-outputs": os.length === 0,
+      "no-inputs": inputsToRender.length === 0,
+      "no-outputs": outputsToRender.length === 0,
       "display-mode": displayMode,
       "force-minimized-input":
         props.forceShowMinimized === "input" ||
@@ -388,12 +384,17 @@ export const InstanceView: React.FC<InstanceViewProps> =
         props.forceShowMinimized === "both",
       "inline-node-edited": !!inlineGroupProps,
       "error-caught": isErrorCaught,
+      selected,
+      dragged,
+      closest: closestPin && closestPin.ins.id === instance.id,
     });
 
     const innerCms = classNames(
       {
         selected,
         dragged,
+        "no-inputs": inputsToRender.length === 0,
+        "no-outputs": outputsToRender.length === 0,
         closest: closestPin && closestPin.ins.id === instance.id,
       },
       `size-${style.size}`
@@ -661,8 +662,8 @@ export const InstanceView: React.FC<InstanceViewProps> =
       _onChangeVisibleInputs,
       _onChangeVisibleOutputs,
       _onSetDisplayName,
+      onGroupSelected,
       _onDeleteInstance,
-      onDblClick,
       style,
       _onChangeStyle,
       _prompt,
@@ -673,17 +674,18 @@ export const InstanceView: React.FC<InstanceViewProps> =
       connectedOutputs,
       onChangeVisibleOutputs,
       onUngroup,
-      onGroupSelected,
+      props,
+      onDblClick,
     ]);
 
-    const styleVarProp = {
-      "--node-color": style.color,
-      ...(style.cssOverride || {}),
-    } as React.CSSProperties;
+    // const styleVarProp = {
+    //   "--node-color": style.color,
+    //   ...(style.cssOverride || {}),
+    // } as React.CSSProperties;
 
     const instanceDomId = getInstanceDomId(instance.id, props.ancestorsInsIds);
 
-    const renderContent = () => {
+    const maybeRenderInlineGroupEditor = () => {
       if (inlineGroupProps) {
         return (
           // ReactDOM.createPortal((<Resizable width={inlineEditorSize.w} height={inlineEditorSize.h} onResize={onResizeInline} handle={<span className='no-drag react-resizable-handle react-resizable-handle-se'/>}>
@@ -714,29 +716,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
 
         // </Resizable>), inlineEditorPortalDomNode)
       } else {
-        return (
-          <ContextMenu
-            className={classNames(
-              "ins-view-inner",
-              innerCms,
-              `size-${style.size}`,
-              { dark: dark }
-            )}
-            onClick={_onSelect}
-            onDoubleClick={onDblClick}
-            content={getContextMenu()}
-            style={styleVarProp}
-          >
-            <Tooltip content={node.description}>
-              <span className="content-and-icon">
-                {style.icon ? (
-                  <InstanceIcon icon={style.icon as string} />
-                ) : null}
-                <span dangerouslySetInnerHTML={{ __html: content }} />
-              </span>
-            </Tooltip>
-          </ContextMenu>
-        );
+        return null;
       }
     };
 
@@ -761,19 +741,32 @@ export const InstanceView: React.FC<InstanceViewProps> =
           displayMode={displayMode}
           domId={instanceDomId}
         >
-          <React.Fragment>
-            <div className="ins-view-inner">
-              <div className="node-header">{content}</div>
-              <div className="node-body">
-                {renderInputs()}
-                <div className="icon-container">
-                  <InstanceIcon icon={style.icon as string} />
+          <ContextMenu
+            className={classNames({ dark: dark })}
+            onClick={_onSelect}
+            onDoubleClick={onDblClick}
+            content={getContextMenu()}
+            // style={styleVarProp}
+          >
+            <Tooltip content={node.description}>
+              <div
+                className={classNames("ins-view-inner", innerCms, {
+                  dark: dark,
+                })}
+              >
+                <div className="node-header">{content}</div>
+                <div className="node-body">
+                  {renderInputs()}
+                  <div className="icon-container">
+                    <InstanceIcon icon={style.icon as string} />
+                  </div>
+                  {renderOutputs()}
                 </div>
-                {renderOutputs()}
               </div>
-            </div>
-          </React.Fragment>
+            </Tooltip>
+          </ContextMenu>
         </BaseNodeView>
+        {maybeRenderInlineGroupEditor()}
       </div>
     );
   };

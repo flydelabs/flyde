@@ -1,5 +1,6 @@
 .pin {
   cursor: pointer;
+  user-select: none;
 
   &.input {
     .pin-inner {
@@ -11,6 +12,8 @@
   }
 
   &.output {
+    text-align: right;
+
     .pin-inner {
       max-width: 60px;
       overflow: hidden;
@@ -67,9 +70,19 @@
     }
   }
 
-  &:hover {
+  &:hover,
+  &.closest,
+  &:not(.minimized) {
     width: 12px;
     height: 12px;
+  }
+
+  &:hover {
+    background: rgb(128, 187, 255);
+  }
+
+  &.selected {
+    background: rgba(40, 135, 244, 1);
   }
 }
 

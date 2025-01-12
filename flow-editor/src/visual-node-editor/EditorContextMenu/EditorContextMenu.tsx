@@ -11,10 +11,11 @@ import { useVisualNodeEditorContext } from "../VisualNodeEditorContext";
 export interface EditorContextMenuProps {
   nodeIoEditable: boolean;
   lastMousePos: React.RefObject<{ x: number; y: number }>;
+  onOpenNodesLibrary: () => void;
 }
 
 export function EditorContextMenu(props: EditorContextMenuProps) {
-  const { nodeIoEditable, lastMousePos } = props;
+  const { nodeIoEditable, lastMousePos, onOpenNodesLibrary } = props;
   const maybeDisabledLabel = nodeIoEditable
     ? ""
     : " (cannot edit main node, only visual)";
@@ -119,6 +120,12 @@ export function EditorContextMenu(props: EditorContextMenuProps) {
 
   return (
     <Menu>
+      <MenuItem
+        text="Add Node"
+        onMouseDown={(e) => e.stopPropagation()}
+        onClick={preventDefaultAnd(onOpenNodesLibrary)}
+      />
+      <MenuDivider />
       <MenuItem
         text={`New main input ${maybeDisabledLabel}`}
         onMouseDown={(e) => e.stopPropagation()}

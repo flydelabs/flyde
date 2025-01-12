@@ -238,10 +238,15 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
       </Tooltip>
       <div className="wire" />
       <div
-        className={`pin-handle ${type}`}
+        className={classNames("pin-handle", type, {
+          minimized: props.minimized,
+          closest: isClosestToMouse,
+          selected,
+        })}
         id={getPinDomHandleId(idParams)}
         onMouseDown={_onMouseDown}
         onMouseUp={_onMouseUp}
+        onClick={onClick}
       />
     </div>
   );

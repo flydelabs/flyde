@@ -12,8 +12,8 @@ node:
       inputConfig: {}
       nodeId: Concat
     - pos:
-        x: -442.56275431315095
-        y: -8.8786485653834
+        x: -548.0014139811196
+        y: 117.16033764067129
       id: clftmbihe000j4668newg9ius
       inputConfig: {}
       nodeId: Delay__clftmbihe000j4668newg9ius
@@ -22,6 +22,9 @@ node:
         delayMs:
           type: static
           value: 1000
+        value:
+          type: dynamic
+          value: ""
       style:
         size: small
         icon: fa-clock
@@ -43,8 +46,8 @@ node:
           type: string
           value: '"Hello, "'
     - pos:
-        x: -708.6779565429688
-        y: -8.790152587890589
+        x: -814.1166162109375
+        y: 117.2488336181641
       id: HelloWorld-pf049m0
       inputConfig: {}
       nodeId: InlineValue__HelloWorld-pf049m0
@@ -61,17 +64,17 @@ node:
           value: '"world!"'
   connections:
     - from:
-        insId: clftmbihe000j4668newg9ius
-        pinId: delayedValue
-      to:
-        insId: clftmb8cw000b4668nw8u5qr9
-        pinId: b
-    - from:
         insId: clftmb8cw000b4668nw8u5qr9
         pinId: value
       to:
         insId: __this
         pinId: result
+    - from:
+        insId: HelloWorld-pf049m0
+        pinId: value
+      to:
+        insId: clftmbihe000j4668newg9ius
+        pinId: value
     - from:
         insId: nu1ietfs4qclohm23tufugsi
         pinId: value
@@ -79,11 +82,11 @@ node:
         insId: clftmb8cw000b4668nw8u5qr9
         pinId: a
     - from:
-        insId: HelloWorld-pf049m0
-        pinId: value
-      to:
         insId: clftmbihe000j4668newg9ius
-        pinId: __trigger
+        pinId: delayedValue
+      to:
+        insId: clftmb8cw000b4668nw8u5qr9
+        pinId: b
   id: HelloWorld
   inputs: {}
   outputs:

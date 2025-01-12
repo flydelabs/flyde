@@ -1,9 +1,5 @@
 @import "../../lib/common.scss";
 
-$const-color: #fcf0ff;
-$trigger-pin-width: 40px;
-$half-of-pin-height: 16px;
-
 .ins-view {
   display: inline-block;
   position: absolute;
@@ -17,15 +13,6 @@ $half-of-pin-height: 16px;
     align-items: center;
     justify-content: space-around;
   }
-
-  // .inputs {f
-  //   padding-right: $trigger-pin-width + 10px;
-
-  //   .pin[data-pin-id="__trigger"] {
-  //     position: absolute;
-  //     right: 0px;
-  //   }
-  // }
 }
 
 .ins-view {
@@ -75,37 +62,6 @@ $half-of-pin-height: 16px;
         width: 14px;
         height: 14px;
       }
-    }
-
-    &.size-small {
-      font-size: 14px;
-      padding: 6px 18px 6px;
-    }
-
-    &.size-regular {
-      // font-size: 18px;
-      // padding: 6px 12px 4px;
-
-      // &:not(:hover):not(.selected):not(.closest) {
-      // border-bottom-color: var(--node-color, transparent);
-      // }
-    }
-
-    &.size-large {
-      font-size: 20px;
-      padding: 12px 30px 12px;
-      // border-radius: 8px;
-      // border-width: 3px;
-
-      // &:not(:hover):not(.selected):not(.closest) {
-      //   border: 3px solid var(--node-color, transparent);
-      // }
-    }
-
-    .content-and-icon {
-      display: flex;
-      align-items: center;
-      gap: 5px;
     }
   }
 
@@ -160,22 +116,6 @@ $half-of-pin-height: 16px;
 
   .pin {
     transition: transform 0.1s ease-in-out;
-  }
-
-  &:not(:hover) {
-    &:not(.force-minimized-input) {
-      .pin.input.minimized:not(.selected) {
-        // the -half of pin thing + scale Y 0 is for the connections to be drawn to the center of the intance
-        transform: translateY(calc(100% - #{$half-of-pin-height})) scaleY(0);
-      }
-    }
-
-    &:not(.force-minimized-output) {
-      .pin.output.minimized:not(.selected) {
-        // the -half of pin thing + scale Y 0 is for the connections to be drawn to the center of the intance
-        transform: translateY(calc(-100% + #{$half-of-pin-height})) scaleY(0);
-      }
-    }
   }
 }
 
