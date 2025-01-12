@@ -236,48 +236,50 @@ export const NodeIoView: React.FC<NodeIoViewProps> = React.memo(
 
     const dark = useDarkMode();
 
-    return (
-      <BaseNodeView
-        className={classNames(`node-io-view`, type, { dark })}
-        pos={pos}
-        onDragEnd={_onDragEnd}
-        onDragStart={_onDragStart}
-        onDragMove={onDragMove}
-        viewPort={viewPort}
-      >
-        <React.Fragment>
-          <Tooltip content={calcTooltipContent()}>
-            <ContextMenu
-              onMouseEnter={refreshHistory}
-              onMouseOut={resetHistory}
-              onMouseUp={_onMouseUp}
-              onMouseDown={_onMouseDown}
-              data-tip=""
-              data-html={true}
-              data-for={id + props.currentInsId}
-              className={classNames("node-io-view-inner", {
-                closest,
-                selected,
-                dark,
-              })}
-              id={getPinDomId({
-                fullInsIdPath: fullInsIdPath(
-                  props.currentInsId,
-                  props.ancestorInsIds
-                ),
-                pinId: id,
-                pinType: type,
-                isMain: true,
-              })}
-              onClick={_onClick}
-              onDoubleClick={onDblClickInner}
-              content={getContextMenu()}
-            >
-              {id}
-            </ContextMenu>
-          </Tooltip>
-        </React.Fragment>
-      </BaseNodeView>
-    );
+    // return (
+    //   <BaseNodeView
+    //     className={classNames(`node-io-view`, type, { dark })}
+    //     pos={pos}
+    //     onDragEnd={_onDragEnd}
+    //     onDragStart={_onDragStart}
+    //     onDragMove={onDragMove}
+    //     viewPort={viewPort}
+    //   >
+    //     <React.Fragment>
+    //       <Tooltip content={calcTooltipContent()}>
+    //         <ContextMenu
+    //           onMouseEnter={refreshHistory}
+    //           onMouseOut={resetHistory}
+    //           onMouseUp={_onMouseUp}
+    //           onMouseDown={_onMouseDown}
+    //           data-tip=""
+    //           data-html={true}
+    //           data-for={id + props.currentInsId}
+    //           className={classNames("node-io-view-inner", {
+    //             closest,
+    //             selected,
+    //             dark,
+    //           })}
+    //           id={getPinDomId({
+    //             fullInsIdPath: fullInsIdPath(
+    //               props.currentInsId,
+    //               props.ancestorInsIds
+    //             ),
+    //             pinId: id,
+    //             pinType: type,
+    //             isMain: true,
+    //           })}
+    //           onClick={_onClick}
+    //           onDoubleClick={onDblClickInner}
+    //           content={getContextMenu()}
+    //         >
+    //           {id}
+    //         </ContextMenu>
+    //       </Tooltip>
+    //     </React.Fragment>
+    //   </BaseNodeView>
+    // );
+
+    return <div>22 {id}</div>;
   }
 );

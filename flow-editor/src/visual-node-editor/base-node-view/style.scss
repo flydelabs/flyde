@@ -1,3 +1,8 @@
+@import "../../lib/common.scss";
+
+$node-width: 160px;
+$key-1: #2887f4;
+
 .base-node-view-vp-fixer {
   transform-origin: top left;
   will-change: transform;
@@ -13,8 +18,103 @@
   display: inline-block;
   position: absolute;
   will-change: transform;
-}
 
-.base-node-view.dragged {
-  opacity: 0.8;
+  &.dragged {
+    opacity: 0.8;
+  }
+
+  .base-node-view-inner {
+    width: $node-width;
+    border-radius: 4px;
+    border: 1px solid #2c2c2c;
+    cursor: pointer;
+    box-sizing: border-box;
+
+    &.no-left-side {
+      border-radius: 16px 4px 4px 16px;
+      width: 120px;
+
+      .node-header {
+        border-radius: 16px 4px 0 0;
+      }
+
+      .node-body {
+        border-radius: 0 0 4px 16px;
+      }
+
+      .left-side {
+        display: none;
+      }
+    }
+
+    &.no-right-side {
+      width: 120px;
+      border-radius: 4px 16px 16px 4px;
+
+      .node-header {
+        border-radius: 4px 16px 0 0;
+      }
+
+      .node-body {
+        border-radius: 0 0 16px 4px;
+      }
+
+      .right-side {
+        display: none;
+      }
+    }
+
+    &:hover {
+      border-color: #fff;
+    }
+
+    &.selected {
+      .node-body {
+        background: linear-gradient(
+            0deg,
+            rgba(40, 135, 244, 0.5),
+            rgba(40, 135, 244, 0.5)
+          ),
+          linear-gradient(180deg, #000000 0%, #222222 100%);
+      }
+    }
+
+    .node-header {
+      background: #383838;
+      font-size: 12px;
+      font-weight: bold;
+      color: #fff;
+      text-align: center;
+      padding: 3px 4px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      width: 100%;
+      box-sizing: border-box;
+      border-radius: 4px 4px 0 0;
+    }
+
+    .node-body {
+      background: linear-gradient(180deg, #000000 0%, #222222 100%);
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0px;
+      gap: 5px;
+      color: $key-1;
+      border-radius: 0 0 4px 4px;
+
+      .icon-container {
+        text-align: center;
+        width: 40px;
+      }
+
+      .left-side,
+      .right-side {
+        flex: 1;
+        flex-shrink: 0;
+      }
+    }
+  }
 }

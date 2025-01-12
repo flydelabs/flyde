@@ -34,7 +34,7 @@ import {
   getNodeInputs,
 } from "@flyde/core";
 import { calcNodeContent } from "./utils";
-import { BaseNodeView } from "../base-node-view";
+import { BaseNodeView, BaseNodeIcon } from "../base-node-view";
 
 import { getInstanceDomId } from "../dom-ids";
 import {
@@ -44,11 +44,9 @@ import {
 } from "../VisualNodeEditor";
 import { usePrompt } from "../..";
 import {
-  ContextMenu,
   MenuItemProps,
   Menu,
   MenuItem,
-  Tooltip,
   Dialog,
   Classes,
 } from "@blueprintjs/core";
@@ -59,7 +57,6 @@ import {
   VisualNodeEditorContextType,
   VisualNodeEditorProvider,
 } from "../VisualNodeEditorContext";
-import { render } from "react-dom";
 
 export const PIECE_HORIZONTAL_PADDING = 25;
 export const PIECE_CHAR_WIDTH = 11;
@@ -480,87 +477,6 @@ export const InstanceView: React.FC<InstanceViewProps> =
       [instance, onPinMouseDown]
     );
 
-    const renderInputs = () => {
-      return (
-        <div className="inputs no-drag">
-          {inputsToRender.map(([k, v]) => (
-            <div className="pin-container inputs">
-              <PinView
-                type="input"
-                currentInsId={instance.id}
-                ancestorsInsIds={props.ancestorsInsIds}
-                id={k}
-                key={k}
-                optional={optionalInputs.has(k)}
-                connected={connectedInputs.has(k)}
-                isSticky={stickyInputs[k]}
-                minimized={selected ? false : inputsToRender.length === 1}
-                onToggleSticky={_onToggleSticky}
-                selected={k === selectedInput}
-                onClick={onInputClick}
-                onDoubleClick={onInputDblClick}
-                isClosestToMouse={
-                  !!closestPin &&
-                  closestPin.type === "input" &&
-                  closestPin.pin === k
-                }
-                onToggleLogged={onTogglePinLog}
-                onToggleBreakpoint={onTogglePinBreakpoint}
-                onInspect={props.onInspectPin}
-                description={v.description}
-                queuedValues={props.queuedInputsData[k] ?? 0}
-                onMouseUp={_onPinMouseUp}
-                onMouseDown={_onPinMouseDown}
-              />
-              {/* <div className="pin-handle input" /> */}
-            </div>
-          ))}
-        </div>
-      );
-    };
-
-    const renderOutputs = () => {
-      return (
-        <div className="outputs no-drag">
-          {outputsToRender.map(([k, v]) => (
-            <div className="pin-container outputs">
-              <PinView
-                currentInsId={instance.id}
-                ancestorsInsIds={props.ancestorsInsIds}
-                connected={connectedOutputs.has(k)}
-                key={k}
-                type="output"
-                id={k}
-                minimized={selected ? false : outputsToRender.length === 1}
-                isClosestToMouse={
-                  !!closestPin &&
-                  closestPin.type === "output" &&
-                  closestPin.pin === k
-                }
-                selected={k === selectedOutput}
-                onClick={onOutputClick}
-                onDoubleClick={onOutputDblClick}
-                onToggleLogged={onTogglePinLog}
-                onToggleBreakpoint={onTogglePinBreakpoint}
-                onInspect={props.onInspectPin}
-                description={v.description}
-                onMouseUp={_onPinMouseUp}
-                onMouseDown={_onPinMouseDown}
-              />
-              {/* <div className="pin-handle output" /> */}
-            </div>
-          ))}
-        </div>
-      );
-    };
-
-    const _onChangeStyle = React.useCallback(
-      (style: NodeStyle) => {
-        onChangeStyle(instance, style);
-      },
-      [instance, onChangeStyle]
-    );
-
     const getContextMenu = React.useCallback(() => {
       const inputMenuItems = inputKeys.map((k) => {
         const isVisible = _visibleInputs.includes(k);
@@ -646,7 +562,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
           <MenuItem text="Style">
             <NodeStyleMenu
               style={style}
-              onChange={_onChangeStyle}
+              onChange={(s) => onChangeStyle(instance, s)}
               promptFn={_prompt}
             />
           </MenuItem>
@@ -665,7 +581,6 @@ export const InstanceView: React.FC<InstanceViewProps> =
       onGroupSelected,
       _onDeleteInstance,
       style,
-      _onChangeStyle,
       _prompt,
       _visibleInputs,
       connectedInputs,
@@ -676,26 +591,19 @@ export const InstanceView: React.FC<InstanceViewProps> =
       onUngroup,
       props,
       onDblClick,
+      onChangeStyle,
     ]);
-
-    // const styleVarProp = {
-    //   "--node-color": style.color,
-    //   ...(style.cssOverride || {}),
-    // } as React.CSSProperties;
 
     const instanceDomId = getInstanceDomId(instance.id, props.ancestorsInsIds);
 
     const maybeRenderInlineGroupEditor = () => {
       if (inlineGroupProps) {
         return (
-          // ReactDOM.createPortal((<Resizable width={inlineEditorSize.w} height={inlineEditorSize.h} onResize={onResizeInline} handle={<span className='no-drag react-resizable-handle react-resizable-handle-se'/>}>
           <Dialog
             isOpen={true}
             onClose={props.onCloseInlineEditor}
             className="inline-group-editor-container no-drag"
             title={`Editing inline node ${content}`}
-
-            // style={{ width: `${inlineEditorSize.w}px`, height: `${inlineEditorSize.h}px` }}
           >
             <main className={classNames(Classes.DIALOG_BODY)} tabIndex={0}>
               <VisualNodeEditorProvider
@@ -713,8 +621,6 @@ export const InstanceView: React.FC<InstanceViewProps> =
             </main>
           </Dialog>
         );
-
-        // </Resizable>), inlineEditorPortalDomNode)
       } else {
         return null;
       }
@@ -723,6 +629,82 @@ export const InstanceView: React.FC<InstanceViewProps> =
     const nodeIdForDomDataAttr = isMacroNodeInstance(instance)
       ? instance.macroId
       : node.id;
+
+    const renderInputs = () => {
+      if (!inputsToRender.length) {
+        return null;
+      }
+      return (
+        <div className="inputs no-drag">
+          {inputsToRender.map(([k, v]) => (
+            <div className="pin-container inputs" key={k}>
+              <PinView
+                type="input"
+                currentInsId={instance.id}
+                ancestorsInsIds={props.ancestorsInsIds}
+                id={k}
+                optional={optionalInputs.has(k)}
+                connected={connectedInputs.has(k)}
+                isSticky={stickyInputs[k]}
+                minimized={selected ? false : inputsToRender.length === 1}
+                onToggleSticky={_onToggleSticky}
+                selected={k === selectedInput}
+                onClick={onInputClick}
+                onDoubleClick={onInputDblClick}
+                isClosestToMouse={
+                  !!closestPin &&
+                  closestPin.type === "input" &&
+                  closestPin.pin === k
+                }
+                onToggleLogged={onTogglePinLog}
+                onToggleBreakpoint={onTogglePinBreakpoint}
+                onInspect={props.onInspectPin}
+                description={v.description}
+                queuedValues={props.queuedInputsData[k] ?? 0}
+                onMouseUp={_onPinMouseUp}
+                onMouseDown={_onPinMouseDown}
+              />
+            </div>
+          ))}
+        </div>
+      );
+    };
+
+    const renderOutputs = () => {
+      if (!outputsToRender.length) {
+        return null;
+      }
+      return (
+        <div className="outputs no-drag">
+          {outputsToRender.map(([k, v]) => (
+            <div className="pin-container outputs" key={k}>
+              <PinView
+                currentInsId={instance.id}
+                ancestorsInsIds={props.ancestorsInsIds}
+                connected={connectedOutputs.has(k)}
+                type="output"
+                id={k}
+                minimized={selected ? false : outputsToRender.length === 1}
+                isClosestToMouse={
+                  !!closestPin &&
+                  closestPin.type === "output" &&
+                  closestPin.pin === k
+                }
+                selected={k === selectedOutput}
+                onClick={onOutputClick}
+                onDoubleClick={onOutputDblClick}
+                onToggleLogged={onTogglePinLog}
+                onToggleBreakpoint={onTogglePinBreakpoint}
+                onInspect={props.onInspectPin}
+                description={v.description}
+                onMouseUp={_onPinMouseUp}
+                onMouseDown={_onPinMouseDown}
+              />
+            </div>
+          ))}
+        </div>
+      );
+    };
 
     return (
       <div
@@ -736,36 +718,19 @@ export const InstanceView: React.FC<InstanceViewProps> =
           onDragStart={_onDragStart}
           onDragMove={_onDragMove}
           onDragEnd={_onDragEnd}
-          upperRenderer={renderInputs}
-          bottomRenderer={renderOutputs}
           displayMode={displayMode}
           domId={instanceDomId}
-        >
-          <ContextMenu
-            className={classNames({ dark: dark })}
-            onClick={_onSelect}
-            onDoubleClick={onDblClick}
-            content={getContextMenu()}
-            // style={styleVarProp}
-          >
-            <Tooltip content={node.description}>
-              <div
-                className={classNames("ins-view-inner", innerCms, {
-                  dark: dark,
-                })}
-              >
-                <div className="node-header">{content}</div>
-                <div className="node-body">
-                  {renderInputs()}
-                  <div className="icon-container">
-                    <InstanceIcon icon={style.icon as string} />
-                  </div>
-                  {renderOutputs()}
-                </div>
-              </div>
-            </Tooltip>
-          </ContextMenu>
-        </BaseNodeView>
+          heading={content}
+          description={node.description}
+          icon={style.icon}
+          leftSide={renderInputs()}
+          rightSide={renderOutputs()}
+          selected={selected}
+          dark={dark}
+          contextMenuContent={getContextMenu()}
+          onClick={_onSelect}
+          onDoubleClick={onDblClick}
+        />
         {maybeRenderInlineGroupEditor()}
       </div>
     );

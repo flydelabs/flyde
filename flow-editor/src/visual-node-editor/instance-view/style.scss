@@ -1,104 +1,7 @@
 @import "../../lib/common.scss";
 
-$node-width: 160px;
-$key-1: #2887f4;
-
 .ins-view {
   user-select: none;
-  &.selected {
-    .ins-view-inner .node-body {
-      background: linear-gradient(
-          0deg,
-          rgba(40, 135, 244, 0.5),
-          rgba(40, 135, 244, 0.5)
-        ),
-        linear-gradient(180deg, #000000 0%, #222222 100%);
-    }
-  }
-
-  .ins-view-inner {
-    width: $node-width;
-    border-radius: 4px;
-    border: 1px solid #2c2c2c;
-    cursor: pointer;
-    box-sizing: border-box;
-
-    &.no-inputs {
-      border-radius: 16px 4px 4px 16px;
-      width: 120px;
-
-      .node-header {
-        border-radius: 16px 4px 0 0;
-      }
-
-      .node-body {
-        border-radius: 0 0 4px 16px;
-      }
-
-      .inputs {
-        display: none;
-      }
-    }
-
-    &.no-outputs {
-      width: 120px;
-      border-radius: 4px 16px 16px 4px;
-
-      .node-header {
-        border-radius: 4px 16px 0 0;
-      }
-
-      .node-body {
-        border-radius: 0 0 16px 4px;
-      }
-
-      .outputs {
-        display: none;
-      }
-    }
-
-    &:hover {
-      border-color: #fff;
-    }
-
-    .node-header {
-      background: #383838;
-      font-size: 12px;
-      font-weight: bold;
-      color: #fff;
-      text-align: center;
-      padding: 3px 4px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      width: 100%;
-      box-sizing: border-box;
-      border-radius: 4px 4px 0 0;
-    }
-
-    .node-body {
-      background: linear-gradient(180deg, #000000 0%, #222222 100%);
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: center;
-      padding: 8px 0px;
-      gap: 5px;
-      color: $key-1;
-      border-radius: 0 0 4px 4px;
-
-      .icon-container {
-        text-align: center;
-        width: 40px;
-      }
-
-      .inputs,
-      .outputs {
-        flex: 1;
-        flex-shrink: 0;
-      }
-    }
-  }
 
   .pin-container {
     position: relative;
@@ -116,29 +19,21 @@ $key-1: #2887f4;
     z-index: 2; // otherwise other instances get rendered on top of inline node editor
 
     > .base-node-view .base-node-view-inner {
-      // padding: 0;
       overflow: hidden;
     }
 
     @at-root {
       .inline-group-editor-container {
-        // width: 400px;
-        // height: 300px;
-        // max-width: 600px;
-
         width: 80%;
         height: 85vh;
         left: 10%;
         top: 7.5%;
-
-        // position: relative;
 
         > header {
           font-size: 20px;
           font-weight: 600;
           text-align: center;
           padding: 4px 15px 3px;
-          // cursor: move;
           user-select: none;
           z-index: 1;
         }
@@ -165,5 +60,4 @@ $key-1: #2887f4;
 .__react_component_tooltip.instance-info-tooltip {
   font-size: 14px;
   max-width: 400px;
-  // min-width: 300px;
 }
