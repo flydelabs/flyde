@@ -8,6 +8,7 @@ import { calcHistoryContent, useHistoryHelpers } from "../pin-view/helpers";
 import { getInputName } from "@flyde/core";
 import { useDarkMode } from "../../flow-editor/DarkModeContext";
 import { PinView } from "../pin-view/PinView";
+import { getMainPinDomId } from "../dom-ids";
 
 export interface NodeIoViewProps {
   id: string;
@@ -233,7 +234,6 @@ export const NodeIoView: React.FC<NodeIoViewProps> = React.memo(
             ancestorsInsIds={props.ancestorInsIds}
             id={id}
             connected={props.connected}
-            minimized={false}
             isClosestToMouse={closest}
             selected={selected}
             onClick={(pinId, pinType) => onSelect(pinId, pinType)}
@@ -253,7 +253,6 @@ export const NodeIoView: React.FC<NodeIoViewProps> = React.memo(
             ancestorsInsIds={props.ancestorInsIds}
             id={id}
             connected={props.connected}
-            minimized={false}
             isClosestToMouse={closest}
             selected={selected}
             onClick={(pinId, pinType) => onSelect(pinId, pinType)}
@@ -273,6 +272,7 @@ export const NodeIoView: React.FC<NodeIoViewProps> = React.memo(
       </div>
     );
 
+    const domId = getMainPinDomId(currentInsId, id, type);
     return (
       <BaseNodeView
         className={classNames(`node-io-view`, type, { dark })}
@@ -291,6 +291,7 @@ export const NodeIoView: React.FC<NodeIoViewProps> = React.memo(
         onDoubleClick={onDblClickInner}
         selected={selected}
         dark={dark}
+        domId={domId}
       />
     );
   }

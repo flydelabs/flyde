@@ -62,7 +62,6 @@ export const PIECE_HORIZONTAL_PADDING = 25;
 export const PIECE_CHAR_WIDTH = 11;
 export const MIN_WIDTH_PER_PIN = 40;
 export const MAX_INSTANCE_WIDTH = 400; // to change in CSS as well
-export const INSTANCE_INFO_TOOLTIP_DELAY = 400;
 
 export const getVisibleInputs = (
   instance: NodeInstance,
@@ -386,17 +385,6 @@ export const InstanceView: React.FC<InstanceViewProps> =
       closest: closestPin && closestPin.ins.id === instance.id,
     });
 
-    const innerCms = classNames(
-      {
-        selected,
-        dragged,
-        "no-inputs": inputsToRender.length === 0,
-        "no-outputs": outputsToRender.length === 0,
-        closest: closestPin && closestPin.ins.id === instance.id,
-      },
-      `size-${style.size}`
-    );
-
     const optionalInputs = new Set(
       entries(node.inputs)
         .filter(([_, v]) => isInputPinOptional(v))
@@ -646,7 +634,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
                 optional={optionalInputs.has(k)}
                 connected={connectedInputs.has(k)}
                 isSticky={stickyInputs[k]}
-                minimized={selected ? false : inputsToRender.length === 1}
+                // minimized={!selected}
                 onToggleSticky={_onToggleSticky}
                 selected={k === selectedInput}
                 onClick={onInputClick}
@@ -685,7 +673,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
                 connected={connectedOutputs.has(k)}
                 type="output"
                 id={k}
-                minimized={selected ? false : outputsToRender.length === 1}
+                // minimized={selected ? false : outputsToRender.length === 1}
                 isClosestToMouse={
                   !!closestPin &&
                   closestPin.type === "output" &&

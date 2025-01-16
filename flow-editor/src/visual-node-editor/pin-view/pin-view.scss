@@ -71,10 +71,17 @@
   }
 
   &:hover,
-  &.closest,
-  &:not(.minimized) {
-    width: 12px;
-    height: 12px;
+  &.closest {
+    width: 13px;
+    height: 13px;
+
+    &.input {
+      left: -1px;
+    }
+
+    &.output {
+      right: -1px;
+    }
   }
 
   &:hover {

@@ -14,6 +14,14 @@ export const getMainInstanceIndicatorDomId = (
   );
 };
 
+export const getMainPinDomId = (
+  insId: string,
+  pinId: string,
+  type: PinType
+) => {
+  return `main-pin:${insId}:${pinId}:${type}`.replace(/\s+/g, "-");
+};
+
 export interface GetPinDomIdParams {
   fullInsIdPath: string;
   pinId: string;

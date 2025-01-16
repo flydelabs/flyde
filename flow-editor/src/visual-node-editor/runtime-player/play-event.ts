@@ -10,6 +10,7 @@ import {
 import {
   getInstanceDomId,
   getMainInstanceIndicatorDomId,
+  getMainPinDomId,
   getPinDomId,
 } from "../dom-ids";
 
@@ -51,6 +52,20 @@ export const playEvent = (event: DebuggerEvent) => {
           isMain: true,
         }),
       ];
+
+      const mainPinDomId = getMainPinDomId(insId, pinId, pinType);
+      const mainPinElement =
+        document.getElementById(mainPinDomId)?.parentElement;
+
+      if (mainPinElement) {
+        mainPinElement.setAttribute("data-runtime", "done"); //should be "active", but wanted to piggy back existing node css
+        console.log("FOUND", mainPinElement);
+      } else {
+        debug(
+          `No DOM element with Id [${mainPinDomId}] found to play event`,
+          event
+        );
+      }
 
       /* events from the root instance are not shown on "regular" pins but just on "main" ones */
 

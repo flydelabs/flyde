@@ -65,7 +65,6 @@ export const createRuntimePlayer = (): RuntimePlayer => {
       console.log("removing data-runtime #1c", elem);
       elem.removeAttribute("data-runtime");
     });
-
     document.querySelectorAll("[data-runtime-queue]").forEach((elem) => {
       elem.removeAttribute("data-runtime-queue");
     });

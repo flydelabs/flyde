@@ -33,7 +33,6 @@ export type PinViewProps = {
   ancestorsInsIds?: string;
   selected: boolean;
   connected: boolean;
-  minimized: boolean;
   onDoubleClick?: (id: string, e?: React.MouseEvent) => void;
   onShiftClick?: (id: string, e?: React.MouseEvent) => void;
   onClick: (id: string, type: PinType, e?: React.MouseEvent) => void;
@@ -108,6 +107,7 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
 
   const onClick = (e: React.MouseEvent) => {
     const { onShiftClick, onClick, id } = props;
+    e.stopPropagation();
     if (e.shiftKey && onShiftClick) {
       onShiftClick(id, e);
     } else {
@@ -128,7 +128,6 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
           closest: isClosestToMouse,
           optional,
           connected,
-          minimized: props.minimized,
           dark,
         },
         type
@@ -141,7 +140,6 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
           connected,
           closest: isClosestToMouse,
           optional,
-          minimized: props.minimized,
           "error-pin": id === ERROR_PIN_ID,
           dark,
         },
@@ -241,7 +239,6 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
       <div className="wire" />
       <div
         className={classNames("pin-handle", type, {
-          minimized: props.minimized,
           closest: isClosestToMouse,
           selected,
         })}

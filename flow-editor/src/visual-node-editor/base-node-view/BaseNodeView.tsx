@@ -60,6 +60,8 @@ export const BaseNodeIcon: React.FC<{ icon?: NodeTypeIcon }> =
     }
   };
 
+const HOVER_DELAY = 400;
+
 export const BaseNodeView: React.FC<BaseNodeViewProps> =
   function BaseNodeViewInner(props) {
     const {
@@ -163,7 +165,13 @@ export const BaseNodeView: React.FC<BaseNodeViewProps> =
             onClick={onClick}
             onDoubleClick={onDoubleClick}
           >
-            <Tooltip content={description}>{content}</Tooltip>
+            <Tooltip
+              content={description}
+              hoverOpenDelay={HOVER_DELAY}
+              placement="top"
+            >
+              {content}
+            </Tooltip>
           </ContextMenu>
         </div>
       </span>
