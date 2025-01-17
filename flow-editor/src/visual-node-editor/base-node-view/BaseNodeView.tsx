@@ -145,10 +145,10 @@ export const BaseNodeView: React.FC<BaseNodeViewProps> =
 
     const content = (
       <div className={innerCm}>
-        <div className="node-header">{heading}</div>
-        <div className="node-body">
+        <div className={classNames("node-header", { dark })}>{heading}</div>
+        <div className={classNames("node-body", { dark })}>
           <div className="left-side">{leftSide}</div>
-          <div className="icon-container">
+          <div className={classNames("icon-container", { dark })}>
             <BaseNodeIcon icon={icon} />
           </div>
           <div className="right-side">{rightSide}</div>
@@ -166,6 +166,7 @@ export const BaseNodeView: React.FC<BaseNodeViewProps> =
             onDoubleClick={onDoubleClick}
           >
             <Tooltip
+              className={classNames({ dark })}
               content={description}
               hoverOpenDelay={HOVER_DELAY}
               placement="top"

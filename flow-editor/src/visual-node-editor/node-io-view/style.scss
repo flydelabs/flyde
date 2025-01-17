@@ -2,7 +2,12 @@
 
 .node-io-view {
   .base-node-view-inner .node-body .icon-container {
-    color: white;
+    &.dark {
+      color: white;
+    }
+    &:not(.dark) {
+      color: #333;
+    }
   }
 
   .node-header {

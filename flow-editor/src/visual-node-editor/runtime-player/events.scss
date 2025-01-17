@@ -1,9 +1,16 @@
 $blink-duration: 8s; // change also BLINK_TIMEOUT in play-event.ts
 
-$runtime-processing-color: #2887f4;
-$runtime-active-color: #39bf15;
-$runtime-error-color: #e10000;
-$runtime-waiting-color: #e1ac00;
+// Dark mode colors (original)
+$runtime-processing-color-dark: #2887f4;
+$runtime-active-color-dark: #39bf15;
+$runtime-error-color-dark: #e10000;
+$runtime-waiting-color-dark: #e1ac00;
+
+// Light mode colors (more vibrant variants, same hues)
+$runtime-processing-color-light: #4b9fff; // More saturated blue
+$runtime-active-color-light: #4cd926; // More saturated green
+$runtime-error-color-light: #ff4040; // More saturated red
+$runtime-waiting-color-light: #ffb520; // More saturated yellow/orange
 
 @mixin event-vars($bg-color-light, $bg-color-dark) {
   &:not(.dark) {
@@ -16,10 +23,10 @@ $runtime-waiting-color: #e1ac00;
 }
 
 .base-node-view-wrapper[data-runtime="processing"] {
-  // background: var(--event-bg-color);
-  // border-color: var(--event-border-color);
-
-  @include event-vars($runtime-processing-color, $runtime-processing-color);
+  @include event-vars(
+    $runtime-processing-color-light,
+    $runtime-processing-color-dark
+  );
   .node-header {
     animation: pulse 1.5s infinite;
   }
@@ -30,7 +37,7 @@ $runtime-waiting-color: #e1ac00;
 }
 
 .base-node-view-wrapper[data-runtime="done"] {
-  @include event-vars($runtime-active-color, $runtime-active-color);
+  @include event-vars($runtime-active-color-light, $runtime-active-color-dark);
   .node-header {
     animation: blink $blink-duration;
   }
@@ -41,7 +48,10 @@ $runtime-waiting-color: #e1ac00;
 }
 
 .base-node-view-wrapper[data-runtime="waiting"] {
-  @include event-vars($runtime-waiting-color, $runtime-waiting-color);
+  @include event-vars(
+    $runtime-waiting-color-light,
+    $runtime-waiting-color-dark
+  );
   .node-header {
     animation: pulse $blink-duration;
   }
@@ -53,7 +63,7 @@ $runtime-waiting-color: #e1ac00;
 
 .ins-view:not(.error-caught) {
   .base-node-view-wrapper[data-runtime="error"] {
-    @include event-vars($runtime-error-color, $runtime-error-color);
+    @include event-vars($runtime-error-color-light, $runtime-error-color-dark);
     .node-header {
       animation: blink $blink-duration;
     }
@@ -66,7 +76,10 @@ $runtime-waiting-color: #e1ac00;
 
 .ins-view.error-caught {
   .base-node-view-wrapper[data-runtime="error"] {
-    @include event-vars($runtime-active-color, $runtime-active-color);
+    @include event-vars(
+      $runtime-active-color-light,
+      $runtime-active-color-dark
+    );
     .node-header {
       animation: blink-error $blink-duration * 2;
     }
@@ -81,22 +94,25 @@ $runtime-waiting-color: #e1ac00;
 .pin.error-pin.connected .pin-inner[data-runtime="active"],
 .node-io-view-inner[data-runtime="active"] {
   &:not([data-runtime-queue]) {
-    @include event-vars($runtime-active-color, $runtime-active-color);
+    @include event-vars(
+      $runtime-active-color-light,
+      $runtime-active-color-dark
+    );
     animation: blink-text $blink-duration;
   }
 }
 
 .pin.error-pin:not(.connected) .pin-inner[data-runtime="active"] {
-  @include event-vars($runtime-error-color, $runtime-error-color);
+  @include event-vars($runtime-error-color-light, $runtime-error-color-dark);
   animation: blink-text $blink-duration * 2;
-  // transition: background-color ease-in-out 0.05s, box-shadow ease-in-out 0.2s;
-  // background: #C1FF91 !important;
-  // box-shadow: 0px 0px 10px 2px rgba(10, 126, 0, 0.5);
 }
 
 .node-io-view-inner[data-runtime-queue],
 .pin-inner[data-runtime-queue] {
-  @include event-vars($runtime-waiting-color, $runtime-waiting-color);
+  @include event-vars(
+    $runtime-waiting-color-light,
+    $runtime-waiting-color-dark
+  );
   animation: pulse-text 1.5s infinite;
 }
 

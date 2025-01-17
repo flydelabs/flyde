@@ -3,6 +3,18 @@
 $node-width: 160px;
 $key-1: #2887f4;
 
+// Dark theme colors
+$dark-border: #2c2c2c;
+$dark-header-bg: #383838;
+$dark-body-bg: linear-gradient(180deg, #000000 0%, #222222 100%);
+$dark-text: #fff;
+
+// Light theme colors
+$light-border: #d1d1d1;
+$light-header-bg: #f0f0f0;
+$light-body-bg: linear-gradient(180deg, #ffffff 0%, #f5f5f5 100%);
+$light-text: #333;
+
 .base-node-view-vp-fixer {
   transform-origin: top left;
   will-change: transform;
@@ -26,9 +38,59 @@ $key-1: #2887f4;
   .base-node-view-inner {
     width: $node-width;
     border-radius: 4px;
-    border: 1px solid #2c2c2c;
+    border: 1px solid $dark-border;
     cursor: pointer;
     box-sizing: border-box;
+
+    &.dark {
+      border-color: $dark-border;
+      .node-header {
+        background: $dark-header-bg;
+        color: $dark-text;
+      }
+      .node-body {
+        background: $dark-body-bg;
+        color: $key-1;
+      }
+      &:hover {
+        border-color: $dark-text;
+      }
+      &.selected {
+        .node-body {
+          background: linear-gradient(
+              0deg,
+              rgba(40, 135, 244, 0.5),
+              rgba(40, 135, 244, 0.5)
+            ),
+            $dark-body-bg;
+        }
+      }
+    }
+
+    &:not(.dark) {
+      border-color: $light-border;
+      .node-header {
+        background: $light-header-bg;
+        color: $light-text;
+      }
+      .node-body {
+        background: $light-body-bg;
+        color: $key-1;
+      }
+      &:hover {
+        border-color: #666;
+      }
+      &.selected {
+        .node-body {
+          background: linear-gradient(
+              0deg,
+              rgba(40, 135, 244, 0.3),
+              rgba(40, 135, 244, 0.3)
+            ),
+            $light-body-bg;
+        }
+      }
+    }
 
     &.no-left-side {
       border-radius: 16px 4px 4px 16px;
@@ -61,21 +123,6 @@ $key-1: #2887f4;
 
       .right-side {
         display: none;
-      }
-    }
-
-    &:hover {
-      border-color: #fff;
-    }
-
-    &.selected {
-      .node-body {
-        background: linear-gradient(
-            0deg,
-            rgba(40, 135, 244, 0.5),
-            rgba(40, 135, 244, 0.5)
-          ),
-          linear-gradient(180deg, #000000 0%, #222222 100%);
       }
     }
 

@@ -1,3 +1,9 @@
+// Theme colors
+$dark-pin-text: #fff;
+$light-pin-text: #333;
+$dark-pin-handle-border: #aaaaaa;
+$light-pin-handle-border: #666666;
+
 .pin {
   cursor: pointer;
   user-select: none;
@@ -24,7 +30,14 @@
   }
 
   user-select: none;
-  color: #fff;
+
+  &.dark {
+    color: $dark-pin-text;
+  }
+
+  &:not(.dark) {
+    color: $light-pin-text;
+  }
 }
 
 .pin-handle {
@@ -39,8 +52,15 @@
   transition: width 0.15s ease-out, height 0.15s ease-out,
     transform 0.15s ease-out;
 
-  background: #ffffff;
-  border: 1px solid #aaaaaa;
+  &.dark {
+    background: #ffffff;
+    border: 1px solid $dark-pin-handle-border;
+  }
+
+  &:not(.dark) {
+    background: #ffffff;
+    border: 1px solid $light-pin-handle-border;
+  }
 
   &::before {
     content: "";

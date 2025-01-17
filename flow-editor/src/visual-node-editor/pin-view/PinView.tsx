@@ -215,7 +215,10 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
 
   return (
     <div className={calcClassNames()} data-pin-id={id}>
-      <Tooltip className="pin-info-tooltip" content={calcTooltipContent()}>
+      <Tooltip
+        className={classNames("pin-info-tooltip", { dark })}
+        content={calcTooltipContent()}
+      >
         <ContextMenu
           onMouseEnter={refreshHistory}
           onMouseOut={resetHistory}
@@ -236,11 +239,11 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
           {maybeQueueLabel()}
         </ContextMenu>
       </Tooltip>
-      <div className="wire" />
       <div
         className={classNames("pin-handle", type, {
           closest: isClosestToMouse,
           selected,
+          dark,
         })}
         id={getPinDomHandleId(idParams)}
         onMouseDown={_onMouseDown}
