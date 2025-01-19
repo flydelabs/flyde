@@ -1,10 +1,10 @@
 import { MacroNode, nodeInput } from "@flyde/core";
 
-export interface CommentConfig {
+export interface NoteConfig {
   content: string;
 }
 
-export const Note: MacroNode<CommentConfig> = {
+export const Note: MacroNode<NoteConfig> = {
   id: "Note",
   displayName: "Note",
   defaultStyle: {
@@ -20,19 +20,10 @@ export const Note: MacroNode<CommentConfig> = {
     return {
       defaultStyle: {
         cssOverride: {
-          fontSize: "12px",
-          borderRadius: "4px",
-          fontFamily: "monospace",
-          minHeight: "40px",
           padding: "6px 8px",
-          textAlign: "left",
-          fontWeight: "normal",
-          display: "inline-flex",
-          alignItems: "center",
         },
       },
 
-      description: "Comment node",
       inputs: {
         never: nodeInput(), // this is a hack to make the node never trigger
       },
@@ -45,7 +36,7 @@ export const Note: MacroNode<CommentConfig> = {
   },
   editorConfig: {
     type: "custom",
-    editorComponentBundlePath: "../../dist/ui/Comment.js",
+    editorComponentBundlePath: "../../dist/ui/Note.js",
   },
 };
 

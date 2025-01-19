@@ -167,5 +167,10 @@ $light-text: #333;
         flex-shrink: 0;
       }
     }
+
+    .node-overridden-body {
+      color: #fff;
+      display: block;
+    }
   }
 }

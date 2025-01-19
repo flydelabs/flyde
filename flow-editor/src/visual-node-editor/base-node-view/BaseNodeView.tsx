@@ -35,6 +35,7 @@ export interface BaseNodeViewProps {
   selected?: boolean;
   dark?: boolean;
   overrideNodeBodyHtml?: string;
+  overrideStyle?: React.CSSProperties;
 
   onDragEnd: (...data: any[]) => void;
   onDragStart: (...data: any[]) => void;
@@ -145,10 +146,13 @@ export const BaseNodeView: React.FC<BaseNodeViewProps> =
       "no-right-side": !rightSide && !overrideNodeBodyHtml,
     });
 
+    console.log("overrideNodeBodyHtml", overrideNodeBodyHtml);
+
     const innerContent = overrideNodeBodyHtml ? (
       <div
         className="node-overridden-body"
         dangerouslySetInnerHTML={{ __html: overrideNodeBodyHtml }}
+        style={props.overrideStyle}
       />
     ) : (
       <>

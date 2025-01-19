@@ -1,19 +1,29 @@
 imports:
   "@flyde/stdlib":
+    - Comment
     - Note
 node:
   instances:
     - pos:
-        x: -87.5
-        y: -172.75
-      id: xyuadhcy2g8clb59jz54jph2
+        x: -10.704877929687484
+        y: -92.94222839355469
+      id: w0owlky1wz4lpe0vk7z7baqh
       inputConfig: {}
-      nodeId: Note__xyuadhcy2g8clb59jz54jph2
+      nodeId: Comment__w0owlky1wz4lpe0vk7z7baqh
+      macroId: Comment
+      macroData:
+        content: |2-
+           # Hello comment
+          **bold** not bold
+    - pos:
+        x: 187.21178873697926
+        y: -137.69222839355467
+      id: rhwh49xq3syxrx9h8z6nvmmq
+      inputConfig: {}
+      nodeId: Note__rhwh49xq3syxrx9h8z6nvmmq
       macroId: Note
       macroData:
-        content: |-
-          # Hello comment
-          **bold** not bold
+        content: Enter your comment here
   connections: []
   id: NoteFixture
   inputs: {}

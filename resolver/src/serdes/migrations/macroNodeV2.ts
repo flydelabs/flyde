@@ -6,7 +6,13 @@ import {
 import { ConditionType } from "@flyde/stdlib/dist/ControlFlow/Conditional/ConditionType";
 
 export function migrateMacroNodeV2(data: { node?: any; imports?: any }) {
-  const skippedMacros = ["Collect", "CodeExpression", "Switch", "Comment"];
+  const skippedMacros = [
+    "Collect",
+    "CodeExpression",
+    "Switch",
+    "Comment",
+    "Note",
+  ];
 
   // migrate old stdlib nodes
   for (const ins of data.node?.instances) {
