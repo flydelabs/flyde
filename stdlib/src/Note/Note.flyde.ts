@@ -4,13 +4,13 @@ export interface CommentConfig {
   content: string;
 }
 
-export const Comment: MacroNode<CommentConfig> = {
-  id: "Comment",
-  displayName: "Comment",
+export const Note: MacroNode<CommentConfig> = {
+  id: "Note",
+  displayName: "Note",
   defaultStyle: {
     icon: "comment",
   },
-  description: "A comment node for documentation purposes",
+  description: "A note node for documentation purposes",
   runFnBuilder: () => {
     return () => {
       // This node does nothing when run
@@ -32,12 +32,12 @@ export const Comment: MacroNode<CommentConfig> = {
         },
       },
 
-      displayName: parseMarkdown(config.content),
       description: "Comment node",
       inputs: {
         never: nodeInput(), // this is a hack to make the node never trigger
       },
       outputs: {},
+      overrideNodeBodyHtml: parseMarkdown(config.content),
     };
   },
   defaultData: {

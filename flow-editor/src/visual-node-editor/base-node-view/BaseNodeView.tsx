@@ -34,6 +34,7 @@ export interface BaseNodeViewProps {
     | ((props: ContextMenuContentProps) => JSX.Element);
   selected?: boolean;
   dark?: boolean;
+  overrideNodeBodyHtml?: string;
 
   onDragEnd: (...data: any[]) => void;
   onDragStart: (...data: any[]) => void;
@@ -81,6 +82,7 @@ export const BaseNodeView: React.FC<BaseNodeViewProps> =
       selected,
       onClick,
       onDoubleClick,
+      overrideNodeBodyHtml,
     } = props;
 
     const dark = useDarkMode();
@@ -139,20 +141,29 @@ export const BaseNodeView: React.FC<BaseNodeViewProps> =
     const innerCm = classNames("base-node-view-inner", {
       selected,
       dark,
-      "no-left-side": !leftSide,
-      "no-right-side": !rightSide,
+      "no-left-side": !leftSide && !overrideNodeBodyHtml,
+      "no-right-side": !rightSide && !overrideNodeBodyHtml,
     });
+
+    const innerContent = overrideNodeBodyHtml ? (
+      <div
+        className="node-overridden-body"
+        dangerouslySetInnerHTML={{ __html: overrideNodeBodyHtml }}
+      />
+    ) : (
+      <>
+        <div className="left-side">{leftSide}</div>
+        <div className={classNames("icon-container", { dark })}>
+          <BaseNodeIcon icon={icon} />
+        </div>
+        <div className="right-side">{rightSide}</div>
+      </>
+    );
 
     const content = (
       <div className={innerCm}>
         <div className={classNames("node-header", { dark })}>{heading}</div>
-        <div className={classNames("node-body", { dark })}>
-          <div className="left-side">{leftSide}</div>
-          <div className={classNames("icon-container", { dark })}>
-            <BaseNodeIcon icon={icon} />
-          </div>
-          <div className="right-side">{rightSide}</div>
-        </div>
+        <div className={classNames("node-body", { dark })}>{innerContent}</div>
       </div>
     );
 

@@ -586,6 +586,11 @@ declare module '@flyde/core/node/node' {
                 * See {@link NodeStyle} for the full options supported
                 */
             defaultStyle?: NodeStyle;
+            /**
+                * Hack to support note node without adding first class support for it.
+                * This is used to override the node body html for a node.
+                */
+            overrideNodeBodyHtml?: string;
     }
     /**
         * Extended by {@link VisualNode}, {@link CodeNode} and {@link InlineValueNode}
@@ -910,6 +915,7 @@ declare module '@flyde/core/node/macro-node' {
                 * Resolver will use this to load the editor component bundle into the editor
                 */
             editorConfig: MacroEditorConfigDefinition;
+            sourceCode?: string;
     };
     export interface MacroEditorCompProps<T> {
             value: T;

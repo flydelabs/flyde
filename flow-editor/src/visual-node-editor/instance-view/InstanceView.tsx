@@ -719,6 +719,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
           dark={dark}
           contextMenuContent={getContextMenu()}
           onClick={_onSelect}
+          overrideNodeBodyHtml={node.overrideNodeBodyHtml}
           onDoubleClick={onDblClick}
         />
         {maybeRenderInlineGroupEditor()}

@@ -19,7 +19,7 @@ import {
 
 import { Switch } from "./ControlFlow/Switch.flyde";
 import { Collect } from "./Lists/Collect/Collect.flyde";
-import { Comment } from "./Comment/Comment.flyde";
+import { Note } from "./Note/Note.flyde";
 import * as Lists from "./Lists";
 import * as Objects from "./Objects";
 
@@ -35,7 +35,7 @@ export function getUnresolvedNodesLibraryData() {
           Http,
           Conditional,
           Switch,
-          Comment,
+          Note,
         ],
       },
       {
