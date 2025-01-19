@@ -59,7 +59,6 @@ export const playEvent = (event: DebuggerEvent) => {
 
       if (mainPinElement) {
         mainPinElement.setAttribute("data-runtime", "done"); //should be "active", but wanted to piggy back existing node css
-        console.log("FOUND", mainPinElement);
       } else {
         debug(
           `No DOM element with Id [${mainPinDomId}] found to play event`,
@@ -228,7 +227,7 @@ export const playEvent = (event: DebuggerEvent) => {
         );
         return;
       }
-      console.log("instanceElem", instanceElem);
+
       if (someWaiting && !instanceElem.getAttribute("data-runtime")) {
         instanceElem.setAttribute("data-runtime", "waiting");
       }
