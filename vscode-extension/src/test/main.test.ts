@@ -48,17 +48,15 @@ suite("Extension Test Suite", () => {
       testFile,
       "flydeEditor"
     );
+    const instances = await webviewTestingCommand("$$", {
+      selector: ".ins-view",
+    });
 
-    await eventually(async () => {
-      const instances = await webviewTestingCommand("$$", {
-        selector: ".ins-view-inner",
-      });
-
-      assert(
-        instances.length === 4,
-        "Expected fixture flow to have 4 instances"
-      );
-    }, 4000);
+    assert(
+      instances.length === 4,
+      `Expected fixture flow to have 4 instances. Got ${instances.length} instances`
+    );
+    // }, 4000);
   }).retries(3);
 
   test("Renders add node modal", async () => {
@@ -144,10 +142,8 @@ suite("Extension Test Suite", () => {
 
       await eventually(async () => {
         const instances = await webviewTestingCommand("$$", {
-          selector: ".ins-view-inner",
+          selector: ".base-node-view-inner",
         });
-
-        console.log(instances[0].innerHTML);
 
         assert(
           instances.length === 1,
@@ -156,7 +152,7 @@ suite("Extension Test Suite", () => {
 
         assert(
           instances[0].innerHTML.includes("<h1>Hello comment</h1>"),
-          "Expected the comment node to render the comment in html"
+          `Expected the note node HTML to render the comment in html. ${instances[0].innerHTML}`
         );
       });
     }).timeout(5000);

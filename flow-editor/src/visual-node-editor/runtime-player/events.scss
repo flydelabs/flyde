@@ -1,16 +1,16 @@
 $blink-duration: 8s; // change also BLINK_TIMEOUT in play-event.ts
 
-// Dark mode colors (original)
+// Dark mode colors (base colors)
 $runtime-processing-color-dark: #2887f4;
 $runtime-active-color-dark: #39bf15;
 $runtime-error-color-dark: #e10000;
 $runtime-waiting-color-dark: #e1ac00;
 
-// Light mode colors (more vibrant variants, same hues)
-$runtime-processing-color-light: #4b9fff; // More saturated blue
-$runtime-active-color-light: #4cd926; // More saturated green
-$runtime-error-color-light: #ff4040; // More saturated red
-$runtime-waiting-color-light: #ffb520; // More saturated yellow/orange
+// Light mode colors (derived with darken)
+$runtime-processing-color-light: darken($runtime-processing-color-dark, 5%);
+$runtime-active-color-light: darken($runtime-active-color-dark, 5%);
+$runtime-error-color-light: darken($runtime-error-color-dark, 5%);
+$runtime-waiting-color-light: darken($runtime-waiting-color-dark, 5%);
 
 @mixin event-vars($bg-color-light, $bg-color-dark) {
   &:not(.dark) {
