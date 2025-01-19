@@ -1,16 +1,16 @@
 import { MacroNode, nodeInput } from "@flyde/core";
 
-export interface CommentConfig {
+export interface NoteConfig {
   content: string;
 }
 
-export const Comment: MacroNode<CommentConfig> = {
-  id: "Comment",
-  displayName: "Comment",
+export const Note: MacroNode<NoteConfig> = {
+  id: "Note",
+  displayName: "Note",
   defaultStyle: {
     icon: "comment",
   },
-  description: "A comment node for documentation purposes",
+  description: "A note node for documentation purposes",
   runFnBuilder: () => {
     return () => {
       // This node does nothing when run
@@ -20,24 +20,15 @@ export const Comment: MacroNode<CommentConfig> = {
     return {
       defaultStyle: {
         cssOverride: {
-          fontSize: "12px",
-          borderRadius: "4px",
-          fontFamily: "monospace",
-          minHeight: "40px",
           padding: "6px 8px",
-          textAlign: "left",
-          fontWeight: "normal",
-          display: "inline-flex",
-          alignItems: "center",
         },
       },
 
-      displayName: parseMarkdown(config.content),
-      description: "Comment node",
       inputs: {
         never: nodeInput(), // this is a hack to make the node never trigger
       },
       outputs: {},
+      overrideNodeBodyHtml: parseMarkdown(config.content),
     };
   },
   defaultData: {
@@ -45,7 +36,7 @@ export const Comment: MacroNode<CommentConfig> = {
   },
   editorConfig: {
     type: "custom",
-    editorComponentBundlePath: "../../dist/ui/Comment.js",
+    editorComponentBundlePath: "../../dist/ui/Note.js",
   },
 };
 

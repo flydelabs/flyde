@@ -564,12 +564,12 @@ export const centerBoardPosOnTarget = (
 };
 
 const FIT_VIEWPORT_MIN_ZOOM = 0.3;
-const FIT_VIEWPORT_MAX_ZOOM = 1.2;
+const FIT_VIEWPORT_MAX_ZOOM = 1;
 
 export const fitViewPortToRect = (
   rect: Rect,
   vpSize: Size,
-  padding: [number, number] = [20, 150]
+  padding: [number, number] = [5, 50]
 ): ViewPort => {
   const horPadding = padding[0];
   const verPadding = padding[1];
@@ -600,7 +600,7 @@ export const fitViewPortToNode = (
   node: VisualNode,
   resolvedNodes: NodesDefCollection,
   vpSize: Size,
-  padding: [number, number] = [20, 150]
+  padding: [number, number] = [20, 50]
 ): ViewPort => {
   const { size, center } = getEffectiveNodeDimensions(node, resolvedNodes);
 

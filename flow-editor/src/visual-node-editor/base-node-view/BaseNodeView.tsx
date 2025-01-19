@@ -2,11 +2,14 @@
 import * as React from "react";
 import classNames from "classnames";
 import Draggable from "react-draggable";
-
-// ;
-import { Pos } from "@flyde/core";
-
+import { Pos, NodeTypeIcon } from "@flyde/core";
 import { useDarkMode } from "../../flow-editor/DarkModeContext";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  ContextMenu,
+  Tooltip,
+  ContextMenuContentProps,
+} from "@blueprintjs/core";
 
 export interface BaseNodeViewContextItem {
   label: string;
@@ -14,22 +17,52 @@ export interface BaseNodeViewContextItem {
 }
 
 export interface BaseNodeViewProps {
-  children: JSX.Element;
   domId?: string;
   className?: string;
   pos: Pos;
   dragged?: boolean;
   viewPort: { pos: Pos; zoom: number };
-
   displayMode?: true;
 
-  upperRenderer?: () => any;
-  bottomRenderer?: () => any;
+  heading?: string;
+  description?: string;
+  icon?: NodeTypeIcon;
+  leftSide?: React.ReactNode;
+  rightSide?: React.ReactNode;
+  contextMenuContent?:
+    | JSX.Element
+    | ((props: ContextMenuContentProps) => JSX.Element);
+  selected?: boolean;
+  dark?: boolean;
+  overrideNodeBodyHtml?: string;
+  overrideStyle?: React.CSSProperties;
 
   onDragEnd: (...data: any[]) => void;
   onDragStart: (...data: any[]) => void;
   onDragMove: (ev: React.MouseEvent, pos: Pos) => void;
+  onClick?: (e: React.MouseEvent) => void;
+  onDoubleClick?: (e: React.MouseEvent) => void;
 }
+
+export const BaseNodeIcon: React.FC<{ icon?: NodeTypeIcon }> =
+  function BaseNodeIcon({ icon }) {
+    if (!icon) {
+      return <FontAwesomeIcon icon="code" size="lg" />;
+    }
+    if (typeof icon === "string" && icon.trim().startsWith("<")) {
+      return (
+        <span
+          className="svg-icon-container"
+          dangerouslySetInnerHTML={{ __html: icon }}
+        />
+      );
+    } else {
+      const iconValue = Array.isArray(icon) ? icon[0] : icon;
+      return <FontAwesomeIcon icon={iconValue as any} size="lg" />;
+    }
+  };
+
+const HOVER_DELAY = 400;
 
 export const BaseNodeView: React.FC<BaseNodeViewProps> =
   function BaseNodeViewInner(props) {
@@ -41,6 +74,16 @@ export const BaseNodeView: React.FC<BaseNodeViewProps> =
       onDragMove,
       onDragStart,
       displayMode,
+      heading,
+      description,
+      icon,
+      leftSide,
+      rightSide,
+      contextMenuContent,
+      selected,
+      onClick,
+      onDoubleClick,
+      overrideNodeBodyHtml,
     } = props;
 
     const dark = useDarkMode();
@@ -96,10 +139,54 @@ export const BaseNodeView: React.FC<BaseNodeViewProps> =
       "display-mode": displayMode,
     });
 
+    const innerCm = classNames("base-node-view-inner", {
+      selected,
+      dark,
+      "no-left-side": !leftSide && !overrideNodeBodyHtml,
+      "no-right-side": !rightSide && !overrideNodeBodyHtml,
+    });
+
+    const innerContent = overrideNodeBodyHtml ? (
+      <div
+        className="node-overridden-body"
+        dangerouslySetInnerHTML={{ __html: overrideNodeBodyHtml }}
+        style={props.overrideStyle}
+      />
+    ) : (
+      <>
+        <div className="left-side">{leftSide}</div>
+        <div className={classNames("icon-container", { dark })}>
+          <BaseNodeIcon icon={icon} />
+        </div>
+        <div className="right-side">{rightSide}</div>
+      </>
+    );
+
+    const content = (
+      <div className={innerCm}>
+        <div className={classNames("node-header", { dark })}>{heading}</div>
+        <div className={classNames("node-body", { dark })}>{innerContent}</div>
+      </div>
+    );
+
     const draggableContent = (
       <span className="base-node-view-wrapper">
         <div className={cm} style={zoomFixStyle} id={props.domId}>
-          {props.children}
+          <ContextMenu
+            className={classNames({ dark })}
+            content={contextMenuContent}
+            onClick={onClick}
+            onDoubleClick={onDoubleClick}
+          >
+            <Tooltip
+              className={classNames({ dark })}
+              content={description}
+              hoverOpenDelay={HOVER_DELAY}
+              placement="top"
+            >
+              {content}
+            </Tooltip>
+          </ContextMenu>
         </div>
       </span>
     );

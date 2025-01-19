@@ -44,11 +44,9 @@ import {
 } from "../VisualNodeEditor";
 import { usePrompt } from "../..";
 import {
-  ContextMenu,
   MenuItemProps,
   Menu,
   MenuItem,
-  Tooltip,
   Dialog,
   Classes,
 } from "@blueprintjs/core";
@@ -64,7 +62,6 @@ export const PIECE_HORIZONTAL_PADDING = 25;
 export const PIECE_CHAR_WIDTH = 11;
 export const MIN_WIDTH_PER_PIN = 40;
 export const MAX_INSTANCE_WIDTH = 400; // to change in CSS as well
-export const INSTANCE_INFO_TOOLTIP_DELAY = 400;
 
 export const getVisibleInputs = (
   instance: NodeInstance,
@@ -89,10 +86,6 @@ export const getVisibleInputs = (
 
     return isConnected || (!isOptional && k !== TRIGGER_PIN_ID);
   });
-
-  if (visiblePins.length === 0) {
-    return [TRIGGER_PIN_ID];
-  }
 
   return visiblePins;
 };
@@ -376,8 +369,8 @@ export const InstanceView: React.FC<InstanceViewProps> =
     );
 
     const cm = classNames("ins-view", {
-      "no-inputs": is.length === 0,
-      "no-outputs": os.length === 0,
+      "no-inputs": inputsToRender.length === 0,
+      "no-outputs": outputsToRender.length === 0,
       "display-mode": displayMode,
       "force-minimized-input":
         props.forceShowMinimized === "input" ||
@@ -387,16 +380,10 @@ export const InstanceView: React.FC<InstanceViewProps> =
         props.forceShowMinimized === "both",
       "inline-node-edited": !!inlineGroupProps,
       "error-caught": isErrorCaught,
+      selected,
+      dragged,
+      closest: closestPin && closestPin.ins.id === instance.id,
     });
-
-    const innerCms = classNames(
-      {
-        selected,
-        dragged,
-        closest: closestPin && closestPin.ins.id === instance.id,
-      },
-      `size-${style.size}`
-    );
 
     const optionalInputs = new Set(
       entries(node.inputs)
@@ -476,81 +463,6 @@ export const InstanceView: React.FC<InstanceViewProps> =
         }
       },
       [instance, onPinMouseDown]
-    );
-
-    const renderInputs = () => {
-      return (
-        <div className="inputs no-drag">
-          {inputsToRender.map(([k, v]) => (
-            <PinView
-              type="input"
-              currentInsId={instance.id}
-              ancestorsInsIds={props.ancestorsInsIds}
-              id={k}
-              key={k}
-              optional={optionalInputs.has(k)}
-              connected={connectedInputs.has(k)}
-              isSticky={stickyInputs[k]}
-              minimized={selected ? false : inputsToRender.length === 1}
-              onToggleSticky={_onToggleSticky}
-              selected={k === selectedInput}
-              onClick={onInputClick}
-              onDoubleClick={onInputDblClick}
-              isClosestToMouse={
-                !!closestPin &&
-                closestPin.type === "input" &&
-                closestPin.pin === k
-              }
-              onToggleLogged={onTogglePinLog}
-              onToggleBreakpoint={onTogglePinBreakpoint}
-              onInspect={props.onInspectPin}
-              description={v.description}
-              queuedValues={props.queuedInputsData[k] ?? 0}
-              onMouseUp={_onPinMouseUp}
-              onMouseDown={_onPinMouseDown}
-            />
-          ))}
-        </div>
-      );
-    };
-
-    const renderOutputs = () => {
-      return (
-        <div className="outputs no-drag">
-          {outputsToRender.map(([k, v]) => (
-            <PinView
-              currentInsId={instance.id}
-              ancestorsInsIds={props.ancestorsInsIds}
-              connected={connectedOutputs.has(k)}
-              key={k}
-              type="output"
-              id={k}
-              minimized={selected ? false : outputsToRender.length === 1}
-              isClosestToMouse={
-                !!closestPin &&
-                closestPin.type === "output" &&
-                closestPin.pin === k
-              }
-              selected={k === selectedOutput}
-              onClick={onOutputClick}
-              onDoubleClick={onOutputDblClick}
-              onToggleLogged={onTogglePinLog}
-              onToggleBreakpoint={onTogglePinBreakpoint}
-              onInspect={props.onInspectPin}
-              description={v.description}
-              onMouseUp={_onPinMouseUp}
-              onMouseDown={_onPinMouseDown}
-            />
-          ))}
-        </div>
-      );
-    };
-
-    const _onChangeStyle = React.useCallback(
-      (style: NodeStyle) => {
-        onChangeStyle(instance, style);
-      },
-      [instance, onChangeStyle]
     );
 
     const getContextMenu = React.useCallback(() => {
@@ -638,7 +550,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
           <MenuItem text="Style">
             <NodeStyleMenu
               style={style}
-              onChange={_onChangeStyle}
+              onChange={(s) => onChangeStyle(instance, s)}
               promptFn={_prompt}
             />
           </MenuItem>
@@ -654,10 +566,9 @@ export const InstanceView: React.FC<InstanceViewProps> =
       _onChangeVisibleInputs,
       _onChangeVisibleOutputs,
       _onSetDisplayName,
+      onGroupSelected,
       _onDeleteInstance,
-      onDblClick,
       style,
-      _onChangeStyle,
       _prompt,
       _visibleInputs,
       connectedInputs,
@@ -666,27 +577,21 @@ export const InstanceView: React.FC<InstanceViewProps> =
       connectedOutputs,
       onChangeVisibleOutputs,
       onUngroup,
-      onGroupSelected,
+      props,
+      onDblClick,
+      onChangeStyle,
     ]);
-
-    const styleVarProp = {
-      "--node-color": style.color,
-      ...(style.cssOverride || {}),
-    } as React.CSSProperties;
 
     const instanceDomId = getInstanceDomId(instance.id, props.ancestorsInsIds);
 
-    const renderContent = () => {
+    const maybeRenderInlineGroupEditor = () => {
       if (inlineGroupProps) {
         return (
-          // ReactDOM.createPortal((<Resizable width={inlineEditorSize.w} height={inlineEditorSize.h} onResize={onResizeInline} handle={<span className='no-drag react-resizable-handle react-resizable-handle-se'/>}>
           <Dialog
             isOpen={true}
             onClose={props.onCloseInlineEditor}
             className="inline-group-editor-container no-drag"
             title={`Editing inline node ${content}`}
-
-            // style={{ width: `${inlineEditorSize.w}px`, height: `${inlineEditorSize.h}px` }}
           >
             <main className={classNames(Classes.DIALOG_BODY)} tabIndex={0}>
               <VisualNodeEditorProvider
@@ -704,38 +609,92 @@ export const InstanceView: React.FC<InstanceViewProps> =
             </main>
           </Dialog>
         );
-
-        // </Resizable>), inlineEditorPortalDomNode)
       } else {
-        return (
-          <ContextMenu
-            className={classNames(
-              "ins-view-inner",
-              innerCms,
-              `size-${style.size}`,
-              { dark: dark }
-            )}
-            onClick={_onSelect}
-            onDoubleClick={onDblClick}
-            content={getContextMenu()}
-            style={styleVarProp}
-          >
-            <Tooltip content={node.description}>
-              <span className="content-and-icon">
-                {style.icon ? (
-                  <InstanceIcon icon={style.icon as string} />
-                ) : null}
-                <span dangerouslySetInnerHTML={{ __html: content }} />
-              </span>
-            </Tooltip>
-          </ContextMenu>
-        );
+        return null;
       }
     };
 
     const nodeIdForDomDataAttr = isMacroNodeInstance(instance)
       ? instance.macroId
       : node.id;
+
+    const renderInputs = () => {
+      if (!inputsToRender.length) {
+        return null;
+      }
+      return (
+        <div className="inputs no-drag">
+          {inputsToRender.map(([k, v]) => (
+            <div className="pin-container inputs" key={k}>
+              <PinView
+                type="input"
+                currentInsId={instance.id}
+                ancestorsInsIds={props.ancestorsInsIds}
+                id={k}
+                optional={optionalInputs.has(k)}
+                connected={connectedInputs.has(k)}
+                isSticky={stickyInputs[k]}
+                // minimized={!selected}
+                onToggleSticky={_onToggleSticky}
+                selected={k === selectedInput}
+                onClick={onInputClick}
+                onDoubleClick={onInputDblClick}
+                isClosestToMouse={
+                  !!closestPin &&
+                  closestPin.type === "input" &&
+                  closestPin.pin === k
+                }
+                onToggleLogged={onTogglePinLog}
+                onToggleBreakpoint={onTogglePinBreakpoint}
+                onInspect={props.onInspectPin}
+                description={v.description}
+                queuedValues={props.queuedInputsData[k] ?? 0}
+                onMouseUp={_onPinMouseUp}
+                onMouseDown={_onPinMouseDown}
+                isMain={false}
+              />
+            </div>
+          ))}
+        </div>
+      );
+    };
+
+    const renderOutputs = () => {
+      if (!outputsToRender.length) {
+        return null;
+      }
+      return (
+        <div className="outputs no-drag">
+          {outputsToRender.map(([k, v]) => (
+            <div className="pin-container outputs" key={k}>
+              <PinView
+                currentInsId={instance.id}
+                ancestorsInsIds={props.ancestorsInsIds}
+                connected={connectedOutputs.has(k)}
+                type="output"
+                id={k}
+                // minimized={selected ? false : outputsToRender.length === 1}
+                isClosestToMouse={
+                  !!closestPin &&
+                  closestPin.type === "output" &&
+                  closestPin.pin === k
+                }
+                selected={k === selectedOutput}
+                onClick={onOutputClick}
+                onDoubleClick={onOutputDblClick}
+                onToggleLogged={onTogglePinLog}
+                onToggleBreakpoint={onTogglePinBreakpoint}
+                onInspect={props.onInspectPin}
+                description={v.description}
+                onMouseUp={_onPinMouseUp}
+                onMouseDown={_onPinMouseDown}
+                isMain={false}
+              />
+            </div>
+          ))}
+        </div>
+      );
+    };
 
     return (
       <div
@@ -749,17 +708,22 @@ export const InstanceView: React.FC<InstanceViewProps> =
           onDragStart={_onDragStart}
           onDragMove={_onDragMove}
           onDragEnd={_onDragEnd}
-          upperRenderer={renderInputs}
-          bottomRenderer={renderOutputs}
           displayMode={displayMode}
           domId={instanceDomId}
-        >
-          <React.Fragment>
-            {renderInputs()}
-            {renderContent()}
-            {renderOutputs()}
-          </React.Fragment>
-        </BaseNodeView>
+          heading={content}
+          description={node.description}
+          icon={style.icon}
+          leftSide={renderInputs()}
+          rightSide={renderOutputs()}
+          selected={selected}
+          dark={dark}
+          contextMenuContent={getContextMenu()}
+          onClick={_onSelect}
+          overrideNodeBodyHtml={node.overrideNodeBodyHtml}
+          overrideStyle={style.cssOverride}
+          onDoubleClick={onDblClick}
+        />
+        {maybeRenderInlineGroupEditor()}
       </div>
     );
   };
@@ -767,6 +731,9 @@ export const InstanceView: React.FC<InstanceViewProps> =
 export const InstanceIcon: React.FC<{ icon?: string }> = function InstanceIcon({
   icon,
 }) {
+  if (!icon) {
+    return <FontAwesomeIcon icon="code" size="lg" />;
+  }
   if (typeof icon === "string" && icon.trim().startsWith("<")) {
     return (
       <span
@@ -775,6 +742,6 @@ export const InstanceIcon: React.FC<{ icon?: string }> = function InstanceIcon({
       />
     );
   } else {
-    return <FontAwesomeIcon icon={icon as any} size="xs" />;
+    return <FontAwesomeIcon icon={icon as any} size="lg" />;
   }
 };

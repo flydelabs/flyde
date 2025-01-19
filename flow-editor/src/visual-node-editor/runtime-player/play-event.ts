@@ -10,6 +10,7 @@ import {
 import {
   getInstanceDomId,
   getMainInstanceIndicatorDomId,
+  getMainPinDomId,
   getPinDomId,
 } from "../dom-ids";
 
@@ -51,6 +52,19 @@ export const playEvent = (event: DebuggerEvent) => {
           isMain: true,
         }),
       ];
+
+      const mainPinDomId = getMainPinDomId(insId, pinId, pinType);
+      const mainPinElement =
+        document.getElementById(mainPinDomId)?.parentElement;
+
+      if (mainPinElement) {
+        mainPinElement.setAttribute("data-runtime", "done"); //should be "active", but wanted to piggy back existing node css
+      } else {
+        debug(
+          `No DOM element with Id [${mainPinDomId}] found to play event`,
+          event
+        );
+      }
 
       /* events from the root instance are not shown on "regular" pins but just on "main" ones */
 
@@ -183,8 +197,8 @@ export const playEvent = (event: DebuggerEvent) => {
       break;
     }
     case DebuggerEventType.INPUTS_STATE_CHANGE: {
+      const { insId, ancestorsInsIds } = event;
       entries(event.val).forEach(([k, v]) => {
-        const { insId, ancestorsInsIds } = event;
         const domId = getPinDomId({
           fullInsIdPath: fullInsIdPath(insId, ancestorsInsIds),
           pinId: k,
@@ -202,6 +216,21 @@ export const playEvent = (event: DebuggerEvent) => {
           element.removeAttribute("data-runtime-queue");
         }
       });
+      const someWaiting = Object.values(event.val).some((v) => v > 0);
+      const instanceDomId = getInstanceDomId(insId, ancestorsInsIds);
+      const instanceElem =
+        document.getElementById(instanceDomId)?.parentElement;
+      if (!instanceElem) {
+        debug(
+          `No DOM element with Id [${instanceDomId}] found to play event`,
+          event
+        );
+        return;
+      }
+
+      if (someWaiting && !instanceElem.getAttribute("data-runtime")) {
+        instanceElem.setAttribute("data-runtime", "waiting");
+      }
       break;
     }
   }

@@ -1,28 +1,58 @@
 @import "../../lib/common.scss";
 
 .node-io-view {
-  .node-io-view-inner {
-    @include base-node;
-    line-height: 1;
-    font-size: 18px;
-    padding: 6px 8px;
-    border-radius: 8px;
-    font-weight: 500;
+  .base-node-view-inner .node-body .icon-container {
+    &.dark {
+      color: white;
+    }
+    &:not(.dark) {
+      color: #333;
+    }
+  }
+
+  .node-header {
+    text-transform: capitalize;
   }
 
   &.input {
-    .node-io-view-inner {
-      border: 2px solid $tblue-300;
+    .base-node-view-inner {
+      width: 120px;
+      border-radius: 4px 16px 16px 4px;
+
+      .node-header {
+        border-radius: 4px 16px 0 0;
+      }
+
+      .node-body {
+        border-radius: 0 0 16px 4px;
+      }
     }
   }
 
   &.output {
-    .node-io-view-inner {
-      border: 2px solid $green-300;
+    .base-node-view-inner {
+      width: 120px;
+      border-radius: 16px 4px 4px 16px;
+
+      .node-header {
+        border-radius: 16px 4px 0 0;
+      }
+
+      .node-body {
+        border-radius: 0 0 4px 16px;
+      }
     }
   }
 
-  &.active .node-io-view-inner {
-    background: #c8ffc7;
+  .pin-container {
+    position: relative;
+
+    &.input {
+      padding-right: 6px;
+    }
+
+    &.output {
+      padding-left: 6px;
+    }
   }
 }

@@ -1,3 +1,22 @@
+@import "../../lib/common.scss";
+
+$node-width: 160px;
+$key-1: #2887f4;
+
+// Dark theme colors
+$dark-border: #2c2c2c;
+$dark-border-light: #4d4d4d;
+$dark-header-bg: #383838;
+$dark-body-bg: linear-gradient(180deg, #000000 0%, #222222 100%);
+$dark-text: #fff;
+
+// Light theme colors
+$light-border: #d1d1d1;
+$light-border-light: #e1e1e1;
+$light-header-bg: #f0f0f0;
+$light-body-bg: linear-gradient(180deg, #ffffff 0%, #f5f5f5 100%);
+$light-text: #333;
+
 .base-node-view-vp-fixer {
   transform-origin: top left;
   will-change: transform;
@@ -5,30 +24,153 @@
 
 .base-node-view-wrapper {
   position: absolute;
-  transform-origin: top left;
-  transition: background-color ease-out 3s, box-shadow ease-out 3s;
-}
-
-.base-node-view-vp-fixer.display-mode {
-  position: initial;
-
-  .base-node-view-wrapper {
-    position: initial;
-  }
-
-  .base-node-view {
-    position: initial;
-  }
+  transform-origin: center center;
 }
 
 .base-node-view {
-  transform-origin: top left;
+  transform-origin: center center;
   display: inline-block;
   position: absolute;
-  transition: box-shadow ease-in-out 0.5s;
-  will-change: transform, width;
-}
+  will-change: transform;
 
-.base-node-view.dragged {
-  opacity: 0.8;
+  &.dragged {
+    opacity: 0.8;
+  }
+
+  .base-node-view-inner {
+    width: $node-width;
+    border-radius: 4px;
+    border: 1px solid $dark-border;
+    cursor: pointer;
+    box-sizing: border-box;
+
+    &.dark {
+      border-color: $dark-border-light;
+      .node-header {
+        background: $dark-header-bg;
+        color: $dark-text;
+        border-bottom: 1px solid $dark-border;
+      }
+      .node-body {
+        background: $dark-body-bg;
+        color: $key-1;
+      }
+      &:hover {
+        border-color: $dark-text;
+      }
+      &.selected {
+        .node-body {
+          background: linear-gradient(
+              0deg,
+              rgba(40, 135, 244, 0.5),
+              rgba(40, 135, 244, 0.5)
+            ),
+            $dark-body-bg;
+        }
+      }
+    }
+
+    &:not(.dark) {
+      border-color: $light-border;
+      .node-header {
+        background: $light-header-bg;
+        color: $light-text;
+        border-bottom: 1px solid $light-border;
+      }
+      .node-body {
+        background: $light-body-bg;
+        color: $key-1;
+      }
+      &:hover {
+        border-color: #666;
+      }
+      &.selected {
+        .node-body {
+          background: linear-gradient(
+              0deg,
+              rgba(40, 135, 244, 0.3),
+              rgba(40, 135, 244, 0.3)
+            ),
+            $light-body-bg;
+        }
+      }
+    }
+
+    &.no-left-side {
+      border-radius: 16px 4px 4px 16px;
+      width: 120px;
+
+      .node-header {
+        border-radius: 16px 4px 0 0;
+      }
+
+      .node-body {
+        border-radius: 0 0 4px 16px;
+      }
+
+      .left-side {
+        display: none;
+      }
+    }
+
+    &.no-right-side {
+      width: 120px;
+      border-radius: 4px 16px 16px 4px;
+
+      .node-header {
+        border-radius: 4px 16px 0 0;
+      }
+
+      .node-body {
+        border-radius: 0 0 16px 4px;
+      }
+
+      .right-side {
+        display: none;
+      }
+    }
+
+    .node-header {
+      background: #383838;
+      font-size: 12px;
+      font-weight: bold;
+      color: #fff;
+      text-align: center;
+      padding: 3px 4px 1px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      width: 100%;
+      box-sizing: border-box;
+      border-radius: 4px 4px 0 0;
+    }
+
+    .node-body {
+      background: linear-gradient(180deg, #000000 0%, #222222 100%);
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0px;
+      gap: 5px;
+      color: $key-1;
+      border-radius: 0 0 4px 4px;
+
+      .icon-container {
+        text-align: center;
+        width: 40px;
+      }
+
+      .left-side,
+      .right-side {
+        flex: 1;
+        flex-shrink: 0;
+      }
+    }
+
+    .node-overridden-body {
+      color: #fff;
+      display: block;
+    }
+  }
 }

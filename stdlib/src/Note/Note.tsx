@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { MacroEditorComp } from "@flyde/core";
-import { CommentConfig } from "./Comment.flyde";
+import { NoteConfig } from "./Note.flyde";
 import { Callout } from "@blueprintjs/core";
 
-export const CommentEditor: MacroEditorComp<CommentConfig> = ({
+export const NoteEditor: MacroEditorComp<NoteConfig> = ({
   value,
   onChange,
 }) => {
@@ -18,7 +18,7 @@ export const CommentEditor: MacroEditorComp<CommentConfig> = ({
       <textarea
         value={content}
         onChange={(e) => setContent(e.target.value)}
-        placeholder="Enter your comment here (A subset of Markdown is supported)"
+        placeholder="Enter your note here (A subset of Markdown is supported)"
         rows={10}
         style={{ width: "100%", padding: "8px 6px" }}
       />
@@ -29,4 +29,4 @@ export const CommentEditor: MacroEditorComp<CommentConfig> = ({
   );
 };
 
-export default CommentEditor;
+export default NoteEditor;

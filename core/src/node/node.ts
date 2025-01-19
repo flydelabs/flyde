@@ -97,6 +97,12 @@ export interface NodeMetadata {
    * See {@link NodeStyle} for the full options supported
    */
   defaultStyle?: NodeStyle;
+
+  /**
+   * Hack to support note node without adding first class support for it.
+   * This is used to override the node body html for a node.
+   */
+  overrideNodeBodyHtml?: string;
 }
 
 /**

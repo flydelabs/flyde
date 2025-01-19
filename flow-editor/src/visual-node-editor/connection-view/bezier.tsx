@@ -28,7 +28,7 @@ function calculateControlOffset(distance: number, curvature: number): number {
   if (distance >= 0) {
     return 0.5 * distance;
   } else {
-    return curvature * 25 * Math.sqrt(-distance);
+    return curvature * 35 * Math.sqrt(-distance);
   }
 }
 

@@ -110,6 +110,7 @@ import {
 } from "./VisualNodeEditorContext";
 import { useEditorCommands } from "./useEditorCommands";
 import { CustomNodeModal } from "./CustomNodeModal/CustomNodeModal";
+import { AddNodeMenu } from "./NodesLibrary/AddNodeMenu";
 
 const MemodSlider = React.memo(Slider);
 
@@ -996,11 +997,15 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         ]
       );
 
+      const { onRequestImportables } = useDependenciesContext();
+      const [showAddNodeMenu, setShowAddNodeMenu] = useState(false);
+
       const getContextMenu = React.useCallback(() => {
         return (
           <EditorContextMenu
             nodeIoEditable={nodeIoEditable}
             lastMousePos={lastMousePos}
+            onOpenNodesLibrary={() => setShowAddNodeMenu(true)}
           />
         );
       }, [nodeIoEditable, lastMousePos]);
@@ -1695,6 +1700,13 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                 />
               ) : null}
               <div className="inline-editor-portal-root" />
+              {showAddNodeMenu ? (
+                <AddNodeMenu
+                  onRequestImportables={onRequestImportables}
+                  onAddNode={onAddNode}
+                  onClose={() => setShowAddNodeMenu(false)}
+                />
+              ) : null}
             </main>
             {selectionIndicatorData ? (
               <SelectionIndicator

@@ -9,7 +9,7 @@ const pairs = [
   },
   { entry: "./src/ControlFlow/Switch.tsx", name: "Switch" },
   { entry: "./src/Lists/Collect/Collect.tsx", name: "Collect" },
-  { entry: "./src/Comment/Comment.tsx", name: "Comment" },
+  { entry: "./src/Note/Note.tsx", name: "Note" },
 ];
 
 module.exports = pairs.map(({ entry, name }) => ({
