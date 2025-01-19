@@ -172,11 +172,8 @@ export function processMacroNodeInstance(
   macro: MacroNode<any>,
   instance: MacroNodeInstance
 ) {
-  console.log("macro", macro, instance);
   const metaData = macro.definitionBuilder(instance.macroData);
   const runFn = macro.runFnBuilder(instance.macroData);
-
-  console.log("metaData", metaData);
 
   const id = `${prefix}${macro.id}__${instance.id}`;
 

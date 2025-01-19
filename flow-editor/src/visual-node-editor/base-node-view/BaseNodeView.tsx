@@ -146,8 +146,6 @@ export const BaseNodeView: React.FC<BaseNodeViewProps> =
       "no-right-side": !rightSide && !overrideNodeBodyHtml,
     });
 
-    console.log("overrideNodeBodyHtml", overrideNodeBodyHtml);
-
     const innerContent = overrideNodeBodyHtml ? (
       <div
         className="node-overridden-body"
