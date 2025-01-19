@@ -9,16 +9,16 @@ imports:
 node:
   instances:
     - pos:
-        x: -34.16388854980468
-        y: 260.1413701629639
+        x: -106.53009948730471
+        y: 255.38161979675294
       id: Add-539
       inputConfig: {}
       nodeId: Add
       style:
         color: "#fee440"
     - pos:
-        x: -135.26147583007813
-        y: 36.80620697021482
+        x: -506.9854748535156
+        y: 208.6238034057617
       id: Subtract-210
       inputConfig:
         n2:
@@ -30,8 +30,8 @@ node:
       style:
         color: "#f15bb5"
     - pos:
-        x: 32.872145385742215
-        y: 34.94542816162107
+        x: -512.034165649414
+        y: 309.46874359130857
       id: Subtract-210-d215
       inputConfig:
         n2:
@@ -43,24 +43,24 @@ node:
       style:
         color: "#f15bb5"
     - pos:
-        x: -128.2442010498047
-        y: 133.93417033672335
+        x: -307.9129022216797
+        y: 230.36254558086398
       id: Fibonacci-261
       inputConfig: {}
       visibleInputs:
         - n
       nodeId: Fibonacci
     - pos:
-        x: 49.44488525390625
-        y: 138.53467710494994
+        x: -302.58624267578125
+        y: 324.1951385307312
       id: Fibonacci-379
       inputConfig: {}
       visibleInputs:
         - n
       nodeId: Fibonacci
     - pos:
-        x: -709.9789821104919
-        y: -387.298208745054
+        x: -928.8918239073669
+        y: -5.549246342710262
       id: clfv4afmf00084668r9nuoaoe
       inputConfig:
         defaultValue:
@@ -70,40 +70,52 @@ node:
         - __error
       nodeId: Get State
     - pos:
-        x: -185.79304344347224
-        y: 355.92854414911244
+        x: 86.97685401746526
+        y: 157.9057780358312
       id: clfv4epnt001o4668lpvrlux1
       inputConfig:
         key:
           mode: sticky
       nodeId: Set State
     - pos:
-        x: -78.93533325195312
-        y: -27.267557983398433
+        x: -764.6777648925781
+        y: 283.7032214355469
       id: cakhy4xeflrv7mec1spzru8a
       inputConfig: {}
       visibleInputs: []
       nodeId: InlineValue__cakhy4xeflrv7mec1spzru8a
       macroId: InlineValue
       macroData:
-        value: 1
-        type: number
-        label: "1"
+        value:
+          type: number
+          value: 1
+        type:
+          type: string
+          value: number
+        label:
+          type: string
+          value: "1"
     - pos:
-        x: 74.54631713867187
-        y: -32.13064453125
+        x: -767.0813684082032
+        y: 370.8050549316406
       id: Fibonacci-nf049eh
       inputConfig: {}
       visibleInputs: []
       nodeId: InlineValue__Fibonacci-nf049eh
       macroId: InlineValue
       macroData:
-        value: 2
-        type: number
-        label: "2"
+        value:
+          type: number
+          value: 2
+        type:
+          type: string
+          value: number
+        label:
+          type: string
+          value: "2"
     - pos:
-        x: -342.77766357421876
-        y: -230.55667785644533
+        x: -728.83802734375
+        y: 84.67604919433592
       id: o97dpv9ilum2i4n47m2bxdtw
       inputConfig: {}
       visibleInputs:
@@ -239,12 +251,12 @@ node:
       delayed: false
   inputsPosition:
     n:
-      x: -313.93844991449174
-      y: -580.2133427174213
+      x: -1081.8260841918354
+      y: 110.2287349192975
   outputsPosition:
     result:
-      x: -250.21811925181652
-      y: 593.4836247190466
+      x: 299.3281148790429
+      y: 73.43043258037471
   defaultStyle:
     size: large
     color: "#00bbf9"

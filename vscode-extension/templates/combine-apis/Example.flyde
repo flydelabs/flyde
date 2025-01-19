@@ -9,31 +9,37 @@ imports:
 node:
   instances:
     - pos:
-        x: -86.86109741210936
-        y: -332.4004211425781
+        x: -817.7525158691406
+        y: 91.46002197265625
       id: lppjv85ixcde390hug6eonj5
       inputConfig: {}
       nodeId: InlineValue__lppjv85ixcde390hug6eonj5
       macroId: InlineValue
       macroData:
-        value: 5
-        type: number
-        label: "5"
+        value:
+          type: number
+          value: 5
+        type:
+          type: string
+          value: number
+        label:
+          type: string
+          value: "5"
     - pos:
-        x: 57.393768310546875
-        y: -13.628143310546875
+        x: -415.4161682128906
+        y: -21.21417236328125
       id: Loop List-a2149ei
       inputConfig: {}
       nodeId: Loop List
     - pos:
-        x: -257.25370971679683
-        y: -38.7403533935547
+        x: -411.33513061523433
+        y: 180.83938903808593
       id: Example-er2490w
       inputConfig: {}
       nodeId: Loop List
     - pos:
-        x: -203.3569860839844
-        y: 242.0537305481027
+        x: 42.321480712890605
+        y: 111.49931770630582
       id: zfhcgwxnesaxpux6bgjwnan2
       inputConfig: {}
       nodeId: CodeExpression__zfhcgwxnesaxpux6bgjwnan2
@@ -42,15 +48,15 @@ node:
         value: "{name: inputs.user, beer: inputs.beer}"
         label: "{name: inputs.user, beer: inputs.beer}"
     - pos:
-        x: 4.522508544921877
-        y: -162.09458923339844
+        x: -625.1263562011718
+        y: -14.809799194335938
       id: Fetch Random Users-8i0496g
       inputConfig: {}
       node:
         instances:
           - pos:
-              x: -39.622965087890634
-              y: -144.00405883789062
+              x: -82.41794799804688
+              y: -134.75265502929688
             id: pyiyhtxsh3b5b7qhuuncqv9u
             inputConfig: {}
             nodeId: CodeExpression__pyiyhtxsh3b5b7qhuuncqv9u
@@ -59,26 +65,26 @@ node:
               value: "`https://random-data-api.com/api/v2/users?size=${inputs.count}`"
               label: "`https://random-data-api.com/api/v2/users?size=${inputs.count}`"
           - pos:
-              x: 90
-              y: -45
+              x: 143.196533203125
+              y: -131.25238037109375
             id: rxuwi8y3zmoabq64tqybypf9
             inputConfig: {}
             nodeId: Http__rxuwi8y3zmoabq64tqybypf9
             macroId: Http
             macroData:
               method:
-                mode: static
+                type: string
                 value: GET
               url:
-                mode: dynamic
+                type: dynamic
               headers:
-                mode: static
+                type: json
                 value: {}
               params:
-                mode: static
+                type: json
                 value: {}
               data:
-                mode: static
+                type: json
                 value: {}
         connections:
           - from:
@@ -108,12 +114,12 @@ node:
             delayed: false
         inputsPosition:
           count:
-            x: 0
-            y: 0
+            x: -243.33880615234375
+            y: -136.8131103515625
         outputsPosition:
           data:
-            x: 0
-            y: 400
+            x: 379.9788513183594
+            y: -132.3677978515625
         completionOutputs:
           - data
         defaultStyle:
@@ -124,8 +130,8 @@ node:
         icon: user
         color: "#ff7f00"
     - pos:
-        x: -315.26334503173825
-        y: -161.8971856689453
+        x: -651.3400662231445
+        y: 225.27352966308595
       id: Fetch Random Beers-6l1491s
       inputConfig: {}
       node:
@@ -149,18 +155,18 @@ node:
             macroId: Http
             macroData:
               method:
-                mode: static
+                type: string
                 value: GET
               url:
-                mode: dynamic
+                type: dynamic
               headers:
-                mode: static
+                type: json
                 value: {}
               params:
-                mode: static
+                type: json
                 value: {}
               data:
-                mode: static
+                type: json
                 value: {}
         connections:
           - from:
@@ -206,8 +212,8 @@ node:
         icon: beer
         color: "#fee440"
     - pos:
-        x: -117.35210815429684
-        y: 348.5079768797496
+        x: 268.22845825195316
+        y: 127.98647724596054
       id: n38bkbjwe57oxvd1nvztu9gv
       inputConfig: {}
       nodeId: Collect__n38bkbjwe57oxvd1nvztu9gv
@@ -218,27 +224,33 @@ node:
           mode: static
           value: 5
     - pos:
-        x: -66.03905883789065
-        y: 113.72089470890216
+        x: -192.55480590820315
+        y: 174.76429070499591
       id: pcld2qma2841gzcfyqurwu4a
       inputConfig: {}
       nodeId: GetAttribute__pcld2qma2841gzcfyqurwu4a
       macroId: GetAttribute
       macroData:
         key:
+          type: string
           value: first_name
-          mode: static
+        object:
+          type: dynamic
+          value: ""
     - pos:
-        x: -346.9323999023437
-        y: 112.26985473632811
+        x: -179.01827636718747
+        y: 53.728411865234364
       id: Example-w0049zu
       inputConfig: {}
       nodeId: GetAttribute__Example-w0049zu
       macroId: GetAttribute
       macroData:
         key:
+          type: string
           value: name
-          mode: static
+        object:
+          type: dynamic
+          value: ""
   connections:
     - from:
         insId: lppjv85ixcde390hug6eonj5
@@ -283,23 +295,23 @@ node:
         insId: zfhcgwxnesaxpux6bgjwnan2
         pinId: beer
     - from:
-        insId: Loop List-a2149ei
-        pinId: item
-      to:
-        insId: pcld2qma2841gzcfyqurwu4a
-        pinId: object
-    - from:
-        insId: Example-er2490w
-        pinId: item
-      to:
-        insId: Example-w0049zu
-        pinId: object
-    - from:
         insId: Example-w0049zu
         pinId: value
       to:
         insId: zfhcgwxnesaxpux6bgjwnan2
         pinId: user
+    - from:
+        insId: Loop List-a2149ei
+        pinId: item
+      to:
+        insId: Example-w0049zu
+        pinId: object
+    - from:
+        insId: Example-er2490w
+        pinId: item
+      to:
+        insId: pcld2qma2841gzcfyqurwu4a
+        pinId: object
   id: Example
   inputs: {}
   outputs:
@@ -311,5 +323,5 @@ node:
       x: -23.264428942324532
       y: 237.25953921502617
     data:
-      x: -35.6508837890625
-      y: 469.41647628784176
+      x: 459.37822998046875
+      y: 128.4156828308105

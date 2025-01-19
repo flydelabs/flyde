@@ -14,8 +14,8 @@ imports:
 node:
   instances:
     - pos:
-        x: -217.08194783528643
-        y: -10.844872393328615
+        x: -761.3352437337239
+        y: 283.8822546818667
       id: clfuqs69n00014668p8jg106j
       inputConfig: {}
       visibleInputs:
@@ -29,8 +29,8 @@ node:
         icon: fa-file
         color: "#00f5d4"
     - pos:
-        x: -144.38379420923934
-        y: 90.02541512543138
+        x: -522.0604909865831
+        y: 288.46776742035325
       id: Parse CSV-bn0462h
       inputConfig: {}
       node:
@@ -187,8 +187,8 @@ node:
       inputConfig: {}
       nodeId: Sum List
     - pos:
-        x: -119
-        y: 226
+        x: -308.2318115234375
+        y: 299.2100143432617
       id: Get Prices By Continent-e4046ap
       inputConfig:
         value:
@@ -331,8 +331,8 @@ node:
         completionOutputs:
           - accumulated
     - pos:
-        x: -115.7337756347656
-        y: -138.5402570515941
+        x: -940.4605212402344
+        y: 345.4214929789235
       id: oy7esxhnpcl5dje5f2p035ur
       inputConfig: {}
       nodeId: InlineValue__oy7esxhnpcl5dje5f2p035ur
@@ -348,8 +348,8 @@ node:
           type: string
           value: '"utf-8"'
     - pos:
-        x: -622.073134765625
-        y: -12.914545288085947
+        x: -944.0381005859375
+        y: 246.93364501953124
       id: CsvExample-ek049t4
       inputConfig: {}
       nodeId: InlineValue__CsvExample-ek049t4
@@ -365,8 +365,8 @@ node:
           type: string
           value: '"data/sales.csv"'
     - pos:
-        x: 53.1795654296875
-        y: 124.39317321777344
+        x: -512.8389892578125
+        y: 367.9654006958008
       id: wwh26ryrt4yqh71m26vevjyj
       inputConfig: {}
       nodeId: InlineValue__wwh26ryrt4yqh71m26vevjyj
@@ -432,5 +432,5 @@ node:
   inputsPosition: {}
   outputsPosition:
     result:
-      x: -30
-      y: 420
+      x: 193.1552734375
+      y: 314.47581481933594

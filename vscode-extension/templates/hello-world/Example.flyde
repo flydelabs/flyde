@@ -3,36 +3,34 @@ imports:
     - Concat
     - Delay
     - InlineValue
-  Add.flyde.ts:
-    - Add
 node:
   instances:
     - pos:
-        x: -280.2705485026041
-        y: -47.387040899367776
+        x: -81.97281901041657
+        y: -34.10539417085215
       id: clftmb8cw000b4668nw8u5qr9
       inputConfig: {}
       nodeId: Concat
     - pos:
-        x: -548.0014139811196
-        y: 117.16033764067129
+        x: -303.85145060221345
+        y: 10.403486444382224
       id: clftmbihe000j4668newg9ius
       inputConfig: {}
       nodeId: Delay__clftmbihe000j4668newg9ius
       macroId: Delay
       macroData:
         delayMs:
-          type: number
-          value: 5000
+          type: static
+          value: 1000
         value:
           type: dynamic
-          value: 6000
+          value: ""
       style:
         size: small
         icon: fa-clock
     - pos:
-        x: -693.5553442382812
-        y: -168.95136210053295
+        x: -452.56218017578124
+        y: -83.81941935150951
       id: nu1ietfs4qclohm23tufugsi
       inputConfig: {}
       nodeId: InlineValue__nu1ietfs4qclohm23tufugsi
@@ -48,8 +46,8 @@ node:
           type: string
           value: '"Hello, "'
     - pos:
-        x: -850.420693359375
-        y: 115.23153015136722
+        x: -463.8223657226563
+        y: 8.173806152343786
       id: HelloWorld-pf049m0
       inputConfig: {}
       nodeId: InlineValue__HelloWorld-pf049m0
@@ -64,13 +62,13 @@ node:
         label:
           type: string
           value: '"world!"'
-    - pos:
-        x: -287.887412109375
-        y: 144.74426757812498
-      id: Add-jj04cvl
-      inputConfig: {}
-      nodeId: Add
   connections:
+    - from:
+        insId: clftmbihe000j4668newg9ius
+        pinId: delayedValue
+      to:
+        insId: clftmb8cw000b4668nw8u5qr9
+        pinId: b
     - from:
         insId: clftmb8cw000b4668nw8u5qr9
         pinId: value
@@ -89,24 +87,13 @@ node:
       to:
         insId: clftmbihe000j4668newg9ius
         pinId: value
-    - from:
-        insId: clftmbihe000j4668newg9ius
-        pinId: delayedValue
-      to:
-        insId: clftmb8cw000b4668nw8u5qr9
-        pinId: b
   id: HelloWorld
   inputs: {}
   outputs:
     result:
       delayed: false
-  inputsPosition:
-    dfgdfg:
-      x: -915.9662670898438
-      y: -51.90420166015625
+  inputsPosition: {}
   outputsPosition:
     result:
-      x: -14.022027819277582
-      y: -87.49514523321602
-  completionOutputs:
-    - fdgfgd
+      x: 142.9939023565036
+      y: -24.21822872930977

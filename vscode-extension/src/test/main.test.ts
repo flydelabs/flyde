@@ -130,10 +130,10 @@ suite("Extension Test Suite", () => {
     });
   });
 
-  suite("Comment node", () => {
-    test("renders comment node", async () => {
+  suite("Note node", () => {
+    test("renders note node", async () => {
       const testFile = vscode.Uri.file(
-        path.resolve(__dirname, "../../test-fixtures/CommentFixture.flyde")
+        path.resolve(__dirname, "../../test-fixtures/NoteFixture.flyde")
       );
 
       await vscode.commands.executeCommand(

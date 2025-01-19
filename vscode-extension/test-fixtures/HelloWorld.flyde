@@ -13,8 +13,8 @@ node:
       inputConfig: {}
       nodeId: Concat
     - pos:
-        x: 14.759389241536553
-        y: -34.26689319428965
+        x: -377.41700236002595
+        y: 156.1642438906713
       id: clftmbihe000j4668newg9ius
       inputConfig:
         delay:
@@ -23,33 +23,48 @@ node:
       macroId: Delay
       macroData:
         delayMs:
-          mode: static
+          type: number
           value: 1000
+        value:
+          type: dynamic
+          value: ""
       style:
         size: small
         icon: fa-clock
     - pos:
-        x: -113.84091796874998
-        y: -75.13641764252512
+        x: -382.4654296875
+        y: 43.54313252837332
       id: amsqg1strnxzxulfuwydz998
       inputConfig: {}
       nodeId: InlineValue__amsqg1strnxzxulfuwydz998
       macroId: InlineValue
       macroData:
-        type: string
-        value: Hello
-        label: '"Hello"'
+        type:
+          type: string
+          value: string
+        value:
+          type: string
+          value: Hello
+        label:
+          type: string
+          value: '"Hello"'
     - pos:
-        x: 14.624100341796861
-        y: -129.59303141205638
+        x: -667.8786462402344
+        y: 182.55645894438894
       id: c574cklre7s0epev24x40rxo
       inputConfig: {}
       nodeId: InlineValue__c574cklre7s0epev24x40rxo
       macroId: InlineValue
       macroData:
-        type: string
-        value: World
-        label: '"World"'
+        type:
+          type: string
+          value: string
+        value:
+          type: string
+          value: World
+        label:
+          type: string
+          value: '"World"'
   connections:
     - from:
         insId: clftmbihe000j4668newg9ius
@@ -69,6 +84,12 @@ node:
       to:
         insId: clftmb8cw000b4668nw8u5qr9
         pinId: a
+    - from:
+        insId: c574cklre7s0epev24x40rxo
+        pinId: value
+      to:
+        insId: clftmbihe000j4668newg9ius
+        pinId: value
   id: HelloWorld
   inputs: {}
   outputs:
@@ -77,5 +98,5 @@ node:
   inputsPosition: {}
   outputsPosition:
     result:
-      x: -23.264428942324532
-      y: 237.25953921502617
+      x: 208.76090064751924
+      y: 82.4549585265496
