@@ -145,6 +145,7 @@ export const ConnectionView: React.FC<ConnectionViewProps> = (props) => {
         from={pos}
         to={logicalPosToRenderedPos(props.lastMousePos, viewPort)}
         zoom={viewPort.zoom}
+        dashed={true}
         key={"dragged"}
       />
     );

@@ -5,12 +5,14 @@ $key-1: #2887f4;
 
 // Dark theme colors
 $dark-border: #2c2c2c;
+$dark-border-light: #4d4d4d;
 $dark-header-bg: #383838;
 $dark-body-bg: linear-gradient(180deg, #000000 0%, #222222 100%);
 $dark-text: #fff;
 
 // Light theme colors
 $light-border: #d1d1d1;
+$light-border-light: #e1e1e1;
 $light-header-bg: #f0f0f0;
 $light-body-bg: linear-gradient(180deg, #ffffff 0%, #f5f5f5 100%);
 $light-text: #333;
@@ -43,10 +45,11 @@ $light-text: #333;
     box-sizing: border-box;
 
     &.dark {
-      border-color: $dark-border;
+      border-color: $dark-border-light;
       .node-header {
         background: $dark-header-bg;
         color: $dark-text;
+        border-bottom: 1px solid $dark-border;
       }
       .node-body {
         background: $dark-body-bg;
@@ -72,6 +75,7 @@ $light-text: #333;
       .node-header {
         background: $light-header-bg;
         color: $light-text;
+        border-bottom: 1px solid $light-border;
       }
       .node-body {
         background: $light-body-bg;
@@ -132,7 +136,7 @@ $light-text: #333;
       font-weight: bold;
       color: #fff;
       text-align: center;
-      padding: 3px 4px;
+      padding: 3px 4px 1px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;

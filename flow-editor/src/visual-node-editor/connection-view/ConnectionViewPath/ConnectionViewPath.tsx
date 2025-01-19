@@ -62,6 +62,7 @@ export const ConnectionViewPath: React.FC<ConnectionViewPathProps> = forwardRef(
           stroke: "#6A6A6A",
           strokeWidth: 3 * zoom,
           fill: "none",
+          strokeDasharray,
         }}
       />
     );
@@ -73,6 +74,7 @@ export const ConnectionViewPath: React.FC<ConnectionViewPathProps> = forwardRef(
           stroke: "#D0D0D0",
           strokeWidth: zoom,
           fill: "none",
+          strokeDasharray,
         }}
       />
     );
