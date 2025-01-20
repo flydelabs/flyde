@@ -60,7 +60,7 @@ import { useState, useRef, useEffect, DragEvent } from "react";
 import { useHotkeys } from "../lib/react-utils/use-hotkeys";
 import useComponentSize from "@rehooks/component-size";
 
-import { Slider, ContextMenu, Button } from "@blueprintjs/core";
+import { Slider, ContextMenu } from "@blueprintjs/core";
 import { NodeIoView, NodeIoViewProps } from "./node-io-view";
 
 import { vec, vSub, vZero } from "../physics";
@@ -111,6 +111,7 @@ import {
 import { useEditorCommands } from "./useEditorCommands";
 import { CustomNodeModal } from "./CustomNodeModal/CustomNodeModal";
 import { AddNodeMenu } from "./NodesLibrary/AddNodeMenu";
+import { Button } from "@/components/ui/button";
 
 const MemodSlider = React.memo(Slider);
 
@@ -1676,7 +1677,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                 />
               ) : null}
               <div className="viewport-controls-and-help">
-                <Button small onClick={fitToScreen} minimal intent="primary">
+                <Button variant="ghost" size="sm" onClick={fitToScreen}>
                   Center
                 </Button>
                 <MemodSlider
@@ -1737,11 +1738,12 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             ) : null}
             <div className="run-btn-container">
               <Button
-                className="run-btn"
+                className="run-btn dark:bg-red-600 bg-yellow-300"
                 onClick={openRunModal}
-                rightIcon={<Play />}
-                small
+                size="sm"
+                variant="default"
               >
+                <Play className="mr h-3 w-3" />
                 Test Flow
               </Button>
             </div>

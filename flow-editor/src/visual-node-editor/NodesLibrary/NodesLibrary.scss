@@ -1,7 +1,6 @@
 @import "./AddNodeMenu/AddNodeMenu.scss";
 
 .nodes-library {
-  background: white;
   display: flex;
   width: 280px;
   padding: 6px;
@@ -18,8 +17,6 @@
   z-index: 1;
 
   &.dark {
-    background: $neutral-800;
-
     .group-title {
       // background: $neutral-900;
       color: $neutral-300;

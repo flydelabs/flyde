@@ -43,7 +43,7 @@ export const NodesLibrary: React.FC<NodesLibraryProps> = memo((props) => {
 
   return (
     <div
-      className={classNames("nodes-library", {
+      className={classNames("nodes-library bg-white dark:bg-neutral-800", {
         dark: darkMode,
       })}
     >
