@@ -72,7 +72,7 @@ export const calcBezierPath = ({
   curvature = 0.25,
 }: GetBezierPathParams): string => {
   const [sourceControlX, sourceControlY] = getControlWithCurvature({
-    pos: sourcePosition,
+      pos: sourcePosition,
     x1: sourceX,
     y1: sourceY,
     x2: targetX,
