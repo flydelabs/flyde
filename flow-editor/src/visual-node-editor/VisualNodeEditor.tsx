@@ -17,7 +17,6 @@ import {
   InlineNodeInstance,
   connectionNode,
   ImportedNodeDef,
-  getNodeOutputs,
   Pos,
   getNodeInputs,
   externalConnectionNode,
@@ -29,6 +28,7 @@ import {
   MacroNodeDefinition,
   NodeOrMacroDefinition,
   CodeNodeDefinition,
+  getNodeOutputs,
 } from "@flyde/core";
 
 import { InstanceView, InstanceViewProps } from "./instance-view/InstanceView";
@@ -37,6 +37,8 @@ import {
   ConnectionViewProps,
 } from "./connection-view/ConnectionView";
 import { entries, Size } from "../utils";
+
+import { ContextMenu } from "@blueprintjs/core";
 import { useBoundingclientrect, useDidMount } from "rooks";
 
 import {
@@ -60,7 +62,6 @@ import { useState, useRef, useEffect, DragEvent } from "react";
 import { useHotkeys } from "../lib/react-utils/use-hotkeys";
 import useComponentSize from "@rehooks/component-size";
 
-import { Slider, ContextMenu } from "@blueprintjs/core";
 import { NodeIoView, NodeIoViewProps } from "./node-io-view";
 
 import { vec, vSub, vZero } from "../physics";
@@ -112,10 +113,7 @@ import { useEditorCommands } from "./useEditorCommands";
 import { CustomNodeModal } from "./CustomNodeModal/CustomNodeModal";
 import { AddNodeMenu } from "./NodesLibrary/AddNodeMenu";
 import { Button } from "@/components/ui/button";
-
-const MemodSlider = React.memo(Slider);
-
-const sliderRenderer = () => null;
+import { Slider } from "@/components/ui/slider";
 
 export const NODE_HEIGHT = 28;
 
@@ -1680,14 +1678,13 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                 <Button variant="ghost" size="sm" onClick={fitToScreen}>
                   Center
                 </Button>
-                <MemodSlider
+                <Slider
                   min={0.15}
                   max={3}
-                  stepSize={0.05}
-                  labelStepSize={10}
-                  labelRenderer={sliderRenderer}
-                  onChange={onZoom}
-                  value={viewPort.zoom}
+                  step={0.05}
+                  className="w-[100px]"
+                  value={[viewPort.zoom]}
+                  onValueChange={([value]) => onZoom(value)}
                 />
                 {isRootInstance ? <HelpBubble /> : null}
               </div>

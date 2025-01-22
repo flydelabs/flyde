@@ -1,3 +1,11 @@
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
+import { Pos } from "@flyde/core";
 import { Menu, MenuDivider, MenuItem } from "@blueprintjs/core";
 import { isDefined, preventDefaultAnd } from "../../utils";
 import { NodeStyle, PinType, nodeInput, nodeOutput } from "@flyde/core";
@@ -8,18 +16,17 @@ import { functionalChange } from "../../flow-editor/flyde-flow-change-type";
 import { NodeStyleMenu } from "../instance-view/NodeStyleMenu";
 import { useVisualNodeEditorContext } from "../VisualNodeEditorContext";
 
-export interface EditorContextMenuProps {
+interface EditorContextMenuProps {
   nodeIoEditable: boolean;
-  lastMousePos: React.RefObject<{ x: number; y: number }>;
+  lastMousePos: { current: Pos };
   onOpenNodesLibrary: () => void;
 }
 
-export function EditorContextMenu(props: EditorContextMenuProps) {
-  const { nodeIoEditable, lastMousePos, onOpenNodesLibrary } = props;
-  const maybeDisabledLabel = nodeIoEditable
-    ? ""
-    : " (cannot edit main node, only visual)";
-
+export function EditorContextMenu({
+  nodeIoEditable,
+  lastMousePos,
+  onOpenNodesLibrary,
+}: EditorContextMenuProps) {
   const _prompt = usePrompt();
 
   const { reportEvent } = usePorts();
@@ -119,65 +126,16 @@ export function EditorContextMenu(props: EditorContextMenuProps) {
   );
 
   return (
-    <Menu>
-      <MenuItem
-        text="Add Node"
-        onMouseDown={(e) => e.stopPropagation()}
-        onClick={preventDefaultAnd(onOpenNodesLibrary)}
-      />
-      <MenuDivider />
-      <MenuItem
-        text={`New main input ${maybeDisabledLabel}`}
-        onMouseDown={(e) => e.stopPropagation()}
-        onClick={preventDefaultAnd(() => onAddMainPin("input"))}
-        disabled={!nodeIoEditable}
-      />
-      <MenuItem
-        onMouseDown={(e) => e.stopPropagation()}
-        text={`New main output ${maybeDisabledLabel}`}
-        onClick={preventDefaultAnd(() => onAddMainPin("output"))}
-        disabled={!nodeIoEditable}
-      />
-      <MenuItem
-        onMouseDown={(e) => e.stopPropagation()}
-        text={`Integrate with existing code (docs link)`}
-        href="https://www.flyde.dev/docs/integrate-flows/"
-        target="_blank"
-        disabled={!nodeIoEditable}
-      />
-      <MenuItem
-        onMouseDown={(e) => e.stopPropagation()}
-        text={"Copy node to clipboard"}
-        onClick={preventDefaultAnd(copyNodeToClipboard)}
-      />
-      <MenuItem
-        onMouseDown={(e) => e.stopPropagation()}
-        text={`Edit Completion Outputs (${
-          node.completionOutputs?.join(",") || "n/a"
-        })`}
-        onClick={preventDefaultAnd(() => editCompletionOutputs())}
-      />
+    <ContextMenuContent className="w-64">
+      <ContextMenuItem onClick={onOpenNodesLibrary}>Add Node</ContextMenuItem>
 
-      <MenuItem
-        onMouseDown={(e) => e.stopPropagation()}
-        text={`Edit Reactive inputs (${
-          node.reactiveInputs?.join(",") || "n/a"
-        })`}
-        onClick={preventDefaultAnd(() => editReactiveInputs())}
-      />
-      <MenuItem
-        onMouseDown={(e) => e.stopPropagation()}
-        text={`Edit description`}
-        onClick={preventDefaultAnd(() => editNodeDescription())}
-      />
-      <MenuDivider />
-      <MenuItem text="Default Style">
-        <NodeStyleMenu
-          style={node.defaultStyle}
-          onChange={onChangeDefaultStyle}
-          promptFn={_prompt}
-        />
-      </MenuItem>
-    </Menu>
+      {nodeIoEditable && (
+        <>
+          <ContextMenuSeparator />
+          <ContextMenuItem>Add Input Pin</ContextMenuItem>
+          <ContextMenuItem>Add Output Pin</ContextMenuItem>
+        </>
+      )}
+    </ContextMenuContent>
   );
 }

@@ -1,37 +1,29 @@
+import { Button } from "@/components/ui/button";
 import {
-  Button,
-  Classes,
   Dialog,
-  H4,
-  Menu,
-  MenuDivider,
-  MenuItem,
-} from "@blueprintjs/core";
-import { HotkeysDialogProps } from "@blueprintjs/core/lib/cjs/components/hotkeys/hotkeysDialog2";
-import { Hotkey } from "@blueprintjs/core/lib/cjs/components/hotkeys/hotkey";
-
-import { PopoverProps, Popover } from "@blueprintjs/core";
-
-import React, { useMemo } from "react";
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useMemo } from "react";
+import * as React from "react";
 import {
   currentHotkeys,
   HotkeysMenuData,
 } from "../../lib/react-utils/use-hotkeys";
-
 import { usePorts } from "../../flow-editor/ports";
 import { isMac } from "../..";
 
 export interface HelpBubbleProps {}
 
-const popperModifiers: PopoverProps["modifiers"] = {
-  offset: { enabled: true, options: { offset: [0, 20] } },
-  preventOverflow: { enabled: true, options: { padding: 10 } },
-};
-
-function hotkeyToBpHotkey(hotkey: {
-  key: string;
-  menuData: HotkeysMenuData;
-}): HotkeysDialogProps["hotkeys"][0] {
+function hotkeyToBpHotkey(hotkey: { key: string; menuData: HotkeysMenuData }) {
   return {
     combo: hotkey.key,
     label: hotkey.menuData.text,
@@ -40,10 +32,6 @@ function hotkeyToBpHotkey(hotkey: {
 }
 
 const groupsOrder = ["Viewport Controls", "Editing", "Selection"];
-
-type Mutable<Type> = {
-  -readonly [Key in keyof Type]: Type[Key];
-};
 
 const mainDocItems = [
   {
@@ -68,16 +56,13 @@ const mainDocItems = [
   },
 ];
 
-export const HelpBubble: React.FC<HelpBubbleProps> = () => {
+export function HelpBubble() {
   const [hotkeysModalOpen, setHotkeysModalOpen] = React.useState(false);
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const _isMac = useMemo(isMac, []);
 
   const bpHotkeys = Array.from(currentHotkeys.entries()).map(
     ([_keys, menuData]) => {
       const keys = _keys.split(/,\s*/).find((key) => {
-        // when using multiple keys, we assume it's for cmd/ctrl differentiation - so we only show the cmd key
         return _isMac && key.includes("cmd") ? true : !key.includes("cmd");
       });
       return hotkeyToBpHotkey({ key: keys!, menuData });
@@ -90,7 +75,7 @@ export const HelpBubble: React.FC<HelpBubbleProps> = () => {
     }
     acc[hotkey.group].push(hotkey);
     return acc;
-  }, {} as { [key: string]: Mutable<HotkeysDialogProps["hotkeys"]> });
+  }, {} as { [key: string]: Array<ReturnType<typeof hotkeyToBpHotkey>> });
 
   const groupsArray = Object.entries(groupedHotkeys).sort((a, b) => {
     return groupsOrder.indexOf(b[0]) - groupsOrder.indexOf(a[0]);
@@ -98,69 +83,85 @@ export const HelpBubble: React.FC<HelpBubbleProps> = () => {
 
   const { reportEvent } = usePorts();
 
-  const hotkeysModal = (
-    <Dialog
-      isOpen={hotkeysModalOpen}
-      onClose={() => setHotkeysModalOpen(false)}
-    >
-      <div className={Classes.DIALOG_BODY}>
-        {groupsArray.map(([group, hotkeys]) => (
-          <React.Fragment key={group}>
-            <H4>{group}</H4>
-            {hotkeys.map((hotkey) => {
-              return <Hotkey {...hotkey} key={hotkey.combo} />;
-            })}
-          </React.Fragment>
-        ))}
-      </div>
-    </Dialog>
-  );
-
-  const menu = (
-    <Menu>
-      {mainDocItems.map((item) => (
-        <MenuItem
-          key={item.title}
-          text={item.title}
-          onClick={() => {
-            reportEvent("helpMenuItem", { item: item.title });
-          }}
-          href={item.link}
-          target="_blank"
-        />
-      ))}
-      <MenuDivider />
-      <MenuItem
-        text="Discord"
-        onClick={() => reportEvent("helpMenuItem", { item: "discord" })}
-        href="https://discord.gg/x7t4tjZQP8"
-        target="_blank"
-      />
-      <MenuItem
-        text="Hotkeys"
-        onClick={() => {
-          setHotkeysModalOpen(true);
-          reportEvent("helpMenuItem", { item: "hotkeys" });
-        }}
-      />
-      <MenuItem
-        text="Full Documentation"
-        onClick={() => reportEvent("helpMenuItem", { item: "documentation" })}
-        href="https://www.flyde.dev/docs"
-        target="_blank"
-      />
-    </Menu>
-  );
   return (
     <div className="help-bubble" data-tip="Help">
-      <Popover
-        content={menu}
-        modifiers={popperModifiers}
-        onOpened={() => reportEvent("helpMenuOpen", {})}
-      >
-        <Button>Help</Button>
-      </Popover>
-      {hotkeysModal}
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="outline"
+            onClick={() => reportEvent("helpMenuOpen", {})}
+          >
+            Help
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent
+          className="p-2 min-w-[200px]"
+          sideOffset={20}
+          align="end"
+        >
+          {mainDocItems.map((item) => (
+            <DropdownMenuItem
+              key={item.title}
+              onClick={() => {
+                reportEvent("helpMenuItem", { item: item.title });
+                window.open(item.link, "_blank");
+              }}
+            >
+              {item.title}
+            </DropdownMenuItem>
+          ))}
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            onClick={() => {
+              reportEvent("helpMenuItem", { item: "discord" });
+              window.open("https://discord.gg/x7t4tjZQP8", "_blank");
+            }}
+          >
+            Discord
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => {
+              setHotkeysModalOpen(true);
+              reportEvent("helpMenuItem", { item: "hotkeys" });
+            }}
+          >
+            Hotkeys
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => {
+              reportEvent("helpMenuItem", { item: "documentation" });
+              window.open("https://www.flyde.dev/docs", "_blank");
+            }}
+          >
+            Full Documentation
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      <Dialog open={hotkeysModalOpen} onOpenChange={setHotkeysModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Keyboard Shortcuts</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            {groupsArray.map(([group, hotkeys]) => (
+              <div key={group}>
+                <h4 className="text-lg font-semibold mb-2">{group}</h4>
+                <div className="space-y-2">
+                  {hotkeys.map((hotkey) => (
+                    <div key={hotkey.combo} className="flex justify-between">
+                      <span>{hotkey.label}</span>
+                      <kbd className="px-2 py-1 bg-muted rounded">
+                        {hotkey.combo}
+                      </kbd>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
-};
+}

@@ -1,26 +1,26 @@
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogFooter } from "@/components/ui/dialog";
 import {
-  Button,
-  Callout,
-  Classes,
-  Dialog,
-  Intent,
-  MenuItem,
-} from "@blueprintjs/core";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Info, GitFork } from "lucide-react";
+
 import {
   MacroNodeDefinition,
   ResolvedDependenciesDefinitions,
   ResolvedMacroNodeInstance,
   isMacroNodeDefinition,
 } from "@flyde/core";
-import classNames from "classnames";
 
 import { ErrorBoundary } from "react-error-boundary";
-
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { loadMacroEditor } from "./macroEditorLoader";
-import { DoubleCaretVertical, Fork, InfoSign } from "@blueprintjs/icons";
 import { usePrompt } from "../../flow-editor/ports";
-import { Select } from "@blueprintjs/select";
 import { useDependenciesContext } from "../../flow-editor/DependenciesContext";
 import { Loader } from "../../lib/loader";
 
@@ -79,70 +79,72 @@ export const MacroInstanceEditor: React.FC<MacroInstanceEditorProps> = (
 
   if (!macro) {
     return (
-      <Dialog isOpen={true} className="macro-instance-editor no-drag">
-        <main className={classNames(Classes.DIALOG_BODY)} tabIndex={0}>
+      <Dialog open={true}>
+        <DialogContent className="sm:max-w-[425px]">
           <Loader />
-        </main>
+        </DialogContent>
       </Dialog>
     );
   }
 
   return (
-    <Dialog isOpen={true} className="macro-instance-editor no-drag">
-      <main className={classNames(Classes.DIALOG_BODY)} tabIndex={0}>
-        {onForkNode ? (
-          <div className="fork-btn-container">
-            <Button onClick={() => _onForkNode(macro)} small icon={<Fork />}>
+    <Dialog open={true}>
+      <DialogContent className="sm:max-w-[425px]">
+        {onForkNode && (
+          <div className="flex justify-end mb-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => _onForkNode(macro)}
+            >
+              <GitFork className="mr-2 h-4 w-4" />
               Fork
             </Button>
           </div>
-        ) : null}
-        {macroSiblings.length > 1 ? (
+        )}
+
+        {macroSiblings.length > 1 && (
           <Select
-            items={macroSiblings}
-            fill
-            itemRenderer={(item, { handleClick }) => (
-              <MenuItem
-                key={item.id}
-                text={item.displayName || item.id}
-                onClick={handleClick}
-              />
-            )}
-            onItemSelect={(selectedMacro) => {
-              props.onSwitchToSiblingMacro(
-                selectedMacro as any as MacroNodeDefinition<any>
-              );
+            value={macro.id}
+            onValueChange={(value) => {
+              const selectedMacro = macroSiblings.find((m) => m.id === value);
+              if (selectedMacro) {
+                props.onSwitchToSiblingMacro(selectedMacro);
+              }
             }}
-            filterable={false}
-            popoverProps={{ minimal: true }}
           >
-            <Button
-              text={macro.displayName ?? macro.id}
-              fill
-              rightIcon={<DoubleCaretVertical />}
-              alignText="left"
-              style={{ marginBottom: "5px" }}
-            />
+            <SelectTrigger className="w-full mb-4">
+              <SelectValue>{macro.displayName ?? macro.id}</SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              {macroSiblings.map((item) => (
+                <SelectItem key={item.id} value={item.id}>
+                  {item.displayName || item.id}
+                </SelectItem>
+              ))}
+            </SelectContent>
           </Select>
-        ) : null}
-        {macro.description ? (
-          <Callout
-            intent="primary"
-            className="macro-description"
-            icon={<InfoSign />}
-            title={macro.displayName ?? macro.id}
-          >
-            {macro.description}
-          </Callout>
-        ) : null}
+        )}
+
+        {macro.description && (
+          <Alert className="mb-4">
+            <Info className="h-4 w-4" />
+            <AlertTitle>{macro.displayName ?? macro.id}</AlertTitle>
+            <AlertDescription>{macro.description}</AlertDescription>
+          </Alert>
+        )}
+
         <ErrorBoundary
           fallback={
-            <span>
-              Error loading macro editor{" "}
-              <Button onClick={() => setMacroData(macro.defaultData)}>
+            <div className="flex items-center gap-2">
+              <span>Error loading macro editor</span>
+              <Button
+                variant="outline"
+                onClick={() => setMacroData(macro.defaultData)}
+              >
                 Reset to default
               </Button>
-            </span>
+            </div>
           }
         >
           <EditorComp
@@ -151,19 +153,14 @@ export const MacroInstanceEditor: React.FC<MacroInstanceEditorProps> = (
             prompt={prompt}
           />
         </ErrorBoundary>
-      </main>
-      <div className={Classes.DIALOG_FOOTER}>
-        <div className={Classes.DIALOG_FOOTER_ACTIONS}>
-          <Button onClick={props.onCancel}>Cancel</Button>
-          <Button
-            onClick={() => props.onSubmit(macroData)}
-            intent={Intent.PRIMARY}
-            className="save-btn"
-          >
-            Save
+
+        <DialogFooter>
+          <Button variant="outline" onClick={props.onCancel}>
+            Cancel
           </Button>
-        </div>
-      </div>
+          <Button onClick={() => props.onSubmit(macroData)}>Save</Button>
+        </DialogFooter>
+      </DialogContent>
     </Dialog>
   );
 };
