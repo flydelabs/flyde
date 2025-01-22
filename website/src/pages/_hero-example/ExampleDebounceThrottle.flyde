@@ -96,8 +96,8 @@ node:
           type: string
           value: ⭐️
     - pos:
-        x: -1094.044921875
-        y: -226.38109693727887
+        x: -1093.044921875
+        y: -273.38109693727887
       id: lfrwwz35676vn1hb9ykzpewd
       inputConfig: {}
       nodeId: Collect__lfrwwz35676vn1hb9ykzpewd

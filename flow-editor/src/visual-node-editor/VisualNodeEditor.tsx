@@ -38,7 +38,7 @@ import {
 } from "./connection-view/ConnectionView";
 import { entries, Size } from "../utils";
 
-import { ContextMenu } from "@blueprintjs/core";
+import { ContextMenu, ContextMenuTrigger } from "@/components/ui/context-menu";
 import { useBoundingclientrect, useDidMount } from "rooks";
 
 import {
@@ -999,16 +999,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       const { onRequestImportables } = useDependenciesContext();
       const [showAddNodeMenu, setShowAddNodeMenu] = useState(false);
 
-      const getContextMenu = React.useCallback(() => {
-        return (
-          <EditorContextMenu
-            nodeIoEditable={nodeIoEditable}
-            lastMousePos={lastMousePos}
-            onOpenNodesLibrary={() => setShowAddNodeMenu(true)}
-          />
-        );
-      }, [nodeIoEditable, lastMousePos]);
-
       useHotkeys(
         "shift+c",
         fitToScreen,
@@ -1515,238 +1505,249 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
       try {
         return (
-          <ContextMenu
-            className={classNames("visual-node-editor", props.className, {
-              dark: darkMode,
-            })}
-            data-id={node.id}
-            content={getContextMenu()}
-            disabled={!isBoardInFocus.current}
-          >
-            <main
-              className="board-editor-inner"
-              onMouseDown={onMouseDown}
-              onMouseUp={onMouseUp}
-              onMouseMove={onMouseMove}
-              onMouseLeave={onMouseLeave}
-              onDragOver={onDragOver}
-              onDrop={onDrop}
-              ref={boardRef as any}
-              style={{
-                ...backgroundStyle,
-                cursor: cursorStyle,
-              }}
+          <ContextMenu>
+            <ContextMenuTrigger
+              className={classNames("visual-node-editor", props.className, {
+                dark: darkMode,
+              })}
+              data-id={node.id}
+              disabled={!isBoardInFocus.current}
             >
-              <React.Fragment>
-                <LayoutDebugger
-                  vp={viewPort}
-                  node={node}
-                  extraDebug={emptyList}
-                  mousePos={lastMousePos.current}
-                />
-              </React.Fragment>
-              {/* <div className='debug-info'>
+              <main
+                className="board-editor-inner"
+                onMouseDown={onMouseDown}
+                onMouseUp={onMouseUp}
+                onMouseMove={onMouseMove}
+                onMouseLeave={onMouseLeave}
+                onDragOver={onDragOver}
+                onDrop={onDrop}
+                ref={boardRef as any}
+                style={{
+                  ...backgroundStyle,
+                  cursor: cursorStyle,
+                }}
+              >
+                <React.Fragment>
+                  <LayoutDebugger
+                    vp={viewPort}
+                    node={node}
+                    extraDebug={emptyList}
+                    mousePos={lastMousePos.current}
+                  />
+                </React.Fragment>
+                {/* <div className='debug-info'>
               <span className='viewport'>
                 {`${viewPort.pos.x.toFixed(2)}, ${viewPort.pos.y.toFixed(2)} | ${viewPort.zoom}`}
               </span>
             </div> */}
 
-              <ConnectionView
-                resolvedNodes={currResolvedDeps}
-                currentInsId={currentInsId}
-                ancestorsInsIds={ancestorsInsIds}
-                size={vpSize}
-                node={node}
-                boardPos={boardPos}
-                instances={instances}
-                connections={connectionsToRender}
-                futureConnection={maybeRenderFutureConnection()}
-                onDblClick={noop}
-                viewPort={viewPort}
-                parentVp={parentViewport}
-                selectedInstances={selectedInstances}
-                selectedConnections={selectedConnections}
-                toggleHidden={toggleConnectionHidden}
-                removeConnection={removeConnection}
-                onSelectConnection={onSelectConnection}
-                lastMousePos={lastMousePos.current}
-                draggedSource={draggedConnection}
-              />
-              {renderMainPins("input")}
-              {instances.map((ins) => (
-                <InstanceView
-                  onUngroup={onUnGroup}
-                  connectionsPerInput={
-                    instancesConnectToPinsRef.current.get(ins.id) || emptyObj
-                  }
-                  node={safelyGetNodeDef(ins, currResolvedDeps)}
-                  ancestorsInsIds={fullInsIdPath(currentInsId, ancestorsInsIds)}
-                  onPinClick={onPinClick}
-                  onPinDblClick={onPinDblClick}
-                  onDragStart={onStartDraggingInstance}
-                  onDragEnd={onInstanceDragEnd}
-                  resolvedDeps={currResolvedDeps}
-                  onDragMove={onInstanceDragMove}
-                  onDblClick={onDblClickInstance}
-                  onSelect={onSelectInstance}
-                  onToggleSticky={onToggleSticky}
-                  selected={selectedInstances.indexOf(ins.id) !== -1}
-                  dragged={draggingId === ins.id}
-                  onInspectPin={_onInspectPin}
-                  selectedInput={
-                    to && isInternalConnectionNode(to) && to.insId === ins.id
-                      ? to.pinId
-                      : undefined
-                  }
-                  selectedOutput={
-                    from &&
-                    isInternalConnectionNode(from) &&
-                    from.insId === ins.id
-                      ? from.pinId
-                      : undefined
-                  }
-                  closestPin={
-                    closestPin && closestPin.ins.id === ins.id
-                      ? closestPin
-                      : undefined
-                  }
-                  queuedInputsData={queueInputsData[ins.id] ?? emptyObj}
-                  instance={ins}
-                  connections={connections}
-                  // was too lazy to remove/fix the breakpoint/log below
-                  onTogglePinBreakpoint={noop}
-                  onTogglePinLog={noop}
-                  // onTogglePinLog={onToggleLog}
-                  // onTogglePinBreakpoint={onToggleBreakpoint}
-                  viewPort={viewPort}
-                  onChangeVisibleInputs={onChangeVisibleInputs}
-                  onChangeVisibleOutputs={onChangeVisibleOutputs}
-                  onSetDisplayName={onChangeInstanceDisplayName}
-                  onDeleteInstance={onDeleteInstance}
-                  key={ins.id}
-                  forceShowMinimized={
-                    from || draggedConnection?.from
-                      ? "input"
-                      : to || draggedConnection?.to
-                      ? "output"
-                      : undefined
-                  }
-                  isConnectedInstanceSelected={selectedInstances.some(
-                    (selInsId) =>
-                      connections.some(({ from, to }) => {
-                        return (
-                          (from.insId === ins.id && to.insId === selInsId) ||
-                          (from.insId === selInsId && to.insId === ins.id)
-                        );
-                      })
-                  )}
-                  inlineGroupProps={maybeGetInlineProps(ins)}
-                  onCloseInlineEditor={closeInlineEditor}
-                  inlineEditorPortalDomNode={inlineEditorPortalRootRef.current}
-                  onChangeStyle={onChangeInstanceStyle}
-                  onGroupSelected={onGroupSelectedInternal}
-                  onPinMouseDown={onPinMouseDown}
-                  onPinMouseUp={onPinMouseUp}
-                  onViewForkCode={onViewForkCode}
-                  hadError={
-                    props.instancesWithErrors?.has(fullInsIdPath(ins.id)) ??
-                    false
-                  }
-                />
-              ))}
-              <SelectionBox selectionBox={selectionBox} viewPort={viewPort} />
-              {/* {maybeRenderEditGroupModal()} */}
-              {renderMainPins("output")}
-              <MainInstanceEventsIndicator
-                currentInsId={currentInsId}
-                ancestorsInsIds={ancestorsInsIds}
-                viewPort={viewPort}
-              />
-              {quickAddMenuVisible ? (
-                <QuickAddMenu
-                  targetNode={quickAddMenuVisible.targetNode}
-                  pinId={quickAddMenuVisible.pinId}
-                  pinType={quickAddMenuVisible.pinType}
-                  pos={quickAddMenuVisible.pos}
-                  resolvedDependencies={resolvedDependencies}
+                <ConnectionView
+                  resolvedNodes={currResolvedDeps}
+                  currentInsId={currentInsId}
+                  ancestorsInsIds={ancestorsInsIds}
+                  size={vpSize}
                   node={node}
-                  onAdd={onQuickAdd}
-                  onClose={onCloseQuickAdd}
+                  boardPos={boardPos}
+                  instances={instances}
+                  connections={connectionsToRender}
+                  futureConnection={maybeRenderFutureConnection()}
+                  onDblClick={noop}
+                  viewPort={viewPort}
+                  parentVp={parentViewport}
+                  selectedInstances={selectedInstances}
+                  selectedConnections={selectedConnections}
+                  toggleHidden={toggleConnectionHidden}
+                  removeConnection={removeConnection}
+                  onSelectConnection={onSelectConnection}
+                  lastMousePos={lastMousePos.current}
+                  draggedSource={draggedConnection}
+                />
+                {renderMainPins("input")}
+                {instances.map((ins) => (
+                  <InstanceView
+                    onUngroup={onUnGroup}
+                    connectionsPerInput={
+                      instancesConnectToPinsRef.current.get(ins.id) || emptyObj
+                    }
+                    node={safelyGetNodeDef(ins, currResolvedDeps)}
+                    ancestorsInsIds={fullInsIdPath(
+                      currentInsId,
+                      ancestorsInsIds
+                    )}
+                    onPinClick={onPinClick}
+                    onPinDblClick={onPinDblClick}
+                    onDragStart={onStartDraggingInstance}
+                    onDragEnd={onInstanceDragEnd}
+                    resolvedDeps={currResolvedDeps}
+                    onDragMove={onInstanceDragMove}
+                    onDblClick={onDblClickInstance}
+                    onSelect={onSelectInstance}
+                    onToggleSticky={onToggleSticky}
+                    selected={selectedInstances.indexOf(ins.id) !== -1}
+                    dragged={draggingId === ins.id}
+                    onInspectPin={_onInspectPin}
+                    selectedInput={
+                      to && isInternalConnectionNode(to) && to.insId === ins.id
+                        ? to.pinId
+                        : undefined
+                    }
+                    selectedOutput={
+                      from &&
+                      isInternalConnectionNode(from) &&
+                      from.insId === ins.id
+                        ? from.pinId
+                        : undefined
+                    }
+                    closestPin={
+                      closestPin && closestPin.ins.id === ins.id
+                        ? closestPin
+                        : undefined
+                    }
+                    queuedInputsData={queueInputsData[ins.id] ?? emptyObj}
+                    instance={ins}
+                    connections={connections}
+                    // was too lazy to remove/fix the breakpoint/log below
+                    onTogglePinBreakpoint={noop}
+                    onTogglePinLog={noop}
+                    // onTogglePinLog={onToggleLog}
+                    // onTogglePinBreakpoint={onToggleBreakpoint}
+                    viewPort={viewPort}
+                    onChangeVisibleInputs={onChangeVisibleInputs}
+                    onChangeVisibleOutputs={onChangeVisibleOutputs}
+                    onSetDisplayName={onChangeInstanceDisplayName}
+                    onDeleteInstance={onDeleteInstance}
+                    key={ins.id}
+                    forceShowMinimized={
+                      from || draggedConnection?.from
+                        ? "input"
+                        : to || draggedConnection?.to
+                        ? "output"
+                        : undefined
+                    }
+                    isConnectedInstanceSelected={selectedInstances.some(
+                      (selInsId) =>
+                        connections.some(({ from, to }) => {
+                          return (
+                            (from.insId === ins.id && to.insId === selInsId) ||
+                            (from.insId === selInsId && to.insId === ins.id)
+                          );
+                        })
+                    )}
+                    inlineGroupProps={maybeGetInlineProps(ins)}
+                    onCloseInlineEditor={closeInlineEditor}
+                    inlineEditorPortalDomNode={
+                      inlineEditorPortalRootRef.current
+                    }
+                    onChangeStyle={onChangeInstanceStyle}
+                    onGroupSelected={onGroupSelectedInternal}
+                    onPinMouseDown={onPinMouseDown}
+                    onPinMouseUp={onPinMouseUp}
+                    onViewForkCode={onViewForkCode}
+                    hadError={
+                      props.instancesWithErrors?.has(fullInsIdPath(ins.id)) ??
+                      false
+                    }
+                  />
+                ))}
+                <SelectionBox selectionBox={selectionBox} viewPort={viewPort} />
+                {/* {maybeRenderEditGroupModal()} */}
+                {renderMainPins("output")}
+                <MainInstanceEventsIndicator
+                  currentInsId={currentInsId}
+                  ancestorsInsIds={ancestorsInsIds}
+                  viewPort={viewPort}
+                />
+                {quickAddMenuVisible ? (
+                  <QuickAddMenu
+                    targetNode={quickAddMenuVisible.targetNode}
+                    pinId={quickAddMenuVisible.pinId}
+                    pinType={quickAddMenuVisible.pinType}
+                    pos={quickAddMenuVisible.pos}
+                    resolvedDependencies={resolvedDependencies}
+                    node={node}
+                    onAdd={onQuickAdd}
+                    onClose={onCloseQuickAdd}
+                  />
+                ) : null}
+                <div className="viewport-controls-and-help">
+                  <Button variant="ghost" size="sm" onClick={fitToScreen}>
+                    Center
+                  </Button>
+                  <Slider
+                    min={0.15}
+                    max={3}
+                    step={0.05}
+                    className="w-[100px]"
+                    value={[viewPort.zoom]}
+                    onValueChange={([value]) => onZoom(value)}
+                  />
+                  {isRootInstance ? <HelpBubble /> : null}
+                </div>
+                {editedMacroInstance ? (
+                  <MacroInstanceEditor
+                    onCancel={() => setEditedMacroInstance(undefined)}
+                    onSubmit={onSaveMacroInstance}
+                    ins={editedMacroInstance.ins}
+                    deps={resolvedDependencies}
+                    onSwitchToSiblingMacro={onSwitchToSiblingMacro}
+                  />
+                ) : null}
+                <div className="inline-editor-portal-root" />
+                {showAddNodeMenu ? (
+                  <AddNodeMenu
+                    onRequestImportables={onRequestImportables}
+                    onAddNode={onAddNode}
+                    onClose={() => setShowAddNodeMenu(false)}
+                  />
+                ) : null}
+              </main>
+              {selectionIndicatorData ? (
+                <SelectionIndicator
+                  selection={selectionIndicatorData}
+                  onCenter={onCenterSelection}
+                  onGroup={onGroupSelectedInternal}
+                  onDelete={onDeleteInstances}
                 />
               ) : null}
-              <div className="viewport-controls-and-help">
-                <Button variant="ghost" size="sm" onClick={fitToScreen}>
-                  Center
-                </Button>
-                <Slider
-                  min={0.15}
-                  max={3}
-                  step={0.05}
-                  className="w-[100px]"
-                  value={[viewPort.zoom]}
-                  onValueChange={([value]) => onZoom(value)}
-                />
-                {isRootInstance ? <HelpBubble /> : null}
-              </div>
-              {editedMacroInstance ? (
-                <MacroInstanceEditor
-                  onCancel={() => setEditedMacroInstance(undefined)}
-                  onSubmit={onSaveMacroInstance}
-                  ins={editedMacroInstance.ins}
-                  deps={resolvedDependencies}
-                  onSwitchToSiblingMacro={onSwitchToSiblingMacro}
-                />
-              ) : null}
-              <div className="inline-editor-portal-root" />
-              {showAddNodeMenu ? (
-                <AddNodeMenu
-                  onRequestImportables={onRequestImportables}
+              <OnboardingTips />
+              {!openInlineInstance && libraryData.groups.length ? (
+                <NodesLibrary
+                  {...libraryData}
                   onAddNode={onAddNode}
-                  onClose={() => setShowAddNodeMenu(false)}
+                  onClickCustomNode={() => setIsAddingCustomNode(true)}
                 />
               ) : null}
-            </main>
-            {selectionIndicatorData ? (
-              <SelectionIndicator
-                selection={selectionIndicatorData}
-                onCenter={onCenterSelection}
-                onGroup={onGroupSelectedInternal}
-                onDelete={onDeleteInstances}
-              />
-            ) : null}
-            <OnboardingTips />
-            {!openInlineInstance && libraryData.groups.length ? (
-              <NodesLibrary
-                {...libraryData}
-                onAddNode={onAddNode}
-                onClickCustomNode={() => setIsAddingCustomNode(true)}
-              />
-            ) : null}
-            {isAddingCustomNode ? (
-              <CustomNodeModal
-                isOpen={isAddingCustomNode}
-                onClose={() => {
-                  setIsAddingCustomNode(false);
-                  setCustomNodeForkData(undefined);
-                }}
-                onSave={onSaveCustomNode}
-                forkMode={customNodeForkData}
-              />
-            ) : null}
-            <div className="run-btn-container">
-              <Button
-                className="run-btn dark:bg-red-600 bg-yellow-300"
-                onClick={openRunModal}
-                size="sm"
-                variant="default"
-              >
-                <Play className="mr h-3 w-3" />
-                Test Flow
-              </Button>
-            </div>
-            {runModalVisible ? (
-              <RunFlowModal node={node} onClose={closeRunModal} />
-            ) : null}
+              {isAddingCustomNode ? (
+                <CustomNodeModal
+                  isOpen={isAddingCustomNode}
+                  onClose={() => {
+                    setIsAddingCustomNode(false);
+                    setCustomNodeForkData(undefined);
+                  }}
+                  onSave={onSaveCustomNode}
+                  forkMode={customNodeForkData}
+                />
+              ) : null}
+              <div className="run-btn-container">
+                <Button
+                  className="run-btn dark:bg-red-600 bg-yellow-300"
+                  onClick={openRunModal}
+                  size="sm"
+                  variant="default"
+                >
+                  <Play className="mr h-3 w-3" />
+                  Test Flow
+                </Button>
+              </div>
+              {runModalVisible ? (
+                <RunFlowModal node={node} onClose={closeRunModal} />
+              ) : null}
+            </ContextMenuTrigger>
+            <EditorContextMenu
+              nodeIoEditable={nodeIoEditable}
+              lastMousePos={lastMousePos}
+              onOpenNodesLibrary={() => setShowAddNodeMenu(true)}
+            />
           </ContextMenu>
         );
       } catch (e) {
