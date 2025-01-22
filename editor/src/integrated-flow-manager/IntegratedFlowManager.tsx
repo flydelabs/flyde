@@ -18,23 +18,18 @@ import {
 
 import produce from "immer";
 import {
-  createNewNodeInstance,
   DebuggerContextData,
   DebuggerContextProvider,
   DependenciesContextData,
   DependenciesContextProvider,
   usePorts,
 } from "@flyde/flow-editor"; // ../../common/visual-node-editor/utils
-import { vAdd } from "@flyde/flow-editor"; // ../../common/physics
 
 import { FlowEditor } from "@flyde/flow-editor"; // ../../common/flow-editor/FlowEditor
 
 import { useDebouncedCallback } from "use-debounce";
 
-import { IntegratedFlowSideMenu } from "./side-menu";
-import { NodeDefinition, ImportablesResult } from "@flyde/core";
-
-import { AppToaster } from "@flyde/flow-editor"; // ../../common/toaster
+import { ImportablesResult } from "@flyde/core";
 
 import { values } from "@flyde/flow-editor"; // ../../common/utils
 import { PinType } from "@flyde/core";
@@ -104,8 +99,6 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
     React.useState<EditorDebuggerClient>();
 
   const runtimePlayer = React.useRef<RuntimePlayer>();
-
-  const [menuSelectedItem, setMenuSelectedItem] = React.useState<string>();
 
   // to avoid re-resolving imported flows, this holds nodes that were imported in the current session
   const [importedNodes, setImportedNodes] = React.useState<ImportableSource[]>(
@@ -263,32 +256,6 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
     props.integratedSource,
   ]);
 
-  const onAddNodeToStage = (node: NodeDefinition) => {
-    const finalPos = vAdd({ x: 100, y: 0 }, editorState.boardData.lastMousePos);
-    const newNodeIns = createNewNodeInstance(
-      node.id,
-      0,
-      finalPos,
-      currentResolvedDeps
-    );
-    if (newNodeIns) {
-      const valueChanged = produce(flow, (draft) => {
-        const node = draft.node;
-
-        node.instances.push(newNodeIns);
-      });
-      onChangeFlow(valueChanged, functionalChange("add-item"));
-    }
-
-    AppToaster.show({ message: `Added ${node.id} on last cursor position` });
-  };
-
-  const onFocusInstance = React.useCallback((insId: string) => {
-    if (boardRef.current) {
-      boardRef.current.centerInstance(insId);
-    }
-  }, []);
-
   const _onRequestHistory = React.useCallback(
     (insId: string, pinId?: string, pinType?: PinType) => {
       if (!debuggerClient) {
@@ -422,20 +389,6 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
     <div className={classNames("app", { embedded: isEmbedded })}>
       <DependenciesContextProvider value={dependenciesContextValue}>
         <main>
-          <IntegratedFlowSideMenu
-            flowPath={props.integratedSource}
-            // editedNode={editedNode}
-            flow={flow}
-            // onDeleteNode={onDeleteCustomNode}
-            onAdd={onAddNodeToStage}
-            // onAddNode={onAddNode}
-            // onRenameNode={onRenameNode}
-            selectedMenuItem={menuSelectedItem}
-            setSelectedMenuItem={setMenuSelectedItem}
-            editorDebugger={debuggerClient}
-            onFocusInstance={onFocusInstance}
-            onChangeFlow={onChangeFlow}
-          />
           <div className={classNames("stage-wrapper", { running: false })}>
             <DebuggerContextProvider value={debuggerContextValue}>
               <FlowEditor

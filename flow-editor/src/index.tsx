@@ -12,7 +12,6 @@ export * from "./lib/analytics-value-renderer";
 export * from "./visual-node-editor/runtime-player/createRuntimePlayer";
 export * from "./lib/safe-ls";
 export * from "./physics";
-export * from "./flow-editor/base-node-editor";
 export * from "./visual-node-editor/utils";
 export * from "./lib/logger";
 export * from "./visual-node-editor/MacroInstanceEditor/SimpleJsonEditor";
