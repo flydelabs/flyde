@@ -37,7 +37,7 @@ import {
 } from "./connection-view/ConnectionView";
 import { entries, Size } from "../utils";
 
-import { ContextMenu, ContextMenuTrigger } from "@/components/ui/context-menu";
+import { ContextMenu, ContextMenuTrigger } from "@flyde/ui";
 import { useBoundingclientrect, useDidMount } from "rooks";
 
 import {
@@ -103,11 +103,8 @@ import {
 import { useEditorCommands } from "./useEditorCommands";
 import { CustomNodeModal } from "./CustomNodeModal/CustomNodeModal";
 import { AddNodeMenu } from "./NodesLibrary/AddNodeMenu";
-import { Button } from "@/components/ui/button";
-import { Slider } from "@/components/ui/slider";
+import { Button, Slider, Toaster, useToast } from "@flyde/ui";
 import { Play } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-import { Toaster } from "@/components/ui/toaster";
 
 export const NODE_HEIGHT = 28;
 
@@ -205,7 +202,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
       const darkMode = useDarkMode();
 
-      const { reportEvent, onCreateCustomNode } = usePorts();
+      const { onCreateCustomNode } = usePorts();
 
       const parentViewport = props.parentViewport || defaultViewPort;
 
@@ -860,7 +857,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             functionalChange("reset corrupt visible inputs/outputs")
           );
         }
-      }, [instances, onChange, node, currResolvedDeps]);
+      }, [instances, onChange, node, currResolvedDeps, toast]);
 
       useEffect(() => {
         const instanceMap = new Map(instances.map((ins) => [ins.id, ins]));

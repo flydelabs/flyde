@@ -6,18 +6,14 @@ import { Pos, NodeTypeIcon } from "@flyde/core";
 import { useDarkMode } from "../../flow-editor/DarkModeContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import {
-  ContextMenu,
-  ContextMenuContent,
-  ContextMenuTrigger,
-} from "@/components/ui/context-menu";
+import { ContextMenu, ContextMenuContent, ContextMenuTrigger } from "@flyde/ui";
 
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from "@flyde/ui";
 
 export interface BaseNodeViewContextItem {
   label: string;

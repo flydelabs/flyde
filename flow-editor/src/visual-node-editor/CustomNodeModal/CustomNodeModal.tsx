@@ -9,9 +9,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+} from "@flyde/ui";
+import { Button } from "@flyde/ui";
+import { Alert, AlertDescription } from "@flyde/ui";
 
 interface CustomNodeModalProps {
   isOpen: boolean;

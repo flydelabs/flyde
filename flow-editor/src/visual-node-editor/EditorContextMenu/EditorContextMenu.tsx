@@ -5,7 +5,7 @@ import {
   ContextMenuSub,
   ContextMenuSubContent,
   ContextMenuSubTrigger,
-} from "../../components/ui/context-menu";
+} from "@flyde/ui";
 import { isDefined } from "../../utils";
 import { NodeStyle, PinType, nodeInput, nodeOutput } from "@flyde/core";
 import produce from "immer";
@@ -14,7 +14,7 @@ import { usePrompt, usePorts } from "../..";
 import { functionalChange } from "../../flow-editor/flyde-flow-change-type";
 import { NodeStyleMenu } from "../instance-view/NodeStyleMenu";
 import { useVisualNodeEditorContext } from "../VisualNodeEditorContext";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@flyde/ui";
 
 export interface EditorContextMenuProps {
   nodeIoEditable: boolean;

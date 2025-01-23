@@ -5,7 +5,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from "@flyde/ui";
 
 export interface InfoTooltipProps {
   content: string | JSX.Element;

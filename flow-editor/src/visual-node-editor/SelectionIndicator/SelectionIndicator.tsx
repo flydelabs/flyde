@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@flyde/ui";
 import React, { useMemo } from "react";
 import { useDarkMode } from "../../flow-editor/DarkModeContext";
 import { cn } from "@/lib/utils";

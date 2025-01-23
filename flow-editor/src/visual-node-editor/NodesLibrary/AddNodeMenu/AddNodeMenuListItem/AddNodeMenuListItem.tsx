@@ -1,5 +1,5 @@
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Badge } from "@flyde/ui";
+import { Button } from "@flyde/ui";
 import { ImportableSource } from "@flyde/core";
 import classNames from "classnames";
 import React, { useCallback } from "react";

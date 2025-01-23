@@ -7,14 +7,9 @@ import { BaseNode } from "@flyde/core";
 import { useLocalStorage } from "../../lib/user-preferences";
 import { InfoTooltip } from "../../lib/InfoTooltip";
 import { usePorts } from "../../flow-editor/ports";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-} from "@/components/ui/dialog";
-import { Slider } from "@/components/ui/slider";
+import { Button } from "@flyde/ui";
+import { Dialog, DialogContent, DialogFooter, DialogHeader } from "@flyde/ui";
+import { Slider } from "@flyde/ui";
 import { cn } from "@/lib/utils";
 
 export interface RunFlowModalProps {

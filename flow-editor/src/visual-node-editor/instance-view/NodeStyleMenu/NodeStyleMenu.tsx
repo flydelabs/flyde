@@ -8,9 +8,9 @@ import {
   ContextMenuSubContent,
   ContextMenuSubTrigger,
   ContextMenuSeparator,
-} from "@/components/ui/context-menu";
+} from "@flyde/ui";
 
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@flyde/ui";
 
 export interface NodeStyleMenuProps {
   style: NodeStyle | undefined;

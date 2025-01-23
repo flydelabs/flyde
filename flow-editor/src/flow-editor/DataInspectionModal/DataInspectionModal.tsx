@@ -1,17 +1,11 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@flyde/ui";
+import { Card } from "@flyde/ui";
+import { Input } from "@flyde/ui";
+import { ScrollArea } from "@flyde/ui";
+import { Alert, AlertDescription } from "@flyde/ui";
+import { Button } from "@flyde/ui";
 import { DebuggerEvent, PinDebuggerEvent, PinType } from "@flyde/core";
 import { HistoryPayload } from "@flyde/remote-debugger";
-import { cn } from "@/lib/utils";
 import React, { useEffect } from "react";
 import { timeAgo, useDebounce } from "../..";
 import { BrowserOnlyReactJson } from "../../lib/analytics-value-renderer/BrowserJsonView";

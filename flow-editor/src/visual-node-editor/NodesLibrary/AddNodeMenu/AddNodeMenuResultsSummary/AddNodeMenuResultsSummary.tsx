@@ -1,4 +1,4 @@
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@flyde/ui";
 import { X } from "lucide-react";
 import React from "react";
 import { AddNodeMenuFilter } from "../AddNodeMenu";

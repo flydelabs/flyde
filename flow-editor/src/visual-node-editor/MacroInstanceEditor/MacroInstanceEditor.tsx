@@ -1,13 +1,13 @@
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogFooter } from "@/components/ui/dialog";
+import { Button } from "@flyde/ui";
+import { Dialog, DialogContent, DialogFooter } from "@flyde/ui";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+} from "@flyde/ui";
+import { Alert, AlertDescription, AlertTitle } from "@flyde/ui";
 import { Info, GitFork } from "lucide-react";
 
 import {

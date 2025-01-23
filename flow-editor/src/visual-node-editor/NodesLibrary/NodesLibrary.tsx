@@ -3,8 +3,8 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { Button } from "@/components/ui/button";
+} from "@flyde/ui";
+import { Button } from "@flyde/ui";
 import { ImportableSource, ImportedNode, NodeLibraryData } from "@flyde/core";
 import classNames from "classnames";
 import React, { memo, useCallback, useEffect, useState } from "react";

@@ -1,13 +1,8 @@
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { Button } from "@flyde/ui";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@flyde/ui";
+import { Input } from "@flyde/ui";
+import { Alert, AlertDescription } from "@flyde/ui";
+import { ScrollArea } from "@flyde/ui";
 import { ImportableSource, simplePluralize } from "@flyde/core";
 import React, { useCallback, useEffect } from "react";
 import { LocalImportableResult } from "../../../flow-editor/DependenciesContext";
@@ -22,8 +17,8 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { Tree, TreeNodeInfo } from "@/components/ui/tree";
+} from "@flyde/ui";
+import { Tree, TreeNodeInfo } from "@flyde/ui";
 
 export interface AddNodeMenuProps {
   onRequestImportables: () => Promise<LocalImportableResult>;

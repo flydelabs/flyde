@@ -7,7 +7,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from "@flyde/ui";
 
 export interface MainInstanceEventsIndicatorProps {
   currentInsId: string;

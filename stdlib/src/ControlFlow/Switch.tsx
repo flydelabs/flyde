@@ -1,11 +1,7 @@
 import { useMemo } from "react";
-import {
-  Button,
-  Checkbox,
-  Divider,
-  FormGroup,
-  InputGroup,
-} from "@blueprintjs/core";
+import { Checkbox, Divider, FormGroup, InputGroup } from "@blueprintjs/core";
+
+import { Button } from "../../../flow-editor/src/components/ui/button";
 import React from "react";
 import { MacroEditorComp } from "@flyde/core";
 import { SwitchConfig } from "./Switch.flyde";
@@ -31,9 +27,8 @@ const SwitchEditor: MacroEditorComp<SwitchConfig> = function SwitchEditor(
             rightElement={
               value.inputs.length > 1 ? (
                 <Button
-                  small
-                  minimal
-                  intent="danger"
+                  variant="ghost"
+                  size="sm"
                   onClick={() => {
                     const newInputs = [...value.inputs];
                     newInputs.splice(i, 1);
