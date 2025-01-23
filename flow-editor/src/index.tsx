@@ -1,7 +1,6 @@
 export * from "./flow-editor/FlowEditor";
 export * from "./utils";
 export * from "./lib/user-preferences";
-export * from "./toaster";
 export * from "./lib/loader";
 export * from "./flow-editor/flyde-flow-change-type";
 export * from "./NodePreview/NodePreview";

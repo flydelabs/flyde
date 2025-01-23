@@ -66,7 +66,6 @@ import { vec, vSub, vZero } from "../physics";
 import { LayoutDebugger, LayoutDebuggerProps } from "./layout-debugger";
 import { preloadMonaco } from "../lib/preload-monaco";
 // import { InstancePanel } from "./instance-panel";
-import { toastMsg } from "../toaster";
 import {
   functionalChange,
   metaChange,
@@ -107,6 +106,8 @@ import { AddNodeMenu } from "./NodesLibrary/AddNodeMenu";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Play } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { Toaster } from "@/components/ui/toaster";
 
 export const NODE_HEIGHT = 28;
 
@@ -190,6 +191,8 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       } = props;
 
       const { resolvedDependencies } = useDependenciesContext();
+
+      const { toast } = useToast();
 
       const {
         node,
@@ -652,7 +655,10 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         (ins: NodeInstance, shift: boolean) => {
           if (shift) {
             if (isMacroNodeInstance(ins)) {
-              toastMsg("Cannot edit macro node instance");
+              toast({
+                description: "Cannot edit macro node instance",
+                variant: "destructive",
+              });
               return;
             }
             const node = isInlineNodeInstance(ins)
@@ -662,7 +668,10 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
               throw new Error(`Impossible state inspecting inexisting node`);
             }
             if (!isVisualNode(node)) {
-              toastMsg("Cannot inspect a non visual node", "warning");
+              toast({
+                description: "Cannot inspect a non visual node",
+                variant: "default",
+              });
               //`Impossible state inspecting visual node`);
               return;
             }
@@ -678,17 +687,23 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
               if (isVisualNode(node)) {
                 setOpenInlineInstance({ insId: ins.id, node });
               } else {
-                toastMsg("Editing this type of node is not supported");
+                toast({
+                  description: "Editing this type of node is not supported",
+                  variant: "default",
+                });
               }
               return;
             } else if (isResolvedMacroNodeInstance(ins)) {
               setEditedMacroInstance({ ins });
             } else {
-              toastMsg("Editing this type of node is not supported");
+              toast({
+                description: "Editing this type of node is not supported",
+                variant: "default",
+              });
             }
           }
         },
-        [onEditNode, currResolvedDeps, currentInsId]
+        [currResolvedDeps, currentInsId, toast, onEditNode]
       );
 
       const renderMainPins = (type: PinType) => {
@@ -831,14 +846,14 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           });
         });
         if (invalids.length > 0) {
-          toastMsg(
-            `Found ${
+          toast({
+            description: `Found ${
               invalids.length
             } invalid visible inputs/outputs: ${invalids.join(
               ", "
             )}. Resetting to full list`,
-            "warning"
-          );
+            variant: "default",
+          });
 
           onChange(
             newNode,
@@ -1357,7 +1372,10 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           try {
             const code = nodeDef.sourceCode;
             if (!code) {
-              toastMsg("No source code found");
+              toast({
+                description: "No source code found",
+                variant: "destructive",
+              });
               return;
             }
             setCustomNodeForkData({ node: nodeDef, initialCode: code });
@@ -1366,7 +1384,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             console.error("Failed to get node source:", e);
           }
         },
-        [currResolvedDeps]
+        [currResolvedDeps, toast]
       );
 
       try {
@@ -1602,6 +1620,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
               lastMousePos={lastMousePos}
               onOpenNodesLibrary={() => setShowAddNodeMenu(true)}
             />
+            <Toaster />
           </ContextMenu>
         );
       } catch (e) {

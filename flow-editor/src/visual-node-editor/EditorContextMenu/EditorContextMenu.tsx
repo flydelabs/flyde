@@ -10,10 +10,11 @@ import { isDefined } from "../../utils";
 import { NodeStyle, PinType, nodeInput, nodeOutput } from "@flyde/core";
 import produce from "immer";
 import React from "react";
-import { usePrompt, AppToaster, usePorts, toastMsg } from "../..";
+import { usePrompt, usePorts } from "../..";
 import { functionalChange } from "../../flow-editor/flyde-flow-change-type";
 import { NodeStyleMenu } from "../instance-view/NodeStyleMenu";
 import { useVisualNodeEditorContext } from "../VisualNodeEditorContext";
+import { useToast } from "@/hooks/use-toast";
 
 export interface EditorContextMenuProps {
   nodeIoEditable: boolean;
@@ -31,6 +32,8 @@ export function EditorContextMenu(props: EditorContextMenuProps) {
 
   const { node, onChangeNode: onChange } = useVisualNodeEditorContext();
   const { reportEvent } = usePorts();
+
+  const { toast } = useToast();
 
   const editCompletionOutputs = React.useCallback(async () => {
     const curr = node.completionOutputs?.join(",");
@@ -85,8 +88,10 @@ export function EditorContextMenu(props: EditorContextMenuProps) {
   const copyNodeToClipboard = React.useCallback(async () => {
     const str = JSON.stringify(node);
     await navigator.clipboard.writeText(str);
-    AppToaster.show({ message: "Copied!" });
-  }, [node]);
+    toast({
+      description: "Copied!",
+    });
+  }, [node, toast]);
 
   const onAddMainPin = React.useCallback(
     async (type: PinType) => {
@@ -111,9 +116,10 @@ export function EditorContextMenu(props: EditorContextMenuProps) {
           draft.outputsPosition[newPinId] = lastMousePos.current;
 
           if (draft.completionOutputs?.length) {
-            toastMsg(
-              "Note that this node has explicit completion outputs set. You may need to update them."
-            );
+            toast({
+              description:
+                "Note that this node has explicit completion outputs set. You may need to update them.",
+            });
           }
         }
       });
@@ -121,7 +127,7 @@ export function EditorContextMenu(props: EditorContextMenuProps) {
       onChange(newValue, functionalChange("add new io pin"));
       reportEvent("addIoPin", { type });
     },
-    [_prompt, lastMousePos, node, onChange, reportEvent]
+    [_prompt, lastMousePos, node, onChange, reportEvent, toast]
   );
 
   return (

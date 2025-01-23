@@ -1,7 +1,6 @@
 import { NodeStyle } from "@flyde/core";
 import React, { useCallback } from "react";
 import { PromptFn } from "../../../flow-editor/ports";
-import { toastMsg } from "../../../toaster";
 
 import {
   ContextMenuItem,
@@ -10,6 +9,8 @@ import {
   ContextMenuSubTrigger,
   ContextMenuSeparator,
 } from "@/components/ui/context-menu";
+
+import { useToast } from "@/hooks/use-toast";
 
 export interface NodeStyleMenuProps {
   style: NodeStyle | undefined;
@@ -31,6 +32,7 @@ const defaultStyle: NodeStyle = { size: "regular" };
 export const NodeStyleMenu: React.FC<NodeStyleMenuProps> = (props) => {
   const { onChange, style: _style } = props;
 
+  const { toast } = useToast();
   const style = _style || defaultStyle;
 
   const _prompt = props.promptFn;
@@ -67,9 +69,12 @@ export const NodeStyleMenu: React.FC<NodeStyleMenuProps> = (props) => {
       onChangeStyleProp("cssOverride", obj);
     } catch (e) {
       console.error(e);
-      toastMsg("Invalid object", "danger");
+      toast({
+        description: "Invalid custom style",
+        variant: "destructive",
+      });
     }
-  }, [_prompt, onChangeStyleProp, style.cssOverride]);
+  }, [_prompt, onChangeStyleProp, style.cssOverride, toast]);
 
   return (
     <React.Fragment>

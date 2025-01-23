@@ -1,5 +1,5 @@
 import { DevServerClient } from "@flyde/dev-server";
-import { EditorPorts, toastMsg } from "@flyde/flow-editor";
+import { EditorPorts } from "@flyde/flow-editor";
 import { useNavigate } from "react-router-dom";
 
 export type WebPortsConfig = {
@@ -22,7 +22,6 @@ export const createWebPorts = ({
       const params = new URLSearchParams(location.search);
       params.set("fileName", absPath);
       const newUrl = decodeURIComponent(`${location.pathname}?${params}`);
-      toastMsg(newUrl);
       navigate(newUrl);
     },
     readFlow: async ({ absPath }) => {
