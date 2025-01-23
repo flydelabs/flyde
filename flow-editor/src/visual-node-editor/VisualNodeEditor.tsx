@@ -11,7 +11,6 @@ import {
   connectionDataEquals,
   ConnectionNode,
   noop,
-  TRIGGER_PIN_ID,
   isInlineNodeInstance,
   isRefNodeInstance,
   InlineNodeInstance,
@@ -43,7 +42,6 @@ import { useBoundingclientrect, useDidMount } from "rooks";
 
 import {
   emptyObj,
-  createNewNodeInstance,
   ViewPort,
   roundNumber,
   fitViewPortToNode,
@@ -65,11 +63,6 @@ import useComponentSize from "@rehooks/component-size";
 import { NodeIoView, NodeIoViewProps } from "./node-io-view";
 
 import { vec, vSub, vZero } from "../physics";
-import {
-  QuickAddMenu,
-  QuickAddMenuData,
-  QuickMenuMatch,
-} from "./quick-add-menu";
 import { LayoutDebugger, LayoutDebuggerProps } from "./layout-debugger";
 import { preloadMonaco } from "../lib/preload-monaco";
 // import { InstancePanel } from "./instance-panel";
@@ -99,7 +92,6 @@ import {
 import { NodesLibrary } from "./NodesLibrary";
 import { RunFlowModal } from "./RunFlowModal";
 
-import { Play } from "@blueprintjs/icons";
 import { EditorContextMenu } from "./EditorContextMenu/EditorContextMenu";
 import { usePruneOrphanConnections } from "./usePruneOrphanConnections";
 import { SelectionBox } from "./SelectionBox/SelectionBox";
@@ -114,6 +106,7 @@ import { CustomNodeModal } from "./CustomNodeModal/CustomNodeModal";
 import { AddNodeMenu } from "./NodesLibrary/AddNodeMenu";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
+import { Play } from "lucide-react";
 
 export const NODE_HEIGHT = 28;
 
@@ -245,9 +238,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       const [didCenterInitially, setDidCenterInitially] = useState(false);
 
       const [runModalVisible, setRunModalVisible] = useState(false);
-
-      const [quickAddMenuVisible, setQuickAddMenuVisible] =
-        useState<QuickAddMenuData>();
 
       const [openInlineInstance, setOpenInlineInstance] = useState<{
         node: VisualNode;
@@ -717,7 +707,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             id={k}
             onDelete={nodeIoEditable ? onRemoveIoPin : undefined}
             onRename={nodeIoEditable ? onRenameIoPin : undefined}
-            onDblClick={onMainInputDblClick}
             closest={
               !!(
                 closestPin &&
@@ -743,55 +732,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           />
         ));
       };
-
-      const onPinDblClick = React.useCallback(
-        async (
-          ins: NodeInstance,
-          pinId: string,
-          type: PinType,
-          e: React.MouseEvent
-        ) => {
-          if (type === "input") {
-            // this used to open the static value modal, but now that it was removed, we just do nothing
-            // TODO - support a shortcut to static values here
-          } else {
-            const node = safelyGetNodeDef(ins, currResolvedDeps);
-            const nodeOutputs = getNodeOutputs(node);
-            const pin = nodeOutputs[pinId];
-
-            if (!pin) {
-              throw new Error("Dbl clicked on un-existing pin");
-            }
-
-            setQuickAddMenuVisible({
-              pos: { x: e.clientX, y: e.clientY },
-              ins,
-              targetNode: node,
-              pinId,
-              pinType: type,
-            });
-          }
-        },
-        [currResolvedDeps]
-      );
-
-      const onMainInputDblClick = React.useCallback(
-        async (pinId: string, e: React.MouseEvent) => {
-          const pin = node.inputs[pinId];
-
-          if (!pin) {
-            throw new Error("Dbl clicked on un-existing pin");
-          }
-
-          setQuickAddMenuVisible({
-            pos: { x: e.clientX, y: e.clientY },
-            pinId,
-            pinType: "input",
-            targetNode: node,
-          });
-        },
-        [node]
-      );
 
       const onMaybeZoomOrPan = React.useCallback(
         (e: WheelEvent) => {
@@ -921,80 +861,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           return m;
         }, new Map());
       }, [connections, instances]);
-
-      const onCloseQuickAdd = React.useCallback(() => {
-        setQuickAddMenuVisible(undefined);
-      }, []);
-
-      const onQuickAdd = React.useCallback(
-        async (match: QuickMenuMatch) => {
-          if (!quickAddMenuVisible) {
-            throw new Error(
-              "impossible state - quick add menu invoked but not available"
-            );
-          }
-
-          const { ins, pinId } = quickAddMenuVisible;
-
-          switch (match.type) {
-            case "import":
-            case "node": {
-              const deps =
-                match.type === "import"
-                  ? await onImportNode(match.importableNode)
-                  : currResolvedDeps;
-
-              const nodeToAdd =
-                match.type === "import"
-                  ? match.importableNode.node
-                  : match.node;
-              const newNodeIns = createNewNodeInstance(
-                nodeToAdd.id,
-                100,
-                lastMousePos.current,
-                deps
-              );
-
-              if (newNodeIns) {
-                const newValue = produce(node, (draft) => {
-                  draft.instances.push(newNodeIns);
-                  draft.connections.push({
-                    from: { insId: ins ? ins.id : THIS_INS_ID, pinId },
-                    to: { insId: newNodeIns.id, pinId: TRIGGER_PIN_ID },
-                  });
-                });
-
-                onChange(newValue, functionalChange("add-item-quick-menu"));
-                onCloseQuickAdd();
-              }
-              reportEvent("addNode", {
-                nodeId: nodeToAdd.id,
-                source: "quickAdd",
-              });
-              break;
-            }
-            case "value": {
-              if (!ins) {
-                toastMsg("Cannot add value to main input");
-                return;
-              }
-
-              // Do nothing, we don't support static values anymore
-              // TODO - find what to do here
-            }
-          }
-        },
-        [
-          quickAddMenuVisible,
-          onImportNode,
-          currResolvedDeps,
-          lastMousePos,
-          reportEvent,
-          node,
-          onChange,
-          onCloseQuickAdd,
-        ]
-      );
 
       const { onRequestImportables } = useDependenciesContext();
       const [showAddNodeMenu, setShowAddNodeMenu] = useState(false);
@@ -1575,7 +1441,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                       ancestorsInsIds
                     )}
                     onPinClick={onPinClick}
-                    onPinDblClick={onPinDblClick}
+                    onPinDblClick={noop}
                     onDragStart={onStartDraggingInstance}
                     onDragEnd={onInstanceDragEnd}
                     resolvedDeps={currResolvedDeps}
@@ -1657,18 +1523,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                   ancestorsInsIds={ancestorsInsIds}
                   viewPort={viewPort}
                 />
-                {quickAddMenuVisible ? (
-                  <QuickAddMenu
-                    targetNode={quickAddMenuVisible.targetNode}
-                    pinId={quickAddMenuVisible.pinId}
-                    pinType={quickAddMenuVisible.pinType}
-                    pos={quickAddMenuVisible.pos}
-                    resolvedDependencies={resolvedDependencies}
-                    node={node}
-                    onAdd={onQuickAdd}
-                    onClose={onCloseQuickAdd}
-                  />
-                ) : null}
                 <div className="viewport-controls-and-help">
                   <Button variant="ghost" size="sm" onClick={fitToScreen}>
                     Center
