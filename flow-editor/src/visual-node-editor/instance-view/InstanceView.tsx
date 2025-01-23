@@ -43,13 +43,23 @@ import {
   VisualNodeEditorProps,
 } from "../VisualNodeEditor";
 import { usePrompt } from "../..";
+
 import {
-  MenuItemProps,
-  Menu,
-  MenuItem,
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+  ContextMenuSub,
+  ContextMenuSubTrigger,
+  ContextMenuSubContent,
+} from "@/components/ui/context-menu";
+
+import {
   Dialog,
-  Classes,
-} from "@blueprintjs/core";
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 import { NodeStyleMenu } from "./NodeStyleMenu";
 import { useDarkMode } from "../../flow-editor/DarkModeContext";
@@ -473,21 +483,26 @@ export const InstanceView: React.FC<InstanceViewProps> =
 
         const pinName = getInputName(k);
 
-        return {
-          text: isVisible
-            ? isConnectedAndNotHidden
-              ? `Hide input "${pinName}" (disconnect first)`
-              : `Hide input "${pinName}"`
-            : `Show input "${pinName}"`,
-          onClick: () =>
-            onChangeVisibleInputs(
-              instance,
-              isVisible
-                ? _visibleInputs.filter((i) => i !== k)
-                : [..._visibleInputs, k]
-            ),
-          disabled: isConnectedAndNotHidden && isVisible,
-        };
+        return (
+          <ContextMenuItem
+            key={k}
+            disabled={isConnectedAndNotHidden && isVisible}
+            onClick={() =>
+              onChangeVisibleInputs(
+                instance,
+                isVisible
+                  ? _visibleInputs.filter((i) => i !== k)
+                  : [..._visibleInputs, k]
+              )
+            }
+          >
+            {isVisible
+              ? isConnectedAndNotHidden
+                ? `Hide input "${pinName}" (disconnect first)`
+                : `Hide input "${pinName}"`
+              : `Show input "${pinName}"`}
+          </ContextMenuItem>
+        );
       });
 
       const outputMenuItems = outputKeys.map((k) => {
@@ -496,68 +511,71 @@ export const InstanceView: React.FC<InstanceViewProps> =
 
         const pinName = getOutputName(k);
 
-        return {
-          text: isVisible
-            ? isConnected
-              ? `Hide output "${pinName}" (disconnect first)`
-              : `Hide output "${pinName}"`
-            : `Show output "${pinName}"`,
-          onClick: () =>
-            onChangeVisibleOutputs(
-              instance,
-              isVisible
-                ? _visibleOutputs.filter((i) => i !== k)
-                : [..._visibleOutputs, k]
-            ),
-          disabled: isConnected && isVisible,
-        };
+        return (
+          <ContextMenuItem
+            key={k}
+            disabled={isConnected && isVisible}
+            onClick={() =>
+              onChangeVisibleOutputs(
+                instance,
+                isVisible
+                  ? _visibleOutputs.filter((i) => i !== k)
+                  : [..._visibleOutputs, k]
+              )
+            }
+          >
+            {isVisible
+              ? isConnected
+                ? `Hide output "${pinName}" (disconnect first)`
+                : `Hide output "${pinName}"`
+              : `Show output "${pinName}"`}
+          </ContextMenuItem>
+        );
       });
 
-      const contextMenuItems: MenuItemProps[] = [
-        ...inputMenuItems,
-        ...outputMenuItems,
-        ...(isInlineNodeInstance(instance) && isVisualNode(instance.node)
-          ? [
-              {
-                text: "Ungroup inline node",
-                onClick: () => onUngroup(instance),
-              },
-            ]
-          : []),
-
-        { text: "Reorder inputs", onClick: _onChangeVisibleInputs },
-        { text: "Reorder outputs", onClick: _onChangeVisibleOutputs },
-        { text: `Set display name`, onClick: _onSetDisplayName },
-        { text: "Group selected instances", onClick: onGroupSelected },
-        {
-          text: "View/fork code",
-          onClick: () => props.onViewForkCode(instance),
-        },
-        {
-          text: "Delete instance",
-          intent: "danger",
-          onClick: _onDeleteInstance,
-        },
-      ];
       return (
-        <Menu>
-          {isMacroNodeInstance(instance) ? (
-            <MenuItem
-              text="Change configuration"
-              onClick={(e) => onDblClick(e)}
-            />
-          ) : null}
-          <MenuItem text="Style">
-            <NodeStyleMenu
-              style={style}
-              onChange={(s) => onChangeStyle(instance, s)}
-              promptFn={_prompt}
-            />
-          </MenuItem>
-          {contextMenuItems.map((item, key) => (
-            <MenuItem {...item} key={key} />
-          ))}
-        </Menu>
+        <ContextMenuContent>
+          {isMacroNodeInstance(instance) && (
+            <ContextMenuItem onClick={(e) => onDblClick(e)}>
+              Change configuration
+            </ContextMenuItem>
+          )}
+          <ContextMenuSub>
+            <ContextMenuSubTrigger>Style</ContextMenuSubTrigger>
+            <ContextMenuSubContent>
+              <NodeStyleMenu
+                style={style}
+                onChange={(s) => onChangeStyle(instance, s)}
+                promptFn={_prompt}
+              />
+            </ContextMenuSubContent>
+          </ContextMenuSub>
+          {inputMenuItems}
+          {outputMenuItems}
+          {isInlineNodeInstance(instance) && isVisualNode(instance.node) && (
+            <ContextMenuItem onClick={() => onUngroup(instance)}>
+              Ungroup inline node
+            </ContextMenuItem>
+          )}
+          <ContextMenuItem onClick={_onChangeVisibleInputs}>
+            Reorder inputs
+          </ContextMenuItem>
+          <ContextMenuItem onClick={_onChangeVisibleOutputs}>
+            Reorder outputs
+          </ContextMenuItem>
+          <ContextMenuItem onClick={_onSetDisplayName}>
+            Set display name
+          </ContextMenuItem>
+          <ContextMenuItem onClick={onGroupSelected}>
+            Group selected instances
+          </ContextMenuItem>
+          <ContextMenuItem onClick={() => props.onViewForkCode(instance)}>
+            View/fork code
+          </ContextMenuItem>
+          <ContextMenuItem className="text-red-500" onClick={_onDeleteInstance}>
+            Delete instance
+          </ContextMenuItem>
+        </ContextMenuContent>
       );
     }, [
       inputKeys,
@@ -587,26 +605,26 @@ export const InstanceView: React.FC<InstanceViewProps> =
     const maybeRenderInlineGroupEditor = () => {
       if (inlineGroupProps) {
         return (
-          <Dialog
-            isOpen={true}
-            onClose={props.onCloseInlineEditor}
-            className="inline-group-editor-container no-drag"
-            title={`Editing inline node ${content}`}
-          >
-            <main className={classNames(Classes.DIALOG_BODY)} tabIndex={0}>
-              <VisualNodeEditorProvider
-                boardData={inlineGroupProps.boardData}
-                onChangeBoardData={inlineGroupProps.onChangeBoardData}
-                node={inlineGroupProps.node}
-                onChangeNode={inlineGroupProps.onChangeNode}
-              >
-                <VisualNodeEditor
-                  {...props.inlineGroupProps}
-                  className="no-drag"
-                  ref={inlineEditorRef}
-                />
-              </VisualNodeEditorProvider>
-            </main>
+          <Dialog open={true} onOpenChange={() => props.onCloseInlineEditor()}>
+            <DialogContent className="inline-group-editor-container no-drag">
+              <DialogHeader>
+                <DialogTitle>Editing inline node {content}</DialogTitle>
+              </DialogHeader>
+              <div className="p-4" tabIndex={0}>
+                <VisualNodeEditorProvider
+                  boardData={inlineGroupProps.boardData}
+                  onChangeBoardData={inlineGroupProps.onChangeBoardData}
+                  node={inlineGroupProps.node}
+                  onChangeNode={inlineGroupProps.onChangeNode}
+                >
+                  <VisualNodeEditor
+                    {...props.inlineGroupProps}
+                    className="no-drag"
+                    ref={inlineEditorRef}
+                  />
+                </VisualNodeEditorProvider>
+              </div>
+            </DialogContent>
           </Dialog>
         );
       } else {

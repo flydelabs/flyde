@@ -2,13 +2,18 @@ import * as React from "react";
 import { getOutputName, InputMode, noop, PinType, Pos } from "@flyde/core";
 import { BaseNodeView } from "../base-node-view";
 import classNames from "classnames";
-import { Menu, MenuItem } from "@blueprintjs/core";
 import { usePrompt } from "../../flow-editor/ports";
 import { calcHistoryContent, useHistoryHelpers } from "../pin-view/helpers";
 import { getInputName } from "@flyde/core";
 import { useDarkMode } from "../../flow-editor/DarkModeContext";
 import { PinView } from "../pin-view/PinView";
 import { getMainPinDomId } from "../dom-ids";
+
+import {
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+} from "@/components/ui/context-menu";
 
 export interface NodeIoViewProps {
   id: string;
@@ -131,25 +136,50 @@ export const NodeIoView: React.FC<NodeIoViewProps> = React.memo(
 
     const contextMenuItems = React.useCallback(() => {
       return [
-        { text: `Current mode - ${inputMode}`, onClick: noop },
-        {
-          text: "Make required",
-          onClick: () => onChangeInputModeInner("required"),
-        },
-        {
-          text: "Make optional",
-          onClick: () => onChangeInputModeInner("optional"),
-        },
-        {
-          text: "Make required-if-connected",
-          onClick: () => onChangeInputModeInner("required-if-connected"),
-        },
-        {
-          text: "Set description",
-          onClick: _onSetDescription,
-        },
-        ...(props.onRename ? [{ text: "Rename", onClick: onRenameInner }] : []),
-        ...(props.onDelete ? [{ text: "Delete", onClick: onDeleteInner }] : []),
+        <ContextMenuItem key="mode" disabled>
+          Current mode - {inputMode}
+        </ContextMenuItem>,
+        <ContextMenuSeparator key="sep1" />,
+        <ContextMenuItem
+          key="required"
+          onClick={() => onChangeInputModeInner("required")}
+        >
+          Make required
+        </ContextMenuItem>,
+        <ContextMenuItem
+          key="optional"
+          onClick={() => onChangeInputModeInner("optional")}
+        >
+          Make optional
+        </ContextMenuItem>,
+        <ContextMenuItem
+          key="required-if-connected"
+          onClick={() => onChangeInputModeInner("required-if-connected")}
+        >
+          Make required-if-connected
+        </ContextMenuItem>,
+        <ContextMenuSeparator key="sep2" />,
+        <ContextMenuItem key="description" onClick={_onSetDescription}>
+          Set description
+        </ContextMenuItem>,
+        ...(props.onRename
+          ? [
+              <ContextMenuItem key="rename" onClick={onRenameInner}>
+                Rename
+              </ContextMenuItem>,
+            ]
+          : []),
+        ...(props.onDelete
+          ? [
+              <ContextMenuItem
+                key="delete"
+                className="text-red-500"
+                onClick={onDeleteInner}
+              >
+                Delete
+              </ContextMenuItem>,
+            ]
+          : []),
       ];
     }, [
       _onSetDescription,
@@ -160,6 +190,10 @@ export const NodeIoView: React.FC<NodeIoViewProps> = React.memo(
       props.onDelete,
       props.onRename,
     ]);
+
+    const getContextMenu = React.useCallback(() => {
+      return <ContextMenuContent>{contextMenuItems()}</ContextMenuContent>;
+    }, [contextMenuItems]);
 
     const onDblClickInner = React.useCallback(
       (e: any) => {
@@ -175,16 +209,6 @@ export const NodeIoView: React.FC<NodeIoViewProps> = React.memo(
         onSelect(id, type);
       }
     }, [id, type, onSelect]);
-
-    const getContextMenu = React.useCallback(() => {
-      return (
-        <Menu>
-          {contextMenuItems().map((item, key) => (
-            <MenuItem {...item} key={key} />
-          ))}
-        </Menu>
-      );
-    }, [contextMenuItems]);
 
     const displayName = type === "input" ? getInputName(id) : getOutputName(id);
 

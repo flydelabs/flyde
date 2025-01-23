@@ -5,11 +5,19 @@ import Draggable from "react-draggable";
 import { Pos, NodeTypeIcon } from "@flyde/core";
 import { useDarkMode } from "../../flow-editor/DarkModeContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 import {
   ContextMenu,
+  ContextMenuContent,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
+
+import {
   Tooltip,
-  ContextMenuContentProps,
-} from "@blueprintjs/core";
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export interface BaseNodeViewContextItem {
   label: string;
@@ -29,9 +37,7 @@ export interface BaseNodeViewProps {
   icon?: NodeTypeIcon;
   leftSide?: React.ReactNode;
   rightSide?: React.ReactNode;
-  contextMenuContent?:
-    | JSX.Element
-    | ((props: ContextMenuContentProps) => JSX.Element);
+  contextMenuContent?: React.ReactNode;
   selected?: boolean;
   dark?: boolean;
   overrideNodeBodyHtml?: string;
@@ -172,20 +178,22 @@ export const BaseNodeView: React.FC<BaseNodeViewProps> =
     const draggableContent = (
       <span className="base-node-view-wrapper">
         <div className={cm} style={zoomFixStyle} id={props.domId}>
-          <ContextMenu
-            className={classNames({ dark })}
-            content={contextMenuContent}
-            onClick={onClick}
-            onDoubleClick={onDoubleClick}
-          >
-            <Tooltip
-              className={classNames({ dark })}
-              content={description}
-              hoverOpenDelay={HOVER_DELAY}
-              placement="top"
-            >
-              {content}
-            </Tooltip>
+          <ContextMenu>
+            <TooltipProvider>
+              <Tooltip delayDuration={HOVER_DELAY}>
+                <ContextMenuTrigger
+                  onClick={onClick}
+                  onDoubleClick={onDoubleClick}
+                  className={classNames({ dark })}
+                >
+                  <TooltipTrigger asChild>{content}</TooltipTrigger>
+                </ContextMenuTrigger>
+                {description && (
+                  <TooltipContent side="top">{description}</TooltipContent>
+                )}
+                {contextMenuContent}
+              </Tooltip>
+            </TooltipProvider>
           </ContextMenu>
         </div>
       </span>
