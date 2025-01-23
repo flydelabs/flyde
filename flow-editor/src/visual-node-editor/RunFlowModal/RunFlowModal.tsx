@@ -3,19 +3,19 @@ import * as React from "react";
 // ;
 
 import Editor, { OnMount } from "@monaco-editor/react";
-import {
-  Button,
-  Callout,
-  Classes,
-  Dialog,
-  Intent,
-  Slider,
-} from "@blueprintjs/core";
-import classNames from "classnames";
 import { BaseNode } from "@flyde/core";
 import { useLocalStorage } from "../../lib/user-preferences";
 import { InfoTooltip } from "../../lib/InfoTooltip";
 import { usePorts } from "../../flow-editor/ports";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+} from "@/components/ui/dialog";
+import { Slider } from "@/components/ui/slider";
+import { cn } from "@/lib/utils";
 
 export interface RunFlowModalProps {
   node: BaseNode;
@@ -89,9 +89,9 @@ export const RunFlowModal: React.FC<RunFlowModalProps> = React.memo(
             />
 
             {optionals.length > 0 ? (
-              <Callout intent={Intent.NONE}>
+              <div className="rounded-md border border-muted bg-muted/50 p-4 text-sm text-muted-foreground">
                 Note: input(s) <code>{optionals.join(", ")}</code> are optional
-              </Callout>
+              </div>
             ) : null}
           </>
         );
@@ -101,41 +101,39 @@ export const RunFlowModal: React.FC<RunFlowModalProps> = React.memo(
     }, [flowInputs.length, optionals, inputsValue]);
 
     return (
-      <Dialog isOpen={true} onClose={props.onClose} className="run-flow-modal">
-        <main
-          className={classNames(Classes.DIALOG_BODY)}
-          onKeyDown={onKeyDown}
-          tabIndex={0}
-        >
-          {maybeInputs}
-          <div className="execution-delay-wrapper">
-            <label>
-              Execution delay:{" "}
-              <InfoTooltip content="Delay between each node execution. Useful for debugging." />
-            </label>
-            <Slider
-              value={executionDelay}
-              onChange={setExecutionDelay}
-              min={0}
-              labelStepSize={500}
-              stepSize={100}
-              labelRenderer={(val) => `${val}ms`}
-              max={1000}
-            />
-          </div>
-        </main>
-        <div className={Classes.DIALOG_FOOTER}>
-          <div className={Classes.DIALOG_FOOTER_ACTIONS}>
-            <Button onClick={onClose}>Close</Button>
-            <Button
-              onClick={_onRun}
-              intent={Intent.PRIMARY}
-              className="run-btn"
-            >
-              Run
+      <Dialog open={true} onOpenChange={() => onClose()}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <div className="space-y-4" onKeyDown={onKeyDown} tabIndex={0}>
+              {maybeInputs}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <label className="text-sm font-medium">
+                    Execution delay:
+                  </label>
+                  <InfoTooltip content="Delay between each node execution. Useful for debugging." />
+                </div>
+                <Slider
+                  value={[executionDelay]}
+                  onValueChange={([value]) => setExecutionDelay(value)}
+                  min={0}
+                  max={1000}
+                  step={100}
+                  className="w-full"
+                />
+                <div className="text-xs text-muted-foreground">
+                  {executionDelay}ms
+                </div>
+              </div>
+            </div>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={onClose}>
+              Close
             </Button>
-          </div>
-        </div>
+            <Button onClick={_onRun}>Run</Button>
+          </DialogFooter>
+        </DialogContent>
       </Dialog>
     );
   }

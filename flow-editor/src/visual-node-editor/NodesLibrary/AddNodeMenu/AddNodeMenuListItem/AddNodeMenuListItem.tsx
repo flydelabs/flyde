@@ -1,5 +1,6 @@
-import { Button, Label, Tag } from "@blueprintjs/core";
-import { BaseNode, ImportableSource, ImportedNode } from "@flyde/core";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { ImportableSource } from "@flyde/core";
 import classNames from "classnames";
 import React, { useCallback } from "react";
 import { AddNodeMenuFilter } from "../AddNodeMenu";
@@ -37,17 +38,21 @@ export const AddNodeMenuListItem: React.FC<AddNodeMenuListItemProps> = (
 
   return (
     <div
-      className={classNames("add-node-menu-list-item", {
-        selected: props.selected,
-      })}
+      className={classNames(
+        "flex items-center justify-between p-3 hover:bg-accent/50 cursor-pointer rounded-md",
+        {
+          "bg-accent": props.selected,
+        }
+      )}
       ref={ref}
       onClick={_onSelect}
     >
-      <div className="content">
-        <header>
-          <span className="name">{displayName ?? id}</span>
-          <Tag
-            interactive
+      <div className="flex-1">
+        <header className="flex items-center gap-2">
+          <span className="font-medium">{displayName ?? id}</span>
+          <Badge
+            variant="outline"
+            className="cursor-pointer hover:bg-accent"
             onClick={() =>
               onSetFilter({
                 type: "external",
@@ -55,20 +60,20 @@ export const AddNodeMenuListItem: React.FC<AddNodeMenuListItemProps> = (
                 namespace: node.namespace,
               })
             }
-            className="source"
-            minimal={true}
           >
             {module}
             {node.namespace ? ` / ${node.namespace}` : null}
-          </Tag>
+          </Badge>
         </header>
-        <div className="description">
+        <div className="text-sm text-muted-foreground mt-1">
           {description ? description : <em>No description</em>}
         </div>
       </div>
-      <aside>
-        <Button onClick={_onAdd}>Add</Button>
-      </aside>
+      <div>
+        <Button variant="secondary" size="sm" onClick={_onAdd}>
+          Add
+        </Button>
+      </div>
     </div>
   );
 };

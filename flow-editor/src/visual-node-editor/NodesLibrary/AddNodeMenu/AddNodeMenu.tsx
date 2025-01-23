@@ -1,16 +1,14 @@
+import { Button } from "@/components/ui/button";
 import {
-  Button,
-  Callout,
-  Classes,
   Dialog,
-  Icon,
-  Intent,
-  TreeNodeInfo,
-  Tree,
-  Tooltip,
-} from "@blueprintjs/core";
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { ImportableSource, simplePluralize } from "@flyde/core";
-import classNames from "classnames";
 import React, { useCallback, useEffect } from "react";
 import { LocalImportableResult } from "../../../flow-editor/DependenciesContext";
 import { usePorts } from "../../../flow-editor/ports";
@@ -18,7 +16,14 @@ import { InfoTooltip } from "../../../lib/InfoTooltip";
 import { Loader } from "../../../lib/loader";
 import { AddNodeMenuListItem } from "./AddNodeMenuListItem";
 import { AddNodeMenuResultsSummary } from "./AddNodeMenuResultsSummary";
-import { Help, Search } from "@blueprintjs/icons";
+import { HelpCircle, Search } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Tree, TreeNodeInfo } from "@/components/ui/tree";
 
 export interface AddNodeMenuProps {
   onRequestImportables: () => Promise<LocalImportableResult>;
@@ -26,12 +31,11 @@ export interface AddNodeMenuProps {
   onClose: () => void;
 }
 
-export const AddNodeMenuFilterTree = Tree.ofType<AddNodeMenuFilter>();
-
 export type AddNodeMenuFilter =
   | { type: "external"; module: string; namespace?: string }
   | { type: "internal"; file?: string }
   | { type: "all" };
+
 export type AddNodeMenuFilterStructure = {
   external: { module: string; namespaces: string[] }[];
   internal: { files: string[] };
@@ -63,7 +67,7 @@ export const AddNodeMenu: React.FC<AddNodeMenuProps> = (props) => {
     React.useState<ImportableSource>(null);
 
   const onNodeExpand = useCallback(
-    (node: TreeNodeInfo) => {
+    (node: TreeNodeInfo<AddNodeMenuFilter>) => {
       openNodes.add(node.id);
       setOpenNodes(new Set(openNodes));
     },
@@ -71,7 +75,7 @@ export const AddNodeMenu: React.FC<AddNodeMenuProps> = (props) => {
   );
 
   const onNodeCollapse = useCallback(
-    (node: TreeNodeInfo) => {
+    (node: TreeNodeInfo<AddNodeMenuFilter>) => {
       openNodes.delete(node.id);
       setOpenNodes(new Set(openNodes));
     },
@@ -205,23 +209,23 @@ export const AddNodeMenu: React.FC<AddNodeMenuProps> = (props) => {
   );
 
   const onNodeClick = useCallback(
-    ({ nodeData }: TreeNodeInfo<AddNodeMenuFilter>) => {
-      if (JSON.stringify(nodeData) === JSON.stringify(filter)) {
-        if (nodeData.type === "external") {
-          if (nodeData.namespace) {
-            setFilter({ type: "external", module: nodeData.module });
+    (node: TreeNodeInfo<AddNodeMenuFilter>) => {
+      if (JSON.stringify(node.nodeData) === JSON.stringify(filter)) {
+        if (node.nodeData.type === "external") {
+          if (node.nodeData.namespace) {
+            setFilter({ type: "external", module: node.nodeData.module });
           } else {
             setFilter({ type: "all" });
           }
-        } else if (nodeData.type === "internal") {
-          if (nodeData.file) {
+        } else if (node.nodeData.type === "internal") {
+          if (node.nodeData.file) {
             setFilter({ type: "internal" });
           } else {
             setFilter({ type: "all" });
           }
         }
       } else {
-        setFilter(nodeData);
+        setFilter(node.nodeData);
       }
     },
     [filter]
@@ -244,7 +248,7 @@ export const AddNodeMenu: React.FC<AddNodeMenuProps> = (props) => {
     }
     if (visibleImportables.length === 0) {
       return (
-        <div className="no-results">
+        <div className="space-y-4">
           <AddNodeMenuResultsSummary
             filter={filter}
             onChangeFilter={setFilter}
@@ -252,16 +256,19 @@ export const AddNodeMenu: React.FC<AddNodeMenuProps> = (props) => {
             onChangeQuery={setQuery}
             resultsCount={visibleImportables.length}
           />
-          <Callout className="callout" intent="primary">
-            Can't find a suitable node? Create one yourself!{" "}
-            <a
-              href="https://www.flyde.dev/docs/code-nodes"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Learn more
-            </a>
-          </Callout>
+          <Alert>
+            <AlertDescription>
+              Can't find a suitable node? Create one yourself!{" "}
+              <a
+                href="https://www.flyde.dev/docs/code-nodes"
+                target="_blank"
+                rel="noreferrer"
+                className="underline"
+              >
+                Learn more
+              </a>
+            </AlertDescription>
+          </Alert>
         </div>
       );
     }
@@ -275,22 +282,24 @@ export const AddNodeMenu: React.FC<AddNodeMenuProps> = (props) => {
           onChangeQuery={setQuery}
           resultsCount={visibleImportables.length}
         />
-        <div className="results">
-          {visibleImportables.map((importableNode) => (
-            <AddNodeMenuListItem
-              importableNode={importableNode}
-              key={
-                importableNode.node.id +
-                importableNode.node.namespace +
-                importableNode.module
-              }
-              onAdd={_onAddNode}
-              selected={selectedNode?.node === importableNode.node}
-              onSelect={setSelectedNode}
-              onSetFilter={setFilter}
-            />
-          ))}
-        </div>
+        <ScrollArea className="h-[400px]">
+          <div className="space-y-2 p-2">
+            {visibleImportables.map((importableNode) => (
+              <AddNodeMenuListItem
+                importableNode={importableNode}
+                key={
+                  importableNode.node.id +
+                  importableNode.node.namespace +
+                  importableNode.module
+                }
+                onAdd={_onAddNode}
+                selected={selectedNode?.node === importableNode.node}
+                onSelect={setSelectedNode}
+                onSetFilter={setFilter}
+              />
+            ))}
+          </div>
+        </ScrollArea>
       </React.Fragment>
     );
   }
@@ -301,92 +310,93 @@ export const AddNodeMenu: React.FC<AddNodeMenuProps> = (props) => {
     }
 
     return (
-      <React.Fragment>
-        <aside>
-          <div className="filter-header">
+      <div className="flex">
+        <aside className="w-64 border-r p-4">
+          <div className="flex items-center gap-2 mb-4">
             Filter by package{" "}
-            <Tooltip
-              content={
-                <span>
-                  Click to learn more about how packages work in Flyde{" "}
-                </span>
-              }
-              hoverCloseDelay={1500}
-            >
-              <a
-                target="_blank"
-                href="https://www.flyde.dev/docs/packages"
-                rel="noreferrer"
-              >
-                <Icon icon={<Help />} intent="primary" iconSize={12} />
-              </a>
-            </Tooltip>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <a
+                    target="_blank"
+                    href="https://www.flyde.dev/docs/packages"
+                    rel="noreferrer"
+                    className="cursor-pointer"
+                  >
+                    <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                  </a>
+                </TooltipTrigger>
+                <TooltipContent>
+                  Click to learn more about how packages work in Flyde
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
           <div className="tree-container">
-            <AddNodeMenuFilterTree
+            <Tree<AddNodeMenuFilter>
               contents={renderTreeNodes(filterStructure, filter, openNodes)}
               onNodeCollapse={onNodeCollapse}
               onNodeExpand={onNodeExpand}
               onNodeClick={onNodeClick}
-              className={Classes.ELEVATION_0}
+              className="border-none"
             />
           </div>
         </aside>
-        <main>{renderItems()}</main>
-      </React.Fragment>
+        <main className="flex-1 p-4">{renderItems()}</main>
+      </div>
     );
   }
 
   return (
-    <Dialog
-      isOpen={true}
-      title="Add Node Menu"
-      onClose={props.onClose}
-      className="add-node-menu"
-      isCloseButtonShown={true}
-    >
-      <main className={classNames(Classes.DIALOG_BODY)}>
-        <header>
-          <div className="bp5-input-group">
-            <Search />
-            <input
-              className="bp5-input"
+    <Dialog open onOpenChange={onClose}>
+      <DialogContent className="max-w-3xl">
+        <DialogHeader>
+          <DialogTitle>Add Node Menu</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4">
+          <div className="relative">
+            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
               type="search"
               placeholder="Search input"
-              dir="auto"
+              className="pl-8"
               autoFocus
               onChange={(e) => setQuery(e.target.value)}
               value={query}
               onKeyDown={onSearchKeyDown}
             />
           </div>
-          {stdLibInstalled ? null : (
-            <Callout intent={Intent.NONE} style={{ marginTop: 10 }}>
-              Using built-in @flyde/stdlib. It's recommended to explicitly
-              install it instead.{" "}
-              <Button
-                minimal
-                small
-                intent={Intent.PRIMARY}
-                onClick={onInstallRuntime}
-              >
-                Click here to install it using npm/yarn
-              </Button>
-            </Callout>
+          {!stdLibInstalled && (
+            <Alert>
+              <AlertDescription>
+                Using built-in @flyde/stdlib. It's recommended to explicitly
+                install it instead.{" "}
+                <Button
+                  variant="link"
+                  className="h-auto p-0"
+                  onClick={onInstallRuntime}
+                >
+                  Click here to install it using npm/yarn
+                </Button>
+              </AlertDescription>
+            </Alert>
           )}
-        </header>
-        <div className="content-wrapper">{renderContent()}</div>
-        {importablesErrors.length > 0 ? (
-          <Callout intent="warning" style={{ marginTop: "10px" }}>
-            Found {simplePluralize(importablesErrors.length, "corrupt flow")}
-            <InfoTooltip
-              content={importablesErrors
-                .map(({ path, message }) => `${path}: ${message}`)
-                .join(", ")}
-            />{" "}
-          </Callout>
-        ) : null}
-      </main>
+          {renderContent()}
+          {importablesErrors.length > 0 && (
+            <Alert variant="destructive">
+              <AlertDescription className="flex items-center gap-2">
+                Found{" "}
+                {simplePluralize(importablesErrors.length, "corrupt flow")}
+                <InfoTooltip
+                  content={importablesErrors
+                    .map(({ path, message }) => `${path}: ${message}`)
+                    .join(", ")}
+                />
+              </AlertDescription>
+            </Alert>
+          )}
+        </div>
+      </DialogContent>
     </Dialog>
   );
 };
@@ -428,7 +438,6 @@ function renderTreeNodes(
   const internals = {
     id: "internal",
     label: "Current Project",
-    // hasCaret: true,
     nodeData: { type: "internal" as const },
     isExpanded: expandedNodes.has("internal"),
     hasCaret: true,

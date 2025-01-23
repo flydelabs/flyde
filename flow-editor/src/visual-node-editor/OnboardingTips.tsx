@@ -9,10 +9,11 @@ import { VisualNode } from "@flyde/core";
 import { useVisualNodeEditorContext } from "./VisualNodeEditorContext";
 import { GroupEditorBoardData } from "./VisualNodeEditor";
 import { usePorts } from "../flow-editor/ports";
-import { Icon } from "@blueprintjs/core";
-import { Lightbulb, SmallTick } from "@blueprintjs/icons";
+import { Lightbulb, Check } from "lucide-react";
 import { useLocalStorage } from "../lib/user-preferences";
 import { useDarkMode } from "../flow-editor/DarkModeContext";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { cn } from "@/lib/utils";
 
 interface TipData {
   tip: string;
@@ -158,20 +159,35 @@ export const OnboardingTips: React.FC<OnboardingTipsProps> = () => {
   }, [currentTip, advanceTip, isCompleted, node, boardData, isAdvancing]);
 
   return isCompleted ? null : (
-    <div className={`onboarding-tips ${isDark ? "dark" : ""}`}>
-      {showFeedback ? (
-        <div className="onboarding-tip-feedback">
-          <Icon icon={<SmallTick />} />
-          {currIndex === tipsOrder.length - 1
-            ? "Great job! For more tips, check out the help menu."
-            : "Great job! Moving to the next tip..."}
-        </div>
-      ) : (
-        <div className="onboarding-tip-text">
-          <Icon icon={<Lightbulb size={12} />} />
-          {tips[currentTip].tip}
-        </div>
+    <div
+      className={cn(
+        "fixed top-4 left-1/2 -translate-x-1/2 z-50 max-w-md transition-all duration-200 ease-in-out",
+        !showTips && "opacity-0 -translate-y-2",
+        showTips && "opacity-100 translate-y-0"
       )}
+    >
+      <Alert
+        variant="default"
+        className={cn(
+          "flex items-start gap-2 shadow-lg p-3",
+          !showFeedback && "bg-secondary"
+        )}
+      >
+        <div className="mt-0.5 shrink-0">
+          {showFeedback ? (
+            <Check className="h-4 w-4" />
+          ) : (
+            <Lightbulb className="h-4 w-4" />
+          )}
+        </div>
+        <AlertDescription>
+          {showFeedback
+            ? currIndex === tipsOrder.length - 1
+              ? "Great job! For more tips, check out the help menu."
+              : "Great job! Moving to the next tip..."
+            : tips[currentTip].tip}
+        </AlertDescription>
+      </Alert>
     </div>
   );
 };
