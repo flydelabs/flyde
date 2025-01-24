@@ -126,7 +126,7 @@ export async function getWebviewContent(params: WebviewContentParams) {
       </style>
       ${await getScriptTagsFromReactAppHtml(extensionUri, webview, isDev)}
     </head>
-    <body class="${darkMode ? "bp5-dark dark-mode" : ""}">
+    <body class="${darkMode ? "dark" : ""}">
     <script type="text/javascript">
         window.__bootstrapData = "${serializedBootstrapData}"
     </script>

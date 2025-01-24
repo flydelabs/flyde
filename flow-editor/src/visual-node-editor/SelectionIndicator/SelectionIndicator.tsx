@@ -118,7 +118,7 @@ export const SelectionIndicator: React.FC<SelectionIndicatorProps> = (
   return (
     <div
       className={cn(
-        "selection-indicator flex items-center gap-2 p-2 rounded-md border",
+        "flex items-center gap-2 p-2 rounded-md border absolute bottom-[10px] left-1/2 -translate-x-1/2 text-xs z-[1] select-none",
         dark ? "bg-background border-border" : "bg-white border-input"
       )}
     >

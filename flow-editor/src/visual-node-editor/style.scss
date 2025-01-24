@@ -9,11 +9,8 @@
 @import "./MainInstanceEventsIndicator/MainInstanceEventsIndicator.scss";
 @import "./HelpBubble/HelpBubble.scss";
 @import "../vars.scss";
-@import "./SelectionIndicator/SelectionIndicator.scss";
 @import "./NodesLibrary/NodesLibrary.scss";
 @import "./RunFlowModal/RunFlowModal.scss";
-@import "./MacroInstanceEditor/MacroInstanceEditor.scss";
-@import "./CustomNodeModal/CustomNodeModal.scss";
 
 .visual-node-editor {
   &:not(.dark) {

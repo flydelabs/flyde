@@ -1599,7 +1599,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
               ) : null}
               <div className="run-btn-container">
                 <Button
-                  className="run-btn dark:bg-red-600 bg-yellow-300"
+                  className="run-btn"
                   onClick={openRunModal}
                   size="sm"
                   variant="default"
