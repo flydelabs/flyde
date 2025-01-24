@@ -1,5 +1,6 @@
-import { Radio, RadioGroup } from "@blueprintjs/core";
 import React from "react";
+import { RadioGroup, RadioGroupItem } from "@flyde/ui";
+import { Label } from "@flyde/ui";
 
 export type ConfigurableInputStatic<T> = {
   mode: "static";
@@ -34,11 +35,10 @@ export const ConfigurableInputEditor = function <T>({
   defaultStaticValue,
   modeLabel,
 }: ConfigurableInputEditorProps<T>) {
-  const handleModeChange = (e: React.FormEvent<HTMLInputElement>) => {
+  const handleModeChange = (newMode: string) => {
     onChange({
-      mode: e.currentTarget.value as "static" | "dynamic",
-      value:
-        e.currentTarget.value === "static" ? defaultStaticValue : undefined,
+      mode: newMode as "static" | "dynamic",
+      value: newMode === "static" ? defaultStaticValue : undefined,
     });
   };
 
@@ -49,27 +49,37 @@ export const ConfigurableInputEditor = function <T>({
     });
   };
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const MemoValueRenderer = React.useMemo(() => ValueRenderer, []);
+  const MemoValueRenderer = React.useMemo(() => ValueRenderer, [ValueRenderer]);
+
   return (
-    <>
+    <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+      <div style={{ marginBottom: "4px" }}>
+        <Label>{modeLabel}</Label>
+      </div>
       <RadioGroup
-        label={modeLabel}
-        onChange={handleModeChange}
-        selectedValue={value.mode}
-        inline
+        value={value.mode}
+        onValueChange={handleModeChange}
+        style={{ display: "flex", gap: "12px" }}
       >
-        <Radio label="Static" value="static" />
-        <Radio label="Dynamic" value="dynamic" />
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <RadioGroupItem value="static" id="static" />
+          <Label htmlFor="static">Static</Label>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <RadioGroupItem value="dynamic" id="dynamic" />
+          <Label htmlFor="dynamic">Dynamic</Label>
+        </div>
       </RadioGroup>
       {value.mode === "static" ? (
         <MemoValueRenderer value={value.value} onChange={handleValueChange} />
       ) : null}
-    </>
+    </div>
   );
 };
 
-export const createConfigurableInputEditor = <T extends Record<string, any>>(
+export const createConfigurableInputEditor = <
+  T extends Record<string, unknown>
+>(
   valueRenderer: React.FC<ValueCompProps<T>>
 ) => {
   return (props: Omit<ConfigurableInputEditorProps<T>, "valueRenderer">) => (

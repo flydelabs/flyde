@@ -1,4 +1,4 @@
-import { FormGroup, TextArea } from "@blueprintjs/core";
+import { FormGroup, Textarea } from "@flyde/ui";
 import type { CodeExpressionConfig } from "./CodeExpression.flyde";
 import React, { useCallback } from "react";
 import { getVariables } from "./getInlineVariables";
@@ -19,26 +19,24 @@ const CodeExpressionEditor: MacroEditorComp<CodeExpressionConfig> =
 
     return (
       <div>
-        <FormGroup
-          helperText={`Accepts any valid JS code that returns an expression`}
-        >
-          <TextArea
+        <FormGroup label="Accepts any valid JS code that returns an expression">
+          <Textarea
             value={value.value}
-            fill
+            style={{ width: "100%" }}
             onChange={(e) => changeValue(e.target.value)}
           />
         </FormGroup>
-        <div>
+        <div style={{ marginTop: "8px" }}>
           {vars.length > 0 ? (
-            <small>
+            <span style={{ fontSize: "0.875rem", color: "#666" }}>
               External inputs exposed from this expression:{" "}
               <em>{vars.join(", ")}</em>
-            </small>
+            </span>
           ) : (
-            <small>
+            <span style={{ fontSize: "0.875rem", color: "#666" }}>
               Expose external inputs by using the "inputs" object. For example,
               "inputs.a + inputs.b" will expose 2 inputs, a and b, and sum them.
-            </small>
+            </span>
           )}
         </div>
       </div>

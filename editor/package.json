@@ -9,9 +9,6 @@
   "license": "agpl-3.0",
   "proxy": "http://localhost:8484",
   "dependencies": {
-    "@blueprintjs/core": "^5.0.0",
-    "@blueprintjs/icons": "^5.0.0",
-    "@blueprintjs/select": "^5.0.0",
     "@flyde/core": "workspace:*",
     "@flyde/dev-server": "workspace:*",
     "@flyde/flow-editor": "workspace:*",

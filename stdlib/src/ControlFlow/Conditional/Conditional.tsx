@@ -1,4 +1,11 @@
-import { Divider, FormGroup, HTMLSelect } from "@blueprintjs/core";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Separator,
+} from "@flyde/ui";
 import { ConditionalConfig } from "./Conditional.flyde";
 import { ConditionType } from "./ConditionType";
 import React from "react";
@@ -41,34 +48,50 @@ const ConditionalEditor: MacroEditorComp<ConditionalConfig> =
     ].includes(value.condition.type);
 
     return (
-      <>
-        <FormGroup label="Condition Type">
-          <HTMLSelect
-            fill
+      <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        <div
+          style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}
+        >
+          <label style={{ fontSize: "0.875rem", fontWeight: 500 }}>
+            Condition Type
+          </label>
+          <Select
             value={value.condition.type}
-            onChange={(e) =>
+            onValueChange={(val) =>
               onChange({
                 ...value,
                 condition: {
-                  type: e.target.value as ConditionType,
+                  type: val as ConditionType,
                 },
               })
             }
           >
-            {Object.entries(conditionEnumToLabel).map(([value, label]) => (
-              <option key={value} value={value}>
-                {label}
-              </option>
-            ))}
-          </HTMLSelect>
-        </FormGroup>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {Object.entries(conditionEnumToLabel).map(([value, label]) => (
+                <SelectItem key={value} value={value}>
+                  {label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
         {(value.condition.type === ConditionType.Contains ||
           value.condition.type === ConditionType.NotContains) && (
-          <FormGroup
-            helperText={`For "Contains" and "Not Contains", the input value can be a string or an array. If it's a string, it checks if the string contains the compared value. If it's an array, it checks if the array includes the compared value.`}
-          />
+          <div
+            style={{ fontSize: "0.875rem", color: "var(--muted-foreground)" }}
+          >
+            For "Contains" and "Not Contains", the input value can be a string
+            or an array. If it's a string, it checks if the string contains the
+            compared value. If it's an array, it checks if the array includes
+            the compared value.
+          </div>
         )}
-        <Divider />
+
+        <Separator />
 
         <MacroConfigurableFieldEditor
           prompt={prompt}
@@ -95,7 +118,7 @@ const ConditionalEditor: MacroEditorComp<ConditionalConfig> =
             config={rightConfig}
           />
         )}
-      </>
+      </div>
     );
   };
 

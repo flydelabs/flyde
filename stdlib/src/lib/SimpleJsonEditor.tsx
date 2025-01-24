@@ -1,9 +1,17 @@
-import { FormGroup, TextArea } from "@blueprintjs/core";
+import { Label, Textarea } from "@flyde/ui";
 import React, { useCallback } from "react";
 
+type JsonValue =
+  | string
+  | number
+  | boolean
+  | null
+  | JsonValue[]
+  | { [key: string]: JsonValue };
+
 export function SimpleJsonEditor(props: {
-  value: any;
-  onChange: (value: any) => void;
+  value: JsonValue;
+  onChange: (value: JsonValue) => void;
   label?: string;
 }) {
   const [tempDataValue, setTempDataValue] = React.useState<string>(
@@ -27,12 +35,24 @@ export function SimpleJsonEditor(props: {
   );
 
   return (
-    <FormGroup
-      label={props.label}
-      intent={dataParseError ? "danger" : undefined}
-      helperText={dataParseError}
-    >
-      <TextArea value={tempDataValue} fill onChange={onValueChange} />
-    </FormGroup>
+    <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+      {props.label && <Label>{props.label}</Label>}
+      <Textarea
+        value={tempDataValue}
+        onChange={onValueChange}
+        style={{ width: "100%", minHeight: "100px" }}
+      />
+      {dataParseError && (
+        <div
+          style={{
+            color: "rgb(220, 38, 38)",
+            fontSize: "14px",
+            marginTop: "4px",
+          }}
+        >
+          {dataParseError}
+        </div>
+      )}
+    </div>
   );
 }

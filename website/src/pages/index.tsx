@@ -11,8 +11,8 @@ import Link from "@docusaurus/Link";
 import { IconStar } from "../components/IconStar";
 import { features } from "./_features";
 import { examples } from "./_examples";
-import { Button } from "@blueprintjs/core";
-import { Play } from "@blueprintjs/icons";
+import { Button } from "@flyde/ui";
+import { Play } from "@flyde/ui";
 import { useCases } from "./_useCases";
 
 const FIRST_EXAMPLE_IDX = 0;

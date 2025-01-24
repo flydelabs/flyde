@@ -1,6 +1,6 @@
-import { FormGroup, NumericInput, Radio, RadioGroup } from "@blueprintjs/core";
 import { MacroEditorComp } from "@flyde/core";
 import { CollectConfig } from "./Collect.flyde";
+import { FormGroup, NumericInput, RadioGroup, RadioGroupItem } from "@flyde/ui";
 
 import React from "react";
 import { ConfigurableInputEditor } from "../../lib/ConfigurableInputEditor";
@@ -27,8 +27,8 @@ const CollectEditor: MacroEditorComp<CollectConfig> = function CollectEditor({
   onChange,
 }) {
   const handleStrategyChange = React.useCallback(
-    (e: React.FormEvent<HTMLInputElement>) => {
-      const strategy = e.currentTarget.value as CollectConfig["strategy"];
+    (value: string) => {
+      const strategy = value as CollectConfig["strategy"];
       const defaultValue = defaultValuePerStrategy[strategy];
       onChange(defaultValue);
     },
@@ -52,6 +52,7 @@ const CollectEditor: MacroEditorComp<CollectConfig> = function CollectEditor({
                       count: { mode: "static", value: e },
                     })
                   }
+                  style={{ width: 80 }}
                 />
               </FormGroup>
             )}
@@ -74,6 +75,7 @@ const CollectEditor: MacroEditorComp<CollectConfig> = function CollectEditor({
                       time: { mode: "static", value: e },
                     })
                   }
+                  style={{ width: 80 }}
                 />
               </FormGroup>
             )}
@@ -85,19 +87,33 @@ const CollectEditor: MacroEditorComp<CollectConfig> = function CollectEditor({
   }, [value, onChange]);
 
   return (
-    <>
-      <RadioGroup
-        label="Collection strategy:"
-        onChange={handleStrategyChange}
-        selectedValue={value.strategy}
-        inline
-      >
-        <Radio label="Count" value="count" />
-        <Radio label="Time" value="time" />
-        <Radio label="Dynamic" value="trigger" />
-      </RadioGroup>
+    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+      <div style={{ display: "flex", gap: "1rem" }}>
+        <RadioGroup value={value.strategy} onValueChange={handleStrategyChange}>
+          <div style={{ display: "flex", gap: "1rem" }}>
+            <div
+              style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
+            >
+              <RadioGroupItem value="count" id="count" />
+              <label htmlFor="count">Count</label>
+            </div>
+            <div
+              style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
+            >
+              <RadioGroupItem value="time" id="time" />
+              <label htmlFor="time">Time</label>
+            </div>
+            <div
+              style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
+            >
+              <RadioGroupItem value="trigger" id="trigger" />
+              <label htmlFor="trigger">Dynamic</label>
+            </div>
+          </div>
+        </RadioGroup>
+      </div>
       {innerEditor}
-    </>
+    </div>
   );
 };
 

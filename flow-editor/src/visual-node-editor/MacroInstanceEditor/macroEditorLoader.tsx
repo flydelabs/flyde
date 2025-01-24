@@ -1,7 +1,5 @@
 import { MacroNodeDefinition } from "@flyde/core";
 import React from "react";
-import * as Blueprint from "@blueprintjs/core";
-import * as BlueprintSelect from "@blueprintjs/select";
 import { StructuredMacroEditorComp } from "./StructuredMacroEditorComp";
 
 export function loadMacroEditor(
@@ -11,11 +9,6 @@ export function loadMacroEditor(
   const { id, editorConfig } = macroNode;
 
   const exportId = `__MacroNode__${id}`;
-
-  // ensure React and BP are available for the editor comps
-  w.React = React;
-  w.Blueprint = Blueprint;
-  w.BlueprintSelect = BlueprintSelect;
 
   if (editorConfig.type === "custom") {
     try {

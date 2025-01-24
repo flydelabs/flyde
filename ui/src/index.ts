@@ -21,6 +21,10 @@ export * from "./components/ui/form";
 export * from "./components/ui/tooltip";
 export * from "./components/ui/dropdown-menu";
 export * from "./components/ui/dialog";
-
+export * from "./components/ui/checkbox";
+export * from "./components/ui/radio-group";
+export * from "./components/ui/numeric-input";
+export * from "./components/ui/form-group";
+export * from "./icons";
 export * from "./hooks/use-toast";
 export * from "./lib/utils";
