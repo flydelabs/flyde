@@ -7,8 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@flyde/ui";
-import { Alert, AlertDescription, AlertTitle } from "@flyde/ui";
-import { Info, GitFork } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle, Info, GitFork } from "@flyde/ui";
 
 import {
   MacroNodeDefinition,

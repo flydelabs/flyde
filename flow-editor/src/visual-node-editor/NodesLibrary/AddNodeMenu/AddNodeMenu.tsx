@@ -11,12 +11,13 @@ import { InfoTooltip } from "../../../lib/InfoTooltip";
 import { Loader } from "../../../lib/loader";
 import { AddNodeMenuListItem } from "./AddNodeMenuListItem";
 import { AddNodeMenuResultsSummary } from "./AddNodeMenuResultsSummary";
-import { HelpCircle, Search } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
+  HelpCircle,
+  Search,
 } from "@flyde/ui";
 import { Tree, TreeNodeInfo } from "@flyde/ui";
 

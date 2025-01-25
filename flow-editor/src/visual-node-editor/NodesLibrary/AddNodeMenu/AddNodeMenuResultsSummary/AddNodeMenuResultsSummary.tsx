@@ -1,5 +1,5 @@
 import { Badge } from "@flyde/ui";
-import { X } from "lucide-react";
+import { X } from "@flyde/ui";
 import React from "react";
 import { AddNodeMenuFilter } from "../AddNodeMenu";
 

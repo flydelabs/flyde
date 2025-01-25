@@ -9,10 +9,9 @@ import { VisualNode } from "@flyde/core";
 import { useVisualNodeEditorContext } from "./VisualNodeEditorContext";
 import { GroupEditorBoardData } from "./VisualNodeEditor";
 import { usePorts } from "../flow-editor/ports";
-import { Lightbulb, Check } from "lucide-react";
 import { useLocalStorage } from "../lib/user-preferences";
 import { useDarkMode } from "../flow-editor/DarkModeContext";
-import { Alert, AlertDescription } from "@flyde/ui";
+import { Alert, AlertDescription, Lightbulb, Check } from "@flyde/ui";
 import { cn } from "@/lib/utils";
 
 interface TipData {

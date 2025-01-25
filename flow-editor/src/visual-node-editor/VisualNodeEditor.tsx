@@ -103,8 +103,7 @@ import {
 import { useEditorCommands } from "./useEditorCommands";
 import { CustomNodeModal } from "./CustomNodeModal/CustomNodeModal";
 import { AddNodeMenu } from "./NodesLibrary/AddNodeMenu";
-import { Button, Slider, Toaster, useToast } from "@flyde/ui";
-import { Play } from "lucide-react";
+import { Button, Slider, Toaster, useToast, Play } from "@flyde/ui";
 
 export const NODE_HEIGHT = 28;
 

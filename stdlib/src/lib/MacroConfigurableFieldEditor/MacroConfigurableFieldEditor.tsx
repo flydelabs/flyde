@@ -4,6 +4,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  Settings,
 } from "@flyde/ui";
 import {
   MacroConfigurableValue,
@@ -12,7 +13,6 @@ import {
 import { MacroConfigurableValueBaseEditor } from "./MacroConfigurableValueBaseEditor";
 import { useCallback, useMemo } from "react";
 import { convertValue } from "./convertValues";
-import { Settings } from "lucide-react";
 import React from "react";
 
 export function MacroConfigurableFieldEditor(props: {

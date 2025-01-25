@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ChevronDown, ChevronRight } from "lucide-react";
+import { ChevronDown, ChevronRight } from "@/icons";
 import { cn } from "@/lib/utils";
 
 export interface TreeNodeInfo<T = {}> {

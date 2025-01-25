@@ -27,3 +27,5 @@ export * from "./components/ui/numeric-input";
 export * from "./components/ui/form-group";
 export * from "./hooks/use-toast";
 export * from "./lib/utils";
+
+export * from "./icons";
