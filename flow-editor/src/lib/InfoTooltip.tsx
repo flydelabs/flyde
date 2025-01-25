@@ -1,5 +1,6 @@
 import React from "react";
-import { Info } from "lucide-react";
+
+import { Info } from "@flyde/ui/dist/icons";
 import {
   Tooltip,
   TooltipContent,
