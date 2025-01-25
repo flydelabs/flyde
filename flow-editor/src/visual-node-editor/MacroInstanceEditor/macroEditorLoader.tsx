@@ -6,6 +6,7 @@ export function loadMacroEditor(
   macroNode: MacroNodeDefinition<any>
 ): React.FC<any> {
   const w: any = window;
+  w.React = React;
   const { id, editorConfig } = macroNode;
 
   const exportId = `__MacroNode__${id}`;

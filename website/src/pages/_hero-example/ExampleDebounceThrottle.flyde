@@ -28,7 +28,7 @@ node:
         size: regular
     - pos:
         x: -1500.3598461914062
-        y: -295.1368161243169
+        y: -294.1368161243169
       id: eaa2b80mmdusjvxi3fve0du1
       inputConfig: {}
       nodeId: Debounce__eaa2b80mmdusjvxi3fve0du1
@@ -96,8 +96,8 @@ node:
           type: string
           value: ⭐️
     - pos:
-        x: -1093.044921875
-        y: -273.38109693727887
+        x: -1094.044921875
+        y: -225.38109693727887
       id: lfrwwz35676vn1hb9ykzpewd
       inputConfig: {}
       nodeId: Collect__lfrwwz35676vn1hb9ykzpewd
