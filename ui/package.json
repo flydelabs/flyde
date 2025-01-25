@@ -32,7 +32,6 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^1.2.1",
     "cmdk": "1.0.0",
-    "@/icons": "^0.473.0",
     "react-hook-form": "^7.54.2",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7"
