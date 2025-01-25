@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "scripts": {
-    "test": "mocha src/**/*.spec.tsx --require ts-node/register",
+    "test": "mocha src/**/*.spec.tsx --require ts-node/register --require tsconfig-paths/register",
     "dev:ts": "tsc -p . -w --incremental",
     "dev": "concurrently \"tsc -p . -w --incremental\" \"tsc-alias -w\" \"tailwindcss -i ./src/styles/tailwind-entry.css -o ./dist/styles/tailwind.scss --watch\"",
     "__publish": "npm version patch && npm publish",
