@@ -11,13 +11,11 @@ import {
   connectionDataEquals,
   ConnectionNode,
   noop,
-  TRIGGER_PIN_ID,
   isInlineNodeInstance,
   isRefNodeInstance,
   InlineNodeInstance,
   connectionNode,
   ImportedNodeDef,
-  getNodeOutputs,
   Pos,
   getNodeInputs,
   externalConnectionNode,
@@ -29,6 +27,7 @@ import {
   MacroNodeDefinition,
   NodeOrMacroDefinition,
   CodeNodeDefinition,
+  getNodeOutputs,
 } from "@flyde/core";
 
 import { InstanceView, InstanceViewProps } from "./instance-view/InstanceView";
@@ -37,11 +36,12 @@ import {
   ConnectionViewProps,
 } from "./connection-view/ConnectionView";
 import { entries, Size } from "../utils";
+
+import { ContextMenu, ContextMenuTrigger } from "@flyde/ui";
 import { useBoundingclientrect, useDidMount } from "rooks";
 
 import {
   emptyObj,
-  createNewNodeInstance,
   ViewPort,
   roundNumber,
   fitViewPortToNode,
@@ -60,19 +60,12 @@ import { useState, useRef, useEffect, DragEvent } from "react";
 import { useHotkeys } from "../lib/react-utils/use-hotkeys";
 import useComponentSize from "@rehooks/component-size";
 
-import { Slider, ContextMenu, Button } from "@blueprintjs/core";
 import { NodeIoView, NodeIoViewProps } from "./node-io-view";
 
 import { vec, vSub, vZero } from "../physics";
-import {
-  QuickAddMenu,
-  QuickAddMenuData,
-  QuickMenuMatch,
-} from "./quick-add-menu";
 import { LayoutDebugger, LayoutDebuggerProps } from "./layout-debugger";
 import { preloadMonaco } from "../lib/preload-monaco";
 // import { InstancePanel } from "./instance-panel";
-import { toastMsg } from "../toaster";
 import {
   functionalChange,
   metaChange,
@@ -98,7 +91,6 @@ import {
 import { NodesLibrary } from "./NodesLibrary";
 import { RunFlowModal } from "./RunFlowModal";
 
-import { Play } from "@blueprintjs/icons";
 import { EditorContextMenu } from "./EditorContextMenu/EditorContextMenu";
 import { usePruneOrphanConnections } from "./usePruneOrphanConnections";
 import { SelectionBox } from "./SelectionBox/SelectionBox";
@@ -111,10 +103,7 @@ import {
 import { useEditorCommands } from "./useEditorCommands";
 import { CustomNodeModal } from "./CustomNodeModal/CustomNodeModal";
 import { AddNodeMenu } from "./NodesLibrary/AddNodeMenu";
-
-const MemodSlider = React.memo(Slider);
-
-const sliderRenderer = () => null;
+import { Button, Slider, Toaster, useToast, Play } from "@flyde/ui";
 
 export const NODE_HEIGHT = 28;
 
@@ -199,6 +188,8 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
       const { resolvedDependencies } = useDependenciesContext();
 
+      const { toast } = useToast();
+
       const {
         node,
         onChangeNode: onChange,
@@ -210,7 +201,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
       const darkMode = useDarkMode();
 
-      const { reportEvent, onCreateCustomNode } = usePorts();
+      const { onCreateCustomNode } = usePorts();
 
       const parentViewport = props.parentViewport || defaultViewPort;
 
@@ -246,9 +237,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       const [didCenterInitially, setDidCenterInitially] = useState(false);
 
       const [runModalVisible, setRunModalVisible] = useState(false);
-
-      const [quickAddMenuVisible, setQuickAddMenuVisible] =
-        useState<QuickAddMenuData>();
 
       const [openInlineInstance, setOpenInlineInstance] = useState<{
         node: VisualNode;
@@ -663,7 +651,10 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         (ins: NodeInstance, shift: boolean) => {
           if (shift) {
             if (isMacroNodeInstance(ins)) {
-              toastMsg("Cannot edit macro node instance");
+              toast({
+                description: "Cannot edit macro node instance",
+                variant: "destructive",
+              });
               return;
             }
             const node = isInlineNodeInstance(ins)
@@ -673,7 +664,10 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
               throw new Error(`Impossible state inspecting inexisting node`);
             }
             if (!isVisualNode(node)) {
-              toastMsg("Cannot inspect a non visual node", "warning");
+              toast({
+                description: "Cannot inspect a non visual node",
+                variant: "default",
+              });
               //`Impossible state inspecting visual node`);
               return;
             }
@@ -689,17 +683,23 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
               if (isVisualNode(node)) {
                 setOpenInlineInstance({ insId: ins.id, node });
               } else {
-                toastMsg("Editing this type of node is not supported");
+                toast({
+                  description: "Editing this type of node is not supported",
+                  variant: "default",
+                });
               }
               return;
             } else if (isResolvedMacroNodeInstance(ins)) {
               setEditedMacroInstance({ ins });
             } else {
-              toastMsg("Editing this type of node is not supported");
+              toast({
+                description: "Editing this type of node is not supported",
+                variant: "default",
+              });
             }
           }
         },
-        [onEditNode, currResolvedDeps, currentInsId]
+        [currResolvedDeps, currentInsId, toast, onEditNode]
       );
 
       const renderMainPins = (type: PinType) => {
@@ -718,7 +718,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             id={k}
             onDelete={nodeIoEditable ? onRemoveIoPin : undefined}
             onRename={nodeIoEditable ? onRenameIoPin : undefined}
-            onDblClick={onMainInputDblClick}
             closest={
               !!(
                 closestPin &&
@@ -744,55 +743,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           />
         ));
       };
-
-      const onPinDblClick = React.useCallback(
-        async (
-          ins: NodeInstance,
-          pinId: string,
-          type: PinType,
-          e: React.MouseEvent
-        ) => {
-          if (type === "input") {
-            // this used to open the static value modal, but now that it was removed, we just do nothing
-            // TODO - support a shortcut to static values here
-          } else {
-            const node = safelyGetNodeDef(ins, currResolvedDeps);
-            const nodeOutputs = getNodeOutputs(node);
-            const pin = nodeOutputs[pinId];
-
-            if (!pin) {
-              throw new Error("Dbl clicked on un-existing pin");
-            }
-
-            setQuickAddMenuVisible({
-              pos: { x: e.clientX, y: e.clientY },
-              ins,
-              targetNode: node,
-              pinId,
-              pinType: type,
-            });
-          }
-        },
-        [currResolvedDeps]
-      );
-
-      const onMainInputDblClick = React.useCallback(
-        async (pinId: string, e: React.MouseEvent) => {
-          const pin = node.inputs[pinId];
-
-          if (!pin) {
-            throw new Error("Dbl clicked on un-existing pin");
-          }
-
-          setQuickAddMenuVisible({
-            pos: { x: e.clientX, y: e.clientY },
-            pinId,
-            pinType: "input",
-            targetNode: node,
-          });
-        },
-        [node]
-      );
 
       const onMaybeZoomOrPan = React.useCallback(
         (e: WheelEvent) => {
@@ -892,21 +842,21 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           });
         });
         if (invalids.length > 0) {
-          toastMsg(
-            `Found ${
+          toast({
+            description: `Found ${
               invalids.length
             } invalid visible inputs/outputs: ${invalids.join(
               ", "
             )}. Resetting to full list`,
-            "warning"
-          );
+            variant: "default",
+          });
 
           onChange(
             newNode,
             functionalChange("reset corrupt visible inputs/outputs")
           );
         }
-      }, [instances, onChange, node, currResolvedDeps]);
+      }, [instances, onChange, node, currResolvedDeps, toast]);
 
       useEffect(() => {
         const instanceMap = new Map(instances.map((ins) => [ins.id, ins]));
@@ -923,92 +873,8 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         }, new Map());
       }, [connections, instances]);
 
-      const onCloseQuickAdd = React.useCallback(() => {
-        setQuickAddMenuVisible(undefined);
-      }, []);
-
-      const onQuickAdd = React.useCallback(
-        async (match: QuickMenuMatch) => {
-          if (!quickAddMenuVisible) {
-            throw new Error(
-              "impossible state - quick add menu invoked but not available"
-            );
-          }
-
-          const { ins, pinId } = quickAddMenuVisible;
-
-          switch (match.type) {
-            case "import":
-            case "node": {
-              const deps =
-                match.type === "import"
-                  ? await onImportNode(match.importableNode)
-                  : currResolvedDeps;
-
-              const nodeToAdd =
-                match.type === "import"
-                  ? match.importableNode.node
-                  : match.node;
-              const newNodeIns = createNewNodeInstance(
-                nodeToAdd.id,
-                100,
-                lastMousePos.current,
-                deps
-              );
-
-              if (newNodeIns) {
-                const newValue = produce(node, (draft) => {
-                  draft.instances.push(newNodeIns);
-                  draft.connections.push({
-                    from: { insId: ins ? ins.id : THIS_INS_ID, pinId },
-                    to: { insId: newNodeIns.id, pinId: TRIGGER_PIN_ID },
-                  });
-                });
-
-                onChange(newValue, functionalChange("add-item-quick-menu"));
-                onCloseQuickAdd();
-              }
-              reportEvent("addNode", {
-                nodeId: nodeToAdd.id,
-                source: "quickAdd",
-              });
-              break;
-            }
-            case "value": {
-              if (!ins) {
-                toastMsg("Cannot add value to main input");
-                return;
-              }
-
-              // Do nothing, we don't support static values anymore
-              // TODO - find what to do here
-            }
-          }
-        },
-        [
-          quickAddMenuVisible,
-          onImportNode,
-          currResolvedDeps,
-          lastMousePos,
-          reportEvent,
-          node,
-          onChange,
-          onCloseQuickAdd,
-        ]
-      );
-
       const { onRequestImportables } = useDependenciesContext();
       const [showAddNodeMenu, setShowAddNodeMenu] = useState(false);
-
-      const getContextMenu = React.useCallback(() => {
-        return (
-          <EditorContextMenu
-            nodeIoEditable={nodeIoEditable}
-            lastMousePos={lastMousePos}
-            onOpenNodesLibrary={() => setShowAddNodeMenu(true)}
-          />
-        );
-      }, [nodeIoEditable, lastMousePos]);
 
       useHotkeys(
         "shift+c",
@@ -1502,7 +1368,10 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           try {
             const code = nodeDef.sourceCode;
             if (!code) {
-              toastMsg("No source code found");
+              toast({
+                description: "No source code found",
+                variant: "destructive",
+              });
               return;
             }
             setCustomNodeForkData({ node: nodeDef, initialCode: code });
@@ -1511,243 +1380,243 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             console.error("Failed to get node source:", e);
           }
         },
-        [currResolvedDeps]
+        [currResolvedDeps, toast]
       );
 
       try {
         return (
-          <ContextMenu
-            className={classNames("visual-node-editor", props.className, {
-              dark: darkMode,
-            })}
-            data-id={node.id}
-            content={getContextMenu()}
-            disabled={!isBoardInFocus.current}
-          >
-            <main
-              className="board-editor-inner"
-              onMouseDown={onMouseDown}
-              onMouseUp={onMouseUp}
-              onMouseMove={onMouseMove}
-              onMouseLeave={onMouseLeave}
-              onDragOver={onDragOver}
-              onDrop={onDrop}
-              ref={boardRef as any}
-              style={{
-                ...backgroundStyle,
-                cursor: cursorStyle,
-              }}
+          <ContextMenu>
+            <ContextMenuTrigger
+              className={classNames("visual-node-editor", props.className, {
+                dark: darkMode,
+              })}
+              data-id={node.id}
+              disabled={!isBoardInFocus.current}
             >
-              <React.Fragment>
-                <LayoutDebugger
-                  vp={viewPort}
-                  node={node}
-                  extraDebug={emptyList}
-                  mousePos={lastMousePos.current}
-                />
-              </React.Fragment>
-              {/* <div className='debug-info'>
+              <main
+                className="board-editor-inner"
+                onMouseDown={onMouseDown}
+                onMouseUp={onMouseUp}
+                onMouseMove={onMouseMove}
+                onMouseLeave={onMouseLeave}
+                onDragOver={onDragOver}
+                onDrop={onDrop}
+                ref={boardRef as any}
+                style={{
+                  ...backgroundStyle,
+                  cursor: cursorStyle,
+                }}
+              >
+                <React.Fragment>
+                  <LayoutDebugger
+                    vp={viewPort}
+                    node={node}
+                    extraDebug={emptyList}
+                    mousePos={lastMousePos.current}
+                  />
+                </React.Fragment>
+                {/* <div className='debug-info'>
               <span className='viewport'>
                 {`${viewPort.pos.x.toFixed(2)}, ${viewPort.pos.y.toFixed(2)} | ${viewPort.zoom}`}
               </span>
             </div> */}
 
-              <ConnectionView
-                resolvedNodes={currResolvedDeps}
-                currentInsId={currentInsId}
-                ancestorsInsIds={ancestorsInsIds}
-                size={vpSize}
-                node={node}
-                boardPos={boardPos}
-                instances={instances}
-                connections={connectionsToRender}
-                futureConnection={maybeRenderFutureConnection()}
-                onDblClick={noop}
-                viewPort={viewPort}
-                parentVp={parentViewport}
-                selectedInstances={selectedInstances}
-                selectedConnections={selectedConnections}
-                toggleHidden={toggleConnectionHidden}
-                removeConnection={removeConnection}
-                onSelectConnection={onSelectConnection}
-                lastMousePos={lastMousePos.current}
-                draggedSource={draggedConnection}
-              />
-              {renderMainPins("input")}
-              {instances.map((ins) => (
-                <InstanceView
-                  onUngroup={onUnGroup}
-                  connectionsPerInput={
-                    instancesConnectToPinsRef.current.get(ins.id) || emptyObj
-                  }
-                  node={safelyGetNodeDef(ins, currResolvedDeps)}
-                  ancestorsInsIds={fullInsIdPath(currentInsId, ancestorsInsIds)}
-                  onPinClick={onPinClick}
-                  onPinDblClick={onPinDblClick}
-                  onDragStart={onStartDraggingInstance}
-                  onDragEnd={onInstanceDragEnd}
-                  resolvedDeps={currResolvedDeps}
-                  onDragMove={onInstanceDragMove}
-                  onDblClick={onDblClickInstance}
-                  onSelect={onSelectInstance}
-                  onToggleSticky={onToggleSticky}
-                  selected={selectedInstances.indexOf(ins.id) !== -1}
-                  dragged={draggingId === ins.id}
-                  onInspectPin={_onInspectPin}
-                  selectedInput={
-                    to && isInternalConnectionNode(to) && to.insId === ins.id
-                      ? to.pinId
-                      : undefined
-                  }
-                  selectedOutput={
-                    from &&
-                    isInternalConnectionNode(from) &&
-                    from.insId === ins.id
-                      ? from.pinId
-                      : undefined
-                  }
-                  closestPin={
-                    closestPin && closestPin.ins.id === ins.id
-                      ? closestPin
-                      : undefined
-                  }
-                  queuedInputsData={queueInputsData[ins.id] ?? emptyObj}
-                  instance={ins}
-                  connections={connections}
-                  // was too lazy to remove/fix the breakpoint/log below
-                  onTogglePinBreakpoint={noop}
-                  onTogglePinLog={noop}
-                  // onTogglePinLog={onToggleLog}
-                  // onTogglePinBreakpoint={onToggleBreakpoint}
-                  viewPort={viewPort}
-                  onChangeVisibleInputs={onChangeVisibleInputs}
-                  onChangeVisibleOutputs={onChangeVisibleOutputs}
-                  onSetDisplayName={onChangeInstanceDisplayName}
-                  onDeleteInstance={onDeleteInstance}
-                  key={ins.id}
-                  forceShowMinimized={
-                    from || draggedConnection?.from
-                      ? "input"
-                      : to || draggedConnection?.to
-                      ? "output"
-                      : undefined
-                  }
-                  isConnectedInstanceSelected={selectedInstances.some(
-                    (selInsId) =>
-                      connections.some(({ from, to }) => {
-                        return (
-                          (from.insId === ins.id && to.insId === selInsId) ||
-                          (from.insId === selInsId && to.insId === ins.id)
-                        );
-                      })
-                  )}
-                  inlineGroupProps={maybeGetInlineProps(ins)}
-                  onCloseInlineEditor={closeInlineEditor}
-                  inlineEditorPortalDomNode={inlineEditorPortalRootRef.current}
-                  onChangeStyle={onChangeInstanceStyle}
-                  onGroupSelected={onGroupSelectedInternal}
-                  onPinMouseDown={onPinMouseDown}
-                  onPinMouseUp={onPinMouseUp}
-                  onViewForkCode={onViewForkCode}
-                  hadError={
-                    props.instancesWithErrors?.has(fullInsIdPath(ins.id)) ??
-                    false
-                  }
-                />
-              ))}
-              <SelectionBox selectionBox={selectionBox} viewPort={viewPort} />
-              {/* {maybeRenderEditGroupModal()} */}
-              {renderMainPins("output")}
-              <MainInstanceEventsIndicator
-                currentInsId={currentInsId}
-                ancestorsInsIds={ancestorsInsIds}
-                viewPort={viewPort}
-              />
-              {quickAddMenuVisible ? (
-                <QuickAddMenu
-                  targetNode={quickAddMenuVisible.targetNode}
-                  pinId={quickAddMenuVisible.pinId}
-                  pinType={quickAddMenuVisible.pinType}
-                  pos={quickAddMenuVisible.pos}
-                  resolvedDependencies={resolvedDependencies}
+                <ConnectionView
+                  resolvedNodes={currResolvedDeps}
+                  currentInsId={currentInsId}
+                  ancestorsInsIds={ancestorsInsIds}
+                  size={vpSize}
                   node={node}
-                  onAdd={onQuickAdd}
-                  onClose={onCloseQuickAdd}
+                  boardPos={boardPos}
+                  instances={instances}
+                  connections={connectionsToRender}
+                  futureConnection={maybeRenderFutureConnection()}
+                  onDblClick={noop}
+                  viewPort={viewPort}
+                  parentVp={parentViewport}
+                  selectedInstances={selectedInstances}
+                  selectedConnections={selectedConnections}
+                  toggleHidden={toggleConnectionHidden}
+                  removeConnection={removeConnection}
+                  onSelectConnection={onSelectConnection}
+                  lastMousePos={lastMousePos.current}
+                  draggedSource={draggedConnection}
+                />
+                {renderMainPins("input")}
+                {instances.map((ins) => (
+                  <InstanceView
+                    onUngroup={onUnGroup}
+                    connectionsPerInput={
+                      instancesConnectToPinsRef.current.get(ins.id) || emptyObj
+                    }
+                    node={safelyGetNodeDef(ins, currResolvedDeps)}
+                    ancestorsInsIds={fullInsIdPath(
+                      currentInsId,
+                      ancestorsInsIds
+                    )}
+                    onPinClick={onPinClick}
+                    onPinDblClick={noop}
+                    onDragStart={onStartDraggingInstance}
+                    onDragEnd={onInstanceDragEnd}
+                    resolvedDeps={currResolvedDeps}
+                    onDragMove={onInstanceDragMove}
+                    onDblClick={onDblClickInstance}
+                    onSelect={onSelectInstance}
+                    onToggleSticky={onToggleSticky}
+                    selected={selectedInstances.indexOf(ins.id) !== -1}
+                    dragged={draggingId === ins.id}
+                    onInspectPin={_onInspectPin}
+                    selectedInput={
+                      to && isInternalConnectionNode(to) && to.insId === ins.id
+                        ? to.pinId
+                        : undefined
+                    }
+                    selectedOutput={
+                      from &&
+                      isInternalConnectionNode(from) &&
+                      from.insId === ins.id
+                        ? from.pinId
+                        : undefined
+                    }
+                    closestPin={
+                      closestPin && closestPin.ins.id === ins.id
+                        ? closestPin
+                        : undefined
+                    }
+                    queuedInputsData={queueInputsData[ins.id] ?? emptyObj}
+                    instance={ins}
+                    connections={connections}
+                    // was too lazy to remove/fix the breakpoint/log below
+                    onTogglePinBreakpoint={noop}
+                    onTogglePinLog={noop}
+                    // onTogglePinLog={onToggleLog}
+                    // onTogglePinBreakpoint={onToggleBreakpoint}
+                    viewPort={viewPort}
+                    onChangeVisibleInputs={onChangeVisibleInputs}
+                    onChangeVisibleOutputs={onChangeVisibleOutputs}
+                    onSetDisplayName={onChangeInstanceDisplayName}
+                    onDeleteInstance={onDeleteInstance}
+                    key={ins.id}
+                    forceShowMinimized={
+                      from || draggedConnection?.from
+                        ? "input"
+                        : to || draggedConnection?.to
+                        ? "output"
+                        : undefined
+                    }
+                    isConnectedInstanceSelected={selectedInstances.some(
+                      (selInsId) =>
+                        connections.some(({ from, to }) => {
+                          return (
+                            (from.insId === ins.id && to.insId === selInsId) ||
+                            (from.insId === selInsId && to.insId === ins.id)
+                          );
+                        })
+                    )}
+                    inlineGroupProps={maybeGetInlineProps(ins)}
+                    onCloseInlineEditor={closeInlineEditor}
+                    inlineEditorPortalDomNode={
+                      inlineEditorPortalRootRef.current
+                    }
+                    onChangeStyle={onChangeInstanceStyle}
+                    onGroupSelected={onGroupSelectedInternal}
+                    onPinMouseDown={onPinMouseDown}
+                    onPinMouseUp={onPinMouseUp}
+                    onViewForkCode={onViewForkCode}
+                    hadError={
+                      props.instancesWithErrors?.has(fullInsIdPath(ins.id)) ??
+                      false
+                    }
+                  />
+                ))}
+                <SelectionBox selectionBox={selectionBox} viewPort={viewPort} />
+                {/* {maybeRenderEditGroupModal()} */}
+                {renderMainPins("output")}
+                <MainInstanceEventsIndicator
+                  currentInsId={currentInsId}
+                  ancestorsInsIds={ancestorsInsIds}
+                  viewPort={viewPort}
+                />
+                <div className="viewport-controls-and-help">
+                  <Button variant="ghost" size="sm" onClick={fitToScreen}>
+                    Center
+                  </Button>
+                  <Slider
+                    min={0.15}
+                    max={3}
+                    step={0.05}
+                    className="w-[100px]"
+                    value={[viewPort.zoom]}
+                    onValueChange={([value]) => onZoom(value)}
+                  />
+                  {isRootInstance ? <HelpBubble /> : null}
+                </div>
+                {editedMacroInstance ? (
+                  <MacroInstanceEditor
+                    onCancel={() => setEditedMacroInstance(undefined)}
+                    onSubmit={onSaveMacroInstance}
+                    ins={editedMacroInstance.ins}
+                    deps={resolvedDependencies}
+                    onSwitchToSiblingMacro={onSwitchToSiblingMacro}
+                  />
+                ) : null}
+                <div className="inline-editor-portal-root" />
+                {showAddNodeMenu ? (
+                  <AddNodeMenu
+                    onRequestImportables={onRequestImportables}
+                    onAddNode={onAddNode}
+                    onClose={() => setShowAddNodeMenu(false)}
+                  />
+                ) : null}
+              </main>
+              {selectionIndicatorData ? (
+                <SelectionIndicator
+                  selection={selectionIndicatorData}
+                  onCenter={onCenterSelection}
+                  onGroup={onGroupSelectedInternal}
+                  onDelete={onDeleteInstances}
                 />
               ) : null}
-              <div className="viewport-controls-and-help">
-                <Button small onClick={fitToScreen} minimal intent="primary">
-                  Center
-                </Button>
-                <MemodSlider
-                  min={0.15}
-                  max={3}
-                  stepSize={0.05}
-                  labelStepSize={10}
-                  labelRenderer={sliderRenderer}
-                  onChange={onZoom}
-                  value={viewPort.zoom}
-                />
-                {isRootInstance ? <HelpBubble /> : null}
-              </div>
-              {editedMacroInstance ? (
-                <MacroInstanceEditor
-                  onCancel={() => setEditedMacroInstance(undefined)}
-                  onSubmit={onSaveMacroInstance}
-                  ins={editedMacroInstance.ins}
-                  deps={resolvedDependencies}
-                  onSwitchToSiblingMacro={onSwitchToSiblingMacro}
-                />
-              ) : null}
-              <div className="inline-editor-portal-root" />
-              {showAddNodeMenu ? (
-                <AddNodeMenu
-                  onRequestImportables={onRequestImportables}
+              <OnboardingTips />
+              {!openInlineInstance && libraryData.groups.length ? (
+                <NodesLibrary
+                  {...libraryData}
                   onAddNode={onAddNode}
-                  onClose={() => setShowAddNodeMenu(false)}
+                  onClickCustomNode={() => setIsAddingCustomNode(true)}
                 />
               ) : null}
-            </main>
-            {selectionIndicatorData ? (
-              <SelectionIndicator
-                selection={selectionIndicatorData}
-                onCenter={onCenterSelection}
-                onGroup={onGroupSelectedInternal}
-                onDelete={onDeleteInstances}
-              />
-            ) : null}
-            <OnboardingTips />
-            {!openInlineInstance && libraryData.groups.length ? (
-              <NodesLibrary
-                {...libraryData}
-                onAddNode={onAddNode}
-                onClickCustomNode={() => setIsAddingCustomNode(true)}
-              />
-            ) : null}
-            {isAddingCustomNode ? (
-              <CustomNodeModal
-                isOpen={isAddingCustomNode}
-                onClose={() => {
-                  setIsAddingCustomNode(false);
-                  setCustomNodeForkData(undefined);
-                }}
-                onSave={onSaveCustomNode}
-                forkMode={customNodeForkData}
-              />
-            ) : null}
-            <div className="run-btn-container">
-              <Button
-                className="run-btn"
-                onClick={openRunModal}
-                rightIcon={<Play />}
-                small
-              >
-                Test Flow
-              </Button>
-            </div>
-            {runModalVisible ? (
-              <RunFlowModal node={node} onClose={closeRunModal} />
-            ) : null}
+              {isAddingCustomNode ? (
+                <CustomNodeModal
+                  isOpen={isAddingCustomNode}
+                  onClose={() => {
+                    setIsAddingCustomNode(false);
+                    setCustomNodeForkData(undefined);
+                  }}
+                  onSave={onSaveCustomNode}
+                  forkMode={customNodeForkData}
+                />
+              ) : null}
+              <div className="run-btn-container">
+                <Button
+                  className="run-btn"
+                  onClick={openRunModal}
+                  size="sm"
+                  variant="default"
+                >
+                  <Play className="mr h-3 w-3" />
+                  Test Flow
+                </Button>
+              </div>
+              {runModalVisible ? (
+                <RunFlowModal node={node} onClose={closeRunModal} />
+              ) : null}
+            </ContextMenuTrigger>
+            <EditorContextMenu
+              nodeIoEditable={nodeIoEditable}
+              lastMousePos={lastMousePos}
+              onOpenNodesLibrary={() => setShowAddNodeMenu(true)}
+            />
+            <Toaster />
           </ContextMenu>
         );
       } catch (e) {

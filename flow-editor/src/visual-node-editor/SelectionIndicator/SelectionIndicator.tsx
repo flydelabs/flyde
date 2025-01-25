@@ -1,7 +1,7 @@
-import { Button } from "@blueprintjs/core";
+import { Button } from "@flyde/ui";
 import React, { useMemo } from "react";
 import { useDarkMode } from "../../flow-editor/DarkModeContext";
-import classNames from "classnames";
+import { cn } from "@/lib/utils";
 
 export type SelectionTypeInput = {
   type: "input";
@@ -87,17 +87,22 @@ export const SelectionIndicator: React.FC<SelectionIndicatorProps> = (
 
   const actions = {
     center: (
-      <Button onClick={onCenter} small minimal outlined>
+      <Button onClick={onCenter} variant="outline" size="sm">
         Center
       </Button>
     ),
     group: (
-      <Button onClick={onGroup} small minimal outlined>
+      <Button onClick={onGroup} variant="outline" size="sm">
         Group
       </Button>
     ),
     delete: (
-      <Button onClick={onDeleteClick} small minimal outlined intent="danger">
+      <Button
+        onClick={onDeleteClick}
+        variant="outline"
+        size="sm"
+        className="text-destructive hover:bg-destructive/90 hover:text-destructive-foreground"
+      >
         Delete
       </Button>
     ),
@@ -111,8 +116,13 @@ export const SelectionIndicator: React.FC<SelectionIndicatorProps> = (
   };
 
   return (
-    <div className={classNames("selection-indicator", { dark })}>
-      {inner} {actionsMap[selection.type]}
+    <div
+      className={cn(
+        "flex items-center gap-2 p-2 rounded-md border absolute bottom-[10px] left-1/2 -translate-x-1/2 text-xs z-[1] select-none",
+        dark ? "bg-background border-border" : "bg-white border-input"
+      )}
+    >
+      {inner} <div className="flex gap-2">{actionsMap[selection.type]}</div>
     </div>
   );
 };

@@ -1,9 +1,17 @@
 import { useState, useCallback, useMemo, useEffect } from "react";
-import { Dialog, Classes, Button, Callout, Intent } from "@blueprintjs/core";
 import { Editor, useMonaco } from "@monaco-editor/react";
 import { NodeOrMacroDefinition } from "@flyde/core";
 import { configureMonaco } from "../../lib/customCodeNode/configureMonaco";
 import { useConfirm } from "../../flow-editor/ports/ports";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@flyde/ui";
+import { Button } from "@flyde/ui";
+import { Alert, AlertDescription } from "@flyde/ui";
 
 interface CustomNodeModalProps {
   isOpen: boolean;
@@ -95,25 +103,21 @@ export function CustomNodeModal({
   }, [monaco]);
 
   return (
-    <Dialog
-      isOpen={isOpen}
-      onClose={handleClose}
-      canEscapeKeyClose={!hasChanges}
-      canOutsideClickClose={!hasChanges}
-      className="custom-node-modal no-drag"
-    >
-      <div className={Classes.DIALOG_HEADER}>
-        <h4 className={Classes.HEADING}>
-          {forkMode ? "Fork Custom Node" : "Create Custom Node"}
-        </h4>
-      </div>
-      <div className={Classes.DIALOG_BODY}>
-        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
+      <DialogContent className="max-w-4xl">
+        <DialogHeader>
+          <DialogTitle>
+            {forkMode ? "Fork Custom Node" : "Create Custom Node"}
+          </DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4">
           {forkMode && (
-            <Callout intent={Intent.PRIMARY}>
-              You are forking a new custom code node from{" "}
-              {forkMode.node.displayName || forkMode.node.id}
-            </Callout>
+            <Alert>
+              <AlertDescription>
+                You are forking a new custom code node from{" "}
+                {forkMode.node.displayName || forkMode.node.id}
+              </AlertDescription>
+            </Alert>
           )}
           <Editor
             height="400px"
@@ -125,21 +129,15 @@ export function CustomNodeModal({
             loading={<div>Loading editor...</div>}
           />
         </div>
-      </div>
-      <div className={Classes.DIALOG_FOOTER}>
-        <div className={Classes.DIALOG_FOOTER_ACTIONS}>
-          <Button onClick={handleClose} disabled={isSaving}>
+        <DialogFooter>
+          <Button variant="outline" onClick={handleClose} disabled={isSaving}>
             Cancel
           </Button>
-          <Button
-            onClick={handleSave}
-            disabled={isSaving}
-            intent={Intent.PRIMARY}
-          >
+          <Button onClick={handleSave} disabled={isSaving}>
             {isSaving ? "Saving..." : "Save"}
           </Button>
-        </div>
-      </div>
+        </DialogFooter>
+      </DialogContent>
     </Dialog>
   );
 }

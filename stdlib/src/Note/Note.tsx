@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { MacroEditorComp } from "@flyde/core";
 import { NoteConfig } from "./Note.flyde";
-import { Callout } from "@blueprintjs/core";
+import { Alert, AlertDescription, Textarea } from "@flyde/ui";
 
 export const NoteEditor: MacroEditorComp<NoteConfig> = ({
   value,
@@ -14,17 +14,17 @@ export const NoteEditor: MacroEditorComp<NoteConfig> = ({
   }, [content, onChange]);
 
   return (
-    <div>
-      <textarea
+    <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+      <Textarea
         value={content}
         onChange={(e) => setContent(e.target.value)}
         placeholder="Enter your note here (A subset of Markdown is supported)"
         rows={10}
-        style={{ width: "100%", padding: "8px 6px" }}
+        style={{ width: "100%", padding: "8px 6px", minHeight: "200px" }}
       />
-      <Callout intent="primary" icon={null}>
-        A subset of markdown is supported
-      </Callout>
+      <Alert>
+        <AlertDescription>A subset of markdown is supported</AlertDescription>
+      </Alert>
     </div>
   );
 };

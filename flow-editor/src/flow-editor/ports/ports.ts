@@ -11,7 +11,6 @@ import {
   NodeOrMacroDefinition,
 } from "@flyde/core";
 import { ReportEvent } from "./analytics";
-import { toastMsg } from "../../toaster";
 
 export * from "./analytics";
 
@@ -73,7 +72,7 @@ export interface EditorPorts {
 
 const toastNotImplemented: any = (method: string) => async () => {
   console.warn(`${method} Not implemented`);
-  toastMsg(`Feature not implemented in this context yet`, "warning");
+  alert(`${method} Not implemented`);
 };
 
 export const defaultPorts: EditorPorts = {

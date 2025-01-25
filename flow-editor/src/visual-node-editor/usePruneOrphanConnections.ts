@@ -13,7 +13,7 @@ import {
 } from "@flyde/core";
 import { FlydeFlowChangeType } from "../flow-editor/flyde-flow-change-type";
 import { safelyGetNodeDef } from "../flow-editor/getNodeDef";
-import { toastMsg } from "../toaster";
+import { useToast } from "@flyde/ui";
 
 export function usePruneOrphanConnections(
   instances: NodeInstance[],
@@ -22,6 +22,7 @@ export function usePruneOrphanConnections(
   currResolvedDeps: Record<string, VisualNode | ImportedNodeDefinition>,
   onChange: (newNode: VisualNode, changeType: FlydeFlowChangeType) => void
 ) {
+  const { toast } = useToast();
   useEffect(() => {
     const validInputs = new Map<string, string[]>();
     const validOutputs = new Map<string, string[]>();
@@ -48,10 +49,10 @@ export function usePruneOrphanConnections(
     });
 
     if (orphanConnections.length > 0) {
-      toastMsg(
-        `${orphanConnections.length} orphan connections removed`,
-        "warning"
-      );
+      toast({
+        title: `${orphanConnections.length} orphan connections removed`,
+        variant: "default",
+      });
       console.warn(
         `${orphanConnections.length} orphan connections removed`,
         orphanConnections
@@ -67,5 +68,5 @@ export function usePruneOrphanConnections(
         message: "prune orphan connections",
       });
     }
-  }, [instances, onChange, connections, node, currResolvedDeps]);
+  }, [instances, onChange, connections, node, currResolvedDeps, toast]);
 }

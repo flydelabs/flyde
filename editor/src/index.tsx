@@ -2,7 +2,6 @@
 
 import { createRoot } from "react-dom/client";
 
-import { FocusStyleManager } from "@blueprintjs/core";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { ReactRouter6Adapter } from "use-query-params/adapters/react-router-6";
 
@@ -15,7 +14,6 @@ import { disableCookieAccessForVscode } from "./disable-cookie-access-for-vscode
 import "./index.scss";
 
 disableCookieAccessForVscode();
-FocusStyleManager.onlyShowFocusOnTabs();
 
 const baseName = "";
 

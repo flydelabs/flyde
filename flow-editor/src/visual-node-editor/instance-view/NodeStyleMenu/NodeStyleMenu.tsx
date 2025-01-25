@@ -1,8 +1,16 @@
-import { MenuDivider, MenuItem } from "@blueprintjs/core";
 import { NodeStyle } from "@flyde/core";
 import React, { useCallback } from "react";
 import { PromptFn } from "../../../flow-editor/ports";
-import { toastMsg } from "../../../toaster";
+
+import {
+  ContextMenuItem,
+  ContextMenuSub,
+  ContextMenuSubContent,
+  ContextMenuSubTrigger,
+  ContextMenuSeparator,
+} from "@flyde/ui";
+
+import { useToast } from "@flyde/ui";
 
 export interface NodeStyleMenuProps {
   style: NodeStyle | undefined;
@@ -20,9 +28,11 @@ export const nodeStylePresetColors: { name: string; color: string }[] = [
 ];
 
 const defaultStyle: NodeStyle = { size: "regular" };
+
 export const NodeStyleMenu: React.FC<NodeStyleMenuProps> = (props) => {
   const { onChange, style: _style } = props;
 
+  const { toast } = useToast();
   const style = _style || defaultStyle;
 
   const _prompt = props.promptFn;
@@ -59,52 +69,71 @@ export const NodeStyleMenu: React.FC<NodeStyleMenuProps> = (props) => {
       onChangeStyleProp("cssOverride", obj);
     } catch (e) {
       console.error(e);
-      toastMsg("Invalid object", "danger");
+      toast({
+        description: "Invalid custom style",
+        variant: "destructive",
+      });
     }
-  }, [_prompt, onChangeStyleProp, style.cssOverride]);
+  }, [_prompt, onChangeStyleProp, style.cssOverride, toast]);
 
   return (
     <React.Fragment>
-      <MenuItem text="Color">
-        {nodeStylePresetColors.map((c) => (
-          <MenuItem
-            key={c.name}
-            text={c.name}
-            onClick={() => onChangeStyleProp("color", c.color)}
-          />
-        ))}
-        <MenuDivider />
-        <MenuItem
-          text="Remove Color"
-          onClick={() => onChangeStyleProp("color", undefined)}
-        />
-      </MenuItem>
-      <MenuItem text={`Size (${style.size ?? "regular"})`}>
-        <MenuItem
-          text="Small"
-          onClick={() => onChangeStyleProp("size", "small")}
-        />
-        <MenuItem
-          text="Regular"
-          onClick={() => onChangeStyleProp("size", "regular")}
-        />
-        <MenuItem
-          text="Large"
-          onClick={() => onChangeStyleProp("size", "large")}
-        />
-      </MenuItem>
+      <ContextMenuSub>
+        <ContextMenuSubTrigger>Color</ContextMenuSubTrigger>
+        <ContextMenuSubContent>
+          {nodeStylePresetColors.map((c) => (
+            <ContextMenuItem
+              key={c.name}
+              onClick={() => onChangeStyleProp("color", c.color)}
+            >
+              <div className="flex items-center gap-2">
+                <div
+                  className="w-4 h-4 rounded-full"
+                  style={{ backgroundColor: c.color }}
+                />
+                {c.name}
+              </div>
+            </ContextMenuItem>
+          ))}
+          <ContextMenuSeparator />
+          <ContextMenuItem
+            onClick={() => onChangeStyleProp("color", undefined)}
+          >
+            Remove Color
+          </ContextMenuItem>
+        </ContextMenuSubContent>
+      </ContextMenuSub>
 
-      <MenuItem text="Icon">
-        <MenuItem text="Choose Icon" onClick={onChooseIcon} />
-        <MenuItem
-          text="Remove Icon"
-          onClick={() => onChangeStyleProp("icon", undefined)}
-        />
-      </MenuItem>
-      <MenuItem
-        text="Custom Styling"
-        onClick={onChooseCustomStyling}
-      ></MenuItem>
+      <ContextMenuSub>
+        <ContextMenuSubTrigger>
+          Size ({style.size ?? "regular"})
+        </ContextMenuSubTrigger>
+        <ContextMenuSubContent>
+          <ContextMenuItem onClick={() => onChangeStyleProp("size", "small")}>
+            Small
+          </ContextMenuItem>
+          <ContextMenuItem onClick={() => onChangeStyleProp("size", "regular")}>
+            Regular
+          </ContextMenuItem>
+          <ContextMenuItem onClick={() => onChangeStyleProp("size", "large")}>
+            Large
+          </ContextMenuItem>
+        </ContextMenuSubContent>
+      </ContextMenuSub>
+
+      <ContextMenuSub>
+        <ContextMenuSubTrigger>Icon</ContextMenuSubTrigger>
+        <ContextMenuSubContent>
+          <ContextMenuItem onClick={onChooseIcon}>Choose Icon</ContextMenuItem>
+          <ContextMenuItem onClick={() => onChangeStyleProp("icon", undefined)}>
+            Remove Icon
+          </ContextMenuItem>
+        </ContextMenuSubContent>
+      </ContextMenuSub>
+
+      <ContextMenuItem onClick={onChooseCustomStyling}>
+        Custom Styling
+      </ContextMenuItem>
     </React.Fragment>
   );
 };

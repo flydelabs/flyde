@@ -1,4 +1,5 @@
-import { Tag } from "@blueprintjs/core";
+import { Badge } from "@flyde/ui";
+import { X } from "@flyde/ui";
 import React from "react";
 import { AddNodeMenuFilter } from "../AddNodeMenu";
 
@@ -21,43 +22,49 @@ export const AddNodeMenuResultsSummary: React.FC<
       return (
         <>
           from &nbsp;
-          <Tag
-            minimal
-            interactive
-            onRemove={() => onChangeFilter({ type: "all" })}
+          <Badge
+            variant="outline"
+            className="cursor-pointer hover:bg-accent gap-1"
+            onClick={() => onChangeFilter({ type: "all" })}
           >
             package {filter.module}
             {filter.namespace ? ` / ${filter.namespace}` : null}
-          </Tag>
+            <X className="h-3 w-3" />
+          </Badge>
         </>
       );
     }
     return (
       <>
         from &nbsp;
-        <Tag
-          minimal
-          interactive
-          onRemove={() => onChangeFilter({ type: "all" })}
+        <Badge
+          variant="outline"
+          className="cursor-pointer hover:bg-accent gap-1"
+          onClick={() => onChangeFilter({ type: "all" })}
         >
-          &nbsp;this project {filter.file ? ` / ${filter.file}` : null}
-        </Tag>
+          this project {filter.file ? ` / ${filter.file}` : null}
+          <X className="h-3 w-3" />
+        </Badge>
       </>
     );
   }
 
   return (
-    <div className="add-node-menu-results-summary">
+    <div className="text-sm text-muted-foreground flex items-center gap-2 p-2">
       {resultsCount
         ? `Showing ${resultsCount} result${resultsCount > 1 ? "s" : ""}`
         : "No results found"}
-      &nbsp;
       {query ? (
         <>
           matching query&nbsp;
-          <Tag minimal interactive onRemove={() => onChangeQuery("")}>
+          <Badge
+            variant="outline"
+            className="cursor-pointer hover:bg-accent gap-1"
+            onClick={() => onChangeQuery("")}
+          >
             "{query}"
-          </Tag>
+            <X className="h-3 w-3" />
+          </Badge>
         </>
       ) : null}
       {filterTag()}

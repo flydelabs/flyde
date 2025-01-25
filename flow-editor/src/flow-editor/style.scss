@@ -1,5 +1,3 @@
-@import "./base-node-editor/styles.scss";
-@import "./manage-visual-node-view/styles.scss";
 @import "./DataInspectionModal/DataInspectionModal.scss";
 
 .flyde-flow-editor {
@@ -7,8 +5,8 @@
   flex: 1;
   position: relative;
   flex-direction: column;
-  background-color: white;
-  color: #000;
+  // background-color: white;
+  // color: #000;
 
   overflow: hidden;
 

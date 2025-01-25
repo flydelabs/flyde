@@ -1,20 +1,10 @@
 @import url("https://fonts.googleapis.com/css?family=Fira+Sans");
 
-@import "~@blueprintjs/core/lib/css/blueprint.css";
-@import "~@blueprintjs/select/lib/css/blueprint-select.css";
-@import "~@blueprintjs/icons/lib/css/blueprint-icons.css";
-
 @import "~@flyde/flow-editor/src/index.scss";
 
 body {
   margin: 0;
   padding: 0;
-  font-family: "DM Sans", sans-serif;
-}
-
-.bp5-button,
-.bp5-control,
-.bp5-input {
   font-family: "DM Sans", sans-serif;
 }
 

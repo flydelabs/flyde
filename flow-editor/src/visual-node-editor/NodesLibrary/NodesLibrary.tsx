@@ -1,4 +1,10 @@
-import { Button, Tooltip } from "@blueprintjs/core";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@flyde/ui";
+import { Button } from "@flyde/ui";
 import { ImportableSource, ImportedNode, NodeLibraryData } from "@flyde/core";
 import classNames from "classnames";
 import React, { memo, useCallback, useEffect, useState } from "react";
@@ -43,73 +49,84 @@ export const NodesLibrary: React.FC<NodesLibraryProps> = memo((props) => {
 
   return (
     <div
-      className={classNames("nodes-library", {
+      className={classNames("nodes-library rounded-md border bg-background", {
         dark: darkMode,
       })}
     >
-      <div className="list" style={{ boxShadow }} onScroll={onScrollHandler}>
+      <div
+        className="list overflow-auto"
+        style={{ boxShadow }}
+        onScroll={onScrollHandler}
+      >
         {groups.map((group, idx) => (
           <div key={group.title}>
             <div
-              className={classNames("group-title", {
-                open: openGroup === group.title,
-                selected: openGroup === group.title,
-              })}
+              className={classNames(
+                "group-title cursor-pointer px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground",
+                {
+                  "bg-accent": openGroup === group.title,
+                }
+              )}
               onClick={() => setOpenGroup(group.title)}
             >
               {group.title}
             </div>
-            <div className="group-items">
+            <div className="group-items space-y-1 p-1">
               {idx === 0 && (
                 <div
-                  className="group-item"
+                  className="group-item flex cursor-pointer items-center rounded-sm px-2 py-1 hover:bg-accent hover:text-accent-foreground"
                   draggable
                   onClick={onClickCustomNode}
                 >
-                  <InstanceIcon icon="cow" /> Custom Node
+                  <InstanceIcon icon="cow" />
+                  <span className="ml-2">Custom Node</span>
                 </div>
               )}
               {group.nodes.map((node) => (
-                <div
-                  key={node.id}
-                  className="group-item"
-                  draggable
-                  onDragStart={(e) => onDragStart(e, node as ImportedNode)}
-                  onClick={() =>
-                    onAddNode({
-                      module: "@flyde/stdlib",
-                      node: node as ImportedNode,
-                    })
-                  }
-                >
-                  <Tooltip
-                    content={node.description}
-                    portalClassName="menu-tooltip"
-                    compact
-                    minimal
-                  >
-                    <div className="group-item-inner">
-                      {node.defaultStyle?.icon && (
-                        <InstanceIcon
-                          icon={node.defaultStyle?.icon as string}
-                        />
-                      )}
-                      {node.displayName ?? node.id}
-                    </div>
+                <TooltipProvider key={node.id}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div
+                        className="group-item flex cursor-pointer items-center rounded-sm px-2 py-1 hover:bg-accent hover:text-accent-foreground"
+                        draggable
+                        onDragStart={(e) =>
+                          onDragStart(e, node as ImportedNode)
+                        }
+                        onClick={() =>
+                          onAddNode({
+                            module: "@flyde/stdlib",
+                            node: node as ImportedNode,
+                          })
+                        }
+                      >
+                        <div className="group-item-inner flex items-center">
+                          {node.defaultStyle?.icon && (
+                            <InstanceIcon
+                              icon={node.defaultStyle?.icon as string}
+                            />
+                          )}
+                          <span className="ml-2">
+                            {node.displayName ?? node.id}
+                          </span>
+                        </div>
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent side="right" className="max-w-[200px]">
+                      {node.description}
+                    </TooltipContent>
                   </Tooltip>
-                </div>
+                </TooltipProvider>
               ))}
             </div>
           </div>
         ))}
       </div>
-      <div className="view-all-container">
-        <div className="view-all">
+      <div className="view-all-container border-t p-2">
+        <div className="view-all flex justify-center">
           <Button
-            minimal
-            small
+            variant="ghost"
+            size="sm"
             onClick={() => setShowAddNodeMenu(true)}
-            intent="primary"
           >
             View all
           </Button>

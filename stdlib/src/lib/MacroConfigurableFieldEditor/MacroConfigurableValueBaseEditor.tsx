@@ -1,10 +1,13 @@
 import {
+  Input,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Textarea,
   Checkbox,
-  HTMLSelect,
-  InputGroup,
-  NumericInput,
-  TextArea,
-} from "@blueprintjs/core";
+} from "@flyde/ui";
 import {
   LongTextFieldDefinition,
   MacroConfigurableValue,
@@ -13,6 +16,10 @@ import {
 import { SimpleJsonEditor } from "../SimpleJsonEditor";
 import { useState, useEffect } from "react";
 import React from "react";
+
+const inputStyles = {
+  width: "100%",
+};
 
 export function MacroConfigurableValueBaseEditor(props: {
   value: MacroConfigurableValue;
@@ -62,17 +69,22 @@ export function MacroConfigurableValueBaseEditor(props: {
   switch (value.type) {
     case "number":
       return (
-        <NumericInput
+        <Input
+          type="number"
           value={value.value as number}
-          onValueChange={(value) => props.onChange({ type: "number", value })}
-          fill
+          onChange={(e) =>
+            props.onChange({
+              type: "number",
+              value: parseFloat(e.target.value),
+            })
+          }
+          style={inputStyles}
         />
       );
-    // eslint-disable-next-line no-lone-blocks
     case "string": {
       if (fieldDefinition.type === "longtext") {
         return (
-          <TextArea
+          <Textarea
             value={value.value as string}
             onChange={(e) =>
               props.onChange({ type: "string", value: e.target.value })
@@ -80,16 +92,17 @@ export function MacroConfigurableValueBaseEditor(props: {
             rows={
               (fieldDefinition as LongTextFieldDefinition).typeData?.rows ?? 5
             }
-            fill
+            style={inputStyles}
           />
         );
       } else {
         return (
-          <InputGroup
+          <Input
             value={value.value as string}
             onChange={(e) =>
               props.onChange({ type: "string", value: e.target.value })
             }
+            style={inputStyles}
           />
         );
       }
@@ -105,34 +118,47 @@ export function MacroConfigurableValueBaseEditor(props: {
       return (
         <Checkbox
           checked={value.value as boolean}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            props.onChange({ type: "boolean", value: e.target.checked })
+          onCheckedChange={(checked) =>
+            props.onChange({ type: "boolean", value: checked === true })
           }
         />
       );
     case "select": {
       return (
-        <HTMLSelect
-          value={value.value}
-          onChange={(e) => {
-            if (e.target.value === "__other__") {
+        <Select
+          value={String(value.value)}
+          onValueChange={(val) => {
+            if (val === "__other__") {
               handleAddOption();
             } else {
-              props.onChange({ type: "select", value: e.target.value });
+              props.onChange({ type: "select", value: val });
             }
           }}
-          fill
         >
-          {options.map((option) => (
-            <option key={option.label} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-          <option value="__other__">Other (add new option)</option>
-        </HTMLSelect>
+          <SelectTrigger style={inputStyles}>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {options.map((option) => (
+              <SelectItem
+                key={String(option.value)}
+                value={String(option.value)}
+              >
+                {option.label}
+              </SelectItem>
+            ))}
+            <SelectItem value="__other__">Other (add new option)</SelectItem>
+          </SelectContent>
+        </Select>
       );
     }
     case "dynamic":
-      return <InputGroup value={`{{${fieldDefinition.configKey}}}`} disabled />;
+      return (
+        <Input
+          value={`{{${fieldDefinition.configKey}}}`}
+          disabled
+          style={inputStyles}
+        />
+      );
   }
 }

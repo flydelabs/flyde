@@ -10,4 +10,5 @@ packages:
   - "runtime"
   - "playground"
   - "vscode-extension"
+  - "ui"
   - "!examples/*"

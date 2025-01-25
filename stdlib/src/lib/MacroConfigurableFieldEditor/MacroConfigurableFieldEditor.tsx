@@ -1,20 +1,20 @@
 import {
   Button,
-  FormGroup,
-  Menu,
-  MenuItem,
-  Popover,
-  Position,
-} from "@blueprintjs/core";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  Settings,
+} from "@flyde/ui";
 import {
   MacroConfigurableValue,
   MacroEditorFieldDefinition,
 } from "@flyde/core";
 import { MacroConfigurableValueBaseEditor } from "./MacroConfigurableValueBaseEditor";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { convertValue } from "./convertValues";
-import { Cog } from "@blueprintjs/icons";
 import React from "react";
+
 export function MacroConfigurableFieldEditor(props: {
   value: MacroConfigurableValue;
   onChange: (value: MacroConfigurableValue) => void;
@@ -22,13 +22,11 @@ export function MacroConfigurableFieldEditor(props: {
   prompt: (message: string) => Promise<string>;
 }) {
   const { config, value, onChange, prompt } = props;
-  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
   const changeType = useCallback(
     (newType: MacroConfigurableValue["type"]) => {
       const newValue = convertValue(value.type, newType, value.value);
       onChange({ type: newType, value: newValue });
-      setIsPopoverOpen(false);
     },
     [value, onChange]
   );
@@ -39,59 +37,64 @@ export function MacroConfigurableFieldEditor(props: {
       config.templateSupport !== false;
 
     return (
-      <div className="config-helper-text">
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginTop: "4px",
+          fontSize: "12px",
+          color: "#666",
+        }}
+      >
         <span>
           {isTemplateSupported
             ? "Use {{ }} to insert variables. For example {{myVar}}"
             : ""}
         </span>
         {config.typeConfigurable !== false ? (
-          <Popover
-            content={
-              <Menu>
-                <MenuItem
-                  text="Dynamic"
-                  onClick={() => changeType("dynamic")}
-                />
-                <MenuItem text="Number" onClick={() => changeType("number")} />
-                <MenuItem
-                  text="Boolean"
-                  onClick={() => changeType("boolean")}
-                />
-                <MenuItem text="JSON" onClick={() => changeType("json")} />
-                <MenuItem text="String" onClick={() => changeType("string")} />
-              </Menu>
-            }
-            position={Position.BOTTOM}
-            isOpen={isPopoverOpen}
-            onInteraction={setIsPopoverOpen}
-            className="change-type-button-wrapper"
-          >
-            <Button minimal small rightIcon={<Cog />}>
-              Change type
-            </Button>
-          </Popover>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="sm" className="h-8">
+                <Settings className="h-4 w-4 mr-2" />
+                Change type
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => changeType("dynamic")}>
+                Dynamic
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => changeType("number")}>
+                Number
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => changeType("boolean")}>
+                Boolean
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => changeType("json")}>
+                JSON
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => changeType("string")}>
+                String
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         ) : null}
       </div>
     );
-  }, [
-    changeType,
-    config.templateSupport,
-    config.typeConfigurable,
-    isPopoverOpen,
-    value.type,
-  ]);
+  }, [changeType, config.templateSupport, config.typeConfigurable, value.type]);
 
   return (
-    <div>
-      <FormGroup label={`${config.label}:`} helperText={helperText}>
-        <MacroConfigurableValueBaseEditor
-          value={value}
-          onChange={onChange}
-          fieldDefinition={config}
-          prompt={prompt}
-        />
-      </FormGroup>
+    <div style={{ marginBottom: "16px" }}>
+      <div style={{ marginBottom: "4px", fontWeight: 500 }}>
+        {config.label}:
+      </div>
+      <MacroConfigurableValueBaseEditor
+        value={value}
+        onChange={onChange}
+        fieldDefinition={config}
+        prompt={prompt}
+      />
+      {helperText}
     </div>
   );
 }

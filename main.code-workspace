@@ -38,6 +38,9 @@
     },
     {
       "path": "playground"
+    },
+    {
+      "path": "ui"
     }
   ],
   "settings": {

@@ -23,8 +23,6 @@
     "test": "mocha --fail-zero=false --require ts-node/register 'src/**/*.spec.ts'"
   },
   "dependencies": {
-    "@blueprintjs/core": "^5.0.0",
-    "@blueprintjs/icons": "^5.0.0",
     "@docusaurus/core": "2.4.1",
     "@docusaurus/plugin-google-gtag": "^2.4.1",
     "@docusaurus/preset-classic": "2.4.1",
@@ -34,6 +32,7 @@
     "@flyde/runtime": "workspace:*",
     "@flyde/stdlib": "workspace:*",
     "@flyde/core": "workspace:*",
+    "@flyde/ui": "workspace:*",
     "@mdx-js/react": "^1.6.22",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",

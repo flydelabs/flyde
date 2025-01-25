@@ -1,12 +1,20 @@
-import { Menu, MenuDivider, MenuItem } from "@blueprintjs/core";
-import { isDefined, preventDefaultAnd } from "../../utils";
+import {
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuSub,
+  ContextMenuSubContent,
+  ContextMenuSubTrigger,
+} from "@flyde/ui";
+import { isDefined } from "../../utils";
 import { NodeStyle, PinType, nodeInput, nodeOutput } from "@flyde/core";
 import produce from "immer";
 import React from "react";
-import { usePrompt, AppToaster, usePorts, toastMsg } from "../..";
+import { usePrompt, usePorts } from "../..";
 import { functionalChange } from "../../flow-editor/flyde-flow-change-type";
 import { NodeStyleMenu } from "../instance-view/NodeStyleMenu";
 import { useVisualNodeEditorContext } from "../VisualNodeEditorContext";
+import { useToast } from "@flyde/ui";
 
 export interface EditorContextMenuProps {
   nodeIoEditable: boolean;
@@ -22,9 +30,10 @@ export function EditorContextMenu(props: EditorContextMenuProps) {
 
   const _prompt = usePrompt();
 
+  const { node, onChangeNode: onChange } = useVisualNodeEditorContext();
   const { reportEvent } = usePorts();
 
-  const { node, onChangeNode: onChange } = useVisualNodeEditorContext();
+  const { toast } = useToast();
 
   const editCompletionOutputs = React.useCallback(async () => {
     const curr = node.completionOutputs?.join(",");
@@ -79,8 +88,10 @@ export function EditorContextMenu(props: EditorContextMenuProps) {
   const copyNodeToClipboard = React.useCallback(async () => {
     const str = JSON.stringify(node);
     await navigator.clipboard.writeText(str);
-    AppToaster.show({ message: "Copied!" });
-  }, [node]);
+    toast({
+      description: "Copied!",
+    });
+  }, [node, toast]);
 
   const onAddMainPin = React.useCallback(
     async (type: PinType) => {
@@ -105,9 +116,10 @@ export function EditorContextMenu(props: EditorContextMenuProps) {
           draft.outputsPosition[newPinId] = lastMousePos.current;
 
           if (draft.completionOutputs?.length) {
-            toastMsg(
-              "Note that this node has explicit completion outputs set. You may need to update them."
-            );
+            toast({
+              description:
+                "Note that this node has explicit completion outputs set. You may need to update them.",
+            });
           }
         }
       });
@@ -115,69 +127,66 @@ export function EditorContextMenu(props: EditorContextMenuProps) {
       onChange(newValue, functionalChange("add new io pin"));
       reportEvent("addIoPin", { type });
     },
-    [_prompt, lastMousePos, node, onChange, reportEvent]
+    [_prompt, lastMousePos, node, onChange, reportEvent, toast]
   );
 
   return (
-    <Menu>
-      <MenuItem
-        text="Add Node"
-        onMouseDown={(e) => e.stopPropagation()}
-        onClick={preventDefaultAnd(onOpenNodesLibrary)}
-      />
-      <MenuDivider />
-      <MenuItem
-        text={`New main input ${maybeDisabledLabel}`}
-        onMouseDown={(e) => e.stopPropagation()}
-        onClick={preventDefaultAnd(() => onAddMainPin("input"))}
-        disabled={!nodeIoEditable}
-      />
-      <MenuItem
-        onMouseDown={(e) => e.stopPropagation()}
-        text={`New main output ${maybeDisabledLabel}`}
-        onClick={preventDefaultAnd(() => onAddMainPin("output"))}
-        disabled={!nodeIoEditable}
-      />
-      <MenuItem
-        onMouseDown={(e) => e.stopPropagation()}
-        text={`Integrate with existing code (docs link)`}
-        href="https://www.flyde.dev/docs/integrate-flows/"
-        target="_blank"
-        disabled={!nodeIoEditable}
-      />
-      <MenuItem
-        onMouseDown={(e) => e.stopPropagation()}
-        text={"Copy node to clipboard"}
-        onClick={preventDefaultAnd(copyNodeToClipboard)}
-      />
-      <MenuItem
-        onMouseDown={(e) => e.stopPropagation()}
-        text={`Edit Completion Outputs (${
-          node.completionOutputs?.join(",") || "n/a"
-        })`}
-        onClick={preventDefaultAnd(() => editCompletionOutputs())}
-      />
+    <ContextMenuContent className="w-64">
+      <ContextMenuItem onSelect={onOpenNodesLibrary}>Add Node</ContextMenuItem>
 
-      <MenuItem
-        onMouseDown={(e) => e.stopPropagation()}
-        text={`Edit Reactive inputs (${
-          node.reactiveInputs?.join(",") || "n/a"
-        })`}
-        onClick={preventDefaultAnd(() => editReactiveInputs())}
-      />
-      <MenuItem
-        onMouseDown={(e) => e.stopPropagation()}
-        text={`Edit description`}
-        onClick={preventDefaultAnd(() => editNodeDescription())}
-      />
-      <MenuDivider />
-      <MenuItem text="Default Style">
-        <NodeStyleMenu
-          style={node.defaultStyle}
-          onChange={onChangeDefaultStyle}
-          promptFn={_prompt}
-        />
-      </MenuItem>
-    </Menu>
+      <ContextMenuSeparator />
+
+      <ContextMenuItem
+        disabled={!nodeIoEditable}
+        onSelect={() => onAddMainPin("input")}
+      >
+        New main input {maybeDisabledLabel}
+      </ContextMenuItem>
+
+      <ContextMenuItem
+        disabled={!nodeIoEditable}
+        onSelect={() => onAddMainPin("output")}
+      >
+        New main output {maybeDisabledLabel}
+      </ContextMenuItem>
+
+      <ContextMenuItem
+        disabled={!nodeIoEditable}
+        onClick={() =>
+          window.open("https://www.flyde.dev/docs/integrate-flows/", "_blank")
+        }
+      >
+        Integrate with existing code (docs link)
+      </ContextMenuItem>
+
+      <ContextMenuItem onSelect={copyNodeToClipboard}>
+        Copy node to clipboard
+      </ContextMenuItem>
+
+      <ContextMenuItem onSelect={editCompletionOutputs}>
+        Edit Completion Outputs ({node.completionOutputs?.join(",") || "n/a"})
+      </ContextMenuItem>
+
+      <ContextMenuItem onSelect={editReactiveInputs}>
+        Edit Reactive inputs ({node.reactiveInputs?.join(",") || "n/a"})
+      </ContextMenuItem>
+
+      <ContextMenuItem onSelect={editNodeDescription}>
+        Edit description
+      </ContextMenuItem>
+
+      <ContextMenuSeparator />
+
+      <ContextMenuSub>
+        <ContextMenuSubTrigger>Default Style</ContextMenuSubTrigger>
+        <ContextMenuSubContent>
+          <NodeStyleMenu
+            style={node.defaultStyle}
+            onChange={onChangeDefaultStyle}
+            promptFn={_prompt}
+          />
+        </ContextMenuSubContent>
+      </ContextMenuSub>
+    </ContextMenuContent>
   );
 }

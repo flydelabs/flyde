@@ -1,9 +1,12 @@
 import React from "react";
 
-import { Icon, Intent } from "@blueprintjs/core";
-import { Tooltip } from "@blueprintjs/core";
-import { InfoSign } from "@blueprintjs/icons";
-import { Classes } from "@blueprintjs/core";
+import { Info } from "@flyde/ui/dist/icons";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@flyde/ui";
 
 export interface InfoTooltipProps {
   content: string | JSX.Element;
@@ -12,12 +15,13 @@ export interface InfoTooltipProps {
 export const InfoTooltip: React.FC<InfoTooltipProps> = (props) => {
   const { content } = props;
   return (
-    <Tooltip content={content} placement="top" className="info-tooltip">
-      <Icon
-        icon={<InfoSign className={Classes.INTENT_PRIMARY} />}
-        intent={Intent.SUCCESS}
-        className="info-tooltip-icon"
-      />
-    </Tooltip>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Info className="h-4 w-4 text-primary cursor-help" />
+        </TooltipTrigger>
+        <TooltipContent>{content}</TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 };

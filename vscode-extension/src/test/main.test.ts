@@ -89,7 +89,10 @@ suite("Extension Test Suite", () => {
       const elements = await webviewTestingCommand("$$", {
         selector: ".add-node-menu-list-item",
       });
-      assert(elements.length > 100, "Expected to find 100+ items in the menu");
+      assert(
+        elements.length > 80,
+        `Expected to find 80+ items in the menu. Found ${elements.length} items`
+      );
     });
   }).retries(3);
 

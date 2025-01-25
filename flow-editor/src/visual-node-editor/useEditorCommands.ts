@@ -27,7 +27,6 @@ import {
   usePrompt,
   usePorts,
   getConnectionId,
-  toastMsg,
   useConfirm,
   createNewMacroNodeInstance,
   createNewNodeInstance,
@@ -43,6 +42,7 @@ import produce from "immer";
 import { handleDuplicateSelectedEditorCommand } from "./commands/duplicate-instances";
 import { groupSelected } from "../group-selected";
 import { handleConnectionCloseEditorCommand } from "./commands/close-connection";
+import { useToast } from "@flyde/ui";
 
 export function useEditorCommands(
   lastMousePos: React.MutableRefObject<Pos>,
@@ -64,6 +64,8 @@ export function useEditorCommands(
 
   const _prompt = usePrompt();
   const _confirm = useConfirm();
+
+  const { toast } = useToast();
 
   const { reportEvent } = usePorts();
 
@@ -169,7 +171,10 @@ export function useEditorCommands(
       if (isInlineNodeInstance(groupNodeIns)) {
         const visualNode = groupNodeIns.node;
         if (!isVisualNode(visualNode)) {
-          toastMsg("Not supported", "warning");
+          toast({
+            description: "Not supported",
+            variant: "destructive",
+          });
           return;
         }
 
@@ -198,10 +203,13 @@ export function useEditorCommands(
         // todo - combine the above with below to an atomic action
         onChangeBoardData({ selectedInstances: [] });
       } else {
-        toastMsg("Cannot ungroup an imported group");
+        toast({
+          description: "Cannot ungroup an imported group",
+          variant: "destructive",
+        });
       }
     },
-    [node, onChange, onChangeBoardData]
+    [node, onChange, onChangeBoardData, toast]
   );
 
   const onNodeIoSetDescription = React.useCallback(
@@ -453,7 +461,10 @@ export function useEditorCommands(
     (from: ConnectionNode, to: ConnectionNode, source: string) => {
       // Prevent connection between main input and output
       if (from.insId === THIS_INS_ID && to.insId === THIS_INS_ID) {
-        toastMsg("Cannot connect main input to main output", "warning");
+        toast({
+          description: "Cannot connect main input to main output",
+          variant: "destructive",
+        });
         return;
       }
 
@@ -466,7 +477,7 @@ export function useEditorCommands(
       onChangeBoardData({ from: undefined, to: undefined });
       reportEvent("createConnection", { source });
     },
-    [onChange, onChangeBoardData, node, reportEvent]
+    [onChange, onChangeBoardData, node, reportEvent, toast]
   );
 
   const onGroupSelectedInternal = React.useCallback(async () => {
@@ -483,7 +494,9 @@ export function useEditorCommands(
 
     onChangeBoardData({ selectedInstances: [] });
 
-    toastMsg("Node grouped");
+    toast({
+      description: "Node grouped",
+    });
 
     reportEvent("groupSelected", {
       count: boardData.selectedInstances.length,
@@ -495,6 +508,7 @@ export function useEditorCommands(
     onChange,
     onChangeBoardData,
     reportEvent,
+    toast,
   ]);
 
   const onNodeIoPinClick = React.useCallback(

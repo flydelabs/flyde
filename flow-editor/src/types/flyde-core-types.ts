@@ -65,7 +65,7 @@ declare module '@flyde/core/common' {
     export * from "@flyde/core/common/hasher";
     export * from "@flyde/core/common/value-builders";
     export * from "@flyde/core/common/data-shaper";
-    export * from '@flyde/core/common/full-ins-id-path';
+    export * from "@flyde/core/common/full-ins-id-path";
     export const DepGraph: any;
 }
 

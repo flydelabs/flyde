@@ -1,6 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {},
+  experimental: {
+    esmExternals: true,
+  },
   reactStrictMode: false,
   webpack: (config, { isServer }) => {
     config.module.noParse = config.module.noParse || [];

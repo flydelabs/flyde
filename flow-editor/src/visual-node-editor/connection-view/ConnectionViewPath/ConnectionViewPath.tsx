@@ -2,7 +2,12 @@ import { Pos } from "@flyde/core";
 import classNames from "classnames";
 import React, { forwardRef } from "react";
 import { calcBezierPath, Position } from "../bezier";
-import { ContextMenu, Menu, MenuItem } from "@blueprintjs/core";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from "@flyde/ui";
 
 export interface ConnectionViewPathProps {
   from: Pos;
@@ -50,7 +55,8 @@ export const ConnectionViewPath: React.FC<ConnectionViewPathProps> = forwardRef(
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
         d={d}
-        style={{ cursor: "pointer", opacity: 0, strokeWidth: 40 * zoom }}
+        className="cursor-pointer"
+        style={{ opacity: 0, strokeWidth: 40 * zoom }}
       />
     );
 
@@ -79,29 +85,20 @@ export const ConnectionViewPath: React.FC<ConnectionViewPathProps> = forwardRef(
       />
     );
 
-    const contextMenuContent = (
-      <Menu>
-        <MenuItem text="Delete connection" intent="danger" onClick={onDelete} />
-      </Menu>
-    );
-
     return (
-      <ContextMenu content={contextMenuContent}>
-        {(ctxMenuProps) => (
-          <g
-            className={classNames(
-              "connection-view-path",
-              ctxMenuProps.className
-            )}
-            onContextMenu={ctxMenuProps.onContextMenu as any}
-            ref={ctxMenuProps.ref as any}
-          >
-            {ctxMenuProps.popover}
+      <ContextMenu>
+        <ContextMenuTrigger asChild>
+          <g className={classNames("connection-view-path", className)}>
             {borderPath}
             {path}
             {pathProximityMask}
           </g>
-        )}
+        </ContextMenuTrigger>
+        <ContextMenuContent>
+          <ContextMenuItem onClick={onDelete} className="text-destructive">
+            Delete connection
+          </ContextMenuItem>
+        </ContextMenuContent>
       </ContextMenu>
     );
   }

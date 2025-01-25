@@ -1,8 +1,6 @@
 import * as React from "react";
 import classNames from "classnames";
 
-import { Menu, MenuItem, ContextMenu, Tooltip } from "@blueprintjs/core";
-
 import {
   ERROR_PIN_ID,
   fullInsIdPath,
@@ -13,6 +11,20 @@ import {
 import { getPinDomId, getPinDomHandleId } from "../dom-ids";
 import { calcHistoryContent, useHistoryHelpers } from "./helpers";
 import { useDarkMode } from "../../flow-editor/DarkModeContext";
+
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from "@flyde/ui";
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@flyde/ui";
 
 export type InputPinViewProps = {
   type: "input";
@@ -78,30 +90,31 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
 
   const dark = useDarkMode();
 
-  const getContextMenu = () => {
-    const inspectMenuItem = (
-      <MenuItem
+  const getContextMenuContent = () => {
+    const inspectItem = (
+      <ContextMenuItem
         onClick={() =>
           props.onInspect(props.currentInsId, {
             id: props.id,
             type: props.type,
           })
         }
-        text={"Inspect"}
-      />
+      >
+        Inspect
+      </ContextMenuItem>
     );
+
     if (props.type === "input") {
       return (
-        <Menu>
-          <MenuItem
-            onClick={() => props.onToggleSticky(props.id)}
-            text={"Toggle sticky (square means sticky)"}
-          />
-          {inspectMenuItem}
-        </Menu>
+        <>
+          <ContextMenuItem onClick={() => props.onToggleSticky(props.id)}>
+            Toggle sticky (square means sticky)
+          </ContextMenuItem>
+          {inspectItem}
+        </>
       );
     } else {
-      return <Menu>{inspectMenuItem}</Menu>;
+      return inspectItem;
     }
   };
 
@@ -215,30 +228,36 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
 
   return (
     <div className={calcClassNames()} data-pin-id={id}>
-      <Tooltip
-        className={classNames("pin-info-tooltip", { dark })}
-        content={calcTooltipContent()}
-      >
-        <ContextMenu
-          onMouseEnter={refreshHistory}
-          onMouseOut={resetHistory}
-          onMouseDown={_onMouseDown}
-          onMouseUp={_onMouseUp}
-          data-tip=""
-          data-html={true}
-          data-for={id + props.currentInsId}
-          id={getPinDomId(idParams)}
-          onDoubleClick={(e) =>
-            props.onDoubleClick && props.onDoubleClick(id, e)
-          }
-          className={classNames(`pin-inner`, { dark })}
-          onClick={onClick}
-          content={getContextMenu()}
-        >
-          {displayName} {maybeStickyLabel()}
-          {maybeQueueLabel()}
-        </ContextMenu>
-      </Tooltip>
+      <TooltipProvider>
+        <Tooltip>
+          <ContextMenu>
+            <TooltipTrigger asChild>
+              <ContextMenuTrigger
+                onMouseEnter={refreshHistory}
+                onMouseOut={resetHistory}
+                onMouseDown={_onMouseDown}
+                onMouseUp={_onMouseUp}
+                data-tip=""
+                data-html={true}
+                data-for={id + props.currentInsId}
+                id={getPinDomId(idParams)}
+                onDoubleClick={(e) =>
+                  props.onDoubleClick && props.onDoubleClick(id, e)
+                }
+                className={classNames(`pin-inner`, { dark })}
+                onClick={onClick}
+              >
+                {displayName} {maybeStickyLabel()}
+                {maybeQueueLabel()}
+              </ContextMenuTrigger>
+            </TooltipTrigger>
+            <ContextMenuContent>{getContextMenuContent()}</ContextMenuContent>
+          </ContextMenu>
+          <TooltipContent className={classNames("pin-info-tooltip", { dark })}>
+            {calcTooltipContent()}
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
       <div
         className={classNames("pin-handle", type, {
           closest: isClosestToMouse,
