@@ -39,7 +39,7 @@ export const AddNodeMenuListItem: React.FC<AddNodeMenuListItemProps> = (
   return (
     <div
       className={classNames(
-        "flex items-center justify-between p-3 hover:bg-accent/50 cursor-pointer rounded-md",
+        "add-node-menu-list-item flex items-center justify-between p-3 hover:bg-accent/50 cursor-pointer rounded-md",
         {
           "bg-accent": props.selected,
         }
