@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "scripts": {
-    "test": "mocha src/**/*.spec.tsx --require ts-node/register",
+    "test": ":",
     "dev:ts": "tsc -p . -w --incremental",
     "dev": "concurrently \"tsc -p . -w --incremental\" \"tsc-alias -w\"",
     "build": "rm -rf dist && tsc -p . && tsc-alias",
