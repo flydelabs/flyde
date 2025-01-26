@@ -1559,7 +1559,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                   <Button
                     variant="outline"
                     onClick={() => setCommandMenuOpen(true)}
-                    className="border shadow-sm relative group inline-flex items-center gap-1 bg-neutral-900 border-neutral-950 px-2 h-8 hover:bg-neutral-950"
+                    className="add-nodes border shadow-sm relative group inline-flex items-center gap-1 bg-neutral-900 border-neutral-950 px-2 h-8 hover:bg-neutral-950"
                   >
                     <span>
                       <Plus className="w-5 h-5" />

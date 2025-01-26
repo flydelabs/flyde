@@ -59,7 +59,7 @@ suite("Extension Test Suite", () => {
     // }, 4000);
   }).retries(3);
 
-  test("Renders add node modal", async () => {
+  test("Renders add nodes menu", async () => {
     const testFile = vscode.Uri.file(
       path.resolve(__dirname, "../../test-fixtures/HelloWorld.flyde")
     );
@@ -72,7 +72,7 @@ suite("Extension Test Suite", () => {
 
     await eventually(async () => {
       const elements = await webviewTestingCommand("$$", {
-        selector: ".nodes-library .view-all button",
+        selector: ".add-nodes.button",
       });
 
       assert(
@@ -82,12 +82,12 @@ suite("Extension Test Suite", () => {
     });
 
     await webviewTestingCommand("click", {
-      selector: ".nodes-library .view-all button",
+      selector: ".add-nodes.button",
     });
 
     await eventually(async () => {
       const elements = await webviewTestingCommand("$$", {
-        selector: ".add-node-menu-list-item",
+        selector: "[cmdk-item]",
       });
       assert(
         elements.length > 80,
