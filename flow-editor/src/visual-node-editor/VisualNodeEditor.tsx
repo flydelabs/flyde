@@ -1135,20 +1135,29 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       const onNodeIoMouseDown = React.useCallback<
         NodeIoViewProps["onMouseDown"]
       >((id, type) => {
-        // drag to connect disabled in node io pins as they conflict with the drag to move
-        // whole concept of "Node IO" probably needs to be rethought
+        if (type === "input") {
+          setDraggedConnection({
+            to: externalConnectionNode(id),
+            from: undefined,
+          });
+        } else {
+          setDraggedConnection({
+            from: externalConnectionNode(id),
+            to: undefined,
+          });
+        }
       }, []);
 
       const onNodeIoMouseUp = React.useCallback<NodeIoViewProps["onMouseUp"]>(
         (id, type) => {
           if (draggedConnection) {
-            if (draggedConnection.from && type === "output") {
+            if (draggedConnection.from && type === "input") {
               onConnectionClose(
                 draggedConnection.from,
                 externalConnectionNode(id),
                 "nodeIoPinDrag"
               );
-            } else if (draggedConnection.to && type === "input") {
+            } else if (draggedConnection.to && type === "output") {
               onConnectionClose(
                 externalConnectionNode(id),
                 draggedConnection.to,
@@ -1156,6 +1165,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
               );
             }
           }
+          setDraggedConnection(null);
         },
         [draggedConnection, onConnectionClose]
       );
