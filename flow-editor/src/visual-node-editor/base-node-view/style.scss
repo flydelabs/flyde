@@ -24,11 +24,11 @@ $light-text: #333;
 
 .base-node-view-wrapper {
   position: absolute;
-  transform-origin: center center;
+  transform-origin: top left;
 }
 
 .base-node-view {
-  transform-origin: center center;
+  transform-origin: top left;
   display: inline-block;
   position: absolute;
   will-change: transform;

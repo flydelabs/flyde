@@ -741,20 +741,21 @@ export const InstanceView: React.FC<InstanceViewProps> =
     );
   };
 
-export const InstanceIcon: React.FC<{ icon?: string }> = function InstanceIcon({
-  icon,
-}) {
-  if (!icon) {
-    return <FontAwesomeIcon icon="code" size="lg" />;
-  }
-  if (typeof icon === "string" && icon.trim().startsWith("<")) {
-    return (
-      <span
-        className="svg-icon-container"
-        dangerouslySetInnerHTML={{ __html: icon }}
-      />
-    );
-  } else {
-    return <FontAwesomeIcon icon={icon as any} size="lg" />;
-  }
-};
+export const InstanceIcon: React.FC<{ icon?: string; className?: string }> =
+  function InstanceIcon({ icon, className }) {
+    if (!icon) {
+      return <FontAwesomeIcon icon="code" size="lg" />;
+    }
+    if (typeof icon === "string" && icon.trim().startsWith("<")) {
+      return (
+        <span
+          className={classNames("svg-icon-container", className)}
+          dangerouslySetInnerHTML={{ __html: icon }}
+        />
+      );
+    } else {
+      return (
+        <FontAwesomeIcon icon={icon as any} size="lg" className={className} />
+      );
+    }
+  };

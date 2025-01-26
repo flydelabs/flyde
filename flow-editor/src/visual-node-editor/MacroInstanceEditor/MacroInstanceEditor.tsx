@@ -79,7 +79,7 @@ export const MacroInstanceEditor: React.FC<MacroInstanceEditorProps> = (
   if (!macro) {
     return (
       <Dialog open={true}>
-        <DialogContent className="sm:max-w-[425px] max-h-[90vh]">
+        <DialogContent className="max-h-[90vh]">
           <Loader />
         </DialogContent>
       </Dialog>
@@ -88,7 +88,7 @@ export const MacroInstanceEditor: React.FC<MacroInstanceEditorProps> = (
 
   return (
     <Dialog open={true} onOpenChange={props.onCancel}>
-      <DialogContent className="sm:max-w-[425px] flex flex-col max-h-[90vh]">
+      <DialogContent className="flex flex-col max-h-[90vh] pt-10">
         <div className="flex-none">
           {onForkNode && (
             <div className="flex justify-end mb-4">

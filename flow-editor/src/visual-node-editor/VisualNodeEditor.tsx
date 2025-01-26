@@ -37,7 +37,7 @@ import {
 } from "./connection-view/ConnectionView";
 import { entries, Size } from "../utils";
 
-import { ContextMenu, ContextMenuTrigger } from "@flyde/ui";
+import { ContextMenu, ContextMenuTrigger, Plus } from "@flyde/ui";
 import { useBoundingclientrect, useDidMount } from "rooks";
 
 import {
@@ -88,7 +88,6 @@ import {
   SelectionIndicator,
   SelectionIndicatorProps,
 } from "./SelectionIndicator";
-import { NodesLibrary } from "./NodesLibrary";
 import { RunFlowModal } from "./RunFlowModal";
 
 import { EditorContextMenu } from "./EditorContextMenu/EditorContextMenu";
@@ -102,8 +101,8 @@ import {
 } from "./VisualNodeEditorContext";
 import { useEditorCommands } from "./useEditorCommands";
 import { CustomNodeModal } from "./CustomNodeModal/CustomNodeModal";
-import { AddNodeMenu } from "./NodesLibrary/AddNodeMenu";
 import { Button, Slider, Toaster, useToast, Play } from "@flyde/ui";
+import { CommandMenu } from "./CommandMenu/CommandMenu";
 
 export const NODE_HEIGHT = 28;
 
@@ -727,7 +726,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
               )
             }
             connected={false}
-            inputMode={v.mode}
             onChangeInputMode={type === "input" ? onChangeInputMode : undefined}
             key={k}
             viewPort={viewPort}
@@ -791,7 +789,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       const backgroundStyle: any = {
         backgroundPositionX: roundNumber(-viewPort.pos.x * viewPort.zoom),
         backgroundPositionY: roundNumber(-viewPort.pos.y * viewPort.zoom),
-        backgroundSize: roundNumber(10 * viewPort.zoom) + "px",
+        backgroundSize: roundNumber(25 * viewPort.zoom) + "px",
       };
 
       // unoptimized code to get connected inputs
@@ -873,9 +871,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         }, new Map());
       }, [connections, instances]);
 
-      const { onRequestImportables } = useDependenciesContext();
-      const [showAddNodeMenu, setShowAddNodeMenu] = useState(false);
-
       useHotkeys(
         "shift+c",
         fitToScreen,
@@ -903,6 +898,17 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         "s",
         selectClosest,
         { text: "Select pin closest to mouse", group: "Selection" },
+        [],
+        isBoardInFocus
+      );
+
+      useHotkeys(
+        "cmd+k, ctrl+k",
+        (e) => {
+          e.preventDefault();
+          setCommandMenuOpen(true);
+        },
+        { text: "Open command menu", group: "General" },
         [],
         isBoardInFocus
       );
@@ -1393,6 +1399,8 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         [currResolvedDeps, toast]
       );
 
+      const [commandMenuOpen, setCommandMenuOpen] = useState(false);
+
       try {
         return (
           <ContextMenu>
@@ -1547,6 +1555,22 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                   ancestorsInsIds={ancestorsInsIds}
                   viewPort={viewPort}
                 />
+                <div className="absolute top-3 left-1/2 -translate-x-1/2 z-10">
+                  <Button
+                    variant="outline"
+                    onClick={() => setCommandMenuOpen(true)}
+                    className="border shadow-sm relative group inline-flex items-center gap-1 bg-neutral-900 border-neutral-950 px-2 h-8 hover:bg-neutral-950"
+                  >
+                    <span>
+                      <Plus className="w-5 h-5" />
+                    </span>{" "}
+                    <span className="text-xs text-gray-600">
+                      {navigator.platform.toLowerCase().includes("mac")
+                        ? "⌘K"
+                        : "Ctrl+K"}
+                    </span>
+                  </Button>
+                </div>
                 <div className="viewport-controls-and-help">
                   <Button variant="ghost" size="sm" onClick={fitToScreen}>
                     Center
@@ -1571,13 +1595,13 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                   />
                 ) : null}
                 <div className="inline-editor-portal-root" />
-                {showAddNodeMenu ? (
-                  <AddNodeMenu
-                    onRequestImportables={onRequestImportables}
-                    onAddNode={onAddNode}
-                    onClose={() => setShowAddNodeMenu(false)}
-                  />
-                ) : null}
+                <CommandMenu
+                  open={commandMenuOpen}
+                  onOpenChange={setCommandMenuOpen}
+                  groups={libraryData.groups}
+                  onAddNode={onAddNode}
+                  onClickCustomNode={() => setIsAddingCustomNode(true)}
+                />
               </main>
               {selectionIndicatorData ? (
                 <SelectionIndicator
@@ -1588,13 +1612,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                 />
               ) : null}
               <OnboardingTips />
-              {!openInlineInstance && libraryData.groups.length ? (
-                <NodesLibrary
-                  {...libraryData}
-                  onAddNode={onAddNode}
-                  onClickCustomNode={() => setIsAddingCustomNode(true)}
-                />
-              ) : null}
               {isAddingCustomNode ? (
                 <CustomNodeModal
                   isOpen={isAddingCustomNode}
@@ -1624,7 +1641,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             <EditorContextMenu
               nodeIoEditable={nodeIoEditable}
               lastMousePos={lastMousePos}
-              onOpenNodesLibrary={() => setShowAddNodeMenu(true)}
+              onOpenNodesLibrary={() => setCommandMenuOpen(true)}
             />
             <Toaster />
           </ContextMenu>
