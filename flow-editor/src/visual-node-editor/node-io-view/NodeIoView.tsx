@@ -235,14 +235,16 @@ export const NodeIoView: React.FC<NodeIoViewProps> = React.memo(
 
     const _onMouseUp = React.useCallback(
       (e: React.MouseEvent) => {
-        onMouseUp(id, type, e);
+        const reversedType = type === "input" ? "output" : "input";
+        onMouseUp(id, reversedType, e);
       },
       [id, onMouseUp, type]
     );
 
     const _onMouseDown = React.useCallback(
       (e: React.MouseEvent) => {
-        onMouseDown(id, type, e);
+        const reversedType = type === "input" ? "output" : "input";
+        onMouseDown(id, reversedType, e);
       },
       [id, onMouseDown, type]
     );
@@ -266,8 +268,14 @@ export const NodeIoView: React.FC<NodeIoViewProps> = React.memo(
             onToggleBreakpoint={noop}
             onInspect={noop}
             description={description}
-            onMouseUp={(pinId, pinType, e) => _onMouseUp(e)}
-            onMouseDown={(pinId, pinType, e) => _onMouseDown(e)}
+            onMouseUp={(pinId, pinType, e) => {
+              e.stopPropagation();
+              _onMouseUp(e);
+            }}
+            onMouseDown={(pinId, pinType, e) => {
+              e.stopPropagation();
+              _onMouseDown(e);
+            }}
             isMain={true}
           />
         ) : (
@@ -285,8 +293,14 @@ export const NodeIoView: React.FC<NodeIoViewProps> = React.memo(
             onToggleBreakpoint={noop}
             onInspect={noop}
             description={description}
-            onMouseUp={(pinId, pinType, e) => _onMouseUp(e)}
-            onMouseDown={(pinId, pinType, e) => _onMouseDown(e)}
+            onMouseUp={(pinId, pinType, e) => {
+              e.stopPropagation();
+              _onMouseUp(e);
+            }}
+            onMouseDown={(pinId, pinType, e) => {
+              e.stopPropagation();
+              _onMouseDown(e);
+            }}
             onToggleSticky={noop}
             isSticky={false}
             queuedValues={0}
