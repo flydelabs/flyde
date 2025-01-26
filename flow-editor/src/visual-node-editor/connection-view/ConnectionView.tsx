@@ -121,7 +121,6 @@ export const ConnectionView: React.FC<ConnectionViewProps> = (props) => {
         {...props}
         connection={futureConnection.connection}
         connectionType={futureConnection.type}
-        toggleHidden={toggleHidden}
         parentSelected={false}
         onSelectConnection={onSelectConnection}
         key={"future"}

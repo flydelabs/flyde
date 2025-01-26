@@ -20,6 +20,7 @@ export interface SingleConnectionViewProps extends BaseConnectionViewProps {
   ) => void;
   isConnectionSelected?: boolean;
   onDelete?: (connection: ConnectionData) => void;
+  selectedInstances: string[];
 }
 
 export const SingleConnectionView: React.FC<SingleConnectionViewProps> = (
@@ -38,21 +39,30 @@ export const SingleConnectionView: React.FC<SingleConnectionViewProps> = (
     onSelectConnection,
     isConnectionSelected,
     onDelete,
+    toggleHidden,
+    selectedInstances,
   } = props;
 
   const [isHovered, setIsHovered] = React.useState(false);
 
-  const { from } = connection;
+  const { from, to } = connection;
 
   const fromInstance =
     isInternalConnectionNode(from) &&
     instances.find((i) => i.id === from.insId);
+
+  const toInstance =
+    isInternalConnectionNode(to) && instances.find((i) => i.id === to.insId);
 
   const handleDelete = React.useCallback(() => {
     if (onDelete) {
       onDelete(connection);
     }
   }, [connection, onDelete]);
+
+  const handleToggleHidden = React.useCallback(() => {
+    toggleHidden(connection);
+  }, [connection, toggleHidden]);
 
   if (!fromInstance && isInternalConnectionNode(from)) {
     console.warn(`Could not find instance ${from.insId} for connection`, from);
@@ -77,10 +87,14 @@ export const SingleConnectionView: React.FC<SingleConnectionViewProps> = (
   const { x: x1, y: y1 } = vDiv(startPos, props.parentVp.zoom);
   const { x: x2, y: y2 } = vDiv(endPos, props.parentVp.zoom);
 
+  const isInstanceSelected =
+    (fromInstance && selectedInstances.includes(fromInstance.id)) ||
+    (toInstance && selectedInstances.includes(toInstance.id));
+
   const connectionClassName = classNames(
     {
       delayed,
-      hidden: connection.hidden,
+      hidden: connection.hidden && !isInstanceSelected,
       "parent-selected": parentSelected,
       selected: isConnectionSelected,
       "pending-selection": !isConnectionSelected && isHovered,
@@ -97,12 +111,16 @@ export const SingleConnectionView: React.FC<SingleConnectionViewProps> = (
       className={connectionClassName}
       from={{ x: x1, y: y1 }}
       to={{ x: x2, y: y2 }}
-      dashed={connectionType !== "regular"}
+      dashed={
+        connectionType !== "regular" ||
+        (connection.hidden && isInstanceSelected)
+      }
       zoom={viewPort.zoom}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={handleConnectionPathClick}
       onDelete={handleDelete}
+      onToggleHidden={handleToggleHidden}
     />
   );
 };

@@ -19,6 +19,7 @@ export interface ConnectionViewPathProps {
   zoom: number;
   dashed?: boolean;
   onDelete?: () => void;
+  onToggleHidden?: () => void;
 }
 
 export const ConnectionViewPath: React.FC<ConnectionViewPathProps> = forwardRef(
@@ -32,6 +33,7 @@ export const ConnectionViewPath: React.FC<ConnectionViewPathProps> = forwardRef(
       onMouseEnter,
       onMouseLeave,
       onDelete,
+      onToggleHidden,
     } = props;
     const { x: x1, y: y1 } = from;
     const { x: x2, y: y2 } = to;
@@ -95,6 +97,11 @@ export const ConnectionViewPath: React.FC<ConnectionViewPathProps> = forwardRef(
           </g>
         </ContextMenuTrigger>
         <ContextMenuContent>
+          {onToggleHidden && (
+            <ContextMenuItem onClick={onToggleHidden}>
+              Toggle Hidden
+            </ContextMenuItem>
+          )}
           <ContextMenuItem onClick={onDelete} className="text-destructive">
             Delete connection
           </ContextMenuItem>
