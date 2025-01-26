@@ -1564,11 +1564,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                     <span>
                       <Plus className="w-5 h-5" />
                     </span>{" "}
-                    <span className="text-xs text-gray-600">
-                      {navigator.platform.toLowerCase().includes("mac")
-                        ? "⌘K"
-                        : "Ctrl+K"}
-                    </span>
+                    <span className="text-xs text-gray-600"> ⌘K</span>
                   </Button>
                 </div>
                 <div className="viewport-controls-and-help">
