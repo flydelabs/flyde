@@ -130,27 +130,27 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
 
   return (
     <CommandDialog open={open} onOpenChange={onOpenChange}>
-      <Command className="[&_[cmdk-group-heading]]:px-1 [&_[cmdk-group-heading]]:py-1 [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-1 [&_[cmdk-item]]:py-1.5">
+      <Command className="[&_[cmdk-group-heading]]:px-1 [&_[cmdk-group-heading]]:py-1 [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-1 [&_[cmdk-group]]:px-1 [&_[cmdk-item]]:py-1">
         <CommandInput
           placeholder="Search nodes..."
           value={query}
           onValueChange={setQuery}
-          className="h-8"
+          className="h-7"
         />
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
           {filteredGroups.map((group) => (
             <React.Fragment key={group.title}>
-              <CommandGroup heading={group.title} className="pb-0">
-                <div className={cn("grid gap-0", query ? "" : "grid-cols-3")}>
+              <CommandGroup heading={group.title} className="pb-0.5">
+                <div className={cn("grid gap-0", query ? "" : "grid-cols-4")}>
                   {group.title === "Essentials" && (
                     <CommandItem
                       value="custom"
                       onSelect={onSelect}
-                      className="text-xs py-1.5 px-1"
+                      className="text-xs py-1 px-1"
                     >
-                      <InstanceIcon icon="cow" className="mr-1 w-3 h-3" />
-                      Create Custom Node
+                      <InstanceIcon icon="cow" className="mr-0.5" />
+                      Custom Node
                     </CommandItem>
                   )}
                   {group.nodes.map((node) => (
@@ -158,12 +158,12 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
                       key={node.id}
                       value={`library:${node.id}`}
                       onSelect={onSelect}
-                      className="text-xs py-1.5 px-1"
+                      className="text-xs py-1 px-1"
                     >
                       {node.defaultStyle?.icon && (
                         <InstanceIcon
                           icon={node.defaultStyle.icon as string}
-                          className="mr-1 w-3 h-3"
+                          className="mr-0.5"
                         />
                       )}
                       <TooltipProvider>
@@ -190,18 +190,18 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
           ))}
           {filteredImportables.length > 0 && (
             <CommandGroup heading="All Other Nodes" className="pb-0">
-              <div className={cn("grid gap-0", query ? "" : "grid-cols-3")}>
+              <div className={cn("grid gap-0", query ? "" : "grid-cols-4")}>
                 {filteredImportables.map((importable) => (
                   <CommandItem
                     key={importable.node.id}
                     value={`importable:${importable.node.id}`}
                     onSelect={onSelect}
-                    className="text-xs py-1.5 px-1"
+                    className="text-xs py-1 px-1"
                   >
                     {importable.node.defaultStyle?.icon && (
                       <InstanceIcon
                         icon={importable.node.defaultStyle.icon as string}
-                        className="mr-1 w-3 h-3"
+                        className="mr-0.5"
                       />
                     )}
                     <TooltipProvider>
