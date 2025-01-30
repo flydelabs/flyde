@@ -12,3 +12,4 @@ packages:
   - "vscode-extension"
   - "ui"
   - "!examples/*"
+  - "ai"
