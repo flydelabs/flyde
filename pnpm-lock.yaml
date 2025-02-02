@@ -20,6 +20,9 @@ importers:
 
   ai:
     dependencies:
+      '@ai-sdk/anthropic':
+        specifier: ^1.1.5
+        version: 1.1.5(zod@3.23.8)
       '@ai-sdk/openai':
         specifier: ^1.1.5
         version: 1.1.5(zod@3.23.8)
@@ -1364,6 +1367,12 @@ packages:
 
   '@adobe/css-tools@4.3.1':
     resolution: {integrity: sha512-/62yikz7NLScCGAAST5SHdnjaDJQBDq0M2muyRTpf2VQhw6StBg2ALiu73zSJQ4fMVLA+0uBhBHAle7Wg+2kSg==}
+
+  '@ai-sdk/anthropic@1.1.5':
+    resolution: {integrity: sha512-HGs69t2dsHlt+c4nCeUcdx5ojXs25dH8xly88TZZoyjfiCRWjmyjQxiPHZL2ME864a+vEpQSmvn8DgvMFA4p2g==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      zod: ^3.0.0
 
   '@ai-sdk/openai@1.1.5':
     resolution: {integrity: sha512-pmZPeb99oWlV3PqMH5DVWtMGZgwWznInjdF0Bi4q1mKoEjomDXSYw+imvzMoSbpCrcGB9uFFTVx2VeR/jvcppg==}
@@ -12802,6 +12811,12 @@ snapshots:
   '@aashutoshrathi/word-wrap@1.2.6': {}
 
   '@adobe/css-tools@4.3.1': {}
+
+  '@ai-sdk/anthropic@1.1.5(zod@3.23.8)':
+    dependencies:
+      '@ai-sdk/provider': 1.0.6
+      '@ai-sdk/provider-utils': 2.1.5(zod@3.23.8)
+      zod: 3.23.8
 
   '@ai-sdk/openai@1.1.5(zod@3.23.8)':
     dependencies:

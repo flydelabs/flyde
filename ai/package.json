@@ -15,6 +15,7 @@
     "link-all": "npm link @flyde/core @flyde/flow-editor @flyde/stdlib @flyde/runtime @flyde/resolver"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "^1.1.5",
     "@ai-sdk/openai": "^1.1.5",
     "@flyde/core": "workspace:*",
     "@flyde/flow-editor": "workspace:*",

@@ -1,5 +1,7 @@
 import { THIS_INS_ID, VisualNode } from "@flyde/core";
 
+const nonMacroNodes = ["Loop List", "Concat"];
+
 export function simpleToVisualNode(simple: SimpleNode): VisualNode {
   const responseNode = simple.nodes.find((node) => node.nodeId === "response");
   const requestNode = simple.nodes.find((node) => node.nodeId === "request");
@@ -8,11 +10,22 @@ export function simpleToVisualNode(simple: SimpleNode): VisualNode {
     if (node.nodeId === "response" || node.nodeId === "request") {
       return [];
     }
+
+    const isMacro = !nonMacroNodes.includes(node.nodeId);
     return {
       id: node.id,
-      nodeId: `${node.nodeId}__${node.id}`,
-      macroId: node.nodeId,
-      macroData: node.config,
+      nodeId: isMacro ? `${node.nodeId}__${node.id}` : node.nodeId,
+      macroId: isMacro ? node.nodeId : undefined,
+      macroData: isMacro
+        ? Object.fromEntries(
+            Object.entries(node.config || {}).map(([k, v]) => {
+              if (node.nodeId === "CodeExpression") {
+                return [k, v];
+              }
+              return [k, { type: "string", value: v }];
+            })
+          )
+        : undefined,
       inputConfig: {},
       pos: {
         x: node.x,
@@ -63,6 +76,7 @@ export type SimpleNode = {
     config?: any;
     x: number;
     y: number;
+    dynamicInputs?: Array<string>;
   }>;
   links: Array<{
     from: [string, string];

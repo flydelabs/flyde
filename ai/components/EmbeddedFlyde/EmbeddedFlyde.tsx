@@ -162,6 +162,7 @@ export function EmbeddedFlyde(props: EmbeddedFlydeProps) {
             onChangeEditorState={setState}
             initialPadding={initialPadding}
             onExtractInlineNode={noop as any}
+            darkMode={true}
           />
         </CanvasPositioningWaitHack>
       </DebuggerContextProvider>

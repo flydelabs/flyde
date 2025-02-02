@@ -1,4 +1,4 @@
-import { generateNode } from "@/lib/generateNode/generateNode";
+import { planFlowNodes } from "@/lib/generateNode/speculateNodes";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
@@ -13,12 +13,9 @@ export default async function handler(
   const lastMessage = messages[messages.length - 1].content;
 
   try {
-    const { node, rawResponse, diagnostics } = await generateNode(
-      lastMessage,
-      model
-    );
-    res.json({ node, rawResponse, diagnostics });
+    const result = await planFlowNodes(lastMessage, model);
+    res.json(result);
   } catch (error) {
-    res.status(500).json({ error: "Failed to generate node" });
+    res.status(500).json({ error: "Failed to speculate nodes" });
   }
 }

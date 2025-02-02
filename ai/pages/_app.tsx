@@ -5,7 +5,7 @@ import React from "react";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <div className={`main-container w-full h-screen`}>
+    <div className="main-container w-full h-screen dark">
       <Component {...pageProps} />
     </div>
   );
