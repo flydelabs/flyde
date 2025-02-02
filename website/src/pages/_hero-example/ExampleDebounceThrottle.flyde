@@ -8,8 +8,8 @@ imports:
 node:
   instances:
     - pos:
-        x: -1501.9825268554687
-        y: -199.5365963977544
+        x: -1549.9825268554687
+        y: -186.5365963977544
       id: wj31gd73i5l111q999pv4kor
       inputConfig: {}
       visibleOutputs:
@@ -27,8 +27,8 @@ node:
       style:
         size: regular
     - pos:
-        x: -1500.3598461914062
-        y: -294.1368161243169
+        x: -1524.3598461914062
+        y: -319.1368161243169
       id: eaa2b80mmdusjvxi3fve0du1
       inputConfig: {}
       nodeId: Debounce__eaa2b80mmdusjvxi3fve0du1
@@ -82,8 +82,8 @@ node:
         size: small
         icon: pen
     - pos:
-        x: -1653.0271630859374
-        y: -242.08191363706828
+        x: -1751.0271630859374
+        y: -246.08191363706828
       id: ygnqzwi1stiki29lavj6wu2w
       inputConfig: {}
       nodeId: Interval__ygnqzwi1stiki29lavj6wu2w
