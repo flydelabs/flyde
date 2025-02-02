@@ -14,36 +14,6 @@
     text-transform: capitalize;
   }
 
-  &.input {
-    .base-node-view-inner {
-      width: 120px;
-      border-radius: 4px 16px 16px 4px;
-
-      .node-header {
-        border-radius: 4px 16px 0 0;
-      }
-
-      .node-body {
-        border-radius: 0 0 16px 4px;
-      }
-    }
-  }
-
-  &.output {
-    .base-node-view-inner {
-      width: 120px;
-      border-radius: 16px 4px 4px 16px;
-
-      .node-header {
-        border-radius: 16px 4px 0 0;
-      }
-
-      .node-body {
-        border-radius: 0 0 4px 16px;
-      }
-    }
-  }
-
   .pin-container {
     position: relative;
 

@@ -631,6 +631,14 @@ export const InstanceView: React.FC<InstanceViewProps> =
       ? instance.macroId
       : node.id;
 
+    const nodeSize = React.useMemo(() => {
+      const hasLongDisplayName = content?.length > 20;
+      const hasLongPin = [...inputsToRender, ...outputsToRender].some(
+        ([id]) => id.length > 10
+      );
+      return hasLongDisplayName || hasLongPin ? "wide" : "normal";
+    }, [content, inputsToRender, outputsToRender]);
+
     const renderInputs = () => {
       if (!inputsToRender.length) {
         return null;
@@ -735,26 +743,28 @@ export const InstanceView: React.FC<InstanceViewProps> =
           overrideNodeBodyHtml={node.overrideNodeBodyHtml}
           overrideStyle={style.cssOverride}
           onDoubleClick={onDblClick}
+          size={nodeSize}
         />
         {maybeRenderInlineGroupEditor()}
       </div>
     );
   };
 
-export const InstanceIcon: React.FC<{ icon?: string }> = function InstanceIcon({
-  icon,
-}) {
-  if (!icon) {
-    return <FontAwesomeIcon icon="code" size="lg" />;
-  }
-  if (typeof icon === "string" && icon.trim().startsWith("<")) {
-    return (
-      <span
-        className="svg-icon-container"
-        dangerouslySetInnerHTML={{ __html: icon }}
-      />
-    );
-  } else {
-    return <FontAwesomeIcon icon={icon as any} size="lg" />;
-  }
-};
+export const InstanceIcon: React.FC<{ icon?: string; className?: string }> =
+  function InstanceIcon({ icon, className }) {
+    if (!icon) {
+      return <FontAwesomeIcon icon="code" size="lg" />;
+    }
+    if (typeof icon === "string" && icon.trim().startsWith("<")) {
+      return (
+        <span
+          className={classNames("svg-icon-container", className)}
+          dangerouslySetInnerHTML={{ __html: icon }}
+        />
+      );
+    } else {
+      return (
+        <FontAwesomeIcon icon={icon as any} size="lg" className={className} />
+      );
+    }
+  };

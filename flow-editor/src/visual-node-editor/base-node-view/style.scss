@@ -1,6 +1,7 @@
 @import "../../lib/common.scss";
 
 $node-width: 160px;
+$node-width-wide: 200px;
 $key-1: #2887f4;
 
 // Dark theme colors
@@ -24,11 +25,11 @@ $light-text: #333;
 
 .base-node-view-wrapper {
   position: absolute;
-  transform-origin: center center;
+  transform-origin: top left;
 }
 
 .base-node-view {
-  transform-origin: center center;
+  transform-origin: top left;
   display: inline-block;
   position: absolute;
   will-change: transform;
@@ -43,6 +44,10 @@ $light-text: #333;
     border: 1px solid $dark-border;
     cursor: pointer;
     box-sizing: border-box;
+
+    &.size-wide {
+      width: $node-width-wide;
+    }
 
     &.dark {
       border-color: $dark-border-light;

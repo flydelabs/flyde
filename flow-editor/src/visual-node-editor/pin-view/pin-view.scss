@@ -8,12 +8,17 @@ $light-pin-handle-border: #666666;
   cursor: pointer;
   user-select: none;
 
+  .pin-inner {
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+  }
+
   &.input {
     .pin-inner {
-      max-width: 60px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      text-align: left;
     }
   }
 
@@ -21,11 +26,7 @@ $light-pin-handle-border: #666666;
     text-align: right;
 
     .pin-inner {
-      max-width: 60px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      margin-left: auto;
+      text-align: right;
     }
   }
 

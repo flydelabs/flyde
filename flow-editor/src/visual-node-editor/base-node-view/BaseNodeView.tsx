@@ -27,6 +27,7 @@ export interface BaseNodeViewProps {
   dragged?: boolean;
   viewPort: { pos: Pos; zoom: number };
   displayMode?: true;
+  size?: "normal" | "wide";
 
   heading?: string;
   description?: string;
@@ -44,6 +45,11 @@ export interface BaseNodeViewProps {
   onDragMove: (ev: React.MouseEvent, pos: Pos) => void;
   onClick?: (e: React.MouseEvent) => void;
   onDoubleClick?: (e: React.MouseEvent) => void;
+}
+
+export interface PinViewProps {
+  id: string;
+  children?: React.ReactNode;
 }
 
 export const BaseNodeIcon: React.FC<{ icon?: NodeTypeIcon }> =
@@ -86,6 +92,7 @@ export const BaseNodeView: React.FC<BaseNodeViewProps> =
       onClick,
       onDoubleClick,
       overrideNodeBodyHtml,
+      size = "normal",
     } = props;
 
     const dark = useDarkMode();
@@ -146,6 +153,7 @@ export const BaseNodeView: React.FC<BaseNodeViewProps> =
       dark,
       "no-left-side": !leftSide && !overrideNodeBodyHtml,
       "no-right-side": !rightSide && !overrideNodeBodyHtml,
+      "size-wide": size === "wide",
     });
 
     const innerContent = overrideNodeBodyHtml ? (
