@@ -147,7 +147,7 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
                     <CommandItem
                       value="custom"
                       onSelect={onSelect}
-                      className="text-xs py-1 px-1 cursor-pointer"
+                      className="text-xs py-1 px-1 cursor-pointer add-menu-item"
                     >
                       <InstanceIcon icon="cow" className="mr-0.5" />
                       Custom Node
@@ -196,7 +196,7 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
                     key={importable.node.id}
                     value={`importable:${importable.node.id}`}
                     onSelect={onSelect}
-                    className="text-xs py-1 px-1"
+                    className="text-xs py-1 px-1 add-menu-item"
                   >
                     {importable.node.defaultStyle?.icon && (
                       <InstanceIcon

@@ -72,7 +72,7 @@ suite("Extension Test Suite", () => {
 
     await eventually(async () => {
       const elements = await webviewTestingCommand("$$", {
-        selector: ".add-nodes.button",
+        selector: "button.add-nodes",
       });
 
       assert(
@@ -82,12 +82,12 @@ suite("Extension Test Suite", () => {
     });
 
     await webviewTestingCommand("click", {
-      selector: ".add-nodes.button",
+      selector: "button.add-nodes",
     });
 
     await eventually(async () => {
       const elements = await webviewTestingCommand("$$", {
-        selector: "[cmdk-item]",
+        selector: ".add-menu-item",
       });
       assert(
         elements.length > 80,
