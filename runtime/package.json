@@ -1,6 +1,6 @@
 {
   "name": "@flyde/runtime",
-  "version": "0.108.1",
+  "version": "0.108.2",
   "description": "",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
