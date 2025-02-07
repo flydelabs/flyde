@@ -24,9 +24,9 @@ const http: ImprovedMacroNode = {
       description: "The URL to send the request to",
       editorType: "string",
     },
-    headers: {
+    data: {
       defaultValue: {},
-      description: "The headers to send with the request",
+      description: "The request body data",
       editorType: "json",
     },
     params: {
@@ -34,9 +34,9 @@ const http: ImprovedMacroNode = {
       description: "The query parameters to send with the request",
       editorType: "json",
     },
-    data: {
+    headers: {
       defaultValue: {},
-      description: "The request body data",
+      description: "The headers to send with the request",
       editorType: "json",
     },
   },

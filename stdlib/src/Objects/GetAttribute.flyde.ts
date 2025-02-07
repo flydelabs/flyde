@@ -5,6 +5,8 @@ const getAttribute: ImprovedMacroNode = {
   namespace: "Objects",
   menuDisplayName: "Get Property",
   menuDescription: "Used to retrieve a property from an object.",
+  displayName: 'Get "{{key}}"',
+  description: "Retrieves a property from an object",
   icon: "fa-magnifying-glass",
   inputs: {
     object: {

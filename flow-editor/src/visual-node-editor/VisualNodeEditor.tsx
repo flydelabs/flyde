@@ -1630,7 +1630,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                   className="run-btn"
                   onClick={openRunModal}
                   size="sm"
-                  variant="default"
+                  variant="outline"
                 >
                   <Play className="mr h-3 w-3" />
                   Test Flow

@@ -18,6 +18,10 @@ import { useDependenciesContext } from "../../flow-editor/DependenciesContext";
 import { InstanceIcon } from "../instance-view";
 import { LocalImportableResult } from "../../flow-editor/DependenciesContext";
 import { cn } from "@flyde/ui";
+import { useLocalStorage } from "../../lib/user-preferences";
+
+const RECENTLY_USED_KEY = "flyde-recently-used-nodes";
+const MAX_RECENT_NODES = 8;
 
 export interface CommandMenuProps extends NodeLibraryData {
   open: boolean;
@@ -36,9 +40,14 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
   const [query, setQuery] = useState("");
   const { onRequestImportables } = useDependenciesContext();
   const [importables, setImportables] = useState<ImportableSource[]>();
+  const [recentlyUsed, setRecentlyUsed] = useLocalStorage<ImportableSource[]>(
+    RECENTLY_USED_KEY,
+    []
+  );
 
   useEffect(() => {
     if (open) {
+      setQuery("");
       onRequestImportables().then(({ importables }: LocalImportableResult) => {
         setImportables(importables);
       });
@@ -112,20 +121,41 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
           .flatMap((g) => g.nodes)
           .find((n) => n.id === nodeId);
         if (node) {
-          onAddNode({
+          const importableNode = {
             module: "@flyde/stdlib",
             node: node as any,
-          });
+          };
+          setRecentlyUsed(
+            [
+              importableNode,
+              ...recentlyUsed.filter((n) => n.node.id !== node.id),
+            ].slice(0, MAX_RECENT_NODES)
+          );
+          onAddNode(importableNode);
         }
       } else if (source === "importable") {
         const node = importables?.find((i) => i.node.id === nodeId);
         if (node) {
+          setRecentlyUsed(
+            [
+              node,
+              ...recentlyUsed.filter((n) => n.node.id !== node.node.id),
+            ].slice(0, MAX_RECENT_NODES)
+          );
           onAddNode(node);
         }
       }
       onOpenChange(false);
     },
-    [groups, importables, onAddNode, onClickCustomNode, onOpenChange]
+    [
+      groups,
+      importables,
+      onAddNode,
+      onClickCustomNode,
+      onOpenChange,
+      recentlyUsed,
+      setRecentlyUsed,
+    ]
   );
 
   return (
@@ -139,6 +169,45 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
         />
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
+          {!query && recentlyUsed.length > 0 && (
+            <React.Fragment>
+              <CommandGroup heading="Recently Used" className="pb-0.5">
+                <div className="grid grid-cols-4 gap-0">
+                  {recentlyUsed.map((importable) => (
+                    <CommandItem
+                      key={importable.node.id}
+                      value={`importable:${importable.node.id}`}
+                      onSelect={onSelect}
+                      className="text-xs py-1 px-1 cursor-pointer add-menu-item"
+                    >
+                      {importable.node.defaultStyle?.icon && (
+                        <InstanceIcon
+                          icon={importable.node.defaultStyle.icon as string}
+                          className="mr-0.5"
+                        />
+                      )}
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger className="truncate">
+                            {importable.node.displayName ?? importable.node.id}
+                          </TooltipTrigger>
+                          {importable.node.description && (
+                            <TooltipContent
+                              side="right"
+                              className="max-w-[300px]"
+                            >
+                              {importable.node.description}
+                            </TooltipContent>
+                          )}
+                        </Tooltip>
+                      </TooltipProvider>
+                    </CommandItem>
+                  ))}
+                </div>
+              </CommandGroup>
+              <CommandSeparator className="my-0.5" />
+            </React.Fragment>
+          )}
           {filteredGroups.map((group) => (
             <React.Fragment key={group.title}>
               <CommandGroup heading={group.title} className="pb-0.5">

@@ -29,7 +29,6 @@ const createUserPreferences = () => {
   };
 };
 
-// THIS HOOK
 export const useUserPref = <T>(
   key: string,
   initial: T
