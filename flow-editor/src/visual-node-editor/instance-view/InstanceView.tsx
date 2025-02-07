@@ -45,15 +45,11 @@ import {
 import { usePrompt } from "../..";
 
 import {
-  ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
-  ContextMenuTrigger,
   ContextMenuSub,
   ContextMenuSubTrigger,
   ContextMenuSubContent,
-  AiGenerationProvider,
-  AiGenerate,
 } from "@flyde/ui";
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@flyde/ui";
