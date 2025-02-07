@@ -39,6 +39,8 @@ import { createEditorClient } from "@flyde/remote-debugger";
 import { maybeAskToStarProject } from "./maybeAskToStarProject";
 import { customCodeNodeFromCode } from "@flyde/core/dist/misc/custom-code-node-from-code";
 
+import openai, { OpenAI } from "openai";
+
 // export type EditorPortType = keyof any;
 
 type Awaited<T> = T extends PromiseLike<infer U> ? U : T;
@@ -526,37 +528,32 @@ export class FlydeEditorEditorProvider
                 if (prompt.trim().length === 0) {
                   throw new Error("prompt is empty");
                 }
-                try {
-                  const { data } = await axios.post(
-                    "https://api.openai.com/v1/chat/completions",
-                    {
-                      model: "gpt-4o",
-                      // eslint-disable-next-line @typescript-eslint/naming-convention
-                      response_format: jsonMode
-                        ? { type: "json_object" }
-                        : undefined,
-                      messages: [
-                        {
-                          role: "system",
-                          content:
-                            "You are a helpful coding assistant. Provide direct code responses without explanations.",
-                        },
-                        {
-                          role: "user",
-                          content: prompt,
-                        },
-                      ],
-                      temperature: 0,
-                    },
-                    {
-                      headers: {
-                        // eslint-disable-next-line @typescript-eslint/naming-convention
-                        Authorization: `Bearer ${openAiToken}`,
-                      },
-                    }
-                  );
 
-                  const completion = data.choices[0]?.message?.content;
+                try {
+                  const openai = new OpenAI({
+                    apiKey: openAiToken,
+                  });
+
+                  const response = await openai.chat.completions.create({
+                    model: "gpt-4o",
+                    response_format: jsonMode
+                      ? { type: "json_object" }
+                      : undefined,
+                    messages: [
+                      {
+                        role: "system",
+                        content:
+                          "You are a helpful coding assistant. Provide direct code responses without explanations.",
+                      },
+                      {
+                        role: "user",
+                        content: prompt,
+                      },
+                    ],
+                    temperature: 0,
+                  });
+
+                  const completion = response.choices[0]?.message?.content;
 
                   if (!completion) {
                     throw new Error("No completion received from OpenAI");
@@ -564,13 +561,8 @@ export class FlydeEditorEditorProvider
 
                   messageResponse(event, completion);
                 } catch (error) {
-                  if (axios.isAxiosError(error)) {
-                    throw new Error(
-                      `OpenAI API error: ${
-                        (error.response?.data as any)?.error?.message ||
-                        error.message
-                      }`
-                    );
+                  if (error instanceof OpenAI.APIError) {
+                    throw new Error(`OpenAI API error: ${error.message}`);
                   }
                   throw error;
                 }
