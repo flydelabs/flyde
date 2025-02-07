@@ -30,7 +30,7 @@ export const CodeExpression: MacroNode<CodeExpressionConfig> = {
         size: "small",
         icon: "code",
       },
-      displayName: `${config.value}`,
+      displayName: "Code Expression",
       description: `Evaluates the expression \`${config.value}\``,
       inputs: Object.fromEntries(inputNames.map((input) => [input, {}]) ?? []),
       outputs: {
