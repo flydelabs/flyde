@@ -22,6 +22,7 @@ import { loadMacroEditor } from "./macroEditorLoader";
 import { usePrompt } from "../../flow-editor/ports";
 import { useDependenciesContext } from "../../flow-editor/DependenciesContext";
 import { Loader } from "../../lib/loader";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 export interface MacroInstanceEditorProps {
   deps: ResolvedDependenciesDefinitions;
@@ -90,7 +91,9 @@ export const MacroInstanceEditor: React.FC<MacroInstanceEditorProps> = (
 
   return (
     <Dialog open={true} onOpenChange={props.onCancel} modal={false}>
-      <DialogTitle>{macro.displayName ?? macro.id}</DialogTitle>
+      <VisuallyHidden asChild>
+        <DialogTitle>{macro.displayName ?? macro.id}</DialogTitle>
+      </VisuallyHidden>
       <DialogContent className="flex flex-col max-h-[90vh] pt-10">
         <div className="flex-none">
           {onForkNode && (

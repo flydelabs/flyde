@@ -32,6 +32,7 @@
     "@hookform/resolvers": "^3.10.0",
     "@monaco-editor/react": "^4.5.1",
     "@paralleldrive/cuid2": "^2.2.2",
+    "@radix-ui/react-visually-hidden": "^1.1.2",
     "@rehooks/component-size": "^1.0.3",
     "@types/jest": "^26.0.24",
     "@types/lodash": "^4.14.197",

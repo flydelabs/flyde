@@ -32,8 +32,6 @@ export function AiGenerate({
   const [input, setInput] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  console.log({ enabled, createCompletion });
-
   useEffect(() => {
     if (isOpen) {
       // Give the popover time to render
@@ -54,7 +52,6 @@ export function AiGenerate({
         prompt: prompt.replace("{prompt}", input),
         jsonMode,
       });
-      console.log("Result", result);
       onComplete(result);
       setInput("");
       setIsOpen(false);
