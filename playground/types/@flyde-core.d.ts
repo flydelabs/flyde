@@ -920,6 +920,9 @@ declare module '@flyde/core/node/macro-node' {
             value: T;
             onChange: (value: T) => void;
             prompt: (message: string) => Promise<string>;
+            createAiCompletion?: (prompt: {
+                    prompt: string;
+            }) => Promise<string>;
     }
     export interface MacroEditorComp<T> extends React.FC<MacroEditorCompProps<T>> {
     }

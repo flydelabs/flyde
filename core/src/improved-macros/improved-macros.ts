@@ -60,6 +60,11 @@ type InputConfig = {
   defaultValue?: any;
   description?: string;
   mode?: InputMode | "reactive";
+  aiCompletion?: {
+    prompt: string;
+    placeholder?: string;
+    jsonMode?: boolean;
+  };
 } & EditorTypeConfig;
 
 type EditorTypeConfig = {
@@ -198,6 +203,7 @@ export function processImprovedMacro(node: ImprovedMacroNode): MacroNode<any> {
         configKey: key,
         typeData: input.editorTypeData,
         label: input.description,
+        aiCompletion: input.aiCompletion,
       } as MacroEditorFieldDefinition;
     });
 

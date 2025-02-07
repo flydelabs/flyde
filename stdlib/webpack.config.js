@@ -47,7 +47,5 @@ module.exports = pairs.map(({ entry, name }) => ({
     // Do not bundle React and ReactDOM, assume they're available externally
     react: "React",
     "react-dom": "ReactDOM",
-    "@blueprintjs/core": "Blueprint",
-    "@blueprintjs/select": "BlueprintSelect",
   },
 }));

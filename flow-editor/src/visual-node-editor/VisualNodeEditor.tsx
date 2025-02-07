@@ -37,7 +37,13 @@ import {
 } from "./connection-view/ConnectionView";
 import { entries, Size } from "../utils";
 
-import { ContextMenu, ContextMenuTrigger, Plus } from "@flyde/ui";
+import {
+  AiGenerate,
+  ContextMenu,
+  ContextMenuTrigger,
+  HotkeyIndication,
+  Plus,
+} from "@flyde/ui";
 import { useBoundingclientrect, useDidMount } from "rooks";
 
 import {
@@ -1564,7 +1570,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                     <span className="size-5">
                       <Plus className="w-5 h-5 dark:text-white text-neutral-800" />
                     </span>{" "}
-                    <span className="text-xs text-gray-600"> ⌘K</span>
+                    <HotkeyIndication hotkey="⌘K" />
                   </Button>
                 </div>
                 <div className="viewport-controls-and-help">

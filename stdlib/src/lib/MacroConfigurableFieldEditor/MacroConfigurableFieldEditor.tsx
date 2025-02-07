@@ -5,6 +5,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
   Settings,
+  AiGenerate,
 } from "@flyde/ui";
 import {
   MacroConfigurableValue,
@@ -84,9 +85,27 @@ export function MacroConfigurableFieldEditor(props: {
   }, [changeType, config.templateSupport, config.typeConfigurable, value.type]);
 
   return (
-    <div style={{ marginBottom: "16px" }}>
-      <div style={{ marginBottom: "4px", fontWeight: 500 }}>
+    <div className="mb-4 group">
+      <div className="mb-1 font-medium flex items-center gap-2 justify-between">
         {config.label}:
+        {config.aiCompletion && (
+          <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+            <AiGenerate
+              prompt={config.aiCompletion.prompt}
+              placeholder={config.aiCompletion.placeholder}
+              jsonMode={config.aiCompletion.jsonMode}
+              onComplete={(text) => {
+                try {
+                  const parsed = JSON.parse(text);
+                  onChange({ ...value, value: parsed });
+                } catch {
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  onChange({ ...value, value: text } as any);
+                }
+              }}
+            />
+          </div>
+        )}
       </div>
       <MacroConfigurableValueBaseEditor
         value={value}

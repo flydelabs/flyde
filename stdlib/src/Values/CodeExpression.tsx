@@ -1,4 +1,4 @@
-import { FormGroup, Textarea } from "@flyde/ui";
+import { AiCompletionProvider, FormGroup, Textarea } from "@flyde/ui";
 import type { CodeExpressionConfig } from "./CodeExpression.flyde";
 import React, { useCallback } from "react";
 import { getVariables } from "./getInlineVariables";
@@ -6,7 +6,7 @@ import { MacroEditorComp } from "@flyde/core";
 
 const CodeExpressionEditor: MacroEditorComp<CodeExpressionConfig> =
   function CodeExpressionEditor(props) {
-    const { value, onChange } = props;
+    const { value, onChange, createAiCompletion } = props;
 
     const changeValue = useCallback(
       (_val) => {
@@ -17,28 +17,62 @@ const CodeExpressionEditor: MacroEditorComp<CodeExpressionConfig> =
 
     const vars = getVariables(value.value ?? "");
 
+    const aiContextValue = React.useMemo(() => {
+      return {
+        createCompletion: createAiCompletion,
+        enabled: !!createAiCompletion,
+      };
+    }, [createAiCompletion]);
+
     return (
       <div>
-        <FormGroup label="Accepts any valid JS code that returns an expression">
-          <Textarea
-            value={value.value}
-            style={{ width: "100%" }}
-            onChange={(e) => changeValue(e.target.value)}
-          />
-        </FormGroup>
-        <div style={{ marginTop: "8px" }}>
-          {vars.length > 0 ? (
-            <span style={{ fontSize: "0.875rem", color: "#666" }}>
-              External inputs exposed from this expression:{" "}
-              <em>{vars.join(", ")}</em>
-            </span>
-          ) : (
-            <span style={{ fontSize: "0.875rem", color: "#666" }}>
-              Expose external inputs by using the "inputs" object. For example,
-              "inputs.a + inputs.b" will expose 2 inputs, a and b, and sum them.
-            </span>
-          )}
-        </div>
+        <AiCompletionProvider value={aiContextValue}>
+          <FormGroup
+            label="Accepts any valid JS code that returns an expression"
+            aiGenerate={{
+              prompt: `You are a master JS inline expression generator. You will receive a user's request, and an optional existing value. 
+              Your task is to return a single JS expression that adheres to the user's request.  You can use the "inputs" object to access the external inputs.
+                Example:
+                Add 2 numbers: inputs.a + inputs.b
+                Uppercase: inputs.name.toUpperCase()
+                BMI formula: inputs.weight / (inputs.height * inputs.height)
+              
+              - Do not write "return" and do not use line breaks. The expression will be evaluated directly.
+              - Return plain code, no wrapping code like \`\`\`js or \`\`\` or \`
+
+              Previous expression:
+              ${value.value}
+
+              User request:
+              {prompt}
+                `,
+              placeholder: "Describe the expression you want to generate",
+              onComplete: (generatedText) => {
+                changeValue(generatedText);
+              },
+            }}
+          >
+            <Textarea
+              value={value.value}
+              style={{ width: "100%" }}
+              onChange={(e) => changeValue(e.target.value)}
+            />
+          </FormGroup>
+          <div style={{ marginTop: "8px" }}>
+            {vars.length > 0 ? (
+              <span style={{ fontSize: "0.875rem", color: "#666" }}>
+                External inputs exposed from this expression:{" "}
+                <em>{vars.join(", ")}</em>
+              </span>
+            ) : (
+              <span style={{ fontSize: "0.875rem", color: "#666" }}>
+                Expose external inputs by using the "inputs" object. For
+                example, "inputs.a + inputs.b" will expose 2 inputs, a and b,
+                and sum them.
+              </span>
+            )}
+          </div>
+        </AiCompletionProvider>
       </div>
     );
   };

@@ -1,5 +1,6 @@
 import { MacroNodeDefinition } from "@flyde/core";
 import React from "react";
+import ReactDOM from "react-dom";
 import { StructuredMacroEditorComp } from "./StructuredMacroEditorComp";
 
 export function loadMacroEditor(
@@ -7,6 +8,7 @@ export function loadMacroEditor(
 ): React.FC<any> {
   const w: any = window;
   w.React = React;
+  w.ReactDOM = ReactDOM;
   const { id, editorConfig } = macroNode;
 
   const exportId = `__MacroNode__${id}`;

@@ -1,4 +1,4 @@
-import { Button } from "@flyde/ui";
+import { Button, DialogTitle, useAiCompletion } from "@flyde/ui";
 import { Dialog, DialogContent, DialogFooter } from "@flyde/ui";
 import {
   Select,
@@ -76,6 +76,8 @@ export const MacroInstanceEditor: React.FC<MacroInstanceEditorProps> = (
 
   const prompt = usePrompt();
 
+  const aiCompletion = useAiCompletion();
+
   if (!macro) {
     return (
       <Dialog open={true}>
@@ -87,7 +89,8 @@ export const MacroInstanceEditor: React.FC<MacroInstanceEditorProps> = (
   }
 
   return (
-    <Dialog open={true} onOpenChange={props.onCancel}>
+    <Dialog open={true} onOpenChange={props.onCancel} modal={false}>
+      <DialogTitle>{macro.displayName ?? macro.id}</DialogTitle>
       <DialogContent className="flex flex-col max-h-[90vh] pt-10">
         <div className="flex-none">
           {onForkNode && (
@@ -153,6 +156,7 @@ export const MacroInstanceEditor: React.FC<MacroInstanceEditorProps> = (
               value={macroData}
               onChange={setMacroData}
               prompt={prompt}
+              createAiCompletion={aiCompletion.createCompletion}
             />
           </ErrorBoundary>
         </div>

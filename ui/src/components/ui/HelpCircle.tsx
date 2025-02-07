@@ -1,5 +1,5 @@
 import * as React from "react";
-import { IconProps, defaultProps } from "./types";
+import { IconProps, defaultProps } from "../../icons/types";
 
 export function HelpCircle(props: IconProps) {
   const { size, strokeWidth, ...rest } = { ...defaultProps, ...props };

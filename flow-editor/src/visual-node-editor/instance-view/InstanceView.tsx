@@ -52,6 +52,8 @@ import {
   ContextMenuSub,
   ContextMenuSubTrigger,
   ContextMenuSubContent,
+  AiGenerationProvider,
+  AiGenerate,
 } from "@flyde/ui";
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@flyde/ui";
