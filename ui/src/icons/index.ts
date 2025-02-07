@@ -14,4 +14,5 @@ export { Circle } from "./Circle";
 export { Info } from "./Info";
 export { Lightbulb } from "./Lightbulb";
 export { GitFork } from "./GitFork";
-export { HelpCircle } from "./HelpCircle";
+export { HelpCircle } from "../components/ui/HelpCircle";
+export { AiIcon } from "./AiIcon";

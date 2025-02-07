@@ -49,6 +49,11 @@ interface BaseFieldDefinition {
   configKey: string;
   templateSupport?: boolean;
   typeConfigurable?: boolean;
+  aiCompletion?: {
+    prompt: string;
+    placeholder?: string;
+    jsonMode?: boolean;
+  };
 }
 
 export interface StringFieldDefinition extends BaseFieldDefinition {
@@ -145,6 +150,7 @@ export interface MacroEditorCompProps<T> {
   value: T;
   onChange: (value: T) => void;
   prompt: (message: string) => Promise<string>;
+  createAiCompletion?: (prompt: { prompt: string }) => Promise<string>;
 }
 
 export interface MacroEditorComp<T> extends React.FC<MacroEditorCompProps<T>> {}

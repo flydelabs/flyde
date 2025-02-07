@@ -253,6 +253,11 @@ declare module '@flyde/core/improved-macros/improved-macros' {
         defaultValue?: any;
         description?: string;
         mode?: InputMode | "reactive";
+        aiCompletion?: {
+            prompt: string;
+            placeholder?: string;
+            jsonMode?: boolean;
+        };
     } & EditorTypeConfig;
     type EditorTypeConfig = {
         [K in EditorType]: {
@@ -848,6 +853,11 @@ declare module '@flyde/core/node/macro-node' {
             configKey: string;
             templateSupport?: boolean;
             typeConfigurable?: boolean;
+            aiCompletion?: {
+                    prompt: string;
+                    placeholder?: string;
+                    jsonMode?: boolean;
+            };
     }
     export interface StringFieldDefinition extends BaseFieldDefinition {
             type: "string";
@@ -921,6 +931,9 @@ declare module '@flyde/core/node/macro-node' {
             value: T;
             onChange: (value: T) => void;
             prompt: (message: string) => Promise<string>;
+            createAiCompletion?: (prompt: {
+                    prompt: string;
+            }) => Promise<string>;
     }
     export interface MacroEditorComp<T> extends React.FC<MacroEditorCompProps<T>> {
     }

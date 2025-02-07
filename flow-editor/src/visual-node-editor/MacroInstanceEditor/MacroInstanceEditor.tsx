@@ -1,4 +1,4 @@
-import { Button } from "@flyde/ui";
+import { Button, DialogTitle, useAiCompletion } from "@flyde/ui";
 import { Dialog, DialogContent, DialogFooter } from "@flyde/ui";
 import {
   Select,
@@ -22,6 +22,7 @@ import { loadMacroEditor } from "./macroEditorLoader";
 import { usePrompt } from "../../flow-editor/ports";
 import { useDependenciesContext } from "../../flow-editor/DependenciesContext";
 import { Loader } from "../../lib/loader";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 export interface MacroInstanceEditorProps {
   deps: ResolvedDependenciesDefinitions;
@@ -76,6 +77,8 @@ export const MacroInstanceEditor: React.FC<MacroInstanceEditorProps> = (
 
   const prompt = usePrompt();
 
+  const aiCompletion = useAiCompletion();
+
   if (!macro) {
     return (
       <Dialog open={true}>
@@ -87,7 +90,10 @@ export const MacroInstanceEditor: React.FC<MacroInstanceEditorProps> = (
   }
 
   return (
-    <Dialog open={true} onOpenChange={props.onCancel}>
+    <Dialog open={true} onOpenChange={props.onCancel} modal={false}>
+      <VisuallyHidden asChild>
+        <DialogTitle>{macro.displayName ?? macro.id}</DialogTitle>
+      </VisuallyHidden>
       <DialogContent className="flex flex-col max-h-[90vh] pt-10">
         <div className="flex-none">
           {onForkNode && (
@@ -153,6 +159,7 @@ export const MacroInstanceEditor: React.FC<MacroInstanceEditorProps> = (
               value={macroData}
               onChange={setMacroData}
               prompt={prompt}
+              createAiCompletion={aiCompletion.createCompletion}
             />
           </ErrorBoundary>
         </div>

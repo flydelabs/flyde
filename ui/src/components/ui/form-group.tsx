@@ -1,14 +1,21 @@
 import * as React from "react";
 import { Label } from "./label";
 import { cn } from "../../lib/utils";
+import { AiGenerate } from "../../ai/ai-generate";
 
 export interface FormGroupProps extends React.HTMLAttributes<HTMLDivElement> {
   label?: React.ReactNode;
   inline?: boolean;
+  aiGenerate?: {
+    prompt: string;
+    placeholder?: string;
+    onComplete: (generatedText: string) => void;
+    jsonMode?: boolean;
+  };
 }
 
 const FormGroup = React.forwardRef<HTMLDivElement, FormGroupProps>(
-  ({ className, children, label, inline, ...props }, ref) => {
+  ({ className, children, label, inline, aiGenerate, ...props }, ref) => {
     return (
       <div
         ref={ref}
@@ -19,7 +26,17 @@ const FormGroup = React.forwardRef<HTMLDivElement, FormGroupProps>(
         )}
         {...props}
       >
-        {label && <Label>{label}</Label>}
+        <div className="inline-flex items-center gap-2 space-betw">
+          {label && <Label>{label}</Label>}
+          {aiGenerate && (
+            <AiGenerate
+              prompt={aiGenerate.prompt}
+              placeholder={aiGenerate.placeholder}
+              onComplete={aiGenerate.onComplete}
+              jsonMode={aiGenerate.jsonMode}
+            />
+          )}
+        </div>
         {children}
       </div>
     );

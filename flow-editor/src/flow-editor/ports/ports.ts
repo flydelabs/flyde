@@ -68,6 +68,7 @@ export interface EditorPorts {
     node: NodeOrMacroDefinition;
   }) => Promise<string>;
   onCreateCustomNode: (dto: { code: string }) => Promise<ImportableSource>;
+  createAiCompletion?: (dto: { prompt: string }) => Promise<string>;
 }
 
 const toastNotImplemented: any = (method: string) => async () => {

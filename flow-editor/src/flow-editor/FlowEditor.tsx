@@ -32,6 +32,7 @@ import { DarkModeProvider } from "./DarkModeContext";
 import { useDarkMode } from "usehooks-ts";
 
 import { VisualNodeEditorProvider } from "../visual-node-editor/VisualNodeEditorContext";
+import { AiCompletionContext, AiCompletionProvider } from "@flyde/ui";
 
 export * from "./ports";
 export * from "./DebuggerContext";
@@ -120,7 +121,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
       return undefined;
     }, [debuggerClient]);
 
-    const { openFile } = usePorts();
+    const { openFile, createAiCompletion } = usePorts();
 
     const onChangeFlow = React.useCallback(
       (newFlow: Partial<FlydeFlow>, changeType: FlydeFlowChangeType) => {
@@ -222,38 +223,47 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
 
     const { isDarkMode } = useDarkMode();
 
+    const AiCompletionContextValue = React.useMemo<AiCompletionContext>(() => {
+      return {
+        createCompletion: createAiCompletion,
+        enabled: !!createAiCompletion,
+      };
+    }, [createAiCompletion]);
+
     const renderInner = () => {
       return (
         <DarkModeProvider value={props.darkMode ?? isDarkMode}>
-          <VisualNodeEditorProvider
-            boardData={editorBoardData}
-            onChangeBoardData={onChangeEditorBoardData}
-            node={editedNode}
-            onChangeNode={onChangeNode}
-          >
-            <React.Fragment>
-              {inspectedItem ? (
-                <DataInspectionModal
-                  item={inspectedItem}
-                  onClose={onCloseInspectedItemModal}
+          <AiCompletionProvider value={AiCompletionContextValue}>
+            <VisualNodeEditorProvider
+              boardData={editorBoardData}
+              onChangeBoardData={onChangeEditorBoardData}
+              node={editedNode}
+              onChangeNode={onChangeNode}
+            >
+              <React.Fragment>
+                {inspectedItem ? (
+                  <DataInspectionModal
+                    item={inspectedItem}
+                    onClose={onCloseInspectedItemModal}
+                  />
+                ) : null}
+                <VisualNodeEditor
+                  currentInsId={ROOT_INS_ID}
+                  ref={visualEditorRef}
+                  key={editedNode.id}
+                  onGoToNodeDef={onEditNode}
+                  clipboardData={clipboardData}
+                  onCopy={setClipboardData}
+                  nodeIoEditable={!editedNode.id.startsWith("Trigger")}
+                  onInspectPin={onInspectPin}
+                  onExtractInlineNode={props.onExtractInlineNode}
+                  queuedInputsData={queuedInputsData}
+                  initialPadding={props.initialPadding}
+                  instancesWithErrors={instancesWithErrors}
                 />
-              ) : null}
-              <VisualNodeEditor
-                currentInsId={ROOT_INS_ID}
-                ref={visualEditorRef}
-                key={editedNode.id}
-                onGoToNodeDef={onEditNode}
-                clipboardData={clipboardData}
-                onCopy={setClipboardData}
-                nodeIoEditable={!editedNode.id.startsWith("Trigger")}
-                onInspectPin={onInspectPin}
-                onExtractInlineNode={props.onExtractInlineNode}
-                queuedInputsData={queuedInputsData}
-                initialPadding={props.initialPadding}
-                instancesWithErrors={instancesWithErrors}
-              />
-            </React.Fragment>
-          </VisualNodeEditorProvider>
+              </React.Fragment>
+            </VisualNodeEditorProvider>
+          </AiCompletionProvider>
         </DarkModeProvider>
       );
     };

@@ -108,7 +108,7 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
       return (
         <>
           <ContextMenuItem onClick={() => props.onToggleSticky(props.id)}>
-            Toggle sticky (square means sticky)
+            Toggle sticky
           </ContextMenuItem>
           {inspectItem}
         </>
@@ -185,14 +185,6 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
     );
   };
 
-  const maybeStickyLabel = () => {
-    if (props.type === "input" && props.isSticky) {
-      return <span className="suffix">s</span>;
-    } else {
-      return null;
-    }
-  };
-
   const maybeQueueLabel = () => {
     if (props.type === "input" && props.queueSize) {
       return <span className="suffix">{props.queueSize} in Q</span>;
@@ -235,8 +227,6 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
               <ContextMenuTrigger
                 onMouseEnter={refreshHistory}
                 onMouseOut={resetHistory}
-                onMouseDown={_onMouseDown}
-                onMouseUp={_onMouseUp}
                 data-tip=""
                 data-html={true}
                 data-for={id + props.currentInsId}
@@ -247,7 +237,7 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
                 className={classNames(`pin-inner`, { dark })}
                 onClick={onClick}
               >
-                {displayName} {maybeStickyLabel()}
+                {displayName}
                 {maybeQueueLabel()}
               </ContextMenuTrigger>
             </TooltipTrigger>

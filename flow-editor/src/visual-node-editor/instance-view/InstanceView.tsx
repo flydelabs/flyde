@@ -45,10 +45,8 @@ import {
 import { usePrompt } from "../..";
 
 import {
-  ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
-  ContextMenuTrigger,
   ContextMenuSub,
   ContextMenuSubTrigger,
   ContextMenuSubContent,

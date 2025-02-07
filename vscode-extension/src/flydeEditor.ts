@@ -7,6 +7,7 @@ import { scanImportableNodes } from "@flyde/dev-server/dist/service/scan-importa
 import { scanImportableMacros } from "@flyde/dev-server/dist/service/scan-importable-macros";
 import { generateAndSaveNode } from "@flyde/dev-server/dist/service/ai/generate-node-from-prompt";
 import { getLibraryData } from "@flyde/dev-server/dist/service/get-library-data";
+import axios from "axios";
 
 import {
   deserializeFlow,
@@ -37,6 +38,8 @@ import { forkRunFlow } from "@flyde/dev-server/dist/runner/runFlow.host";
 import { createEditorClient } from "@flyde/remote-debugger";
 import { maybeAskToStarProject } from "./maybeAskToStarProject";
 import { customCodeNodeFromCode } from "@flyde/core/dist/misc/custom-code-node-from-code";
+
+import openai, { OpenAI } from "openai";
 
 // export type EditorPortType = keyof any;
 
@@ -506,6 +509,63 @@ export class FlydeEditorEditorProvider
                   module: nodeFileName,
                 };
                 messageResponse(event, importableSource);
+                break;
+              }
+              case "createAiCompletion": {
+                const config = vscode.workspace.getConfiguration("flyde");
+                let openAiToken = config.get<string>("openAiToken");
+
+                if (!openAiToken) {
+                  await vscode.commands.executeCommand("flyde.setOpenAiToken");
+                  openAiToken = config.get<string>("openAiToken");
+                }
+
+                if (!openAiToken) {
+                  throw new Error("OpenAI token is required");
+                }
+
+                const { prompt, jsonMode } = event.params;
+                if (prompt.trim().length === 0) {
+                  throw new Error("prompt is empty");
+                }
+
+                try {
+                  const openai = new OpenAI({
+                    apiKey: openAiToken,
+                  });
+
+                  const response = await openai.chat.completions.create({
+                    model: "gpt-4o",
+                    response_format: jsonMode
+                      ? { type: "json_object" }
+                      : undefined,
+                    messages: [
+                      {
+                        role: "system",
+                        content:
+                          "You are a helpful coding assistant. Provide direct code responses without explanations.",
+                      },
+                      {
+                        role: "user",
+                        content: prompt,
+                      },
+                    ],
+                    temperature: 0,
+                  });
+
+                  const completion = response.choices[0]?.message?.content;
+
+                  if (!completion) {
+                    throw new Error("No completion received from OpenAI");
+                  }
+
+                  messageResponse(event, completion);
+                } catch (error) {
+                  if (error instanceof OpenAI.APIError) {
+                    throw new Error(`OpenAI API error: ${error.message}`);
+                  }
+                  throw error;
+                }
                 break;
               }
               default: {

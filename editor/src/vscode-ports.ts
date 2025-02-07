@@ -102,6 +102,9 @@ export const createVsCodePorts = (): EditorPorts => {
     onCreateCustomNode: async (dto) => {
       return postMessageCallback("onCreateCustomNode", dto);
     },
+    createAiCompletion: async (dto) => {
+      return postMessageCallback("createAiCompletion", dto);
+    },
   };
 };
 
