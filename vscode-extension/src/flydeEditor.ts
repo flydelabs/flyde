@@ -7,6 +7,7 @@ import { scanImportableNodes } from "@flyde/dev-server/dist/service/scan-importa
 import { scanImportableMacros } from "@flyde/dev-server/dist/service/scan-importable-macros";
 import { generateAndSaveNode } from "@flyde/dev-server/dist/service/ai/generate-node-from-prompt";
 import { getLibraryData } from "@flyde/dev-server/dist/service/get-library-data";
+import axios from "axios";
 
 import {
   deserializeFlow,
@@ -525,18 +526,10 @@ export class FlydeEditorEditorProvider
                 if (prompt.trim().length === 0) {
                   throw new Error("prompt is empty");
                 }
-
-                const response = await fetch(
-                  "https://api.openai.com/v1/chat/completions",
-                  {
-                    method: "POST",
-                    headers: {
-                      // eslint-disable-next-line @typescript-eslint/naming-convention
-                      "Content-Type": "application/json",
-                      // eslint-disable-next-line @typescript-eslint/naming-convention
-                      Authorization: `Bearer ${openAiToken}`,
-                    },
-                    body: JSON.stringify({
+                try {
+                  const { data } = await axios.post(
+                    "https://api.openai.com/v1/chat/completions",
+                    {
                       model: "gpt-4o",
                       // eslint-disable-next-line @typescript-eslint/naming-convention
                       response_format: jsonMode
@@ -554,23 +547,33 @@ export class FlydeEditorEditorProvider
                         },
                       ],
                       temperature: 0,
-                    }),
+                    },
+                    {
+                      headers: {
+                        // eslint-disable-next-line @typescript-eslint/naming-convention
+                        Authorization: `Bearer ${openAiToken}`,
+                      },
+                    }
+                  );
+
+                  const completion = data.choices[0]?.message?.content;
+
+                  if (!completion) {
+                    throw new Error("No completion received from OpenAI");
                   }
-                );
 
-                if (!response.ok) {
-                  const error = await response.text();
-                  throw new Error(`OpenAI API error: ${error}`);
+                  messageResponse(event, completion);
+                } catch (error) {
+                  if (axios.isAxiosError(error)) {
+                    throw new Error(
+                      `OpenAI API error: ${
+                        (error.response?.data as any)?.error?.message ||
+                        error.message
+                      }`
+                    );
+                  }
+                  throw error;
                 }
-
-                const data = await response.json();
-                const completion = data.choices[0]?.message?.content;
-
-                if (!completion) {
-                  throw new Error("No completion received from OpenAI");
-                }
-
-                messageResponse(event, completion);
                 break;
               }
               default: {
