@@ -241,12 +241,13 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
               onChangeNode={onChangeNode}
             >
               <React.Fragment>
-                {inspectedItem ? (
+                {inspectedItem && (
                   <DataInspectionModal
                     item={inspectedItem}
+                    isOpen={!!inspectedItem}
                     onClose={onCloseInspectedItemModal}
                   />
-                ) : null}
+                )}
                 <VisualNodeEditor
                   currentInsId={ROOT_INS_ID}
                   ref={visualEditorRef}

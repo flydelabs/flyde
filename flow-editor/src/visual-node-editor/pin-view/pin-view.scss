@@ -9,11 +9,15 @@ $light-pin-handle-border: #666666;
   user-select: none;
 
   .pin-inner {
-    max-width: 80px;
+    max-width: 60px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     display: inline-block;
+  }
+
+  .size-wide & .pin-inner {
+    max-width: 80px;
   }
 
   &.input {
