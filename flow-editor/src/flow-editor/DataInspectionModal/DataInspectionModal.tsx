@@ -15,13 +15,14 @@ import { useDebuggerContext } from "../DebuggerContext";
 export interface DataInspectionModalProps {
   onClose: () => void;
   item: { insId: string; pin?: { id: string; type: PinType } };
+  isOpen: boolean;
 }
 
 export const DataInspectionModal: React.FC<DataInspectionModalProps> = (
   props
 ) => {
   const { onRequestHistory } = useDebuggerContext();
-  const { item } = props;
+  const { item, isOpen } = props;
 
   const [data, setData] = React.useState<HistoryPayload>();
   const [currIdx, setCurrIdx] = React.useState(0);
@@ -154,7 +155,7 @@ export const DataInspectionModal: React.FC<DataInspectionModalProps> = (
   };
 
   return (
-    <Dialog open={true} onOpenChange={() => props.onClose()}>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && props.onClose()}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Inspecting data for instance {itemName}</DialogTitle>
