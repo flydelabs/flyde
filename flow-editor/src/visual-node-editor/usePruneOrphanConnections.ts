@@ -49,10 +49,6 @@ export function usePruneOrphanConnections(
     });
 
     if (orphanConnections.length > 0) {
-      toast({
-        title: `${orphanConnections.length} orphan connections removed`,
-        variant: "default",
-      });
       console.warn(
         `${orphanConnections.length} orphan connections removed`,
         orphanConnections
