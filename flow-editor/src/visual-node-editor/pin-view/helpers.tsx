@@ -1,50 +1,6 @@
-import { HistoryPayload, valuePreview } from "@flyde/remote-debugger";
-import React from "react";
-import { useCallback, useRef, useState } from "react";
+import { HistoryPayload } from "@flyde/remote-debugger";
+import React, { useCallback, useRef, useState } from "react";
 import { useDebuggerContext } from "../../flow-editor/DebuggerContext";
-
-export const calcHistoryContent = (
-  history?: HistoryPayload,
-  queuedValues?: number
-) => {
-  if (history) {
-    const { total, lastSamples } = history;
-
-    const timesActivated = (
-      <strong>Activated {total} times this session</strong>
-    );
-
-    const lastValueData =
-      lastSamples.length > 0 ? (
-        <div>
-          Last value:{" "}
-          <strong>{valuePreview(lastSamples[0].val).substring(0, 200)}</strong>
-          <br />
-          <em>Inspect instance for the full value</em>
-        </div>
-      ) : (
-        ""
-      );
-    const queuedValuesData = queuedValues ? (
-      <React.Fragment>
-        <div>
-          Queued values: <strong>{queuedValues}</strong>
-        </div>
-      </React.Fragment>
-    ) : (
-      ""
-    );
-    return (
-      <div className="history-tooltip">
-        {timesActivated}
-        {lastValueData}
-        {queuedValuesData}
-      </div>
-    );
-  } else {
-    return "Loading session data..";
-  }
-};
 
 const INSIGHTS_TOOLTIP_INTERVAL = 500;
 

@@ -3,7 +3,6 @@ import { getOutputName, InputMode, noop, PinType, Pos } from "@flyde/core";
 import { BaseNodeView } from "../base-node-view";
 import classNames from "classnames";
 import { usePrompt } from "../../flow-editor/ports";
-import { calcHistoryContent, useHistoryHelpers } from "../pin-view/helpers";
 import { getInputName } from "@flyde/core";
 import { useDarkMode } from "../../flow-editor/DarkModeContext";
 import { PinView } from "../pin-view/PinView";
@@ -68,12 +67,6 @@ export const NodeIoView: React.FC<NodeIoViewProps> = React.memo(
       onDragEnd,
       pos,
     } = props;
-
-    const { history, resetHistory, refreshHistory } = useHistoryHelpers(
-      currentInsId,
-      id,
-      type
-    );
 
     const lastDragEndTimeRef = React.useRef<number>(0);
 
@@ -211,27 +204,6 @@ export const NodeIoView: React.FC<NodeIoViewProps> = React.memo(
     }, [id, type, onSelect]);
 
     const displayName = type === "input" ? getInputName(id) : getOutputName(id);
-
-    const calcTooltipContent = () => {
-      const historyContent = calcHistoryContent(history);
-
-      const maybeDescription = props.description ? (
-        <em>{props.description}</em>
-      ) : (
-        ""
-      );
-
-      return (
-        <div>
-          <div>
-            <strong>{displayName}</strong> ({type}){" "}
-          </div>
-          {maybeDescription}
-          <hr />
-          {historyContent}
-        </div>
-      );
-    };
 
     const _onMouseUp = React.useCallback(
       (e: React.MouseEvent) => {

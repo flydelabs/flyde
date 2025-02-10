@@ -82,7 +82,6 @@ import classNames from "classnames";
 import { pasteInstancesCommand } from "./commands/paste-instances";
 
 import { useDependenciesContext } from "../flow-editor/FlowEditor";
-import { MainInstanceEventsIndicator } from "./MainInstanceEventsIndicator";
 import { HelpBubble } from "./HelpBubble";
 import { safelyGetNodeDef } from "../flow-editor/getNodeDef";
 import { useDarkMode } from "../flow-editor/DarkModeContext";
@@ -1556,11 +1555,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                 <SelectionBox selectionBox={selectionBox} viewPort={viewPort} />
                 {/* {maybeRenderEditGroupModal()} */}
                 {renderMainPins("output")}
-                <MainInstanceEventsIndicator
-                  currentInsId={currentInsId}
-                  ancestorsInsIds={ancestorsInsIds}
-                  viewPort={viewPort}
-                />
                 <div className="absolute top-3 left-1/2 -translate-x-1/2 z-10">
                   <Button
                     variant="outline"

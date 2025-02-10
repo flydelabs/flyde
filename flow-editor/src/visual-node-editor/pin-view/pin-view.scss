@@ -117,15 +117,3 @@ $light-pin-handle-border: #666666;
     background: rgba(40, 135, 244, 1);
   }
 }
-
-@at-root {
-  .__react_component_tooltip.pin-info-tooltip {
-    font-size: 14px;
-    // min-width: 300px;
-    max-width: 400px;
-  }
-
-  .pin-info-tooltip {
-    max-width: 400px;
-  }
-}
