@@ -34,11 +34,6 @@ export interface CommandMenuProps extends NodeLibraryData {
   onClickCustomNode: () => void;
 }
 
-interface FilteredGroup extends NodeLibraryGroup {
-  isEssentials: boolean;
-  customNodeVisible: boolean;
-}
-
 export const CommandMenu: React.FC<CommandMenuProps> = ({
   groups,
   open,
@@ -153,9 +148,13 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
       } else if (source === "importable") {
         const node = importables?.find((i) => i.node.id === nodeId);
         if (node) {
+          const importableNode = {
+            module: node.module,
+            node: node.node,
+          };
           setRecentlyUsed(
             [
-              node,
+              importableNode,
               ...recentlyUsed.filter((n) => n.node.id !== node.node.id),
             ].slice(0, MAX_RECENT_NODES)
           );
