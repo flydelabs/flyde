@@ -1,6 +1,6 @@
 import * as React from "react";
 import classNames from "classnames";
-import { useCallback, useRef, useEffect } from "react";
+import { useCallback, useRef } from "react";
 import { useHotkeys } from "../../lib/react-utils/use-hotkeys";
 
 import {
@@ -67,7 +67,6 @@ export interface OptionalPinViewProps {
   onSelect: (k: string) => void;
 }
 
-const REFRESH_DELAY = 200; // 200ms delay before refreshing
 const LEAVE_DELAY = 200; // 200ms delay before hiding tooltip
 
 export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
@@ -249,7 +248,7 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
           <TooltipContent side="top" align="start" className="p-0">
             <PinTooltipContent
               displayName={displayName}
-              type={
+              typeLabel={
                 isMain
                   ? type === "input"
                     ? "main output"

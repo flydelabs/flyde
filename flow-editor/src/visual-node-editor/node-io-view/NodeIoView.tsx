@@ -3,7 +3,6 @@ import { getOutputName, InputMode, noop, PinType, Pos } from "@flyde/core";
 import { BaseNodeView } from "../base-node-view";
 import classNames from "classnames";
 import { usePrompt } from "../../flow-editor/ports";
-import { useHistoryHelpers } from "../pin-view/helpers";
 import { getInputName } from "@flyde/core";
 import { useDarkMode } from "../../flow-editor/DarkModeContext";
 import { PinView } from "../pin-view/PinView";
@@ -68,12 +67,6 @@ export const NodeIoView: React.FC<NodeIoViewProps> = React.memo(
       onDragEnd,
       pos,
     } = props;
-
-    const { history, resetHistory, refreshHistory } = useHistoryHelpers(
-      currentInsId,
-      id,
-      type
-    );
 
     const lastDragEndTimeRef = React.useRef<number>(0);
 

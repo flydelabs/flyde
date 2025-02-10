@@ -1,6 +1,4 @@
 import { HistoryPayload } from "@flyde/remote-debugger";
-import { valuePreview } from "@flyde/remote-debugger";
-import { DebuggerEventType, PinType } from "@flyde/core";
 import * as React from "react";
 import { cn } from "../../lib/utils";
 import { formatTimeAgo } from "../../lib/format-time";
@@ -8,7 +6,7 @@ import { HotkeyIndication } from "@flyde/ui";
 
 interface PinTooltipContentProps {
   displayName: string;
-  type: PinType;
+  typeLabel: string;
   description?: string;
   history?: HistoryPayload;
   queuedValues?: number;
@@ -17,10 +15,9 @@ interface PinTooltipContentProps {
 
 export const PinTooltipContent = ({
   displayName,
-  type,
+  typeLabel: type,
   description,
   history,
-  queuedValues,
   className,
 }: PinTooltipContentProps) => {
   const renderHistoryContent = () => {
