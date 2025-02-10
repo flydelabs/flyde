@@ -1,5 +1,7 @@
 import * as React from "react";
 import classNames from "classnames";
+import { useCallback, useRef, useEffect } from "react";
+import { useHotkeys } from "../../lib/react-utils/use-hotkeys";
 
 import {
   ERROR_PIN_ID,
@@ -9,8 +11,9 @@ import {
   PinType,
 } from "@flyde/core";
 import { getPinDomId, getPinDomHandleId } from "../dom-ids";
-import { calcHistoryContent, useHistoryHelpers } from "./helpers";
+import { useHistoryHelpers } from "./helpers";
 import { useDarkMode } from "../../flow-editor/DarkModeContext";
+import { PinTooltipContent } from "./PinTooltipContent";
 
 import {
   ContextMenu,
@@ -64,7 +67,8 @@ export interface OptionalPinViewProps {
   onSelect: (k: string) => void;
 }
 
-const INSIGHTS_TOOLTIP_INTERVAL = 500;
+const REFRESH_DELAY = 200; // 200ms delay before refreshing
+const LEAVE_DELAY = 200; // 200ms delay before hiding tooltip
 
 export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
   props
@@ -86,6 +90,32 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
     currentInsId,
     id,
     type
+  );
+
+  const leaveTimer = useRef<number>();
+
+  const handleMouseEnter = useCallback(() => {
+    window.clearTimeout(leaveTimer.current);
+    refreshHistory();
+  }, [refreshHistory]);
+
+  const handleMouseLeave = useCallback(() => {
+    leaveTimer.current = window.setTimeout(() => {
+      resetHistory();
+    }, LEAVE_DELAY);
+  }, [resetHistory]);
+
+  useHotkeys(
+    "cmd+i,ctrl+i",
+    (e) => {
+      e.preventDefault();
+      props.onInspect(currentInsId, { id, type });
+    },
+    {
+      text: "Inspect pin value",
+      group: "Pin Actions",
+    },
+    [currentInsId, id, type, props.onInspect]
   );
 
   const dark = useDarkMode();
@@ -161,30 +191,6 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
     }
   };
 
-  const calcTooltipContent = () => {
-    const historyContent = calcHistoryContent(
-      history,
-      type === "input" ? props.queuedValues : undefined
-    );
-
-    const maybeDescription = props.description ? (
-      <em>{props.description}</em>
-    ) : (
-      ""
-    );
-
-    return (
-      <div className="pin-info-tooltip">
-        <div>
-          <strong>{displayName}</strong> ({type}){" "}
-        </div>
-        {maybeDescription}
-        <hr />
-        {historyContent}
-      </div>
-    );
-  };
-
   const maybeQueueLabel = () => {
     if (props.type === "input" && props.queueSize) {
       return <span className="suffix">{props.queueSize} in Q</span>;
@@ -225,11 +231,8 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
           <ContextMenu>
             <TooltipTrigger asChild>
               <ContextMenuTrigger
-                onMouseEnter={refreshHistory}
-                onMouseOut={resetHistory}
-                data-tip=""
-                data-html={true}
-                data-for={id + props.currentInsId}
+                onMouseEnter={handleMouseEnter}
+                onMouseOut={handleMouseLeave}
                 id={getPinDomId(idParams)}
                 onDoubleClick={(e) =>
                   props.onDoubleClick && props.onDoubleClick(id, e)
@@ -243,8 +246,20 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
             </TooltipTrigger>
             <ContextMenuContent>{getContextMenuContent()}</ContextMenuContent>
           </ContextMenu>
-          <TooltipContent className={classNames("pin-info-tooltip", { dark })}>
-            {calcTooltipContent()}
+          <TooltipContent side="top" align="start" className="p-0">
+            <PinTooltipContent
+              displayName={displayName}
+              type={
+                isMain
+                  ? type === "input"
+                    ? "main output"
+                    : "main input"
+                  : type
+              }
+              description={props.description}
+              history={history}
+              queuedValues={type === "input" ? props.queuedValues : undefined}
+            />
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
