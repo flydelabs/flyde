@@ -13,7 +13,11 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@flyde/ui";
-import { ImportableSource, NodeLibraryData } from "@flyde/core";
+import {
+  ImportableSource,
+  NodeLibraryData,
+  NodeLibraryGroup,
+} from "@flyde/core";
 import { useDependenciesContext } from "../../flow-editor/DependenciesContext";
 import { InstanceIcon } from "../instance-view";
 import { LocalImportableResult } from "../../flow-editor/DependenciesContext";
@@ -28,6 +32,11 @@ export interface CommandMenuProps extends NodeLibraryData {
   onOpenChange: (open: boolean) => void;
   onAddNode: (node: ImportableSource) => void;
   onClickCustomNode: () => void;
+}
+
+interface FilteredGroup extends NodeLibraryGroup {
+  isEssentials: boolean;
+  customNodeVisible: boolean;
 }
 
 export const CommandMenu: React.FC<CommandMenuProps> = ({
@@ -73,6 +82,10 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
       });
     }
 
+    const customNodeMatches = "Custom Node"
+      .toLowerCase()
+      .includes(query.toLowerCase());
+
     return groups
       .map((group) => ({
         ...group,
@@ -83,7 +96,11 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
           return searchContent.toLowerCase().includes(query.toLowerCase());
         }),
       }))
-      .filter((group) => group.nodes.length > 0);
+      .filter(
+        (group) =>
+          group.nodes.length > 0 ||
+          (group.title === "Essentials" && customNodeMatches)
+      );
   }, [groups, query]);
 
   const filteredImportables = React.useMemo(() => {
@@ -212,16 +229,20 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
             <React.Fragment key={group.title}>
               <CommandGroup heading={group.title} className="pb-0.5">
                 <div className={cn("grid gap-0", query ? "" : "grid-cols-4")}>
-                  {group.title === "Essentials" && (
-                    <CommandItem
-                      value="custom"
-                      onSelect={onSelect}
-                      className="text-xs py-1 px-1 cursor-pointer add-menu-item"
-                    >
-                      <InstanceIcon icon="cow" className="mr-0.5" />
-                      Custom Node
-                    </CommandItem>
-                  )}
+                  {group.title === "Essentials" &&
+                    (!query ||
+                      "Custom Node"
+                        .toLowerCase()
+                        .includes(query.toLowerCase())) && (
+                      <CommandItem
+                        value="custom"
+                        onSelect={onSelect}
+                        className="text-xs py-1 px-1 cursor-pointer add-menu-item"
+                      >
+                        <InstanceIcon icon="cow" className="mr-0.5" />
+                        Custom Node
+                      </CommandItem>
+                    )}
                   {group.nodes.map((node) => (
                     <CommandItem
                       key={node.id}
