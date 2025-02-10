@@ -63,15 +63,15 @@ export const PinTooltipContent = ({
   return (
     <div
       className={cn(
-        "w-[300px] overflow-hidden rounded-none p-0 bg-gradient-to-b from-black to-[#222] text-white border border-neutral-600",
+        "w-[300px] overflow-hidden rounded-md p-0 bg-gradient-to-b from-black to-[#222] text-white border border-neutral-700",
         className
       )}
     >
-      <div className="bg-[#383838] border-b border-neutral-700 py-[2px] px-2">
+      <div className="bg-[#383838] border-b border-neutral-700 py-[2px] px-2 rounded-t-md">
         <strong className="mr-1.5 text-sm font-bold">{displayName}</strong>{" "}
         <span className="text-[10px] capitalize">{type}</span>
       </div>
-      <div className="py-1 px-2">
+      <div className="py-1 px-2 rounded-b-md">
         {description && (
           <div className="py-2 text-neutral-400 border-b border-neutral-700">
             {description}

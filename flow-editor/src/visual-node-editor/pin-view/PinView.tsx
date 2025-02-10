@@ -161,11 +161,9 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
 
   const calcClassNames = () => {
     if (props.type === "input") {
-      const { isSticky } = props;
       return classNames(
         "pin",
         {
-          sticky: isSticky,
           selected,
           closest: isClosestToMouse,
           optional,
@@ -245,7 +243,7 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
             </TooltipTrigger>
             <ContextMenuContent>{getContextMenuContent()}</ContextMenuContent>
           </ContextMenu>
-          <TooltipContent side="top" align="start" className="p-0">
+          <TooltipContent side="top" align="start" className="p-0 rounded-md">
             <PinTooltipContent
               displayName={displayName}
               typeLabel={

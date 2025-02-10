@@ -633,10 +633,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
       const hasLongDisplayName = content?.length > 20;
       const longestInput = Math.max(...inputsToRender.map(([k]) => k.length));
       const longestOutput = Math.max(...outputsToRender.map(([k]) => k.length));
-      const hasLongPin =
-        longestInput > 10 ||
-        longestOutput > 10 ||
-        longestInput + longestOutput > 20;
+      const hasLongPin = longestInput > 7 || longestOutput > 7;
       return hasLongDisplayName || hasLongPin ? "wide" : "normal";
     }, [content, inputsToRender, outputsToRender]);
 
