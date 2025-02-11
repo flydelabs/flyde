@@ -227,7 +227,7 @@ export const VisualNodeDiffView: React.FC<VisualNodeDiffViewProps> = (
   React.useEffect(() => {
     if (!didCenterInitially && vpSize.width) {
       const vp = fitViewPortToNode(
-        node,
+        comparisonNode,
         resolvedDependencies,
         vpSize,
         initialPadding
@@ -235,7 +235,13 @@ export const VisualNodeDiffView: React.FC<VisualNodeDiffViewProps> = (
       setViewPort(vp);
       setDidCenterInitially(true);
     }
-  }, [node, initialPadding, vpSize, didCenterInitially, resolvedDependencies]);
+  }, [
+    comparisonNode,
+    initialPadding,
+    vpSize,
+    didCenterInitially,
+    resolvedDependencies,
+  ]);
 
   const renderMainPins = (type: PinType) => {
     const pins = type === "input" ? inputs : outputs;
