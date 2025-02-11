@@ -57,6 +57,8 @@ export type FlydeFlowEditorProps = {
 
   initialPadding?: [number, number];
   darkMode?: boolean;
+
+  comparisonNode?: VisualNode;
 };
 
 const maxUndoStackSize = 50;
@@ -229,6 +231,13 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
         enabled: !!createAiCompletion,
       };
     }, [createAiCompletion]);
+
+    const [isDiffViewOpen, setIsDiffViewOpen] = React.useState(false);
+
+    // Add a button to toggle the diff view
+    const toggleDiffView = React.useCallback(() => {
+      setIsDiffViewOpen((prev) => !prev);
+    }, []);
 
     const renderInner = () => {
       return (

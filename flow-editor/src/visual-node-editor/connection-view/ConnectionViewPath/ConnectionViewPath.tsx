@@ -67,7 +67,13 @@ export const ConnectionViewPath: React.FC<ConnectionViewPathProps> = forwardRef(
         d={d}
         ref={ref as any}
         style={{
-          stroke: "#6A6A6A",
+          stroke: className.includes("added")
+            ? "#4ADE80"
+            : className.includes("removed")
+            ? "#F87171"
+            : className.includes("changed")
+            ? "#60A5FA"
+            : "#6A6A6A",
           strokeWidth: 3 * zoom,
           fill: "none",
           strokeDasharray,
@@ -79,7 +85,13 @@ export const ConnectionViewPath: React.FC<ConnectionViewPathProps> = forwardRef(
       <path
         d={d}
         style={{
-          stroke: "#D0D0D0",
+          stroke: className.includes("added")
+            ? "#86EFAC"
+            : className.includes("removed")
+            ? "#FCA5A5"
+            : className.includes("changed")
+            ? "#93C5FD"
+            : "#D0D0D0",
           strokeWidth: zoom,
           fill: "none",
           strokeDasharray,
