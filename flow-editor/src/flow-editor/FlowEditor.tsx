@@ -33,6 +33,9 @@ import { useDarkMode } from "usehooks-ts";
 
 import { VisualNodeEditorProvider } from "../visual-node-editor/VisualNodeEditorContext";
 import { AiCompletionContext, AiCompletionProvider } from "@flyde/ui";
+import { VisualNodeDiffView } from "../visual-node-editor/VisualNodeDiffView";
+import { Dialog, DialogContent } from "@flyde/ui";
+import { Button } from "@flyde/ui";
 
 export * from "./ports";
 export * from "./DebuggerContext";
@@ -57,6 +60,8 @@ export type FlydeFlowEditorProps = {
 
   initialPadding?: [number, number];
   darkMode?: boolean;
+
+  comparisonNode?: VisualNode;
 };
 
 const maxUndoStackSize = 50;
@@ -230,6 +235,13 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
       };
     }, [createAiCompletion]);
 
+    const [isDiffViewOpen, setIsDiffViewOpen] = React.useState(false);
+
+    // Add a button to toggle the diff view
+    const toggleDiffView = React.useCallback(() => {
+      setIsDiffViewOpen((prev) => !prev);
+    }, []);
+
     const renderInner = () => {
       return (
         <DarkModeProvider value={props.darkMode ?? isDarkMode}>
@@ -262,6 +274,86 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
                   initialPadding={props.initialPadding}
                   instancesWithErrors={instancesWithErrors}
                 />
+                {/* <VisualNodeDiffView
+                  node={editedNode}
+                  currentInsId={ROOT_INS_ID}
+                  className="w-full h-full"
+                /> */}
+
+                <Button
+                  variant="outline"
+                  className="fixed top-4 right-4 z-50"
+                  onClick={toggleDiffView}
+                >
+                  Toggle Diff View
+                </Button>
+
+                <Dialog open={isDiffViewOpen} onOpenChange={setIsDiffViewOpen}>
+                  <DialogContent className="max-w-[90vw] max-h-[90vh] w-[1200px] h-[800px]">
+                    <VisualNodeDiffView
+                      node={editedNode}
+                      comparisonNode={{
+                        ...editedNode,
+                        instances: [
+                          // Keep all instances except the first one in their original positions
+                          ...editedNode.instances.slice(1),
+                          // Add a new instance based on an existing one (should show as "added")
+                          ...(editedNode.instances.length > 0
+                            ? [
+                                {
+                                  ...editedNode.instances[0],
+                                  id: "cloned-instance",
+                                  pos: {
+                                    x: editedNode.instances[0].pos.x + 200,
+                                    y: editedNode.instances[0].pos.y,
+                                  },
+                                },
+                              ]
+                            : []),
+                        ],
+                        // Add test connections to show different states
+                        connections: [
+                          // Keep only some existing connections (others will show as removed)
+                          ...editedNode.connections.filter((_, i) => i > 0), // Remove first connection to show as removed
+                          // Add a new connection between existing instances (will show as added)
+                          ...(editedNode.instances.length > 1
+                            ? [
+                                {
+                                  from: {
+                                    insId: editedNode.instances[1].id,
+                                    pinId:
+                                      Object.keys(
+                                        editedNode.instances[1].inputConfig
+                                      )[0] || "value",
+                                  },
+                                  to: {
+                                    insId: editedNode.instances[0].id,
+                                    pinId: "value",
+                                  },
+                                },
+                                // Add another connection to the cloned instance
+                                {
+                                  from: {
+                                    insId: editedNode.instances[1].id,
+                                    pinId:
+                                      Object.keys(
+                                        editedNode.instances[1].inputConfig
+                                      )[0] || "value",
+                                  },
+                                  to: {
+                                    insId: "cloned-instance",
+                                    pinId: "value",
+                                  },
+                                },
+                              ]
+                            : []),
+                        ],
+                      }}
+                      currentInsId={ROOT_INS_ID + "diff"}
+                      className="w-full h-full"
+                    />
+                  </DialogContent>
+                </Dialog>
               </React.Fragment>
             </VisualNodeEditorProvider>
           </AiCompletionProvider>

@@ -13,3 +13,5 @@ export * from "./lib/safe-ls";
 export * from "./physics";
 export * from "./visual-node-editor/utils";
 export * from "./lib/logger";
+
+export * from "./visual-node-editor";

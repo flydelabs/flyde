@@ -28,6 +28,7 @@ export interface BaseNodeViewProps {
   viewPort: { pos: Pos; zoom: number };
   displayMode?: true;
   size?: "normal" | "wide";
+  diffStatus?: "added" | "removed" | "changed";
 
   heading?: string;
   description?: string;
@@ -93,6 +94,7 @@ export const BaseNodeView: React.FC<BaseNodeViewProps> =
       onDoubleClick,
       overrideNodeBodyHtml,
       size = "normal",
+      diffStatus,
     } = props;
 
     const dark = useDarkMode();
@@ -132,6 +134,9 @@ export const BaseNodeView: React.FC<BaseNodeViewProps> =
       dragged,
       dark,
       "display-mode": displayMode,
+      "bg-green-50 dark:bg-green-900/30": diffStatus === "added",
+      "bg-red-50 dark:bg-red-900/30": diffStatus === "removed",
+      "bg-blue-50 dark:bg-blue-900/30": diffStatus === "changed",
     });
 
     const correctX = pos.x * viewPort.zoom - viewPort.pos.x * viewPort.zoom;
@@ -154,6 +159,23 @@ export const BaseNodeView: React.FC<BaseNodeViewProps> =
       "no-left-side": !leftSide && !overrideNodeBodyHtml,
       "no-right-side": !rightSide && !overrideNodeBodyHtml,
       "size-wide": size === "wide",
+      "bg-green-100 border-green-500/50": diffStatus === "added",
+      "bg-red-100 border-red-500/50": diffStatus === "removed",
+      "bg-blue-100 border-blue-500/50": diffStatus === "changed",
+    });
+
+    const headerCm = classNames("node-header", {
+      dark,
+      "bg-green-200 text-green-900": diffStatus === "added",
+      "bg-red-200 text-red-900": diffStatus === "removed",
+      "bg-blue-200 text-blue-900": diffStatus === "changed",
+    });
+
+    const bodyCm = classNames("node-body", {
+      dark,
+      "bg-green-100/80": diffStatus === "added",
+      "bg-red-100/80": diffStatus === "removed",
+      "bg-blue-100/80": diffStatus === "changed",
     });
 
     const innerContent = overrideNodeBodyHtml ? (
@@ -174,8 +196,8 @@ export const BaseNodeView: React.FC<BaseNodeViewProps> =
 
     const content = (
       <div className={innerCm}>
-        <div className={classNames("node-header", { dark })}>{heading}</div>
-        <div className={classNames("node-body", { dark })}>{innerContent}</div>
+        <div className={headerCm}>{heading}</div>
+        <div className={bodyCm}>{innerContent}</div>
       </div>
     );
 

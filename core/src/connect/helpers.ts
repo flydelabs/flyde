@@ -17,7 +17,7 @@ export const getNodeInputs = (node: NodeDefinition) => {
 export const getInputName = (pinId: string) => {
   switch (pinId) {
     case TRIGGER_PIN_ID:
-      return "Trigger";
+      return "trigger";
     default:
       return pinId;
   }
@@ -26,7 +26,7 @@ export const getInputName = (pinId: string) => {
 export const getOutputName = (pinId: string) => {
   switch (pinId) {
     case ERROR_PIN_ID:
-      return "Error";
+      return "error";
     default:
       return pinId;
   }

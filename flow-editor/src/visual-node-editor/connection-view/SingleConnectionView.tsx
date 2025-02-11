@@ -98,6 +98,9 @@ export const SingleConnectionView: React.FC<SingleConnectionViewProps> = (
       "parent-selected": parentSelected,
       selected: isConnectionSelected,
       "pending-selection": !isConnectionSelected && isHovered,
+      added: (connection as any).diffStatus === "added",
+      removed: (connection as any).diffStatus === "removed",
+      changed: (connection as any).diffStatus === "changed",
     },
     connectionType
   );

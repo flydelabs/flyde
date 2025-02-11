@@ -15,6 +15,7 @@ import {
   isMacroNodeInstance,
 } from "@flyde/core";
 import classNames from "classnames";
+import { DiffStatus } from "../VisualNodeDiffView";
 
 import { PinView } from "../pin-view/PinView";
 import {
@@ -126,6 +127,7 @@ export interface InstanceViewProps {
   closestPin?: ClosestPinData;
   connections: ConnectionData[];
   viewPort: { pos: Pos; zoom: number };
+  diffStatus?: DiffStatus;
 
   queuedInputsData: Record<string, number>;
 
@@ -386,6 +388,12 @@ export const InstanceView: React.FC<InstanceViewProps> =
       selected,
       dragged,
       closest: closestPin && closestPin.ins.id === instance.id,
+      "ring-2 ring-green-500/20 bg-green-50/10 dark:bg-green-950/10":
+        props.diffStatus === "added",
+      "ring-2 ring-red-500/20 bg-red-50/10 dark:bg-red-950/10":
+        props.diffStatus === "removed",
+      "ring-2 ring-blue-500/20 bg-blue-50/10 dark:bg-blue-950/10":
+        props.diffStatus === "changed",
     });
 
     const optionalInputs = new Set(
@@ -411,7 +419,12 @@ export const InstanceView: React.FC<InstanceViewProps> =
       console.error(`Error rendering custom view for node ${node.id}`);
     }
 
-    const content = calcNodeContent(instance, node);
+    const content = React.useMemo(() => {
+      const baseContent = calcNodeContent(instance, node);
+      return props.diffStatus
+        ? `${baseContent} (${props.diffStatus})`
+        : baseContent;
+    }, [instance, node, props.diffStatus]);
 
     const _onChangeVisibleInputs = React.useCallback(async () => {
       const inputs = keys(node.inputs);
@@ -742,6 +755,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
           overrideStyle={style.cssOverride}
           onDoubleClick={onDblClick}
           size={nodeSize}
+          diffStatus={props.diffStatus}
         />
         {maybeRenderInlineGroupEditor()}
       </div>
