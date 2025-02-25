@@ -1,5 +1,9 @@
 import axios, { AxiosRequestConfig } from "axios";
-import { processImprovedMacro, ImprovedMacroNode } from "@flyde/core";
+import {
+  processImprovedMacro,
+  ImprovedMacroNode,
+  createInputGroup,
+} from "@flyde/core";
 
 const namespace = "HTTP";
 
@@ -13,6 +17,7 @@ const http: ImprovedMacroNode = {
   inputs: {
     method: {
       defaultValue: "GET",
+      label: "Method",
       description: "The HTTP method to use",
       editorType: "select",
       editorTypeData: {
@@ -21,23 +26,36 @@ const http: ImprovedMacroNode = {
     },
     url: {
       defaultValue: "https://www.example.com",
+      label: "URL",
       description: "The URL to send the request to",
       editorType: "string",
     },
     data: {
       defaultValue: {},
+      label: "Request Body",
       description: "The request body data",
       editorType: "json",
+      condition: "method !== 'GET'",
     },
+
+    // Advanced settings (collapsible)
     params: {
       defaultValue: {},
+      label: "Query Parameters",
       description: "The query parameters to send with the request",
       editorType: "json",
     },
     headers: {
       defaultValue: {},
+      label: "Headers",
       description: "The headers to send with the request",
       editorType: "json",
+    },
+    advancedSettings: {
+      group: createInputGroup("Advanced Settings", ["params", "headers"], {
+        collapsible: true,
+        defaultCollapsed: true,
+      }),
     },
   },
   outputs: {

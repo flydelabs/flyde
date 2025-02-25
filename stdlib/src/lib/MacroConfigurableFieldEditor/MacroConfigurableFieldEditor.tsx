@@ -94,6 +94,7 @@ export function MacroConfigurableFieldEditor(props: {
               prompt={config.aiCompletion.prompt}
               placeholder={config.aiCompletion.placeholder}
               jsonMode={config.aiCompletion.jsonMode}
+              currentValue={value.value}
               onComplete={(text) => {
                 try {
                   const parsed = JSON.parse(text);
@@ -113,6 +114,12 @@ export function MacroConfigurableFieldEditor(props: {
         fieldDefinition={config}
         prompt={prompt}
       />
+
+      {config.description && (
+        <div className="mt-2 text-xs text-gray-500 dark:text-gray-400 italic">
+          {config.description}
+        </div>
+      )}
       {helperText}
     </div>
   );

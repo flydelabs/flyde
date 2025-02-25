@@ -6,6 +6,9 @@ import {
   nodeInput,
 } from "..";
 
+// Import the InputConfig type from improved-macros
+import { InputConfig } from "./improved-macros";
+
 function extractInputNameAndPath(match: string): {
   inputName: string;
   path: string[];
@@ -189,6 +192,7 @@ export function generateConfigEditor<Config>(
         key
           .replace(/([A-Z])/g, " $1")
           .replace(/^./, (str) => str.toUpperCase()),
+      description: override?.description,
     };
   });
 
@@ -222,4 +226,113 @@ export function renderDerivedString(displayName: string, config: any) {
     }
     return match;
   });
+}
+
+/**
+ * Evaluates a string condition against a configuration object.
+ *
+ * @param condition The string expression to evaluate
+ * @param config The configuration object to evaluate against
+ * @returns True if the condition is met, false otherwise
+ */
+export function evaluateCondition(
+  condition: string | undefined,
+  config: Record<string, any>
+): boolean {
+  if (!condition) {
+    return true;
+  }
+
+  const context: Record<string, any> = {};
+
+  Object.entries(config).forEach(([key, value]) => {
+    if (
+      value &&
+      typeof value === "object" &&
+      "type" in value &&
+      "value" in value
+    ) {
+      context[key] = value.value;
+    } else {
+      context[key] = value;
+    }
+  });
+
+  try {
+    const evaluator = new Function(
+      ...Object.keys(context),
+      `return ${condition};`
+    );
+    return Boolean(evaluator(...Object.values(context)));
+  } catch (error) {
+    console.error(`Error evaluating condition "${condition}":`, error);
+    return true;
+  }
+}
+
+/**
+ * Evaluates whether a field in a group hierarchy should be visible.
+ * A field is visible only if all its parent groups are visible.
+ *
+ * @param field The field to check visibility for
+ * @param fieldPath Array of parent group field IDs leading to this field
+ * @param allFields Map of all fields by their ID
+ * @param config The configuration object to evaluate conditions against
+ * @returns True if the field should be visible, false otherwise
+ */
+export function evaluateFieldVisibility(
+  fieldKey: string,
+  groupHierarchy: string[],
+  allFields: Record<string, MacroEditorFieldDefinition>,
+  config: Record<string, any>
+): boolean {
+  // Check if the field itself has a condition
+  const field = allFields[fieldKey];
+  if (!field) {
+    return false;
+  }
+
+  // First check if the field itself is visible based on its condition
+  const fieldVisible = evaluateCondition(field.condition, config);
+  if (!fieldVisible) {
+    return false;
+  }
+
+  // Then check if all parent groups are visible
+  for (const groupKey of groupHierarchy) {
+    const group = allFields[groupKey];
+    if (!group || !evaluateCondition(group.condition, config)) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+/**
+ * Creates a group configuration for use in InputConfig.
+ *
+ * @param title The title of the group
+ * @param fields Array of field keys to include in the group
+ * @param options Additional group options
+ * @returns A group configuration object
+ */
+export function createInputGroup(
+  title: string,
+  fields: string[],
+  options?: {
+    collapsible?: boolean;
+    defaultCollapsed?: boolean;
+    parentGroup?: string;
+    condition?: string;
+  }
+): NonNullable<InputConfig["group"]> & { condition?: string } {
+  return {
+    title,
+    fields,
+    collapsible: options?.collapsible,
+    defaultCollapsed: options?.defaultCollapsed,
+    parentGroup: options?.parentGroup,
+    condition: options?.condition,
+  };
 }

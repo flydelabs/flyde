@@ -41,7 +41,8 @@ export type MacroEditorFieldDefinition =
   | BooleanFieldDefinition
   | JsonFieldDefinition
   | SelectFieldDefinition
-  | LongTextFieldDefinition;
+  | LongTextFieldDefinition
+  | GroupFieldDefinition;
 
 interface BaseFieldDefinition {
   label: string;
@@ -54,6 +55,17 @@ interface BaseFieldDefinition {
     placeholder?: string;
     jsonMode?: boolean;
   };
+  /**
+   * Optional condition that determines whether this field should be shown.
+   * If the condition evaluates to false, the field will be hidden.
+   *
+   * Uses a string expression like "method !== 'GET'" that will be evaluated against the values.
+   * The expression can reference other field values directly by their key.
+   *
+   * @example
+   * condition: "method === 'POST'"
+   */
+  condition?: string;
 }
 
 export interface StringFieldDefinition extends BaseFieldDefinition {
@@ -150,7 +162,10 @@ export interface MacroEditorCompProps<T> {
   value: T;
   onChange: (value: T) => void;
   prompt: (message: string) => Promise<string>;
-  createAiCompletion?: (prompt: { prompt: string }) => Promise<string>;
+  createAiCompletion?: (prompt: {
+    prompt: string;
+    currentValue?: any;
+  }) => Promise<string>;
 }
 
 export interface MacroEditorComp<T> extends React.FC<MacroEditorCompProps<T>> {}
@@ -193,4 +208,19 @@ export function processMacroNodeInstance(
   };
 
   return resolvedNode;
+}
+
+export interface GroupFieldDefinition extends BaseFieldDefinition {
+  type: "group";
+  fields: MacroEditorFieldDefinition[];
+  typeData?: {
+    /**
+     * Whether the group is collapsible
+     */
+    collapsible?: boolean;
+    /**
+     * Whether the group is collapsed by default (only applies if collapsible is true)
+     */
+    defaultCollapsed?: boolean;
+  };
 }

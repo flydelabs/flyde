@@ -12,6 +12,8 @@ import {
   macroConfigurableValue,
   nodeOutput,
   dynamicNodeInput,
+  MacroEditorConfigStructured,
+  evaluateCondition,
 } from "..";
 
 describe("ImprovedMacros", () => {
@@ -195,6 +197,91 @@ describe("ImprovedMacros", () => {
         assert.strictEqual(typeof parsedResult.count, "number");
         assert.strictEqual(typeof parsedResult.metadata, "object");
       });
+    });
+  });
+
+  describe("Conditional Inputs", () => {
+    it("supports conditional inputs based on string expressions", async () => {
+      const ConditionalInputsMacro: ImprovedMacroNode = {
+        id: "ConditionalInputsMacro",
+        displayName: "Conditional Inputs Macro",
+        inputs: {
+          method: {
+            defaultValue: "GET",
+            label: "Method",
+            editorType: "select",
+            editorTypeData: {
+              options: ["GET", "POST", "PUT", "DELETE"],
+            },
+          },
+          body: {
+            defaultValue: {},
+            label: "Request Body",
+            editorType: "json",
+            condition: "method !== 'GET'",
+          },
+          headers: {
+            defaultValue: {},
+            label: "Headers",
+            editorType: "json",
+            condition: "method !== 'GET' && method !== 'HEAD'",
+          },
+        },
+        outputs: {
+          result: nodeOutput(),
+        },
+        run: (inputs, outputs) => {
+          const { method, body, headers } = inputs;
+          outputs.result.next({
+            method,
+            body: method === "GET" ? undefined : body,
+            headers: method === "GET" ? undefined : headers,
+          });
+        },
+      };
+
+      const macro = processImprovedMacro(ConditionalInputsMacro);
+
+      // Verify that the conditions are passed to the field definitions
+      const editorConfig = macro.editorConfig as MacroEditorConfigStructured;
+      const bodyField = editorConfig.fields.find(
+        (field) => field.configKey === "body"
+      );
+      const headersField = editorConfig.fields.find(
+        (field) => field.configKey === "headers"
+      );
+
+      assert.ok(bodyField);
+      assert.ok(headersField);
+      assert.equal(typeof (bodyField as any).condition, "string");
+      assert.equal(typeof (headersField as any).condition, "string");
+
+      // Test that the string conditions work correctly with evaluateCondition
+      const getMethodConfig = { method: { type: "select", value: "GET" } };
+      const postMethodConfig = { method: { type: "select", value: "POST" } };
+      const headMethodConfig = { method: { type: "select", value: "HEAD" } };
+
+      assert.equal(
+        evaluateCondition((bodyField as any).condition, getMethodConfig),
+        false
+      );
+      assert.equal(
+        evaluateCondition((bodyField as any).condition, postMethodConfig),
+        true
+      );
+
+      assert.equal(
+        evaluateCondition((headersField as any).condition, getMethodConfig),
+        false
+      );
+      assert.equal(
+        evaluateCondition((headersField as any).condition, headMethodConfig),
+        false
+      );
+      assert.equal(
+        evaluateCondition((headersField as any).condition, postMethodConfig),
+        true
+      );
     });
   });
 });

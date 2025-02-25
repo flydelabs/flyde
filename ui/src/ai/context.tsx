@@ -3,6 +3,7 @@ import { createContext, useContext } from "react";
 export interface AiPromptRequest {
   prompt: string;
   jsonMode?: boolean;
+  currentValue?: any;
 }
 
 export interface AiCompletionContext {
