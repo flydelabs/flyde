@@ -2,6 +2,86 @@
 
 All notable changes to Flyde will be documented in this file.
 
+## [0.109.0] - 2025-02-25
+
+### What's Changed
+
+- Node configuration improvements by @GabiGrin in https://github.com/flydelabs/flyde/pull/190
+
+**Full Changelog**: https://github.com/flydelabs/flyde/compare/v0.108.5...v0.109.0
+
+## [0.108.5] - 2025-02-11
+
+### What's Changed
+
+- Diff view improvements and fixes by @GabiGrin in https://github.com/flydelabs/flyde/pull/189
+
+**Full Changelog**: https://github.com/flydelabs/flyde/compare/v0.108.4...v0.108.5
+
+## [0.108.4] - 2025-02-10
+
+### What's Changed
+
+- Fixed recently used external nodes not working
+- Removed orphan connections warning
+- UI tweaks by @GabiGrin in https://github.com/flydelabs/flyde/pull/188
+
+**Full Changelog**: https://github.com/flydelabs/flyde/compare/v0.108.3...v0.108.4
+
+## [0.108.3] - 2025-02-10
+
+### What's Changed
+
+- Debugger tooltip redesign by @GabiGrin in https://github.com/flydelabs/flyde/pull/187
+- Fixed command menu not finding custom nodes
+- UI fixes by @GabiGrin in https://github.com/flydelabs/flyde/pull/186
+- No longer surfacing JS expression code to node display name
+
+**Full Changelog**: https://github.com/flydelabs/flyde/compare/v0.108.2...v0.108.3
+
+## [0.108.2] - 2025-02-07
+
+### What's Changed
+
+- Native AI generation infrastructure and many bug fixes by @GabiGrin in https://github.com/flydelabs/flyde/pull/185
+
+**Full Changelog**: https://github.com/flydelabs/flyde/compare/v0.108.1...v0.108.2
+
+## [0.108.1] - 2025-02-02
+
+### What's Changed
+
+- Better add node menu and UI fixes by @GabiGrin in https://github.com/flydelabs/flyde/pull/182
+- Fixed dragging pins on main I/O by @GabiGrin in https://github.com/flydelabs/flyde/pull/183
+- Added ability to revive hidden connections
+
+**Full Changelog**: https://github.com/flydelabs/flyde/compare/v0.108.0...v0.108.1
+
+## [0.108.0] - 2025-01-25
+
+### What's Changed
+
+- Migrated UI to ShadCN by @GabiGrin in https://github.com/flydelabs/flyde/pull/181
+
+**Full Changelog**: https://github.com/flydelabs/flyde/compare/v0.107.0...v0.108.0
+
+## [0.107.0] - 2025-01-19
+
+### What's Changed
+
+- Node redesign by @GabiGrin in https://github.com/flydelabs/flyde/pull/180
+- Fork nodes functionality by @GabiGrin in https://github.com/flydelabs/flyde/pull/179
+
+**Full Changelog**: https://github.com/flydelabs/flyde/compare/v0.106.2...v0.107.0
+
+## [0.106.2] - 2025-01-01
+
+### What's Changed
+
+- Macro value replacement improvements by @GabiGrin in https://github.com/flydelabs/flyde/pull/178
+
+**Full Changelog**: https://github.com/flydelabs/flyde/compare/v0.106.1...v0.106.2
+
 ## [0.106.1] - 2024-12-23
 
 ### What's Changed
