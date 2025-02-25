@@ -66,6 +66,12 @@ export type InputConfig = {
   label?: string;
   description?: string;
   mode?: InputMode | "reactive";
+  /**
+   * Whether this input can be configured as a dynamic value (linked to other inputs).
+   * When false, the input will only be used for internal node configuration and won't be exposed as an input pin.
+   * @default true
+   */
+  configurable?: boolean;
   aiCompletion?: {
     prompt: string;
     placeholder?: string;
@@ -228,23 +234,30 @@ export function processImprovedMacro(node: ImprovedMacroNode): MacroNode<any> {
         node.editorConfig ?? generateConfigEditor(node.defaultConfig),
     };
   } else {
-    const defaultData = Object.keys(node.inputs).reduce((acc, key) => {
-      const input = node.inputs[key];
-      const type = inferTypeFromInput(input);
-      acc[key] = macroConfigurableValue(
-        type,
-        input.defaultValue ?? `{{${key}}}`
-      );
-      return acc;
-    }, {} as Record<string, any>);
-
-    // First, identify all group containers and their fields
+    // First, identify all group containers
     const groupContainers = Object.entries(node.inputs)
       .filter(([_, input]) => input.group)
       .reduce((acc, [key, input]) => {
         acc[key] = input.group!;
         return acc;
       }, {} as Record<string, NonNullable<InputConfig["group"]>>);
+
+    // Only create defaultData for actual input fields, not group containers
+    const defaultData = Object.entries(node.inputs)
+      .filter(([key]) => !groupContainers[key]) // Filter out group container keys
+      .reduce((acc, [key, input]) => {
+        const type = inferTypeFromInput(input);
+        // For non-configurable inputs, store the actual value, not a configurable value
+        if (input.configurable === false) {
+          acc[key] = input.defaultValue;
+        } else {
+          acc[key] = macroConfigurableValue(
+            type,
+            input.defaultValue ?? `{{${key}}}`
+          );
+        }
+        return acc;
+      }, {} as Record<string, any>);
 
     // Build a map of parent groups to their child groups
     const groupHierarchy: Record<string, string[]> = {};
@@ -387,6 +400,10 @@ export function processImprovedMacro(node: ImprovedMacroNode): MacroNode<any> {
       definitionBuilder: (config) => {
         return {
           inputs: Object.keys(config).reduce((acc, key) => {
+            // Skip non-configurable inputs when creating input pins
+            if (node.inputs[key]?.configurable === false) {
+              return acc;
+            }
             return {
               ...acc,
               ...extractInputsFromValue(config[key], key),
@@ -397,9 +414,9 @@ export function processImprovedMacro(node: ImprovedMacroNode): MacroNode<any> {
             typeof node.completionOutputs === "function"
               ? node.completionOutputs(config)
               : node.completionOutputs,
-          reactiveInputs: Object.keys(node.inputs).filter(
-            (key) => node.inputs[key].mode === "reactive"
-          ),
+          reactiveInputs: Object.keys(node.inputs)
+            .filter((key) => !groupContainers[key]) // Filter out group container keys
+            .filter((key) => node.inputs[key].mode === "reactive"),
           description: description(config),
           displayName: displayName(config),
         };
@@ -407,7 +424,12 @@ export function processImprovedMacro(node: ImprovedMacroNode): MacroNode<any> {
       runFnBuilder: (config) => {
         return (inputs, outputs, adv) => {
           const inputValues = Object.keys(config).reduce((acc, key) => {
-            acc[key] = replaceInputsInValue(inputs, config[key], key);
+            // For non-configurable inputs, use the raw value directly
+            if (node.inputs[key]?.configurable === false) {
+              acc[key] = config[key];
+            } else {
+              acc[key] = replaceInputsInValue(inputs, config[key], key);
+            }
             return acc;
           }, {} as Record<string, any>);
           return node.run(inputValues, outputs, adv);
