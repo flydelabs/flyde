@@ -8,6 +8,63 @@ import { MacroConfigurableFieldEditor } from "@flyde/stdlib";
 import { usePrompt } from "../../flow-editor/ports";
 import { useState } from "react";
 
+// Helper function for non-configurable dropdown/select field
+function NonConfigurableSelectField({
+  value,
+  onChange,
+  config,
+}: {
+  value: any;
+  onChange: (value: any) => void;
+  config: any;
+}) {
+  const options = config.typeData?.options || [];
+
+  const renderOptions = () => {
+    if (Array.isArray(options) && options.length > 0) {
+      // Handle array of objects with value/label
+      if (typeof options[0] === "object" && "value" in options[0]) {
+        return options.map((opt: any) => (
+          <option key={opt.value} value={opt.value}>
+            {opt.label}
+          </option>
+        ));
+      }
+      // Handle array of strings
+      return options.map((opt: string) => (
+        <option key={opt} value={opt}>
+          {opt}
+        </option>
+      ));
+    }
+    return null;
+  };
+
+  return (
+    <div style={{ marginBottom: "16px" }}>
+      <div style={{ marginBottom: "4px", fontWeight: 500 }}>{config.label}</div>
+      {config.description && (
+        <div style={{ marginBottom: "8px", color: "#888", fontSize: "0.85em" }}>
+          {config.description}
+        </div>
+      )}
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        style={{
+          width: "100%",
+          padding: "8px",
+          border: "1px solid #ccc",
+          borderRadius: "4px",
+          backgroundColor: "#fff",
+        }}
+      >
+        {renderOptions()}
+      </select>
+    </div>
+  );
+}
+
 // Define the GroupFieldDefinition type
 interface GroupFieldDefinition {
   type: "group";
@@ -117,6 +174,23 @@ function GroupFields({
               return null;
             }
 
+            // Use a different editor for non-configurable select fields
+            if (field.configurable === false && field.type === "select") {
+              return (
+                <NonConfigurableSelectField
+                  key={field.configKey}
+                  value={value[field.configKey]}
+                  onChange={(newValue) =>
+                    onChange({
+                      ...value,
+                      [field.configKey]: newValue,
+                    })
+                  }
+                  config={field}
+                />
+              );
+            }
+
             return (
               <MacroConfigurableFieldEditor
                 key={field.configKey}
@@ -167,6 +241,23 @@ export function StructuredMacroEditorComp<T>(
           // Check if the field has a condition and evaluate it
           if (!evaluateFieldVisibility(field, props.value)) {
             return null;
+          }
+
+          // Use a different editor for non-configurable select fields
+          if (field.configurable === false && field.type === "select") {
+            return (
+              <NonConfigurableSelectField
+                key={field.configKey}
+                value={props.value[field.configKey]}
+                onChange={(newValue) =>
+                  props.onChange({
+                    ...props.value,
+                    [field.configKey]: newValue,
+                  })
+                }
+                config={field}
+              />
+            );
           }
 
           return (
