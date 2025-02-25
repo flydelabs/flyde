@@ -12,12 +12,7 @@ import {
   macroConfigurableValue,
   nodeOutput,
   dynamicNodeInput,
-  CodeNode,
-  InputPin,
   MacroEditorConfigStructured,
-  MacroNode,
-  OutputPin,
-  nodeInput,
   evaluateCondition,
 } from "..";
 
@@ -246,7 +241,6 @@ describe("ImprovedMacros", () => {
       };
 
       const macro = processImprovedMacro(ConditionalInputsMacro);
-      const definition = macro.definitionBuilder(macro.defaultData);
 
       // Verify that the conditions are passed to the field definitions
       const editorConfig = macro.editorConfig as MacroEditorConfigStructured;
