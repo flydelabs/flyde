@@ -1324,20 +1324,13 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           const data = e.dataTransfer.getData("application/json");
           if (data) {
             const droppedNode = JSON.parse(data) as ImportedNode;
-            const rect = boardRef.current.getBoundingClientRect();
-            const x = (e.clientX - rect.left) / viewPort.zoom + viewPort.pos.x;
-            const y = (e.clientY - rect.top) / viewPort.zoom + viewPort.pos.y;
-
-            onAddNode(
-              {
-                module: "@flyde/stdlib",
-                node: droppedNode,
-              },
-              { x, y }
-            );
+            onAddNode({
+              module: "@flyde/stdlib",
+              node: droppedNode,
+            });
           }
         },
-        [onAddNode, viewPort]
+        [onAddNode]
       );
 
       useEffect(() => {

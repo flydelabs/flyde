@@ -305,12 +305,11 @@ export function useEditorCommands(
     async (importableNode: ImportableSource, position?: Pos) => {
       const depsWithImport = await onImportNode(importableNode);
 
-      const targetPos =
-        position ||
-        vSub(lastMousePos.current, {
-          x: 200,
-          y: 50 * viewPort.zoom,
-        });
+      // Calculate the center of the viewport
+      const targetPos = {
+        x: viewPort.pos.x + vpSize.width / (2 * viewPort.zoom),
+        y: viewPort.pos.y + vpSize.height / (2 * viewPort.zoom),
+      };
 
       const newNodeIns = isMacroNodeDefinition(importableNode.node)
         ? createNewMacroNodeInstance(importableNode.node, 0, targetPos)
@@ -332,12 +331,6 @@ export function useEditorCommands(
 
       onChangeBoardData(newState);
 
-      if (isResolvedMacroNodeInstance(newNodeIns)) {
-        // hack to allow imported macro to appear in deps. TODO: fix
-        setTimeout(() => {
-          setEditedMacroInstance({ ins: newNodeIns });
-        }, 100);
-      }
       reportEvent("addNode", {
         nodeId: importableNode.node.id,
         source: "actionMenu",
@@ -345,14 +338,13 @@ export function useEditorCommands(
     },
     [
       boardData,
-      lastMousePos,
       node,
       onChange,
       onChangeBoardData,
       onImportNode,
       reportEvent,
-      setEditedMacroInstance,
-      viewPort.zoom,
+      viewPort,
+      vpSize,
     ]
   );
 

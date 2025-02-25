@@ -42,16 +42,21 @@ export function MacroConfigurableValueBaseEditor(props: {
   useEffect(() => {
     if (
       fieldDefinition.type === "select" &&
-      !options.some((option) => option.value === value.value)
+      !options.some((option) => option.value === value.value) &&
+      fieldDefinition.typeConfigurable !== false
     ) {
       setOptions([
         ...options,
         { value: value.value, label: String(value.value) },
       ]);
     }
-  }, [value, options, fieldDefinition.type]);
+  }, [value, options, fieldDefinition.type, fieldDefinition.typeConfigurable]);
 
   const handleAddOption = async () => {
+    if (fieldDefinition.typeConfigurable === false) {
+      return; // Don't allow adding options when typeConfigurable is false
+    }
+
     const newOption = await _prompt("Enter a new option:");
     if (newOption && !options.some((option) => option.value === newOption)) {
       const updatedOptions = [
@@ -147,7 +152,9 @@ export function MacroConfigurableValueBaseEditor(props: {
                 {option.label}
               </SelectItem>
             ))}
-            <SelectItem value="__other__">Other (add new option)</SelectItem>
+            {fieldDefinition.typeConfigurable !== false && (
+              <SelectItem value="__other__">Other (add new option)</SelectItem>
+            )}
           </SelectContent>
         </Select>
       );

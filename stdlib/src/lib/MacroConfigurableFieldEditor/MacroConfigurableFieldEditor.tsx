@@ -82,7 +82,7 @@ export function MacroConfigurableFieldEditor(props: {
         ) : null}
       </div>
     );
-  }, [changeType, config.templateSupport, config.typeConfigurable, value.type]);
+  }, [changeType, config, value.type]);
 
   return (
     <div className="mb-4 group">

@@ -67,11 +67,11 @@ export type InputConfig = {
   description?: string;
   mode?: InputMode | "reactive";
   /**
-   * Whether this input can be configured as a dynamic value (linked to other inputs).
-   * When false, the input will only be used for internal node configuration and won't be exposed as an input pin.
+   * Whether the type of this input can be changed in the editor.
+   * When false, the "Change type" button will not be shown and the input won't be exposed as an input pin.
    * @default true
    */
-  configurable?: boolean;
+  typeConfigurable?: boolean;
   aiCompletion?: {
     prompt: string;
     placeholder?: string;
@@ -247,8 +247,8 @@ export function processImprovedMacro(node: ImprovedMacroNode): MacroNode<any> {
       .filter(([key]) => !groupContainers[key]) // Filter out group container keys
       .reduce((acc, [key, input]) => {
         const type = inferTypeFromInput(input);
-        // For non-configurable inputs, store the actual value, not a configurable value
-        if (input.configurable === false) {
+        // For non-configurable inputs or inputs with typeConfigurable: false, store the actual value, not a configurable value
+        if (input.typeConfigurable === false) {
           acc[key] = input.defaultValue;
         } else {
           acc[key] = macroConfigurableValue(
@@ -340,6 +340,8 @@ export function processImprovedMacro(node: ImprovedMacroNode): MacroNode<any> {
         description,
         aiCompletion: input.aiCompletion,
         condition: input.condition,
+        // Pass through typeConfigurable
+        typeConfigurable: input.typeConfigurable,
       } as MacroEditorFieldDefinition;
     });
 
@@ -401,7 +403,11 @@ export function processImprovedMacro(node: ImprovedMacroNode): MacroNode<any> {
         return {
           inputs: Object.keys(config).reduce((acc, key) => {
             // Skip non-configurable inputs when creating input pins
-            if (node.inputs[key]?.configurable === false) {
+            if (node.inputs[key]?.typeConfigurable === false) {
+              return acc;
+            }
+            // Skip group containers when creating input pins
+            if (groupContainers[key]) {
               return acc;
             }
             return {
@@ -425,7 +431,7 @@ export function processImprovedMacro(node: ImprovedMacroNode): MacroNode<any> {
         return (inputs, outputs, adv) => {
           const inputValues = Object.keys(config).reduce((acc, key) => {
             // For non-configurable inputs, use the raw value directly
-            if (node.inputs[key]?.configurable === false) {
+            if (node.inputs[key]?.typeConfigurable === false) {
               acc[key] = config[key];
             } else {
               acc[key] = replaceInputsInValue(inputs, config[key], key);
