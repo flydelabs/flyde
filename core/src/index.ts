@@ -19,6 +19,14 @@ export * from "./node/get-node-with-dependencies";
 export * from "./flow-schema";
 
 export * from "./improved-macros/improved-macros";
+export {
+  extractInputsFromValue,
+  replaceInputsInValue,
+  renderDerivedString,
+  evaluateCondition,
+  evaluateFieldVisibility,
+  createInputGroup,
+} from "./improved-macros/improved-macro-utils";
 
 export interface InstanceViewData {
   id: string;

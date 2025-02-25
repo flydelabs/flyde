@@ -1,5 +1,5 @@
 import { Button, DialogTitle, useAiCompletion } from "@flyde/ui";
-import { Dialog, DialogContent, DialogFooter } from "@flyde/ui";
+import { Dialog, DialogContent, DialogHeader } from "@flyde/ui";
 import {
   Select,
   SelectContent,
@@ -22,7 +22,7 @@ import { loadMacroEditor } from "./macroEditorLoader";
 import { usePrompt } from "../../flow-editor/ports";
 import { useDependenciesContext } from "../../flow-editor/DependenciesContext";
 import { Loader } from "../../lib/loader";
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import { InstanceIcon } from "../instance-view/InstanceIcon";
 
 export interface MacroInstanceEditorProps {
   deps: ResolvedDependenciesDefinitions;
@@ -91,86 +91,97 @@ export const MacroInstanceEditor: React.FC<MacroInstanceEditorProps> = (
 
   return (
     <Dialog open={true} onOpenChange={props.onCancel} modal={false}>
-      <VisuallyHidden asChild>
-        <DialogTitle>{macro.displayName ?? macro.id}</DialogTitle>
-      </VisuallyHidden>
-      <DialogContent className="flex flex-col max-h-[90vh] pt-10">
-        <div className="flex-none">
-          {onForkNode && (
-            <div className="flex justify-end mb-4">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => _onForkNode(macro)}
-              >
-                <GitFork className="mr-2 h-4 w-4" />
-                Fork
-              </Button>
-            </div>
-          )}
+      <DialogContent className="flex flex-col max-h-[90vh] p-0">
+        <DialogHeader className="flex flex-row items-center py-2 px-4 border-b border-gray-200 dark:border-gray-800 space-y-0">
+          <InstanceIcon
+            icon={macro.defaultStyle?.icon}
+            className="h-5 w-5 mr-2 flex-shrink-0"
+          />
+          <DialogTitle className="text-base font-medium m-0">
+            {macro.displayName ?? macro.id}
+          </DialogTitle>
+        </DialogHeader>
 
-          {macroSiblings.length > 1 && (
-            <Select
-              value={macro.id}
-              onValueChange={(value) => {
-                const selectedMacro = macroSiblings.find((m) => m.id === value);
-                if (selectedMacro) {
-                  props.onSwitchToSiblingMacro(selectedMacro);
-                }
-              }}
-            >
-              <SelectTrigger className="w-full mb-4">
-                <SelectValue>{macro.displayName ?? macro.id}</SelectValue>
-              </SelectTrigger>
-              <SelectContent>
-                {macroSiblings.map((item) => (
-                  <SelectItem key={item.id} value={item.id}>
-                    {item.displayName || item.id}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
-
-          {macro.description && (
-            <Alert className="mb-4">
-              <Info className="h-4 w-4" />
-              <AlertTitle>{macro.displayName ?? macro.id}</AlertTitle>
-              <AlertDescription>{macro.description}</AlertDescription>
-            </Alert>
-          )}
-        </div>
-
-        <div className="flex-1 overflow-y-auto min-h-0 mb-4">
-          <ErrorBoundary
-            fallback={
-              <div className="flex items-center gap-2">
-                <span>Error loading macro editor</span>
+        <div className="flex-1 overflow-y-auto p-4">
+          <div className="flex-none">
+            {onForkNode && (
+              <div className="flex justify-end mb-3">
                 <Button
                   variant="outline"
-                  onClick={() => setMacroData(macro.defaultData)}
+                  size="sm"
+                  onClick={() => _onForkNode(macro)}
                 >
-                  Reset to default
+                  <GitFork className="mr-2 h-4 w-4" />
+                  Fork
                 </Button>
               </div>
-            }
-          >
-            <EditorComp
-              value={macroData}
-              onChange={setMacroData}
-              prompt={prompt}
-              createAiCompletion={aiCompletion.createCompletion}
-            />
-          </ErrorBoundary>
+            )}
+
+            {macroSiblings.length > 1 && (
+              <Select
+                value={macro.id}
+                onValueChange={(value) => {
+                  const selectedMacro = macroSiblings.find(
+                    (m) => m.id === value
+                  );
+                  if (selectedMacro) {
+                    props.onSwitchToSiblingMacro(selectedMacro);
+                  }
+                }}
+              >
+                <SelectTrigger className="w-full mb-3">
+                  <SelectValue>{macro.displayName ?? macro.id}</SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  {macroSiblings.map((item) => (
+                    <SelectItem key={item.id} value={item.id}>
+                      {item.displayName || item.id}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+
+            {macro.description && (
+              <Alert className="mb-3">
+                <Info className="h-4 w-4" />
+                <AlertTitle>{macro.displayName ?? macro.id}</AlertTitle>
+                <AlertDescription>{macro.description}</AlertDescription>
+              </Alert>
+            )}
+          </div>
+
+          <div className="flex-1 overflow-y-auto min-h-0 mb-3">
+            <ErrorBoundary
+              fallback={
+                <div className="flex items-center gap-2">
+                  <span>Error loading macro editor</span>
+                  <Button
+                    variant="outline"
+                    onClick={() => setMacroData(macro.defaultData)}
+                  >
+                    Reset to default
+                  </Button>
+                </div>
+              }
+            >
+              <EditorComp
+                value={macroData}
+                onChange={setMacroData}
+                prompt={prompt}
+                createAiCompletion={aiCompletion.createCompletion}
+              />
+            </ErrorBoundary>
+          </div>
         </div>
 
-        <div className="flex-none">
-          <DialogFooter>
-            <Button variant="outline" onClick={props.onCancel}>
-              Cancel
-            </Button>
-            <Button onClick={() => props.onSubmit(macroData)}>Save</Button>
-          </DialogFooter>
+        <div className="flex justify-end gap-2 py-2 px-4 border-t border-gray-200 dark:border-gray-800">
+          <Button variant="outline" size="sm" onClick={props.onCancel}>
+            Cancel
+          </Button>
+          <Button size="sm" onClick={() => props.onSubmit(macroData)}>
+            Save
+          </Button>
         </div>
       </DialogContent>
     </Dialog>

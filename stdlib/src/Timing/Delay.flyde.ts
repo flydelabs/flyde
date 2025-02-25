@@ -18,9 +18,13 @@ const delay: ImprovedMacroNode = {
     }
   },
   inputs: {
-    value: { description: "Value to delay" },
+    value: {
+      label: "Value",
+      description: "Value to delay",
+    },
     delayMs: {
       defaultValue: 1000,
+      label: "Delay (ms)",
       description: "Delay in milliseconds",
     },
   },

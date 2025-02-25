@@ -56,14 +56,59 @@ export type ImprovedMacroNode<Config = any> =
   | SimplifiedMacroNode<Config>
   | AdvancedMacroNode<Config>;
 
-type InputConfig = {
+export type InputConfig = {
   defaultValue?: any;
+  /**
+   * The label displayed above the input field.
+   * If not provided, the description will be used as the label.
+   * @recommended
+   */
+  label?: string;
   description?: string;
   mode?: InputMode | "reactive";
   aiCompletion?: {
     prompt: string;
     placeholder?: string;
     jsonMode?: boolean;
+  };
+  /**
+   * Optional condition that determines whether this input should be shown.
+   * If the condition evaluates to false, the input will be hidden.
+   *
+   * Uses a string expression like "method !== 'GET'" that will be evaluated against the config.
+   * The expression can reference other field values directly by their key.
+   *
+   * @example
+   * condition: "method !== 'GET'"
+   */
+  condition?: string;
+  /**
+   * Optional group configuration for organizing inputs.
+   * When specified, this input will be treated as a group container.
+   */
+  group?: {
+    /**
+     * The title of the group
+     */
+    title: string;
+    /**
+     * Whether the group is collapsible
+     */
+    collapsible?: boolean;
+    /**
+     * Whether the group is collapsed by default (only applies if collapsible is true)
+     */
+    defaultCollapsed?: boolean;
+    /**
+     * Fields to include in this group.
+     * Can include both regular field keys and other group keys for nested groups.
+     */
+    fields: string[];
+    /**
+     * Optional parent group key. When specified, this group will be nested inside the parent group.
+     * If not specified, the group will be at the top level.
+     */
+    parentGroup?: string;
   };
 } & EditorTypeConfig;
 
@@ -193,19 +238,143 @@ export function processImprovedMacro(node: ImprovedMacroNode): MacroNode<any> {
       return acc;
     }, {} as Record<string, any>);
 
-    const editorFields: MacroEditorFieldDefinition[] = Object.keys(
-      node.inputs
-    ).map((key) => {
+    // First, identify all group containers and their fields
+    const groupContainers = Object.entries(node.inputs)
+      .filter(([_, input]) => input.group)
+      .reduce((acc, [key, input]) => {
+        acc[key] = input.group!;
+        return acc;
+      }, {} as Record<string, NonNullable<InputConfig["group"]>>);
+
+    // Build a map of parent groups to their child groups
+    const groupHierarchy: Record<string, string[]> = {};
+
+    // Initialize with empty arrays for all groups
+    Object.keys(groupContainers).forEach((key) => {
+      groupHierarchy[key] = [];
+    });
+
+    // Add a root entry for top-level groups
+    groupHierarchy["root"] = [];
+
+    // Populate the hierarchy
+    Object.entries(groupContainers).forEach(([key, group]) => {
+      const parentKey = group.parentGroup || "root";
+      if (parentKey !== key) {
+        // Prevent circular references
+        if (!groupHierarchy[parentKey]) {
+          groupHierarchy[parentKey] = [];
+        }
+        groupHierarchy[parentKey].push(key);
+      }
+    });
+
+    // Track which fields are already in groups to avoid duplication
+    const fieldsInGroups = new Set<string>();
+
+    // Collect all fields in all groups
+    Object.values(groupContainers).forEach((group) => {
+      group.fields.forEach((field) => {
+        // Only add if it's not a group itself, or if it is a group but not a child of this group
+        if (
+          !groupContainers[field] ||
+          groupContainers[field].parentGroup !== group.parentGroup
+        ) {
+          fieldsInGroups.add(field);
+        }
+      });
+    });
+
+    // Create field definitions for all inputs, including groups
+    const allFieldDefinitions = Object.keys(node.inputs).map((key) => {
       const input = node.inputs[key];
       const type = input.editorType ?? inferTypeFromInput(input);
+
+      // If no label is provided, use the description or the key
+      const label =
+        input.label ||
+        input.description ||
+        key
+          .replace(/([A-Z])/g, " $1")
+          .replace(/^./, (str) => str.toUpperCase());
+
+      // Only use description for explanatory text if it's different from the label
+      const description =
+        input.description !== label ? input.description : undefined;
+
+      // If this is a group container, create a group field definition
+      if (input.group) {
+        return {
+          type: "group" as const,
+          configKey: key,
+          label: input.group.title || label,
+          description,
+          condition: input.condition,
+          typeData: {
+            collapsible: input.group.collapsible,
+            defaultCollapsed: input.group.defaultCollapsed,
+          },
+          // We'll populate this with actual field definitions later
+          fields: [],
+        };
+      }
+
       return {
         type,
         configKey: key,
         typeData: input.editorTypeData,
-        label: input.description,
+        label,
+        description,
         aiCompletion: input.aiCompletion,
+        condition: input.condition,
       } as MacroEditorFieldDefinition;
     });
+
+    // Create a map of field definitions by key for easy lookup
+    const fieldDefinitionsMap = allFieldDefinitions.reduce((acc, field) => {
+      acc[field.configKey] = field;
+      return acc;
+    }, {} as Record<string, MacroEditorFieldDefinition>);
+
+    // Function to recursively build group fields
+    function buildGroupFields(groupKey: string): MacroEditorFieldDefinition[] {
+      const group = groupContainers[groupKey];
+      const childGroups = groupHierarchy[groupKey] || [];
+
+      // Get direct field children (excluding child groups)
+      const directFields = group.fields
+        .filter((fieldKey) => !childGroups.includes(fieldKey))
+        .map((fieldKey) => fieldDefinitionsMap[fieldKey])
+        .filter(Boolean);
+
+      // Get child groups
+      const childGroupFields = childGroups
+        .map((childGroupKey) => {
+          const childGroupField = fieldDefinitionsMap[childGroupKey] as any;
+          if (childGroupField) {
+            // Recursively build fields for this child group
+            childGroupField.fields = buildGroupFields(childGroupKey);
+          }
+          return childGroupField;
+        })
+        .filter(Boolean);
+
+      // Combine direct fields and child group fields
+      return [...directFields, ...childGroupFields];
+    }
+
+    // Populate group fields with their field definitions
+    Object.entries(groupContainers)
+      .filter(([_, group]) => !group.parentGroup) // Start with top-level groups
+      .forEach(([groupKey, _]) => {
+        const groupField = fieldDefinitionsMap[groupKey] as any;
+        groupField.fields = buildGroupFields(groupKey);
+      });
+
+    // Final editor fields should only include top-level fields (not in any group)
+    const editorFields = allFieldDefinitions.filter(
+      (field) => !fieldsInGroups.has(field.configKey)
+    );
 
     return {
       id: node.id,

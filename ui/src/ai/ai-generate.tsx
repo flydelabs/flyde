@@ -17,6 +17,7 @@ interface AiGenerateProps {
   onComplete: (generatedText: string) => void;
   className?: string;
   jsonMode?: boolean;
+  currentValue?: any;
 }
 
 export function AiGenerate({
@@ -25,6 +26,7 @@ export function AiGenerate({
   onComplete,
   className,
   jsonMode = false,
+  currentValue,
 }: AiGenerateProps) {
   const { createCompletion, enabled } = useAiCompletion();
   const [isOpen, setIsOpen] = useState(false);
@@ -48,9 +50,23 @@ export function AiGenerate({
   const handleGenerate = async () => {
     try {
       setIsGenerating(true);
+
+      // Replace template variables in the prompt
+      let processedPrompt = prompt.replace(/{{prompt}}/g, input);
+
+      // Handle the currentValue replacement
+      if (currentValue !== undefined) {
+        const valueString =
+          typeof currentValue === "object"
+            ? JSON.stringify(currentValue, null, 2)
+            : String(currentValue);
+        processedPrompt = processedPrompt.replace(/{{value}}/g, valueString);
+      }
+
       const result = await createCompletion({
-        prompt: prompt.replace("{prompt}", input),
+        prompt: processedPrompt,
         jsonMode,
+        currentValue,
       });
       onComplete(result);
       setInput("");
