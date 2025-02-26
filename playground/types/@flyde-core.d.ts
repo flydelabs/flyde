@@ -17,6 +17,7 @@ declare module '@flyde/core' {
     export * from "@flyde/core/node/get-node-with-dependencies";
     export * from "@flyde/core/flow-schema";
     export * from "@flyde/core/improved-macros/improved-macros";
+    export { extractInputsFromValue, replaceInputsInValue, renderDerivedString, evaluateCondition, evaluateFieldVisibility, createInputGroup, } from "@flyde/core/improved-macros/improved-macro-utils";
     export interface InstanceViewData {
         id: string;
         nodeIdOrGroup: string | VisualNode;
@@ -223,71 +224,167 @@ declare module '@flyde/core/improved-macros/improved-macros' {
     export * from "@flyde/core/improved-macros/improved-macro-utils";
     export type StaticOrDerived<T, Config> = T | ((config: Config) => T);
     export interface BaseMacroNodeData<Config = any> {
-        id: string;
-        namespace?: string;
-        menuDisplayName?: string;
-        menuDescription?: string;
-        displayName?: StaticOrDerived<string, Config>;
-        description?: StaticOrDerived<string, Config>;
-        icon?: string;
-        completionOutputs?: StaticOrDerived<string[], Config>;
-        run: CodeNode["run"];
+            id: string;
+            namespace?: string;
+            menuDisplayName?: string;
+            menuDescription?: string;
+            displayName?: StaticOrDerived<string, Config>;
+            description?: StaticOrDerived<string, Config>;
+            icon?: string;
+            completionOutputs?: StaticOrDerived<string[], Config>;
+            run: CodeNode["run"];
     }
     export interface SimplifiedMacroNode<Config> extends BaseMacroNodeData<Config> {
-        inputs: Record<string, InputConfig>;
-        outputs: Record<string, {
-            description?: string;
-        }>;
+            inputs: Record<string, InputConfig>;
+            outputs: Record<string, {
+                    description?: string;
+            }>;
     }
     export interface AdvancedMacroNode<Config> extends BaseMacroNodeData<Config> {
-        inputs: StaticOrDerived<Record<string, InputPin>, Config>;
-        outputs: StaticOrDerived<Record<string, OutputPin>, Config>;
-        reactiveInputs?: StaticOrDerived<string[], Config>;
-        defaultConfig: Config;
-        editorConfig?: MacroNode<Config>["editorConfig"];
-        defaultStyle?: NodeStyle;
+            inputs: StaticOrDerived<Record<string, InputPin>, Config>;
+            outputs: StaticOrDerived<Record<string, OutputPin>, Config>;
+            reactiveInputs?: StaticOrDerived<string[], Config>;
+            defaultConfig: Config;
+            editorConfig?: MacroNode<Config>["editorConfig"];
+            defaultStyle?: NodeStyle;
     }
     export type ImprovedMacroNode<Config = any> = SimplifiedMacroNode<Config> | AdvancedMacroNode<Config>;
-    type InputConfig = {
-        defaultValue?: any;
-        description?: string;
-        mode?: InputMode | "reactive";
-        aiCompletion?: {
-            prompt: string;
-            placeholder?: string;
-            jsonMode?: boolean;
-        };
+    export type InputConfig = {
+            defaultValue?: any;
+            /**
+                * The label displayed above the input field.
+                * If not provided, the description will be used as the label.
+                * @recommended
+                */
+            label?: string;
+            description?: string;
+            mode?: InputMode | "reactive";
+            /**
+                * Whether this input can be configured as a dynamic value (linked to other inputs).
+                * When false, the input will only be used for internal node configuration and won't be exposed as an input pin.
+                * @default true
+                */
+            configurable?: boolean;
+            aiCompletion?: {
+                    prompt: string;
+                    placeholder?: string;
+                    jsonMode?: boolean;
+            };
+            /**
+                * Optional condition that determines whether this input should be shown.
+                * If the condition evaluates to false, the input will be hidden.
+                *
+                * Uses a string expression like "method !== 'GET'" that will be evaluated against the config.
+                * The expression can reference other field values directly by their key.
+                *
+                * @example
+                * condition: "method !== 'GET'"
+                */
+            condition?: string;
+            /**
+                * Optional group configuration for organizing inputs.
+                * When specified, this input will be treated as a group container.
+                */
+            group?: {
+                    /**
+                        * The title of the group
+                        */
+                    title: string;
+                    /**
+                        * Whether the group is collapsible
+                        */
+                    collapsible?: boolean;
+                    /**
+                        * Whether the group is collapsed by default (only applies if collapsible is true)
+                        */
+                    defaultCollapsed?: boolean;
+                    /**
+                        * Fields to include in this group.
+                        * Can include both regular field keys and other group keys for nested groups.
+                        */
+                    fields: string[];
+                    /**
+                        * Optional parent group key. When specified, this group will be nested inside the parent group.
+                        * If not specified, the group will be at the top level.
+                        */
+                    parentGroup?: string;
+            };
     } & EditorTypeConfig;
     type EditorTypeConfig = {
-        [K in EditorType]: {
-            editorType?: K;
-            editorTypeData?: EditorTypeDataMap[K];
-        };
+            [K in EditorType]: {
+                    editorType?: K;
+                    editorTypeData?: EditorTypeDataMap[K];
+            };
     }[EditorType];
     type EditorType = "string" | "number" | "boolean" | "json" | "select" | "longtext" | "enum";
     type EditorTypeDataMap = {
-        string: undefined;
-        number: {
-            min?: number;
-            max?: number;
-        };
-        boolean: undefined;
-        json: undefined;
-        select: {
-            options: string[] | {
-                value: string | number;
-                label: string;
-            }[];
-        };
-        longtext: {
-            rows?: number;
-        };
-        enum: {
-            options: string[];
-        };
+            string: undefined;
+            number: {
+                    min?: number;
+                    max?: number;
+            };
+            boolean: undefined;
+            json: undefined;
+            select: {
+                    options: string[] | {
+                            value: string | number;
+                            label: string;
+                    }[];
+            };
+            longtext: {
+                    rows?: number;
+            };
+            enum: {
+                    options: string[];
+            };
     };
     export function isAdvancedMacroNode<Config>(node: ImprovedMacroNode<Config>): node is AdvancedMacroNode<Config>;
     export function processImprovedMacro(node: ImprovedMacroNode): MacroNode<any>;
+}
+
+declare module '@flyde/core/improved-macros/improved-macro-utils' {
+    import { InputPin, MacroConfigurableValue, MacroEditorFieldDefinition, MacroNode } from "@flyde/core/";
+    import { InputConfig } from "@flyde/core/improved-macros/improved-macros";
+    export function extractInputsFromValue(val: MacroConfigurableValue, key: string): Record<string, InputPin>;
+    export function replaceInputsInValue(inputs: Record<string, any>, value: MacroConfigurableValue, fieldName: string, ignoreMissingInputs?: boolean): MacroConfigurableValue["value"];
+    export function renderConfigurableValue(value: MacroConfigurableValue, fieldName: string): string;
+    export function generateConfigEditor<Config>(config: Config, overrides?: Partial<Record<keyof Config, any>>): MacroNode<Config>["editorConfig"];
+    export function renderDerivedString(displayName: string, config: any): string;
+    /**
+        * Evaluates a string condition against a configuration object.
+        *
+        * @param condition The string expression to evaluate
+        * @param config The configuration object to evaluate against
+        * @returns True if the condition is met, false otherwise
+        */
+    export function evaluateCondition(condition: string | undefined, config: Record<string, any>): boolean;
+    /**
+        * Evaluates whether a field in a group hierarchy should be visible.
+        * A field is visible only if all its parent groups are visible.
+        *
+        * @param field The field to check visibility for
+        * @param fieldPath Array of parent group field IDs leading to this field
+        * @param allFields Map of all fields by their ID
+        * @param config The configuration object to evaluate conditions against
+        * @returns True if the field should be visible, false otherwise
+        */
+    export function evaluateFieldVisibility(fieldKey: string, groupHierarchy: string[], allFields: Record<string, MacroEditorFieldDefinition>, config: Record<string, any>): boolean;
+    /**
+        * Creates a group configuration for use in InputConfig.
+        *
+        * @param title The title of the group
+        * @param fields Array of field keys to include in the group
+        * @param options Additional group options
+        * @returns A group configuration object
+        */
+    export function createInputGroup(title: string, fields: string[], options?: {
+            collapsible?: boolean;
+            defaultCollapsed?: boolean;
+            parentGroup?: string;
+            condition?: string;
+    }): NonNullable<InputConfig["group"]> & {
+            condition?: string;
+    };
 }
 
 declare module '@flyde/core/common/test-data-creator' {
@@ -762,6 +859,7 @@ declare module '@flyde/core/' {
     export * from "@flyde/core/node/get-node-with-dependencies";
     export * from "@flyde/core/flow-schema";
     export * from "@flyde/core/improved-macros/improved-macros";
+    export { extractInputsFromValue, replaceInputsInValue, renderDerivedString, evaluateCondition, evaluateFieldVisibility, createInputGroup, } from "@flyde/core/improved-macros/improved-macro-utils";
     export interface InstanceViewData {
         id: string;
         nodeIdOrGroup: string | VisualNode;
@@ -816,15 +914,6 @@ declare module '@flyde/core/execute/debugger' {
     };
 }
 
-declare module '@flyde/core/improved-macros/improved-macro-utils' {
-    import { InputPin, MacroConfigurableValue, MacroNode } from "@flyde/core/";
-    export function extractInputsFromValue(val: MacroConfigurableValue, key: string): Record<string, InputPin>;
-    export function replaceInputsInValue(inputs: Record<string, any>, value: MacroConfigurableValue, fieldName: string, ignoreMissingInputs?: boolean): MacroConfigurableValue["value"];
-    export function renderConfigurableValue(value: MacroConfigurableValue, fieldName: string): string;
-    export function generateConfigEditor<Config>(config: Config, overrides?: Partial<Record<keyof Config, any>>): MacroNode<Config>["editorConfig"];
-    export function renderDerivedString(displayName: string, config: any): string;
-}
-
 declare module '@flyde/core/node/macro-node' {
     import { CodeNode, CodeNodeDefinition, NodeMetadata } from "@flyde/core/node/node";
     import type React from "react";
@@ -845,7 +934,7 @@ declare module '@flyde/core/node/macro-node' {
             };
     }[keyof MacroConfigurableValueTypeMap];
     export function macroConfigurableValue(type: MacroConfigurableValue["type"], value: MacroConfigurableValue["value"]): MacroConfigurableValue;
-    export type MacroEditorFieldDefinition = StringFieldDefinition | NumberFieldDefinition | BooleanFieldDefinition | JsonFieldDefinition | SelectFieldDefinition | LongTextFieldDefinition;
+    export type MacroEditorFieldDefinition = StringFieldDefinition | NumberFieldDefinition | BooleanFieldDefinition | JsonFieldDefinition | SelectFieldDefinition | LongTextFieldDefinition | GroupFieldDefinition;
     interface BaseFieldDefinition {
             label: string;
             description?: string;
@@ -857,6 +946,17 @@ declare module '@flyde/core/node/macro-node' {
                     placeholder?: string;
                     jsonMode?: boolean;
             };
+            /**
+                * Optional condition that determines whether this field should be shown.
+                * If the condition evaluates to false, the field will be hidden.
+                *
+                * Uses a string expression like "method !== 'GET'" that will be evaluated against the values.
+                * The expression can reference other field values directly by their key.
+                *
+                * @example
+                * condition: "method === 'POST'"
+                */
+            condition?: string;
     }
     export interface StringFieldDefinition extends BaseFieldDefinition {
             type: "string";
@@ -932,6 +1032,7 @@ declare module '@flyde/core/node/macro-node' {
             prompt: (message: string) => Promise<string>;
             createAiCompletion?: (prompt: {
                     prompt: string;
+                    currentValue?: any;
             }) => Promise<string>;
     }
     export interface MacroEditorComp<T> extends React.FC<MacroEditorCompProps<T>> {
@@ -939,6 +1040,20 @@ declare module '@flyde/core/node/macro-node' {
     export const isMacroNode: (p: any) => p is MacroNode<any>;
     export const isMacroNodeDefinition: (p: any) => p is MacroNodeDefinition<any>;
     export function processMacroNodeInstance(prefix: string, macro: MacroNode<any>, instance: MacroNodeInstance): CodeNode;
+    export interface GroupFieldDefinition extends BaseFieldDefinition {
+            type: "group";
+            fields: MacroEditorFieldDefinition[];
+            typeData?: {
+                    /**
+                        * Whether the group is collapsible
+                        */
+                    collapsible?: boolean;
+                    /**
+                        * Whether the group is collapsed by default (only applies if collapsible is true)
+                        */
+                    defaultCollapsed?: boolean;
+            };
+    }
     export {};
 }
 

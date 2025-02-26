@@ -13,11 +13,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@flyde/ui";
-import {
-  ImportableSource,
-  NodeLibraryData,
-  NodeLibraryGroup,
-} from "@flyde/core";
+import { ImportableSource, NodeLibraryData } from "@flyde/core";
 import { useDependenciesContext } from "../../flow-editor/DependenciesContext";
 import { InstanceIcon } from "../instance-view";
 import { LocalImportableResult } from "../../flow-editor/DependenciesContext";
@@ -146,19 +142,33 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
           onAddNode(importableNode);
         }
       } else if (source === "importable") {
-        const node = importables?.find((i) => i.node.id === nodeId);
-        if (node) {
-          const importableNode = {
-            module: node.module,
-            node: node.node,
-          };
+        // First check if it's in the recently used list
+        const recentNode = recentlyUsed.find((item) => item.node.id === nodeId);
+        if (recentNode) {
+          // Move it to the top of recently used
           setRecentlyUsed(
             [
-              importableNode,
-              ...recentlyUsed.filter((n) => n.node.id !== node.node.id),
+              recentNode,
+              ...recentlyUsed.filter((n) => n.node.id !== nodeId),
             ].slice(0, MAX_RECENT_NODES)
           );
-          onAddNode(node);
+          onAddNode(recentNode);
+        } else {
+          // If not in recently used, look in importables
+          const node = importables?.find((i) => i.node.id === nodeId);
+          if (node) {
+            const importableNode = {
+              module: node.module,
+              node: node.node,
+            };
+            setRecentlyUsed(
+              [
+                importableNode,
+                ...recentlyUsed.filter((n) => n.node.id !== node.node.id),
+              ].slice(0, MAX_RECENT_NODES)
+            );
+            onAddNode(node);
+          }
         }
       }
       onOpenChange(false);
