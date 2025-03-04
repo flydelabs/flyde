@@ -36,7 +36,7 @@
   </a>
 
   <a href="https://www.getflowcode.io?ref=readme">
-    <img src="https://img.shields.io/badge/Flowcode: API Builder-0D439E?style=flat&logo=world&logoColor=white"/>
+    <img src="https://img.shields.io/badge/Flowcode-0D439E?style=flat&logo=world&logoColor=white"/>
   </a>
 
 </h4>
@@ -72,15 +72,9 @@ The easiest way to experiment with Flyde is to visit the [online playground](htt
 
 ## Who is Flyde for?
 
-- **Novice Developers and Non-Technical Users:** Flyde simplifies programming by transforming complex code into accessible visual blocks, making it an ideal entry point for those new to development or from non-technical backgrounds.
-
-- **Team Collaboration Across Roles:** Flyde democratizes innovation by enabling team members like product managers and data engineers to contribute directly to the codebase through visual programming, fostering collaboration and understanding.
-
-- **Educators in Programming:** Flyde is a valuable resource for educators seeking to provide hands-on, interactive programming education by blending visual learning with real-world coding concepts.
-
-- **Seasoned Developers:** Flyde offers experienced developers a new dimension of efficiency for designing, prototyping, and managing APIs and microservices visually, while retaining the flexibility and power of traditional coding. Its open-source nature and the commercial platform [Flowcode](https://www.getflowcode.io?ref=readme) provide further customization and cloud-hosted capabilities.
-
-And many more!
+- **Experienced Developers:** Flyde lets developers design, prototype, and manage APIs and microservices visually, while retaining the flexibility and power of traditional coding. The commercial platform [Flowcode](https://www.getflowcode.io?ref=readme) provides further customization and cloud-hosted capabilities.
+  
+- **Teams collaborating on AI workflows:** Flyde democratizes innovation by letting team members like product managers and data engineers contribute directly to the codebase. It helps everybody understand the logic and improves collaboration.
 
 ## Contributing
 
