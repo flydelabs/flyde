@@ -42,8 +42,9 @@
 </h4>
 
 <div align="center">
-    <img src="https://github.com/flydelabs/flyde/assets/3727015/5d2d917b-48f6-49db-a1a9-e7fe685c408f"/>
+    <img src="https://github.com/user-attachments/assets/ab4ca3be-4fc6-488c-b869-adbc6c651002"/>
 </div>
+
 
 <h5 align="center">
   
@@ -72,15 +73,9 @@ The easiest way to experiment with Flyde is to visit the [online playground](htt
 
 ## Who is Flyde for?
 
-- **Novice Developers and Non-Technical Users:** Flyde simplifies programming by transforming complex code into accessible visual blocks, making it an ideal entry point for those new to development or from non-technical backgrounds.
+- **Experienced Developers:** Flyde lets developers design, prototype, and manage APIs and microservices visually, while retaining the flexibility and power of traditional coding. The commercial platform Flowcode provides further customization and cloud-hosted capabilities.
 
-- **Team Collaboration Across Roles:** Flyde democratizes innovation by enabling team members like product managers and data engineers to contribute directly to the codebase through visual programming, fostering collaboration and understanding.
-
-- **Educators in Programming:** Flyde is a valuable resource for educators seeking to provide hands-on, interactive programming education by blending visual learning with real-world coding concepts.
-
-- **Seasoned Developers:** Flyde offers experienced developers a new dimension of efficiency for designing, prototyping, and managing APIs and microservices visually, while retaining the flexibility and power of traditional coding. Its open-source nature and the commercial platform [Flowcode](https://www.getflowcode.io?ref=readme) provide further customization and cloud-hosted capabilities.
-
-And many more!
+- **Teams collaborating on AI workflows:** Flyde democratizes innovation by letting team members like product managers and data engineers contribute directly to the codebase. It helps everybody understand the logic and improves collaboration.
 
 ## Contributing
 
