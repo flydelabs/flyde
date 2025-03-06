@@ -66,6 +66,27 @@ export const MacroInstanceEditor: React.FC<MacroInstanceEditorProps> = (
   }, [macro, onRequestSiblingNodes]);
 
   const [macroData, setMacroData] = React.useState<any>(ins.macroData);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = React.useState(false);
+
+  const handleMacroDataChange = useCallback((newData: any) => {
+    setMacroData(newData);
+    setHasUnsavedChanges(true);
+  }, []);
+
+  const handleSubmit = useCallback(() => {
+    props.onSubmit(macroData);
+    setHasUnsavedChanges(false);
+  }, [props, macroData]);
+
+  const handleCancel = useCallback(() => {
+    if (!hasUnsavedChanges) {
+      onCancel();
+      return;
+    }
+
+    // If there are unsaved changes, the dialog won't close on outside click
+    // The user will need to explicitly click the Cancel button
+  }, [hasUnsavedChanges, onCancel]);
 
   const EditorComp = useMemo(() => {
     const macro = deps[ins.macroId];
@@ -90,8 +111,11 @@ export const MacroInstanceEditor: React.FC<MacroInstanceEditorProps> = (
   }
 
   return (
-    <Dialog open={true} onOpenChange={props.onCancel} modal={false}>
-      <DialogContent className="flex flex-col max-h-[90vh] p-0">
+    <Dialog open={true} onOpenChange={handleCancel} modal={false}>
+      <DialogContent
+        className="flex flex-col max-h-[90vh] p-0"
+        noInteractOutside={hasUnsavedChanges}
+      >
         <DialogHeader className="flex flex-row items-center py-2 px-4 border-b border-gray-200 dark:border-gray-800 space-y-0">
           <InstanceIcon
             icon={macro.defaultStyle?.icon}
@@ -167,7 +191,7 @@ export const MacroInstanceEditor: React.FC<MacroInstanceEditorProps> = (
             >
               <EditorComp
                 value={macroData}
-                onChange={setMacroData}
+                onChange={handleMacroDataChange}
                 prompt={prompt}
                 createAiCompletion={aiCompletion.createCompletion}
               />
@@ -176,10 +200,10 @@ export const MacroInstanceEditor: React.FC<MacroInstanceEditorProps> = (
         </div>
 
         <div className="flex justify-end gap-2 py-2 px-4 border-t border-gray-200 dark:border-gray-800">
-          <Button variant="outline" size="sm" onClick={props.onCancel}>
+          <Button variant="outline" size="sm" onClick={onCancel}>
             Cancel
           </Button>
-          <Button size="sm" onClick={() => props.onSubmit(macroData)}>
+          <Button size="sm" onClick={handleSubmit}>
             Save
           </Button>
         </div>

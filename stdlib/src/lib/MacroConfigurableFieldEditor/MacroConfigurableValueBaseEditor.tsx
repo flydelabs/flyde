@@ -17,17 +17,26 @@ import { SimpleJsonEditor } from "../SimpleJsonEditor";
 import { useState, useEffect } from "react";
 import React from "react";
 
-const inputStyles = {
-  width: "100%",
-};
+const inputClassName = "w-full";
 
 export function MacroConfigurableValueBaseEditor(props: {
   value: MacroConfigurableValue;
   onChange: (value: MacroConfigurableValue) => void;
   prompt: (message: string) => Promise<string>;
   fieldDefinition: MacroEditorFieldDefinition;
+  isExpanded?: boolean;
+  rawJsonData?: string;
+  onRawJsonDataChange?: (rawData: string) => void;
 }) {
-  const { value, onChange, fieldDefinition, prompt: _prompt } = props;
+  const {
+    value,
+    onChange,
+    fieldDefinition,
+    prompt: _prompt,
+    isExpanded,
+    rawJsonData,
+    onRawJsonDataChange,
+  } = props;
   const [options, setOptions] = useState<
     { value: string | number; label: string }[]
   >(
@@ -38,6 +47,27 @@ export function MacroConfigurableValueBaseEditor(props: {
       typeof opt === "object" ? opt : { value: opt, label: String(opt) }
     ) || []
   );
+
+  // Track raw JSON data internally if not provided from parent
+  const [internalRawJsonData, setInternalRawJsonData] = useState<string>(
+    rawJsonData ||
+      (value.type === "json" ? JSON.stringify(value.value, null, 2) : "")
+  );
+
+  // Update internal state when rawJsonData prop changes
+  useEffect(() => {
+    if (rawJsonData !== undefined && value.type === "json") {
+      setInternalRawJsonData(rawJsonData);
+    }
+  }, [rawJsonData, value.type]);
+
+  // Handle raw JSON data changes
+  const handleRawJsonDataChange = (rawData: string) => {
+    setInternalRawJsonData(rawData);
+    if (onRawJsonDataChange) {
+      onRawJsonDataChange(rawData);
+    }
+  };
 
   useEffect(() => {
     if (
@@ -83,7 +113,7 @@ export function MacroConfigurableValueBaseEditor(props: {
               value: parseFloat(e.target.value),
             })
           }
-          style={inputStyles}
+          className={inputClassName}
         />
       );
     case "string": {
@@ -97,7 +127,10 @@ export function MacroConfigurableValueBaseEditor(props: {
             rows={
               (fieldDefinition as LongTextFieldDefinition).typeData?.rows ?? 5
             }
-            style={inputStyles}
+            style={{
+              minWidth: isExpanded ? "65vw" : "100%",
+              height: isExpanded ? "65vh" : undefined,
+            }}
           />
         );
       } else {
@@ -107,7 +140,7 @@ export function MacroConfigurableValueBaseEditor(props: {
             onChange={(e) =>
               props.onChange({ type: "string", value: e.target.value })
             }
-            style={inputStyles}
+            className={inputClassName}
           />
         );
       }
@@ -117,6 +150,9 @@ export function MacroConfigurableValueBaseEditor(props: {
         <SimpleJsonEditor
           value={value.value}
           onChange={(value) => props.onChange({ type: "json", value })}
+          isExpanded={isExpanded}
+          rawData={rawJsonData || internalRawJsonData}
+          onChangeRaw={handleRawJsonDataChange}
         />
       );
     case "boolean":
@@ -140,7 +176,7 @@ export function MacroConfigurableValueBaseEditor(props: {
             }
           }}
         >
-          <SelectTrigger style={inputStyles}>
+          <SelectTrigger className={inputClassName}>
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -164,7 +200,7 @@ export function MacroConfigurableValueBaseEditor(props: {
         <Input
           value={`{{${fieldDefinition.configKey}}}`}
           disabled
-          style={inputStyles}
+          className={inputClassName}
         />
       );
   }

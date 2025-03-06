@@ -260,11 +260,11 @@ declare module '@flyde/core/improved-macros/improved-macros' {
             description?: string;
             mode?: InputMode | "reactive";
             /**
-                * Whether this input can be configured as a dynamic value (linked to other inputs).
-                * When false, the input will only be used for internal node configuration and won't be exposed as an input pin.
+                * Whether the type of this input can be changed in the editor.
+                * When false, the "Change type" button will not be shown and the input won't be exposed as an input pin.
                 * @default true
                 */
-            configurable?: boolean;
+            typeConfigurable?: boolean;
             aiCompletion?: {
                     prompt: string;
                     placeholder?: string;
