@@ -1,7 +1,7 @@
 import { Label, Textarea } from "@flyde/ui";
 import React, { useCallback } from "react";
 
-type JsonValue =
+export type JsonValue =
   | string
   | number
   | boolean
@@ -13,18 +13,33 @@ export function SimpleJsonEditor(props: {
   value: JsonValue;
   onChange: (value: JsonValue) => void;
   label?: string;
+  isExpanded?: boolean;
+  rawData?: string;
+  onChangeRaw?: (rawData: string) => void;
 }) {
   const [tempDataValue, setTempDataValue] = React.useState<string>(
-    JSON.stringify(props.value, null, 2)
+    props.rawData || JSON.stringify(props.value, null, 2)
   );
+
+  React.useEffect(() => {
+    if (props.rawData !== undefined) {
+      setTempDataValue(props.rawData);
+    }
+  }, [props.rawData]);
 
   const [dataParseError, setDataParseError] = React.useState<string>();
 
   const onValueChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      setTempDataValue(e.target.value);
+      const newRawValue = e.target.value;
+      setTempDataValue(newRawValue);
+
+      if (props.onChangeRaw) {
+        props.onChangeRaw(newRawValue);
+      }
+
       try {
-        const data = JSON.parse(e.target.value);
+        const data = JSON.parse(newRawValue);
         setDataParseError(undefined);
         props.onChange(data);
       } catch (e) {
@@ -40,18 +55,13 @@ export function SimpleJsonEditor(props: {
       <Textarea
         value={tempDataValue}
         onChange={onValueChange}
-        style={{ width: "100%", minHeight: "100px" }}
+        style={{
+          minWidth: props.isExpanded ? "65vw" : "100%",
+          height: props.isExpanded ? "65vh" : undefined,
+        }}
       />
       {dataParseError && (
-        <div
-          style={{
-            color: "rgb(220, 38, 38)",
-            fontSize: "14px",
-            marginTop: "4px",
-          }}
-        >
-          {dataParseError}
-        </div>
+        <div className="text-red-500 text-sm mt-1">{dataParseError}</div>
       )}
     </div>
   );
