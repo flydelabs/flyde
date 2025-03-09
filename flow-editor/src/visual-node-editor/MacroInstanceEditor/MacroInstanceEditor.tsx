@@ -83,9 +83,6 @@ export const MacroInstanceEditor: React.FC<MacroInstanceEditorProps> = (
       onCancel();
       return;
     }
-
-    // If there are unsaved changes, the dialog won't close on outside click
-    // The user will need to explicitly click the Cancel button
   }, [hasUnsavedChanges, onCancel]);
 
   const EditorComp = useMemo(() => {

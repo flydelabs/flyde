@@ -1,0 +1,6 @@
+---
+description: 
+globs: **/*.{ts,tsx}
+alwaysApply: true
+---
+Never add comments to code unless their are crucial

@@ -91,7 +91,6 @@ export function MacroConfigurableFieldEditor(props: {
     value.type === "json" ? JSON.stringify(value.value, null, 2) : ""
   );
 
-  // Update rawJsonData when value changes from outside
   useEffect(() => {
     if (value.type === "json" && typeof value.value !== "string") {
       setRawJsonData(JSON.stringify(value.value, null, 2));

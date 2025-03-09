@@ -21,7 +21,6 @@ export function SimpleJsonEditor(props: {
     props.rawData || JSON.stringify(props.value, null, 2)
   );
 
-  // Update tempDataValue when rawData changes
   React.useEffect(() => {
     if (props.rawData !== undefined) {
       setTempDataValue(props.rawData);
@@ -35,7 +34,6 @@ export function SimpleJsonEditor(props: {
       const newRawValue = e.target.value;
       setTempDataValue(newRawValue);
 
-      // Notify parent about raw text change
       if (props.onChangeRaw) {
         props.onChangeRaw(newRawValue);
       }
