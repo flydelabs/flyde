@@ -147,9 +147,10 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
     }
   };
 
-  const onClick = (e: React.MouseEvent) => {
-    const { onShiftClick, onClick, id } = props;
+  const onPinHandleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
+
+    const { onShiftClick, onClick, id } = props;
     if (e.shiftKey && onShiftClick) {
       onShiftClick(id, e);
     } else {
@@ -231,11 +232,12 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
                 onMouseEnter={handleMouseEnter}
                 onMouseOut={handleMouseLeave}
                 id={getPinDomId(idParams)}
-                onDoubleClick={(e) =>
-                  props.onDoubleClick && props.onDoubleClick(id, e)
-                }
+                onDoubleClick={(e) => {
+                  if (props.onDoubleClick) {
+                    props.onDoubleClick(id, e);
+                  }
+                }}
                 className={classNames(`pin-inner`, { dark })}
-                onClick={onClick}
               >
                 {displayName}
                 {maybeQueueLabel()}
@@ -261,15 +263,20 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
         </Tooltip>
       </TooltipProvider>
       <div
-        className={classNames("pin-handle", type, {
+        className={classNames("pin-handle no-drag", type, {
           closest: isClosestToMouse,
           selected,
           dark,
         })}
         id={getPinDomHandleId(idParams)}
-        onMouseDown={_onMouseDown}
+        onMouseDown={(e) => {
+          if (e.button === 0) {
+            e.stopPropagation(); // Prevent node selection when clicking on pin handle
+            onMouseDown(id, type, e);
+          }
+        }}
         onMouseUp={_onMouseUp}
-        onClick={onClick}
+        onClick={onPinHandleClick}
       />
     </div>
   );
