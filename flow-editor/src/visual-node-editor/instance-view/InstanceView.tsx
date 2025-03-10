@@ -655,7 +655,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
         return null;
       }
       return (
-        <div className="inputs no-drag">
+        <div className="inputs">
           {inputsToRender.map(([k, v]) => (
             <div className="pin-container inputs" key={k}>
               <PinView
@@ -696,7 +696,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
         return null;
       }
       return (
-        <div className="outputs no-drag">
+        <div className="outputs">
           {outputsToRender.map(([k, v]) => (
             <div className="pin-container outputs" key={k}>
               <PinView
