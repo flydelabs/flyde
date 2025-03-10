@@ -147,12 +147,8 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
     }
   };
 
-  const onPinNameClick = (e: React.MouseEvent) => {
-    // Don't stop propagation here so the click reaches the node
-  };
-
   const onPinHandleClick = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent node selection when clicking on pin handle
+    e.stopPropagation();
 
     const { onShiftClick, onClick, id } = props;
     if (e.shiftKey && onShiftClick) {
@@ -242,7 +238,6 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
                   }
                 }}
                 className={classNames(`pin-inner`, { dark })}
-                onClick={onPinNameClick}
               >
                 {displayName}
                 {maybeQueueLabel()}
