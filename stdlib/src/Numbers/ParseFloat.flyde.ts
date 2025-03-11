@@ -1,7 +1,7 @@
-import { CodeNode } from "@flyde/core";
+import { InternalCodeNode } from "@flyde/core";
 
 const namespace = "Numbers";
-export const ParseFloat: CodeNode = {
+export const ParseFloat: InternalCodeNode = {
   id: "Parse Float",
   namespace,
   description: "Emits the float value of a string",

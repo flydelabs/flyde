@@ -8,7 +8,7 @@ import {
   dynamicOutput,
   Node,
   isVisualNode,
-  CodeNode,
+  InternalCodeNode,
   NodeInputs,
   NodeOutputs,
   NodeAdvancedContext,
@@ -57,7 +57,7 @@ export type InnerExecuteFn = (
 ) => CancelFn;
 
 export type CodeExecutionData = {
-  node: CodeNode;
+  node: InternalCodeNode;
   inputs: NodeInputs;
   outputs: NodeOutputs;
   resolvedDeps: NodesCollection;
@@ -524,7 +524,7 @@ export const execute: ExecuteFn = ({
     }
   };
 
-  const processNode = (node: Node): CodeNode => {
+  const processNode = (node: Node): InternalCodeNode => {
     if (isVisualNode(node)) {
       return connect(
         node,

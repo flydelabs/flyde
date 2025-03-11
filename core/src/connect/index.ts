@@ -1,5 +1,5 @@
 import {
-  CodeNode,
+  InternalCodeNode,
   NodeInput,
   NodeInputs,
   NodeOutputs,
@@ -61,7 +61,7 @@ export const connect = (
   mainState: OMap<NodeState> = {},
   onBubbleError: (err: any) => void = noop,
   extraContext: Record<string, any> = {}
-): CodeNode => {
+): InternalCodeNode => {
   const { id: maybeId, connections, instances } = node;
 
   const nodeId = maybeId || "connected-node" + randomInt(999);

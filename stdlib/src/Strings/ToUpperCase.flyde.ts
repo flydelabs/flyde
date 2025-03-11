@@ -1,8 +1,8 @@
-import { CodeNode } from "@flyde/core";
+import { InternalCodeNode } from "@flyde/core";
 
 const namespace = "Strings";
 
-export const ToUpperCase: CodeNode = {
+export const ToUpperCase: InternalCodeNode = {
   id: "To Upper Case",
   defaultStyle: { icon: "fa-font" },
   namespace,

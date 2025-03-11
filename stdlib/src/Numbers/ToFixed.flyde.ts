@@ -1,7 +1,7 @@
-import { CodeNode } from "@flyde/core";
+import { InternalCodeNode } from "@flyde/core";
 
 const namespace = "Numbers";
-export const ToFixed: CodeNode = {
+export const ToFixed: InternalCodeNode = {
   id: "To Fixed",
   namespace,
   description: "Emits the specified number of decimal places of a number",

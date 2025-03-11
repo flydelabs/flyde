@@ -17,7 +17,7 @@ declare module '@flyde/core' {
     export * from "@flyde/core/node/get-node-with-dependencies";
     export * from "@flyde/core/flow-schema";
     export * from "@flyde/core/improved-macros/improved-macros";
-    export { extractInputsFromValue, replaceInputsInValue, renderDerivedString, evaluateCondition, } from "@flyde/core/improved-macros/improved-macro-utils";
+    export { extractInputsFromValue, replaceInputsInValue, renderDerivedString, evaluateCondition, evaluateFieldVisibility, createInputGroup, } from "@flyde/core/improved-macros/improved-macro-utils";
     export interface InstanceViewData {
         id: string;
         nodeIdOrGroup: string | VisualNode;
@@ -122,7 +122,7 @@ declare module '@flyde/core/node' {
 }
 
 declare module '@flyde/core/connect' {
-    import { CodeNode, VisualNode, NodeState } from "@flyde/core/node";
+    import { InternalCodeNode, VisualNode, NodeState } from "@flyde/core/node";
     import { Debugger } from "@flyde/core/execute";
     import { OMap } from "@flyde/core/common";
     import { THIS_INS_ID } from "@flyde/core/connect/helpers";
@@ -148,13 +148,13 @@ declare module '@flyde/core/connect' {
         pinId: string;
     }>;
     type PositionlessVisualNode = Omit<Omit<VisualNode, "inputsPosition">, "outputsPosition">;
-    export const connect: (node: PositionlessVisualNode, resolvedDeps: NodesCollection, _debugger?: Debugger, ancestorsInsIds?: string, mainState?: OMap<NodeState>, onBubbleError?: (err: any) => void, extraContext?: Record<string, any>) => CodeNode;
+    export const connect: (node: PositionlessVisualNode, resolvedDeps: NodesCollection, _debugger?: Debugger, ancestorsInsIds?: string, mainState?: OMap<NodeState>, onBubbleError?: (err: any) => void, extraContext?: Record<string, any>) => InternalCodeNode;
 }
 
 declare module '@flyde/core/execute' {
     import { Subject } from "rxjs";
     export * from "@flyde/core/execute/debugger";
-    import { Node, CodeNode, NodeInputs, NodeOutputs, NodeInstanceError, NodeState, NodesCollection } from "@flyde/core/node";
+    import { Node, InternalCodeNode, NodeInputs, NodeOutputs, NodeInstanceError, NodeState, NodesCollection } from "@flyde/core/node";
     import { OMap, OMapF } from "@flyde/core/common";
     import { Debugger } from "@flyde/core/execute/debugger";
     export type SubjectMap = OMapF<Subject<any>>;
@@ -162,7 +162,7 @@ declare module '@flyde/core/execute' {
     export type CancelFn = () => void;
     export type InnerExecuteFn = (node: Node, args: NodeInputs, outputs: NodeOutputs, insId: string) => CancelFn;
     export type CodeExecutionData = {
-            node: CodeNode;
+            node: InternalCodeNode;
             inputs: NodeInputs;
             outputs: NodeOutputs;
             resolvedDeps: NodesCollection;
@@ -220,7 +220,7 @@ declare module '@flyde/core/node/get-node-with-dependencies' {
 }
 
 declare module '@flyde/core/improved-macros/improved-macros' {
-    import { CodeNode, InputPin, OutputPin, MacroNode, NodeStyle, InputMode } from "@flyde/core/";
+    import { InternalCodeNode, InputPin, OutputPin, MacroNode, NodeStyle, InputMode } from "@flyde/core/";
     export * from "@flyde/core/improved-macros/improved-macro-utils";
     export type StaticOrDerived<T, Config> = T | ((config: Config) => T);
     export interface BaseMacroNodeData<Config = any> {
@@ -232,7 +232,7 @@ declare module '@flyde/core/improved-macros/improved-macros' {
             description?: StaticOrDerived<string, Config>;
             icon?: string;
             completionOutputs?: StaticOrDerived<string[], Config>;
-            run: CodeNode["run"];
+            run: InternalCodeNode["run"];
     }
     export interface SimplifiedMacroNode<Config> extends BaseMacroNodeData<Config> {
             inputs: Record<string, InputConfig>;
@@ -249,7 +249,7 @@ declare module '@flyde/core/improved-macros/improved-macros' {
             defaultStyle?: NodeStyle;
     }
     export type ImprovedMacroNode<Config = any> = SimplifiedMacroNode<Config> | AdvancedMacroNode<Config>;
-    type InputConfig = {
+    export type InputConfig = {
             defaultValue?: any;
             /**
                 * The label displayed above the input field.
@@ -259,6 +259,12 @@ declare module '@flyde/core/improved-macros/improved-macros' {
             label?: string;
             description?: string;
             mode?: InputMode | "reactive";
+            /**
+                * Whether the type of this input can be changed in the editor.
+                * When false, the "Change type" button will not be shown and the input won't be exposed as an input pin.
+                * @default true
+                */
+            typeConfigurable?: boolean;
             aiCompletion?: {
                     prompt: string;
                     placeholder?: string;
@@ -275,6 +281,34 @@ declare module '@flyde/core/improved-macros/improved-macros' {
                 * condition: "method !== 'GET'"
                 */
             condition?: string;
+            /**
+                * Optional group configuration for organizing inputs.
+                * When specified, this input will be treated as a group container.
+                */
+            group?: {
+                    /**
+                        * The title of the group
+                        */
+                    title: string;
+                    /**
+                        * Whether the group is collapsible
+                        */
+                    collapsible?: boolean;
+                    /**
+                        * Whether the group is collapsed by default (only applies if collapsible is true)
+                        */
+                    defaultCollapsed?: boolean;
+                    /**
+                        * Fields to include in this group.
+                        * Can include both regular field keys and other group keys for nested groups.
+                        */
+                    fields: string[];
+                    /**
+                        * Optional parent group key. When specified, this group will be nested inside the parent group.
+                        * If not specified, the group will be at the top level.
+                        */
+                    parentGroup?: string;
+            };
     } & EditorTypeConfig;
     type EditorTypeConfig = {
             [K in EditorType]: {
@@ -309,20 +343,48 @@ declare module '@flyde/core/improved-macros/improved-macros' {
 }
 
 declare module '@flyde/core/improved-macros/improved-macro-utils' {
-    import { InputPin, MacroConfigurableValue, MacroNode } from "@flyde/core/";
+    import { InputPin, MacroConfigurableValue, MacroEditorFieldDefinition, MacroNode } from "@flyde/core/";
+    import { InputConfig } from "@flyde/core/improved-macros/improved-macros";
     export function extractInputsFromValue(val: MacroConfigurableValue, key: string): Record<string, InputPin>;
     export function replaceInputsInValue(inputs: Record<string, any>, value: MacroConfigurableValue, fieldName: string, ignoreMissingInputs?: boolean): MacroConfigurableValue["value"];
     export function renderConfigurableValue(value: MacroConfigurableValue, fieldName: string): string;
     export function generateConfigEditor<Config>(config: Config, overrides?: Partial<Record<keyof Config, any>>): MacroNode<Config>["editorConfig"];
     export function renderDerivedString(displayName: string, config: any): string;
     /**
-      * Evaluates a string condition against a configuration object.
-      *
-      * @param condition The string expression to evaluate
-      * @param config The configuration object to evaluate against
-      * @returns True if the condition is met, false otherwise
-      */
+        * Evaluates a string condition against a configuration object.
+        *
+        * @param condition The string expression to evaluate
+        * @param config The configuration object to evaluate against
+        * @returns True if the condition is met, false otherwise
+        */
     export function evaluateCondition(condition: string | undefined, config: Record<string, any>): boolean;
+    /**
+        * Evaluates whether a field in a group hierarchy should be visible.
+        * A field is visible only if all its parent groups are visible.
+        *
+        * @param field The field to check visibility for
+        * @param fieldPath Array of parent group field IDs leading to this field
+        * @param allFields Map of all fields by their ID
+        * @param config The configuration object to evaluate conditions against
+        * @returns True if the field should be visible, false otherwise
+        */
+    export function evaluateFieldVisibility(fieldKey: string, groupHierarchy: string[], allFields: Record<string, MacroEditorFieldDefinition>, config: Record<string, any>): boolean;
+    /**
+        * Creates a group configuration for use in InputConfig.
+        *
+        * @param title The title of the group
+        * @param fields Array of field keys to include in the group
+        * @param options Additional group options
+        * @returns A group configuration object
+        */
+    export function createInputGroup(title: string, fields: string[], options?: {
+            collapsible?: boolean;
+            defaultCollapsed?: boolean;
+            parentGroup?: string;
+            condition?: string;
+    }): NonNullable<InputConfig["group"]> & {
+            condition?: string;
+    };
 }
 
 declare module '@flyde/core/common/test-data-creator' {
@@ -432,7 +494,7 @@ declare module '@flyde/core/common/full-ins-id-path' {
 }
 
 declare module '@flyde/core/node/node-instance' {
-    import { CodeNode, InputPinsConfig, Node, NodeDefinition, NodeStyle, Pos, ResolvedVisualNode, VisualNode } from "@flyde/core/";
+    import { InternalCodeNode, InputPinsConfig, Node, NodeDefinition, NodeStyle, Pos, ResolvedVisualNode, VisualNode } from "@flyde/core/";
     export interface NodeInstanceConfig {
         inputConfig: InputPinsConfig;
         visibleInputs?: string[];
@@ -446,10 +508,10 @@ declare module '@flyde/core/node/node-instance' {
         nodeId: string;
     }
     export interface InlineNodeInstance extends NodeInstanceConfig {
-        node: VisualNode | CodeNode;
+        node: VisualNode | InternalCodeNode;
     }
     export interface ResolvedInlineNodeInstance extends NodeInstanceConfig {
-        node: ResolvedVisualNode | CodeNode;
+        node: ResolvedVisualNode | InternalCodeNode;
     }
     export interface MacroNodeInstance extends NodeInstanceConfig {
         macroId: string;
@@ -529,7 +591,7 @@ declare module '@flyde/core/node/pin-config' {
 }
 
 declare module '@flyde/core/node/nodeFromSimpleFunction' {
-    import { BaseNode, CodeNode, NodeStyleSize, RunNodeFunction } from "@flyde/core/node";
+    import { BaseNode, InternalCodeNode, NodeStyleSize, RunNodeFunction } from "@flyde/core/node";
     import { InputMode } from "@flyde/core/node/node-pins";
     export type SimpleFnData = Omit<BaseNode, "inputs" | "outputs" | "run"> & {
         id: string;
@@ -551,7 +613,7 @@ declare module '@flyde/core/node/nodeFromSimpleFunction' {
         size?: NodeStyleSize;
         fullRunFn?: RunNodeFunction;
     };
-    export function nodeFromSimpleFunction(data: SimpleFnData): CodeNode;
+    export function nodeFromSimpleFunction(data: SimpleFnData): InternalCodeNode;
 }
 
 declare module '@flyde/core/node/node-instance-error' {
@@ -632,7 +694,7 @@ declare module '@flyde/core/node/node' {
             overrideNodeBodyHtml?: string;
     }
     /**
-        * Extended by {@link VisualNode}, {@link CodeNode} and {@link InlineValueNode}
+        * Extended by {@link VisualNode}, {@link InternalCodeNode} and {@link InlineValueNode}
         */
     export interface BaseNode extends NodeMetadata {
             /**
@@ -679,7 +741,7 @@ declare module '@flyde/core/node/node' {
                 */
             reactiveInputs?: string[];
     }
-    export interface CodeNode extends BaseNode {
+    export interface InternalCodeNode extends BaseNode {
             /**
                 * This function will run as soon as the node's inputs are satisfied.
                 * It has access to the nodes inputs values, and output pins. See {@link RunNodeFunction} for more information.
@@ -687,7 +749,7 @@ declare module '@flyde/core/node/node' {
                 */
             run: RunNodeFunction;
             /**
-                * @deprecated use {@link CodeNode['run']} instead
+                * @deprecated use {@link InternalCodeNode['run']} instead
                 */
             fn?: RunNodeFunction;
     }
@@ -713,13 +775,13 @@ declare module '@flyde/core/node/node' {
     export interface ResolvedVisualNode extends VisualNode {
             instances: ResolvedNodeInstance[];
     }
-    export type Node = CodeNode | CustomNode;
+    export type Node = InternalCodeNode | CustomNode;
     export type ImportableSource = {
             module: string;
             node: ImportedNode;
     };
     export type CustomNode = VisualNode;
-    export type CodeNodeDefinition = Omit<CodeNode, "run"> & {
+    export type CodeNodeDefinition = Omit<InternalCodeNode, "run"> & {
             /**
                 * The source code of the node, if available. Used for editing and forking nodes in the editor.
                 */
@@ -732,18 +794,18 @@ declare module '@flyde/core/node/node' {
     };
     export type NodeDefinitionWithModuleMetaData = NodeDefinition & NodeModuleMetaData;
     export const isBaseNode: (p: any) => p is BaseNode;
-    export const isCodeNode: (p: Node | NodeDefinition | any) => p is CodeNode;
+    export const isCodeNode: (p: Node | NodeDefinition | any) => p is InternalCodeNode;
     export const extractMetadata: <N extends NodeMetadata>(node: N) => NodeMetadata;
     export const isVisualNode: (p: Node | NodeDefinition) => p is VisualNode;
     export const visualNode: import("../common").TestDataCreator<VisualNode>;
-    export const codeNode: import("../common").TestDataCreator<CodeNode>;
+    export const InternalCodeNode: import("../common").TestDataCreator<InternalCodeNode>;
     export type SimplifiedNodeParams = {
             id: string;
             inputTypes: OMap<string>;
             outputTypes: OMap<string>;
             run: RunNodeFunction;
     };
-    export const fromSimplified: ({ run, inputTypes, outputTypes, id, }: SimplifiedNodeParams) => CodeNode;
+    export const fromSimplified: ({ run, inputTypes, outputTypes, id, }: SimplifiedNodeParams) => InternalCodeNode;
     export const getNode: (idOrIns: string | NodeInstance, resolvedNodes: NodesCollection) => Node;
     export const getNodeDef: (idOrIns: string | NodeInstance, resolvedNodes: NodesDefCollection) => NodeDefinition;
     export type codeFromFunctionParams = {
@@ -753,7 +815,7 @@ declare module '@flyde/core/node/node' {
             outputName: string;
             defaultStyle?: NodeStyle;
     };
-    export const codeFromFunction: ({ id, fn, inputNames, outputName, defaultStyle, }: codeFromFunctionParams) => CodeNode;
+    export const codeFromFunction: ({ id, fn, inputNames, outputName, defaultStyle, }: codeFromFunctionParams) => InternalCodeNode;
 }
 
 declare module '@flyde/core/connect/helpers' {
@@ -797,7 +859,7 @@ declare module '@flyde/core/' {
     export * from "@flyde/core/node/get-node-with-dependencies";
     export * from "@flyde/core/flow-schema";
     export * from "@flyde/core/improved-macros/improved-macros";
-    export { extractInputsFromValue, replaceInputsInValue, renderDerivedString, evaluateCondition, } from "@flyde/core/improved-macros/improved-macro-utils";
+    export { extractInputsFromValue, replaceInputsInValue, renderDerivedString, evaluateCondition, evaluateFieldVisibility, createInputGroup, } from "@flyde/core/improved-macros/improved-macro-utils";
     export interface InstanceViewData {
         id: string;
         nodeIdOrGroup: string | VisualNode;
@@ -853,7 +915,7 @@ declare module '@flyde/core/execute/debugger' {
 }
 
 declare module '@flyde/core/node/macro-node' {
-    import { CodeNode, CodeNodeDefinition, NodeMetadata } from "@flyde/core/node/node";
+    import { InternalCodeNode, CodeNodeDefinition, NodeMetadata } from "@flyde/core/node/node";
     import type React from "react";
     import { MacroNodeInstance } from "@flyde/core/node/node-instance";
     export type MacroEditorFieldDefinitionType = "string" | "number" | "boolean" | "json" | "select" | "longtext" | "dynamic";
@@ -872,7 +934,7 @@ declare module '@flyde/core/node/macro-node' {
             };
     }[keyof MacroConfigurableValueTypeMap];
     export function macroConfigurableValue(type: MacroConfigurableValue["type"], value: MacroConfigurableValue["value"]): MacroConfigurableValue;
-    export type MacroEditorFieldDefinition = StringFieldDefinition | NumberFieldDefinition | BooleanFieldDefinition | JsonFieldDefinition | SelectFieldDefinition | LongTextFieldDefinition;
+    export type MacroEditorFieldDefinition = StringFieldDefinition | NumberFieldDefinition | BooleanFieldDefinition | JsonFieldDefinition | SelectFieldDefinition | LongTextFieldDefinition | GroupFieldDefinition;
     interface BaseFieldDefinition {
             label: string;
             description?: string;
@@ -948,7 +1010,7 @@ declare module '@flyde/core/node/macro-node' {
     export type MacroEditorConfigDefinition = MacroEditorConfigCustomDefinition | MacroEditorConfigStructured;
     export interface MacroNode<T> extends NodeMetadata {
             definitionBuilder: (data: T) => Omit<CodeNodeDefinition, "id" | "namespace">;
-            runFnBuilder: (data: T) => CodeNode["run"];
+            runFnBuilder: (data: T) => InternalCodeNode["run"];
             defaultData: T;
             /**
                 * Assumes you are bundling the editor component using webpack library+window config.
@@ -970,13 +1032,28 @@ declare module '@flyde/core/node/macro-node' {
             prompt: (message: string) => Promise<string>;
             createAiCompletion?: (prompt: {
                     prompt: string;
+                    currentValue?: any;
             }) => Promise<string>;
     }
     export interface MacroEditorComp<T> extends React.FC<MacroEditorCompProps<T>> {
     }
     export const isMacroNode: (p: any) => p is MacroNode<any>;
     export const isMacroNodeDefinition: (p: any) => p is MacroNodeDefinition<any>;
-    export function processMacroNodeInstance(prefix: string, macro: MacroNode<any>, instance: MacroNodeInstance): CodeNode;
+    export function processMacroNodeInstance(prefix: string, macro: MacroNode<any>, instance: MacroNodeInstance): InternalCodeNode;
+    export interface GroupFieldDefinition extends BaseFieldDefinition {
+            type: "group";
+            fields: MacroEditorFieldDefinition[];
+            typeData?: {
+                    /**
+                        * Whether the group is collapsible
+                        */
+                    collapsible?: boolean;
+                    /**
+                        * Whether the group is collapsed by default (only applies if collapsible is true)
+                        */
+                    defaultCollapsed?: boolean;
+            };
+    }
     export {};
 }
 

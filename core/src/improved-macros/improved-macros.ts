@@ -1,5 +1,5 @@
 import {
-  CodeNode,
+  InternalCodeNode,
   InputPin,
   OutputPin,
   MacroNode,
@@ -30,7 +30,7 @@ export interface BaseMacroNodeData<Config = any> {
   icon?: string;
 
   completionOutputs?: StaticOrDerived<string[], Config>;
-  run: CodeNode["run"];
+  run: InternalCodeNode["run"];
 }
 
 export interface SimplifiedMacroNode<Config> extends BaseMacroNodeData<Config> {

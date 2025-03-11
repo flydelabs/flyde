@@ -1,7 +1,7 @@
-import { CodeNode } from "@flyde/core";
+import { InternalCodeNode } from "@flyde/core";
 
 const namespace = "Numbers";
-export const Sin: CodeNode = {
+export const Sin: InternalCodeNode = {
   id: "Sin",
   defaultStyle: {
     icon: "fa-sin",

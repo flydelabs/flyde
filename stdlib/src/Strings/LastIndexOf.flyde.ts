@@ -1,8 +1,8 @@
-import { CodeNode } from "@flyde/core";
+import { InternalCodeNode } from "@flyde/core";
 
 const namespace = "Strings";
 
-export const LastIndexOf: CodeNode = {
+export const LastIndexOf: InternalCodeNode = {
   id: "Last Index Of",
   defaultStyle: { icon: "fa-font" },
   namespace,

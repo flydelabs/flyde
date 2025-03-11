@@ -1,5 +1,5 @@
 import {
-  CodeNode,
+  InternalCodeNode,
   InputPinsConfig,
   Node,
   NodeDefinition,
@@ -25,11 +25,11 @@ export interface RefNodeInstance extends NodeInstanceConfig {
 }
 
 export interface InlineNodeInstance extends NodeInstanceConfig {
-  node: VisualNode | CodeNode;
+  node: VisualNode | InternalCodeNode;
 }
 
 export interface ResolvedInlineNodeInstance extends NodeInstanceConfig {
-  node: ResolvedVisualNode | CodeNode;
+  node: ResolvedVisualNode | InternalCodeNode;
 }
 
 export interface MacroNodeInstance extends NodeInstanceConfig {

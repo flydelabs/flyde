@@ -1,7 +1,7 @@
-import { CodeNode } from "@flyde/core";
+import { InternalCodeNode } from "@flyde/core";
 
 const namespace = "Numbers";
-export const Ceiling: CodeNode = {
+export const Ceiling: InternalCodeNode = {
   id: "Ceiling",
   defaultStyle: {
     icon: "fa-ceiling",

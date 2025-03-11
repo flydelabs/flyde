@@ -106,7 +106,7 @@ export interface NodeMetadata {
 }
 
 /**
- * Extended by {@link VisualNode}, {@link CodeNode} and {@link InlineValueNode}
+ * Extended by {@link VisualNode}, {@link InternalCodeNode} and {@link InlineValueNode}
  */
 export interface BaseNode extends NodeMetadata {
   /**
@@ -155,7 +155,7 @@ export interface BaseNode extends NodeMetadata {
   reactiveInputs?: string[];
 }
 
-export interface CodeNode extends BaseNode {
+export interface InternalCodeNode extends BaseNode {
   /**
    * This function will run as soon as the node's inputs are satisfied.
    * It has access to the nodes inputs values, and output pins. See {@link RunNodeFunction} for more information.
@@ -163,7 +163,7 @@ export interface CodeNode extends BaseNode {
    */
   run: RunNodeFunction;
   /**
-   * @deprecated use {@link CodeNode['run']} instead
+   * @deprecated use {@link InternalCodeNode['run']} instead
    */
   fn?: RunNodeFunction;
 }
@@ -194,7 +194,7 @@ export interface ResolvedVisualNode extends VisualNode {
   instances: ResolvedNodeInstance[];
 }
 
-export type Node = CodeNode | CustomNode;
+export type Node = InternalCodeNode | CustomNode;
 
 export type ImportableSource = {
   module: string;
@@ -203,7 +203,7 @@ export type ImportableSource = {
 
 export type CustomNode = VisualNode;
 
-export type CodeNodeDefinition = Omit<CodeNode, "run"> & {
+export type CodeNodeDefinition = Omit<InternalCodeNode, "run"> & {
   /**
    * The source code of the node, if available. Used for editing and forking nodes in the editor.
    */
@@ -224,8 +224,10 @@ export const isBaseNode = (p: any): p is BaseNode => {
   return p && p.id && p.inputs && p.outputs;
 };
 
-export const isCodeNode = (p: Node | NodeDefinition | any): p is CodeNode => {
-  return isBaseNode(p) && typeof (p as CodeNode).run === "function";
+export const isCodeNode = (
+  p: Node | NodeDefinition | any
+): p is InternalCodeNode => {
+  return isBaseNode(p) && typeof (p as InternalCodeNode).run === "function";
 };
 
 export const extractMetadata: <N extends NodeMetadata>(
@@ -263,7 +265,7 @@ export const visualNode = testDataCreator<VisualNode>({
   inputsPosition: {},
 });
 
-export const codeNode = testDataCreator<CodeNode>({
+export const InternalCodeNode = testDataCreator<InternalCodeNode>({
   id: "node",
   inputs: {},
   outputs: {},
@@ -282,7 +284,7 @@ export const fromSimplified = ({
   inputTypes,
   outputTypes,
   id,
-}: SimplifiedNodeParams): CodeNode => {
+}: SimplifiedNodeParams): InternalCodeNode => {
   const inputs: InputPinMap = entries(inputTypes).reduce<InputPinMap>(
     (p, [k]) => ({ ...p, [k]: {} }),
     {}
@@ -355,7 +357,7 @@ export const codeFromFunction = ({
   inputNames,
   outputName,
   defaultStyle,
-}: codeFromFunctionParams): CodeNode => {
+}: codeFromFunctionParams): InternalCodeNode => {
   return {
     id,
     inputs: inputNames.reduce((acc, k) => ({ ...acc, [k]: nodeInput() }), {}),

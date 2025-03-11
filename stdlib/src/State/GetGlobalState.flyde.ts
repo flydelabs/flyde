@@ -1,8 +1,8 @@
-import { CodeNode } from "@flyde/core";
+import { InternalCodeNode } from "@flyde/core";
 
 const namespace = "State";
 
-export const GetGlobalState: CodeNode = {
+export const GetGlobalState: InternalCodeNode = {
   id: "Get State",
   defaultStyle: {
     icon: "fa-eye",

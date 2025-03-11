@@ -1,7 +1,7 @@
-import { CodeNode } from "@flyde/core";
+import { InternalCodeNode } from "@flyde/core";
 
 const namespace = "Numbers";
-export const Subtract: CodeNode = {
+export const Subtract: InternalCodeNode = {
   id: "Subtract",
   defaultStyle: {
     icon: "fa-minus",

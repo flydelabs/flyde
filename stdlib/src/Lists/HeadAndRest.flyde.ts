@@ -1,8 +1,8 @@
-import { CodeNode } from "@flyde/core";
+import { InternalCodeNode } from "@flyde/core";
 
 const namespace = "Lists";
 
-export const HeadAndRest: CodeNode = {
+export const HeadAndRest: InternalCodeNode = {
   id: "Head and rest",
   defaultStyle: {
     icon: "fa-list",

@@ -1,8 +1,8 @@
-import { CodeNode } from "@flyde/core";
+import { InternalCodeNode } from "@flyde/core";
 
 const namespace = "Strings";
 
-export const EndsWith: CodeNode = {
+export const EndsWith: InternalCodeNode = {
   id: "Ends With",
   namespace,
   defaultStyle: { icon: "fa-font" },

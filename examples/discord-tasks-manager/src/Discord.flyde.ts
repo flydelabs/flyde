@@ -1,7 +1,7 @@
-import { CodeNode, nodeOutput } from "@flyde/core";
+import { InternalCodeNode, nodeOutput } from "@flyde/core";
 import { Client } from "eris";
 
-const node: CodeNode = {
+const node: InternalCodeNode = {
   id: "Discord Bot",
   inputs: {},
   defaultStyle: {

@@ -1,8 +1,8 @@
-import { CodeNode } from "@flyde/core";
+import { InternalCodeNode } from "@flyde/core";
 
 const namespace = "Lists";
 
-export const Append: CodeNode = {
+export const Append: InternalCodeNode = {
   id: "Append",
   namespace,
   description: "Appends an item to a list",

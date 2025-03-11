@@ -1,8 +1,8 @@
-import { CodeNode } from "@flyde/core";
+import { InternalCodeNode } from "@flyde/core";
 
 const namespace = "Lists";
 
-export const LoopList: CodeNode = {
+export const LoopList: InternalCodeNode = {
   id: "Loop List",
   defaultStyle: {
     icon: "fa-list",

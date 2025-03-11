@@ -1,7 +1,7 @@
-import { CodeNode } from "@flyde/core";
+import { InternalCodeNode } from "@flyde/core";
 
 const namespace = "Numbers";
-export const Power: CodeNode = {
+export const Power: InternalCodeNode = {
   id: "Power",
   defaultStyle: {
     icon: "fa-superscript",

@@ -4,8 +4,8 @@ In Flyde, custom nodes can be created to extend functionality. Examples Below:
 # Example 1: Add Two Numbers
 This node takes two numbers as input and outputs their sum.
 \`\`\`typescript
-import { CodeNode } from "@flyde/core";
-export const Add: CodeNode = {
+import { InternalCodeNode } from "@flyde/core";
+export const Add: InternalCodeNode = {
   id: "Add",
   displayName: "Add",
   description: "Emits the sum of two numbers",
@@ -20,8 +20,8 @@ export const Add: CodeNode = {
 # Example 2: Calculate Average
 This node calculates the average of all numbers it has received since the flow started.
 \`\`\`typescript
-import { CodeNode } from "@flyde/core";
-export const RollingAverage: CodeNode = {
+import { InternalCodeNode } from "@flyde/core";
+export const RollingAverage: InternalCodeNode = {
   id: "RollingAverage",
   displayName: "Rolling Average"
   description: "Emits the average of all the numbers it received",

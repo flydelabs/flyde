@@ -1,8 +1,8 @@
-import { CodeNode } from "@flyde/core";
+import { InternalCodeNode } from "@flyde/core";
 
 const namespace = "Dates";
 
-export const NowUnixTime: CodeNode = {
+export const NowUnixTime: InternalCodeNode = {
   id: "Now Unix Time",
   defaultStyle: {
     icon: "fa-calendar",

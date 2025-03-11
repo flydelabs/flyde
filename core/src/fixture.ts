@@ -4,7 +4,7 @@ import {
   VisualNode,
   nodeInput,
   nodeOutput,
-  CodeNode,
+  InternalCodeNode,
   nodeInstance,
   dynamicNodeInput,
   queueInputPinConfig,
@@ -17,7 +17,7 @@ import { Subject } from "rxjs";
 import { NodesCollection } from ".";
 import { conciseCodeNode, valueNode } from "./test-utils";
 
-export const add: CodeNode = {
+export const add: InternalCodeNode = {
   id: "add",
   inputs: {
     n1: nodeInput(),
@@ -31,7 +31,7 @@ export const add: CodeNode = {
   },
 };
 
-export const add1: CodeNode = {
+export const add1: InternalCodeNode = {
   id: "add1",
   inputs: { n: nodeInput() },
   outputs: { r: nodeOutput() },
@@ -69,7 +69,7 @@ export const id: Node = {
   completionOutputs: ["r"],
 };
 
-export const id2: CodeNode = {
+export const id2: InternalCodeNode = {
   id: "id2",
   inputs: {
     v: nodeInput(),
@@ -223,7 +223,7 @@ export const addGroupedQueued: VisualNode = {
   ],
 };
 
-export const optAdd: CodeNode = {
+export const optAdd: InternalCodeNode = {
   id: "optAdd",
   inputs: {
     n1: {},
@@ -238,7 +238,7 @@ export const optAdd: CodeNode = {
   },
 };
 
-export const isEven: CodeNode = {
+export const isEven: InternalCodeNode = {
   id: "is-even",
   inputs: {
     item: {},
@@ -297,7 +297,7 @@ export const filter: Node = fromSimplified({
   },
 });
 
-export const peq: CodeNode = {
+export const peq: InternalCodeNode = {
   id: "peq",
   inputs: { val: nodeInput(), compare: nodeInput() },
   outputs: { r: nodeOutput(), else: nodeOutput() },

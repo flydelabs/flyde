@@ -1,7 +1,7 @@
-import { CodeNode } from "@flyde/core";
+import { InternalCodeNode } from "@flyde/core";
 
 const namespace = "Numbers";
-export const LessThan: CodeNode = {
+export const LessThan: InternalCodeNode = {
   id: "Less Than",
   namespace,
   description: "Emits true if the first number is less than the second",

@@ -7,7 +7,7 @@ import { spy } from "sinon";
 import { assert } from "chai";
 import {
   dynamicNodeInput,
-  CodeNode,
+  InternalCodeNode,
   nodeInput,
   nodeInstance,
   nodeOutput,
@@ -111,7 +111,7 @@ describe("connect", () => {
 
   describe("cyclic dependencies", () => {
     it.skip("allows closing cyclic dependencies with delayed nodes", () => {
-      const delayedId: CodeNode = {
+      const delayedId: InternalCodeNode = {
         id: "d",
         inputs: { n: {} },
         outputs: { r: { delayed: true } },

@@ -1,8 +1,8 @@
-import { CodeNode } from "@flyde/core";
+import { InternalCodeNode } from "@flyde/core";
 
 const namespace = "Console";
 
-export const Log: CodeNode = {
+export const Log: InternalCodeNode = {
   id: "Log",
   defaultStyle: {
     icon: "fa-terminal",

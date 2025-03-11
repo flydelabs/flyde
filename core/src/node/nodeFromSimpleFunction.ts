@@ -1,4 +1,4 @@
-import { BaseNode, CodeNode, NodeStyleSize, RunNodeFunction } from ".";
+import { BaseNode, InternalCodeNode, NodeStyleSize, RunNodeFunction } from ".";
 import { InputMode } from "./node-pins";
 
 export type SimpleFnData = Omit<BaseNode, "inputs" | "outputs" | "run"> & {
@@ -19,7 +19,7 @@ export type SimpleFnData = Omit<BaseNode, "inputs" | "outputs" | "run"> & {
   fullRunFn?: RunNodeFunction; // hack to start migrating these back
 };
 
-export function nodeFromSimpleFunction(data: SimpleFnData): CodeNode {
+export function nodeFromSimpleFunction(data: SimpleFnData): InternalCodeNode {
   return {
     ...data,
     id: data.id,

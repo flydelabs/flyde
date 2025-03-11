@@ -12,7 +12,7 @@ module.exports = {
     },
 
     create(context) {
-      const nodeTypes = ["CodeNode", "MacroNode", "ImprovedMacroNode"];
+      const nodeTypes = ["InternalCodeNode", "MacroNode", "ImprovedMacroNode"];
       let nodeCount = 0;
       let nodeLocations = [];
 
@@ -28,7 +28,7 @@ module.exports = {
               context
                 .getSourceCode()
                 .getText(declaration.init)
-                .includes("CodeNode")
+                .includes("InternalCodeNode")
             ) {
               nodeCount++;
               nodeLocations.push(node.loc.start);
@@ -92,7 +92,7 @@ module.exports = {
     },
 
     create(context) {
-      const nodeTypes = ["CodeNode", "MacroNode", "ImprovedMacroNode"];
+      const nodeTypes = ["InternalCodeNode", "MacroNode", "ImprovedMacroNode"];
       const filename = context.getFilename();
 
       // Only apply to .flyde.ts files
@@ -119,7 +119,7 @@ module.exports = {
 
           // Check if this is a valid node export
           const isNodeExport =
-            text.includes("CodeNode") ||
+            text.includes("InternalCodeNode") ||
             text.includes("MacroNode") ||
             text.includes("ImprovedMacroNode") ||
             text.includes("processImprovedMacro(") ||

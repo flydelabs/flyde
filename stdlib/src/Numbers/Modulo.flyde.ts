@@ -1,7 +1,7 @@
-import { CodeNode } from "@flyde/core";
+import { InternalCodeNode } from "@flyde/core";
 
 const namespace = "Numbers";
-export const Modulo: CodeNode = {
+export const Modulo: InternalCodeNode = {
   id: "Modulo",
   defaultStyle: {
     icon: "fa-percentage",

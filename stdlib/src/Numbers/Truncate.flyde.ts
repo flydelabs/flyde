@@ -1,7 +1,7 @@
-import { CodeNode } from "@flyde/core";
+import { InternalCodeNode } from "@flyde/core";
 
 const namespace = "Numbers";
-export const Truncate: CodeNode = {
+export const Truncate: InternalCodeNode = {
   id: "Truncate",
   defaultStyle: {
     icon: "fa-truncate",

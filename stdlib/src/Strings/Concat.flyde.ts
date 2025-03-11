@@ -1,8 +1,8 @@
-import { CodeNode } from "@flyde/core";
+import { InternalCodeNode } from "@flyde/core";
 
 const namespace = "Strings";
 
-export const Concat: CodeNode = {
+export const Concat: InternalCodeNode = {
   id: "Concat",
   defaultStyle: {
     icon: "fa-font",

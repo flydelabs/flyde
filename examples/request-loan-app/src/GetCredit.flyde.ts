@@ -1,7 +1,7 @@
-import { codeFromFunction, CodeNode } from "@flyde/core";
+import { codeFromFunction, InternalCodeNode } from "@flyde/core";
 import { creditService } from "./lib/credit-service";
 
-const GetCredit: CodeNode = codeFromFunction({
+const GetCredit: InternalCodeNode = codeFromFunction({
   id: "Get Credit By Id",
   fn: creditService.getCredit,
   inputNames: ["userId"],

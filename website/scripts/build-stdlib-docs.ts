@@ -1,6 +1,6 @@
 import { writeFileSync } from "fs";
 import ejs from "ejs";
-import { CodeNode, Node } from "@site/../core";
+import { InternalCodeNode, Node } from "@site/../core";
 
 import markdownTable from "markdown-table";
 
@@ -22,7 +22,7 @@ const groupedData = Object.values(data).reduce((acc, node) => {
   return acc;
 }, {});
 
-const entries = Object.entries<CodeNode[]>(groupedData);
+const entries = Object.entries<InternalCodeNode[]>(groupedData);
 
 const groupAndTables = entries.map(([ns, nodes]) => {
   const rows = [

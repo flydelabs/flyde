@@ -1,7 +1,7 @@
-import { CodeNode } from "@flyde/core";
+import { InternalCodeNode } from "@flyde/core";
 
 const namespace = "Numbers";
-export const AbsoluteValue: CodeNode = {
+export const AbsoluteValue: InternalCodeNode = {
   id: "Absolute Value",
   defaultStyle: {
     icon: "fa-abs",

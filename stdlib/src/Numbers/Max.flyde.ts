@@ -1,7 +1,7 @@
-import { CodeNode } from "@flyde/core";
+import { InternalCodeNode } from "@flyde/core";
 
 const namespace = "Numbers";
-export const Max: CodeNode = {
+export const Max: InternalCodeNode = {
   id: "Max",
   namespace,
   description: "Emits the maximum of two numbers",

@@ -1,5 +1,5 @@
 import {
-  CodeNode,
+  InternalCodeNode,
   VisualNode,
   nodeInput,
   nodeOutput,
@@ -43,7 +43,7 @@ import { conciseCodeNode, wrappedOnEvent } from "../test-utils";
 import { DebuggerEventType } from "./debugger";
 
 describe("execute", () => {
-  const totalOptInput: CodeNode = {
+  const totalOptInput: InternalCodeNode = {
     id: "optAdd",
     inputs: {
       n1: { mode: "required-if-connected" },

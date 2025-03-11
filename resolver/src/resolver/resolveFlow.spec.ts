@@ -1,5 +1,5 @@
 import {
-  CodeNode,
+  InternalCodeNode,
   dynamicNodeInput,
   execute,
   ImportedNode,
@@ -384,8 +384,8 @@ describe("resolver", () => {
 
     const resolvedDeps = flow.dependencies as NodesCollection;
 
-    assert.exists((resolvedDeps.Add as CodeNode).run);
-    assert.exists((resolvedDeps.Sub as CodeNode).run);
+    assert.exists((resolvedDeps.Add as InternalCodeNode).run);
+    assert.exists((resolvedDeps.Sub as InternalCodeNode).run);
 
     assert.match(
       (resolvedDeps.Add as unknown as ImportedNode).source.export,

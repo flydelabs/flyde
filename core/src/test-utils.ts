@@ -1,6 +1,12 @@
 import { spy } from "sinon";
 import Sinon = require("sinon");
-import { BaseNode, InputPinMap, VisualNode, CodeNode, NodeInstance } from "./.";
+import {
+  BaseNode,
+  InputPinMap,
+  VisualNode,
+  InternalCodeNode,
+  NodeInstance,
+} from "./.";
 
 import {
   DynamicOutput,
@@ -26,7 +32,7 @@ interface ConciseVisualNode extends ConciseBaseNode {
 }
 
 interface ConciseCodeNode extends ConciseBaseNode {
-  run: CodeNode["run"];
+  run: InternalCodeNode["run"];
 }
 const conciseBaseNode = (concise: ConciseBaseNode): BaseNode => {
   return {
@@ -81,7 +87,7 @@ export const conciseNode = (concise: ConciseVisualNode): VisualNode => {
   };
 };
 
-export const conciseCodeNode = (concise: ConciseCodeNode): CodeNode => {
+export const conciseCodeNode = (concise: ConciseCodeNode): InternalCodeNode => {
   const base = conciseBaseNode(concise);
   return {
     ...base,

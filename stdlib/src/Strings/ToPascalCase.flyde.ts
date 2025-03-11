@@ -1,8 +1,8 @@
-import { CodeNode } from "@flyde/core";
+import { InternalCodeNode } from "@flyde/core";
 
 const namespace = "Strings";
 
-export const ToPascalCase: CodeNode = {
+export const ToPascalCase: InternalCodeNode = {
   id: "To Pascal Case",
   defaultStyle: { icon: "fa-font" },
   namespace,

@@ -1,8 +1,8 @@
-import { CodeNode } from "@flyde/core";
+import { InternalCodeNode } from "@flyde/core";
 
 const namespace = "Dates";
 
-export const DateToTimezoneOffset: CodeNode = {
+export const DateToTimezoneOffset: InternalCodeNode = {
   id: "Date To Timezone Offset",
   defaultStyle: {
     icon: "fa-calendar",

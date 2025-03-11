@@ -1,8 +1,8 @@
-import { CodeNode } from "@flyde/core";
+import { InternalCodeNode } from "@flyde/core";
 
 const namespace = "Strings";
 
-export const Split: CodeNode = {
+export const Split: InternalCodeNode = {
   id: "Split",
   defaultStyle: { icon: "fa-font" },
   namespace,

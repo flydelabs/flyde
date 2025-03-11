@@ -26,7 +26,7 @@ import {
   TRIGGER_PIN_ID,
 } from "./connect";
 import {
-  CodeNode,
+  InternalCodeNode,
   fromSimplified,
   dynamicNodeInput,
   dynamicOutput,
@@ -93,7 +93,7 @@ describe("main ", () => {
 
   describe("core", () => {
     it("runs an Id code node properly", () => {
-      const node: CodeNode = {
+      const node: InternalCodeNode = {
         id: "id",
         inputs: {
           v: nodeInput(),
@@ -122,7 +122,7 @@ describe("main ", () => {
     });
 
     it("runs an pure-like Id code node properly", () => {
-      const node: CodeNode = {
+      const node: InternalCodeNode = {
         id: "id",
         inputs: {
           v: nodeInput(),
@@ -152,7 +152,7 @@ describe("main ", () => {
 
     it("runs an ADD code node properly", () => {
       const innerSpy = spy();
-      const node: CodeNode = {
+      const node: InternalCodeNode = {
         id: "add",
         inputs: {
           a: nodeInput(),
@@ -901,7 +901,7 @@ describe("main ", () => {
       it("stops running connected nodes", () => {
         const internalSpy = spy();
         const s = spy();
-        const ids: CodeNode = fromSimplified({
+        const ids: InternalCodeNode = fromSimplified({
           id: "test",
           inputTypes: { v: "any" },
           outputTypes: { r: "any" },
@@ -1083,7 +1083,7 @@ describe("main ", () => {
 
     // it('runs "leaf" nodes without waiting for external inputs', () => {
     //   const innerLeafSpy = spy();
-    //   const leaf: CodeNode = {
+    //   const leaf: InternalCodeNode = {
     //     id: "emit-1",
     //     inputs: {},
     //     outputs: { r: nodeOutput() },
@@ -1159,7 +1159,7 @@ describe("main ", () => {
     });
 
     describe("node state", () => {
-      const node: CodeNode = {
+      const node: InternalCodeNode = {
         id: "fixture",
         inputs: { v: nodeInput() },
         outputs: { r: nodeOutput() },
@@ -1178,7 +1178,7 @@ describe("main ", () => {
           const v = dynamicNodeInput();
           const r = new Subject();
 
-          const node1: CodeNode = {
+          const node1: InternalCodeNode = {
             id: "p1",
             inputs: {},
             outputs: { r: nodeOutput() },
@@ -1189,7 +1189,7 @@ describe("main ", () => {
               outs.r?.next(n);
             },
           };
-          const node2: CodeNode = {
+          const node2: InternalCodeNode = {
             id: "p2",
             inputs: {},
             outputs: { r: nodeOutput() },
@@ -1541,7 +1541,7 @@ describe("main ", () => {
   describe("uncontrolled visual nodes", () => {
     it("waits for all inputs when visual node is uncontrolled", () => {
       const innerSpy = spy();
-      const innerNode: CodeNode = {
+      const innerNode: InternalCodeNode = {
         id: "inner",
         inputs: {},
         outputs: {},
@@ -1585,7 +1585,7 @@ describe("main ", () => {
 
   describe("recursion support", () => {
     it("does run nodes that have no args", () => {
-      const node: CodeNode = {
+      const node: InternalCodeNode = {
         id: "node",
         inputs: {},
         outputs: {
@@ -1757,7 +1757,7 @@ describe("main ", () => {
   describe("node cleanup", () => {
     it("runs cleanup code after a a node finished running on code node", () => {
       const spyFn = spy();
-      const node: CodeNode = {
+      const node: InternalCodeNode = {
         id: "id",
         inputs: {
           v: nodeInput(),
@@ -1788,7 +1788,7 @@ describe("main ", () => {
 
     it("calls destroy fn of debugger when cleaning up", () => {
       const spyFn = spy();
-      const node: CodeNode = {
+      const node: InternalCodeNode = {
         id: "id",
         inputs: {
           v: nodeInput(),
@@ -1821,7 +1821,7 @@ describe("main ", () => {
   describe("extra context", () => {
     it("passes external context forward when running code comps", async () => {
       const bobber = (n: number) => n + 42;
-      const node: CodeNode = {
+      const node: InternalCodeNode = {
         id: "tester",
         inputs: {},
         outputs: {
@@ -1962,7 +1962,7 @@ describe("main ", () => {
       const s = spy();
       r.subscribe(s);
 
-      const delayer: CodeNode = {
+      const delayer: InternalCodeNode = {
         id: "delayer",
         inputs: {
           item: nodeInput(),
@@ -2008,7 +2008,7 @@ describe("main ", () => {
         r.subscribe(s);
         final.subscribe(s);
 
-        const delayer: CodeNode = {
+        const delayer: InternalCodeNode = {
           id: "delayer",
           inputs: {
             item: nodeInput(),
@@ -2059,7 +2059,7 @@ describe("main ", () => {
 
         const [_, r] = spiedOutput();
 
-        const delayer: CodeNode = {
+        const delayer: InternalCodeNode = {
           id: "delayer",
           inputs: {
             item: nodeInput(),
@@ -2117,7 +2117,7 @@ describe("main ", () => {
         final2.subscribe((v) => s(`f2-${v}`));
         r.subscribe((v) => s(`r-${v}`));
 
-        const delayer: CodeNode = {
+        const delayer: InternalCodeNode = {
           id: "delayer",
           inputs: {
             item: nodeInput(),
@@ -2177,7 +2177,7 @@ describe("main ", () => {
         final1.subscribe((v) => s(`f1-${v}`));
         r.subscribe((v) => s(`r-${v}`));
 
-        const delayer: CodeNode = {
+        const delayer: InternalCodeNode = {
           id: "delayer",
           inputs: {
             item: nodeInput(),
@@ -2236,7 +2236,7 @@ describe("main ", () => {
       });
 
       it("triggers the completion callback with last values when completed", async () => {
-        const simpleCompletion: CodeNode = {
+        const simpleCompletion: InternalCodeNode = {
           id: "simpleCompletion",
           inputs: {},
           outputs: {
@@ -2415,7 +2415,7 @@ describe("main ", () => {
       r.subscribe(s);
       final.subscribe(s);
 
-      const someNode: CodeNode = {
+      const someNode: InternalCodeNode = {
         id: "someNode",
         inputs: {
           item: nodeInput(),
@@ -2460,7 +2460,7 @@ describe("main ", () => {
     });
 
     describe("accumulate", () => {
-      const accumulate: CodeNode = {
+      const accumulate: InternalCodeNode = {
         id: "acc",
         inputs: {
           item: nodeInput(),
@@ -2654,7 +2654,7 @@ describe("main ", () => {
       });
 
       it('supports creation of "accumulate until"', () => {
-        const accUntil: CodeNode = {
+        const accUntil: InternalCodeNode = {
           id: "acc",
           inputs: {
             item: nodeInput("optional"),
@@ -2705,7 +2705,7 @@ describe("main ", () => {
     });
 
     it('supports creation of "merge" node - code', () => {
-      const merge: CodeNode = {
+      const merge: InternalCodeNode = {
         id: "merge",
         inputs: {
           a: nodeInput("optional"),

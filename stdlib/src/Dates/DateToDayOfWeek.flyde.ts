@@ -1,8 +1,8 @@
-import { CodeNode } from "@flyde/core";
+import { InternalCodeNode } from "@flyde/core";
 
 const namespace = "Dates";
 
-export const DateToDayOfWeek: CodeNode = {
+export const DateToDayOfWeek: InternalCodeNode = {
   id: "Date To Day Of Week",
   defaultStyle: {
     icon: "fa-calendar",

@@ -1,8 +1,8 @@
-import { CodeNode } from "@flyde/core";
+import { InternalCodeNode } from "@flyde/core";
 
 const namespace = "Objects";
 
-export const JSONStringify: CodeNode = {
+export const JSONStringify: InternalCodeNode = {
   id: "JSON Stringify",
   defaultStyle: {
     icon: "fa-pen-fancy",

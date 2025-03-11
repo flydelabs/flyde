@@ -1,8 +1,8 @@
-import { CodeNode } from "@flyde/core";
+import { InternalCodeNode } from "@flyde/core";
 
 const namespace = "Strings";
 
-export const MatchRegex: CodeNode = {
+export const MatchRegex: InternalCodeNode = {
   id: "Match Regex",
   namespace,
   defaultStyle: { icon: "fa-font" },

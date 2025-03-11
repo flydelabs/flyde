@@ -1,4 +1,4 @@
-import { CodeNode, CodeNodeDefinition, NodeMetadata } from "./node";
+import { InternalCodeNode, CodeNodeDefinition, NodeMetadata } from "./node";
 import type React from "react";
 import { MacroNodeInstance } from "./node-instance";
 
@@ -133,7 +133,7 @@ export type MacroEditorConfigDefinition =
 
 export interface MacroNode<T> extends NodeMetadata {
   definitionBuilder: (data: T) => Omit<CodeNodeDefinition, "id" | "namespace">;
-  runFnBuilder: (data: T) => CodeNode["run"];
+  runFnBuilder: (data: T) => InternalCodeNode["run"];
   defaultData: T;
 
   /**
@@ -198,7 +198,7 @@ export function processMacroNodeInstance(
 
   const id = `${prefix}${macro.id}__${instance.id}`;
 
-  const resolvedNode: CodeNode = {
+  const resolvedNode: InternalCodeNode = {
     ...metaData,
     defaultStyle: metaData.defaultStyle ?? macro.defaultStyle,
     displayName: metaData.displayName ?? macro.id,

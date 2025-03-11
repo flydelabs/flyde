@@ -1,7 +1,7 @@
-import { CodeNode } from "@flyde/core";
+import { InternalCodeNode } from "@flyde/core";
 
 const namespace = "Numbers";
-export const Min: CodeNode = {
+export const Min: InternalCodeNode = {
   id: "Min",
   namespace,
   description: "Emits the minimum of two numbers",

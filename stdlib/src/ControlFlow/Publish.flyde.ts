@@ -1,11 +1,11 @@
-import { CodeNode } from "@flyde/core";
+import { InternalCodeNode } from "@flyde/core";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const PubSub = require("pubsub-js");
 
 const namespace = "Control Flow";
 
-export const Publish: CodeNode = {
+export const Publish: InternalCodeNode = {
   id: "Publish",
   namespace,
   description:

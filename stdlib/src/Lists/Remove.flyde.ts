@@ -1,8 +1,8 @@
-import { CodeNode } from "@flyde/core";
+import { InternalCodeNode } from "@flyde/core";
 
 const namespace = "Lists";
 
-export const Remove: CodeNode = {
+export const Remove: InternalCodeNode = {
   id: "Remove Item",
   namespace,
   description: "Removes an item from a list",

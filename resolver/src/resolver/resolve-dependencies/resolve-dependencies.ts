@@ -5,7 +5,7 @@ import {
   FlydeFlow,
   ResolvedFlydeFlow,
   isCodeNode,
-  CodeNode,
+  InternalCodeNode,
   ImportedNodeDef,
   isMacroNode,
   ResolvedVisualNode,
@@ -386,7 +386,10 @@ export function findTypeScriptSource(jsPath: string): string | null {
 
 export function resolveCodeNodeDependencies(path: string): {
   errors: string[];
-  nodes: { exportName: string; node: CodeNode | MacroNodeDefinition<any> }[];
+  nodes: {
+    exportName: string;
+    node: InternalCodeNode | MacroNodeDefinition<any>;
+  }[];
 } {
   const errors = [];
   const nodes = [];

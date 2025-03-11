@@ -1,5 +1,5 @@
 import {
-  CodeNode,
+  InternalCodeNode,
   ImportableSource,
   ImportedNode,
   randomInt,
@@ -60,7 +60,7 @@ export async function generateAndSaveNode(
   }
 
   const node: ImportedNode = {
-    ...(maybeNode.node as CodeNode),
+    ...(maybeNode.node as InternalCodeNode),
     source: { path: filePath, export: maybeNode.exportName },
   };
   return { node, module: `./${fileName}.flyde.ts` };

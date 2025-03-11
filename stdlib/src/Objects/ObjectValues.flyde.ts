@@ -1,8 +1,8 @@
-import { CodeNode } from "@flyde/core";
+import { InternalCodeNode } from "@flyde/core";
 
 const namespace = "Objects";
 
-export const ObjectValues: CodeNode = {
+export const ObjectValues: InternalCodeNode = {
   id: "Values",
   namespace,
   description: "Emits the values of an object",

@@ -1,8 +1,8 @@
-import { CodeNode } from "@flyde/core";
+import { InternalCodeNode } from "@flyde/core";
 
 const namespace = "Dates";
 
-export const Now: CodeNode = {
+export const Now: InternalCodeNode = {
   id: "Now",
   defaultStyle: {
     icon: "fa-calendar",

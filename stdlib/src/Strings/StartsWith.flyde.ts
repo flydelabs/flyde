@@ -1,8 +1,8 @@
-import { CodeNode } from "@flyde/core";
+import { InternalCodeNode } from "@flyde/core";
 
 const namespace = "Strings";
 
-export const StartsWith: CodeNode = {
+export const StartsWith: InternalCodeNode = {
   id: "Starts With",
   namespace,
   defaultStyle: { icon: "fa-font" },

@@ -1,7 +1,7 @@
-import { CodeNode } from "@flyde/core";
+import { InternalCodeNode } from "@flyde/core";
 
 const namespace = "Numbers";
-export const SquareRoot: CodeNode = {
+export const SquareRoot: InternalCodeNode = {
   id: "Square Root",
   defaultStyle: {
     icon: "fa-square-root-alt",
