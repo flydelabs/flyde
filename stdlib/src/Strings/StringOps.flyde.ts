@@ -1,11 +1,6 @@
-import {
-  processImprovedMacro,
-  CodeNode,
-  createInputGroup,
-  nodeOutput,
-} from "@flyde/core";
+import { CodeNode, createInputGroup, nodeOutput } from "@flyde/core";
 
-const stringNodeRaw: CodeNode = {
+export const StringOps: CodeNode = {
   id: "StringOps",
   displayName: "String {{operation}}",
   menuDisplayName: "String Operations",
@@ -331,5 +326,3 @@ const stringNodeRaw: CodeNode = {
     "join",
   ],
 };
-
-export const StringNode = processImprovedMacro(stringNodeRaw);

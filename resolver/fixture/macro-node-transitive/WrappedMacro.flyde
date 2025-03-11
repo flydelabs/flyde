@@ -1,22 +1,19 @@
 imports:
-  "./Macro.flyde.ts":
-  - Add
+  ./Macro.flyde.ts:
+    - Add
 node:
-  id: WrappedMacro
-  inputs:
-    n:
-      type: number
-      mode: required
-  outputs:
-    r:
-      type: number
   instances:
-  - id: ins1
-    macroId: Add
-    macroData: 1
-    pos:
-      x: 0
-      y: 0
+    - pos:
+        x: 161
+        y: 19
+      id: ins1
+      inputConfig: {}
+      nodeId: Add__ins1
+      macroId: Add
+      macroData:
+        sum:
+          type: number
+          value: 1
   connections:
     - from:
         insId: __this
@@ -30,3 +27,19 @@ node:
       to:
         insId: __this
         pinId: r
+  id: WrappedMacro
+  inputs:
+    n:
+      mode: required
+      type: number
+  outputs:
+    r:
+      type: number
+  inputsPosition:
+    n:
+      x: -13
+      y: 132
+  outputsPosition:
+    r:
+      x: -188
+      y: -16

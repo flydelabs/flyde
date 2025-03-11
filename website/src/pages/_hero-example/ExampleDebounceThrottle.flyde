@@ -5,6 +5,7 @@ imports:
     - InlineValue
     - Interval
     - Collect
+    - Switch
 node:
   instances:
     - pos:
@@ -82,8 +83,8 @@ node:
         size: small
         icon: pen
     - pos:
-        x: -1751.0271630859374
-        y: -246.08191363706828
+        x: -1850.1480126953124
+        y: -267.6896101702714
       id: ygnqzwi1stiki29lavj6wu2w
       inputConfig: {}
       nodeId: Interval__ygnqzwi1stiki29lavj6wu2w
@@ -96,8 +97,8 @@ node:
           type: string
           value: ⭐️
     - pos:
-        x: -1094.044921875
-        y: -225.38109693727887
+        x: -1029.580078125
+        y: -224.48165235720074
       id: lfrwwz35676vn1hb9ykzpewd
       inputConfig: {}
       nodeId: Collect__lfrwwz35676vn1hb9ykzpewd
@@ -129,6 +130,23 @@ node:
       style:
         size: small
         icon: pen
+    - pos:
+        x: -1536.1991978427322
+        y: -460.6615140965011
+      id: nf64rsud7568wtdrh5lhku0f
+      inputConfig: {}
+      nodeId: Switch__nf64rsud7568wtdrh5lhku0f
+      macroId: Switch
+      macroData:
+        inputs:
+          - value
+        cases:
+          - name: case1
+            conditionExpression: inputs.value === 1
+            outputExpression: inputs.value
+        defaultCase:
+          enabled: true
+          outputExpression: inputs.value
   connections:
     - from:
         insId: wj31gd73i5l111q999pv4kor
@@ -184,6 +202,12 @@ node:
       to:
         insId: eaa2b80mmdusjvxi3fve0du1
         pinId: value
+    - from:
+        insId: ygnqzwi1stiki29lavj6wu2w
+        pinId: value
+      to:
+        insId: nf64rsud7568wtdrh5lhku0f
+        pinId: value
   id: DebounceThrottle
   inputs: {}
   outputs:
@@ -209,8 +233,8 @@ node:
       x: -499.82438378976735
       y: 706.7650396699393
     output:
-      x: -889.3611007635895
-      y: -225.48106600747957
+      x: -824.914201349527
+      y: -224.6356375406827
     response:
       x: -506.3386688159596
       y: 488.67302443385125

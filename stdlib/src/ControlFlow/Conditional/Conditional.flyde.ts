@@ -1,6 +1,5 @@
 import { macroConfigurableValue, MacroConfigurableValue } from "@flyde/core";
 import {
-  processImprovedMacro,
   CodeNode,
   extractInputsFromValue,
   replaceInputsInValue,
@@ -44,7 +43,7 @@ function conditionalConfigToDisplayName(config: ConditionalConfig) {
   }
 }
 
-const conditional: CodeNode<ConditionalConfig> = {
+export const Conditional: CodeNode<ConditionalConfig> = {
   id: "Conditional",
   namespace: "Control Flow",
   mode: "advanced",
@@ -141,5 +140,3 @@ function calculateCondition(
       return val1 === null || val1 === undefined || val1 === "";
   }
 }
-
-export const Conditional = processImprovedMacro(conditional);

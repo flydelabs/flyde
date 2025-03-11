@@ -1,7 +1,6 @@
 import {
   macroConfigurableValue,
   MacroConfigurableValue,
-  processImprovedMacro,
   CodeNode,
   extractInputsFromValue,
   replaceInputsInValue,
@@ -11,7 +10,7 @@ export interface InlineValueConfig {
   value: MacroConfigurableValue;
 }
 
-const inlineValue: CodeNode<InlineValueConfig> = {
+export const InlineValue: CodeNode<InlineValueConfig> = {
   id: "InlineValue",
   mode: "advanced",
   defaultConfig: {
@@ -45,5 +44,3 @@ const inlineValue: CodeNode<InlineValueConfig> = {
     editorComponentBundlePath: "../../dist/ui/InlineValue.js",
   },
 };
-
-export const InlineValue = processImprovedMacro(inlineValue);

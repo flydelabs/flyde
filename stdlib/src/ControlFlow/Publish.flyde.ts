@@ -1,11 +1,11 @@
-import { processImprovedMacro } from "@flyde/core";
+import { CodeNode } from "@flyde/core";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const PubSub = require("pubsub-js");
 
 const namespace = "Control Flow";
 
-export const Publish = processImprovedMacro({
+export const Publish: CodeNode = {
   id: "Publish",
   namespace,
   description:
@@ -22,4 +22,4 @@ export const Publish = processImprovedMacro({
     const nsKey = `${adv.ancestorsInsIds}__${inputs.key}`;
     PubSub.publish(nsKey, inputs.value);
   },
-});
+};

@@ -465,7 +465,8 @@ export class FlydeEditorEditorProvider
                 const siblings = Object.entries(importableMacros).flatMap(
                   ([_module, nodes]) => {
                     return Object.values(nodes).filter(
-                      (node) => node?.namespace === macro.namespace
+                      (node) =>
+                        node?.namespace && node?.namespace === macro.namespace
                     ) as MacroNodeDefinition<any>[];
                   }
                 );

@@ -483,7 +483,7 @@ describe("resolver", () => {
     assert.equal(s.lastCall.args[0], 4);
   });
 
-  describe("macro nodes", () => {
+  describe.only("macro nodes", () => {
     it("resolves a macro node dependency", async () => {
       const data = resolveFlowByPath(
         getFixturePath("macro-node-simple/a.flyde")

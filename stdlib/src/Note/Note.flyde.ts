@@ -1,37 +1,27 @@
-import { InternalMacroNode, nodeInput } from "@flyde/core";
+import { nodeInput, CodeNode } from "@flyde/core";
 
 export interface NoteConfig {
   content: string;
 }
 
-export const Note: InternalMacroNode<NoteConfig> = {
+export const Note: CodeNode = {
   id: "Note",
   displayName: "Note",
   defaultStyle: {
     icon: "comment",
+    cssOverride: {
+      padding: "6px 8px",
+    },
   },
   description: "A note node for documentation purposes",
-  runFnBuilder: () => {
-    return () => {
-      // This node does nothing when run
-    };
+  overrideNodeBodyHtml: (config) => parseMarkdown(config.content),
+  run: () => {},
+  inputs: {
+    never: nodeInput(), // this is a hack to make the node never trigger
   },
-  definitionBuilder: (config) => {
-    return {
-      defaultStyle: {
-        cssOverride: {
-          padding: "6px 8px",
-        },
-      },
-
-      inputs: {
-        never: nodeInput(), // this is a hack to make the node never trigger
-      },
-      outputs: {},
-      overrideNodeBodyHtml: parseMarkdown(config.content),
-    };
-  },
-  defaultData: {
+  outputs: {},
+  mode: "advanced",
+  defaultConfig: {
     content: "Enter your comment here",
   },
   editorConfig: {

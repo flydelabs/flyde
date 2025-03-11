@@ -1,6 +1,6 @@
-import { processImprovedMacro, CodeNode, nodeOutput } from "@flyde/core";
+import { CodeNode, nodeOutput } from "@flyde/core";
 
-const dateNodeRaw: CodeNode = {
+export const DateOps: CodeNode = {
   id: "DateOps",
   displayName: "Date {{operation}}",
   menuDisplayName: "Date Operations",
@@ -52,5 +52,3 @@ const dateNodeRaw: CodeNode = {
     }
   },
 };
-
-export const DateOps = processImprovedMacro(dateNodeRaw);

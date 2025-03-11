@@ -1,5 +1,7 @@
 # Flyde Examples
 
+## Note: Flyde has gone and changed a lot since these examples were created and are now outdated. They are left for reference only. New examples are coming soon!
+
 Repository containing example projects demonstrating how Flyde can be used to build various types of projects, from CLI tools to backends and UI
 
 - [Dad jokes CLI tool](dad-jokes-cli/)

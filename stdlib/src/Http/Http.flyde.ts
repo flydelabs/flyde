@@ -1,9 +1,9 @@
 import axios, { AxiosRequestConfig } from "axios";
-import { processImprovedMacro, CodeNode, createInputGroup } from "@flyde/core";
+import { CodeNode, createInputGroup } from "@flyde/core";
 
 const namespace = "HTTP";
 
-const http: CodeNode = {
+export const Http: CodeNode = {
   id: "Http",
   menuDisplayName: "HTTP Request",
   namespace,
@@ -89,5 +89,3 @@ const http: CodeNode = {
       });
   },
 };
-
-export const Http = processImprovedMacro(http);

@@ -170,7 +170,7 @@ export interface MacroEditorCompProps<T> {
 
 export interface MacroEditorComp<T> extends React.FC<MacroEditorCompProps<T>> {}
 
-export const isMacroNode = (p: any): p is InternalMacroNode<any> => {
+export const isInternalMacroNode = (p: any): p is InternalMacroNode<any> => {
   return p && typeof (p as InternalMacroNode<any>).runFnBuilder === "function";
 };
 

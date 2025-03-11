@@ -29,6 +29,7 @@ export interface BaseMacroNodeData<Config = any> {
   menuDescription?: string;
   displayName?: StaticOrDerived<string, Config>;
   description?: StaticOrDerived<string, Config>;
+  overrideNodeBodyHtml?: StaticOrDerived<string, Config>;
   aliases?: string[];
   icon?: string;
 
@@ -180,6 +181,19 @@ export function isAdvancedMacroNode<Config>(
   return (node as AdvancedMacroNode<Config>).defaultConfig !== undefined;
 }
 
+export function isSimplifiedMacroNode<Config>(
+  node: CodeNode<Config>
+): node is SimplifiedMacroNode<Config> {
+  return (
+    (node as SimplifiedMacroNode<Config>).inputs !== undefined &&
+    (node as SimplifiedMacroNode<Config>).outputs !== undefined
+  );
+}
+
+export function isCodeNode<Config>(node: any): node is CodeNode<Config> {
+  return isAdvancedMacroNode(node) || isSimplifiedMacroNode(node);
+}
+
 export function processImprovedMacro(node: CodeNode): InternalMacroNode<any> {
   const isAdvanced = isAdvancedMacroNode(node);
 
@@ -224,6 +238,10 @@ export function processImprovedMacro(node: CodeNode): InternalMacroNode<any> {
             typeof node.completionOutputs === "function"
               ? node.completionOutputs(config)
               : node.completionOutputs,
+          overrideNodeBodyHtml:
+            typeof node.overrideNodeBodyHtml === "function"
+              ? node.overrideNodeBodyHtml(config)
+              : node.overrideNodeBodyHtml,
         };
       },
       runFnBuilder: (config) => {

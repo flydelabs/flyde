@@ -1,6 +1,6 @@
-import { DynamicOutput, InternalMacroNode, OutputPinMap } from "@flyde/core";
+import { DynamicOutput, MacroNode, OutputPinMap } from "@flyde/core";
 
-const node: InternalMacroNode<number> = {
+const node: MacroNode<number> = {
   id: "Duplicate",
   description: "Duplicates the input value",
   definitionBuilder: (times) => {

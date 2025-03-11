@@ -1,11 +1,6 @@
-import {
-  processImprovedMacro,
-  CodeNode,
-  createInputGroup,
-  nodeOutput,
-} from "@flyde/core";
+import { CodeNode, createInputGroup, nodeOutput } from "@flyde/core";
 
-const mathNodeRaw: CodeNode = {
+export const MathNode: CodeNode = {
   id: "Math",
   displayName: "Math {{operation}}",
   menuDisplayName: "1 Math Operations",
@@ -209,5 +204,3 @@ const mathNodeRaw: CodeNode = {
     "max",
   ],
 };
-
-export const MathNode = processImprovedMacro(mathNodeRaw);

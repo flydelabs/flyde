@@ -1,8 +1,8 @@
-import { processImprovedMacro, CodeNode } from "@flyde/core";
+import { CodeNode } from "@flyde/core";
 
 const namespace = "Console";
 
-const log: CodeNode = {
+export const Log: CodeNode = {
   id: "Log2",
   menuDisplayName: "Console Log",
   namespace,
@@ -25,5 +25,3 @@ const log: CodeNode = {
     outputs.loggedValue.next(value);
   },
 };
-
-export const Log = processImprovedMacro(log);

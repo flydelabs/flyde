@@ -1,9 +1,9 @@
 import { TIMING_NAMESPACE, timeToString } from "./common";
-import { processImprovedMacro, CodeNode } from "@flyde/core";
+import { CodeNode } from "@flyde/core";
 
 const namespace = TIMING_NAMESPACE;
 
-const debounce: CodeNode = {
+export const Debounce: CodeNode = {
   id: "Debounce",
   namespace,
   menuDisplayName: "Debounce",
@@ -51,5 +51,3 @@ const debounce: CodeNode = {
     });
   },
 };
-
-export const Debounce = processImprovedMacro(debounce);

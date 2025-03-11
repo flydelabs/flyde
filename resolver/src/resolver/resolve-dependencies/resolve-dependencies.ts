@@ -7,7 +7,7 @@ import {
   isCodeNode,
   InternalCodeNode,
   ImportedNodeDef,
-  isMacroNode,
+  isInternalMacroNode,
   ResolvedVisualNode,
   InternalMacroNode,
   isVisualNode,
@@ -17,6 +17,8 @@ import {
   isMacroNodeInstance,
   isBaseNode,
   processMacroNodeInstance,
+  isAdvancedMacroNode,
+  processImprovedMacro,
 } from "@flyde/core";
 import { existsSync, readFileSync } from "fs";
 import _ = require("lodash");
@@ -31,7 +33,7 @@ import { macroNodeToDefinition } from "./macro-node-to-definition";
 
 const StdLib = Object.values(_StdLib).reduce<Record<string, any>>(
   (acc, curr) => {
-    if (isBaseNode(curr) || isMacroNode(curr)) {
+    if (isBaseNode(curr) || isInternalMacroNode(curr)) {
       return { ...acc, [curr.id]: curr };
     } else {
       return acc;
@@ -221,7 +223,7 @@ export function resolveFlow(
             const targetMacro = nodes.find(({ node }) => node.id === macroId);
 
             if (targetMacro) {
-              if (!isMacroNode(targetMacro.node)) {
+              if (!isInternalMacroNode(targetMacro.node)) {
                 console.warn(
                   `Found node ${macroId} in ${importPath}, but it is not a macro node`
                 );
@@ -276,7 +278,7 @@ export function resolveFlow(
           if (importPath === "@flyde/stdlib" && StdLib[macroId]) {
             const targetMacroNode = StdLib[macroId];
 
-            if (!isMacroNode(targetMacroNode)) {
+            if (!isInternalMacroNode(targetMacroNode)) {
               throw new Error(
                 `Found node ${macroId} in ${importPath}, but it is not a macro node`
               );
@@ -417,7 +419,7 @@ export function resolveCodeNodeDependencies(path: string): {
               sourceCode,
             },
           });
-        } else if (isMacroNode(value)) {
+        } else if (isInternalMacroNode(value)) {
           nodes.push({ exportName: key, node: value });
         }
       });
@@ -441,7 +443,11 @@ function resolveMacroNodesDependencies(path: string): {
     const sourceCode =
       findTypeScriptSource(path) || readFileSync(path, "utf-8");
 
-    if (isMacroNode(module)) {
+    if (isCodeNode(module)) {
+      module = processImprovedMacro(module);
+    }
+
+    if (isInternalMacroNode(module)) {
       nodes.push({
         exportName: "default",
         node: {
@@ -451,7 +457,10 @@ function resolveMacroNodesDependencies(path: string): {
       });
     } else if (typeof module === "object") {
       Object.entries(module).forEach(([key, value]) => {
-        if (isMacroNode(value)) {
+        if (isCodeNode(value)) {
+          value = processImprovedMacro(value);
+        }
+        if (isInternalMacroNode(value)) {
           nodes.push({
             exportName: key,
             node: {

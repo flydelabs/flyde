@@ -1,9 +1,9 @@
 import { TIMING_NAMESPACE, timeToString } from "./common";
-import { processImprovedMacro, CodeNode } from "@flyde/core";
+import { CodeNode } from "@flyde/core";
 
 const namespace = TIMING_NAMESPACE;
 
-const delay: CodeNode = {
+export const Delay: CodeNode = {
   id: "Delay",
   menuDisplayName: "Delay",
   namespace,
@@ -40,5 +40,3 @@ const delay: CodeNode = {
     delayedValue.next(inputs.value);
   },
 };
-
-export const Delay = processImprovedMacro(delay);

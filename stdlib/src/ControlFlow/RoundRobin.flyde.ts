@@ -3,7 +3,7 @@ import {
   MacroConfigurableValue,
   OutputPin,
 } from "@flyde/core";
-import { processImprovedMacro, CodeNode } from "@flyde/core";
+import { CodeNode } from "@flyde/core";
 
 const namespace = "Control Flow";
 
@@ -11,7 +11,7 @@ export interface RoundRobinConfig {
   count: MacroConfigurableValue;
 }
 
-const roundRobin: CodeNode<RoundRobinConfig> = {
+export const RoundRobin: CodeNode<RoundRobinConfig> = {
   mode: "advanced",
   id: "RoundRobin",
   defaultConfig: { count: macroConfigurableValue("number", 3) },
@@ -74,5 +74,3 @@ const roundRobin: CodeNode<RoundRobinConfig> = {
     o.next(inputs.value);
   },
 };
-
-export const RoundRobin = processImprovedMacro(roundRobin);

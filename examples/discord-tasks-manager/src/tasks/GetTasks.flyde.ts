@@ -1,14 +1,9 @@
-import {
-  VisualNode,
-  InternalCodeNode,
-  nodeInput,
-  nodeOutput,
-} from "@flyde/core";
+import { VisualNode, CodeNode, nodeInput, nodeOutput } from "@flyde/core";
 import { createTasksService } from "./tasks";
 
 const servicePromise = createTasksService();
 
-const node: InternalCodeNode = {
+const node: CodeNode = {
   id: "Get Tasks",
   inputs: {},
   outputs: {
