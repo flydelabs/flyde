@@ -12,7 +12,7 @@ import {
   ImportablesResult,
   ImportableMacrosResult,
   MacrosDefCollection,
-  MacroNode,
+  InternalMacroNode,
 } from "@flyde/core";
 import { scanFolderStructure } from "./scan-folders-structure";
 import { FlydeFile } from "../fs-helper/shared";
@@ -46,7 +46,7 @@ export async function scanImportableMacros(
         .filter((pair) => isMacroNode(pair[1]))
         .map(([id, node]) => [
           id,
-          macroNodeToDefinition(node as MacroNode<any>, ""),
+          macroNodeToDefinition(node as InternalMacroNode<any>, ""),
         ])
     ) as MacrosDefCollection;
     builtInStdLib = {

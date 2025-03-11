@@ -1,6 +1,6 @@
 import {
   ImportedNode,
-  MacroNode,
+  InternalMacroNode,
   Node,
   VisualNode,
   isInlineNodeInstance,
@@ -33,7 +33,7 @@ export function processMacroNodes(
       if (isMacroNodeInstance(ins)) {
         const macroNode = Object.values(stdLib).find(
           (p) => isMacroNode(p) && p.id === ins.macroId
-        ) as unknown as MacroNode<any>;
+        ) as unknown as InternalMacroNode<any>;
 
         if (!macroNode) {
           throw new Error(

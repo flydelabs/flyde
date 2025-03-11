@@ -1,4 +1,4 @@
-import { InputPinMap, MacroNode, isDefined } from "@flyde/core";
+import { InputPinMap, InternalMacroNode, isDefined } from "@flyde/core";
 import { timeToString } from "../../Timing/common";
 import { ConfigurableInput } from "../../lib/ConfigurableInputEditor";
 
@@ -21,7 +21,7 @@ export type CollectConfig =
   | CollectConfigCount
   | CollectConfigTrigger;
 
-export const Collect: MacroNode<CollectConfig> = {
+export const Collect: InternalMacroNode<CollectConfig> = {
   id: "Collect",
   displayName: "Collect",
   description: "Collects values into a list. Over time, count, or trigger.",

@@ -221,16 +221,18 @@ declare module '@flyde/core/node/get-node-with-dependencies' {
 }
 
 declare module '@flyde/core/improved-macros/improved-macros' {
-    import { InternalCodeNode, InputPin, OutputPin, MacroNode, NodeStyle, InputMode } from "@flyde/core/";
+    import { InternalCodeNode, InputPin, OutputPin, InternalMacroNode, NodeStyle, InputMode } from "@flyde/core/";
     export * from "@flyde/core/improved-macros/improved-macro-utils";
     export type StaticOrDerived<T, Config> = T | ((config: Config) => T);
     export interface BaseMacroNodeData<Config = any> {
+            mode?: "simple" | "advanced";
             id: string;
             namespace?: string;
             menuDisplayName?: string;
             menuDescription?: string;
             displayName?: StaticOrDerived<string, Config>;
             description?: StaticOrDerived<string, Config>;
+            aliases?: string[];
             icon?: string;
             completionOutputs?: StaticOrDerived<string[], Config>;
             run: InternalCodeNode["run"];
@@ -242,14 +244,15 @@ declare module '@flyde/core/improved-macros/improved-macros' {
             }>;
     }
     export interface AdvancedMacroNode<Config> extends BaseMacroNodeData<Config> {
+            mode: "advanced";
             inputs: StaticOrDerived<Record<string, InputPin>, Config>;
             outputs: StaticOrDerived<Record<string, OutputPin>, Config>;
             reactiveInputs?: StaticOrDerived<string[], Config>;
             defaultConfig: Config;
-            editorConfig?: MacroNode<Config>["editorConfig"];
+            editorConfig?: InternalMacroNode<Config>["editorConfig"];
             defaultStyle?: NodeStyle;
     }
-    export type ImprovedMacroNode<Config = any> = SimplifiedMacroNode<Config> | AdvancedMacroNode<Config>;
+    export type CodeNode<Config = any> = SimplifiedMacroNode<Config> | AdvancedMacroNode<Config>;
     export type InputConfig = {
             defaultValue?: any;
             /**
@@ -339,17 +342,17 @@ declare module '@flyde/core/improved-macros/improved-macros' {
                     options: string[];
             };
     };
-    export function isAdvancedMacroNode<Config>(node: ImprovedMacroNode<Config>): node is AdvancedMacroNode<Config>;
-    export function processImprovedMacro(node: ImprovedMacroNode): MacroNode<any>;
+    export function isAdvancedMacroNode<Config>(node: CodeNode<Config>): node is AdvancedMacroNode<Config>;
+    export function processImprovedMacro(node: CodeNode): InternalMacroNode<any>;
 }
 
 declare module '@flyde/core/improved-macros/improved-macro-utils' {
-    import { InputPin, MacroConfigurableValue, MacroEditorFieldDefinition, MacroNode } from "@flyde/core/";
+    import { InputPin, MacroConfigurableValue, MacroEditorFieldDefinition, InternalMacroNode } from "@flyde/core/";
     import { InputConfig } from "@flyde/core/improved-macros/improved-macros";
     export function extractInputsFromValue(val: MacroConfigurableValue, key: string): Record<string, InputPin>;
     export function replaceInputsInValue(inputs: Record<string, any>, value: MacroConfigurableValue, fieldName: string, ignoreMissingInputs?: boolean): MacroConfigurableValue["value"];
     export function renderConfigurableValue(value: MacroConfigurableValue, fieldName: string): string;
-    export function generateConfigEditor<Config>(config: Config, overrides?: Partial<Record<keyof Config, any>>): MacroNode<Config>["editorConfig"];
+    export function generateConfigEditor<Config>(config: Config, overrides?: Partial<Record<keyof Config, any>>): InternalMacroNode<Config>["editorConfig"];
     export function renderDerivedString(displayName: string, config: any): string;
     /**
         * Evaluates a string condition against a configuration object.
@@ -678,7 +681,7 @@ declare module '@flyde/core/node/node' {
             /**
                 * A list of keywords that can be used to search for the node. Useful for node that users might search using different words.
                 */
-            searchKeywords?: string[];
+            aliases?: string[];
             /**
                 * TBD
                 */
@@ -1009,7 +1012,7 @@ declare module '@flyde/core/node/macro-node' {
     }
     export type MacroEditorConfigResolved = MacroEditorConfigCustomResolved | MacroEditorConfigStructured;
     export type MacroEditorConfigDefinition = MacroEditorConfigCustomDefinition | MacroEditorConfigStructured;
-    export interface MacroNode<T> extends NodeMetadata {
+    export interface InternalMacroNode<T> extends NodeMetadata {
             definitionBuilder: (data: T) => Omit<CodeNodeDefinition, "id" | "namespace">;
             runFnBuilder: (data: T) => InternalCodeNode["run"];
             defaultData: T;
@@ -1020,7 +1023,7 @@ declare module '@flyde/core/node/macro-node' {
                 */
             editorConfig: MacroEditorConfigResolved;
     }
-    export type MacroNodeDefinition<T> = Omit<MacroNode<T>, "definitionBuilder" | "runFnBuilder" | "editorComponentBundlePath" | "editorConfig"> & {
+    export type MacroNodeDefinition<T> = Omit<InternalMacroNode<T>, "definitionBuilder" | "runFnBuilder" | "editorComponentBundlePath" | "editorConfig"> & {
             /**
                 * Resolver will use this to load the editor component bundle into the editor
                 */
@@ -1038,9 +1041,9 @@ declare module '@flyde/core/node/macro-node' {
     }
     export interface MacroEditorComp<T> extends React.FC<MacroEditorCompProps<T>> {
     }
-    export const isMacroNode: (p: any) => p is MacroNode<any>;
+    export const isMacroNode: (p: any) => p is InternalMacroNode<any>;
     export const isMacroNodeDefinition: (p: any) => p is MacroNodeDefinition<any>;
-    export function processMacroNodeInstance(prefix: string, macro: MacroNode<any>, instance: MacroNodeInstance): InternalCodeNode;
+    export function processMacroNodeInstance(prefix: string, macro: InternalMacroNode<any>, instance: MacroNodeInstance): InternalCodeNode;
     export interface GroupFieldDefinition extends BaseFieldDefinition {
             type: "group";
             fields: MacroEditorFieldDefinition[];

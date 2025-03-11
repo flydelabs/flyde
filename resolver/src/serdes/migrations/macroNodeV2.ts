@@ -3,7 +3,17 @@ import {
   isMacroNodeInstance,
   macroConfigurableValue,
 } from "@flyde/core";
-import { ConditionType } from "@flyde/stdlib/dist/ControlFlow/Conditional/ConditionType";
+
+// copied from Conditional.flyde.ts
+enum ConditionType {
+  Equal = "EQUAL",
+  NotEqual = "NOT_EQUAL",
+  Contains = "CONTAINS",
+  NotContains = "NOT_CONTAINS",
+  RegexMatches = "REGEX_MATCHES",
+  Exists = "EXISTS",
+  NotExists = "NOT_EXISTS",
+}
 
 export function migrateMacroNodeV2(data: { node?: any; imports?: any }) {
   const skippedMacros = [

@@ -1,13 +1,13 @@
 import {
   MacroEditorConfigCustomDefinition,
-  MacroNode,
+  InternalMacroNode,
   MacroNodeDefinition,
 } from "@flyde/core";
 import { readFileSync, existsSync } from "fs";
 import { join } from "path";
 
 export function macroNodeToDefinition<T>(
-  macro: MacroNode<T>,
+  macro: InternalMacroNode<T>,
   importPath: string
 ): MacroNodeDefinition<T> {
   if (macro.editorConfig.type === "structured") {
@@ -24,14 +24,14 @@ export function macroNodeToDefinition<T>(
   let editorComponentPath = join(
     importPath,
     "..",
-    macro.editorConfig.editorComponentBundlePath,
+    macro.editorConfig.editorComponentBundlePath
   );
   // fallback for backwards compatibility (see issue #120)
   if (!existsSync(editorComponentPath)) {
     editorComponentPath = join(
       importPath,
-      macro.editorConfig.editorComponentBundlePath,
-    )
+      macro.editorConfig.editorComponentBundlePath
+    );
   }
 
   try {

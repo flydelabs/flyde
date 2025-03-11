@@ -2,7 +2,7 @@ import {
   InputPin,
   MacroConfigurableValue,
   MacroEditorFieldDefinition,
-  MacroNode,
+  InternalMacroNode,
   nodeInput,
 } from "..";
 
@@ -156,7 +156,7 @@ export function renderConfigurableValue(
 export function generateConfigEditor<Config>(
   config: Config,
   overrides?: Partial<Record<keyof Config, any>>
-): MacroNode<Config>["editorConfig"] {
+): InternalMacroNode<Config>["editorConfig"] {
   const fields = Object.keys(config).map((key) => {
     const value = config[key];
     const override = overrides && overrides[key];

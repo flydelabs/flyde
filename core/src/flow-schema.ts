@@ -73,7 +73,7 @@ const flydeBaseNode = z.object({
   reactiveInputs: z.optional(z.array(z.string())),
   defaultStyle: z.optional(nodeStyle),
   description: z.optional(z.string()),
-  searchKeywords: z.optional(z.array(z.string())),
+  aliases: z.optional(z.array(z.string())),
 });
 
 const visualNode = z

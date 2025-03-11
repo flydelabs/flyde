@@ -1,6 +1,6 @@
-import { DynamicOutput, MacroNode, OutputPinMap } from "@flyde/core";
+import { DynamicOutput, InternalMacroNode, OutputPinMap } from "@flyde/core";
 
-const node: MacroNode<number> = {
+const node: InternalMacroNode<number> = {
   id: "Add",
   description: "Adds the input value",
   defaultData: 1,

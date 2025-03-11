@@ -1,11 +1,11 @@
-import { MacroNode } from "@flyde/core";
+import { InternalMacroNode } from "@flyde/core";
 import { getVariables } from "./getInlineVariables";
 
 export interface CodeExpressionConfig {
   value: string;
 }
 
-export const CodeExpression: MacroNode<CodeExpressionConfig> = {
+export const CodeExpression: InternalMacroNode<CodeExpressionConfig> = {
   id: "CodeExpression",
   displayName: "JS Expression",
   defaultStyle: {

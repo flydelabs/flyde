@@ -7,7 +7,7 @@ import {
   ImportedNode,
   isMacroNode,
   Node,
-  MacroNode,
+  InternalMacroNode,
   MacroNodeDefinition,
 } from "@flyde/core";
 import {
@@ -37,7 +37,9 @@ const noop = () => {};
 
 const initialPadding = [10, 10] as [number, number];
 
-async function loadStdLib(): Promise<Record<string, Node | MacroNode<any>>> {
+async function loadStdLib(): Promise<
+  Record<string, Node | InternalMacroNode<any>>
+> {
   return Object.values(await import("@flyde/stdlib/dist/all-browser"))
     .filter((n) => isBaseNode(n) || isMacroNode(n))
     .map((n) => {
@@ -59,7 +61,7 @@ async function loadStdLib(): Promise<Record<string, Node | MacroNode<any>>> {
         return n;
       }
     })
-    .reduce<Record<string, Node | MacroNode<any>>>((acc, node: any) => {
+    .reduce<Record<string, Node | InternalMacroNode<any>>>((acc, node: any) => {
       acc[node.id] = node;
       return acc;
     }, {});

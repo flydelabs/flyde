@@ -203,5 +203,12 @@ export function MacroConfigurableValueBaseEditor(props: {
           className={inputClassName}
         />
       );
+    default:
+      return (
+        <span className="text-gray-500 dark:text-gray-400 italic">
+          Trying to render unsupported type: [
+          {(value as unknown as { type: string })?.type}]
+        </span>
+      );
   }
 }

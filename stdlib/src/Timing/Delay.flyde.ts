@@ -1,9 +1,9 @@
 import { TIMING_NAMESPACE, timeToString } from "./common";
-import { processImprovedMacro, ImprovedMacroNode } from "@flyde/core";
+import { processImprovedMacro, CodeNode } from "@flyde/core";
 
 const namespace = TIMING_NAMESPACE;
 
-const delay: ImprovedMacroNode = {
+const delay: CodeNode = {
   id: "Delay",
   menuDisplayName: "Delay",
   namespace,

@@ -1,10 +1,10 @@
-import { MacroNode, nodeInput } from "@flyde/core";
+import { InternalMacroNode, nodeInput } from "@flyde/core";
 
 export interface NoteConfig {
   content: string;
 }
 
-export const Note: MacroNode<NoteConfig> = {
+export const Note: InternalMacroNode<NoteConfig> = {
   id: "Note",
   displayName: "Note",
   defaultStyle: {

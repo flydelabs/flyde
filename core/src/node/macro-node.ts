@@ -131,7 +131,7 @@ export type MacroEditorConfigDefinition =
   | MacroEditorConfigCustomDefinition
   | MacroEditorConfigStructured;
 
-export interface MacroNode<T> extends NodeMetadata {
+export interface InternalMacroNode<T> extends NodeMetadata {
   definitionBuilder: (data: T) => Omit<CodeNodeDefinition, "id" | "namespace">;
   runFnBuilder: (data: T) => InternalCodeNode["run"];
   defaultData: T;
@@ -145,7 +145,7 @@ export interface MacroNode<T> extends NodeMetadata {
 }
 
 export type MacroNodeDefinition<T> = Omit<
-  MacroNode<T>,
+  InternalMacroNode<T>,
   | "definitionBuilder"
   | "runFnBuilder"
   | "editorComponentBundlePath"
@@ -170,8 +170,8 @@ export interface MacroEditorCompProps<T> {
 
 export interface MacroEditorComp<T> extends React.FC<MacroEditorCompProps<T>> {}
 
-export const isMacroNode = (p: any): p is MacroNode<any> => {
-  return p && typeof (p as MacroNode<any>).runFnBuilder === "function";
+export const isMacroNode = (p: any): p is InternalMacroNode<any> => {
+  return p && typeof (p as InternalMacroNode<any>).runFnBuilder === "function";
 };
 
 export const isMacroNodeDefinition = (
@@ -190,7 +190,7 @@ export const isMacroNodeDefinition = (
 
 export function processMacroNodeInstance(
   prefix: string,
-  macro: MacroNode<any>,
+  macro: InternalMacroNode<any>,
   instance: MacroNodeInstance
 ) {
   const metaData = macro.definitionBuilder(instance.macroData);

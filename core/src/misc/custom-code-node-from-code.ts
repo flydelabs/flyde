@@ -1,7 +1,7 @@
-import { isCodeNode, isMacroNode, MacroNode, Node } from "../";
+import { isCodeNode, isMacroNode, InternalMacroNode, Node } from "../";
 import { transpileFile } from "./transpile-file/transpile-file";
 import {
-  ImprovedMacroNode,
+  CodeNode,
   processImprovedMacro,
 } from "../improved-macros/improved-macros";
 
@@ -9,7 +9,7 @@ export function customCodeNodeFromCode(
   code: string,
   suffixId?: string,
   imports?: { [key: string]: any }
-): Node | MacroNode<any> {
+): Node | InternalMacroNode<any> {
   const transpiledCode = transpileFile("", code);
 
   // Wrap the transpiled code to handle default export
@@ -36,10 +36,10 @@ export function customCodeNodeFromCode(
   const node = validNodes[0];
 
   if (isCodeNode(node) || isMacroNode(node)) {
-    if ((node as ImprovedMacroNode).icon) {
+    if ((node as CodeNode).icon) {
       const macro = processImprovedMacro(
-        node as ImprovedMacroNode
-      ) as MacroNode<any>;
+        node as CodeNode
+      ) as InternalMacroNode<any>;
       macro.id = `${macro.id}${suffixId ? `-${suffixId}` : ""}`;
       return macro;
     }

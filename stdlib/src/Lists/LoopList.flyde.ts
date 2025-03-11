@@ -8,7 +8,7 @@ export const LoopList: InternalCodeNode = {
     icon: "fa-list",
   },
   namespace,
-  searchKeywords: ["each", "spread"],
+  aliases: ["each", "spread"],
   description: "Emits all values in a list",
   inputs: {
     list: { description: "The list to loop" },

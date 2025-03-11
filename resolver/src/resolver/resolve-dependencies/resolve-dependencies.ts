@@ -9,7 +9,7 @@ import {
   ImportedNodeDef,
   isMacroNode,
   ResolvedVisualNode,
-  MacroNode,
+  InternalMacroNode,
   isVisualNode,
   ResolvedFlydeFlowDefinition,
   ResolvedMacroNodeInstance,
@@ -26,7 +26,6 @@ import { resolveImportablePaths } from "./resolve-importable-paths";
 import { namespaceFlowImports } from "./namespace-flow-imports";
 
 import * as _StdLib from "@flyde/stdlib/dist/all";
-
 import requireReload from "require-reload";
 import { macroNodeToDefinition } from "./macro-node-to-definition";
 
@@ -431,7 +430,7 @@ export function resolveCodeNodeDependencies(path: string): {
 
 function resolveMacroNodesDependencies(path: string): {
   errors: string[];
-  nodes: { exportName: string; node: MacroNode<any> }[];
+  nodes: { exportName: string; node: InternalMacroNode<any> }[];
 } {
   const errors = [];
   const nodes = [];

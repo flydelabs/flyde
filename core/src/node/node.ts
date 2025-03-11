@@ -86,7 +86,7 @@ export interface NodeMetadata {
   /**
    * A list of keywords that can be used to search for the node. Useful for node that users might search using different words.
    */
-  searchKeywords?: string[];
+  aliases?: string[];
   /**
    * TBD
    */
@@ -233,21 +233,15 @@ export const isCodeNode = (
 export const extractMetadata: <N extends NodeMetadata>(
   node: N
 ) => NodeMetadata = (node) => {
-  const {
-    id,
-    displayName,
-    description,
-    namespace,
-    defaultStyle,
-    searchKeywords,
-  } = node;
+  const { id, displayName, description, namespace, defaultStyle, aliases } =
+    node;
   return {
     id,
     displayName,
     description,
     namespace,
     defaultStyle,
-    searchKeywords,
+    aliases,
   };
 };
 

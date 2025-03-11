@@ -7,11 +7,21 @@ import {
   Separator,
 } from "@flyde/ui";
 import { ConditionalConfig } from "./Conditional.flyde";
-import { ConditionType } from "./ConditionType";
 import React from "react";
 import { MacroEditorComp, MacroEditorFieldDefinition } from "@flyde/core";
 
 import { MacroConfigurableFieldEditor } from "../../lib/MacroConfigurableFieldEditor/MacroConfigurableFieldEditor";
+
+// copied from Conditional.flyde.ts
+enum ConditionType {
+  Equal = "EQUAL",
+  NotEqual = "NOT_EQUAL",
+  Contains = "CONTAINS",
+  NotContains = "NOT_CONTAINS",
+  RegexMatches = "REGEX_MATCHES",
+  Exists = "EXISTS",
+  NotExists = "NOT_EXISTS",
+}
 
 const conditionEnumToLabel: Record<
   ConditionalConfig["condition"]["type"],

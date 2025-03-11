@@ -8,13 +8,9 @@ For simplicity, all parts of Flyde's standard library reside in the same package
 **Available sections:** 
 - [Objects](#Objects)
 
-- [Numbers](#Numbers)
-
 - [Strings](#Strings)
 
 - [Control Flow](#Control-Flow)
-
-- [Console](#Console)
 
 - [Lists](#Lists)
 
@@ -36,35 +32,6 @@ For simplicity, all parts of Flyde's standard library reside in the same package
 | **Entries**          | Emits the entries of an object           | <div><strong>object</strong>: Object to get entries of (required)</div>                                                                             | <div><strong>entries</strong>: The entries of object</div>                |
 | **Keys**             | Emits the keys of an object              | <div><strong>object</strong>: Object to get keys of (required)</div>                                                                                | <div><strong>keys</strong>: The keys of object</div>                      |
 | **Values**           | Emits the values of an object            | <div><strong>object</strong>: Object to get values of (required)</div>                                                                              | <div><strong>values</strong>: The values of object</div>                  |
-
-## Numbers
-
-| Id                        | Description                                                           | Inputs                                                                                                                                              | Outputs                                                                                   |
-| ------------------------- | --------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| **Absolute Value**        | Emits the absolute value of a number                                  | <div><strong>n</strong>: Number to take the absolute value of (required)</div>                                                                      | <div><strong>absolute</strong>: The absolute value of n</div>                             |
-| **Add**                   | Emits the sum of two numbers                                          | <div><strong>n1</strong>: First number to add (required)</div><div><strong>n2</strong>: Second number to add (required)</div>                       | <div><strong>sum</strong>: The sum of n1 and n2</div>                                     |
-| **Ceiling**               | Emits the ceiling of a number                                         | <div><strong>n</strong>: Number to take the ceiling of (required)</div>                                                                             | <div><strong>ceiling</strong>: The ceiling of n</div>                                     |
-| **Cos**                   | Emits the cosine of an angle                                          | <div><strong>angle</strong>: Angle in radians (required)</div>                                                                                      | <div><strong>cosine</strong>: The cosine of angle</div>                                   |
-| **Divide**                | Emits the quotient of two numbers                                     | <div><strong>n1</strong>: First number to divide (required)</div><div><strong>n2</strong>: Second number to divide (required)</div>                 | <div><strong>quotient</strong>: The quotient of n1 and n2</div>                           |
-| **Floor**                 | Emits the floor of a number                                           | <div><strong>n</strong>: Number to take the floor of (required)</div>                                                                               | <div><strong>floor</strong>: The floor of n</div>                                         |
-| **Greater Than**          | Emits true if the first number is greater than the second             | <div><strong>n1</strong>: First number (required)</div><div><strong>n2</strong>: Second number (required)</div>                                     | <div><strong>result</strong>: true if n1 is greater than n2</div>                         |
-| **Greater Than Or Equal** | Emits true if the first number is greater than or equal to the second | <div><strong>n1</strong>: First number (required)</div><div><strong>n2</strong>: Second number (required)</div>                                     | <div><strong>result</strong>: true if n1 is greater than or equal to n2</div>             |
-| **Less Than**             | Emits true if the first number is less than the second                | <div><strong>n1</strong>: First number (required)</div><div><strong>n2</strong>: Second number (required)</div>                                     | <div><strong>result</strong>: true if n1 is less than n2</div>                            |
-| **Less Than Or Equal**    | Emits true if the first number is less than or equal to the second    | <div><strong>n1</strong>: First number (required)</div><div><strong>n2</strong>: Second number (required)</div>                                     | <div><strong>result</strong>: true if n1 is less than or equal to n2</div>                |
-| **Max**                   | Emits the maximum of two numbers                                      | <div><strong>n1</strong>: First number (required)</div><div><strong>n2</strong>: Second number (required)</div>                                     | <div><strong>max</strong>: The maximum of n1 and n2</div>                                 |
-| **Min**                   | Emits the minimum of two numbers                                      | <div><strong>n1</strong>: First number (required)</div><div><strong>n2</strong>: Second number (required)</div>                                     | <div><strong>min</strong>: The minimum of n1 and n2</div>                                 |
-| **Modulo**                | Emits the remainder of two numbers                                    | <div><strong>n1</strong>: First number to divide (required)</div><div><strong>n2</strong>: Second number to divide (required)</div>                 | <div><strong>remainder</strong>: The remainder of n1 and n2</div>                         |
-| **Multiply**              | Emits the product of two numbers                                      | <div><strong>n1</strong>: First number to multiply (required)</div><div><strong>n2</strong>: Second number to multiply (required)</div>             | <div><strong>product</strong>: The product of n1 and n2</div>                             |
-| **Parse Float**           | Emits the float value of a string                                     | <div><strong>str</strong>: String to parse (required)</div>                                                                                         | <div><strong>float</strong>: The float value of str</div>                                 |
-| **Parse Int**             | Emits the integer value of a string                                   | <div><strong>str</strong>: String to parse (required)</div>                                                                                         | <div><strong>int</strong>: The integer value of str</div>                                 |
-| **Power**                 | Emits the power of two numbers                                        | <div><strong>n1</strong>: Base number (required)</div><div><strong>n2</strong>: Exponent (required)</div>                                           | <div><strong>power</strong>: The power of n1 and n2</div>                                 |
-| **Round**                 | Emits the rounded value of a number                                   | <div><strong>n</strong>: Number to round (required)</div>                                                                                           | <div><strong>rounded</strong>: The rounded value of n</div>                               |
-| **Sin**                   | Emits the sine of an angle                                            | <div><strong>angle</strong>: Angle in radians (required)</div>                                                                                      | <div><strong>sine</strong>: The sine of angle</div>                                       |
-| **Square Root**           | Emits the square root of a number                                     | <div><strong>n</strong>: Number to take the square root of (required)</div>                                                                         | <div><strong>root</strong>: The square root of n</div>                                    |
-| **Subtract**              | Emits the difference of two numbers                                   | <div><strong>n1</strong>: First number to subtract (required)</div><div><strong>n2</strong>: Second number to subtract (required)</div>             | <div><strong>difference</strong>: The difference of n1 and n2</div>                       |
-| **Sum List**              | Emits the sum of a list of numbers                                    | <div><strong>list</strong>: List of numbers (required)</div>                                                                                        | <div><strong>sum</strong>: The sum of the numbers in list</div>                           |
-| **To Fixed**              | Emits the specified number of decimal places of a number              | <div><strong>number</strong>: Number to format (required)</div><div><strong>places</strong>: Number of decimal places to format to (required)</div> | <div><strong>fixed</strong>: The number with the specified number of decimal places</div> |
-| **Truncate**              | Emits the truncated value of a number                                 | <div><strong>n</strong>: Number to truncate (required)</div>                                                                                        | <div><strong>truncated</strong>: The truncated value of n</div>                           |
 
 ## Strings
 
@@ -101,12 +68,6 @@ For simplicity, all parts of Flyde's standard library reside in the same package
 | **Limit Times** | Item will be emitted until the limit is reached                                                       | <div><strong>item</strong>: The item to emit (required)</div><div><strong>times</strong>: The number of times to emit the item (required)</div><div><strong>reset</strong>: Reset the counter (optional)</div> | <div><strong>ok</strong>: undefined</div>                         |
 | **Publish**     | Publishes a value by a key to all listeners in the current flow. Use 'Subscribe' to listen to events. | <div><strong>key</strong>: A key to use to subscribe to values (required)</div><div><strong>value</strong>: undefined (required)</div>                                                                         | *None*                                                            |
 | **Subscribe**   | Subscribes to a value published by a key. Use 'Publish' to publish values.                            | <div><strong>key</strong>: A key to use to subscribe to values (required)</div><div><strong>initial</strong>: If passed will be published has the first value (required-if-connected)</div>                    | <div><strong>value</strong>: The value published by the key</div> |
-
-## Console
-
-| Id      | Description                 | Inputs                                                     | Outputs                                                            |
-| ------- | --------------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------ |
-| **Log** | Logs a value to the console | <div><strong>value</strong>: Value to log (required)</div> | <div><strong>loggedValue</strong>: The value that was logged</div> |
 
 ## Lists
 

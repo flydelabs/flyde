@@ -1,8 +1,8 @@
-import { processImprovedMacro, ImprovedMacroNode } from "@flyde/core";
+import { processImprovedMacro, CodeNode } from "@flyde/core";
 
 const namespace = "Objects";
 
-const setAttribute2: ImprovedMacroNode = {
+const setAttribute2: CodeNode = {
   id: "SetAttribute",
   namespace,
   menuDisplayName: "Set Attribute",

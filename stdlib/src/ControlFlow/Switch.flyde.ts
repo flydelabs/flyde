@@ -1,4 +1,4 @@
-import { InputPinMap, MacroNode, OutputPinMap } from "@flyde/core";
+import { InputPinMap, InternalMacroNode, OutputPinMap } from "@flyde/core";
 
 export interface SwitchConfig {
   inputs: string[];
@@ -17,7 +17,7 @@ export interface SwitchConfig {
       };
 }
 
-export const Switch: MacroNode<SwitchConfig> = {
+export const Switch: InternalMacroNode<SwitchConfig> = {
   id: "Switch",
   namespace: "Control Flow",
   defaultStyle: {

@@ -1,0 +1,26 @@
+imports:
+  "@flyde/stdlib": []
+  ControlFlow/Console.flyde.ts:
+    - Log2
+node:
+  instances:
+    - pos:
+        x: -193.21292114257812
+        y: 54.54147529602051
+      id: k3qp7t6nyii1jfd3217yjvh9
+      inputConfig: {}
+      nodeId: Log2__k3qp7t6nyii1jfd3217yjvh9
+      macroId: Log2
+      macroData:
+        value:
+          type: number
+          value: 222
+  connections: []
+  id: Example
+  inputs: {}
+  outputs: {}
+  inputsPosition: {}
+  outputsPosition:
+    result:
+      x: -23.264428942324532
+      y: 237.25953921502617

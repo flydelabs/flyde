@@ -54,10 +54,11 @@
     "dev": "pnpm run watch",
     "macros:bundle": "webpack --config webpack.config.js",
     "macros:watch": "webpack --config webpack.config.js --watch",
-    "build": "rm -rf dist && tsc -p tsconfig.build.json && pnpm run macros:bundle && pnpm run build:docs-data",
+    "build": "pnpm run clean && tsc -p tsconfig.build.json && pnpm run macros:bundle && pnpm run build:docs-data",
     "build:docs-data": "ts-node scripts/docs-data.ts",
     "build:node-sources": "ts-node scripts/build-node-sources.ts",
     "prod": "node dist/index.js",
+    "clean": "rm -rf dist",
     "__publish": "npm version patch && npm publish",
     "lint": "eslint . --ext .ts && ts-node scripts/check-unique-node-ids.ts"
   }

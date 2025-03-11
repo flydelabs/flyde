@@ -1,6 +1,6 @@
-import { ImprovedMacroNode, processImprovedMacro } from "@flyde/core";
+import { CodeNode, processImprovedMacro } from "@flyde/core";
 
-const getAttribute: ImprovedMacroNode = {
+const getAttribute: CodeNode = {
   id: "GetAttribute",
   namespace: "Objects",
   menuDisplayName: "Get Property",

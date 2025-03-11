@@ -1,6 +1,6 @@
-import { DynamicOutput, MacroNode } from "@flyde/core";
+import { DynamicOutput, InternalMacroNode } from "@flyde/core";
 
-const node: MacroNode<any> = {
+const node: InternalMacroNode<any> = {
   id: "InlineValue",
   description: "Emits a value",
   definitionBuilder: (val) => {

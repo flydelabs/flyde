@@ -1,13 +1,9 @@
 import axios, { AxiosRequestConfig } from "axios";
-import {
-  processImprovedMacro,
-  ImprovedMacroNode,
-  createInputGroup,
-} from "@flyde/core";
+import { processImprovedMacro, CodeNode, createInputGroup } from "@flyde/core";
 
 const namespace = "HTTP";
 
-const http: ImprovedMacroNode = {
+const http: CodeNode = {
   id: "Http",
   menuDisplayName: "HTTP Request",
   namespace,
@@ -18,6 +14,7 @@ const http: ImprovedMacroNode = {
     method: {
       defaultValue: "GET",
       label: "Method",
+      typeConfigurable: false,
       description: "The HTTP method to use",
       editorType: "select",
       editorTypeData: {

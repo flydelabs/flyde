@@ -1,6 +1,6 @@
 import {
   ImportedNode,
-  MacroNode,
+  InternalMacroNode,
   Node,
   VisualNode,
   isInlineNodeInstance,
@@ -24,7 +24,7 @@ export function getMacroData(node: VisualNode): any[] {
 
 export function processMacroNodes(
   mainNode: VisualNode,
-  stdLib: Record<string, Node | MacroNode<any>>
+  stdLib: Record<string, Node | InternalMacroNode<any>>
 ) {
   const newDeps: Record<string, ImportedNode> = {};
 
@@ -33,7 +33,7 @@ export function processMacroNodes(
       if (isMacroNodeInstance(ins)) {
         const macroNode = Object.values(stdLib).find(
           (p) => isMacroNode(p) && p.id === ins.macroId
-        ) as MacroNode<any>;
+        ) as InternalMacroNode<any>;
 
         if (!macroNode) {
           throw new Error(

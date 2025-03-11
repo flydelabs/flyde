@@ -1,11 +1,20 @@
 import { macroConfigurableValue, MacroConfigurableValue } from "@flyde/core";
 import {
   processImprovedMacro,
-  ImprovedMacroNode,
+  CodeNode,
   extractInputsFromValue,
   replaceInputsInValue,
 } from "@flyde/core";
-import { ConditionType } from "./ConditionType";
+
+enum ConditionType {
+  Equal = "EQUAL",
+  NotEqual = "NOT_EQUAL",
+  Contains = "CONTAINS",
+  NotContains = "NOT_CONTAINS",
+  RegexMatches = "REGEX_MATCHES",
+  Exists = "EXISTS",
+  NotExists = "NOT_EXISTS",
+}
 
 export interface ConditionalConfig {
   condition: { type: ConditionType; data?: string };
@@ -35,9 +44,10 @@ function conditionalConfigToDisplayName(config: ConditionalConfig) {
   }
 }
 
-const conditional: ImprovedMacroNode<ConditionalConfig> = {
+const conditional: CodeNode<ConditionalConfig> = {
   id: "Conditional",
   namespace: "Control Flow",
+  mode: "advanced",
   menuDisplayName: "Conditional",
   defaultConfig: {
     condition: {

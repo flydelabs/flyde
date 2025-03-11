@@ -40,7 +40,7 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
   const [query, setQuery] = useState("");
   const { onRequestImportables } = useDependenciesContext();
   const [importables, setImportables] = useState<ImportableSource[]>();
-  const [recentlyUsed, setRecentlyUsed] = useLocalStorage<ImportableSource[]>(
+  const [recentlyUsedIds, setRecentlyUsedIds] = useLocalStorage<string[]>(
     RECENTLY_USED_KEY,
     []
   );
@@ -77,21 +77,23 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
       .toLowerCase()
       .includes(query.toLowerCase());
 
-    return groups
-      .map((group) => ({
-        ...group,
-        nodes: group.nodes.filter((node) => {
-          const searchContent = `${node.id} ${node.displayName ?? ""} ${
-            node.namespace ?? ""
-          } ${node.description ?? ""} ${node.searchKeywords?.join(" ") ?? ""}`;
-          return searchContent.toLowerCase().includes(query.toLowerCase());
-        }),
-      }))
-      .filter(
-        (group) =>
-          group.nodes.length > 0 ||
-          (group.title === "Essentials" && customNodeMatches)
-      );
+    // First filter the nodes in each group
+    const filteredGroups = groups.map((group) => ({
+      ...group,
+      nodes: group.nodes.filter((node) => {
+        const searchContent = `${node.id} ${node.displayName ?? ""} ${
+          node.namespace ?? ""
+        } ${node.description ?? ""} ${node.aliases?.join(" ") ?? ""}`;
+        return searchContent.toLowerCase().includes(query.toLowerCase());
+      }),
+    }));
+
+    // Then filter out empty groups, but keep Essentials if customNodeMatches
+    return filteredGroups.filter(
+      (group) =>
+        group.nodes.length > 0 ||
+        (group.title === "Essentials" && customNodeMatches)
+    );
   }, [groups, query]);
 
   const filteredImportables = React.useMemo(() => {
@@ -106,7 +108,7 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
 
       if (!query) return true;
 
-      const content = `${importable.node.searchKeywords?.join(" ") ?? ""} ${
+      const content = `${importable.node.aliases?.join(" ") ?? ""} ${
         importable.node.id
       } ${importable.node.displayName ?? ""} ${
         importable.node.namespace ?? ""
@@ -114,6 +116,20 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
       return content.toLowerCase().includes(query.toLowerCase());
     });
   }, [importables, query, groups]);
+
+  // Get recently used nodes from current available nodes
+  const recentlyUsedNodes = React.useMemo(() => {
+    const allNodes = [
+      ...groups.flatMap((g) =>
+        g.nodes.map((node) => ({ module: "@flyde/stdlib", node }))
+      ),
+      ...(importables || []),
+    ];
+
+    return recentlyUsedIds
+      .map((id) => allNodes.find((node) => node.node.id === id))
+      .filter(Boolean) as ImportableSource[];
+  }, [recentlyUsedIds, groups, importables]);
 
   const onSelect = useCallback(
     (value: string) => {
@@ -133,42 +149,24 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
             module: "@flyde/stdlib",
             node: node as any,
           };
-          setRecentlyUsed(
-            [
-              importableNode,
-              ...recentlyUsed.filter((n) => n.node.id !== node.id),
-            ].slice(0, MAX_RECENT_NODES)
+          setRecentlyUsedIds(
+            [nodeId, ...recentlyUsedIds.filter((id) => id !== nodeId)].slice(
+              0,
+              MAX_RECENT_NODES
+            )
           );
           onAddNode(importableNode);
         }
       } else if (source === "importable") {
-        // First check if it's in the recently used list
-        const recentNode = recentlyUsed.find((item) => item.node.id === nodeId);
-        if (recentNode) {
-          // Move it to the top of recently used
-          setRecentlyUsed(
-            [
-              recentNode,
-              ...recentlyUsed.filter((n) => n.node.id !== nodeId),
-            ].slice(0, MAX_RECENT_NODES)
+        const node = importables?.find((i) => i.node.id === nodeId);
+        if (node) {
+          setRecentlyUsedIds(
+            [nodeId, ...recentlyUsedIds.filter((id) => id !== nodeId)].slice(
+              0,
+              MAX_RECENT_NODES
+            )
           );
-          onAddNode(recentNode);
-        } else {
-          // If not in recently used, look in importables
-          const node = importables?.find((i) => i.node.id === nodeId);
-          if (node) {
-            const importableNode = {
-              module: node.module,
-              node: node.node,
-            };
-            setRecentlyUsed(
-              [
-                importableNode,
-                ...recentlyUsed.filter((n) => n.node.id !== node.node.id),
-              ].slice(0, MAX_RECENT_NODES)
-            );
-            onAddNode(node);
-          }
+          onAddNode(node);
         }
       }
       onOpenChange(false);
@@ -179,8 +177,8 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
       onAddNode,
       onClickCustomNode,
       onOpenChange,
-      recentlyUsed,
-      setRecentlyUsed,
+      recentlyUsedIds,
+      setRecentlyUsedIds,
     ]
   );
 
@@ -195,11 +193,11 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
         />
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
-          {!query && recentlyUsed.length > 0 && (
+          {!query && recentlyUsedNodes.length > 0 && (
             <React.Fragment>
               <CommandGroup heading="Recently Used" className="pb-0.5">
                 <div className="grid grid-cols-4 gap-0">
-                  {recentlyUsed.map((importable) => (
+                  {recentlyUsedNodes.map((importable) => (
                     <CommandItem
                       key={importable.node.id}
                       value={`importable:${importable.node.id}`}
