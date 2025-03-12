@@ -5,10 +5,12 @@ import {
   ResolvedDependencies,
   isBaseNode,
   ImportedNode,
-  isMacroNode,
   Node,
   InternalMacroNode,
   MacroNodeDefinition,
+  isCodeNode,
+  CodeNode,
+  processImprovedMacro,
 } from "@flyde/core";
 import {
   FlowEditorState,
@@ -41,25 +43,22 @@ async function loadStdLib(): Promise<
   Record<string, Node | InternalMacroNode<any>>
 > {
   return Object.values(await import("@flyde/stdlib/dist/all-browser"))
-    .filter((n) => isBaseNode(n) || isMacroNode(n))
+    .filter((n) => isCodeNode(n))
     .map((n) => {
-      if (isMacroNode(n)) {
-        const macroDef = n as unknown as MacroNodeDefinition<any>;
+      const node = processImprovedMacro(n as unknown as CodeNode<any>);
+      const macroDef = node as unknown as MacroNodeDefinition<any>;
 
-        if (macroDef.editorConfig.type !== "custom") {
-          return macroDef;
-        }
-
-        const bundleBase64Content =
-          macroBundlesContent[macroDef.id as keyof typeof macroBundlesContent];
-
-        macroDef.editorConfig.editorComponentBundleContent = bundleBase64Content
-          ? atob(bundleBase64Content)
-          : "";
+      if (macroDef.editorConfig.type !== "custom") {
         return macroDef;
-      } else {
-        return n;
       }
+
+      const bundleBase64Content =
+        macroBundlesContent[macroDef.id as keyof typeof macroBundlesContent];
+
+      macroDef.editorConfig.editorComponentBundleContent = bundleBase64Content
+        ? atob(bundleBase64Content)
+        : "";
+      return macroDef;
     })
     .reduce<Record<string, Node | InternalMacroNode<any>>>((acc, node: any) => {
       acc[node.id] = node;
@@ -117,7 +116,7 @@ export function EmbeddedFlyde(props: EmbeddedFlydeProps) {
     useCallback(async () => {
       const stdLibNodes = Object.values(
         await import("@flyde/stdlib/dist/all-browser")
-      ).filter((n) => isBaseNode(n) || isMacroNode(n)) as ImportedNode[];
+      ).filter((n) => isCodeNode(n)) as ImportedNode[];
 
       const _stdLibNodes = stdLibNodes.map((b) => ({
         node: { ...b, source: { path: "n/a", export: "n/a" } },

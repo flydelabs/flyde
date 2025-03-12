@@ -4,9 +4,8 @@ import {
   ResolvedDependencies,
   simplifiedExecute,
   Debugger,
-  isBaseNode,
+  isCodeNode,
   DynamicNodeInput,
-  isMacroNode,
 } from "@flyde/core";
 
 import * as stdlib from "@flyde/stdlib/dist/all-browser";
@@ -48,7 +47,7 @@ function ensureFakeModulesOnWindow(
         const promise: any = new Promise(async (res, rej) => {
           const fixedStdlib = Object.entries(stdlib).reduce(
             (acc, [key, val]) => {
-              if (isBaseNode(val) || isMacroNode(val)) {
+              if (isCodeNode(val)) {
                 acc[val.id] = val;
                 return acc;
               } else {

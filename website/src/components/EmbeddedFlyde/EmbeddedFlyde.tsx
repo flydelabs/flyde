@@ -19,7 +19,6 @@ import {
   DependenciesContextProvider,
   FlowEditor,
   FlowEditorState,
-  toastMsg,
 } from "@flyde/flow-editor";
 import {
   FlydeFlow,
@@ -92,10 +91,6 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = forwardRef(
         );
         setResolvedDeps(newDeps);
         setFlowEditorState(newState);
-
-        toastMsg(
-          `Node ${importedNode.node.id} successfully imported from ${importedNode.module}`
-        );
 
         return resolvedDeps;
       },

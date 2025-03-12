@@ -1,12 +1,14 @@
 import {
+  CodeNode,
   ImportedNode,
   InternalMacroNode,
   Node,
   VisualNode,
+  isCodeNode,
   isInlineNodeInstance,
-  isMacroNode,
   isMacroNodeInstance,
   isVisualNode,
+  processImprovedMacro,
   processMacroNodeInstance,
 } from "@flyde/core";
 
@@ -31,15 +33,19 @@ export function processMacroNodes(
   function maybeProcessMacroNodeInstances(node: VisualNode): VisualNode {
     const newInstances = node.instances.map((ins) => {
       if (isMacroNodeInstance(ins)) {
-        const macroNode = Object.values(stdLib).find(
-          (p) => isMacroNode(p) && p.id === ins.macroId
-        ) as InternalMacroNode<any>;
+        let macroNode = Object.values(stdLib).find(
+          (p) => isCodeNode(p) && p.id === ins.macroId
+        );
 
         if (!macroNode) {
           throw new Error(
             `Could not find macro node ${ins.macroId} in embedded stdlib`
           );
         }
+
+        macroNode = processImprovedMacro(
+          macroNode as unknown as CodeNode<any>
+        ) as unknown as InternalMacroNode<any>;
 
         const newNode = processMacroNodeInstance("", macroNode, ins);
 

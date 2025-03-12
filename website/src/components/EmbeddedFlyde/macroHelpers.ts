@@ -3,8 +3,8 @@ import {
   InternalMacroNode,
   Node,
   VisualNode,
+  isCodeNode,
   isInlineNodeInstance,
-  isMacroNode,
   isMacroNodeInstance,
   isVisualNode,
 } from "@flyde/core";
@@ -32,7 +32,7 @@ export function processMacroNodes(
     const newInstances = node.instances.map((ins) => {
       if (isMacroNodeInstance(ins)) {
         const macroNode = Object.values(stdLib).find(
-          (p) => isMacroNode(p) && p.id === ins.macroId
+          (p) => isCodeNode(p) && p.id === ins.macroId
         ) as unknown as InternalMacroNode<any>;
 
         if (!macroNode) {
