@@ -419,6 +419,7 @@ export function processImprovedMacro(node: CodeNode): InternalMacroNode<any> {
       },
       defaultData,
       definitionBuilder: (config) => {
+        console.log("config", config);
         // Build a map of fields to their group hierarchies
         const fieldToGroupHierarchy: Record<string, string[]> = {};
 
@@ -457,7 +458,7 @@ export function processImprovedMacro(node: CodeNode): InternalMacroNode<any> {
           });
 
         return {
-          inputs: Object.keys(config).reduce((acc, key) => {
+          inputs: Object.keys(node.inputs).reduce((acc, key) => {
             // Skip non-configurable inputs when creating input pins
             if (node.inputs[key]?.typeConfigurable === false) {
               return acc;
@@ -481,7 +482,13 @@ export function processImprovedMacro(node: CodeNode): InternalMacroNode<any> {
 
             return {
               ...acc,
-              ...extractInputsFromValue(config[key], key),
+              ...extractInputsFromValue(
+                config[key] ?? macroConfigurableValue("dynamic", `{{${key}}}`),
+                key,
+                node.inputs[key].mode === "reactive"
+                  ? undefined
+                  : node.inputs[key].mode
+              ),
             };
           }, {}),
           outputs: node.outputs,
@@ -507,10 +514,16 @@ export function processImprovedMacro(node: CodeNode): InternalMacroNode<any> {
       },
       runFnBuilder: (config) => {
         return (inputs, outputs, adv) => {
-          const inputValues = Object.keys(config).reduce((acc, key) => {
-            acc[key] = replaceInputsInValue(inputs, config[key], key);
+          const inputValues = Object.keys(node.inputs).reduce((acc, key) => {
+            acc[key] = replaceInputsInValue(
+              inputs,
+              config[key] ?? macroConfigurableValue("dynamic", `{{${key}}}`),
+              key
+            );
             return acc;
           }, {} as Record<string, any>);
+
+          console.log("inputValues", inputValues, config);
           return node.run(inputValues, outputs, adv);
         };
       },

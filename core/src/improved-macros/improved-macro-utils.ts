@@ -4,6 +4,7 @@ import {
   MacroEditorFieldDefinition,
   InternalMacroNode,
   nodeInput,
+  InputMode,
 } from "..";
 
 // Import the InputConfig type from improved-macros
@@ -23,7 +24,8 @@ function extractInputNameAndPath(match: string): {
 
 export function extractInputsFromValue(
   val: MacroConfigurableValue,
-  key: string
+  key: string,
+  mode?: InputMode
 ): Record<string, InputPin> {
   const inputs = {};
 
@@ -33,7 +35,7 @@ export function extractInputsFromValue(
       if (matches) {
         for (const match of matches) {
           const { inputName } = extractInputNameAndPath(match);
-          inputs[inputName] = nodeInput();
+          inputs[inputName] = nodeInput(mode);
         }
       }
     }
@@ -42,7 +44,7 @@ export function extractInputsFromValue(
   if (val.type === "string") {
     extractFromValue(val.value);
   } else if (val.type === "dynamic") {
-    return { [key]: nodeInput() };
+    return { [key]: nodeInput(mode) };
   } else {
     try {
       const jsonString = JSON.stringify(val.value);
@@ -50,7 +52,7 @@ export function extractInputsFromValue(
       if (matches) {
         for (const match of matches) {
           const { inputName } = extractInputNameAndPath(match);
-          inputs[inputName] = nodeInput();
+          inputs[inputName] = nodeInput(mode);
         }
       }
     } catch (error) {

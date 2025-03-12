@@ -15,10 +15,6 @@ export const Subscribe: InternalCodeNode = {
       mode: "required",
       description: "A key to use to subscribe to values",
     },
-    initial: {
-      mode: "required-if-connected",
-      description: "If passed will be published has the first value",
-    },
   },
   completionOutputs: [],
   outputs: { value: { description: "The value published by the key" } },
@@ -28,10 +24,6 @@ export const Subscribe: InternalCodeNode = {
     const token = PubSub.subscribe(nsKey, (_, data) => {
       value.next(data);
     });
-
-    if (typeof inputs.initial !== "undefined") {
-      value.next(inputs.initial);
-    }
 
     adv.onCleanup(() => {
       PubSub.unsubscribe(token);

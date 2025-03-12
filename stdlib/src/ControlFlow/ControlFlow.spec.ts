@@ -3,6 +3,9 @@ import {
   eventually,
   execute,
   inlineNodeInstance,
+  macroNodeInstance,
+  processImprovedMacro,
+  processMacroNodeInstance,
   randomInt,
   VisualNode,
 } from "@flyde/core";
@@ -22,14 +25,23 @@ describe("ControlFlow", () => {
       const key = "bla";
       const value = randomInt(42);
 
+      const _pub = processImprovedMacro(Publish);
+      const _sub = processImprovedMacro(Subscribe);
+
+      const i1 = macroNodeInstance("i1", _pub.id, {});
+      const i2 = macroNodeInstance("i2", _sub.id, {});
+
+      const _pubNode = processMacroNodeInstance("i1", _pub, i1);
+      const _subNode = processMacroNodeInstance("i2", _sub, i2);
+
       const visualNode: VisualNode = conciseNode({
         id: "test",
         inputs: ["a"],
         outputs: ["b"],
         instances: [
           inlineNodeInstance("key", valueNode("key", key)),
-          inlineNodeInstance("i1", Publish),
-          inlineNodeInstance("i2", Subscribe),
+          inlineNodeInstance("i1", _pubNode),
+          inlineNodeInstance("i2", _subNode),
         ],
         connections: [
           ["key.r", "i1.key"],
@@ -45,8 +57,8 @@ describe("ControlFlow", () => {
 
       execute({
         node: visualNode,
-        outputs: { b },
         inputs: { a: input },
+        outputs: { b },
         resolvedDeps: {},
         ancestorsInsIds: "bob",
       });
