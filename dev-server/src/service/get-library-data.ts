@@ -1,4 +1,4 @@
-import { NodeLibraryData, isMacroNode } from "@flyde/core";
+import { NodeLibraryData, processImprovedMacro } from "@flyde/core";
 import { macroNodeToDefinition } from "@flyde/resolver";
 
 import { getUnresolvedNodesLibraryData } from "@flyde/stdlib/dist/nodes-library-data";
@@ -12,11 +12,8 @@ export function getLibraryData(): NodeLibraryData {
       return {
         ...g,
         nodes: g.nodes.map((node) => {
-          if (isMacroNode(node)) {
-            return macroNodeToDefinition(node, "");
-          } else {
-            return node;
-          }
+          const processed = processImprovedMacro(node);
+          return macroNodeToDefinition(processed, "");
         }),
       };
     }),

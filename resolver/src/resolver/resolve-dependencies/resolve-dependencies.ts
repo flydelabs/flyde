@@ -276,7 +276,11 @@ export function resolveFlow(
 
         if (!found) {
           if (importPath === "@flyde/stdlib" && StdLib[macroId]) {
-            const targetMacroNode = StdLib[macroId];
+            let targetMacroNode = StdLib[macroId];
+
+            if (isCodeNode(targetMacroNode)) {
+              targetMacroNode = processImprovedMacro(targetMacroNode);
+            }
 
             if (!isInternalMacroNode(targetMacroNode)) {
               throw new Error(

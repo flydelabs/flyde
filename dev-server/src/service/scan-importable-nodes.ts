@@ -10,7 +10,7 @@ import {
   BaseNode,
   debugLogger,
   isBaseNode,
-  isMacroNode,
+  isInternalMacroNode,
   NodesDefCollection,
   ImportablesResult,
 } from "@flyde/core";
@@ -64,7 +64,7 @@ export async function scanImportableNodes(
         const nodesObj = nodes.reduce(
           (obj, { node }) => ({
             ...obj,
-            [node.id]: isMacroNode(node)
+            [node.id]: isInternalMacroNode(node)
               ? macroNodeToDefinition(node, file.fullPath)
               : node,
           }),

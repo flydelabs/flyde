@@ -1,4 +1,4 @@
-import { isCodeNode, isMacroNode, InternalMacroNode, Node } from "../";
+import { isCodeNode, isInternalMacroNode, InternalMacroNode, Node } from "../";
 import { transpileFile } from "./transpile-file/transpile-file";
 import {
   CodeNode,
@@ -22,7 +22,7 @@ export function customCodeNodeFromCode(
   const result = new Function(wrappedCode)(imports);
 
   const validNodes = Object.values(result).filter(
-    (node) => isCodeNode(node) || isMacroNode(node)
+    (node) => isCodeNode(node) || isInternalMacroNode(node)
   );
 
   if (validNodes.length === 0) {
@@ -35,14 +35,13 @@ export function customCodeNodeFromCode(
 
   const node = validNodes[0];
 
-  if (isCodeNode(node) || isMacroNode(node)) {
-    if ((node as CodeNode).icon) {
-      const macro = processImprovedMacro(
-        node as CodeNode
-      ) as InternalMacroNode<any>;
-      macro.id = `${macro.id}${suffixId ? `-${suffixId}` : ""}`;
-      return macro;
-    }
+  if (isCodeNode(node)) {
+    const macro = processImprovedMacro(
+      node as CodeNode
+    ) as InternalMacroNode<any>;
+    macro.id = `${macro.id}${suffixId ? `-${suffixId}` : ""}`;
+    return macro;
+  } else if (isInternalMacroNode(node)) {
     node.id = `${node.id}${suffixId ? `-${suffixId}` : ""}`;
     return node;
   } else {

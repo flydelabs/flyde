@@ -21,7 +21,7 @@ interface CustomNodeModalProps {
 }
 
 const defaultContent = `
-import type { InternalCodeNode } from "@flyde/core";
+import type { CodeNode } from "@flyde/core";
 
 /*
  Feel free to change the content of this file to experiment with the code nodes
@@ -30,7 +30,7 @@ import type { InternalCodeNode } from "@flyde/core";
  Full API reference: https://www.flyde.dev/docs/custom-nodes/
  */
 
-const node: InternalCodeNode = {
+const node: CodeNode = {
   id: "Add",
   displayName: "Add",
   defaultStyle: {

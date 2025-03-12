@@ -3,11 +3,10 @@ import * as vscode from "vscode";
 import { getWebviewContent } from "./editor/open-flyde-panel";
 var fp = require("find-free-port");
 
-import { scanImportableNodes } from "@flyde/dev-server/dist/service/scan-importable-nodes";
 import { scanImportableMacros } from "@flyde/dev-server/dist/service/scan-importable-macros";
+import { scanImportableNodes } from "@flyde/dev-server/dist/service/scan-importable-nodes";
 import { generateAndSaveNode } from "@flyde/dev-server/dist/service/ai/generate-node-from-prompt";
 import { getLibraryData } from "@flyde/dev-server/dist/service/get-library-data";
-import axios from "axios";
 
 import {
   deserializeFlow,

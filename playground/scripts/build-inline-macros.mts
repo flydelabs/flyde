@@ -1,4 +1,4 @@
-import { isMacroNode } from "@flyde/core";
+import { InternalMacroNode, isInternalMacroNode } from "@flyde/core";
 import { promises as fs } from "fs";
 import * as stdlib from "@flyde/stdlib/dist/all-browser.js";
 
@@ -18,7 +18,9 @@ const probePathStart = join(stdlibPath, "../ui/");
 const targetFile = join(__dirname, "../stdlib-bundle/inline-macros.ts");
 
 async function bundleMacros() {
-  const macros = Object.values(stdlib).filter(isMacroNode);
+  const macros = Object.values(stdlib).filter(
+    isInternalMacroNode
+  ) as unknown as InternalMacroNode<any>[];
 
   const macroBundlesContent = await macros.reduce<
     Promise<Record<string, string>>

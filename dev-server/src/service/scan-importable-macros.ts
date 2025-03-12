@@ -8,11 +8,13 @@ import {
 
 import {
   debugLogger,
-  isMacroNode,
+  isInternalMacroNode,
   ImportablesResult,
   ImportableMacrosResult,
   MacrosDefCollection,
   InternalMacroNode,
+  isCodeNode,
+  processImprovedMacro,
 } from "@flyde/core";
 import { scanFolderStructure } from "./scan-folders-structure";
 import { FlydeFile } from "../fs-helper/shared";
@@ -43,10 +45,10 @@ export async function scanImportableMacros(
 
     const nodes = Object.fromEntries(
       Object.entries(StdLib)
-        .filter((pair) => isMacroNode(pair[1]))
+        .filter((pair) => isCodeNode(pair[1]))
         .map(([id, node]) => [
           id,
-          macroNodeToDefinition(node as InternalMacroNode<any>, ""),
+          macroNodeToDefinition(processImprovedMacro(node), ""),
         ])
     ) as MacrosDefCollection;
     builtInStdLib = {
@@ -66,8 +68,11 @@ export async function scanImportableMacros(
         );
 
         const nodesObj = nodes.reduce((obj, { node }) => {
-          if (isMacroNode(node)) {
-            obj[node.id] = macroNodeToDefinition(node, file.fullPath);
+          if (isCodeNode(node)) {
+            obj[node.id] = macroNodeToDefinition(
+              processImprovedMacro(node),
+              file.fullPath
+            );
           }
           return obj;
         }, {});

@@ -224,12 +224,6 @@ export const isBaseNode = (p: any): p is BaseNode => {
   return p && p.id && p.inputs && p.outputs;
 };
 
-export const isCodeNode = (
-  p: Node | NodeDefinition | any
-): p is InternalCodeNode => {
-  return isBaseNode(p) && typeof (p as InternalCodeNode).run === "function";
-};
-
 export const extractMetadata: <N extends NodeMetadata>(
   node: N
 ) => NodeMetadata = (node) => {

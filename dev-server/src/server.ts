@@ -4,13 +4,11 @@ import { createService } from "./service/service";
 
 import { setupRemoteDebuggerServer } from "@flyde/remote-debugger/dist/setup-server";
 import { createServer } from "http";
-import { scanImportableNodes } from "./service/scan-importable-nodes";
 import { resolveFlowByPath } from "@flyde/resolver";
 import { join } from "path";
 
-import { generateAndSaveNode } from "./service/ai/generate-node-from-prompt";
-
 import { getLibraryData } from "./service/get-library-data";
+import { scanImportableMacros } from "./service/scan-importable-macros";
 
 export const runDevServer = (
   port: number,
@@ -58,7 +56,7 @@ export const runDevServer = (
   app.get("/importables", async (req, res) => {
     const { filename } = req.query as { filename: string };
     try {
-      const importables = await scanImportableNodes(rootDir, filename);
+      const importables = await scanImportableMacros(rootDir, filename);
       res.send(importables);
     } catch (e) {
       console.error(e);

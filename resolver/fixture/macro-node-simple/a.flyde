@@ -1,6 +1,10 @@
 imports:
   ./Macro.flyde.ts:
     - Duplicate
+  ../namespaces-imported-inline-visual-node-references/Special2.flyde.js:
+    - Special
+  "@flyde/stdlib":
+    - InlineValue
 node:
   instances:
     - pos:
@@ -14,6 +18,23 @@ node:
         times:
           type: number
           value: 3
+    - pos:
+        x: 24.5
+        y: 148.5
+      id: Special-v204eeq
+      inputConfig: {}
+      nodeId: Special
+    - pos:
+        x: 93
+        y: 86.25
+      id: zqfrlmuaqnzhkqtgkkcljmxi
+      inputConfig: {}
+      nodeId: InlineValue__zqfrlmuaqnzhkqtgkkcljmxi
+      macroId: InlineValue
+      macroData:
+        value:
+          type: string
+          value: Hello, {{name}}
   connections:
     - from:
         insId: __this
