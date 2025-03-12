@@ -1,7 +1,10 @@
 import {
+  CodeNode,
+  InternalMacroNode,
   MacrosDefCollection,
-  NodesDefCollection,
-  isMacroNode,
+  isCodeNode,
+  processImprovedMacro,
+  processMacroNodeInstance,
 } from "@flyde/core";
 import {
   deserializeFlow,
@@ -23,35 +26,33 @@ export async function resolveDependentPackagesMacros(
         const nodes = paths.reduce((acc, filePath) => {
           if (isCodeNodePath(filePath)) {
             const obj = resolveCodeNodeDependencies(filePath).nodes.reduce(
-              (obj, { node }) => {
-                // Only include macro nodes
-                if (isMacroNode(node)) {
-                  return {
-                    ...obj,
-                    [node.id]: macroNodeToDefinition(node, filePath),
-                  };
-                }
-                return obj;
+              (obj, { node: _node }) => {
+                let node = processImprovedMacro(_node);
+                return {
+                  ...obj,
+                  [node.id]: macroNodeToDefinition(node, filePath),
+                };
+                // return obj;
               },
               {}
             );
 
             return { ...acc, ...obj };
           }
-          try {
-            const flow = deserializeFlow(
-              readFileSync(filePath, "utf8"),
-              filePath
-            );
-            // Only include macro nodes
-            if (isMacroNode(flow.node)) {
-              return { ...acc, [flow.node.id]: flow.node };
-            }
-            return acc;
-          } catch (e) {
-            console.error(`Skipping corrupt flow at ${filePath}, error: ${e}`);
-            return acc;
-          }
+          // try {
+          //   const flow = deserializeFlow(
+          //     readFileSync(filePath, "utf8"),
+          //     filePath
+          //   );
+          //   // Only include macro nodes
+          //   if (isMacroNode(flow.node)) {
+          //     return { ...acc, [flow.node.id]: flow.node };
+          //   }
+          //   return acc;
+          // } catch (e) {
+          //   console.error(`Skipping corrupt flow at ${filePath}, error: ${e}`);
+          //   return acc;
+          // }
         }, {});
         return { ...acc, [dep]: nodes };
       } catch (e) {

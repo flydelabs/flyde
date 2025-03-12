@@ -231,6 +231,7 @@ declare module '@flyde/core/improved-macros/improved-macros' {
             menuDescription?: string;
             displayName?: StaticOrDerived<string, Config>;
             description?: StaticOrDerived<string, Config>;
+            overrideNodeBodyHtml?: StaticOrDerived<string, Config>;
             aliases?: string[];
             icon?: string;
             completionOutputs?: StaticOrDerived<string[], Config>;
@@ -342,13 +343,15 @@ declare module '@flyde/core/improved-macros/improved-macros' {
             };
     };
     export function isAdvancedMacroNode<Config>(node: CodeNode<Config>): node is AdvancedMacroNode<Config>;
+    export function isSimplifiedMacroNode<Config>(node: CodeNode<Config>): node is SimplifiedMacroNode<Config>;
+    export function isCodeNode<Config>(node: any): node is CodeNode<Config>;
     export function processImprovedMacro(node: CodeNode): InternalMacroNode<any>;
 }
 
 declare module '@flyde/core/improved-macros/improved-macro-utils' {
-    import { InputPin, MacroConfigurableValue, MacroEditorFieldDefinition, InternalMacroNode } from "@flyde/core/";
+    import { InputPin, MacroConfigurableValue, MacroEditorFieldDefinition, InternalMacroNode, InputMode } from "@flyde/core/";
     import { InputConfig } from "@flyde/core/improved-macros/improved-macros";
-    export function extractInputsFromValue(val: MacroConfigurableValue, key: string): Record<string, InputPin>;
+    export function extractInputsFromValue(val: MacroConfigurableValue, key: string, mode?: InputMode): Record<string, InputPin>;
     export function replaceInputsInValue(inputs: Record<string, any>, value: MacroConfigurableValue, fieldName: string, ignoreMissingInputs?: boolean): MacroConfigurableValue["value"];
     export function renderConfigurableValue(value: MacroConfigurableValue, fieldName: string): string;
     export function generateConfigEditor<Config>(config: Config, overrides?: Partial<Record<keyof Config, any>>): InternalMacroNode<Config>["editorConfig"];
@@ -797,7 +800,6 @@ declare module '@flyde/core/node/node' {
     };
     export type NodeDefinitionWithModuleMetaData = NodeDefinition & NodeModuleMetaData;
     export const isBaseNode: (p: any) => p is BaseNode;
-    export const isCodeNode: (p: Node | NodeDefinition | any) => p is InternalCodeNode;
     export const extractMetadata: <N extends NodeMetadata>(node: N) => NodeMetadata;
     export const isVisualNode: (p: Node | NodeDefinition) => p is VisualNode;
     export const visualNode: import("../common").TestDataCreator<VisualNode>;
@@ -1040,7 +1042,7 @@ declare module '@flyde/core/node/macro-node' {
     }
     export interface MacroEditorComp<T> extends React.FC<MacroEditorCompProps<T>> {
     }
-    export const isMacroNode: (p: any) => p is InternalMacroNode<any>;
+    export const isInternalMacroNode: (p: any) => p is InternalMacroNode<any>;
     export const isMacroNodeDefinition: (p: any) => p is MacroNodeDefinition<any>;
     export function processMacroNodeInstance(prefix: string, macro: InternalMacroNode<any>, instance: MacroNodeInstance): InternalCodeNode;
     export interface GroupFieldDefinition extends BaseFieldDefinition {

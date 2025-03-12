@@ -19,6 +19,7 @@ import {
   processMacroNodeInstance,
   isAdvancedMacroNode,
   processImprovedMacro,
+  CodeNode,
 } from "@flyde/core";
 import { existsSync, readFileSync } from "fs";
 import _ = require("lodash");
@@ -393,7 +394,7 @@ export function resolveCodeNodeDependencies(path: string): {
   errors: string[];
   nodes: {
     exportName: string;
-    node: InternalCodeNode | MacroNodeDefinition<any>;
+    node: CodeNode<any>;
   }[];
 } {
   const errors = [];

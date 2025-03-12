@@ -349,9 +349,9 @@ declare module '@flyde/core/improved-macros/improved-macros' {
 }
 
 declare module '@flyde/core/improved-macros/improved-macro-utils' {
-    import { InputPin, MacroConfigurableValue, MacroEditorFieldDefinition, InternalMacroNode } from "@flyde/core/";
+    import { InputPin, MacroConfigurableValue, MacroEditorFieldDefinition, InternalMacroNode, InputMode } from "@flyde/core/";
     import { InputConfig } from "@flyde/core/improved-macros/improved-macros";
-    export function extractInputsFromValue(val: MacroConfigurableValue, key: string): Record<string, InputPin>;
+    export function extractInputsFromValue(val: MacroConfigurableValue, key: string, mode?: InputMode): Record<string, InputPin>;
     export function replaceInputsInValue(inputs: Record<string, any>, value: MacroConfigurableValue, fieldName: string, ignoreMissingInputs?: boolean): MacroConfigurableValue["value"];
     export function renderConfigurableValue(value: MacroConfigurableValue, fieldName: string): string;
     export function generateConfigEditor<Config>(config: Config, overrides?: Partial<Record<keyof Config, any>>): InternalMacroNode<Config>["editorConfig"];
