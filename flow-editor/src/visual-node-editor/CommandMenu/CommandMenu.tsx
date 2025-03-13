@@ -204,25 +204,27 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
                       onSelect={onSelect}
                       className="text-xs py-1 px-1 cursor-pointer add-menu-item"
                     >
-                      {importable.node.defaultStyle?.icon && (
+                      {importable.node.icon && (
                         <InstanceIcon
-                          icon={importable.node.defaultStyle.icon as string}
+                          icon={importable.node.icon}
                           className="mr-0.5"
                         />
                       )}
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger className="truncate">
-                            {importable.node.displayName ?? importable.node.id}
+                            {importable.node.menuDisplayName ??
+                              importable.node.id}
                           </TooltipTrigger>
-                          {importable.node.description && (
-                            <TooltipContent
-                              side="right"
-                              className="max-w-[300px]"
-                            >
-                              {importable.node.description}
-                            </TooltipContent>
-                          )}
+                          {importable.node.description &&
+                            typeof importable.node.description === "string" && (
+                              <TooltipContent
+                                side="right"
+                                className="max-w-[300px]"
+                              >
+                                {importable.node.description}
+                              </TooltipContent>
+                            )}
                         </Tooltip>
                       </TooltipProvider>
                     </CommandItem>
@@ -295,25 +297,27 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
                     onSelect={onSelect}
                     className="text-xs py-1 px-1 add-menu-item"
                   >
-                    {importable.node.defaultStyle?.icon && (
+                    {importable.node?.icon && (
                       <InstanceIcon
-                        icon={importable.node.defaultStyle.icon as string}
+                        icon={importable.node.icon as string}
                         className="mr-0.5"
                       />
                     )}
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger className="truncate">
-                          {importable.node.displayName ?? importable.node.id}
+                          {importable.node.menuDisplayName ??
+                            importable.node.id}
                         </TooltipTrigger>
-                        {importable.node.description && (
-                          <TooltipContent
-                            side="right"
-                            className="max-w-[300px]"
-                          >
-                            {importable.node.description}
-                          </TooltipContent>
-                        )}
+                        {importable.node.description &&
+                          typeof importable.node.description === "string" && (
+                            <TooltipContent
+                              side="right"
+                              className="max-w-[300px]"
+                            >
+                              {importable.node.description}
+                            </TooltipContent>
+                          )}
                       </Tooltip>
                     </TooltipProvider>
                   </CommandItem>

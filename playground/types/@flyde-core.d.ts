@@ -10,12 +10,13 @@ declare module '@flyde/core' {
     import { Pos, OMap } from "@flyde/core/common";
     import { FlydeFlow } from "@flyde/core/flow-schema";
     import { VisualNode, InputPinsConfig, NodeDefinition, NodeOrMacroDefinition, MacroNodeDefinition } from "@flyde/core/node";
-    export * from "@flyde/core/connect";
+    export * from "@flyde/core/connect/helpers";
     export * from "@flyde/core/execute";
     export * from "@flyde/core/simplified-execute";
     export * from "@flyde/core/node";
     export * from "@flyde/core/node/get-node-with-dependencies";
     export * from "@flyde/core/flow-schema";
+    export * from "@flyde/core/types/connections";
     export * from "@flyde/core/improved-macros/improved-macros";
     export { extractInputsFromValue, replaceInputsInValue, renderDerivedString, evaluateCondition, evaluateFieldVisibility, createInputGroup, } from "@flyde/core/improved-macros/improved-macro-utils";
     export interface InstanceViewData {
@@ -69,7 +70,7 @@ declare module '@flyde/core/common' {
 
 declare module '@flyde/core/flow-schema' {
     import { z } from "zod";
-    import { VisualNode, NodeDefinition, Node, ResolvedVisualNode } from "@flyde/core/node";
+    import { VisualNode, NodeDefinition, ResolvedVisualNode } from "@flyde/core/node";
     import { CodeNode } from "@flyde/core/improved-macros/improved-macros";
     export type FlydeFlow = {
         imports?: Record<string, String[]>;
@@ -82,7 +83,7 @@ declare module '@flyde/core/flow-schema' {
     export type ImportedNodeDefinition = NodeDefinition & {
         source: ImportSource;
     };
-    export type ImportedNode = (Node | CodeNode) & {
+    export type ImportedNode = (VisualNode | CodeNode) & {
         source: ImportSource;
     };
     export type ImportedNodeDef = NodeDefinition & {
@@ -120,34 +121,33 @@ declare module '@flyde/core/node' {
     export * from "@flyde/core/node/node";
 }
 
-declare module '@flyde/core/connect' {
-    import { InternalCodeNode, VisualNode, NodeState } from "@flyde/core/node";
-    import { Debugger } from "@flyde/core/execute";
-    import { OMap } from "@flyde/core/common";
-    import { THIS_INS_ID } from "@flyde/core/connect/helpers";
-    import { NodesCollection } from "@flyde/core/";
-    export * from "@flyde/core/connect/helpers";
-    export type ConnectionData = {
-        from: ConnectionNode;
-        to: ConnectionNode;
-        delayed?: boolean;
-        hidden?: boolean;
+declare module '@flyde/core/connect/helpers' {
+    import { NodeDefinition } from "@flyde/core/node";
+    import { ConnectionData, ConnectionNode, ExternalConnectionNode, InternalConnectionNode } from "@flyde/core/types/connections";
+    export const THIS_INS_ID = "__this";
+    export const ERROR_PIN_ID = "__error";
+    export const TRIGGER_PIN_ID = "__trigger";
+    export const getNodeInputs: (node: NodeDefinition) => {
+        __trigger: import("../node").InputPin;
     };
-    export type ExternalConnectionNode = {
-        insId: typeof THIS_INS_ID;
-        pinId: string;
+    export const getInputName: (pinId: string) => string;
+    export const getOutputName: (pinId: string) => string;
+    export const getNodeOutputs: (node: NodeDefinition) => {
+        __error: import("../node").OutputPin;
     };
-    export type InternalConnectionNode = {
-        insId: string;
-        pinId: string;
-    };
-    export type ConnectionNode = ExternalConnectionNode | InternalConnectionNode;
-    export type PinList = Array<{
-        insId: string;
-        pinId: string;
-    }>;
-    type PositionlessVisualNode = Omit<Omit<VisualNode, "inputsPosition">, "outputsPosition">;
-    export const connect: (node: PositionlessVisualNode, resolvedDeps: NodesCollection, _debugger?: Debugger, ancestorsInsIds?: string, mainState?: OMap<NodeState>, onBubbleError?: (err: any) => void, extraContext?: Record<string, any>) => InternalCodeNode;
+    export const isExternalConnectionNode: (node: ConnectionNode) => node is ExternalConnectionNode;
+    export const isInternalConnectionNode: (node: ConnectionNode) => node is InternalConnectionNode;
+    export const isExternalConnection: ({ from, to }: ConnectionData) => boolean;
+    export const isInternalConnection: (conn: ConnectionData) => boolean;
+    export const externalConnectionNode: (pinId: string) => ExternalConnectionNode;
+    export const connectionNode: (insId: string, pinId: string) => ConnectionNode;
+    export const connectionNodeEquals: (conn1: ConnectionNode, conn2: ConnectionNode) => boolean;
+    export const connectionDataEquals: (cd1?: ConnectionData, cd2?: ConnectionData) => boolean;
+    export function connectionData(from: string, to: string, delayed?: boolean): ConnectionData;
+    export function connectionData(from: [string, string], to: [string, string], delayed?: boolean): ConnectionData;
+    export function connectionData(from: [string, string], to: [string], delayed?: boolean): ConnectionData;
+    export function connectionData(from: [string], to: [string, string], delayed?: boolean): ConnectionData;
+    export const connection: (from: ConnectionNode, to: ConnectionNode, delayed?: boolean) => ConnectionData;
 }
 
 declare module '@flyde/core/execute' {
@@ -215,6 +215,25 @@ declare module '@flyde/core/simplified-execute' {
 declare module '@flyde/core/node/get-node-with-dependencies' {
     import { CustomNodeCollection, VisualNode } from "@flyde/core/";
     export const getNodeWithDependencies: (node: VisualNode, resolvedDeps: CustomNodeCollection, existingIds?: string[]) => VisualNode[];
+}
+
+declare module '@flyde/core/types/connections' {
+    import { THIS_INS_ID } from "@flyde/core/connect/helpers";
+    export type ConnectionData = {
+        from: ConnectionNode;
+        to: ConnectionNode;
+        delayed?: boolean;
+        hidden?: boolean;
+    };
+    export type ExternalConnectionNode = {
+        insId: typeof THIS_INS_ID;
+        pinId: string;
+    };
+    export type InternalConnectionNode = {
+        insId: string;
+        pinId: string;
+    };
+    export type ConnectionNode = ExternalConnectionNode | InternalConnectionNode;
 }
 
 declare module '@flyde/core/improved-macros/improved-macros' {
@@ -631,12 +650,12 @@ declare module '@flyde/core/node/node' {
     import { OMap, OMapF, Pos } from "@flyde/core/common";
     import { Subject } from "rxjs";
     import { CancelFn, InnerExecuteFn } from "@flyde/core/execute";
-    import { ConnectionData } from "@flyde/core/connect";
     import { NodeInstance, ResolvedNodeInstance } from "@flyde/core/node/node-instance";
     import { InputPin, OutputPin } from "@flyde/core/node/node-pins";
     import { ImportedNode } from "@flyde/core/flow-schema";
     import { MacroNodeDefinition } from "@flyde/core/node/macro-node";
     import { CodeNode } from "@flyde/core/";
+    import { ConnectionData } from "@flyde/core/types/connections";
     export type NodesCollection = OMap<Node | CodeNode>;
     export type NodesDefCollection = OMap<NodeDefinition>;
     export type CustomNodeCollection = OMap<VisualNode>;
@@ -674,6 +693,7 @@ declare module '@flyde/core/node/node' {
                 * A human readable name for the node. Used in the visual editor.
                 */
             displayName?: string;
+            menuDisplayName?: string;
             /**
                 * Is displayed in the visual editor and used to search for nodes.
                 */
@@ -686,6 +706,7 @@ declare module '@flyde/core/node/node' {
                 * TBD
                 */
             namespace?: string;
+            icon?: string;
             /**
                 * All instances of this node will inherit the default style if it is supplied.
                 * See {@link NodeStyle} for the full options supported
@@ -820,33 +841,20 @@ declare module '@flyde/core/node/node' {
     export const codeFromFunction: ({ id, fn, inputNames, outputName, defaultStyle, }: codeFromFunctionParams) => InternalCodeNode;
 }
 
-declare module '@flyde/core/connect/helpers' {
-    import { ConnectionNode, ExternalConnectionNode, InternalConnectionNode, ConnectionData } from "@flyde/core/connect";
-    import { NodeDefinition } from "@flyde/core/node";
-    export const THIS_INS_ID = "__this";
-    export const ERROR_PIN_ID = "__error";
-    export const TRIGGER_PIN_ID = "__trigger";
-    export const getNodeInputs: (node: NodeDefinition) => {
-        __trigger: import("../node").InputPin;
+declare module '@flyde/core/execute/debugger' {
+    import { DebuggerEvent } from "@flyde/core/execute/debugger/events";
+    export * from "@flyde/core/execute/debugger/events";
+    export * from "@flyde/core/execute/debugger/format-event";
+    export type DebuggerInterceptCommand = {
+        cmd: "intercept";
+        valuePromise: Promise<any>;
     };
-    export const getInputName: (pinId: string) => string;
-    export const getOutputName: (pinId: string) => string;
-    export const getNodeOutputs: (node: NodeDefinition) => {
-        __error: import("../node").OutputPin;
+    export type DebuggerCommand = DebuggerInterceptCommand | void;
+    export type Debugger = {
+        onEvent?: <T extends DebuggerEvent>(event: Omit<T, "time" | "executionId">) => DebuggerCommand;
+        debugDelay?: number;
+        destroy?: () => void;
     };
-    export const isExternalConnectionNode: (node: ConnectionNode) => node is ExternalConnectionNode;
-    export const isInternalConnectionNode: (node: ConnectionNode) => node is InternalConnectionNode;
-    export const isExternalConnection: ({ from, to }: ConnectionData) => boolean;
-    export const isInternalConnection: (conn: ConnectionData) => boolean;
-    export const externalConnectionNode: (pinId: string) => ExternalConnectionNode;
-    export const connectionNode: (insId: string, pinId: string) => ConnectionNode;
-    export const connectionNodeEquals: (conn1: ConnectionNode, conn2: ConnectionNode) => boolean;
-    export const connectionDataEquals: (cd1?: ConnectionData, cd2?: ConnectionData) => boolean;
-    export function connectionData(from: string, to: string, delayed?: boolean): ConnectionData;
-    export function connectionData(from: [string, string], to: [string, string], delayed?: boolean): ConnectionData;
-    export function connectionData(from: [string, string], to: [string], delayed?: boolean): ConnectionData;
-    export function connectionData(from: [string], to: [string, string], delayed?: boolean): ConnectionData;
-    export const connection: (from: ConnectionNode, to: ConnectionNode, delayed?: boolean) => ConnectionData;
 }
 
 declare module '@flyde/core/' {
@@ -854,12 +862,13 @@ declare module '@flyde/core/' {
     import { Pos, OMap } from "@flyde/core/common";
     import { FlydeFlow } from "@flyde/core/flow-schema";
     import { VisualNode, InputPinsConfig, NodeDefinition, NodeOrMacroDefinition, MacroNodeDefinition } from "@flyde/core/node";
-    export * from "@flyde/core/connect";
+    export * from "@flyde/core/connect/helpers";
     export * from "@flyde/core/execute";
     export * from "@flyde/core/simplified-execute";
     export * from "@flyde/core/node";
     export * from "@flyde/core/node/get-node-with-dependencies";
     export * from "@flyde/core/flow-schema";
+    export * from "@flyde/core/types/connections";
     export * from "@flyde/core/improved-macros/improved-macros";
     export { extractInputsFromValue, replaceInputsInValue, renderDerivedString, evaluateCondition, evaluateFieldVisibility, createInputGroup, } from "@flyde/core/improved-macros/improved-macro-utils";
     export interface InstanceViewData {
@@ -896,22 +905,6 @@ declare module '@flyde/core/' {
         flow: FlydeFlow;
         id: string;
     }
-}
-
-declare module '@flyde/core/execute/debugger' {
-    import { DebuggerEvent } from "@flyde/core/execute/debugger/events";
-    export * from "@flyde/core/execute/debugger/events";
-    export * from "@flyde/core/execute/debugger/format-event";
-    export type DebuggerInterceptCommand = {
-        cmd: "intercept";
-        valuePromise: Promise<any>;
-    };
-    export type DebuggerCommand = DebuggerInterceptCommand | void;
-    export type Debugger = {
-        onEvent?: <T extends DebuggerEvent>(event: Omit<T, "time" | "executionId">) => DebuggerCommand;
-        debugDelay?: number;
-        destroy?: () => void;
-    };
 }
 
 declare module '@flyde/core/node/macro-node' {
@@ -1047,13 +1040,15 @@ declare module '@flyde/core/node/macro-node' {
             id: string;
             run: import("./node").RunNodeFunction;
             description?: string;
-            aliases?: string[];
-            overrideNodeBodyHtml?: string;
             fn?: import("./node").RunNodeFunction;
             inputs: Record<string, import("./node-pins").InputPin>;
             outputs: Record<string, import("./node-pins").OutputPin>;
             completionOutputs?: string[];
             reactiveInputs?: string[];
+            menuDisplayName?: string;
+            aliases?: string[];
+            icon?: string;
+            overrideNodeBodyHtml?: string;
             sourceCode?: string;
     };
     export function processMacroNodeInstance(prefix: string, _macro: InternalMacroNode<any> | CodeNode, instance: MacroNodeInstance): InternalCodeNode;

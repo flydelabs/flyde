@@ -493,14 +493,14 @@ describe("resolver", () => {
     assert.equal(s.lastCall.args[0], 4);
   });
 
-  describe("macro nodes", () => {
+  // these were the original macro node tests, might be redundant now
+  describe("new code nodes", () => {
     it("resolves a macro node dependency", async () => {
       const data = resolveFlowByPath(
         getFixturePath("macro-node-simple/a.flyde")
       );
       const node = data.main;
 
-      console.log("node", data.dependencies.Duplicate);
       const resolvedDeps = data.dependencies as NodesCollection;
 
       const [s, r] = spiedOutput();

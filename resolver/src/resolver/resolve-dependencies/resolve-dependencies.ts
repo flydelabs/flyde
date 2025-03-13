@@ -6,17 +6,14 @@ import {
   ResolvedFlydeFlow,
   isCodeNode,
   ImportedNodeDef,
-  isInternalMacroNode,
   ResolvedVisualNode,
-  InternalMacroNode,
   isVisualNode,
   ResolvedFlydeFlowDefinition,
   ResolvedMacroNodeInstance,
   isMacroNodeInstance,
   processMacroNodeInstance,
-  processImprovedMacro,
   CodeNode,
-  isAdvancedMacroNode,
+  ResolvedDependenciesDefinitions,
 } from "@flyde/core";
 import { existsSync, readFileSync } from "fs";
 import _ = require("lodash");
@@ -200,7 +197,7 @@ export function resolveFlow(
           }
         }
       } else if (isMacroNodeInstance(instance)) {
-        const { macroId, macroData } = instance;
+        const { macroId } = instance;
         const importPath = inverseImports[macroId];
 
         if (!importPath) {
@@ -348,7 +345,7 @@ export function resolveFlow(
   return {
     main: resolvedNode,
     dependencies: {
-      ...dependencies,
+      ...(dependencies as ResolvedDependenciesDefinitions),
       [mainNode.id]: mainNode,
     },
   };
@@ -404,8 +401,6 @@ export function resolveCodeNodeDependencies(path: string): {
               sourceCode,
             },
           });
-        } else if (isInternalMacroNode(value)) {
-          nodes.push({ exportName: key, node: value });
         }
       });
     }

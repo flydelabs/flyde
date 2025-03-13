@@ -80,6 +80,8 @@ export interface NodeMetadata {
    * A human readable name for the node. Used in the visual editor.
    */
   displayName?: string;
+
+  menuDisplayName?: string;
   /**
    * Is displayed in the visual editor and used to search for nodes.
    */
@@ -92,6 +94,8 @@ export interface NodeMetadata {
    * TBD
    */
   namespace?: string;
+
+  icon?: string;
 
   /**
    * All instances of this node will inherit the default style if it is supplied.

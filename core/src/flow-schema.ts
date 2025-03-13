@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { VisualNode, NodeDefinition, Node, ResolvedVisualNode } from "./node";
+import { VisualNode, NodeDefinition, ResolvedVisualNode } from "./node";
 import { CodeNode } from "./improved-macros/improved-macros";
 
 const importSchema = z.record(z.string(), z.string().or(z.array(z.string())));
@@ -105,7 +105,7 @@ export type ImportedNodeDefinition = NodeDefinition & {
   source: ImportSource;
 };
 
-export type ImportedNode = (Node | CodeNode) & {
+export type ImportedNode = (VisualNode | CodeNode) & {
   source: ImportSource;
 };
 
