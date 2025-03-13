@@ -14,7 +14,7 @@ import { execute, SubjectMap } from "./execute";
 
 import { isDefined, keys } from "./common";
 import { Subject } from "rxjs";
-import { NodesCollection } from ".";
+import { CodeNode, NodesCollection } from ".";
 import { conciseCodeNode, valueNode } from "./test-utils";
 
 export const add: InternalCodeNode = {
@@ -402,7 +402,9 @@ export const spreadList = conciseCodeNode({
   },
 });
 
-export const testNodesCollectionWith = (...nodes: Node[]): NodesCollection => {
+export const testNodesCollectionWith = (
+  ...nodes: (Node | CodeNode)[]
+): NodesCollection => {
   return nodes.reduce<NodesCollection>(
     (acc, p) => ({ ...acc, [p.id]: p }),
     testNodesCollection

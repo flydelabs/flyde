@@ -17,8 +17,6 @@ import { runAddTests } from "../node/add-tests";
 import { add, optAdd, testNodesCollection } from "../fixture";
 import { connectionData } from "./helpers";
 
-describe("is connected", () => {});
-
 describe("connect", () => {
   describe("optional inputs", () => {
     it("allows not renaming an optional pin that is connected", () => {

@@ -1,5 +1,5 @@
 import {
-  InternalCodeNode,
+  CodeNode,
   ImportableSource,
   ImportedNode,
   randomInt,
@@ -59,8 +59,8 @@ export async function generateAndSaveNode(
     throw new Error("Generated node is corrupt");
   }
 
-  const node: ImportedNode = {
-    ...(maybeNode.node as InternalCodeNode),
+  const node = {
+    ...(maybeNode.node as CodeNode),
     source: { path: filePath, export: maybeNode.exportName },
   };
   return { node, module: `./${fileName}.flyde.ts` };

@@ -1,12 +1,11 @@
-import { CustomNode } from ".";
-import { CustomNodeCollection, removeDupes } from "..";
+import { CustomNodeCollection, removeDupes, VisualNode } from "..";
 import { isRefNodeInstance, RefNodeInstance } from "./node-instance";
 
 export const getNodeWithDependencies = (
-  node: CustomNode,
+  node: VisualNode,
   resolvedDeps: CustomNodeCollection,
   existingIds: string[] = []
-): CustomNode[] => {
+): VisualNode[] => {
   if (existingIds.includes(node.id)) {
     return [];
   }
@@ -19,7 +18,7 @@ export const getNodeWithDependencies = (
 
   const depsNodesWithDeps = deps
     .flatMap((id) => resolvedDeps[id] ?? [])
-    .reduce<CustomNode[]>((acc, curr) => {
+    .reduce<VisualNode[]>((acc, curr) => {
       return [
         ...acc,
         ...getNodeWithDependencies(curr, resolvedDeps, [

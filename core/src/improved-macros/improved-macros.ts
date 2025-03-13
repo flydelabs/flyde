@@ -6,7 +6,6 @@ import {
   NodeStyle,
   InputMode,
   MacroConfigurableValue,
-  macroConfigurableValue,
   MacroEditorFieldDefinition,
 } from "..";
 import {
@@ -18,6 +17,8 @@ import {
 } from "./improved-macro-utils";
 
 export * from "./improved-macro-utils";
+
+import { macroConfigurableValue } from "../node/macro-node";
 
 export type StaticOrDerived<T, Config> = T | ((config: Config) => T);
 
@@ -256,7 +257,6 @@ export function processImprovedMacro(node: CodeNode): InternalMacroNode<any> {
         node.editorConfig ?? generateConfigEditor(node.defaultConfig),
     };
   } else {
-    // First, identify all group containers
     const groupContainers = Object.entries(node.inputs)
       .filter(([_, input]) => input.group)
       .reduce((acc, [key, input]) => {
@@ -264,7 +264,6 @@ export function processImprovedMacro(node: CodeNode): InternalMacroNode<any> {
         return acc;
       }, {} as Record<string, NonNullable<InputConfig["group"]>>);
 
-    // Only create defaultData for actual input fields, not group containers
     const defaultData = Object.entries(node.inputs)
       .filter(([key]) => !groupContainers[key]) // Filter out group container keys
       .reduce((acc, [key, input]) => {
@@ -277,7 +276,6 @@ export function processImprovedMacro(node: CodeNode): InternalMacroNode<any> {
 
         return acc;
       }, {} as Record<string, any>);
-
     // Build a map of parent groups to their child groups
     const groupHierarchy: Record<string, string[]> = {};
 
@@ -317,12 +315,10 @@ export function processImprovedMacro(node: CodeNode): InternalMacroNode<any> {
       });
     });
 
-    // Create field definitions for all inputs, including groups
     const allFieldDefinitions = Object.keys(node.inputs).map((key) => {
       const input = node.inputs[key];
       const type = input.editorType ?? inferTypeFromInput(input);
 
-      // If no label is provided, use the description or the key
       const label =
         input.label ||
         input.description ||
@@ -330,7 +326,6 @@ export function processImprovedMacro(node: CodeNode): InternalMacroNode<any> {
           .replace(/([A-Z])/g, " $1")
           .replace(/^./, (str) => str.toUpperCase());
 
-      // Only use description for explanatory text if it's different from the label
       const description =
         input.description !== label ? input.description : undefined;
 
@@ -419,13 +414,9 @@ export function processImprovedMacro(node: CodeNode): InternalMacroNode<any> {
       },
       defaultData,
       definitionBuilder: (config) => {
-        console.log("config", config);
-        // Build a map of fields to their group hierarchies
         const fieldToGroupHierarchy: Record<string, string[]> = {};
 
-        // Helper function to build group hierarchy for a field
         function buildGroupHierarchy(fieldKey: string): string[] {
-          // Find all groups that contain this field
           const containingGroups = Object.entries(groupContainers)
             .filter(([_, group]) => group.fields.includes(fieldKey))
             .map(([groupKey, _]) => groupKey);
@@ -434,12 +425,9 @@ export function processImprovedMacro(node: CodeNode): InternalMacroNode<any> {
             return [];
           }
 
-          // For simplicity, we'll use the first containing group
-          // (a field should typically only be in one group)
           const groupKey = containingGroups[0];
           const group = groupContainers[groupKey];
 
-          // Build the hierarchy by starting with the parent groups
           const hierarchy = group.parentGroup
             ? [...buildGroupHierarchy(group.parentGroup), group.parentGroup]
             : [];
@@ -459,7 +447,6 @@ export function processImprovedMacro(node: CodeNode): InternalMacroNode<any> {
 
         return {
           inputs: Object.keys(node.inputs).reduce((acc, key) => {
-            // Skip non-configurable inputs when creating input pins
             if (node.inputs[key]?.typeConfigurable === false) {
               return acc;
             }

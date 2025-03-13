@@ -20,12 +20,13 @@ import {
 } from "./node-pins";
 import { ImportedNode } from "../flow-schema";
 import { MacroNodeDefinition } from "./macro-node";
+import { CodeNode } from "..";
 
-export type NodesCollection = OMap<Node>;
+export type NodesCollection = OMap<Node | CodeNode>;
 
 export type NodesDefCollection = OMap<NodeDefinition>;
 
-export type CustomNodeCollection = OMap<CustomNode>;
+export type CustomNodeCollection = OMap<VisualNode>;
 
 export type NodeState = Map<string, any>;
 
@@ -194,14 +195,12 @@ export interface ResolvedVisualNode extends VisualNode {
   instances: ResolvedNodeInstance[];
 }
 
-export type Node = InternalCodeNode | CustomNode;
+export type Node = InternalCodeNode | VisualNode;
 
 export type ImportableSource = {
   module: string;
   node: ImportedNode;
 };
-
-export type CustomNode = VisualNode;
 
 export type CodeNodeDefinition = Omit<InternalCodeNode, "run"> & {
   /**
@@ -210,7 +209,7 @@ export type CodeNodeDefinition = Omit<InternalCodeNode, "run"> & {
   sourceCode?: string;
 };
 
-export type NodeDefinition = CustomNode | CodeNodeDefinition;
+export type NodeDefinition = VisualNode | CodeNodeDefinition;
 export type NodeOrMacroDefinition = NodeDefinition | MacroNodeDefinition<any>;
 
 export type NodeModuleMetaData = {
@@ -309,7 +308,7 @@ export const getNode = (
   if (!node) {
     throw new Error(`Node with id ${id} not found`);
   }
-  return node;
+  return node as Node;
 };
 
 export const getNodeDef = (

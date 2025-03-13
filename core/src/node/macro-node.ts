@@ -2,6 +2,17 @@ import { InternalCodeNode, CodeNodeDefinition, NodeMetadata } from "./node";
 import type React from "react";
 import { MacroNodeInstance } from "./node-instance";
 
+export function macroConfigurableValue(
+  type: MacroConfigurableValue["type"],
+  value: MacroConfigurableValue["value"]
+): MacroConfigurableValue {
+  return { type, value };
+}
+import {
+  CodeNode,
+  processImprovedMacro,
+} from "../improved-macros/improved-macros";
+
 export type MacroEditorFieldDefinitionType =
   | "string"
   | "number"
@@ -27,13 +38,6 @@ export type MacroConfigurableValue = {
     value: MacroConfigurableValueTypeMap[K];
   };
 }[keyof MacroConfigurableValueTypeMap];
-
-export function macroConfigurableValue(
-  type: MacroConfigurableValue["type"],
-  value: MacroConfigurableValue["value"]
-): MacroConfigurableValue {
-  return { type, value };
-}
 
 export type MacroEditorFieldDefinition =
   | StringFieldDefinition
@@ -131,7 +135,7 @@ export type MacroEditorConfigDefinition =
   | MacroEditorConfigCustomDefinition
   | MacroEditorConfigStructured;
 
-export interface InternalMacroNode<T> extends NodeMetadata {
+export interface InternalMacroNode<T = any> extends NodeMetadata {
   definitionBuilder: (data: T) => Omit<CodeNodeDefinition, "id" | "namespace">;
   runFnBuilder: (data: T) => InternalCodeNode["run"];
   defaultData: T;
@@ -188,11 +192,34 @@ export const isMacroNodeDefinition = (
   }
 };
 
+export function processMacroNode<T = any>(
+  macro: InternalMacroNode<T>,
+  macroData: T,
+  prefix?: string
+) {
+  const metaData = macro.definitionBuilder(macroData);
+  const runFn = macro.runFnBuilder(macroData);
+
+  const id = `${prefix}${macro.id}`;
+  return {
+    ...metaData,
+    defaultStyle: metaData.defaultStyle ?? macro.defaultStyle,
+    displayName: metaData.displayName ?? macro.id,
+    namespace: macro.namespace,
+    id,
+    run: runFn,
+  };
+}
+
 export function processMacroNodeInstance(
   prefix: string,
-  macro: InternalMacroNode<any>,
+  _macro: InternalMacroNode<any> | CodeNode,
   instance: MacroNodeInstance
 ) {
+  const macro = isInternalMacroNode(_macro)
+    ? _macro
+    : processImprovedMacro(_macro);
+
   const metaData = macro.definitionBuilder(instance.macroData);
   const runFn = macro.runFnBuilder(instance.macroData);
 

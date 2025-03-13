@@ -1,9 +1,5 @@
 import { OMap } from "..";
 
-export const INPUT_MODES: InputPinMode[] = ["queue", "sticky", "static"];
-
-export type InputPinMode = "queue" | "sticky" | "static";
-
 export type QueueInputPinConfig = {
   mode: "queue";
 };

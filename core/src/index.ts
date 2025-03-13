@@ -3,9 +3,7 @@ import { Pos, OMap } from "./common";
 import { FlydeFlow } from "./flow-schema";
 import {
   VisualNode,
-  CustomNode,
   InputPinsConfig,
-  Node,
   NodeDefinition,
   NodeOrMacroDefinition,
   MacroNodeDefinition,
@@ -36,13 +34,9 @@ export interface InstanceViewData {
   inputConfig: InputPinsConfig;
 }
 
-export type NodesCollection = OMap<Node>;
-
 export type NodesDefCollection = OMap<NodeDefinition>;
 
 export type MacrosDefCollection = OMap<MacroNodeDefinition<any>>;
-
-export type CustomNodesCollection = OMap<CustomNode>;
 
 export interface NodeLibraryGroup {
   title: string;

@@ -73,6 +73,7 @@ export const connect = (
     completionOutputs: node.completionOutputs,
     reactiveInputs: node.reactiveInputs,
     run: (fnArgs, fnOutputs) => {
+      console.log("connect", fnArgs, fnOutputs);
       let cancelFns: CancelFn[] = [];
 
       const depGraph = new DepGraph({});
@@ -339,6 +340,7 @@ export const connect = (
           const fnArg = fnArgs[key];
 
           if (isDefined(fnArg)) {
+            console.log("input", fnArg);
             input.subject.next(fnArg);
           } else {
             // skipping emitting an undefined value. VERY UNSURE OF THIS, TRIGGER WAS VISUAL MERGE

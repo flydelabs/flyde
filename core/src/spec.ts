@@ -1,4 +1,11 @@
-import { DynamicNodeInput, NodeInstanceError, VisualNode } from ".";
+import {
+  CodeNode,
+  DynamicNodeInput,
+  macroConfigurableValue,
+  macroNodeInstance,
+  NodeInstanceError,
+  VisualNode,
+} from ".";
 import { assert } from "chai";
 
 import { spy } from "sinon";
@@ -92,7 +99,7 @@ describe("main ", () => {
   });
 
   describe("core", () => {
-    it("runs an Id code node properly", () => {
+    it("runs an Id internal code node properly", () => {
       const node: InternalCodeNode = {
         id: "id",
         inputs: {
@@ -121,7 +128,7 @@ describe("main ", () => {
       assert.equal(s.calledOnceWithExactly(2), true);
     });
 
-    it("runs an pure-like Id code node properly", () => {
+    it("runs an pure-like Id internal code node properly", () => {
       const node: InternalCodeNode = {
         id: "id",
         inputs: {
@@ -150,7 +157,7 @@ describe("main ", () => {
       assert.equal(s.calledOnceWithExactly(2), true);
     });
 
-    it("runs an ADD code node properly", () => {
+    it("runs an ADD internal code node properly", () => {
       const innerSpy = spy();
       const node: InternalCodeNode = {
         id: "add",
@@ -1755,7 +1762,7 @@ describe("main ", () => {
   });
 
   describe("node cleanup", () => {
-    it("runs cleanup code after a a node finished running on code node", () => {
+    it("runs cleanup code after a a node finished running on internalcode node", () => {
       const spyFn = spy();
       const node: InternalCodeNode = {
         id: "id",
@@ -1851,7 +1858,7 @@ describe("main ", () => {
   });
 
   describe("node v2 tests", () => {
-    it("queues values - code node", () => {
+    it("queues values - internal code node", () => {
       const [n1, n2] = [
         dynamicNodeInput({
           // config: queueInputPinConfig(),
@@ -2274,7 +2281,7 @@ describe("main ", () => {
       });
 
       describe("implicit completion", () => {
-        describe("code nodes", () => {
+        describe("internal code nodes", () => {
           it("triggers an implicit completion when there are no explicit completion outputs", async () => {
             const node = conciseCodeNode({
               outputs: ["r"],
@@ -2292,7 +2299,7 @@ describe("main ", () => {
             assert.deepEqual(s.lastCall.args[0], { r: "ok" });
           });
 
-          it("waits for promises to resolve before triggering an implicit completion of code node with no explicit completion outputs", async () => {
+          it("waits for promises to resolve before triggering an implicit completion of internal code node with no explicit completion outputs", async () => {
             const node = conciseCodeNode({
               outputs: ["r"],
               run: async (_, o) => {
@@ -3478,6 +3485,59 @@ describe("main ", () => {
 
       assert.equal(s.callCount, timesToCall);
       assert.equal(s.lastCall.args[0], timesToCall);
+    });
+  });
+
+  describe("native support for non internal code nodes", () => {
+    const codeNodeId: CodeNode = {
+      id: "add-num",
+      inputs: {
+        number1: {},
+        number2: {},
+      },
+      outputs: { value: {} },
+      run: (i, o) => {
+        o.value.next(i.number1 + i.number2);
+      },
+    };
+
+    const testVisualNode = (randomNumber: number) =>
+      conciseNode({
+        id: "visual-node",
+        inputs: ["number"],
+        outputs: ["value"],
+        instances: [
+          macroNodeInstance("i1", codeNodeId.id, {
+            number1: macroConfigurableValue("number", randomNumber),
+            number2: macroConfigurableValue("number", randomNumber),
+          }),
+        ],
+        connections: [
+          ["number", "i1.__trigger"],
+          ["i1.value", "value"],
+        ],
+      });
+
+    it("supports executing an external/non-internal instance", () => {
+      const randomNumber = randomInt();
+
+      const input = dynamicNodeInput();
+      const [s, r] = spiedOutput();
+
+      execute({
+        node: testVisualNode(randomNumber),
+        inputs: { number: input },
+        outputs: { value: r },
+        resolvedDeps: testNodesCollectionWith(codeNodeId),
+        onBubbleError: (e) => {
+          console.log("error", e);
+        },
+      });
+
+      input.subject.next(randomNumber);
+
+      assert.equal(s.callCount, 1);
+      assert.equal(s.lastCall.args[0], randomNumber * 2);
     });
   });
 });

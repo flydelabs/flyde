@@ -328,7 +328,7 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
 
       onChangeState(newState, functionalChange("imported-node"));
 
-      return newDeps;
+      return newDeps as any;
     },
     [editorState, flow, onChangeState, resolvedDependencies]
   );

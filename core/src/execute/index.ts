@@ -17,6 +17,9 @@ import {
   NodeState,
   RunNodeFunction,
   NodesCollection,
+  isMacroNodeInstance,
+  processMacroNodeInstance,
+  InternalMacroNode,
 } from "../node";
 
 import { connect, ERROR_PIN_ID } from "../connect";
@@ -42,6 +45,7 @@ import {
 } from "../common";
 import { debugLogger } from "../common/debug-logger";
 import { Debugger, DebuggerEvent, DebuggerEventType } from "./debugger";
+import { isCodeNode, ResolvedMacroNodeInstance } from "@flyde/core";
 
 export type SubjectMap = OMapF<Subject<any>>;
 
@@ -495,7 +499,25 @@ export const execute: ExecuteFn = ({
     mainState[GLOBAL_STATE_NS] = new Map();
   }
 
-  const processedNodes = resolvedDeps;
+  const instances = isVisualNode(node) ? node.instances : [];
+  const processedNodes = instances
+    .filter((instance): instance is ResolvedMacroNodeInstance => {
+      return (
+        isMacroNodeInstance(instance) &&
+        isCodeNode(resolvedDeps[instance.macroId])
+      );
+    })
+    .map((instance) => {
+      const macro = resolvedDeps[
+        instance.macroId
+      ] as unknown as InternalMacroNode;
+
+      return processMacroNodeInstance("", macro, instance);
+    });
+
+  for (const node of processedNodes) {
+    resolvedDeps[node.id] = node;
+  }
 
   const onError = (err: unknown) => {
     // this means "catch the error"
@@ -528,7 +550,7 @@ export const execute: ExecuteFn = ({
     if (isVisualNode(node)) {
       return connect(
         node,
-        processedNodes,
+        resolvedDeps,
         _debugger,
         fullInsIdPath(insId, ancestorsInsIds),
         mainState,
@@ -598,7 +620,7 @@ export const execute: ExecuteFn = ({
     node: processedNode,
     inputs: mediatedInputs,
     outputs: mediatedOutputs,
-    resolvedDeps: processedNodes,
+    resolvedDeps,
     _debugger,
     insId,
     mainState,
@@ -615,6 +637,3 @@ export const execute: ExecuteFn = ({
     cancelFn();
   };
 };
-/*
-start the nodes, connect the inputs to outputs, push the right sources
-*/

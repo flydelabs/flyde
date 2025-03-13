@@ -9,12 +9,13 @@ import {
 import { eventually } from "..";
 import {
   MacroConfigurableValue,
-  macroConfigurableValue,
   nodeOutput,
   dynamicNodeInput,
   MacroEditorConfigStructured,
   evaluateCondition,
 } from "..";
+
+import { macroConfigurableValue } from "../node/macro-node";
 
 describe("ImprovedMacros", () => {
   describe("SimpleMacro with dot notation", () => {
