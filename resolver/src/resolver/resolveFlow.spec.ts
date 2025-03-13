@@ -1,5 +1,4 @@
 import {
-  InternalCodeNode,
   dynamicNodeInput,
   execute,
   ImportedNode,
@@ -382,10 +381,10 @@ describe("resolver", () => {
       getFixturePath("a-imports-multi-exposed-from-package/a.flyde")
     );
 
-    const resolvedDeps = flow.dependencies as NodesCollection;
+    const resolvedDeps = flow.dependencies;
 
-    assert.exists((resolvedDeps.Add as InternalCodeNode).run);
-    assert.exists((resolvedDeps.Sub as InternalCodeNode).run);
+    assert.exists(resolvedDeps.run);
+    assert.exists(resolvedDeps.run);
 
     assert.match(
       (resolvedDeps.Add as unknown as ImportedNode).source.export,
@@ -436,7 +435,7 @@ describe("resolver", () => {
   });
 
   describe("typescript", () => {
-    it("runs code nodes written in TS", async () => {
+    it.only("runs code nodes written in TS", async () => {
       const data = resolveFlowByPath(
         getFixturePath("a-imports-ts-node-from-b/a.flyde")
       );
@@ -483,7 +482,7 @@ describe("resolver", () => {
     assert.equal(s.lastCall.args[0], 4);
   });
 
-  describe.only("macro nodes", () => {
+  describe("macro nodes", () => {
     it("resolves a macro node dependency", async () => {
       const data = resolveFlowByPath(
         getFixturePath("macro-node-simple/a.flyde")

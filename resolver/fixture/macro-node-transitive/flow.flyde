@@ -32,9 +32,9 @@ node:
       type: number
   inputsPosition:
     n:
-      x: -192
-      y: -108
+      x: -203
+      y: -87
   outputsPosition:
     r:
-      x: 200
-      y: -26
+      x: 213
+      y: -79

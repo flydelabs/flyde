@@ -10,7 +10,7 @@ import {
   visualNode,
 } from "../../node";
 import { FlydeFlow } from "../../flow-schema";
-import { connectionData } from "../../connect";
+import { connectionData } from "../../connect/helpers";
 
 const someNode: VisualNode = {
   id: "bob",

@@ -1,9 +1,4 @@
-import {
-  CodeNode,
-  DynamicOutput,
-  MacroConfigurableValue,
-  processImprovedMacro,
-} from "@flyde/core";
+import { CodeNode, DynamicOutput, MacroConfigurableValue } from "@flyde/core";
 
 interface DuplicateConfig {
   times: MacroConfigurableValue;

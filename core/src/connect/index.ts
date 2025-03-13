@@ -27,34 +27,8 @@ import { NodesCollection } from "..";
 
 export * from "./helpers";
 
-export type ConnectionData = {
-  from: ConnectionNode;
-  to: ConnectionNode;
-  delayed?: boolean;
-  hidden?: boolean;
-};
-
-export type ExternalConnectionNode = {
-  insId: typeof THIS_INS_ID;
-  pinId: string;
-};
-
-export type InternalConnectionNode = {
-  insId: string;
-  pinId: string;
-};
-
-export type ConnectionNode = ExternalConnectionNode | InternalConnectionNode;
-
-export type PinList = Array<{ insId: string; pinId: string }>;
-
-type PositionlessVisualNode = Omit<
-  Omit<VisualNode, "inputsPosition">,
-  "outputsPosition"
->;
-
-export const connect = (
-  node: PositionlessVisualNode,
+export const composeExecutableNode = (
+  node: Omit<VisualNode, "inputsPosition" | "outputsPosition">,
   resolvedDeps: NodesCollection,
   _debugger: Debugger = {},
   ancestorsInsIds?: string,
@@ -73,7 +47,7 @@ export const connect = (
     completionOutputs: node.completionOutputs,
     reactiveInputs: node.reactiveInputs,
     run: (fnArgs, fnOutputs) => {
-      console.log("connect", fnArgs, fnOutputs);
+      console.log("composeExecutableNode", fnArgs, fnOutputs);
       let cancelFns: CancelFn[] = [];
 
       const depGraph = new DepGraph({});
@@ -232,7 +206,7 @@ export const connect = (
 
         if (!sourceInstance && fromInstanceId !== THIS_INS_ID) {
           throw new Error(
-            `Instance [${fromInstanceId}] does not exist! failed to connect [${from}] -> [${to}]`
+            `Instance [${fromInstanceId}] does not exist! failed to composeExecutableNode [${from}] -> [${to}]`
           );
         }
 
@@ -260,7 +234,7 @@ export const connect = (
         cancelFns.push(() => sub.unsubscribe());
       });
 
-      // connect the external outputs to the outputs that are left hanging
+      // composeExecutableNode the external outputs to the outputs that are left hanging
       keys(fnOutputs).forEach((key) => {
         const outputs = externalOutputConnections.get(key) || [];
         outputs.forEach((output) => {
@@ -332,7 +306,7 @@ export const connect = (
           cancelFns.push(cancel);
         });
 
-      // connect external args to their hanging inputs and run them
+      // composeExecutableNode external args to their hanging inputs and run them
       Object.keys(fnArgs).forEach(async (key) => {
         const inputs = externalInputConnections.get(key) || [];
 

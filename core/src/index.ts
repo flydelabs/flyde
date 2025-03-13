@@ -9,7 +9,7 @@ import {
   MacroNodeDefinition,
 } from "./node";
 
-export * from "./connect";
+export * from "./connect/helpers";
 export * from "./execute";
 export * from "./simplified-execute";
 export * from "./node";

@@ -2,7 +2,6 @@ import { OMap, OMapF, entries, testDataCreator, noop, Pos } from "../common";
 import { Subject } from "rxjs";
 
 import { CancelFn, InnerExecuteFn } from "../execute";
-import { ConnectionData } from "../connect";
 import {
   isInlineNodeInstance,
   NodeInstance,
@@ -21,6 +20,7 @@ import {
 import { ImportedNode } from "../flow-schema";
 import { MacroNodeDefinition } from "./macro-node";
 import { CodeNode } from "..";
+import { ConnectionData } from "../types/connections";
 
 export type NodesCollection = OMap<Node | CodeNode>;
 

@@ -17,7 +17,7 @@ import {
   nodeOutput,
 } from "./node";
 
-import { connectionNode, externalConnectionNode } from "./connect";
+import { connectionNode, externalConnectionNode } from "./connect/helpers";
 
 import { DebuggerEventType, DebuggerEvent, Debugger } from "./execute/debugger";
 interface ConciseBaseNode extends Omit<BaseNode, "inputs" | "outputs" | "id"> {

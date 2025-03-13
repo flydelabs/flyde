@@ -19,8 +19,7 @@ import {
   connectionNode,
   externalConnectionNode,
   connectionData,
-  connect,
-} from "../connect";
+} from "../connect/helpers";
 import { randomInt, isDefined, keys, eventually } from "../common";
 import { equal } from "assert";
 import {
@@ -41,6 +40,7 @@ import {
 
 import { conciseCodeNode, wrappedOnEvent } from "../test-utils";
 import { DebuggerEventType } from "./debugger";
+import { composeExecutableNode } from "../connect";
 
 describe("execute", () => {
   const totalOptInput: InternalCodeNode = {
@@ -164,7 +164,11 @@ describe("execute", () => {
         outputsPosition: {},
       };
 
-      const node = connect(visualNode, testNodesCollection, {} as any);
+      const node = composeExecutableNode(
+        visualNode,
+        testNodesCollection,
+        {} as any
+      );
       assert.deepEqual(keys(node.outputs), keys(visualNode.outputs));
       assert.deepEqual(keys(node.inputs), keys(visualNode.inputs));
     });
@@ -183,7 +187,11 @@ describe("execute", () => {
         outputsPosition: {},
       };
 
-      const node = connect(visualNode, testNodesCollection, {} as any);
+      const node = composeExecutableNode(
+        visualNode,
+        testNodesCollection,
+        {} as any
+      );
       assert.equal(node.inputs["a"]?.mode, "optional");
       assert.equal(node.inputs["b"]?.mode, "required");
     });

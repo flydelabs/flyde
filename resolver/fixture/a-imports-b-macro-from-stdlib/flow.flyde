@@ -4,16 +4,22 @@ imports:
 node:
   instances:
     - pos:
-        x: -11.30609130859375
-        y: -3.8911108398437477
+        x: -158.30609130859375
+        y: 56.10888916015625
       id: zue8ekkmpkisgom61s2i3yqs
       inputConfig: {}
       nodeId: InlineValue__zue8ekkmpkisgom61s2i3yqs
       macroId: InlineValue
       macroData:
-        type: string
-        value: Hello
-        label: '"Hello"'
+        type:
+          type: string
+          value: string
+        value:
+          type: string
+          value: Hello
+        label:
+          type: string
+          value: '"Hello"'
   connections:
     - from:
         insId: __this
@@ -37,9 +43,9 @@ node:
       type: number
   inputsPosition:
     n:
-      x: 26.400238037109375
-      y: -66.00590515136719
+      x: -334.5997619628906
+      y: 55.99409484863281
   outputsPosition:
     r:
-      x: 27.59765625
-      y: 110.82328796386719
+      x: 105.59765625
+      y: 55.82328796386719

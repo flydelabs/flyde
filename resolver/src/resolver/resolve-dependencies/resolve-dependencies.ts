@@ -5,7 +5,6 @@ import {
   FlydeFlow,
   ResolvedFlydeFlow,
   isCodeNode,
-  InternalCodeNode,
   ImportedNodeDef,
   isInternalMacroNode,
   ResolvedVisualNode,
@@ -13,11 +12,8 @@ import {
   isVisualNode,
   ResolvedFlydeFlowDefinition,
   ResolvedMacroNodeInstance,
-  MacroNodeDefinition,
   isMacroNodeInstance,
-  isBaseNode,
   processMacroNodeInstance,
-  isAdvancedMacroNode,
   processImprovedMacro,
   CodeNode,
 } from "@flyde/core";
@@ -32,9 +28,9 @@ import * as _StdLib from "@flyde/stdlib/dist/all";
 import requireReload from "require-reload";
 import { macroNodeToDefinition } from "./macro-node-to-definition";
 
-const StdLib = Object.values(_StdLib).reduce<Record<string, any>>(
+const LocalStdLib = Object.values(_StdLib).reduce<Record<string, CodeNode>>(
   (acc, curr) => {
-    if (isBaseNode(curr) || isInternalMacroNode(curr)) {
+    if (isCodeNode(curr)) {
       return { ...acc, [curr.id]: curr };
     } else {
       return acc;
@@ -189,9 +185,9 @@ export function resolveFlow(
         }
 
         if (!found) {
-          if (importPath === "@flyde/stdlib" && StdLib[nodeId]) {
+          if (importPath === "@flyde/stdlib" && LocalStdLib[nodeId]) {
             gatheredDependencies[nodeId] = {
-              ...StdLib[nodeId],
+              ...LocalStdLib[nodeId],
               source: {
                 path: importPath,
                 export: nodeId,
@@ -276,14 +272,10 @@ export function resolveFlow(
         }
 
         if (!found) {
-          if (importPath === "@flyde/stdlib" && StdLib[macroId]) {
-            let targetMacroNode = StdLib[macroId];
+          if (importPath === "@flyde/stdlib" && LocalStdLib[macroId]) {
+            let targetMacroNode = LocalStdLib[macroId];
 
-            if (isCodeNode(targetMacroNode)) {
-              targetMacroNode = processImprovedMacro(targetMacroNode);
-            }
-
-            if (!isInternalMacroNode(targetMacroNode)) {
+            if (!isCodeNode(targetMacroNode)) {
               throw new Error(
                 `Found node ${macroId} in ${importPath}, but it is not a macro node`
               );

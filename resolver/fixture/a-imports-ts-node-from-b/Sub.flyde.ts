@@ -1,6 +1,6 @@
-import { InternalCodeNode, nodeOutput } from "@flyde/core";
+import { CodeNode, nodeOutput } from "@flyde/core";
 
-const node: InternalCodeNode = {
+const node: CodeNode = {
   id: "Sub",
   inputs: {
     a: { mode: "required" },

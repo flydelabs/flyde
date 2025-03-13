@@ -1,4 +1,4 @@
-import { connect, connectionNode } from ".";
+import { composeExecutableNode, connectionNode } from ".";
 
 import { Subject } from "rxjs";
 
@@ -17,11 +17,11 @@ import { runAddTests } from "../node/add-tests";
 import { add, optAdd, testNodesCollection } from "../fixture";
 import { connectionData } from "./helpers";
 
-describe("connect", () => {
+describe("composeExecutableNode", () => {
   describe("optional inputs", () => {
     it("allows not renaming an optional pin that is connected", () => {
       assert.doesNotThrow(() => {
-        connect(
+        composeExecutableNode(
           {
             id: "bob",
             instances: [nodeInstance("a", optAdd.id)],
@@ -35,7 +35,7 @@ describe("connect", () => {
     });
 
     it("runs properly when optional arg is not passed", () => {
-      const node = connect(
+      const node = composeExecutableNode(
         {
           id: "bob",
           instances: [nodeInstance("a", optAdd.id)],
@@ -69,7 +69,7 @@ describe("connect", () => {
     });
 
     it("waits for optional input if passed", () => {
-      const node = connect(
+      const node = composeExecutableNode(
         {
           id: "bob",
           instances: [nodeInstance("a", optAdd.id)],
@@ -120,7 +120,7 @@ describe("connect", () => {
         },
       };
 
-      const node = connect(
+      const node = composeExecutableNode(
         {
           id: "bob",
           instances: [
@@ -167,7 +167,7 @@ describe("connect", () => {
   });
 
   describe("passes normal node specs when connected with no other pieces", () => {
-    const node = connect(
+    const node = composeExecutableNode(
       {
         id: "bob",
         instances: [nodeInstance("a", add.id)],
@@ -187,6 +187,6 @@ describe("connect", () => {
       testNodesCollection
     );
 
-    runAddTests(node, "connect", testNodesCollection);
+    runAddTests(node, "composeExecutableNode", testNodesCollection);
   });
 });

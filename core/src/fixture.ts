@@ -9,7 +9,7 @@ import {
   dynamicNodeInput,
   queueInputPinConfig,
 } from "./node";
-import { externalConnectionNode, connectionNode } from "./connect";
+import { externalConnectionNode, connectionNode } from "./connect/helpers";
 import { execute, SubjectMap } from "./execute";
 
 import { isDefined, keys } from "./common";

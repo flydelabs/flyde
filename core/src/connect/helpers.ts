@@ -1,10 +1,10 @@
+import { NodeDefinition, nodeInput, nodeOutput } from "../node";
 import {
+  ConnectionData,
   ConnectionNode,
   ExternalConnectionNode,
   InternalConnectionNode,
-  ConnectionData,
-} from ".";
-import { NodeDefinition, nodeInput, nodeOutput } from "../node";
+} from "../types/connections";
 
 export const THIS_INS_ID = "__this";
 export const ERROR_PIN_ID = "__error";

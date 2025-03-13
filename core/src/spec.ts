@@ -1,11 +1,13 @@
 import {
   CodeNode,
   DynamicNodeInput,
-  macroConfigurableValue,
   macroNodeInstance,
   NodeInstanceError,
   VisualNode,
 } from ".";
+
+import { macroConfigurableValue } from "./node/macro-node";
+
 import { assert } from "chai";
 
 import { spy } from "sinon";
@@ -24,7 +26,7 @@ import {
   shuffle,
 } from "./common";
 import {
-  connect,
+  composeExecutableNode,
   connectionNode,
   externalConnectionNode,
   connection,
@@ -240,7 +242,7 @@ describe("main ", () => {
         },
       };
 
-      const node = connect(add1mul2twice, testNodesCollection);
+      const node = composeExecutableNode(add1mul2twice, testNodesCollection);
 
       const fn = spy();
       const n = dynamicNodeInput();
@@ -308,7 +310,7 @@ describe("main ", () => {
 
     describe("optional inputs", () => {
       it("runs nodes with optional pins that were left unconnected", () => {
-        const node = connect(
+        const node = composeExecutableNode(
           {
             id: "bob",
             instances: [nodeInstance("a", optAdd.id)],
@@ -341,7 +343,7 @@ describe("main ", () => {
       });
 
       it("runs nodes with optional pins that were connected", () => {
-        const node = connect(
+        const node = composeExecutableNode(
           {
             id: "bob",
             instances: [nodeInstance("a", optAdd.id)],
@@ -386,7 +388,7 @@ describe("main ", () => {
         // eventually I solved it by making sure that the constant for n2 is called first.
         // Not ideal at all!
         const resolvedDeps = testNodesCollectionWith(Value(42), Value(5));
-        const node = connect(
+        const node = composeExecutableNode(
           {
             id: "bob",
             instances: [
@@ -420,9 +422,9 @@ describe("main ", () => {
       });
     });
 
-    describe("connect", () => {
+    describe("composeExecutableNode", () => {
       it("runs pieces in an isolate environment for each execution", () => {
-        const p1 = connect(
+        const p1 = composeExecutableNode(
           {
             id: "test",
             instances: [nodeInstance("a", add1.id)],
@@ -498,7 +500,7 @@ describe("main ", () => {
 
         const fn = spy();
 
-        const node = connect(add1mul2, testNodesCollection, {});
+        const node = composeExecutableNode(add1mul2, testNodesCollection, {});
 
         const n = dynamicNodeInput();
         const r = new Subject();
@@ -529,7 +531,7 @@ describe("main ", () => {
       it("connects one-off inputs properly", () => {
         const n = randomInt(99);
         const resolvedDeps = testNodesCollectionWith(Value(n));
-        const node = connect(
+        const node = composeExecutableNode(
           {
             id: "test",
             instances: [
@@ -567,7 +569,7 @@ describe("main ", () => {
       it("connects the same output to 2 inputs", () => {
         const n = randomInt(99);
         const resolvedDeps = testNodesCollectionWith(Value(n));
-        const node = connect(
+        const node = composeExecutableNode(
           {
             id: "test",
             instances: [
@@ -617,7 +619,7 @@ describe("main ", () => {
         ];
 
         for (let i = 0; i < 10; i++) {
-          const node = connect(
+          const node = composeExecutableNode(
             {
               id: "test",
               instances: shuffle(instances),
@@ -660,7 +662,7 @@ describe("main ", () => {
         ];
 
         for (let i = 0; i < 10; i++) {
-          const node = connect(
+          const node = composeExecutableNode(
             {
               id: "test",
               instances: shuffle(instances),
@@ -734,7 +736,7 @@ describe("main ", () => {
     });
 
     it("supports external outputs on connected nodes", () => {
-      const p = connect(
+      const p = composeExecutableNode(
         {
           id: "test",
           instances: [nodeInstance("a", add1.id)],
@@ -798,9 +800,9 @@ describe("main ", () => {
       assert.equal(res.callCount, 1);
     });
 
-    it("supports constant values on connect", () => {
+    it("supports constant values on composeExecutableNode", () => {
       const resolvedDeps = testNodesCollectionWith(Value(7));
-      const node = connect(
+      const node = composeExecutableNode(
         {
           id: "test",
           instances: [
@@ -843,7 +845,7 @@ describe("main ", () => {
     it("supports static values on raw", () => {
       const resolvedDeps = testNodesCollectionWith(Value(7));
 
-      const node = connect(
+      const node = composeExecutableNode(
         {
           id: "test",
           instances: [
@@ -920,7 +922,7 @@ describe("main ", () => {
 
         const resolvedDeps = testNodesCollectionWith(ids);
 
-        const node = connect(
+        const node = composeExecutableNode(
           {
             id: "bob",
             instances: [nodeInstance("a", ids.id), nodeInstance("b", ids.id)],

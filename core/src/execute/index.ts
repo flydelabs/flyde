@@ -22,7 +22,7 @@ import {
   InternalMacroNode,
 } from "../node";
 
-import { connect, ERROR_PIN_ID } from "../connect";
+import { composeExecutableNode, ERROR_PIN_ID } from "../connect";
 
 import {
   hasNewSignificantValues,
@@ -548,7 +548,7 @@ export const execute: ExecuteFn = ({
 
   const processNode = (node: Node): InternalCodeNode => {
     if (isVisualNode(node)) {
-      return connect(
+      return composeExecutableNode(
         node,
         resolvedDeps,
         _debugger,
