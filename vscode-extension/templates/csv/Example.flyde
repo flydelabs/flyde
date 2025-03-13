@@ -6,7 +6,6 @@ imports:
     - Loop List
     - Get List Element
     - Sum List
-    - Parse Int
     - InlineValue
     - Conditional
     - CodeExpression
@@ -210,12 +209,6 @@ node:
                 mode: sticky
             nodeId: Get List Element
           - pos:
-              x: -230.44541137695307
-              y: 607.3148419189453
-            id: Get Prices By Continent-cs0461a
-            inputConfig: {}
-            nodeId: Parse Int
-          - pos:
               x: -227.98379150390628
               y: 336.4735145161737
             id: xiusd3g6bhi8nw3h50gvkz7q
@@ -279,12 +272,6 @@ node:
               insId: clfutxtvk00174668slofeqax
               pinId: list
           - from:
-              insId: clfuu1kkq0024466856fkuiyi
-              pinId: element
-            to:
-              insId: Get Prices By Continent-cs0461a
-              pinId: str
-          - from:
               insId: xiusd3g6bhi8nw3h50gvkz7q
               pinId: "true"
             to:
@@ -296,12 +283,6 @@ node:
             to:
               insId: clfuu1kkq0024466856fkuiyi
               pinId: index
-          - from:
-              insId: Get Prices By Continent-cs0461a
-              pinId: int
-            to:
-              insId: pwusa11s2p7eyz100p4ilpwx
-              pinId: value
           - from:
               insId: pwusa11s2p7eyz100p4ilpwx
               pinId: list

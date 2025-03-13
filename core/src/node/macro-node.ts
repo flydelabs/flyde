@@ -192,25 +192,6 @@ export const isMacroNodeDefinition = (
   }
 };
 
-export function processMacroNode<T = any>(
-  macro: InternalMacroNode<T>,
-  macroData: T,
-  prefix?: string
-) {
-  const metaData = macro.definitionBuilder(macroData);
-  const runFn = macro.runFnBuilder(macroData);
-
-  const id = `${prefix}${macro.id}`;
-  return {
-    ...metaData,
-    defaultStyle: metaData.defaultStyle ?? macro.defaultStyle,
-    displayName: metaData.displayName ?? macro.id,
-    namespace: macro.namespace,
-    id,
-    run: runFn,
-  };
-}
-
 export function processMacroNodeInstance(
   prefix: string,
   _macro: InternalMacroNode<any> | CodeNode,
@@ -227,6 +208,7 @@ export function processMacroNodeInstance(
 
   const resolvedNode: InternalCodeNode = {
     ...metaData,
+    // defaultStyle: metaData.defaultStyle ?? macro.defaultStyle,
     defaultStyle: metaData.defaultStyle ?? macro.defaultStyle,
     displayName: metaData.displayName ?? macro.id,
     namespace: macro.namespace,

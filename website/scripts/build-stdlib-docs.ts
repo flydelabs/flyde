@@ -15,7 +15,6 @@ const groupedData = Object.values(data).reduce((acc, node) => {
 
   if (!node.inputs || !node.outputs) {
     console.error({ node });
-    throw new Error("42424");
   }
 
   acc[ns].push(node);
@@ -29,8 +28,8 @@ const groupAndTables = entries.map(([ns, nodes]) => {
     ["Id", "Description", "Inputs", "Outputs"],
     ...nodes.map((node) => {
       if (!node.inputs || !node.outputs) {
-        console.error({ node });
-        throw new Error("Node is missing inputs or outputs");
+        console.warn("Node is missing inputs or outputs", { node });
+        return [];
       }
 
       return [

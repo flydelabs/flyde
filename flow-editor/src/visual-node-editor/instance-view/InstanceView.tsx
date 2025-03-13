@@ -612,11 +612,12 @@ export const InstanceView: React.FC<InstanceViewProps> =
       if (inlineGroupProps) {
         return (
           <Dialog open={true} onOpenChange={() => props.onCloseInlineEditor()}>
-            <DialogContent className="inline-group-editor-container no-drag">
+            <DialogContent className="inline-group-editor-container no-drag w-[85vw] h-[85vh] flex">
               <DialogHeader>
                 <DialogTitle>Editing inline node {content}</DialogTitle>
               </DialogHeader>
-              <div className="p-4" tabIndex={0}>
+
+              <div className="p-4 flex-1 flex" tabIndex={0}>
                 <VisualNodeEditorProvider
                   boardData={inlineGroupProps.boardData}
                   onChangeBoardData={inlineGroupProps.onChangeBoardData}
@@ -625,7 +626,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
                 >
                   <VisualNodeEditor
                     {...props.inlineGroupProps}
-                    className="no-drag"
+                    className="no-drag flex-1"
                     ref={inlineEditorRef}
                   />
                 </VisualNodeEditorProvider>

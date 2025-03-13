@@ -11,6 +11,7 @@ import {
   isCodeNode,
   CodeNode,
   processImprovedMacro,
+  ResolvedDependenciesDefinitions,
 } from "@flyde/core";
 import {
   FlowEditorState,
@@ -136,7 +137,8 @@ export function EmbeddedFlyde(props: EmbeddedFlydeProps) {
 
   const depsContextValue = useMemo<DependenciesContextData>(() => {
     return {
-      resolvedDependencies,
+      resolvedDependencies:
+        resolvedDependencies as ResolvedDependenciesDefinitions,
       onImportNode: noop as any,
       onRequestImportables,
       onRequestSiblingNodes: () => Promise.resolve([]),

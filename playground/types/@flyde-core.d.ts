@@ -1033,24 +1033,6 @@ declare module '@flyde/core/node/macro-node' {
     }
     export const isInternalMacroNode: (p: any) => p is InternalMacroNode<any>;
     export const isMacroNodeDefinition: (p: any) => p is MacroNodeDefinition<any>;
-    export function processMacroNode<T = any>(macro: InternalMacroNode<T>, macroData: T, prefix?: string): {
-            defaultStyle: import("./node").NodeStyle;
-            displayName: string;
-            namespace: string;
-            id: string;
-            run: import("./node").RunNodeFunction;
-            description?: string;
-            fn?: import("./node").RunNodeFunction;
-            inputs: Record<string, import("./node-pins").InputPin>;
-            outputs: Record<string, import("./node-pins").OutputPin>;
-            completionOutputs?: string[];
-            reactiveInputs?: string[];
-            menuDisplayName?: string;
-            aliases?: string[];
-            icon?: string;
-            overrideNodeBodyHtml?: string;
-            sourceCode?: string;
-    };
     export function processMacroNodeInstance(prefix: string, _macro: InternalMacroNode<any> | CodeNode, instance: MacroNodeInstance): InternalCodeNode;
     export interface GroupFieldDefinition extends BaseFieldDefinition {
             type: "group";
