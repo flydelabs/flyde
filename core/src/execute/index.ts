@@ -20,6 +20,7 @@ import {
   isMacroNodeInstance,
   processMacroNodeInstance,
   InternalMacroNode,
+  ResolvedMacroNodeInstance,
 } from "../node";
 
 import { composeExecutableNode, ERROR_PIN_ID } from "../connect";
@@ -44,8 +45,8 @@ import {
   OMapF,
 } from "../common";
 import { debugLogger } from "../common/debug-logger";
+import { isCodeNode } from "../improved-macros/improved-macros";
 import { Debugger, DebuggerEvent, DebuggerEventType } from "./debugger";
-import { isCodeNode, ResolvedMacroNodeInstance } from "@flyde/core";
 
 export type SubjectMap = OMapF<Subject<any>>;
 
