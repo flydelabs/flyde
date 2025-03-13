@@ -1,43 +1,57 @@
 imports:
   "@acme/add1-add2":
-  - Add1
-  - Add2
+    - Add1
+    - Add2
 node:
+  instances:
+    - pos:
+        x: 36
+        y: -12
+      id: ins1
+      inputConfig: {}
+      nodeId: Add1__ins1
+      macroId: Add1
+      macroData: {}
+    - pos:
+        x: -57
+        y: 105
+      id: ins2
+      inputConfig: {}
+      nodeId: Add2__ins2
+      macroId: Add2
+      macroData: {}
+  connections:
+    - from:
+        insId: ins1
+        pinId: r
+      to:
+        insId: __this
+        pinId: r
+    - from:
+        insId: ins2
+        pinId: r
+      to:
+        insId: ins1
+        pinId: n
+    - from:
+        insId: __this
+        pinId: n
+      to:
+        insId: ins2
+        pinId: n
   id: Bob
   inputs:
     n:
-      type: number
       mode: required
+      type: number
   outputs:
     r:
       type: number
-  instances:
-    - nodeId: Add1
-      id: ins1
-      pos: 
-        x: 0
-        y: 0
-    - nodeId: Add2
-      id: ins2
-      pos: 
-        x: 0
-        y: 0
-  connections:
-    - from:
-        insId: __this
-        pinId: n
-      to:
-        insId: ins1
-        pinId: n
-    - from:
-        insId: ins1
-        pinId: r
-      to:
-        insId: ins2
-        pinId: n
-    - from:
-        insId: ins2
-        pinId: r
-      to:
-        insId: __this
-        pinId: r
+  inputsPosition:
+    n:
+      x: -232
+      y: 89
+  outputsPosition:
+    r:
+      x: 333
+      y: 46

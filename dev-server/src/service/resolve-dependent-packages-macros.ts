@@ -9,7 +9,6 @@ import {
 import {
   deserializeFlow,
   isCodeNodePath,
-  macroNodeToDefinition,
   resolveCodeNodeDependencies,
   resolveImportablePaths,
 } from "@flyde/resolver";
@@ -30,7 +29,7 @@ export async function resolveDependentPackagesMacros(
                 let node = processImprovedMacro(_node);
                 return {
                   ...obj,
-                  [node.id]: macroNodeToDefinition(node, filePath),
+                  [node.id]: node,
                 };
                 // return obj;
               },

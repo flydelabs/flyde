@@ -5,21 +5,25 @@ imports:
 node:
   instances:
     - pos:
-        x: -99.17202758789062
-        y: -137.81661987304688
+        x: -100.17202758789062
+        y: -145.81661987304688
       id: ins1
       inputConfig:
         b:
           mode: queue
-      nodeId: Add
+      nodeId: Add__ins1
+      macroId: Add
+      macroData: {}
     - pos:
-        x: -115.8931884765625
-        y: -7.3731231689453125
+        x: 87.1068115234375
+        y: -43.37312316894531
       id: ins2
       inputConfig:
         b:
           mode: queue
-      nodeId: Sub
+      nodeId: Sub__ins2
+      macroId: Sub
+      macroData: {}
   connections:
     - from:
         insId: __this
@@ -49,8 +53,8 @@ node:
       type: number
   inputsPosition:
     n:
-      x: -122.78512573242188
-      y: -222.96578979492188
+      x: -274.7851257324219
+      y: -175.96578979492188
   outputsPosition:
     r:
       x: -102.49996948242188

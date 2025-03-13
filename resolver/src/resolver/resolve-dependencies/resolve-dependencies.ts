@@ -16,6 +16,7 @@ import {
   processMacroNodeInstance,
   processImprovedMacro,
   CodeNode,
+  isAdvancedMacroNode,
 } from "@flyde/core";
 import { existsSync, readFileSync } from "fs";
 import _ = require("lodash");
@@ -26,7 +27,6 @@ import { namespaceFlowImports } from "./namespace-flow-imports";
 
 import * as _StdLib from "@flyde/stdlib/dist/all";
 import requireReload from "require-reload";
-import { macroNodeToDefinition } from "./macro-node-to-definition";
 
 const LocalStdLib = Object.values(_StdLib).reduce<Record<string, CodeNode>>(
   (acc, curr) => {
@@ -215,43 +215,43 @@ export function resolveFlow(
         // Look for the referenced node in each possible file it might be in
         for (const importPath of paths) {
           if (isCodeNodePath(importPath)) {
-            const { errors, nodes } = resolveMacroNodesDependencies(importPath);
+            const { errors, nodes } = resolveCodeNodeDependencies(importPath);
 
-            const targetMacro = nodes.find(({ node }) => node.id === macroId);
+            const targetNode = nodes.find(({ node }) => node.id === macroId);
 
-            if (targetMacro) {
-              if (!isInternalMacroNode(targetMacro.node)) {
+            if (targetNode) {
+              if (!isCodeNode(targetNode.node)) {
                 console.warn(
                   `Found node ${macroId} in ${importPath}, but it is not a macro node`
                 );
                 continue;
               }
 
-              const macroDef = macroNodeToDefinition(
-                targetMacro.node,
-                importPath
-              );
+              // const macroDef = macroNodeToDefinition(
+              //   targetNode.node,
+              //   importPath
+              // );
 
-              gatheredDependencies[macroDef.id] = {
-                ...macroDef,
+              gatheredDependencies[targetNode.node.id] = {
+                ...targetNode.node,
                 source: {
                   path: importPath,
-                  export: targetMacro.exportName,
+                  export: targetNode.exportName,
                 },
               };
 
               const resolvedNode = processMacroNodeInstance(
                 namespace,
-                targetMacro.node,
+                targetNode.node,
                 instance
               );
 
               gatheredDependencies[resolvedNode.id] = {
                 ...resolvedNode,
-                sourceCode: (targetMacro.node as any).sourceCode,
+                sourceCode: (targetNode.node as any).sourceCode,
                 source: {
                   path: importPath,
-                  export: targetMacro.exportName,
+                  export: targetNode.exportName,
                 },
               };
 
@@ -273,67 +273,53 @@ export function resolveFlow(
 
         if (!found) {
           if (importPath === "@flyde/stdlib" && LocalStdLib[macroId]) {
-            let targetMacroNode = LocalStdLib[macroId];
+            let targetCodeNode = LocalStdLib[macroId];
 
-            if (!isCodeNode(targetMacroNode)) {
+            if (!isCodeNode(targetCodeNode)) {
               throw new Error(
                 `Found node ${macroId} in ${importPath}, but it is not a macro node`
               );
             }
 
-            const macroDef = macroNodeToDefinition(targetMacroNode, importPath);
+            // const macroDef = macroNodeToDefinition(targetCodeNode, importPath);
 
-            const hardcodedStdLibLocation = require.resolve(
-              "@flyde/stdlib/dist/all-browser"
-            );
+            // const hardcodedStdLibLocation = require.resolve(
+            //   "@flyde/stdlib/dist/all-browser"
+            // );
 
-            if (targetMacroNode.editorConfig.type === "custom") {
-              const bundleFileName =
-                targetMacroNode.editorConfig.editorComponentBundlePath
-                  .split("/")
-                  .pop()!;
-              const bundlePath = join(
-                hardcodedStdLibLocation,
-                "../ui",
-                bundleFileName
-              );
+            // if (targetCodeNode.editorConfig.type === "custom") {
+            //   const bundleFileName =
+            //     targetCodeNode.editorConfig.editorComponentBundlePath
+            //       .split("/")
+            //       .pop()!;
+            //   const bundlePath = join(
+            //     hardcodedStdLibLocation,
+            //     "../ui",
+            //     bundleFileName
+            //   );
 
-              macroDef.editorConfig = {
-                type: "custom",
-                editorComponentBundleContent: readFileSync(bundlePath, "utf-8"),
-              };
-            }
+            //   macroDef.editorConfig = {
+            //     type: "custom",
+            //     editorComponentBundleContent: readFileSync(bundlePath, "utf-8"),
+            //   };
+            // }
 
             /*
               mega hack to read the content's of the bundled node when using built-in stdlib
               TODO - once real-world macro nodes are implemented, this should be rethought of
             */
 
-            gatheredDependencies[macroDef.id] = {
-              ...macroDef,
+            console.log("targetCodeNode", targetCodeNode.id);
+            gatheredDependencies[targetCodeNode.id] = {
+              ...targetCodeNode,
               source: {
                 path: importPath,
-                export: targetMacroNode.id,
-              },
-            };
-
-            const resolvedNode = processMacroNodeInstance(
-              namespace,
-              targetMacroNode,
-              instance
-            );
-
-            gatheredDependencies[resolvedNode.id] = {
-              ...resolvedNode,
-              sourceCode: (targetMacroNode as any).sourceCode,
-              source: {
-                path: importPath,
-                export: targetMacroNode.id,
+                export: targetCodeNode.id,
               },
             };
           } else {
             throw new Error(
-              `Could not find macro node ${macroId} in ${importPath}. It is imported by ${node.id} (${fullFlowPath})`
+              `Could not find ${macroId} in ${importPath} or the stdlib`
             );
           }
         }
@@ -343,6 +329,8 @@ export function resolveFlow(
         );
       }
     }
+
+    console.log("gatheredDependencies", gatheredDependencies);
 
     return {
       resolvedNode: visualNode as ResolvedVisualNode,
@@ -418,53 +406,6 @@ export function resolveCodeNodeDependencies(path: string): {
           });
         } else if (isInternalMacroNode(value)) {
           nodes.push({ exportName: key, node: value });
-        }
-      });
-    }
-  } catch (e) {
-    errors.push(`Error loading module "${path}": ${e.message}`);
-  }
-  return { errors, nodes };
-}
-
-function resolveMacroNodesDependencies(path: string): {
-  errors: string[];
-  nodes: { exportName: string; node: InternalMacroNode<any> }[];
-} {
-  const errors = [];
-  const nodes = [];
-
-  try {
-    let module = requireReload(path);
-    // Try to find TypeScript source if it's a JS file in dist
-    const sourceCode =
-      findTypeScriptSource(path) || readFileSync(path, "utf-8");
-
-    if (isCodeNode(module)) {
-      module = processImprovedMacro(module);
-    }
-
-    if (isInternalMacroNode(module)) {
-      nodes.push({
-        exportName: "default",
-        node: {
-          ...module,
-          sourceCode,
-        },
-      });
-    } else if (typeof module === "object") {
-      Object.entries(module).forEach(([key, value]) => {
-        if (isCodeNode(value)) {
-          value = processImprovedMacro(value);
-        }
-        if (isInternalMacroNode(value)) {
-          nodes.push({
-            exportName: key,
-            node: {
-              ...value,
-              sourceCode,
-            },
-          });
         }
       });
     }

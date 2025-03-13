@@ -66,6 +66,9 @@ describe("resolver", () => {
       resolvedDeps: resolvedDeps,
       inputs: { n },
       outputs: { r },
+      onBubbleError: (e) => {
+        console.log("error", e);
+      },
     });
 
     n.subject.next(2);
@@ -310,11 +313,16 @@ describe("resolver", () => {
 
     const [s, r] = spiedOutput();
     const n = dynamicNodeInput();
+
+    console.log("resolvedDeps", resolvedDeps);
     execute({
       node: flow.main,
       resolvedDeps: resolvedDeps,
       inputs: { n },
       outputs: { r },
+      onBubbleError: (e) => {
+        console.log("error", e);
+      },
     });
 
     n.subject.next(2);
@@ -383,8 +391,8 @@ describe("resolver", () => {
 
     const resolvedDeps = flow.dependencies;
 
-    assert.exists(resolvedDeps.run);
-    assert.exists(resolvedDeps.run);
+    assert.exists(resolvedDeps.Add);
+    assert.exists(resolvedDeps.Sub);
 
     assert.match(
       (resolvedDeps.Add as unknown as ImportedNode).source.export,
@@ -400,7 +408,7 @@ describe("resolver", () => {
     const n = dynamicNodeInput();
     execute({
       node: flow.main,
-      resolvedDeps: resolvedDeps,
+      resolvedDeps: resolvedDeps as NodesCollection,
       inputs: { n },
       outputs: { r },
     });
@@ -435,7 +443,7 @@ describe("resolver", () => {
   });
 
   describe("typescript", () => {
-    it.only("runs code nodes written in TS", async () => {
+    it("runs code nodes written in TS", async () => {
       const data = resolveFlowByPath(
         getFixturePath("a-imports-ts-node-from-b/a.flyde")
       );
@@ -475,6 +483,9 @@ describe("resolver", () => {
       resolvedDeps: resolvedDeps,
       inputs: { n },
       outputs: { r },
+      onBubbleError: (e) => {
+        console.log("error", e);
+      },
     });
 
     n.subject.next(2);
@@ -488,6 +499,8 @@ describe("resolver", () => {
         getFixturePath("macro-node-simple/a.flyde")
       );
       const node = data.main;
+
+      console.log("node", data.dependencies.Duplicate);
       const resolvedDeps = data.dependencies as NodesCollection;
 
       const [s, r] = spiedOutput();
@@ -499,6 +512,9 @@ describe("resolver", () => {
         resolvedDeps: resolvedDeps,
         inputs: { n },
         outputs: { r },
+        onBubbleError: (e) => {
+          console.log("error", e);
+        },
       });
 
       n.subject.next(2);
