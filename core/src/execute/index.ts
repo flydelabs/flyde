@@ -45,7 +45,7 @@ import {
   OMapF,
 } from "../common";
 import { debugLogger } from "../common/debug-logger";
-import { CodeNode, isCodeNode } from "../improved-macros/improved-macros";
+import { isCodeNode } from "../improved-macros/improved-macros";
 import { Debugger, DebuggerEvent, DebuggerEventType } from "./debugger";
 
 export type SubjectMap = OMapF<Subject<any>>;
