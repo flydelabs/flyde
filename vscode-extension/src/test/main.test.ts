@@ -40,31 +40,24 @@ suite("Extension Test Suite", () => {
       throw new Error("Temporary directory already exists");
     }
   });
-  test
-    .only("Loads test flow and renders instance views", async () => {
-      const testFile = vscode.Uri.file(
-        path.resolve(tmpDir, "HelloWorld.flyde")
-      );
+  test("Loads test flow and renders instance views", async () => {
+    const testFile = vscode.Uri.file(path.resolve(tmpDir, "HelloWorld.flyde"));
 
-      await vscode.commands.executeCommand(
-        "vscode.openWith",
-        testFile,
-        "flydeEditor"
-      );
+    await vscode.commands.executeCommand(
+      "vscode.openWith",
+      testFile,
+      "flydeEditor"
+    );
 
-      await delay(100000);
-      const instances = await webviewTestingCommand("$$", {
-        selector: ".ins-view",
-      });
+    const instances = await webviewTestingCommand("$$", {
+      selector: ".ins-view",
+    });
 
-      assert(
-        instances.length === 4,
-        `Expected fixture flow to have 4 instances. Got ${instances.length} instances`
-      );
-      // }, 4000);
-    })
-    .timeout(100000)
-    .retries(3);
+    assert(
+      instances.length === 4,
+      `Expected fixture flow to have 4 instances. Got ${instances.length} instances`
+    );
+  }).retries(3);
 
   test("Renders add nodes menu", async () => {
     const testFile = vscode.Uri.file(
