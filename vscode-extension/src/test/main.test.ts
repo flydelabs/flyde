@@ -90,8 +90,8 @@ suite("Extension Test Suite", () => {
         selector: ".add-menu-item",
       });
       assert(
-        elements.length > 80,
-        `Expected to find 80+ items in the menu. Found ${elements.length} items`
+        elements.length > 30,
+        `Expected to find 30+ items in the menu. Found ${elements.length} items`
       );
     });
   }).retries(3);

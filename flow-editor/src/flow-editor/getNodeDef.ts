@@ -19,6 +19,7 @@ export const safelyGetNodeDef: typeof getNodeDef = (idOrIns, resolved) => {
         : (idOrIns as RefNodeInstance).nodeId;
     return {
       ...loadingDef,
+      displayName: `Loading "${nodeId}"`,
       id: nodeId,
     };
   }
