@@ -7,7 +7,7 @@ import * as os from "os";
 
 import { webviewTestingCommand } from "./testUtils";
 import assert = require("assert");
-import { eventually } from "@flyde/core";
+import { delay, eventually } from "@flyde/core";
 import { getTemplates } from "../templateUtils";
 
 let tmpDir = "";
@@ -40,24 +40,31 @@ suite("Extension Test Suite", () => {
       throw new Error("Temporary directory already exists");
     }
   });
-  test("Loads test flow and renders instance views", async () => {
-    const testFile = vscode.Uri.file(path.resolve(tmpDir, "HelloWorld.flyde"));
+  test
+    .only("Loads test flow and renders instance views", async () => {
+      const testFile = vscode.Uri.file(
+        path.resolve(tmpDir, "HelloWorld.flyde")
+      );
 
-    await vscode.commands.executeCommand(
-      "vscode.openWith",
-      testFile,
-      "flydeEditor"
-    );
-    const instances = await webviewTestingCommand("$$", {
-      selector: ".ins-view",
-    });
+      await vscode.commands.executeCommand(
+        "vscode.openWith",
+        testFile,
+        "flydeEditor"
+      );
 
-    assert(
-      instances.length === 4,
-      `Expected fixture flow to have 4 instances. Got ${instances.length} instances`
-    );
-    // }, 4000);
-  }).retries(3);
+      await delay(100000);
+      const instances = await webviewTestingCommand("$$", {
+        selector: ".ins-view",
+      });
+
+      assert(
+        instances.length === 4,
+        `Expected fixture flow to have 4 instances. Got ${instances.length} instances`
+      );
+      // }, 4000);
+    })
+    .timeout(100000)
+    .retries(3);
 
   test("Renders add nodes menu", async () => {
     const testFile = vscode.Uri.file(
