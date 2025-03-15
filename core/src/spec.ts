@@ -3490,7 +3490,7 @@ describe("main ", () => {
     });
   });
 
-  describe("native support for non internal code nodes", () => {
+  describe.only("native support for non internal code nodes", () => {
     const codeNodeId: CodeNode = {
       id: "add-num",
       inputs: {

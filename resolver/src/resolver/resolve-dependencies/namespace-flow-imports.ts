@@ -5,6 +5,7 @@ import {
   isInlineNodeInstance,
   VisualNode,
   ResolvedVisualNode,
+  isMacroNodeInstance,
 } from "@flyde/core";
 import _ = require("lodash");
 
@@ -19,6 +20,8 @@ const namespaceVisualNode = (
       } else {
         return ins;
       }
+    } else if (isMacroNodeInstance(ins)) {
+      return { ...ins, macroId: `${namespace}${ins.macroId}` };
     } else {
       return { ...ins, nodeId: `${namespace}${ins.nodeId}` };
     }
@@ -46,9 +49,16 @@ export const namespaceFlowImports = (
           ? {
               ...node,
               instances: node.instances.map((ins) => {
-                return isRefNodeInstance(ins)
-                  ? { ...ins, nodeId: `${namespace}${ins.nodeId}` }
-                  : ins;
+                if (isRefNodeInstance(ins)) {
+                  return { ...ins, nodeId: `${namespace}${ins.nodeId}` };
+                } else if (isMacroNodeInstance(ins)) {
+                  return {
+                    ...ins,
+                    macroId: `${namespace}${ins.macroId}`,
+                  };
+                } else {
+                  return ins;
+                }
               }),
               id: `${namespace}${node.id}`,
             }

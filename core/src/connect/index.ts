@@ -47,7 +47,6 @@ export const composeExecutableNode = (
     completionOutputs: node.completionOutputs,
     reactiveInputs: node.reactiveInputs,
     run: (fnArgs, fnOutputs) => {
-      console.log("composeExecutableNode", fnArgs, fnOutputs);
       let cancelFns: CancelFn[] = [];
 
       const depGraph = new DepGraph({});

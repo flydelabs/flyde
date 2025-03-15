@@ -4,8 +4,8 @@ imports:
 node:
   instances:
     - pos:
-        x: 161
-        y: 19
+        x: -31
+        y: 66
       id: ins1
       inputConfig: {}
       nodeId: Add__ins1
@@ -37,9 +37,9 @@ node:
       type: number
   inputsPosition:
     n:
-      x: -13
-      y: 132
+      x: -245.688720703125
+      y: 57.652313232421875
   outputsPosition:
     r:
-      x: -188
-      y: -16
+      x: 203.34637451171875
+      y: 65.12660217285156

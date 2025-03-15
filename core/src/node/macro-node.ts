@@ -197,6 +197,7 @@ export function processMacroNodeInstance(
   _macro: InternalMacroNode<any> | CodeNode,
   instance: MacroNodeInstance
 ) {
+  console.log("PROCESSING MACRO INSTANCE", instance.id);
   const macro = isInternalMacroNode(_macro)
     ? _macro
     : processImprovedMacro(_macro);

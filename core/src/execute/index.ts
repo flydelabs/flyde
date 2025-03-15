@@ -45,7 +45,7 @@ import {
   OMapF,
 } from "../common";
 import { debugLogger } from "../common/debug-logger";
-import { isCodeNode } from "../improved-macros/improved-macros";
+import { CodeNode, isCodeNode } from "../improved-macros/improved-macros";
 import { Debugger, DebuggerEvent, DebuggerEventType } from "./debugger";
 
 export type SubjectMap = OMapF<Subject<any>>;
@@ -122,6 +122,10 @@ const executeCodeNode = (data: CodeExecutionData) => {
       insId: id,
       onCompleted,
       onStarted,
+      ancestorsInsIds,
+      extraContext,
+      mainState,
+      onBubbleError: onError,
     });
 
   const onEvent: Debugger["onEvent"] = _debugger?.onEvent || noop;
@@ -501,6 +505,7 @@ export const execute: ExecuteFn = ({
   }
 
   const instances = isVisualNode(node) ? node.instances : [];
+
   const processedNodes = instances
     .filter((instance): instance is ResolvedMacroNodeInstance => {
       return (
@@ -513,10 +518,17 @@ export const execute: ExecuteFn = ({
         instance.macroId
       ] as unknown as InternalMacroNode;
 
-      return processMacroNodeInstance("", macro, instance);
+      if (!macro) {
+        throw new Error(`Macro ${instance.macroId} not found in resolvedDeps`);
+      }
+
+      const processed = processMacroNodeInstance("", macro, instance);
+      instance.nodeId = processed.id;
+      return processed;
     });
 
   for (const node of processedNodes) {
+    console.log("node", node.id);
     resolvedDeps[node.id] = node;
   }
 

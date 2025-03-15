@@ -237,23 +237,6 @@ export function resolveFlow(
                 },
               };
 
-              const resolvedNode = processMacroNodeInstance(
-                namespace,
-                targetNode.node,
-                instance
-              );
-
-              gatheredDependencies[resolvedNode.id] = {
-                ...resolvedNode,
-                sourceCode: (targetNode.node as any).sourceCode,
-                source: {
-                  path: importPath,
-                  export: targetNode.exportName,
-                },
-              };
-
-              (instance as ResolvedMacroNodeInstance).nodeId = resolvedNode.id;
-
               found = true;
               break;
             } else {
@@ -306,7 +289,6 @@ export function resolveFlow(
               TODO - once real-world macro nodes are implemented, this should be rethought of
             */
 
-            console.log("targetCodeNode", targetCodeNode.id);
             gatheredDependencies[targetCodeNode.id] = {
               ...targetCodeNode,
               source: {
@@ -326,8 +308,6 @@ export function resolveFlow(
         );
       }
     }
-
-    console.log("gatheredDependencies", gatheredDependencies);
 
     return {
       resolvedNode: visualNode as ResolvedVisualNode,

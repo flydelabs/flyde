@@ -6,6 +6,7 @@ import {
   ResolvedFlydeFlow,
   ResolvedFlydeFlowDefinition,
   ResolvedVisualNode,
+  MacroNodeInstance,
 } from "@flyde/core";
 import { assert } from "chai";
 import _ = require("lodash");
@@ -49,5 +50,44 @@ describe("namespace flows", () => {
       ).nodeId,
       "NS__Dave"
     );
+  });
+
+  it("namespaces macroId for macro instances", () => {
+    const flow: ResolvedFlydeFlowDefinition = {
+      main: visualNode({
+        id: "MainFlow",
+        instances: [
+          {
+            id: "i1",
+            macroId: "SomeMacro",
+            macroData: { count: 3 },
+            inputConfig: {},
+            pos: { x: 0, y: 0 },
+          } as MacroNodeInstance,
+        ],
+      }) as ResolvedVisualNode,
+      dependencies: {
+        SomeMacro: {
+          id: "SomeMacro",
+          source: {
+            path: "@macro/package",
+            export: "SomeMacro",
+          },
+          inputs: {},
+          outputs: {},
+        },
+      },
+    };
+
+    const namespaced = namespaceFlowImports(flow, "NS__");
+
+    // Verify that macroId is also namespaced
+    assert.equal(
+      (namespaced.main.instances[0] as MacroNodeInstance).macroId,
+      "NS__SomeMacro"
+    );
+
+    assert.deepEqual(_.keys(namespaced.dependencies), ["NS__SomeMacro"]);
+    assert.equal(namespaced.dependencies["NS__SomeMacro"]?.id, "NS__SomeMacro");
   });
 });

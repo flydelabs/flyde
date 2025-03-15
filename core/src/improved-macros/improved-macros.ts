@@ -196,6 +196,7 @@ export function isCodeNode<Config>(node: any): node is CodeNode<Config> {
 }
 
 export function processImprovedMacro(node: CodeNode): InternalMacroNode<any> {
+  console.log("PROCESSING INNER", node);
   const isAdvanced = isAdvancedMacroNode(node);
 
   const displayName =

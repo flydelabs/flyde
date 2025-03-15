@@ -533,16 +533,18 @@ describe("resolver", () => {
       const [s, r] = spiedOutput();
 
       const n = dynamicNodeInput();
-
+      let err: any;
       execute({
         node,
         resolvedDeps: resolvedDeps,
         inputs: { n },
         outputs: { r },
+        onBubbleError: (e) => {
+          throw e;
+        },
       });
 
       n.subject.next(2);
-
       assert.equal(s.lastCall.args[0], 3);
     });
 
