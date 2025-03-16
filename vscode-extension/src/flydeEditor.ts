@@ -23,6 +23,7 @@ import {
   ResolvedFlydeFlow,
   extractInputsFromValue,
   formatEvent,
+  isInternalMacroNode,
   isMacroNodeDefinition,
   keys,
   macroConfigurableValue,
@@ -42,6 +43,7 @@ import { maybeAskToStarProject } from "./maybeAskToStarProject";
 import { customCodeNodeFromCode } from "@flyde/core/dist/misc/custom-code-node-from-code";
 
 import openai, { OpenAI } from "openai";
+import { readFileSync } from "fs";
 
 // export type EditorPortType = keyof any;
 
@@ -594,11 +596,27 @@ export class FlydeEditorEditorProvider
                   );
                 }
 
+                const macro = isInternalMacroNode(codeNode)
+                  ? codeNode
+                  : processImprovedMacro(codeNode as any);
+
                 const processedInstance = processMacroNodeInstance(
                   "",
-                  codeNode as any,
+                  macro,
                   instance
                 );
+
+                let editorConfig = macro.editorConfig;
+
+                // if (editorConfig.type === "custom") {
+                //   editorConfig.editorComponentBundleContent = readFileSync(
+                //     path.join(
+                //       vscode.workspace.workspaceFolders?.[0].uri.fsPath ?? "",
+                //       editorConfig.editorComponentBundlePath
+                //     ),
+                //     "utf-8"
+                //   );
+                // }
 
                 const editorInstance: EditorNodeInstance = {
                   id: instance.id,
@@ -617,6 +635,7 @@ export class FlydeEditorEditorProvider
                     overrideNodeBodyHtml:
                       processedInstance.overrideNodeBodyHtml,
                     defaultStyle: processedInstance.defaultStyle,
+                    editorConfig,
                   },
                 };
 

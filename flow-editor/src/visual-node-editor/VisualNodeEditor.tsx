@@ -155,7 +155,6 @@ export type VisualNodeEditorProps = {
   onCopy: (data: ClipboardData) => void;
   onInspectPin: (insId: string, pin?: { id: string; type: PinType }) => void;
 
-  onGoToNodeDef: (node: ImportedNodeDef) => void;
   onExtractInlineNode: (instance: InlineNodeInstance) => Promise<void>;
 
   className?: string;
@@ -184,7 +183,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       const {
         nodeIoEditable,
         onCopy,
-        onGoToNodeDef: onEditNode,
         onInspectPin,
         currentInsId,
         ancestorsInsIds,
@@ -688,9 +686,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             setOpenInlineInstance({ insId: `${currentInsId}.${ins.id}`, node });
           } else {
             if (isRefNodeInstance(ins)) {
-              const node = ins.node;
-
-              onEditNode(node as ImportedNodeDef);
+              setEditedMacroInstance({ ins: ins as any });
             } else if (isInlineNodeInstance(ins)) {
               const node = ins.node;
               if (isVisualNode(node)) {
@@ -712,7 +708,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             }
           }
         },
-        [currentInsId, toast, onEditNode]
+        [currentInsId, toast]
       );
 
       const renderMainPins = (type: PinType) => {
@@ -973,7 +969,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             onCopy: onCopy,
             clipboardData: props.clipboardData,
             onInspectPin: props.onInspectPin,
-            onGoToNodeDef: props.onGoToNodeDef,
             nodeIoEditable: props.nodeIoEditable,
             node: openInlineInstance.node as EditorVisualNode,
             onChangeNode: onChangeInspected,

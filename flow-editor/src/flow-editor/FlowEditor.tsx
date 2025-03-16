@@ -199,13 +199,6 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
       [onChangeFlow]
     );
 
-    const onEditNode = React.useCallback(
-      (node: ImportedNodeDef) => {
-        openFile({ absPath: node.source.path });
-      },
-      [openFile]
-    );
-
     const [inspectedItem, setInspectedItem] = React.useState<{
       insId: string;
       pin?: { type: PinType; id: string };
@@ -254,7 +247,6 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
                   currentInsId={ROOT_INS_ID}
                   ref={visualEditorRef}
                   key={editedNode.id}
-                  onGoToNodeDef={onEditNode}
                   clipboardData={clipboardData}
                   onCopy={setClipboardData}
                   nodeIoEditable={!editedNode.id.startsWith("Trigger")}
