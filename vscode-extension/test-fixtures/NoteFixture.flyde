@@ -14,17 +14,6 @@ node:
         content: |-
           # Hello comment
           **bold** not bold
-    - pos:
-        x: -566.3
-        y: 35.84
-      id: NoteFixture-ut04e1i
-      inputConfig: {}
-      nodeId: Note__NoteFixture-ut04e1i
-      macroId: Note
-      macroData:
-        content: |-
-          # Hello comment
-          **bold** not bold
   connections: []
   id: NoteFixture
   inputs: {}
