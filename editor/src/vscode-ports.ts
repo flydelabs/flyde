@@ -105,6 +105,9 @@ export const createVsCodePorts = (): EditorPorts => {
     createAiCompletion: async (dto) => {
       return postMessageCallback("createAiCompletion", dto);
     },
+    resolveInstance: async (dto) => {
+      return postMessageCallback("resolveInstance", dto);
+    },
   };
 };
 

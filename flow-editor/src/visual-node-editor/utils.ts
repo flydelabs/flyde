@@ -25,6 +25,7 @@ import {
   macroNodeInstance,
   MacroNodeDefinition,
   createInsId,
+  EditorVisualNode,
 } from "@flyde/core";
 import { calcPinPosition } from "./connection-view/calc-pin-position";
 import { Size } from "../utils";
@@ -84,8 +85,7 @@ export const changePinConfig = (
 };
 
 export const findClosestPin = (
-  node: VisualNode,
-  resolvedNodes: NodesDefCollection,
+  node: EditorVisualNode,
   mousePos: Pos,
   boardPos: Pos,
   currentInsId: string,
@@ -120,10 +120,8 @@ export const findClosestPin = (
   });
 
   const instancesData = node.instances.reduce<any[]>((acc, ins) => {
-    const insNode = safelyGetNodeDef(ins, resolvedNodes);
-
-    const visibleInputs = getVisibleInputs(ins, insNode, node.connections);
-    const visibleOutputs = getVisibleOutputs(ins, insNode, node.connections);
+    const visibleInputs = getVisibleInputs(ins, node.connections);
+    const visibleOutputs = getVisibleOutputs(ins, node.connections);
 
     const ips = visibleInputs.map((id) => ({
       ins,

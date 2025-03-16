@@ -2380,10 +2380,15 @@ describe("main ", () => {
             const wrapper = conciseNode({
               outputs: ["r"],
               instances: [
-                { id: "a", node: delay5, pos: { x: 0, y: 0 }, inputConfig: {} },
+                {
+                  id: "a",
+                  nodeId: delay5.id,
+                  pos: { x: 0, y: 0 },
+                  inputConfig: {},
+                },
                 {
                   id: "b",
-                  node: delay10,
+                  nodeId: delay10.id,
                   pos: { x: 0, y: 0 },
                   inputConfig: {},
                 },
@@ -2398,7 +2403,7 @@ describe("main ", () => {
             const onCompleted = spy();
             execute({
               node: wrapper,
-              resolvedDeps: testNodesCollection,
+              resolvedDeps: testNodesCollectionWith(delay10, delay5),
               inputs: {},
               outputs: { r },
               onCompleted,
@@ -3490,7 +3495,7 @@ describe("main ", () => {
     });
   });
 
-  describe.only("native support for non internal code nodes", () => {
+  describe("native support for non internal code nodes", () => {
     const codeNodeId: CodeNode = {
       id: "add-num",
       inputs: {

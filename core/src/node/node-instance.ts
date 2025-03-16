@@ -1,5 +1,4 @@
 import {
-  InternalCodeNode,
   InputPinsConfig,
   Node,
   NodeDefinition,
@@ -20,16 +19,23 @@ export interface NodeInstanceConfig {
   pos: Pos;
 }
 
+export interface NodeSource {
+  type: string;
+  source: string;
+}
+
 export interface RefNodeInstance extends NodeInstanceConfig {
   nodeId: string;
+  source?: NodeSource;
+  nodeConfig?: any;
 }
 
 export interface InlineNodeInstance extends NodeInstanceConfig {
-  node: VisualNode | InternalCodeNode;
+  node: VisualNode;
 }
 
 export interface ResolvedInlineNodeInstance extends NodeInstanceConfig {
-  node: ResolvedVisualNode | InternalCodeNode;
+  node: ResolvedVisualNode;
 }
 
 export interface MacroNodeInstance extends NodeInstanceConfig {
@@ -110,18 +116,6 @@ export const isResolvedMacroNodeInstance = (
   ins: ResolvedNodeInstance | NodeInstance
 ): ins is ResolvedMacroNodeInstance =>
   !!(ins as any).macroId && !!(ins as any).nodeId;
-
-export const NodeInstance = (
-  id: string,
-  node: NodeDefinition,
-  config?: InputPinsConfig,
-  pos?: Pos
-): NodeInstance => ({
-  id,
-  nodeId: node.id,
-  inputConfig: config || {},
-  pos: pos || { x: 0, y: 0 },
-});
 
 export const createInsId = (node: NodeDefinition) => {
   return `${node.id}-${slug()}`;

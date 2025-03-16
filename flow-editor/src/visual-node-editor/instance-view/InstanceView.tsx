@@ -11,8 +11,8 @@ import {
   getNodeOutputs,
   getInputName,
   getOutputName,
-  NodeDefinition,
   isMacroNodeInstance,
+  EditorNodeInstance,
 } from "@flyde/core";
 import classNames from "classnames";
 import { DiffStatus } from "../VisualNodeDiffView";
@@ -68,8 +68,7 @@ export const MIN_WIDTH_PER_PIN = 40;
 export const MAX_INSTANCE_WIDTH = 400; // to change in CSS as well
 
 export const getVisibleInputs = (
-  instance: NodeInstance,
-  node: NodeDefinition,
+  instance: EditorNodeInstance,
   connections: ConnectionData[]
 ): string[] => {
   const { visibleInputs } = instance;
@@ -78,7 +77,7 @@ export const getVisibleInputs = (
     return visibleInputs;
   }
 
-  const visiblePins = keys(getNodeInputs(node)).filter((k, v) => {
+  const visiblePins = keys(getNodeInputs(instance.node)).filter((k, v) => {
     const isConnected = connections.some(
       (c) => c.to.insId === instance.id && c.to.pinId === k
     );
@@ -86,7 +85,8 @@ export const getVisibleInputs = (
 
     // const isRequired = node.inputs[k] && node.inputs[k]?.mode === "required";
 
-    const isOptional = node.inputs[k] && node.inputs[k]?.mode === "optional";
+    const isOptional =
+      instance.node.inputs[k] && instance.node.inputs[k]?.mode === "optional";
 
     return isConnected || (!isOptional && k !== TRIGGER_PIN_ID);
   });
@@ -95,8 +95,7 @@ export const getVisibleInputs = (
 };
 
 export const getVisibleOutputs = (
-  instance: NodeInstance,
-  node: NodeDefinition,
+  instance: EditorNodeInstance,
   connections: ConnectionData[]
 ) => {
   const { visibleOutputs } = instance;
@@ -104,7 +103,7 @@ export const getVisibleOutputs = (
   if (visibleOutputs) {
     return visibleOutputs;
   }
-  const keys = Object.keys(node.outputs);
+  const keys = Object.keys(instance.node.outputs);
   if (
     connections.some(
       (c) => c.from.insId === instance.id && c.from.pinId === ERROR_PIN_ID
@@ -117,8 +116,7 @@ export const getVisibleOutputs = (
 };
 
 export interface InstanceViewProps {
-  instance: NodeInstance;
-  node: NodeDefinition;
+  instance: EditorNodeInstance;
   selected?: boolean;
   dragged?: boolean;
   selectedInput?: string;
@@ -196,7 +194,6 @@ export const InstanceView: React.FC<InstanceViewProps> =
       connections,
       instance,
       viewPort,
-      node,
       onPinClick,
       onPinDblClick,
       onDragStart,
@@ -224,15 +221,16 @@ export const InstanceView: React.FC<InstanceViewProps> =
 
     const inlineEditorRef = React.useRef();
 
+    const node = instance.node;
+
     const style = React.useMemo(() => {
       return {
-        icon: instance.style?.icon ?? node.defaultStyle?.icon,
-        color: instance.style?.color ?? node.defaultStyle?.color,
-        size: instance.style?.size ?? node.defaultStyle?.color ?? "regular",
-        cssOverride:
-          instance.style?.cssOverride ?? node.defaultStyle?.cssOverride,
+        icon: instance.node.defaultStyle?.icon,
+        color: instance.node.defaultStyle?.color,
+        size: instance.node.defaultStyle?.color ?? "regular",
+        cssOverride: instance.node.defaultStyle?.cssOverride,
       } as NodeStyle;
-    }, [node, instance]);
+    }, [instance]);
 
     const connectedInputs = React.useMemo(() => {
       return new Map(
@@ -331,9 +329,9 @@ export const InstanceView: React.FC<InstanceViewProps> =
       );
     }
 
-    const _visibleInputs = getVisibleInputs(instance, node, connections);
+    const _visibleInputs = getVisibleInputs(instance, connections);
 
-    const _visibleOutputs = getVisibleOutputs(instance, node, connections);
+    const _visibleOutputs = getVisibleOutputs(instance, connections);
 
     is.push([
       TRIGGER_PIN_ID,
@@ -455,10 +453,10 @@ export const InstanceView: React.FC<InstanceViewProps> =
     const _onSetDisplayName = React.useCallback(async () => {
       const name = await _prompt(
         `Set custom display name`,
-        instance.displayName || node.id
+        node.displayName || node.id
       );
       onSetDisplayName(instance, name);
-    }, [_prompt, instance, onSetDisplayName, node.id]);
+    }, [_prompt, node.displayName, node.id, onSetDisplayName, instance]);
 
     const inputKeys = Object.keys(getNodeInputs(node));
     const outputKeys = Object.keys(getNodeOutputs(node));
@@ -623,6 +621,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
                   onChangeBoardData={inlineGroupProps.onChangeBoardData}
                   node={inlineGroupProps.node}
                   onChangeNode={inlineGroupProps.onChangeNode}
+                  editorNode={null as any}
                 >
                   <VisualNodeEditor
                     {...props.inlineGroupProps}

@@ -15,16 +15,19 @@ import {
   serializeFlow,
 } from "@flyde/resolver";
 import {
+  EditorNodeInstance,
   FlydeFlow,
   ImportableSource,
   MAJOR_DEBUGGER_EVENT_TYPES,
   MacroNodeDefinition,
+  ResolvedFlydeFlow,
   extractInputsFromValue,
   formatEvent,
   isMacroNodeDefinition,
   keys,
   macroConfigurableValue,
   processImprovedMacro,
+  processMacroNodeInstance,
   replaceInputsInValue,
 } from "@flyde/core";
 import { findPackageRoot } from "./find-package-root";
@@ -566,6 +569,56 @@ export class FlydeEditorEditorProvider
                   }
                   throw error;
                 }
+                break;
+              }
+              case "resolveInstance": {
+                const { flow, instance } = event.params;
+
+                console.log("instance", instance);
+
+                const resolvedFlow = tryOrThrow(
+                  () => resolveFlow(flow, "definition", fullDocumentPath),
+                  "Failed to resolve flow"
+                ) as ResolvedFlydeFlow;
+
+                const codeNode = resolvedFlow.dependencies[instance.macroId];
+
+                if (!codeNode) {
+                  throw new Error(
+                    `Could not find node definition for ${instance.macroId}`
+                  );
+                }
+
+                const processedInstance = processMacroNodeInstance(
+                  "",
+                  codeNode as any,
+                  instance
+                );
+
+                const editorInstance: EditorNodeInstance = {
+                  id: instance.id,
+                  config: instance.macroData,
+                  nodeId: instance.macroId,
+                  inputConfig: instance.inputConfig,
+                  pos: instance.pos,
+                  style: instance.style,
+                  node: {
+                    id: processedInstance.id,
+                    inputs: processedInstance.inputs,
+                    outputs: processedInstance.outputs,
+                    displayName:
+                      processedInstance.displayName ?? processedInstance.id,
+                    description: processedInstance.description,
+                    overrideNodeBodyHtml:
+                      processedInstance.overrideNodeBodyHtml,
+                    defaultStyle: processedInstance.defaultStyle,
+                  },
+                };
+
+                console.log("editorInstance", editorInstance);
+
+                messageResponse(event, editorInstance);
+
                 break;
               }
               default: {

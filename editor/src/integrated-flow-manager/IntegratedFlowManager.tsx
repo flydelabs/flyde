@@ -2,6 +2,8 @@ import * as React from "react";
 import "./App.scss";
 
 import {
+  EditorNodeInstance,
+  EditorVisualNode,
   FlydeFlow,
   ImportableSource,
   isInlineNodeInstance,
@@ -77,11 +79,7 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
     groups: [],
   });
 
-  useEffect(() => {
-    ports.getLibraryData().then((data) => {
-      setLibraryData(data);
-    });
-  }, [ports]);
+  const [editorNode, setEditorNode] = React.useState<EditorVisualNode>();
 
   const [editorState, setEditorState] = React.useState<FlowEditorState>({
     flow: initialFlow,
@@ -94,6 +92,35 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
   });
 
   const { flow } = editorState;
+
+  useEffect(() => {
+    const resolveAllInstances = async () => {
+      const resolvedInstances = await Promise.all(
+        initialFlow.node.instances.map((instance) =>
+          ports.resolveInstance({
+            flow: initialFlow,
+            instance,
+          })
+        )
+      );
+
+      // Use the first instance as the editor node
+      if (resolvedInstances.length > 0) {
+        setEditorNode({
+          ...flow.node,
+          instances: resolvedInstances as EditorNodeInstance[],
+        });
+      }
+    };
+
+    resolveAllInstances();
+  }, [ports, initialFlow, setEditorNode, flow.node]);
+
+  useEffect(() => {
+    ports.getLibraryData().then((data) => {
+      setLibraryData(data);
+    });
+  }, [ports]);
 
   const [debuggerClient, setDebuggerClient] =
     React.useState<EditorDebuggerClient>();
@@ -391,14 +418,19 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
         <main>
           <div className={classNames("stage-wrapper", { running: false })}>
             <DebuggerContextProvider value={debuggerContextValue}>
-              <FlowEditor
-                darkMode={bootstrapData?.darkMode}
-                key={props.integratedSource}
-                state={editorState}
-                onChangeEditorState={setEditorState}
-                onExtractInlineNode={onExtractInlineNode}
-                ref={boardRef}
-              />
+              {editorNode ? (
+                <FlowEditor
+                  darkMode={bootstrapData?.darkMode}
+                  key={props.integratedSource}
+                  state={editorState}
+                  onChangeEditorState={setEditorState}
+                  onExtractInlineNode={onExtractInlineNode}
+                  ref={boardRef}
+                  editorNode={editorNode}
+                />
+              ) : (
+                <div>Loading...</div>
+              )}
             </DebuggerContextProvider>
           </div>
         </main>

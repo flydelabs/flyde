@@ -189,18 +189,18 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         initialPadding,
       } = props;
 
-      const { resolvedDependencies } = useDependenciesContext();
-
       const { toast } = useToast();
 
       const {
         node,
         onChangeNode: onChange,
+        editorNode,
         boardData,
         onChangeBoardData,
       } = useVisualNodeEditorContext();
 
-      const { onImportNode, libraryData } = useDependenciesContext();
+      const { onImportNode, libraryData, resolvedDependencies } =
+        useDependenciesContext();
 
       const darkMode = useDarkMode();
 
@@ -308,8 +308,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
       const { closestPin, lastMousePos, updateClosestPinAndMousePos } =
         useClosestPinAndMousePos(
-          node,
-          currResolvedDeps,
+          editorNode,
           currentInsId,
           ancestorsInsIds,
           viewPort,
@@ -977,6 +976,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             parentBoardPos: boardPos,
             onExtractInlineNode: props.onExtractInlineNode,
             queuedInputsData: props.queuedInputsData,
+            editorNode: null as any,
           };
         } else {
           return undefined;
@@ -1458,13 +1458,12 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                   draggedSource={draggedConnection}
                 />
                 {renderMainPins("input")}
-                {instances.map((ins) => (
+                {instances.map((ins, idx) => (
                   <InstanceView
                     onUngroup={onUnGroup}
                     connectionsPerInput={
                       instancesConnectToPinsRef.current.get(ins.id) || emptyObj
                     }
-                    node={safelyGetNodeDef(ins, currResolvedDeps)}
                     ancestorsInsIds={fullInsIdPath(
                       currentInsId,
                       ancestorsInsIds
@@ -1499,7 +1498,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                         : undefined
                     }
                     queuedInputsData={queueInputsData[ins.id] ?? emptyObj}
-                    instance={ins}
+                    instance={editorNode.instances[idx]}
                     connections={connections}
                     // was too lazy to remove/fix the breakpoint/log below
                     onTogglePinBreakpoint={noop}

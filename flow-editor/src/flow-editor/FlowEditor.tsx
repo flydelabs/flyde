@@ -9,6 +9,7 @@ import {
   PinType,
   DebuggerEventType,
   ROOT_INS_ID,
+  EditorVisualNode,
 } from "@flyde/core";
 import {
   VisualNodeEditor,
@@ -59,6 +60,8 @@ export type FlydeFlowEditorProps = {
   darkMode?: boolean;
 
   comparisonNode?: VisualNode;
+
+  editorNode: EditorVisualNode;
 };
 
 const maxUndoStackSize = 50;
@@ -240,6 +243,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
               boardData={editorBoardData}
               onChangeBoardData={onChangeEditorBoardData}
               node={editedNode}
+              editorNode={props.editorNode}
               onChangeNode={onChangeNode}
             >
               <React.Fragment>

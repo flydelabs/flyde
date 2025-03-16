@@ -18,6 +18,8 @@ export * from "./flow-schema";
 
 export * from "./types/connections";
 
+export * from "./types/editor";
+
 export * from "./improved-macros/improved-macros";
 export {
   extractInputsFromValue,

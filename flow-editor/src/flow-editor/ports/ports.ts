@@ -9,6 +9,8 @@ import {
   ImportablesResult,
   MacroNodeDefinition,
   NodeOrMacroDefinition,
+  NodeInstance,
+  EditorNodeInstance,
 } from "@flyde/core";
 import { ReportEvent } from "./analytics";
 
@@ -69,6 +71,11 @@ export interface EditorPorts {
   }) => Promise<string>;
   onCreateCustomNode: (dto: { code: string }) => Promise<ImportableSource>;
   createAiCompletion?: (dto: { prompt: string }) => Promise<string>;
+
+  resolveInstance: (dto: {
+    flow: FlydeFlow;
+    instance: NodeInstance;
+  }) => Promise<EditorNodeInstance>;
 }
 
 const toastNotImplemented: any = (method: string) => async () => {
@@ -97,6 +104,9 @@ export const defaultPorts: EditorPorts = {
   onRequestSiblingNodes: () => Promise.resolve([]),
   onCreateCustomNode: toastNotImplemented("onCreateCustomNode"),
   onRequestNodeSource: () => {
+    throw new Error("Not implemented");
+  },
+  resolveInstance: () => {
     throw new Error("Not implemented");
   },
 };

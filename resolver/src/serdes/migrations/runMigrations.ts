@@ -35,6 +35,7 @@ function migrateAllToMacroNode(node: VisualNode) {
     if (isRefNodeInstance(instance)) {
       console.log("migrating");
       let ins = instance as unknown as MacroNodeInstance;
+      // ins.macroId = ins.nodeId;
     }
   }
 }
