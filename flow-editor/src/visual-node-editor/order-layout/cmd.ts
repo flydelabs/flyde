@@ -4,16 +4,13 @@ import {
   isExternalConnectionNode,
   entries,
   VisualNode,
-  NodesDefCollection,
-  getNodeDef,
-  ResolvedFlydeFlowDefinition,
+  EditorVisualNode,
 } from "@flyde/core";
 import { orderLayout, LayoutData } from ".";
 import produce from "immer";
 import { calcNodeIoWidth } from "../node-io-view/utils";
 import { size } from "../../physics";
 import { calcNodeWidth } from "../instance-view/utils";
-import { safelyGetNodeDef } from "../../flow-editor/getNodeDef";
 
 export const layoutToInstances = (
   ld: LayoutData,
@@ -45,17 +42,13 @@ export const layoutToInstances = (
 };
 
 export const orderVisualNode = (
-  node: VisualNode,
-  resolvedNodes: NodesDefCollection,
+  node: EditorVisualNode,
   itrs: number,
   onStep?: (val: VisualNode, idx: number) => void
 ) => {
   const { instances, connections } = node;
   const insNodes = instances.reduce((prev, curr) => {
-    const s = size(
-      calcNodeWidth(curr, safelyGetNodeDef(curr, resolvedNodes)),
-      NODE_HEIGHT
-    );
+    const s = size(calcNodeWidth(curr, curr.node), NODE_HEIGHT);
     return {
       ...prev,
       [`ins-${curr.id}`]: { p: curr.pos, s },

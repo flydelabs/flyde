@@ -7,6 +7,7 @@ import {
   noop,
   fullInsIdPath,
   EditorVisualNode,
+  EditorNodeInstance,
 } from "@flyde/core";
 
 import { InstanceView } from "./instance-view/InstanceView";
@@ -286,9 +287,9 @@ export const VisualNodeDiffView: React.FC<VisualNodeDiffViewProps> = (
             visibleInputs: currentInstance.visibleInputs,
             visibleOutputs: currentInstance.visibleOutputs,
             diffStatus: "changed",
-          } as WithDiffStatus<NodeInstance>;
+          } as WithDiffStatus<EditorNodeInstance>;
         }
-        return { ...compIns } as WithDiffStatus<NodeInstance>;
+        return { ...compIns } as WithDiffStatus<EditorNodeInstance>;
       })
       .concat(
         // Add instances that only exist in current node (they were removed)
@@ -373,7 +374,7 @@ export const VisualNodeDiffView: React.FC<VisualNodeDiffViewProps> = (
           size={vpSize}
           node={node}
           boardPos={boardPos}
-          instances={allInstancesToRender}
+          instances={allInstancesToRender as EditorNodeInstance[]}
           connections={connectionsToRender}
           viewPort={viewPort}
           parentVp={defaultViewPort}

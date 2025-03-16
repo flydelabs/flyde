@@ -5,7 +5,6 @@ import { useSsr } from "usehooks-ts";
 import { calcStartPos, calcTargetPos } from "./calc-pin-position";
 import { vDiv } from "../../physics";
 import { ConnectionViewPath } from "./ConnectionViewPath/ConnectionViewPath";
-import { safelyGetNodeDef } from "../../flow-editor/getNodeDef";
 import { BaseConnectionViewProps } from "./ConnectionView";
 
 export interface SingleConnectionViewProps extends BaseConnectionViewProps {
@@ -31,7 +30,6 @@ export const SingleConnectionView: React.FC<SingleConnectionViewProps> = (
   const {
     connection,
     node,
-    resolvedNodes,
     instances,
     connectionType,
     viewPort,
@@ -69,10 +67,7 @@ export const SingleConnectionView: React.FC<SingleConnectionViewProps> = (
     return null;
   }
 
-  const fromNode =
-    isInternalConnectionNode(from) && fromInstance
-      ? safelyGetNodeDef(fromInstance, resolvedNodes)
-      : node;
+  const fromNode = fromInstance?.node;
 
   const sourcePin = fromNode.outputs[from.pinId];
   const delayed = sourcePin && sourcePin.delayed;

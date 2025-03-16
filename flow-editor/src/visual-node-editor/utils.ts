@@ -261,7 +261,7 @@ export const createNewNodeInstance = (
   //   : nodeIdOrNode;
 
   if (!node) {
-    throw new Error(`${nodeIdOrNode} node not found in resolvedNodes`);
+    throw new Error(`${nodeIdOrNode} node not found`);
   }
 
   const inputsConfig = entries(node.inputs).reduce((acc, [k, v]) => {
@@ -470,11 +470,6 @@ export const calcNodesPositions = (node: EditorVisualNode): Points[] => {
 
   return [...insNodes, ...inputsCenter, ...outputsCenter];
 };
-
-// export const calcNodesCenter = (node: VisualNode, resolvedNodes: NodesDefCollection): Pos => {
-//   const positions = calcNodesPositions(node, resolvedNodes);
-//   return positions.reduce((acc, curr) => middlePos(acc, curr), positions[0] || { x: 0, y: 0 });
-// };
 
 export const getEffectiveNodeDimensions = (node: EditorVisualNode) => {
   const positions = calcNodesPositions(node);

@@ -862,7 +862,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             functionalChange("reset corrupt visible inputs/outputs")
           );
         }
-      }, [instances, onChange, node, toast]);
+      }, [instances, onChange, node, toast, editorNode.instances]);
 
       useEffect(() => {
         const instanceMap = new Map(instances.map((ins) => [ins.id, ins]));
@@ -1443,7 +1443,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                   size={vpSize}
                   node={editorNode}
                   boardPos={boardPos}
-                  instances={instances}
+                  instances={editorNode.instances}
                   connections={connectionsToRender}
                   futureConnection={maybeRenderFutureConnection()}
                   onDblClick={noop}

@@ -1,12 +1,10 @@
 import * as React from "react";
 import {
-  VisualNode,
   Pos,
-  NodesDefCollection,
-  NodeInstance,
   ConnectionData,
   ConnectionNode,
   EditorVisualNode,
+  EditorNodeInstance,
 } from "@flyde/core";
 import { Size } from "../../utils";
 import { getConnectionId, logicalPosToRenderedPos, ViewPort } from "../..";
@@ -22,7 +20,7 @@ export interface BaseConnectionViewProps {
   size: Size;
   boardPos: Pos;
   viewPort: ViewPort;
-  instances: NodeInstance[];
+  instances: EditorNodeInstance[];
   parentVp: ViewPort;
 }
 
