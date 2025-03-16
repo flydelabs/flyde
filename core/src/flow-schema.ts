@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { VisualNode, NodeDefinition, ResolvedVisualNode } from "./node";
+import { VisualNode, NodeDefinition } from "./node";
 import { CodeNode } from "./improved-macros/improved-macros";
 
 const importSchema = z.record(z.string(), z.string().or(z.array(z.string())));
@@ -127,14 +127,14 @@ export type ResolvedDependenciesDefinitions = Record<
 >;
 
 export type ResolvedFlydeFlowDefinition = {
-  main: ResolvedVisualNode;
+  main: VisualNode;
   dependencies: ResolvedDependenciesDefinitions;
 };
 
 export type ResolvedDependencies = Record<string, ImportedNode>;
 
 export type ResolvedFlydeRuntimeFlow = {
-  main: ResolvedVisualNode;
+  main: VisualNode;
   dependencies: ResolvedDependencies;
 };
 

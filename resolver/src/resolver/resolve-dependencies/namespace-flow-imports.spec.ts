@@ -3,10 +3,7 @@ import {
   visualNode,
   nodeInstance,
   RefNodeInstance,
-  ResolvedFlydeFlow,
   ResolvedFlydeFlowDefinition,
-  ResolvedVisualNode,
-  MacroNodeInstance,
 } from "@flyde/core";
 import { assert } from "chai";
 import _ = require("lodash");
@@ -18,7 +15,7 @@ describe("namespace flows", () => {
       main: visualNode({
         id: "Bob",
         instances: [nodeInstance("i1", "Alice")],
-      }) as ResolvedVisualNode,
+      }) as VisualNode,
       dependencies: {
         Alice: {
           ...visualNode({
@@ -63,7 +60,7 @@ describe("namespace flows", () => {
             macroData: { count: 3 },
             inputConfig: {},
             pos: { x: 0, y: 0 },
-          } as MacroNodeInstance,
+          } as RefNodeInstance,
         ],
       }) as ResolvedVisualNode,
       dependencies: {
@@ -83,7 +80,7 @@ describe("namespace flows", () => {
 
     // Verify that macroId is also namespaced
     assert.equal(
-      (namespaced.main.instances[0] as MacroNodeInstance).macroId,
+      (namespaced.main.instances[0] as RefNodeInstance).macroId,
       "NS__SomeMacro"
     );
 

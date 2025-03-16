@@ -620,11 +620,12 @@ export class FlydeEditorEditorProvider
 
                 const editorInstance: EditorNodeInstance = {
                   id: instance.id,
-                  config: instance.macroData,
+                  config: instance.macroData ?? {},
                   nodeId: instance.macroId,
                   inputConfig: instance.inputConfig,
                   pos: instance.pos,
                   style: instance.style,
+                  macroData: instance.macroData ?? {},
                   node: {
                     id: processedInstance.id,
                     inputs: processedInstance.inputs,

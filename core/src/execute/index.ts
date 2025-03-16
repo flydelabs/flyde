@@ -17,10 +17,10 @@ import {
   NodeState,
   RunNodeFunction,
   NodesCollection,
-  isMacroNodeInstance,
   processMacroNodeInstance,
   InternalMacroNode,
-  ResolvedMacroNodeInstance,
+  RefNodeInstance,
+  isRefNodeInstance,
 } from "../node";
 
 import { composeExecutableNode, ERROR_PIN_ID } from "../connect";
@@ -507,15 +507,14 @@ export const execute: ExecuteFn = ({
   const instances = isVisualNode(node) ? node.instances : [];
 
   const processedNodes = instances
-    .filter((instance): instance is ResolvedMacroNodeInstance => {
+    .filter((instance): instance is RefNodeInstance => {
       return (
-        isMacroNodeInstance(instance) &&
-        isCodeNode(resolvedDeps[instance.macroId])
+        isRefNodeInstance(instance) && isCodeNode(resolvedDeps[instance.nodeId])
       );
     })
     .map((instance) => {
       const macro = resolvedDeps[
-        instance.macroId
+        instance.macroId ?? instance.nodeId
       ] as unknown as InternalMacroNode;
 
       if (!macro) {
@@ -524,11 +523,12 @@ export const execute: ExecuteFn = ({
 
       const processed = processMacroNodeInstance("", macro, instance);
       instance.nodeId = processed.id;
+
       return processed;
     });
 
   for (const node of processedNodes) {
-    console.log("node", node.id);
+    console.log("node", node);
     resolvedDeps[node.id] = node;
   }
 

@@ -38,7 +38,7 @@ export interface BaseMacroNodeData<Config = any> {
   run: InternalCodeNode["run"];
 }
 
-export interface SimplifiedMacroNode<Config> extends BaseMacroNodeData<Config> {
+export interface SimpleCodeNode<Config> extends BaseMacroNodeData<Config> {
   inputs: Record<string, InputConfig>;
   outputs: Record<
     string,
@@ -48,7 +48,7 @@ export interface SimplifiedMacroNode<Config> extends BaseMacroNodeData<Config> {
   >;
 }
 
-export interface AdvancedMacroNode<Config> extends BaseMacroNodeData<Config> {
+export interface AdvancedCodeNode<Config> extends BaseMacroNodeData<Config> {
   mode: "advanced";
   inputs: StaticOrDerived<Record<string, InputPin>, Config>;
   outputs: StaticOrDerived<Record<string, OutputPin>, Config>;
@@ -59,8 +59,8 @@ export interface AdvancedMacroNode<Config> extends BaseMacroNodeData<Config> {
 }
 
 export type CodeNode<Config = any> =
-  | SimplifiedMacroNode<Config>
-  | AdvancedMacroNode<Config>;
+  | SimpleCodeNode<Config>
+  | AdvancedCodeNode<Config>;
 
 export type InputConfig = {
   defaultValue?: any;
@@ -176,27 +176,28 @@ function inferTypeFromInput(
   }
 }
 
-export function isAdvancedMacroNode<Config>(
+export function isAdvancedCodeNode<Config>(
   node: CodeNode<Config>
-): node is AdvancedMacroNode<Config> {
-  return (node as AdvancedMacroNode<Config>).defaultConfig !== undefined;
+): node is AdvancedCodeNode<Config> {
+  return (node as AdvancedCodeNode<Config>).defaultConfig !== undefined;
 }
 
-export function isSimplifiedMacroNode<Config>(
+export function isSimplifiedCodeNode<Config>(
   node: CodeNode<Config>
-): node is SimplifiedMacroNode<Config> {
+): node is SimpleCodeNode<Config> {
   return (
-    (node as SimplifiedMacroNode<Config>).inputs !== undefined &&
-    (node as SimplifiedMacroNode<Config>).outputs !== undefined
+    (node as SimpleCodeNode<Config>).inputs !== undefined &&
+    (node as SimpleCodeNode<Config>).outputs !== undefined &&
+    (node as SimpleCodeNode<Config>).run !== undefined
   );
 }
 
 export function isCodeNode<Config>(node: any): node is CodeNode<Config> {
-  return isAdvancedMacroNode(node) || isSimplifiedMacroNode(node);
+  return isAdvancedCodeNode(node) || isSimplifiedCodeNode(node);
 }
 
 export function processImprovedMacro(node: CodeNode): InternalMacroNode<any> {
-  const isAdvanced = isAdvancedMacroNode(node);
+  const isAdvanced = isAdvancedCodeNode(node);
 
   const displayName =
     typeof node.displayName === "function"
@@ -485,7 +486,11 @@ export function processImprovedMacro(node: CodeNode): InternalMacroNode<any> {
               : node.completionOutputs,
           reactiveInputs: Object.keys(node.inputs)
             .filter((key) => !groupContainers[key]) // Filter out group container keys
-            .filter((key) => node.inputs[key].mode === "reactive")
+            .filter(
+              (key) =>
+                node.inputs[key].mode === "reactive" ||
+                (node as InternalCodeNode).reactiveInputs?.includes(key)
+            )
             .filter((key) => {
               // Check if the field should be visible based on its condition and group hierarchy
               return evaluateFieldVisibility(

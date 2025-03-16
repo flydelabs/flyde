@@ -1,8 +1,8 @@
 import {
   CodeNode,
   DynamicNodeInput,
-  macroNodeInstance,
   NodeInstanceError,
+  refNodeInstance,
   VisualNode,
 } from ".";
 
@@ -1242,6 +1242,9 @@ describe("main ", () => {
             inputs: { v },
             outputs: { r },
             resolvedDeps: testNodesCollectionWith(node1, node2, wrappedP2),
+            onBubbleError: (e) => {
+              console.log("error", e);
+            },
           });
           v.subject.next("");
           assert.deepEqual(s.lastCall.args[0], 2);
@@ -3333,6 +3336,9 @@ describe("main ", () => {
         inputs: { list },
         outputs: { r },
         resolvedDeps: testNodesCollectionWith(spreadList, accumulate),
+        onBubbleError: (e) => {
+          console.log("error", e);
+        },
       });
 
       assert.equal(s.callCount, 0);
@@ -3496,40 +3502,40 @@ describe("main ", () => {
   });
 
   describe("native support for non internal code nodes", () => {
-    const codeNodeId: CodeNode = {
-      id: "add-num",
-      inputs: {
-        number1: {},
-        number2: {},
-      },
-      outputs: { value: {} },
-      run: (i, o) => {
-        o.value.next(i.number1 + i.number2);
-      },
-    };
-
-    const testVisualNode = (randomNumber: number) =>
-      conciseNode({
-        id: "visual-node",
-        inputs: ["number"],
-        outputs: ["value"],
-        instances: [
-          macroNodeInstance("i1", codeNodeId.id, {
-            number1: macroConfigurableValue("number", randomNumber),
-            number2: macroConfigurableValue("number", randomNumber),
-          }),
-        ],
-        connections: [
-          ["number", "i1.__trigger"],
-          ["i1.value", "value"],
-        ],
-      });
-
     it("supports executing an external/non-internal instance", () => {
       const randomNumber = randomInt();
 
       const input = dynamicNodeInput();
       const [s, r] = spiedOutput();
+
+      const codeNodeId: CodeNode = {
+        id: "add-num",
+        inputs: {
+          number1: {},
+          number2: {},
+        },
+        outputs: { value: {} },
+        run: (i, o) => {
+          o.value.next(i.number1 + i.number2);
+        },
+      };
+
+      const testVisualNode = (randomNumber: number) =>
+        conciseNode({
+          id: "visual-node",
+          inputs: ["number"],
+          outputs: ["value"],
+          instances: [
+            refNodeInstance("i1", codeNodeId.id, {
+              number1: macroConfigurableValue("number", randomNumber),
+              number2: macroConfigurableValue("number", randomNumber),
+            }),
+          ],
+          connections: [
+            ["number", "i1.__trigger"],
+            ["i1.value", "value"],
+          ],
+        });
 
       execute({
         node: testVisualNode(randomNumber),

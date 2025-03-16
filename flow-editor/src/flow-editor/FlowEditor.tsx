@@ -4,7 +4,6 @@ import {
   VisualNode,
   NodeInstance,
   FlydeFlow,
-  ImportedNodeDef,
   InlineNodeInstance,
   PinType,
   DebuggerEventType,
@@ -123,7 +122,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
       return undefined;
     }, [debuggerClient]);
 
-    const { openFile, createAiCompletion } = usePorts();
+    const { createAiCompletion } = usePorts();
 
     const onChangeFlow = React.useCallback(
       (newFlow: Partial<FlydeFlow>, changeType: FlydeFlowChangeType) => {

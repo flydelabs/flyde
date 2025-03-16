@@ -6,12 +6,8 @@ import {
   ResolvedFlydeFlow,
   isCodeNode,
   ImportedNodeDef,
-  ResolvedVisualNode,
   isVisualNode,
   ResolvedFlydeFlowDefinition,
-  ResolvedMacroNodeInstance,
-  isMacroNodeInstance,
-  processMacroNodeInstance,
   CodeNode,
   ResolvedDependenciesDefinitions,
 } from "@flyde/core";
@@ -75,7 +71,7 @@ export function resolveFlow(
     namespace = "",
     dependencies = {}
   ): {
-    resolvedNode: ResolvedVisualNode;
+    resolvedNode: VisualNode;
     dependencies:
       | ResolvedFlydeFlow["dependencies"]
       | ResolvedFlydeFlowDefinition["dependencies"];
@@ -196,9 +192,9 @@ export function resolveFlow(
             );
           }
         }
-      } else if (isMacroNodeInstance(instance)) {
-        const { macroId } = instance;
-        const importPath = inverseImports[macroId];
+      } else if (instance) {
+        const { macroId, nodeId } = instance;
+        const importPath = inverseImports[nodeId ?? macroId];
 
         if (!importPath) {
           throw new Error(

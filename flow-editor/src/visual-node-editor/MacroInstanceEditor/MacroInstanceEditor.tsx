@@ -12,7 +12,7 @@ import { Alert, AlertDescription, AlertTitle, Info, GitFork } from "@flyde/ui";
 import {
   EditorVisualNode,
   MacroNodeDefinition,
-  ResolvedMacroNodeInstance,
+  RefNodeInstance,
   isMacroNodeDefinition,
 } from "@flyde/core";
 
@@ -25,7 +25,7 @@ import { Loader } from "../../lib/loader";
 import { InstanceIcon } from "../instance-view/InstanceIcon";
 
 export interface MacroInstanceEditorProps {
-  ins: ResolvedMacroNodeInstance;
+  ins: RefNodeInstance;
   editorNode: EditorVisualNode;
   onCancel: () => void;
   onSubmit: (value: any) => void;
@@ -65,7 +65,7 @@ export const MacroInstanceEditor: React.FC<MacroInstanceEditorProps> = (
     }
   }, [macro, onRequestSiblingNodes]);
 
-  const [macroData, setMacroData] = React.useState<any>(ins.macroData);
+  const [macroData, setMacroData] = React.useState<any>(ins.macroData ?? {});
   const [hasUnsavedChanges, setHasUnsavedChanges] = React.useState(false);
 
   const handleMacroDataChange = useCallback((newData: any) => {

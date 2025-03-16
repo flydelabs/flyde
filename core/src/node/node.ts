@@ -5,18 +5,9 @@ import { CancelFn, InnerExecuteFn } from "../execute";
 import {
   isInlineNodeInstance,
   NodeInstance,
-  RefNodeInstance,
-  ResolvedMacroNodeInstance,
   ResolvedNodeInstance,
 } from "./node-instance";
-import {
-  InputPin,
-  InputPinMap,
-  OutputPin,
-  OutputPinMap,
-  nodeInput,
-  nodeOutput,
-} from "./node-pins";
+import { InputPin, InputPinMap, OutputPin, OutputPinMap } from "./node-pins";
 import { ImportedNode } from "../flow-schema";
 import { MacroNodeDefinition } from "./macro-node";
 import { CodeNode } from "..";
@@ -195,10 +186,6 @@ export interface VisualNode extends BaseNode {
   customView?: CustomNodeViewFn;
 }
 
-export interface ResolvedVisualNode extends VisualNode {
-  instances: ResolvedNodeInstance[];
-}
-
 export type Node = InternalCodeNode | VisualNode;
 
 export type ImportableSource = {
@@ -287,53 +274,4 @@ export const getNode = (
     throw new Error(`Node with id ${id} not found`);
   }
   return node as Node;
-};
-
-export const getNodeDef = (
-  idOrIns: string | NodeInstance,
-  resolvedNodes: NodesDefCollection
-): NodeDefinition => {
-  if (typeof idOrIns !== "string" && isInlineNodeInstance(idOrIns)) {
-    return idOrIns.node;
-  }
-  const id =
-    typeof idOrIns === "string"
-      ? idOrIns
-      : (idOrIns as RefNodeInstance | ResolvedMacroNodeInstance).nodeId;
-  const node = resolvedNodes[id];
-  if (!node) {
-    console.error(`Node with id ${id} not found`);
-    throw new Error(`Node with id ${id} not found`);
-  }
-  return node;
-};
-
-export type codeFromFunctionParams = {
-  id: string;
-  fn: Function;
-  inputNames: string[];
-  outputName: string;
-  defaultStyle?: NodeStyle;
-};
-
-export const codeFromFunction = ({
-  id,
-  fn,
-  inputNames,
-  outputName,
-  defaultStyle,
-}: codeFromFunctionParams): InternalCodeNode => {
-  return {
-    id,
-    inputs: inputNames.reduce((acc, k) => ({ ...acc, [k]: nodeInput() }), {}),
-    outputs: { [outputName]: nodeOutput() },
-    run: (inputs, outputs) => {
-      const args = inputNames.map((name) => inputs[name]);
-      const output = outputs[outputName];
-      const result = fn(...args);
-      return Promise.resolve(result).then((val) => output?.next(val));
-    },
-    completionOutputs: [outputName],
-    defaultStyle,
-  };
 };

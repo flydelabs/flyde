@@ -1,4 +1,4 @@
-import { FlydeFlow, ResolvedFlydeFlowDefinition } from "@flyde/core";
+import { FlydeFlow } from "@flyde/core";
 import * as vscode from "vscode";
 
 export type WebviewContentParams = {
@@ -8,7 +8,6 @@ export type WebviewContentParams = {
   port: number;
   webview: vscode.Webview;
   initialFlow: FlydeFlow;
-  dependencies: ResolvedFlydeFlowDefinition;
   webviewId: string;
   darkMode: boolean;
 };

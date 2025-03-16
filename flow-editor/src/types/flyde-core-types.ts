@@ -266,13 +266,13 @@ declare module '@flyde/core/improved-macros/improved-macros' {
             completionOutputs?: StaticOrDerived<string[], Config>;
             run: InternalCodeNode["run"];
     }
-    export interface SimplifiedMacroNode<Config> extends BaseMacroNodeData<Config> {
+    export interface SimpleCodeNode<Config> extends BaseMacroNodeData<Config> {
             inputs: Record<string, InputConfig>;
             outputs: Record<string, {
                     description?: string;
             }>;
     }
-    export interface AdvancedMacroNode<Config> extends BaseMacroNodeData<Config> {
+    export interface AdvancedCodeNode<Config> extends BaseMacroNodeData<Config> {
             mode: "advanced";
             inputs: StaticOrDerived<Record<string, InputPin>, Config>;
             outputs: StaticOrDerived<Record<string, OutputPin>, Config>;
@@ -281,7 +281,7 @@ declare module '@flyde/core/improved-macros/improved-macros' {
             editorConfig?: InternalMacroNode<Config>["editorConfig"];
             defaultStyle?: NodeStyle;
     }
-    export type CodeNode<Config = any> = SimplifiedMacroNode<Config> | AdvancedMacroNode<Config>;
+    export type CodeNode<Config = any> = SimpleCodeNode<Config> | AdvancedCodeNode<Config>;
     export type InputConfig = {
             defaultValue?: any;
             /**
@@ -371,8 +371,8 @@ declare module '@flyde/core/improved-macros/improved-macros' {
                     options: string[];
             };
     };
-    export function isAdvancedMacroNode<Config>(node: CodeNode<Config>): node is AdvancedMacroNode<Config>;
-    export function isSimplifiedMacroNode<Config>(node: CodeNode<Config>): node is SimplifiedMacroNode<Config>;
+    export function isAdvancedCodeNode<Config>(node: CodeNode<Config>): node is AdvancedCodeNode<Config>;
+    export function isSimplifiedCodeNode<Config>(node: CodeNode<Config>): node is SimpleCodeNode<Config>;
     export function isCodeNode<Config>(node: any): node is CodeNode<Config>;
     export function processImprovedMacro(node: CodeNode): InternalMacroNode<any>;
 }

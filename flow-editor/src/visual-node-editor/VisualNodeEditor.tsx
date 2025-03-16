@@ -15,14 +15,10 @@ import {
   isRefNodeInstance,
   InlineNodeInstance,
   connectionNode,
-  ImportedNodeDef,
   Pos,
   getNodeInputs,
   externalConnectionNode,
   fullInsIdPath,
-  isMacroNodeInstance,
-  isResolvedMacroNodeInstance,
-  ResolvedMacroNodeInstance,
   ImportedNode,
   MacroNodeDefinition,
   NodeOrMacroDefinition,
@@ -30,6 +26,7 @@ import {
   EditorVisualNode,
   EditorNodeInstance,
   FlydeFlow,
+  RefNodeInstance,
 } from "@flyde/core";
 
 import { InstanceView, InstanceViewProps } from "./instance-view/InstanceView";
@@ -234,6 +231,10 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         ),
       });
 
+      const blah = React.useMemo(() => {
+        return instances.map((ins) => JSON.stringify((ins as any).macroData));
+      }, [instances]);
+
       useEffect(() => {
         const resolveAllInstances = async () => {
           const resolvedInstances = await Promise.all(
@@ -253,7 +254,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         };
         resolveAllInstances();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-      }, []);
+      }, [blah]);
 
       // hooks area
       const [draggingId, setDraggingId] = useState<string>();
@@ -271,8 +272,8 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         insId: string;
       }>();
 
-      const [editedMacroInstance, setEditedMacroInstance] = useState<{
-        ins: ResolvedMacroNodeInstance;
+      const [editedNodeInstance, setEditedNodeInstance] = useState<{
+        ins: RefNodeInstance;
       }>();
 
       const [isAddingCustomNode, setIsAddingCustomNode] = useState(false);
@@ -378,7 +379,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         lastMousePos,
         vpSize,
         isBoardInFocus,
-        setEditedMacroInstance
+        setEditedNodeInstance
       );
 
       const fitToScreen = () => {
@@ -663,13 +664,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       const onDblClickInstance = React.useCallback(
         (ins: EditorNodeInstance, shift: boolean) => {
           if (shift) {
-            if (isMacroNodeInstance(ins)) {
-              toast({
-                description: "Cannot edit macro node instance",
-                variant: "destructive",
-              });
-              return;
-            }
             const node = ins.node;
             if (!node) {
               throw new Error(`Impossible state inspecting inexisting node`);
@@ -686,7 +680,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             setOpenInlineInstance({ insId: `${currentInsId}.${ins.id}`, node });
           } else {
             if (isRefNodeInstance(ins)) {
-              setEditedMacroInstance({ ins: ins as any });
+              setEditedNodeInstance({ ins: ins as any });
             } else if (isInlineNodeInstance(ins)) {
               const node = ins.node;
               if (isVisualNode(node)) {
@@ -698,8 +692,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                 });
               }
               return;
-            } else if (isResolvedMacroNodeInstance(ins)) {
-              setEditedMacroInstance({ ins });
             } else {
               toast({
                 description: "Editing this type of node is not supported",
@@ -1184,22 +1176,22 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           (val) => {
             const newVal = produce(node, (draft) => {
               const ins = draft.instances.find(
-                (i) => i.id === editedMacroInstance.ins.id
+                (i) => i.id === editedNodeInstance.ins.id
               );
-              if (!ins || !isMacroNodeInstance(ins)) {
-                throw new Error(`Impossible state`);
-              }
-              ins.macroData = val;
+              // if (!ins || !isMacroNodeInstance(ins)) {
+              //   throw new Error(`Impossible state`);
+              // }
+              ins.config = val;
             });
             onChange(newVal, functionalChange("save macro instance"));
-            setEditedMacroInstance(undefined);
+            setEditedNodeInstance(undefined);
           },
-          [node, onChange, editedMacroInstance]
+          [node, onChange, editedNodeInstance]
         );
 
       const onSwitchToSiblingMacro = React.useCallback(
         async (newMacro: MacroNodeDefinition<any>) => {
-          if (!editedMacroInstance) {
+          if (!editedNodeInstance) {
             throw new Error("Impossible state - no edited macro instance");
           }
 
@@ -1212,12 +1204,12 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           const newNodeIns = createNewMacroNodeInstance(
             importableNode.node,
             0,
-            editedMacroInstance.ins.pos
-          ) as ResolvedMacroNodeInstance;
+            editedNodeInstance.ins.pos
+          ) as RefNodeInstance;
 
           const newNode = produce(node, (draft) => {
             const index = draft.instances.findIndex(
-              (ins) => ins.id === editedMacroInstance.ins.id
+              (ins) => ins.id === editedNodeInstance.ins.id
             );
             if (index !== -1) {
               draft.instances[index] = newNodeIns as any;
@@ -1226,16 +1218,16 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
           onChange(newNode, functionalChange("switch to sibling macro"));
 
-          setEditedMacroInstance(undefined);
+          setEditedNodeInstance(undefined);
 
           setTimeout(() => {
-            setEditedMacroInstance({
-              ...editedMacroInstance,
-              ins: newNodeIns,
+            setEditedNodeInstance({
+              ...editedNodeInstance,
+              ins: newNodeIns as any,
             });
           }, 10);
         },
-        [editedMacroInstance, node, onChange, onImportNode]
+        [editedNodeInstance, node, onChange, onImportNode]
       );
 
       const selectionIndicatorData: SelectionIndicatorProps["selection"] =
@@ -1567,11 +1559,11 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                   />
                   {isRootInstance ? <HelpBubble /> : null}
                 </div>
-                {editedMacroInstance ? (
+                {editedNodeInstance ? (
                   <MacroInstanceEditor
-                    onCancel={() => setEditedMacroInstance(undefined)}
+                    onCancel={() => setEditedNodeInstance(undefined)}
                     onSubmit={onSaveMacroInstance}
-                    ins={editedMacroInstance.ins}
+                    ins={editedNodeInstance.ins}
                     onSwitchToSiblingMacro={onSwitchToSiblingMacro}
                     editorNode={editorNode}
                   />
