@@ -1,5 +1,5 @@
 import React from "react";
-import { EditorVisualNode, VisualNode } from "@flyde/core";
+import { VisualNode } from "@flyde/core";
 import { GroupEditorBoardData } from "./VisualNodeEditor";
 import { FlydeFlowChangeType } from "../flow-editor/flyde-flow-change-type";
 
@@ -7,7 +7,6 @@ export interface VisualNodeEditorContextType {
   boardData: GroupEditorBoardData;
   onChangeBoardData: (partial: Partial<GroupEditorBoardData>) => void;
   node: VisualNode;
-  editorNode: EditorVisualNode;
   onChangeNode: (newNode: VisualNode, changeType: FlydeFlowChangeType) => void;
 }
 

@@ -9,13 +9,7 @@ const ALLOWED_SELECTION_BOX_CLASSES = [
   "connections-view",
 ];
 
-export const useSelectionBox = (
-  node,
-  currResolvedDeps,
-  viewPort,
-  boardPos,
-  parentViewport
-) => {
+export const useSelectionBox = (node, viewPort, boardPos, parentViewport) => {
   const [selectionBox, setSelectionBox] = useState<{ from: Pos; to: Pos }>();
 
   const startSelectionBox = useCallback(
@@ -52,7 +46,6 @@ export const useSelectionBox = (
       if (selectionBox && calcSelectionBoxArea(selectionBox) > 50) {
         const toSelect = getInstancesInRect(
           selectionBox,
-          currResolvedDeps,
           viewPort,
           node.instances,
           parentViewport
@@ -61,7 +54,7 @@ export const useSelectionBox = (
       }
       setSelectionBox(undefined);
     },
-    [selectionBox, currResolvedDeps, viewPort, node.instances, parentViewport]
+    [selectionBox, viewPort, node.instances, parentViewport]
   );
 
   return {

@@ -4,11 +4,22 @@ imports:
 node:
   instances:
     - pos:
-        x: -203.7986482747395
-        y: -283.1578045654297
+        x: -986.7986482747394
+        y: 49.84219543457033
       id: rhwh49xq3syxrx9h8z6nvmmq
       inputConfig: {}
       nodeId: Note__rhwh49xq3syxrx9h8z6nvmmq
+      macroId: Note
+      macroData:
+        content: |-
+          # Hello comment
+          **bold** not bold
+    - pos:
+        x: -566.3
+        y: 35.84
+      id: NoteFixture-ut04e1i
+      inputConfig: {}
+      nodeId: Note__NoteFixture-ut04e1i
       macroId: Note
       macroData:
         content: |-

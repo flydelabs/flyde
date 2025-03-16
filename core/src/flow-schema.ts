@@ -32,6 +32,14 @@ const instance = z
     node: z.optional(z.lazy(() => visualNode)),
     macroId: z.optional(z.string()),
     macroData: z.optional(z.any()),
+    config: z.optional(z.any()),
+    type: z.optional(z.enum(["CodeNode", "VisualNode"])),
+    source: z.optional(
+      z.object({
+        type: z.string(),
+        source: z.string(),
+      })
+    ),
     style: z.optional(nodeStyle),
   })
   .refine(

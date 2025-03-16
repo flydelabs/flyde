@@ -197,13 +197,12 @@ export function processMacroNodeInstance(
   _macro: InternalMacroNode<any> | CodeNode,
   instance: MacroNodeInstance
 ) {
-  console.log("PROCESSING MACRO INSTANCE", instance.id);
   const macro = isInternalMacroNode(_macro)
     ? _macro
     : processImprovedMacro(_macro);
 
-  const metaData = macro.definitionBuilder(instance.macroData);
-  const runFn = macro.runFnBuilder(instance.macroData);
+  const metaData = macro.definitionBuilder(instance.macroData ?? {});
+  const runFn = macro.runFnBuilder(instance.macroData ?? {});
 
   const id = `${prefix}${macro.id}__${instance.id}`;
 

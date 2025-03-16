@@ -6,6 +6,7 @@ import {
   NodeInstance,
   ConnectionData,
   ConnectionNode,
+  EditorVisualNode,
 } from "@flyde/core";
 import { Size } from "../../utils";
 import { getConnectionId, logicalPosToRenderedPos, ViewPort } from "../..";
@@ -14,8 +15,7 @@ import { SingleConnectionView } from "./SingleConnectionView";
 import { calcStartPos, calcTargetPos } from "./calc-pin-position";
 
 export interface BaseConnectionViewProps {
-  resolvedNodes: NodesDefCollection;
-  node: VisualNode;
+  node: EditorVisualNode;
   ancestorsInsIds?: string;
   currentInsId: string;
   onDblClick: () => void;

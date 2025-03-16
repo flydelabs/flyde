@@ -16,7 +16,6 @@ export interface LocalImportableResult {
 }
 
 export interface DependenciesContextData {
-  resolvedDependencies: ResolvedDependenciesDefinitions;
   onImportNode: (
     node: ImportableSource,
     target?: {
@@ -34,7 +33,6 @@ export interface DependenciesContextData {
 }
 
 const DependenciesContext = createContext<DependenciesContextData>({
-  resolvedDependencies: {},
   onImportNode: () => Promise.reject(new Error("Not implemented")),
   onRequestImportables: () => Promise.reject(new Error("Not implemented")),
   libraryData: { groups: [] },

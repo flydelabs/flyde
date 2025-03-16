@@ -56,9 +56,6 @@ export const createVsCodePorts = (): EditorPorts => {
     setFlow: async (dto) => {
       return postMessageCallback("setFlow", dto);
     },
-    resolveDeps: async (dto) => {
-      return postMessageCallback("resolveDeps", dto);
-    },
     getImportables: async (dto) => {
       return postMessageCallback("getImportables", dto);
     },

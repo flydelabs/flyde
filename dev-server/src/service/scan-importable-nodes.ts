@@ -9,10 +9,10 @@ import {
 import {
   BaseNode,
   debugLogger,
-  isBaseNode,
   isInternalMacroNode,
   NodesDefCollection,
   ImportablesResult,
+  isCodeNode,
 } from "@flyde/core";
 import { scanFolderStructure } from "./scan-folders-structure";
 import { FlydeFile } from "../fs-helper/shared";
@@ -43,7 +43,7 @@ export async function scanImportableNodes(
     debugLogger("Using built-in stdlib");
 
     const nodes = Object.fromEntries(
-      Object.entries(StdLib).filter((pair) => isBaseNode(pair[1]))
+      Object.entries(StdLib).filter((pair) => isCodeNode(pair[1]))
     ) as NodesDefCollection;
     builtInStdLib = {
       "@flyde/stdlib": nodes,

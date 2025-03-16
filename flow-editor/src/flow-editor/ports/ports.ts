@@ -3,7 +3,6 @@ import {
   FlydeFlow,
   ImportableSource,
   NodeLibraryData,
-  ResolvedDependenciesDefinitions,
   noop,
   FlowJob,
   ImportablesResult,
@@ -30,22 +29,12 @@ export interface EditorPorts {
   readFlow: (dto: { absPath: string }) => Promise<FlydeFlow>;
   setFlow: (dto: { absPath: string; flow: FlydeFlow }) => Promise<void>;
 
-  resolveDeps: (dto: {
-    relativePath: string;
-    flow?: FlydeFlow;
-  }) => Promise<ResolvedDependenciesDefinitions>;
-
   getImportables: (dto: {
     rootFolder: string;
     flowPath: string;
   }) => Promise<ImportablesResult>;
 
-  onExternalFlowChange: (
-    cb: (data: {
-      flow: FlydeFlow;
-      deps: ResolvedDependenciesDefinitions;
-    }) => void
-  ) => CancelFn;
+  onExternalFlowChange: (cb: (data: { flow: FlydeFlow }) => void) => CancelFn;
 
   onInstallRuntimeRequest: () => Promise<void>;
 
@@ -91,7 +80,6 @@ export const defaultPorts: EditorPorts = {
   confirm: async ({ text }) => confirm(text),
   readFlow: toastNotImplemented("readFlow"),
   setFlow: toastNotImplemented("setFlow"),
-  resolveDeps: toastNotImplemented("resolveDeps"),
 
   getImportables: toastNotImplemented("getImportables"),
   onExternalFlowChange: toastNotImplemented("onExternalFlowChange"),

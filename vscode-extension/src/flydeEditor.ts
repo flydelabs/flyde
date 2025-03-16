@@ -581,11 +581,16 @@ export class FlydeEditorEditorProvider
                   "Failed to resolve flow"
                 ) as ResolvedFlydeFlow;
 
-                const codeNode = resolvedFlow.dependencies[instance.macroId];
+                const codeNode =
+                  resolvedFlow.dependencies[
+                    instance.macroId ?? instance.nodeId
+                  ];
 
                 if (!codeNode) {
                   throw new Error(
-                    `Could not find node definition for ${instance.macroId}`
+                    `Could not find node definition for ${
+                      instance.macroId ?? instance.nodeId
+                    }`
                   );
                 }
 

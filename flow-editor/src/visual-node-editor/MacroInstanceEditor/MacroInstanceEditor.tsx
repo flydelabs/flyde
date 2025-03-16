@@ -10,8 +10,8 @@ import {
 import { Alert, AlertDescription, AlertTitle, Info, GitFork } from "@flyde/ui";
 
 import {
+  EditorVisualNode,
   MacroNodeDefinition,
-  ResolvedDependenciesDefinitions,
   ResolvedMacroNodeInstance,
   isMacroNodeDefinition,
 } from "@flyde/core";
@@ -25,8 +25,8 @@ import { Loader } from "../../lib/loader";
 import { InstanceIcon } from "../instance-view/InstanceIcon";
 
 export interface MacroInstanceEditorProps {
-  deps: ResolvedDependenciesDefinitions;
   ins: ResolvedMacroNodeInstance;
+  editorNode: EditorVisualNode;
   onCancel: () => void;
   onSubmit: (value: any) => void;
   onSwitchToSiblingMacro: (newMacro: MacroNodeDefinition<any>) => void;
@@ -35,7 +35,7 @@ export interface MacroInstanceEditorProps {
 export const MacroInstanceEditor: React.FC<MacroInstanceEditorProps> = (
   props
 ) => {
-  const { deps, ins, onCancel } = props;
+  const { ins, onCancel, editorNode } = props;
 
   const { onRequestSiblingNodes, onForkNode } = useDependenciesContext();
 
@@ -52,12 +52,12 @@ export const MacroInstanceEditor: React.FC<MacroInstanceEditorProps> = (
   );
 
   const macro: MacroNodeDefinition<any> = useMemo(() => {
-    const macro = deps[ins.macroId];
+    const macro = editorNode.instances.find((_ins) => _ins.id === ins.id)?.node;
     if (macro && !isMacroNodeDefinition(macro)) {
       throw new Error(`Macro ${ins.macroId} not found `);
     }
     return macro as any as MacroNodeDefinition<any>;
-  }, [deps, ins.macroId]);
+  }, [editorNode.instances, ins.id, ins.macroId]);
 
   useEffect(() => {
     if (macro) {
@@ -86,12 +86,8 @@ export const MacroInstanceEditor: React.FC<MacroInstanceEditorProps> = (
   }, [hasUnsavedChanges, onCancel]);
 
   const EditorComp = useMemo(() => {
-    const macro = deps[ins.macroId];
-    if (!macro) {
-      throw new Error(`Macro ${ins.macroId} not found `);
-    }
     return loadMacroEditor(macro as any as MacroNodeDefinition<any>);
-  }, [deps, ins]);
+  }, [macro]);
 
   const prompt = usePrompt();
 

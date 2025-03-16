@@ -3,7 +3,6 @@ imports:
     - Concat
     - Delay
     - InlineValue
-  ./undefined.flyde.ts: []
 node:
   instances:
     - pos:

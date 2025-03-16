@@ -3,7 +3,6 @@ export * from "./utils";
 export * from "./lib/user-preferences";
 export * from "./lib/loader";
 export * from "./flow-editor/flyde-flow-change-type";
-export * from "./NodePreview/NodePreview";
 export * from "./visual-node-editor/use-debounce";
 export * from "./lib/highlight-text";
 export * from "./lib/react-utils/use-hotkeys";

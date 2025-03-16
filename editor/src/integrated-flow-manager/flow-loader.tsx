@@ -1,4 +1,4 @@
-import { FlydeFlow, ResolvedDependenciesDefinitions } from "@flyde/core";
+import { FlydeFlow } from "@flyde/core";
 import { File, FolderStructure } from "@flyde/dev-server";
 import React, { useCallback, useEffect, useRef } from "react";
 
@@ -18,8 +18,6 @@ export const FlowLoader: React.FC = (props) => {
   const isEmbedded = !!bootstrapData;
 
   const [flow, setFlow] = React.useState<FlydeFlow>();
-  const [resolvedDependencies, setResolvedDependencies] =
-    React.useState<ResolvedDependenciesDefinitions>();
 
   const [executionId, setExecutionId] = React.useState<string>("n/a");
 
@@ -35,9 +33,8 @@ export const FlowLoader: React.FC = (props) => {
 
   const loadData = useCallback(async () => {
     if (bootstrapData) {
-      const { initialFlow, dependencies, executionId } = bootstrapData;
+      const { initialFlow, executionId } = bootstrapData;
 
-      setResolvedDependencies(dependencies);
       setFlow(initialFlow);
       setFileName("n/a");
       setExecutionId(executionId);
@@ -74,10 +71,6 @@ export const FlowLoader: React.FC = (props) => {
       if (!file) {
         throw new Error("No .flyde file found in project");
       }
-      const resolvedDeps = await ports.current.resolveDeps({
-        relativePath: file.relativePath,
-      });
-      setResolvedDependencies(resolvedDeps);
 
       const flow = await ports.current.readFlow({ absPath: file.fullPath });
       setFlow(flow);
@@ -88,12 +81,11 @@ export const FlowLoader: React.FC = (props) => {
 
   useEffect(() => {
     setFlow(undefined);
-    setResolvedDependencies(undefined);
     loadData();
   }, [fileName, loadData]);
 
   // eslint-disable-next-line no-constant-condition
-  if (flow && resolvedDependencies) {
+  if (flow) {
     const params = new URLSearchParams(window.location.search);
     const locationPortIfNot3000 =
       location.port === "3000" ? null : location.port;
@@ -106,7 +98,6 @@ export const FlowLoader: React.FC = (props) => {
         <IntegratedFlowManager
           key={fileName}
           flow={flow}
-          resolvedDependencies={resolvedDependencies}
           integratedSource={fileName}
           port={port}
           executionId={executionId}

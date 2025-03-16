@@ -1,4 +1,4 @@
-import { OMap, OMapF, entries, testDataCreator, noop, Pos } from "../common";
+import { OMap, OMapF, entries, testDataCreator, Pos } from "../common";
 import { Subject } from "rxjs";
 
 import { CancelFn, InnerExecuteFn } from "../execute";
@@ -223,27 +223,8 @@ export type NodeModuleMetaData = {
 export type NodeDefinitionWithModuleMetaData = NodeDefinition &
   NodeModuleMetaData;
 
-export const isBaseNode = (p: any): p is BaseNode => {
-  return p && p.id && p.inputs && p.outputs;
-};
-
-export const extractMetadata: <N extends NodeMetadata>(
-  node: N
-) => NodeMetadata = (node) => {
-  const { id, displayName, description, namespace, defaultStyle, aliases } =
-    node;
-  return {
-    id,
-    displayName,
-    description,
-    namespace,
-    defaultStyle,
-    aliases,
-  };
-};
-
 export const isVisualNode = (p: Node | NodeDefinition): p is VisualNode => {
-  return !!(p as VisualNode).instances;
+  return !!(p as VisualNode).instances && !!(p as VisualNode).connections;
 };
 
 export const visualNode = testDataCreator<VisualNode>({
@@ -254,13 +235,6 @@ export const visualNode = testDataCreator<VisualNode>({
   connections: [],
   outputsPosition: {},
   inputsPosition: {},
-});
-
-export const InternalCodeNode = testDataCreator<InternalCodeNode>({
-  id: "node",
-  inputs: {},
-  outputs: {},
-  run: noop as any,
 });
 
 export type SimplifiedNodeParams = {

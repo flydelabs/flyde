@@ -4,9 +4,9 @@ import {
   NodeInstance,
   PinType,
   ConnectionData,
-  NodesDefCollection,
   noop,
   fullInsIdPath,
+  EditorVisualNode,
 } from "@flyde/core";
 
 import { InstanceView } from "./instance-view/InstanceView";
@@ -28,9 +28,7 @@ import { NodeIoView } from "./node-io-view";
 import { LayoutDebugger } from "./layout-debugger";
 import { useDarkMode } from "../flow-editor/DarkModeContext";
 import classNames from "classnames";
-import { safelyGetNodeDef } from "../flow-editor/getNodeDef";
 import useComponentSize from "@rehooks/component-size";
-import { useDependenciesContext } from "../flow-editor/DependenciesContext";
 
 const defaultViewPort: ViewPort = {
   pos: { x: 0, y: 0 },
@@ -94,8 +92,8 @@ const connectionViewNoopProps = {
 export type DiffStatus = "added" | "removed" | "changed" | undefined;
 
 export interface VisualNodeDiffViewProps {
-  node: VisualNode;
-  comparisonNode: VisualNode;
+  node: EditorVisualNode;
+  comparisonNode: EditorVisualNode;
   currentInsId: string;
   ancestorsInsIds?: string;
   className?: string;
@@ -105,91 +103,90 @@ export interface VisualNodeDiffViewProps {
 // Add at the top with other types
 type WithDiffStatus<T> = T & { diffStatus?: DiffStatus };
 
-const calculateInstanceDiff = (
-  instance: NodeInstance,
-  node: VisualNode,
-  comparisonNode?: VisualNode,
-  isFromComparison?: boolean
-): DiffStatus => {
-  if (!comparisonNode) {
-    return undefined;
-  }
+// const calculateInstanceDiff = (
+//   instance: NodeInstance,
+//   node: VisualNode,
+//   comparisonNode?: VisualNode,
+//   isFromComparison?: boolean
+// ): DiffStatus => {
+//   if (!comparisonNode) {
+//     return undefined;
+//   }
 
-  const currentInstance = isFromComparison ? instance : instance;
-  const otherInstance = (
-    isFromComparison ? node : comparisonNode
-  ).instances.find((i) => i.id === instance.id);
+//   const currentInstance = isFromComparison ? instance : instance;
+//   const otherInstance = (
+//     isFromComparison ? node : comparisonNode
+//   ).instances.find((i) => i.id === instance.id);
 
-  // Check if instance exists in both nodes
-  if (!otherInstance) {
-    return isFromComparison ? "added" : "removed";
-  }
+//   // Check if instance exists in both nodes
+//   if (!otherInstance) {
+//     return isFromComparison ? "added" : "removed";
+//   }
 
-  // Compare relevant properties to detect changes
-  const relevantPropsToCompare = {
-    pos: currentInstance.pos,
-    inputConfig: currentInstance.inputConfig,
-    style: currentInstance.style,
-    displayName: currentInstance.displayName,
-    visibleInputs: currentInstance.visibleInputs,
-    visibleOutputs: currentInstance.visibleOutputs,
-  };
+//   // Compare relevant properties to detect changes
+//   const relevantPropsToCompare = {
+//     pos: currentInstance.pos,
+//     inputConfig: currentInstance.inputConfig,
+//     style: currentInstance.style,
+//     displayName: currentInstance.displayName,
+//     visibleInputs: currentInstance.visibleInputs,
+//     visibleOutputs: currentInstance.visibleOutputs,
+//   };
 
-  const otherRelevantProps = {
-    pos: otherInstance.pos,
-    inputConfig: otherInstance.inputConfig,
-    style: otherInstance.style,
-    displayName: otherInstance.displayName,
-    visibleInputs: otherInstance.visibleInputs,
-    visibleOutputs: otherInstance.visibleOutputs,
-  };
+//   const otherRelevantProps = {
+//     pos: otherInstance.pos,
+//     inputConfig: otherInstance.inputConfig,
+//     style: otherInstance.style,
+//     displayName: otherInstance.displayName,
+//     visibleInputs: otherInstance.visibleInputs,
+//     visibleOutputs: otherInstance.visibleOutputs,
+//   };
 
-  if (
-    JSON.stringify(relevantPropsToCompare) !==
-    JSON.stringify(otherRelevantProps)
-  ) {
-    return "changed";
-  }
+//   if (
+//     JSON.stringify(relevantPropsToCompare) !==
+//     JSON.stringify(otherRelevantProps)
+//   ) {
+//     return "changed";
+//   }
 
-  return undefined;
-};
+//   return undefined;
+// };
 
-const calculateConnectionDiff = (
-  connection: ConnectionData,
-  node: VisualNode,
-  comparisonNode?: VisualNode,
-  isFromComparison?: boolean
-): DiffStatus => {
-  if (!comparisonNode) {
-    return undefined;
-  }
+// const calculateConnectionDiff = (
+//   connection: ConnectionData,
+//   node: VisualNode,
+//   comparisonNode?: VisualNode,
+//   isFromComparison?: boolean
+// ): DiffStatus => {
+//   if (!comparisonNode) {
+//     return undefined;
+//   }
 
-  const currentConnection = isFromComparison ? connection : connection;
-  const otherConnections = isFromComparison
-    ? node.connections
-    : comparisonNode.connections;
+//   const currentConnection = isFromComparison ? connection : connection;
+//   const otherConnections = isFromComparison
+//     ? node.connections
+//     : comparisonNode.connections;
 
-  const existsInOther = otherConnections.some(
-    (conn) =>
-      conn.from.insId === currentConnection.from.insId &&
-      conn.from.pinId === currentConnection.from.pinId &&
-      conn.to.insId === currentConnection.to.insId &&
-      conn.to.pinId === currentConnection.to.pinId
-  );
+//   const existsInOther = otherConnections.some(
+//     (conn) =>
+//       conn.from.insId === currentConnection.from.insId &&
+//       conn.from.pinId === currentConnection.from.pinId &&
+//       conn.to.insId === currentConnection.to.insId &&
+//       conn.to.pinId === currentConnection.to.pinId
+//   );
 
-  if (!existsInOther) {
-    return isFromComparison ? "added" : "removed";
-  }
+//   if (!existsInOther) {
+//     return isFromComparison ? "added" : "removed";
+//   }
 
-  return undefined;
-};
+//   return undefined;
+// };
 
 export const VisualNodeDiffView: React.FC<VisualNodeDiffViewProps> = (
   props
 ) => {
   const { node, comparisonNode, currentInsId, className, initialPadding } =
     props;
-  const { resolvedDependencies } = useDependenciesContext();
 
   const darkMode = useDarkMode();
 
@@ -211,11 +208,11 @@ export const VisualNodeDiffView: React.FC<VisualNodeDiffViewProps> = (
   };
 
   const fitToScreen = React.useCallback(() => {
-    const vp = fitViewPortToNode(node, resolvedDependencies, vpSize);
+    const vp = fitViewPortToNode(node, vpSize);
     animateViewPort(viewPort, vp, 500, (vp) => {
       setViewPort(vp);
     });
-  }, [node, resolvedDependencies, vpSize, viewPort]);
+  }, [node, vpSize, viewPort]);
 
   const onZoom = React.useCallback(
     (newZoom: number) => {
@@ -226,22 +223,11 @@ export const VisualNodeDiffView: React.FC<VisualNodeDiffViewProps> = (
 
   React.useEffect(() => {
     if (!didCenterInitially && vpSize.width) {
-      const vp = fitViewPortToNode(
-        comparisonNode,
-        resolvedDependencies,
-        vpSize,
-        initialPadding
-      );
+      const vp = fitViewPortToNode(comparisonNode, vpSize, initialPadding);
       setViewPort(vp);
       setDidCenterInitially(true);
     }
-  }, [
-    comparisonNode,
-    initialPadding,
-    vpSize,
-    didCenterInitially,
-    resolvedDependencies,
-  ]);
+  }, [comparisonNode, initialPadding, vpSize, didCenterInitially]);
 
   const renderMainPins = (type: PinType) => {
     const pins = type === "input" ? inputs : outputs;
@@ -382,7 +368,6 @@ export const VisualNodeDiffView: React.FC<VisualNodeDiffViewProps> = (
 
         <ConnectionView
           {...connectionViewNoopProps}
-          resolvedNodes={resolvedDependencies}
           currentInsId={currentInsId}
           ancestorsInsIds={undefined}
           size={vpSize}
@@ -397,13 +382,12 @@ export const VisualNodeDiffView: React.FC<VisualNodeDiffViewProps> = (
 
         {renderMainPins("input")}
 
-        {allInstancesToRender.map((ins) => (
+        {allInstancesToRender.map((ins, idx) => (
           <InstanceView
             {...instanceViewNoopProps}
             connectionsPerInput={emptyObj}
-            node={safelyGetNodeDef(ins, resolvedDependencies)}
+            node={node.instances[idx].node}
             ancestorsInsIds={fullInsIdPath(currentInsId, props.ancestorsInsIds)}
-            resolvedDeps={resolvedDependencies}
             queuedInputsData={emptyObj}
             instance={ins}
             connections={connections}

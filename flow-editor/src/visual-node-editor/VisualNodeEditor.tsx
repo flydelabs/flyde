@@ -26,8 +26,10 @@ import {
   ImportedNode,
   MacroNodeDefinition,
   NodeOrMacroDefinition,
-  CodeNodeDefinition,
   getNodeOutputs,
+  EditorVisualNode,
+  EditorNodeInstance,
+  FlydeFlow,
 } from "@flyde/core";
 
 import { InstanceView, InstanceViewProps } from "./instance-view/InstanceView";
@@ -82,7 +84,6 @@ import { pasteInstancesCommand } from "./commands/paste-instances";
 
 import { useDependenciesContext } from "../flow-editor/FlowEditor";
 import { HelpBubble } from "./HelpBubble";
-import { safelyGetNodeDef } from "../flow-editor/getNodeDef";
 import { useDarkMode } from "../flow-editor/DarkModeContext";
 import {
   MacroInstanceEditor,
@@ -166,6 +167,8 @@ export type VisualNodeEditorProps = {
   instancesWithErrors?: Set<string>;
 
   initialPadding?: [number, number];
+
+  tempFlow?: FlydeFlow;
 };
 
 export interface VisualNodeEditorHandle {
@@ -194,31 +197,17 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       const {
         node,
         onChangeNode: onChange,
-        editorNode,
         boardData,
         onChangeBoardData,
       } = useVisualNodeEditorContext();
 
-      const { onImportNode, libraryData, resolvedDependencies } =
-        useDependenciesContext();
+      const { onImportNode, libraryData } = useDependenciesContext();
 
       const darkMode = useDarkMode();
 
-      const { onCreateCustomNode } = usePorts();
+      const { onCreateCustomNode, resolveInstance } = usePorts();
 
       const parentViewport = props.parentViewport || defaultViewPort;
-
-      const [currResolvedDeps, setResolvedDeps] = useState({
-        ...resolvedDependencies,
-        [node.id]: node,
-      });
-
-      useEffect(() => {
-        setResolvedDeps({
-          ...resolvedDependencies,
-          [node.id]: node,
-        });
-      }, [resolvedDependencies, node]);
 
       const { selectedConnections, selectedInstances, from, to } = boardData;
       const {
@@ -229,6 +218,44 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         inputs,
         outputs,
       } = node;
+
+      const [editorNode, setEditorNode] = useState<EditorVisualNode>({
+        ...node,
+        instances: instances.map(
+          (ins) =>
+            ({
+              ...ins,
+              node: {
+                id: "__loading__",
+                displayName: "Loading...",
+                inputs: {},
+                outputs: {},
+                defaultStyle: {},
+              },
+            } as EditorNodeInstance)
+        ),
+      });
+
+      useEffect(() => {
+        const resolveAllInstances = async () => {
+          const resolvedInstances = await Promise.all(
+            instances.map(async (ins) => {
+              return await resolveInstance({
+                flow: props.tempFlow,
+                instance: ins,
+              });
+            })
+          );
+
+          console.log("resolvedInstances", resolvedInstances);
+          setEditorNode({
+            ...node,
+            instances: resolvedInstances,
+          });
+        };
+        resolveAllInstances();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, []);
 
       // hooks area
       const [draggingId, setDraggingId] = useState<string>();
@@ -325,13 +352,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         startSelectionBox,
         updateSelectionBox,
         endSelectionBox,
-      } = useSelectionBox(
-        node,
-        currResolvedDeps,
-        boardData.viewPort,
-        boardPos,
-        parentViewport
-      );
+      } = useSelectionBox(node, boardData.viewPort, boardPos, parentViewport);
 
       const {
         onRenameIoPin,
@@ -363,7 +384,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       );
 
       const fitToScreen = () => {
-        const vp = fitViewPortToNode(node, currResolvedDeps, vpSize);
+        const vp = fitViewPortToNode(editorNode, vpSize);
 
         animateViewPort(viewPort, vp, 500, (vp) => {
           setViewPort(vp);
@@ -372,21 +393,11 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
       useEffect(() => {
         if (!didCenterInitially && vpSize.width) {
-          const vp = fitViewPortToNode(
-            node,
-            currResolvedDeps,
-            vpSize,
-            initialPadding
-          );
+          const vp = fitViewPortToNode(editorNode, vpSize, initialPadding);
           setViewPort(vp);
           // hackidy hack
           const timer = setTimeout(() => {
-            const vp = fitViewPortToNode(
-              node,
-              currResolvedDeps,
-              vpSize,
-              initialPadding
-            );
+            const vp = fitViewPortToNode(editorNode, vpSize, initialPadding);
             if (!props.thumbnailMode) {
               // hack to make project view work nicely
               setViewPort(vp);
@@ -396,12 +407,11 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           return () => clearTimeout(timer);
         }
       }, [
-        node,
+        editorNode,
         initialPadding,
         vpSize,
         props.thumbnailMode,
         didCenterInitially,
-        currResolvedDeps,
         setViewPort,
       ]);
 
@@ -425,7 +435,10 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           lastMousePos.current,
           props.clipboardData
         );
-        onChange(newNode, functionalChange("paste instances"));
+        onChange(
+          newNode as EditorVisualNode,
+          functionalChange("paste instances")
+        );
 
         onChangeBoardData({
           selectedInstances: newInstances.map((ins) => ins.id),
@@ -650,7 +663,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       }, []);
 
       const onDblClickInstance = React.useCallback(
-        (ins: NodeInstance, shift: boolean) => {
+        (ins: EditorNodeInstance, shift: boolean) => {
           if (shift) {
             if (isMacroNodeInstance(ins)) {
               toast({
@@ -659,9 +672,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
               });
               return;
             }
-            const node = isInlineNodeInstance(ins)
-              ? ins.node
-              : safelyGetNodeDef(ins.nodeId, currResolvedDeps);
+            const node = ins.node;
             if (!node) {
               throw new Error(`Impossible state inspecting inexisting node`);
             }
@@ -677,7 +688,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             setOpenInlineInstance({ insId: `${currentInsId}.${ins.id}`, node });
           } else {
             if (isRefNodeInstance(ins)) {
-              const node = safelyGetNodeDef(ins, currResolvedDeps);
+              const node = ins.node;
 
               onEditNode(node as ImportedNodeDef);
             } else if (isInlineNodeInstance(ins)) {
@@ -701,7 +712,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             }
           }
         },
-        [currResolvedDeps, currentInsId, toast, onEditNode]
+        [currentInsId, toast, onEditNode]
       );
 
       const renderMainPins = (type: PinType) => {
@@ -801,20 +812,14 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       );
 
       // auto prune orphan connections if their inputs/outputs no longer exist
-      usePruneOrphanConnections(
-        instances,
-        connections,
-        node,
-        currResolvedDeps,
-        onChange
-      );
+      usePruneOrphanConnections(instances, connections, editorNode, onChange);
 
       // for each instance, if there's a visible input or output that doesn't exist, reset the visible inputs/outputs to be the full list
       React.useEffect(() => {
         let invalids = [];
         const newNode = produce(node, (draft) => {
-          draft.instances = draft.instances.map((ins) => {
-            const node = safelyGetNodeDef(ins, currResolvedDeps);
+          draft.instances = draft.instances.map((ins, idx) => {
+            const node = editorNode.instances[idx].node;
             if (node) {
               const nodeInputs = getNodeInputs(node);
               const nodeOutputs = getNodeOutputs(node);
@@ -857,7 +862,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             functionalChange("reset corrupt visible inputs/outputs")
           );
         }
-      }, [instances, onChange, node, currResolvedDeps, toast]);
+      }, [instances, onChange, node, toast]);
 
       useEffect(() => {
         const instanceMap = new Map(instances.map((ins) => [ins.id, ins]));
@@ -970,13 +975,12 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             onInspectPin: props.onInspectPin,
             onGoToNodeDef: props.onGoToNodeDef,
             nodeIoEditable: props.nodeIoEditable,
-            node: openInlineInstance.node,
+            node: openInlineInstance.node as EditorVisualNode,
             onChangeNode: onChangeInspected,
             parentViewport: defaultViewPort,
             parentBoardPos: boardPos,
             onExtractInlineNode: props.onExtractInlineNode,
             queuedInputsData: props.queuedInputsData,
-            editorNode: null as any,
           };
         } else {
           return undefined;
@@ -1221,7 +1225,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
               (ins) => ins.id === editedMacroInstance.ins.id
             );
             if (index !== -1) {
-              draft.instances[index] = newNodeIns;
+              draft.instances[index] = newNodeIns as any;
             }
           });
 
@@ -1373,11 +1377,8 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         : "default";
 
       const onViewForkCode = React.useCallback(
-        async (instance: NodeInstance) => {
-          const nodeDef = safelyGetNodeDef(
-            instance,
-            currResolvedDeps
-          ) as CodeNodeDefinition;
+        async (instance: EditorNodeInstance) => {
+          const nodeDef = instance.node;
           try {
             const code = nodeDef.sourceCode;
             if (!code) {
@@ -1393,7 +1394,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             console.error("Failed to get node source:", e);
           }
         },
-        [currResolvedDeps, toast]
+        [toast]
       );
 
       const [commandMenuOpen, setCommandMenuOpen] = useState(false);
@@ -1437,11 +1438,10 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             </div> */}
 
                 <ConnectionView
-                  resolvedNodes={currResolvedDeps}
                   currentInsId={currentInsId}
                   ancestorsInsIds={ancestorsInsIds}
                   size={vpSize}
-                  node={node}
+                  node={editorNode}
                   boardPos={boardPos}
                   instances={instances}
                   connections={connectionsToRender}
@@ -1472,7 +1472,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                     onPinDblClick={noop}
                     onDragStart={onStartDraggingInstance}
                     onDragEnd={onInstanceDragEnd}
-                    resolvedDeps={currResolvedDeps}
                     onDragMove={onInstanceDragMove}
                     onDblClick={onDblClickInstance}
                     onSelect={onSelectInstance}
@@ -1498,7 +1497,8 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                         : undefined
                     }
                     queuedInputsData={queueInputsData[ins.id] ?? emptyObj}
-                    instance={editorNode.instances[idx]}
+                    instance={ins}
+                    node={editorNode.instances[idx].node}
                     connections={connections}
                     // was too lazy to remove/fix the breakpoint/log below
                     onTogglePinBreakpoint={noop}
@@ -1577,8 +1577,8 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                     onCancel={() => setEditedMacroInstance(undefined)}
                     onSubmit={onSaveMacroInstance}
                     ins={editedMacroInstance.ins}
-                    deps={resolvedDependencies}
                     onSwitchToSiblingMacro={onSwitchToSiblingMacro}
+                    editorNode={editorNode}
                   />
                 ) : null}
                 <div className="inline-editor-portal-root" />

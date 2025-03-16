@@ -18,6 +18,7 @@ declare module '@flyde/core' {
     export * from "@flyde/core/node/get-node-with-dependencies";
     export * from "@flyde/core/flow-schema";
     export * from "@flyde/core/types/connections";
+    export * from "@flyde/core/types/editor";
     export * from "@flyde/core/improved-macros/improved-macros";
     export { extractInputsFromValue, replaceInputsInValue, renderDerivedString, evaluateCondition, evaluateFieldVisibility, createInputGroup, } from "@flyde/core/improved-macros/improved-macro-utils";
     export interface InstanceViewData {
@@ -235,6 +236,16 @@ declare module '@flyde/core/types/connections' {
         pinId: string;
     };
     export type ConnectionNode = ExternalConnectionNode | InternalConnectionNode;
+}
+
+declare module '@flyde/core/types/editor' {
+    import { CodeNodeDefinition, NodeInstance, VisualNode } from "@flyde/core/node";
+    export type EditorNodeInstance = NodeInstance & {
+        node: CodeNodeDefinition;
+    };
+    export type EditorVisualNode = Omit<VisualNode, "instances"> & {
+        instances: EditorNodeInstance[];
+    };
 }
 
 declare module '@flyde/core/improved-macros/improved-macros' {
@@ -519,7 +530,7 @@ declare module '@flyde/core/common/full-ins-id-path' {
 }
 
 declare module '@flyde/core/node/node-instance' {
-    import { InternalCodeNode, InputPinsConfig, Node, NodeDefinition, NodeStyle, Pos, ResolvedVisualNode, VisualNode } from "@flyde/core/";
+    import { InputPinsConfig, Node, NodeDefinition, NodeStyle, Pos, ResolvedVisualNode, VisualNode } from "@flyde/core/";
     export interface NodeInstanceConfig {
         inputConfig: InputPinsConfig;
         visibleInputs?: string[];
@@ -529,14 +540,21 @@ declare module '@flyde/core/node/node-instance' {
         id: string;
         pos: Pos;
     }
+    export interface NodeSource {
+        type: string;
+        source: any;
+    }
     export interface RefNodeInstance extends NodeInstanceConfig {
         nodeId: string;
+        source?: NodeSource;
+        config?: any;
+        type?: "CodeNode" | "VisualNode";
     }
     export interface InlineNodeInstance extends NodeInstanceConfig {
-        node: VisualNode | InternalCodeNode;
+        node: VisualNode;
     }
     export interface ResolvedInlineNodeInstance extends NodeInstanceConfig {
-        node: ResolvedVisualNode | InternalCodeNode;
+        node: ResolvedVisualNode;
     }
     export interface MacroNodeInstance extends NodeInstanceConfig {
         macroId: string;
@@ -556,7 +574,6 @@ declare module '@flyde/core/node/node-instance' {
     export const isRefNodeInstance: (ins: NodeInstance) => ins is RefNodeInstance;
     export const isMacroNodeInstance: (ins: NodeInstance) => ins is MacroNodeInstance;
     export const isResolvedMacroNodeInstance: (ins: ResolvedNodeInstance | NodeInstance) => ins is ResolvedMacroNodeInstance;
-    export const NodeInstance: (id: string, node: NodeDefinition, config?: InputPinsConfig, pos?: Pos) => NodeInstance;
     export const createInsId: (node: NodeDefinition) => string;
 }
 
@@ -818,11 +835,8 @@ declare module '@flyde/core/node/node' {
             imported?: boolean;
     };
     export type NodeDefinitionWithModuleMetaData = NodeDefinition & NodeModuleMetaData;
-    export const isBaseNode: (p: any) => p is BaseNode;
-    export const extractMetadata: <N extends NodeMetadata>(node: N) => NodeMetadata;
     export const isVisualNode: (p: Node | NodeDefinition) => p is VisualNode;
     export const visualNode: import("..").TestDataCreator<VisualNode>;
-    export const InternalCodeNode: import("..").TestDataCreator<InternalCodeNode>;
     export type SimplifiedNodeParams = {
             id: string;
             inputTypes: OMap<string>;
@@ -870,6 +884,7 @@ declare module '@flyde/core/' {
     export * from "@flyde/core/node/get-node-with-dependencies";
     export * from "@flyde/core/flow-schema";
     export * from "@flyde/core/types/connections";
+    export * from "@flyde/core/types/editor";
     export * from "@flyde/core/improved-macros/improved-macros";
     export { extractInputsFromValue, replaceInputsInValue, renderDerivedString, evaluateCondition, evaluateFieldVisibility, createInputGroup, } from "@flyde/core/improved-macros/improved-macro-utils";
     export interface InstanceViewData {

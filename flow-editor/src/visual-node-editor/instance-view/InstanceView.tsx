@@ -12,7 +12,7 @@ import {
   getInputName,
   getOutputName,
   isMacroNodeInstance,
-  EditorNodeInstance,
+  CodeNodeDefinition,
 } from "@flyde/core";
 import classNames from "classnames";
 import { DiffStatus } from "../VisualNodeDiffView";
@@ -21,7 +21,6 @@ import { PinView } from "../pin-view/PinView";
 import {
   ConnectionData,
   Pos,
-  NodesDefCollection,
   isStickyInputPinConfig,
   ERROR_PIN_ID,
   TRIGGER_PIN_ID,
@@ -68,7 +67,8 @@ export const MIN_WIDTH_PER_PIN = 40;
 export const MAX_INSTANCE_WIDTH = 400; // to change in CSS as well
 
 export const getVisibleInputs = (
-  instance: EditorNodeInstance,
+  instance: NodeInstance,
+  node: CodeNodeDefinition,
   connections: ConnectionData[]
 ): string[] => {
   const { visibleInputs } = instance;
@@ -77,7 +77,7 @@ export const getVisibleInputs = (
     return visibleInputs;
   }
 
-  const visiblePins = keys(getNodeInputs(instance.node)).filter((k, v) => {
+  const visiblePins = keys(getNodeInputs(node)).filter((k, v) => {
     const isConnected = connections.some(
       (c) => c.to.insId === instance.id && c.to.pinId === k
     );
@@ -85,8 +85,7 @@ export const getVisibleInputs = (
 
     // const isRequired = node.inputs[k] && node.inputs[k]?.mode === "required";
 
-    const isOptional =
-      instance.node.inputs[k] && instance.node.inputs[k]?.mode === "optional";
+    const isOptional = node.inputs[k] && node.inputs[k]?.mode === "optional";
 
     return isConnected || (!isOptional && k !== TRIGGER_PIN_ID);
   });
@@ -95,7 +94,8 @@ export const getVisibleInputs = (
 };
 
 export const getVisibleOutputs = (
-  instance: EditorNodeInstance,
+  instance: NodeInstance,
+  node: CodeNodeDefinition,
   connections: ConnectionData[]
 ) => {
   const { visibleOutputs } = instance;
@@ -103,7 +103,7 @@ export const getVisibleOutputs = (
   if (visibleOutputs) {
     return visibleOutputs;
   }
-  const keys = Object.keys(instance.node.outputs);
+  const keys = Object.keys(node.outputs);
   if (
     connections.some(
       (c) => c.from.insId === instance.id && c.from.pinId === ERROR_PIN_ID
@@ -116,7 +116,8 @@ export const getVisibleOutputs = (
 };
 
 export interface InstanceViewProps {
-  instance: EditorNodeInstance;
+  instance: NodeInstance;
+  node?: CodeNodeDefinition;
   selected?: boolean;
   dragged?: boolean;
   selectedInput?: string;
@@ -131,7 +132,6 @@ export interface InstanceViewProps {
 
   ancestorsInsIds?: string;
 
-  resolvedDeps: NodesDefCollection;
   onPinClick: (v: NodeInstance, k: string, type: PinType) => void;
   onPinDblClick: (
     v: NodeInstance,
@@ -221,16 +221,16 @@ export const InstanceView: React.FC<InstanceViewProps> =
 
     const inlineEditorRef = React.useRef();
 
-    const node = instance.node;
+    const node = props.node;
 
     const style = React.useMemo(() => {
       return {
-        icon: instance.node.defaultStyle?.icon,
-        color: instance.node.defaultStyle?.color,
-        size: instance.node.defaultStyle?.color ?? "regular",
-        cssOverride: instance.node.defaultStyle?.cssOverride,
+        icon: node?.defaultStyle?.icon,
+        color: node?.defaultStyle?.color,
+        size: node?.defaultStyle?.color ?? "regular",
+        cssOverride: node?.defaultStyle?.cssOverride,
       } as NodeStyle;
-    }, [instance]);
+    }, [node]);
 
     const connectedInputs = React.useMemo(() => {
       return new Map(
@@ -329,9 +329,9 @@ export const InstanceView: React.FC<InstanceViewProps> =
       );
     }
 
-    const _visibleInputs = getVisibleInputs(instance, connections);
+    const _visibleInputs = getVisibleInputs(instance, node, connections);
 
-    const _visibleOutputs = getVisibleOutputs(instance, connections);
+    const _visibleOutputs = getVisibleOutputs(instance, node, connections);
 
     is.push([
       TRIGGER_PIN_ID,
@@ -621,7 +621,6 @@ export const InstanceView: React.FC<InstanceViewProps> =
                   onChangeBoardData={inlineGroupProps.onChangeBoardData}
                   node={inlineGroupProps.node}
                   onChangeNode={inlineGroupProps.onChangeNode}
-                  editorNode={null as any}
                 >
                   <VisualNodeEditor
                     {...props.inlineGroupProps}
@@ -727,6 +726,10 @@ export const InstanceView: React.FC<InstanceViewProps> =
         </div>
       );
     };
+
+    if (!node) {
+      return "LOADING";
+    }
 
     return (
       <div

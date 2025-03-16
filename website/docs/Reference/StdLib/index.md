@@ -12,6 +12,10 @@ For simplicity, all parts of Flyde's standard library reside in the same package
 
 - [bob](#bob)
 
+- [Misc](#Misc)
+
+- [Numbers](#Numbers)
+
 - [Strings](#Strings)
 
 - [Control Flow](#Control-Flow)
@@ -25,8 +29,6 @@ For simplicity, all parts of Flyde's standard library reside in the same package
 - [State](#State)
 
 - [Timing](#Timing)
-
-- [Misc](#Misc)
 
 - [Values](#Values)
 
@@ -58,6 +60,23 @@ For simplicity, all parts of Flyde's standard library reside in the same package
 | Id       | Description                              | Inputs                                                                                                                                                                                                                                                                                                                                                                                                         | Outputs                                       |
 | -------- | ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------- |
 | **Math** | Performs various mathematical operations | <div><strong>operation</strong>: The math operation to perform (required)</div><div><strong>binaryInputs</strong>: undefined (required)</div><div><strong>n1</strong>: First number operand (required)</div><div><strong>n2</strong>: Second number operand (required)</div><div><strong>unaryInputs</strong>: undefined (required)</div><div><strong>n</strong>: Number for unary operations (required)</div> | <div><strong>result</strong>: undefined</div> |
+
+## Misc
+
+| Id           | Description                            | Inputs                                                                                                                    | Outputs                                                                   |
+| ------------ | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| **Add**      | Add two numbers                        | <div><strong>n1</strong>: undefined (required)</div><div><strong>n2</strong>: undefined (required)</div>                  | <div><strong>sum</strong>: The sum of the two numbers</div>               |
+| **Subtract** | Subtract two numbers                   | <div><strong>n1</strong>: undefined (required)</div><div><strong>n2</strong>: undefined (required)</div>                  | <div><strong>difference</strong>: The difference of the two numbers</div> |
+| **Concat**   | Concatenate two strings                | <div><strong>a</strong>: The first string (required)</div><div><strong>b</strong>: The second string (required)</div>     | <div><strong>value</strong>: The concatenated string</div>                |
+| **Split**    | Splits a string                        | <div><strong>string</strong>: String to split (required)</div><div><strong>separator</strong>: Separator (required)</div> | <div><strong>value</strong>: Splitted value</div>                         |
+|              |                                        |                                                                                                                           |                                                                           |
+| **Note**     | A note node for documentation purposes | <div><strong>never</strong>: undefined (required)</div>                                                                   | *None*                                                                    |
+
+## Numbers
+
+| Id           | Description                        | Inputs                                                       | Outputs                                                         |
+| ------------ | ---------------------------------- | ------------------------------------------------------------ | --------------------------------------------------------------- |
+| **Sum List** | Emits the sum of a list of numbers | <div><strong>list</strong>: List of numbers (required)</div> | <div><strong>sum</strong>: The sum of the numbers in list</div> |
 
 ## Strings
 
@@ -126,13 +145,6 @@ For simplicity, all parts of Flyde's standard library reside in the same package
 | **Interval** | Emits a value every interval | <div><strong>value</strong>: Value to emit (supports templates) (required)</div><div><strong>time</strong>: Interval (required)</div>            | <div><strong>value</strong>: Emitted value</div>                |
 | **Debounce** |                              | <div><strong>value</strong>: Value to debounce (reactive)</div><div><strong>delayMs</strong>: Debounce delay in milliseconds (required)</div>    | <div><strong>debouncedValue</strong>: Debounced value</div>     |
 | **Throttle** |                              | <div><strong>value</strong>: Value to throttle (reactive)</div><div><strong>delayMs</strong>: Throttle interval in milliseconds (required)</div> | <div><strong>unthrottledValue</strong>: Unthrottled value</div> |
-
-## Misc
-
-| Id       | Description                            | Inputs                                                  | Outputs |
-| -------- | -------------------------------------- | ------------------------------------------------------- | ------- |
-|          |                                        |                                                         |         |
-| **Note** | A note node for documentation purposes | <div><strong>never</strong>: undefined (required)</div> | *None*  |
 
 ## Values
 

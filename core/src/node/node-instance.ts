@@ -21,13 +21,14 @@ export interface NodeInstanceConfig {
 
 export interface NodeSource {
   type: string;
-  source: string;
+  source: any;
 }
 
 export interface RefNodeInstance extends NodeInstanceConfig {
   nodeId: string;
   source?: NodeSource;
-  nodeConfig?: any;
+  config?: any;
+  type?: "CodeNode" | "VisualNode";
 }
 
 export interface InlineNodeInstance extends NodeInstanceConfig {

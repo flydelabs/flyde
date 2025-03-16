@@ -6,20 +6,18 @@ import {
   NodeInstance,
   VisualNode,
   THIS_INS_ID,
-  ImportedNodeDefinition,
   getNodeInputs,
   getNodeOutputs,
   keys,
+  EditorVisualNode,
 } from "@flyde/core";
 import { FlydeFlowChangeType } from "../flow-editor/flyde-flow-change-type";
-import { safelyGetNodeDef } from "../flow-editor/getNodeDef";
 import { useToast } from "@flyde/ui";
 
 export function usePruneOrphanConnections(
   instances: NodeInstance[],
   connections: ConnectionData[],
-  node: VisualNode,
-  currResolvedDeps: Record<string, VisualNode | ImportedNodeDefinition>,
+  node: EditorVisualNode,
   onChange: (newNode: VisualNode, changeType: FlydeFlowChangeType) => void
 ) {
   const { toast } = useToast();
@@ -27,8 +25,17 @@ export function usePruneOrphanConnections(
     const validInputs = new Map<string, string[]>();
     const validOutputs = new Map<string, string[]>();
 
-    instances.forEach((ins) => {
-      const nodeDef = safelyGetNodeDef(ins, currResolvedDeps);
+    // ugly hack in mid big refactor - TODO: rethink
+    const isLoading = node.instances.some(
+      (ins) => ins.node.id === "__loading__"
+    );
+
+    if (isLoading) {
+      return;
+    }
+
+    instances.forEach((ins, idx) => {
+      const nodeDef = node.instances[idx].node;
       if (nodeDef) {
         validInputs.set(ins.id, keys(getNodeInputs(nodeDef)));
         validOutputs.set(ins.id, keys(getNodeOutputs(nodeDef)));
@@ -64,5 +71,5 @@ export function usePruneOrphanConnections(
         message: "prune orphan connections",
       });
     }
-  }, [instances, onChange, connections, node, currResolvedDeps, toast]);
+  }, [instances, onChange, connections, node, toast]);
 }
