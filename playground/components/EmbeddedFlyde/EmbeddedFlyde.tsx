@@ -3,7 +3,6 @@ import { HistoryPlayer } from "@/lib/executeApp/createHistoryPlayer";
 import {
   FlydeFlow,
   ResolvedDependencies,
-  isBaseNode,
   ImportedNode,
   Node,
   InternalMacroNode,

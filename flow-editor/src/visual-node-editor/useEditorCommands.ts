@@ -13,7 +13,6 @@ import {
   NodeStyle,
   ImportableSource,
   isMacroNodeDefinition,
-  isResolvedMacroNodeInstance,
   Pos,
   ConnectionData,
   ConnectionNode,
@@ -30,8 +29,6 @@ import {
   useConfirm,
   createNewMacroNodeInstance,
   createNewNodeInstance,
-  vSub,
-  useDependenciesContext,
   centerBoardPosOnTarget,
   Size,
   useHotkeys,
@@ -68,8 +65,6 @@ export function useEditorCommands(
   const { toast } = useToast();
 
   const { reportEvent } = usePorts();
-
-  const { onImportNode } = useDependenciesContext();
 
   const onRenameIoPin = React.useCallback(
     async (type: PinType, pinId: string) => {
@@ -303,8 +298,6 @@ export function useEditorCommands(
 
   const onAddNode = React.useCallback(
     async (importableNode: ImportableSource, position?: Pos) => {
-      const depsWithImport = await onImportNode(importableNode);
-
       // Calculate the center of the viewport
       const targetPos = {
         x: viewPort.pos.x + vpSize.width / (2 * viewPort.zoom),
@@ -313,12 +306,7 @@ export function useEditorCommands(
 
       const newNodeIns = isMacroNodeDefinition(importableNode.node)
         ? createNewMacroNodeInstance(importableNode.node, 0, targetPos)
-        : createNewNodeInstance(
-            importableNode.node.id,
-            0,
-            targetPos,
-            depsWithImport
-          );
+        : createNewNodeInstance(importableNode.node.id, 0, targetPos);
       const newNode = produce(node, (draft) => {
         draft.instances.push(newNodeIns);
       });
@@ -341,7 +329,6 @@ export function useEditorCommands(
       node,
       onChange,
       onChangeBoardData,
-      onImportNode,
       reportEvent,
       viewPort,
       vpSize,
