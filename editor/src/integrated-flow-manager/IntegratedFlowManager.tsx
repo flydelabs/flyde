@@ -1,12 +1,7 @@
 import * as React from "react";
 import "./App.scss";
 
-import {
-  FlydeFlow,
-  ImportableSource,
-  isVisualNode,
-  NodeLibraryData,
-} from "@flyde/core";
+import { FlydeFlow, isVisualNode, NodeLibraryData } from "@flyde/core";
 
 import classNames from "classnames";
 import {
@@ -238,7 +233,7 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
   );
 
   const queryImportables = React.useCallback(async (): Promise<{
-    importables: ImportableSource[];
+    importables: any[];
     errors: ImportablesResult["errors"];
   }> => {
     return await ports

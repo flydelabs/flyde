@@ -18,7 +18,8 @@ function _resolveFlow(
   mode: ResolveMode = "definition"
 ): ResolvedFlydeFlow {
   const flow = deserializeFlowByPath(fullFlowPath);
-  return resolveFlowDependencies(flow, fullFlowPath, mode);
+  return flow as any;
+  // return resolveFlowDependencies(flow, fullFlowPath, mode);
 }
 
 export const resolveFlowByPath = _resolveFlow;

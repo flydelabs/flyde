@@ -350,16 +350,14 @@ function getNode(idOrIns: NodeInstance, resolvedNodes: NodesCollection): Node {
   }
 
   if (isVisualNodeInstance(isOrInsResolved)) {
-    if (isOrInsResolved.source.type === "ref") {
-      const node = resolvedNodes[isOrInsResolved.source.nodeId];
+    if (isOrInsResolved.source.type !== "inline") {
+      const node = resolvedNodes[isOrInsResolved.nodeId];
       if (!node) {
-        throw new Error(
-          `Node with id ${isOrInsResolved.source.nodeId} not found`
-        );
+        throw new Error(`Node with id ${isOrInsResolved.nodeId} not found`);
       }
       return node as Node;
     }
-    return isOrInsResolved.source.node;
+    return isOrInsResolved.source.data;
   }
 
   const id =

@@ -193,12 +193,12 @@ export function resolveFlow(
           }
         }
       } else if (instance) {
-        const { macroId, nodeId } = instance;
-        const importPath = inverseImports[nodeId ?? macroId];
+        const { nodeId } = instance;
+        const importPath = inverseImports[nodeId];
 
         if (!importPath) {
           throw new Error(
-            `${node.id} in ${fullFlowPath} is using referenced macro node with id ${macroId} that is not imported`
+            `${node.id} in ${fullFlowPath} is using referenced node with id ${nodeId} that is not imported`
           );
         }
 
@@ -210,12 +210,12 @@ export function resolveFlow(
           if (isCodeNodePath(importPath)) {
             const { errors, nodes } = resolveCodeNodeDependencies(importPath);
 
-            const targetNode = nodes.find(({ node }) => node.id === macroId);
+            const targetNode = nodes.find(({ node }) => node.id === nodeId);
 
             if (targetNode) {
               if (!isCodeNode(targetNode.node)) {
                 console.warn(
-                  `Found node ${macroId} in ${importPath}, but it is not a macro node`
+                  `Found node ${nodeId} in ${importPath}, but it is not a macro node`
                 );
                 continue;
               }
@@ -238,7 +238,7 @@ export function resolveFlow(
             } else {
               if (errors.length) {
                 console.warn(
-                  `Could not find ${macroId} in ${importPath}. The following errors were thrown, and might be the reason the node is not properly resolved. Errors: ${errors.join(
+                  `Could not find ${nodeId} in ${importPath}. The following errors were thrown, and might be the reason the node is not properly resolved. Errors: ${errors.join(
                     ", "
                   )}`
                 );
@@ -248,12 +248,12 @@ export function resolveFlow(
         }
 
         if (!found) {
-          if (importPath === "@flyde/stdlib" && LocalStdLib[macroId]) {
-            let targetCodeNode = LocalStdLib[macroId];
+          if (importPath === "@flyde/stdlib" && LocalStdLib[nodeId]) {
+            let targetCodeNode = LocalStdLib[nodeId];
 
             if (!isCodeNode(targetCodeNode)) {
               throw new Error(
-                `Found node ${macroId} in ${importPath}, but it is not a macro node`
+                `Found node ${nodeId} in ${importPath}, but it is not a macro node`
               );
             }
 
@@ -294,7 +294,7 @@ export function resolveFlow(
             };
           } else {
             throw new Error(
-              `Could not find ${macroId} in ${importPath} or the stdlib`
+              `Could not find ${nodeId} in ${importPath} or the stdlib`
             );
           }
         }
@@ -306,7 +306,7 @@ export function resolveFlow(
     }
 
     return {
-      resolvedNode: visualNode as ResolvedVisualNode,
+      resolvedNode: visualNode,
       dependencies: gatheredDependencies,
     };
   }

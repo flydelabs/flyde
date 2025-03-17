@@ -1,13 +1,16 @@
 import {
   isInlineNodeInstance,
-  isMacroNodeInstance,
+  isCodeNodeInstance,
   isRefNodeInstance,
   isVisualNode,
-  MacroNodeInstance,
   VisualNode,
+  FlydeFlow,
+  CodeNodeInstance,
+  VisualNodeInstance,
 } from "@flyde/core";
 import { migrateMacroNodeV2 } from "./macroNodeV2";
 import { migrateOldStdlibNodes } from "./oldStdlibNods";
+import { migrateToPR198Structure } from "./pr198";
 
 export function runMigrations(data: { node?: VisualNode; imports?: any }): {
   node?: VisualNode;
@@ -15,27 +18,9 @@ export function runMigrations(data: { node?: VisualNode; imports?: any }): {
 } {
   migrateOldStdlibNodes(data);
   migrateMacroNodeV2(data);
-  migrateAllToMacroNode(data.node);
+  migrateToPR198Structure(data);
+
+  console.log("Migrated data", data);
 
   return data;
-}
-
-function migrateAllToMacroNode(node: VisualNode) {
-  for (const instance of node.instances) {
-    if (isMacroNodeInstance(instance)) {
-      continue;
-    }
-
-    if (isInlineNodeInstance(instance)) {
-      if (isVisualNode(instance.node)) {
-        migrateAllToMacroNode(instance.node);
-      }
-    }
-
-    if (isRefNodeInstance(instance)) {
-      console.log("migrating");
-      let ins = instance as unknown as MacroNodeInstance;
-      // ins.macroId = ins.nodeId;
-    }
-  }
 }

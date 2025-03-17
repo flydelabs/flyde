@@ -11,8 +11,9 @@ import {
   getNodeOutputs,
   getInputName,
   getOutputName,
-  isMacroNodeInstance,
   CodeNodeDefinition,
+  VisualNodeInstance,
+  CodeNodeInstance,
 } from "@flyde/core";
 import classNames from "classnames";
 import { DiffStatus } from "../VisualNodeDiffView";
@@ -539,11 +540,9 @@ export const InstanceView: React.FC<InstanceViewProps> =
 
       return (
         <ContextMenuContent>
-          {isMacroNodeInstance(instance) && (
-            <ContextMenuItem onClick={(e) => onDblClick(e)}>
-              Change configuration
-            </ContextMenuItem>
-          )}
+          <ContextMenuItem onClick={(e) => onDblClick(e)}>
+            Change configuration
+          </ContextMenuItem>
           <ContextMenuSub>
             <ContextMenuSubTrigger>Style</ContextMenuSubTrigger>
             <ContextMenuSubContent>
@@ -637,9 +636,9 @@ export const InstanceView: React.FC<InstanceViewProps> =
       }
     };
 
-    const nodeIdForDomDataAttr = isMacroNodeInstance(instance)
-      ? instance.macroId
-      : node.id;
+    const nodeIdForDomDataAttr = (
+      instance as VisualNodeInstance | CodeNodeInstance
+    ).nodeId;
 
     const nodeSize = React.useMemo(() => {
       const hasLongDisplayName = content?.length > 20;

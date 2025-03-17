@@ -20,10 +20,11 @@ export interface NodeInstanceConfig {
 
 export interface CodeNodeSource {
   type: "package" | "file" | "custom";
-  source: any;
+  data: any;
 }
 
 export interface CodeNodeInstance extends NodeInstanceConfig {
+  type: "code";
   nodeId: string;
   source: CodeNodeSource;
   config: any;
@@ -39,18 +40,21 @@ export interface CodeNodeInstance extends NodeInstanceConfig {
 }
 
 export interface VisualNodeSourceRef {
-  type: "ref";
-  source: string;
-  nodeId: string;
+  type: "package" | "file" | "custom";
+  data: string;
 }
 
 export interface VisualNodeSourceInline {
   type: "inline";
-  node: VisualNode;
+  data: VisualNode;
 }
 
+export type VisualNodeSource = VisualNodeSourceRef | VisualNodeSourceInline;
+
 export interface VisualNodeInstance extends NodeInstanceConfig {
-  source: VisualNodeSourceRef | VisualNodeSourceInline;
+  type: "visual";
+  nodeId: string;
+  source: VisualNodeSource;
 }
 
 /** @deprecated */
@@ -117,24 +121,60 @@ export const isInlineNodeInstance = (
 ): ins is InlineNodeInstance => {
   return !!(ins as any).node;
 };
+
 export const isRefNodeInstance = (ins: NodeInstance): ins is RefNodeInstance =>
   !!(ins as any).nodeId && !(ins as any).macroId;
+
+export function codeNodeInstance(
+  id: string,
+  nodeId: string,
+  source: CodeNodeSource,
+  config?: any,
+  inputConfig?: InputPinsConfig,
+  pos?: Pos
+): CodeNodeInstance {
+  return {
+    id,
+    type: "code",
+    nodeId,
+    source,
+    inputConfig: inputConfig ?? {},
+    config: config ?? {},
+    pos: pos ?? { x: 0, y: 0 },
+  };
+}
+
+export function visualNodeInstance(
+  id: string,
+  nodeId: string,
+  source: VisualNodeSource,
+  inputConfig?: InputPinsConfig,
+  pos?: Pos
+): VisualNodeInstance {
+  return {
+    id,
+    type: "visual",
+    nodeId,
+    source,
+    inputConfig: inputConfig ?? {},
+    pos: pos ?? { x: 0, y: 0 },
+  };
+}
 
 export const isCodeNodeInstance = (
   ins: NodeInstance
 ): ins is CodeNodeInstance => {
-  return !!(ins as any).nodeId && !!(ins as any).source;
+  return (
+    !!(ins as any).nodeId &&
+    !!(ins as any).source &&
+    (ins as CodeNodeInstance).type === "code"
+  );
 };
 
 export const isVisualNodeInstance = (
   ins: NodeInstance
 ): ins is VisualNodeInstance => {
-  return (
-    !!(ins as any).source &&
-    (["ref", "inline"] as const).includes(
-      (ins as VisualNodeInstance).source.type
-    )
-  );
+  return !!(ins as any).source && (ins as VisualNodeInstance).type === "visual";
 };
 
 export const createInsId = (node: NodeDefinition) => {
