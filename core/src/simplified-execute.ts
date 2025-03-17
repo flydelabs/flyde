@@ -1,7 +1,7 @@
 import {
-  Node,
+  InternalNode,
+  InternalNodesCollection,
   NodeInputs,
-  NodesCollection,
   dynamicNodeInput,
   dynamicOutput,
   keys,
@@ -9,8 +9,8 @@ import {
 import { execute, ExecuteParams } from "./execute";
 
 export const simplifiedExecute = (
-  nodeToRun: Node,
-  resolvedDependencies: NodesCollection,
+  nodeToRun: InternalNode,
+  resolvedDependencies: InternalNodesCollection,
   inputs: Record<string, any> = {},
   onOutput?: (key: string, data: any) => void,
   otherParams: Partial<ExecuteParams> = {}

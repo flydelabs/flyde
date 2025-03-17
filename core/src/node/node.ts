@@ -6,8 +6,12 @@ import { CancelFn, InnerExecuteFn } from "../execute";
 import { MacroNodeDefinition } from "./macro-node";
 import { CodeNode } from "..";
 import { CodeNodeDefinition, VisualNode } from "@flyde/core";
+import { InternalNode } from "../types/internal";
 
-export type NodesCollection = OMap<Node | CodeNode>;
+/** @deprecated use InternalNodesCollection instead */
+export type NodesCollection = OMap<InternalNode | CodeNode>;
+
+export type InternalNodesCollection = OMap<InternalNode>;
 
 export type NodesDefCollection = OMap<NodeDefinition>;
 
@@ -36,3 +40,9 @@ export * from "./macro-node";
 
 export type NodeDefinition = VisualNode | CodeNodeDefinition;
 export type NodeOrMacroDefinition = NodeDefinition | MacroNodeDefinition<any>;
+
+export * from "./node-instance";
+export * from "../types/internal";
+export * from "../types/core";
+export * from "../types/external";
+export * from "../types/pins";

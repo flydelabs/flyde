@@ -5,7 +5,7 @@
  * Connecting to a main input or output is the way that a visual nodes' internal implementation can communicate with its external API.
  */
 
-import { NodeDefinition, NodeInstance } from "..";
+import { CodeNode, NodeDefinition, NodeInstance } from "..";
 import { OMap, Pos, testDataCreator } from "../common";
 import { ConnectionData } from "./connections";
 import { BaseNode } from "./core";
@@ -42,3 +42,5 @@ export type CodeNodeDefinition = Omit<InternalCodeNode, "run"> & {
    */
   sourceCode?: string;
 };
+
+export type FlydeNode<T = any> = VisualNode | CodeNode<T>;

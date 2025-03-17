@@ -6,11 +6,10 @@ import {
   dynamicOutput,
   dynamicNodeInput,
   NodeInstance,
-  VisualNode,
   queueInputPinConfig,
   NodeOutput,
   NodeState,
-  Node,
+  InternalVisualNode,
 } from "../node";
 import { CancelFn, execute, Debugger } from "../execute";
 import { DepGraph, isDefined, noop, keys, OMap, randomInt } from "../common";
@@ -24,16 +23,18 @@ import {
 } from "./helpers";
 
 import {
-  isInlineNodeInstance,
-  isVisualNodeInstance,
-  NodesCollection,
-} from "..";
+  InternalInlineNodeInstance,
+  InternalNode,
+  InternalNodeInstance,
+  InternalRefNodeInstance,
+  InternalNodesCollection,
+} from "../node";
 
 export * from "./helpers";
 
 export const composeExecutableNode = (
-  node: Omit<VisualNode, "inputsPosition" | "outputsPosition">,
-  resolvedDeps: NodesCollection,
+  node: InternalVisualNode,
+  resolvedDeps: InternalNodesCollection,
   _debugger: Debugger = {},
   ancestorsInsIds?: string,
   mainState: OMap<NodeState> = {},
@@ -55,8 +56,8 @@ export const composeExecutableNode = (
 
       const depGraph = new DepGraph({});
 
-      const instanceToId = new Map<NodeInstance, string>();
-      const idToInstance = new Map<string, NodeInstance>();
+      const instanceToId = new Map<InternalNodeInstance, string>();
+      const idToInstance = new Map<string, InternalNodeInstance>();
 
       // these hold the args / outputs for each piece of an internal connection
       const instanceArgs = new Map<string, NodeInputs>();
@@ -343,31 +344,18 @@ export const composeExecutableNode = (
   };
 };
 
-function getNode(idOrIns: NodeInstance, resolvedNodes: NodesCollection): Node {
-  const isOrInsResolved = idOrIns;
-  if (isInlineNodeInstance(isOrInsResolved)) {
-    return isOrInsResolved.node;
+function getNode(
+  ins: InternalNodeInstance,
+  resolvedNodes: InternalNodesCollection
+): InternalNode {
+  if ((ins as InternalInlineNodeInstance).node) {
+    return (ins as InternalInlineNodeInstance).node;
   }
 
-  if (isVisualNodeInstance(isOrInsResolved)) {
-    if (isOrInsResolved.source.type !== "inline") {
-      const node = resolvedNodes[isOrInsResolved.nodeId];
-      if (!node) {
-        throw new Error(`Node with id ${isOrInsResolved.nodeId} not found`);
-      }
-      return node as Node;
-    }
-    return isOrInsResolved.source.data;
-  }
-
-  const id =
-    typeof isOrInsResolved === "string"
-      ? isOrInsResolved
-      : isOrInsResolved.nodeId;
-
-  const node = resolvedNodes[id];
+  const nodeId = (ins as InternalRefNodeInstance).nodeId;
+  const node = resolvedNodes[nodeId];
   if (!node) {
-    throw new Error(`Node with id ${id} not found`);
+    throw new Error(`Node with id ${nodeId} not found`);
   }
-  return node as Node;
+  return node;
 }

@@ -1,15 +1,15 @@
 import {
   InternalCodeNode,
-  VisualNode,
+  InternalVisualNode,
   nodeInput,
   nodeOutput,
-  Node,
   dynamicOutput,
   dynamicNodeInput,
-  nodeInstance,
   dynamicNodeInputs,
   stickyInputPinConfig,
   DynamicNodeInput,
+  InternalNode,
+  internalNodeInstance,
 } from "../node";
 import { execute } from ".";
 import { Subject } from "rxjs";
@@ -59,7 +59,7 @@ describe("execute", () => {
     },
   };
 
-  const groupedOptInput: VisualNode = {
+  const groupedOptInput: InternalVisualNode = {
     id: "groupedOptAdd",
     inputs: {
       n1: nodeInput(),
@@ -68,9 +68,7 @@ describe("execute", () => {
     outputs: {
       r: nodeOutput(),
     },
-    inputsPosition: {},
-    outputsPosition: {},
-    instances: [nodeInstance("a", optAdd.id)],
+    instances: [internalNodeInstance("a", optAdd.id)],
     connections: [
       {
         from: externalConnectionNode("n1"),
@@ -87,10 +85,8 @@ describe("execute", () => {
     ],
   };
 
-  const addGrouped: VisualNode = {
+  const addGrouped: InternalVisualNode = {
     id: "add-visual",
-    inputsPosition: {},
-    outputsPosition: {},
     inputs: {
       n1: nodeInput(),
       n2: nodeInput(),
@@ -98,7 +94,7 @@ describe("execute", () => {
     outputs: {
       r: nodeOutput(),
     },
-    instances: [nodeInstance("a", add.id)],
+    instances: [internalNodeInstance("a", add.id)],
     connections: [
       {
         from: externalConnectionNode("n1"),
@@ -154,14 +150,12 @@ describe("execute", () => {
     });
 
     it("compiles visual nodes with the right inputs and outputs", () => {
-      const visualNode: VisualNode = {
+      const visualNode: InternalVisualNode = {
         id: "anode",
         inputs: { a: nodeInput(), b: nodeInput() },
         outputs: { r: nodeOutput() },
         instances: [],
         connections: [],
-        inputsPosition: {},
-        outputsPosition: {},
       };
 
       const node = composeExecutableNode(
@@ -174,7 +168,7 @@ describe("execute", () => {
     });
 
     it("compiles visual nodes with the right inputs and outputs when inputs have modes", () => {
-      const visualNode: VisualNode = {
+      const visualNode: InternalVisualNode = {
         id: "anode",
         inputs: {
           a: nodeInput("optional"),
@@ -183,8 +177,6 @@ describe("execute", () => {
         outputs: { r: nodeOutput() },
         instances: [],
         connections: [],
-        inputsPosition: {},
-        outputsPosition: {},
       };
 
       const node = composeExecutableNode(
@@ -374,10 +366,8 @@ describe("execute", () => {
         const s = spy();
         r.subscribe(s);
 
-        const node: VisualNode = {
+        const node: InternalVisualNode = {
           id: "bob",
-          inputsPosition: {},
-          outputsPosition: {},
           inputs: {
             a: nodeInput(),
             b: nodeInput("optional"),
@@ -386,8 +376,8 @@ describe("execute", () => {
             r: nodeOutput(),
           },
           instances: [
-            nodeInstance("a", id.id),
-            // nodeInstance('b', id),
+            internalNodeInstance("a", id.id),
+            // internalNodeInstance('b', id),
           ],
           connections: [
             {
@@ -426,17 +416,18 @@ describe("execute", () => {
         const val2 = Value(2);
         const resolvedDeps = testNodesCollectionWith(val2);
 
-        const node: VisualNode = {
+        const node: InternalVisualNode = {
           id: "bob",
-          inputsPosition: {},
-          outputsPosition: {},
           inputs: {
             a: nodeInput("optional"),
           },
           outputs: {
             r: nodeOutput(),
           },
-          instances: [nodeInstance("v", Value(2).id), nodeInstance("a", id.id)],
+          instances: [
+            internalNodeInstance("v", Value(2).id),
+            internalNodeInstance("a", id.id),
+          ],
           connections: [
             connectionData(["a", "r"], ["r"]),
             connectionData(["v", "r"], ["a", "v"]),
@@ -456,7 +447,7 @@ describe("execute", () => {
     });
 
     describe("outputs", () => {
-      const optOutput: Node = {
+      const optOutput: InternalNode = {
         id: "dup",
         inputs: {
           v: nodeInput(),
@@ -519,10 +510,8 @@ describe("execute", () => {
   });
 
   describe("node as args", () => {
-    const isOddPredicate: VisualNode = {
+    const isOddPredicate: InternalVisualNode = {
       id: "is-even",
-      inputsPosition: {},
-      outputsPosition: {},
       inputs: {
         item: {},
         idx: { mode: "optional" },
@@ -530,7 +519,7 @@ describe("execute", () => {
       outputs: {
         r: {},
       },
-      instances: [nodeInstance("a", isEven.id)],
+      instances: [internalNodeInstance("a", isEven.id)],
       connections: [
         {
           from: externalConnectionNode("item"),

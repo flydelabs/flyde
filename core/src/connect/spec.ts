@@ -8,8 +8,8 @@ import { assert } from "chai";
 import {
   dynamicNodeInput,
   InternalCodeNode,
+  internalNodeInstance,
   nodeInput,
-  nodeInstance,
   nodeOutput,
 } from "../node";
 import { execute } from "../execute";
@@ -24,7 +24,7 @@ describe("composeExecutableNode", () => {
         composeExecutableNode(
           {
             id: "bob",
-            instances: [nodeInstance("a", optAdd.id)],
+            instances: [internalNodeInstance("a", optAdd.id)],
             connections: [],
             inputs: {},
             outputs: {},
@@ -38,7 +38,7 @@ describe("composeExecutableNode", () => {
       const node = composeExecutableNode(
         {
           id: "bob",
-          instances: [nodeInstance("a", optAdd.id)],
+          instances: [internalNodeInstance("a", optAdd.id)],
           connections: [
             connectionData("n1", "a.n1"),
             connectionData("a.r", "r"),
@@ -72,7 +72,7 @@ describe("composeExecutableNode", () => {
       const node = composeExecutableNode(
         {
           id: "bob",
-          instances: [nodeInstance("a", optAdd.id)],
+          instances: [internalNodeInstance("a", optAdd.id)],
           connections: [
             connectionData("n1", "a.n1"),
             connectionData("n2", "a.n2"),
@@ -124,9 +124,9 @@ describe("composeExecutableNode", () => {
         {
           id: "bob",
           instances: [
-            nodeInstance("d", delayedId.id),
-            nodeInstance("add", add.id),
-            // nodeInstance('m', merge, {
+            internalNodeInstance("d", delayedId.id),
+            internalNodeInstance("add", add.id),
+            // internalNodeInstance('m', merge, {
             // 	b: {type: 'static', value: 0}
             // }),
           ],
@@ -170,7 +170,7 @@ describe("composeExecutableNode", () => {
     const node = composeExecutableNode(
       {
         id: "bob",
-        instances: [nodeInstance("a", add.id)],
+        instances: [internalNodeInstance("a", add.id)],
         connections: [
           connectionData("n1", "a.n1"),
           connectionData("n2", "a.n2"),

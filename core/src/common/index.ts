@@ -7,8 +7,6 @@ export * from "./capped-array-debounce";
 
 export * from "./utils";
 
-export * from "./hasher";
-
 export * from "./value-builders";
 
 export * from "./data-shaper";

@@ -1,11 +1,15 @@
 import { spy } from "sinon";
 import Sinon = require("sinon");
-import { NodeInstance, entries, OMap, RunNodeFunction } from "./.";
+import { entries, OMap, RunNodeFunction } from "./.";
 
 import { connectionNode, externalConnectionNode } from "./connect/helpers";
 
 import { DebuggerEventType, DebuggerEvent, Debugger } from "./execute/debugger";
-import { InternalCodeNode } from "./types/internal";
+import {
+  InternalCodeNode,
+  InternalNodeInstance,
+  InternalVisualNode,
+} from "./types/internal";
 import { BaseNode } from "./types/core";
 import {
   dynamicOutput,
@@ -16,7 +20,7 @@ import {
   nodeOutput,
   OutputPinMap,
 } from "./types/pins";
-import { VisualNode } from "./types/external";
+
 interface ConciseBaseNode extends Omit<BaseNode, "inputs" | "outputs" | "id"> {
   inputs?: string[];
   outputs?: string[];
@@ -25,7 +29,7 @@ interface ConciseBaseNode extends Omit<BaseNode, "inputs" | "outputs" | "id"> {
 
 interface ConciseVisualNode extends ConciseBaseNode {
   connections: Array<[string, string]>;
-  instances: NodeInstance[];
+  instances: InternalNodeInstance[];
 }
 
 interface ConciseCodeNode extends ConciseBaseNode {
@@ -56,7 +60,7 @@ const conciseBaseNode = (concise: ConciseBaseNode): BaseNode => {
   };
 };
 
-export const conciseNode = (concise: ConciseVisualNode): VisualNode => {
+export const conciseNode = (concise: ConciseVisualNode): InternalVisualNode => {
   const base = conciseBaseNode(concise);
 
   return {
@@ -79,8 +83,6 @@ export const conciseNode = (concise: ConciseVisualNode): VisualNode => {
       };
     }),
     instances: concise.instances,
-    inputsPosition: {},
-    outputsPosition: {},
   };
 };
 

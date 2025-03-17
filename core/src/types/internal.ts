@@ -14,13 +14,13 @@ export interface InternalCodeNode extends BaseNode {
 export interface InternalRefNodeInstance {
   id: string;
   nodeId: string;
-  inputsConfig: InputPinsConfig;
+  inputConfig: InputPinsConfig;
 }
 
 export interface InternalInlineNodeInstance {
   id: string;
   node: InternalVisualNode;
-  inputsConfig: InputPinsConfig;
+  inputConfig: InputPinsConfig;
 }
 
 export type InternalNodeInstance =
@@ -35,3 +35,21 @@ export interface InternalVisualNode extends BaseNode {
 }
 
 export type InternalNode = InternalCodeNode | InternalVisualNode;
+
+export function internalNodeInstance(
+  insId: string,
+  nodeId: string,
+  inputConfig?: InputPinsConfig
+): InternalRefNodeInstance {
+  return {
+    id: insId,
+    nodeId,
+    inputConfig: inputConfig ?? {},
+  };
+}
+
+export function isInternalVisualNode(
+  node: InternalNode
+): node is InternalVisualNode {
+  return "instances" in node;
+}

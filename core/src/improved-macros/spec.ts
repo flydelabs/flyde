@@ -9,11 +9,12 @@ import {
 import { eventually } from "..";
 import {
   MacroConfigurableValue,
-  nodeOutput,
   dynamicNodeInput,
   MacroEditorConfigStructured,
   evaluateCondition,
 } from "..";
+
+import { nodeOutput } from "../node";
 
 import { macroConfigurableValue } from "../node/macro-node";
 

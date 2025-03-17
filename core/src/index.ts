@@ -13,7 +13,6 @@ export * from "./connect/helpers";
 export * from "./execute";
 export * from "./simplified-execute";
 export * from "./node";
-export * from "./node/get-node-with-dependencies";
 export * from "./flow-schema";
 
 export * from "./types/connections";

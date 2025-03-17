@@ -1,11 +1,10 @@
 import {
-  fromSimplified,
-  Node,
-  VisualNode,
+  InternalNode,
+  InternalVisualNode,
   nodeInput,
   nodeOutput,
   InternalCodeNode,
-  nodeInstance,
+  internalNodeInstance,
   dynamicNodeInput,
   queueInputPinConfig,
 } from "./node";
@@ -14,8 +13,8 @@ import { execute, SubjectMap } from "./execute";
 
 import { isDefined, keys } from "./common";
 import { Subject } from "rxjs";
-import { CodeNode, NodesCollection } from ".";
-import { conciseCodeNode, valueNode } from "./test-utils";
+import { CodeNode, InternalNodesCollection } from ".";
+import { conciseCodeNode, fromSimplified, valueNode } from "./test-utils";
 
 export const add: InternalCodeNode = {
   id: "add",
@@ -40,7 +39,7 @@ export const add1: InternalCodeNode = {
   },
 };
 
-export const mul: Node = {
+export const mul: InternalNode = {
   id: "mul",
   inputs: {
     n1: nodeInput(),
@@ -50,7 +49,7 @@ export const mul: Node = {
   run: ({ n1, n2 }, { r }) => r?.next(n1 * n2),
 };
 
-export const mul2: Node = fromSimplified({
+export const mul2: InternalNode = fromSimplified({
   id: "mul2",
   inputTypes: { n: "number" },
   outputTypes: { r: "number" },
@@ -59,7 +58,7 @@ export const mul2: Node = fromSimplified({
   },
 });
 
-export const id: Node = {
+export const id: InternalNode = {
   id: "id",
   inputs: { v: nodeInput() },
   outputs: { r: nodeOutput() },
@@ -82,7 +81,7 @@ export const id2: InternalCodeNode = {
   },
 };
 
-export const transform: Node = {
+export const transform: InternalNode = {
   id: "transform",
   inputs: { from: nodeInput(), to: nodeInput() },
   outputs: { r: nodeOutput() },
@@ -91,7 +90,7 @@ export const transform: Node = {
   },
 };
 
-export const Value = (v: any): Node => {
+export const Value = (v: any): InternalNode => {
   return fromSimplified({
     id: `val-${v}`,
     inputTypes: {},
@@ -100,7 +99,7 @@ export const Value = (v: any): Node => {
   });
 };
 
-export const add1mul2: VisualNode = {
+export const add1mul2: InternalVisualNode = {
   id: "a1m2",
   inputs: {
     n: nodeInput(),
@@ -108,9 +107,11 @@ export const add1mul2: VisualNode = {
   outputs: {
     r: nodeOutput(),
   },
-  inputsPosition: {},
-  outputsPosition: {},
-  instances: [nodeInstance("a", add1.id), nodeInstance("b", mul2.id)],
+
+  instances: [
+    internalNodeInstance("a", add1.id),
+    internalNodeInstance("b", mul2.id),
+  ],
   connections: [
     {
       from: externalConnectionNode("n"),
@@ -127,7 +128,7 @@ export const add1mul2: VisualNode = {
   ],
 };
 
-export const add1mul2add1: VisualNode = {
+export const add1mul2add1: InternalVisualNode = {
   id: "a1m2a1",
   inputs: {
     n: nodeInput(),
@@ -135,12 +136,10 @@ export const add1mul2add1: VisualNode = {
   outputs: {
     r: nodeOutput(),
   },
-  inputsPosition: {},
-  outputsPosition: {},
   instances: [
-    nodeInstance("a", add1.id),
-    nodeInstance("b", mul2.id),
-    nodeInstance("c", add1.id),
+    internalNodeInstance("a", add1.id),
+    internalNodeInstance("b", mul2.id),
+    internalNodeInstance("c", add1.id),
   ],
   connections: [
     {
@@ -162,10 +161,8 @@ export const add1mul2add1: VisualNode = {
   ],
 };
 
-export const addGrouped: VisualNode = {
+export const addGrouped: InternalVisualNode = {
   id: "add-visual",
-  inputsPosition: {},
-  outputsPosition: {},
   inputs: {
     n1: nodeInput(),
     n2: nodeInput(),
@@ -173,7 +170,7 @@ export const addGrouped: VisualNode = {
   outputs: {
     r: nodeOutput(),
   },
-  instances: [nodeInstance("a", add.id)],
+  instances: [internalNodeInstance("a", add.id)],
   connections: [
     {
       from: externalConnectionNode("n1"),
@@ -190,10 +187,9 @@ export const addGrouped: VisualNode = {
   ],
 };
 
-export const addGroupedQueued: VisualNode = {
+export const addGroupedQueued: InternalVisualNode = {
   id: "add-visual-queued",
-  inputsPosition: {},
-  outputsPosition: {},
+
   inputs: {
     n1: nodeInput(),
     n2: nodeInput(),
@@ -202,7 +198,7 @@ export const addGroupedQueued: VisualNode = {
     r: nodeOutput(),
   },
   instances: [
-    nodeInstance("a", add.id, {
+    internalNodeInstance("a", add.id, {
       n1: queueInputPinConfig(),
       n2: queueInputPinConfig(),
     }),
@@ -252,7 +248,7 @@ export const isEven: InternalCodeNode = {
   },
 };
 
-export const filter: Node = fromSimplified({
+export const filter: InternalNode = fromSimplified({
   id: "filter",
   inputTypes: { list: "any", fn: "node" },
   outputTypes: { r: "any" },
@@ -354,7 +350,7 @@ export const testNodesCollection = {
   zero,
   one,
   mOne,
-};
+} as InternalNodesCollection;
 
 export const accumulate = conciseCodeNode({
   id: "accumulate",
@@ -404,10 +400,10 @@ export const spreadList = conciseCodeNode({
 });
 
 export const testNodesCollectionWith = (
-  ...nodes: (Node | CodeNode)[]
-): NodesCollection => {
-  return nodes.reduce<NodesCollection>(
-    (acc, p) => ({ ...acc, [p.id]: p }),
+  ...nodes: (InternalNode | CodeNode)[]
+): InternalNodesCollection => {
+  return nodes.reduce<InternalNodesCollection>(
+    (acc, p) => ({ ...acc, [p.id]: p as InternalNode }),
     testNodesCollection
   );
 };

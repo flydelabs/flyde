@@ -5,14 +5,14 @@ import { execute } from "../execute";
 import { Subject } from "rxjs";
 
 import { assert } from "chai";
-import { NodesCollection } from "..";
+import { InternalCodeNode, InternalNodesCollection } from "..";
 import { queueInputPinConfig, stickyInputPinConfig } from "../types/pin-config";
 import { dynamicNodeInput } from "../types/pins";
 
 export const runAddTests = (
-  add: Node,
+  add: InternalCodeNode,
   source: string,
-  resolvedDeps: NodesCollection
+  resolvedDeps: InternalNodesCollection
 ) => {
   describe(`Add tests: ${source}`, () => {
     it("runs fn when dynamic inputs are given", () => {

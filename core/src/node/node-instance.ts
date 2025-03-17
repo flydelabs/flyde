@@ -1,6 +1,5 @@
 import {
   InputPinsConfig,
-  Node,
   NodeDefinition,
   NodeStyle,
   Pos,
@@ -69,61 +68,9 @@ export interface InlineNodeInstance extends NodeInstanceConfig {
   node: VisualNode;
 }
 
-export type NodeInstance =
-  | RefNodeInstance
-  | InlineNodeInstance
-  | CodeNodeInstance
-  | VisualNodeInstance;
+export type NodeInstance = CodeNodeInstance | VisualNodeInstance;
 
 export type ResolvedNodeInstance = NodeInstance;
-
-export const nodeInstance = (
-  id: string,
-  nodeOrId: string,
-  config?: InputPinsConfig,
-  pos?: Pos
-): NodeInstance => ({
-  id,
-  nodeId: nodeOrId,
-  inputConfig: config || {},
-  pos: pos || { x: 0, y: 0 },
-});
-
-export const refNodeInstance = (
-  id: string,
-  nodeId: string,
-  config?: any,
-  inputConfig?: InputPinsConfig,
-  pos?: Pos
-): NodeInstance => ({
-  id,
-  nodeId,
-  inputConfig: inputConfig || {},
-  config: config || {},
-  pos: pos || { x: 0, y: 0 },
-});
-
-export const inlineNodeInstance = (
-  insId: string,
-  node: Node,
-  config?: InputPinsConfig,
-  pos?: Pos
-): NodeInstance =>
-  ({
-    id: insId,
-    node,
-    inputConfig: config || {},
-    pos: pos || { x: 0, y: 0 },
-  } as InlineNodeInstance);
-
-export const isInlineNodeInstance = (
-  ins: NodeInstance
-): ins is InlineNodeInstance => {
-  return !!(ins as any).node;
-};
-
-export const isRefNodeInstance = (ins: NodeInstance): ins is RefNodeInstance =>
-  !!(ins as any).nodeId && !(ins as any).macroId;
 
 export function codeNodeInstance(
   id: string,

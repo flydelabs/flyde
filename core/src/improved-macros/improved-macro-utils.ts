@@ -3,9 +3,10 @@ import {
   MacroConfigurableValue,
   MacroEditorFieldDefinition,
   InternalMacroNode,
-  nodeInput,
   InputMode,
 } from "..";
+
+import { nodeInput } from "../node";
 
 // Import the InputConfig type from improved-macros
 import { InputConfig } from "./improved-macros";

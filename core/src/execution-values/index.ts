@@ -1,7 +1,7 @@
 import {
+  InternalNode,
   isQueueInputPinConfig,
   isStickyInputPinConfig,
-  Node,
   NodeInput,
   NodeInputs,
   NodeState,
@@ -85,7 +85,7 @@ export const hasNewSignificantValues = (
 export const isNodeStateValid = (
   nodeInputs: NodeInputs,
   state: NodeState,
-  node: Node
+  node: InternalNode
 ) => {
   const connectedKeys = keys(nodeInputs);
 

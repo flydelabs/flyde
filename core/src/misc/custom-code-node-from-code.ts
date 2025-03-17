@@ -1,15 +1,12 @@
-import { isCodeNode, isInternalMacroNode, InternalMacroNode, Node } from "../";
+import { FlydeNode } from "../node";
 import { transpileFile } from "./transpile-file/transpile-file";
-import {
-  CodeNode,
-  processImprovedMacro,
-} from "../improved-macros/improved-macros";
+import { isCodeNode } from "../improved-macros/improved-macros";
 
 export function customCodeNodeFromCode(
   code: string,
-  suffixId?: string,
+  _?: string,
   imports?: { [key: string]: any }
-): Node | InternalMacroNode<any> {
+): FlydeNode {
   const transpiledCode = transpileFile("", code);
 
   // Wrap the transpiled code to handle default export
@@ -21,9 +18,7 @@ export function customCodeNodeFromCode(
 
   const result = new Function(wrappedCode)(imports);
 
-  const validNodes = Object.values(result).filter(
-    (node) => isCodeNode(node) || isInternalMacroNode(node)
-  );
+  const validNodes = Object.values(result).filter((node) => isCodeNode(node));
 
   if (validNodes.length === 0) {
     throw new Error("No valid nodes found");
@@ -36,13 +31,6 @@ export function customCodeNodeFromCode(
   const node = validNodes[0];
 
   if (isCodeNode(node)) {
-    const macro = processImprovedMacro(
-      node as CodeNode
-    ) as InternalMacroNode<any>;
-    macro.id = `${macro.id}${suffixId ? `-${suffixId}` : ""}`;
-    return macro;
-  } else if (isInternalMacroNode(node)) {
-    node.id = `${node.id}${suffixId ? `-${suffixId}` : ""}`;
     return node;
   } else {
     throw new Error("Invalid node type");
