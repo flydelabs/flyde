@@ -8,6 +8,7 @@ import {
 import { assert } from "chai";
 import _ = require("lodash");
 import { namespaceFlowImports } from "./namespace-flow-imports";
+import { ResolvedVisualNode } from "@flyde/core";
 
 describe("namespace flows", () => {
   it("namespaces referred node ids and their imports", () => {

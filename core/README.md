@@ -1,5 +1,3 @@
 # @flyde/core
 
-This package is responsible for running Flyde flows.
-
-It is responsible for running Visual nodes (flows), processing them and executing them.
+This is a low-level package responsible for running a flow after it has been fully resolved (dependencies resolved, CodeNodes expanded, etc).

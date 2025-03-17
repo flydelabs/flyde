@@ -1,25 +1,22 @@
 import { spy } from "sinon";
 import Sinon = require("sinon");
-import {
-  BaseNode,
-  InputPinMap,
-  VisualNode,
-  InternalCodeNode,
-  NodeInstance,
-} from "./.";
-
-import {
-  DynamicOutput,
-  dynamicOutput,
-  InputMode,
-  OutputPinMap,
-  nodeInput,
-  nodeOutput,
-} from "./node";
+import { NodeInstance, entries, OMap, RunNodeFunction } from "./.";
 
 import { connectionNode, externalConnectionNode } from "./connect/helpers";
 
 import { DebuggerEventType, DebuggerEvent, Debugger } from "./execute/debugger";
+import { InternalCodeNode } from "./types/internal";
+import { BaseNode } from "./types/core";
+import {
+  dynamicOutput,
+  DynamicOutput,
+  InputMode,
+  InputPinMap,
+  nodeInput,
+  nodeOutput,
+  OutputPinMap,
+} from "./types/pins";
+import { VisualNode } from "./types/external";
 interface ConciseBaseNode extends Omit<BaseNode, "inputs" | "outputs" | "id"> {
   inputs?: string[];
   outputs?: string[];
@@ -122,5 +119,34 @@ export const wrappedOnEvent = (
     if (event.type === type) {
       fn(event);
     }
+  };
+};
+
+export type SimplifiedNodeParams = {
+  id: string;
+  inputTypes: OMap<string>;
+  outputTypes: OMap<string>;
+  run: RunNodeFunction;
+};
+
+export const fromSimplified = ({
+  run,
+  inputTypes,
+  outputTypes,
+  id,
+}: SimplifiedNodeParams): InternalCodeNode => {
+  const inputs: InputPinMap = entries(inputTypes).reduce<InputPinMap>(
+    (p, [k]) => ({ ...p, [k]: {} }),
+    {}
+  );
+  const outputs: OutputPinMap = entries(outputTypes).reduce<InputPinMap>(
+    (p, [k]) => ({ ...p, [k]: {} }),
+    {}
+  );
+  return {
+    id,
+    inputs,
+    outputs,
+    run,
   };
 };

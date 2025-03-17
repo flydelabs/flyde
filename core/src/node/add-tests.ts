@@ -1,5 +1,3 @@
-import { dynamicNodeInput, Node } from ".";
-
 import { spy } from "sinon";
 
 import { execute } from "../execute";
@@ -8,7 +6,8 @@ import { Subject } from "rxjs";
 
 import { assert } from "chai";
 import { NodesCollection } from "..";
-import { queueInputPinConfig, stickyInputPinConfig } from "./pin-config";
+import { queueInputPinConfig, stickyInputPinConfig } from "../types/pin-config";
+import { dynamicNodeInput } from "../types/pins";
 
 export const runAddTests = (
   add: Node,

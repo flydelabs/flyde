@@ -1,10 +1,4 @@
-import {
-  CodeNode,
-  DynamicNodeInput,
-  NodeInstanceError,
-  refNodeInstance,
-  VisualNode,
-} from ".";
+import { CodeNode, NodeInstanceError, refNodeInstance } from ".";
 
 import { macroConfigurableValue } from "./node/macro-node";
 
@@ -35,17 +29,10 @@ import {
   TRIGGER_PIN_ID,
 } from "./connect";
 import {
-  InternalCodeNode,
-  fromSimplified,
-  dynamicNodeInput,
-  dynamicOutput,
   nodeInstance,
   NodeInstance,
-  nodeInput,
-  nodeOutput,
   queueInputPinConfig,
   stickyInputPinConfig,
-  dynamicNodeInputs,
   inlineNodeInstance,
 } from "./node";
 import { execute } from "./execute";
@@ -83,6 +70,7 @@ import {
   wrappedOnEvent,
 } from "./test-utils";
 import { DebuggerEventType } from "./execute/debugger";
+import { VisualNode, DynamicNodeInput } from "@flyde/core";
 
 describe("main ", () => {
   let cleanups: any[] = [];
