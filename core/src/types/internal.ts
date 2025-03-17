@@ -27,6 +27,12 @@ export type InternalNodeInstance =
   | InternalRefNodeInstance
   | InternalInlineNodeInstance;
 
+export function isInternalInlineNodeInstance(
+  instance: InternalNodeInstance
+): instance is InternalInlineNodeInstance {
+  return "node" in instance;
+}
+
 export interface InternalVisualNode extends BaseNode {
   /** the visual nodes internal node instances, either referring to other nodes by id or by value (inline) */
   instances: InternalNodeInstance[];

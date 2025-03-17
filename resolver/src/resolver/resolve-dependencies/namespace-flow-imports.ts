@@ -1,29 +1,38 @@
 import {
+  InternalVisualNode,
+  isInternalInlineNodeInstance,
   isVisualNode,
+  isVisualNodeInstance,
   ResolvedFlydeFlow,
-  isRefNodeInstance,
-  isInlineNodeInstance,
   VisualNode,
-  ResolvedVisualNode,
-  isMacroNodeInstance,
+  InternalNodeInstance,
+  InternalRefNodeInstance,
 } from "@flyde/core";
 import _ = require("lodash");
 
 const namespaceVisualNode = (
-  node: ResolvedVisualNode,
+  node: InternalVisualNode,
   namespace: string
-): ResolvedVisualNode => {
-  const namespacedInstances = node.instances.map((ins) => {
-    if (isInlineNodeInstance(ins)) {
-      if (isVisualNode(ins.node)) {
-        return { ...ins, node: namespaceVisualNode(ins.node, namespace) };
+): InternalVisualNode => {
+  const namespacedInstances = node.instances.map((ins: any) => {
+    if (isVisualNodeInstance(ins) && ins.source.type === "inline") {
+      const inlineNode = ins.source.data;
+      if (isVisualNode(inlineNode)) {
+        return {
+          ...ins,
+          source: {
+            ...ins.source,
+            data: namespaceVisualNode(inlineNode, namespace),
+          },
+        };
       } else {
         return ins;
       }
-    } else if (isMacroNodeInstance(ins)) {
-      return { ...ins, macroId: `${namespace}${ins.macroId}` };
-    } else {
+    } else if ("nodeId" in ins) {
+      // Handle reference node instances
       return { ...ins, nodeId: `${namespace}${ins.nodeId}` };
+    } else {
+      return ins;
     }
   });
 
@@ -33,10 +42,10 @@ const namespaceVisualNode = (
   };
 };
 
-export const namespaceFlowImports = (
+export function namespaceFlowImports(
   resolvedFlow: ResolvedFlydeFlow,
   namespace: string = ""
-): ResolvedFlydeFlow => {
+): ResolvedFlydeFlow {
   const node = resolvedFlow.main;
 
   if (isVisualNode(node)) {
@@ -48,14 +57,22 @@ export const namespaceFlowImports = (
         const newNode = isVisualNode(node)
           ? {
               ...node,
-              instances: node.instances.map((ins) => {
-                if (isRefNodeInstance(ins)) {
+              instances: node.instances.map((ins: any) => {
+                if (isVisualNodeInstance(ins) && ins.source.type === "inline") {
+                  const inlineNode = ins.source.data;
+                  if (isVisualNode(inlineNode)) {
+                    return {
+                      ...ins,
+                      source: {
+                        ...ins.source,
+                        data: namespaceVisualNode(inlineNode, namespace),
+                      },
+                    };
+                  }
+                  return ins;
+                } else if ("nodeId" in ins) {
+                  // Handle reference node instances
                   return { ...ins, nodeId: `${namespace}${ins.nodeId}` };
-                } else if (isMacroNodeInstance(ins)) {
-                  return {
-                    ...ins,
-                    macroId: `${namespace}${ins.macroId}`,
-                  };
                 } else {
                   return ins;
                 }
@@ -78,4 +95,4 @@ export const namespaceFlowImports = (
   } else {
     return resolvedFlow;
   }
-};
+}

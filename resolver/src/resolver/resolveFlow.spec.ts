@@ -1,9 +1,9 @@
 import {
   dynamicNodeInput,
   execute,
-  ImportedNode,
-  InlineNodeInstance,
-  NodesCollection,
+  InternalInlineNodeInstance,
+  InternalNodesCollection,
+  InternalVisualNode,
   randomInt,
   RefNodeInstance,
   VisualNode,
@@ -34,7 +34,7 @@ describe("resolver", () => {
     );
     const node = data.main;
 
-    const resolvedDeps = data.dependencies as NodesCollection;
+    const resolvedDeps = data.dependencies as InternalNodesCollection;
 
     const [s, r] = spiedOutput();
     const n = dynamicNodeInput();
@@ -56,7 +56,7 @@ describe("resolver", () => {
     );
 
     const node = data.main;
-    const resolvedDeps = data.dependencies as NodesCollection;
+    const resolvedDeps = data.dependencies as InternalNodesCollection;
 
     const [s, r] = spiedOutput();
 
@@ -82,7 +82,7 @@ describe("resolver", () => {
         getFixturePath("a-imports-b-imports-c-imports-d/Container.flyde")
       );
 
-      const resolvedDeps = data.dependencies as NodesCollection;
+      const resolvedDeps = data.dependencies as InternalNodesCollection;
 
       const keys = _.keys(resolvedDeps);
 
@@ -115,7 +115,7 @@ describe("resolver", () => {
       const data = resolveFlowByPath(
         getFixturePath("a-imports-b-and-c-potential-ambiguity/Container.flyde")
       );
-      const resolvedDeps = data.dependencies as NodesCollection;
+      const resolvedDeps = data.dependencies as InternalNodesCollection;
 
       assert.deepEqual(_.keys(resolvedDeps), [
         "Adds1Wrapper__Special",
@@ -153,7 +153,7 @@ describe("resolver", () => {
         )
       );
 
-      const resolvedDeps = data.dependencies as NodesCollection;
+      const resolvedDeps = data.dependencies as InternalNodesCollection;
 
       const [s, r] = spiedOutput();
       const n = dynamicNodeInput();
@@ -177,9 +177,9 @@ describe("resolver", () => {
         "Flow",
       ]);
 
-      const resolvedContainer = resolvedDeps["Container"] as VisualNode;
+      const resolvedContainer = resolvedDeps["Container"] as InternalVisualNode;
       const inlineContainer = (
-        resolvedContainer.instances[0] as InlineNodeInstance
+        resolvedContainer.instances[0] as InternalInlineNodeInstance
       ).node as VisualNode;
 
       assert.equal(
@@ -191,11 +191,10 @@ describe("resolver", () => {
 
   it("resolves a .flyde with dependency on a code node from a different package", async () => {
     const data = resolveFlowByPath(
-      getFixturePath("a-imports-b-code-from-package/a.flyde"),
-      "implementation"
+      getFixturePath("a-imports-b-code-from-package/a.flyde")
     );
 
-    const resolvedDeps = data.dependencies as NodesCollection;
+    const resolvedDeps = data.dependencies as InternalNodesCollection;
     const [s, r] = spiedOutput();
     const n = dynamicNodeInput();
     execute({
@@ -206,22 +205,15 @@ describe("resolver", () => {
     });
     n.subject.next(2);
     assert.equal(s.lastCall.args[0], 3);
-    assert.match(
-      data.dependencies.Add1?.source.path ?? "",
-      /@acme\/add1\/src\/add1\.flyde\.js$/
-    );
-
-    assert.equal(data.dependencies.Add1?.source.export ?? "", "default");
   });
 
   // TODO: this text is failing in CI, but not locally, investigate
   it.skip("resolves a .flyde with dependency on a visual node from a different package", async () => {
     const data = resolveFlowByPath(
-      getFixturePath("a-imports-b-grouped-from-package/a.flyde"),
-      "implementation"
+      getFixturePath("a-imports-b-grouped-from-package/a.flyde")
     );
 
-    const resolvedDeps = data.dependencies as NodesCollection;
+    const resolvedDeps = data.dependencies as InternalNodesCollection;
     const [s, r] = spiedOutput();
     const n = dynamicNodeInput();
     execute({
@@ -232,11 +224,6 @@ describe("resolver", () => {
     });
 
     assert.equal(s.lastCall.args[0], 3);
-
-    assert.match(
-      data.dependencies.Add1Wrapped?.source.path ?? "",
-      /@acme\/add1-wrapped\/src\/add1-wrapped\.flyde$/
-    );
   });
 
   it("breaks on invalid schemas", () => {
@@ -262,7 +249,7 @@ describe("resolver", () => {
     const path = getFixturePath("a-imports-js-node-from-b-with-dep/a.flyde");
     const flow = resolveFlowByPath(path);
 
-    const resolvedDeps = flow.dependencies as NodesCollection;
+    const resolvedDeps = flow.dependencies as InternalNodesCollection;
 
     const [s, r] = spiedOutput();
     const n = dynamicNodeInput();
@@ -309,7 +296,7 @@ describe("resolver", () => {
     const path = getFixturePath("imports-2-nodes-from-package.flyde");
 
     const flow = resolveFlowByPath(path);
-    const resolvedDeps = flow.dependencies as NodesCollection;
+    const resolvedDeps = flow.dependencies as InternalNodesCollection;
 
     const [s, r] = spiedOutput();
     const n = dynamicNodeInput();
@@ -343,7 +330,7 @@ describe("resolver", () => {
       getFixturePath("a-uses-inline-node-with-dependency/a.flyde")
     );
 
-    const resolvedDeps = flow.dependencies as NodesCollection;
+    const resolvedDeps = flow.dependencies as InternalNodesCollection;
 
     assert.exists(resolvedDeps.Add);
     // const val = await simplifiedExecute(flow.main, resolvedDeps, { n: 2 });
@@ -366,7 +353,7 @@ describe("resolver", () => {
       getFixturePath("a-uses-inline-node-with-dependency/b-imports-a.flyde")
     );
 
-    const resolvedDeps = flow.dependencies as NodesCollection;
+    const resolvedDeps = flow.dependencies as InternalNodesCollection;
 
     assert.exists(resolvedDeps.Add1Wrapper);
 
@@ -394,21 +381,12 @@ describe("resolver", () => {
     assert.exists(resolvedDeps.Add);
     assert.exists(resolvedDeps.Sub);
 
-    assert.match(
-      (resolvedDeps.Add as unknown as ImportedNode).source.export,
-      /add/
-    );
-    assert.match(
-      (resolvedDeps.Sub as unknown as ImportedNode).source.export,
-      /sub/
-    );
-
     const [s, r] = spiedOutput();
 
     const n = dynamicNodeInput();
     execute({
       node: flow.main,
-      resolvedDeps: resolvedDeps as NodesCollection,
+      resolvedDeps: resolvedDeps as InternalNodesCollection,
       inputs: { n },
       outputs: { r },
     });
@@ -426,7 +404,7 @@ describe("resolver", () => {
     const resolvedFlow = resolveFlowDependencies(flow, path);
     const node = resolvedFlow.main;
 
-    const resolvedDeps = resolvedFlow.dependencies as NodesCollection;
+    const resolvedDeps = resolvedFlow.dependencies as InternalNodesCollection;
 
     const [s, r] = spiedOutput();
     const n = dynamicNodeInput();
@@ -449,7 +427,7 @@ describe("resolver", () => {
       );
       const node = data.main;
 
-      const resolvedDeps = data.dependencies as NodesCollection;
+      const resolvedDeps = data.dependencies as InternalNodesCollection;
 
       const [s, r] = spiedOutput();
 
@@ -473,7 +451,7 @@ describe("resolver", () => {
       getFixturePath("a-imports-b-code-from-stdlib/flow.flyde")
     );
 
-    const resolvedDeps = data.dependencies as NodesCollection;
+    const resolvedDeps = data.dependencies as InternalNodesCollection;
 
     const [s, r] = spiedOutput();
 
@@ -501,7 +479,7 @@ describe("resolver", () => {
       );
       const node = data.main;
 
-      const resolvedDeps = data.dependencies as NodesCollection;
+      const resolvedDeps = data.dependencies as InternalNodesCollection;
 
       const [s, r] = spiedOutput();
 
@@ -528,7 +506,7 @@ describe("resolver", () => {
         getFixturePath("macro-node-transitive/flow.flyde")
       );
       const node = data.main;
-      const resolvedDeps = data.dependencies as NodesCollection;
+      const resolvedDeps = data.dependencies as InternalNodesCollection;
 
       const [s, r] = spiedOutput();
 
@@ -551,7 +529,7 @@ describe("resolver", () => {
     it("resolves a macro from external packages", async () => {
       const data = resolveFlowByPath(getFixturePath("macro-node-dep/a.flyde"));
       const node = data.main;
-      const resolvedDeps = data.dependencies as NodesCollection;
+      const resolvedDeps = data.dependencies as InternalNodesCollection;
 
       const [s, r] = spiedOutput();
 
@@ -575,7 +553,7 @@ describe("resolver", () => {
         getFixturePath("a-imports-b-macro-from-stdlib/flow.flyde")
       );
 
-      const resolvedDeps = data.dependencies as NodesCollection;
+      const resolvedDeps = data.dependencies as InternalNodesCollection;
 
       const [s, r] = spiedOutput();
 

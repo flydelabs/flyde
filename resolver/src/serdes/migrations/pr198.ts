@@ -133,5 +133,9 @@ export function migrateToPR198Structure(data: {
     value.map(String),
   ]) as [string, string[]][];
 
-  return migrateVisualNode(node, imports);
+  delete data.imports;
+
+  const res = migrateVisualNode(node, imports);
+
+  return res;
 }

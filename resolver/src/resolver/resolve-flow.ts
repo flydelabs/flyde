@@ -3,23 +3,17 @@ import _ = require("lodash");
 import { deserializeFlowByPath } from "../serdes/deserialize";
 import { resolveFlow } from "./resolve-dependencies/resolve-dependencies";
 
-export type ResolveMode = "implementation" | "definition";
-
 export function resolveFlowDependencies(
   flow: FlydeFlow,
-  flowPath: string,
-  mode: ResolveMode = "definition"
+  flowPath: string
 ): ResolvedFlydeFlow {
-  return resolveFlow(flow, mode, flowPath);
+  return resolveFlow(flow, flowPath);
 }
 
-function _resolveFlow(
-  fullFlowPath: string,
-  mode: ResolveMode = "definition"
-): ResolvedFlydeFlow {
+function _resolveFlow(fullFlowPath: string): ResolvedFlydeFlow {
   const flow = deserializeFlowByPath(fullFlowPath);
-  return flow as any;
-  // return resolveFlowDependencies(flow, fullFlowPath, mode);
+
+  return resolveFlowDependencies(flow, fullFlowPath);
 }
 
 export const resolveFlowByPath = _resolveFlow;
