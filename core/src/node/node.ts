@@ -2,13 +2,8 @@ import { OMap, OMapF, entries, testDataCreator, Pos } from "../common";
 import { Subject } from "rxjs";
 
 import { CancelFn, InnerExecuteFn } from "../execute";
-import {
-  isInlineNodeInstance,
-  NodeInstance,
-  ResolvedNodeInstance,
-} from "./node-instance";
+import { NodeInstance } from "./node-instance";
 import { InputPin, InputPinMap, OutputPin, OutputPinMap } from "./node-pins";
-import { ImportedNode } from "../flow-schema";
 import { MacroNodeDefinition } from "./macro-node";
 import { CodeNode } from "..";
 import { ConnectionData } from "../types/connections";
@@ -182,16 +177,9 @@ export interface VisualNode extends BaseNode {
   instances: NodeInstance[];
   /** each connection represents a "wire" between 2 different instances, or between an instance and a main input/output*/
   connections: ConnectionData[];
-  /** TODO - either deprecate this or {@link BaseNode.customViewCode} */
-  customView?: CustomNodeViewFn;
 }
 
 export type Node = InternalCodeNode | VisualNode;
-
-export type ImportableSource = {
-  module: string;
-  node: ImportedNode;
-};
 
 export type CodeNodeDefinition = Omit<InternalCodeNode, "run"> & {
   /**
@@ -251,27 +239,4 @@ export const fromSimplified = ({
     outputs,
     run,
   };
-};
-
-export const getNode = (
-  idOrIns: string | NodeInstance,
-  resolvedNodes: NodesCollection
-): Node => {
-  const isOrInsResolved = idOrIns as string | ResolvedNodeInstance; // ugly type hack to avoid fixing the whole Resolved instances cases caused by macros. TODO: fix this by refactoring all places to use "ResolvedNodeInstance"
-  if (
-    typeof isOrInsResolved !== "string" &&
-    isInlineNodeInstance(isOrInsResolved)
-  ) {
-    return isOrInsResolved.node;
-  }
-  const id =
-    typeof isOrInsResolved === "string"
-      ? isOrInsResolved
-      : isOrInsResolved.nodeId;
-
-  const node = resolvedNodes[id];
-  if (!node) {
-    throw new Error(`Node with id ${id} not found`);
-  }
-  return node as Node;
 };

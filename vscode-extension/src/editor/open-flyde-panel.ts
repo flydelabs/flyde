@@ -65,7 +65,6 @@ export async function getWebviewContent(params: WebviewContentParams) {
     port,
     webview,
     initialFlow,
-    dependencies,
     executionId,
     darkMode,
   } = params;
@@ -89,7 +88,6 @@ export async function getWebviewContent(params: WebviewContentParams) {
 
   const bootstrapData = {
     initialFlow,
-    dependencies,
     port,
     relativeFile,
     executionId,

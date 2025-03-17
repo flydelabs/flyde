@@ -1,6 +1,6 @@
 import {
   isInlineNodeInstance,
-  isMacroNodeInstance,
+  isCodeNodeInstance,
   macroConfigurableValue,
 } from "@flyde/core";
 
@@ -26,7 +26,7 @@ export function migrateMacroNodeV2(data: { node?: any; imports?: any }) {
 
   // migrate old stdlib nodes
   for (const ins of data.node?.instances) {
-    if (isMacroNodeInstance(ins)) {
+    if (isCodeNodeInstance(ins)) {
       if (skippedMacros.includes(ins.macroId)) {
         continue;
       }

@@ -18,15 +18,16 @@ export interface NodeInstanceConfig {
   pos: Pos;
 }
 
-export interface NodeSource {
-  type: string;
+export interface CodeNodeSource {
+  type: "package" | "file" | "custom";
   source: any;
 }
 
-export interface RefNodeInstance extends NodeInstanceConfig {
+export interface CodeNodeInstance extends NodeInstanceConfig {
   nodeId: string;
-  source?: NodeSource;
-  config?: any;
+  source: CodeNodeSource;
+  config: any;
+
   /**
    * @deprecated Use nodeId instead
    */
@@ -37,11 +38,38 @@ export interface RefNodeInstance extends NodeInstanceConfig {
   macroData?: any;
 }
 
+export interface VisualNodeSourceRef {
+  type: "ref";
+  source: string;
+  nodeId: string;
+}
+
+export interface VisualNodeSourceInline {
+  type: "inline";
+  node: VisualNode;
+}
+
+export interface VisualNodeInstance extends NodeInstanceConfig {
+  source: VisualNodeSourceRef | VisualNodeSourceInline;
+}
+
+/** @deprecated */
+export interface RefNodeInstance extends NodeInstanceConfig {
+  nodeId: string;
+  source?: CodeNodeSource;
+  config?: any;
+}
+
+/** @deprecated */
 export interface InlineNodeInstance extends NodeInstanceConfig {
   node: VisualNode;
 }
 
-export type NodeInstance = RefNodeInstance | InlineNodeInstance;
+export type NodeInstance =
+  | RefNodeInstance
+  | InlineNodeInstance
+  | CodeNodeInstance
+  | VisualNodeInstance;
 
 export type ResolvedNodeInstance = NodeInstance;
 
@@ -91,6 +119,23 @@ export const isInlineNodeInstance = (
 };
 export const isRefNodeInstance = (ins: NodeInstance): ins is RefNodeInstance =>
   !!(ins as any).nodeId && !(ins as any).macroId;
+
+export const isCodeNodeInstance = (
+  ins: NodeInstance
+): ins is CodeNodeInstance => {
+  return !!(ins as any).nodeId && !!(ins as any).source;
+};
+
+export const isVisualNodeInstance = (
+  ins: NodeInstance
+): ins is VisualNodeInstance => {
+  return (
+    !!(ins as any).source &&
+    (["ref", "inline"] as const).includes(
+      (ins as VisualNodeInstance).source.type
+    )
+  );
+};
 
 export const createInsId = (node: NodeDefinition) => {
   return `${node.id}-${slug()}`;

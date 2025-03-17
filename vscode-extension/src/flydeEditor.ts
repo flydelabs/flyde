@@ -17,7 +17,6 @@ import {
 import {
   EditorNodeInstance,
   FlydeFlow,
-  ImportableSource,
   MAJOR_DEBUGGER_EVENT_TYPES,
   MacroNodeDefinition,
   ResolvedFlydeFlow,
@@ -208,7 +207,6 @@ export class FlydeEditorEditorProvider
         port: this.params.port,
         webview: webviewPanel.webview,
         initialFlow,
-        dependencies,
         webviewId,
         executionId,
         darkMode: this.params.darkMode,
@@ -509,11 +507,11 @@ export class FlydeEditorEditorProvider
                     }`
                   );
                 }
-                const importableSource: ImportableSource = {
-                  node: node as any,
-                  module: nodeFileName,
-                };
-                messageResponse(event, importableSource);
+                // const importableSource: ImportableSource = {
+                //   node: node as any,
+                //   module: nodeFileName,
+                // };
+                // messageResponse(event, importableSource);
                 break;
               }
               case "createAiCompletion": {

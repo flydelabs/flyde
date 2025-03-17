@@ -513,12 +513,11 @@ export const execute: ExecuteFn = ({
       );
     })
     .map((instance) => {
-      const macro = resolvedDeps[
-        instance.macroId ?? instance.nodeId
-      ] as unknown as InternalMacroNode;
+      const id = (instance as any).macroId ?? instance.nodeId;
+      const macro = resolvedDeps[id] as unknown as InternalMacroNode;
 
       if (!macro) {
-        throw new Error(`Macro ${instance.macroId} not found in resolvedDeps`);
+        throw new Error(`Macro ${id} not found in resolvedDeps`);
       }
 
       const processed = processMacroNodeInstance("", macro, instance);

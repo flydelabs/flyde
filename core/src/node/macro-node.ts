@@ -202,9 +202,11 @@ export function processMacroNodeInstance(
     : processImprovedMacro(_macro);
 
   const metaData = macro.definitionBuilder(
-    instance.config ?? instance.macroData ?? {}
+    instance.config ?? (instance as any).macroData ?? {}
   );
-  const runFn = macro.runFnBuilder(instance.config ?? instance.macroData ?? {});
+  const runFn = macro.runFnBuilder(
+    instance.config ?? (instance as any).macroData ?? {}
+  );
 
   const id = `${prefix}${macro.id}__${instance.id}`;
 

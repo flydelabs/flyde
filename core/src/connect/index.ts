@@ -10,7 +10,7 @@ import {
   queueInputPinConfig,
   NodeOutput,
   NodeState,
-  getNode,
+  Node,
 } from "../node";
 import { CancelFn, execute, Debugger } from "../execute";
 import { DepGraph, isDefined, noop, keys, OMap, randomInt } from "../common";
@@ -23,7 +23,11 @@ import {
   TRIGGER_PIN_ID,
 } from "./helpers";
 
-import { NodesCollection } from "..";
+import {
+  isInlineNodeInstance,
+  isVisualNodeInstance,
+  NodesCollection,
+} from "..";
 
 export * from "./helpers";
 
@@ -338,3 +342,34 @@ export const composeExecutableNode = (
     },
   };
 };
+
+function getNode(idOrIns: NodeInstance, resolvedNodes: NodesCollection): Node {
+  const isOrInsResolved = idOrIns;
+  if (isInlineNodeInstance(isOrInsResolved)) {
+    return isOrInsResolved.node;
+  }
+
+  if (isVisualNodeInstance(isOrInsResolved)) {
+    if (isOrInsResolved.source.type === "ref") {
+      const node = resolvedNodes[isOrInsResolved.source.nodeId];
+      if (!node) {
+        throw new Error(
+          `Node with id ${isOrInsResolved.source.nodeId} not found`
+        );
+      }
+      return node as Node;
+    }
+    return isOrInsResolved.source.node;
+  }
+
+  const id =
+    typeof isOrInsResolved === "string"
+      ? isOrInsResolved
+      : isOrInsResolved.nodeId;
+
+  const node = resolvedNodes[id];
+  if (!node) {
+    throw new Error(`Node with id ${id} not found`);
+  }
+  return node as Node;
+}

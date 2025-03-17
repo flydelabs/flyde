@@ -100,6 +100,7 @@ const visualNode = z
   .and(flydeBaseNode);
 
 export type FlydeFlow = {
+  /** @deprecated */
   imports?: Record<string, String[]>;
   node: VisualNode;
 };
