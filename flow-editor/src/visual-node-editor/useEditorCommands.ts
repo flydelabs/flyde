@@ -6,16 +6,15 @@ import {
   queueInputPinConfig,
   stickyInputPinConfig,
   THIS_INS_ID,
-  isExternalConnectionNode,
-  isInlineNodeInstance,
   isInternalConnectionNode,
   isVisualNode,
   NodeStyle,
-  ImportableSource,
-  isMacroNodeDefinition,
   Pos,
   ConnectionData,
   ConnectionNode,
+  isInlineVisualNodeInstance,
+  isExternalConnectionNode,
+  EditorNodeInstance,
 } from "@flyde/core";
 import React from "react";
 import {
@@ -27,7 +26,6 @@ import {
   usePorts,
   getConnectionId,
   useConfirm,
-  createNewMacroNodeInstance,
   createNewNodeInstance,
   centerBoardPosOnTarget,
   Size,
@@ -163,8 +161,8 @@ export function useEditorCommands(
 
   const onUnGroup = React.useCallback(
     (groupNodeIns: NodeInstance) => {
-      if (isInlineNodeInstance(groupNodeIns)) {
-        const visualNode = groupNodeIns.node;
+      if (isInlineVisualNodeInstance(groupNodeIns)) {
+        const visualNode = groupNodeIns.source.data;
         if (!isVisualNode(visualNode)) {
           toast({
             description: "Not supported",
@@ -297,16 +295,18 @@ export function useEditorCommands(
   }, [_confirm, boardData, onDeleteInstances, onRemoveIoPin]);
 
   const onAddNode = React.useCallback(
-    async (importableNode: ImportableSource, position?: Pos) => {
+    async (importableNode: EditorNodeInstance, position?: Pos) => {
       // Calculate the center of the viewport
       const targetPos = {
         x: viewPort.pos.x + vpSize.width / (2 * viewPort.zoom),
         y: viewPort.pos.y + vpSize.height / (2 * viewPort.zoom),
       };
 
-      const newNodeIns = isMacroNodeDefinition(importableNode.node)
-        ? createNewMacroNodeInstance(importableNode.node, 0, targetPos)
-        : createNewNodeInstance(importableNode.node.id, 0, targetPos);
+      const newNodeIns = createNewNodeInstance(
+        importableNode.node.id,
+        0,
+        targetPos
+      );
       const newNode = produce(node, (draft) => {
         draft.instances.push(newNodeIns);
       });
@@ -466,7 +466,6 @@ export function useEditorCommands(
       boardData.selectedInstances,
       node,
       name,
-      "inline",
       _prompt
     );
     onChange(currentNode, functionalChange("group node"));

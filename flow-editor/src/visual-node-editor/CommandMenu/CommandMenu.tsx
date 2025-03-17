@@ -13,7 +13,11 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@flyde/ui";
-import { ImportableSource, NodeLibraryData } from "@flyde/core";
+import {
+  CodeNodeDefinition,
+  EditorNodeInstance,
+  NodeLibraryData,
+} from "@flyde/core";
 import { useDependenciesContext } from "../../flow-editor/DependenciesContext";
 import { InstanceIcon } from "../instance-view";
 import { LocalImportableResult } from "../../flow-editor/DependenciesContext";
@@ -26,7 +30,7 @@ const MAX_RECENT_NODES = 8;
 export interface CommandMenuProps extends NodeLibraryData {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onAddNode: (node: ImportableSource) => void;
+  onAddNode: (node: EditorNodeInstance) => void;
   onClickCustomNode: () => void;
 }
 
@@ -39,7 +43,7 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
 }) => {
   const [query, setQuery] = useState("");
   const { onRequestImportables } = useDependenciesContext();
-  const [importables, setImportables] = useState<ImportableSource[]>();
+  const [importables, setImportables] = useState<EditorNodeInstance[]>();
   const [recentlyUsedIds, setRecentlyUsedIds] = useLocalStorage<string[]>(
     RECENTLY_USED_KEY,
     []
@@ -120,15 +124,13 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
   // Get recently used nodes from current available nodes
   const recentlyUsedNodes = React.useMemo(() => {
     const allNodes = [
-      ...groups.flatMap((g) =>
-        g.nodes.map((node) => ({ module: "@flyde/stdlib", node }))
-      ),
+      ...groups.flatMap((g) => g.nodes.map((node) => node)),
       ...(importables || []),
     ];
 
     return recentlyUsedIds
-      .map((id) => allNodes.find((node) => node.node.id === id))
-      .filter(Boolean) as ImportableSource[];
+      .map((id) => allNodes.find((node) => node.id === id))
+      .filter(Boolean) as CodeNodeDefinition[];
   }, [recentlyUsedIds, groups, importables]);
 
   const onSelect = useCallback(
@@ -145,10 +147,7 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
           .flatMap((g) => g.nodes)
           .find((n) => n.id === nodeId);
         if (node) {
-          const importableNode = {
-            module: "@flyde/stdlib",
-            node: node as any,
-          };
+          const importableNode = node as any as EditorNodeInstance;
           setRecentlyUsedIds(
             [nodeId, ...recentlyUsedIds.filter((id) => id !== nodeId)].slice(
               0,
@@ -199,30 +198,29 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
                 <div className="grid grid-cols-4 gap-0">
                   {recentlyUsedNodes.map((importable) => (
                     <CommandItem
-                      key={importable.node.id}
-                      value={`importable:${importable.node.id}`}
+                      key={importable.id}
+                      value={`importable:${importable.id}`}
                       onSelect={onSelect}
                       className="text-xs py-1 px-1 cursor-pointer add-menu-item"
                     >
-                      {importable.node.icon && (
+                      {importable.icon && (
                         <InstanceIcon
-                          icon={importable.node.icon}
+                          icon={importable.icon}
                           className="mr-0.5"
                         />
                       )}
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger className="truncate">
-                            {importable.node.menuDisplayName ??
-                              importable.node.id}
+                            {importable.menuDisplayName ?? importable.id}
                           </TooltipTrigger>
-                          {importable.node.description &&
-                            typeof importable.node.description === "string" && (
+                          {importable.description &&
+                            typeof importable.description === "string" && (
                               <TooltipContent
                                 side="right"
                                 className="max-w-[300px]"
                               >
-                                {importable.node.description}
+                                {importable.description}
                               </TooltipContent>
                             )}
                         </Tooltip>

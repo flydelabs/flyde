@@ -1,4 +1,9 @@
-import { InternalCodeNode, CodeNodeDefinition, NodeMetadata } from "./node";
+import {
+  InternalCodeNode,
+  CodeNodeDefinition,
+  NodeMetadata,
+  CodeNodeInstance,
+} from "./node";
 import type React from "react";
 
 export function macroConfigurableValue(
@@ -11,7 +16,6 @@ import {
   CodeNode,
   processImprovedMacro,
 } from "../improved-macros/improved-macros";
-import { RefNodeInstance } from "./node-instance";
 
 export type MacroEditorFieldDefinitionType =
   | "string"
@@ -178,35 +182,17 @@ export const isInternalMacroNode = (p: any): p is InternalMacroNode<any> => {
   return p && typeof (p as InternalMacroNode<any>).runFnBuilder === "function";
 };
 
-export const isMacroNodeDefinition = (
-  p: any
-): p is MacroNodeDefinition<any> => {
-  const { editorConfig } = (p ?? {}) as MacroNodeDefinition<any>;
-  if (editorConfig?.type === "custom") {
-    return (
-      typeof (editorConfig as MacroEditorConfigCustomDefinition)
-        .editorComponentBundleContent === "string"
-    );
-  } else {
-    return editorConfig?.type === "structured";
-  }
-};
-
 export function processMacroNodeInstance(
   prefix: string,
   _macro: InternalMacroNode<any> | CodeNode,
-  instance: RefNodeInstance
+  instance: Pick<CodeNodeInstance, "id" | "config">
 ) {
   const macro = isInternalMacroNode(_macro)
     ? _macro
     : processImprovedMacro(_macro);
 
-  const metaData = macro.definitionBuilder(
-    instance.config ?? (instance as any).macroData ?? {}
-  );
-  const runFn = macro.runFnBuilder(
-    instance.config ?? (instance as any).macroData ?? {}
-  );
+  const metaData = macro.definitionBuilder(instance.config ?? {});
+  const runFn = macro.runFnBuilder(instance.config ?? {});
 
   const id = `${prefix}${macro.id}__${instance.id}`;
 

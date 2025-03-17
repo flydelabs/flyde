@@ -23,7 +23,6 @@ import {
   extractInputsFromValue,
   formatEvent,
   isInternalMacroNode,
-  isMacroNodeDefinition,
   keys,
   macroConfigurableValue,
   processImprovedMacro,
@@ -184,8 +183,7 @@ export class FlydeEditorEditorProvider
             };
       }, "Failed to deserialize flow");
       const dependencies = tryOrThrow(
-        () =>
-          resolveFlow(initialFlow, "definition", fullDocumentPath).dependencies,
+        () => resolveFlow(initialFlow, fullDocumentPath).dependencies,
         "Failed to resolve flow's dependencies"
       );
 
@@ -308,15 +306,11 @@ export class FlydeEditorEditorProvider
                 if (dtoFlow) {
                   const deps = resolveFlow(
                     dtoFlow,
-                    "definition",
                     fullDocumentPath
                   ).dependencies;
                   messageResponse(event, deps);
                 } else {
-                  const flow = resolveFlowByPath(
-                    fullDocumentPath,
-                    "definition"
-                  );
+                  const flow = resolveFlowByPath(fullDocumentPath);
                   messageResponse(event, flow);
                 }
                 break;
@@ -577,7 +571,7 @@ export class FlydeEditorEditorProvider
                 console.log("instance", instance);
 
                 const resolvedFlow = tryOrThrow(
-                  () => resolveFlow(flow, "definition", fullDocumentPath),
+                  () => resolveFlow(flow, fullDocumentPath),
                   "Failed to resolve flow"
                 ) as ResolvedFlydeFlow;
 
@@ -636,7 +630,7 @@ export class FlydeEditorEditorProvider
                     defaultStyle: processedInstance.defaultStyle,
                     editorConfig,
                   },
-                };
+                } as any;
 
                 console.log("editorInstance", editorInstance);
 
@@ -684,11 +678,7 @@ export class FlydeEditorEditorProvider
         if (isSameUri && lastSaveBy !== webviewId) {
           const raw = document.getText();
           const flow: FlydeFlow = deserializeFlow(raw, fullDocumentPath);
-          const deps = resolveFlow(
-            flow,
-            "definition",
-            fullDocumentPath
-          ).dependencies;
+          const deps = resolveFlow(flow, fullDocumentPath).dependencies;
           webviewPanel.webview.postMessage({
             type: "onExternalFlowChange",
             requestId: "TODO-cuid",

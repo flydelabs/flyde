@@ -11,15 +11,11 @@ import {
   connectionDataEquals,
   ConnectionNode,
   noop,
-  isInlineNodeInstance,
-  isRefNodeInstance,
-  InlineNodeInstance,
   connectionNode,
   Pos,
   getNodeInputs,
   externalConnectionNode,
   fullInsIdPath,
-  ImportedNode,
   MacroNodeDefinition,
   NodeOrMacroDefinition,
   getNodeOutputs,
@@ -27,6 +23,10 @@ import {
   EditorNodeInstance,
   FlydeFlow,
   RefNodeInstance,
+  CodeNodeInstance,
+  isCodeNodeInstance,
+  isVisualNodeInstance,
+  isInlineVisualNodeInstance,
 } from "@flyde/core";
 
 import { InstanceView, InstanceViewProps } from "./instance-view/InstanceView";
@@ -54,7 +54,7 @@ import {
   animateViewPort,
   fitViewPortToRect,
   isEventOnCurrentBoard,
-  createNewMacroNodeInstance,
+  createNewNodeInstance,
 } from "./utils";
 
 import { OnboardingTips } from "./OnboardingTips";
@@ -151,8 +151,6 @@ export type VisualNodeEditorProps = {
 
   onCopy: (data: ClipboardData) => void;
   onInspectPin: (insId: string, pin?: { id: string; type: PinType }) => void;
-
-  onExtractInlineNode: (instance: InlineNodeInstance) => Promise<void>;
 
   className?: string;
 
@@ -273,7 +271,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       }>();
 
       const [editedNodeInstance, setEditedNodeInstance] = useState<{
-        ins: RefNodeInstance;
+        ins: CodeNodeInstance;
       }>();
 
       const [isAddingCustomNode, setIsAddingCustomNode] = useState(false);
@@ -679,11 +677,11 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
             setOpenInlineInstance({ insId: `${currentInsId}.${ins.id}`, node });
           } else {
-            if (isRefNodeInstance(ins)) {
-              setEditedNodeInstance({ ins: ins as any });
-            } else if (isInlineNodeInstance(ins)) {
+            if (isCodeNodeInstance(ins)) {
+              setEditedNodeInstance({ ins });
+            } else if (isVisualNodeInstance(ins)) {
               const node = ins.node;
-              if (isVisualNode(node)) {
+              if (isVisualNode(node) && ins.source.type === "inline") {
                 setOpenInlineInstance({ insId: ins.id, node });
               } else {
                 toast({
@@ -919,10 +917,10 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
               const ins = draft.instances.find(
                 (i) => i.id === openInlineInstance.insId
               );
-              if (!ins || !isInlineNodeInstance(ins)) {
+              if (!ins || !isInlineVisualNodeInstance(ins)) {
                 throw new Error("impossible state");
               }
-              ins.node = changedInlineNode;
+              ins.source.data = changedInlineNode;
             });
 
             onChange(
@@ -966,7 +964,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             onChangeNode: onChangeInspected,
             parentViewport: defaultViewPort,
             parentBoardPos: boardPos,
-            onExtractInlineNode: props.onExtractInlineNode,
             queuedInputsData: props.queuedInputsData,
           };
         } else {
@@ -1178,9 +1175,11 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
               const ins = draft.instances.find(
                 (i) => i.id === editedNodeInstance.ins.id
               );
-              // if (!ins || !isMacroNodeInstance(ins)) {
-              //   throw new Error(`Impossible state`);
-              // }
+
+              if (!ins || !isCodeNodeInstance(ins)) {
+                throw new Error(`Impossible state`);
+              }
+
               ins.config = val;
             });
             onChange(newVal, functionalChange("save macro instance"));
@@ -1189,7 +1188,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           [node, onChange, editedNodeInstance]
         );
 
-      const onSwitchToSiblingMacro = React.useCallback(
+      const onSwitchToSiblingNode = React.useCallback(
         async (newMacro: MacroNodeDefinition<any>) => {
           if (!editedNodeInstance) {
             throw new Error("Impossible state - no edited macro instance");
@@ -1201,8 +1200,8 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           };
           await onImportNode(importableNode);
 
-          const newNodeIns = createNewMacroNodeInstance(
-            importableNode.node,
+          const newNodeIns = createNewNodeInstance(
+            importableNode.node.id,
             0,
             editedNodeInstance.ins.pos
           ) as RefNodeInstance;
@@ -1313,11 +1312,8 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           e.preventDefault();
           const data = e.dataTransfer.getData("application/json");
           if (data) {
-            const droppedNode = JSON.parse(data) as ImportedNode;
-            onAddNode({
-              module: "@flyde/stdlib",
-              node: droppedNode,
-            });
+            const droppedNode = JSON.parse(data) as EditorNodeInstance;
+            onAddNode(droppedNode);
           }
         },
         [onAddNode]
@@ -1564,7 +1560,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                     onCancel={() => setEditedNodeInstance(undefined)}
                     onSubmit={onSaveMacroInstance}
                     ins={editedNodeInstance.ins}
-                    onSwitchToSiblingMacro={onSwitchToSiblingMacro}
+                    onSwitchToSiblingMacro={onSwitchToSiblingNode}
                     editorNode={editorNode}
                   />
                 ) : null}

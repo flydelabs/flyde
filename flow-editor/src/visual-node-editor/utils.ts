@@ -1,11 +1,8 @@
 import * as immer from "immer";
-import { createId } from "@paralleldrive/cuid2";
 
 import { NODE_HEIGHT } from "./VisualNodeEditor";
 import {
   Pos,
-  InputPin,
-  OutputPin,
   VisualNode,
   NodeInstance,
   isExternalConnectionNode,
@@ -13,31 +10,19 @@ import {
   nodeInstance,
   queueInputPinConfig,
   InputMode,
-  inlineNodeInstance,
   intersectRect,
   Rect,
   calcCenter,
   fullInsIdPath,
   InputPinConfig,
   NodeDefinition,
-  isMacroNodeDefinition,
-  macroNodeInstance,
-  MacroNodeDefinition,
   createInsId,
   EditorVisualNode,
   EditorNodeInstance,
 } from "@flyde/core";
 import { calcPinPosition } from "./connection-view/calc-pin-position";
 import { Size } from "../utils";
-import {
-  isOptionalType,
-  randomInt,
-  keys,
-  OMap,
-  entries,
-  fromEntries,
-  isDefined,
-} from "@flyde/core";
+import { keys, isDefined } from "@flyde/core";
 import { calcNodeWidth } from "./instance-view/utils";
 
 import { calcNodeIoWidth as calcIoNodeWidth } from "./node-io-view/utils";
@@ -91,7 +76,10 @@ export const findClosestPin = (
   ancestorsInsIds: string,
   viewPort: ViewPort
 ) => {
-  const rootInstance: NodeInstance = nodeInstance(node.id, node.id);
+  const rootInstance: NodeInstance = nodeInstance(node.id, node.id, {} as any, {
+    x: 0,
+    y: 0,
+  });
   const mainInputsData = keys(node.inputs).map((pinId) => {
     const pos = calcPinPosition({
       insId: currentInsId,
@@ -183,72 +171,6 @@ export const getSelectionBoxRect = (from: Pos, to: Pos) => {
   return { x: mnx, y: mny, w, h };
 };
 
-export const parsePromptValue = (raw: string | null) => {
-  if (raw === null) {
-    return;
-  }
-  const maybeNum = parseInt(raw, 10);
-  let value: any = raw;
-  // eslint-disable-next-line eqeqeq
-  if (maybeNum.toString() == raw && !isNaN(maybeNum)) {
-    value = maybeNum;
-  }
-  return value;
-};
-
-export const parseInputOutputTypes = (
-  typeStr: string
-): { inputs: OMap<InputPin>; outputs: OMap<OutputPin> } => {
-  const [, inputsRaw, outputsRaw] = (typeStr.match(/node\((.+)\|(.+)\)/) ||
-    []) as any;
-
-  const inputsEntries = entries(JSON.parse(inputsRaw)).map(([key, type]) => {
-    const optional = isOptionalType(key);
-
-    const val = {
-      type,
-      optional,
-    };
-    return [key.replace(/\?$/, ""), val];
-  });
-  const outputsEntries = entries(JSON.parse(outputsRaw)).map(([key, type]) => {
-    const optional = isOptionalType(key);
-
-    const val = {
-      type,
-      optional,
-    };
-    return [key.replace(/\?$/, ""), val];
-  });
-
-  return {
-    inputs: fromEntries(inputsEntries as any),
-    outputs: fromEntries(outputsEntries as any),
-  };
-};
-
-export const createNewInlineNodeInstance = (
-  node: NodeDefinition,
-  offset: number = -1 * NODE_HEIGHT * 1.5,
-  lastMousePos: Pos
-): NodeInstance => {
-  const ins = inlineNodeInstance(
-    `${node.id}-${randomInt(999)}`,
-    node as any,
-    {},
-    { x: 0, y: 0 }
-  );
-  const width = calcNodeWidth(ins, node);
-
-  const { x, y } = lastMousePos;
-  const pos = {
-    x: x - width / 2,
-    y: y + offset,
-  };
-
-  return { ...ins, pos };
-};
-
 export const createNewNodeInstance = (
   nodeIdOrNode: string | NodeDefinition,
   offset: number = -1 * NODE_HEIGHT * 1.5,
@@ -264,50 +186,14 @@ export const createNewNodeInstance = (
     throw new Error(`${nodeIdOrNode} node not found`);
   }
 
-  const inputsConfig = entries(node.inputs).reduce((acc, [k, v]) => {
-    return acc;
-  }, {});
+  // TODO - handle visual node addition
 
-  const ins = isMacroNodeDefinition(node)
-    ? macroNodeInstance(
-        createInsId(node as any),
-        node.id,
-        node.defaultData,
-        inputsConfig,
-        {
-          x: 0,
-          y: 0,
-        }
-      )
-    : nodeInstance(createInsId(node), node.id, inputsConfig, { x: 0, y: 0 });
+  const ins = nodeInstance(createInsId(node), node.id, {} as any, {
+    x: 0,
+    y: 0,
+  });
+
   const width = calcNodeWidth(ins, node);
-
-  const { x, y } = lastMousePos;
-  const pos = {
-    x: x - width / 2,
-    y: y + offset,
-  };
-
-  return { ...ins, pos };
-};
-
-export const createNewMacroNodeInstance = (
-  macro: MacroNodeDefinition<any>,
-  offset: number = -1 * NODE_HEIGHT * 1.5,
-  lastMousePos: Pos
-): NodeInstance => {
-  const ins = macroNodeInstance(
-    createId(),
-    macro.id,
-    macro.defaultData,
-    {},
-    {
-      x: 0,
-      y: 0,
-    }
-  );
-
-  const width = 100; // macro are resolved only after they are created, so we don't know their width yet
 
   const { x, y } = lastMousePos;
   const pos = {

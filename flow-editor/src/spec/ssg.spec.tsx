@@ -24,7 +24,10 @@ describe("ssg/ssr support", () => {
       id,
       inputs: { a: nodeInput() },
       outputs: { r: nodeOutput() },
-      instances: [nodeInstance("i1", id), nodeInstance("i2", id)],
+      instances: [
+        nodeInstance("i1", id, { type: "package", data: {} }),
+        nodeInstance("i2", id, { type: "package", data: {} }),
+      ],
       connections: [connectionData("i1.r", "i2.a")],
     });
     const props: FlydeFlowEditorProps = {

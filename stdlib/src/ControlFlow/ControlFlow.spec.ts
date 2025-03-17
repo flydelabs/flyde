@@ -2,12 +2,11 @@ import {
   dynamicNodeInput,
   eventually,
   execute,
-  inlineNodeInstance,
-  macroNodeInstance,
+  internalNodeInstance,
+  InternalVisualNode,
   processImprovedMacro,
   processMacroNodeInstance,
   randomInt,
-  VisualNode,
 } from "@flyde/core";
 import { assert } from "chai";
 
@@ -28,20 +27,25 @@ describe("ControlFlow", () => {
       const _pub = processImprovedMacro(Publish);
       const _sub = processImprovedMacro(Subscribe);
 
-      const i1 = macroNodeInstance("i1", _pub.id, {});
-      const i2 = macroNodeInstance("i2", _sub.id, {});
+      const _pubNode = processMacroNodeInstance("i1", _pub, {
+        id: "i1",
+        config: {},
+      });
+      const _subNode = processMacroNodeInstance("i2", _sub, {
+        id: "i2",
+        config: {},
+      });
 
-      const _pubNode = processMacroNodeInstance("i1", _pub, i1);
-      const _subNode = processMacroNodeInstance("i2", _sub, i2);
+      const valNode = valueNode("key", key);
 
-      const visualNode: VisualNode = conciseNode({
+      const visualNode: InternalVisualNode = conciseNode({
         id: "test",
         inputs: ["a"],
         outputs: ["b"],
         instances: [
-          inlineNodeInstance("key", valueNode("key", key)),
-          inlineNodeInstance("i1", _pubNode),
-          inlineNodeInstance("i2", _subNode),
+          internalNodeInstance("key", valNode.id, {}),
+          internalNodeInstance("i1", _pubNode.id, {}),
+          internalNodeInstance("i2", _subNode.id, {}),
         ],
         connections: [
           ["key.r", "i1.key"],
@@ -59,7 +63,11 @@ describe("ControlFlow", () => {
         node: visualNode,
         inputs: { a: input },
         outputs: { b },
-        resolvedDeps: {},
+        resolvedDeps: {
+          [_pubNode.id]: _pubNode,
+          [_subNode.id]: _subNode,
+          [valNode.id]: valNode,
+        },
         ancestorsInsIds: "bob",
       });
 

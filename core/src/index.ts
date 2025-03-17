@@ -7,6 +7,7 @@ import {
   NodeDefinition,
   NodeOrMacroDefinition,
   MacroNodeDefinition,
+  CodeNodeDefinition,
 } from "./node";
 
 export * from "./connect/helpers";
@@ -43,7 +44,7 @@ export type MacrosDefCollection = OMap<MacroNodeDefinition<any>>;
 
 export interface NodeLibraryGroup {
   title: string;
-  nodes: NodeOrMacroDefinition[];
+  nodes: CodeNodeDefinition[];
 }
 
 export interface NodeLibraryData {

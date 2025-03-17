@@ -250,7 +250,6 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
                   onCopy={setClipboardData}
                   nodeIoEditable={!editedNode.id.startsWith("Trigger")}
                   onInspectPin={onInspectPin}
-                  onExtractInlineNode={props.onExtractInlineNode}
                   queuedInputsData={queuedInputsData}
                   initialPadding={props.initialPadding}
                   instancesWithErrors={instancesWithErrors}

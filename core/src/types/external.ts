@@ -5,7 +5,15 @@
  * Connecting to a main input or output is the way that a visual nodes' internal implementation can communicate with its external API.
  */
 
-import { CodeNode, NodeDefinition, NodeInstance } from "..";
+import {
+  CodeNode,
+  CodeNodeInstance,
+  CodeNodeSource,
+  InputPinsConfig,
+  NodeDefinition,
+  NodeInstance,
+  VisualNodeInstance,
+} from "..";
 import { OMap, Pos, testDataCreator } from "../common";
 import { ConnectionData } from "./connections";
 import { BaseNode } from "./core";
@@ -35,6 +43,44 @@ export const visualNode = testDataCreator<VisualNode>({
   outputsPosition: {},
   inputsPosition: {},
 });
+
+export function nodeInstance(
+  insId: string,
+  nodeId: string,
+  source: CodeNodeSource,
+  config: any = {},
+  inputConfig: InputPinsConfig = {},
+  pos: Pos = { x: 0, y: 0 }
+): CodeNodeInstance {
+  return {
+    id: insId,
+    nodeId,
+    source,
+    config,
+    inputConfig,
+    type: "code",
+    pos,
+  };
+}
+
+export function inlineVisualNodeInstance(
+  insId: string,
+  node: VisualNode,
+  inputConfig: InputPinsConfig = {},
+  pos: Pos = { x: 0, y: 0 }
+): VisualNodeInstance {
+  return {
+    id: insId,
+    nodeId: node.id,
+    source: {
+      type: "inline",
+      data: node,
+    },
+    inputConfig,
+    pos,
+    type: "visual",
+  };
+}
 
 export type CodeNodeDefinition = Omit<InternalCodeNode, "run"> & {
   /**

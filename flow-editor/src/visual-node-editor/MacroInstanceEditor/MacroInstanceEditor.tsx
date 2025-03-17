@@ -10,10 +10,9 @@ import {
 import { Alert, AlertDescription, AlertTitle, Info, GitFork } from "@flyde/ui";
 
 import {
+  CodeNodeInstance,
   EditorVisualNode,
   MacroNodeDefinition,
-  RefNodeInstance,
-  isMacroNodeDefinition,
 } from "@flyde/core";
 
 import { ErrorBoundary } from "react-error-boundary";
@@ -25,7 +24,7 @@ import { Loader } from "../../lib/loader";
 import { InstanceIcon } from "../instance-view/InstanceIcon";
 
 export interface MacroInstanceEditorProps {
-  ins: RefNodeInstance;
+  ins: CodeNodeInstance;
   editorNode: EditorVisualNode;
   onCancel: () => void;
   onSubmit: (value: any) => void;
@@ -53,11 +52,8 @@ export const MacroInstanceEditor: React.FC<MacroInstanceEditorProps> = (
 
   const macro: MacroNodeDefinition<any> = useMemo(() => {
     const macro = editorNode.instances.find((_ins) => _ins.id === ins.id)?.node;
-    if (macro && !isMacroNodeDefinition(macro)) {
-      throw new Error(`Macro ${ins.macroId} not found `);
-    }
     return macro as any as MacroNodeDefinition<any>;
-  }, [editorNode.instances, ins.id, ins.macroId]);
+  }, [editorNode.instances, ins.id]);
 
   useEffect(() => {
     if (macro) {

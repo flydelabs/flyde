@@ -6,7 +6,6 @@ import {
   nodeInput,
   connectionNodeEquals,
   VisualNode,
-  middlePos,
 } from "@flyde/core";
 import { rnd } from "../physics";
 import { NodeInstance } from "@flyde/core";
@@ -138,11 +137,6 @@ export const createGroup = async (
     outputs[name] = nodeOutput();
   }
 
-  // replace relevant nodes with new node
-  const midPos = instances.reduce((p, c) => {
-    return middlePos(c.pos, p);
-  }, instances[0].pos);
-
   const internalConnections = connections.filter(
     (conn) =>
       instanceIds.includes(conn.from.insId) &&
@@ -155,7 +149,6 @@ export const createGroup = async (
     outputs,
     instances,
     defaultStyle: {
-      size: "large",
       color: pickRandom(nodeStylePresetColors.map((c) => c.color)),
     },
     inputsPosition: keys(inputs).reduce(

@@ -1,10 +1,9 @@
 import {
   VisualNode,
   middlePos,
-  nodeInstance,
   ConnectionData,
-  inlineNodeInstance,
   createInsId,
+  inlineVisualNodeInstance,
 } from "@flyde/core";
 import produce from "immer";
 import { createGroup } from "./lib/create-group";
@@ -14,7 +13,6 @@ export const groupSelected = async (
   selected: string[],
   node: VisualNode,
   nodeName: string,
-  type: "inline" | "ref",
   prompt: PromptFn
 ): Promise<{ newNode: VisualNode; currentNode: VisualNode }> => {
   const { instances, connections } = node;
@@ -42,10 +40,12 @@ export const groupSelected = async (
     return middlePos(c.pos, p);
     // return { x: (c.pos.x + p.x) / 2, y: (c.pos.y + p.y) / 2 };
   }, instances[0].pos);
-  const newInstance =
-    type === "ref"
-      ? nodeInstance(createInsId(visualNode), visualNode.id, {}, midPos)
-      : inlineNodeInstance(createInsId(visualNode), visualNode, {}, midPos);
+  const newInstance = inlineVisualNodeInstance(
+    createInsId(visualNode),
+    visualNode,
+    {},
+    midPos
+  );
 
   // replace relevant nodes with new node
   const newInstancesArr = instances.filter((ins) => {

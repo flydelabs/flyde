@@ -6,7 +6,6 @@ import {
   OMap,
   keys,
   nodeInput,
-  isInlineNodeInstance,
   NodeStyle,
   getNodeOutputs,
   getInputName,
@@ -14,6 +13,7 @@ import {
   CodeNodeDefinition,
   VisualNodeInstance,
   CodeNodeInstance,
+  isInlineVisualNodeInstance,
 } from "@flyde/core";
 import classNames from "classnames";
 import { DiffStatus } from "../VisualNodeDiffView";
@@ -28,12 +28,7 @@ import {
   nodeOutput,
   isInputPinOptional,
 } from "@flyde/core";
-import {
-  NodeInstance,
-  isVisualNode,
-  PinType,
-  getNodeInputs,
-} from "@flyde/core";
+import { NodeInstance, PinType, getNodeInputs } from "@flyde/core";
 import { calcNodeContent } from "./utils";
 import { BaseNodeView } from "../base-node-view";
 
@@ -555,7 +550,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
           </ContextMenuSub>
           {inputMenuItems}
           {outputMenuItems}
-          {isInlineNodeInstance(instance) && isVisualNode(instance.node) && (
+          {isInlineVisualNodeInstance(instance) && (
             <ContextMenuItem onClick={() => onUngroup(instance)}>
               Ungroup inline node
             </ContextMenuItem>

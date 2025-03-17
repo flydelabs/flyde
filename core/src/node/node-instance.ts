@@ -124,6 +124,12 @@ export const isVisualNodeInstance = (
   return !!(ins as any).source && (ins as VisualNodeInstance).type === "visual";
 };
 
+export const isInlineVisualNodeInstance = (
+  ins: NodeInstance
+): ins is VisualNodeInstance & { source: VisualNodeSourceInline } => {
+  return isVisualNodeInstance(ins) && ins.source.type === "inline";
+};
+
 export const createInsId = (node: NodeDefinition) => {
   return `${node.id}-${slug()}`;
 };

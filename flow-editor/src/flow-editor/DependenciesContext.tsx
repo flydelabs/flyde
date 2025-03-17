@@ -1,6 +1,5 @@
 import {
   ResolvedDependenciesDefinitions,
-  ImportableSource,
   Pos,
   NodeLibraryData,
   ImportablesResult,
@@ -11,13 +10,13 @@ import { createContext, useContext } from "react";
 
 // TODO - merge this interface with the one from the dev-server
 export interface LocalImportableResult {
-  importables: ImportableSource[];
+  importables: any[];
   errors: ImportablesResult["errors"];
 }
 
 export interface DependenciesContextData {
   onImportNode: (
-    node: ImportableSource,
+    node: any,
     target?: {
       pos: Pos;
       selectAfterAdding?: boolean;

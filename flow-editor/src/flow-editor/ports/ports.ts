@@ -1,7 +1,6 @@
 import { createContext, useContext } from "react";
 import {
   FlydeFlow,
-  ImportableSource,
   NodeLibraryData,
   noop,
   FlowJob,
@@ -48,7 +47,7 @@ export interface EditorPorts {
 
   generateNodeFromPrompt: (dto: {
     prompt: string;
-  }) => Promise<{ importableNode: ImportableSource }>;
+  }) => Promise<{ importableNode: EditorNodeInstance }>;
   getLibraryData: () => Promise<NodeLibraryData>;
 
   onRequestSiblingNodes: (dto: {
@@ -58,7 +57,7 @@ export interface EditorPorts {
   onRequestNodeSource: (dto: {
     node: NodeOrMacroDefinition;
   }) => Promise<string>;
-  onCreateCustomNode: (dto: { code: string }) => Promise<ImportableSource>;
+  onCreateCustomNode: (dto: { code: string }) => Promise<EditorNodeInstance>;
   createAiCompletion?: (dto: { prompt: string }) => Promise<string>;
 
   resolveInstance: (dto: {

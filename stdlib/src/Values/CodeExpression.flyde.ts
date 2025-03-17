@@ -11,7 +11,6 @@ export const CodeExpression: CodeNode<CodeExpressionConfig> = {
   mode: "advanced",
   defaultStyle: {
     icon: "code",
-    size: "small",
   },
   menuDisplayName: "JS Expression",
   menuDescription: "Evaluates a JS expression. Supports dynamic variables",

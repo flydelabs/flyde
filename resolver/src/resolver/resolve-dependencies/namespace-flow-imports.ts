@@ -1,12 +1,8 @@
 import {
   InternalVisualNode,
-  isInternalInlineNodeInstance,
   isVisualNode,
   isVisualNodeInstance,
   ResolvedFlydeFlow,
-  VisualNode,
-  InternalNodeInstance,
-  InternalRefNodeInstance,
 } from "@flyde/core";
 import _ = require("lodash");
 
