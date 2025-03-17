@@ -49,7 +49,6 @@ export const ConnectionView: React.FC<ConnectionViewProps> = (props) => {
   const {
     viewPort,
     futureConnection,
-    toggleHidden,
     selectedInstances,
     draggedSource,
     selectedConnections,

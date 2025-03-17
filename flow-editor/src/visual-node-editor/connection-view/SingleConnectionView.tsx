@@ -29,7 +29,6 @@ export const SingleConnectionView: React.FC<SingleConnectionViewProps> = (
 
   const {
     connection,
-    node,
     instances,
     connectionType,
     viewPort,
@@ -67,7 +66,11 @@ export const SingleConnectionView: React.FC<SingleConnectionViewProps> = (
     return null;
   }
 
-  const fromNode = fromInstance?.node;
+  if (!fromInstance) {
+    return null;
+  }
+
+  const fromNode = fromInstance.node;
 
   const sourcePin = fromNode.outputs[from.pinId];
   const delayed = sourcePin && sourcePin.delayed;

@@ -41,7 +41,7 @@ export function loadFlowFromContent<Inputs>(
   fullFlowPath: string,
   debuggerUrl: string
 ): LoadedFlowExecuteFn<Inputs> {
-  const resFlow = resolveFlow(flow, "implementation", fullFlowPath);
+  const resFlow = resolveFlow(flow, fullFlowPath);
 
   return (inputs, params = {}) => {
     const { onOutputs, onCompleted, ...otherParams } = params;

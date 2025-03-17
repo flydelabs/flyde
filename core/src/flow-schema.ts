@@ -26,37 +26,23 @@ const nodeStyle = z.object({
   cssOverride: z.optional(z.record(z.string())),
 });
 
-const instance = z
-  .object({
-    pos: position.default({ x: 0, y: 0 }),
-    id: z.string(),
-    inputConfig: z.optional(z.record(z.string(), inputConfig)).default({}),
-    visibleInputs: z.optional(z.array(z.string())),
-    visibleOutputs: z.optional(z.array(z.string())),
-    nodeId: z.optional(z.string()),
-    node: z.optional(z.lazy(() => visualNode)),
-    macroId: z.optional(z.string()),
-    macroData: z.optional(z.any()),
-    config: z.optional(z.any()),
-    type: z.optional(z.enum(["CodeNode", "VisualNode"])),
-    source: z.optional(
-      z.object({
-        type: z.string(),
-        source: z.string(),
-      })
-    ),
-    style: z.optional(nodeStyle),
-  })
-  .refine(
-    (val) =>
-      val.node ||
-      val.nodeId ||
-      (val.macroId && typeof val.macroData !== "undefined"),
-    {
-      message:
-        "Instance must have either an inline node or refer to a nodeId, or be a macro instance",
-    }
-  );
+const instance = z.object({
+  pos: position.default({ x: 0, y: 0 }),
+  id: z.string(),
+  inputConfig: z.optional(z.record(z.string(), inputConfig)).default({}),
+  visibleInputs: z.optional(z.array(z.string())),
+  visibleOutputs: z.optional(z.array(z.string())),
+  nodeId: z.optional(z.string()),
+  config: z.optional(z.any()),
+  type: z.optional(z.enum(["CodeNode", "VisualNode"])),
+  source: z.optional(
+    z.object({
+      type: z.string(),
+      data: z.any(),
+    })
+  ),
+  style: z.optional(nodeStyle),
+});
 
 const inputPinSchema = z.union([
   z.string(),

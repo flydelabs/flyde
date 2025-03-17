@@ -5,7 +5,6 @@ import {
   VisualNode,
   InputPinsConfig,
   NodeDefinition,
-  NodeOrMacroDefinition,
   MacroNodeDefinition,
   CodeNodeDefinition,
 } from "./node";

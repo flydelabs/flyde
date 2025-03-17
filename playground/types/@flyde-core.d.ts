@@ -10,7 +10,7 @@ declare module '@flyde/core' {
     export * from "@flyde/core/common";
     import { Pos, OMap } from "@flyde/core/common";
     import { FlydeFlow } from "@flyde/core/flow-schema";
-    import { VisualNode, InputPinsConfig, NodeDefinition, NodeOrMacroDefinition, MacroNodeDefinition } from "@flyde/core/node";
+    import { VisualNode, InputPinsConfig, NodeDefinition, MacroNodeDefinition, CodeNodeDefinition } from "@flyde/core/node";
     export * from "@flyde/core/connect/helpers";
     export * from "@flyde/core/execute";
     export * from "@flyde/core/simplified-execute";
@@ -31,7 +31,7 @@ declare module '@flyde/core' {
     export type MacrosDefCollection = OMap<MacroNodeDefinition<any>>;
     export interface NodeLibraryGroup {
         title: string;
-        nodes: NodeOrMacroDefinition[];
+        nodes: CodeNodeDefinition[];
     }
     export interface NodeLibraryData {
         groups: NodeLibraryGroup[];
@@ -90,321 +90,13 @@ declare module '@flyde/core/flow-schema' {
     export const flydeFlowSchema: z.ZodObject<{
         /** @deprecated */
         imports: z.ZodDefault<z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnion<[z.ZodString, z.ZodArray<z.ZodString, "many">]>>>>;
-        node: z.ZodIntersection<z.ZodObject<{
-            instances: z.ZodArray<any, "many">;
-            connections: z.ZodArray<z.ZodObject<{
-                from: z.ZodObject<{
-                    insId: z.ZodString;
-                    pinId: z.ZodString;
-                }, "strict", z.ZodTypeAny, {
-                    insId?: string;
-                    pinId?: string;
-                }, {
-                    insId?: string;
-                    pinId?: string;
-                }>;
-                to: z.ZodObject<{
-                    insId: z.ZodString;
-                    pinId: z.ZodString;
-                }, "strict", z.ZodTypeAny, {
-                    insId?: string;
-                    pinId?: string;
-                }, {
-                    insId?: string;
-                    pinId?: string;
-                }>;
-                delayed: z.ZodOptional<z.ZodBoolean>;
-                hidden: z.ZodOptional<z.ZodBoolean>;
-            }, "strict", z.ZodTypeAny, {
-                from?: {
-                    insId?: string;
-                    pinId?: string;
-                };
-                to?: {
-                    insId?: string;
-                    pinId?: string;
-                };
-                delayed?: boolean;
-                hidden?: boolean;
-            }, {
-                from?: {
-                    insId?: string;
-                    pinId?: string;
-                };
-                to?: {
-                    insId?: string;
-                    pinId?: string;
-                };
-                delayed?: boolean;
-                hidden?: boolean;
-            }>, "many">;
-        }, "strip", z.ZodTypeAny, {
-            instances?: any[];
-            connections?: {
-                from?: {
-                    insId?: string;
-                    pinId?: string;
-                };
-                to?: {
-                    insId?: string;
-                    pinId?: string;
-                };
-                delayed?: boolean;
-                hidden?: boolean;
-            }[];
-        }, {
-            instances?: any[];
-            connections?: {
-                from?: {
-                    insId?: string;
-                    pinId?: string;
-                };
-                to?: {
-                    insId?: string;
-                    pinId?: string;
-                };
-                delayed?: boolean;
-                hidden?: boolean;
-            }[];
-        }>, z.ZodObject<{
-            id: z.ZodOptional<z.ZodString>;
-            inputs: z.ZodRecord<z.ZodString, z.ZodUnion<[z.ZodString, z.ZodObject<{
-                mode: z.ZodEnum<["required", "optional", "required-if-connected"]>;
-                /** @deprecated */
-                type: z.ZodOptional<z.ZodString>;
-                description: z.ZodOptional<z.ZodString>;
-                defaultValue: z.ZodOptional<z.ZodAny>;
-            }, "strip", z.ZodTypeAny, {
-                mode?: "required" | "optional" | "required-if-connected";
-                type?: string;
-                description?: string;
-                defaultValue?: any;
-            }, {
-                mode?: "required" | "optional" | "required-if-connected";
-                type?: string;
-                description?: string;
-                defaultValue?: any;
-            }>]>>;
-            outputs: z.ZodRecord<z.ZodString, z.ZodObject<{
-                /** @deprecated */
-                type: z.ZodOptional<z.ZodString>;
-                optional: z.ZodOptional<z.ZodBoolean>;
-                delayed: z.ZodOptional<z.ZodBoolean>;
-                description: z.ZodOptional<z.ZodString>;
-            }, "strip", z.ZodTypeAny, {
-                type?: string;
-                optional?: boolean;
-                delayed?: boolean;
-                description?: string;
-            }, {
-                type?: string;
-                optional?: boolean;
-                delayed?: boolean;
-                description?: string;
-            }>>;
-            inputsPosition: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodObject<{
-                x: z.ZodNumber;
-                y: z.ZodNumber;
-            }, "strict", z.ZodTypeAny, {
-                x?: number;
-                y?: number;
-            }, {
-                x?: number;
-                y?: number;
-            }>>>;
-            outputsPosition: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodObject<{
-                x: z.ZodNumber;
-                y: z.ZodNumber;
-            }, "strict", z.ZodTypeAny, {
-                x?: number;
-                y?: number;
-            }, {
-                x?: number;
-                y?: number;
-            }>>>;
-            completionOutputs: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
-            reactiveInputs: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
-            defaultStyle: z.ZodOptional<z.ZodObject<{
-                size: z.ZodOptional<z.ZodEnum<["small", "regular", "large"]>>;
-                icon: z.ZodOptional<z.ZodAny>;
-                color: z.ZodOptional<z.ZodString>;
-                cssOverride: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodString>>;
-            }, "strip", z.ZodTypeAny, {
-                size?: "small" | "regular" | "large";
-                icon?: any;
-                color?: string;
-                cssOverride?: Record<string, string>;
-            }, {
-                size?: "small" | "regular" | "large";
-                icon?: any;
-                color?: string;
-                cssOverride?: Record<string, string>;
-            }>>;
-            description: z.ZodOptional<z.ZodString>;
-            aliases: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
-        }, "strip", z.ZodTypeAny, {
-            id?: string;
-            inputs?: Record<string, string | {
-                mode?: "required" | "optional" | "required-if-connected";
-                type?: string;
-                description?: string;
-                defaultValue?: any;
-            }>;
-            outputs?: Record<string, {
-                type?: string;
-                optional?: boolean;
-                delayed?: boolean;
-                description?: string;
-            }>;
-            inputsPosition?: Record<string, {
-                x?: number;
-                y?: number;
-            }>;
-            outputsPosition?: Record<string, {
-                x?: number;
-                y?: number;
-            }>;
-            completionOutputs?: string[];
-            reactiveInputs?: string[];
-            defaultStyle?: {
-                size?: "small" | "regular" | "large";
-                icon?: any;
-                color?: string;
-                cssOverride?: Record<string, string>;
-            };
-            description?: string;
-            aliases?: string[];
-        }, {
-            id?: string;
-            inputs?: Record<string, string | {
-                mode?: "required" | "optional" | "required-if-connected";
-                type?: string;
-                description?: string;
-                defaultValue?: any;
-            }>;
-            outputs?: Record<string, {
-                type?: string;
-                optional?: boolean;
-                delayed?: boolean;
-                description?: string;
-            }>;
-            inputsPosition?: Record<string, {
-                x?: number;
-                y?: number;
-            }>;
-            outputsPosition?: Record<string, {
-                x?: number;
-                y?: number;
-            }>;
-            completionOutputs?: string[];
-            reactiveInputs?: string[];
-            defaultStyle?: {
-                size?: "small" | "regular" | "large";
-                icon?: any;
-                color?: string;
-                cssOverride?: Record<string, string>;
-            };
-            description?: string;
-            aliases?: string[];
-        }>>;
+        node: any;
     }, "strict", z.ZodTypeAny, {
         imports?: Record<string, string | string[]>;
-        node?: {
-            instances?: any[];
-            connections?: {
-                from?: {
-                    insId?: string;
-                    pinId?: string;
-                };
-                to?: {
-                    insId?: string;
-                    pinId?: string;
-                };
-                delayed?: boolean;
-                hidden?: boolean;
-            }[];
-        } & {
-            id?: string;
-            inputs?: Record<string, string | {
-                mode?: "required" | "optional" | "required-if-connected";
-                type?: string;
-                description?: string;
-                defaultValue?: any;
-            }>;
-            outputs?: Record<string, {
-                type?: string;
-                optional?: boolean;
-                delayed?: boolean;
-                description?: string;
-            }>;
-            inputsPosition?: Record<string, {
-                x?: number;
-                y?: number;
-            }>;
-            outputsPosition?: Record<string, {
-                x?: number;
-                y?: number;
-            }>;
-            completionOutputs?: string[];
-            reactiveInputs?: string[];
-            defaultStyle?: {
-                size?: "small" | "regular" | "large";
-                icon?: any;
-                color?: string;
-                cssOverride?: Record<string, string>;
-            };
-            description?: string;
-            aliases?: string[];
-        };
+        node?: any;
     }, {
         imports?: Record<string, string | string[]>;
-        node?: {
-            instances?: any[];
-            connections?: {
-                from?: {
-                    insId?: string;
-                    pinId?: string;
-                };
-                to?: {
-                    insId?: string;
-                    pinId?: string;
-                };
-                delayed?: boolean;
-                hidden?: boolean;
-            }[];
-        } & {
-            id?: string;
-            inputs?: Record<string, string | {
-                mode?: "required" | "optional" | "required-if-connected";
-                type?: string;
-                description?: string;
-                defaultValue?: any;
-            }>;
-            outputs?: Record<string, {
-                type?: string;
-                optional?: boolean;
-                delayed?: boolean;
-                description?: string;
-            }>;
-            inputsPosition?: Record<string, {
-                x?: number;
-                y?: number;
-            }>;
-            outputsPosition?: Record<string, {
-                x?: number;
-                y?: number;
-            }>;
-            completionOutputs?: string[];
-            reactiveInputs?: string[];
-            defaultStyle?: {
-                size?: "small" | "regular" | "large";
-                icon?: any;
-                color?: string;
-                cssOverride?: Record<string, string>;
-            };
-            description?: string;
-            aliases?: string[];
-        };
+        node?: any;
     }>;
 }
 
@@ -870,6 +562,9 @@ declare module '@flyde/core/node/node-instance' {
     export function visualNodeInstance(id: string, nodeId: string, source: VisualNodeSource, inputConfig?: InputPinsConfig, pos?: Pos): VisualNodeInstance;
     export const isCodeNodeInstance: (ins: NodeInstance) => ins is CodeNodeInstance;
     export const isVisualNodeInstance: (ins: NodeInstance) => ins is VisualNodeInstance;
+    export const isInlineVisualNodeInstance: (ins: NodeInstance) => ins is VisualNodeInstance & {
+            source: VisualNodeSourceInline;
+    };
     export const createInsId: (node: NodeDefinition) => string;
 }
 
@@ -952,7 +647,7 @@ declare module '@flyde/core/' {
     export * from "@flyde/core/common";
     import { Pos, OMap } from "@flyde/core/common";
     import { FlydeFlow } from "@flyde/core/flow-schema";
-    import { VisualNode, InputPinsConfig, NodeDefinition, NodeOrMacroDefinition, MacroNodeDefinition } from "@flyde/core/node";
+    import { VisualNode, InputPinsConfig, NodeDefinition, MacroNodeDefinition, CodeNodeDefinition } from "@flyde/core/node";
     export * from "@flyde/core/connect/helpers";
     export * from "@flyde/core/execute";
     export * from "@flyde/core/simplified-execute";
@@ -973,7 +668,7 @@ declare module '@flyde/core/' {
     export type MacrosDefCollection = OMap<MacroNodeDefinition<any>>;
     export interface NodeLibraryGroup {
         title: string;
-        nodes: NodeOrMacroDefinition[];
+        nodes: CodeNodeDefinition[];
     }
     export interface NodeLibraryData {
         groups: NodeLibraryGroup[];
@@ -999,11 +694,10 @@ declare module '@flyde/core/' {
 }
 
 declare module '@flyde/core/node/macro-node' {
-    import { InternalCodeNode, CodeNodeDefinition, NodeMetadata } from "@flyde/core/node/node";
+    import { InternalCodeNode, CodeNodeDefinition, NodeMetadata, CodeNodeInstance } from "@flyde/core/node/node";
     import type React from "react";
     export function macroConfigurableValue(type: MacroConfigurableValue["type"], value: MacroConfigurableValue["value"]): MacroConfigurableValue;
     import { CodeNode } from "@flyde/core/improved-macros/improved-macros";
-    import { RefNodeInstance } from "@flyde/core/node/node-instance";
     export type MacroEditorFieldDefinitionType = "string" | "number" | "boolean" | "json" | "select" | "longtext" | "dynamic";
     export type MacroConfigurableValueTypeMap = {
             string: string;
@@ -1123,8 +817,7 @@ declare module '@flyde/core/node/macro-node' {
     export interface MacroEditorComp<T> extends React.FC<MacroEditorCompProps<T>> {
     }
     export const isInternalMacroNode: (p: any) => p is InternalMacroNode<any>;
-    export const isMacroNodeDefinition: (p: any) => p is MacroNodeDefinition<any>;
-    export function processMacroNodeInstance(prefix: string, _macro: InternalMacroNode<any> | CodeNode, instance: RefNodeInstance): InternalCodeNode;
+    export function processMacroNodeInstance(prefix: string, _macro: InternalMacroNode<any> | CodeNode, instance: Pick<CodeNodeInstance, "id" | "config">): InternalCodeNode;
     export interface GroupFieldDefinition extends BaseFieldDefinition {
             type: "group";
             fields: MacroEditorFieldDefinition[];
@@ -1276,7 +969,7 @@ declare module '@flyde/core/types/external' {
         * Each connection will represent a "wire" between 2 instances, or between an instance and a main input/output pin.
         * Connecting to a main input or output is the way that a visual nodes' internal implementation can communicate with its external API.
         */
-    import { CodeNode, NodeDefinition, NodeInstance } from "@flyde/core/";
+    import { CodeNode, CodeNodeInstance, CodeNodeSource, InputPinsConfig, NodeDefinition, NodeInstance, VisualNodeInstance } from "@flyde/core/";
     import { OMap, Pos } from "@flyde/core/common";
     import { ConnectionData } from "@flyde/core/types/connections";
     import { BaseNode } from "@flyde/core/types/core";
@@ -1293,6 +986,8 @@ declare module '@flyde/core/types/external' {
     }
     export const isVisualNode: (p: Node | NodeDefinition) => p is VisualNode;
     export const visualNode: import("..").TestDataCreator<VisualNode>;
+    export function nodeInstance(insId: string, nodeId: string, source: CodeNodeSource, config?: any, inputConfig?: InputPinsConfig, pos?: Pos): CodeNodeInstance;
+    export function inlineVisualNodeInstance(insId: string, node: VisualNode, inputConfig?: InputPinsConfig, pos?: Pos): VisualNodeInstance;
     export type CodeNodeDefinition = Omit<InternalCodeNode, "run"> & {
             /**
                 * The source code of the node, if available. Used for editing and forking nodes in the editor.
