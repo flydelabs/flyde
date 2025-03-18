@@ -1,8 +1,6 @@
 import { readFileSync, writeFileSync } from "fs";
 import { join } from "path";
 import { FlydeFlow } from "@flyde/core";
-import { defaultScanFilter } from "../fs-helper/default-scan-filter";
-import { findInFiles } from "../fs-helper/find-in-files";
 import { scanFolderStructure } from "./scan-folders-structure";
 import { deserializeFlow, serializeFlow } from "@flyde/resolver";
 

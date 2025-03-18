@@ -1,11 +1,5 @@
-import {
-  CodeNode,
-  ImportableSource,
-  ImportedNode,
-  randomInt,
-} from "@flyde/core";
-import { resolveCodeNodeDependencies, resolveFlow } from "@flyde/resolver";
-import axios from "axios";
+import { CodeNode, randomInt } from "@flyde/core";
+import { resolveCodeNodeDependencies } from "@flyde/resolver";
 import { existsSync, writeFileSync } from "fs";
 
 import OpenAI from "openai";
@@ -45,7 +39,7 @@ export async function generateAndSaveNode(
   rootDir: string,
   prompt: string,
   apiKey: string
-): Promise<ImportableSource> {
+): Promise<any> {
   const { fileName, code } = await generateNode(prompt, apiKey);
 
   let filePath = join(rootDir, `${fileName}.flyde.ts`);

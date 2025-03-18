@@ -12,7 +12,6 @@ import * as stdlib from "@flyde/stdlib/dist/all-browser";
 import { transpileFile } from "../transpileFile/transpileFile";
 import React from "react";
 import ReactDOM from "react-dom";
-import { processMacroNodes } from "@/components/EmbeddedFlyde/macroHelpers";
 
 function ensureFakeModulesOnWindow(
   app: AppData,
@@ -57,15 +56,9 @@ function ensureFakeModulesOnWindow(
             {} as any
           );
 
-          const { newDeps, newNode } = processMacroNodes(flow.node, {
-            ...fixedStdlib,
-            ...deps,
-          });
-
           onStatusChange({ type: "running" });
           destroy = await simplifiedExecute(
-            newNode,
-            { ...fixedStdlib, ...deps, ...newDeps } as any,
+            flow.node,
             inputs ?? handle.inputs,
             onOutputs,
             {

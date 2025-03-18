@@ -8,7 +8,7 @@ import { resolveFlowByPath } from "@flyde/resolver";
 import { join } from "path";
 
 import { getLibraryData } from "./service/get-library-data";
-import { scanImportableMacros } from "./service/scan-importable-macros";
+import { scanImportableNodes } from "./service/scan-importable-nodes";
 
 export const runDevServer = (
   port: number,
@@ -56,7 +56,7 @@ export const runDevServer = (
   app.get("/importables", async (req, res) => {
     const { filename } = req.query as { filename: string };
     try {
-      const importables = await scanImportableMacros(rootDir, filename);
+      const importables = await scanImportableNodes(rootDir, filename);
       res.send(importables);
     } catch (e) {
       console.error(e);
@@ -74,7 +74,7 @@ export const runDevServer = (
 
       const fullPath = join(rootDir, filename);
 
-      const resolvedFlow = await resolveFlowByPath(fullPath, "definition");
+      const resolvedFlow = await resolveFlowByPath(fullPath);
       res.send(resolvedFlow);
     } catch (e) {
       console.error(e);

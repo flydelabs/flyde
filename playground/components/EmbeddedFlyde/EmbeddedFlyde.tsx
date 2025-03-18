@@ -2,15 +2,12 @@ import { defaultNode } from "@/lib/defaultNode";
 import { HistoryPlayer } from "@/lib/executeApp/createHistoryPlayer";
 import {
   FlydeFlow,
-  ResolvedDependencies,
   ImportedNode,
-  Node,
   InternalMacroNode,
   MacroNodeDefinition,
   isCodeNode,
   CodeNode,
   processImprovedMacro,
-  ResolvedDependenciesDefinitions,
 } from "@flyde/core";
 import {
   FlowEditorState,
@@ -24,14 +21,13 @@ import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { FullPageLoader } from "../FullPageLoader";
 
 import { getLibraryData } from "./getLibraryData";
-import { processMacroNodes } from "./macroHelpers";
 
 import { macroBundlesContent } from "../../stdlib-bundle/inline-macros";
 
 export interface EmbeddedFlydeProps {
   flow: FlydeFlow;
   onChange: (flow: FlydeFlow) => void;
-  localNodes: ResolvedDependencies;
+  localNodes: any[];
   historyPlayer: HistoryPlayer;
 }
 
@@ -60,7 +56,7 @@ async function loadStdLib(): Promise<
         : "";
       return macroDef;
     })
-    .reduce<Record<string, Node | InternalMacroNode<any>>>((acc, node: any) => {
+    .reduce<Record<string, any | InternalMacroNode<any>>>((acc, node: any) => {
       acc[node.id] = node;
       return acc;
     }, {});
@@ -97,15 +93,12 @@ export function EmbeddedFlyde(props: EmbeddedFlydeProps) {
   });
 
   const { flow: stateFlow } = state;
-  const [resolvedDependencies, setResolvedDependencies] =
-    useState<ResolvedDependencies>({});
 
   useEffect(() => {
-    loadStdLib().then((stdlib) => {
-      const { newDeps } = processMacroNodes(state.flow.node, stdlib);
-
-      setResolvedDependencies({ ...stdlib, ...localNodes, ...newDeps } as any);
-    });
+    // loadStdLib().then((stdlib) => {
+    //   const { newDeps } = processMacroNodes(state.flow.node, stdlib);
+    //   setResolvedDependencies({ ...stdlib, ...localNodes, ...newDeps } as any);
+    // });
   }, [localNodes]);
 
   useEffect(() => {
@@ -136,14 +129,12 @@ export function EmbeddedFlyde(props: EmbeddedFlydeProps) {
 
   const depsContextValue = useMemo<DependenciesContextData>(() => {
     return {
-      resolvedDependencies:
-        resolvedDependencies as ResolvedDependenciesDefinitions,
       onImportNode: noop as any,
       onRequestImportables,
       onRequestSiblingNodes: () => Promise.resolve([]),
       libraryData: getLibraryData(),
     };
-  }, [resolvedDependencies, onRequestImportables]);
+  }, [onRequestImportables]);
 
   const debuggerContextValue = React.useMemo<DebuggerContextData>(
     () => ({
@@ -151,10 +142,6 @@ export function EmbeddedFlyde(props: EmbeddedFlydeProps) {
     }),
     [historyPlayer.requestHistory]
   );
-
-  if (Object.keys(resolvedDependencies).length === 0) {
-    return <FullPageLoader />;
-  }
 
   return (
     <DependenciesContextProvider value={depsContextValue}>

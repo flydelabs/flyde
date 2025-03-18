@@ -43,9 +43,9 @@ describe("ControlFlow", () => {
         inputs: ["a"],
         outputs: ["b"],
         instances: [
-          internalNodeInstance("key", valNode.id, {}),
-          internalNodeInstance("i1", _pubNode.id, {}),
-          internalNodeInstance("i2", _subNode.id, {}),
+          internalNodeInstance("key", valNode, {}),
+          internalNodeInstance("i1", _pubNode, {}),
+          internalNodeInstance("i2", _subNode, {}),
         ],
         connections: [
           ["key.r", "i1.key"],
@@ -63,11 +63,6 @@ describe("ControlFlow", () => {
         node: visualNode,
         inputs: { a: input },
         outputs: { b },
-        resolvedDeps: {
-          [_pubNode.id]: _pubNode,
-          [_subNode.id]: _subNode,
-          [valNode.id]: valNode,
-        },
         ancestorsInsIds: "bob",
       });
 

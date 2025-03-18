@@ -1,10 +1,5 @@
 import { z } from "zod";
-import {
-  VisualNode,
-  NodeDefinition,
-  InternalVisualNode,
-  InternalNode,
-} from "./node";
+import { VisualNode, NodeDefinition } from "./node";
 import { CodeNode } from "./improved-macros/improved-macros";
 
 const importSchema = z.record(z.string(), z.string().or(z.array(z.string())));
@@ -105,20 +100,6 @@ export type ImportedNodeDefinition = NodeDefinition;
 export type ImportedNode = VisualNode | CodeNode;
 
 export type ImportedNodeDef = NodeDefinition;
-
-export type ResolvedDependenciesDefinitions = Record<
-  string,
-  ImportedNodeDefinition
->;
-
-export type ResolvedDependencies = Record<string, InternalNode>;
-
-export type ResolvedFlydeRuntimeFlow = {
-  main: InternalVisualNode;
-  dependencies: ResolvedDependencies;
-};
-
-export type ResolvedFlydeFlow = ResolvedFlydeRuntimeFlow;
 
 export const flydeFlowSchema = z.strictObject({
   /** @deprecated */

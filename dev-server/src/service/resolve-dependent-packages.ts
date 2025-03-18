@@ -6,7 +6,6 @@ import {
 import {
   deserializeFlow,
   isCodeNodePath,
-  macroNodeToDefinition,
   resolveCodeNodeDependencies,
   resolveImportablePaths,
 } from "@flyde/resolver";

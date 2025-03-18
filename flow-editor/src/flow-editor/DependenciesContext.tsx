@@ -1,5 +1,4 @@
 import {
-  ResolvedDependenciesDefinitions,
   Pos,
   NodeLibraryData,
   ImportablesResult,
@@ -22,7 +21,7 @@ export interface DependenciesContextData {
       selectAfterAdding?: boolean;
       connectTo?: { insId: string; outputId: string };
     }
-  ) => Promise<ResolvedDependenciesDefinitions>;
+  ) => Promise<any>;
   onRequestImportables: () => Promise<LocalImportableResult>;
   libraryData: NodeLibraryData;
   onRequestSiblingNodes: (

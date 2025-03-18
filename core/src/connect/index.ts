@@ -307,7 +307,6 @@ export const composeExecutableNode = (
           const fnArg = fnArgs[key];
 
           if (isDefined(fnArg)) {
-            console.log("input", fnArg);
             input.subject.next(fnArg);
           } else {
             // skipping emitting an undefined value. VERY UNSURE OF THIS, TRIGGER WAS VISUAL MERGE

@@ -928,58 +928,6 @@ describe("main ", () => {
       });
     });
 
-    // it('runs "leaf" nodes without waiting for external inputs', () => {
-    //   const innerLeafSpy = spy();
-    //   const leaf: InternalCodeNode = {
-    //     id: "emit-1",
-    //     inputs: {},
-    //     outputs: { r: nodeOutput() },
-    //     run: (_, o) => {
-    //       innerLeafSpy();
-    //       o.r?.next(1);
-    //     }
-    //   };
-
-    //   const node: InternalVisualNode = {
-    //     id: "node",
-    //     inputs: {
-    //       n: nodeInput()
-    //     },
-    //     outputs: {
-    //       r: nodeOutput()
-    //     },
-    //     instances: [
-    //       internalNodeInstance("a", leaf),
-    //       internalNodeInstance("b", id) // we need it just to mediate the connection
-    //     ],
-    //     connections: [
-    //       connection(externalConnectionNode("n"), connectionNode("b", "v")),
-    //       connection(connectionNode("b", "r"), externalConnectionNode("r")),
-    //       connection(connectionNode("a", "r"), externalConnectionNode("r"))
-    //     ]
-    //   };
-
-    //   const fn = spy();
-    //   const n = dynamicNodeInput();
-    //   const r = dynamicOutput();
-    //   r.subscribe(fn);
-    //   execute({node: node, inputs: { n }, outputs: { r }, resolvedDeps: resolvedDeps});
-
-    //   // assert.equal(fn.calledWith(2), true);
-    //   assert.equal(fn.callCount, 1);
-    //   assert.equal(fn.calledWith(1), true);
-    //   assert.equal(innerLeafSpy.callCount, 1);
-
-    //   n.subject.next(2);
-    //   assert.equal(fn.callCount, 2);
-    //   assert.equal(fn.calledWith(2), true);
-    //   assert.equal(innerLeafSpy.callCount, 1);
-
-    //   n.subject.next(3);
-    //   assert.equal(fn.callCount, 3);
-    //   assert.equal(fn.calledWith(3), true);
-    //   assert.equal(innerLeafSpy.callCount, 1);
-    // });
 
     describe("high order nodes", () => {
       it("works when node is passed directly", () => {
@@ -1181,7 +1129,7 @@ describe("main ", () => {
           outputs: ["r"],
           instances: [
             internalNodeInstance("i1", add),
-            internalNodeInstance("i2", id), // id to simualte anot
+            internalNodeInstance("i2", id), // id to simulate another node
           ],
           connections: [
             ["n1", "i1.n1"],
@@ -1455,7 +1403,6 @@ describe("main ", () => {
           internalNodeInstance("one", one),
           internalNodeInstance("mOne", mOne),
           internalNodeInstance("if", peq),
-          // internalNodeInstance("arr", addRec), // TODO - fix recursion
           internalNodeInstance("add1", add),
           internalNodeInstance("add2", add),
           internalNodeInstance("tr1", transform),
@@ -1474,6 +1421,8 @@ describe("main ", () => {
           connectionData("one.r", "add2.n2"),
         ],
       };
+
+      addRec.instances.push(internalNodeInstance("arr", addRec));
 
       const r = new Subject();
       const s = spy();
@@ -1523,7 +1472,6 @@ describe("main ", () => {
           internalNodeInstance("one", value2),
           internalNodeInstance("m1", value3),
           internalNodeInstance("if", peq),
-          // internalNodeInstance("f", "fact"), // todo - fix recursion
           internalNodeInstance("add", add),
           internalNodeInstance("mul", mul),
           internalNodeInstance("tr1", transform),
@@ -1542,6 +1490,8 @@ describe("main ", () => {
           connectionData("mul.r", "r"),
         ],
       };
+
+      fact.instances.push(internalNodeInstance("f", fact));
 
       const r = new Subject();
       const s = spy();

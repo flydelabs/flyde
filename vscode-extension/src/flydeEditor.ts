@@ -3,14 +3,13 @@ import * as vscode from "vscode";
 import { getWebviewContent } from "./editor/open-flyde-panel";
 var fp = require("find-free-port");
 
-import { scanImportableMacros } from "@flyde/dev-server/dist/service/scan-importable-macros";
 import { scanImportableNodes } from "@flyde/dev-server/dist/service/scan-importable-nodes";
 import { generateAndSaveNode } from "@flyde/dev-server/dist/service/ai/generate-node-from-prompt";
 import { getLibraryData } from "@flyde/dev-server/dist/service/get-library-data";
 
 import {
   deserializeFlow,
-  resolveFlow,
+  resolveVisualNode,
   resolveFlowByPath,
   serializeFlow,
 } from "@flyde/resolver";
@@ -19,7 +18,6 @@ import {
   FlydeFlow,
   MAJOR_DEBUGGER_EVENT_TYPES,
   MacroNodeDefinition,
-  ResolvedFlydeFlow,
   extractInputsFromValue,
   formatEvent,
   isInternalMacroNode,
@@ -67,7 +65,7 @@ type FlydePortMessage<T extends any> = {
   params: any; // PostMsgConfig[T]['params']
 };
 
-const tryOrThrow = (fn: Function, msg: string) => {
+const tryOrThrow = <T>(fn: () => T, msg: string): T | Error => {
   try {
     return fn();
   } catch (e) {
@@ -182,12 +180,15 @@ export class FlydeEditorEditorProvider
               imports: {},
             };
       }, "Failed to deserialize flow");
-      const dependencies = tryOrThrow(
-        () => resolveFlow(initialFlow, fullDocumentPath).dependencies,
+      const internalNode = tryOrThrow(
+        () =>
+          initialFlow instanceof Error
+            ? initialFlow
+            : resolveVisualNode(initialFlow.node, fullDocumentPath),
         "Failed to resolve flow's dependencies"
       );
 
-      const errors = [initialFlow, dependencies]
+      const errors = [initialFlow, internalNode]
         .filter((obj) => obj instanceof Error)
         .map((err: Error) => err.message);
 
@@ -204,13 +205,13 @@ export class FlydeEditorEditorProvider
         relativeFile: relative,
         port: this.params.port,
         webview: webviewPanel.webview,
-        initialFlow,
+        initialFlow: initialFlow as FlydeFlow,
         webviewId,
         executionId,
         darkMode: this.params.darkMode,
       });
 
-      lastFlow = initialFlow;
+      lastFlow = initialFlow as FlydeFlow;
 
       lastWebview = webviewPanel.webview;
     };
@@ -300,21 +301,6 @@ export class FlydeEditorEditorProvider
                 break;
               }
 
-              case "resolveDeps": {
-                const { flow: dtoFlow } = event.params;
-
-                if (dtoFlow) {
-                  const deps = resolveFlow(
-                    dtoFlow,
-                    fullDocumentPath
-                  ).dependencies;
-                  messageResponse(event, deps);
-                } else {
-                  const flow = resolveFlowByPath(fullDocumentPath);
-                  messageResponse(event, flow);
-                }
-                break;
-              }
               case "generateNodeFromPrompt": {
                 const config = vscode.workspace.getConfiguration("flyde");
                 let openAiToken = config.get<string>("openAiToken");
@@ -448,25 +434,8 @@ export class FlydeEditorEditorProvider
                 break;
               }
               case "onRequestSiblingNodes": {
-                const { macro } = event.params;
-                const maybePackageRoot = await findPackageRoot(document.uri);
-                const root =
-                  maybePackageRoot ?? Uri.joinPath(document.uri, "..");
-
-                const { importableMacros, errors } = await scanImportableMacros(
-                  root.fsPath,
-                  path.relative(root.fsPath, fullDocumentPath)
-                );
-
-                const siblings = Object.entries(importableMacros).flatMap(
-                  ([_module, nodes]) => {
-                    return Object.values(nodes).filter(
-                      (node) =>
-                        node?.namespace && node?.namespace === macro.namespace
-                    ) as MacroNodeDefinition<any>[];
-                  }
-                );
-                messageResponse(event, siblings);
+                // TODO - re-implement
+                throw new Error("Not implemented");
                 break;
               }
               case "onCreateCustomNode": {
@@ -571,9 +540,9 @@ export class FlydeEditorEditorProvider
                 console.log("instance", instance);
 
                 const resolvedFlow = tryOrThrow(
-                  () => resolveFlow(flow, fullDocumentPath),
+                  () => resolveVisualNode(flow, fullDocumentPath),
                   "Failed to resolve flow"
-                ) as ResolvedFlydeFlow;
+                ) as any;
 
                 const codeNode =
                   resolvedFlow.dependencies[
@@ -678,7 +647,7 @@ export class FlydeEditorEditorProvider
         if (isSameUri && lastSaveBy !== webviewId) {
           const raw = document.getText();
           const flow: FlydeFlow = deserializeFlow(raw, fullDocumentPath);
-          const deps = resolveFlow(flow, fullDocumentPath).dependencies;
+          const deps = resolveVisualNode(flow.node, fullDocumentPath);
           webviewPanel.webview.postMessage({
             type: "onExternalFlowChange",
             requestId: "TODO-cuid",

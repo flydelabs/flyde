@@ -3,7 +3,6 @@ import {
   isCodeNodePath,
   resolveCodeNodeDependencies,
   deserializeFlow,
-  macroNodeToDefinition,
 } from "@flyde/resolver";
 
 import {
@@ -14,12 +13,13 @@ import {
   ImportablesResult,
   isCodeNode,
 } from "@flyde/core";
-import { scanFolderStructure } from "./scan-folders-structure";
+
 import { FlydeFile } from "../fs-helper/shared";
 import { getFlydeDependencies } from "./get-flyde-dependencies";
 import { resolveDependentPackages } from "./resolve-dependent-packages";
 import * as StdLib from "@flyde/stdlib/dist/all";
 import { readFileSync } from "fs";
+import { scanFolderStructure } from "./scan-folders-structure";
 
 export interface CorruptScannedNode {
   type: "corrupt";
@@ -64,9 +64,7 @@ export async function scanImportableNodes(
         const nodesObj = nodes.reduce(
           (obj, { node }) => ({
             ...obj,
-            [node.id]: isInternalMacroNode(node)
-              ? macroNodeToDefinition(node, file.fullPath)
-              : node,
+            [node.id]: node,
           }),
           {}
         );

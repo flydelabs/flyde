@@ -71,33 +71,560 @@ declare module '@flyde/core/common' {
 
 declare module '@flyde/core/flow-schema' {
     import { z } from "zod";
-    import { VisualNode, NodeDefinition, InternalVisualNode, InternalNode } from "@flyde/core/node";
+    import { VisualNode, NodeDefinition } from "@flyde/core/node";
     import { CodeNode } from "@flyde/core/improved-macros/improved-macros";
     export type FlydeFlow = {
         /** @deprecated */
-        imports?: Record<string, String[]>;
+        imports?: Record<string, string[]>;
         node: VisualNode;
     };
     export type ImportedNodeDefinition = NodeDefinition;
     export type ImportedNode = VisualNode | CodeNode;
     export type ImportedNodeDef = NodeDefinition;
-    export type ResolvedDependenciesDefinitions = Record<string, ImportedNodeDefinition>;
-    export type ResolvedDependencies = Record<string, InternalNode>;
-    export type ResolvedFlydeRuntimeFlow = {
-        main: InternalVisualNode;
-        dependencies: ResolvedDependencies;
-    };
-    export type ResolvedFlydeFlow = ResolvedFlydeRuntimeFlow;
     export const flydeFlowSchema: z.ZodObject<{
         /** @deprecated */
         imports: z.ZodDefault<z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnion<[z.ZodString, z.ZodArray<z.ZodString, "many">]>>>>;
-        node: any;
+        node: z.ZodIntersection<z.ZodObject<{
+            instances: z.ZodArray<z.ZodObject<{
+                pos: z.ZodDefault<z.ZodObject<{
+                    x: z.ZodNumber;
+                    y: z.ZodNumber;
+                }, "strict", z.ZodTypeAny, {
+                    x?: number;
+                    y?: number;
+                }, {
+                    x?: number;
+                    y?: number;
+                }>>;
+                id: z.ZodString;
+                inputConfig: z.ZodDefault<z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodDiscriminatedUnion<"mode", [z.ZodObject<{
+                    mode: z.ZodLiteral<"queue">;
+                }, "strict", z.ZodTypeAny, {
+                    mode?: "queue";
+                }, {
+                    mode?: "queue";
+                }>, z.ZodObject<{
+                    mode: z.ZodLiteral<"sticky">;
+                }, "strict", z.ZodTypeAny, {
+                    mode?: "sticky";
+                }, {
+                    mode?: "sticky";
+                }>]>>>>;
+                visibleInputs: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
+                visibleOutputs: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
+                nodeId: z.ZodOptional<z.ZodString>;
+                macroId: z.ZodOptional<z.ZodString>;
+                macroData: z.ZodOptional<z.ZodAny>;
+                config: z.ZodOptional<z.ZodAny>;
+                type: z.ZodOptional<z.ZodEnum<["CodeNode", "VisualNode", "code"]>>;
+                source: z.ZodOptional<z.ZodObject<{
+                    type: z.ZodString;
+                    data: z.ZodAny;
+                }, "strip", z.ZodTypeAny, {
+                    type?: string;
+                    data?: any;
+                }, {
+                    type?: string;
+                    data?: any;
+                }>>;
+                style: z.ZodOptional<z.ZodObject<{
+                    size: z.ZodOptional<z.ZodEnum<["small", "regular", "large"]>>;
+                    icon: z.ZodOptional<z.ZodAny>;
+                    color: z.ZodOptional<z.ZodString>;
+                    cssOverride: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodString>>;
+                }, "strip", z.ZodTypeAny, {
+                    size?: "small" | "regular" | "large";
+                    icon?: any;
+                    color?: string;
+                    cssOverride?: Record<string, string>;
+                }, {
+                    size?: "small" | "regular" | "large";
+                    icon?: any;
+                    color?: string;
+                    cssOverride?: Record<string, string>;
+                }>>;
+            }, "strip", z.ZodTypeAny, {
+                pos?: {
+                    x?: number;
+                    y?: number;
+                };
+                id?: string;
+                inputConfig?: Record<string, {
+                    mode?: "queue";
+                } | {
+                    mode?: "sticky";
+                }>;
+                visibleInputs?: string[];
+                visibleOutputs?: string[];
+                nodeId?: string;
+                macroId?: string;
+                macroData?: any;
+                config?: any;
+                type?: "code" | "CodeNode" | "VisualNode";
+                source?: {
+                    type?: string;
+                    data?: any;
+                };
+                style?: {
+                    size?: "small" | "regular" | "large";
+                    icon?: any;
+                    color?: string;
+                    cssOverride?: Record<string, string>;
+                };
+            }, {
+                pos?: {
+                    x?: number;
+                    y?: number;
+                };
+                id?: string;
+                inputConfig?: Record<string, {
+                    mode?: "queue";
+                } | {
+                    mode?: "sticky";
+                }>;
+                visibleInputs?: string[];
+                visibleOutputs?: string[];
+                nodeId?: string;
+                macroId?: string;
+                macroData?: any;
+                config?: any;
+                type?: "code" | "CodeNode" | "VisualNode";
+                source?: {
+                    type?: string;
+                    data?: any;
+                };
+                style?: {
+                    size?: "small" | "regular" | "large";
+                    icon?: any;
+                    color?: string;
+                    cssOverride?: Record<string, string>;
+                };
+            }>, "many">;
+            connections: z.ZodArray<z.ZodObject<{
+                from: z.ZodObject<{
+                    insId: z.ZodString;
+                    pinId: z.ZodString;
+                }, "strict", z.ZodTypeAny, {
+                    insId?: string;
+                    pinId?: string;
+                }, {
+                    insId?: string;
+                    pinId?: string;
+                }>;
+                to: z.ZodObject<{
+                    insId: z.ZodString;
+                    pinId: z.ZodString;
+                }, "strict", z.ZodTypeAny, {
+                    insId?: string;
+                    pinId?: string;
+                }, {
+                    insId?: string;
+                    pinId?: string;
+                }>;
+                delayed: z.ZodOptional<z.ZodBoolean>;
+                hidden: z.ZodOptional<z.ZodBoolean>;
+            }, "strict", z.ZodTypeAny, {
+                from?: {
+                    insId?: string;
+                    pinId?: string;
+                };
+                to?: {
+                    insId?: string;
+                    pinId?: string;
+                };
+                delayed?: boolean;
+                hidden?: boolean;
+            }, {
+                from?: {
+                    insId?: string;
+                    pinId?: string;
+                };
+                to?: {
+                    insId?: string;
+                    pinId?: string;
+                };
+                delayed?: boolean;
+                hidden?: boolean;
+            }>, "many">;
+        }, "strip", z.ZodTypeAny, {
+            instances?: {
+                pos?: {
+                    x?: number;
+                    y?: number;
+                };
+                id?: string;
+                inputConfig?: Record<string, {
+                    mode?: "queue";
+                } | {
+                    mode?: "sticky";
+                }>;
+                visibleInputs?: string[];
+                visibleOutputs?: string[];
+                nodeId?: string;
+                macroId?: string;
+                macroData?: any;
+                config?: any;
+                type?: "code" | "CodeNode" | "VisualNode";
+                source?: {
+                    type?: string;
+                    data?: any;
+                };
+                style?: {
+                    size?: "small" | "regular" | "large";
+                    icon?: any;
+                    color?: string;
+                    cssOverride?: Record<string, string>;
+                };
+            }[];
+            connections?: {
+                from?: {
+                    insId?: string;
+                    pinId?: string;
+                };
+                to?: {
+                    insId?: string;
+                    pinId?: string;
+                };
+                delayed?: boolean;
+                hidden?: boolean;
+            }[];
+        }, {
+            instances?: {
+                pos?: {
+                    x?: number;
+                    y?: number;
+                };
+                id?: string;
+                inputConfig?: Record<string, {
+                    mode?: "queue";
+                } | {
+                    mode?: "sticky";
+                }>;
+                visibleInputs?: string[];
+                visibleOutputs?: string[];
+                nodeId?: string;
+                macroId?: string;
+                macroData?: any;
+                config?: any;
+                type?: "code" | "CodeNode" | "VisualNode";
+                source?: {
+                    type?: string;
+                    data?: any;
+                };
+                style?: {
+                    size?: "small" | "regular" | "large";
+                    icon?: any;
+                    color?: string;
+                    cssOverride?: Record<string, string>;
+                };
+            }[];
+            connections?: {
+                from?: {
+                    insId?: string;
+                    pinId?: string;
+                };
+                to?: {
+                    insId?: string;
+                    pinId?: string;
+                };
+                delayed?: boolean;
+                hidden?: boolean;
+            }[];
+        }>, z.ZodObject<{
+            id: z.ZodOptional<z.ZodString>;
+            inputs: z.ZodRecord<z.ZodString, z.ZodUnion<[z.ZodString, z.ZodObject<{
+                mode: z.ZodEnum<["required", "optional", "required-if-connected"]>;
+                /** @deprecated */
+                type: z.ZodOptional<z.ZodString>;
+                description: z.ZodOptional<z.ZodString>;
+                defaultValue: z.ZodOptional<z.ZodAny>;
+            }, "strip", z.ZodTypeAny, {
+                mode?: "optional" | "required" | "required-if-connected";
+                type?: string;
+                description?: string;
+                defaultValue?: any;
+            }, {
+                mode?: "optional" | "required" | "required-if-connected";
+                type?: string;
+                description?: string;
+                defaultValue?: any;
+            }>]>>;
+            outputs: z.ZodRecord<z.ZodString, z.ZodObject<{
+                /** @deprecated */
+                type: z.ZodOptional<z.ZodString>;
+                optional: z.ZodOptional<z.ZodBoolean>;
+                delayed: z.ZodOptional<z.ZodBoolean>;
+                description: z.ZodOptional<z.ZodString>;
+            }, "strip", z.ZodTypeAny, {
+                type?: string;
+                optional?: boolean;
+                delayed?: boolean;
+                description?: string;
+            }, {
+                type?: string;
+                optional?: boolean;
+                delayed?: boolean;
+                description?: string;
+            }>>;
+            inputsPosition: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodObject<{
+                x: z.ZodNumber;
+                y: z.ZodNumber;
+            }, "strict", z.ZodTypeAny, {
+                x?: number;
+                y?: number;
+            }, {
+                x?: number;
+                y?: number;
+            }>>>;
+            outputsPosition: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodObject<{
+                x: z.ZodNumber;
+                y: z.ZodNumber;
+            }, "strict", z.ZodTypeAny, {
+                x?: number;
+                y?: number;
+            }, {
+                x?: number;
+                y?: number;
+            }>>>;
+            completionOutputs: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
+            reactiveInputs: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
+            defaultStyle: z.ZodOptional<z.ZodObject<{
+                size: z.ZodOptional<z.ZodEnum<["small", "regular", "large"]>>;
+                icon: z.ZodOptional<z.ZodAny>;
+                color: z.ZodOptional<z.ZodString>;
+                cssOverride: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodString>>;
+            }, "strip", z.ZodTypeAny, {
+                size?: "small" | "regular" | "large";
+                icon?: any;
+                color?: string;
+                cssOverride?: Record<string, string>;
+            }, {
+                size?: "small" | "regular" | "large";
+                icon?: any;
+                color?: string;
+                cssOverride?: Record<string, string>;
+            }>>;
+            description: z.ZodOptional<z.ZodString>;
+            aliases: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
+        }, "strip", z.ZodTypeAny, {
+            id?: string;
+            inputs?: Record<string, string | {
+                mode?: "optional" | "required" | "required-if-connected";
+                type?: string;
+                description?: string;
+                defaultValue?: any;
+            }>;
+            outputs?: Record<string, {
+                type?: string;
+                optional?: boolean;
+                delayed?: boolean;
+                description?: string;
+            }>;
+            inputsPosition?: Record<string, {
+                x?: number;
+                y?: number;
+            }>;
+            outputsPosition?: Record<string, {
+                x?: number;
+                y?: number;
+            }>;
+            completionOutputs?: string[];
+            reactiveInputs?: string[];
+            defaultStyle?: {
+                size?: "small" | "regular" | "large";
+                icon?: any;
+                color?: string;
+                cssOverride?: Record<string, string>;
+            };
+            description?: string;
+            aliases?: string[];
+        }, {
+            id?: string;
+            inputs?: Record<string, string | {
+                mode?: "optional" | "required" | "required-if-connected";
+                type?: string;
+                description?: string;
+                defaultValue?: any;
+            }>;
+            outputs?: Record<string, {
+                type?: string;
+                optional?: boolean;
+                delayed?: boolean;
+                description?: string;
+            }>;
+            inputsPosition?: Record<string, {
+                x?: number;
+                y?: number;
+            }>;
+            outputsPosition?: Record<string, {
+                x?: number;
+                y?: number;
+            }>;
+            completionOutputs?: string[];
+            reactiveInputs?: string[];
+            defaultStyle?: {
+                size?: "small" | "regular" | "large";
+                icon?: any;
+                color?: string;
+                cssOverride?: Record<string, string>;
+            };
+            description?: string;
+            aliases?: string[];
+        }>>;
     }, "strict", z.ZodTypeAny, {
         imports?: Record<string, string | string[]>;
-        node?: any;
+        node?: {
+            instances?: {
+                pos?: {
+                    x?: number;
+                    y?: number;
+                };
+                id?: string;
+                inputConfig?: Record<string, {
+                    mode?: "queue";
+                } | {
+                    mode?: "sticky";
+                }>;
+                visibleInputs?: string[];
+                visibleOutputs?: string[];
+                nodeId?: string;
+                macroId?: string;
+                macroData?: any;
+                config?: any;
+                type?: "code" | "CodeNode" | "VisualNode";
+                source?: {
+                    type?: string;
+                    data?: any;
+                };
+                style?: {
+                    size?: "small" | "regular" | "large";
+                    icon?: any;
+                    color?: string;
+                    cssOverride?: Record<string, string>;
+                };
+            }[];
+            connections?: {
+                from?: {
+                    insId?: string;
+                    pinId?: string;
+                };
+                to?: {
+                    insId?: string;
+                    pinId?: string;
+                };
+                delayed?: boolean;
+                hidden?: boolean;
+            }[];
+        } & {
+            id?: string;
+            inputs?: Record<string, string | {
+                mode?: "optional" | "required" | "required-if-connected";
+                type?: string;
+                description?: string;
+                defaultValue?: any;
+            }>;
+            outputs?: Record<string, {
+                type?: string;
+                optional?: boolean;
+                delayed?: boolean;
+                description?: string;
+            }>;
+            inputsPosition?: Record<string, {
+                x?: number;
+                y?: number;
+            }>;
+            outputsPosition?: Record<string, {
+                x?: number;
+                y?: number;
+            }>;
+            completionOutputs?: string[];
+            reactiveInputs?: string[];
+            defaultStyle?: {
+                size?: "small" | "regular" | "large";
+                icon?: any;
+                color?: string;
+                cssOverride?: Record<string, string>;
+            };
+            description?: string;
+            aliases?: string[];
+        };
     }, {
         imports?: Record<string, string | string[]>;
-        node?: any;
+        node?: {
+            instances?: {
+                pos?: {
+                    x?: number;
+                    y?: number;
+                };
+                id?: string;
+                inputConfig?: Record<string, {
+                    mode?: "queue";
+                } | {
+                    mode?: "sticky";
+                }>;
+                visibleInputs?: string[];
+                visibleOutputs?: string[];
+                nodeId?: string;
+                macroId?: string;
+                macroData?: any;
+                config?: any;
+                type?: "code" | "CodeNode" | "VisualNode";
+                source?: {
+                    type?: string;
+                    data?: any;
+                };
+                style?: {
+                    size?: "small" | "regular" | "large";
+                    icon?: any;
+                    color?: string;
+                    cssOverride?: Record<string, string>;
+                };
+            }[];
+            connections?: {
+                from?: {
+                    insId?: string;
+                    pinId?: string;
+                };
+                to?: {
+                    insId?: string;
+                    pinId?: string;
+                };
+                delayed?: boolean;
+                hidden?: boolean;
+            }[];
+        } & {
+            id?: string;
+            inputs?: Record<string, string | {
+                mode?: "optional" | "required" | "required-if-connected";
+                type?: string;
+                description?: string;
+                defaultValue?: any;
+            }>;
+            outputs?: Record<string, {
+                type?: string;
+                optional?: boolean;
+                delayed?: boolean;
+                description?: string;
+            }>;
+            inputsPosition?: Record<string, {
+                x?: number;
+                y?: number;
+            }>;
+            outputsPosition?: Record<string, {
+                x?: number;
+                y?: number;
+            }>;
+            completionOutputs?: string[];
+            reactiveInputs?: string[];
+            defaultStyle?: {
+                size?: "small" | "regular" | "large";
+                icon?: any;
+                color?: string;
+                cssOverride?: Record<string, string>;
+            };
+            description?: string;
+            aliases?: string[];
+        };
     }>;
 }
 
@@ -140,7 +667,7 @@ declare module '@flyde/core/connect/helpers' {
 declare module '@flyde/core/execute' {
     import { Subject } from "rxjs";
     export * from "@flyde/core/execute/debugger";
-    import { InternalCodeNode, NodeInputs, NodeOutputs, NodeInstanceError, NodeState, InternalNode, InternalNodesCollection } from "@flyde/core/node";
+    import { InternalCodeNode, NodeInputs, NodeOutputs, NodeInstanceError, NodeState, InternalNode } from "@flyde/core/node";
     import { OMap, OMapF } from "@flyde/core/common";
     import { Debugger } from "@flyde/core/execute/debugger";
     export type SubjectMap = OMapF<Subject<any>>;
@@ -151,7 +678,6 @@ declare module '@flyde/core/execute' {
             node: InternalCodeNode;
             inputs: NodeInputs;
             outputs: NodeOutputs;
-            resolvedDeps: InternalNodesCollection;
             _debugger?: Debugger;
             /**
                 * If the node is an instance of another node, this is the id of the instance.
@@ -176,7 +702,6 @@ declare module '@flyde/core/execute' {
     export type ExecuteFn = (params: ExecuteParams) => CancelFn;
     export type ExecuteParams = {
             node: InternalNode;
-            resolvedDeps: InternalNodesCollection;
             inputs: NodeInputs;
             outputs: NodeOutputs;
             _debugger?: Debugger;
@@ -194,9 +719,9 @@ declare module '@flyde/core/execute' {
 }
 
 declare module '@flyde/core/simplified-execute' {
-    import { InternalNode, InternalNodesCollection } from "@flyde/core/";
+    import { InternalNode } from "@flyde/core/";
     import { ExecuteParams } from "@flyde/core/execute";
-    export const simplifiedExecute: (nodeToRun: InternalNode, resolvedDependencies: InternalNodesCollection, inputs?: Record<string, any>, onOutput?: (key: string, data: any) => void, otherParams?: Partial<ExecuteParams>) => import("./execute").CancelFn;
+    export const simplifiedExecute: (nodeToRun: InternalNode, inputs?: Record<string, any>, onOutput?: (key: string, data: any) => void, otherParams?: Partial<ExecuteParams>) => import("./execute").CancelFn;
 }
 
 declare module '@flyde/core/types/connections' {
@@ -594,18 +1119,11 @@ declare module '@flyde/core/node/node-instance-error' {
 }
 
 declare module '@flyde/core/node/node' {
-    import { OMap, OMapF } from "@flyde/core/common";
+    import { OMapF } from "@flyde/core/common";
     import { Subject } from "rxjs";
     import { CancelFn, InnerExecuteFn } from "@flyde/core/execute";
     import { MacroNodeDefinition } from "@flyde/core/node/macro-node";
-    import { CodeNode } from "@flyde/core/";
     import { CodeNodeDefinition, VisualNode } from "@flyde/core";
-    import { InternalNode } from "@flyde/core/types/internal";
-    /** @deprecated use InternalNodesCollection instead */
-    export type NodesCollection = OMap<InternalNode | CodeNode>;
-    export type InternalNodesCollection = OMap<InternalNode>;
-    export type NodesDefCollection = OMap<NodeDefinition>;
-    export type CustomNodeCollection = OMap<VisualNode>;
     export type NodeState = Map<string, any>;
     export type NodeAdvancedContext = {
         execute: InnerExecuteFn;
@@ -848,9 +1366,9 @@ declare module '@flyde/core/types/internal' {
           */
         run: RunNodeFunction;
     }
-    export interface InternalRefNodeInstance {
+    export interface InternalCodeNodeInstance {
         id: string;
-        nodeId: string;
+        node: InternalCodeNode;
         inputConfig: InputPinsConfig;
     }
     export interface InternalInlineNodeInstance {
@@ -858,7 +1376,7 @@ declare module '@flyde/core/types/internal' {
         node: InternalVisualNode;
         inputConfig: InputPinsConfig;
     }
-    export type InternalNodeInstance = InternalRefNodeInstance | InternalInlineNodeInstance;
+    export type InternalNodeInstance = InternalCodeNodeInstance | InternalInlineNodeInstance;
     export function isInternalInlineNodeInstance(instance: InternalNodeInstance): instance is InternalInlineNodeInstance;
     export interface InternalVisualNode extends BaseNode {
         /** the visual nodes internal node instances, either referring to other nodes by id or by value (inline) */
@@ -867,7 +1385,7 @@ declare module '@flyde/core/types/internal' {
         connections: ConnectionData[];
     }
     export type InternalNode = InternalCodeNode | InternalVisualNode;
-    export function internalNodeInstance(insId: string, nodeId: string, inputConfig?: InputPinsConfig): InternalRefNodeInstance;
+    export function internalNodeInstance(insId: string, node: InternalNode, inputConfig?: InputPinsConfig): InternalNodeInstance;
     export function isInternalVisualNode(node: InternalNode): node is InternalVisualNode;
 }
 

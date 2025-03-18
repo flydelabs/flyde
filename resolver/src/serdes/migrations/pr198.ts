@@ -16,6 +16,7 @@ function migrateVisualNode(
 ): VisualNode {
   const migratedNode = { ...node };
 
+  console.log("migrating", node.id);
   for (const instance of migratedNode.instances) {
     const anyIns = instance as any;
 
@@ -29,6 +30,7 @@ function migrateVisualNode(
     );
 
     if (!importedNodeImport) {
+      console.log(anyIns, imports);
       throw new Error(
         `processing instance [${anyIns.id}] with imported id [${importedNodeId}] but it is not found in the imports`
       );
@@ -46,7 +48,11 @@ function migrateVisualNode(
         anyIns.id,
         importedNodeId,
         {
-          type: importSource.endsWith(".flyde.ts") ? "file" : "package",
+          type:
+            importSource.endsWith(".flyde.ts") ||
+            importSource.endsWith(".flyde.js")
+              ? "file"
+              : "package",
           data: importedNodeImport[0],
         },
         anyIns.macroData,
@@ -61,6 +67,7 @@ function migrateVisualNode(
       anyIns.config = newInstance.config;
       anyIns.inputConfig = newInstance.inputConfig;
       anyIns.pos = newInstance.pos;
+      anyIns.type = newInstance.type;
 
       console.info("Migrated", anyIns.id, "to new format");
     } else {
@@ -112,6 +119,7 @@ function migrateVisualNode(
         anyIns.source = newInstance.source;
         anyIns.inputConfig = newInstance.inputConfig;
         anyIns.pos = newInstance.pos;
+        anyIns.type = newInstance.type;
       }
     }
   }
