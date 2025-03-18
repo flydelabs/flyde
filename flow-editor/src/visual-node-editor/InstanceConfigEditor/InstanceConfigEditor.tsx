@@ -1,12 +1,6 @@
 import { Button, DialogTitle, useAiCompletion } from "@flyde/ui";
 import { Dialog, DialogContent, DialogHeader } from "@flyde/ui";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@flyde/ui";
+
 import { Alert, AlertDescription, AlertTitle, Info, GitFork } from "@flyde/ui";
 
 import {
@@ -16,38 +10,33 @@ import {
 } from "@flyde/core";
 
 import { ErrorBoundary } from "react-error-boundary";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { loadMacroEditor } from "./macroEditorLoader";
 import { usePrompt } from "../../flow-editor/ports";
-import { useDependenciesContext } from "../../flow-editor/DependenciesContext";
 import { Loader } from "../../lib/loader";
 import { InstanceIcon } from "../instance-view/InstanceIcon";
 
-export interface MacroInstanceEditorProps {
+export interface InstanceConfigEditorProps {
   ins: CodeNodeInstance;
   editorNode: EditorVisualNode;
   onCancel: () => void;
   onSubmit: (value: any) => void;
-  onSwitchToSiblingMacro: (newMacro: MacroNodeDefinition<any>) => void;
+  // onSwitchToSiblingMacro: (newMacro: MacroNodeDefinition<any>) => void;
 }
 
-export const MacroInstanceEditor: React.FC<MacroInstanceEditorProps> = (
+export const InstanceConfigEditor: React.FC<InstanceConfigEditorProps> = (
   props
 ) => {
   const { ins, onCancel, editorNode } = props;
 
-  const { onRequestSiblingNodes, onForkNode } = useDependenciesContext();
-
-  const [macroSiblings, setMacroSiblings] = useState<
-    MacroNodeDefinition<any>[]
-  >([]);
+  const [macroSiblings] = useState<MacroNodeDefinition<any>[]>([]);
 
   const _onForkNode = useCallback(
     (node: MacroNodeDefinition<any>) => {
-      onForkNode({ node });
       onCancel();
+      throw new Error("Not implemented");
     },
-    [onForkNode, onCancel]
+    [onCancel]
   );
 
   const macro: MacroNodeDefinition<any> = useMemo(() => {
@@ -55,24 +44,20 @@ export const MacroInstanceEditor: React.FC<MacroInstanceEditorProps> = (
     return macro as any as MacroNodeDefinition<any>;
   }, [editorNode.instances, ins.id]);
 
-  useEffect(() => {
-    if (macro) {
-      onRequestSiblingNodes(macro).then(setMacroSiblings);
-    }
-  }, [macro, onRequestSiblingNodes]);
-
-  const [macroData, setMacroData] = React.useState<any>(ins.macroData ?? {});
+  const [instanceConfig, setInstanceConfig] = React.useState<any>(
+    ins.config ?? {}
+  );
   const [hasUnsavedChanges, setHasUnsavedChanges] = React.useState(false);
 
   const handleMacroDataChange = useCallback((newData: any) => {
-    setMacroData(newData);
+    setInstanceConfig(newData);
     setHasUnsavedChanges(true);
   }, []);
 
   const handleSubmit = useCallback(() => {
-    props.onSubmit(macroData);
+    props.onSubmit(instanceConfig);
     setHasUnsavedChanges(false);
-  }, [props, macroData]);
+  }, [props, instanceConfig]);
 
   const handleCancel = useCallback(() => {
     if (!hasUnsavedChanges) {
@@ -117,7 +102,7 @@ export const MacroInstanceEditor: React.FC<MacroInstanceEditorProps> = (
 
         <div className="flex-1 overflow-y-auto p-4">
           <div className="flex-none">
-            {onForkNode && (
+            {_onForkNode && (
               <div className="flex justify-end mb-3">
                 <Button
                   variant="outline"
@@ -130,7 +115,7 @@ export const MacroInstanceEditor: React.FC<MacroInstanceEditorProps> = (
               </div>
             )}
 
-            {macroSiblings.length > 1 && (
+            {/* {macroSiblings.length > 1 && (
               <Select
                 value={macro.id}
                 onValueChange={(value) => {
@@ -138,7 +123,7 @@ export const MacroInstanceEditor: React.FC<MacroInstanceEditorProps> = (
                     (m) => m.id === value
                   );
                   if (selectedMacro) {
-                    props.onSwitchToSiblingMacro(selectedMacro);
+                    // props.onSwitchToSiblingMacro(selectedMacro);
                   }
                 }}
               >
@@ -153,7 +138,7 @@ export const MacroInstanceEditor: React.FC<MacroInstanceEditorProps> = (
                   ))}
                 </SelectContent>
               </Select>
-            )}
+            )} */}
 
             {macro.description && (
               <Alert className="mb-3">
@@ -171,7 +156,7 @@ export const MacroInstanceEditor: React.FC<MacroInstanceEditorProps> = (
                   <span>Error loading macro editor</span>
                   <Button
                     variant="outline"
-                    onClick={() => setMacroData(macro.defaultData)}
+                    onClick={() => setInstanceConfig(macro.defaultData)}
                   >
                     Reset to default
                   </Button>
@@ -179,7 +164,7 @@ export const MacroInstanceEditor: React.FC<MacroInstanceEditorProps> = (
               }
             >
               <EditorComp
-                value={macroData}
+                value={instanceConfig}
                 onChange={handleMacroDataChange}
                 prompt={prompt}
                 createAiCompletion={aiCompletion.createCompletion}

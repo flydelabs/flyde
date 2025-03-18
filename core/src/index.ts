@@ -1,13 +1,7 @@
 export * from "./common";
-import { Pos, OMap } from "./common";
+import { Pos } from "./common";
 import { FlydeFlow } from "./flow-schema";
-import {
-  VisualNode,
-  InputPinsConfig,
-  NodeDefinition,
-  MacroNodeDefinition,
-  CodeNodeDefinition,
-} from "./node";
+import { VisualNode, InputPinsConfig } from "./node";
 
 export * from "./connect/helpers";
 export * from "./execute";
@@ -36,29 +30,6 @@ export interface InstanceViewData {
   visibleOptionalInputs?: string[];
   inputConfig: InputPinsConfig;
 }
-
-export type NodesDefCollection = OMap<NodeDefinition>;
-
-export type MacrosDefCollection = OMap<MacroNodeDefinition<any>>;
-
-export interface NodeLibraryGroup {
-  title: string;
-  nodes: CodeNodeDefinition[];
-}
-
-export interface NodeLibraryData {
-  groups: NodeLibraryGroup[];
-}
-
-export type ImportablesResult = {
-  importables: Record<string, NodesDefCollection>;
-  errors: { path: string; message: string }[];
-};
-
-export type ImportableMacrosResult = {
-  importableMacros: Record<string, MacrosDefCollection>;
-  errors: { path: string; message: string }[];
-};
 
 export interface FlowJob {
   flow: FlydeFlow;

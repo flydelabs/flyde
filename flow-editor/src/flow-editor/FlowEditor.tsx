@@ -4,7 +4,6 @@ import {
   VisualNode,
   NodeInstance,
   FlydeFlow,
-  InlineNodeInstance,
   PinType,
   DebuggerEventType,
   ROOT_INS_ID,
@@ -35,7 +34,6 @@ import { AiCompletionContext, AiCompletionProvider } from "@flyde/ui";
 
 export * from "./ports";
 export * from "./DebuggerContext";
-export * from "./DependenciesContext";
 
 library.add(fab, fas);
 
@@ -49,8 +47,6 @@ export type FlydeFlowEditorProps = {
   onChangeEditorState: React.Dispatch<React.SetStateAction<FlowEditorState>>;
 
   onNewEnvVar?: (name: string, val: any) => void;
-
-  onExtractInlineNode: (ins: InlineNodeInstance) => Promise<void>;
 
   ref?: React.Ref<any>;
 

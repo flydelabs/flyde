@@ -12,6 +12,7 @@ import {
   InputPinsConfig,
   NodeInstance,
   VisualNodeInstance,
+  VisualNodeSource,
 } from "..";
 import { OMap, Pos, testDataCreator } from "../common";
 import { ConnectionData } from "./connections";
@@ -89,3 +90,23 @@ export type CodeNodeDefinition = Omit<InternalCodeNode, "run"> & {
 };
 
 export type FlydeNode<T = any> = VisualNode | CodeNode<T>;
+
+export type ImportableEditorNode = {
+  id: string;
+  displayName: string;
+  description: string;
+  icon: string;
+  aliases?: string[];
+} & (
+  | { type: "code"; source: CodeNodeSource }
+  | { type: "visual"; source: VisualNodeSource }
+);
+
+export interface NodeLibraryGroup {
+  title: string;
+  nodes: ImportableEditorNode[];
+}
+
+export interface NodeLibraryData {
+  groups: NodeLibraryGroup[];
+}

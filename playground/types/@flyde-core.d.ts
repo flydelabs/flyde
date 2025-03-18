@@ -8,9 +8,9 @@
 
 declare module '@flyde/core' {
     export * from "@flyde/core/common";
-    import { Pos, OMap } from "@flyde/core/common";
+    import { Pos } from "@flyde/core/common";
     import { FlydeFlow } from "@flyde/core/flow-schema";
-    import { VisualNode, InputPinsConfig, NodeDefinition, MacroNodeDefinition, CodeNodeDefinition } from "@flyde/core/node";
+    import { VisualNode, InputPinsConfig } from "@flyde/core/node";
     export * from "@flyde/core/connect/helpers";
     export * from "@flyde/core/execute";
     export * from "@flyde/core/simplified-execute";
@@ -27,29 +27,6 @@ declare module '@flyde/core' {
         visibleOptionalInputs?: string[];
         inputConfig: InputPinsConfig;
     }
-    export type NodesDefCollection = OMap<NodeDefinition>;
-    export type MacrosDefCollection = OMap<MacroNodeDefinition<any>>;
-    export interface NodeLibraryGroup {
-        title: string;
-        nodes: CodeNodeDefinition[];
-    }
-    export interface NodeLibraryData {
-        groups: NodeLibraryGroup[];
-    }
-    export type ImportablesResult = {
-        importables: Record<string, NodesDefCollection>;
-        errors: {
-            path: string;
-            message: string;
-        }[];
-    };
-    export type ImportableMacrosResult = {
-        importableMacros: Record<string, MacrosDefCollection>;
-        errors: {
-            path: string;
-            message: string;
-        }[];
-    };
     export interface FlowJob {
         flow: FlydeFlow;
         id: string;
@@ -1173,9 +1150,9 @@ declare module '@flyde/core/execute/debugger' {
 
 declare module '@flyde/core/' {
     export * from "@flyde/core/common";
-    import { Pos, OMap } from "@flyde/core/common";
+    import { Pos } from "@flyde/core/common";
     import { FlydeFlow } from "@flyde/core/flow-schema";
-    import { VisualNode, InputPinsConfig, NodeDefinition, MacroNodeDefinition, CodeNodeDefinition } from "@flyde/core/node";
+    import { VisualNode, InputPinsConfig } from "@flyde/core/node";
     export * from "@flyde/core/connect/helpers";
     export * from "@flyde/core/execute";
     export * from "@flyde/core/simplified-execute";
@@ -1192,29 +1169,6 @@ declare module '@flyde/core/' {
         visibleOptionalInputs?: string[];
         inputConfig: InputPinsConfig;
     }
-    export type NodesDefCollection = OMap<NodeDefinition>;
-    export type MacrosDefCollection = OMap<MacroNodeDefinition<any>>;
-    export interface NodeLibraryGroup {
-        title: string;
-        nodes: CodeNodeDefinition[];
-    }
-    export interface NodeLibraryData {
-        groups: NodeLibraryGroup[];
-    }
-    export type ImportablesResult = {
-        importables: Record<string, NodesDefCollection>;
-        errors: {
-            path: string;
-            message: string;
-        }[];
-    };
-    export type ImportableMacrosResult = {
-        importableMacros: Record<string, MacrosDefCollection>;
-        errors: {
-            path: string;
-            message: string;
-        }[];
-    };
     export interface FlowJob {
         flow: FlydeFlow;
         id: string;
@@ -1497,7 +1451,7 @@ declare module '@flyde/core/types/external' {
         * Each connection will represent a "wire" between 2 instances, or between an instance and a main input/output pin.
         * Connecting to a main input or output is the way that a visual nodes' internal implementation can communicate with its external API.
         */
-    import { CodeNode, CodeNodeInstance, CodeNodeSource, InputPinsConfig, NodeInstance, VisualNodeInstance } from "@flyde/core/";
+    import { CodeNode, CodeNodeInstance, CodeNodeSource, InputPinsConfig, NodeInstance, VisualNodeInstance, VisualNodeSource } from "@flyde/core/";
     import { OMap, Pos } from "@flyde/core/common";
     import { ConnectionData } from "@flyde/core/types/connections";
     import { BaseNode } from "@flyde/core/types/core";
@@ -1523,6 +1477,26 @@ declare module '@flyde/core/types/external' {
             sourceCode?: string;
     };
     export type FlydeNode<T = any> = VisualNode | CodeNode<T>;
+    export type ImportableEditorNode = {
+            id: string;
+            displayName: string;
+            description: string;
+            icon: string;
+            aliases?: string[];
+    } & ({
+            type: "code";
+            source: CodeNodeSource;
+    } | {
+            type: "visual";
+            source: VisualNodeSource;
+    });
+    export interface NodeLibraryGroup {
+            title: string;
+            nodes: ImportableEditorNode[];
+    }
+    export interface NodeLibraryData {
+            groups: NodeLibraryGroup[];
+    }
 }
 
 declare module '@flyde/core/types/pins' {

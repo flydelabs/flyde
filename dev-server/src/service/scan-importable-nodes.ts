@@ -8,10 +8,9 @@ import {
 import {
   BaseNode,
   debugLogger,
-  isInternalMacroNode,
-  NodesDefCollection,
-  ImportablesResult,
   isCodeNode,
+  ImportableEditorNode,
+  CodeNode,
 } from "@flyde/core";
 
 import { FlydeFile } from "../fs-helper/shared";
@@ -29,7 +28,10 @@ export interface CorruptScannedNode {
 export async function scanImportableNodes(
   rootPath: string,
   filename: string
-): Promise<ImportablesResult> {
+): Promise<{
+  nodes: ImportableEditorNode[];
+  errors: { path: string; message: string }[];
+}> {
   const fileRoot = join(rootPath, filename);
 
   const localFiles = getLocalFlydeFiles(rootPath);
@@ -38,42 +40,57 @@ export async function scanImportableNodes(
 
   const depsNodes = await resolveDependentPackages(rootPath, depsNames);
 
-  let builtInStdLib: Record<string, Record<string, BaseNode>> = {};
+  let builtInStdLib: Record<string, ImportableEditorNode[]> = {};
   if (!depsNames.includes("@flyde/stdlib")) {
     debugLogger("Using built-in stdlib");
 
     const nodes = Object.fromEntries(
-      Object.entries(StdLib).filter((pair) => isCodeNode(pair[1]))
-    ) as NodesDefCollection;
+      Object.entries(StdLib)
+        .filter((pair): pair is [string, CodeNode] => isCodeNode(pair[1]))
+        .map<[string, ImportableEditorNode]>(([id, node]) => [
+          id,
+          {
+            id,
+            type: "code",
+            displayName: node.menuDisplayName,
+            description: node.menuDescription,
+            aliases: node.aliases,
+            icon: node.icon,
+            source: {
+              type: "package",
+              data: "@flyde/stdlib",
+            },
+          },
+        ])
+    );
     builtInStdLib = {
-      "@flyde/stdlib": nodes,
+      "@flyde/stdlib": Object.values(nodes),
     };
   }
 
-  let allErrors: ImportablesResult["errors"] = [];
+  let allErrors: { path: string; message: string }[] = [];
 
   const localNodes = localFiles
     .filter((file) => !file.relativePath.endsWith(filename))
-    .reduce<Record<string, Record<string, BaseNode>>>((acc, file) => {
+    .reduce<Record<string, ImportableEditorNode[]>>((acc, file) => {
       if (isCodeNodePath(file.fullPath)) {
         const { errors, nodes } = resolveCodeNodeDependencies(file.fullPath);
         allErrors.push(
           ...errors.map((err) => ({ path: file.fullPath, message: err }))
         );
 
-        const nodesObj = nodes.reduce(
-          (obj, { node }) => ({
-            ...obj,
-            [node.id]: node,
-          }),
-          {}
-        );
+        const nodesObj: ImportableEditorNode[] = nodes.map(({ node }) => ({
+          id: node.id,
+          type: "code",
+          displayName: node.menuDisplayName,
+          description: node.menuDescription,
+          aliases: node.aliases,
+          icon: node.icon,
+          source: { type: "file", data: file.fullPath },
+        }));
         const relativePath = relative(join(fileRoot, ".."), file.fullPath);
-        acc[relativePath] ??= {};
-        acc[relativePath] = {
-          ...acc[relativePath],
-          ...nodesObj,
-        };
+        acc[relativePath] ??= [];
+        acc[relativePath] = [...acc[relativePath], ...nodesObj];
 
         return acc;
       }
@@ -86,8 +103,16 @@ export async function scanImportableNodes(
 
         const relativePath = relative(join(fileRoot, ".."), file.fullPath);
 
-        acc[relativePath] ??= {};
-        acc[relativePath][flow.node.id] = flow.node;
+        acc[relativePath] ??= [];
+        acc[relativePath].push({
+          id: flow.node.id,
+          type: "visual",
+          displayName: flow.node.displayName,
+          description: flow.node.description,
+          aliases: flow.node.aliases,
+          icon: flow.node.icon,
+          source: { type: "file", data: file.fullPath },
+        });
 
         return acc;
       } catch (e) {
@@ -101,7 +126,11 @@ export async function scanImportableNodes(
     }, {});
 
   return {
-    importables: { ...builtInStdLib, ...depsNodes, ...localNodes },
+    nodes: [
+      ...Object.values(builtInStdLib).flat(),
+      ...Object.values(depsNodes).flat(),
+      ...Object.values(localNodes).flat(),
+    ],
     errors: allErrors,
   };
 }

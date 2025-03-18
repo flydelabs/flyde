@@ -4,11 +4,11 @@ import {
   NodeLibraryData,
   noop,
   FlowJob,
-  ImportablesResult,
   MacroNodeDefinition,
   NodeOrMacroDefinition,
   NodeInstance,
   EditorNodeInstance,
+  ImportableEditorNode,
 } from "@flyde/core";
 import { ReportEvent } from "./analytics";
 
@@ -31,7 +31,7 @@ export interface EditorPorts {
   getImportables: (dto: {
     rootFolder: string;
     flowPath: string;
-  }) => Promise<ImportablesResult>;
+  }) => Promise<ImportableEditorNode[]>;
 
   onExternalFlowChange: (cb: (data: { flow: FlydeFlow }) => void) => CancelFn;
 

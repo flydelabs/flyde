@@ -16,13 +16,11 @@ import {
   getNodeInputs,
   externalConnectionNode,
   fullInsIdPath,
-  MacroNodeDefinition,
   NodeOrMacroDefinition,
   getNodeOutputs,
   EditorVisualNode,
   EditorNodeInstance,
   FlydeFlow,
-  RefNodeInstance,
   CodeNodeInstance,
   isCodeNodeInstance,
   isVisualNodeInstance,
@@ -54,7 +52,6 @@ import {
   animateViewPort,
   fitViewPortToRect,
   isEventOnCurrentBoard,
-  createNewNodeInstance,
 } from "./utils";
 
 import { OnboardingTips } from "./OnboardingTips";
@@ -79,13 +76,12 @@ import { usePorts } from "../flow-editor/ports";
 import classNames from "classnames";
 import { pasteInstancesCommand } from "./commands/paste-instances";
 
-import { useDependenciesContext } from "../flow-editor/FlowEditor";
 import { HelpBubble } from "./HelpBubble";
 import { useDarkMode } from "../flow-editor/DarkModeContext";
 import {
-  MacroInstanceEditor,
-  MacroInstanceEditorProps,
-} from "./MacroInstanceEditor";
+  InstanceConfigEditor,
+  InstanceConfigEditorProps,
+} from "./InstanceConfigEditor";
 import {
   SelectionIndicator,
   SelectionIndicatorProps,
@@ -193,8 +189,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         boardData,
         onChangeBoardData,
       } = useVisualNodeEditorContext();
-
-      const { onImportNode, libraryData } = useDependenciesContext();
 
       const darkMode = useDarkMode();
 
@@ -1171,7 +1165,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         [draggedConnection, onConnectionClose]
       );
 
-      const onSaveMacroInstance: MacroInstanceEditorProps["onSubmit"] =
+      const onSaveMacroInstance: InstanceConfigEditorProps["onSubmit"] =
         React.useCallback(
           (val) => {
             const newVal = produce(node, (draft) => {
@@ -1190,47 +1184,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           },
           [node, onChange, editedNodeInstance]
         );
-
-      const onSwitchToSiblingNode = React.useCallback(
-        async (newMacro: MacroNodeDefinition<any>) => {
-          if (!editedNodeInstance) {
-            throw new Error("Impossible state - no edited macro instance");
-          }
-
-          const importableNode = {
-            module: "@flyde/stdlib",
-            node: newMacro as any,
-          };
-          await onImportNode(importableNode);
-
-          const newNodeIns = createNewNodeInstance(
-            importableNode.node.id,
-            0,
-            editedNodeInstance.ins.pos
-          ) as RefNodeInstance;
-
-          const newNode = produce(node, (draft) => {
-            const index = draft.instances.findIndex(
-              (ins) => ins.id === editedNodeInstance.ins.id
-            );
-            if (index !== -1) {
-              draft.instances[index] = newNodeIns as any;
-            }
-          });
-
-          onChange(newNode, functionalChange("switch to sibling macro"));
-
-          setEditedNodeInstance(undefined);
-
-          setTimeout(() => {
-            setEditedNodeInstance({
-              ...editedNodeInstance,
-              ins: newNodeIns as any,
-            });
-          }, 10);
-        },
-        [editedNodeInstance, node, onChange, onImportNode]
-      );
 
       const selectionIndicatorData: SelectionIndicatorProps["selection"] =
         React.useMemo(() => {
@@ -1559,11 +1512,10 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                   {isRootInstance ? <HelpBubble /> : null}
                 </div>
                 {editedNodeInstance ? (
-                  <MacroInstanceEditor
+                  <InstanceConfigEditor
                     onCancel={() => setEditedNodeInstance(undefined)}
                     onSubmit={onSaveMacroInstance}
                     ins={editedNodeInstance.ins}
-                    onSwitchToSiblingMacro={onSwitchToSiblingNode}
                     editorNode={editorNode}
                   />
                 ) : null}
@@ -1571,7 +1523,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                 <CommandMenu
                   open={commandMenuOpen}
                   onOpenChange={setCommandMenuOpen}
-                  groups={libraryData.groups}
                   onAddNode={onAddNode}
                   onClickCustomNode={() => setIsAddingCustomNode(true)}
                 />

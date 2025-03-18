@@ -9,12 +9,9 @@ import {
   EditorDebuggerClient,
 } from "@flyde/remote-debugger/dist/client";
 
-import produce from "immer";
 import {
   DebuggerContextData,
   DebuggerContextProvider,
-  DependenciesContextData,
-  DependenciesContextProvider,
   usePorts,
 } from "@flyde/flow-editor"; // ../../common/visual-node-editor/utils
 
@@ -22,14 +19,11 @@ import { FlowEditor } from "@flyde/flow-editor"; // ../../common/flow-editor/Flo
 
 import { useDebouncedCallback } from "use-debounce";
 
-import { ImportablesResult } from "@flyde/core";
-
-import { values } from "@flyde/flow-editor"; // ../../common/utils
 import { PinType } from "@flyde/core";
 import { createRuntimePlayer, RuntimePlayer } from "@flyde/flow-editor"; // ../../common/visual-node-editor/runtime-player
 
 // import { useDevServerApi } from "../api/dev-server-api";
-import { FlydeFlowChangeType, functionalChange } from "@flyde/flow-editor"; // ../../common/flow-editor/flyde-flow-change-type
+import { FlydeFlowChangeType } from "@flyde/flow-editor"; // ../../common/flow-editor/flyde-flow-change-type
 import { FlowEditorState } from "@flyde/flow-editor"; // ../../common/lib/react-utils/use-hotkeys
 import { defaultViewPort } from "@flyde/flow-editor/dist/visual-node-editor/VisualNodeEditor";
 // import { vscodePromptHandler } from "../vscode-ports";
@@ -232,68 +226,6 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
     [debuggerClient, executionId]
   );
 
-  const queryImportables = React.useCallback(async (): Promise<{
-    importables: any[];
-    errors: ImportablesResult["errors"];
-  }> => {
-    return await ports
-      .getImportables({
-        rootFolder: props.integratedSource,
-        flowPath: props.integratedSource,
-      })
-      .then((imps) => {
-        const { importables, errors } = imps;
-
-        const newImportables = Object.entries(importables).reduce<any[]>(
-          (acc, [module, nodesMap]) => {
-            const nodes = values(nodesMap);
-            const nodeAndModule = nodes.map((node) => ({ module, node }));
-            return acc.concat(nodeAndModule);
-          },
-          []
-        );
-        return { importables: [...newImportables], errors };
-      });
-  }, [ports, props.integratedSource]);
-
-  const onImportNode = React.useCallback<
-    DependenciesContextData["onImportNode"]
-  >(
-    async (importableNode) => {
-      const existingModuleImports =
-        (flow.imports || {})[importableNode.module] || [];
-
-      // setImportedNodes((nodes) => [...nodes, importableNode]);
-
-      const newDeps = {
-        [importableNode.node.id]: importableNode.node,
-      };
-
-      const newFlow = produce(flow, (draft) => {
-        const imports = draft.imports || {};
-        const modImports = imports[importableNode.module] || [];
-
-        if (!existingModuleImports.includes(importableNode.node.id)) {
-          modImports.push(importableNode.node.id);
-        }
-
-        imports[importableNode.module] = modImports;
-        draft.imports = imports;
-      });
-
-      const newState = produce(editorState, (draft) => {
-        draft.flow = newFlow;
-      });
-
-      onChangeState(newState, functionalChange("imported-node"));
-
-      return newDeps as any;
-    },
-    [editorState, flow, onChangeState]
-  );
-
-  const onExtractInlineNode = React.useCallback(async () => {}, []);
-
   const debuggerContextValue = React.useMemo<DebuggerContextData>(
     () => ({
       onRequestHistory: _onRequestHistory,
@@ -302,43 +234,21 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
     [_onRequestHistory, debuggerClient]
   );
 
-  const onRequestSiblingNodes = React.useCallback<
-    DependenciesContextData["onRequestSiblingNodes"]
-  >(
-    (macro) => {
-      return ports.onRequestSiblingNodes({ macro });
-    },
-    [ports]
-  );
-
-  const dependenciesContextValue = React.useMemo<DependenciesContextData>(
-    () => ({
-      onImportNode,
-      onRequestImportables: queryImportables,
-      libraryData,
-      onRequestSiblingNodes,
-    }),
-    [onImportNode, queryImportables, libraryData, onRequestSiblingNodes]
-  );
-
   return (
     <div className={classNames("app", { embedded: isEmbedded })}>
-      <DependenciesContextProvider value={dependenciesContextValue}>
-        <main>
-          <div className={classNames("stage-wrapper", { running: false })}>
-            <DebuggerContextProvider value={debuggerContextValue}>
-              <FlowEditor
-                darkMode={bootstrapData?.darkMode}
-                key={props.integratedSource}
-                state={editorState}
-                onChangeEditorState={setEditorState}
-                onExtractInlineNode={onExtractInlineNode}
-                ref={boardRef}
-              />
-            </DebuggerContextProvider>
-          </div>
-        </main>
-      </DependenciesContextProvider>
+      <main>
+        <div className={classNames("stage-wrapper", { running: false })}>
+          <DebuggerContextProvider value={debuggerContextValue}>
+            <FlowEditor
+              darkMode={bootstrapData?.darkMode}
+              key={props.integratedSource}
+              state={editorState}
+              onChangeEditorState={setEditorState}
+              ref={boardRef}
+            />
+          </DebuggerContextProvider>
+        </div>
+      </main>
     </div>
   );
 };

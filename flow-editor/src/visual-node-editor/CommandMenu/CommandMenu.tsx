@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   Command,
   CommandDialog,
@@ -14,51 +14,38 @@ import {
   TooltipTrigger,
 } from "@flyde/ui";
 import {
-  CodeNodeDefinition,
   EditorNodeInstance,
-  NodeLibraryData,
+  ImportableEditorNode,
+  NodeLibraryGroup,
 } from "@flyde/core";
-import { useDependenciesContext } from "../../flow-editor/DependenciesContext";
 import { InstanceIcon } from "../instance-view";
-import { LocalImportableResult } from "../../flow-editor/DependenciesContext";
 import { cn } from "@flyde/ui";
 import { useLocalStorage } from "../../lib/user-preferences";
 
 const RECENTLY_USED_KEY = "flyde-recently-used-nodes";
 const MAX_RECENT_NODES = 8;
 
-export interface CommandMenuProps extends NodeLibraryData {
+export interface CommandMenuProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onAddNode: (node: EditorNodeInstance) => void;
   onClickCustomNode: () => void;
 }
 
+const groups: NodeLibraryGroup[] = [];
+
 export const CommandMenu: React.FC<CommandMenuProps> = ({
-  groups,
   open,
   onOpenChange,
   onAddNode,
   onClickCustomNode,
 }) => {
   const [query, setQuery] = useState("");
-  const { onRequestImportables } = useDependenciesContext();
   const [importables, setImportables] = useState<EditorNodeInstance[]>();
   const [recentlyUsedIds, setRecentlyUsedIds] = useLocalStorage<string[]>(
     RECENTLY_USED_KEY,
     []
   );
-
-  useEffect(() => {
-    if (open) {
-      setQuery("");
-      onRequestImportables().then(({ importables }: LocalImportableResult) => {
-        setImportables(importables);
-      });
-    } else {
-      setImportables(undefined);
-    }
-  }, [onRequestImportables, open]);
 
   const filteredGroups = React.useMemo(() => {
     if (!query) {
@@ -86,8 +73,8 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
       ...group,
       nodes: group.nodes.filter((node) => {
         const searchContent = `${node.id} ${node.displayName ?? ""} ${
-          node.namespace ?? ""
-        } ${node.description ?? ""} ${node.aliases?.join(" ") ?? ""}`;
+          node.description ?? ""
+        } ${node.aliases?.join(" ") ?? ""}`;
         return searchContent.toLowerCase().includes(query.toLowerCase());
       }),
     }));
@@ -130,7 +117,7 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
 
     return recentlyUsedIds
       .map((id) => allNodes.find((node) => node.id === id))
-      .filter(Boolean) as CodeNodeDefinition[];
+      .filter(Boolean) as ImportableEditorNode[];
   }, [recentlyUsedIds, groups, importables]);
 
   const onSelect = useCallback(
@@ -212,7 +199,7 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger className="truncate">
-                            {importable.menuDisplayName ?? importable.id}
+                            {importable.displayName}
                           </TooltipTrigger>
                           {importable.description &&
                             typeof importable.description === "string" && (
@@ -257,12 +244,8 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
                       onSelect={onSelect}
                       className="text-xs cursor-pointer"
                     >
-                      {node.defaultStyle?.icon && (
-                        <InstanceIcon
-                          icon={node.defaultStyle.icon as string}
-                          className="mr-0.5"
-                        />
-                      )}
+                      <InstanceIcon icon={node.icon} className="mr-0.5" />
+
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger className="truncate">
