@@ -33,8 +33,12 @@ const instance = z.object({
   visibleInputs: z.optional(z.array(z.string())),
   visibleOutputs: z.optional(z.array(z.string())),
   nodeId: z.optional(z.string()),
+  // @deprecated
+  macroId: z.optional(z.string()),
+  // @deprecated
+  macroData: z.optional(z.any()),
   config: z.optional(z.any()),
-  type: z.optional(z.enum(["CodeNode", "VisualNode"])),
+  type: z.optional(z.enum(["CodeNode", "VisualNode", "code"])),
   source: z.optional(
     z.object({
       type: z.string(),
@@ -92,7 +96,7 @@ const visualNode = z
 
 export type FlydeFlow = {
   /** @deprecated */
-  imports?: Record<string, String[]>;
+  imports?: Record<string, string[]>;
   node: VisualNode;
 };
 

@@ -35,7 +35,7 @@ export function usePruneOrphanConnections(
     }
 
     instances.forEach((ins, idx) => {
-      const nodeDef = node.instances[idx].node;
+      const nodeDef = node.instances[idx]?.node;
       if (nodeDef) {
         validInputs.set(ins.id, keys(getNodeInputs(nodeDef)));
         validOutputs.set(ins.id, keys(getNodeOutputs(nodeDef)));

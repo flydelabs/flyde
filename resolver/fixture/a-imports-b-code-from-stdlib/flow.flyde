@@ -1,32 +1,28 @@
-imports:
-  "@flyde/stdlib":
-    - Math
+imports: {}
 node:
   instances:
     - pos:
-        x: -53.16093444824219
-        y: -9.608047485351562
-      id: u692bwtw9lfpm5t5yt02ktwm
-      inputConfig: {}
-      nodeId: Math__u692bwtw9lfpm5t5yt02ktwm
-      macroId: Math
-      macroData:
-        operation:
-          type: select
-          value: add
+        x: -16.83331298828125
+        y: 64.13333129882812
+      id: ins1
+      inputConfig:
         n1:
-          type: dynamic
-          value: "{{n1}}"
-        n2:
-          type: dynamic
-          value: "{{n2}}"
-        n:
-          type: dynamic
-          value: "{{n}}"
+          mode: queue
+      nodeId: Add
+      config: {}
+      source:
+        type: package
+        data: "@flyde/stdlib"
   connections:
     - from:
-        insId: u692bwtw9lfpm5t5yt02ktwm
-        pinId: result
+        insId: __this
+        pinId: n
+      to:
+        insId: ins1
+        pinId: n2
+    - from:
+        insId: ins1
+        pinId: sum
       to:
         insId: __this
         pinId: r
@@ -34,14 +30,8 @@ node:
         insId: __this
         pinId: n
       to:
-        insId: u692bwtw9lfpm5t5yt02ktwm
+        insId: ins1
         pinId: n1
-    - from:
-        insId: __this
-        pinId: n
-      to:
-        insId: u692bwtw9lfpm5t5yt02ktwm
-        pinId: n2
   id: Add1Wrapped
   inputs:
     n:
@@ -52,9 +42,9 @@ node:
       type: number
   inputsPosition:
     n:
-      x: -228.59976196289062
-      y: 6.9940948486328125
+      x: -217.38873291015625
+      y: 92.04984283447266
   outputsPosition:
     r:
-      x: 176.27789306640625
-      y: 3.7898101806640625
+      x: 212.6500244140625
+      y: 76.63396453857422

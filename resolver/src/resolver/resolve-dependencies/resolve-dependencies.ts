@@ -95,6 +95,8 @@ export function resolveFlow(
           continue; // recursive call
         }
 
+        console.log("instance", instance);
+
         if (
           !instance.source ||
           (instance.source.type !== "file" &&

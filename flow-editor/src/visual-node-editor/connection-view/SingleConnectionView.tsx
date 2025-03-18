@@ -28,6 +28,7 @@ export const SingleConnectionView: React.FC<SingleConnectionViewProps> = (
   const { isBrowser } = useSsr();
 
   const {
+    node,
     connection,
     instances,
     connectionType,
@@ -66,11 +67,7 @@ export const SingleConnectionView: React.FC<SingleConnectionViewProps> = (
     return null;
   }
 
-  if (!fromInstance) {
-    return null;
-  }
-
-  const fromNode = fromInstance.node;
+  const fromNode = fromInstance.node ?? node;
 
   const sourcePin = fromNode.outputs[from.pinId];
   const delayed = sourcePin && sourcePin.delayed;

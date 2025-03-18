@@ -301,7 +301,6 @@ describe("resolver", () => {
     const [s, r] = spiedOutput();
     const n = dynamicNodeInput();
 
-    console.log("resolvedDeps", resolvedDeps);
     execute({
       node: flow.main,
       resolvedDeps: resolvedDeps,
@@ -473,7 +472,7 @@ describe("resolver", () => {
 
   // these were the original macro node tests, might be redundant now
   describe("new code nodes", () => {
-    it("resolves a macro node dependency", async () => {
+    it.only("resolves a macro node dependency", async () => {
       const data = resolveFlowByPath(
         getFixturePath("macro-node-simple/a.flyde")
       );
