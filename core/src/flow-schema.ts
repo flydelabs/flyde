@@ -33,6 +33,10 @@ const instance = z.object({
   // @deprecated
   macroData: z.optional(z.any()),
   config: z.optional(z.any()),
+
+  // @deprecated - use source instead
+  node: z.optional(z.any()),
+
   type: z.optional(z.enum(["CodeNode", "VisualNode", "code"])),
   source: z.optional(
     z.object({

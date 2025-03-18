@@ -10,7 +10,6 @@ import {
   CodeNodeInstance,
   CodeNodeSource,
   InputPinsConfig,
-  NodeDefinition,
   NodeInstance,
   VisualNodeInstance,
 } from "..";
@@ -30,7 +29,7 @@ export interface VisualNode extends BaseNode {
   connections: ConnectionData[];
 }
 
-export const isVisualNode = (p: Node | NodeDefinition): p is VisualNode => {
+export const isVisualNode = (p: FlydeNode): p is VisualNode => {
   return !!(p as VisualNode).instances && !!(p as VisualNode).connections;
 };
 

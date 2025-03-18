@@ -1,3 +1,4 @@
+import { isVisualNode } from "@flyde/core";
 import {
   codeNodeInstance,
   CodeNodeInstance,
@@ -24,13 +25,40 @@ function migrateVisualNode(
       continue;
     }
 
+    if (anyIns.node) {
+      const inlineNode = (anyIns as InlineNodeInstance).node;
+      const migratedInlineNode = migrateVisualNode(inlineNode, imports);
+
+      const source: VisualNodeSource = {
+        type: "inline",
+        data: migratedInlineNode,
+      };
+
+      const newInstance = visualNodeInstance(
+        anyIns.id,
+        node.id,
+        source,
+        instance.inputConfig,
+        instance.pos
+      );
+
+      delete anyIns.macroId;
+      delete anyIns.macroData;
+      delete anyIns.node;
+      anyIns.nodeId = newInstance.nodeId;
+      anyIns.source = newInstance.source;
+      anyIns.inputConfig = newInstance.inputConfig;
+      anyIns.pos = newInstance.pos;
+      anyIns.type = newInstance.type;
+      return anyIns;
+    }
+
     const importedNodeId = anyIns.macroId ?? anyIns.nodeId;
     const importedNodeImport = imports.find(([pkg, nodeIds]) =>
       nodeIds.includes(importedNodeId)
     );
 
     if (!importedNodeImport) {
-      console.log(anyIns, imports);
       throw new Error(
         `processing instance [${anyIns.id}] with imported id [${importedNodeId}] but it is not found in the imports`
       );
@@ -76,29 +104,7 @@ function migrateVisualNode(
       const isInline = !!(anyIns as InlineNodeInstance).node;
 
       if (isInline) {
-        const inlineNode = (anyIns as InlineNodeInstance).node;
-        const migratedInlineNode = migrateVisualNode(inlineNode, imports);
-
-        const source: VisualNodeSource = {
-          type: "inline",
-          data: migratedInlineNode,
-        };
-
-        const newInstance = visualNodeInstance(
-          anyIns.id,
-          importedNodeId,
-          source,
-          instance.inputConfig,
-          instance.pos
-        );
-
-        delete anyIns.macroId;
-        delete anyIns.macroData;
-        delete anyIns.node;
-        anyIns.nodeId = newInstance.nodeId;
-        anyIns.source = newInstance.source;
-        anyIns.inputConfig = newInstance.inputConfig;
-        anyIns.pos = newInstance.pos;
+        throw new Error("impossible state");
       } else {
         const source: VisualNodeSource = {
           type: importSource.endsWith(".flyde") ? "file" : "package",

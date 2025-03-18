@@ -1,7 +1,7 @@
-import { FlydeFlow, InternalVisualNode } from "@flyde/core";
+import { InternalVisualNode } from "@flyde/core";
 import _ = require("lodash");
 import { deserializeFlowByPath } from "../serdes/deserialize";
-import { resolveVisualNode } from "./resolve-dependencies/resolve-dependencies";
+import { resolveVisualNode } from "./resolve-visual-node";
 import { VisualNode } from "@flyde/core";
 
 export function resolveFlowDependencies(

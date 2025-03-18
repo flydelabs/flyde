@@ -10,42 +10,14 @@ import {
   CodeNodeSource,
 } from "@flyde/core";
 
-import { existsSync, readFileSync } from "fs";
+import { readFileSync } from "fs";
 import _ = require("lodash");
 import { join } from "path";
-import { resolveImportablePaths } from "./resolve-importable-paths";
 
 import * as _StdLib from "@flyde/stdlib/dist/all";
 import requireReload from "require-reload";
-import { resolveFlowByPath } from "../resolve-flow";
-
-const LocalStdLib = Object.values(_StdLib).reduce<Record<string, CodeNode>>(
-  (acc, curr) => {
-    if (isCodeNode(curr)) {
-      return { ...acc, [curr.id]: curr };
-    } else {
-      return acc;
-    }
-  },
-  {}
-);
-
-const getLocalOrPackagePaths = (fullFlowPath: string, importPath: string) => {
-  const fullImportPath = join(fullFlowPath, "..", importPath);
-
-  if (existsSync(fullImportPath)) {
-    return [fullImportPath];
-  } else {
-    try {
-      return resolveImportablePaths(fullFlowPath, importPath);
-    } catch (e) {
-      if (importPath !== "@flyde/stdlib") {
-        throw new Error(`Cannot find module ${importPath} in ${fullFlowPath}`);
-      }
-      return [];
-    }
-  }
-};
+import { resolveFlowByPath } from "./resolve-flow";
+import { findReferencedCodeNode } from "./find-referenced-node";
 
 /*
 Recursively resolve all dependencies of a flow. For each node instance:
@@ -56,6 +28,7 @@ export function resolveVisualNode(
   visualNode: VisualNode,
   fullFlowPath: string
 ): InternalVisualNode {
+  console.log("resolving", visualNode.id);
   const internalInstances = visualNode.instances.map(
     (instance): InternalNodeInstance => {
       if (isInlineVisualNodeInstance(instance)) {
@@ -69,7 +42,7 @@ export function resolveVisualNode(
         // this can't be inline because we checked above - probably the instance types need minor rethinking
         const source: CodeNodeSource = instance.source as CodeNodeSource;
         const fullPath = join(fullFlowPath, "..", source.data);
-        console.log("fullPath", fullPath, source.data);
+
         const node = resolveFlowByPath(fullPath);
 
         return {
@@ -78,44 +51,17 @@ export function resolveVisualNode(
         };
       }
 
-      switch (instance.source.type) {
-        case "package": {
-          return {
-            ...instance,
-            node: LocalStdLib[instance.source.data] as any,
-          };
-        }
-        case "file": {
-          const fullPath = join(fullFlowPath, "..", instance.source.data);
-          const resolved = resolveCodeNodeDependencies(fullPath);
+      const node = findReferencedCodeNode(instance, fullFlowPath);
+      const processed = processMacroNodeInstance("", node, instance);
 
-          const node = resolved.nodes.find(
-            ({ node }) => node.id === instance.nodeId
-          );
-
-          if (!node) {
-            throw new Error(
-              `Cannot find node ${instance.nodeId} in ${fullPath}`
-            );
-          }
-
-          const processed = processMacroNodeInstance("", node.node, instance);
-
-          return {
-            ...instance,
-            node: processed,
-          };
-        }
-        default: {
-          throw new Error(`Unknown node source type: ${instance.source.type}`);
-        }
-      }
+      return {
+        ...instance,
+        node: processed,
+      };
     }
   );
 
   return { ...visualNode, instances: internalInstances };
-
-  console.log(internalInstances[0].node);
 }
 
 export function findTypeScriptSource(jsPath: string): string | null {

@@ -1,12 +1,4 @@
-import {
-  dynamicNodeInput,
-  execute,
-  InternalInlineNodeInstance,
-  InternalVisualNode,
-  randomInt,
-  RefNodeInstance,
-  VisualNode,
-} from "@flyde/core";
+import { dynamicNodeInput, execute, randomInt } from "@flyde/core";
 import { assert } from "chai";
 import { readdirSync } from "fs";
 import { join } from "path";
@@ -18,7 +10,7 @@ import _ = require("lodash");
 
 const getFixturePath = (path: string) => join(__dirname, "../../fixture", path);
 
-describe.only("resolver", () => {
+describe("resolver", () => {
   it("resolves a blank .flyde file without any instances", () => {
     const data = resolveFlowByPath(getFixturePath("blank.flyde"));
 
@@ -118,7 +110,7 @@ describe.only("resolver", () => {
       assert.equal(s2.lastCall.args[0], n - 1);
     });
 
-    it.only("namespaces instances in inline nodes as well", () => {
+    it("namespaces instances in inline nodes as well", () => {
       const data = resolveFlowByPath(
         getFixturePath(
           "namespaces-imported-inline-visual-node-references/Flow.flyde"
@@ -274,10 +266,8 @@ describe.only("resolver", () => {
 
   it("resolves dependencies of inline nodes", async () => {
     const flow = resolveFlowByPath(
-      getFixturePath("a-uses-inline-node-with-dependency/a.flyde")
+      getFixturePath("a-uses-inline-node-with-dependency/b-imports-a.flyde")
     );
-
-    // const val = await simplifiedExecute(flow.main, resolvedDeps, { n: 2 });
 
     const [s, r] = spiedOutput();
     const n = dynamicNodeInput();
@@ -293,7 +283,7 @@ describe.only("resolver", () => {
 
   it("resolves dependencies of imported inline nodes", async () => {
     const flow = resolveFlowByPath(
-      getFixturePath("a-uses-inline-node-with-dependency/b-imports-a.flyde")
+      getFixturePath("a-uses-inline-node-with-dependency/a.flyde")
     );
 
     const [s, r] = spiedOutput();
