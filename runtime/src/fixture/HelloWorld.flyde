@@ -1,19 +1,20 @@
-imports:
-  "@flyde/stdlib":
-    - InlineValue
+imports: {}
 node:
   instances:
     - pos:
-        x: -73.98515502929689
-        y: 355.5457458496094
+        x: -248.9851550292969
+        y: 502.5457458496094
       id: ar205nq5xbkfixibwz516z0q
       inputConfig: {}
-      nodeId: InlineValue__ar205nq5xbkfixibwz516z0q
-      macroId: InlineValue
-      macroData:
-        type: string
-        value: Hello
-        label: '"Hello"'
+      nodeId: InlineValue
+      config:
+        value:
+          type: string
+          value: "Hello"
+      type: code
+      source:
+        type: package
+        data: "@flyde/stdlib"
   connections:
     - from:
         insId: ar205nq5xbkfixibwz516z0q

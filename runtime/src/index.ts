@@ -60,6 +60,7 @@ export function loadFlowFromContent<Inputs>(
             if (_debugger && _debugger.destroy) {
               await _debugger.destroy();
             }
+            console.log("onCompleted", data);
             res(data);
             if (onCompleted) {
               onCompleted(data);
