@@ -14,7 +14,7 @@ import {
   ConnectionNode,
   isInlineVisualNodeInstance,
   isExternalConnectionNode,
-  EditorNodeInstance,
+  ImportableEditorNode,
 } from "@flyde/core";
 import React from "react";
 import {
@@ -295,18 +295,14 @@ export function useEditorCommands(
   }, [_confirm, boardData, onDeleteInstances, onRemoveIoPin]);
 
   const onAddNode = React.useCallback(
-    async (importableNode: EditorNodeInstance, position?: Pos) => {
+    async (importableNode: ImportableEditorNode, position?: Pos) => {
       // Calculate the center of the viewport
       const targetPos = {
         x: viewPort.pos.x + vpSize.width / (2 * viewPort.zoom),
         y: viewPort.pos.y + vpSize.height / (2 * viewPort.zoom),
       };
 
-      const newNodeIns = createNewNodeInstance(
-        importableNode.node.id,
-        0,
-        targetPos
-      );
+      const newNodeIns = createNewNodeInstance(importableNode, 0, targetPos);
       const newNode = produce(node, (draft) => {
         draft.instances.push(newNodeIns);
       });
@@ -320,7 +316,7 @@ export function useEditorCommands(
       onChangeBoardData(newState);
 
       reportEvent("addNode", {
-        nodeId: importableNode.node.id,
+        nodeId: importableNode.id,
         source: "actionMenu",
       });
     },

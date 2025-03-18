@@ -25,6 +25,7 @@ import {
   isCodeNodeInstance,
   isVisualNodeInstance,
   isInlineVisualNodeInstance,
+  ImportableEditorNode,
 } from "@flyde/core";
 
 import { InstanceView, InstanceViewProps } from "./instance-view/InstanceView";
@@ -231,10 +232,51 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         const resolveAllInstances = async () => {
           const resolvedInstances = await Promise.all(
             instances.map(async (ins) => {
-              return await resolveInstance({
-                flow: props.tempFlow,
-                instance: ins,
-              });
+              if (ins.type === "visual" && ins.source.type === "self") {
+                const node: EditorNodeInstance = {
+                  ...ins,
+                  node: {
+                    id: props.tempFlow?.node.id ?? "__error__",
+                    displayName:
+                      props.tempFlow?.node.displayName ?? "__error__",
+                    inputs: props.tempFlow?.node.inputs ?? {},
+                    outputs: props.tempFlow?.node.outputs ?? {},
+                    editorConfig: {
+                      type: "structured",
+                      fields: [],
+                    },
+                  },
+                };
+
+                return node;
+              }
+              try {
+                const node = await resolveInstance({
+                  flow: props.tempFlow,
+                  instance: ins,
+                });
+                if (!node.node) {
+                  return {
+                    ...ins,
+                    node: {
+                      id: "__error__",
+                      displayName: "Error",
+                      description: "No inputs",
+                    },
+                  } as EditorNodeInstance;
+                }
+                return node;
+              } catch (error) {
+                console.error("Error resolving instance", ins);
+                return {
+                  ...ins,
+                  node: {
+                    id: "__error__",
+                    displayName: "Error",
+                    description: error.message,
+                  },
+                } as EditorNodeInstance;
+              }
             })
           );
 
@@ -244,7 +286,9 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             instances: resolvedInstances,
           });
         };
-        resolveAllInstances();
+        resolveAllInstances().catch((error) => {
+          console.error("Error resolving instances 4242", error);
+        });
         // eslint-disable-next-line react-hooks/exhaustive-deps
       }, [blah]);
 
@@ -802,7 +846,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         let invalids = [];
         const newNode = produce(node, (draft) => {
           draft.instances = draft.instances.map((ins, idx) => {
-            const node = editorNode.instances[idx].node;
+            const node = editorNode.instances[idx]?.node;
             if (node) {
               const nodeInputs = getNodeInputs(node);
               const nodeOutputs = getNodeOutputs(node);
@@ -1268,7 +1312,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           e.preventDefault();
           const data = e.dataTransfer.getData("application/json");
           if (data) {
-            const droppedNode = JSON.parse(data) as EditorNodeInstance;
+            const droppedNode = JSON.parse(data) as ImportableEditorNode;
             onAddNode(droppedNode);
           }
         },

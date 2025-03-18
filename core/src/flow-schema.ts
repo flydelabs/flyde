@@ -37,7 +37,7 @@ const instance = z.object({
   // @deprecated - use source instead
   node: z.optional(z.any()),
 
-  type: z.optional(z.enum(["CodeNode", "VisualNode", "code"])),
+  type: z.optional(z.enum(["code", "visual"])),
   source: z.optional(
     z.object({
       type: z.string(),

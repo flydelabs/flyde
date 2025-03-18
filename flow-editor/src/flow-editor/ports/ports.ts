@@ -57,7 +57,7 @@ export interface EditorPorts {
   onRequestNodeSource: (dto: {
     node: NodeOrMacroDefinition;
   }) => Promise<string>;
-  onCreateCustomNode: (dto: { code: string }) => Promise<EditorNodeInstance>;
+  onCreateCustomNode: (dto: { code: string }) => Promise<ImportableEditorNode>;
   createAiCompletion?: (dto: { prompt: string }) => Promise<string>;
 
   resolveInstance: (dto: {

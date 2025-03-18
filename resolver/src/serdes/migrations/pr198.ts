@@ -1,4 +1,3 @@
-import { isVisualNode } from "@flyde/core";
 import {
   codeNodeInstance,
   CodeNodeInstance,
@@ -8,7 +7,6 @@ import {
   visualNodeInstance,
   VisualNodeInstance,
   VisualNodeSource,
-  VisualNodeSourceInline,
 } from "@flyde/core";
 
 function migrateVisualNode(
@@ -20,9 +18,20 @@ function migrateVisualNode(
   console.log("migrating", node.id);
   for (const instance of migratedNode.instances) {
     const anyIns = instance as any;
+    console.log(
+      "migrating instance",
+      anyIns.nodeId,
+      anyIns.macroId,
+      anyIns.node?.id
+    );
 
     if ((anyIns as CodeNodeInstance | VisualNodeInstance).source) {
       continue;
+    }
+
+    if (!anyIns.nodeId && !anyIns.macroId && !anyIns.node) {
+      console.log("instance has no nodeId or macroId", anyIns);
+      throw new Error("instance has no nodeId or macroId");
     }
 
     if (anyIns.nodeId === node.id) {
@@ -39,7 +48,7 @@ function migrateVisualNode(
       anyIns.inputConfig = newInstance.inputConfig;
       anyIns.pos = newInstance.pos;
       anyIns.type = newInstance.type;
-      return anyIns;
+      continue;
     }
 
     if (anyIns.node) {
@@ -67,7 +76,7 @@ function migrateVisualNode(
       anyIns.inputConfig = newInstance.inputConfig;
       anyIns.pos = newInstance.pos;
       anyIns.type = newInstance.type;
-      return anyIns;
+      continue;
     }
 
     const importedNodeId = anyIns.macroId ?? anyIns.nodeId;
@@ -115,6 +124,7 @@ function migrateVisualNode(
       anyIns.type = newInstance.type;
 
       console.info("Migrated", anyIns.id, "to new format");
+      continue;
     } else {
       // visual node
 
@@ -143,6 +153,7 @@ function migrateVisualNode(
         anyIns.inputConfig = newInstance.inputConfig;
         anyIns.pos = newInstance.pos;
         anyIns.type = newInstance.type;
+        continue;
       }
     }
   }

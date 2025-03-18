@@ -63,6 +63,23 @@ export function nodeInstance(
   };
 }
 
+export function visualNodeInstance(
+  insId: string,
+  nodeId: string,
+  source: VisualNodeSource,
+  inputConfig: InputPinsConfig = {},
+  pos: Pos = { x: 0, y: 0 }
+): VisualNodeInstance {
+  return {
+    id: insId,
+    nodeId,
+    source,
+    inputConfig,
+    pos,
+    type: "visual",
+  };
+}
+
 export function inlineVisualNodeInstance(
   insId: string,
   node: VisualNode,
@@ -101,6 +118,35 @@ export type ImportableEditorNode = {
   | { type: "code"; source: CodeNodeSource }
   | { type: "visual"; source: VisualNodeSource }
 );
+
+export function codeNodeToImportableEditorNode(
+  node: CodeNode,
+  source: CodeNodeSource
+): ImportableEditorNode {
+  return {
+    id: node.id,
+    displayName: node.menuDisplayName,
+    description: node.menuDescription,
+    icon: node.icon,
+    aliases: node.aliases,
+    type: "code",
+    source,
+  };
+}
+
+export function visualNodeToImportableEditorNode(
+  node: VisualNode,
+  source: VisualNodeSource
+): ImportableEditorNode {
+  return {
+    id: node.id,
+    displayName: node.id,
+    description: "",
+    icon: "code",
+    type: "visual",
+    source,
+  };
+}
 
 export interface NodeLibraryGroup {
   title: string;

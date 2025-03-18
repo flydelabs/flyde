@@ -98,23 +98,6 @@ export function codeNodeInstance(
   };
 }
 
-export function visualNodeInstance(
-  id: string,
-  nodeId: string,
-  source: VisualNodeSource,
-  inputConfig?: InputPinsConfig,
-  pos?: Pos
-): VisualNodeInstance {
-  return {
-    id,
-    type: "visual",
-    nodeId,
-    source,
-    inputConfig: inputConfig ?? {},
-    pos: pos ?? { x: 0, y: 0 },
-  };
-}
-
 export const isCodeNodeInstance = (
   ins: NodeInstance
 ): ins is CodeNodeInstance => {
@@ -137,6 +120,6 @@ export const isInlineVisualNodeInstance = (
   return isVisualNodeInstance(ins) && ins.source.type === "inline";
 };
 
-export const createInsId = (node: NodeDefinition) => {
+export const createInsId = (node: Pick<NodeDefinition, "id">) => {
   return `${node.id}-${slug()}`;
 };

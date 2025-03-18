@@ -1,8 +1,4 @@
-imports:
-  "@flyde/stdlib":
-    - Concat
-    - Delay
-    - InlineValue
+imports: {}
 node:
   instances:
     - pos:
@@ -11,20 +7,28 @@ node:
       id: clftmb8cw000b4668nw8u5qr9
       inputConfig: {}
       nodeId: Concat
+      config: {}
+      type: code
+      source:
+        type: package
+        data: "@flyde/stdlib"
     - pos:
         x: -303.85145060221345
         y: 10.403486444382224
       id: clftmbihe000j4668newg9ius
       inputConfig: {}
-      nodeId: Delay__clftmbihe000j4668newg9ius
-      macroId: Delay
-      macroData:
+      nodeId: Delay
+      config:
         delayMs:
           type: static
           value: 1000
         value:
           type: dynamic
           value: ""
+      type: code
+      source:
+        type: package
+        data: "@flyde/stdlib"
       style:
         size: small
         icon: fa-clock
@@ -33,9 +37,8 @@ node:
         y: -83.81941935150951
       id: nu1ietfs4qclohm23tufugsi
       inputConfig: {}
-      nodeId: InlineValue__nu1ietfs4qclohm23tufugsi
-      macroId: InlineValue
-      macroData:
+      nodeId: InlineValue
+      config:
         type:
           type: string
           value: string
@@ -45,14 +48,17 @@ node:
         label:
           type: string
           value: '"Hello, "'
+      type: code
+      source:
+        type: package
+        data: "@flyde/stdlib"
     - pos:
         x: -463.8223657226563
         y: 8.173806152343786
       id: HelloWorld-pf049m0
       inputConfig: {}
-      nodeId: InlineValue__HelloWorld-pf049m0
-      macroId: InlineValue
-      macroData:
+      nodeId: InlineValue
+      config:
         type:
           type: string
           value: string
@@ -62,6 +68,10 @@ node:
         label:
           type: string
           value: '"world!"'
+      type: code
+      source:
+        type: package
+        data: "@flyde/stdlib"
   connections:
     - from:
         insId: clftmbihe000j4668newg9ius

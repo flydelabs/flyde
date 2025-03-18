@@ -11,8 +11,8 @@ import { clamp } from "lodash";
 import { getInstanceDomId } from "../dom-ids";
 
 export const calcNodeContent = (
-  instance: NodeInstance,
-  node: NodeDefinition
+  instance: Pick<NodeInstance, "displayName">,
+  node: Pick<NodeDefinition, "displayName" | "id">
 ) => {
   if (instance.displayName) {
     return instance.displayName;

@@ -11,6 +11,8 @@ import {
   isCodeNode,
   ImportableEditorNode,
   CodeNode,
+  visualNodeToImportableEditorNode,
+  codeNodeToImportableEditorNode,
 } from "@flyde/core";
 
 import { FlydeFile } from "../fs-helper/shared";
@@ -49,18 +51,10 @@ export async function scanImportableNodes(
         .filter((pair): pair is [string, CodeNode] => isCodeNode(pair[1]))
         .map<[string, ImportableEditorNode]>(([id, node]) => [
           id,
-          {
-            id,
-            type: "code",
-            displayName: node.menuDisplayName,
-            description: node.menuDescription,
-            aliases: node.aliases,
-            icon: node.icon,
-            source: {
-              type: "package",
-              data: "@flyde/stdlib",
-            },
-          },
+          codeNodeToImportableEditorNode(node, {
+            type: "package",
+            data: "@flyde/stdlib",
+          }),
         ])
     );
     builtInStdLib = {
@@ -79,15 +73,14 @@ export async function scanImportableNodes(
           ...errors.map((err) => ({ path: file.fullPath, message: err }))
         );
 
-        const nodesObj: ImportableEditorNode[] = nodes.map(({ node }) => ({
-          id: node.id,
-          type: "code",
-          displayName: node.menuDisplayName,
-          description: node.menuDescription,
-          aliases: node.aliases,
-          icon: node.icon,
-          source: { type: "file", data: file.fullPath },
-        }));
+        const nodesObj: ImportableEditorNode[] = nodes.map(({ node }) => {
+          const importableNode = codeNodeToImportableEditorNode(node, {
+            type: "file",
+            data: file.fullPath,
+          });
+          return importableNode;
+        });
+
         const relativePath = relative(join(fileRoot, ".."), file.fullPath);
         acc[relativePath] ??= [];
         acc[relativePath] = [...acc[relativePath], ...nodesObj];
@@ -104,15 +97,12 @@ export async function scanImportableNodes(
         const relativePath = relative(join(fileRoot, ".."), file.fullPath);
 
         acc[relativePath] ??= [];
-        acc[relativePath].push({
-          id: flow.node.id,
-          type: "visual",
-          displayName: flow.node.displayName,
-          description: flow.node.description,
-          aliases: flow.node.aliases,
-          icon: flow.node.icon,
-          source: { type: "file", data: file.fullPath },
+
+        const importableNode = visualNodeToImportableEditorNode(flow.node, {
+          type: "file",
+          data: file.fullPath,
         });
+        acc[relativePath].push(importableNode);
 
         return acc;
       } catch (e) {

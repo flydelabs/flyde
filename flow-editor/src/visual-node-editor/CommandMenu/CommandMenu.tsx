@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Command,
   CommandDialog,
@@ -13,14 +13,11 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@flyde/ui";
-import {
-  EditorNodeInstance,
-  ImportableEditorNode,
-  NodeLibraryGroup,
-} from "@flyde/core";
+import { ImportableEditorNode, NodeLibraryGroup } from "@flyde/core";
 import { InstanceIcon } from "../instance-view";
 import { cn } from "@flyde/ui";
 import { useLocalStorage } from "../../lib/user-preferences";
+import { usePorts } from "@/flow-editor/ports";
 
 const RECENTLY_USED_KEY = "flyde-recently-used-nodes";
 const MAX_RECENT_NODES = 8;
@@ -28,11 +25,9 @@ const MAX_RECENT_NODES = 8;
 export interface CommandMenuProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onAddNode: (node: EditorNodeInstance) => void;
+  onAddNode: (node: ImportableEditorNode) => void;
   onClickCustomNode: () => void;
 }
-
-const groups: NodeLibraryGroup[] = [];
 
 export const CommandMenu: React.FC<CommandMenuProps> = ({
   open,
@@ -41,11 +36,21 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
   onClickCustomNode,
 }) => {
   const [query, setQuery] = useState("");
-  const [importables, setImportables] = useState<EditorNodeInstance[]>();
+  const [importables, setImportables] = useState<ImportableEditorNode[]>();
   const [recentlyUsedIds, setRecentlyUsedIds] = useLocalStorage<string[]>(
     RECENTLY_USED_KEY,
     []
   );
+
+  const [groups, setGroups] = useState<NodeLibraryGroup[]>([]);
+
+  const { getLibraryData } = usePorts();
+
+  useEffect(() => {
+    getLibraryData().then((data) => {
+      setGroups(data.groups);
+    });
+  }, [getLibraryData]);
 
   const filteredGroups = React.useMemo(() => {
     if (!query) {
@@ -95,15 +100,13 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
     );
 
     return importables.filter((importable) => {
-      if (allLibraryNodes.has(importable.node.id)) return false;
+      if (allLibraryNodes.has(importable.id)) return false;
 
       if (!query) return true;
 
-      const content = `${importable.node.aliases?.join(" ") ?? ""} ${
-        importable.node.id
-      } ${importable.node.displayName ?? ""} ${
-        importable.node.namespace ?? ""
-      } ${importable.node.description ?? ""}`;
+      const content = `${importable.aliases?.join(" ") ?? ""} ${
+        importable.id
+      } ${importable.displayName ?? ""} ${importable.description ?? ""}`;
       return content.toLowerCase().includes(query.toLowerCase());
     });
   }, [importables, query, groups]);
@@ -134,17 +137,16 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
           .flatMap((g) => g.nodes)
           .find((n) => n.id === nodeId);
         if (node) {
-          const importableNode = node as any as EditorNodeInstance;
           setRecentlyUsedIds(
             [nodeId, ...recentlyUsedIds.filter((id) => id !== nodeId)].slice(
               0,
               MAX_RECENT_NODES
             )
           );
-          onAddNode(importableNode);
+          onAddNode(node);
         }
       } else if (source === "importable") {
-        const node = importables?.find((i) => i.node.id === nodeId);
+        const node = importables?.find((i) => i.id === nodeId);
         if (node) {
           setRecentlyUsedIds(
             [nodeId, ...recentlyUsedIds.filter((id) => id !== nodeId)].slice(
@@ -273,30 +275,29 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
               <div className={cn("grid gap-0", query ? "" : "grid-cols-4")}>
                 {filteredImportables.map((importable) => (
                   <CommandItem
-                    key={importable.node.id}
-                    value={`importable:${importable.node.id}`}
+                    key={importable.id}
+                    value={`importable:${importable.id}`}
                     onSelect={onSelect}
                     className="text-xs py-1 px-1 add-menu-item"
                   >
-                    {importable.node?.icon && (
+                    {importable.icon && (
                       <InstanceIcon
-                        icon={importable.node.icon as string}
+                        icon={importable.icon as string}
                         className="mr-0.5"
                       />
                     )}
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger className="truncate">
-                          {importable.node.menuDisplayName ??
-                            importable.node.id}
+                          {importable.displayName ?? importable.id}
                         </TooltipTrigger>
-                        {importable.node.description &&
-                          typeof importable.node.description === "string" && (
+                        {importable.description &&
+                          typeof importable.description === "string" && (
                             <TooltipContent
                               side="right"
                               className="max-w-[300px]"
                             >
-                              {importable.node.description}
+                              {importable.description}
                             </TooltipContent>
                           )}
                       </Tooltip>

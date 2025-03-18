@@ -15,10 +15,11 @@ import {
   calcCenter,
   fullInsIdPath,
   InputPinConfig,
-  NodeDefinition,
   createInsId,
   EditorVisualNode,
   EditorNodeInstance,
+  ImportableEditorNode,
+  visualNodeInstance,
 } from "@flyde/core";
 import { calcPinPosition } from "./connection-view/calc-pin-position";
 import { Size } from "../utils";
@@ -172,28 +173,23 @@ export const getSelectionBoxRect = (from: Pos, to: Pos) => {
 };
 
 export const createNewNodeInstance = (
-  nodeIdOrNode: string | NodeDefinition,
+  importableNode: ImportableEditorNode,
   offset: number = -1 * NODE_HEIGHT * 1.5,
   lastMousePos: Pos
 ): NodeInstance => {
-  // TODO - FIX THIS POST BIG REFACTOR
-  const node = null as any;
-  // typeof nodeIdOrNode === "string"
-  //   ? safelyGetNodeDef(nodeIdOrNode)
-  //   : nodeIdOrNode;
-
-  if (!node) {
-    throw new Error(`${nodeIdOrNode} node not found`);
-  }
-
   // TODO - handle visual node addition
 
-  const ins = nodeInstance(createInsId(node), node.id, {} as any, {
-    x: 0,
-    y: 0,
-  });
+  const insId = createInsId(importableNode);
 
-  const width = calcNodeWidth(ins, node);
+  const ins =
+    importableNode.type === "visual"
+      ? visualNodeInstance(insId, importableNode.id, importableNode.source)
+      : nodeInstance(insId, importableNode.id, importableNode.source, {
+          x: 0,
+          y: 0,
+        });
+
+  const width = 300; // TODO - calc proper width
 
   const { x, y } = lastMousePos;
   const pos = {

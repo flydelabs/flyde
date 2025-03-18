@@ -93,7 +93,7 @@ declare module '@flyde/core/flow-schema' {
                 macroData: z.ZodOptional<z.ZodAny>;
                 config: z.ZodOptional<z.ZodAny>;
                 node: z.ZodOptional<z.ZodAny>;
-                type: z.ZodOptional<z.ZodEnum<["CodeNode", "VisualNode", "code"]>>;
+                type: z.ZodOptional<z.ZodEnum<["code", "visual"]>>;
                 source: z.ZodOptional<z.ZodObject<{
                     type: z.ZodString;
                     data: z.ZodAny;
@@ -138,7 +138,7 @@ declare module '@flyde/core/flow-schema' {
                 macroData?: any;
                 config?: any;
                 node?: any;
-                type?: "code" | "CodeNode" | "VisualNode";
+                type?: "code" | "visual";
                 source?: {
                     type?: string;
                     data?: any;
@@ -167,7 +167,7 @@ declare module '@flyde/core/flow-schema' {
                 macroData?: any;
                 config?: any;
                 node?: any;
-                type?: "code" | "CodeNode" | "VisualNode";
+                type?: "code" | "visual";
                 source?: {
                     type?: string;
                     data?: any;
@@ -244,7 +244,7 @@ declare module '@flyde/core/flow-schema' {
                 macroData?: any;
                 config?: any;
                 node?: any;
-                type?: "code" | "CodeNode" | "VisualNode";
+                type?: "code" | "visual";
                 source?: {
                     type?: string;
                     data?: any;
@@ -287,7 +287,7 @@ declare module '@flyde/core/flow-schema' {
                 macroData?: any;
                 config?: any;
                 node?: any;
-                type?: "code" | "CodeNode" | "VisualNode";
+                type?: "code" | "visual";
                 source?: {
                     type?: string;
                     data?: any;
@@ -473,7 +473,7 @@ declare module '@flyde/core/flow-schema' {
                 macroData?: any;
                 config?: any;
                 node?: any;
-                type?: "code" | "CodeNode" | "VisualNode";
+                type?: "code" | "visual";
                 source?: {
                     type?: string;
                     data?: any;
@@ -551,7 +551,7 @@ declare module '@flyde/core/flow-schema' {
                 macroData?: any;
                 config?: any;
                 node?: any;
-                type?: "code" | "CodeNode" | "VisualNode";
+                type?: "code" | "visual";
                 source?: {
                     type?: string;
                     data?: any;
@@ -1071,13 +1071,12 @@ declare module '@flyde/core/node/node-instance' {
     export type NodeInstance = CodeNodeInstance | VisualNodeInstance;
     export type ResolvedNodeInstance = NodeInstance;
     export function codeNodeInstance(id: string, nodeId: string, source: CodeNodeSource, config?: any, inputConfig?: InputPinsConfig, pos?: Pos): CodeNodeInstance;
-    export function visualNodeInstance(id: string, nodeId: string, source: VisualNodeSource, inputConfig?: InputPinsConfig, pos?: Pos): VisualNodeInstance;
     export const isCodeNodeInstance: (ins: NodeInstance) => ins is CodeNodeInstance;
     export const isVisualNodeInstance: (ins: NodeInstance) => ins is VisualNodeInstance;
     export const isInlineVisualNodeInstance: (ins: NodeInstance) => ins is VisualNodeInstance & {
             source: VisualNodeSourceInline;
     };
-    export const createInsId: (node: NodeDefinition) => string;
+    export const createInsId: (node: Pick<NodeDefinition, "id">) => string;
 }
 
 declare module '@flyde/core/types/pin-config' {
@@ -1469,6 +1468,7 @@ declare module '@flyde/core/types/external' {
     export const isVisualNode: (p: FlydeNode) => p is VisualNode;
     export const visualNode: import("..").TestDataCreator<VisualNode>;
     export function nodeInstance(insId: string, nodeId: string, source: CodeNodeSource, config?: any, inputConfig?: InputPinsConfig, pos?: Pos): CodeNodeInstance;
+    export function visualNodeInstance(insId: string, nodeId: string, source: VisualNodeSource, inputConfig?: InputPinsConfig, pos?: Pos): VisualNodeInstance;
     export function inlineVisualNodeInstance(insId: string, node: VisualNode, inputConfig?: InputPinsConfig, pos?: Pos): VisualNodeInstance;
     export type CodeNodeDefinition = Omit<InternalCodeNode, "run"> & {
             /**
@@ -1490,6 +1490,8 @@ declare module '@flyde/core/types/external' {
             type: "visual";
             source: VisualNodeSource;
     });
+    export function codeNodeToImportableEditorNode(node: CodeNode, source: CodeNodeSource): ImportableEditorNode;
+    export function visualNodeToImportableEditorNode(node: VisualNode, source: VisualNodeSource): ImportableEditorNode;
     export interface NodeLibraryGroup {
             title: string;
             nodes: ImportableEditorNode[];

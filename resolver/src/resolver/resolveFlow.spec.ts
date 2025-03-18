@@ -475,5 +475,18 @@ describe("resolver", () => {
       n.subject.next("");
       assert.equal(s.lastCall.args[0], "Hello");
     });
+
+    it("works with CSV Example from vscode extension", async () => {
+      assert.doesNotThrow(() => {
+        resolveFlowByPath(getFixturePath("CSVExample.flyde"));
+      });
+    });
+
+    it.only("works with Fibonacci Example from vscode extension", async () => {
+      resolveFlowByPath(getFixturePath("MemoFibo.flyde"));
+      assert.doesNotThrow(() => {
+        resolveFlowByPath(getFixturePath("MemoFibo.flyde"));
+      });
+    });
   });
 });

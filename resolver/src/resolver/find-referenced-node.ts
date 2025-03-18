@@ -10,7 +10,10 @@ import {
 
 import * as _StdLib from "@flyde/stdlib/dist/all";
 import { join } from "path";
-import { resolveCodeNodeDependencies } from "./resolve-visual-node";
+import {
+  resolveCodeNodeDependencies,
+  resolveVisualNode,
+} from "./resolve-visual-node";
 import { existsSync } from "fs";
 import { resolveImportablePaths } from "./resolve-importable-paths";
 import { deserializeFlowByPath } from "../serdes";
@@ -30,6 +33,7 @@ export function findReferencedNode(
   instance: NodeInstance,
   fullFlowPath: string
 ): CodeNode | VisualNode {
+  console.log("finding referenced node", instance);
   switch (instance.source.type) {
     case "package": {
       // const node = LocalStdLib[instance.source.data];
@@ -90,8 +94,10 @@ export function findReferencedNode(
 
       return node.node;
     }
+    case "inline": {
+      return instance.source.data;
+    }
     default: {
-      console.log(instance, isInlineVisualNodeInstance);
       throw new Error(`Unknown node source type: ${instance.source.type}`);
     }
   }

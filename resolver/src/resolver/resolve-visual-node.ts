@@ -29,10 +29,10 @@ export function resolveVisualNode(
   visualNode: VisualNode,
   fullFlowPath: string
 ): InternalVisualNode {
-  console.log("resolving", visualNode.id);
   const internalInstances = visualNode.instances.map(
     (instance): InternalNodeInstance => {
       if (isInlineVisualNodeInstance(instance)) {
+        console.log("resolving inline", instance.source.data);
         return {
           ...instance,
           node: resolveVisualNode(instance.source.data, fullFlowPath),

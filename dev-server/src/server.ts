@@ -7,7 +7,8 @@ import { createServer } from "http";
 import { resolveFlowByPath } from "@flyde/resolver";
 import { join } from "path";
 
-import { getLibraryData } from "./service/get-library-data";
+import { getBaseNodesLibraryData } from "@flyde/stdlib/dist/nodes-library-data";
+
 import { scanImportableNodes } from "./service/scan-importable-nodes";
 
 export const runDevServer = (
@@ -83,7 +84,7 @@ export const runDevServer = (
   });
 
   app.get("/library", async (req, res) => {
-    const library = getLibraryData();
+    const library = getBaseNodesLibraryData();
     res.send(library);
   });
 

@@ -5,11 +5,10 @@ var fp = require("find-free-port");
 
 import { scanImportableNodes } from "@flyde/dev-server/dist/service/scan-importable-nodes";
 import { generateAndSaveNode } from "@flyde/dev-server/dist/service/ai/generate-node-from-prompt";
-import { getLibraryData } from "@flyde/dev-server/dist/service/get-library-data";
+import { getBaseNodesLibraryData } from "@flyde/stdlib/dist/nodes-library-data";
 
 import {
   deserializeFlow,
-  resolveVisualNode,
   serializeFlow,
   findReferencedNode,
 } from "@flyde/resolver";
@@ -177,15 +176,8 @@ export class FlydeEditorEditorProvider
               imports: {},
             };
       }, "Failed to deserialize flow");
-      const internalNode = tryOrThrow(
-        () =>
-          initialFlow instanceof Error
-            ? initialFlow
-            : resolveVisualNode(initialFlow.node, fullDocumentPath),
-        "Failed to resolve flow's dependencies"
-      );
 
-      const errors = [initialFlow, internalNode]
+      const errors = [initialFlow]
         .filter((obj) => obj instanceof Error)
         .map((err: Error) => err.message);
 
@@ -426,7 +418,7 @@ export class FlydeEditorEditorProvider
                 break;
               }
               case "getLibraryData": {
-                const libraryData = getLibraryData();
+                const libraryData = getBaseNodesLibraryData();
                 messageResponse(event, libraryData);
                 break;
               }
@@ -536,61 +528,68 @@ export class FlydeEditorEditorProvider
 
                 console.log("instance", instance);
 
-                const node = findReferencedNode(instance, fullDocumentPath);
+                try {
+                  const node = findReferencedNode(instance, fullDocumentPath);
 
-                if (!node) {
-                  throw new Error(
-                    `Could not find node definition for ${
-                      instance.macroId ?? instance.nodeId
-                    }`
+                  if (!node) {
+                    throw new Error(
+                      `Could not find node definition for ${
+                        instance.macroId ?? instance.nodeId
+                      }`
+                    );
+                  }
+
+                  const macro = processImprovedMacro(node as any);
+
+                  const processedInstance = processMacroNodeInstance(
+                    "",
+                    macro,
+                    instance
                   );
+
+                  let editorConfig = macro.editorConfig;
+
+                  // if (editorConfig.type === "custom") {
+                  //   editorConfig.editorComponentBundleContent = readFileSync(
+                  //     path.join(
+                  //       vscode.workspace.workspaceFolders?.[0].uri.fsPath ?? "",
+                  //       editorConfig.editorComponentBundlePath
+                  //     ),
+                  //     "utf-8"
+                  //   );
+                  // }
+
+                  const editorInstance: EditorNodeInstance = {
+                    id: instance.id,
+                    config: instance.macroData ?? {},
+                    nodeId: instance.macroId,
+                    inputConfig: instance.inputConfig,
+                    pos: instance.pos,
+                    style: instance.style,
+                    macroData: instance.macroData ?? {},
+                    node: {
+                      id: processedInstance.id,
+                      inputs: processedInstance.inputs,
+                      outputs: processedInstance.outputs,
+                      displayName:
+                        processedInstance.displayName ?? processedInstance.id,
+                      description: processedInstance.description,
+                      overrideNodeBodyHtml:
+                        processedInstance.overrideNodeBodyHtml,
+                      defaultStyle: processedInstance.defaultStyle,
+                      editorConfig,
+                    },
+                  } as any;
+
+                  console.log("editorInstance", editorInstance);
+
+                  messageResponse(event, editorInstance);
+                } catch (error) {
+                  console.error("Error resolving instance", instance);
+                  messageResponse(event, {
+                    error: error,
+                  });
                 }
-
-                const macro = processImprovedMacro(node as any);
-
-                const processedInstance = processMacroNodeInstance(
-                  "",
-                  macro,
-                  instance
-                );
-
-                let editorConfig = macro.editorConfig;
-
-                // if (editorConfig.type === "custom") {
-                //   editorConfig.editorComponentBundleContent = readFileSync(
-                //     path.join(
-                //       vscode.workspace.workspaceFolders?.[0].uri.fsPath ?? "",
-                //       editorConfig.editorComponentBundlePath
-                //     ),
-                //     "utf-8"
-                //   );
-                // }
-
-                const editorInstance: EditorNodeInstance = {
-                  id: instance.id,
-                  config: instance.macroData ?? {},
-                  nodeId: instance.macroId,
-                  inputConfig: instance.inputConfig,
-                  pos: instance.pos,
-                  style: instance.style,
-                  macroData: instance.macroData ?? {},
-                  node: {
-                    id: processedInstance.id,
-                    inputs: processedInstance.inputs,
-                    outputs: processedInstance.outputs,
-                    displayName:
-                      processedInstance.displayName ?? processedInstance.id,
-                    description: processedInstance.description,
-                    overrideNodeBodyHtml:
-                      processedInstance.overrideNodeBodyHtml,
-                    defaultStyle: processedInstance.defaultStyle,
-                    editorConfig,
-                  },
-                } as any;
-
-                console.log("editorInstance", editorInstance);
-
-                messageResponse(event, editorInstance);
 
                 break;
               }
@@ -634,11 +633,10 @@ export class FlydeEditorEditorProvider
         if (isSameUri && lastSaveBy !== webviewId) {
           const raw = document.getText();
           const flow: FlydeFlow = deserializeFlow(raw, fullDocumentPath);
-          const deps = resolveVisualNode(flow.node, fullDocumentPath);
           webviewPanel.webview.postMessage({
             type: "onExternalFlowChange",
             requestId: "TODO-cuid",
-            params: { flow, deps },
+            params: { flow },
             source: "extension",
           });
         }
