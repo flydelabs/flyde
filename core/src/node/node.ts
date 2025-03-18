@@ -4,7 +4,8 @@ import { Subject } from "rxjs";
 import { CancelFn, InnerExecuteFn } from "../execute";
 
 import { MacroNodeDefinition } from "./macro-node";
-import { CodeNodeDefinition, VisualNode } from "@flyde/core";
+import { VisualNode } from "../types/external";
+import { CodeNodeDefinition } from "../types/external";
 
 export type NodeState = Map<string, any>;
 
