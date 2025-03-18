@@ -124,7 +124,7 @@ export const wrappedOnEvent = (
   };
 };
 
-export type SimplifiedNodeParams = {
+type SimplifiedNodeParams = {
   id: string;
   inputTypes: OMap<string>;
   outputTypes: OMap<string>;

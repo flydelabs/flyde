@@ -22,8 +22,7 @@
   },
   "files": [
     "dist/",
-    "README.md",
-    "webpack-loader.js"
+    "README.md"
   ],
   "author": "",
   "license": "MIT",

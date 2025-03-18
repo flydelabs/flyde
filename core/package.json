@@ -22,17 +22,15 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@types/md5": "^2.3.2",
     "@types/react": "~18.2.0",
     "cuid": "^3.0.0",
     "debug": "^4.3.4",
     "dependency-graph": "^0.8.1",
-    "knip": "^5.27.0",
-    "md5": "^2.3.0",
     "rxjs": "^6.6.7",
     "zod": "^3.22.2"
   },
   "devDependencies": {
+    "knip": "^5.27.0",
     "@types/chai": "^4.3.5",
     "@types/debug": "^4.1.8",
     "@types/mocha": "^10.0.1",
@@ -40,7 +38,6 @@
     "@types/sinon": "^7.5.2",
     "badge-maker": "^3.3.1",
     "chai": "^4.3.7",
-    "immer": "^10.1.1",
     "jsdom": "^13.2.0",
     "jsdom-global": "^3.0.2",
     "mocha": "^10.2.0",
