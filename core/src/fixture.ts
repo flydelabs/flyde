@@ -13,7 +13,6 @@ import { execute, SubjectMap } from "./execute";
 
 import { isDefined, keys } from "./common";
 import { Subject } from "rxjs";
-import { CodeNode, InternalNodesCollection } from ".";
 import { conciseCodeNode, fromSimplified, valueNode } from "./test-utils";
 
 export const add: InternalCodeNode = {
@@ -108,10 +107,7 @@ export const add1mul2: InternalVisualNode = {
     r: nodeOutput(),
   },
 
-  instances: [
-    internalNodeInstance("a", add1.id),
-    internalNodeInstance("b", mul2.id),
-  ],
+  instances: [internalNodeInstance("a", add1), internalNodeInstance("b", mul2)],
   connections: [
     {
       from: externalConnectionNode("n"),
@@ -137,9 +133,9 @@ export const add1mul2add1: InternalVisualNode = {
     r: nodeOutput(),
   },
   instances: [
-    internalNodeInstance("a", add1.id),
-    internalNodeInstance("b", mul2.id),
-    internalNodeInstance("c", add1.id),
+    internalNodeInstance("a", add1),
+    internalNodeInstance("b", mul2),
+    internalNodeInstance("c", add1),
   ],
   connections: [
     {
@@ -170,7 +166,7 @@ export const addGrouped: InternalVisualNode = {
   outputs: {
     r: nodeOutput(),
   },
-  instances: [internalNodeInstance("a", add.id)],
+  instances: [internalNodeInstance("a", add)],
   connections: [
     {
       from: externalConnectionNode("n1"),
@@ -198,7 +194,7 @@ export const addGroupedQueued: InternalVisualNode = {
     r: nodeOutput(),
   },
   instances: [
-    internalNodeInstance("a", add.id, {
+    internalNodeInstance("a", add, {
       n1: queueInputPinConfig(),
       n2: queueInputPinConfig(),
     }),
@@ -267,7 +263,6 @@ export const filter: InternalNode = fromSimplified({
         node: fn,
         inputs: { item: itemInput },
         outputs: outputs,
-        resolvedDeps: testNodesCollection,
       });
       outputs.r?.subscribe((bool) => {
         if (bool) {
@@ -334,24 +329,6 @@ export const zero = valueNode("zero", 0);
 export const one = valueNode("one", 1);
 export const mOne = valueNode("mOne", -1);
 
-export const testNodesCollection = {
-  add,
-  add1,
-  mul2: mul2,
-  mul,
-  a1m2: add1mul2,
-  [isEven.id]: isEven,
-  [id.id]: id,
-  [id2.id]: id2,
-  [optAdd.id]: optAdd,
-  [transform.id]: transform,
-  peq,
-  delay,
-  zero,
-  one,
-  mOne,
-} as InternalNodesCollection;
-
 export const accumulate = conciseCodeNode({
   id: "accumulate",
   inputs: ["count|required", "val|optional"],
@@ -398,12 +375,3 @@ export const spreadList = conciseCodeNode({
     length?.next(list.length);
   },
 });
-
-export const testNodesCollectionWith = (
-  ...nodes: (InternalNode | CodeNode)[]
-): InternalNodesCollection => {
-  return nodes.reduce<InternalNodesCollection>(
-    (acc, p) => ({ ...acc, [p.id]: p as InternalNode }),
-    testNodesCollection
-  );
-};

@@ -5,7 +5,6 @@ import {
   NodeOutputs,
   dynamicOutput,
   dynamicNodeInput,
-  NodeInstance,
   queueInputPinConfig,
   NodeOutput,
   NodeState,
@@ -22,19 +21,12 @@ import {
   TRIGGER_PIN_ID,
 } from "./helpers";
 
-import {
-  InternalInlineNodeInstance,
-  InternalNode,
-  InternalNodeInstance,
-  InternalRefNodeInstance,
-  InternalNodesCollection,
-} from "../node";
+import { InternalNodeInstance, InternalCodeNodeInstance } from "../node";
 
 export * from "./helpers";
 
 export const composeExecutableNode = (
   node: InternalVisualNode,
-  resolvedDeps: InternalNodesCollection,
   _debugger: Debugger = {},
   ancestorsInsIds?: string,
   mainState: OMap<NodeState> = {},
@@ -76,7 +68,7 @@ export const composeExecutableNode = (
 
       // build all input and output maps
       instances.forEach((instance) => {
-        const node = getNode(instance, resolvedDeps);
+        const node = instance.node;
         const instanceId = instance.id;
         instanceToId.set(instance, instanceId);
         idToInstance.set(instanceId, instance);
@@ -214,9 +206,7 @@ export const composeExecutableNode = (
           );
         }
 
-        const sourceNode = sourceInstance
-          ? getNode(sourceInstance, resolvedDeps)
-          : node;
+        const sourceNode = sourceInstance.node;
 
         const sourceOutputPin = sourceNode.outputs[fromInstancePinId];
         const isDelayed =
@@ -268,11 +258,11 @@ export const composeExecutableNode = (
       depGraph
         .overallOrder()
         .map((name: string) => idToInstance.get(name))
-        .forEach((instance: NodeInstance) => {
+        .forEach((instance: InternalCodeNodeInstance) => {
           const inputs = instanceArgs.get(instance.id);
           const outputs = instanceOutputs.get(instance.id);
 
-          const node = getNode(instance, resolvedDeps);
+          const node = instance.node;
           if (!inputs) {
             throw new Error(
               `Unexpected error - args not found when running ${instance}`
@@ -297,7 +287,6 @@ export const composeExecutableNode = (
             node,
             inputs,
             outputs,
-            resolvedDeps: resolvedDeps,
             _debugger,
             insId: instance.id,
             extraContext,
@@ -343,19 +332,3 @@ export const composeExecutableNode = (
     },
   };
 };
-
-function getNode(
-  ins: InternalNodeInstance,
-  resolvedNodes: InternalNodesCollection
-): InternalNode {
-  if ((ins as InternalInlineNodeInstance).node) {
-    return (ins as InternalInlineNodeInstance).node;
-  }
-
-  const nodeId = (ins as InternalRefNodeInstance).nodeId;
-  const node = resolvedNodes[nodeId];
-  if (!node) {
-    throw new Error(`Node with id ${nodeId} not found`);
-  }
-  return node;
-}

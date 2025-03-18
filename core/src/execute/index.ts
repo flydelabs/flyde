@@ -15,7 +15,6 @@ import {
   NodeState,
   RunNodeFunction,
   InternalNode,
-  InternalNodesCollection,
   isInternalVisualNode,
 } from "../node";
 
@@ -61,7 +60,6 @@ export type CodeExecutionData = {
   node: InternalCodeNode;
   inputs: NodeInputs;
   outputs: NodeOutputs;
-  resolvedDeps: InternalNodesCollection;
   _debugger?: Debugger;
   /**
    * If the node is an instance of another node, this is the id of the instance.
@@ -91,7 +89,6 @@ const executeCodeNode = (data: CodeExecutionData) => {
     node,
     inputs,
     outputs,
-    resolvedDeps: resolvedDeps,
     _debugger,
     insId,
     ancestorsInsIds,
@@ -113,7 +110,6 @@ const executeCodeNode = (data: CodeExecutionData) => {
       node: node,
       inputs: i,
       outputs: o,
-      resolvedDeps,
       _debugger,
       insId: id,
       onCompleted,
@@ -458,7 +454,6 @@ export type ExecuteFn = (params: ExecuteParams) => CancelFn;
 
 export type ExecuteParams = {
   node: InternalNode;
-  resolvedDeps: InternalNodesCollection;
   inputs: NodeInputs;
   outputs: NodeOutputs;
   _debugger?: Debugger;
@@ -480,7 +475,6 @@ export const execute: ExecuteFn = ({
   node,
   inputs,
   outputs,
-  resolvedDeps,
   _debugger = {},
   insId = ROOT_INS_ID,
   extraContext = {},
@@ -554,7 +548,6 @@ export const execute: ExecuteFn = ({
     if (isInternalVisualNode(node)) {
       return composeExecutableNode(
         node,
-        resolvedDeps,
         _debugger,
         fullInsIdPath(insId, ancestorsInsIds),
         mainState,
@@ -624,7 +617,6 @@ export const execute: ExecuteFn = ({
     node: processedNode,
     inputs: mediatedInputs,
     outputs: mediatedOutputs,
-    resolvedDeps,
     _debugger,
     insId,
     mainState,

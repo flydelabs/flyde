@@ -32,8 +32,6 @@ import {
   Value,
   filter,
   mul2,
-  testNodesCollection,
-  testNodesCollectionWith,
   delay,
   delay5,
 } from "../fixture";
@@ -68,7 +66,7 @@ describe("execute", () => {
     outputs: {
       r: nodeOutput(),
     },
-    instances: [internalNodeInstance("a", optAdd.id)],
+    instances: [internalNodeInstance("a", optAdd)],
     connections: [
       {
         from: externalConnectionNode("n1"),
@@ -94,7 +92,7 @@ describe("execute", () => {
     outputs: {
       r: nodeOutput(),
     },
-    instances: [internalNodeInstance("a", add.id)],
+    instances: [internalNodeInstance("a", add)],
     connections: [
       {
         from: externalConnectionNode("n1"),
@@ -122,7 +120,6 @@ describe("execute", () => {
         node: addGrouped,
         inputs: { n1, n2 },
         outputs: { r },
-        resolvedDeps: testNodesCollection,
       });
       const num1 = randomInt(1, 100);
       const num2 = randomInt(1, 100);
@@ -141,7 +138,6 @@ describe("execute", () => {
         node: add1mul2,
         inputs: { n },
         outputs: { r },
-        resolvedDeps: testNodesCollection,
       });
       const num = randomInt(1, 100);
       n.subject.next(num);
@@ -158,11 +154,7 @@ describe("execute", () => {
         connections: [],
       };
 
-      const node = composeExecutableNode(
-        visualNode,
-        testNodesCollection,
-        {} as any
-      );
+      const node = composeExecutableNode(visualNode, {} as any);
       assert.deepEqual(keys(node.outputs), keys(visualNode.outputs));
       assert.deepEqual(keys(node.inputs), keys(visualNode.inputs));
     });
@@ -179,11 +171,7 @@ describe("execute", () => {
         connections: [],
       };
 
-      const node = composeExecutableNode(
-        visualNode,
-        testNodesCollection,
-        {} as any
-      );
+      const node = composeExecutableNode(visualNode);
       assert.equal(node.inputs["a"]?.mode, "optional");
       assert.equal(node.inputs["b"]?.mode, "required");
     });
@@ -202,7 +190,6 @@ describe("execute", () => {
           node: optAdd,
           inputs: { n1 },
           outputs: { r },
-          resolvedDeps: testNodesCollection,
         });
 
         n1.subject.next(1);
@@ -224,7 +211,6 @@ describe("execute", () => {
           node: optAdd,
           inputs: { n1, n2 },
           outputs: { r },
-          resolvedDeps: testNodesCollection,
         });
 
         n2.subject.next(3);
@@ -247,7 +233,6 @@ describe("execute", () => {
           node: optAdd,
           inputs: { n1, n2 },
           outputs: { r },
-          resolvedDeps: testNodesCollection,
         });
 
         n1.subject.next(1);
@@ -269,7 +254,6 @@ describe("execute", () => {
           node: groupedOptInput,
           inputs: { n1 },
           outputs: { r },
-          resolvedDeps: testNodesCollection,
         });
 
         n1.subject.next(1);
@@ -291,7 +275,6 @@ describe("execute", () => {
           node: groupedOptInput,
           inputs: { n1, n2 },
           outputs: { r },
-          resolvedDeps: testNodesCollection,
         });
 
         n1.subject.next(3);
@@ -313,7 +296,6 @@ describe("execute", () => {
           node: totalOptInput,
           inputs: { n1, n2 },
           outputs: { r },
-          resolvedDeps: testNodesCollection,
         });
 
         n1.subject.next(3);
@@ -334,7 +316,6 @@ describe("execute", () => {
           node: totalOptInput,
           inputs: { n1 },
           outputs: { r },
-          resolvedDeps: testNodesCollection,
         });
 
         n1.subject.next(3);
@@ -353,7 +334,6 @@ describe("execute", () => {
           node: totalOptInput,
           inputs: {},
           outputs: { r },
-          resolvedDeps: testNodesCollection,
         });
 
         equal(s.callCount, 1);
@@ -376,7 +356,7 @@ describe("execute", () => {
             r: nodeOutput(),
           },
           instances: [
-            internalNodeInstance("a", id.id),
+            internalNodeInstance("a", id),
             // internalNodeInstance('b', id),
           ],
           connections: [
@@ -398,7 +378,6 @@ describe("execute", () => {
           node: node,
           inputs: { a, b },
           outputs: { r },
-          resolvedDeps: testNodesCollection,
         });
 
         a.subject.next(42);
@@ -413,9 +392,6 @@ describe("execute", () => {
         const s = spy();
         r.subscribe(s);
 
-        const val2 = Value(2);
-        const resolvedDeps = testNodesCollectionWith(val2);
-
         const node: InternalVisualNode = {
           id: "bob",
           inputs: {
@@ -425,8 +401,8 @@ describe("execute", () => {
             r: nodeOutput(),
           },
           instances: [
-            internalNodeInstance("v", Value(2).id),
-            internalNodeInstance("a", id.id),
+            internalNodeInstance("v", Value(2)),
+            internalNodeInstance("a", id),
           ],
           connections: [
             connectionData(["a", "r"], ["r"]),
@@ -438,7 +414,6 @@ describe("execute", () => {
           node: node,
           inputs: {},
           outputs: { r },
-          resolvedDeps: resolvedDeps,
         });
 
         assert.equal(s.callCount, 1);
@@ -475,7 +450,6 @@ describe("execute", () => {
           node: optOutput,
           inputs: { v },
           outputs: { r1 },
-          resolvedDeps: testNodesCollection,
         });
 
         v.subject.next(1);
@@ -497,7 +471,6 @@ describe("execute", () => {
           node: optOutput,
           inputs: { v },
           outputs: { r1, r2 },
-          resolvedDeps: testNodesCollection,
         });
 
         v.subject.next(17);
@@ -519,7 +492,7 @@ describe("execute", () => {
       outputs: {
         r: {},
       },
-      instances: [internalNodeInstance("a", isEven.id)],
+      instances: [internalNodeInstance("a", isEven)],
       connections: [
         {
           from: externalConnectionNode("item"),
@@ -539,7 +512,6 @@ describe("execute", () => {
         node: filter,
         inputs: { list, fn },
         outputs: { r },
-        resolvedDeps: testNodesCollection,
       });
       list.subject.next([1, 2, 3, 4, 5, 6]);
       fn.subject.next(isEven);
@@ -558,7 +530,6 @@ describe("execute", () => {
         node: filter,
         inputs: { list, fn },
         outputs: { r },
-        resolvedDeps: testNodesCollection,
       });
       list.subject.next([1, 2, 3, 4, 5, 6]);
       fn.subject.next(isOddPredicate);
@@ -589,7 +560,6 @@ describe("execute", () => {
           node: add1mul2,
           inputs: { n },
           outputs: { r },
-          resolvedDeps: testNodesCollection,
           _debugger: { onEvent },
         });
 
@@ -640,7 +610,6 @@ describe("execute", () => {
           node: add1mul2add1,
           inputs: { n },
           outputs: { r },
-          resolvedDeps: testNodesCollection,
           _debugger: { onEvent },
         });
 
@@ -699,7 +668,6 @@ describe("execute", () => {
           node: add1mul2add1,
           inputs: { n },
           outputs: { r },
-          resolvedDeps: testNodesCollection,
           _debugger: {
             onEvent: ({ val, insId, type }) => {
               if (type === DebuggerEventType.INPUT_CHANGE) {
@@ -736,7 +704,6 @@ describe("execute", () => {
           node: add,
           inputs: { n1, n2 },
           outputs: { r },
-          resolvedDeps: testNodesCollection,
           _debugger: { onEvent },
           insId: "myIns",
         });
@@ -777,7 +744,6 @@ describe("execute", () => {
           node: addGrouped,
           inputs: { n1, n2 },
           outputs: { r },
-          resolvedDeps: testNodesCollection,
           _debugger: { onEvent },
           insId: "myIns",
         });
@@ -805,7 +771,6 @@ describe("execute", () => {
           node: add1mul2add1,
           inputs: { n },
           outputs: { r },
-          resolvedDeps: testNodesCollection,
           _debugger: {
             onEvent: ({ val, insId, type }) => {
               if (type === DebuggerEventType.INPUT_CHANGE) {
@@ -838,7 +803,6 @@ describe("execute", () => {
           node: mul2,
           inputs: { n },
           outputs: { r },
-          resolvedDeps: testNodesCollection,
           _debugger: {
             onEvent: ({ val, type }) => {
               if (type !== DebuggerEventType.INPUT_CHANGE) return undefined;
@@ -880,7 +844,6 @@ describe("execute", () => {
           node: add1mul2,
           inputs: { n },
           outputs: { r },
-          resolvedDeps: testNodesCollection,
           _debugger: { onEvent },
           insId: "myIns",
         });
@@ -928,7 +891,6 @@ describe("execute", () => {
           node: add,
           inputs: { n1, n2 },
           outputs: { r },
-          resolvedDeps: testNodesCollection,
           _debugger: { onEvent },
           insId: "myIns",
         });
@@ -959,7 +921,6 @@ describe("execute", () => {
           node: addGrouped,
           inputs: { n1, n2 },
           outputs: { r },
-          resolvedDeps: testNodesCollection,
           _debugger: { onEvent },
           insId: "myIns",
         });
@@ -985,7 +946,6 @@ describe("execute", () => {
           node: add1mul2add1,
           inputs: { n },
           outputs: { r },
-          resolvedDeps: testNodesCollection,
           _debugger: {
             onEvent: ({ val, type }) => {
               if (type !== DebuggerEventType.OUTPUT_CHANGE) return undefined;
@@ -1035,7 +995,6 @@ describe("execute", () => {
           node: delay,
           inputs: { item },
           outputs: { r },
-          resolvedDeps: testNodesCollection,
           _debugger: {
             onEvent,
           },
@@ -1064,7 +1023,6 @@ describe("execute", () => {
           node: delay5,
           inputs: { item },
           outputs: { r },
-          resolvedDeps: testNodesCollection,
           _debugger: {
             onEvent,
           },
@@ -1094,7 +1052,6 @@ describe("execute", () => {
           node: delay5,
           inputs: { item },
           outputs: { r },
-          resolvedDeps: testNodesCollection,
           _debugger: {
             onEvent,
           },
@@ -1136,7 +1093,6 @@ describe("execute", () => {
           node: delay,
           inputs: { item, ms },
           outputs: { r },
-          resolvedDeps: testNodesCollection,
           _debugger: {
             onEvent,
           },

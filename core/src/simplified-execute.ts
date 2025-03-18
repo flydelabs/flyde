@@ -1,6 +1,5 @@
 import {
   InternalNode,
-  InternalNodesCollection,
   NodeInputs,
   dynamicNodeInput,
   dynamicOutput,
@@ -10,7 +9,6 @@ import { execute, ExecuteParams } from "./execute";
 
 export const simplifiedExecute = (
   nodeToRun: InternalNode,
-  resolvedDependencies: InternalNodesCollection,
   inputs: Record<string, any> = {},
   onOutput?: (key: string, data: any) => void,
   otherParams: Partial<ExecuteParams> = {}
@@ -38,7 +36,6 @@ export const simplifiedExecute = (
     node: nodeToRun,
     inputs: _inputs,
     outputs,
-    resolvedDeps: resolvedDependencies,
     onBubbleError: (err) => {
       throw err;
     },

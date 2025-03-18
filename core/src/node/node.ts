@@ -1,21 +1,10 @@
-import { OMap, OMapF } from "../common";
+import { OMapF } from "../common";
 import { Subject } from "rxjs";
 
 import { CancelFn, InnerExecuteFn } from "../execute";
 
 import { MacroNodeDefinition } from "./macro-node";
-import { CodeNode } from "..";
 import { CodeNodeDefinition, VisualNode } from "@flyde/core";
-import { InternalNode } from "../types/internal";
-
-/** @deprecated use InternalNodesCollection instead */
-export type NodesCollection = OMap<InternalNode | CodeNode>;
-
-export type InternalNodesCollection = OMap<InternalNode>;
-
-export type NodesDefCollection = OMap<NodeDefinition>;
-
-export type CustomNodeCollection = OMap<VisualNode>;
 
 export type NodeState = Map<string, any>;
 

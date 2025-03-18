@@ -11,9 +11,9 @@ export interface InternalCodeNode extends BaseNode {
   run: RunNodeFunction;
 }
 
-export interface InternalRefNodeInstance {
+export interface InternalCodeNodeInstance {
   id: string;
-  nodeId: string;
+  node: InternalCodeNode;
   inputConfig: InputPinsConfig;
 }
 
@@ -24,7 +24,7 @@ export interface InternalInlineNodeInstance {
 }
 
 export type InternalNodeInstance =
-  | InternalRefNodeInstance
+  | InternalCodeNodeInstance
   | InternalInlineNodeInstance;
 
 export function isInternalInlineNodeInstance(
@@ -44,18 +44,26 @@ export type InternalNode = InternalCodeNode | InternalVisualNode;
 
 export function internalNodeInstance(
   insId: string,
-  nodeId: string,
+  node: InternalNode,
   inputConfig?: InputPinsConfig
-): InternalRefNodeInstance {
-  return {
-    id: insId,
-    nodeId,
-    inputConfig: inputConfig ?? {},
-  };
+): InternalNodeInstance {
+  if (isInternalVisualNode(node)) {
+    return {
+      id: insId,
+      node,
+      inputConfig: inputConfig ?? {},
+    };
+  } else {
+    return {
+      id: insId,
+      node,
+      inputConfig: inputConfig ?? {},
+    };
+  }
 }
 
 export function isInternalVisualNode(
   node: InternalNode
 ): node is InternalVisualNode {
-  return "instances" in node;
+  return "instances" in (node ?? {});
 }
