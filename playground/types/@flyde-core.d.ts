@@ -115,6 +115,7 @@ declare module '@flyde/core/flow-schema' {
                 macroId: z.ZodOptional<z.ZodString>;
                 macroData: z.ZodOptional<z.ZodAny>;
                 config: z.ZodOptional<z.ZodAny>;
+                node: z.ZodOptional<z.ZodAny>;
                 type: z.ZodOptional<z.ZodEnum<["CodeNode", "VisualNode", "code"]>>;
                 source: z.ZodOptional<z.ZodObject<{
                     type: z.ZodString;
@@ -159,6 +160,7 @@ declare module '@flyde/core/flow-schema' {
                 macroId?: string;
                 macroData?: any;
                 config?: any;
+                node?: any;
                 type?: "code" | "CodeNode" | "VisualNode";
                 source?: {
                     type?: string;
@@ -187,6 +189,7 @@ declare module '@flyde/core/flow-schema' {
                 macroId?: string;
                 macroData?: any;
                 config?: any;
+                node?: any;
                 type?: "code" | "CodeNode" | "VisualNode";
                 source?: {
                     type?: string;
@@ -263,6 +266,7 @@ declare module '@flyde/core/flow-schema' {
                 macroId?: string;
                 macroData?: any;
                 config?: any;
+                node?: any;
                 type?: "code" | "CodeNode" | "VisualNode";
                 source?: {
                     type?: string;
@@ -305,6 +309,7 @@ declare module '@flyde/core/flow-schema' {
                 macroId?: string;
                 macroData?: any;
                 config?: any;
+                node?: any;
                 type?: "code" | "CodeNode" | "VisualNode";
                 source?: {
                     type?: string;
@@ -490,6 +495,7 @@ declare module '@flyde/core/flow-schema' {
                 macroId?: string;
                 macroData?: any;
                 config?: any;
+                node?: any;
                 type?: "code" | "CodeNode" | "VisualNode";
                 source?: {
                     type?: string;
@@ -567,6 +573,7 @@ declare module '@flyde/core/flow-schema' {
                 macroId?: string;
                 macroData?: any;
                 config?: any;
+                node?: any;
                 type?: "code" | "CodeNode" | "VisualNode";
                 source?: {
                     type?: string;
@@ -1065,7 +1072,10 @@ declare module '@flyde/core/node/node-instance' {
             type: "inline";
             data: VisualNode;
     }
-    export type VisualNodeSource = VisualNodeSourceRef | VisualNodeSourceInline;
+    export interface VisualNodeSourceSelf {
+            type: "self";
+    }
+    export type VisualNodeSource = VisualNodeSourceRef | VisualNodeSourceInline | VisualNodeSourceSelf;
     export interface VisualNodeInstance extends NodeInstanceConfig {
             type: "visual";
             nodeId: string;
@@ -1487,7 +1497,7 @@ declare module '@flyde/core/types/external' {
         * Each connection will represent a "wire" between 2 instances, or between an instance and a main input/output pin.
         * Connecting to a main input or output is the way that a visual nodes' internal implementation can communicate with its external API.
         */
-    import { CodeNode, CodeNodeInstance, CodeNodeSource, InputPinsConfig, NodeDefinition, NodeInstance, VisualNodeInstance } from "@flyde/core/";
+    import { CodeNode, CodeNodeInstance, CodeNodeSource, InputPinsConfig, NodeInstance, VisualNodeInstance } from "@flyde/core/";
     import { OMap, Pos } from "@flyde/core/common";
     import { ConnectionData } from "@flyde/core/types/connections";
     import { BaseNode } from "@flyde/core/types/core";
@@ -1502,7 +1512,7 @@ declare module '@flyde/core/types/external' {
             /** each connection represents a "wire" between 2 different instances, or between an instance and a main input/output*/
             connections: ConnectionData[];
     }
-    export const isVisualNode: (p: Node | NodeDefinition) => p is VisualNode;
+    export const isVisualNode: (p: FlydeNode) => p is VisualNode;
     export const visualNode: import("..").TestDataCreator<VisualNode>;
     export function nodeInstance(insId: string, nodeId: string, source: CodeNodeSource, config?: any, inputConfig?: InputPinsConfig, pos?: Pos): CodeNodeInstance;
     export function inlineVisualNodeInstance(insId: string, node: VisualNode, inputConfig?: InputPinsConfig, pos?: Pos): VisualNodeInstance;

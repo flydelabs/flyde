@@ -10,17 +10,15 @@ import { getLibraryData } from "@flyde/dev-server/dist/service/get-library-data"
 import {
   deserializeFlow,
   resolveVisualNode,
-  resolveFlowByPath,
   serializeFlow,
+  findReferencedNode,
 } from "@flyde/resolver";
 import {
   EditorNodeInstance,
   FlydeFlow,
   MAJOR_DEBUGGER_EVENT_TYPES,
-  MacroNodeDefinition,
   extractInputsFromValue,
   formatEvent,
-  isInternalMacroNode,
   keys,
   macroConfigurableValue,
   processImprovedMacro,
@@ -38,8 +36,7 @@ import { createEditorClient } from "@flyde/remote-debugger";
 import { maybeAskToStarProject } from "./maybeAskToStarProject";
 import { customCodeNodeFromCode } from "@flyde/core/dist/misc/custom-code-node-from-code";
 
-import openai, { OpenAI } from "openai";
-import { readFileSync } from "fs";
+import { OpenAI } from "openai";
 
 // export type EditorPortType = keyof any;
 
@@ -539,17 +536,9 @@ export class FlydeEditorEditorProvider
 
                 console.log("instance", instance);
 
-                const resolvedFlow = tryOrThrow(
-                  () => resolveVisualNode(flow, fullDocumentPath),
-                  "Failed to resolve flow"
-                ) as any;
+                const node = findReferencedNode(instance, fullDocumentPath);
 
-                const codeNode =
-                  resolvedFlow.dependencies[
-                    instance.macroId ?? instance.nodeId
-                  ];
-
-                if (!codeNode) {
+                if (!node) {
                   throw new Error(
                     `Could not find node definition for ${
                       instance.macroId ?? instance.nodeId
@@ -557,9 +546,7 @@ export class FlydeEditorEditorProvider
                   );
                 }
 
-                const macro = isInternalMacroNode(codeNode)
-                  ? codeNode
-                  : processImprovedMacro(codeNode as any);
+                const macro = processImprovedMacro(node as any);
 
                 const processedInstance = processMacroNodeInstance(
                   "",

@@ -18,7 +18,7 @@ import { join } from "path";
 import * as _StdLib from "@flyde/stdlib/dist/all";
 import requireReload from "require-reload";
 import { resolveFlowByPath } from "./resolve-flow";
-import { findReferencedCodeNode } from "./find-referenced-node";
+import { findReferencedNode } from "./find-referenced-node";
 
 /*
 Recursively resolve all dependencies of a flow. For each node instance:
@@ -59,9 +59,7 @@ export function resolveVisualNode(
         };
       }
 
-      const node = findReferencedCodeNode(instance, fullFlowPath);
-
-      console.log("node", node);
+      const node = findReferencedNode(instance, fullFlowPath);
 
       if (isVisualNode(node)) {
         const resolved = resolveVisualNode(node, fullFlowPath);

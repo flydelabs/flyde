@@ -666,7 +666,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             if (!node) {
               throw new Error(`Impossible state inspecting inexisting node`);
             }
-            if (!isVisualNode(node)) {
+            if (!isVisualNode(node as any)) {
               toast({
                 description: "Cannot inspect a non visual node",
                 variant: "default",
@@ -675,14 +675,17 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
               return;
             }
 
-            setOpenInlineInstance({ insId: `${currentInsId}.${ins.id}`, node });
+            setOpenInlineInstance({
+              insId: `${currentInsId}.${ins.id}`,
+              node: node as any,
+            });
           } else {
             if (isCodeNodeInstance(ins)) {
               setEditedNodeInstance({ ins });
             } else if (isVisualNodeInstance(ins)) {
               const node = ins.node;
-              if (isVisualNode(node) && ins.source.type === "inline") {
-                setOpenInlineInstance({ insId: ins.id, node });
+              if (isVisualNode(node as any) && ins.source.type === "inline") {
+                setOpenInlineInstance({ insId: ins.id, node: node as any });
               } else {
                 toast({
                   description: "Editing this type of node is not supported",

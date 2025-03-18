@@ -26,7 +26,7 @@ const LocalStdLib = Object.values(_StdLib).reduce<Record<string, CodeNode>>(
   {}
 );
 
-export function findReferencedCodeNode(
+export function findReferencedNode(
   instance: NodeInstance,
   fullFlowPath: string
 ): CodeNode | VisualNode {
