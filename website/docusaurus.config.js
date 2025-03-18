@@ -20,6 +20,9 @@ const FixWebpack5Plugin = () => ({
                   /* ... */
                 },
               },
+              {
+                loader: "yaml-loader",
+              },
             ],
           },
         ],

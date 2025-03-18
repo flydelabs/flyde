@@ -1,7 +1,6 @@
 import { AppData, AppFileType } from "@/components/AppView";
 
 import {
-  ResolvedDependencies,
   simplifiedExecute,
   Debugger,
   isCodeNode,
@@ -15,7 +14,6 @@ import ReactDOM from "react-dom";
 
 function ensureFakeModulesOnWindow(
   app: AppData,
-  deps: ResolvedDependencies,
   _debugger: Debugger,
   handle: PlaygroundHandle
 ) {
@@ -126,7 +124,6 @@ export interface RuntimeStatusError {
 
 export interface ExecuteAppParams {
   app: AppData;
-  deps: ResolvedDependencies;
   _debugger: Debugger;
   playgroundHandle: PlaygroundHandle;
   debugDelay: number;
@@ -136,7 +133,6 @@ export interface ExecuteAppParams {
 export function executeApp({
   app,
   _debugger,
-  deps,
   playgroundHandle: outputHandle,
   debugDelay,
   onStatusChange,
@@ -148,7 +144,7 @@ export function executeApp({
   } else {
     _debugger.debugDelay = undefined;
   }
-  ensureFakeModulesOnWindow(app, deps, _debugger, outputHandle);
+  ensureFakeModulesOnWindow(app, _debugger, outputHandle);
 
   (window as any).FlydePlayground = outputHandle;
 

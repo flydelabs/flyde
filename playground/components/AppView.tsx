@@ -31,7 +31,6 @@ import {
   DebuggerEvent,
   DynamicNodeInput,
   FlydeFlow,
-  ResolvedDependencies,
   dynamicNodeInput,
 } from "@flyde/core";
 import { transpileCodeNodes } from "@/lib/transpileCodeFlow";
@@ -372,20 +371,12 @@ export default function AppView(props: AppViewProps) {
     runtimePlayer.start();
     executeApp({
       app: draftAppData,
-      deps: localNodes as any,
       _debugger,
       playgroundHandle: outputHandle,
       onStatusChange: setRuntimeStatus,
       debugDelay: runtimeDelay,
     });
-  }, [
-    runtimePlayer,
-    draftAppData,
-    localNodes,
-    _debugger,
-    outputHandle,
-    runtimeDelay,
-  ]);
+  }, [runtimePlayer, draftAppData, _debugger, outputHandle, runtimeDelay]);
 
   const stopExecution = useCallback(() => {
     destroyExecution();
