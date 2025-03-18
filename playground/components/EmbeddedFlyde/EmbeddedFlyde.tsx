@@ -11,16 +11,12 @@ import {
 } from "@flyde/core";
 import {
   FlowEditorState,
-  DependenciesContextData,
   DebuggerContextData,
-  DependenciesContextProvider,
   DebuggerContextProvider,
 } from "@flyde/flow-editor";
 import dynamic from "next/dynamic";
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { FullPageLoader } from "../FullPageLoader";
-
-import { getLibraryData } from "./getLibraryData";
 
 import { macroBundlesContent } from "../../stdlib-bundle/inline-macros";
 
@@ -30,8 +26,6 @@ export interface EmbeddedFlydeProps {
   localNodes: any[];
   historyPlayer: HistoryPlayer;
 }
-
-const noop = () => {};
 
 const initialPadding = [10, 10] as [number, number];
 
@@ -105,37 +99,6 @@ export function EmbeddedFlyde(props: EmbeddedFlydeProps) {
     onChange(stateFlow);
   }, [onChange, stateFlow]);
 
-  const onRequestImportables: DependenciesContextData["onRequestImportables"] =
-    useCallback(async () => {
-      const stdLibNodes = Object.values(
-        await import("@flyde/stdlib/dist/all-browser")
-      ).filter((n) => isCodeNode(n)) as ImportedNode[];
-
-      const _stdLibNodes = stdLibNodes.map((b) => ({
-        node: { ...b, source: { path: "n/a", export: "n/a" } },
-        module: "@flyde/stdlib",
-      }));
-
-      const localModules = Object.values(localNodes).map((node) => ({
-        node: { ...node, source: { path: "n/a", export: "n/a" } },
-        module: "local",
-      }));
-
-      return {
-        importables: [..._stdLibNodes, ...localModules],
-        errors: [],
-      };
-    }, [localNodes]);
-
-  const depsContextValue = useMemo<DependenciesContextData>(() => {
-    return {
-      onImportNode: noop as any,
-      onRequestImportables,
-      onRequestSiblingNodes: () => Promise.resolve([]),
-      libraryData: getLibraryData(),
-    };
-  }, [onRequestImportables]);
-
   const debuggerContextValue = React.useMemo<DebuggerContextData>(
     () => ({
       onRequestHistory: historyPlayer.requestHistory,
@@ -144,18 +107,15 @@ export function EmbeddedFlyde(props: EmbeddedFlydeProps) {
   );
 
   return (
-    <DependenciesContextProvider value={depsContextValue}>
-      <DebuggerContextProvider value={debuggerContextValue}>
-        <CanvasPositioningWaitHack>
-          <DynamicFlowEditor
-            state={state}
-            onChangeEditorState={setState}
-            initialPadding={initialPadding}
-            onExtractInlineNode={noop as any}
-          />
-        </CanvasPositioningWaitHack>
-      </DebuggerContextProvider>
-    </DependenciesContextProvider>
+    <DebuggerContextProvider value={debuggerContextValue}>
+      <CanvasPositioningWaitHack>
+        <DynamicFlowEditor
+          state={state}
+          onChangeEditorState={setState}
+          initialPadding={initialPadding}
+        />
+      </CanvasPositioningWaitHack>
+    </DebuggerContextProvider>
   );
 }
 
