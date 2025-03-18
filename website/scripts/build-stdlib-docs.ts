@@ -1,10 +1,13 @@
 import { writeFileSync } from "fs";
 import ejs from "ejs";
-import { InternalCodeNode, Node } from "@site/../core";
+import { InternalCodeNode, VisualNode } from "@site/../core";
 
 import markdownTable from "markdown-table";
 
-const data: Record<string, Node> = require("@flyde/stdlib/dist/nodes.json");
+const data: Record<
+  string,
+  VisualNode
+> = require("@flyde/stdlib/dist/nodes.json");
 
 // group data object by "namespace"
 const groupedData = Object.values(data).reduce((acc, node) => {

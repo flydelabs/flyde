@@ -17,8 +17,6 @@ console.log(\`Output: \$\{output\}\`);`;
 
 import "./HeroExample.scss";
 import { Loader } from "@flyde/flow-editor";
-import { processMacroNodes } from "@site/src/components/EmbeddedFlyde/macroHelpers";
-import * as stdLibBrowser from "@flyde/stdlib/dist/all-browser";
 import { noop } from "@flyde/core";
 import { examples } from "../_examples";
 
@@ -35,14 +33,8 @@ export const HeroExample: React.FC<{
   const [logs, setLogs] = React.useState<any>([]);
 
   const flowProps = useMemo(() => {
-    const { newDeps, newNode } = processMacroNodes(
-      currentExample.flow.flow.node,
-      stdLibBrowser
-    );
-
     return {
-      initialFlow: { ...currentExample.flow.flow, node: newNode },
-      dependencies: { ...currentExample.flow.dependencies, ...newDeps },
+      initialFlow: { node: currentExample.flow.node },
     };
   }, [currentExample]);
 

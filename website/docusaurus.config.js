@@ -15,12 +15,6 @@ const FixWebpack5Plugin = () => ({
             test: /\.flyde$/,
             use: [
               {
-                loader: "@flyde/runtime/webpack-loader",
-                options: {
-                  /* ... */
-                },
-              },
-              {
                 loader: "yaml-loader",
               },
             ],

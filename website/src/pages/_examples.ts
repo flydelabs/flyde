@@ -3,6 +3,8 @@ import exampleDebounceThrottle from "./_hero-example/ExampleDebounceThrottle.fly
 import exampleHttpRequests from "./_hero-example/ExampleHTTPRequests.flyde";
 import exampleReactivity from "./_hero-example/ExampleReactivity.flyde";
 
+console.log(exampleHelloWorld);
+
 export const examples = [
   {
     label: "Hello World",
