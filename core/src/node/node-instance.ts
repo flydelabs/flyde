@@ -48,7 +48,14 @@ export interface VisualNodeSourceInline {
   data: VisualNode;
 }
 
-export type VisualNodeSource = VisualNodeSourceRef | VisualNodeSourceInline;
+export interface VisualNodeSourceSelf {
+  type: "self";
+}
+
+export type VisualNodeSource =
+  | VisualNodeSourceRef
+  | VisualNodeSourceInline
+  | VisualNodeSourceSelf;
 
 export interface VisualNodeInstance extends NodeInstanceConfig {
   type: "visual";

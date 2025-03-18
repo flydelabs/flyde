@@ -25,6 +25,23 @@ function migrateVisualNode(
       continue;
     }
 
+    if (anyIns.nodeId === node.id) {
+      const source: VisualNodeSource = {
+        type: "self",
+      };
+
+      const newInstance = visualNodeInstance(anyIns.id, node.id, source);
+
+      delete anyIns.macroId;
+      delete anyIns.macroData;
+      anyIns.nodeId = newInstance.nodeId;
+      anyIns.source = newInstance.source;
+      anyIns.inputConfig = newInstance.inputConfig;
+      anyIns.pos = newInstance.pos;
+      anyIns.type = newInstance.type;
+      return anyIns;
+    }
+
     if (anyIns.node) {
       const inlineNode = (anyIns as InlineNodeInstance).node;
       const migratedInlineNode = migrateVisualNode(inlineNode, imports);

@@ -10,9 +10,10 @@ node:
       inputConfig: {}
       nodeId: Duplicate__ins1
       macroId: Duplicate
-      macroData: {
-        times: 3
-      }
+      macroData:
+        times:
+          type: "number"
+          value: 3
   connections:
     - from:
         insId: __this

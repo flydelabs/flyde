@@ -3,7 +3,7 @@ import { assert } from "chai";
 import { readdirSync } from "fs";
 import { join } from "path";
 import { deserializeFlowByPath } from "../serdes";
-import { resolveFlowByPath, resolveFlowDependencies } from "./resolve-flow";
+import { resolveFlow, resolveFlowByPath } from "./resolve-flow";
 
 import { spiedOutput } from "@flyde/core/dist/test-utils";
 import _ = require("lodash");
@@ -230,8 +230,9 @@ describe("resolver", () => {
     const path = getFixturePath(
       "imports-ok-from-package-with-problematic.flyde"
     );
+    resolveFlowByPath(path);
 
-    const flow = resolveFlowByPath(path);
+    assert.doesNotThrow(() => {});
   });
 
   it("imports multiple nodes from the same package", async () => {
@@ -326,7 +327,7 @@ describe("resolver", () => {
     const flow = deserializeFlowByPath(
       getFixturePath("a-imports-js-node-from-b/a.flyde")
     );
-    const node = resolveFlowDependencies(flow.node, path);
+    const node = resolveFlow(flow.node, path);
 
     const [s, r] = spiedOutput();
     const n = dynamicNodeInput();
@@ -444,9 +445,11 @@ describe("resolver", () => {
 
       execute({
         node,
-
         inputs: { n },
         outputs: { r },
+        onBubbleError: (e) => {
+          console.log("error", e);
+        },
       });
 
       n.subject.next(2);

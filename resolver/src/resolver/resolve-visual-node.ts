@@ -8,6 +8,7 @@ import {
   isInlineVisualNodeInstance,
   processMacroNodeInstance,
   CodeNodeSource,
+  isVisualNode,
 } from "@flyde/core";
 
 import { readFileSync } from "fs";
@@ -39,6 +40,13 @@ export function resolveVisualNode(
       }
 
       if (isVisualNodeInstance(instance)) {
+        if (instance.source.type === "self") {
+          return {
+            ...instance,
+            node: "__SELF" as any,
+          };
+        }
+
         // this can't be inline because we checked above - probably the instance types need minor rethinking
         const source: CodeNodeSource = instance.source as CodeNodeSource;
         const fullPath = join(fullFlowPath, "..", source.data);
@@ -52,6 +60,17 @@ export function resolveVisualNode(
       }
 
       const node = findReferencedCodeNode(instance, fullFlowPath);
+
+      console.log("node", node);
+
+      if (isVisualNode(node)) {
+        const resolved = resolveVisualNode(node, fullFlowPath);
+        return {
+          ...instance,
+          node: resolved,
+        };
+      }
+
       const processed = processMacroNodeInstance("", node, instance);
 
       return {
@@ -61,7 +80,18 @@ export function resolveVisualNode(
     }
   );
 
-  return { ...visualNode, instances: internalInstances };
+  const newNode: InternalVisualNode = {
+    ...visualNode,
+    instances: internalInstances,
+  };
+
+  for (const ins of newNode.instances) {
+    if ((ins.node as any) === "__SELF") {
+      ins.node = newNode;
+    }
+  }
+
+  return newNode;
 }
 
 export function findTypeScriptSource(jsPath: string): string | null {
@@ -118,6 +148,7 @@ export function resolveCodeNodeDependencies(path: string): {
       });
     }
   } catch (e) {
+    console.log("error", e);
     errors.push(`Error loading module "${path}": ${e.message}`);
   }
   return { errors, nodes };
