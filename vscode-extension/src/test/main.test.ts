@@ -87,7 +87,7 @@ suite("Extension Test Suite", () => {
 
     await eventually(async () => {
       const elements = await webviewTestingCommand("$$", {
-        selector: ".add-menu-item",
+        selector: "[cmdk-item]",
       });
       assert(
         elements.length > 30,
