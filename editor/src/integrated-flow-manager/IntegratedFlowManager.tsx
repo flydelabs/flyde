@@ -1,7 +1,7 @@
 import * as React from "react";
 import "./App.scss";
 
-import { FlydeFlow, isVisualNode, NodeLibraryData } from "@flyde/core";
+import { FlydeFlow, isVisualNode } from "@flyde/core";
 
 import classNames from "classnames";
 import {
@@ -55,10 +55,6 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
 
   const lastChangeReason = React.useRef("");
 
-  const [libraryData, setLibraryData] = React.useState<NodeLibraryData>({
-    groups: [],
-  });
-
   const [editorState, setEditorState] = React.useState<FlowEditorState>({
     flow: initialFlow,
     boardData: {
@@ -70,12 +66,6 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
   });
 
   const { flow } = editorState;
-
-  useEffect(() => {
-    ports.getLibraryData().then((data) => {
-      setLibraryData(data);
-    });
-  }, [ports]);
 
   const [debuggerClient, setDebuggerClient] =
     React.useState<EditorDebuggerClient>();
@@ -166,15 +156,6 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
       ports.setFlow({ absPath: src, flow: cleanFlow });
     },
     500
-  );
-
-  const onChangeState = React.useCallback(
-    (changedState: FlowEditorState, type: FlydeFlowChangeType) => {
-      lastChangeReason.current = type.message;
-      setEditorState(changedState);
-      debouncedSaveFile(changedState.flow, props.integratedSource);
-    },
-    [debouncedSaveFile, props.integratedSource]
   );
 
   const onChangeFlow = React.useCallback(

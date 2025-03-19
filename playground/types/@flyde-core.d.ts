@@ -3,7 +3,6 @@
 //   ../../../../zod
 //   ../../../../rxjs
 //   ../../../../debug
-//   ../../../../@flyde/core
 //   ../../../../react
 
 declare module '@flyde/core' {
@@ -1108,7 +1107,8 @@ declare module '@flyde/core/node/node' {
     import { Subject } from "rxjs";
     import { CancelFn, InnerExecuteFn } from "@flyde/core/execute";
     import { MacroNodeDefinition } from "@flyde/core/node/macro-node";
-    import { CodeNodeDefinition, VisualNode } from "@flyde/core";
+    import { VisualNode } from "@flyde/core/types/external";
+    import { CodeNodeDefinition } from "@flyde/core/types/external";
     export type NodeState = Map<string, any>;
     export type NodeAdvancedContext = {
         execute: InnerExecuteFn;
@@ -1316,6 +1316,64 @@ declare module '@flyde/core/node/macro-node' {
     export {};
 }
 
+declare module '@flyde/core/types/external' {
+    /**
+        * A visual node is what makes Flyde special. It represents a node created visually in the editor.
+        * It consists of node instances and connections. Each node instance will either refer to an imported node (by id), or include the node "inline".
+        * Each connection will represent a "wire" between 2 instances, or between an instance and a main input/output pin.
+        * Connecting to a main input or output is the way that a visual nodes' internal implementation can communicate with its external API.
+        */
+    import { CodeNode, CodeNodeInstance, CodeNodeSource, InputPinsConfig, NodeInstance, VisualNodeInstance, VisualNodeSource } from "@flyde/core/";
+    import { OMap, Pos } from "@flyde/core/common";
+    import { ConnectionData } from "@flyde/core/types/connections";
+    import { BaseNode } from "@flyde/core/types/core";
+    import { InternalCodeNode } from "@flyde/core/types/internal";
+    export interface VisualNode extends BaseNode {
+            /** a map holding the position for each main input. Used in the editor only. */
+            inputsPosition: OMap<Pos>;
+            /** a map holding the position for each main output. Used in the editor only. */
+            outputsPosition: OMap<Pos>;
+            /** the visual nodes internal node instances, either referring to other nodes by id or by value (inline) */
+            instances: NodeInstance[];
+            /** each connection represents a "wire" between 2 different instances, or between an instance and a main input/output*/
+            connections: ConnectionData[];
+    }
+    export const isVisualNode: (p: FlydeNode) => p is VisualNode;
+    export const visualNode: import("..").TestDataCreator<VisualNode>;
+    export function nodeInstance(insId: string, nodeId: string, source: CodeNodeSource, config?: any, inputConfig?: InputPinsConfig, pos?: Pos): CodeNodeInstance;
+    export function visualNodeInstance(insId: string, nodeId: string, source: VisualNodeSource, inputConfig?: InputPinsConfig, pos?: Pos): VisualNodeInstance;
+    export function inlineVisualNodeInstance(insId: string, node: VisualNode, inputConfig?: InputPinsConfig, pos?: Pos): VisualNodeInstance;
+    export type CodeNodeDefinition = Omit<InternalCodeNode, "run"> & {
+            /**
+                * The source code of the node, if available. Used for editing and forking nodes in the editor.
+                */
+            sourceCode?: string;
+    };
+    export type FlydeNode<T = any> = VisualNode | CodeNode<T>;
+    export type ImportableEditorNode = {
+            id: string;
+            displayName: string;
+            description: string;
+            icon: string;
+            aliases?: string[];
+    } & ({
+            type: "code";
+            source: CodeNodeSource;
+    } | {
+            type: "visual";
+            source: VisualNodeSource;
+    });
+    export function codeNodeToImportableEditorNode(node: CodeNode, source: CodeNodeSource): ImportableEditorNode;
+    export function visualNodeToImportableEditorNode(node: VisualNode, source: VisualNodeSource): ImportableEditorNode;
+    export interface NodeLibraryGroup {
+            title: string;
+            nodes: ImportableEditorNode[];
+    }
+    export interface NodeLibraryData {
+            groups: NodeLibraryGroup[];
+    }
+}
+
 declare module '@flyde/core/types/internal' {
     import { InputPinsConfig, RunNodeFunction } from "@flyde/core/node";
     import { ConnectionData } from "@flyde/core/types/connections";
@@ -1440,64 +1498,6 @@ declare module '@flyde/core/types/core' {
                 * @deprecated - TBD
                 */
             reactiveInputs?: string[];
-    }
-}
-
-declare module '@flyde/core/types/external' {
-    /**
-        * A visual node is what makes Flyde special. It represents a node created visually in the editor.
-        * It consists of node instances and connections. Each node instance will either refer to an imported node (by id), or include the node "inline".
-        * Each connection will represent a "wire" between 2 instances, or between an instance and a main input/output pin.
-        * Connecting to a main input or output is the way that a visual nodes' internal implementation can communicate with its external API.
-        */
-    import { CodeNode, CodeNodeInstance, CodeNodeSource, InputPinsConfig, NodeInstance, VisualNodeInstance, VisualNodeSource } from "@flyde/core/";
-    import { OMap, Pos } from "@flyde/core/common";
-    import { ConnectionData } from "@flyde/core/types/connections";
-    import { BaseNode } from "@flyde/core/types/core";
-    import { InternalCodeNode } from "@flyde/core/types/internal";
-    export interface VisualNode extends BaseNode {
-            /** a map holding the position for each main input. Used in the editor only. */
-            inputsPosition: OMap<Pos>;
-            /** a map holding the position for each main output. Used in the editor only. */
-            outputsPosition: OMap<Pos>;
-            /** the visual nodes internal node instances, either referring to other nodes by id or by value (inline) */
-            instances: NodeInstance[];
-            /** each connection represents a "wire" between 2 different instances, or between an instance and a main input/output*/
-            connections: ConnectionData[];
-    }
-    export const isVisualNode: (p: FlydeNode) => p is VisualNode;
-    export const visualNode: import("..").TestDataCreator<VisualNode>;
-    export function nodeInstance(insId: string, nodeId: string, source: CodeNodeSource, config?: any, inputConfig?: InputPinsConfig, pos?: Pos): CodeNodeInstance;
-    export function visualNodeInstance(insId: string, nodeId: string, source: VisualNodeSource, inputConfig?: InputPinsConfig, pos?: Pos): VisualNodeInstance;
-    export function inlineVisualNodeInstance(insId: string, node: VisualNode, inputConfig?: InputPinsConfig, pos?: Pos): VisualNodeInstance;
-    export type CodeNodeDefinition = Omit<InternalCodeNode, "run"> & {
-            /**
-                * The source code of the node, if available. Used for editing and forking nodes in the editor.
-                */
-            sourceCode?: string;
-    };
-    export type FlydeNode<T = any> = VisualNode | CodeNode<T>;
-    export type ImportableEditorNode = {
-            id: string;
-            displayName: string;
-            description: string;
-            icon: string;
-            aliases?: string[];
-    } & ({
-            type: "code";
-            source: CodeNodeSource;
-    } | {
-            type: "visual";
-            source: VisualNodeSource;
-    });
-    export function codeNodeToImportableEditorNode(node: CodeNode, source: CodeNodeSource): ImportableEditorNode;
-    export function visualNodeToImportableEditorNode(node: VisualNode, source: VisualNodeSource): ImportableEditorNode;
-    export interface NodeLibraryGroup {
-            title: string;
-            nodes: ImportableEditorNode[];
-    }
-    export interface NodeLibraryData {
-            groups: NodeLibraryGroup[];
     }
 }
 
