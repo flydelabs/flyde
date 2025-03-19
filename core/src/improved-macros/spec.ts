@@ -5,14 +5,12 @@ import { processImprovedMacro, CodeNode } from "./improved-macros";
 import {
   extractInputsFromValue,
   replaceInputsInValue,
+  evaluateCondition,
 } from "./improved-macro-utils";
 import { eventually } from "..";
-import {
-  MacroConfigurableValue,
-  dynamicNodeInput,
-  MacroEditorConfigStructured,
-  evaluateCondition,
-} from "..";
+import { MacroConfigurableValue, MacroEditorConfigStructured } from "..";
+
+import { dynamicNodeInput } from "../node";
 
 import { nodeOutput } from "../node";
 

@@ -5,8 +5,9 @@ import {
   InternalMacroNode,
   InputMode,
   macroConfigurableValue,
-  isMacroConfigurableValue,
 } from "..";
+
+import { isMacroConfigurableValue } from "../node/macro-node";
 
 import { nodeInput } from "../node";
 
