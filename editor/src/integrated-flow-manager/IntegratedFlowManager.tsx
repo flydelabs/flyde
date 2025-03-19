@@ -163,16 +163,9 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
       console.log("onChangeFlow", type);
       lastChangeReason.current = type.message;
       setEditorState((state) => ({ ...state, flow: changedFlow }));
-      if (type.message.includes("macro")) {
-        await ports.setFlow({
-          absPath: props.integratedSource,
-          flow: changedFlow,
-        });
-      } else {
-        debouncedSaveFile(changedFlow, props.integratedSource);
-      }
+      debouncedSaveFile(changedFlow, props.integratedSource);
     },
-    [ports, props.integratedSource, debouncedSaveFile]
+    [props.integratedSource, debouncedSaveFile]
   );
 
   React.useEffect(() => {

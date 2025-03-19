@@ -29,8 +29,11 @@ node:
       nodeId: Loop List
       config:
         list:
-          type: dynamic
-          value: "{{list}}"
+          type: json
+          value:
+            - 2
+            - "{{item1}}"
+            - "{{item2}}"
       type: code
       source:
         type: package
@@ -63,8 +66,8 @@ node:
         type: package
         data: "@flyde/stdlib"
     - pos:
-        x: -625.1263562011718
-        y: -14.809799194335938
+        x: -701.9036999511718
+        y: -70.91557312011719
       id: Fetch Random Users-8i0496g
       inputConfig: {}
       nodeId: Example

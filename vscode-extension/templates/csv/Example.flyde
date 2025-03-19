@@ -7,7 +7,13 @@ node:
       id: clfuqs69n00014668p8jg106j
       inputConfig: {}
       nodeId: Read File
-      config: {}
+      config:
+        path:
+          type: dynamic
+          value: "{{path}}"
+        encoding:
+          type: dynamic
+          value: "{{encoding}}"
       type: code
       source:
         type: package
@@ -206,7 +212,10 @@ node:
       id: clfuu4wdv00074668lyl7gtnw
       inputConfig: {}
       nodeId: Sum List
-      config: {}
+      config:
+        list:
+          type: dynamic
+          value: "{{list}}"
       type: code
       source:
         type: package
@@ -422,24 +431,6 @@ node:
         data: "@flyde/stdlib"
   connections:
     - from:
-        insId: clfuqs69n00014668p8jg106j
-        pinId: contents
-      to:
-        insId: Parse CSV-bn0462h
-        pinId: contents
-    - from:
-        insId: Parse CSV-bn0462h
-        pinId: parsed
-      to:
-        insId: Get Prices By Continent-e4046ap
-        pinId: list
-    - from:
-        insId: Get Prices By Continent-e4046ap
-        pinId: accumulated
-      to:
-        insId: clfuu4wdv00074668lyl7gtnw
-        pinId: list
-    - from:
         insId: clfuu4wdv00074668lyl7gtnw
         pinId: sum
       to:
@@ -457,12 +448,6 @@ node:
       to:
         insId: clfuqs69n00014668p8jg106j
         pinId: path
-    - from:
-        insId: wwh26ryrt4yqh71m26vevjyj
-        pinId: value
-      to:
-        insId: Get Prices By Continent-e4046ap
-        pinId: value
   id: CsvExample
   inputs: {}
   outputs:

@@ -117,14 +117,7 @@ module.exports = {
           }
 
           // Check if this is a valid node export
-          const isNodeExport =
-            text.includes("CodeNode") ||
-            (node.declaration?.type === "VariableDeclaration" &&
-              node.declaration.declarations.some(
-                (decl) =>
-                  decl.init?.type === "CallExpression" &&
-                  decl.init.callee.name === "processImprovedMacro"
-              ));
+          const isNodeExport = text.includes("CodeNode");
 
           if (isNodeExport) {
             validNodeExportFound = true;
