@@ -1,24 +1,27 @@
 import {
-  VisualNode,
-  isCodeNode,
+  BaseNode,
   CodeNode,
-  isVisualNodeInstance,
-  InternalVisualNode,
-  InternalNodeInstance,
-  isInlineVisualNodeInstance,
-  processMacroNodeInstance,
+  CodeNodeInstance,
   CodeNodeSource,
+  FlydeNode,
+  InputPin,
+  InternalCodeNode,
+  InternalNode,
+  InternalVisualNode,
+  isCodeNode,
+  isInternalVisualNode,
   isVisualNode,
+  isVisualNodeInstance,
+  NodeInstance,
+  processMacroNodeInstance,
+  VisualNode,
+  VisualNodeInstance,
+  isInlineVisualNodeInstance,
 } from "@flyde/core";
-
-import { readFileSync } from "fs";
-import _ = require("lodash");
 import { join } from "path";
-
-import * as _StdLib from "@flyde/stdlib/dist/all";
-import requireReload from "require-reload";
+import { findReferencedNode, NodeWithSourcePath } from "./find-referenced-node";
 import { resolveFlowByPath } from "./resolve-flow";
-import { findReferencedNode } from "./find-referenced-node";
+import { existsSync, readFileSync } from "fs";
 
 /*
 Recursively resolve all dependencies of a flow. For each node instance:
@@ -29,54 +32,54 @@ export function resolveVisualNode(
   visualNode: VisualNode,
   fullFlowPath: string
 ): InternalVisualNode {
-  const internalInstances = visualNode.instances.map(
-    (instance): InternalNodeInstance => {
-      if (isInlineVisualNodeInstance(instance)) {
-        console.log("resolving inline", instance.source.data);
+  const internalInstances = visualNode.instances.map((instance) => {
+    if (isInlineVisualNodeInstance(instance)) {
+      const resolved = resolveVisualNode(instance.source.data, fullFlowPath);
+      // TODO: weird gap in types? This seems to be similar to createInternalInlineNodeInstance - need to double check
+      return {
+        id: instance.id,
+        node: resolved,
+        inputConfig: instance.inputConfig,
+      };
+    }
+
+    if (isVisualNodeInstance(instance)) {
+      if (instance.source.type === "self") {
         return {
           ...instance,
-          node: resolveVisualNode(instance.source.data, fullFlowPath),
+          node: "__SELF" as any,
         };
       }
 
-      if (isVisualNodeInstance(instance)) {
-        if (instance.source.type === "self") {
-          return {
-            ...instance,
-            node: "__SELF" as any,
-          };
-        }
+      // this can't be inline because we checked above - probably the instance types need minor rethinking
+      const source: CodeNodeSource = instance.source as CodeNodeSource;
+      const fullPath = join(fullFlowPath, "..", source.data);
 
-        // this can't be inline because we checked above - probably the instance types need minor rethinking
-        const source: CodeNodeSource = instance.source as CodeNodeSource;
-        const fullPath = join(fullFlowPath, "..", source.data);
-
-        const node = resolveFlowByPath(fullPath);
-
-        return {
-          ...instance,
-          node: node,
-        };
-      }
-
-      const node = findReferencedNode(instance, fullFlowPath);
-
-      if (isVisualNode(node)) {
-        const resolved = resolveVisualNode(node, fullFlowPath);
-        return {
-          ...instance,
-          node: resolved,
-        };
-      }
-
-      const processed = processMacroNodeInstance("", node, instance);
+      const node = resolveFlowByPath(fullPath);
 
       return {
         ...instance,
-        node: processed,
+        node: node,
       };
     }
-  );
+
+    const node = findReferencedNode(instance, fullFlowPath);
+
+    if (isVisualNode(node)) {
+      const resolved = resolveVisualNode(node, fullFlowPath);
+      return {
+        ...instance,
+        node: resolved,
+      };
+    }
+
+    const processed = processMacroNodeInstance("", node, instance);
+
+    return {
+      ...instance,
+      node: processed,
+    };
+  });
 
   const newNode: InternalVisualNode = {
     ...visualNode,
@@ -99,13 +102,12 @@ export function findTypeScriptSource(jsPath: string): string | null {
 
   const potentialTsPath = jsPath
     .replace("/dist/", "/src/")
-    .replace(/\.js$/, ".ts");
+    .replace(".js", ".ts");
 
-  try {
-    return readFileSync(potentialTsPath, "utf-8");
-  } catch {
-    return null;
+  if (existsSync(potentialTsPath)) {
+    return potentialTsPath;
   }
+  return null;
 }
 
 export function resolveCodeNodeDependencies(path: string): {
@@ -115,43 +117,46 @@ export function resolveCodeNodeDependencies(path: string): {
     node: CodeNode<any>;
   }[];
 } {
-  const errors = [];
-  const nodes = [];
+  if (!path.endsWith(".js") && !path.endsWith(".ts")) {
+    throw new Error(`Path ${path} is not a JS or TS file`);
+  }
 
   try {
-    let module = requireReload(path);
-    // Try to find TypeScript source if it's a JS file in dist
-    const sourceCode =
-      findTypeScriptSource(path) || readFileSync(path, "utf-8");
-
-    if (isCodeNode(module)) {
-      nodes.push({
-        exportName: "default",
-        node: {
-          ...module,
-          sourceCode,
-        },
-      });
-    } else if (typeof module === "object") {
-      Object.entries(module).forEach(([key, value]) => {
-        if (isCodeNode(value)) {
-          nodes.push({
-            exportName: key,
-            node: {
-              ...value,
-              sourceCode,
-            },
-          });
-        }
-      });
+    // This is a hack to require the file
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    let result = require(path);
+    if (result.__esModule) {
+      result = result.default || result;
     }
+
+    if (isCodeNode(result)) {
+      return {
+        errors: [],
+        nodes: [{ exportName: result.id, node: result }],
+      };
+    } else if (result) {
+      if (typeof result === "object") {
+        const entries = Object.entries(result);
+        const nodes = entries
+          .filter(([, value]) => isCodeNode(value))
+          .map(([key, value]) => ({ exportName: key, node: value as any }));
+        const errors: string[] = [];
+        return { errors, nodes };
+      }
+    }
+    return {
+      errors: [`No code nodes found in ${path}`],
+      nodes: [],
+    };
   } catch (e) {
-    console.log("error", e);
-    errors.push(`Error loading module "${path}": ${e.message}`);
+    console.error(`Error resolving code node from ${path}`, e);
+    return {
+      errors: [`Error resolving code node from ${path}: ${e}`],
+      nodes: [],
+    };
   }
-  return { errors, nodes };
 }
 
 export function isCodeNodePath(path: string): boolean {
-  return /.(js|ts)x?$/.test(path);
+  return path.endsWith(".js") || path.endsWith(".ts");
 }

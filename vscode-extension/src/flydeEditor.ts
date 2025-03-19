@@ -11,6 +11,7 @@ import {
   deserializeFlow,
   serializeFlow,
   findReferencedNode,
+  resolveEditorInstance,
 } from "@flyde/resolver";
 import {
   EditorNodeInstance,
@@ -145,7 +146,29 @@ export class FlydeEditorEditorProvider
       webviewPanel.webview.postMessage({
         type: event.type,
         requestId: event.requestId,
+        status: "success",
         payload,
+        source: "extension",
+      });
+    };
+
+    const messageError = (event: FlydePortMessage<any>, error: unknown) => {
+      const normalizedError =
+        error instanceof Error ? error : new Error(String(error));
+      console.info(
+        "Sending error to webview",
+        event.type,
+        event.requestId,
+        normalizedError.message
+      );
+      webviewPanel.webview.postMessage({
+        type: event.type,
+        requestId: event.requestId,
+        status: "error",
+        payload: {
+          message: normalizedError.message,
+          stack: normalizedError.stack,
+        },
         source: "extension",
       });
     };
@@ -526,69 +549,20 @@ export class FlydeEditorEditorProvider
               case "resolveInstance": {
                 const { flow, instance } = event.params;
 
-                console.log("instance", instance);
-
                 try {
-                  const node = findReferencedNode(instance, fullDocumentPath);
-
-                  if (!node) {
-                    throw new Error(
-                      `Could not find node definition for ${
-                        instance.macroId ?? instance.nodeId
-                      }`
-                    );
-                  }
-
-                  const macro = processImprovedMacro(node as any);
-
-                  const processedInstance = processMacroNodeInstance(
-                    "",
-                    macro,
-                    instance
+                  const editorInstance = resolveEditorInstance(
+                    instance,
+                    fullDocumentPath
                   );
-
-                  let editorConfig = macro.editorConfig;
-
-                  // if (editorConfig.type === "custom") {
-                  //   editorConfig.editorComponentBundleContent = readFileSync(
-                  //     path.join(
-                  //       vscode.workspace.workspaceFolders?.[0].uri.fsPath ?? "",
-                  //       editorConfig.editorComponentBundlePath
-                  //     ),
-                  //     "utf-8"
-                  //   );
-                  // }
-
-                  const editorInstance: EditorNodeInstance = {
-                    id: instance.id,
-                    config: instance.macroData ?? {},
-                    nodeId: instance.macroId,
-                    inputConfig: instance.inputConfig,
-                    pos: instance.pos,
-                    style: instance.style,
-                    macroData: instance.macroData ?? {},
-                    node: {
-                      id: processedInstance.id,
-                      inputs: processedInstance.inputs,
-                      outputs: processedInstance.outputs,
-                      displayName:
-                        processedInstance.displayName ?? processedInstance.id,
-                      description: processedInstance.description,
-                      overrideNodeBodyHtml:
-                        processedInstance.overrideNodeBodyHtml,
-                      defaultStyle: processedInstance.defaultStyle,
-                      editorConfig,
-                    },
-                  } as any;
-
                   console.log("editorInstance", editorInstance);
-
                   messageResponse(event, editorInstance);
-                } catch (error) {
-                  console.error("Error resolving instance", instance);
-                  messageResponse(event, {
-                    error: error,
-                  });
+                } catch (err) {
+                  console.error(
+                    "Error resolving instance",
+                    instance,
+                    err instanceof Error ? err.stack : err
+                  );
+                  messageError(event, err);
                 }
 
                 break;
@@ -604,7 +578,7 @@ export class FlydeEditorEditorProvider
                 break;
               }
             }
-          } catch (err: unknown) {
+          } catch (err) {
             const error =
               err instanceof Error ? err : new Error(`Unknown error: ${err}`);
             console.error(`Error while handling message from webview`, error);
@@ -614,6 +588,8 @@ export class FlydeEditorEditorProvider
             vscode.window.showErrorMessage(
               `Unexpected error while handling message from webview: ${error.message}`
             );
+            // Send error response back to client
+            messageError(event, error);
           }
         }
       }

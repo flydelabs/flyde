@@ -18,7 +18,10 @@ import {
 
 export * from "./improved-macro-utils";
 
-import { macroConfigurableValue } from "../node/macro-node";
+import {
+  isMacroConfigurableValue,
+  macroConfigurableValue,
+} from "../node/macro-node";
 
 export type StaticOrDerived<T, Config> = T | ((config: Config) => T);
 
@@ -468,10 +471,18 @@ export function processImprovedMacro(node: CodeNode): InternalMacroNode<any> {
               return acc;
             }
 
+            let configValue = config[key];
+            if (!isMacroConfigurableValue(configValue)) {
+              console.warn(
+                `Config value ${key} isn't a valid MacroConfigurableValue, converting to dynamic`
+              );
+              configValue = macroConfigurableValue("dynamic", configValue);
+            }
+
             return {
               ...acc,
               ...extractInputsFromValue(
-                config[key] ?? macroConfigurableValue("dynamic", `{{${key}}}`),
+                config[key],
                 key,
                 node.inputs[key].mode === "reactive"
                   ? undefined

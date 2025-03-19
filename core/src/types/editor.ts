@@ -1,13 +1,18 @@
 import {
   CodeNodeDefinition,
-  MacroEditorConfigResolved,
+  MacroEditorConfigStructured,
   NodeInstance,
   VisualNode,
 } from "../node";
 
 export type EditorNodeInstance = NodeInstance & {
   node: CodeNodeDefinition & {
-    editorConfig: MacroEditorConfigResolved;
+    editorConfig:
+      | MacroEditorConfigStructured
+      | {
+          type: "custom";
+          editorComponentBundleContent: string;
+        };
   };
 };
 

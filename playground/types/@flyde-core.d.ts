@@ -726,10 +726,13 @@ declare module '@flyde/core/types/connections' {
 }
 
 declare module '@flyde/core/types/editor' {
-    import { CodeNodeDefinition, MacroEditorConfigResolved, NodeInstance, VisualNode } from "@flyde/core/node";
+    import { CodeNodeDefinition, MacroEditorConfigStructured, NodeInstance, VisualNode } from "@flyde/core/node";
     export type EditorNodeInstance = NodeInstance & {
         node: CodeNodeDefinition & {
-            editorConfig: MacroEditorConfigResolved;
+            editorConfig: MacroEditorConfigStructured | {
+                type: "custom";
+                editorComponentBundleContent: string;
+            };
         };
     };
     export type EditorVisualNode = Omit<VisualNode, "instances"> & {
@@ -869,7 +872,7 @@ declare module '@flyde/core/improved-macros/improved-macros' {
 declare module '@flyde/core/improved-macros/improved-macro-utils' {
     import { InputPin, MacroConfigurableValue, MacroEditorFieldDefinition, InternalMacroNode, InputMode } from "@flyde/core/";
     import { InputConfig } from "@flyde/core/improved-macros/improved-macros";
-    export function extractInputsFromValue(val: MacroConfigurableValue, key: string, mode?: InputMode): Record<string, InputPin>;
+    export function extractInputsFromValue(_val: unknown, key: string, mode?: InputMode): Record<string, InputPin>;
     export function replaceInputsInValue(inputs: Record<string, any>, value: MacroConfigurableValue, fieldName: string, ignoreMissingInputs?: boolean): MacroConfigurableValue["value"];
     export function renderConfigurableValue(value: MacroConfigurableValue, fieldName: string): string;
     export function generateConfigEditor<Config>(config: Config, overrides?: Partial<Record<keyof Config, any>>): InternalMacroNode<Config>["editorConfig"];
@@ -1254,20 +1257,16 @@ declare module '@flyde/core/node/macro-node' {
                     label: string;
             }[];
     }
-    export interface MacroEditorConfigCustomResolved {
+    export interface MacroEditorConfigCustom {
             type: "custom";
             editorComponentBundlePath: string;
-    }
-    export interface MacroEditorConfigCustomDefinition {
-            type: "custom";
-            editorComponentBundleContent: string;
     }
     export interface MacroEditorConfigStructured {
             type: "structured";
             fields: MacroEditorFieldDefinition[];
     }
-    export type MacroEditorConfigResolved = MacroEditorConfigCustomResolved | MacroEditorConfigStructured;
-    export type MacroEditorConfigDefinition = MacroEditorConfigCustomDefinition | MacroEditorConfigStructured;
+    export type MacroEditorConfigResolved = MacroEditorConfigCustom | MacroEditorConfigStructured;
+    export type MacroEditorConfigDefinition = MacroEditorConfigCustom | MacroEditorConfigStructured;
     export interface InternalMacroNode<T = any> extends NodeMetadata {
             definitionBuilder: (data: T) => Omit<CodeNodeDefinition, "id" | "namespace">;
             runFnBuilder: (data: T) => InternalCodeNode["run"];
@@ -1313,6 +1312,7 @@ declare module '@flyde/core/node/macro-node' {
                     defaultCollapsed?: boolean;
             };
     }
+    export function isMacroConfigurableValue(value: any): value is MacroConfigurableValue;
     export {};
 }
 

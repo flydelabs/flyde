@@ -117,14 +117,9 @@ export interface SelectTypeData {
   options: { value: string | number; label: string }[];
 }
 
-export interface MacroEditorConfigCustomResolved {
+export interface MacroEditorConfigCustom {
   type: "custom";
   editorComponentBundlePath: string;
-}
-
-export interface MacroEditorConfigCustomDefinition {
-  type: "custom";
-  editorComponentBundleContent: string;
 }
 
 export interface MacroEditorConfigStructured {
@@ -133,10 +128,10 @@ export interface MacroEditorConfigStructured {
 }
 
 export type MacroEditorConfigResolved =
-  | MacroEditorConfigCustomResolved
+  | MacroEditorConfigCustom
   | MacroEditorConfigStructured;
 export type MacroEditorConfigDefinition =
-  | MacroEditorConfigCustomDefinition
+  | MacroEditorConfigCustom
   | MacroEditorConfigStructured;
 
 export interface InternalMacroNode<T = any> extends NodeMetadata {
@@ -222,4 +217,10 @@ export interface GroupFieldDefinition extends BaseFieldDefinition {
      */
     defaultCollapsed?: boolean;
   };
+}
+
+export function isMacroConfigurableValue(
+  value: any
+): value is MacroConfigurableValue {
+  return typeof value === "object" && value !== null && "type" in value;
 }

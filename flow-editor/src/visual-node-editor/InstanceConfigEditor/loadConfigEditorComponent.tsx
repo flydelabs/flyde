@@ -1,17 +1,18 @@
-import { MacroNodeDefinition } from "@flyde/core";
+import { EditorNodeInstance } from "@flyde/core";
 import React from "react";
 import ReactDOM from "react-dom";
 import { StructuredMacroEditorComp } from "./StructuredMacroEditorComp";
 
-export function loadMacroEditor(
-  macroNode: MacroNodeDefinition<any>
+export function loadConfigEditorComponent(
+  instance: EditorNodeInstance
 ): React.FC<any> {
   const w: any = window;
   w.React = React;
   w.ReactDOM = ReactDOM;
-  const { id, editorConfig } = macroNode;
 
-  const exportId = `__MacroNode__${id}`;
+  const { nodeId, node } = instance;
+  const exportId = `__NodeConfig__${nodeId}`;
+  const editorConfig = node.editorConfig;
 
   if (editorConfig.type === "custom") {
     try {
@@ -25,7 +26,7 @@ export function loadMacroEditor(
         return function () {
           return (
             <span>
-              Failed to load macro node - please check that bundle that {id}{" "}
+              Failed to load macro node - please check that bundle that {nodeId}{" "}
               exposes an editable component to window.{exportId}
             </span>
           );
@@ -40,7 +41,7 @@ export function loadMacroEditor(
       return function () {
         return (
           <span>
-            Failed to load macro node - please check that bundle that {id}{" "}
+            Failed to load macro node - please check that bundle that {nodeId}{" "}
             exposes an editable component to window.{exportId}
           </span>
         );

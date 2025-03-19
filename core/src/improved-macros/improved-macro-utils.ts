@@ -4,6 +4,8 @@ import {
   MacroEditorFieldDefinition,
   InternalMacroNode,
   InputMode,
+  macroConfigurableValue,
+  isMacroConfigurableValue,
 } from "..";
 
 import { nodeInput } from "../node";
@@ -24,11 +26,20 @@ function extractInputNameAndPath(match: string): {
 }
 
 export function extractInputsFromValue(
-  val: MacroConfigurableValue,
+  _val: unknown,
   key: string,
   mode?: InputMode
 ): Record<string, InputPin> {
   const inputs = {};
+
+  let val: MacroConfigurableValue = _val as any;
+
+  if (!isMacroConfigurableValue(val)) {
+    console.warn(
+      `Value ${key} isn't a valid MacroConfigurableValue, converting to dynamic`
+    );
+    val = macroConfigurableValue("dynamic", `{{${key}}}`);
+  }
 
   function extractFromValue(value: any) {
     if (typeof value === "string") {

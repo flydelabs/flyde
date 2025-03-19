@@ -5,13 +5,13 @@ import { Alert, AlertDescription, AlertTitle, Info, GitFork } from "@flyde/ui";
 
 import {
   CodeNodeInstance,
+  EditorNodeInstance,
   EditorVisualNode,
-  MacroNodeDefinition,
 } from "@flyde/core";
 
 import { ErrorBoundary } from "react-error-boundary";
-import React, { useCallback, useMemo, useState } from "react";
-import { loadMacroEditor } from "./macroEditorLoader";
+import React, { useCallback, useMemo } from "react";
+import { loadConfigEditorComponent } from "./loadConfigEditorComponent";
 import { usePrompt } from "../../flow-editor/ports";
 import { Loader } from "../../lib/loader";
 import { InstanceIcon } from "../instance-view/InstanceIcon";
@@ -29,23 +29,22 @@ export const InstanceConfigEditor: React.FC<InstanceConfigEditorProps> = (
 ) => {
   const { ins, onCancel, editorNode } = props;
 
-  const [macroSiblings] = useState<MacroNodeDefinition<any>[]>([]);
+  // const [macroSiblings] = useState<MacroNodeDefinition<any>[]>([]);
 
   const _onForkNode = useCallback(
-    (node: MacroNodeDefinition<any>) => {
+    (node: EditorNodeInstance["node"]) => {
       onCancel();
       throw new Error("Not implemented");
     },
     [onCancel]
   );
 
-  const macro: MacroNodeDefinition<any> = useMemo(() => {
-    const macro = editorNode.instances.find((_ins) => _ins.id === ins.id)?.node;
-    return macro as any as MacroNodeDefinition<any>;
+  const nodeInstance: EditorNodeInstance = useMemo(() => {
+    return editorNode.instances.find((_ins) => _ins.id === ins.id);
   }, [editorNode.instances, ins.id]);
 
   const [instanceConfig, setInstanceConfig] = React.useState<any>(
-    ins.config ?? {}
+    (nodeInstance as any).config ?? {}
   );
   const [hasUnsavedChanges, setHasUnsavedChanges] = React.useState(false);
 
@@ -67,14 +66,14 @@ export const InstanceConfigEditor: React.FC<InstanceConfigEditorProps> = (
   }, [hasUnsavedChanges, onCancel]);
 
   const EditorComp = useMemo(() => {
-    return loadMacroEditor(macro as any as MacroNodeDefinition<any>);
-  }, [macro]);
+    return loadConfigEditorComponent(nodeInstance);
+  }, [nodeInstance]);
 
   const prompt = usePrompt();
 
   const aiCompletion = useAiCompletion();
 
-  if (!macro) {
+  if (!nodeInstance || !nodeInstance.node) {
     return (
       <Dialog open={true}>
         <DialogContent className="max-h-[90vh]">
@@ -83,6 +82,7 @@ export const InstanceConfigEditor: React.FC<InstanceConfigEditorProps> = (
       </Dialog>
     );
   }
+  const { node } = nodeInstance;
 
   return (
     <Dialog open={true} onOpenChange={handleCancel} modal={false}>
@@ -92,11 +92,11 @@ export const InstanceConfigEditor: React.FC<InstanceConfigEditorProps> = (
       >
         <DialogHeader className="flex flex-row items-center py-2 px-4 border-b border-gray-200 dark:border-gray-800 space-y-0">
           <InstanceIcon
-            icon={macro.defaultStyle?.icon}
+            icon={node.defaultStyle?.icon}
             className="h-5 w-5 mr-2 flex-shrink-0"
           />
           <DialogTitle className="text-base font-medium m-0">
-            {macro.displayName ?? macro.id}
+            {node.displayName ?? node.id}
           </DialogTitle>
         </DialogHeader>
 
@@ -107,7 +107,7 @@ export const InstanceConfigEditor: React.FC<InstanceConfigEditorProps> = (
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => _onForkNode(macro)}
+                  onClick={() => _onForkNode(node)}
                 >
                   <GitFork className="mr-2 h-4 w-4" />
                   Fork
@@ -140,11 +140,11 @@ export const InstanceConfigEditor: React.FC<InstanceConfigEditorProps> = (
               </Select>
             )} */}
 
-            {macro.description && (
+            {node.description && (
               <Alert className="mb-3">
                 <Info className="h-4 w-4" />
-                <AlertTitle>{macro.displayName ?? macro.id}</AlertTitle>
-                <AlertDescription>{macro.description}</AlertDescription>
+                <AlertTitle>{node.displayName ?? node.id}</AlertTitle>
+                <AlertDescription>{node.description}</AlertDescription>
               </Alert>
             )}
           </div>
@@ -156,7 +156,7 @@ export const InstanceConfigEditor: React.FC<InstanceConfigEditorProps> = (
                   <span>Error loading macro editor</span>
                   <Button
                     variant="outline"
-                    onClick={() => setInstanceConfig(macro.defaultData)}
+                    onClick={() => setInstanceConfig({})}
                   >
                     Reset to default
                   </Button>

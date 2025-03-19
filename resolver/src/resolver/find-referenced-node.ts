@@ -18,6 +18,11 @@ import { existsSync } from "fs";
 import { resolveImportablePaths } from "./resolve-importable-paths";
 import { deserializeFlowByPath } from "../serdes";
 
+// Create a type that extends the FlydeNode with a sourcePath
+export type NodeWithSourcePath = FlydeNode & {
+  sourcePath: string;
+};
+
 const LocalStdLib = Object.values(_StdLib).reduce<Record<string, CodeNode>>(
   (acc, curr) => {
     if (isCodeNode(curr)) {
@@ -32,7 +37,7 @@ const LocalStdLib = Object.values(_StdLib).reduce<Record<string, CodeNode>>(
 export function findReferencedNode(
   instance: NodeInstance,
   fullFlowPath: string
-): CodeNode | VisualNode {
+): NodeWithSourcePath {
   console.log("finding referenced node", instance);
   switch (instance.source.type) {
     case "package": {
@@ -41,12 +46,16 @@ export function findReferencedNode(
       const paths = getLocalOrPackagePaths(fullFlowPath, instance.source.data);
 
       const nodeWrapper = paths
-        .flatMap<CodeNode | VisualNode>((path) => {
+        .flatMap<NodeWithSourcePath>((path) => {
           const isVisual = path.endsWith(".flyde");
 
           if (isVisual) {
             try {
-              return [deserializeFlowByPath(path).node];
+              const node = deserializeFlowByPath(path).node;
+              // Add sourcePath to track where this node comes from
+              const nodeWithPath = node as NodeWithSourcePath;
+              nodeWithPath.sourcePath = path;
+              return [nodeWithPath];
             } catch (e) {
               console.log("error", e);
               return [];
@@ -54,7 +63,13 @@ export function findReferencedNode(
           }
           const { errors, nodes } = resolveCodeNodeDependencies(path);
           console.log("errors", errors);
-          return nodes.map((n) => n.node as CodeNode);
+          return nodes.map((n) => {
+            const node = n.node as CodeNode;
+            // Add sourcePath to track where this node comes from
+            const nodeWithPath = node as NodeWithSourcePath;
+            nodeWithPath.sourcePath = path;
+            return nodeWithPath;
+          });
         })
         .find((node) => node.id === instance.nodeId);
 
@@ -68,7 +83,10 @@ export function findReferencedNode(
             );
           }
 
-          return maybeFromStdlib;
+          // Add sourcePath for stdlib nodes
+          const nodeWithPath = maybeFromStdlib as NodeWithSourcePath;
+          nodeWithPath.sourcePath = "@flyde/stdlib";
+          return nodeWithPath;
         }
 
         console.log();
@@ -92,10 +110,17 @@ export function findReferencedNode(
         throw new Error(`Cannot find node ${instance.nodeId} in ${fullPath}`);
       }
 
-      return node.node;
+      // Add sourcePath to track where this node comes from
+      const nodeWithPath = node.node as NodeWithSourcePath;
+      nodeWithPath.sourcePath = fullPath;
+      return nodeWithPath;
     }
     case "inline": {
-      return instance.source.data;
+      const inlineNode = instance.source.data;
+      // Add sourcePath for inline nodes - use the parent flow path
+      const nodeWithPath = inlineNode as NodeWithSourcePath;
+      nodeWithPath.sourcePath = fullFlowPath;
+      return nodeWithPath;
     }
     default: {
       throw new Error(`Unknown node source type: ${instance.source.type}`);

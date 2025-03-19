@@ -251,31 +251,29 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                 return node;
               }
               try {
-                const node = await resolveInstance({
+                const editorInstance = await resolveInstance({
                   flow: props.tempFlow,
                   instance: ins,
                 });
-                if (!node.node) {
-                  return {
-                    ...ins,
-                    node: {
-                      id: "__error__",
-                      displayName: "Error",
-                      description: "No inputs",
-                    },
-                  } as EditorNodeInstance;
-                }
-                return node;
+
+                return editorInstance;
               } catch (error) {
                 console.error("Error resolving instance", ins);
-                return {
+                const errorNode: EditorNodeInstance = {
                   ...ins,
                   node: {
                     id: "__error__",
                     displayName: "Error",
                     description: error.message,
+                    inputs: {},
+                    outputs: {},
+                    editorConfig: {
+                      type: "structured",
+                      fields: [],
+                    },
                   },
-                } as EditorNodeInstance;
+                };
+                return errorNode;
               }
             })
           );

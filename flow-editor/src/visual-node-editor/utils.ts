@@ -184,10 +184,17 @@ export const createNewNodeInstance = (
   const ins =
     importableNode.type === "visual"
       ? visualNodeInstance(insId, importableNode.id, importableNode.source)
-      : nodeInstance(insId, importableNode.id, importableNode.source, {
-          x: 0,
-          y: 0,
-        });
+      : nodeInstance(
+          insId,
+          importableNode.id,
+          importableNode.source,
+          {},
+          {},
+          {
+            x: 0,
+            y: 0,
+          }
+        );
 
   const width = 300; // TODO - calc proper width
 
