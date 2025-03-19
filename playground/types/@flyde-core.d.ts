@@ -727,13 +727,14 @@ declare module '@flyde/core/types/connections' {
 
 declare module '@flyde/core/types/editor' {
     import { CodeNodeDefinition, MacroEditorConfigStructured, NodeInstance, VisualNode } from "@flyde/core/node";
-    export type EditorNodeInstance = NodeInstance & {
-        node: CodeNodeDefinition & {
-            editorConfig: MacroEditorConfigStructured | {
-                type: "custom";
-                editorComponentBundleContent: string;
-            };
+    export type EditorCodeNodeDefinition = CodeNodeDefinition & {
+        editorConfig: MacroEditorConfigStructured | {
+            type: "custom";
+            editorComponentBundleContent: string;
         };
+    };
+    export type EditorNodeInstance = NodeInstance & {
+        node: EditorCodeNodeDefinition | VisualNode;
     };
     export type EditorVisualNode = Omit<VisualNode, "instances"> & {
         instances: EditorNodeInstance[];

@@ -2,6 +2,8 @@ import * as React from "react";
 
 import {
   THIS_INS_ID,
+  isInlineVisualNodeInstance,
+  isCodeNodeInstance,
   ConnectionData,
   isInternalConnectionNode,
   VisualNode,
@@ -22,10 +24,10 @@ import {
   EditorNodeInstance,
   FlydeFlow,
   CodeNodeInstance,
-  isCodeNodeInstance,
   isVisualNodeInstance,
-  isInlineVisualNodeInstance,
   ImportableEditorNode,
+  EditorCodeNodeDefinition,
+  FlydeNode,
 } from "@flyde/core";
 
 import { InstanceView, InstanceViewProps } from "./instance-view/InstanceView";
@@ -696,13 +698,19 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       }, []);
 
       const onDblClickInstance = React.useCallback(
-        (ins: EditorNodeInstance, shift: boolean) => {
+        (ins: NodeInstance, shift: boolean) => {
+          const editorInstance = editorNode.instances.find(
+            (i) => i.id === ins.id
+          );
+          if (!editorInstance) {
+            throw new Error(`Impossible state inspecting unresolved node`);
+          }
+          const node = editorInstance.node;
+          if (!node) {
+            throw new Error(`Impossible state inspecting inexistent node`);
+          }
           if (shift) {
-            const node = ins.node;
-            if (!node) {
-              throw new Error(`Impossible state inspecting inexisting node`);
-            }
-            if (!isVisualNode(node as any)) {
+            if (!isVisualNode(node as FlydeNode)) {
               toast({
                 description: "Cannot inspect a non visual node",
                 variant: "default",
@@ -719,7 +727,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             if (isCodeNodeInstance(ins)) {
               setEditedNodeInstance({ ins });
             } else if (isVisualNodeInstance(ins)) {
-              const node = ins.node;
               if (isVisualNode(node as any) && ins.source.type === "inline") {
                 setOpenInlineInstance({ insId: ins.id, node: node as any });
               } else {
@@ -737,7 +744,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             }
           }
         },
-        [currentInsId, toast]
+        [currentInsId, editorNode.instances, toast]
       );
 
       const renderMainPins = (type: PinType) => {
@@ -999,7 +1006,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             clipboardData: props.clipboardData,
             onInspectPin: props.onInspectPin,
             nodeIoEditable: props.nodeIoEditable,
-            node: openInlineInstance.node as EditorVisualNode,
+            node: openInlineInstance.node,
             onChangeNode: onChangeInspected,
             parentViewport: defaultViewPort,
             parentBoardPos: boardPos,
@@ -1360,16 +1367,28 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       const onViewForkCode = React.useCallback(
         async (instance: EditorNodeInstance) => {
           const nodeDef = instance.node;
+
+          if (isVisualNode(nodeDef as VisualNode)) {
+            toast({
+              description: "Visual nodes cannot be forked",
+              variant: "destructive",
+            });
+            return;
+          }
+
+          const codeNodeDef = nodeDef as EditorCodeNodeDefinition;
           try {
-            const code = nodeDef.sourceCode;
-            if (!code) {
+            if (!codeNodeDef.sourceCode) {
               toast({
                 description: "No source code found",
                 variant: "destructive",
               });
               return;
             }
-            setCustomNodeForkData({ node: nodeDef, initialCode: code });
+            setCustomNodeForkData({
+              node: nodeDef,
+              initialCode: codeNodeDef.sourceCode,
+            });
             setIsAddingCustomNode(true);
           } catch (e) {
             console.error("Failed to get node source:", e);

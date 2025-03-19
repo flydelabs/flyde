@@ -1,6 +1,7 @@
 import * as React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  isInlineVisualNodeInstance,
   entries,
   pickFirst,
   OMap,
@@ -13,7 +14,6 @@ import {
   CodeNodeDefinition,
   VisualNodeInstance,
   CodeNodeInstance,
-  isInlineVisualNodeInstance,
 } from "@flyde/core";
 import classNames from "classnames";
 import { DiffStatus } from "../VisualNodeDiffView";
@@ -221,7 +221,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
 
     const style = React.useMemo(() => {
       return {
-        icon: node?.defaultStyle?.icon,
+        icon: node?.icon ?? node?.defaultStyle?.icon,
         color: node?.defaultStyle?.color,
         size: node?.defaultStyle?.color ?? "regular",
         cssOverride: node?.defaultStyle?.cssOverride,
@@ -604,12 +604,12 @@ export const InstanceView: React.FC<InstanceViewProps> =
       if (inlineGroupProps) {
         return (
           <Dialog open={true} onOpenChange={() => props.onCloseInlineEditor()}>
-            <DialogContent className="inline-group-editor-container no-drag w-[85vw] h-[85vh] flex">
-              <DialogHeader>
-                <DialogTitle>Editing inline node {content}</DialogTitle>
+            <DialogContent className="inline-group-editor-container no-drag w-[85vw] max-w-[95vw] h-[85vh] max-h-[95vh] flex flex-col overflow-hidden p-0">
+              <DialogHeader className="border-b py-3 px-6">
+                <DialogTitle className="font-medium">{`Editing inline node ${content}`}</DialogTitle>
               </DialogHeader>
 
-              <div className="p-4 flex-1 flex" tabIndex={0}>
+              <div className="flex-1 flex overflow-auto" tabIndex={0}>
                 <VisualNodeEditorProvider
                   boardData={inlineGroupProps.boardData}
                   onChangeBoardData={inlineGroupProps.onChangeBoardData}
@@ -618,7 +618,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
                 >
                   <VisualNodeEditor
                     {...props.inlineGroupProps}
-                    className="no-drag flex-1"
+                    className="no-drag flex-1 w-full h-full"
                     ref={inlineEditorRef}
                   />
                 </VisualNodeEditorProvider>

@@ -52,6 +52,7 @@ export function nodeInstance(
   inputConfig: InputPinsConfig = {},
   pos: Pos = { x: 0, y: 0 }
 ): CodeNodeInstance {
+  console.log("2342342");
   return {
     id: insId,
     nodeId,
