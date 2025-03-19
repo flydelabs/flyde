@@ -45,9 +45,9 @@ async function loadStdLib(): Promise<
       const bundleBase64Content =
         macroBundlesContent[macroDef.id as keyof typeof macroBundlesContent];
 
-      macroDef.editorConfig.editorComponentBundleContent = bundleBase64Content
-        ? atob(bundleBase64Content)
-        : "";
+      // macroDef.editorConfig.editorComponentBundleContent = bundleBase64Content
+      //   ? atob(bundleBase64Content)
+      //   : "";
       return macroDef;
     })
     .reduce<Record<string, any | InternalMacroNode<any>>>((acc, node: any) => {
