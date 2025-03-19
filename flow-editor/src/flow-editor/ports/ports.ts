@@ -28,14 +28,7 @@ export interface EditorPorts {
   readFlow: (dto: { absPath: string }) => Promise<FlydeFlow>;
   setFlow: (dto: { absPath: string; flow: FlydeFlow }) => Promise<void>;
 
-  getImportables: (dto: {
-    rootFolder: string;
-    flowPath: string;
-  }) => Promise<ImportableEditorNode[]>;
-
   onExternalFlowChange: (cb: (data: { flow: FlydeFlow }) => void) => CancelFn;
-
-  onInstallRuntimeRequest: () => Promise<void>;
 
   onRunFlow: (
     inputs: Record<string, any>,
@@ -80,9 +73,7 @@ export const defaultPorts: EditorPorts = {
   readFlow: toastNotImplemented("readFlow"),
   setFlow: toastNotImplemented("setFlow"),
 
-  getImportables: toastNotImplemented("getImportables"),
   onExternalFlowChange: toastNotImplemented("onExternalFlowChange"),
-  onInstallRuntimeRequest: toastNotImplemented("onInstallRuntimeRequest"),
   onRunFlow: toastNotImplemented("onRunFlow"),
   onStopFlow: toastNotImplemented("onStopFlow"),
   reportEvent: noop,

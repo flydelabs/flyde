@@ -225,7 +225,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       });
 
       const blah = React.useMemo(() => {
-        return instances.map((ins) => JSON.stringify((ins as any).macroData));
+        return instances.map((ins) => JSON.stringify((ins as any).config));
       }, [instances]);
 
       useEffect(() => {
@@ -1479,7 +1479,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                     }
                     queuedInputsData={queueInputsData[ins.id] ?? emptyObj}
                     instance={ins}
-                    node={editorNode.instances[idx].node}
+                    node={editorNode.instances[idx]?.node ?? tempLoadingNode}
                     connections={connections}
                     // was too lazy to remove/fix the breakpoint/log below
                     onTogglePinBreakpoint={noop}
@@ -1618,3 +1618,14 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       }
     })
   );
+
+const tempLoadingNode: EditorNodeInstance["node"] = {
+  id: "loading",
+  inputs: {},
+  outputs: {},
+  displayName: "Loading",
+  editorConfig: {
+    type: "structured",
+    fields: [],
+  },
+};

@@ -30,15 +30,9 @@ export const createWebPorts = ({
     setFlow: async ({ absPath, flow }) => {
       await devServerClient.saveFile(absPath, flow);
     },
-    getImportables: async ({ rootFolder }) => {
-      return devServerClient.getImportables(rootFolder);
-    },
     onExternalFlowChange: () => {
       console.log("Not implemented");
       return () => {};
-    },
-    onInstallRuntimeRequest: async () => {
-      alert("Not implemented");
     },
     onRunFlow: async () => {
       alert("Not implemented");

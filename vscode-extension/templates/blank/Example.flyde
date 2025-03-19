@@ -1,5 +1,4 @@
-imports:
-  "@flyde/stdlib": []
+imports: {}
 node:
   instances: []
   connections: []

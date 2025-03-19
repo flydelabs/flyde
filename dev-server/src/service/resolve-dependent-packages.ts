@@ -17,8 +17,8 @@ export async function resolveDependentPackages(
         const paths = resolveImportablePaths(rootPath, pkgName);
         const nodes = paths.reduce<ImportableEditorNode[]>((acc, filePath) => {
           if (isCodeNodePath(filePath)) {
-            const obj = resolveCodeNodeDependencies(filePath).nodes.reduce(
-              (obj, { node: _node }) => {
+            const obj = resolveCodeNodeDependencies(filePath).nodes.map(
+              ({ node: _node }) => {
                 const node: ImportableEditorNode = {
                   id: _node.id,
                   displayName: _node.menuDisplayName,
@@ -34,15 +34,11 @@ export async function resolveDependentPackages(
                 // let node = isCodeNode(_node)
                 //   ? processImprovedMacro(_node)
                 //   : _node;
-                return {
-                  ...obj,
-                  [node.id]: node,
-                };
-              },
-              {}
+                return node;
+              }
             );
 
-            return { ...acc, ...obj };
+            return [...acc, ...obj];
           }
           try {
             const flow = deserializeFlow(

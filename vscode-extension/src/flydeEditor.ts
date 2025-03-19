@@ -24,6 +24,7 @@ import {
   processImprovedMacro,
   processMacroNodeInstance,
   replaceInputsInValue,
+  ImportableEditorNode,
 } from "@flyde/core";
 import { findPackageRoot } from "./find-package-root";
 import { randomInt } from "crypto";
@@ -35,8 +36,7 @@ import { forkRunFlow } from "@flyde/dev-server/dist/runner/runFlow.host";
 import { createEditorClient } from "@flyde/remote-debugger";
 import { maybeAskToStarProject } from "./maybeAskToStarProject";
 import { customCodeNodeFromCode } from "@flyde/core/dist/misc/custom-code-node-from-code";
-
-import { OpenAI } from "openai";
+import { createAiCompletion } from "./ai";
 
 // export type EditorPortType = keyof any;
 
@@ -354,18 +354,7 @@ export class FlydeEditorEditorProvider
                 messageResponse(event, undefined);
                 break;
               }
-              case "getImportables": {
-                const maybePackageRoot = await findPackageRoot(document.uri);
-                const root =
-                  maybePackageRoot ?? Uri.joinPath(document.uri, "..");
 
-                const deps = await scanImportableNodes(
-                  root.fsPath,
-                  path.relative(root.fsPath, fullDocumentPath)
-                );
-                messageResponse(event, deps);
-                break;
-              }
               case "onInstallRuntimeRequest": {
                 // show vscode selection dialog between "use yarn" and "use npm"
                 const res = await vscode.window.showQuickPick(
@@ -442,7 +431,84 @@ export class FlydeEditorEditorProvider
               }
               case "getLibraryData": {
                 const libraryData = getBaseNodesLibraryData();
-                messageResponse(event, libraryData);
+
+                try {
+                  const firstWorkspace =
+                    vscode.workspace.workspaceFolders &&
+                    vscode.workspace.workspaceFolders[0];
+                  const rootPath = firstWorkspace
+                    ? firstWorkspace.uri.fsPath
+                    : path.dirname(fullDocumentPath);
+                  const fileName = path.basename(fullDocumentPath);
+
+                  const { nodes } = await scanImportableNodes(
+                    rootPath,
+                    fileName
+                  );
+
+                  const categorizedNodeIds = new Set<string>();
+
+                  const localNodes: ImportableEditorNode[] = [];
+
+                  Object.entries(libraryData).forEach(
+                    ([category, categoryNodes]) => {
+                      // Track all stdlib nodes that are already categorized
+                      categoryNodes.forEach((node: ImportableEditorNode) => {
+                        categorizedNodeIds.add(node.id);
+                      });
+                    }
+                  );
+
+                  nodes.forEach((node: ImportableEditorNode) => {
+                    if (
+                      node.type === "code" &&
+                      node.source.type === "file" &&
+                      !categorizedNodeIds.has(node.id)
+                    ) {
+                      localNodes.push(node);
+                      categorizedNodeIds.add(node.id);
+                    } else if (
+                      node.type === "visual" &&
+                      node.source.type === "file" &&
+                      !categorizedNodeIds.has(node.id)
+                    ) {
+                      localNodes.push(node);
+                      categorizedNodeIds.add(node.id);
+                    }
+                  });
+
+                  // 3. Create Other category for stdlib nodes that aren't in main categories
+                  const otherNodes: ImportableEditorNode[] = [];
+                  nodes.forEach((node: ImportableEditorNode) => {
+                    if (
+                      node.type === "code" &&
+                      node.source.type === "package" &&
+                      node.source.data === "@flyde/stdlib" &&
+                      !categorizedNodeIds.has(node.id)
+                    ) {
+                      otherNodes.push(node);
+                    }
+                  });
+
+                  if (localNodes.length > 0) {
+                    libraryData.groups.push({
+                      title: "Local",
+                      nodes: localNodes,
+                    });
+                  }
+
+                  if (otherNodes.length > 0) {
+                    libraryData.groups.push({
+                      title: "Other",
+                      nodes: otherNodes,
+                    });
+                  }
+
+                  messageResponse(event, libraryData);
+                } catch (error) {
+                  console.error("Error getting library data:", error);
+                  messageError(event, error);
+                }
                 break;
               }
               case "onRequestSiblingNodes": {
@@ -490,59 +556,16 @@ export class FlydeEditorEditorProvider
                 break;
               }
               case "createAiCompletion": {
-                const config = vscode.workspace.getConfiguration("flyde");
-                let openAiToken = config.get<string>("openAiToken");
-
-                if (!openAiToken) {
-                  await vscode.commands.executeCommand("flyde.setOpenAiToken");
-                  openAiToken = config.get<string>("openAiToken");
-                }
-
-                if (!openAiToken) {
-                  throw new Error("OpenAI token is required");
-                }
-
-                const { prompt, jsonMode } = event.params;
-                if (prompt.trim().length === 0) {
-                  throw new Error("prompt is empty");
-                }
-
                 try {
-                  const openai = new OpenAI({
-                    apiKey: openAiToken,
+                  const { prompt, jsonMode } = event.params;
+                  const completion = await createAiCompletion({
+                    prompt,
+                    jsonMode,
                   });
-
-                  const response = await openai.chat.completions.create({
-                    model: "gpt-4o",
-                    response_format: jsonMode
-                      ? { type: "json_object" }
-                      : undefined,
-                    messages: [
-                      {
-                        role: "system",
-                        content:
-                          "You are a helpful coding assistant. Provide direct code responses without explanations.",
-                      },
-                      {
-                        role: "user",
-                        content: prompt,
-                      },
-                    ],
-                    temperature: 0,
-                  });
-
-                  const completion = response.choices[0]?.message?.content;
-
-                  if (!completion) {
-                    throw new Error("No completion received from OpenAI");
-                  }
-
                   messageResponse(event, completion);
                 } catch (error) {
-                  if (error instanceof OpenAI.APIError) {
-                    throw new Error(`OpenAI API error: ${error.message}`);
-                  }
-                  throw error;
+                  console.error(`Error creating AI completion`, error);
+                  messageError(event, error);
                 }
                 break;
               }

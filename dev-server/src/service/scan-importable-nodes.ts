@@ -115,12 +115,13 @@ export async function scanImportableNodes(
       }
     }, {});
 
+  const depNodesFlat = Object.values(depsNodes).flat();
+  const localNodesFlat = Object.values(localNodes).flat();
+  const builtInStdLibFlat = Object.values(builtInStdLib).flat();
+
   return {
-    nodes: [
-      ...Object.values(builtInStdLib).flat(),
-      ...Object.values(depsNodes).flat(),
-      ...Object.values(localNodes).flat(),
-    ],
+    nodes: [...builtInStdLibFlat, ...depNodesFlat, ...localNodesFlat],
+
     errors: allErrors,
   };
 }
