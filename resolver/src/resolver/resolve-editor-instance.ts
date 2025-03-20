@@ -2,17 +2,12 @@ import {
   CodeNodeInstance,
   EditorNodeInstance,
   isVisualNode,
-  MacroEditorConfigResolved,
   processImprovedMacro,
   processMacroNodeInstance,
-  replaceInputsInValue,
-  VisualNode,
 } from "@flyde/core";
-import { findReferencedNode, NodeWithSourcePath } from "./find-referenced-node";
+import { findReferencedNode } from "./find-referenced-node";
 import { readFileSync, existsSync } from "fs";
-import { join, dirname, resolve } from "path";
-import * as fs from "fs";
-import { resolveVisualNode } from "./resolve-visual-node";
+import { join, dirname } from "path";
 
 export function resolveEditorInstance(
   instance: CodeNodeInstance,

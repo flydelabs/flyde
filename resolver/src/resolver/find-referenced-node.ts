@@ -2,17 +2,13 @@ import {
   CodeNode,
   FlydeNode,
   isCodeNode,
-  isInlineVisualNodeInstance,
   NodeInstance,
-  processMacroNodeInstance,
-  VisualNode,
 } from "@flyde/core";
 
 import * as _StdLib from "@flyde/stdlib/dist/all";
 import { join } from "path";
 import {
   resolveCodeNodeDependencies,
-  resolveVisualNode,
 } from "./resolve-visual-node";
 import { existsSync } from "fs";
 import { resolveImportablePaths } from "./resolve-importable-paths";

@@ -70,7 +70,7 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = forwardRef(
     const [localDebugger, setLocalDebugger] =
       useState<Pick<EditorDebuggerClient, "onBatchedEvents">>();
 
-    const cleanRunRef = useRef(() => {});
+    const cleanRunRef = useRef(() => { });
 
     const debuggerContextValue = useMemo<DebuggerContextData>(() => {
       return {
@@ -161,14 +161,14 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = forwardRef(
 
             if (_editorConfig.type === "custom") {
               const path = (_editorConfig as any).editorComponentBundlePath;
-              const bundle = await import(
-                "@flyde/stdlib" + path.replace("../..", "")
-              );
-              console.log(24242, bundle);
-              const component = bundle.__NodeConfig__[nodeId];
-              if (!component) {
-                throw new Error(`Component ${nodeId} not found in bundle`);
-              }
+              // const bundle = await import(
+              //   "@flyde/stdlib" + path.replace("../..", "")
+              // );
+              // console.log(24242, bundle);
+              // const component = bundle.__NodeConfig__[nodeId];
+              // if (!component) {
+              // throw new Error(`Component ${nodeId} not found in bundle`);
+              // }
             }
 
             // if ()
