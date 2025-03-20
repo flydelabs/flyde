@@ -1,4 +1,4 @@
-import { EditorNodeInstance } from "@flyde/core";
+import { EditorCodeNodeDefinition, EditorNodeInstance } from "@flyde/core";
 import React from "react";
 import ReactDOM from "react-dom";
 import { StructuredMacroEditorComp } from "./StructuredMacroEditorComp";
@@ -12,7 +12,7 @@ export function loadConfigEditorComponent(
 
   const { nodeId, node } = instance;
   const exportId = `__NodeConfig__${nodeId}`;
-  const editorConfig = node.editorConfig;
+  const editorConfig = (node as EditorCodeNodeDefinition).editorConfig;
 
   if (editorConfig.type === "custom") {
     try {
