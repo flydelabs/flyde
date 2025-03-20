@@ -1,49 +1,51 @@
-imports:
-  "@flyde/stdlib":
-    - Delay
-    - InlineValue
+imports: {}
 node:
   instances:
     - pos:
         x: -1043.6136509007906
-        y: -56.27666775342419
+        y: -57.27666775342419
       id: hvnxp46iusf1g91k6dua576w
       inputConfig: {}
-      nodeId: Delay__hvnxp46iusf1g91k6dua576w
-      macroId: Delay
-      macroData:
+      nodeId: Delay
+      config:
         delayMs:
           type: number
           value: 1500
         value:
           type: dynamic
           value: ""
+      type: code
+      source:
+        type: package
+        data: "@flyde/stdlib"
       style:
         size: small
         icon: fa-clock
         color: "#00bbf9"
     - pos:
-        x: -1207.2781784983479
-        y: -135.1688372784011
+        x: -1209.2781784983479
+        y: -139.1688372784011
       id: qi81a3d3zqj4reik3qaogcx9
       inputConfig: {}
-      nodeId: InlineValue__qi81a3d3zqj4reik3qaogcx9
-      macroId: InlineValue
-      macroData:
+      nodeId: InlineValue
+      config:
         value:
           type: string
           value: Hello
+      type: code
+      source:
+        type: package
+        data: "@flyde/stdlib"
       style:
         size: regular
         icon: pen
     - pos:
         x: -1206.458134765625
-        y: -56.61902832031251
+        y: -57.61902832031251
       id: ApisCombination-o5049mg
       inputConfig: {}
-      nodeId: InlineValue__ApisCombination-o5049mg
-      macroId: InlineValue
-      macroData:
+      nodeId: InlineValue
+      config:
         type:
           type: string
           value: string
@@ -53,6 +55,10 @@ node:
         label:
           type: string
           value: '"World!"'
+      type: code
+      source:
+        type: package
+        data: "@flyde/stdlib"
       style:
         size: regular
         icon: pen
@@ -100,8 +106,8 @@ node:
       x: -499.82438378976735
       y: 706.7650396699393
     output:
-      x: -829.9929367010895
-      y: -98.65831210122957
+      x: -791.9929367010895
+      y: -111.65831210122957
     response:
       x: -506.3386688159596
       y: 488.67302443385125

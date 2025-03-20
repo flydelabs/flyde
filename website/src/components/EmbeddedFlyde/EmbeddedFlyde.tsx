@@ -1,7 +1,6 @@
 import React, {
   forwardRef,
   useCallback,
-  useEffect,
   useImperativeHandle,
   useMemo,
   useRef,
@@ -15,32 +14,31 @@ import {
   createRuntimePlayer,
   DebuggerContextData,
   DebuggerContextProvider,
-  DependenciesContextData,
-  DependenciesContextProvider,
+  defaultPorts,
+  EditorPorts,
   FlowEditor,
   FlowEditorState,
+  PortsContext,
 } from "@flyde/flow-editor";
 import {
   FlydeFlow,
-  ImportedNode,
-  noop,
   keys,
   execute,
   dynamicOutput,
   VisualNode,
+  processMacroNodeInstance,
+  EditorNodeInstance,
+  EditorCodeNodeDefinition,
 } from "@flyde/core";
 import { createHistoryPlayer } from "./createHistoryPlayer";
 
 import "@flyde/flow-editor/src/index.scss";
 
-import produce from "immer";
 import BrowserOnly from "@docusaurus/BrowserOnly";
 import { EditorDebuggerClient } from "@site/../remote-debugger/dist";
-import { useDarkMode, useDebounce } from "usehooks-ts";
+import { useDarkMode } from "usehooks-ts";
 import { createRuntimeClientDebugger } from "./createRuntimePlayerDebugger";
 import { defaultBoardData } from "@flyde/flow-editor/dist/visual-node-editor/VisualNodeEditor";
-import { onImportNode } from "./onImportNode";
-import { onRequestImportables } from "./requestImportables";
 
 const initialPadding = [0, 20] as [number, number];
 
@@ -142,20 +140,86 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = forwardRef(
       [editorState]
     );
 
+    const portsValue = useMemo(() => {
+      const ports: EditorPorts = {
+        ...defaultPorts,
+        resolveInstance: async ({ instance }) => {
+          const { type, source, nodeId } = instance;
+
+          if (
+            type === "code" &&
+            source.type === "package" &&
+            source.data === "@flyde/stdlib"
+          ) {
+            const node = stdLibBrowser[nodeId];
+            if (!node) {
+              throw new Error(`Node ${nodeId} not found in stdlib`);
+            }
+
+            const _editorConfig: EditorCodeNodeDefinition["editorConfig"] =
+              node.editorConfig;
+
+            if (_editorConfig.type === "custom") {
+              const path = (_editorConfig as any).editorComponentBundlePath;
+              const bundle = await import(
+                "@flyde/stdlib" + path.replace("../..", "")
+              );
+              console.log(24242, bundle);
+              const component = bundle.__NodeConfig__[nodeId];
+              if (!component) {
+                throw new Error(`Component ${nodeId} not found in bundle`);
+              }
+            }
+
+            // if ()
+
+            const processed = processMacroNodeInstance("", node, instance);
+            const editorInstance = {
+              id: instance.id,
+              config: instance.config,
+              nodeId: instance.nodeId,
+              inputConfig: instance.inputConfig,
+              pos: instance.pos,
+              style: instance.style,
+              type: instance.type,
+              source: instance.source,
+              node: {
+                id: processed.id,
+                inputs: processed.inputs,
+                outputs: processed.outputs,
+                displayName: processed.displayName,
+                description: processed.description,
+                overrideNodeBodyHtml: processed.overrideNodeBodyHtml,
+                defaultStyle: processed.defaultStyle,
+                editorConfig: node.editorConfig,
+              },
+            } as EditorNodeInstance;
+            return editorInstance;
+          }
+
+          throw new Error(
+            `Instance ${instance.id} ${instance.type}${JSON.stringify(
+              instance.source
+            )} not found`
+          );
+        },
+      };
+      return ports;
+    }, []);
+
     return (
       <BrowserOnly>
         {() => (
-          <DependenciesContextProvider value={{} as any}>
+          <PortsContext.Provider value={portsValue}>
             <DebuggerContextProvider value={debuggerContextValue}>
               <FlowEditor
                 state={editorState}
                 onChangeEditorState={setFlowEditorState}
                 initialPadding={initialPadding}
-                onExtractInlineNode={noop as any}
                 darkMode={true}
               />
             </DebuggerContextProvider>
-          </DependenciesContextProvider>
+          </PortsContext.Provider>
         )}
       </BrowserOnly>
     );
