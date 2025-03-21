@@ -1,0 +1,39 @@
+imports: {}
+node:
+  instances:
+    - pos:
+        x: -82.46417236328125
+        y: 77.41525268554688
+      id: ins1
+      inputConfig: {}
+      nodeId: Node
+      config: {}
+      type: code
+      source:
+        type: file
+        data: ./Node.flyde.js
+    - pos:
+        x: -21.22210693359375
+        y: 140.6666717529297
+      id: InlineValue-oi04eh1
+      inputConfig: {}
+      nodeId: InlineValue
+      config: {}
+      type: code
+      source:
+        type: package
+        data: "@flyde/stdlib"
+  connections: []
+  id: Add1
+  inputs:
+    n:
+      mode: required
+      type: number
+  outputs:
+    r:
+      type: number
+  inputsPosition: {}
+  outputsPosition:
+    r:
+      x: 143.5557861328125
+      y: 213.33334350585938

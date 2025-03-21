@@ -1,27 +1,18 @@
 import {
-  BaseNode,
   CodeNode,
-  CodeNodeInstance,
   CodeNodeSource,
-  FlydeNode,
-  InputPin,
-  InternalCodeNode,
-  InternalNode,
   InternalVisualNode,
   isCodeNode,
-  isInternalVisualNode,
   isVisualNode,
   isVisualNodeInstance,
-  NodeInstance,
   processMacroNodeInstance,
   VisualNode,
-  VisualNodeInstance,
   isInlineVisualNodeInstance,
 } from "@flyde/core";
 import { join } from "path";
-import { findReferencedNode, NodeWithSourcePath } from "./find-referenced-node";
-import { resolveFlowByPath } from "./resolve-flow";
-import { existsSync, readFileSync } from "fs";
+import { resolveFlowByPath } from "./resolveFlow";
+import { existsSync } from "fs";
+import { createServerReferencedNodeFinder } from "./findReferencedNode/findReferencedNodeServer";
 
 /*
 Recursively resolve all dependencies of a flow. For each node instance:
@@ -32,6 +23,8 @@ export function resolveVisualNode(
   visualNode: VisualNode,
   fullFlowPath: string
 ): InternalVisualNode {
+
+  const findReferencedNode = createServerReferencedNodeFinder(fullFlowPath);
   const internalInstances = visualNode.instances.map((instance) => {
     if (isInlineVisualNodeInstance(instance)) {
       const resolved = resolveVisualNode(instance.source.data, fullFlowPath);
@@ -63,7 +56,7 @@ export function resolveVisualNode(
       };
     }
 
-    const node = findReferencedNode(instance, fullFlowPath);
+    const node = findReferencedNode(instance);
 
     if (isVisualNode(node)) {
       const resolved = resolveVisualNode(node, fullFlowPath);

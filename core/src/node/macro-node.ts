@@ -119,7 +119,8 @@ export interface SelectTypeData {
 
 export interface MacroEditorConfigCustom {
   type: "custom";
-  editorComponentBundlePath: string;
+  editorComponentBundlePath?: string;
+  editorComponentBundleContent?: string;
 }
 
 export interface MacroEditorConfigStructured {
@@ -171,7 +172,7 @@ export interface MacroEditorCompProps<T> {
   }) => Promise<string>;
 }
 
-export interface MacroEditorComp<T> extends React.FC<MacroEditorCompProps<T>> {}
+export interface MacroEditorComp<T> extends React.FC<MacroEditorCompProps<T>> { }
 
 export const isInternalMacroNode = (p: any): p is InternalMacroNode<any> => {
   return p && typeof (p as InternalMacroNode<any>).runFnBuilder === "function";

@@ -18,5 +18,11 @@ module.exports = function (w) {
         env: "NODE_PATH=fixture/node_modules",
       },
     },
+    lowercaseTestFiles: true,
+    project: {
+      github: {
+        name: "flydelabs/flyde"
+      }
+    }
   };
 };

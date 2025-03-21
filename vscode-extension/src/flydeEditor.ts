@@ -10,11 +10,10 @@ import { getBaseNodesLibraryData } from "@flyde/stdlib/dist/nodes-library-data";
 import {
   deserializeFlow,
   serializeFlow,
-  findReferencedNode,
   resolveEditorInstance,
+  createServerReferencedNodeFinder,
 } from "@flyde/resolver";
 import {
-  EditorNodeInstance,
   FlydeFlow,
   MAJOR_DEBUGGER_EVENT_TYPES,
   extractInputsFromValue,
@@ -22,7 +21,6 @@ import {
   keys,
   macroConfigurableValue,
   processImprovedMacro,
-  processMacroNodeInstance,
   replaceInputsInValue,
   ImportableEditorNode,
 } from "@flyde/core";
@@ -86,8 +84,7 @@ export interface FlydeEditorProviderParams {
 }
 
 export class FlydeEditorEditorProvider
-  implements vscode.CustomTextEditorProvider
-{
+  implements vscode.CustomTextEditorProvider {
   params!: FlydeEditorProviderParams;
 
   public static register(
@@ -108,7 +105,7 @@ export class FlydeEditorEditorProvider
 
   private static readonly viewType = "flydeEditor";
 
-  constructor(private readonly context: vscode.ExtensionContext) {}
+  constructor(private readonly context: vscode.ExtensionContext) { }
 
   public async resolveCustomTextEditor(
     document: vscode.TextDocument,
@@ -187,17 +184,17 @@ export class FlydeEditorEditorProvider
         return raw.trim() !== ""
           ? deserializeFlow(raw, fullDocumentPath)
           : {
-              node: {
-                id: fileName,
-                inputs: {},
-                inputsPosition: {},
-                outputs: {},
-                outputsPosition: {},
-                instances: [],
-                connections: [],
-              },
-              imports: {},
-            };
+            node: {
+              id: fileName,
+              inputs: {},
+              inputsPosition: {},
+              outputs: {},
+              outputsPosition: {},
+              instances: [],
+              connections: [],
+            },
+            imports: {},
+          };
       }, "Failed to deserialize flow");
 
       const errors = [initialFlow]
@@ -543,8 +540,7 @@ export class FlydeEditorEditorProvider
                 } catch (error) {
                   console.error("Error saving custom node file:", error);
                   vscode.window.showErrorMessage(
-                    `Failed to save custom node: ${
-                      error instanceof Error ? error.message : "Unknown error"
+                    `Failed to save custom node: ${error instanceof Error ? error.message : "Unknown error"
                     }`
                   );
                 }
@@ -572,10 +568,12 @@ export class FlydeEditorEditorProvider
               case "resolveInstance": {
                 const { flow, instance } = event.params;
 
+                const referencedNodeFinder = createServerReferencedNodeFinder(fullDocumentPath);
+
                 try {
                   const editorInstance = resolveEditorInstance(
                     instance,
-                    fullDocumentPath
+                    referencedNodeFinder
                   );
                   console.log("editorInstance", editorInstance);
                   messageResponse(event, editorInstance);

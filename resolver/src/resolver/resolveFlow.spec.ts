@@ -1,9 +1,9 @@
-import { dynamicNodeInput, execute, randomInt } from "@flyde/core";
+import { AdvancedCodeNode, CodeNode, codeNodeInstance, dynamicNodeInput, execute, MacroEditorConfigCustom, randomInt } from "@flyde/core";
 import { assert } from "chai";
 import { readdirSync } from "fs";
 import { join } from "path";
 import { deserializeFlowByPath } from "../serdes";
-import { resolveFlow, resolveFlowByPath } from "./resolve-flow";
+import { resolveFlow, resolveFlowByPath } from "./resolveFlow";
 
 import { spiedOutput } from "@flyde/core/dist/test-utils";
 import _ = require("lodash");
@@ -129,16 +129,6 @@ describe("resolver", () => {
       n.subject.next(2);
 
       assert.equal(s.lastCall.args[0], 5);
-
-      // const resolvedContainer = resolvedDeps["Container"] as InternalVisualNode;
-      // const inlineContainer = (
-      //   resolvedContainer.instances[0] as InternalInlineNodeInstance
-      // ).node as VisualNode;
-
-      // assert.equal(
-      //   (inlineContainer.instances[0] as RefNodeInstance).nodeId,
-      //   "Container__Special"
-      // );
     });
   });
 
@@ -232,7 +222,7 @@ describe("resolver", () => {
     );
     resolveFlowByPath(path);
 
-    assert.doesNotThrow(() => {});
+    assert.doesNotThrow(() => { });
   });
 
   it("imports multiple nodes from the same package", async () => {
@@ -482,11 +472,12 @@ describe("resolver", () => {
       });
     });
 
-    it.only("works with Fibonacci Example from vscode extension", async () => {
+    it("works with Fibonacci Example from vscode extension", async () => {
       resolveFlowByPath(getFixturePath("MemoFibo.flyde"));
       assert.doesNotThrow(() => {
         resolveFlowByPath(getFixturePath("MemoFibo.flyde"));
       });
     });
   });
+
 });
