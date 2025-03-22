@@ -1,6 +1,6 @@
 {
   "name": "flyde",
-  "version": "0.109.4",
+  "version": "1.0.0-alpha.1",
   "main": "index.js",
   "description": "",
   "proxy": "http://localhost:8484",
@@ -19,7 +19,8 @@
     "publish-all": "./publish-all-with-otp.sh",
     "release": "pnpm run build && pnpm run bump-all-patch && pnpm run publish-all",
     "bump:minor": "tsx updateVersions.ts minor",
-    "bump:patch": "tsx updateVersions.ts patch"
+    "bump:patch": "tsx updateVersions.ts patch",
+    "bump:alpha": "tsx updateVersionsAlpha.ts"
   },
   "author": "",
   "dependencies": {
@@ -33,5 +34,8 @@
     "overrides": {
       "@radix-ui/react-dismissable-layer": "1.1.4"
     }
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.11"
   }
 }

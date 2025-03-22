@@ -1,6 +1,6 @@
 {
   "name": "@flyde/ui",
-  "version": "0.109.4",
+  "version": "1.0.0-alpha.1",
   "description": "",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",

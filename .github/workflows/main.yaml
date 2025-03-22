@@ -51,7 +51,7 @@ jobs:
       - name: Test
         run: xvfb-run -a pnpm run test
       - name: If release, Publish to NPM
-        if: github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, 'Prepare for v')
+        if: github.ref == 'refs/heads/main' && (startsWith(github.event.head_commit.message, 'Prepare for v') || startsWith(github.event.head_commit.message, 'Prepare for v1.0.0-alpha'))
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "github-actions@users.noreply.github.com"
@@ -71,8 +71,16 @@ jobs:
                 cd $root
                 continue
             fi
-            echo "Publishing $name"
-            pnpm publish --access public --force --no-git-checks
+            
+            # Check if this is an alpha release
+            if [[ $(grep -o '"version": "1.0.0-alpha' package.json) ]]; then
+              echo "Publishing alpha version of $name"
+              pnpm publish --access public --force --no-git-checks --tag alpha
+            else
+              echo "Publishing $name"
+              pnpm publish --access public --force --no-git-checks
+            fi
+            
             echo "Published $name\n\n"
             cd $root
           done
