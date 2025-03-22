@@ -8,8 +8,6 @@ import React, {
 } from "react";
 import _ from "lodash";
 
-import * as stdLibBrowser from "@flyde/stdlib/dist/all-browser";
-
 import {
   createRuntimePlayer,
   DebuggerContextData,
@@ -26,9 +24,6 @@ import {
   execute,
   dynamicOutput,
   VisualNode,
-  processMacroNodeInstance,
-  EditorNodeInstance,
-  EditorCodeNodeDefinition,
 } from "@flyde/core";
 import { createHistoryPlayer } from "./createHistoryPlayer";
 
@@ -39,6 +34,8 @@ import { EditorDebuggerClient } from "@site/../remote-debugger/dist";
 import { useDarkMode } from "usehooks-ts";
 import { createRuntimeClientDebugger } from "./createRuntimePlayerDebugger";
 import { defaultBoardData } from "@flyde/flow-editor/dist/visual-node-editor/VisualNodeEditor";
+import { resolveEditorInstance } from "@flyde/resolver/dist/resolver/resolveEditorInstance";
+import { websiteNodesFinder } from "./nodesFinder";
 
 const initialPadding = [0, 20] as [number, number];
 
@@ -70,7 +67,7 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = forwardRef(
     const [localDebugger, setLocalDebugger] =
       useState<Pick<EditorDebuggerClient, "onBatchedEvents">>();
 
-    const cleanRunRef = useRef(() => { });
+    const cleanRunRef = useRef(() => {});
 
     const debuggerContextValue = useMemo<DebuggerContextData>(() => {
       return {
@@ -146,62 +143,11 @@ export const EmbeddedFlyde: React.FC<EmbeddedFlydeProps> = forwardRef(
         resolveInstance: async ({ instance }) => {
           const { type, source, nodeId } = instance;
 
-          if (
-            type === "code" &&
-            source.type === "package" &&
-            source.data === "@flyde/stdlib"
-          ) {
-            const node = stdLibBrowser[nodeId];
-            if (!node) {
-              throw new Error(`Node ${nodeId} not found in stdlib`);
-            }
-
-            const _editorConfig: EditorCodeNodeDefinition["editorConfig"] =
-              node.editorConfig;
-
-            if (_editorConfig.type === "custom") {
-              const path = (_editorConfig as any).editorComponentBundlePath;
-              // const bundle = await import(
-              //   "@flyde/stdlib" + path.replace("../..", "")
-              // );
-              // console.log(24242, bundle);
-              // const component = bundle.__NodeConfig__[nodeId];
-              // if (!component) {
-              // throw new Error(`Component ${nodeId} not found in bundle`);
-              // }
-            }
-
-            // if ()
-
-            const processed = processMacroNodeInstance("", node, instance);
-            const editorInstance = {
-              id: instance.id,
-              config: instance.config,
-              nodeId: instance.nodeId,
-              inputConfig: instance.inputConfig,
-              pos: instance.pos,
-              style: instance.style,
-              type: instance.type,
-              source: instance.source,
-              node: {
-                id: processed.id,
-                inputs: processed.inputs,
-                outputs: processed.outputs,
-                displayName: processed.displayName,
-                description: processed.description,
-                overrideNodeBodyHtml: processed.overrideNodeBodyHtml,
-                defaultStyle: processed.defaultStyle,
-                editorConfig: node.editorConfig,
-              },
-            } as EditorNodeInstance;
-            return editorInstance;
+          if (instance.type === "code") {
+            return resolveEditorInstance(instance, websiteNodesFinder);
           }
 
-          throw new Error(
-            `Instance ${instance.id} ${instance.type}${JSON.stringify(
-              instance.source
-            )} not found`
-          );
+          throw new Error(`Instance ${instance.id} not found`);
         },
       };
       return ports;

@@ -3,14 +3,12 @@ import {
   FlydeNode,
   isCodeNode,
   NodeInstance,
-  AdvancedCodeNode
+  AdvancedCodeNode,
 } from "@flyde/core";
 
 import * as _StdLib from "@flyde/stdlib/dist/all";
 import { join, dirname } from "path";
-import {
-  resolveCodeNodeDependencies,
-} from "../resolveVisualNode";
+import { resolveCodeNodeDependencies } from "../resolveVisualNode";
 import { existsSync, readFileSync } from "fs";
 import { resolveImportablePaths } from "../resolveImportablePaths";
 import { deserializeFlowByPath } from "../../serdes";
@@ -27,13 +25,16 @@ const LocalStdLib = Object.values(_StdLib).reduce<Record<string, CodeNode>>(
   {}
 );
 
-export function createServerReferencedNodeFinder(fullFlowPath: string): ReferencedNodeFinder {
-  return (
-    instance: NodeInstance,
-  ): FlydeNode => {
+export function createServerReferencedNodeFinder(
+  fullFlowPath: string
+): ReferencedNodeFinder {
+  return (instance: NodeInstance): FlydeNode => {
     switch (instance.source.type) {
       case "package": {
-        const paths = getLocalOrPackagePaths(fullFlowPath, instance.source.data);
+        const paths = getLocalOrPackagePaths(
+          fullFlowPath,
+          instance.source.data
+        );
 
         const nodeWrapper = paths
           .flatMap<FlydeNode>((path) => {
@@ -64,6 +65,16 @@ export function createServerReferencedNodeFinder(fullFlowPath: string): Referenc
               );
             }
 
+            const maybeAdvancedNode = maybeFromStdlib as AdvancedCodeNode<any>;
+
+            if (maybeAdvancedNode.editorConfig?.type === "custom") {
+              const content = require("@flyde/stdlib/dist/bundled-config/" +
+                instance.nodeId);
+
+              maybeAdvancedNode.editorConfig.editorComponentBundleContent =
+                content;
+            }
+
             // The bundle content is already included during the post-processing step
             return maybeFromStdlib as FlydeNode;
           }
@@ -75,15 +86,24 @@ export function createServerReferencedNodeFinder(fullFlowPath: string): Referenc
 
         const maybeAdvancedNode = nodeWrapper as AdvancedCodeNode<any>;
         // read the editorComponentBundlePath if it exists
-        if (maybeAdvancedNode.editorConfig &&
-          'editorComponentBundlePath' in maybeAdvancedNode.editorConfig &&
-          'type' in maybeAdvancedNode.editorConfig &&
-          maybeAdvancedNode.editorConfig.type === 'custom') {
+        if (
+          maybeAdvancedNode.editorConfig &&
+          "editorComponentBundlePath" in maybeAdvancedNode.editorConfig &&
+          "type" in maybeAdvancedNode.editorConfig &&
+          maybeAdvancedNode.editorConfig.type === "custom"
+        ) {
           try {
-            const editorComponentBundlePath = join(fullFlowPath, "..", maybeAdvancedNode.editorConfig.editorComponentBundlePath);
-            maybeAdvancedNode.editorConfig.editorComponentBundleContent = readFileSync(editorComponentBundlePath, 'utf-8');
+            const editorComponentBundlePath = join(
+              fullFlowPath,
+              "..",
+              maybeAdvancedNode.editorConfig.editorComponentBundlePath
+            );
+            maybeAdvancedNode.editorConfig.editorComponentBundleContent =
+              readFileSync(editorComponentBundlePath, "utf-8");
           } catch (e) {
-            throw new Error(`Cannot read editor component bundle at ${maybeAdvancedNode.editorConfig.editorComponentBundlePath}`);
+            throw new Error(
+              `Cannot read editor component bundle at ${maybeAdvancedNode.editorConfig.editorComponentBundlePath}`
+            );
           }
         }
 
@@ -100,18 +120,27 @@ export function createServerReferencedNodeFinder(fullFlowPath: string): Referenc
         );
 
         if (!node) {
-          throw new Error(`Cannot find node ${instance.nodeId} in ${fullFilePath}`);
+          throw new Error(
+            `Cannot find node ${instance.nodeId} in ${fullFilePath}`
+          );
         }
-
 
         const maybeAdvancedNode = node.node as AdvancedCodeNode<any>;
         // read the editorComponentBundlePath if it exists
-        if (maybeAdvancedNode.editorConfig &&
-          'editorComponentBundlePath' in maybeAdvancedNode.editorConfig &&
-          'type' in maybeAdvancedNode.editorConfig &&
-          maybeAdvancedNode.editorConfig.type === 'custom') {
-          const fullPath = join(fullFlowPath, "..", maybeAdvancedNode.editorConfig.editorComponentBundlePath);
-          maybeAdvancedNode.editorConfig.editorComponentBundleContent = readFileSync(fullPath, 'utf-8');
+        if (
+          maybeAdvancedNode.editorConfig &&
+          "editorComponentBundlePath" in maybeAdvancedNode.editorConfig &&
+          "type" in maybeAdvancedNode.editorConfig &&
+          maybeAdvancedNode.editorConfig.type === "custom"
+        ) {
+          const fullPath = join(
+            fullFlowPath,
+            "..",
+            maybeAdvancedNode.editorConfig.editorComponentBundlePath
+          );
+          const fileContent = readFileSync(fullPath, "utf-8");
+          maybeAdvancedNode.editorConfig.editorComponentBundleContent =
+            fileContent;
         }
 
         return node.node;
@@ -123,7 +152,7 @@ export function createServerReferencedNodeFinder(fullFlowPath: string): Referenc
         throw new Error(`Unknown node source type: ${instance.source.type}`);
       }
     }
-  }
+  };
 }
 
 function getLocalOrPackagePaths(fullFlowPath: string, importPath: string) {
@@ -142,3 +171,17 @@ function getLocalOrPackagePaths(fullFlowPath: string, importPath: string) {
     }
   }
 }
+
+// Example of how to import and use the bundled configs:
+/*
+// Import all bundled configs
+const bundledConfigs = require('@flyde/stdlib/dist/bundled-config');
+
+// Access a specific node bundle
+const inlineValueBundle = bundledConfigs.InlineValue;
+
+// Or import a specific node directly
+const nodeBundle = require('@flyde/stdlib/dist/bundled-config/InlineValue');
+
+// Each import provides the full bundle JavaScript as a string
+*/

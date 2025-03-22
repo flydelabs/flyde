@@ -8,7 +8,7 @@ module.exports = function (w) {
       "src/**/*.js",
       { pattern: "src/**/*.spec.ts", ignore: true },
       { pattern: "src/**/*.spec.tsx", ignore: true },
-      "fixture/**",
+      { pattern: "fixture/**", instrument: false },
     ],
 
     tests: ["src/**/*.spec.ts", "src/**/*.spec.tsx"],
@@ -21,8 +21,8 @@ module.exports = function (w) {
     lowercaseTestFiles: true,
     project: {
       github: {
-        name: "flydelabs/flyde"
-      }
-    }
+        name: "flydelabs/flyde",
+      },
+    },
   };
 };

@@ -1,4 +1,12 @@
-import { AdvancedCodeNode, CodeNode, codeNodeInstance, dynamicNodeInput, execute, MacroEditorConfigCustom, randomInt } from "@flyde/core";
+import {
+  AdvancedCodeNode,
+  CodeNode,
+  codeNodeInstance,
+  dynamicNodeInput,
+  execute,
+  MacroEditorConfigCustom,
+  randomInt,
+} from "@flyde/core";
 import { assert } from "chai";
 import { readdirSync } from "fs";
 import { join } from "path";
@@ -222,7 +230,7 @@ describe("resolver", () => {
     );
     resolveFlowByPath(path);
 
-    assert.doesNotThrow(() => { });
+    assert.doesNotThrow(() => {});
   });
 
   it("imports multiple nodes from the same package", async () => {
@@ -479,5 +487,4 @@ describe("resolver", () => {
       });
     });
   });
-
 });

@@ -1260,7 +1260,8 @@ declare module '@flyde/core/node/macro-node' {
     }
     export interface MacroEditorConfigCustom {
             type: "custom";
-            editorComponentBundlePath: string;
+            editorComponentBundlePath?: string;
+            editorComponentBundleContent?: string;
     }
     export interface MacroEditorConfigStructured {
             type: "structured";
