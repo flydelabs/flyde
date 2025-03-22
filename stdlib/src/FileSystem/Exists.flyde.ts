@@ -1,7 +1,7 @@
-import { CodeNode } from "@flyde/core";
+import { InternalCodeNode } from "@flyde/core";
 import * as fs from "fs";
 
-export const Exists: CodeNode = {
+export const Exists: InternalCodeNode = {
   id: "Exists",
   defaultStyle: {
     icon: "fa-file",

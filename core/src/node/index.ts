@@ -1,6 +1,4 @@
 export * from "./node-instance";
-export * from "./node-pins";
-export * from "./pin-config";
-export * from "./nodeFromSimpleFunction";
+export * from "../types/pin-config";
 export * from "./node-instance-error";
 export * from "./node";

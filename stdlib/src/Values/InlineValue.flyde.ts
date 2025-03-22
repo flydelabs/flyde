@@ -1,8 +1,7 @@
 import {
   macroConfigurableValue,
   MacroConfigurableValue,
-  processImprovedMacro,
-  ImprovedMacroNode,
+  CodeNode,
   extractInputsFromValue,
   replaceInputsInValue,
 } from "@flyde/core";
@@ -11,8 +10,9 @@ export interface InlineValueConfig {
   value: MacroConfigurableValue;
 }
 
-const inlineValue: ImprovedMacroNode<InlineValueConfig> = {
+export const InlineValue: CodeNode<InlineValueConfig> = {
   id: "InlineValue",
+  mode: "advanced",
   defaultConfig: {
     value: macroConfigurableValue("string", "Hello, {{name}}"),
   },
@@ -44,5 +44,3 @@ const inlineValue: ImprovedMacroNode<InlineValueConfig> = {
     editorComponentBundlePath: "../../dist/ui/InlineValue.js",
   },
 };
-
-export const InlineValue = processImprovedMacro(inlineValue);

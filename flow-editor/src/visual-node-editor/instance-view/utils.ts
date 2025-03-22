@@ -9,10 +9,11 @@ import {
 
 import { clamp } from "lodash";
 import { getInstanceDomId } from "../dom-ids";
+import { unfoundPinPos } from "../connection-view/calc-pin-position";
 
 export const calcNodeContent = (
-  instance: NodeInstance,
-  node: NodeDefinition
+  instance: Pick<NodeInstance, "displayName">,
+  node: Pick<NodeDefinition, "displayName" | "id">
 ) => {
   if (instance.displayName) {
     return instance.displayName;
@@ -58,8 +59,5 @@ export const calcInstancePosition = (
 
   console.warn(`Cannot find element to draw connection to`, domId);
 
-  return {
-    x: 99999,
-    y: 99999,
-  };
+  return unfoundPinPos;
 };

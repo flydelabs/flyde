@@ -1,8 +1,8 @@
-import { CodeNode } from "@flyde/core";
+import { InternalCodeNode } from "@flyde/core";
 
 const namespace = "Lists";
 
-export const Reverse: CodeNode = {
+export const Reverse: InternalCodeNode = {
   id: "Reverse",
   defaultStyle: {
     icon: "fa-list",

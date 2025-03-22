@@ -1,16 +1,4 @@
-imports:
-  "@flyde/stdlib":
-    - Read File
-    - Split
-    - Head and rest
-    - Loop List
-    - Get List Element
-    - Sum List
-    - Parse Int
-    - InlineValue
-    - Conditional
-    - CodeExpression
-    - Collect
+imports: {}
 node:
   instances:
     - pos:
@@ -18,13 +6,18 @@ node:
         y: 283.8822546818667
       id: clfuqs69n00014668p8jg106j
       inputConfig: {}
-      visibleInputs:
-        - path
-        - encoding
-      visibleOutputs:
-        - contents
-        - __error
       nodeId: Read File
+      config:
+        path:
+          type: dynamic
+          value: "{{path}}"
+        encoding:
+          type: dynamic
+          value: "{{encoding}}"
+      type: code
+      source:
+        type: package
+        data: "@flyde/stdlib"
       style:
         icon: fa-file
         color: "#00f5d4"
@@ -33,149 +26,182 @@ node:
         y: 288.46776742035325
       id: Parse CSV-bn0462h
       inputConfig: {}
-      node:
-        instances:
-          - pos:
-              x: -118.06916251947007
-              y: -242.0581984195877
-            id: clfur381u000e46680qngrrv0
-            inputConfig:
-              separator:
-                mode: sticky
-            nodeId: Split
-          - pos:
-              x: -143.34856082088254
-              y: -127.92327522136146
-            id: clfur3wrb000n4668tzjs5lcw
-            inputConfig: {}
-            nodeId: Head and rest
-          - pos:
-              x: -123.38416757304788
-              y: 40.55221890874138
-            id: clfur49eg000w4668ahvwk2ib
-            inputConfig: {}
-            nodeId: Loop List
-          - pos:
-              x: -149.01732026369052
-              y: 223.5823753019469
-            id: clfur4n31001346682iyika2o
-            inputConfig:
-              separator:
-                mode: sticky
-            nodeId: Split
-          - pos:
-              x: 69.25510009765625
-              y: 89.8313360595703
-            id: Parse CSV-lz0496s
-            inputConfig: {}
-            nodeId: InlineValue__Parse CSV-lz0496s
-            macroId: InlineValue
-            macroData:
-              value:
-                type: string
-                value: ","
-              type:
-                type: string
-                value: string
-              label:
-                type: string
-                value: '","'
-          - pos:
-              x: 1.8964953613281352
-              y: -362.0457109563053
-            id: d5t7eb2n0pu2pxn52tnhbepy
-            inputConfig: {}
-            nodeId: CodeExpression__d5t7eb2n0pu2pxn52tnhbepy
-            macroId: CodeExpression
-            macroData:
-              value: '"\n"'
-              label: \n
-          - pos:
-              x: -102.36408203124995
-              y: 349.9501273273129
-            id: qiojvdu7phtarj77inj7kevf
-            inputConfig: {}
-            nodeId: Collect__qiojvdu7phtarj77inj7kevf
-            macroId: Collect
-            macroData:
-              strategy: count
-              count:
-                mode: dynamic
-        connections:
-          - from:
-              insId: clfur381u000e46680qngrrv0
-              pinId: value
-            to:
-              insId: clfur3wrb000n4668tzjs5lcw
-              pinId: list
-          - from:
-              insId: clfur3wrb000n4668tzjs5lcw
-              pinId: rest
-            to:
-              insId: clfur49eg000w4668ahvwk2ib
-              pinId: list
-          - from:
-              insId: clfur49eg000w4668ahvwk2ib
-              pinId: item
-            to:
-              insId: clfur4n31001346682iyika2o
-              pinId: string
-          - from:
-              insId: __this
-              pinId: contents
-            to:
-              insId: clfur381u000e46680qngrrv0
-              pinId: string
-          - from:
-              insId: Parse CSV-lz0496s
-              pinId: value
-            to:
-              insId: clfur4n31001346682iyika2o
-              pinId: separator
-          - from:
-              insId: d5t7eb2n0pu2pxn52tnhbepy
-              pinId: value
-            to:
-              insId: clfur381u000e46680qngrrv0
-              pinId: separator
-          - from:
-              insId: clfur49eg000w4668ahvwk2ib
-              pinId: length
-            to:
-              insId: qiojvdu7phtarj77inj7kevf
-              pinId: count
-          - from:
-              insId: clfur4n31001346682iyika2o
-              pinId: value
-            to:
-              insId: qiojvdu7phtarj77inj7kevf
-              pinId: value
-          - from:
-              insId: qiojvdu7phtarj77inj7kevf
-              pinId: list
-            to:
-              insId: __this
-              pinId: parsed
-        id: Parse CSV
-        inputs:
-          contents:
-            mode: required
-        outputs:
-          parsed:
-            delayed: false
-        inputsPosition:
-          string:
-            x: -125.91370946045086
-            y: -338.8222372977071
-          contents:
-            x: -125.91370946045086
-            y: -338.8222372977071
-        outputsPosition:
-          parsed:
-            x: -56.849183340289116
-            y: 533.9258730367221
-        completionOutputs:
-          - parsed
+      nodeId: CsvExample
+      type: visual
+      source:
+        type: inline
+        data:
+          instances:
+            - pos:
+                x: -118.06916251947007
+                y: -242.0581984195877
+              id: clfur381u000e46680qngrrv0
+              inputConfig:
+                separator:
+                  mode: sticky
+              nodeId: Split
+              source:
+                type: package
+                data: "@flyde/stdlib"
+              config: {}
+              type: code
+            - pos:
+                x: -143.34856082088254
+                y: -127.92327522136146
+              id: clfur3wrb000n4668tzjs5lcw
+              inputConfig: {}
+              nodeId: Head and rest
+              source:
+                type: package
+                data: "@flyde/stdlib"
+              config: {}
+              type: code
+            - pos:
+                x: -123.38416757304788
+                y: 40.55221890874138
+              id: clfur49eg000w4668ahvwk2ib
+              inputConfig: {}
+              nodeId: Loop List
+              source:
+                type: package
+                data: "@flyde/stdlib"
+              config: {}
+              type: code
+            - pos:
+                x: -149.01732026369052
+                y: 223.5823753019469
+              id: clfur4n31001346682iyika2o
+              inputConfig:
+                separator:
+                  mode: sticky
+              nodeId: Split
+              source:
+                type: package
+                data: "@flyde/stdlib"
+              config: {}
+              type: code
+            - pos:
+                x: 69.25510009765625
+                y: 89.8313360595703
+              id: Parse CSV-lz0496s
+              inputConfig: {}
+              nodeId: InlineValue
+              source:
+                type: package
+                data: "@flyde/stdlib"
+              config:
+                value:
+                  type: string
+                  value: ","
+                type:
+                  type: string
+                  value: string
+                label:
+                  type: string
+                  value: '","'
+              type: code
+            - pos:
+                x: 1.8964953613281352
+                y: -362.0457109563053
+              id: d5t7eb2n0pu2pxn52tnhbepy
+              inputConfig: {}
+              nodeId: CodeExpression
+              source:
+                type: package
+                data: "@flyde/stdlib"
+              config:
+                value: '"\n"'
+                label: \n
+              type: code
+            - pos:
+                x: -102.36408203124995
+                y: 349.9501273273129
+              id: qiojvdu7phtarj77inj7kevf
+              inputConfig: {}
+              nodeId: Collect
+              source:
+                type: package
+                data: "@flyde/stdlib"
+              config:
+                strategy: count
+                count:
+                  mode: dynamic
+              type: code
+          connections:
+            - from:
+                insId: clfur381u000e46680qngrrv0
+                pinId: value
+              to:
+                insId: clfur3wrb000n4668tzjs5lcw
+                pinId: list
+            - from:
+                insId: clfur3wrb000n4668tzjs5lcw
+                pinId: rest
+              to:
+                insId: clfur49eg000w4668ahvwk2ib
+                pinId: list
+            - from:
+                insId: clfur49eg000w4668ahvwk2ib
+                pinId: item
+              to:
+                insId: clfur4n31001346682iyika2o
+                pinId: string
+            - from:
+                insId: __this
+                pinId: contents
+              to:
+                insId: clfur381u000e46680qngrrv0
+                pinId: string
+            - from:
+                insId: Parse CSV-lz0496s
+                pinId: value
+              to:
+                insId: clfur4n31001346682iyika2o
+                pinId: separator
+            - from:
+                insId: d5t7eb2n0pu2pxn52tnhbepy
+                pinId: value
+              to:
+                insId: clfur381u000e46680qngrrv0
+                pinId: separator
+            - from:
+                insId: clfur49eg000w4668ahvwk2ib
+                pinId: length
+              to:
+                insId: qiojvdu7phtarj77inj7kevf
+                pinId: count
+            - from:
+                insId: clfur4n31001346682iyika2o
+                pinId: value
+              to:
+                insId: qiojvdu7phtarj77inj7kevf
+                pinId: value
+            - from:
+                insId: qiojvdu7phtarj77inj7kevf
+                pinId: list
+              to:
+                insId: __this
+                pinId: parsed
+          id: Parse CSV
+          inputs:
+            contents:
+              mode: required
+          outputs:
+            parsed:
+              delayed: false
+          inputsPosition:
+            string:
+              x: -125.91370946045086
+              y: -338.8222372977071
+            contents:
+              x: -125.91370946045086
+              y: -338.8222372977071
+          outputsPosition:
+            parsed:
+              x: -56.849183340289116
+              y: 533.9258730367221
+          completionOutputs:
+            - parsed
       style:
         size: regular
         icon: file-csv
@@ -186,6 +212,14 @@ node:
       id: clfuu4wdv00074668lyl7gtnw
       inputConfig: {}
       nodeId: Sum List
+      config:
+        list:
+          type: dynamic
+          value: "{{list}}"
+      type: code
+      source:
+        type: package
+        data: "@flyde/stdlib"
     - pos:
         x: -308.2318115234375
         y: 299.2100143432617
@@ -193,151 +227,155 @@ node:
       inputConfig:
         value:
           mode: sticky
-      node:
-        instances:
-          - pos:
-              x: -214.98781494140627
-              y: 187.7970252609253
-            id: clfutxtvk00174668slofeqax
-            inputConfig: {}
-            nodeId: Loop List
-          - pos:
-              x: -299.183955078125
-              y: 515.4710998535156
-            id: clfuu1kkq0024466856fkuiyi
-            inputConfig:
-              index:
-                mode: sticky
-            nodeId: Get List Element
-          - pos:
-              x: -230.44541137695307
-              y: 607.3148419189453
-            id: Get Prices By Continent-cs0461a
-            inputConfig: {}
-            nodeId: Parse Int
-          - pos:
-              x: -227.98379150390628
-              y: 336.4735145161737
-            id: xiusd3g6bhi8nw3h50gvkz7q
-            inputConfig:
-              compareTo:
-                mode: sticky
-            nodeId: Conditional__xiusd3g6bhi8nw3h50gvkz7q
-            macroId: Conditional
-            macroData:
-              compareTo:
-                type: dynamic
-              propertyPath:
-                type: string
-                value: "1"
-              condition:
-                type: EQUAL
-              trueValue:
-                type: value
-              falseValue:
-                type: value
-              leftOperand:
-                type: string
-                value: "{{value.continent}}"
-              rightOperand:
-                type: string
-                value: "{{continent}}"
-          - pos:
-              x: -36.846899414062506
-              y: 393.65142558795105
-            id: k537z31orw8cwh8emq1ukhs8
-            inputConfig: {}
-            nodeId: InlineValue__k537z31orw8cwh8emq1ukhs8
-            macroId: InlineValue
-            macroData:
-              value:
-                type: number
-                value: 3
-              type:
-                type: string
-                value: number
-              label:
-                type: string
-                value: "3"
-          - pos:
-              x: -239.2752465820313
-              y: 714.719063221283
-            id: pwusa11s2p7eyz100p4ilpwx
-            inputConfig: {}
-            nodeId: Collect__pwusa11s2p7eyz100p4ilpwx
-            macroId: Collect
-            macroData:
-              strategy: time
-              time:
-                mode: static
-                value: 2000
-        connections:
-          - from:
-              insId: __this
-              pinId: list
-            to:
-              insId: clfutxtvk00174668slofeqax
-              pinId: list
-          - from:
-              insId: clfuu1kkq0024466856fkuiyi
-              pinId: element
-            to:
-              insId: Get Prices By Continent-cs0461a
-              pinId: str
-          - from:
-              insId: xiusd3g6bhi8nw3h50gvkz7q
-              pinId: "true"
-            to:
-              insId: clfuu1kkq0024466856fkuiyi
-              pinId: list
-          - from:
-              insId: k537z31orw8cwh8emq1ukhs8
-              pinId: value
-            to:
-              insId: clfuu1kkq0024466856fkuiyi
-              pinId: index
-          - from:
-              insId: Get Prices By Continent-cs0461a
-              pinId: int
-            to:
-              insId: pwusa11s2p7eyz100p4ilpwx
-              pinId: value
-          - from:
-              insId: pwusa11s2p7eyz100p4ilpwx
-              pinId: list
-            to:
-              insId: __this
-              pinId: accumulated
-        id: Get Prices By Continent
-        inputs:
-          list:
-            mode: required
-          value:
-            mode: required
-        outputs:
-          accumulated:
-            delayed: false
-        inputsPosition:
-          list:
-            x: -224.4720619253199
-            y: -6.734161457821966
-          value:
-            x: 28.829459399874054
-            y: -16.001467704067352
-        outputsPosition:
-          accumulated:
-            x: -203.37937417252186
-            y: 865.83859895635
-        completionOutputs:
-          - accumulated
+      nodeId: CsvExample
+      type: visual
+      source:
+        type: inline
+        data:
+          instances:
+            - pos:
+                x: -214.98781494140627
+                y: 187.7970252609253
+              id: clfutxtvk00174668slofeqax
+              inputConfig: {}
+              nodeId: Loop List
+              source:
+                type: package
+                data: "@flyde/stdlib"
+              config: {}
+              type: code
+            - pos:
+                x: -299.183955078125
+                y: 515.4710998535156
+              id: clfuu1kkq0024466856fkuiyi
+              inputConfig:
+                index:
+                  mode: sticky
+              nodeId: Get List Element
+              source:
+                type: package
+                data: "@flyde/stdlib"
+              config: {}
+              type: code
+            - pos:
+                x: -227.98379150390628
+                y: 336.4735145161737
+              id: xiusd3g6bhi8nw3h50gvkz7q
+              inputConfig:
+                compareTo:
+                  mode: sticky
+              nodeId: Conditional
+              source:
+                type: package
+                data: "@flyde/stdlib"
+              config:
+                compareTo:
+                  type: dynamic
+                propertyPath:
+                  type: string
+                  value: "1"
+                condition:
+                  type: EQUAL
+                trueValue:
+                  type: value
+                falseValue:
+                  type: value
+                leftOperand:
+                  type: string
+                  value: "{{value.continent}}"
+                rightOperand:
+                  type: string
+                  value: "{{continent}}"
+              type: code
+            - pos:
+                x: -36.846899414062506
+                y: 393.65142558795105
+              id: k537z31orw8cwh8emq1ukhs8
+              inputConfig: {}
+              nodeId: InlineValue
+              source:
+                type: package
+                data: "@flyde/stdlib"
+              config:
+                value:
+                  type: number
+                  value: 3
+                type:
+                  type: string
+                  value: number
+                label:
+                  type: string
+                  value: "3"
+              type: code
+            - pos:
+                x: -239.2752465820313
+                y: 714.719063221283
+              id: pwusa11s2p7eyz100p4ilpwx
+              inputConfig: {}
+              nodeId: Collect
+              source:
+                type: package
+                data: "@flyde/stdlib"
+              config:
+                strategy: time
+                time:
+                  mode: static
+                  value: 2000
+              type: code
+          connections:
+            - from:
+                insId: __this
+                pinId: list
+              to:
+                insId: clfutxtvk00174668slofeqax
+                pinId: list
+            - from:
+                insId: xiusd3g6bhi8nw3h50gvkz7q
+                pinId: "true"
+              to:
+                insId: clfuu1kkq0024466856fkuiyi
+                pinId: list
+            - from:
+                insId: k537z31orw8cwh8emq1ukhs8
+                pinId: value
+              to:
+                insId: clfuu1kkq0024466856fkuiyi
+                pinId: index
+            - from:
+                insId: pwusa11s2p7eyz100p4ilpwx
+                pinId: list
+              to:
+                insId: __this
+                pinId: accumulated
+          id: Get Prices By Continent
+          inputs:
+            list:
+              mode: required
+            value:
+              mode: required
+          outputs:
+            accumulated:
+              delayed: false
+          inputsPosition:
+            list:
+              x: -224.4720619253199
+              y: -6.734161457821966
+            value:
+              x: 28.829459399874054
+              y: -16.001467704067352
+          outputsPosition:
+            accumulated:
+              x: -203.37937417252186
+              y: 865.83859895635
+          completionOutputs:
+            - accumulated
     - pos:
         x: -940.4605212402344
         y: 345.4214929789235
       id: oy7esxhnpcl5dje5f2p035ur
       inputConfig: {}
-      nodeId: InlineValue__oy7esxhnpcl5dje5f2p035ur
-      macroId: InlineValue
-      macroData:
+      nodeId: InlineValue
+      config:
         type:
           type: string
           value: string
@@ -347,14 +385,17 @@ node:
         label:
           type: string
           value: '"utf-8"'
+      type: code
+      source:
+        type: package
+        data: "@flyde/stdlib"
     - pos:
         x: -944.0381005859375
         y: 246.93364501953124
       id: CsvExample-ek049t4
       inputConfig: {}
-      nodeId: InlineValue__CsvExample-ek049t4
-      macroId: InlineValue
-      macroData:
+      nodeId: InlineValue
+      config:
         type:
           type: string
           value: string
@@ -364,14 +405,17 @@ node:
         label:
           type: string
           value: '"data/sales.csv"'
+      type: code
+      source:
+        type: package
+        data: "@flyde/stdlib"
     - pos:
         x: -512.8389892578125
         y: 367.9654006958008
       id: wwh26ryrt4yqh71m26vevjyj
       inputConfig: {}
-      nodeId: InlineValue__wwh26ryrt4yqh71m26vevjyj
-      macroId: InlineValue
-      macroData:
+      nodeId: InlineValue
+      config:
         type:
           type: string
           value: string
@@ -381,25 +425,11 @@ node:
         label:
           type: string
           value: '"Europe"'
+      type: code
+      source:
+        type: package
+        data: "@flyde/stdlib"
   connections:
-    - from:
-        insId: clfuqs69n00014668p8jg106j
-        pinId: contents
-      to:
-        insId: Parse CSV-bn0462h
-        pinId: contents
-    - from:
-        insId: Parse CSV-bn0462h
-        pinId: parsed
-      to:
-        insId: Get Prices By Continent-e4046ap
-        pinId: list
-    - from:
-        insId: Get Prices By Continent-e4046ap
-        pinId: accumulated
-      to:
-        insId: clfuu4wdv00074668lyl7gtnw
-        pinId: list
     - from:
         insId: clfuu4wdv00074668lyl7gtnw
         pinId: sum
@@ -418,12 +448,6 @@ node:
       to:
         insId: clfuqs69n00014668p8jg106j
         pinId: path
-    - from:
-        insId: wwh26ryrt4yqh71m26vevjyj
-        pinId: value
-      to:
-        insId: Get Prices By Continent-e4046ap
-        pinId: value
   id: CsvExample
   inputs: {}
   outputs:

@@ -20,6 +20,8 @@ const elemPos = (elem: Element, boardPos: Pos): Pos => {
   };
 };
 
+export const unfoundPinPos = { x: 99999, y: 99999 };
+
 export function calcPinPosition(params: {
   insId: string;
   ancestorsInsIds?: string;
@@ -39,7 +41,7 @@ export function calcPinPosition(params: {
   const elem = document.getElementById(domId);
   if (!elem) {
     logger("calcPinPosition: cannot find element", { domId });
-    return { x: 99999, y: 99999 };
+    return unfoundPinPos;
   }
   return elemPos(elem, params.boardPos);
 }

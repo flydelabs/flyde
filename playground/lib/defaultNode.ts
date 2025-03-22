@@ -4,14 +4,18 @@ export const defaultNode: VisualNode = {
   instances: [
     {
       id: "voixmhfp3bpsbkz4c0kcbpe0",
-      macroId: "InlineValue",
-      macroData: {
+      nodeId: "InlineValue",
+      type: "code",
+      source: {
+        type: "package",
+        data: "@flyde/stdlib",
+      },
+      config: {
         type: "string",
         value: "Hello ",
         label: '"Hello "',
       },
       inputConfig: {},
-      nodeId: "InlineValue__voixmhfp3bpsbkz4c0kcbpe0",
       pos: {
         x: -186.9242626953125,
         y: 266.6974755859376,
@@ -20,6 +24,12 @@ export const defaultNode: VisualNode = {
     {
       id: "Concat-lq03jnw",
       nodeId: "Concat",
+      type: "code",
+      source: {
+        type: "package",
+        data: "@flyde/stdlib",
+      },
+      config: {},
       inputConfig: {},
       pos: {
         x: -128.57554931640624,

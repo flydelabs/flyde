@@ -10,7 +10,10 @@ node:
       inputConfig: {}
       nodeId: Duplicate__ins1
       macroId: Duplicate
-      macroData: 3
+      macroData:
+        times:
+          type: "number"
+          value: 3
   connections:
     - from:
         insId: __this
@@ -46,9 +49,9 @@ node:
       type: number
   inputsPosition:
     n:
-      x: 33.333282470703125
-      y: 16.6668701171875
+      x: -280.6667175292969
+      y: 61.6668701171875
   outputsPosition:
     r:
-      x: 43.333343505859375
-      y: 237.53330993652344
+      x: 248.33334350585938
+      y: 80.53330993652344

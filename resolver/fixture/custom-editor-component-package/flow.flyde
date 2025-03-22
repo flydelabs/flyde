@@ -1,0 +1,31 @@
+imports: {}
+node:
+  instances:
+    - pos:
+        x: -7
+        y: -5
+      id: ins1
+      inputConfig: {}
+      nodeId: Node
+      config: {}
+      type: code
+      source:
+        type: package
+        data: "@acme/custom-editor"
+  connections: []
+  id: Add1Wrapped
+  inputs:
+    n:
+      mode: required
+      type: number
+  outputs:
+    r:
+      type: number
+  inputsPosition:
+    n:
+      x: -201
+      y: -2
+  outputsPosition:
+    r:
+      x: 223
+      y: -7

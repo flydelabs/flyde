@@ -1,10 +1,4 @@
-import {
-  VisualNode,
-  Pos,
-  createInsId,
-  isMacroNodeInstance,
-  macroNodeInstance,
-} from "@flyde/core";
+import { VisualNode, Pos, createInsId } from "@flyde/core";
 import produce from "immer";
 import { ClipboardData } from "../VisualNodeEditor";
 
@@ -15,13 +9,11 @@ export const pasteInstancesCommand = (
 ) => {
   const newInstances = clipboardData.instances.map((ins) => {
     const id = createInsId(_node);
-    return isMacroNodeInstance(ins)
-      ? macroNodeInstance(id, ins.macroId, ins.macroData, undefined, mousePos)
-      : {
-          ...ins,
-          pos: mousePos,
-          id,
-        };
+    return {
+      ...ins,
+      pos: mousePos,
+      id,
+    };
   });
 
   const idMap = new Map(

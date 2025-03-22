@@ -20,6 +20,8 @@ export const Publish: CodeNode = {
   outputs: {},
   run: function (inputs, _, adv) {
     const nsKey = `${adv.ancestorsInsIds}__${inputs.key}`;
+
+    console.log("Publishing", nsKey, inputs.value);
     PubSub.publish(nsKey, inputs.value);
   },
 };

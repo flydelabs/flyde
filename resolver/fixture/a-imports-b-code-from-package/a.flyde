@@ -1,21 +1,17 @@
----
-imports:
-  "@acme/add1": Add1
+imports: {}
 node:
-  id: Add1Wrapped
-  inputs:
-    n:
-      type: number
-      mode: required
-  outputs:
-    r:
-      type: number
   instances:
-  - id: ins1
-    nodeId: Add1
-    pos:
-      x: 0
-      y: 0
+    - pos:
+        x: -7
+        y: -5
+      id: ins1
+      inputConfig: {}
+      nodeId: Add1
+      config: {}
+      type: code
+      source:
+        type: package
+        data: "@acme/add1"
   connections:
     - from:
         insId: __this
@@ -29,3 +25,19 @@ node:
       to:
         insId: __this
         pinId: r
+  id: Add1Wrapped
+  inputs:
+    n:
+      mode: required
+      type: number
+  outputs:
+    r:
+      type: number
+  inputsPosition:
+    n:
+      x: -201
+      y: -2
+  outputsPosition:
+    r:
+      x: 223
+      y: -7

@@ -3,7 +3,7 @@
 import "@flyde/flow-editor/src/index.scss";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import React from "react";
-import { FlydeFlow, ResolvedDependencies } from "@flyde/core";
+import { FlydeFlow } from "@flyde/core";
 import { safeParse } from "@/lib/safeParse";
 import { HistoryPlayer } from "@/lib/executeApp/createHistoryPlayer";
 import { FullPageLoader } from "../FullPageLoader";
@@ -14,7 +14,7 @@ export interface EmbeddedFlydeFileWrapperProps {
   content: string;
   onFileChange: (content: string) => void;
   fileName: string;
-  localNodes: ResolvedDependencies;
+  localNodes: any[];
   historyPlayer: HistoryPlayer;
 }
 

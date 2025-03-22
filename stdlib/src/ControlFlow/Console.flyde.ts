@@ -3,20 +3,25 @@ import { CodeNode } from "@flyde/core";
 const namespace = "Console";
 
 export const Log: CodeNode = {
-  id: "Log",
-  defaultStyle: {
-    icon: "fa-terminal",
-  },
+  id: "Log2",
+  menuDisplayName: "Console Log",
   namespace,
+  icon: "terminal",
+  displayName: "Log {{value}}",
   description: "Logs a value to the console",
   inputs: {
-    value: { description: "Value to log" },
+    value: {
+      description: "Value to log",
+    },
   },
   outputs: {
-    loggedValue: { description: "The value that was logged" },
+    loggedValue: {
+      description: "The value that was logged",
+    },
   },
-  run: ({ value }, { loggedValue }) => {
+  run: (inputs, outputs) => {
+    const { value } = inputs;
     console.log(value);
-    loggedValue.next(value);
+    outputs.loggedValue.next(value);
   },
 };

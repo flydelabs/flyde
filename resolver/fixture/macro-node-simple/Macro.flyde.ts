@@ -1,18 +1,32 @@
-import { DynamicOutput, MacroNode, OutputPinMap } from "@flyde/core";
+import { CodeNode, DynamicOutput, MacroConfigurableValue } from "@flyde/core";
 
-const node: MacroNode<number> = {
+interface DuplicateConfig {
+  times: MacroConfigurableValue;
+}
+
+export const Duplicate: CodeNode<DuplicateConfig> = {
   id: "Duplicate",
-  description: "Duplicates the input value",
-  editorConfig: {
-    type: "custom",
-    editorComponentBundlePath: "./Macro.flyde.ts",
+  mode: "advanced",
+  defaultStyle: {
+    icon: "copy",
   },
-  defaultData: 1,
-  definitionBuilder: (times) => {
-    const outputs = "x"
-      .repeat(times)
+  menuDisplayName: "Duplicate",
+  menuDescription: "Duplicates the input value a specified number of times",
+  displayName: () => "Duplicate",
+  description: (config) => `Duplicates the input value ${config.times} times`,
+  defaultConfig: {
+    times: { type: "number", value: 1 },
+  },
+  inputs: () => ({
+    value: {
+      description: "The value to be duplicated",
+    },
+  }),
+  outputs: (config) => {
+    return "x"
+      .repeat(config.times.value)
       .split("")
-      .reduce<OutputPinMap>((acc, _, i) => {
+      .reduce((acc, _, i) => {
         return {
           ...acc,
           [`output${i}`]: {
@@ -20,18 +34,10 @@ const node: MacroNode<number> = {
           },
         };
       }, {});
-
-    return {
-      description: `Duplicates the input value`,
-      inputs: {
-        value: {
-          description: "The value to be duplicated",
-        },
-      },
-      outputs,
-    };
   },
-  runFnBuilder: (times) => async (inputs, outputs) => {
+  run: (inputs, outputs, adv) => {
+    const { times: timesConfig } = adv.context.config;
+    const times = timesConfig.value;
     const value = inputs.value;
 
     for (let i = 0; i < times; i++) {
@@ -40,5 +46,3 @@ const node: MacroNode<number> = {
     }
   },
 };
-
-export default node;

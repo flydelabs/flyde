@@ -1,8 +1,8 @@
-import { CodeNode } from "@flyde/core";
+import { InternalCodeNode } from "@flyde/core";
 
 const namespace = "Control Flow";
 
-export const LimitTimes: CodeNode = {
+export const LimitTimes: InternalCodeNode = {
   id: "Limit Times",
   namespace,
   description: "Item will be emitted until the limit is reached",

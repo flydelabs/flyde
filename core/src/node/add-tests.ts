@@ -1,5 +1,3 @@
-import { dynamicNodeInput, Node } from ".";
-
 import { spy } from "sinon";
 
 import { execute } from "../execute";
@@ -7,14 +5,11 @@ import { execute } from "../execute";
 import { Subject } from "rxjs";
 
 import { assert } from "chai";
-import { NodesCollection } from "..";
-import { queueInputPinConfig, stickyInputPinConfig } from "./pin-config";
+import { InternalCodeNode } from "..";
+import { queueInputPinConfig, stickyInputPinConfig } from "../types/pin-config";
+import { dynamicNodeInput } from "../types/pins";
 
-export const runAddTests = (
-  add: Node,
-  source: string,
-  resolvedDeps: NodesCollection
-) => {
+export const runAddTests = (add: InternalCodeNode, source: string) => {
   describe(`Add tests: ${source}`, () => {
     it("runs fn when dynamic inputs are given", () => {
       const fn = spy();
@@ -28,7 +23,6 @@ export const runAddTests = (
         node: add,
         inputs: { n1, n2 },
         outputs: { r },
-        resolvedDeps: resolvedDeps,
       });
       n1.subject.next(1);
       n2.subject.next(2);
@@ -49,7 +43,6 @@ export const runAddTests = (
         node: add,
         inputs: { n1, n2 },
         outputs: { r },
-        resolvedDeps: resolvedDeps,
       });
       assert.equal(fn.callCount, 0);
       n1.subject.next(1);
@@ -72,7 +65,6 @@ export const runAddTests = (
         node: add,
         inputs: { n1, n2 },
         outputs: { r },
-        resolvedDeps: resolvedDeps,
       });
       n1.subject.next(1);
       n2.subject.next(2);
@@ -98,7 +90,6 @@ export const runAddTests = (
         node: add,
         inputs: { n1, n2 },
         outputs: { r },
-        resolvedDeps: resolvedDeps,
       });
       n1.subject.next(1);
       n2.subject.next(2);
@@ -124,7 +115,6 @@ export const runAddTests = (
         node: add,
         inputs: { n1, n2 },
         outputs: { r },
-        resolvedDeps: resolvedDeps,
       });
       n1.subject.next(1);
       n2.subject.next(2);

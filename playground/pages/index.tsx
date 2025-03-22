@@ -29,7 +29,7 @@ export const getServerSideProps: GetServerSideProps<{
 
   return {
     props: {
-      apps: res.data as PlaygroundApp[],
+      apps: res.data as unknown as PlaygroundApp[],
     },
   };
 };

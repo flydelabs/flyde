@@ -1,18 +1,19 @@
 import * as React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  isInlineVisualNodeInstance,
   entries,
   pickFirst,
   OMap,
   keys,
   nodeInput,
-  isInlineNodeInstance,
   NodeStyle,
   getNodeOutputs,
   getInputName,
   getOutputName,
-  NodeDefinition,
-  isMacroNodeInstance,
+  CodeNodeDefinition,
+  VisualNodeInstance,
+  CodeNodeInstance,
 } from "@flyde/core";
 import classNames from "classnames";
 import { DiffStatus } from "../VisualNodeDiffView";
@@ -21,19 +22,13 @@ import { PinView } from "../pin-view/PinView";
 import {
   ConnectionData,
   Pos,
-  NodesDefCollection,
   isStickyInputPinConfig,
   ERROR_PIN_ID,
   TRIGGER_PIN_ID,
   nodeOutput,
   isInputPinOptional,
 } from "@flyde/core";
-import {
-  NodeInstance,
-  isVisualNode,
-  PinType,
-  getNodeInputs,
-} from "@flyde/core";
+import { NodeInstance, PinType, getNodeInputs } from "@flyde/core";
 import { calcNodeContent } from "./utils";
 import { BaseNodeView } from "../base-node-view";
 
@@ -69,7 +64,7 @@ export const MAX_INSTANCE_WIDTH = 400; // to change in CSS as well
 
 export const getVisibleInputs = (
   instance: NodeInstance,
-  node: NodeDefinition,
+  node: CodeNodeDefinition,
   connections: ConnectionData[]
 ): string[] => {
   const { visibleInputs } = instance;
@@ -96,7 +91,7 @@ export const getVisibleInputs = (
 
 export const getVisibleOutputs = (
   instance: NodeInstance,
-  node: NodeDefinition,
+  node: CodeNodeDefinition,
   connections: ConnectionData[]
 ) => {
   const { visibleOutputs } = instance;
@@ -118,7 +113,7 @@ export const getVisibleOutputs = (
 
 export interface InstanceViewProps {
   instance: NodeInstance;
-  node: NodeDefinition;
+  node?: CodeNodeDefinition;
   selected?: boolean;
   dragged?: boolean;
   selectedInput?: string;
@@ -133,7 +128,6 @@ export interface InstanceViewProps {
 
   ancestorsInsIds?: string;
 
-  resolvedDeps: NodesDefCollection;
   onPinClick: (v: NodeInstance, k: string, type: PinType) => void;
   onPinDblClick: (
     v: NodeInstance,
@@ -196,7 +190,6 @@ export const InstanceView: React.FC<InstanceViewProps> =
       connections,
       instance,
       viewPort,
-      node,
       onPinClick,
       onPinDblClick,
       onDragStart,
@@ -224,15 +217,16 @@ export const InstanceView: React.FC<InstanceViewProps> =
 
     const inlineEditorRef = React.useRef();
 
+    const node = props.node;
+
     const style = React.useMemo(() => {
       return {
-        icon: instance.style?.icon ?? node.defaultStyle?.icon,
-        color: instance.style?.color ?? node.defaultStyle?.color,
-        size: instance.style?.size ?? node.defaultStyle?.color ?? "regular",
-        cssOverride:
-          instance.style?.cssOverride ?? node.defaultStyle?.cssOverride,
+        icon: node?.icon ?? node?.defaultStyle?.icon,
+        color: node?.defaultStyle?.color,
+        size: node?.defaultStyle?.color ?? "regular",
+        cssOverride: node?.defaultStyle?.cssOverride,
       } as NodeStyle;
-    }, [node, instance]);
+    }, [node]);
 
     const connectedInputs = React.useMemo(() => {
       return new Map(
@@ -455,10 +449,10 @@ export const InstanceView: React.FC<InstanceViewProps> =
     const _onSetDisplayName = React.useCallback(async () => {
       const name = await _prompt(
         `Set custom display name`,
-        instance.displayName || node.id
+        node.displayName || node.id
       );
       onSetDisplayName(instance, name);
-    }, [_prompt, instance, onSetDisplayName, node.id]);
+    }, [_prompt, node.displayName, node.id, onSetDisplayName, instance]);
 
     const inputKeys = Object.keys(getNodeInputs(node));
     const outputKeys = Object.keys(getNodeOutputs(node));
@@ -541,11 +535,9 @@ export const InstanceView: React.FC<InstanceViewProps> =
 
       return (
         <ContextMenuContent>
-          {isMacroNodeInstance(instance) && (
-            <ContextMenuItem onClick={(e) => onDblClick(e)}>
-              Change configuration
-            </ContextMenuItem>
-          )}
+          <ContextMenuItem onClick={(e) => onDblClick(e)}>
+            Change configuration
+          </ContextMenuItem>
           <ContextMenuSub>
             <ContextMenuSubTrigger>Style</ContextMenuSubTrigger>
             <ContextMenuSubContent>
@@ -558,7 +550,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
           </ContextMenuSub>
           {inputMenuItems}
           {outputMenuItems}
-          {isInlineNodeInstance(instance) && isVisualNode(instance.node) && (
+          {isInlineVisualNodeInstance(instance) && (
             <ContextMenuItem onClick={() => onUngroup(instance)}>
               Ungroup inline node
             </ContextMenuItem>
@@ -612,11 +604,12 @@ export const InstanceView: React.FC<InstanceViewProps> =
       if (inlineGroupProps) {
         return (
           <Dialog open={true} onOpenChange={() => props.onCloseInlineEditor()}>
-            <DialogContent className="inline-group-editor-container no-drag">
-              <DialogHeader>
-                <DialogTitle>Editing inline node {content}</DialogTitle>
+            <DialogContent className="inline-group-editor-container no-drag w-[85vw] max-w-[95vw] h-[85vh] max-h-[95vh] flex flex-col overflow-hidden p-0">
+              <DialogHeader className="border-b py-3 px-6">
+                <DialogTitle className="font-medium">{`Editing inline node ${content}`}</DialogTitle>
               </DialogHeader>
-              <div className="p-4" tabIndex={0}>
+
+              <div className="flex-1 flex overflow-auto" tabIndex={0}>
                 <VisualNodeEditorProvider
                   boardData={inlineGroupProps.boardData}
                   onChangeBoardData={inlineGroupProps.onChangeBoardData}
@@ -625,7 +618,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
                 >
                   <VisualNodeEditor
                     {...props.inlineGroupProps}
-                    className="no-drag"
+                    className="no-drag flex-1 w-full h-full"
                     ref={inlineEditorRef}
                   />
                 </VisualNodeEditorProvider>
@@ -638,9 +631,9 @@ export const InstanceView: React.FC<InstanceViewProps> =
       }
     };
 
-    const nodeIdForDomDataAttr = isMacroNodeInstance(instance)
-      ? instance.macroId
-      : node.id;
+    const nodeIdForDomDataAttr = (
+      instance as VisualNodeInstance | CodeNodeInstance
+    ).nodeId;
 
     const nodeSize = React.useMemo(() => {
       const hasLongDisplayName = content?.length > 20;
@@ -727,6 +720,10 @@ export const InstanceView: React.FC<InstanceViewProps> =
         </div>
       );
     };
+
+    if (!node) {
+      return "LOADING";
+    }
 
     return (
       <div

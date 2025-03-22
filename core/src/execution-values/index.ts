@@ -1,14 +1,14 @@
 import {
+  InternalNode,
   isQueueInputPinConfig,
   isStickyInputPinConfig,
-  Node,
   NodeInput,
   NodeInputs,
   NodeState,
 } from "../node";
 
 import { containsAll, entries, isDefined, keys } from "../common";
-import { TRIGGER_PIN_ID } from "../connect";
+import { TRIGGER_PIN_ID } from "../connect/helpers";
 
 export const peekValueForExecution = (
   key: string,
@@ -85,7 +85,7 @@ export const hasNewSignificantValues = (
 export const isNodeStateValid = (
   nodeInputs: NodeInputs,
   state: NodeState,
-  node: Node
+  node: InternalNode
 ) => {
   const connectedKeys = keys(nodeInputs);
 

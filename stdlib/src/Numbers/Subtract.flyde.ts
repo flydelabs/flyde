@@ -1,17 +1,19 @@
 import { CodeNode } from "@flyde/core";
 
-const namespace = "Numbers";
+// for backwards compatibility
 export const Subtract: CodeNode = {
   id: "Subtract",
-  defaultStyle: {
-    icon: "fa-minus",
-  },
-  namespace,
-  description: "Emits the difference of two numbers",
+  description: "Subtract two numbers",
   inputs: {
-    n1: { description: "First number to subtract" },
-    n2: { description: "Second number to subtract" },
+    n1: {},
+    n2: {},
   },
-  outputs: { difference: { description: "The difference of n1 and n2" } },
-  run: ({ n1, n2 }, { difference }) => difference.next(n1 - n2),
+  outputs: {
+    difference: {
+      description: "The difference of the two numbers",
+    },
+  },
+  run: (inputs, { difference }) => {
+    difference.next(inputs.n1 - inputs.n2);
+  },
 };

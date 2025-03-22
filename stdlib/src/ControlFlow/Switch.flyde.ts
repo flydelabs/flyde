@@ -1,4 +1,4 @@
-import { InputPinMap, MacroNode, OutputPinMap } from "@flyde/core";
+import { CodeNode } from "@flyde/core";
 
 export interface SwitchConfig {
   inputs: string[];
@@ -17,96 +17,84 @@ export interface SwitchConfig {
       };
 }
 
-export const Switch: MacroNode<SwitchConfig> = {
+export const Switch: CodeNode<SwitchConfig> = {
   id: "Switch",
   namespace: "Control Flow",
+  mode: "advanced",
   defaultStyle: {
     icon: "sitemap",
   },
-  description:
+  menuDisplayName: "Switch",
+  menuDescription:
     "Allows you to switch between multiple outputs based on the value of one input or more, using code expressions",
-  runFnBuilder: (config) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    function evalExpression(expression: string, inputs: any) {
-      return eval(`(inputs) => (${expression})`)(inputs);
-    }
-    return (inputs, outputs, adv) => {
-      const { defaultCase, cases: cases } = config;
-
-      let foundCase = false;
-
-      for (const { name, conditionExpression, outputExpression } of cases) {
-        try {
-          const condition = evalExpression(conditionExpression, inputs);
-          if (condition) {
-            try {
-              outputs[name].next(evalExpression(outputExpression, inputs));
-              foundCase = true;
-            } catch (e) {
-              adv.onError(e);
-            }
-            break;
-          }
-        } catch (e) {
-          adv.onError(e);
-        }
-      }
-
-      if (!foundCase && defaultCase.enabled) {
-        outputs.default.next(
-          evalExpression(defaultCase.outputExpression, inputs)
-        );
-      }
-    };
-  },
-  definitionBuilder: (config) => {
-    const { inputs, cases: outputs, defaultCase } = config;
-
-    const inputDefs = inputs.map((name, i) => ({
-      name,
-      description: `Switch input no. ${i + 1}`,
-    }));
-
-    const outputDefs = outputs.map(({ name }, i) => ({
-      name,
-      description: `Switch output no. ${i + 1}`,
-    }));
-
-    if (defaultCase.enabled) {
-      outputDefs.push({
-        name: "default",
-        description: "Switch default case output",
-      });
-    }
-
-    return {
-      inputs: inputDefs.reduce<InputPinMap>((acc, { name, description }) => {
-        acc[name] = { description };
-        return acc;
-      }, {}),
-      outputs: outputDefs.reduce<OutputPinMap>((acc, { name, description }) => {
-        acc[name] = { description };
-        return acc;
-      }, {}),
-      displayName: "Switch",
-    };
-  },
-  defaultData: {
+  displayName: () => "Switch",
+  description: (config) =>
+    `Switch between ${config.cases.length} cases based on conditions`,
+  defaultConfig: {
     inputs: ["value"],
     cases: [
       {
         name: "case1",
-        conditionExpression: "",
+        conditionExpression: "inputs.value === 'case1'",
         outputExpression: "inputs.value",
       },
     ],
     defaultCase: {
       enabled: true,
-      outputExpression: "input.value",
+      outputExpression: "inputs.value",
     },
+  },
+  inputs: (config) =>
+    config.inputs.reduce((acc, name, i) => {
+      acc[name] = { description: `Switch input no. ${i + 1}` };
+      return acc;
+    }, {}),
+  outputs: (config) => {
+    const outputs = config.cases.reduce((acc, { name }, i) => {
+      acc[name] = { description: `Switch output no. ${i + 1}` };
+      return acc;
+    }, {});
+
+    if (config.defaultCase.enabled) {
+      outputs["default"] = { description: "Switch default case output" };
+    }
+
+    return outputs;
+  },
+  run: (inputs, outputs, adv) => {
+    const { defaultCase, cases } = adv.context.config;
+
+    let foundCase = false;
+
+    for (const { name, conditionExpression, outputExpression } of cases) {
+      try {
+        const condition = evalExpression(conditionExpression, inputs);
+        if (condition) {
+          try {
+            outputs[name].next(evalExpression(outputExpression, inputs));
+            foundCase = true;
+          } catch (e) {
+            adv.onError(e);
+          }
+          break;
+        }
+      } catch (e) {
+        adv.onError(e);
+      }
+    }
+
+    if (!foundCase && defaultCase.enabled) {
+      outputs.default.next(
+        evalExpression(defaultCase.outputExpression, inputs)
+      );
+    }
   },
   editorConfig: {
     type: "custom",
     editorComponentBundlePath: "../../dist/ui/Switch.js",
   },
 };
+
+function evalExpression(expression: string, inputs: Record<string, unknown>) {
+  return eval(`(inputs) => (${expression})`)(inputs);
+}

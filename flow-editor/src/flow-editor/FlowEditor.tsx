@@ -4,8 +4,6 @@ import {
   VisualNode,
   NodeInstance,
   FlydeFlow,
-  ImportedNodeDef,
-  InlineNodeInstance,
   PinType,
   DebuggerEventType,
   ROOT_INS_ID,
@@ -36,7 +34,6 @@ import { AiCompletionContext, AiCompletionProvider } from "@flyde/ui";
 
 export * from "./ports";
 export * from "./DebuggerContext";
-export * from "./DependenciesContext";
 
 library.add(fab, fas);
 
@@ -50,8 +47,6 @@ export type FlydeFlowEditorProps = {
   onChangeEditorState: React.Dispatch<React.SetStateAction<FlowEditorState>>;
 
   onNewEnvVar?: (name: string, val: any) => void;
-
-  onExtractInlineNode: (ins: InlineNodeInstance) => Promise<void>;
 
   ref?: React.Ref<any>;
 
@@ -123,7 +118,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
       return undefined;
     }, [debuggerClient]);
 
-    const { openFile, createAiCompletion } = usePorts();
+    const { createAiCompletion } = usePorts();
 
     const onChangeFlow = React.useCallback(
       (newFlow: Partial<FlydeFlow>, changeType: FlydeFlowChangeType) => {
@@ -199,13 +194,6 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
       [onChangeFlow]
     );
 
-    const onEditNode = React.useCallback(
-      (node: ImportedNodeDef) => {
-        openFile({ absPath: node.source.path });
-      },
-      [openFile]
-    );
-
     const [inspectedItem, setInspectedItem] = React.useState<{
       insId: string;
       pin?: { type: PinType; id: string };
@@ -232,13 +220,6 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
       };
     }, [createAiCompletion]);
 
-    const [isDiffViewOpen, setIsDiffViewOpen] = React.useState(false);
-
-    // Add a button to toggle the diff view
-    const toggleDiffView = React.useCallback(() => {
-      setIsDiffViewOpen((prev) => !prev);
-    }, []);
-
     const renderInner = () => {
       return (
         <DarkModeProvider value={props.darkMode ?? isDarkMode}>
@@ -261,15 +242,14 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
                   currentInsId={ROOT_INS_ID}
                   ref={visualEditorRef}
                   key={editedNode.id}
-                  onGoToNodeDef={onEditNode}
                   clipboardData={clipboardData}
                   onCopy={setClipboardData}
                   nodeIoEditable={!editedNode.id.startsWith("Trigger")}
                   onInspectPin={onInspectPin}
-                  onExtractInlineNode={props.onExtractInlineNode}
                   queuedInputsData={queuedInputsData}
                   initialPadding={props.initialPadding}
                   instancesWithErrors={instancesWithErrors}
+                  tempFlow={state.flow}
                 />
               </React.Fragment>
             </VisualNodeEditorProvider>

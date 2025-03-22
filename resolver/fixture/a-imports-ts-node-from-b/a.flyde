@@ -6,8 +6,8 @@ imports:
 node:
   instances:
     - pos:
-        x: 19.03265380859375
-        y: -61.73219299316406
+        x: 22.03265380859375
+        y: -59.73219299316406
       id: xyv2im2edn3md8gghwtkmd43
       inputConfig: {}
       nodeId: Sub
@@ -32,11 +32,12 @@ node:
   outputs:
     r:
       type: number
+  macroData: {}
   inputsPosition:
     n:
-      x: 33.34002685546875
-      y: -138.33328247070312
+      x: -145.65997314453125
+      y: -55.333282470703125
   outputsPosition:
     r:
-      x: 44.16668701171875
-      y: 99.13584899902344
+      x: 239.16668701171875
+      y: -58.86415100097656

@@ -3,23 +3,24 @@ import {
   isCodeNodePath,
   resolveCodeNodeDependencies,
   deserializeFlow,
-  macroNodeToDefinition,
 } from "@flyde/resolver";
 
 import {
   BaseNode,
   debugLogger,
-  isBaseNode,
-  isMacroNode,
-  NodesDefCollection,
-  ImportablesResult,
+  isCodeNode,
+  ImportableEditorNode,
+  CodeNode,
+  visualNodeToImportableEditorNode,
+  codeNodeToImportableEditorNode,
 } from "@flyde/core";
-import { scanFolderStructure } from "./scan-folders-structure";
+
 import { FlydeFile } from "../fs-helper/shared";
 import { getFlydeDependencies } from "./get-flyde-dependencies";
 import { resolveDependentPackages } from "./resolve-dependent-packages";
 import * as StdLib from "@flyde/stdlib/dist/all";
 import { readFileSync } from "fs";
+import { scanFolderStructure } from "./scan-folders-structure";
 
 export interface CorruptScannedNode {
   type: "corrupt";
@@ -29,7 +30,10 @@ export interface CorruptScannedNode {
 export async function scanImportableNodes(
   rootPath: string,
   filename: string
-): Promise<ImportablesResult> {
+): Promise<{
+  nodes: ImportableEditorNode[];
+  errors: { path: string; message: string }[];
+}> {
   const fileRoot = join(rootPath, filename);
 
   const localFiles = getLocalFlydeFiles(rootPath);
@@ -38,44 +42,48 @@ export async function scanImportableNodes(
 
   const depsNodes = await resolveDependentPackages(rootPath, depsNames);
 
-  let builtInStdLib: Record<string, Record<string, BaseNode>> = {};
+  let builtInStdLib: Record<string, ImportableEditorNode[]> = {};
   if (!depsNames.includes("@flyde/stdlib")) {
     debugLogger("Using built-in stdlib");
 
     const nodes = Object.fromEntries(
-      Object.entries(StdLib).filter((pair) => isBaseNode(pair[1]))
-    ) as NodesDefCollection;
+      Object.entries(StdLib)
+        .filter((pair): pair is [string, CodeNode] => isCodeNode(pair[1]))
+        .map<[string, ImportableEditorNode]>(([id, node]) => [
+          id,
+          codeNodeToImportableEditorNode(node, {
+            type: "package",
+            data: "@flyde/stdlib",
+          }),
+        ])
+    );
     builtInStdLib = {
-      "@flyde/stdlib": nodes,
+      "@flyde/stdlib": Object.values(nodes),
     };
   }
 
-  let allErrors: ImportablesResult["errors"] = [];
+  let allErrors: { path: string; message: string }[] = [];
 
   const localNodes = localFiles
     .filter((file) => !file.relativePath.endsWith(filename))
-    .reduce<Record<string, Record<string, BaseNode>>>((acc, file) => {
+    .reduce<Record<string, ImportableEditorNode[]>>((acc, file) => {
       if (isCodeNodePath(file.fullPath)) {
         const { errors, nodes } = resolveCodeNodeDependencies(file.fullPath);
         allErrors.push(
           ...errors.map((err) => ({ path: file.fullPath, message: err }))
         );
 
-        const nodesObj = nodes.reduce(
-          (obj, { node }) => ({
-            ...obj,
-            [node.id]: isMacroNode(node)
-              ? macroNodeToDefinition(node, file.fullPath)
-              : node,
-          }),
-          {}
-        );
+        const nodesObj: ImportableEditorNode[] = nodes.map(({ node }) => {
+          const importableNode = codeNodeToImportableEditorNode(node, {
+            type: "file",
+            data: file.fullPath,
+          });
+          return importableNode;
+        });
+
         const relativePath = relative(join(fileRoot, ".."), file.fullPath);
-        acc[relativePath] ??= {};
-        acc[relativePath] = {
-          ...acc[relativePath],
-          ...nodesObj,
-        };
+        acc[relativePath] ??= [];
+        acc[relativePath] = [...acc[relativePath], ...nodesObj];
 
         return acc;
       }
@@ -88,8 +96,13 @@ export async function scanImportableNodes(
 
         const relativePath = relative(join(fileRoot, ".."), file.fullPath);
 
-        acc[relativePath] ??= {};
-        acc[relativePath][flow.node.id] = flow.node;
+        acc[relativePath] ??= [];
+
+        const importableNode = visualNodeToImportableEditorNode(flow.node, {
+          type: "file",
+          data: file.fullPath,
+        });
+        acc[relativePath].push(importableNode);
 
         return acc;
       } catch (e) {
@@ -102,8 +115,13 @@ export async function scanImportableNodes(
       }
     }, {});
 
+  const depNodesFlat = Object.values(depsNodes).flat();
+  const localNodesFlat = Object.values(localNodes).flat();
+  const builtInStdLibFlat = Object.values(builtInStdLib).flat();
+
   return {
-    importables: { ...builtInStdLib, ...depsNodes, ...localNodes },
+    nodes: [...builtInStdLibFlat, ...depNodesFlat, ...localNodesFlat],
+
     errors: allErrors,
   };
 }

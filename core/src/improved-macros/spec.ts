@@ -1,29 +1,30 @@
 import { assert } from "chai";
 import { spiedOutput } from "../test-utils";
 
-import { processImprovedMacro, ImprovedMacroNode } from "./improved-macros";
+import { processImprovedMacro, CodeNode } from "./improved-macros";
 import {
   extractInputsFromValue,
   replaceInputsInValue,
+  evaluateCondition,
 } from "./improved-macro-utils";
 import { eventually } from "..";
-import {
-  MacroConfigurableValue,
-  macroConfigurableValue,
-  nodeOutput,
-  dynamicNodeInput,
-  MacroEditorConfigStructured,
-  evaluateCondition,
-} from "..";
+import { MacroConfigurableValue, MacroEditorConfigStructured } from "..";
+
+import { dynamicNodeInput } from "../node";
+
+import { nodeOutput } from "../node";
+
+import { macroConfigurableValue } from "../node/macro-node";
 
 describe("ImprovedMacros", () => {
   describe("SimpleMacro with dot notation", () => {
     it("processes input with dot notation template", async () => {
       // Define a simple macro node
-      const SimpleMacro: ImprovedMacroNode<{
+      const SimpleMacro: CodeNode<{
         message: MacroConfigurableValue;
       }> = {
         id: "SimpleMacro",
+        mode: "advanced",
         defaultConfig: {
           message: macroConfigurableValue(
             "string",
@@ -72,10 +73,11 @@ describe("ImprovedMacros", () => {
 
   describe("JSON Multiline String Macro", () => {
     it("processes multiline input in JSON template", async () => {
-      const MultilineJsonMacro: ImprovedMacroNode<{
+      const MultilineJsonMacro: CodeNode<{
         data: MacroConfigurableValue;
       }> = {
         id: "MultilineJsonMacro",
+        mode: "advanced",
         defaultConfig: {
           data: macroConfigurableValue(
             "json",
@@ -133,10 +135,11 @@ describe("ImprovedMacros", () => {
     });
 
     it("preserves non-string property types in JSON template", async () => {
-      const TypePreservingMacro: ImprovedMacroNode<{
+      const TypePreservingMacro: CodeNode<{
         data: MacroConfigurableValue;
       }> = {
         id: "TypePreservingMacro",
+        mode: "advanced",
         defaultConfig: {
           data: macroConfigurableValue(
             "json",
@@ -202,7 +205,7 @@ describe("ImprovedMacros", () => {
 
   describe("Conditional Inputs", () => {
     it("supports conditional inputs based on string expressions", async () => {
-      const ConditionalInputsMacro: ImprovedMacroNode = {
+      const ConditionalInputsMacro: CodeNode = {
         id: "ConditionalInputsMacro",
         displayName: "Conditional Inputs Macro",
         inputs: {

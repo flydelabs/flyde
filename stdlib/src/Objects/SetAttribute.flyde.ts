@@ -1,8 +1,8 @@
-import { processImprovedMacro, ImprovedMacroNode } from "@flyde/core";
+import { CodeNode } from "@flyde/core";
 
 const namespace = "Objects";
 
-const setAttribute2: ImprovedMacroNode = {
+export const SetAttribute: CodeNode = {
   id: "SetAttribute",
   namespace,
   menuDisplayName: "Set Attribute",
@@ -39,5 +39,3 @@ const setAttribute2: ImprovedMacroNode = {
     outputs.object.next(object);
   },
 };
-
-export const SetAttribute = processImprovedMacro(setAttribute2);

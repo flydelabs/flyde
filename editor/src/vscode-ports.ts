@@ -27,12 +27,19 @@ export const postMessageCallback = (
   const requestId = slug();
   const vscode = safelyAcquireApi();
   vscode.postMessage({ type, params, requestId, source: "app" }, "*");
-  return new Promise((res) => {
+  return new Promise((resolve, reject) => {
     const handler = (event: MessageEvent) => {
       const { data } = event;
       if (data && data.type === type && data.requestId === requestId) {
-        res(event.data.payload);
         window.removeEventListener("message", handler);
+        if (data.status === "error") {
+          const errorMessage = data.payload?.message || "Unknown error";
+          const error = new Error(errorMessage);
+          error.stack = data.payload?.stack || error.stack;
+          reject(error);
+        } else {
+          resolve(data.payload);
+        }
       }
     };
     window.addEventListener("message", handler);
@@ -55,15 +62,6 @@ export const createVsCodePorts = (): EditorPorts => {
     },
     setFlow: async (dto) => {
       return postMessageCallback("setFlow", dto);
-    },
-    resolveDeps: async (dto) => {
-      return postMessageCallback("resolveDeps", dto);
-    },
-    getImportables: async (dto) => {
-      return postMessageCallback("getImportables", dto);
-    },
-    onInstallRuntimeRequest: async () => {
-      return postMessageCallback("onInstallRuntimeRequest", {});
     },
     generateNodeFromPrompt: async (dto) => {
       return postMessageCallback("generateNodeFromPrompt", dto);
@@ -104,6 +102,9 @@ export const createVsCodePorts = (): EditorPorts => {
     },
     createAiCompletion: async (dto) => {
       return postMessageCallback("createAiCompletion", dto);
+    },
+    resolveInstance: async (dto) => {
+      return postMessageCallback("resolveInstance", dto);
     },
   };
 };

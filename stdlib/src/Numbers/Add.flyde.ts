@@ -1,17 +1,19 @@
 import { CodeNode } from "@flyde/core";
 
-const namespace = "Numbers";
+// for backwards compatibility
 export const Add: CodeNode = {
   id: "Add",
-  defaultStyle: {
-    icon: "fa-plus",
-  },
-  namespace,
-  description: "Emits the sum of two numbers",
+  description: "Add two numbers",
   inputs: {
-    n1: { description: "First number to add" },
-    n2: { description: "Second number to add" },
+    n1: {},
+    n2: {},
   },
-  outputs: { sum: { description: "The sum of n1 and n2" } },
-  run: ({ n1, n2 }, { sum }) => sum.next(n1 + n2),
+  outputs: {
+    sum: {
+      description: "The sum of the two numbers",
+    },
+  },
+  run: (inputs, { sum }) => {
+    sum.next(inputs.n1 + inputs.n2);
+  },
 };

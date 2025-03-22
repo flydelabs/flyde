@@ -1,21 +1,14 @@
----
 imports:
-  "./Add1Wrapper.flyde": Add1Wrapper
+  ./Add1Wrapper.flyde:
+    - Add1Wrapper
 node:
-  id: Add1WrapperTwice
-  inputs:
-    n:
-      type: number
-      mode: required
-  outputs:
-    r:
-      type: number
   instances:
-  - id: ins1
-    nodeId: Add1Wrapper
-    pos:
-      x: 0
-      y: 0
+    - pos:
+        x: 57
+        y: 74
+      id: ins1
+      inputConfig: {}
+      nodeId: Add1Wrapper
   connections:
     - from:
         insId: __this
@@ -29,3 +22,19 @@ node:
       to:
         insId: __this
         pinId: r
+  id: Add1WrapperTwice
+  inputs:
+    n:
+      mode: required
+      type: number
+  outputs:
+    r:
+      type: number
+  inputsPosition:
+    n:
+      x: -166
+      y: 86
+  outputsPosition:
+    r:
+      x: 280
+      y: 43

@@ -1,7 +1,7 @@
 // // ```
 // import {
 //   BaseNode,
-//   CodeNode,
+//   InternalCodeNode,
 //   InputNodePin,
 //   OutputNodePin,
 //   NodeStyleSize,
@@ -44,7 +44,7 @@
 // };
 
 // // This is the refactored nodeFromSimpleFunction function.
-// export function nodeFromSimpleFunction(data: SimpleFnData): CodeNode {
+// export function nodeFromSimpleFunction(data: SimpleFnData): InternalCodeNode {
 //   const inputs: ImprovedInputs = {}; // Using the improved inputs type defined above.
 //   const outputs: Output = {};
 

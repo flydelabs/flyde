@@ -1,6 +1,4 @@
-imports:
-  "@flyde/stdlib":
-    - Add
+imports: {}
 node:
   instances:
     - pos:
@@ -11,6 +9,10 @@ node:
         n1:
           mode: queue
       nodeId: Add
+      config: {}
+      source:
+        type: package
+        data: "@flyde/stdlib"
   connections:
     - from:
         insId: __this
@@ -40,9 +42,9 @@ node:
       type: number
   inputsPosition:
     n:
-      x: 26.400238037109375
-      y: -66.00590515136719
+      x: -217.38873291015625
+      y: 92.04984283447266
   outputsPosition:
     r:
-      x: 154.27789306640625
-      y: -27.210189819335938
+      x: 212.6500244140625
+      y: 76.63396453857422

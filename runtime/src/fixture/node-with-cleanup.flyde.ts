@@ -1,6 +1,6 @@
-import { CodeNode } from "@flyde/core";
+import { InternalCodeNode } from "@flyde/core";
 
-export const node: CodeNode = {
+export const node: InternalCodeNode = {
   id: "IdWithCleanup",
   inputs: {
     n: { mode: "required" },

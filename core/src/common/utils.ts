@@ -77,11 +77,15 @@ export const pickFirst = <K>(v: [K, any]): K => v[0];
 export const pickSecond = <K>(v: [any, K]): K => v[1];
 
 export type RandomFunction = {
+  (): number;
   (max: number): number;
   (max: number, min: number): number;
 };
 
-export const randomInt: RandomFunction = (to: number, from: number = 0) => {
+export const randomInt: RandomFunction = (
+  to: number = 100,
+  from: number = 0
+) => {
   const rnd = Math.random();
   return from + Math.floor((to - from) * rnd);
 };

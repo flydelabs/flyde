@@ -1,7 +1,7 @@
-import { CodeNode } from "@flyde/core";
+import { InternalCodeNode } from "@flyde/core";
 import * as fs from "fs";
 
-export const DeleteFile: CodeNode = {
+export const DeleteFile: InternalCodeNode = {
   id: "Delete File",
   defaultStyle: {
     icon: "fa-file",

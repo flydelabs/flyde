@@ -4,8 +4,8 @@ imports:
 node:
   instances:
     - pos:
-        x: -278.7986482747395
-        y: -372.1578045654297
+        x: -986.7986482747394
+        y: 49.84219543457033
       id: rhwh49xq3syxrx9h8z6nvmmq
       inputConfig: {}
       nodeId: Note__rhwh49xq3syxrx9h8z6nvmmq

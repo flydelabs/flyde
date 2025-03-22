@@ -2,7 +2,7 @@ import { AppFileType } from "@/components/AppView";
 import { visualNode } from "@flyde/core";
 import { defaultNode } from "./defaultNode";
 
-const defaultCodeNodeContent = `import type { CodeNode } from "@flyde/core";
+const defaultCodeNodeContent = `import type { InternalCodeNode } from "@flyde/core";
 
 /*
  Feel free to change the content of this file to experiment with the code nodes
@@ -11,7 +11,7 @@ const defaultCodeNodeContent = `import type { CodeNode } from "@flyde/core";
  Full API reference: https://www.flyde.dev/docs/custom-nodes/
  */
 
-export const Add: CodeNode = {
+export const Add: InternalCodeNode = {
   id: "Add",
   defaultStyle: {
     icon: "fa-plus",

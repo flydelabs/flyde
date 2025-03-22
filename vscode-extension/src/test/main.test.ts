@@ -7,7 +7,7 @@ import * as os from "os";
 
 import { webviewTestingCommand } from "./testUtils";
 import assert = require("assert");
-import { eventually } from "@flyde/core";
+import { delay, eventually } from "@flyde/core";
 import { getTemplates } from "../templateUtils";
 
 let tmpDir = "";
@@ -48,6 +48,7 @@ suite("Extension Test Suite", () => {
       testFile,
       "flydeEditor"
     );
+
     const instances = await webviewTestingCommand("$$", {
       selector: ".ins-view",
     });
@@ -56,7 +57,6 @@ suite("Extension Test Suite", () => {
       instances.length === 4,
       `Expected fixture flow to have 4 instances. Got ${instances.length} instances`
     );
-    // }, 4000);
   }).retries(3);
 
   test("Renders add nodes menu", async () => {
@@ -87,11 +87,11 @@ suite("Extension Test Suite", () => {
 
     await eventually(async () => {
       const elements = await webviewTestingCommand("$$", {
-        selector: ".add-menu-item",
+        selector: "[cmdk-item]",
       });
       assert(
-        elements.length > 80,
-        `Expected to find 80+ items in the menu. Found ${elements.length} items`
+        elements.length > 30,
+        `Expected to find 30+ items in the menu. Found ${elements.length} items`
       );
     });
   }).retries(3);

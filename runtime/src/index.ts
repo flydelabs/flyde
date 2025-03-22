@@ -1,10 +1,5 @@
-import {
-  ExecuteParams,
-  FlydeFlow,
-  ResolvedDependencies,
-  simplifiedExecute,
-} from "@flyde/core";
-import { deserializeFlowByPath, resolveFlow } from "@flyde/resolver";
+import { ExecuteParams, FlydeFlow, simplifiedExecute } from "@flyde/core";
+import { deserializeFlowByPath, resolveVisualNode } from "@flyde/resolver";
 import EventEmitter = require("events");
 
 import findRoot from "find-root";
@@ -15,7 +10,7 @@ import { getCallPath } from "./get-call-path";
 import { debugLogger } from "./logger";
 
 // convenience exports
-export { CodeNode, BaseNode, VisualNode } from "@flyde/core";
+export { InternalCodeNode, BaseNode, VisualNode } from "@flyde/core";
 
 export type PromiseWithEmitter<T> = Promise<T> & { on: EventEmitter["on"] };
 
@@ -41,7 +36,7 @@ export function loadFlowFromContent<Inputs>(
   fullFlowPath: string,
   debuggerUrl: string
 ): LoadedFlowExecuteFn<Inputs> {
-  const resFlow = resolveFlow(flow, "implementation", fullFlowPath);
+  const node = resolveVisualNode(flow.node, fullFlowPath);
 
   return (inputs, params = {}) => {
     const { onOutputs, onCompleted, ...otherParams } = params;
@@ -58,30 +53,25 @@ export function loadFlowFromContent<Inputs>(
         ));
 
       debugLogger("Using debugger %o", _debugger);
-      destroy = await simplifiedExecute(
-        resFlow.main,
-        resFlow.dependencies as ResolvedDependencies,
-        inputs ?? {},
-        onOutputs,
-        {
-          _debugger: _debugger,
-          onCompleted: (data) => {
-            void (async function () {
-              if (_debugger && _debugger.destroy) {
-                await _debugger.destroy();
-              }
-              res(data);
-              if (onCompleted) {
-                onCompleted(data);
-              }
-            })();
-          },
-          onBubbleError: (err) => {
-            rej(err);
-          },
-          ...otherParams,
-        }
-      );
+      destroy = await simplifiedExecute(node, inputs ?? {}, onOutputs, {
+        _debugger: _debugger,
+        onCompleted: (data) => {
+          void (async function () {
+            if (_debugger && _debugger.destroy) {
+              await _debugger.destroy();
+            }
+            console.log("onCompleted", data);
+            res(data);
+            if (onCompleted) {
+              onCompleted(data);
+            }
+          })();
+        },
+        onBubbleError: (err) => {
+          rej(err);
+        },
+        ...otherParams,
+      });
     }) as any;
     return { result: promise, destroy };
   };

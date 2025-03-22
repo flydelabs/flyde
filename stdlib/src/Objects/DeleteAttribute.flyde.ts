@@ -1,8 +1,8 @@
-import { CodeNode } from "@flyde/core";
+import { InternalCodeNode } from "@flyde/core";
 
 const namespace = "Objects";
 
-export const DeleteAttribute: CodeNode = {
+export const DeleteAttribute: InternalCodeNode = {
   id: "Delete Attribute",
   defaultStyle: {
     icon: "fa-box",

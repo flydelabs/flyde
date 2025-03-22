@@ -1,11 +1,8 @@
 import {
-  CodeNode,
   InputPinsConfig,
-  Node,
   NodeDefinition,
   NodeStyle,
   Pos,
-  ResolvedVisualNode,
   VisualNode,
 } from "..";
 import { slug } from "cuid";
@@ -20,109 +17,109 @@ export interface NodeInstanceConfig {
   pos: Pos;
 }
 
+export interface CodeNodeSource {
+  type: "package" | "file" | "custom";
+  data: any;
+}
+
+export interface CodeNodeInstance extends NodeInstanceConfig {
+  type: "code";
+  nodeId: string;
+  source: CodeNodeSource;
+  config: any;
+
+  /**
+   * @deprecated Use nodeId instead
+   */
+  macroId?: string;
+  /**
+   * @deprecated Use config instead
+   */
+  macroData?: any;
+}
+
+export interface VisualNodeSourceRef {
+  type: "package" | "file" | "custom";
+  data: string;
+}
+
+export interface VisualNodeSourceInline {
+  type: "inline";
+  data: VisualNode;
+}
+
+export interface VisualNodeSourceSelf {
+  type: "self";
+}
+
+export type VisualNodeSource =
+  | VisualNodeSourceRef
+  | VisualNodeSourceInline
+  | VisualNodeSourceSelf;
+
+export interface VisualNodeInstance extends NodeInstanceConfig {
+  type: "visual";
+  nodeId: string;
+  source: VisualNodeSource;
+}
+
+/** @deprecated */
 export interface RefNodeInstance extends NodeInstanceConfig {
   nodeId: string;
+  source?: CodeNodeSource;
+  config?: any;
 }
 
+/** @deprecated */
 export interface InlineNodeInstance extends NodeInstanceConfig {
-  node: VisualNode | CodeNode;
+  node: VisualNode;
 }
 
-export interface ResolvedInlineNodeInstance extends NodeInstanceConfig {
-  node: ResolvedVisualNode | CodeNode;
-}
+export type NodeInstance = CodeNodeInstance | VisualNodeInstance;
 
-export interface MacroNodeInstance extends NodeInstanceConfig {
-  macroId: string;
-  macroData: any;
-}
+export type ResolvedNodeInstance = NodeInstance;
 
-export interface ResolvedMacroNodeInstance extends NodeInstanceConfig {
-  nodeId: string;
-  macroId: string;
-  macroData: any;
-}
-
-export type NodeInstance =
-  | RefNodeInstance
-  | InlineNodeInstance
-  | MacroNodeInstance;
-
-export type ResolvedNodeInstance =
-  | RefNodeInstance
-  | ResolvedInlineNodeInstance
-  | ResolvedMacroNodeInstance;
-
-export const nodeInstance = (
+export function codeNodeInstance(
   id: string,
-  nodeOrId: string,
-  config?: InputPinsConfig,
+  nodeId: string,
+  source: CodeNodeSource,
+  config?: any,
+  inputConfig?: InputPinsConfig,
   pos?: Pos
-): NodeInstance => ({
-  id,
-  nodeId: nodeOrId,
-  inputConfig: config || {},
-  pos: pos || { x: 0, y: 0 },
-});
-
-export const inlineNodeInstance = (
-  insId: string,
-  node: Node,
-  config?: InputPinsConfig,
-  pos?: Pos
-): NodeInstance =>
-  ({
-    id: insId,
-    node,
-    inputConfig: config || {},
-    pos: pos || { x: 0, y: 0 },
-  } as InlineNodeInstance);
-
-export const macroNodeInstance = (
-  id: string,
-  macroId: string,
-  macroData: any,
-  config?: InputPinsConfig,
-  pos?: Pos
-): ResolvedMacroNodeInstance =>
-  ({
+): CodeNodeInstance {
+  return {
     id,
-    macroId,
-    macroData,
-    inputConfig: config || {},
-    nodeId: `${macroId}__${id}`, // TODO: lift this concatenation to a higher level
-    pos: pos || { x: 0, y: 0 },
-  } as ResolvedMacroNodeInstance);
+    type: "code",
+    nodeId,
+    source,
+    inputConfig: inputConfig ?? {},
+    config: config ?? {},
+    pos: pos ?? { x: 0, y: 0 },
+  };
+}
 
-export const isInlineNodeInstance = (
+export const isCodeNodeInstance = (
   ins: NodeInstance
-): ins is InlineNodeInstance => {
-  return !!(ins as any).node;
+): ins is CodeNodeInstance => {
+  return (
+    !!(ins as any).nodeId &&
+    !!(ins as any).source &&
+    (ins as CodeNodeInstance).type === "code"
+  );
 };
-export const isRefNodeInstance = (ins: NodeInstance): ins is RefNodeInstance =>
-  !!(ins as any).nodeId && !(ins as any).macroId;
 
-export const isMacroNodeInstance = (
+export const isVisualNodeInstance = (
   ins: NodeInstance
-): ins is MacroNodeInstance => !!(ins as any).macroId;
+): ins is VisualNodeInstance => {
+  return !!(ins as any).source && (ins as VisualNodeInstance).type === "visual";
+};
 
-export const isResolvedMacroNodeInstance = (
-  ins: ResolvedNodeInstance | NodeInstance
-): ins is ResolvedMacroNodeInstance =>
-  !!(ins as any).macroId && !!(ins as any).nodeId;
+export const isInlineVisualNodeInstance = (
+  ins: NodeInstance
+): ins is VisualNodeInstance & { source: VisualNodeSourceInline } => {
+  return isVisualNodeInstance(ins) && ins.source.type === "inline";
+};
 
-export const NodeInstance = (
-  id: string,
-  node: NodeDefinition,
-  config?: InputPinsConfig,
-  pos?: Pos
-): NodeInstance => ({
-  id,
-  nodeId: node.id,
-  inputConfig: config || {},
-  pos: pos || { x: 0, y: 0 },
-});
-
-export const createInsId = (node: NodeDefinition) => {
+export const createInsId = (node: Pick<NodeDefinition, "id">) => {
   return `${node.id}-${slug()}`;
 };

@@ -6,7 +6,7 @@
 declare module '@flyde/runtime' {
     import { ExecuteParams, FlydeFlow } from "@flyde/core";
     import EventEmitter = require("events");
-    export { CodeNode, BaseNode, VisualNode } from "@flyde/core";
+    export { InternalCodeNode, BaseNode, VisualNode } from "@flyde/core";
     export type PromiseWithEmitter<T> = Promise<T> & {
         on: EventEmitter["on"];
     };

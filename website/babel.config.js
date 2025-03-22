@@ -1,4 +1,5 @@
 module.exports = {
-  presets: [require.resolve('@docusaurus/core/lib/babel/preset')],
-  sourceType: "unambiguous"
+  presets: [require.resolve("@docusaurus/core/lib/babel/preset")],
+  plugins: ["@babel/plugin-transform-modules-commonjs"],
+  sourceType: "unambiguous",
 };

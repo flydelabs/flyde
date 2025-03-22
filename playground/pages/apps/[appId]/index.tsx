@@ -30,7 +30,7 @@ export const getServerSideProps: GetServerSideProps<{
   const user =
     userResult.status === "fulfilled" ? userResult.value.data.user : null;
 
-  const app = appResult.value.data as PlaygroundApp;
+  const app = appResult.value.data as unknown as PlaygroundApp;
 
   const baseDomain = `https://${context.req.headers.host ?? "play.flyde.dev"}`;
 

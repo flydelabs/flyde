@@ -4,29 +4,25 @@ import { getWebviewContent } from "./editor/open-flyde-panel";
 var fp = require("find-free-port");
 
 import { scanImportableNodes } from "@flyde/dev-server/dist/service/scan-importable-nodes";
-import { scanImportableMacros } from "@flyde/dev-server/dist/service/scan-importable-macros";
 import { generateAndSaveNode } from "@flyde/dev-server/dist/service/ai/generate-node-from-prompt";
-import { getLibraryData } from "@flyde/dev-server/dist/service/get-library-data";
-import axios from "axios";
+import { getBaseNodesLibraryData } from "@flyde/stdlib/dist/nodes-library-data";
 
 import {
   deserializeFlow,
-  resolveFlow,
-  resolveFlowByPath,
   serializeFlow,
+  resolveEditorInstance,
+  createServerReferencedNodeFinder,
 } from "@flyde/resolver";
 import {
   FlydeFlow,
-  ImportableSource,
   MAJOR_DEBUGGER_EVENT_TYPES,
-  MacroNodeDefinition,
   extractInputsFromValue,
   formatEvent,
-  isMacroNodeDefinition,
   keys,
   macroConfigurableValue,
   processImprovedMacro,
   replaceInputsInValue,
+  ImportableEditorNode,
 } from "@flyde/core";
 import { findPackageRoot } from "./find-package-root";
 import { randomInt } from "crypto";
@@ -38,8 +34,7 @@ import { forkRunFlow } from "@flyde/dev-server/dist/runner/runFlow.host";
 import { createEditorClient } from "@flyde/remote-debugger";
 import { maybeAskToStarProject } from "./maybeAskToStarProject";
 import { customCodeNodeFromCode } from "@flyde/core/dist/misc/custom-code-node-from-code";
-
-import openai, { OpenAI } from "openai";
+import { createAiCompletion } from "./ai";
 
 // export type EditorPortType = keyof any;
 
@@ -65,7 +60,7 @@ type FlydePortMessage<T extends any> = {
   params: any; // PostMsgConfig[T]['params']
 };
 
-const tryOrThrow = (fn: Function, msg: string) => {
+const tryOrThrow = <T>(fn: () => T, msg: string): T | Error => {
   try {
     return fn();
   } catch (e) {
@@ -149,7 +144,29 @@ export class FlydeEditorEditorProvider
       webviewPanel.webview.postMessage({
         type: event.type,
         requestId: event.requestId,
+        status: "success",
         payload,
+        source: "extension",
+      });
+    };
+
+    const messageError = (event: FlydePortMessage<any>, error: unknown) => {
+      const normalizedError =
+        error instanceof Error ? error : new Error(String(error));
+      console.info(
+        "Sending error to webview",
+        event.type,
+        event.requestId,
+        normalizedError.message
+      );
+      webviewPanel.webview.postMessage({
+        type: event.type,
+        requestId: event.requestId,
+        status: "error",
+        payload: {
+          message: normalizedError.message,
+          stack: normalizedError.stack,
+        },
         source: "extension",
       });
     };
@@ -180,13 +197,8 @@ export class FlydeEditorEditorProvider
               imports: {},
             };
       }, "Failed to deserialize flow");
-      const dependencies = tryOrThrow(
-        () =>
-          resolveFlow(initialFlow, "definition", fullDocumentPath).dependencies,
-        "Failed to resolve flow's dependencies"
-      );
 
-      const errors = [initialFlow, dependencies]
+      const errors = [initialFlow]
         .filter((obj) => obj instanceof Error)
         .map((err: Error) => err.message);
 
@@ -203,14 +215,13 @@ export class FlydeEditorEditorProvider
         relativeFile: relative,
         port: this.params.port,
         webview: webviewPanel.webview,
-        initialFlow,
-        dependencies,
+        initialFlow: initialFlow as FlydeFlow,
         webviewId,
         executionId,
         darkMode: this.params.darkMode,
       });
 
-      lastFlow = initialFlow;
+      lastFlow = initialFlow as FlydeFlow;
 
       lastWebview = webviewPanel.webview;
     };
@@ -300,25 +311,6 @@ export class FlydeEditorEditorProvider
                 break;
               }
 
-              case "resolveDeps": {
-                const { flow: dtoFlow } = event.params;
-
-                if (dtoFlow) {
-                  const deps = resolveFlow(
-                    dtoFlow,
-                    "definition",
-                    fullDocumentPath
-                  ).dependencies;
-                  messageResponse(event, deps);
-                } else {
-                  const flow = resolveFlowByPath(
-                    fullDocumentPath,
-                    "definition"
-                  );
-                  messageResponse(event, flow);
-                }
-                break;
-              }
               case "generateNodeFromPrompt": {
                 const config = vscode.workspace.getConfiguration("flyde");
                 let openAiToken = config.get<string>("openAiToken");
@@ -360,18 +352,7 @@ export class FlydeEditorEditorProvider
                 messageResponse(event, undefined);
                 break;
               }
-              case "getImportables": {
-                const maybePackageRoot = await findPackageRoot(document.uri);
-                const root =
-                  maybePackageRoot ?? Uri.joinPath(document.uri, "..");
 
-                const deps = await scanImportableNodes(
-                  root.fsPath,
-                  path.relative(root.fsPath, fullDocumentPath)
-                );
-                messageResponse(event, deps);
-                break;
-              }
               case "onInstallRuntimeRequest": {
                 // show vscode selection dialog between "use yarn" and "use npm"
                 const res = await vscode.window.showQuickPick(
@@ -447,29 +428,90 @@ export class FlydeEditorEditorProvider
                 break;
               }
               case "getLibraryData": {
-                const libraryData = getLibraryData();
-                messageResponse(event, libraryData);
+                const libraryData = getBaseNodesLibraryData();
+
+                try {
+                  const firstWorkspace =
+                    vscode.workspace.workspaceFolders &&
+                    vscode.workspace.workspaceFolders[0];
+                  const rootPath = firstWorkspace
+                    ? firstWorkspace.uri.fsPath
+                    : path.dirname(fullDocumentPath);
+                  const fileName = path.basename(fullDocumentPath);
+
+                  const { nodes } = await scanImportableNodes(
+                    rootPath,
+                    fileName
+                  );
+
+                  const categorizedNodeIds = new Set<string>();
+
+                  const localNodes: ImportableEditorNode[] = [];
+
+                  Object.entries(libraryData).forEach(
+                    ([category, categoryNodes]) => {
+                      // Track all stdlib nodes that are already categorized
+                      categoryNodes.forEach((node: ImportableEditorNode) => {
+                        categorizedNodeIds.add(node.id);
+                      });
+                    }
+                  );
+
+                  nodes.forEach((node: ImportableEditorNode) => {
+                    if (
+                      node.type === "code" &&
+                      node.source.type === "file" &&
+                      !categorizedNodeIds.has(node.id)
+                    ) {
+                      localNodes.push(node);
+                      categorizedNodeIds.add(node.id);
+                    } else if (
+                      node.type === "visual" &&
+                      node.source.type === "file" &&
+                      !categorizedNodeIds.has(node.id)
+                    ) {
+                      localNodes.push(node);
+                      categorizedNodeIds.add(node.id);
+                    }
+                  });
+
+                  // 3. Create Other category for stdlib nodes that aren't in main categories
+                  const otherNodes: ImportableEditorNode[] = [];
+                  nodes.forEach((node: ImportableEditorNode) => {
+                    if (
+                      node.type === "code" &&
+                      node.source.type === "package" &&
+                      node.source.data === "@flyde/stdlib" &&
+                      !categorizedNodeIds.has(node.id)
+                    ) {
+                      otherNodes.push(node);
+                    }
+                  });
+
+                  if (localNodes.length > 0) {
+                    libraryData.groups.push({
+                      title: "Local",
+                      nodes: localNodes,
+                    });
+                  }
+
+                  if (otherNodes.length > 0) {
+                    libraryData.groups.push({
+                      title: "Other",
+                      nodes: otherNodes,
+                    });
+                  }
+
+                  messageResponse(event, libraryData);
+                } catch (error) {
+                  console.error("Error getting library data:", error);
+                  messageError(event, error);
+                }
                 break;
               }
               case "onRequestSiblingNodes": {
-                const { macro } = event.params;
-                const maybePackageRoot = await findPackageRoot(document.uri);
-                const root =
-                  maybePackageRoot ?? Uri.joinPath(document.uri, "..");
-
-                const { importableMacros, errors } = await scanImportableMacros(
-                  root.fsPath,
-                  path.relative(root.fsPath, fullDocumentPath)
-                );
-
-                const siblings = Object.entries(importableMacros).flatMap(
-                  ([_module, nodes]) => {
-                    return Object.values(nodes).filter(
-                      (node) => node?.namespace === macro.namespace
-                    ) as MacroNodeDefinition<any>[];
-                  }
-                );
-                messageResponse(event, siblings);
+                // TODO - re-implement
+                throw new Error("Not implemented");
                 break;
               }
               case "onCreateCustomNode": {
@@ -504,68 +546,49 @@ export class FlydeEditorEditorProvider
                     }`
                   );
                 }
-                const importableSource: ImportableSource = {
-                  node: node as any,
-                  module: nodeFileName,
-                };
-                messageResponse(event, importableSource);
+                // const importableSource: ImportableSource = {
+                //   node: node as any,
+                //   module: nodeFileName,
+                // };
+                // messageResponse(event, importableSource);
                 break;
               }
               case "createAiCompletion": {
-                const config = vscode.workspace.getConfiguration("flyde");
-                let openAiToken = config.get<string>("openAiToken");
-
-                if (!openAiToken) {
-                  await vscode.commands.executeCommand("flyde.setOpenAiToken");
-                  openAiToken = config.get<string>("openAiToken");
-                }
-
-                if (!openAiToken) {
-                  throw new Error("OpenAI token is required");
-                }
-
-                const { prompt, jsonMode } = event.params;
-                if (prompt.trim().length === 0) {
-                  throw new Error("prompt is empty");
-                }
-
                 try {
-                  const openai = new OpenAI({
-                    apiKey: openAiToken,
+                  const { prompt, jsonMode } = event.params;
+                  const completion = await createAiCompletion({
+                    prompt,
+                    jsonMode,
                   });
-
-                  const response = await openai.chat.completions.create({
-                    model: "gpt-4o",
-                    response_format: jsonMode
-                      ? { type: "json_object" }
-                      : undefined,
-                    messages: [
-                      {
-                        role: "system",
-                        content:
-                          "You are a helpful coding assistant. Provide direct code responses without explanations.",
-                      },
-                      {
-                        role: "user",
-                        content: prompt,
-                      },
-                    ],
-                    temperature: 0,
-                  });
-
-                  const completion = response.choices[0]?.message?.content;
-
-                  if (!completion) {
-                    throw new Error("No completion received from OpenAI");
-                  }
-
                   messageResponse(event, completion);
                 } catch (error) {
-                  if (error instanceof OpenAI.APIError) {
-                    throw new Error(`OpenAI API error: ${error.message}`);
-                  }
-                  throw error;
+                  console.error(`Error creating AI completion`, error);
+                  messageError(event, error);
                 }
+                break;
+              }
+              case "resolveInstance": {
+                const { flow, instance } = event.params;
+
+                const referencedNodeFinder =
+                  createServerReferencedNodeFinder(fullDocumentPath);
+
+                try {
+                  const editorInstance = resolveEditorInstance(
+                    instance,
+                    referencedNodeFinder
+                  );
+                  console.log("editorInstance", editorInstance);
+                  messageResponse(event, editorInstance);
+                } catch (err) {
+                  console.error(
+                    "Error resolving instance",
+                    instance,
+                    err instanceof Error ? err.stack : err
+                  );
+                  messageError(event, err);
+                }
+
                 break;
               }
               default: {
@@ -579,7 +602,7 @@ export class FlydeEditorEditorProvider
                 break;
               }
             }
-          } catch (err: unknown) {
+          } catch (err) {
             const error =
               err instanceof Error ? err : new Error(`Unknown error: ${err}`);
             console.error(`Error while handling message from webview`, error);
@@ -589,6 +612,8 @@ export class FlydeEditorEditorProvider
             vscode.window.showErrorMessage(
               `Unexpected error while handling message from webview: ${error.message}`
             );
+            // Send error response back to client
+            messageError(event, error);
           }
         }
       }
@@ -608,15 +633,10 @@ export class FlydeEditorEditorProvider
         if (isSameUri && lastSaveBy !== webviewId) {
           const raw = document.getText();
           const flow: FlydeFlow = deserializeFlow(raw, fullDocumentPath);
-          const deps = resolveFlow(
-            flow,
-            "definition",
-            fullDocumentPath
-          ).dependencies;
           webviewPanel.webview.postMessage({
             type: "onExternalFlowChange",
             requestId: "TODO-cuid",
-            params: { flow, deps },
+            params: { flow },
             source: "extension",
           });
         }

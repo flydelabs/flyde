@@ -1,14 +1,14 @@
-import { CodeNode } from "@flyde/core";
+import { InternalCodeNode } from "@flyde/core";
 
 const namespace = "Lists";
 
-export const LoopList: CodeNode = {
+export const LoopList: InternalCodeNode = {
   id: "Loop List",
   defaultStyle: {
     icon: "fa-list",
   },
   namespace,
-  searchKeywords: ["each", "spread"],
+  aliases: ["each", "spread"],
   description: "Emits all values in a list",
   inputs: {
     list: { description: "The list to loop" },

@@ -1,16 +1,14 @@
 import {
-  CodeNode,
+  InternalCodeNode,
   NodeInput,
   NodeInputs,
   NodeOutputs,
   dynamicOutput,
   dynamicNodeInput,
-  NodeInstance,
-  VisualNode,
   queueInputPinConfig,
   NodeOutput,
   NodeState,
-  getNode,
+  InternalVisualNode,
 } from "../node";
 import { CancelFn, execute, Debugger } from "../execute";
 import { DepGraph, isDefined, noop, keys, OMap, randomInt } from "../common";
@@ -23,45 +21,18 @@ import {
   TRIGGER_PIN_ID,
 } from "./helpers";
 
-import { NodesCollection } from "..";
+import { InternalNodeInstance, InternalCodeNodeInstance } from "../node";
 
 export * from "./helpers";
 
-export type ConnectionData = {
-  from: ConnectionNode;
-  to: ConnectionNode;
-  delayed?: boolean;
-  hidden?: boolean;
-};
-
-export type ExternalConnectionNode = {
-  insId: typeof THIS_INS_ID;
-  pinId: string;
-};
-
-export type InternalConnectionNode = {
-  insId: string;
-  pinId: string;
-};
-
-export type ConnectionNode = ExternalConnectionNode | InternalConnectionNode;
-
-export type PinList = Array<{ insId: string; pinId: string }>;
-
-type PositionlessVisualNode = Omit<
-  Omit<VisualNode, "inputsPosition">,
-  "outputsPosition"
->;
-
-export const connect = (
-  node: PositionlessVisualNode,
-  resolvedDeps: NodesCollection,
+export const composeExecutableNode = (
+  node: InternalVisualNode,
   _debugger: Debugger = {},
   ancestorsInsIds?: string,
   mainState: OMap<NodeState> = {},
   onBubbleError: (err: any) => void = noop,
   extraContext: Record<string, any> = {}
-): CodeNode => {
+): InternalCodeNode => {
   const { id: maybeId, connections, instances } = node;
 
   const nodeId = maybeId || "connected-node" + randomInt(999);
@@ -77,8 +48,8 @@ export const connect = (
 
       const depGraph = new DepGraph({});
 
-      const instanceToId = new Map<NodeInstance, string>();
-      const idToInstance = new Map<string, NodeInstance>();
+      const instanceToId = new Map<InternalNodeInstance, string>();
+      const idToInstance = new Map<string, InternalNodeInstance>();
 
       // these hold the args / outputs for each piece of an internal connection
       const instanceArgs = new Map<string, NodeInputs>();
@@ -97,7 +68,7 @@ export const connect = (
 
       // build all input and output maps
       instances.forEach((instance) => {
-        const node = getNode(instance, resolvedDeps);
+        const node = instance.node;
         const instanceId = instance.id;
         instanceToId.set(instance, instanceId);
         idToInstance.set(instanceId, instance);
@@ -231,13 +202,11 @@ export const connect = (
 
         if (!sourceInstance && fromInstanceId !== THIS_INS_ID) {
           throw new Error(
-            `Instance [${fromInstanceId}] does not exist! failed to connect [${from}] -> [${to}]`
+            `Instance [${fromInstanceId}] does not exist! failed to composeExecutableNode [${from}] -> [${to}]`
           );
         }
 
-        const sourceNode = sourceInstance
-          ? getNode(sourceInstance, resolvedDeps)
-          : node;
+        const sourceNode = sourceInstance.node;
 
         const sourceOutputPin = sourceNode.outputs[fromInstancePinId];
         const isDelayed =
@@ -259,7 +228,7 @@ export const connect = (
         cancelFns.push(() => sub.unsubscribe());
       });
 
-      // connect the external outputs to the outputs that are left hanging
+      // composeExecutableNode the external outputs to the outputs that are left hanging
       keys(fnOutputs).forEach((key) => {
         const outputs = externalOutputConnections.get(key) || [];
         outputs.forEach((output) => {
@@ -289,11 +258,11 @@ export const connect = (
       depGraph
         .overallOrder()
         .map((name: string) => idToInstance.get(name))
-        .forEach((instance: NodeInstance) => {
+        .forEach((instance: InternalCodeNodeInstance) => {
           const inputs = instanceArgs.get(instance.id);
           const outputs = instanceOutputs.get(instance.id);
 
-          const node = getNode(instance, resolvedDeps);
+          const node = instance.node;
           if (!inputs) {
             throw new Error(
               `Unexpected error - args not found when running ${instance}`
@@ -318,7 +287,6 @@ export const connect = (
             node,
             inputs,
             outputs,
-            resolvedDeps: resolvedDeps,
             _debugger,
             insId: instance.id,
             extraContext,
@@ -331,7 +299,7 @@ export const connect = (
           cancelFns.push(cancel);
         });
 
-      // connect external args to their hanging inputs and run them
+      // composeExecutableNode external args to their hanging inputs and run them
       Object.keys(fnArgs).forEach(async (key) => {
         const inputs = externalInputConnections.get(key) || [];
 

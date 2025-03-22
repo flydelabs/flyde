@@ -1,8 +1,8 @@
-import { CodeNode } from "@flyde/core";
+import { InternalCodeNode } from "@flyde/core";
 
 const namespace = "Lists";
 
-export const Flatten: CodeNode = {
+export const Flatten: InternalCodeNode = {
   id: "Flatten",
   namespace,
   description: "Flattens a list of lists into a single list",

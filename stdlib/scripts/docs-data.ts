@@ -1,11 +1,11 @@
 import * as allExported from "../src/all";
 import { writeFileSync } from "fs";
-import { isCodeNode, isVisualNode, Node } from "@flyde/core";
+import { CodeNode, isCodeNode, isVisualNode, VisualNode } from "@flyde/core";
 
 const nodes = Object.fromEntries(
   Object.entries(allExported).filter(
     ([, value]: [string, unknown]) =>
-      isCodeNode(value as Node) || isVisualNode(value as Node)
+      isCodeNode(value as CodeNode) || isVisualNode(value as VisualNode)
   )
 );
 

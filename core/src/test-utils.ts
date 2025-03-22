@@ -1,19 +1,26 @@
 import { spy } from "sinon";
 import Sinon = require("sinon");
-import { BaseNode, InputPinMap, VisualNode, CodeNode, NodeInstance } from "./.";
+import { entries, OMap, RunNodeFunction } from "./.";
 
-import {
-  DynamicOutput,
-  dynamicOutput,
-  InputMode,
-  OutputPinMap,
-  nodeInput,
-  nodeOutput,
-} from "./node";
-
-import { connectionNode, externalConnectionNode } from "./connect";
+import { connectionNode, externalConnectionNode } from "./connect/helpers";
 
 import { DebuggerEventType, DebuggerEvent, Debugger } from "./execute/debugger";
+import {
+  InternalCodeNode,
+  InternalNodeInstance,
+  InternalVisualNode,
+} from "./types/internal";
+import { BaseNode } from "./types/core";
+import {
+  dynamicOutput,
+  DynamicOutput,
+  InputMode,
+  InputPinMap,
+  nodeInput,
+  nodeOutput,
+  OutputPinMap,
+} from "./types/pins";
+
 interface ConciseBaseNode extends Omit<BaseNode, "inputs" | "outputs" | "id"> {
   inputs?: string[];
   outputs?: string[];
@@ -22,11 +29,11 @@ interface ConciseBaseNode extends Omit<BaseNode, "inputs" | "outputs" | "id"> {
 
 interface ConciseVisualNode extends ConciseBaseNode {
   connections: Array<[string, string]>;
-  instances: NodeInstance[];
+  instances: InternalNodeInstance[];
 }
 
 interface ConciseCodeNode extends ConciseBaseNode {
-  run: CodeNode["run"];
+  run: InternalCodeNode["run"];
 }
 const conciseBaseNode = (concise: ConciseBaseNode): BaseNode => {
   return {
@@ -53,7 +60,7 @@ const conciseBaseNode = (concise: ConciseBaseNode): BaseNode => {
   };
 };
 
-export const conciseNode = (concise: ConciseVisualNode): VisualNode => {
+export const conciseNode = (concise: ConciseVisualNode): InternalVisualNode => {
   const base = conciseBaseNode(concise);
 
   return {
@@ -76,12 +83,10 @@ export const conciseNode = (concise: ConciseVisualNode): VisualNode => {
       };
     }),
     instances: concise.instances,
-    inputsPosition: {},
-    outputsPosition: {},
   };
 };
 
-export const conciseCodeNode = (concise: ConciseCodeNode): CodeNode => {
+export const conciseCodeNode = (concise: ConciseCodeNode): InternalCodeNode => {
   const base = conciseBaseNode(concise);
   return {
     ...base,
@@ -116,5 +121,34 @@ export const wrappedOnEvent = (
     if (event.type === type) {
       fn(event);
     }
+  };
+};
+
+type SimplifiedNodeParams = {
+  id: string;
+  inputTypes: OMap<string>;
+  outputTypes: OMap<string>;
+  run: RunNodeFunction;
+};
+
+export const fromSimplified = ({
+  run,
+  inputTypes,
+  outputTypes,
+  id,
+}: SimplifiedNodeParams): InternalCodeNode => {
+  const inputs: InputPinMap = entries(inputTypes).reduce<InputPinMap>(
+    (p, [k]) => ({ ...p, [k]: {} }),
+    {}
+  );
+  const outputs: OutputPinMap = entries(outputTypes).reduce<InputPinMap>(
+    (p, [k]) => ({ ...p, [k]: {} }),
+    {}
+  );
+  return {
+    id,
+    inputs,
+    outputs,
+    run,
   };
 };

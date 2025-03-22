@@ -1,8 +1,8 @@
-import { CodeNode } from "@flyde/core";
+import { InternalCodeNode } from "@flyde/core";
 
 const namespace = "Lists";
 
-export const AccumulateSomeValuesByCount: CodeNode = {
+export const AccumulateSomeValuesByCount: InternalCodeNode = {
   id: "Accumulate Some Values by Count",
   defaultStyle: {
     icon: "fa-basket-shopping",

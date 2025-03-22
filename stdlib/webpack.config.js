@@ -19,7 +19,7 @@ module.exports = pairs.map(({ entry, name }) => ({
     path: path.resolve(__dirname, "dist", "ui"),
     filename: name + ".js",
     library: {
-      name: "__MacroNode__" + name,
+      name: "__NodeConfig__" + name,
       type: "window",
     },
   },

@@ -1,14 +1,14 @@
 import { createContext, useContext } from "react";
 import {
   FlydeFlow,
-  ImportableSource,
   NodeLibraryData,
-  ResolvedDependenciesDefinitions,
   noop,
   FlowJob,
-  ImportablesResult,
   MacroNodeDefinition,
   NodeOrMacroDefinition,
+  NodeInstance,
+  EditorNodeInstance,
+  ImportableEditorNode,
 } from "@flyde/core";
 import { ReportEvent } from "./analytics";
 
@@ -28,24 +28,7 @@ export interface EditorPorts {
   readFlow: (dto: { absPath: string }) => Promise<FlydeFlow>;
   setFlow: (dto: { absPath: string; flow: FlydeFlow }) => Promise<void>;
 
-  resolveDeps: (dto: {
-    relativePath: string;
-    flow?: FlydeFlow;
-  }) => Promise<ResolvedDependenciesDefinitions>;
-
-  getImportables: (dto: {
-    rootFolder: string;
-    flowPath: string;
-  }) => Promise<ImportablesResult>;
-
-  onExternalFlowChange: (
-    cb: (data: {
-      flow: FlydeFlow;
-      deps: ResolvedDependenciesDefinitions;
-    }) => void
-  ) => CancelFn;
-
-  onInstallRuntimeRequest: () => Promise<void>;
+  onExternalFlowChange: (cb: (data: { flow: FlydeFlow }) => void) => CancelFn;
 
   onRunFlow: (
     inputs: Record<string, any>,
@@ -57,7 +40,7 @@ export interface EditorPorts {
 
   generateNodeFromPrompt: (dto: {
     prompt: string;
-  }) => Promise<{ importableNode: ImportableSource }>;
+  }) => Promise<{ importableNode: EditorNodeInstance }>;
   getLibraryData: () => Promise<NodeLibraryData>;
 
   onRequestSiblingNodes: (dto: {
@@ -67,8 +50,13 @@ export interface EditorPorts {
   onRequestNodeSource: (dto: {
     node: NodeOrMacroDefinition;
   }) => Promise<string>;
-  onCreateCustomNode: (dto: { code: string }) => Promise<ImportableSource>;
+  onCreateCustomNode: (dto: { code: string }) => Promise<ImportableEditorNode>;
   createAiCompletion?: (dto: { prompt: string }) => Promise<string>;
+
+  resolveInstance: (dto: {
+    flow: FlydeFlow;
+    instance: NodeInstance;
+  }) => Promise<EditorNodeInstance>;
 }
 
 const toastNotImplemented: any = (method: string) => async () => {
@@ -84,11 +72,8 @@ export const defaultPorts: EditorPorts = {
   confirm: async ({ text }) => confirm(text),
   readFlow: toastNotImplemented("readFlow"),
   setFlow: toastNotImplemented("setFlow"),
-  resolveDeps: toastNotImplemented("resolveDeps"),
 
-  getImportables: toastNotImplemented("getImportables"),
   onExternalFlowChange: toastNotImplemented("onExternalFlowChange"),
-  onInstallRuntimeRequest: toastNotImplemented("onInstallRuntimeRequest"),
   onRunFlow: toastNotImplemented("onRunFlow"),
   onStopFlow: toastNotImplemented("onStopFlow"),
   reportEvent: noop,
@@ -97,6 +82,9 @@ export const defaultPorts: EditorPorts = {
   onRequestSiblingNodes: () => Promise.resolve([]),
   onCreateCustomNode: toastNotImplemented("onCreateCustomNode"),
   onRequestNodeSource: () => {
+    throw new Error("Not implemented");
+  },
+  resolveInstance: () => {
     throw new Error("Not implemented");
   },
 };

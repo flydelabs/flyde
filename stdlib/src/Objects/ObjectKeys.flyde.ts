@@ -1,8 +1,8 @@
-import { CodeNode } from "@flyde/core";
+import { InternalCodeNode } from "@flyde/core";
 
 const namespace = "Objects";
 
-export const ObjectKeys: CodeNode = {
+export const ObjectKeys: InternalCodeNode = {
   id: "Keys",
   defaultStyle: {
     icon: "fa-key",

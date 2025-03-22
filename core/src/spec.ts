@@ -1,4 +1,20 @@
-import { DynamicNodeInput, NodeInstanceError, VisualNode } from ".";
+import {
+  InternalCodeNode,
+  NodeInstanceError,
+  InternalVisualNode,
+  DynamicNodeInput,
+  InternalNodeInstance,
+} from ".";
+
+import { nodeInput, nodeOutput } from "./node";
+
+import { internalNodeInstance } from "./types/internal";
+import {
+  dynamicNodeInput,
+  dynamicOutput,
+  dynamicNodeInputs,
+} from "./types/pins";
+
 import { assert } from "chai";
 
 import { spy } from "sinon";
@@ -17,7 +33,7 @@ import {
   shuffle,
 } from "./common";
 import {
-  connect,
+  composeExecutableNode,
   connectionNode,
   externalConnectionNode,
   connection,
@@ -25,20 +41,7 @@ import {
   ERROR_PIN_ID,
   TRIGGER_PIN_ID,
 } from "./connect";
-import {
-  CodeNode,
-  fromSimplified,
-  dynamicNodeInput,
-  dynamicOutput,
-  nodeInstance,
-  NodeInstance,
-  nodeInput,
-  nodeOutput,
-  queueInputPinConfig,
-  stickyInputPinConfig,
-  dynamicNodeInputs,
-  inlineNodeInstance,
-} from "./node";
+import { queueInputPinConfig, stickyInputPinConfig } from "./node";
 import { execute } from "./execute";
 import {
   add1,
@@ -52,8 +55,6 @@ import {
   filter,
   isEven,
   add1mul2,
-  testNodesCollection,
-  testNodesCollectionWith,
   peq,
   mul,
   addGroupedQueued,
@@ -72,6 +73,7 @@ import {
   valueNode,
   spiedOutput,
   wrappedOnEvent,
+  fromSimplified,
 } from "./test-utils";
 import { DebuggerEventType } from "./execute/debugger";
 
@@ -92,8 +94,8 @@ describe("main ", () => {
   });
 
   describe("core", () => {
-    it("runs an Id code node properly", () => {
-      const node: CodeNode = {
+    it("runs an Id internal code node properly", () => {
+      const node: InternalCodeNode = {
         id: "id",
         inputs: {
           v: nodeInput(),
@@ -115,44 +117,14 @@ describe("main ", () => {
         node: node,
         inputs: { v },
         outputs: { r },
-        resolvedDeps: testNodesCollection,
       });
       v.subject.next(2);
       assert.equal(s.calledOnceWithExactly(2), true);
     });
 
-    it("runs an pure-like Id code node properly", () => {
-      const node: CodeNode = {
-        id: "id",
-        inputs: {
-          v: nodeInput(),
-        },
-        outputs: {
-          r: nodeInput(),
-        },
-        run: ({ v }, { r }) => {
-          r?.next(v);
-        },
-      };
-
-      const s = spy();
-      const v = dynamicNodeInput();
-      const r = dynamicOutput();
-
-      r.subscribe(s);
-      execute({
-        node: node,
-        inputs: { v },
-        outputs: { r },
-        resolvedDeps: testNodesCollection,
-      });
-      v.subject.next(2);
-      assert.equal(s.calledOnceWithExactly(2), true);
-    });
-
-    it("runs an ADD code node properly", () => {
+    it("runs an ADD internal code node properly", () => {
       const innerSpy = spy();
-      const node: CodeNode = {
+      const node: InternalCodeNode = {
         id: "add",
         inputs: {
           a: nodeInput(),
@@ -177,7 +149,6 @@ describe("main ", () => {
         node: node,
         inputs: { a, b },
         outputs: { r },
-        resolvedDeps: testNodesCollection,
       });
       a.subject.next(2);
       b.subject.next(3);
@@ -200,7 +171,6 @@ describe("main ", () => {
         node: addGrouped,
         inputs: { n1, n2 },
         outputs: { r },
-        resolvedDeps: testNodesCollection,
       });
       const num1 = randomInt(1, 100);
       const num2 = randomInt(1, 100);
@@ -214,8 +184,8 @@ describe("main ", () => {
       const add1mul2twice = {
         id: "a1m2x2",
         instances: [
-          nodeInstance("p1", add1mul2.id),
-          nodeInstance("p2", add1mul2.id),
+          internalNodeInstance("p1", add1mul2),
+          internalNodeInstance("p2", add1mul2),
         ],
         connections: [
           {
@@ -233,7 +203,7 @@ describe("main ", () => {
         },
       };
 
-      const node = connect(add1mul2twice, testNodesCollection);
+      const node = composeExecutableNode(add1mul2twice);
 
       const fn = spy();
       const n = dynamicNodeInput();
@@ -242,7 +212,6 @@ describe("main ", () => {
         node: node,
         inputs: { n },
         outputs: { r },
-        resolvedDeps: testNodesCollection,
       });
       r.subscribe(fn);
 
@@ -253,71 +222,22 @@ describe("main ", () => {
       assert.equal(fn.lastCall.args[0], 86);
     });
 
-    it("supports inline instance nodes", () => {
-      const add1: VisualNode = {
-        id: "add1",
-        inputs: {
-          n: nodeInput(),
-        },
-        outputs: {
-          r: nodeOutput(),
-        },
-        inputsPosition: {},
-        outputsPosition: {},
-        instances: [
-          inlineNodeInstance("n1", valueNode("n", 1)),
-          inlineNodeInstance("a", add),
-        ],
-        connections: [
-          {
-            from: externalConnectionNode("n"),
-            to: connectionNode("a", "n2"),
-          },
-          {
-            from: connectionNode("a", "r"),
-            to: externalConnectionNode("r"),
-          },
-          {
-            from: connectionNode("n1", "r"),
-            to: connectionNode("a", "n1"),
-          },
-        ],
-      };
-
-      const n = dynamicNodeInput();
-      const [s, r] = spiedOutput();
-
-      execute({
-        node: add1,
-        inputs: { n },
-        outputs: { r },
-        resolvedDeps: testNodesCollection,
-      });
-
-      n.subject.next(2);
-
-      assert.equal(s.lastCall.args[0], 3);
-    });
-
     describe("optional inputs", () => {
       it("runs nodes with optional pins that were left unconnected", () => {
-        const node = connect(
-          {
-            id: "bob",
-            instances: [nodeInstance("a", optAdd.id)],
-            connections: [
-              connectionData("n1", "a.n1"),
-              connectionData("a.r", "r"),
-            ],
-            inputs: {
-              n1: nodeInput(),
-            },
-            outputs: {
-              r: nodeOutput(),
-            },
+        const node = composeExecutableNode({
+          id: "bob",
+          instances: [internalNodeInstance("a", optAdd)],
+          connections: [
+            connectionData("n1", "a.n1"),
+            connectionData("a.r", "r"),
+          ],
+          inputs: {
+            n1: nodeInput(),
           },
-          testNodesCollection
-        );
+          outputs: {
+            r: nodeOutput(),
+          },
+        });
 
         const n1 = dynamicNodeInput();
         const s = spy();
@@ -326,7 +246,6 @@ describe("main ", () => {
           node: node,
           inputs: { n1 },
           outputs: { r },
-          resolvedDeps: testNodesCollection,
         });
         r.subscribe(s);
         n1.subject.next(42);
@@ -334,25 +253,22 @@ describe("main ", () => {
       });
 
       it("runs nodes with optional pins that were connected", () => {
-        const node = connect(
-          {
-            id: "bob",
-            instances: [nodeInstance("a", optAdd.id)],
-            inputs: {
-              n1: nodeInput(),
-              n2: nodeInput(),
-            },
-            outputs: {
-              r: nodeOutput(),
-            },
-            connections: [
-              connectionData("n1", "a.n1"),
-              connectionData("n2", "a.n2"),
-              connectionData("a.r", "r"),
-            ],
+        const node = composeExecutableNode({
+          id: "bob",
+          instances: [internalNodeInstance("a", optAdd)],
+          inputs: {
+            n1: nodeInput(),
+            n2: nodeInput(),
           },
-          testNodesCollection
-        );
+          outputs: {
+            r: nodeOutput(),
+          },
+          connections: [
+            connectionData("n1", "a.n1"),
+            connectionData("n2", "a.n2"),
+            connectionData("a.r", "r"),
+          ],
+        });
 
         const n1 = dynamicNodeInput();
         const n2 = dynamicNodeInput();
@@ -362,7 +278,6 @@ describe("main ", () => {
           node: node,
           inputs: { n1, n2 },
           outputs: { r },
-          resolvedDeps: testNodesCollection,
         });
         r.subscribe(s);
         n2.subject.next(1);
@@ -378,27 +293,23 @@ describe("main ", () => {
 
         // eventually I solved it by making sure that the constant for n2 is called first.
         // Not ideal at all!
-        const resolvedDeps = testNodesCollectionWith(Value(42), Value(5));
-        const node = connect(
-          {
-            id: "bob",
-            instances: [
-              nodeInstance("b", Value(5).id),
-              nodeInstance("v", Value(42).id),
-              nodeInstance("a", optAdd.id),
-            ],
-            connections: [
-              connectionData(["b", "r"], ["a", "n2"]),
-              connectionData(["v", "r"], ["a", "n1"]),
-              connectionData("a.r", "r"),
-            ],
-            inputs: {},
-            outputs: {
-              r: nodeOutput(),
-            },
+        const node = composeExecutableNode({
+          id: "bob",
+          instances: [
+            internalNodeInstance("b", Value(5)),
+            internalNodeInstance("v", Value(42)),
+            internalNodeInstance("a", optAdd),
+          ],
+          connections: [
+            connectionData(["b", "r"], ["a", "n2"]),
+            connectionData(["v", "r"], ["a", "n1"]),
+            connectionData("a.r", "r"),
+          ],
+          inputs: {},
+          outputs: {
+            r: nodeOutput(),
           },
-          resolvedDeps
-        );
+        });
 
         const s = spy();
         const r = dynamicOutput();
@@ -407,31 +318,24 @@ describe("main ", () => {
           node: node,
           inputs: {},
           outputs: { r },
-          resolvedDeps: resolvedDeps,
         });
         assert.equal(s.lastCall.args[0], 47);
       });
     });
 
-    describe("connect", () => {
+    describe("composeExecutableNode", () => {
       it("runs pieces in an isolate environment for each execution", () => {
-        const p1 = connect(
-          {
-            id: "test",
-            instances: [nodeInstance("a", add1.id)],
-            inputs: {
-              n: nodeInput(),
-            },
-            outputs: {
-              r: nodeOutput(),
-            },
-            connections: [
-              connectionData("n", "a.n"),
-              connectionData("a.r", "r"),
-            ],
+        const p1 = composeExecutableNode({
+          id: "test",
+          instances: [internalNodeInstance("a", add1)],
+          inputs: {
+            n: nodeInput(),
           },
-          testNodesCollection
-        );
+          outputs: {
+            r: nodeOutput(),
+          },
+          connections: [connectionData("n", "a.n"), connectionData("a.r", "r")],
+        });
 
         const n = dynamicNodeInput();
         const s1 = spy();
@@ -440,7 +344,6 @@ describe("main ", () => {
           node: p1,
           inputs: { n },
           outputs: { r: r1 },
-          resolvedDeps: testNodesCollection,
         });
         r1.subscribe(s1);
 
@@ -450,7 +353,6 @@ describe("main ", () => {
           node: p1,
           inputs: { n },
           outputs: { r: r2 },
-          resolvedDeps: testNodesCollection,
         });
         r2.subscribe(s2);
 
@@ -462,9 +364,12 @@ describe("main ", () => {
       });
 
       it("connects 2 pieces and runs it", () => {
-        const add1mul2: VisualNode = {
+        const add1mul2: InternalVisualNode = {
           id: "test",
-          instances: [nodeInstance("a", add1.id), nodeInstance("b", mul2.id)],
+          instances: [
+            internalNodeInstance("a", add1),
+            internalNodeInstance("b", mul2),
+          ],
           connections: [
             {
               from: connectionNode("a", "r"),
@@ -485,13 +390,11 @@ describe("main ", () => {
           outputs: {
             r: nodeOutput(),
           },
-          inputsPosition: {},
-          outputsPosition: {},
         };
 
         const fn = spy();
 
-        const node = connect(add1mul2, testNodesCollection, {});
+        const node = composeExecutableNode(add1mul2);
 
         const n = dynamicNodeInput();
         const r = new Subject();
@@ -505,7 +408,6 @@ describe("main ", () => {
           node: node,
           inputs: { n },
           outputs: { r },
-          resolvedDeps: testNodesCollection,
         });
 
         assert.equal(fn.callCount, 0);
@@ -521,28 +423,24 @@ describe("main ", () => {
 
       it("connects one-off inputs properly", () => {
         const n = randomInt(99);
-        const resolvedDeps = testNodesCollectionWith(Value(n));
-        const node = connect(
-          {
-            id: "test",
-            instances: [
-              nodeInstance("v1", Value(n).id),
-              nodeInstance("a", add1.id),
-            ],
-            connections: [
-              {
-                from: connectionNode("v1", "r"),
-                to: connectionNode("a", "n"),
-              },
-              connectionData("a.r", "r"),
-            ],
-            outputs: {
-              r: nodeOutput(),
+        const node = composeExecutableNode({
+          id: "test",
+          instances: [
+            internalNodeInstance("v1", Value(n)),
+            internalNodeInstance("a", add1),
+          ],
+          connections: [
+            {
+              from: connectionNode("v1", "r"),
+              to: connectionNode("a", "n"),
             },
-            inputs: {},
+            connectionData("a.r", "r"),
+          ],
+          outputs: {
+            r: nodeOutput(),
           },
-          resolvedDeps
-        );
+          inputs: {},
+        });
 
         const r = new Subject();
         const s = spy();
@@ -551,7 +449,6 @@ describe("main ", () => {
           node: node,
           inputs: {},
           outputs: { r },
-          resolvedDeps: resolvedDeps,
         });
 
         assert.equal(s.lastCall.args[0], n + 1);
@@ -559,32 +456,28 @@ describe("main ", () => {
 
       it("connects the same output to 2 inputs", () => {
         const n = randomInt(99);
-        const resolvedDeps = testNodesCollectionWith(Value(n));
-        const node = connect(
-          {
-            id: "test",
-            instances: [
-              nodeInstance("v", Value(n).id),
-              nodeInstance("a", add.id),
-            ],
-            connections: [
-              {
-                from: connectionNode("v", "r"),
-                to: connectionNode("a", "n1"),
-              },
-              {
-                from: connectionNode("v", "r"),
-                to: connectionNode("a", "n2"),
-              },
-              connectionData("a.r", "r"),
-            ],
-            outputs: {
-              r: nodeOutput(),
+        const node = composeExecutableNode({
+          id: "test",
+          instances: [
+            internalNodeInstance("v", Value(n)),
+            internalNodeInstance("a", add),
+          ],
+          connections: [
+            {
+              from: connectionNode("v", "r"),
+              to: connectionNode("a", "n1"),
             },
-            inputs: {},
+            {
+              from: connectionNode("v", "r"),
+              to: connectionNode("a", "n2"),
+            },
+            connectionData("a.r", "r"),
+          ],
+          outputs: {
+            r: nodeOutput(),
           },
-          resolvedDeps
-        );
+          inputs: {},
+        });
 
         const r = new Subject();
         const s = spy();
@@ -593,7 +486,6 @@ describe("main ", () => {
           node: node,
           inputs: {},
           outputs: { r },
-          resolvedDeps: resolvedDeps,
         });
 
         r.subscribe(s);
@@ -603,31 +495,27 @@ describe("main ", () => {
 
       it("works regardless of the order of the instances and connections with 2 pieces", () => {
         const n = randomInt(99);
-        const resolvedDeps = testNodesCollectionWith(Value(n));
         const instances = [
-          nodeInstance("a", add1.id),
-          nodeInstance("v", Value(n).id),
+          internalNodeInstance("a", add1),
+          internalNodeInstance("v", Value(n)),
         ];
 
         for (let i = 0; i < 10; i++) {
-          const node = connect(
-            {
-              id: "test",
-              instances: shuffle(instances),
-              connections: [
-                {
-                  from: connectionNode("v", "r"),
-                  to: connectionNode("a", "n"),
-                },
-                connectionData("a.r", "r"),
-              ],
-              inputs: {},
-              outputs: {
-                r: nodeOutput(),
+          const node = composeExecutableNode({
+            id: "test",
+            instances: shuffle(instances),
+            connections: [
+              {
+                from: connectionNode("v", "r"),
+                to: connectionNode("a", "n"),
               },
+              connectionData("a.r", "r"),
+            ],
+            inputs: {},
+            outputs: {
+              r: nodeOutput(),
             },
-            resolvedDeps
-          );
+          });
 
           const r = new Subject();
           const s = spy();
@@ -636,7 +524,6 @@ describe("main ", () => {
             node: node,
             inputs: {},
             outputs: { r },
-            resolvedDeps: resolvedDeps,
           });
 
           assert.equal(s.lastCall.args[0], n + 1);
@@ -645,36 +532,33 @@ describe("main ", () => {
 
       it("works regardless of the order of the instances and connections with 3 pieces", () => {
         const n = randomInt(99);
-        const resolvedDeps = testNodesCollectionWith(Value(n));
-        const instances: NodeInstance[] = [
-          nodeInstance("a", add.id),
-          nodeInstance("v1", Value(n).id),
-          nodeInstance("v2", Value(n).id),
+
+        const instances: InternalNodeInstance[] = [
+          internalNodeInstance("a", add),
+          internalNodeInstance("v1", Value(n)),
+          internalNodeInstance("v2", Value(n)),
         ];
 
         for (let i = 0; i < 10; i++) {
-          const node = connect(
-            {
-              id: "test",
-              instances: shuffle(instances),
-              connections: [
-                {
-                  from: connectionNode("v1", "r"),
-                  to: connectionNode("a", "n1"),
-                },
-                {
-                  from: connectionNode("v2", "r"),
-                  to: connectionNode("a", "n2"),
-                },
-                connectionData("a.r", "r"),
-              ],
-              inputs: {},
-              outputs: {
-                r: nodeOutput(),
+          const node = composeExecutableNode({
+            id: "test",
+            instances: shuffle(instances),
+            connections: [
+              {
+                from: connectionNode("v1", "r"),
+                to: connectionNode("a", "n1"),
               },
+              {
+                from: connectionNode("v2", "r"),
+                to: connectionNode("a", "n2"),
+              },
+              connectionData("a.r", "r"),
+            ],
+            inputs: {},
+            outputs: {
+              r: nodeOutput(),
             },
-            resolvedDeps
-          );
+          });
 
           const r = new Subject();
           const s = spy();
@@ -683,7 +567,6 @@ describe("main ", () => {
             node: node,
             inputs: {},
             outputs: { r },
-            resolvedDeps: resolvedDeps,
           });
 
           assert.equal(s.lastCall.args[0], n + n);
@@ -692,23 +575,20 @@ describe("main ", () => {
 
       it("connects const inputs properly", () => {
         const n = randomInt(99);
-        const resolvedDeps = testNodesCollectionWith(Value(n));
-        const node: VisualNode = {
+        const node: InternalVisualNode = {
           id: "test",
           inputs: {},
           outputs: {
             r: nodeOutput(),
           },
           instances: [
-            nodeInstance("v1", Value(n).id),
-            nodeInstance("a", add1.id),
+            internalNodeInstance("v1", Value(n)),
+            internalNodeInstance("a", add1),
           ],
           connections: [
             connectionData("v1.r", "a.n"),
             connectionData("a.r", "r"),
           ],
-          inputsPosition: {},
-          outputsPosition: {},
         };
 
         const r = new Subject();
@@ -718,7 +598,6 @@ describe("main ", () => {
           node: node,
           inputs: {},
           outputs: { r },
-          resolvedDeps: resolvedDeps,
         });
 
         assert.equal(s.callCount, 1);
@@ -727,20 +606,17 @@ describe("main ", () => {
     });
 
     it("supports external outputs on connected nodes", () => {
-      const p = connect(
-        {
-          id: "test",
-          instances: [nodeInstance("a", add1.id)],
-          connections: [connectionData("n", "a.n"), connectionData("a.r", "r")],
-          inputs: {
-            n: nodeInput(),
-          },
-          outputs: {
-            r: nodeOutput(),
-          },
+      const p = composeExecutableNode({
+        id: "test",
+        instances: [internalNodeInstance("a", add1)],
+        connections: [connectionData("n", "a.n"), connectionData("a.r", "r")],
+        inputs: {
+          n: nodeInput(),
         },
-        testNodesCollection
-      );
+        outputs: {
+          r: nodeOutput(),
+        },
+      });
 
       const s1 = spy();
       const s2 = spy();
@@ -755,7 +631,6 @@ describe("main ", () => {
         node: add1,
         inputs: { n: n1 },
         outputs: { r: r1 },
-        resolvedDeps: testNodesCollection,
       });
       r1.subscribe(s1);
       n1.subject.next(4);
@@ -766,7 +641,6 @@ describe("main ", () => {
         node: p,
         inputs: { n: n2 },
         outputs: { r: r2 },
-        resolvedDeps: testNodesCollection,
       });
       r2.subscribe(s2);
       n2.subject.next(4);
@@ -781,7 +655,6 @@ describe("main ", () => {
         node: add1,
         inputs: { n, bob },
         outputs: { r },
-        resolvedDeps: testNodesCollection,
       });
       const res = spy();
       r.subscribe(res);
@@ -791,29 +664,25 @@ describe("main ", () => {
       assert.equal(res.callCount, 1);
     });
 
-    it("supports constant values on connect", () => {
-      const resolvedDeps = testNodesCollectionWith(Value(7));
-      const node = connect(
-        {
-          id: "test",
-          instances: [
-            nodeInstance("v", Value(7).id),
-            nodeInstance("a", add.id),
-          ],
-          connections: [
-            connectionData("v.r", "a.n1"),
-            connectionData("n2", "a.n2"),
-            connectionData("a.r", "r"),
-          ],
-          inputs: {
-            n2: nodeInput(),
-          },
-          outputs: {
-            r: nodeOutput(),
-          },
+    it("supports constant values on composeExecutableNode", () => {
+      const node = composeExecutableNode({
+        id: "test",
+        instances: [
+          internalNodeInstance("v", Value(7)),
+          internalNodeInstance("a", add),
+        ],
+        connections: [
+          connectionData("v.r", "a.n1"),
+          connectionData("n2", "a.n2"),
+          connectionData("a.r", "r"),
+        ],
+        inputs: {
+          n2: nodeInput(),
         },
-        resolvedDeps
-      );
+        outputs: {
+          r: nodeOutput(),
+        },
+      });
 
       const n2 = dynamicNodeInput();
       const r = new Subject();
@@ -824,7 +693,6 @@ describe("main ", () => {
         node: node,
         inputs: { n2 },
         outputs: { r },
-        resolvedDeps: resolvedDeps,
       });
 
       r.subscribe(s);
@@ -834,29 +702,24 @@ describe("main ", () => {
     });
 
     it("supports static values on raw", () => {
-      const resolvedDeps = testNodesCollectionWith(Value(7));
-
-      const node = connect(
-        {
-          id: "test",
-          instances: [
-            nodeInstance("v", Value(7).id),
-            nodeInstance("a", transform.id),
-          ],
-          connections: [
-            connectionData("v.r", "a.to"),
-            connectionData("from", "a.from"),
-            connectionData("a.r", "r"),
-          ],
-          inputs: {
-            from: nodeInput(),
-          },
-          outputs: {
-            r: nodeOutput(),
-          },
+      const node = composeExecutableNode({
+        id: "test",
+        instances: [
+          internalNodeInstance("v", Value(7)),
+          internalNodeInstance("a", transform),
+        ],
+        connections: [
+          connectionData("v.r", "a.to"),
+          connectionData("from", "a.from"),
+          connectionData("a.r", "r"),
+        ],
+        inputs: {
+          from: nodeInput(),
         },
-        resolvedDeps
-      );
+        outputs: {
+          r: nodeOutput(),
+        },
+      });
 
       const from = dynamicNodeInput();
       const r = new Subject();
@@ -869,7 +732,6 @@ describe("main ", () => {
         node: node,
         inputs: { from },
         outputs: { r },
-        resolvedDeps: resolvedDeps,
       });
 
       from.subject.next(18);
@@ -887,7 +749,6 @@ describe("main ", () => {
           node: id,
           inputs: { v },
           outputs: { r },
-          resolvedDeps: testNodesCollection,
         });
         r.subscribe(s);
         v.subject.next(5);
@@ -901,7 +762,7 @@ describe("main ", () => {
       it("stops running connected nodes", () => {
         const internalSpy = spy();
         const s = spy();
-        const ids: CodeNode = fromSimplified({
+        const ids: InternalCodeNode = fromSimplified({
           id: "test",
           inputTypes: { v: "any" },
           outputTypes: { r: "any" },
@@ -911,29 +772,27 @@ describe("main ", () => {
           },
         });
 
-        const resolvedDeps = testNodesCollectionWith(ids);
-
-        const node = connect(
-          {
-            id: "bob",
-            instances: [nodeInstance("a", ids.id), nodeInstance("b", ids.id)],
-            connections: [
-              {
-                from: connectionNode("a", "r"),
-                to: connectionNode("b", "v"),
-              },
-              connectionData("v", "a.v"),
-              connectionData("a.r", "r"),
-            ],
-            inputs: {
-              v: nodeInput(),
+        const node = composeExecutableNode({
+          id: "bob",
+          instances: [
+            internalNodeInstance("a", ids),
+            internalNodeInstance("b", ids),
+          ],
+          connections: [
+            {
+              from: connectionNode("a", "r"),
+              to: connectionNode("b", "v"),
             },
-            outputs: {
-              r: nodeOutput(),
-            },
+            connectionData("v", "a.v"),
+            connectionData("a.r", "r"),
+          ],
+          inputs: {
+            v: nodeInput(),
           },
-          resolvedDeps
-        );
+          outputs: {
+            r: nodeOutput(),
+          },
+        });
 
         const v = dynamicNodeInput();
         const r = dynamicOutput();
@@ -941,7 +800,6 @@ describe("main ", () => {
           node: node,
           inputs: { v },
           outputs: { r },
-          resolvedDeps: resolvedDeps,
         });
         r.subscribe(s);
         v.subject.next(5);
@@ -970,8 +828,7 @@ describe("main ", () => {
     });
 
     it("allows same name for input and output", () => {
-      const resolvedDeps = testNodesCollectionWith(Value(1));
-      const node: VisualNode = {
+      const node: InternalVisualNode = {
         id: "node",
         inputs: {
           a: nodeOutput(),
@@ -980,16 +837,14 @@ describe("main ", () => {
           a: nodeOutput(),
         },
         instances: [
-          nodeInstance("v", Value(1).id),
-          nodeInstance("add", add.id),
+          internalNodeInstance("v", Value(1)),
+          internalNodeInstance("add", add),
         ],
         connections: [
           connectionData("v.r", "add.n2"),
           connection(externalConnectionNode("a"), connectionNode("add", "n1")),
           connection(connectionNode("add", "r"), externalConnectionNode("a")),
         ],
-        outputsPosition: {},
-        inputsPosition: {},
       };
 
       const inputA = dynamicNodeInput();
@@ -1000,7 +855,6 @@ describe("main ", () => {
         node: node,
         inputs: { a: inputA },
         outputs: { a: outputA },
-        resolvedDeps: resolvedDeps,
       });
       inputA.subject.next(2);
       assert.equal(fn.callCount, 1);
@@ -1009,7 +863,7 @@ describe("main ", () => {
 
     describe("more than 1 connection per pin", () => {
       it("is possible when connecting main input to 2 inputs inside it", () => {
-        const node: VisualNode = {
+        const node: InternalVisualNode = {
           id: "node",
           inputs: {
             n: nodeInput(),
@@ -1017,14 +871,12 @@ describe("main ", () => {
           outputs: {
             r: nodeOutput(),
           },
-          instances: [nodeInstance("a", add.id)],
+          instances: [internalNodeInstance("a", add)],
           connections: [
             connection(externalConnectionNode("n"), connectionNode("a", "n1")),
             connection(externalConnectionNode("n"), connectionNode("a", "n2")),
             connection(connectionNode("a", "r"), externalConnectionNode("r")),
           ],
-          outputsPosition: {},
-          inputsPosition: {},
         };
 
         const n = dynamicNodeInput();
@@ -1033,7 +885,6 @@ describe("main ", () => {
           node: node,
           inputs: { n },
           outputs: { r },
-          resolvedDeps: testNodesCollection,
         });
 
         const fn = spy();
@@ -1044,18 +895,15 @@ describe("main ", () => {
       });
 
       it("returns all given pulses to output", async () => {
-        const resolvedDeps = testNodesCollectionWith(Value(1), Value(2));
-        const node: VisualNode = {
+        const node: InternalVisualNode = {
           id: "node",
           inputs: {},
           outputs: {
             r: nodeOutput(),
           },
-          inputsPosition: {},
-          outputsPosition: {},
           instances: [
-            nodeInstance("a", Value(1).id),
-            nodeInstance("b", Value(2).id),
+            internalNodeInstance("a", Value(1)),
+            internalNodeInstance("b", Value(2)),
           ],
           connections: [
             connection(connectionNode("a", "r"), externalConnectionNode("r")),
@@ -1070,7 +918,6 @@ describe("main ", () => {
           node: node,
           inputs: {},
           outputs: { r },
-          resolvedDeps: resolvedDeps,
         });
 
         await delay(200);
@@ -1081,61 +928,6 @@ describe("main ", () => {
       });
     });
 
-    // it('runs "leaf" nodes without waiting for external inputs', () => {
-    //   const innerLeafSpy = spy();
-    //   const leaf: CodeNode = {
-    //     id: "emit-1",
-    //     inputs: {},
-    //     outputs: { r: nodeOutput() },
-    //     run: (_, o) => {
-    //       innerLeafSpy();
-    //       o.r?.next(1);
-    //     }
-    //   };
-
-    //   const resolvedDeps = something(leaf);
-    //   const node: VisualNode = {
-    //     id: "node",
-    //     inputsPosition: {},
-    //     outputsPosition: {},
-    //     inputs: {
-    //       n: nodeInput()
-    //     },
-    //     outputs: {
-    //       r: nodeOutput()
-    //     },
-    //     instances: [
-    //       nodeInstance("a", leaf),
-    //       nodeInstance("b", id) // we need it just to mediate the connection
-    //     ],
-    //     connections: [
-    //       connection(externalConnectionNode("n"), connectionNode("b", "v")),
-    //       connection(connectionNode("b", "r"), externalConnectionNode("r")),
-    //       connection(connectionNode("a", "r"), externalConnectionNode("r"))
-    //     ]
-    //   };
-
-    //   const fn = spy();
-    //   const n = dynamicNodeInput();
-    //   const r = dynamicOutput();
-    //   r.subscribe(fn);
-    //   execute({node: node, inputs: { n }, outputs: { r }, resolvedDeps: resolvedDeps});
-
-    //   // assert.equal(fn.calledWith(2), true);
-    //   assert.equal(fn.callCount, 1);
-    //   assert.equal(fn.calledWith(1), true);
-    //   assert.equal(innerLeafSpy.callCount, 1);
-
-    //   n.subject.next(2);
-    //   assert.equal(fn.callCount, 2);
-    //   assert.equal(fn.calledWith(2), true);
-    //   assert.equal(innerLeafSpy.callCount, 1);
-
-    //   n.subject.next(3);
-    //   assert.equal(fn.callCount, 3);
-    //   assert.equal(fn.calledWith(3), true);
-    //   assert.equal(innerLeafSpy.callCount, 1);
-    // });
 
     describe("high order nodes", () => {
       it("works when node is passed directly", () => {
@@ -1148,7 +940,6 @@ describe("main ", () => {
           node: filter,
           inputs: { list, fn },
           outputs: { r },
-          resolvedDeps: testNodesCollection,
         });
         list.subject.next([1, 2, 3, 4, 5, 6]);
         fn.subject.next(isEven);
@@ -1159,7 +950,7 @@ describe("main ", () => {
     });
 
     describe("node state", () => {
-      const node: CodeNode = {
+      const node: InternalCodeNode = {
         id: "fixture",
         inputs: { v: nodeInput() },
         outputs: { r: nodeOutput() },
@@ -1178,7 +969,7 @@ describe("main ", () => {
           const v = dynamicNodeInput();
           const r = new Subject();
 
-          const node1: CodeNode = {
+          const node1: InternalCodeNode = {
             id: "p1",
             inputs: {},
             outputs: { r: nodeOutput() },
@@ -1189,7 +980,7 @@ describe("main ", () => {
               outs.r?.next(n);
             },
           };
-          const node2: CodeNode = {
+          const node2: InternalCodeNode = {
             id: "p2",
             inputs: {},
             outputs: { r: nodeOutput() },
@@ -1205,7 +996,7 @@ describe("main ", () => {
             id: "wrappedP2",
             inputs: [],
             outputs: ["r"],
-            instances: [nodeInstance("p2", node2.id)],
+            instances: [internalNodeInstance("p2", node2)],
             connections: [
               ["__trigger", "p2.__trigger"],
               ["p2.r", "r"],
@@ -1217,8 +1008,8 @@ describe("main ", () => {
             inputs: ["v"],
             outputs: ["r"],
             instances: [
-              nodeInstance("p1", node1.id),
-              nodeInstance("p2", wrappedP2.id),
+              internalNodeInstance("p1", node1),
+              internalNodeInstance("p2", wrappedP2),
             ],
             connections: [
               ["v", "p1.__trigger"],
@@ -1232,7 +1023,9 @@ describe("main ", () => {
             node: wrapper,
             inputs: { v },
             outputs: { r },
-            resolvedDeps: testNodesCollectionWith(node1, node2, wrappedP2),
+            onBubbleError: (e) => {
+              console.log("error", e);
+            },
           });
           v.subject.next("");
           assert.deepEqual(s.lastCall.args[0], 2);
@@ -1252,7 +1045,6 @@ describe("main ", () => {
           node: node,
           inputs: { v },
           outputs: { r },
-          resolvedDeps: testNodesCollection,
         });
         v.subject.next(1);
         v.subject.next(2);
@@ -1275,7 +1067,6 @@ describe("main ", () => {
           node: node,
           inputs: { v: v1 },
           outputs: { r: r1 },
-          resolvedDeps: testNodesCollection,
         });
         v1.subject.next(1);
         v1.subject.next(2);
@@ -1283,7 +1074,6 @@ describe("main ", () => {
           node: node,
           inputs: { v: v2 },
           outputs: { r: r2 },
-          resolvedDeps: testNodesCollection,
         });
         v2.subject.next(1);
         v2.subject.next(2);
@@ -1299,8 +1089,8 @@ describe("main ", () => {
           inputs: ["n1", "n2"],
           outputs: ["r"],
           instances: [
-            nodeInstance("i1", add.id),
-            nodeInstance("i2", id.id), // id to simulate another node
+            internalNodeInstance("i1", add),
+            internalNodeInstance("i2", id), // id to simulate another node
           ],
           connections: [
             ["n1", "i1.n1"],
@@ -1319,7 +1109,6 @@ describe("main ", () => {
           node: node,
           inputs: { n1, n2 },
           outputs: { r },
-          resolvedDeps: testNodesCollection,
         });
 
         n1.subject.next(1);
@@ -1339,8 +1128,8 @@ describe("main ", () => {
           inputs: ["n1", "n2"],
           outputs: ["r"],
           instances: [
-            nodeInstance("i1", add.id),
-            nodeInstance("i2", id.id), // id to simualte anot
+            internalNodeInstance("i1", add),
+            internalNodeInstance("i2", id), // id to simulate another node
           ],
           connections: [
             ["n1", "i1.n1"],
@@ -1360,7 +1149,6 @@ describe("main ", () => {
           node: node,
           inputs: { n1, n2 },
           outputs: { r },
-          resolvedDeps: testNodesCollection,
         });
 
         n1.subject.next(1);
@@ -1395,7 +1183,7 @@ describe("main ", () => {
           inputs: ["v"],
           outputs: ["r"],
           completionOutputs: ["r"],
-          instances: [nodeInstance("i1", counter.id)],
+          instances: [internalNodeInstance("i1", counter)],
           connections: [
             ["v", "i1.v"],
             ["i1.r", "r"],
@@ -1411,7 +1199,6 @@ describe("main ", () => {
           node: counterWrapper,
           inputs: { v },
           outputs: { r },
-          resolvedDeps: testNodesCollectionWith(counter),
         });
         v.subject.next(1);
         v.subject.next(1);
@@ -1447,8 +1234,8 @@ describe("main ", () => {
           outputs: ["r", "r2"],
           reactiveInputs: ["v", "v2"],
           instances: [
-            nodeInstance("i1", counter.id),
-            nodeInstance("i2", id.id),
+            internalNodeInstance("i1", counter),
+            internalNodeInstance("i2", id),
           ],
           connections: [
             ["v", "i1.v"],
@@ -1467,7 +1254,6 @@ describe("main ", () => {
           node: counterWrapper,
           inputs: { v, v2 },
           outputs: { r, r2 },
-          resolvedDeps: testNodesCollectionWith(counter),
         });
         v.subject.next(1);
         v.subject.next(1);
@@ -1492,7 +1278,6 @@ describe("main ", () => {
           node: node,
           inputs: { v },
           outputs: { r },
-          resolvedDeps: testNodesCollection,
           mainState: state,
         });
         v.subject.next(1);
@@ -1506,17 +1291,18 @@ describe("main ", () => {
     });
 
     it("runs nodes that are not fully connected", () => {
-      const node: VisualNode = {
+      const node: InternalVisualNode = {
         id: "node",
-        inputsPosition: {},
-        outputsPosition: {},
         inputs: {
           n: nodeInput(),
         },
         outputs: {
           r: nodeOutput(),
         },
-        instances: [nodeInstance("p1", id.id), nodeInstance("p2", add.id)],
+        instances: [
+          internalNodeInstance("p1", id),
+          internalNodeInstance("p2", add),
+        ],
         connections: [connectionData("n", "p1.v"), connectionData("p1.r", "r")],
       };
 
@@ -1530,7 +1316,6 @@ describe("main ", () => {
         node: node,
         inputs: { n },
         outputs: { r },
-        resolvedDeps: testNodesCollection,
       });
       n.subject.next(42);
 
@@ -1541,7 +1326,7 @@ describe("main ", () => {
   describe("uncontrolled visual nodes", () => {
     it("waits for all inputs when visual node is uncontrolled", () => {
       const innerSpy = spy();
-      const innerNode: CodeNode = {
+      const innerNode: InternalCodeNode = {
         id: "inner",
         inputs: {},
         outputs: {},
@@ -1550,17 +1335,13 @@ describe("main ", () => {
         },
       };
 
-      const visual: VisualNode = {
+      const visual: InternalVisualNode = {
         id: "bob",
         inputs: { n: nodeInput() },
         outputs: {},
-        instances: [nodeInstance("i", innerNode.id)],
+        instances: [internalNodeInstance("i", innerNode)],
         connections: [],
-        inputsPosition: {},
-        outputsPosition: {},
       };
-
-      const resolvedDeps = testNodesCollectionWith(innerNode);
 
       const n = dynamicNodeInput();
       const r = new Subject();
@@ -1572,7 +1353,6 @@ describe("main ", () => {
         node: visual,
         inputs: { n },
         outputs: {},
-        resolvedDeps: resolvedDeps,
       });
 
       assert.equal(innerSpy.callCount, 0);
@@ -1585,7 +1365,7 @@ describe("main ", () => {
 
   describe("recursion support", () => {
     it("does run nodes that have no args", () => {
-      const node: CodeNode = {
+      const node: InternalCodeNode = {
         id: "node",
         inputs: {},
         outputs: {
@@ -1605,13 +1385,12 @@ describe("main ", () => {
         node: node,
         inputs: {},
         outputs: { r },
-        resolvedDeps: testNodesCollection,
       });
       assert.equal(s.lastCall.args[0], "ok");
     });
 
     it('support recursive "add" calculation', () => {
-      const addRec: VisualNode = {
+      const addRec: InternalVisualNode = {
         id: "add-rec",
         inputs: {
           n: nodeInput(),
@@ -1619,17 +1398,14 @@ describe("main ", () => {
         outputs: {
           r: nodeOutput(),
         },
-        inputsPosition: {},
-        outputsPosition: {},
         instances: [
-          nodeInstance("zero", zero.id),
-          nodeInstance("one", one.id),
-          nodeInstance("mOne", mOne.id),
-          nodeInstance("if", peq.id),
-          nodeInstance("arr", "add-rec"),
-          nodeInstance("add1", add.id),
-          nodeInstance("add2", add.id),
-          nodeInstance("tr1", transform.id),
+          internalNodeInstance("zero", zero),
+          internalNodeInstance("one", one),
+          internalNodeInstance("mOne", mOne),
+          internalNodeInstance("if", peq),
+          internalNodeInstance("add1", add),
+          internalNodeInstance("add2", add),
+          internalNodeInstance("tr1", transform),
         ],
         connections: [
           connectionData("n", "if.val"),
@@ -1646,7 +1422,7 @@ describe("main ", () => {
         ],
       };
 
-      const resolvedDeps = testNodesCollectionWith(addRec);
+      addRec.instances.push(internalNodeInstance("arr", addRec));
 
       const r = new Subject();
       const s = spy();
@@ -1659,7 +1435,6 @@ describe("main ", () => {
         node: addRec,
         inputs: { n },
         outputs: { r },
-        resolvedDeps: resolvedDeps,
         onBubbleError: (e) => {
           console.log(e);
         },
@@ -1680,7 +1455,11 @@ describe("main ", () => {
     });
 
     it("support recursion based factorial calculation", async () => {
-      const fact: VisualNode = {
+      const value1 = valueNode("z", 0);
+      const value2 = valueNode("one", 1);
+      const value3 = valueNode("m1", -1);
+
+      const fact: InternalVisualNode = {
         id: "fact",
         inputs: {
           n: nodeInput(),
@@ -1688,17 +1467,14 @@ describe("main ", () => {
         outputs: {
           r: nodeOutput(),
         },
-        inputsPosition: {},
-        outputsPosition: {},
         instances: [
-          inlineNodeInstance("z", valueNode("z", 0)),
-          inlineNodeInstance("one", valueNode("one", 1)),
-          inlineNodeInstance("m1", valueNode("m1", -1)),
-          nodeInstance("if", peq.id),
-          nodeInstance("f", "fact"),
-          nodeInstance("add", add.id),
-          nodeInstance("mul", mul.id),
-          nodeInstance("tr1", transform.id),
+          internalNodeInstance("z", value1),
+          internalNodeInstance("one", value2),
+          internalNodeInstance("m1", value3),
+          internalNodeInstance("if", peq),
+          internalNodeInstance("add", add),
+          internalNodeInstance("mul", mul),
+          internalNodeInstance("tr1", transform),
         ],
         connections: [
           connectionData("n", "if.val"),
@@ -1715,7 +1491,7 @@ describe("main ", () => {
         ],
       };
 
-      const resolvedDeps = testNodesCollectionWith(fact);
+      fact.instances.push(internalNodeInstance("f", fact));
 
       const r = new Subject();
       const s = spy();
@@ -1728,7 +1504,6 @@ describe("main ", () => {
         node: fact,
         inputs: { n },
         outputs: { r },
-        resolvedDeps: resolvedDeps,
       });
 
       n.subject.next(0);
@@ -1755,9 +1530,9 @@ describe("main ", () => {
   });
 
   describe("node cleanup", () => {
-    it("runs cleanup code after a a node finished running on code node", () => {
+    it("runs cleanup code after a a node finished running on internalcode node", () => {
       const spyFn = spy();
-      const node: CodeNode = {
+      const node: InternalCodeNode = {
         id: "id",
         inputs: {
           v: nodeInput(),
@@ -1778,7 +1553,6 @@ describe("main ", () => {
         node: node,
         inputs: { v },
         outputs: { r },
-        resolvedDeps: testNodesCollection,
       });
       v.subject.next(2);
       assert.equal(spyFn.calledOnce, false);
@@ -1788,7 +1562,7 @@ describe("main ", () => {
 
     it("calls destroy fn of debugger when cleaning up", () => {
       const spyFn = spy();
-      const node: CodeNode = {
+      const node: InternalCodeNode = {
         id: "id",
         inputs: {
           v: nodeInput(),
@@ -1809,7 +1583,6 @@ describe("main ", () => {
         node: node,
         inputs: { v },
         outputs: { r },
-        resolvedDeps: testNodesCollection,
       });
       v.subject.next(2);
       assert.equal(spyFn.calledOnce, false);
@@ -1821,7 +1594,7 @@ describe("main ", () => {
   describe("extra context", () => {
     it("passes external context forward when running code comps", async () => {
       const bobber = (n: number) => n + 42;
-      const node: CodeNode = {
+      const node: InternalCodeNode = {
         id: "tester",
         inputs: {},
         outputs: {
@@ -1838,7 +1611,6 @@ describe("main ", () => {
         node: node,
         inputs: {},
         outputs: { r },
-        resolvedDeps: testNodesCollection,
         extraContext: { bobber },
       });
       assert.equal(s.callCount, 1);
@@ -1851,7 +1623,7 @@ describe("main ", () => {
   });
 
   describe("node v2 tests", () => {
-    it("queues values - code node", () => {
+    it("queues values - internal code node", () => {
       const [n1, n2] = [
         dynamicNodeInput({
           // config: queueInputPinConfig(),
@@ -1869,7 +1641,6 @@ describe("main ", () => {
         node: add,
         inputs: { n1, n2 },
         outputs: { r },
-        resolvedDeps: testNodesCollection,
       });
 
       n1.subject.next(1);
@@ -1901,7 +1672,6 @@ describe("main ", () => {
         node: addGroupedQueued,
         inputs: { n1, n2 },
         outputs: { r },
-        resolvedDeps: testNodesCollection,
       });
 
       n1.subject.next(1);
@@ -1939,7 +1709,6 @@ describe("main ", () => {
         node: node,
         inputs: { a, b },
         outputs: { r },
-        resolvedDeps: testNodesCollection,
       });
 
       a.subject.next(1);
@@ -1962,7 +1731,7 @@ describe("main ", () => {
       const s = spy();
       r.subscribe(s);
 
-      const delayer: CodeNode = {
+      const delayer: InternalCodeNode = {
         id: "delayer",
         inputs: {
           item: nodeInput(),
@@ -1982,7 +1751,6 @@ describe("main ", () => {
         node: delayer,
         inputs: { item },
         outputs: { r },
-        resolvedDeps: testNodesCollection,
       });
 
       item.subject.next(10);
@@ -2008,7 +1776,7 @@ describe("main ", () => {
         r.subscribe(s);
         final.subscribe(s);
 
-        const delayer: CodeNode = {
+        const delayer: InternalCodeNode = {
           id: "delayer",
           inputs: {
             item: nodeInput(),
@@ -2031,7 +1799,6 @@ describe("main ", () => {
           node: delayer,
           inputs: { item },
           outputs: { r, final },
-          resolvedDeps: testNodesCollection,
         });
 
         item.subject.next(1);
@@ -2059,7 +1826,7 @@ describe("main ", () => {
 
         const [_, r] = spiedOutput();
 
-        const delayer: CodeNode = {
+        const delayer: InternalCodeNode = {
           id: "delayer",
           inputs: {
             item: nodeInput(),
@@ -2087,7 +1854,6 @@ describe("main ", () => {
           node: delayer,
           inputs: { item },
           outputs: { f1, f2, r },
-          resolvedDeps: testNodesCollection,
         });
 
         item.subject.next(1);
@@ -2117,7 +1883,7 @@ describe("main ", () => {
         final2.subscribe((v) => s(`f2-${v}`));
         r.subscribe((v) => s(`r-${v}`));
 
-        const delayer: CodeNode = {
+        const delayer: InternalCodeNode = {
           id: "delayer",
           inputs: {
             item: nodeInput(),
@@ -2145,7 +1911,6 @@ describe("main ", () => {
           node: delayer,
           inputs: { item },
           outputs: { r, final1, final2 },
-          resolvedDeps: testNodesCollection,
         });
 
         item.subject.next(0);
@@ -2177,7 +1942,7 @@ describe("main ", () => {
         final1.subscribe((v) => s(`f1-${v}`));
         r.subscribe((v) => s(`r-${v}`));
 
-        const delayer: CodeNode = {
+        const delayer: InternalCodeNode = {
           id: "delayer",
           inputs: {
             item: nodeInput(),
@@ -2211,7 +1976,6 @@ describe("main ", () => {
           node: delayer,
           inputs: { item },
           outputs: { r, final1 },
-          resolvedDeps: testNodesCollection,
           onBubbleError: onError,
         });
 
@@ -2236,7 +2000,7 @@ describe("main ", () => {
       });
 
       it("triggers the completion callback with last values when completed", async () => {
-        const simpleCompletion: CodeNode = {
+        const simpleCompletion: InternalCodeNode = {
           id: "simpleCompletion",
           inputs: {},
           outputs: {
@@ -2257,7 +2021,6 @@ describe("main ", () => {
           node: simpleCompletion,
           inputs: {},
           outputs: { r },
-          resolvedDeps: testNodesCollection,
           onCompleted: completionSpy,
         });
 
@@ -2274,7 +2037,7 @@ describe("main ", () => {
       });
 
       describe("implicit completion", () => {
-        describe("code nodes", () => {
+        describe("internal code nodes", () => {
           it("triggers an implicit completion when there are no explicit completion outputs", async () => {
             const node = conciseCodeNode({
               outputs: ["r"],
@@ -2283,7 +2046,7 @@ describe("main ", () => {
             const s = spy();
             execute({
               node,
-              resolvedDeps: testNodesCollection,
+
               inputs: {},
               outputs: { r: dynamicOutput() },
               onCompleted: s,
@@ -2292,7 +2055,7 @@ describe("main ", () => {
             assert.deepEqual(s.lastCall.args[0], { r: "ok" });
           });
 
-          it("waits for promises to resolve before triggering an implicit completion of code node with no explicit completion outputs", async () => {
+          it("waits for promises to resolve before triggering an implicit completion of internal code node with no explicit completion outputs", async () => {
             const node = conciseCodeNode({
               outputs: ["r"],
               run: async (_, o) => {
@@ -2305,7 +2068,7 @@ describe("main ", () => {
             const [sr, r] = spiedOutput();
             execute({
               node,
-              resolvedDeps: testNodesCollection,
+
               inputs: {},
               outputs: { r },
               onCompleted: s,
@@ -2334,7 +2097,7 @@ describe("main ", () => {
             const input = dynamicNodeInput();
             execute({
               node,
-              resolvedDeps: testNodesCollection,
+
               inputs: { a: input },
               outputs: { r },
               onCompleted: s,
@@ -2371,11 +2134,14 @@ describe("main ", () => {
             const wrapper = conciseNode({
               outputs: ["r"],
               instances: [
-                { id: "a", node: delay5, pos: { x: 0, y: 0 }, inputConfig: {} },
+                {
+                  id: "a",
+                  node: delay5,
+                  inputConfig: {},
+                },
                 {
                   id: "b",
                   node: delay10,
-                  pos: { x: 0, y: 0 },
                   inputConfig: {},
                 },
               ],
@@ -2389,7 +2155,6 @@ describe("main ", () => {
             const onCompleted = spy();
             execute({
               node: wrapper,
-              resolvedDeps: testNodesCollection,
               inputs: {},
               outputs: { r },
               onCompleted,
@@ -2415,7 +2180,7 @@ describe("main ", () => {
       r.subscribe(s);
       final.subscribe(s);
 
-      const someNode: CodeNode = {
+      const someNode: InternalCodeNode = {
         id: "someNode",
         inputs: {
           item: nodeInput(),
@@ -2446,7 +2211,6 @@ describe("main ", () => {
         node: someNode,
         inputs: { item },
         outputs: { r, final },
-        resolvedDeps: testNodesCollection,
       });
 
       item.subject.next(23423); // call 0
@@ -2460,7 +2224,7 @@ describe("main ", () => {
     });
 
     describe("accumulate", () => {
-      const accumulate: CodeNode = {
+      const accumulate: InternalCodeNode = {
         id: "acc",
         inputs: {
           item: nodeInput(),
@@ -2501,7 +2265,6 @@ describe("main ", () => {
           node: accumulate,
           inputs: { item, count },
           outputs: { r },
-          resolvedDeps: testNodesCollection,
         });
 
         count.subject.next(1);
@@ -2525,7 +2288,6 @@ describe("main ", () => {
           node: accumulate,
           inputs: { item, count },
           outputs: { r },
-          resolvedDeps: testNodesCollection,
         });
 
         item.subject.next(1);
@@ -2555,7 +2317,6 @@ describe("main ", () => {
           node: accumulate,
           inputs: { item, count },
           outputs: { r },
-          resolvedDeps: testNodesCollection,
         });
 
         item.subject.next(1);
@@ -2574,6 +2335,7 @@ describe("main ", () => {
       });
 
       it("allows creating accumulate2 visually (shared state)", () => {
+        const two = valueNode("two", 2);
         const visualNode = conciseNode({
           id: "bob",
           inputs: ["val"],
@@ -2581,8 +2343,8 @@ describe("main ", () => {
           completionOutputs: ["r"],
           reactiveInputs: ["val"],
           instances: [
-            inlineNodeInstance("two", valueNode("two", 2)),
-            nodeInstance("i1", accumulate.id),
+            internalNodeInstance("two", two),
+            internalNodeInstance("i1", accumulate),
           ],
           connections: [
             ["two.r", "i1.count"],
@@ -2601,7 +2363,6 @@ describe("main ", () => {
           node: visualNode,
           inputs: { val, count },
           outputs: { r },
-          resolvedDeps: testNodesCollectionWith(accumulate),
         });
 
         val.subject.next(1);
@@ -2617,7 +2378,7 @@ describe("main ", () => {
           inputs: ["val", "count"],
           outputs: ["r"],
           reactiveInputs: ["val"],
-          instances: [nodeInstance("i1", accumulate.id, {})],
+          instances: [internalNodeInstance("i1", accumulate, {})],
           connections: [
             ["val", "i1.item"],
             ["count", "i1.count"],
@@ -2636,7 +2397,6 @@ describe("main ", () => {
           node: visualNode,
           inputs: { val, count },
           outputs: { r },
-          resolvedDeps: testNodesCollectionWith(accumulate),
         });
 
         count.subject.next(2);
@@ -2654,7 +2414,7 @@ describe("main ", () => {
       });
 
       it('supports creation of "accumulate until"', () => {
-        const accUntil: CodeNode = {
+        const accUntil: InternalCodeNode = {
           id: "acc",
           inputs: {
             item: nodeInput("optional"),
@@ -2690,7 +2450,6 @@ describe("main ", () => {
           node: accUntil,
           inputs: { item, until },
           outputs: { r },
-          resolvedDeps: testNodesCollection,
         });
 
         item.subject.next(22);
@@ -2705,7 +2464,7 @@ describe("main ", () => {
     });
 
     it('supports creation of "merge" node - code', () => {
-      const merge: CodeNode = {
+      const merge: InternalCodeNode = {
         id: "merge",
         inputs: {
           a: nodeInput("optional"),
@@ -2736,7 +2495,6 @@ describe("main ", () => {
         node: merge,
         inputs: { a, b },
         outputs: { r },
-        resolvedDeps: testNodesCollection,
       });
 
       const numbers = randomInts(20);
@@ -2753,10 +2511,9 @@ describe("main ", () => {
     });
 
     it('supports creation of "merge" node - visual', () => {
-      const mergeGrouped: VisualNode = {
+      const mergeGrouped: InternalVisualNode = {
         id: "visual-node",
-        inputsPosition: {},
-        outputsPosition: {},
+
         inputs: {
           b: nodeInput("optional"),
           a: nodeInput("optional"),
@@ -2764,7 +2521,7 @@ describe("main ", () => {
         outputs: {
           r: nodeOutput(),
         },
-        instances: [nodeInstance("id", id2.id)],
+        instances: [internalNodeInstance("id", id2)],
         connections: [
           connectionData("a", "id.v"),
           connectionData("b", "id.v"),
@@ -2783,7 +2540,6 @@ describe("main ", () => {
         node: mergeGrouped,
         inputs: { b, a },
         outputs: { r },
-        resolvedDeps: testNodesCollection,
       });
 
       const valuesCount = randomInt(10, 20);
@@ -2820,13 +2576,11 @@ describe("main ", () => {
           node: dummyNode,
           inputs: { a },
           outputs: {},
-          resolvedDeps: testNodesCollection,
         });
         execute({
           node: dummyNode,
           inputs: { b },
           outputs: {},
-          resolvedDeps: testNodesCollection,
         });
 
         a.subject.next(1);
@@ -2838,7 +2592,6 @@ describe("main ", () => {
           node: dummyNode,
           inputs: { a, b },
           outputs: {},
-          resolvedDeps: testNodesCollection,
         });
 
         a.subject.next(1);
@@ -2863,7 +2616,6 @@ describe("main ", () => {
           node: dummyNode,
           inputs: { a, b },
           outputs: {},
-          resolvedDeps: testNodesCollection,
         });
 
         a.subject.next(1);
@@ -2874,7 +2626,6 @@ describe("main ", () => {
           node: dummyNode,
           inputs: { a },
           outputs: {},
-          resolvedDeps: testNodesCollection,
         });
 
         a.subject.next(1);
@@ -2908,7 +2659,6 @@ describe("main ", () => {
         node: errorReportingNode,
         inputs: { a },
         outputs: {},
-        resolvedDeps: testNodesCollection,
         onBubbleError: s,
         insId: "someIns",
         _debugger: { onEvent },
@@ -2946,7 +2696,6 @@ describe("main ", () => {
         node: p2,
         inputs: { a },
         outputs: {},
-        resolvedDeps: testNodesCollection,
         _debugger: { onEvent },
         insId: "someIns",
       });
@@ -2978,7 +2727,6 @@ describe("main ", () => {
         node: p2,
         inputs: { a },
         outputs: {},
-        resolvedDeps: testNodesCollection,
         _debugger: { onEvent },
         insId: "someIns",
       });
@@ -3013,7 +2761,6 @@ describe("main ", () => {
           node: p2,
           inputs: { a },
           outputs: {},
-          resolvedDeps: testNodesCollection,
           _debugger: { onEvent },
           insId: "someIns",
           // onBubbleError: (e) => {
@@ -3051,7 +2798,7 @@ describe("main ", () => {
         id: "badWrap",
         inputs: ["a"],
         outputs: ["r"],
-        instances: [nodeInstance("i1", p2.id)],
+        instances: [internalNodeInstance("i1", p2)],
         connections: [["a", "i1.a"]],
       });
 
@@ -3061,7 +2808,6 @@ describe("main ", () => {
         node: badWrapper,
         inputs: { a },
         outputs: {},
-        resolvedDeps: testNodesCollectionWith(p2),
         _debugger: { onEvent },
         insId: "someIns",
       });
@@ -3099,7 +2845,7 @@ describe("main ", () => {
         id: "badWrap",
         inputs: ["a"],
         outputs: ["r"],
-        instances: [nodeInstance("i1", p2.id)],
+        instances: [internalNodeInstance("i1", p2)],
         connections: [["a", "i1.a"]],
       });
 
@@ -3109,7 +2855,6 @@ describe("main ", () => {
         node: badWrapper,
         inputs: { a },
         outputs: {},
-        resolvedDeps: testNodesCollectionWith(p2),
         _debugger: { onEvent },
         insId: "someIns",
       });
@@ -3141,7 +2886,7 @@ describe("main ", () => {
         id: "badWrap",
         inputs: ["a"],
         outputs: ["r"],
-        instances: [nodeInstance("i1", errorReportingNode.id)],
+        instances: [internalNodeInstance("i1", errorReportingNode)],
         connections: [["a", "i1.a"]],
       });
 
@@ -3151,7 +2896,6 @@ describe("main ", () => {
         node: badWrapper,
         inputs: { a },
         outputs: {},
-        resolvedDeps: testNodesCollectionWith(errorReportingNode),
         _debugger: { onEvent },
         insId: "someIns",
       });
@@ -3185,7 +2929,7 @@ describe("main ", () => {
         id: "badWrap",
         inputs: ["a"],
         outputs: ["r"],
-        instances: [nodeInstance("i1", errorReportingNode.id)],
+        instances: [internalNodeInstance("i1", errorReportingNode)],
         connections: [
           ["a", "i1.a"],
           [`i1.${ERROR_PIN_ID}`, "r"],
@@ -3198,7 +2942,6 @@ describe("main ", () => {
         node: badWrapper,
         inputs: { a },
         outputs: { r },
-        resolvedDeps: testNodesCollectionWith(errorReportingNode),
         _debugger: { onEvent },
         insId: "someIns",
       });
@@ -3224,7 +2967,6 @@ describe("main ", () => {
         node: errorReportingNode,
         inputs: { a },
         outputs: { [ERROR_PIN_ID]: errPin },
-        resolvedDeps: testNodesCollection,
         onBubbleError: s1,
         insId: "someIns",
       });
@@ -3251,7 +2993,6 @@ describe("main ", () => {
         node: errorReportingNode,
         inputs: { a },
         outputs: { [ERROR_PIN_ID]: errPin },
-        resolvedDeps: testNodesCollection,
         insId: "someIns",
         _debugger: { onEvent },
       });
@@ -3279,7 +3020,6 @@ describe("main ", () => {
       const [s, r] = spiedOutput();
       const clean = execute({
         node,
-        resolvedDeps: {},
         inputs: {},
         outputs: { r },
       });
@@ -3302,9 +3042,11 @@ describe("main ", () => {
         inputs: ["list"],
         outputs: ["r"],
         instances: [
-          nodeInstance("one", one.id),
-          nodeInstance("i1", spreadList.id),
-          nodeInstance("i2", accumulate.id, { count: stickyInputPinConfig() }),
+          internalNodeInstance("one", one),
+          internalNodeInstance("i1", spreadList),
+          internalNodeInstance("i2", accumulate, {
+            count: stickyInputPinConfig(),
+          }),
         ],
         connections: [
           ["one.r", "i2.count"],
@@ -3318,7 +3060,9 @@ describe("main ", () => {
         node: node,
         inputs: { list },
         outputs: { r },
-        resolvedDeps: testNodesCollectionWith(spreadList, accumulate),
+        onBubbleError: (e) => {
+          console.log("error", e);
+        },
       });
 
       assert.equal(s.callCount, 0);
@@ -3330,14 +3074,15 @@ describe("main ", () => {
     });
 
     it("does not get in a loop with a sticky input that got data", () => {
+      const _valueNode = valueNode("bob", "bob");
       const node = conciseNode({
         id: "test",
         inputs: [],
         outputs: ["r"],
         instances: [
-          inlineNodeInstance("bob", valueNode("bob", "bob")),
-          nodeInstance("i1", id.id),
-          nodeInstance("i2", id.id, { v: stickyInputPinConfig() }),
+          internalNodeInstance("bob", _valueNode),
+          internalNodeInstance("i1", id),
+          internalNodeInstance("i2", id, { v: stickyInputPinConfig() }),
         ],
         connections: [
           ["i1.r", "i2.v"],
@@ -3352,7 +3097,6 @@ describe("main ", () => {
         node: node,
         inputs: {},
         outputs: { r },
-        resolvedDeps: testNodesCollectionWith(id),
       });
 
       assert.equal(s.callCount, 1);
@@ -3383,8 +3127,8 @@ describe("main ", () => {
         inputs: [],
         outputs: ["r"],
         instances: [
-          nodeInstance("i1", loopValuesNode.id),
-          nodeInstance("i2", asyncId.id),
+          internalNodeInstance("i1", loopValuesNode),
+          internalNodeInstance("i2", asyncId),
         ],
         connections: [
           ["i1.r", "i2.v"],
@@ -3398,7 +3142,6 @@ describe("main ", () => {
         node: wrapperNode,
         inputs: {},
         outputs: { r },
-        resolvedDeps: testNodesCollectionWith(loopValuesNode, asyncId),
       });
 
       await eventually(() => {
@@ -3416,7 +3159,7 @@ describe("main ", () => {
         id: "visual-node",
         inputs: ["a|optional"],
         outputs: ["r"],
-        instances: [nodeInstance("v1", v42.id)],
+        instances: [internalNodeInstance("v1", v42)],
         connections: [
           ["a", "v1.__trigger"],
           ["v1.r", "r"],
@@ -3433,7 +3176,6 @@ describe("main ", () => {
         node: visualNode,
         inputs: { a },
         outputs: { r },
-        resolvedDeps: testNodesCollectionWith(v42),
         onBubbleError: err,
       });
 
@@ -3468,7 +3210,6 @@ describe("main ", () => {
         node,
         inputs: { a },
         outputs: { r },
-        resolvedDeps: testNodesCollectionWith(node),
       });
 
       const timesToCall = randomInt(3, 10);
@@ -3478,6 +3219,53 @@ describe("main ", () => {
 
       assert.equal(s.callCount, timesToCall);
       assert.equal(s.lastCall.args[0], timesToCall);
+    });
+  });
+
+  describe("native support for non internal code nodes", () => {
+    it.skip("supports executing an external/non-internal instance", () => {
+      // const randomNumber = randomInt();
+      // const input = dynamicNodeInput();
+      // const [s, r] = spiedOutput();
+      // const codeNodeId: CodeNode = {
+      //   id: "add-num",
+      //   inputs: {
+      //     number1: {},
+      //     number2: {},
+      //   },
+      //   outputs: { value: {} },
+      //   run: (i, o) => {
+      //     o.value.next(i.number1 + i.number2);
+      //   },
+      // };
+      // const testVisualNode = (randomNumber: number) =>
+      //   conciseNode({
+      //     id: "visual-node",
+      //     inputs: ["number"],
+      //     outputs: ["value"],
+      //     instances: [
+      //       refNodeInstance("i1", codeNodeId.id, {
+      //         number1: macroConfigurableValue("number", randomNumber),
+      //         number2: macroConfigurableValue("number", randomNumber),
+      //       }),
+      //     ],
+      //     connections: [
+      //       ["number", "i1.__trigger"],
+      //       ["i1.value", "value"],
+      //     ],
+      //   });
+      // execute({
+      //   node: testVisualNode(randomNumber),
+      //   inputs: { number: input },
+      //   outputs: { value: r },
+      //   resolvedDeps: testNodesCollectionWith(codeNodeId),
+      //   onBubbleError: (e) => {
+      //     console.log("error", e);
+      //   },
+      // });
+      // input.subject.next(randomNumber);
+      // assert.equal(s.callCount, 1);
+      // assert.equal(s.lastCall.args[0], randomNumber * 2);
     });
   });
 });

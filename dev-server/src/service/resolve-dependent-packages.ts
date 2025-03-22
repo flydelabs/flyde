@@ -1,8 +1,7 @@
-import { NodesDefCollection, isMacroNode } from "@flyde/core";
+import { ImportableEditorNode } from "@flyde/core";
 import {
   deserializeFlow,
   isCodeNodePath,
-  macroNodeToDefinition,
   resolveCodeNodeDependencies,
   resolveImportablePaths,
 } from "@flyde/resolver";
@@ -12,40 +11,58 @@ export async function resolveDependentPackages(
   rootPath: string,
   flydeDependencies: string[]
 ) {
-  return flydeDependencies.reduce<Record<string, NodesDefCollection>>(
-    (acc, dep) => {
+  return flydeDependencies.reduce<Record<string, ImportableEditorNode[]>>(
+    (acc, pkgName) => {
       try {
-        const paths = resolveImportablePaths(rootPath, dep);
-        const nodes = paths.reduce((acc, filePath) => {
+        const paths = resolveImportablePaths(rootPath, pkgName);
+        const nodes = paths.reduce<ImportableEditorNode[]>((acc, filePath) => {
           if (isCodeNodePath(filePath)) {
-            const obj = resolveCodeNodeDependencies(filePath).nodes.reduce(
-              (obj, { node }) => {
-                return {
-                  ...obj,
-                  [node.id]: isMacroNode(node)
-                    ? macroNodeToDefinition(node, filePath)
-                    : node,
+            const obj = resolveCodeNodeDependencies(filePath).nodes.map(
+              ({ node: _node }) => {
+                const node: ImportableEditorNode = {
+                  id: _node.id,
+                  displayName: _node.menuDisplayName,
+                  description: _node.menuDescription,
+                  icon: _node.icon,
+                  aliases: _node.aliases,
+                  type: "code",
+                  source: {
+                    type: "package",
+                    data: pkgName,
+                  },
                 };
-              },
-              {}
+                // let node = isCodeNode(_node)
+                //   ? processImprovedMacro(_node)
+                //   : _node;
+                return node;
+              }
             );
 
-            return { ...acc, ...obj };
+            return [...acc, ...obj];
           }
           try {
             const flow = deserializeFlow(
               readFileSync(filePath, "utf8"),
               filePath
             );
-            return { ...acc, [flow.node.id]: flow.node };
+            const importableNode: ImportableEditorNode = {
+              id: flow.node.id,
+              type: "visual",
+              displayName: flow.node.displayName,
+              description: flow.node.description,
+              aliases: flow.node.aliases,
+              icon: flow.node.icon,
+              source: { type: "package", data: pkgName },
+            };
+            return { ...acc, [flow.node.id]: importableNode };
           } catch (e) {
             console.error(`Skipping corrupt flow at ${filePath}, error: ${e}`);
             return acc;
           }
-        }, {});
-        return { ...acc, [dep]: nodes };
+        }, []);
+        return { ...acc, [pkgName]: nodes };
       } catch (e) {
-        console.log(`skipping invalid dependency ${dep}`);
+        console.log(`skipping invalid dependency ${pkgName}`);
         return acc;
       }
       // return acc;

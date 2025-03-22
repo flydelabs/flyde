@@ -29,7 +29,7 @@ export function deserializeFlow(flowContents: string, path: string): FlydeFlow {
 
   data.imports = imports;
 
-  runMigrations(data);
+  runMigrations(data as any);
   if (!data.node.inputsPosition) {
     data.node.inputsPosition = {};
   }

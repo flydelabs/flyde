@@ -13,48 +13,44 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@flyde/ui";
-import { ImportableSource, NodeLibraryData } from "@flyde/core";
-import { useDependenciesContext } from "../../flow-editor/DependenciesContext";
+import { ImportableEditorNode, NodeLibraryGroup } from "@flyde/core";
 import { InstanceIcon } from "../instance-view";
-import { LocalImportableResult } from "../../flow-editor/DependenciesContext";
 import { cn } from "@flyde/ui";
 import { useLocalStorage } from "../../lib/user-preferences";
+import { usePorts } from "@/flow-editor/ports";
 
 const RECENTLY_USED_KEY = "flyde-recently-used-nodes";
 const MAX_RECENT_NODES = 8;
 
-export interface CommandMenuProps extends NodeLibraryData {
+export interface CommandMenuProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onAddNode: (node: ImportableSource) => void;
+  onAddNode: (node: ImportableEditorNode) => void;
   onClickCustomNode: () => void;
 }
 
 export const CommandMenu: React.FC<CommandMenuProps> = ({
-  groups,
   open,
   onOpenChange,
   onAddNode,
   onClickCustomNode,
 }) => {
   const [query, setQuery] = useState("");
-  const { onRequestImportables } = useDependenciesContext();
-  const [importables, setImportables] = useState<ImportableSource[]>();
-  const [recentlyUsed, setRecentlyUsed] = useLocalStorage<ImportableSource[]>(
+  const [importables, setImportables] = useState<ImportableEditorNode[]>();
+  const [recentlyUsedIds, setRecentlyUsedIds] = useLocalStorage<string[]>(
     RECENTLY_USED_KEY,
     []
   );
 
+  const [groups, setGroups] = useState<NodeLibraryGroup[]>([]);
+
+  const { getLibraryData } = usePorts();
+
   useEffect(() => {
-    if (open) {
-      setQuery("");
-      onRequestImportables().then(({ importables }: LocalImportableResult) => {
-        setImportables(importables);
-      });
-    } else {
-      setImportables(undefined);
-    }
-  }, [onRequestImportables, open]);
+    getLibraryData().then((data) => {
+      setGroups(data.groups);
+    });
+  }, [getLibraryData]);
 
   const filteredGroups = React.useMemo(() => {
     if (!query) {
@@ -77,21 +73,23 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
       .toLowerCase()
       .includes(query.toLowerCase());
 
-    return groups
-      .map((group) => ({
-        ...group,
-        nodes: group.nodes.filter((node) => {
-          const searchContent = `${node.id} ${node.displayName ?? ""} ${
-            node.namespace ?? ""
-          } ${node.description ?? ""} ${node.searchKeywords?.join(" ") ?? ""}`;
-          return searchContent.toLowerCase().includes(query.toLowerCase());
-        }),
-      }))
-      .filter(
-        (group) =>
-          group.nodes.length > 0 ||
-          (group.title === "Essentials" && customNodeMatches)
-      );
+    // First filter the nodes in each group
+    const filteredGroups = groups.map((group) => ({
+      ...group,
+      nodes: group.nodes.filter((node) => {
+        const searchContent = `${node.id} ${node.displayName ?? ""} ${
+          node.description ?? ""
+        } ${node.aliases?.join(" ") ?? ""}`;
+        return searchContent.toLowerCase().includes(query.toLowerCase());
+      }),
+    }));
+
+    // Then filter out empty groups, but keep Essentials if customNodeMatches
+    return filteredGroups.filter(
+      (group) =>
+        group.nodes.length > 0 ||
+        (group.title === "Essentials" && customNodeMatches)
+    );
   }, [groups, query]);
 
   const filteredImportables = React.useMemo(() => {
@@ -102,18 +100,28 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
     );
 
     return importables.filter((importable) => {
-      if (allLibraryNodes.has(importable.node.id)) return false;
+      if (allLibraryNodes.has(importable.id)) return false;
 
       if (!query) return true;
 
-      const content = `${importable.node.searchKeywords?.join(" ") ?? ""} ${
-        importable.node.id
-      } ${importable.node.displayName ?? ""} ${
-        importable.node.namespace ?? ""
-      } ${importable.node.description ?? ""}`;
+      const content = `${importable.aliases?.join(" ") ?? ""} ${
+        importable.id
+      } ${importable.displayName ?? ""} ${importable.description ?? ""}`;
       return content.toLowerCase().includes(query.toLowerCase());
     });
   }, [importables, query, groups]);
+
+  // Get recently used nodes from current available nodes
+  const recentlyUsedNodes = React.useMemo(() => {
+    const allNodes = [
+      ...groups.flatMap((g) => g.nodes.map((node) => node)),
+      ...(importables || []),
+    ];
+
+    return recentlyUsedIds
+      .map((id) => allNodes.find((node) => node.id === id))
+      .filter(Boolean) as ImportableEditorNode[];
+  }, [recentlyUsedIds, groups, importables]);
 
   const onSelect = useCallback(
     (value: string) => {
@@ -129,46 +137,24 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
           .flatMap((g) => g.nodes)
           .find((n) => n.id === nodeId);
         if (node) {
-          const importableNode = {
-            module: "@flyde/stdlib",
-            node: node as any,
-          };
-          setRecentlyUsed(
-            [
-              importableNode,
-              ...recentlyUsed.filter((n) => n.node.id !== node.id),
-            ].slice(0, MAX_RECENT_NODES)
+          setRecentlyUsedIds(
+            [nodeId, ...recentlyUsedIds.filter((id) => id !== nodeId)].slice(
+              0,
+              MAX_RECENT_NODES
+            )
           );
-          onAddNode(importableNode);
+          onAddNode(node);
         }
       } else if (source === "importable") {
-        // First check if it's in the recently used list
-        const recentNode = recentlyUsed.find((item) => item.node.id === nodeId);
-        if (recentNode) {
-          // Move it to the top of recently used
-          setRecentlyUsed(
-            [
-              recentNode,
-              ...recentlyUsed.filter((n) => n.node.id !== nodeId),
-            ].slice(0, MAX_RECENT_NODES)
+        const node = importables?.find((i) => i.id === nodeId);
+        if (node) {
+          setRecentlyUsedIds(
+            [nodeId, ...recentlyUsedIds.filter((id) => id !== nodeId)].slice(
+              0,
+              MAX_RECENT_NODES
+            )
           );
-          onAddNode(recentNode);
-        } else {
-          // If not in recently used, look in importables
-          const node = importables?.find((i) => i.node.id === nodeId);
-          if (node) {
-            const importableNode = {
-              module: node.module,
-              node: node.node,
-            };
-            setRecentlyUsed(
-              [
-                importableNode,
-                ...recentlyUsed.filter((n) => n.node.id !== node.node.id),
-              ].slice(0, MAX_RECENT_NODES)
-            );
-            onAddNode(node);
-          }
+          onAddNode(node);
         }
       }
       onOpenChange(false);
@@ -179,8 +165,8 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
       onAddNode,
       onClickCustomNode,
       onOpenChange,
-      recentlyUsed,
-      setRecentlyUsed,
+      recentlyUsedIds,
+      setRecentlyUsedIds,
     ]
   );
 
@@ -195,36 +181,37 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
         />
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
-          {!query && recentlyUsed.length > 0 && (
+          {!query && recentlyUsedNodes.length > 0 && (
             <React.Fragment>
               <CommandGroup heading="Recently Used" className="pb-0.5">
                 <div className="grid grid-cols-4 gap-0">
-                  {recentlyUsed.map((importable) => (
+                  {recentlyUsedNodes.map((importable) => (
                     <CommandItem
-                      key={importable.node.id}
-                      value={`importable:${importable.node.id}`}
+                      key={importable.id}
+                      value={`importable:${importable.id}`}
                       onSelect={onSelect}
                       className="text-xs py-1 px-1 cursor-pointer add-menu-item"
                     >
-                      {importable.node.defaultStyle?.icon && (
+                      {importable.icon && (
                         <InstanceIcon
-                          icon={importable.node.defaultStyle.icon as string}
+                          icon={importable.icon}
                           className="mr-0.5"
                         />
                       )}
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger className="truncate">
-                            {importable.node.displayName ?? importable.node.id}
+                            {importable.displayName}
                           </TooltipTrigger>
-                          {importable.node.description && (
-                            <TooltipContent
-                              side="right"
-                              className="max-w-[300px]"
-                            >
-                              {importable.node.description}
-                            </TooltipContent>
-                          )}
+                          {importable.description &&
+                            typeof importable.description === "string" && (
+                              <TooltipContent
+                                side="right"
+                                className="max-w-[300px]"
+                              >
+                                {importable.description}
+                              </TooltipContent>
+                            )}
                         </Tooltip>
                       </TooltipProvider>
                     </CommandItem>
@@ -259,12 +246,8 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
                       onSelect={onSelect}
                       className="text-xs cursor-pointer"
                     >
-                      {node.defaultStyle?.icon && (
-                        <InstanceIcon
-                          icon={node.defaultStyle.icon as string}
-                          className="mr-0.5"
-                        />
-                      )}
+                      <InstanceIcon icon={node.icon} className="mr-0.5" />
+
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger className="truncate">
@@ -292,30 +275,31 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
               <div className={cn("grid gap-0", query ? "" : "grid-cols-4")}>
                 {filteredImportables.map((importable) => (
                   <CommandItem
-                    key={importable.node.id}
-                    value={`importable:${importable.node.id}`}
+                    key={importable.id}
+                    value={`importable:${importable.id}`}
                     onSelect={onSelect}
                     className="text-xs py-1 px-1 add-menu-item"
                   >
-                    {importable.node.defaultStyle?.icon && (
+                    {importable.icon && (
                       <InstanceIcon
-                        icon={importable.node.defaultStyle.icon as string}
+                        icon={importable.icon as string}
                         className="mr-0.5"
                       />
                     )}
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger className="truncate">
-                          {importable.node.displayName ?? importable.node.id}
+                          {importable.displayName ?? importable.id}
                         </TooltipTrigger>
-                        {importable.node.description && (
-                          <TooltipContent
-                            side="right"
-                            className="max-w-[300px]"
-                          >
-                            {importable.node.description}
-                          </TooltipContent>
-                        )}
+                        {importable.description &&
+                          typeof importable.description === "string" && (
+                            <TooltipContent
+                              side="right"
+                              className="max-w-[300px]"
+                            >
+                              {importable.description}
+                            </TooltipContent>
+                          )}
                       </Tooltip>
                     </TooltipProvider>
                   </CommandItem>

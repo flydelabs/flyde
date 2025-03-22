@@ -1,10 +1,5 @@
 import axios from "axios";
-import {
-  FlydeFlow,
-  NodeLibraryData,
-  ResolvedFlydeFlowDefinition,
-  ImportablesResult,
-} from "@flyde/core";
+import { FlydeFlow, ImportableEditorNode, NodeLibraryData } from "@flyde/core";
 import { FolderStructure } from "./fs-helper/shared";
 
 export const createDevServerClient = (baseUrl: string) => {
@@ -20,14 +15,7 @@ export const createDevServerClient = (baseUrl: string) => {
     fileStructure: async (): Promise<FolderStructure> => {
       return axios.get(`${baseUrl}/structure`).then((res) => res.data);
     },
-    resolveDefinitions: (
-      filename: string
-    ): Promise<ResolvedFlydeFlowDefinition> => {
-      return axios
-        .get(`${baseUrl}/resolveFlow?filename=${filename}`)
-        .then((res) => res.data);
-    },
-    getImportables: (filename: string): Promise<ImportablesResult> => {
+    getImportables: (filename: string): Promise<ImportableEditorNode[]> => {
       return axios
         .get(`${baseUrl}/importables?filename=${filename}`)
         .then((res) => res.data);

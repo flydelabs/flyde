@@ -26,12 +26,12 @@
     "@docusaurus/core": "2.4.1",
     "@docusaurus/plugin-google-gtag": "^2.4.1",
     "@docusaurus/preset-classic": "2.4.1",
+    "@flyde/core": "workspace:*",
     "@flyde/dev-server": "workspace:*",
     "@flyde/flow-editor": "workspace:*",
     "@flyde/resolver": "workspace:*",
     "@flyde/runtime": "workspace:*",
     "@flyde/stdlib": "workspace:*",
-    "@flyde/core": "workspace:*",
     "@flyde/ui": "workspace:*",
     "@mdx-js/react": "^1.6.22",
     "@types/react": "^18.2.0",
@@ -51,9 +51,11 @@
     "usehooks-ts": "^2.9.1"
   },
   "devDependencies": {
+    "@babel/plugin-transform-modules-commonjs": "^7.26.3",
     "@tsconfig/docusaurus": "^1.0.7",
     "@types/chai": "^4.3.5",
     "@types/mocha": "^10.0.1",
+    "add": "^2.0.6",
     "chai": "^4.3.8",
     "concurrently": "^7.6.0",
     "docusaurus-plugin-sass": "^0.2.5",
@@ -72,7 +74,8 @@
     "typedoc": "^0.24.8",
     "typedoc-plugin-markdown": "^3.15.4",
     "typescript": "^5.2.2",
-    "vm-browserify": "^1.1.2"
+    "vm-browserify": "^1.1.2",
+    "yaml-loader": "^0.8.1"
   },
   "browserslist": {
     "production": [

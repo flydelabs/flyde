@@ -1,8 +1,8 @@
-import { CodeNode } from "@flyde/core";
+import { InternalCodeNode } from "@flyde/core";
 
 const namespace = "Lists";
 
-export const ConcatLists: CodeNode = {
+export const ConcatLists: InternalCodeNode = {
   id: "Concat Lists",
   defaultStyle: {
     icon: "fa-list",

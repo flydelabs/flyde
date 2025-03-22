@@ -1,14 +1,7 @@
 import * as React from "react";
 import "./App.scss";
 
-import {
-  FlydeFlow,
-  ImportableSource,
-  isInlineNodeInstance,
-  isMacroNodeInstance,
-  NodeLibraryData,
-  ResolvedDependenciesDefinitions,
-} from "@flyde/core";
+import { FlydeFlow, isVisualNode } from "@flyde/core";
 
 import classNames from "classnames";
 import {
@@ -16,12 +9,9 @@ import {
   EditorDebuggerClient,
 } from "@flyde/remote-debugger/dist/client";
 
-import produce from "immer";
 import {
   DebuggerContextData,
   DebuggerContextProvider,
-  DependenciesContextData,
-  DependenciesContextProvider,
   usePorts,
 } from "@flyde/flow-editor"; // ../../common/visual-node-editor/utils
 
@@ -29,18 +19,14 @@ import { FlowEditor } from "@flyde/flow-editor"; // ../../common/flow-editor/Flo
 
 import { useDebouncedCallback } from "use-debounce";
 
-import { ImportablesResult } from "@flyde/core";
-
-import { values } from "@flyde/flow-editor"; // ../../common/utils
 import { PinType } from "@flyde/core";
 import { createRuntimePlayer, RuntimePlayer } from "@flyde/flow-editor"; // ../../common/visual-node-editor/runtime-player
 
 // import { useDevServerApi } from "../api/dev-server-api";
-import { FlydeFlowChangeType, functionalChange } from "@flyde/flow-editor"; // ../../common/flow-editor/flyde-flow-change-type
+import { FlydeFlowChangeType } from "@flyde/flow-editor"; // ../../common/flow-editor/flyde-flow-change-type
 import { FlowEditorState } from "@flyde/flow-editor"; // ../../common/lib/react-utils/use-hotkeys
 import { defaultViewPort } from "@flyde/flow-editor/dist/visual-node-editor/VisualNodeEditor";
 // import { vscodePromptHandler } from "../vscode-ports";
-import { useState } from "react";
 import { useEffect } from "react";
 import _ from "lodash";
 import { useBootstrapData } from "./use-bootstrap-data";
@@ -51,7 +37,6 @@ export type IntegratedFlowManagerProps = {
   // user: string;
   flow: FlydeFlow;
   integratedSource: string;
-  resolvedDependencies: ResolvedDependenciesDefinitions;
   port: number;
   executionId: string;
 };
@@ -59,7 +44,7 @@ export type IntegratedFlowManagerProps = {
 export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
   props
 ) => {
-  const { flow: initialFlow, resolvedDependencies, executionId } = props;
+  const { flow: initialFlow, executionId } = props;
   const boardRef = React.useRef<any>();
 
   const ports = usePorts();
@@ -68,20 +53,7 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
   const bootstrapData = useBootstrapData();
   const isEmbedded = !!bootstrapData;
 
-  const [currentResolvedDeps, setCurrentResolvedDeps] =
-    useState(resolvedDependencies);
-
   const lastChangeReason = React.useRef("");
-
-  const [libraryData, setLibraryData] = React.useState<NodeLibraryData>({
-    groups: [],
-  });
-
-  useEffect(() => {
-    ports.getLibraryData().then((data) => {
-      setLibraryData(data);
-    });
-  }, [ports]);
 
   const [editorState, setEditorState] = React.useState<FlowEditorState>({
     flow: initialFlow,
@@ -100,61 +72,20 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
 
   const runtimePlayer = React.useRef<RuntimePlayer>();
 
-  // to avoid re-resolving imported flows, this holds nodes that were imported in the current session
-  const [importedNodes, setImportedNodes] = React.useState<ImportableSource[]>(
-    []
-  );
-
   const didMount = React.useRef(false);
 
   useEffect(() => {
-    setCurrentResolvedDeps((deps) => ({
-      ...deps,
-      [flow.node.id]: { ...flow.node, source: { path: "n/a", export: "n/a" } },
-    }));
-  }, [flow.node]);
-
-  useEffect(() => {
-    return ports.onExternalFlowChange(({ flow, deps }) => {
+    return ports.onExternalFlowChange(({ flow }) => {
       /*
        this is triggered from either vscode or in the future from  filesystem watcher when outside of an IDE
       */
       if (_.isEqual(flow, editorState.flow) === false) {
-        setCurrentResolvedDeps(deps);
         setEditorState((state) => ({ ...state, flow }));
 
         lastChangeReason.current = "external-changes";
       }
     });
   }, [editorState.flow, ports]);
-
-  const lastInstancesMacroData = React.useRef<any>([]);
-
-  useEffect(() => {
-    // syncs macro data from instances to the resolved deps
-    const insMacroDatas = flow.node.instances.flatMap((ins) => {
-      if (isMacroNodeInstance(ins)) {
-        return ins.macroData;
-      } else if (isInlineNodeInstance(ins)) {
-        // hack so this covers also inline nodes, probably inefficient (such as everything in this section)
-        return ins.node;
-      } else {
-        return [];
-      }
-    });
-
-    if (!_.isEqual(insMacroDatas, lastInstancesMacroData.current)) {
-      lastInstancesMacroData.current = insMacroDatas;
-      ports
-        .resolveDeps({
-          flow: editorState.flow,
-          relativePath: props.integratedSource,
-        })
-        .then((deps) => {
-          setCurrentResolvedDeps(deps);
-        });
-    }
-  }, [editorState.flow, flow.node.instances, ports, props.integratedSource]);
 
   const connectToRemoteDebugger = React.useCallback(
     (url: string) => {
@@ -206,17 +137,25 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
     }
   }, [debuggerClient]);
 
-  const debouncedSaveFile = useDebouncedCallback((flow, src: string) => {
-    ports.setFlow({ absPath: src, flow });
-  }, 500);
-
-  const onChangeState = React.useCallback(
-    (changedState: FlowEditorState, type: FlydeFlowChangeType) => {
-      lastChangeReason.current = type.message;
-      setEditorState(changedState);
-      debouncedSaveFile(changedState.flow, props.integratedSource);
+  const debouncedSaveFile = useDebouncedCallback(
+    (flow: FlydeFlow, src: string) => {
+      const cleanFlow: FlydeFlow = {
+        ...flow,
+        node: {
+          ...flow.node,
+          instances: flow.node.instances.map((ins) => {
+            const copy = { ...ins };
+            const node = (ins as any).node;
+            if (node && !isVisualNode(node)) {
+              delete (copy as any).node;
+            }
+            return copy;
+          }),
+        },
+      };
+      ports.setFlow({ absPath: src, flow: cleanFlow });
     },
-    [debouncedSaveFile, props.integratedSource]
+    500
   );
 
   const onChangeFlow = React.useCallback(
@@ -224,20 +163,9 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
       console.log("onChangeFlow", type);
       lastChangeReason.current = type.message;
       setEditorState((state) => ({ ...state, flow: changedFlow }));
-      if (type.message.includes("macro")) {
-        await ports.setFlow({
-          absPath: props.integratedSource,
-          flow: changedFlow,
-        });
-        const deps = await ports.resolveDeps({
-          relativePath: props.integratedSource,
-        });
-        setCurrentResolvedDeps(deps);
-      } else {
-        debouncedSaveFile(changedFlow, props.integratedSource);
-      }
+      debouncedSaveFile(changedFlow, props.integratedSource);
     },
-    [ports, props.integratedSource, debouncedSaveFile]
+    [props.integratedSource, debouncedSaveFile]
   );
 
   React.useEffect(() => {
@@ -272,85 +200,6 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
     [debuggerClient, executionId]
   );
 
-  const queryImportables = React.useCallback(async (): Promise<{
-    importables: ImportableSource[];
-    errors: ImportablesResult["errors"];
-  }> => {
-    return await ports
-      .getImportables({
-        rootFolder: props.integratedSource,
-        flowPath: props.integratedSource,
-      })
-      .then((imps) => {
-        const { importables, errors } = imps;
-
-        const newImportables = Object.entries(importables).reduce<any[]>(
-          (acc, [module, nodesMap]) => {
-            const nodes = values(nodesMap);
-            const nodeAndModule = nodes.map((node) => ({ module, node }));
-            return acc.concat(nodeAndModule);
-          },
-          []
-        );
-        return { importables: [...newImportables], errors };
-      });
-  }, [ports, props.integratedSource]);
-
-  const onImportNode = React.useCallback<
-    DependenciesContextData["onImportNode"]
-  >(
-    async (importableNode) => {
-      const existingModuleImports =
-        (flow.imports || {})[importableNode.module] || [];
-
-      setImportedNodes((nodes) => [...nodes, importableNode]);
-
-      const newDeps = {
-        ...resolvedDependencies,
-        [importableNode.node.id]: importableNode.node,
-      };
-
-      const newFlow = produce(flow, (draft) => {
-        const imports = draft.imports || {};
-        const modImports = imports[importableNode.module] || [];
-
-        if (!existingModuleImports.includes(importableNode.node.id)) {
-          modImports.push(importableNode.node.id);
-        }
-
-        imports[importableNode.module] = modImports;
-        draft.imports = imports;
-      });
-
-      const newState = produce(editorState, (draft) => {
-        draft.flow = newFlow;
-      });
-
-      onChangeState(newState, functionalChange("imported-node"));
-
-      return newDeps;
-    },
-    [editorState, flow, onChangeState, resolvedDependencies]
-  );
-
-  const onExtractInlineNode = React.useCallback(async () => {}, []);
-
-  React.useEffect(() => {
-    const _importedNodes = importedNodes.reduce((acc, curr) => {
-      return {
-        ...acc,
-        [curr.node.id]: { ...curr.node, importPath: curr.module },
-      };
-    }, {});
-
-    setCurrentResolvedDeps((deps) => {
-      return {
-        ...deps,
-        ..._importedNodes,
-      };
-    });
-  }, [importedNodes]);
-
   const debuggerContextValue = React.useMemo<DebuggerContextData>(
     () => ({
       onRequestHistory: _onRequestHistory,
@@ -359,50 +208,21 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
     [_onRequestHistory, debuggerClient]
   );
 
-  const onRequestSiblingNodes = React.useCallback<
-    DependenciesContextData["onRequestSiblingNodes"]
-  >(
-    (macro) => {
-      return ports.onRequestSiblingNodes({ macro });
-    },
-    [ports]
-  );
-
-  const dependenciesContextValue = React.useMemo<DependenciesContextData>(
-    () => ({
-      resolvedDependencies: currentResolvedDeps,
-      onImportNode,
-      onRequestImportables: queryImportables,
-      libraryData,
-      onRequestSiblingNodes,
-    }),
-    [
-      currentResolvedDeps,
-      onImportNode,
-      queryImportables,
-      libraryData,
-      onRequestSiblingNodes,
-    ]
-  );
-
   return (
     <div className={classNames("app", { embedded: isEmbedded })}>
-      <DependenciesContextProvider value={dependenciesContextValue}>
-        <main>
-          <div className={classNames("stage-wrapper", { running: false })}>
-            <DebuggerContextProvider value={debuggerContextValue}>
-              <FlowEditor
-                darkMode={bootstrapData?.darkMode}
-                key={props.integratedSource}
-                state={editorState}
-                onChangeEditorState={setEditorState}
-                onExtractInlineNode={onExtractInlineNode}
-                ref={boardRef}
-              />
-            </DebuggerContextProvider>
-          </div>
-        </main>
-      </DependenciesContextProvider>
+      <main>
+        <div className={classNames("stage-wrapper", { running: false })}>
+          <DebuggerContextProvider value={debuggerContextValue}>
+            <FlowEditor
+              darkMode={bootstrapData?.darkMode}
+              key={props.integratedSource}
+              state={editorState}
+              onChangeEditorState={setEditorState}
+              ref={boardRef}
+            />
+          </DebuggerContextProvider>
+        </div>
+      </main>
     </div>
   );
 };

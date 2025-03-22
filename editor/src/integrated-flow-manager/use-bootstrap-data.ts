@@ -1,10 +1,9 @@
-import { FlydeFlow, ResolvedFlydeFlowDefinition } from "@flyde/core";
+import { FlydeFlow } from "@flyde/core";
 import { useState } from "react";
 import { useSsr } from "usehooks-ts";
 
 export type BootstrapData = {
   initialFlow: FlydeFlow;
-  dependencies: ResolvedFlydeFlowDefinition["dependencies"];
   port: number;
   executionId: string;
   darkMode: boolean;

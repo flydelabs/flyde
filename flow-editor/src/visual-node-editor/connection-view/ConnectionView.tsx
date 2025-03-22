@@ -1,11 +1,10 @@
 import * as React from "react";
 import {
-  VisualNode,
   Pos,
-  NodesDefCollection,
-  NodeInstance,
   ConnectionData,
   ConnectionNode,
+  EditorVisualNode,
+  EditorNodeInstance,
 } from "@flyde/core";
 import { Size } from "../../utils";
 import { getConnectionId, logicalPosToRenderedPos, ViewPort } from "../..";
@@ -14,15 +13,14 @@ import { SingleConnectionView } from "./SingleConnectionView";
 import { calcStartPos, calcTargetPos } from "./calc-pin-position";
 
 export interface BaseConnectionViewProps {
-  resolvedNodes: NodesDefCollection;
-  node: VisualNode;
+  node: EditorVisualNode;
   ancestorsInsIds?: string;
   currentInsId: string;
   onDblClick: () => void;
   size: Size;
   boardPos: Pos;
   viewPort: ViewPort;
-  instances: NodeInstance[];
+  instances: EditorNodeInstance[];
   parentVp: ViewPort;
 }
 
@@ -51,7 +49,6 @@ export const ConnectionView: React.FC<ConnectionViewProps> = (props) => {
   const {
     viewPort,
     futureConnection,
-    toggleHidden,
     selectedInstances,
     draggedSource,
     selectedConnections,

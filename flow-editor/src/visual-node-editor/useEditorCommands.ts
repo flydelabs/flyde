@@ -6,17 +6,15 @@ import {
   queueInputPinConfig,
   stickyInputPinConfig,
   THIS_INS_ID,
-  isExternalConnectionNode,
-  isInlineNodeInstance,
   isInternalConnectionNode,
   isVisualNode,
   NodeStyle,
-  ImportableSource,
-  isMacroNodeDefinition,
-  isResolvedMacroNodeInstance,
   Pos,
   ConnectionData,
   ConnectionNode,
+  isInlineVisualNodeInstance,
+  isExternalConnectionNode,
+  ImportableEditorNode,
 } from "@flyde/core";
 import React from "react";
 import {
@@ -28,10 +26,7 @@ import {
   usePorts,
   getConnectionId,
   useConfirm,
-  createNewMacroNodeInstance,
   createNewNodeInstance,
-  vSub,
-  useDependenciesContext,
   centerBoardPosOnTarget,
   Size,
   useHotkeys,
@@ -68,8 +63,6 @@ export function useEditorCommands(
   const { toast } = useToast();
 
   const { reportEvent } = usePorts();
-
-  const { onImportNode } = useDependenciesContext();
 
   const onRenameIoPin = React.useCallback(
     async (type: PinType, pinId: string) => {
@@ -168,8 +161,8 @@ export function useEditorCommands(
 
   const onUnGroup = React.useCallback(
     (groupNodeIns: NodeInstance) => {
-      if (isInlineNodeInstance(groupNodeIns)) {
-        const visualNode = groupNodeIns.node;
+      if (isInlineVisualNodeInstance(groupNodeIns)) {
+        const visualNode = groupNodeIns.source.data;
         if (!isVisualNode(visualNode)) {
           toast({
             description: "Not supported",
@@ -302,23 +295,14 @@ export function useEditorCommands(
   }, [_confirm, boardData, onDeleteInstances, onRemoveIoPin]);
 
   const onAddNode = React.useCallback(
-    async (importableNode: ImportableSource, position?: Pos) => {
-      const depsWithImport = await onImportNode(importableNode);
-
+    async (importableNode: ImportableEditorNode, position?: Pos) => {
       // Calculate the center of the viewport
       const targetPos = {
         x: viewPort.pos.x + vpSize.width / (2 * viewPort.zoom),
         y: viewPort.pos.y + vpSize.height / (2 * viewPort.zoom),
       };
 
-      const newNodeIns = isMacroNodeDefinition(importableNode.node)
-        ? createNewMacroNodeInstance(importableNode.node, 0, targetPos)
-        : createNewNodeInstance(
-            importableNode.node.id,
-            0,
-            targetPos,
-            depsWithImport
-          );
+      const newNodeIns = createNewNodeInstance(importableNode, 0, targetPos);
       const newNode = produce(node, (draft) => {
         draft.instances.push(newNodeIns);
       });
@@ -332,7 +316,7 @@ export function useEditorCommands(
       onChangeBoardData(newState);
 
       reportEvent("addNode", {
-        nodeId: importableNode.node.id,
+        nodeId: importableNode.id,
         source: "actionMenu",
       });
     },
@@ -341,7 +325,6 @@ export function useEditorCommands(
       node,
       onChange,
       onChangeBoardData,
-      onImportNode,
       reportEvent,
       viewPort,
       vpSize,
@@ -479,7 +462,6 @@ export function useEditorCommands(
       boardData.selectedInstances,
       node,
       name,
-      "inline",
       _prompt
     );
     onChange(currentNode, functionalChange("group node"));

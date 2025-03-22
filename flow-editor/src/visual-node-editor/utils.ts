@@ -1,49 +1,35 @@
 import * as immer from "immer";
-import { createId } from "@paralleldrive/cuid2";
 
 import { NODE_HEIGHT } from "./VisualNodeEditor";
 import {
   Pos,
-  InputPin,
-  OutputPin,
   VisualNode,
   NodeInstance,
-  NodesDefCollection,
   isExternalConnectionNode,
   PinType,
   nodeInstance,
   queueInputPinConfig,
   InputMode,
-  inlineNodeInstance,
   intersectRect,
   Rect,
   calcCenter,
   fullInsIdPath,
   InputPinConfig,
-  NodeDefinition,
-  isMacroNodeDefinition,
-  macroNodeInstance,
-  MacroNodeDefinition,
   createInsId,
+  EditorVisualNode,
+  EditorNodeInstance,
+  ImportableEditorNode,
+  visualNodeInstance,
 } from "@flyde/core";
 import { calcPinPosition } from "./connection-view/calc-pin-position";
 import { Size } from "../utils";
-import {
-  isOptionalType,
-  randomInt,
-  keys,
-  OMap,
-  entries,
-  fromEntries,
-  isDefined,
-} from "@flyde/core";
+import { keys, isDefined } from "@flyde/core";
 import { calcNodeWidth } from "./instance-view/utils";
 
 import { calcNodeIoWidth as calcIoNodeWidth } from "./node-io-view/utils";
 import { vSub, vAdd, vMul, vDiv } from "../physics";
 import { getLeafInstancesOfSelection } from "./node-graph-utils";
 import { getVisibleInputs, getVisibleOutputs } from "./instance-view";
-import { safelyGetNodeDef } from "../flow-editor/getNodeDef";
 import { ConnectionData } from "@flyde/core";
 
 export const emptyObj = {}; // for immutability
@@ -84,15 +70,17 @@ export const changePinConfig = (
 };
 
 export const findClosestPin = (
-  node: VisualNode,
-  resolvedNodes: NodesDefCollection,
+  node: EditorVisualNode,
   mousePos: Pos,
   boardPos: Pos,
   currentInsId: string,
   ancestorsInsIds: string,
   viewPort: ViewPort
 ) => {
-  const rootInstance: NodeInstance = nodeInstance(node.id, node.id);
+  const rootInstance: NodeInstance = nodeInstance(node.id, node.id, {} as any, {
+    x: 0,
+    y: 0,
+  });
   const mainInputsData = keys(node.inputs).map((pinId) => {
     const pos = calcPinPosition({
       insId: currentInsId,
@@ -120,10 +108,8 @@ export const findClosestPin = (
   });
 
   const instancesData = node.instances.reduce<any[]>((acc, ins) => {
-    const insNode = safelyGetNodeDef(ins, resolvedNodes);
-
-    const visibleInputs = getVisibleInputs(ins, insNode, node.connections);
-    const visibleOutputs = getVisibleOutputs(ins, insNode, node.connections);
+    const visibleInputs = getVisibleInputs(ins, ins.node, node.connections);
+    const visibleOutputs = getVisibleOutputs(ins, ins.node, node.connections);
 
     const ips = visibleInputs.map((id) => ({
       ins,
@@ -186,131 +172,31 @@ export const getSelectionBoxRect = (from: Pos, to: Pos) => {
   return { x: mnx, y: mny, w, h };
 };
 
-export const parsePromptValue = (raw: string | null) => {
-  if (raw === null) {
-    return;
-  }
-  const maybeNum = parseInt(raw, 10);
-  let value: any = raw;
-  // eslint-disable-next-line eqeqeq
-  if (maybeNum.toString() == raw && !isNaN(maybeNum)) {
-    value = maybeNum;
-  }
-  return value;
-};
-
-export const parseInputOutputTypes = (
-  typeStr: string
-): { inputs: OMap<InputPin>; outputs: OMap<OutputPin> } => {
-  const [, inputsRaw, outputsRaw] = (typeStr.match(/node\((.+)\|(.+)\)/) ||
-    []) as any;
-
-  const inputsEntries = entries(JSON.parse(inputsRaw)).map(([key, type]) => {
-    const optional = isOptionalType(key);
-
-    const val = {
-      type,
-      optional,
-    };
-    return [key.replace(/\?$/, ""), val];
-  });
-  const outputsEntries = entries(JSON.parse(outputsRaw)).map(([key, type]) => {
-    const optional = isOptionalType(key);
-
-    const val = {
-      type,
-      optional,
-    };
-    return [key.replace(/\?$/, ""), val];
-  });
-
-  return {
-    inputs: fromEntries(inputsEntries as any),
-    outputs: fromEntries(outputsEntries as any),
-  };
-};
-
-export const createNewInlineNodeInstance = (
-  node: NodeDefinition,
-  offset: number = -1 * NODE_HEIGHT * 1.5,
-  lastMousePos: Pos
-): NodeInstance => {
-  const ins = inlineNodeInstance(
-    `${node.id}-${randomInt(999)}`,
-    node as any,
-    {},
-    { x: 0, y: 0 }
-  );
-  const width = calcNodeWidth(ins, node);
-
-  const { x, y } = lastMousePos;
-  const pos = {
-    x: x - width / 2,
-    y: y + offset,
-  };
-
-  return { ...ins, pos };
-};
-
 export const createNewNodeInstance = (
-  nodeIdOrNode: string | NodeDefinition,
-  offset: number = -1 * NODE_HEIGHT * 1.5,
-  lastMousePos: Pos,
-  resolvedNodes: NodesDefCollection
-): NodeInstance => {
-  const node =
-    typeof nodeIdOrNode === "string"
-      ? safelyGetNodeDef(nodeIdOrNode, resolvedNodes)
-      : nodeIdOrNode;
-
-  if (!node) {
-    throw new Error(`${nodeIdOrNode} node not found in resolvedNodes`);
-  }
-
-  const inputsConfig = entries(node.inputs).reduce((acc, [k, v]) => {
-    return acc;
-  }, {});
-
-  const ins = isMacroNodeDefinition(node)
-    ? macroNodeInstance(
-        createInsId(node),
-        node.id,
-        node.defaultData,
-        inputsConfig,
-        {
-          x: 0,
-          y: 0,
-        }
-      )
-    : nodeInstance(createInsId(node), node.id, inputsConfig, { x: 0, y: 0 });
-  const width = calcNodeWidth(ins, node);
-
-  const { x, y } = lastMousePos;
-  const pos = {
-    x: x - width / 2,
-    y: y + offset,
-  };
-
-  return { ...ins, pos };
-};
-
-export const createNewMacroNodeInstance = (
-  macro: MacroNodeDefinition<any>,
+  importableNode: ImportableEditorNode,
   offset: number = -1 * NODE_HEIGHT * 1.5,
   lastMousePos: Pos
 ): NodeInstance => {
-  const ins = macroNodeInstance(
-    createId(),
-    macro.id,
-    macro.defaultData,
-    {},
-    {
-      x: 0,
-      y: 0,
-    }
-  );
+  // TODO - handle visual node addition
 
-  const width = 100; // macro are resolved only after they are created, so we don't know their width yet
+  const insId = createInsId(importableNode);
+
+  const ins =
+    importableNode.type === "visual"
+      ? visualNodeInstance(insId, importableNode.id, importableNode.source)
+      : nodeInstance(
+          insId,
+          importableNode.id,
+          importableNode.source,
+          {},
+          {},
+          {
+            x: 0,
+            y: 0,
+          }
+        );
+
+  const width = 300; // TODO - calc proper width
 
   const { x, y } = lastMousePos;
   const pos = {
@@ -450,12 +336,9 @@ const calcPoints = (w: number, h: number, pos: Pos, tag: string): Points => {
   };
 };
 
-export const calcNodesPositions = (
-  node: VisualNode,
-  resolvedNodes: NodesDefCollection
-): Points[] => {
+export const calcNodesPositions = (node: EditorVisualNode): Points[] => {
   const insNodes = node.instances.map((curr) => {
-    const w = calcNodeWidth(curr, safelyGetNodeDef(curr, resolvedNodes));
+    const w = calcNodeWidth(curr, curr.node);
     const h = NODE_HEIGHT;
     return calcPoints(w, h, curr.pos, curr.id);
   });
@@ -477,16 +360,8 @@ export const calcNodesPositions = (
   return [...insNodes, ...inputsCenter, ...outputsCenter];
 };
 
-// export const calcNodesCenter = (node: VisualNode, resolvedNodes: NodesDefCollection): Pos => {
-//   const positions = calcNodesPositions(node, resolvedNodes);
-//   return positions.reduce((acc, curr) => middlePos(acc, curr), positions[0] || { x: 0, y: 0 });
-// };
-
-export const getEffectiveNodeDimensions = (
-  node: VisualNode,
-  resolvedNodes: NodesDefCollection
-) => {
-  const positions = calcNodesPositions(node, resolvedNodes);
+export const getEffectiveNodeDimensions = (node: EditorVisualNode) => {
+  const positions = calcNodesPositions(node);
   const firstPosition = positions[0] || {
     left: 0,
     right: 0,
@@ -597,12 +472,11 @@ export const fitViewPortToRect = (
 };
 
 export const fitViewPortToNode = (
-  node: VisualNode,
-  resolvedNodes: NodesDefCollection,
+  node: EditorVisualNode,
   vpSize: Size,
   padding: [number, number] = [20, 50]
 ): ViewPort => {
-  const { size, center } = getEffectiveNodeDimensions(node, resolvedNodes);
+  const { size, center } = getEffectiveNodeDimensions(node);
 
   return fitViewPortToRect(
     {
@@ -638,9 +512,8 @@ export const isJsxValue = (val: any): boolean => {
 
 export const getInstancesInRect = (
   selectionBox: { from: Pos; to: Pos },
-  resolvedNodes: NodesDefCollection,
   viewPort: ViewPort,
-  instances: NodeInstance[],
+  instances: EditorNodeInstance[],
   parentVp: ViewPort
 ) => {
   const { from, to } = selectionBox;
@@ -649,10 +522,7 @@ export const getInstancesInRect = (
   const toSelect = instances
     .filter((ins) => {
       const { pos } = ins;
-      const w =
-        calcNodeWidth(ins, safelyGetNodeDef(ins, resolvedNodes)) *
-        viewPort.zoom *
-        parentVp.zoom;
+      const w = calcNodeWidth(ins, ins.node) * viewPort.zoom * parentVp.zoom;
       const rec2 = {
         ...pos,
         w,

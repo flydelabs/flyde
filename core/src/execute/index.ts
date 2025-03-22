@@ -6,9 +6,7 @@ export * from "./debugger";
 import {
   dynamicNodeInput,
   dynamicOutput,
-  Node,
-  isVisualNode,
-  CodeNode,
+  InternalCodeNode,
   NodeInputs,
   NodeOutputs,
   NodeAdvancedContext,
@@ -16,10 +14,11 @@ import {
   NodeInstanceError,
   NodeState,
   RunNodeFunction,
-  NodesCollection,
+  InternalNode,
+  isInternalVisualNode,
 } from "../node";
 
-import { connect, ERROR_PIN_ID } from "../connect";
+import { composeExecutableNode, ERROR_PIN_ID } from "../connect";
 
 import {
   hasNewSignificantValues,
@@ -41,6 +40,7 @@ import {
   OMapF,
 } from "../common";
 import { debugLogger } from "../common/debug-logger";
+
 import { Debugger, DebuggerEvent, DebuggerEventType } from "./debugger";
 
 export type SubjectMap = OMapF<Subject<any>>;
@@ -50,17 +50,16 @@ export type ExecutionState = Map<string, any>;
 export type CancelFn = () => void;
 
 export type InnerExecuteFn = (
-  node: Node,
+  node: InternalNode,
   args: NodeInputs,
   outputs: NodeOutputs,
   insId: string
 ) => CancelFn;
 
 export type CodeExecutionData = {
-  node: CodeNode;
+  node: InternalCodeNode;
   inputs: NodeInputs;
   outputs: NodeOutputs;
-  resolvedDeps: NodesCollection;
   _debugger?: Debugger;
   /**
    * If the node is an instance of another node, this is the id of the instance.
@@ -90,7 +89,6 @@ const executeCodeNode = (data: CodeExecutionData) => {
     node,
     inputs,
     outputs,
-    resolvedDeps: resolvedDeps,
     _debugger,
     insId,
     ancestorsInsIds,
@@ -100,7 +98,7 @@ const executeCodeNode = (data: CodeExecutionData) => {
     onCompleted,
     extraContext,
   } = data;
-  const { run, fn } = node;
+  const { run } = node;
 
   const debug = debugLogger("core");
 
@@ -112,11 +110,14 @@ const executeCodeNode = (data: CodeExecutionData) => {
       node: node,
       inputs: i,
       outputs: o,
-      resolvedDeps,
       _debugger,
       insId: id,
       onCompleted,
       onStarted,
+      ancestorsInsIds,
+      extraContext,
+      mainState,
+      onBubbleError: onError,
     });
 
   const onEvent: Debugger["onEvent"] = _debugger?.onEvent || noop;
@@ -315,11 +316,7 @@ const executeCodeNode = (data: CodeExecutionData) => {
             onStarted();
           }
 
-          nodeCleanupFn = (fn ?? run)(
-            argValues as any,
-            outputs,
-            advNodeContext
-          );
+          nodeCleanupFn = run(argValues as any, outputs, advNodeContext);
 
           if (isPromise(nodeCleanupFn)) {
             nodeCleanupFn
@@ -456,8 +453,7 @@ const executeCodeNode = (data: CodeExecutionData) => {
 export type ExecuteFn = (params: ExecuteParams) => CancelFn;
 
 export type ExecuteParams = {
-  node: Node;
-  resolvedDeps: NodesCollection;
+  node: InternalNode;
   inputs: NodeInputs;
   outputs: NodeOutputs;
   _debugger?: Debugger;
@@ -479,7 +475,6 @@ export const execute: ExecuteFn = ({
   node,
   inputs,
   outputs,
-  resolvedDeps,
   _debugger = {},
   insId = ROOT_INS_ID,
   extraContext = {},
@@ -495,7 +490,32 @@ export const execute: ExecuteFn = ({
     mainState[GLOBAL_STATE_NS] = new Map();
   }
 
-  const processedNodes = resolvedDeps;
+  // const instances = isVisualNode(node) ? node.instances : [];
+
+  // const processedNodes = instances
+  //   .filter((instance): instance is RefNodeInstance => {
+  //     return (
+  //       isRefNodeInstance(instance) && isCodeNode(resolvedDeps[instance.nodeId])
+  //     );
+  //   })
+  //   .map((instance) => {
+  //     const id = (instance as any).macroId ?? instance.nodeId;
+  //     const macro = resolvedDeps[id] as unknown as InternalMacroNode;
+
+  //     if (!macro) {
+  //       throw new Error(`Macro ${id} not found in resolvedDeps`);
+  //     }
+
+  //     const processed = processMacroNodeInstance("", macro, instance);
+  //     instance.nodeId = processed.id;
+
+  //     return processed;
+  //   });
+
+  // for (const node of processedNodes) {
+  //   console.log("node", node);
+  //   resolvedDeps[node.id] = node;
+  // }
 
   const onError = (err: unknown) => {
     // this means "catch the error"
@@ -524,11 +544,10 @@ export const execute: ExecuteFn = ({
     }
   };
 
-  const processNode = (node: Node): CodeNode => {
-    if (isVisualNode(node)) {
-      return connect(
+  const processNode = (node: InternalNode): InternalCodeNode => {
+    if (isInternalVisualNode(node)) {
+      return composeExecutableNode(
         node,
-        processedNodes,
         _debugger,
         fullInsIdPath(insId, ancestorsInsIds),
         mainState,
@@ -598,7 +617,6 @@ export const execute: ExecuteFn = ({
     node: processedNode,
     inputs: mediatedInputs,
     outputs: mediatedOutputs,
-    resolvedDeps: processedNodes,
     _debugger,
     insId,
     mainState,
@@ -615,6 +633,3 @@ export const execute: ExecuteFn = ({
     cancelFn();
   };
 };
-/*
-start the nodes, connect the inputs to outputs, push the right sources
-*/

@@ -2,9 +2,14 @@ import {
   InputPin,
   MacroConfigurableValue,
   MacroEditorFieldDefinition,
-  MacroNode,
-  nodeInput,
+  InternalMacroNode,
+  InputMode,
+  macroConfigurableValue,
 } from "..";
+
+import { isMacroConfigurableValue } from "../node/macro-node";
+
+import { nodeInput } from "../node";
 
 // Import the InputConfig type from improved-macros
 import { InputConfig } from "./improved-macros";
@@ -22,10 +27,20 @@ function extractInputNameAndPath(match: string): {
 }
 
 export function extractInputsFromValue(
-  val: MacroConfigurableValue,
-  key: string
+  _val: unknown,
+  key: string,
+  mode?: InputMode
 ): Record<string, InputPin> {
   const inputs = {};
+
+  let val: MacroConfigurableValue = _val as any;
+
+  if (!isMacroConfigurableValue(val)) {
+    console.warn(
+      `Value ${key} isn't a valid MacroConfigurableValue, converting to dynamic`
+    );
+    val = macroConfigurableValue("dynamic", `{{${key}}}`);
+  }
 
   function extractFromValue(value: any) {
     if (typeof value === "string") {
@@ -33,7 +48,7 @@ export function extractInputsFromValue(
       if (matches) {
         for (const match of matches) {
           const { inputName } = extractInputNameAndPath(match);
-          inputs[inputName] = nodeInput();
+          inputs[inputName] = nodeInput(mode);
         }
       }
     }
@@ -42,7 +57,7 @@ export function extractInputsFromValue(
   if (val.type === "string") {
     extractFromValue(val.value);
   } else if (val.type === "dynamic") {
-    return { [key]: nodeInput() };
+    return { [key]: nodeInput(mode) };
   } else {
     try {
       const jsonString = JSON.stringify(val.value);
@@ -50,7 +65,7 @@ export function extractInputsFromValue(
       if (matches) {
         for (const match of matches) {
           const { inputName } = extractInputNameAndPath(match);
-          inputs[inputName] = nodeInput();
+          inputs[inputName] = nodeInput(mode);
         }
       }
     } catch (error) {
@@ -156,7 +171,7 @@ export function renderConfigurableValue(
 export function generateConfigEditor<Config>(
   config: Config,
   overrides?: Partial<Record<keyof Config, any>>
-): MacroNode<Config>["editorConfig"] {
+): InternalMacroNode<Config>["editorConfig"] {
   const fields = Object.keys(config).map((key) => {
     const value = config[key];
     const override = overrides && overrides[key];

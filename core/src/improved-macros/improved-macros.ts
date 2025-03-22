@@ -1,12 +1,11 @@
 import {
-  CodeNode,
+  InternalCodeNode,
   InputPin,
   OutputPin,
-  MacroNode,
+  InternalMacroNode,
   NodeStyle,
   InputMode,
   MacroConfigurableValue,
-  macroConfigurableValue,
   MacroEditorFieldDefinition,
 } from "..";
 import {
@@ -14,26 +13,35 @@ import {
   generateConfigEditor,
   renderDerivedString,
   replaceInputsInValue,
+  evaluateFieldVisibility,
 } from "./improved-macro-utils";
 
 export * from "./improved-macro-utils";
 
+import {
+  isMacroConfigurableValue,
+  macroConfigurableValue,
+} from "../node/macro-node";
+
 export type StaticOrDerived<T, Config> = T | ((config: Config) => T);
 
 export interface BaseMacroNodeData<Config = any> {
+  mode?: "simple" | "advanced";
   id: string;
   namespace?: string;
   menuDisplayName?: string;
   menuDescription?: string;
   displayName?: StaticOrDerived<string, Config>;
   description?: StaticOrDerived<string, Config>;
+  overrideNodeBodyHtml?: StaticOrDerived<string, Config>;
+  aliases?: string[];
   icon?: string;
 
   completionOutputs?: StaticOrDerived<string[], Config>;
-  run: CodeNode["run"];
+  run: InternalCodeNode["run"];
 }
 
-export interface SimplifiedMacroNode<Config> extends BaseMacroNodeData<Config> {
+export interface SimpleCodeNode<Config> extends BaseMacroNodeData<Config> {
   inputs: Record<string, InputConfig>;
   outputs: Record<
     string,
@@ -43,18 +51,19 @@ export interface SimplifiedMacroNode<Config> extends BaseMacroNodeData<Config> {
   >;
 }
 
-export interface AdvancedMacroNode<Config> extends BaseMacroNodeData<Config> {
+export interface AdvancedCodeNode<Config> extends BaseMacroNodeData<Config> {
+  mode: "advanced";
   inputs: StaticOrDerived<Record<string, InputPin>, Config>;
   outputs: StaticOrDerived<Record<string, OutputPin>, Config>;
   reactiveInputs?: StaticOrDerived<string[], Config>;
   defaultConfig: Config;
-  editorConfig?: MacroNode<Config>["editorConfig"];
+  editorConfig?: InternalMacroNode<Config>["editorConfig"];
   defaultStyle?: NodeStyle;
 }
 
-export type ImprovedMacroNode<Config = any> =
-  | SimplifiedMacroNode<Config>
-  | AdvancedMacroNode<Config>;
+export type CodeNode<Config = any> =
+  | SimpleCodeNode<Config>
+  | AdvancedCodeNode<Config>;
 
 export type InputConfig = {
   defaultValue?: any;
@@ -170,14 +179,28 @@ function inferTypeFromInput(
   }
 }
 
-export function isAdvancedMacroNode<Config>(
-  node: ImprovedMacroNode<Config>
-): node is AdvancedMacroNode<Config> {
-  return (node as AdvancedMacroNode<Config>).defaultConfig !== undefined;
+export function isAdvancedCodeNode<Config>(
+  node: CodeNode<Config>
+): node is AdvancedCodeNode<Config> {
+  return (node as AdvancedCodeNode<Config>).defaultConfig !== undefined;
 }
 
-export function processImprovedMacro(node: ImprovedMacroNode): MacroNode<any> {
-  const isAdvanced = isAdvancedMacroNode(node);
+export function isSimplifiedCodeNode<Config>(
+  node: CodeNode<Config>
+): node is SimpleCodeNode<Config> {
+  return (
+    (node as SimpleCodeNode<Config>).inputs !== undefined &&
+    (node as SimpleCodeNode<Config>).outputs !== undefined &&
+    (node as SimpleCodeNode<Config>).run !== undefined
+  );
+}
+
+export function isCodeNode<Config>(node: any): node is CodeNode<Config> {
+  return isAdvancedCodeNode(node) || isSimplifiedCodeNode(node);
+}
+
+export function processImprovedMacro(node: CodeNode): InternalMacroNode<any> {
+  const isAdvanced = isAdvancedCodeNode(node);
 
   const displayName =
     typeof node.displayName === "function"
@@ -220,6 +243,10 @@ export function processImprovedMacro(node: ImprovedMacroNode): MacroNode<any> {
             typeof node.completionOutputs === "function"
               ? node.completionOutputs(config)
               : node.completionOutputs,
+          overrideNodeBodyHtml:
+            typeof node.overrideNodeBodyHtml === "function"
+              ? node.overrideNodeBodyHtml(config)
+              : node.overrideNodeBodyHtml,
         };
       },
       runFnBuilder: (config) => {
@@ -234,7 +261,6 @@ export function processImprovedMacro(node: ImprovedMacroNode): MacroNode<any> {
         node.editorConfig ?? generateConfigEditor(node.defaultConfig),
     };
   } else {
-    // First, identify all group containers
     const groupContainers = Object.entries(node.inputs)
       .filter(([_, input]) => input.group)
       .reduce((acc, [key, input]) => {
@@ -242,23 +268,18 @@ export function processImprovedMacro(node: ImprovedMacroNode): MacroNode<any> {
         return acc;
       }, {} as Record<string, NonNullable<InputConfig["group"]>>);
 
-    // Only create defaultData for actual input fields, not group containers
     const defaultData = Object.entries(node.inputs)
       .filter(([key]) => !groupContainers[key]) // Filter out group container keys
       .reduce((acc, [key, input]) => {
         const type = inferTypeFromInput(input);
-        // For non-configurable inputs or inputs with typeConfigurable: false, store the actual value, not a configurable value
-        if (input.typeConfigurable === false) {
-          acc[key] = input.defaultValue;
-        } else {
-          acc[key] = macroConfigurableValue(
-            type,
-            input.defaultValue ?? `{{${key}}}`
-          );
-        }
+
+        acc[key] = macroConfigurableValue(
+          type,
+          input.defaultValue ?? `{{${key}}}`
+        );
+
         return acc;
       }, {} as Record<string, any>);
-
     // Build a map of parent groups to their child groups
     const groupHierarchy: Record<string, string[]> = {};
 
@@ -298,12 +319,10 @@ export function processImprovedMacro(node: ImprovedMacroNode): MacroNode<any> {
       });
     });
 
-    // Create field definitions for all inputs, including groups
     const allFieldDefinitions = Object.keys(node.inputs).map((key) => {
       const input = node.inputs[key];
       const type = input.editorType ?? inferTypeFromInput(input);
 
-      // If no label is provided, use the description or the key
       const label =
         input.label ||
         input.description ||
@@ -311,7 +330,6 @@ export function processImprovedMacro(node: ImprovedMacroNode): MacroNode<any> {
           .replace(/([A-Z])/g, " $1")
           .replace(/^./, (str) => str.toUpperCase());
 
-      // Only use description for explanatory text if it's different from the label
       const description =
         input.description !== label ? input.description : undefined;
 
@@ -400,9 +418,39 @@ export function processImprovedMacro(node: ImprovedMacroNode): MacroNode<any> {
       },
       defaultData,
       definitionBuilder: (config) => {
+        const fieldToGroupHierarchy: Record<string, string[]> = {};
+
+        function buildGroupHierarchy(fieldKey: string): string[] {
+          const containingGroups = Object.entries(groupContainers)
+            .filter(([_, group]) => group.fields.includes(fieldKey))
+            .map(([groupKey, _]) => groupKey);
+
+          if (containingGroups.length === 0) {
+            return [];
+          }
+
+          const groupKey = containingGroups[0];
+          const group = groupContainers[groupKey];
+
+          const hierarchy = group.parentGroup
+            ? [...buildGroupHierarchy(group.parentGroup), group.parentGroup]
+            : [];
+
+          // Add the current group
+          hierarchy.push(groupKey);
+
+          return hierarchy;
+        }
+
+        // Build hierarchies for all fields
+        Object.keys(node.inputs)
+          .filter((key) => !groupContainers[key]) // Skip group containers
+          .forEach((key) => {
+            fieldToGroupHierarchy[key] = buildGroupHierarchy(key);
+          });
+
         return {
-          inputs: Object.keys(config).reduce((acc, key) => {
-            // Skip non-configurable inputs when creating input pins
+          inputs: Object.keys(node.inputs).reduce((acc, key) => {
             if (node.inputs[key]?.typeConfigurable === false) {
               return acc;
             }
@@ -410,9 +458,36 @@ export function processImprovedMacro(node: ImprovedMacroNode): MacroNode<any> {
             if (groupContainers[key]) {
               return acc;
             }
+
+            // Check if the field should be visible based on its condition and group hierarchy
+            const isVisible = evaluateFieldVisibility(
+              key,
+              fieldToGroupHierarchy[key] || [],
+              fieldDefinitionsMap,
+              config
+            );
+
+            if (!isVisible) {
+              return acc;
+            }
+
+            let configValue = config[key];
+            if (!isMacroConfigurableValue(configValue)) {
+              console.warn(
+                `Config value ${key} isn't a valid MacroConfigurableValue, converting to dynamic`
+              );
+              configValue = macroConfigurableValue("dynamic", configValue);
+            }
+
             return {
               ...acc,
-              ...extractInputsFromValue(config[key], key),
+              ...extractInputsFromValue(
+                config[key],
+                key,
+                node.inputs[key].mode === "reactive"
+                  ? undefined
+                  : node.inputs[key].mode
+              ),
             };
           }, {}),
           outputs: node.outputs,
@@ -422,22 +497,36 @@ export function processImprovedMacro(node: ImprovedMacroNode): MacroNode<any> {
               : node.completionOutputs,
           reactiveInputs: Object.keys(node.inputs)
             .filter((key) => !groupContainers[key]) // Filter out group container keys
-            .filter((key) => node.inputs[key].mode === "reactive"),
+            .filter(
+              (key) =>
+                node.inputs[key].mode === "reactive" ||
+                (node as InternalCodeNode).reactiveInputs?.includes(key)
+            )
+            .filter((key) => {
+              // Check if the field should be visible based on its condition and group hierarchy
+              return evaluateFieldVisibility(
+                key,
+                fieldToGroupHierarchy[key] || [],
+                fieldDefinitionsMap,
+                config
+              );
+            }),
           description: description(config),
           displayName: displayName(config),
         };
       },
       runFnBuilder: (config) => {
         return (inputs, outputs, adv) => {
-          const inputValues = Object.keys(config).reduce((acc, key) => {
-            // For non-configurable inputs, use the raw value directly
-            if (node.inputs[key]?.typeConfigurable === false) {
-              acc[key] = config[key];
-            } else {
-              acc[key] = replaceInputsInValue(inputs, config[key], key);
-            }
+          const inputValues = Object.keys(node.inputs).reduce((acc, key) => {
+            acc[key] = replaceInputsInValue(
+              inputs,
+              config[key] ?? macroConfigurableValue("dynamic", `{{${key}}}`),
+              key
+            );
             return acc;
           }, {} as Record<string, any>);
+
+          console.log("inputValues", inputValues, config);
           return node.run(inputValues, outputs, adv);
         };
       },

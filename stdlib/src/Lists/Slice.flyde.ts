@@ -1,8 +1,8 @@
-import { CodeNode } from "@flyde/core";
+import { InternalCodeNode } from "@flyde/core";
 
 const namespace = "Lists";
 
-export const Slice: CodeNode = {
+export const Slice: InternalCodeNode = {
   id: "Slice",
   namespace,
   description:

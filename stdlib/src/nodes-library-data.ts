@@ -22,8 +22,18 @@ import { Collect } from "./Lists/Collect/Collect.flyde";
 import { Note } from "./Note/Note.flyde";
 import * as Lists from "./Lists";
 import * as Objects from "./Objects";
+import {
+  CodeNodeSource,
+  codeNodeToImportableEditorNode,
+  NodeLibraryData,
+} from "@flyde/core";
 
-export function getUnresolvedNodesLibraryData() {
+const stdlibSource: CodeNodeSource = {
+  type: "package",
+  data: "@flyde/stdlib",
+};
+
+export function getBaseNodesLibraryData(): NodeLibraryData {
   return {
     groups: [
       {
@@ -36,7 +46,7 @@ export function getUnresolvedNodesLibraryData() {
           Conditional,
           Switch,
           Note,
-        ],
+        ].map((node) => codeNodeToImportableEditorNode(node, stdlibSource)),
       },
       {
         title: "Lists",
@@ -47,7 +57,7 @@ export function getUnresolvedNodesLibraryData() {
           Lists.GetListElement,
           Lists.Append,
           Lists.Reverse,
-        ],
+        ].map((node) => codeNodeToImportableEditorNode(node, stdlibSource)),
       },
       {
         title: "Control Flow",
@@ -61,7 +71,7 @@ export function getUnresolvedNodesLibraryData() {
           Switch,
           Publish,
           Subscribe,
-        ],
+        ].map((node) => codeNodeToImportableEditorNode(node, stdlibSource)),
       },
       {
         title: "Objects",
@@ -72,15 +82,19 @@ export function getUnresolvedNodesLibraryData() {
           Objects.JSONParse,
           Objects.JSONStringify,
           Objects.ObjectEntries,
-        ],
+        ].map((node) => codeNodeToImportableEditorNode(node, stdlibSource)),
       },
       {
         title: "State",
-        nodes: [GetGlobalState, SetGlobalState],
+        nodes: [GetGlobalState, SetGlobalState].map((node) =>
+          codeNodeToImportableEditorNode(node, stdlibSource)
+        ),
       },
       {
         title: "Timing",
-        nodes: [Delay, Throttle, Debounce, Interval, RoundRobin],
+        nodes: [Delay, Throttle, Debounce, Interval, RoundRobin].map((node) =>
+          codeNodeToImportableEditorNode(node, stdlibSource)
+        ),
       },
     ],
   };

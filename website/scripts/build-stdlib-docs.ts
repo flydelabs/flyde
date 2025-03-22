@@ -1,10 +1,13 @@
 import { writeFileSync } from "fs";
 import ejs from "ejs";
-import { CodeNode, Node } from "@site/../core";
+import { InternalCodeNode, VisualNode } from "@site/../core";
 
 import markdownTable from "markdown-table";
 
-const data: Record<string, Node> = require("@flyde/stdlib/dist/nodes.json");
+const data: Record<
+  string,
+  VisualNode
+> = require("@flyde/stdlib/dist/nodes.json");
 
 // group data object by "namespace"
 const groupedData = Object.values(data).reduce((acc, node) => {
@@ -15,22 +18,21 @@ const groupedData = Object.values(data).reduce((acc, node) => {
 
   if (!node.inputs || !node.outputs) {
     console.error({ node });
-    throw new Error("42424");
   }
 
   acc[ns].push(node);
   return acc;
 }, {});
 
-const entries = Object.entries<CodeNode[]>(groupedData);
+const entries = Object.entries<InternalCodeNode[]>(groupedData);
 
 const groupAndTables = entries.map(([ns, nodes]) => {
   const rows = [
     ["Id", "Description", "Inputs", "Outputs"],
     ...nodes.map((node) => {
       if (!node.inputs || !node.outputs) {
-        console.error({ node });
-        throw new Error("Node is missing inputs or outputs");
+        console.warn("Node is missing inputs or outputs", { node });
+        return [];
       }
 
       return [

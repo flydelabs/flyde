@@ -11,9 +11,9 @@ node:
       nodeId: InlineValue__rhtf7w6c3ymqcuesd3c1jmwv
       macroId: InlineValue
       macroData:
-        type: string
-        value: World
-        label: '"World"'
+        value:
+          type: string
+          value: World
     - pos:
         x: -69.82091308593749
         y: 316.8998239135742
@@ -22,9 +22,9 @@ node:
       nodeId: InlineValue__DblHelloWorld-ks0481m
       macroId: InlineValue
       macroData:
-        type: string
-        value: Hello
-        label: '"Hello"'
+        value:
+          type: string
+          value: Hello
   connections:
     - from:
         insId: DblHelloWorld-ks0481m

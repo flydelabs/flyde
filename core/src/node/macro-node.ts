@@ -1,6 +1,21 @@
-import { CodeNode, CodeNodeDefinition, NodeMetadata } from "./node";
+import {
+  InternalCodeNode,
+  CodeNodeDefinition,
+  NodeMetadata,
+  CodeNodeInstance,
+} from "./node";
 import type React from "react";
-import { MacroNodeInstance } from "./node-instance";
+
+export function macroConfigurableValue(
+  type: MacroConfigurableValue["type"],
+  value: MacroConfigurableValue["value"]
+): MacroConfigurableValue {
+  return { type, value };
+}
+import {
+  CodeNode,
+  processImprovedMacro,
+} from "../improved-macros/improved-macros";
 
 export type MacroEditorFieldDefinitionType =
   | "string"
@@ -27,13 +42,6 @@ export type MacroConfigurableValue = {
     value: MacroConfigurableValueTypeMap[K];
   };
 }[keyof MacroConfigurableValueTypeMap];
-
-export function macroConfigurableValue(
-  type: MacroConfigurableValue["type"],
-  value: MacroConfigurableValue["value"]
-): MacroConfigurableValue {
-  return { type, value };
-}
 
 export type MacroEditorFieldDefinition =
   | StringFieldDefinition
@@ -109,14 +117,10 @@ export interface SelectTypeData {
   options: { value: string | number; label: string }[];
 }
 
-export interface MacroEditorConfigCustomResolved {
+export interface MacroEditorConfigCustom {
   type: "custom";
-  editorComponentBundlePath: string;
-}
-
-export interface MacroEditorConfigCustomDefinition {
-  type: "custom";
-  editorComponentBundleContent: string;
+  editorComponentBundlePath?: string;
+  editorComponentBundleContent?: string;
 }
 
 export interface MacroEditorConfigStructured {
@@ -125,15 +129,15 @@ export interface MacroEditorConfigStructured {
 }
 
 export type MacroEditorConfigResolved =
-  | MacroEditorConfigCustomResolved
+  | MacroEditorConfigCustom
   | MacroEditorConfigStructured;
 export type MacroEditorConfigDefinition =
-  | MacroEditorConfigCustomDefinition
+  | MacroEditorConfigCustom
   | MacroEditorConfigStructured;
 
-export interface MacroNode<T> extends NodeMetadata {
+export interface InternalMacroNode<T = any> extends NodeMetadata {
   definitionBuilder: (data: T) => Omit<CodeNodeDefinition, "id" | "namespace">;
-  runFnBuilder: (data: T) => CodeNode["run"];
+  runFnBuilder: (data: T) => InternalCodeNode["run"];
   defaultData: T;
 
   /**
@@ -145,7 +149,7 @@ export interface MacroNode<T> extends NodeMetadata {
 }
 
 export type MacroNodeDefinition<T> = Omit<
-  MacroNode<T>,
+  InternalMacroNode<T>,
   | "definitionBuilder"
   | "runFnBuilder"
   | "editorComponentBundlePath"
@@ -168,38 +172,29 @@ export interface MacroEditorCompProps<T> {
   }) => Promise<string>;
 }
 
-export interface MacroEditorComp<T> extends React.FC<MacroEditorCompProps<T>> {}
+export interface MacroEditorComp<T> extends React.FC<MacroEditorCompProps<T>> { }
 
-export const isMacroNode = (p: any): p is MacroNode<any> => {
-  return p && typeof (p as MacroNode<any>).runFnBuilder === "function";
-};
-
-export const isMacroNodeDefinition = (
-  p: any
-): p is MacroNodeDefinition<any> => {
-  const { editorConfig } = (p ?? {}) as MacroNodeDefinition<any>;
-  if (editorConfig?.type === "custom") {
-    return (
-      typeof (editorConfig as MacroEditorConfigCustomDefinition)
-        .editorComponentBundleContent === "string"
-    );
-  } else {
-    return editorConfig?.type === "structured";
-  }
+export const isInternalMacroNode = (p: any): p is InternalMacroNode<any> => {
+  return p && typeof (p as InternalMacroNode<any>).runFnBuilder === "function";
 };
 
 export function processMacroNodeInstance(
   prefix: string,
-  macro: MacroNode<any>,
-  instance: MacroNodeInstance
+  _macro: InternalMacroNode<any> | CodeNode,
+  instance: Pick<CodeNodeInstance, "id" | "config">
 ) {
-  const metaData = macro.definitionBuilder(instance.macroData);
-  const runFn = macro.runFnBuilder(instance.macroData);
+  const macro = isInternalMacroNode(_macro)
+    ? _macro
+    : processImprovedMacro(_macro);
+
+  const metaData = macro.definitionBuilder(instance.config ?? {});
+  const runFn = macro.runFnBuilder(instance.config ?? {});
 
   const id = `${prefix}${macro.id}__${instance.id}`;
 
-  const resolvedNode: CodeNode = {
+  const resolvedNode: InternalCodeNode = {
     ...metaData,
+    // defaultStyle: metaData.defaultStyle ?? macro.defaultStyle,
     defaultStyle: metaData.defaultStyle ?? macro.defaultStyle,
     displayName: metaData.displayName ?? macro.id,
     namespace: macro.namespace,
@@ -223,4 +218,10 @@ export interface GroupFieldDefinition extends BaseFieldDefinition {
      */
     defaultCollapsed?: boolean;
   };
+}
+
+export function isMacroConfigurableValue(
+  value: any
+): value is MacroConfigurableValue {
+  return typeof value === "object" && value !== null && "type" in value;
 }

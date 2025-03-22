@@ -1,23 +1,19 @@
 import { AppData, AppFileType } from "@/components/AppView";
 
 import {
-  ResolvedDependencies,
   simplifiedExecute,
   Debugger,
-  isBaseNode,
+  isCodeNode,
   DynamicNodeInput,
-  isMacroNode,
 } from "@flyde/core";
 
 import * as stdlib from "@flyde/stdlib/dist/all-browser";
 import { transpileFile } from "../transpileFile/transpileFile";
 import React from "react";
 import ReactDOM from "react-dom";
-import { processMacroNodes } from "@/components/EmbeddedFlyde/macroHelpers";
 
 function ensureFakeModulesOnWindow(
   app: AppData,
-  deps: ResolvedDependencies,
   _debugger: Debugger,
   handle: PlaygroundHandle
 ) {
@@ -48,7 +44,7 @@ function ensureFakeModulesOnWindow(
         const promise: any = new Promise(async (res, rej) => {
           const fixedStdlib = Object.entries(stdlib).reduce(
             (acc, [key, val]) => {
-              if (isBaseNode(val) || isMacroNode(val)) {
+              if (isCodeNode(val)) {
                 acc[val.id] = val;
                 return acc;
               } else {
@@ -58,15 +54,9 @@ function ensureFakeModulesOnWindow(
             {} as any
           );
 
-          const { newDeps, newNode } = processMacroNodes(flow.node, {
-            ...fixedStdlib,
-            ...deps,
-          });
-
           onStatusChange({ type: "running" });
           destroy = await simplifiedExecute(
-            newNode,
-            { ...fixedStdlib, ...deps, ...newDeps } as any,
+            flow.node,
             inputs ?? handle.inputs,
             onOutputs,
             {
@@ -134,7 +124,6 @@ export interface RuntimeStatusError {
 
 export interface ExecuteAppParams {
   app: AppData;
-  deps: ResolvedDependencies;
   _debugger: Debugger;
   playgroundHandle: PlaygroundHandle;
   debugDelay: number;
@@ -144,7 +133,6 @@ export interface ExecuteAppParams {
 export function executeApp({
   app,
   _debugger,
-  deps,
   playgroundHandle: outputHandle,
   debugDelay,
   onStatusChange,
@@ -156,7 +144,7 @@ export function executeApp({
   } else {
     _debugger.debugDelay = undefined;
   }
-  ensureFakeModulesOnWindow(app, deps, _debugger, outputHandle);
+  ensureFakeModulesOnWindow(app, _debugger, outputHandle);
 
   (window as any).FlydePlayground = outputHandle;
 

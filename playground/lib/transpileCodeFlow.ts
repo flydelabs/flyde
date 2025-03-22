@@ -1,8 +1,8 @@
 import { AppFile } from "@/components/AppView";
 import { transpileFile } from "./transpileFile/transpileFile";
-import { CodeNode, isCodeNode } from "@flyde/core";
+import { InternalCodeNode, isCodeNode } from "@flyde/core";
 
-export function transpileCodeNodes(file: AppFile): CodeNode[] {
+export function transpileCodeNodes(file: AppFile): InternalCodeNode[] {
   const code = transpileFile(file.name, file.content);
 
   const codeToRun = `
@@ -13,7 +13,9 @@ export function transpileCodeNodes(file: AppFile): CodeNode[] {
 
   try {
     const exports = Object.values(eval(codeToRun) ?? {});
-    return exports.filter((obj: any): obj is CodeNode => isCodeNode(obj));
+    return exports.filter((obj: any): obj is InternalCodeNode =>
+      isCodeNode(obj)
+    );
   } catch (e) {
     console.error(e);
     return [];

@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef } from "react";
-import { VisualNode, NodeInstance, PinType, Pos } from "@flyde/core";
+import { NodeInstance, Pos, EditorVisualNode } from "@flyde/core";
 import { findClosestPin, domToViewPort } from "./utils";
 import { ViewPort } from "./utils";
 
@@ -10,8 +10,7 @@ export interface ClosestPinData {
 }
 
 export function useClosestPinAndMousePos(
-  node: VisualNode,
-  currResolvedDeps: any,
+  node: EditorVisualNode,
   currentInsId: string,
   ancestorsInsIds: string | undefined,
   viewPort: ViewPort,
@@ -32,7 +31,6 @@ export function useClosestPinAndMousePos(
 
       const closest = findClosestPin(
         node,
-        currResolvedDeps,
         normalizedPos,
         boardPos,
         currentInsId,
@@ -60,7 +58,6 @@ export function useClosestPinAndMousePos(
     },
     [
       node,
-      currResolvedDeps,
       boardPos,
       currentInsId,
       ancestorsInsIds,

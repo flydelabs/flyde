@@ -31,8 +31,6 @@ import {
   DebuggerEvent,
   DynamicNodeInput,
   FlydeFlow,
-  Node,
-  ResolvedDependencies,
   dynamicNodeInput,
 } from "@flyde/core";
 import { transpileCodeNodes } from "@/lib/transpileCodeFlow";
@@ -361,7 +359,7 @@ export default function AppView(props: AppViewProps) {
       .filter((f) => f.type === AppFileType.CODE_FLOW)
       .flatMap((f) => transpileCodeNodes(f));
 
-    const deps = [...visualNodes, ...codeFlows].reduce<Record<string, Node>>(
+    const deps = [...visualNodes, ...codeFlows].reduce<Record<string, any>>(
       (acc, node) => ({ ...acc, [node.id]: node }),
       {}
     );
@@ -373,20 +371,12 @@ export default function AppView(props: AppViewProps) {
     runtimePlayer.start();
     executeApp({
       app: draftAppData,
-      deps: localNodes as any,
       _debugger,
       playgroundHandle: outputHandle,
       onStatusChange: setRuntimeStatus,
       debugDelay: runtimeDelay,
     });
-  }, [
-    runtimePlayer,
-    draftAppData,
-    localNodes,
-    _debugger,
-    outputHandle,
-    runtimeDelay,
-  ]);
+  }, [runtimePlayer, draftAppData, _debugger, outputHandle, runtimeDelay]);
 
   const stopExecution = useCallback(() => {
     destroyExecution();
@@ -496,7 +486,7 @@ export default function AppView(props: AppViewProps) {
               <div className="flex-grow overflow-y-auto h-full">
                 {activeFile.type === AppFileType.VISUAL_FLOW ? (
                   <EmbeddedFlydeFileWrapper
-                    localNodes={localNodes as ResolvedDependencies}
+                    localNodes={localNodes as any}
                     key={activeFile.name}
                     fileName={activeFile.name}
                     content={activeFile.content}

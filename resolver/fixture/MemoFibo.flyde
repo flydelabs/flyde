@@ -1,0 +1,279 @@
+imports: {}
+node:
+  instances:
+    - pos:
+        x: -106.53009948730471
+        y: 255.38161979675294
+      id: Add-539
+      inputConfig: {}
+      nodeId: Add
+      config: {}
+      type: code
+      source:
+        type: package
+        data: "@flyde/stdlib"
+      style:
+        color: "#fee440"
+    - pos:
+        x: -506.9854748535156
+        y: 208.6238034057617
+      id: Subtract-210
+      inputConfig:
+        n2:
+          mode: sticky
+      nodeId: Subtract
+      config: {}
+      type: code
+      source:
+        type: package
+        data: "@flyde/stdlib"
+      style:
+        color: "#f15bb5"
+    - pos:
+        x: -512.034165649414
+        y: 309.46874359130857
+      id: Subtract-210-d215
+      inputConfig:
+        n2:
+          mode: sticky
+      nodeId: Subtract
+      config: {}
+      type: code
+      source:
+        type: package
+        data: "@flyde/stdlib"
+      style:
+        color: "#f15bb5"
+    - pos:
+        x: 0
+        y: 0
+      id: Fibonacci-261
+      inputConfig: {}
+      nodeId: Fibonacci
+      type: visual
+      source:
+        type: self
+    - pos:
+        x: 0
+        y: 0
+      id: Fibonacci-379
+      inputConfig: {}
+      nodeId: Fibonacci
+      type: visual
+      source:
+        type: self
+    - pos:
+        x: -928.8918239073669
+        y: -5.549246342710262
+      id: clfv4afmf00084668r9nuoaoe
+      inputConfig:
+        defaultValue:
+          mode: queue
+      nodeId: Get State
+      config: {}
+      type: code
+      source:
+        type: package
+        data: "@flyde/stdlib"
+    - pos:
+        x: 86.97685401746526
+        y: 157.9057780358312
+      id: clfv4epnt001o4668lpvrlux1
+      inputConfig:
+        key:
+          mode: sticky
+      nodeId: Set State
+      config: {}
+      type: code
+      source:
+        type: package
+        data: "@flyde/stdlib"
+    - pos:
+        x: -764.6777648925781
+        y: 283.7032214355469
+      id: cakhy4xeflrv7mec1spzru8a
+      inputConfig: {}
+      visibleInputs: []
+      nodeId: InlineValue
+      config:
+        value:
+          type: number
+          value: 1
+        type:
+          type: string
+          value: number
+        label:
+          type: string
+          value: "1"
+      type: code
+      source:
+        type: package
+        data: "@flyde/stdlib"
+    - pos:
+        x: -767.0813684082032
+        y: 370.8050549316406
+      id: Fibonacci-nf049eh
+      inputConfig: {}
+      visibleInputs: []
+      nodeId: InlineValue
+      config:
+        value:
+          type: number
+          value: 2
+        type:
+          type: string
+          value: number
+        label:
+          type: string
+          value: "2"
+      type: code
+      source:
+        type: package
+        data: "@flyde/stdlib"
+    - pos:
+        x: -728.83802734375
+        y: 84.67604919433592
+      id: o97dpv9ilum2i4n47m2bxdtw
+      inputConfig: {}
+      nodeId: Switch
+      config:
+        inputs:
+          - value
+        cases:
+          - name: is0
+            conditionExpression: inputs.value == 0
+            outputExpression: inputs.value
+          - name: is1
+            conditionExpression: inputs.value == 1
+            outputExpression: inputs.value
+        defaultCase:
+          enabled: true
+          outputExpression: inputs.value
+      type: code
+      source:
+        type: package
+        data: "@flyde/stdlib"
+  connections:
+    - from:
+        insId: Fibonacci-261
+        pinId: result
+      to:
+        insId: Add-539
+        pinId: n1
+    - from:
+        insId: Add-539
+        pinId: sum
+      to:
+        insId: clfv4epnt001o4668lpvrlux1
+        pinId: value
+    - from:
+        insId: clfv4epnt001o4668lpvrlux1
+        pinId: setValue
+      to:
+        insId: __this
+        pinId: result
+    - from:
+        insId: Fibonacci-379
+        pinId: result
+      to:
+        insId: Add-539
+        pinId: n2
+    - from:
+        insId: clfv4afmf00084668r9nuoaoe
+        pinId: value
+      to:
+        insId: __this
+        pinId: result
+    - from:
+        insId: Fibonacci-nf049eh
+        pinId: value
+      to:
+        insId: Subtract-210-d215
+        pinId: n2
+    - from:
+        insId: cakhy4xeflrv7mec1spzru8a
+        pinId: value
+      to:
+        insId: Subtract-210
+        pinId: n2
+    - from:
+        insId: o97dpv9ilum2i4n47m2bxdtw
+        pinId: is0
+      to:
+        insId: __this
+        pinId: result
+    - from:
+        insId: o97dpv9ilum2i4n47m2bxdtw
+        pinId: is1
+      to:
+        insId: __this
+        pinId: result
+    - from:
+        insId: o97dpv9ilum2i4n47m2bxdtw
+        pinId: default
+      to:
+        insId: Subtract-210
+        pinId: n1
+    - from:
+        insId: o97dpv9ilum2i4n47m2bxdtw
+        pinId: default
+      to:
+        insId: Subtract-210-d215
+        pinId: n1
+    - from:
+        insId: __this
+        pinId: n
+      to:
+        insId: clfv4afmf00084668r9nuoaoe
+        pinId: key
+    - from:
+        insId: clfv4afmf00084668r9nuoaoe
+        pinId: __error
+      to:
+        insId: o97dpv9ilum2i4n47m2bxdtw
+        pinId: __trigger
+    - from:
+        insId: __this
+        pinId: n
+      to:
+        insId: o97dpv9ilum2i4n47m2bxdtw
+        pinId: value
+    - from:
+        insId: __this
+        pinId: n
+      to:
+        insId: clfv4epnt001o4668lpvrlux1
+        pinId: key
+    - from:
+        insId: Subtract-210
+        pinId: difference
+      to:
+        insId: Fibonacci-261
+        pinId: n
+    - from:
+        insId: Subtract-210-d215
+        pinId: difference
+      to:
+        insId: Fibonacci-379
+        pinId: n
+  id: Fibonacci
+  inputs:
+    n:
+      mode: required
+      type: any
+  outputs:
+    result:
+      type: any
+      optional: false
+      delayed: false
+  inputsPosition:
+    n:
+      x: -1081.8260841918354
+      y: 110.2287349192975
+  outputsPosition:
+    result:
+      x: 299.3281148790429
+      y: 73.43043258037471
+  defaultStyle:
+    size: large
+    color: "#00bbf9"

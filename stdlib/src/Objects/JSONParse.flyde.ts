@@ -1,8 +1,8 @@
-import { CodeNode } from "@flyde/core";
+import { InternalCodeNode } from "@flyde/core";
 
 const namespace = "Objects";
 
-export const JSONParse: CodeNode = {
+export const JSONParse: InternalCodeNode = {
   id: "JSON Parse",
   defaultStyle: {
     icon: "fa-glasses",

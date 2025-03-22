@@ -1,33 +1,38 @@
-import { DynamicOutput, MacroNode, OutputPinMap } from "@flyde/core";
+import { CodeNode, DynamicOutput, MacroConfigurableValue } from "@flyde/core";
 
-const node: MacroNode<number> = {
+interface AddConfig {
+  sum: MacroConfigurableValue;
+}
+
+export const Add: CodeNode<AddConfig> = {
   id: "Add",
-  description: "Adds the input value",
-  defaultData: 1,
-  editorConfig: {
-    type: "custom",
-    editorComponentBundlePath: "./Macro.flyde.ts",
+  mode: "advanced",
+  defaultStyle: {
+    icon: "plus",
   },
-  definitionBuilder: (sum) => {
-    return {
-      description: `Adds ${sum} to the input value`,
-      inputs: {
-        value: {
-          description: `The value to add ${sum} to`,
-        },
-      },
-      outputs: {
-        output: {
-          description: `The value plus ${sum}`,
-        },
-      },
-    };
+  menuDisplayName: "Add",
+  menuDescription: "Adds a configured value to the input",
+  displayName: () => "Add",
+  description: (config) => `Adds ${config.sum.value} to the input value`,
+  defaultConfig: {
+    sum: { type: "number", value: 1 },
   },
-  runFnBuilder: (sum) => async (inputs, outputs) => {
+  inputs: () => ({
+    value: {
+      description: "The value to add to",
+    },
+  }),
+  outputs: () => ({
+    output: {
+      description: "The sum result",
+    },
+  }),
+  run: (inputs, outputs, adv) => {
+    const { sum: sumConfig } = adv.context.config;
+    const sum = sumConfig.value;
     const value = inputs.value;
+
     const outputPin = outputs.output as DynamicOutput;
     outputPin.next(value + sum);
   },
 };
-
-export default node;

@@ -2,10 +2,13 @@ import * as React from "react";
 import classNames from "classnames";
 import { isInternalConnectionNode, ConnectionData } from "@flyde/core";
 import { useSsr } from "usehooks-ts";
-import { calcStartPos, calcTargetPos } from "./calc-pin-position";
+import {
+  calcStartPos,
+  calcTargetPos,
+  unfoundPinPos,
+} from "./calc-pin-position";
 import { vDiv } from "../../physics";
 import { ConnectionViewPath } from "./ConnectionViewPath/ConnectionViewPath";
-import { safelyGetNodeDef } from "../../flow-editor/getNodeDef";
 import { BaseConnectionViewProps } from "./ConnectionView";
 
 export interface SingleConnectionViewProps extends BaseConnectionViewProps {
@@ -29,9 +32,8 @@ export const SingleConnectionView: React.FC<SingleConnectionViewProps> = (
   const { isBrowser } = useSsr();
 
   const {
-    connection,
     node,
-    resolvedNodes,
+    connection,
     instances,
     connectionType,
     viewPort,
@@ -69,10 +71,7 @@ export const SingleConnectionView: React.FC<SingleConnectionViewProps> = (
     return null;
   }
 
-  const fromNode =
-    isInternalConnectionNode(from) && fromInstance
-      ? safelyGetNodeDef(fromInstance, resolvedNodes)
-      : node;
+  const fromNode = fromInstance.node ?? node;
 
   const sourcePin = fromNode.outputs[from.pinId];
   const delayed = sourcePin && sourcePin.delayed;
@@ -83,6 +82,22 @@ export const SingleConnectionView: React.FC<SingleConnectionViewProps> = (
   const endPos = isBrowser
     ? calcTargetPos({ ...props, connectionNode: connection.to })
     : { x: 0, y: 0 };
+
+  if (startPos.x === unfoundPinPos.x && startPos.y === unfoundPinPos.y) {
+    console.warn(
+      `Could not find pin ${from.pinId} on instance ${from.insId} for connection`,
+      from
+    );
+    return null;
+  }
+
+  if (endPos.x === unfoundPinPos.x && endPos.y === unfoundPinPos.y) {
+    console.warn(
+      `Could not find pin ${to.pinId} on instance ${to.insId} for connection`,
+      to
+    );
+    return null;
+  }
 
   const { x: x1, y: y1 } = vDiv(startPos, props.parentVp.zoom);
   const { x: x2, y: y2 } = vDiv(endPos, props.parentVp.zoom);

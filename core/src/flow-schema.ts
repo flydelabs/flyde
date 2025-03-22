@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { VisualNode, NodeDefinition, Node, ResolvedVisualNode } from "./node";
+import { VisualNode, NodeDefinition } from "./node";
+import { CodeNode } from "./improved-macros/improved-macros";
 
 const importSchema = z.record(z.string(), z.string().or(z.array(z.string())));
 const position = z.strictObject({ x: z.number(), y: z.number() });
@@ -20,29 +21,31 @@ const nodeStyle = z.object({
   cssOverride: z.optional(z.record(z.string())),
 });
 
-const instance = z
-  .object({
-    pos: position.default({ x: 0, y: 0 }),
-    id: z.string(),
-    inputConfig: z.optional(z.record(z.string(), inputConfig)).default({}),
-    visibleInputs: z.optional(z.array(z.string())),
-    visibleOutputs: z.optional(z.array(z.string())),
-    nodeId: z.optional(z.string()),
-    node: z.optional(z.lazy(() => visualNode)),
-    macroId: z.optional(z.string()),
-    macroData: z.optional(z.any()),
-    style: z.optional(nodeStyle),
-  })
-  .refine(
-    (val) =>
-      val.node ||
-      val.nodeId ||
-      (val.macroId && typeof val.macroData !== "undefined"),
-    {
-      message:
-        "Instance must have either an inline node or refer to a nodeId, or be a macro instance",
-    }
-  );
+const instance = z.object({
+  pos: position.default({ x: 0, y: 0 }),
+  id: z.string(),
+  inputConfig: z.optional(z.record(z.string(), inputConfig)).default({}),
+  visibleInputs: z.optional(z.array(z.string())),
+  visibleOutputs: z.optional(z.array(z.string())),
+  nodeId: z.optional(z.string()),
+  // @deprecated
+  macroId: z.optional(z.string()),
+  // @deprecated
+  macroData: z.optional(z.any()),
+  config: z.optional(z.any()),
+
+  // @deprecated - use source instead
+  node: z.optional(z.any()),
+
+  type: z.optional(z.enum(["code", "visual"])),
+  source: z.optional(
+    z.object({
+      type: z.string(),
+      data: z.any(),
+    })
+  ),
+  style: z.optional(nodeStyle),
+});
 
 const inputPinSchema = z.union([
   z.string(),
@@ -73,7 +76,7 @@ const flydeBaseNode = z.object({
   reactiveInputs: z.optional(z.array(z.string())),
   defaultStyle: z.optional(nodeStyle),
   description: z.optional(z.string()),
-  searchKeywords: z.optional(z.array(z.string())),
+  aliases: z.optional(z.array(z.string())),
 });
 
 const visualNode = z
@@ -91,49 +94,19 @@ const visualNode = z
   .and(flydeBaseNode);
 
 export type FlydeFlow = {
-  imports?: Record<string, String[]>;
+  /** @deprecated */
+  imports?: Record<string, string[]>;
   node: VisualNode;
 };
 
-export interface ImportSource {
-  path: string;
-  export?: string;
-}
+export type ImportedNodeDefinition = NodeDefinition;
 
-export type ImportedNodeDefinition = NodeDefinition & {
-  source: ImportSource;
-};
+export type ImportedNode = VisualNode | CodeNode;
 
-export type ImportedNode = Node & {
-  source: ImportSource;
-};
-
-export type ImportedNodeDef = NodeDefinition & {
-  source: ImportSource;
-};
-
-export type ResolvedDependenciesDefinitions = Record<
-  string,
-  ImportedNodeDefinition
->;
-
-export type ResolvedFlydeFlowDefinition = {
-  main: ResolvedVisualNode;
-  dependencies: ResolvedDependenciesDefinitions;
-};
-
-export type ResolvedDependencies = Record<string, ImportedNode>;
-
-export type ResolvedFlydeRuntimeFlow = {
-  main: ResolvedVisualNode;
-  dependencies: ResolvedDependencies;
-};
-
-export type ResolvedFlydeFlow =
-  | ResolvedFlydeFlowDefinition
-  | ResolvedFlydeRuntimeFlow;
+export type ImportedNodeDef = NodeDefinition;
 
 export const flydeFlowSchema = z.strictObject({
+  /** @deprecated */
   imports: z.optional(importSchema).default({}),
   node: visualNode,
 });

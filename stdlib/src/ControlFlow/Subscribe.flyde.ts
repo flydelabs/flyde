@@ -1,11 +1,11 @@
-import { CodeNode } from "@flyde/core";
+import { InternalCodeNode } from "@flyde/core";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const PubSub = require("pubsub-js");
 
 const namespace = "Control Flow";
 
-export const Subscribe: CodeNode = {
+export const Subscribe: InternalCodeNode = {
   id: "Subscribe",
   namespace,
   description:
@@ -14,10 +14,6 @@ export const Subscribe: CodeNode = {
     key: {
       mode: "required",
       description: "A key to use to subscribe to values",
-    },
-    initial: {
-      mode: "required-if-connected",
-      description: "If passed will be published has the first value",
     },
   },
   completionOutputs: [],
@@ -28,10 +24,6 @@ export const Subscribe: CodeNode = {
     const token = PubSub.subscribe(nsKey, (_, data) => {
       value.next(data);
     });
-
-    if (typeof inputs.initial !== "undefined") {
-      value.next(inputs.initial);
-    }
 
     adv.onCleanup(() => {
       PubSub.unsubscribe(token);

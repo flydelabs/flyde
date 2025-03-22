@@ -27,7 +27,7 @@ export const nodeStylePresetColors: { name: string; color: string }[] = [
   { name: "Orange", color: "#ff7f00" },
 ];
 
-const defaultStyle: NodeStyle = { size: "regular" };
+const defaultStyle: NodeStyle = {};
 
 export const NodeStyleMenu: React.FC<NodeStyleMenuProps> = (props) => {
   const { onChange, style: _style } = props;
@@ -100,23 +100,6 @@ export const NodeStyleMenu: React.FC<NodeStyleMenuProps> = (props) => {
             onClick={() => onChangeStyleProp("color", undefined)}
           >
             Remove Color
-          </ContextMenuItem>
-        </ContextMenuSubContent>
-      </ContextMenuSub>
-
-      <ContextMenuSub>
-        <ContextMenuSubTrigger>
-          Size ({style.size ?? "regular"})
-        </ContextMenuSubTrigger>
-        <ContextMenuSubContent>
-          <ContextMenuItem onClick={() => onChangeStyleProp("size", "small")}>
-            Small
-          </ContextMenuItem>
-          <ContextMenuItem onClick={() => onChangeStyleProp("size", "regular")}>
-            Regular
-          </ContextMenuItem>
-          <ContextMenuItem onClick={() => onChangeStyleProp("size", "large")}>
-            Large
           </ContextMenuItem>
         </ContextMenuSubContent>
       </ContextMenuSub>

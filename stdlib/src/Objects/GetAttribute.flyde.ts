@@ -1,6 +1,6 @@
-import { ImprovedMacroNode, processImprovedMacro } from "@flyde/core";
+import { CodeNode } from "@flyde/core";
 
-const getAttribute: ImprovedMacroNode = {
+export const GetAttribute: CodeNode = {
   id: "GetAttribute",
   namespace: "Objects",
   menuDisplayName: "Get Property",
@@ -28,4 +28,3 @@ const getAttribute: ImprovedMacroNode = {
     outputs.value.next(key.split(".").reduce((obj, i) => obj[i], object));
   },
 };
-export const GetAttribute = processImprovedMacro(getAttribute);

@@ -10,6 +10,7 @@ import {
   DialogTrigger,
   DialogContent,
   Expand,
+  Check,
 } from "@flyde/ui";
 import {
   MacroConfigurableValue,
@@ -109,6 +110,14 @@ export function MacroConfigurableFieldEditor(props: {
     setIsDialogOpen(!isDialogOpen);
   };
 
+  const typeOptions: MacroConfigurableValue["type"][] = [
+    "dynamic",
+    "number",
+    "boolean",
+    "json",
+    "string",
+  ];
+
   const helperText = useMemo(() => {
     const isTemplateSupported =
       (value.type === "string" || value.type === "json") &&
@@ -139,21 +148,14 @@ export function MacroConfigurableFieldEditor(props: {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => changeType("dynamic")}>
-                Dynamic
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => changeType("number")}>
-                Number
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => changeType("boolean")}>
-                Boolean
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => changeType("json")}>
-                JSON
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => changeType("string")}>
-                String
-              </DropdownMenuItem>
+              {typeOptions.map((type) => (
+                <DropdownMenuItem key={type} onClick={() => changeType(type)}>
+                  <div className="flex items-center justify-between w-full">
+                    <span className="capitalize">{type}</span>
+                    {value.type === type && <Check className="h-4 w-4 ml-2" />}
+                  </div>
+                </DropdownMenuItem>
+              ))}
             </DropdownMenuContent>
           </DropdownMenu>
         ) : null}

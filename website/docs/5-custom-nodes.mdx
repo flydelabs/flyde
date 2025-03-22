@@ -17,7 +17,7 @@ Custom nodes can be built in 3 ways:
 
 ## Custom Code Nodes
 
-A Flyde custom code node can be created by exporting an object that implements the `CodeNode` interface from a TypeScript/JavaScript file ending with `.flyde.ts` or `.flyde.js`. This convention helps the visual editor suggest your custom node when exploring the nodes library.
+A Flyde custom code node can be created by exporting an object that implements the `InternalCodeNode` interface from a TypeScript/JavaScript file ending with `.flyde.ts` or `.flyde.js`. This convention helps the visual editor suggest your custom node when exploring the nodes library.
 
 A custom code node consists of 2 parts:
 
@@ -27,9 +27,9 @@ A custom code node consists of 2 parts:
 The following example shows how to create a custom code node that adds two numbers together:
 
 ```ts
-import { CodeNode } from "@flyde/core";
+import { InternalCodeNode } from "@flyde/core";
 
-export const Add: CodeNode = {
+export const Add: InternalCodeNode = {
   id: "Add",
   description: "Emits the sum of two numbers",
   inputs: {
@@ -52,9 +52,9 @@ The `run` function also accepts a third argument, which is an object containing 
 For example, the following custom node will emit the average of all the numbers it received since the flow started:
 
 ```ts
-import { CodeNode } from "@flyde/core";
+import { InternalCodeNode } from "@flyde/core";
 
-export const Average: CodeNode = {
+export const Average: InternalCodeNode = {
   id: "Average",
   description: "Emits the average of all the numbers it received",
   inputs: { n: { description: "Number to add to the average" } },
