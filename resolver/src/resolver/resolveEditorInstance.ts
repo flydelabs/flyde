@@ -5,7 +5,7 @@ import {
   processImprovedMacro,
   processMacroNodeInstance,
 } from "@flyde/core";
-import { ReferencedNodeFinder } from "./findReferencedNode/ReferencedNodeFinder";
+import { ReferencedNodeFinder } from "./ReferencedNodeFinder";
 import { existsSync, readFileSync } from "fs";
 
 export function resolveEditorInstance(

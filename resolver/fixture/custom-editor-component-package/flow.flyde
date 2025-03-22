@@ -6,25 +6,13 @@ node:
         y: -5
       id: ins1
       inputConfig: {}
-      nodeId: Add1
+      nodeId: Node
       config: {}
       type: code
       source:
         type: package
-        data: "@acme/add1"
-  connections:
-    - from:
-        insId: __this
-        pinId: n
-      to:
-        insId: ins1
-        pinId: n
-    - from:
-        insId: ins1
-        pinId: r
-      to:
-        insId: __this
-        pinId: r
+        data: "@acme/custom-editor"
+  connections: []
   id: Add1Wrapped
   inputs:
     n:

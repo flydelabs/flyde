@@ -12,7 +12,7 @@ import {
 import { join } from "path";
 import { resolveFlowByPath } from "./resolveFlow";
 import { existsSync } from "fs";
-import { createServerReferencedNodeFinder } from "./findReferencedNode/findReferencedNodeServer";
+import { createServerReferencedNodeFinder } from "./findReferencedNodeServer";
 
 /*
 Recursively resolve all dependencies of a flow. For each node instance:

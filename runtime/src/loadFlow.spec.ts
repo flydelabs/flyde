@@ -18,7 +18,6 @@ describe("runtime", () => {
     it("resolves promise with multiple completed values", async () => {
       const execute = loadFixture("DblHelloWorld");
       const { res1, res2 } = await execute().result;
-      console.log("res1", res1, res2, 42);
       assert.equal(res1, "Hello");
       assert.equal(res2, "World");
     });

@@ -2,8 +2,8 @@ imports: {}
 node:
   instances:
     - pos:
-        x: -205.46417236328125
-        y: 24.415252685546875
+        x: -7
+        y: -5
       id: ins1
       inputConfig: {}
       nodeId: Node
@@ -11,23 +11,9 @@ node:
       type: code
       source:
         type: file
-        data: ./Node.flyde.js
-    - pos:
-        x: -21.22210693359375
-        y: 141.6666717529297
-      id: InlineValue-oi04eh1
-      inputConfig: {}
-      nodeId: InlineValue
-      config:
-        value:
-          type: string
-          value: Hello, {{name}}
-      type: code
-      source:
-        type: package
-        data: "@flyde/stdlib"
+        data: "Node.flyde.js"
   connections: []
-  id: Add1
+  id: Add1Wrapped
   inputs:
     n:
       mode: required
@@ -35,8 +21,11 @@ node:
   outputs:
     r:
       type: number
-  inputsPosition: {}
+  inputsPosition:
+    n:
+      x: -201
+      y: -2
   outputsPosition:
     r:
-      x: 143.5557861328125
-      y: 213.33334350585938
+      x: 223
+      y: -7

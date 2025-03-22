@@ -8,10 +8,10 @@ import {
 
 import * as _StdLib from "@flyde/stdlib/dist/all";
 import { join, dirname } from "path";
-import { resolveCodeNodeDependencies } from "../resolveVisualNode";
+import { resolveCodeNodeDependencies } from "./resolveVisualNode";
 import { existsSync, readFileSync } from "fs";
-import { resolveImportablePaths } from "../resolveImportablePaths";
-import { deserializeFlowByPath } from "../../serdes";
+import { resolveImportablePaths } from "./resolveImportablePaths";
+import { deserializeFlowByPath } from "../serdes";
 import { ReferencedNodeFinder } from "./ReferencedNodeFinder";
 
 const LocalStdLib = Object.values(_StdLib).reduce<Record<string, CodeNode>>(
@@ -25,6 +25,8 @@ const LocalStdLib = Object.values(_StdLib).reduce<Record<string, CodeNode>>(
   {}
 );
 
+type NodeWithSource = FlydeNode & { sourcePath: string };
+
 export function createServerReferencedNodeFinder(
   fullFlowPath: string
 ): ReferencedNodeFinder {
@@ -37,21 +39,21 @@ export function createServerReferencedNodeFinder(
         );
 
         const nodeWrapper = paths
-          .flatMap<FlydeNode>((path) => {
+          .flatMap<NodeWithSource>((path) => {
             const isVisual = path.endsWith(".flyde");
 
             if (isVisual) {
               try {
                 const node = deserializeFlowByPath(path).node;
                 // No longer adding sourcePath
-                return [node as FlydeNode];
+                return { ...node, sourcePath: path };
               } catch (e) {
                 return [];
               }
             }
             const { nodes } = resolveCodeNodeDependencies(path);
 
-            return nodes.map((n) => n.node);
+            return nodes.map((n) => ({ ...n.node, sourcePath: path }));
           })
           .find((node) => node.id === instance.nodeId);
 
@@ -80,7 +82,7 @@ export function createServerReferencedNodeFinder(
           }
 
           throw new Error(
-            `Cannot find node ${instance.source.data} in ${fullFlowPath}`
+            `Cannot find node ${instance.nodeId} in ${instance.source.data} from ${fullFlowPath}`
           );
         }
 
@@ -94,7 +96,7 @@ export function createServerReferencedNodeFinder(
         ) {
           try {
             const editorComponentBundlePath = join(
-              fullFlowPath,
+              nodeWrapper.sourcePath,
               "..",
               maybeAdvancedNode.editorConfig.editorComponentBundlePath
             );

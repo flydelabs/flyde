@@ -6,7 +6,8 @@ import {
 import { assert } from "chai";
 import { join } from "path";
 import { createServerReferencedNodeFinder } from "./findReferencedNodeServer";
-import { readFileSync } from "fs";
+
+
 
 describe("findReferencedNodeServer", () => {
   it("resolves custom editor component bundle paths for file nodes", async () => {
@@ -43,8 +44,25 @@ describe("findReferencedNodeServer", () => {
 
     assert.include(editorConfig.editorComponentBundleContent, "React"); // naive check
   });
+
+  it("resolves custom editor component bundle paths for npm packages", async () => {
+    const fixturePath = getFixturePath("custom-editor-component-package/flow.flyde");
+    const instance = codeNodeInstance("someInsId", "Node", {
+      type: "package",
+      data: "@acme/custom-editor",
+    });
+
+    const findReferencedNode = createServerReferencedNodeFinder(fixturePath);
+
+    const node = findReferencedNode(instance);
+
+    const editorConfig = (node as AdvancedCodeNode<any>)
+      .editorConfig as MacroEditorConfigCustom;
+
+    assert.include(editorConfig.editorComponentBundleContent, "// dummy component content for test");
+  });
 });
 
 function getFixturePath(path: string) {
-  return join(__dirname, "../../../fixture", path);
+  return join(__dirname, "../../fixture", path);
 }
