@@ -55,6 +55,8 @@ function migrateVisualNode(
       const inlineNode = (anyIns as InlineNodeInstance).node;
       const migratedInlineNode = migrateVisualNode(inlineNode, imports);
 
+      console.log("migratedInlineNode", migratedInlineNode);
+
       const source: VisualNodeSource = {
         type: "inline",
         data: migratedInlineNode,

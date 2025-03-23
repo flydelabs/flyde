@@ -2,6 +2,7 @@ import {
   codeNodeInstance,
   AdvancedCodeNode,
   MacroEditorConfigCustom,
+  CodeNode
 } from "@flyde/core";
 import { assert } from "chai";
 import { join } from "path";
@@ -61,6 +62,38 @@ describe("findReferencedNodeServer", () => {
 
     assert.include(editorConfig.editorComponentBundleContent, "// dummy component content for test");
   });
+
+  it("populates sourceCode for file nodes", async () => {
+    const fixturePath = getFixturePath("a-imports-js-node-from-b/a.flyde");
+    const instance = codeNodeInstance("someInsId", "Add", {
+      type: "file",
+      data: "Add.flyde.js",
+    });
+
+    const findReferencedNode = createServerReferencedNodeFinder(fixturePath);
+
+    const node = findReferencedNode(instance) as CodeNode;
+
+    assert.exists(node.sourceCode);
+    assert.include(node.sourceCode, "inputs.a + 1");
+  });
+
+  it("populates sourceCode for package nodes", async () => {
+    const fixturePath = getFixturePath("a-imports-b-code-from-stdlib/flow.flyde");
+    const instance = codeNodeInstance("someInsId", "Add", {
+      type: "package",
+      data: "@flyde/stdlib",
+    });
+
+    const findReferencedNode = createServerReferencedNodeFinder(fixturePath);
+
+    const node = findReferencedNode(instance) as CodeNode;
+
+    assert.exists(node.sourceCode);
+    assert.include(node.sourceCode.toLowerCase(), "add");
+  });
+
+ 
 });
 
 function getFixturePath(path: string) {

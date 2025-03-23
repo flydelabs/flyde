@@ -3,3 +3,4 @@ export * from "./findReferencedNodeServer";
 export * from "./resolveVisualNode";
 export * from "./resolveImportablePaths";
 export * from "./resolveEditorInstance";
+export * from "./serverUtils";

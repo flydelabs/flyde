@@ -121,6 +121,9 @@ describe("resolver", () => {
         )
       );
 
+      console.log(data);
+      console.log(data.instances[1].node);
+
       const [s, r] = spiedOutput();
       const n = dynamicNodeInput();
       execute({

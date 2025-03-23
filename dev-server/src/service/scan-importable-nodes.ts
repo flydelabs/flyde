@@ -29,12 +29,12 @@ export interface CorruptScannedNode {
 
 export async function scanImportableNodes(
   rootPath: string,
-  filename: string
+  relativePath: string
 ): Promise<{
   nodes: ImportableEditorNode[];
   errors: { path: string; message: string }[];
 }> {
-  const fileRoot = join(rootPath, filename);
+  const fileRoot = join(rootPath, relativePath);
 
   const localFiles = getLocalFlydeFiles(rootPath);
 
@@ -65,7 +65,7 @@ export async function scanImportableNodes(
   let allErrors: { path: string; message: string }[] = [];
 
   const localNodes = localFiles
-    .filter((file) => !file.relativePath.endsWith(filename))
+    .filter((file) => !file.relativePath.endsWith(relativePath))
     .reduce<Record<string, ImportableEditorNode[]>>((acc, file) => {
       if (isCodeNodePath(file.fullPath)) {
         const { errors, nodes } = resolveCodeNodeDependencies(file.fullPath);
@@ -74,9 +74,11 @@ export async function scanImportableNodes(
         );
 
         const nodesObj: ImportableEditorNode[] = nodes.map(({ node }) => {
+          const relativePath = relative(join(fileRoot, ".."), file.fullPath);
+
           const importableNode = codeNodeToImportableEditorNode(node, {
             type: "file",
-            data: file.fullPath,
+            data: relativePath,
           });
           return importableNode;
         });

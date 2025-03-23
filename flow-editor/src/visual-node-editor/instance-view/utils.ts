@@ -35,8 +35,6 @@ export const calcNodeWidth = (instance: NodeInstance, node: NodeDefinition) => {
     minWidth,
     MAX_INSTANCE_WIDTH
   );
-
-  // return Math.max(minWidth, nodeContent.length * charWidth + PIECE_HORIZONTAL_PADDING * 2);
 };
 
 export const calcInstancePosition = (

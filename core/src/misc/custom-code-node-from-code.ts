@@ -1,12 +1,11 @@
-import { FlydeNode } from "../node";
 import { transpileFile } from "./transpile-file/transpile-file";
-import { isCodeNode } from "../improved-macros/improved-macros";
+import { CodeNode, isCodeNode } from "../improved-macros/improved-macros";
 
 export function customCodeNodeFromCode(
   code: string,
   _?: string,
   imports?: { [key: string]: any }
-): FlydeNode {
+): CodeNode {
   const transpiledCode = transpileFile("", code);
 
   // Wrap the transpiled code to handle default export

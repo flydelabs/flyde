@@ -52,7 +52,6 @@ export function nodeInstance(
   inputConfig: InputPinsConfig = {},
   pos: Pos = { x: 0, y: 0 }
 ): CodeNodeInstance {
-  console.log("2342342");
   return {
     id: insId,
     nodeId,
@@ -116,9 +115,9 @@ export type ImportableEditorNode = {
   icon: string;
   aliases?: string[];
 } & (
-  | { type: "code"; source: CodeNodeSource }
-  | { type: "visual"; source: VisualNodeSource }
-);
+    | { type: "code"; source: CodeNodeSource }
+    | { type: "visual"; source: VisualNodeSource }
+  );
 
 export function codeNodeToImportableEditorNode(
   node: CodeNode,

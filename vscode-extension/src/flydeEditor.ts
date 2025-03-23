@@ -23,6 +23,7 @@ import {
   processImprovedMacro,
   replaceInputsInValue,
   ImportableEditorNode,
+  codeNodeToImportableEditorNode,
 } from "@flyde/core";
 import { findPackageRoot } from "./find-package-root";
 import { randomInt } from "crypto";
@@ -84,8 +85,7 @@ export interface FlydeEditorProviderParams {
 }
 
 export class FlydeEditorEditorProvider
-  implements vscode.CustomTextEditorProvider
-{
+  implements vscode.CustomTextEditorProvider {
   params!: FlydeEditorProviderParams;
 
   public static register(
@@ -106,7 +106,7 @@ export class FlydeEditorEditorProvider
 
   private static readonly viewType = "flydeEditor";
 
-  constructor(private readonly context: vscode.ExtensionContext) {}
+  constructor(private readonly context: vscode.ExtensionContext) { }
 
   public async resolveCustomTextEditor(
     document: vscode.TextDocument,
@@ -185,17 +185,17 @@ export class FlydeEditorEditorProvider
         return raw.trim() !== ""
           ? deserializeFlow(raw, fullDocumentPath)
           : {
-              node: {
-                id: fileName,
-                inputs: {},
-                inputsPosition: {},
-                outputs: {},
-                outputsPosition: {},
-                instances: [],
-                connections: [],
-              },
-              imports: {},
-            };
+            node: {
+              id: fileName,
+              inputs: {},
+              inputsPosition: {},
+              outputs: {},
+              outputsPosition: {},
+              instances: [],
+              connections: [],
+            },
+            imports: {},
+          };
       }, "Failed to deserialize flow");
 
       const errors = [initialFlow]
@@ -437,11 +437,11 @@ export class FlydeEditorEditorProvider
                   const rootPath = firstWorkspace
                     ? firstWorkspace.uri.fsPath
                     : path.dirname(fullDocumentPath);
-                  const fileName = path.basename(fullDocumentPath);
+                  const relativePath = path.relative(rootPath, fullDocumentPath);
 
                   const { nodes } = await scanImportableNodes(
                     rootPath,
-                    fileName
+                    relativePath
                   );
 
                   const categorizedNodeIds = new Set<string>();
@@ -541,16 +541,20 @@ export class FlydeEditorEditorProvider
                 } catch (error) {
                   console.error("Error saving custom node file:", error);
                   vscode.window.showErrorMessage(
-                    `Failed to save custom node: ${
-                      error instanceof Error ? error.message : "Unknown error"
+                    `Failed to save custom node: ${error instanceof Error ? error.message : "Unknown error"
                     }`
                   );
                 }
+
+                const editorNode = codeNodeToImportableEditorNode(node, {
+                  type: "file",
+                  data: nodeFileName,
+                });
                 // const importableSource: ImportableSource = {
                 //   node: node as any,
                 //   module: nodeFileName,
                 // };
-                // messageResponse(event, importableSource);
+                messageResponse(event, editorNode);
                 break;
               }
               case "createAiCompletion": {
