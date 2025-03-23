@@ -1,28 +1,14 @@
-imports: {}
+imports:
+  ./Add.flyde.js:
+    - Add
 node:
   instances:
     - pos:
         x: 56.53582763671875
-        y: 73.41525268554688
+        y: 74.41525268554688
       id: ins1
       inputConfig: {}
       nodeId: Add
-      config: {}
-      type: code
-      source:
-        type: file
-        data: ./Add.flyde.js
-    - pos:
-        x: -18.22210693359375
-        y: 140.6666717529297
-      id: Http-bu04elc
-      inputConfig: {}
-      nodeId: Http
-      config: {}
-      type: code
-      source:
-        type: package
-        data: "@flyde/stdlib"
   connections:
     - from:
         insId: ins1
