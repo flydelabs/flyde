@@ -39,6 +39,7 @@ export interface BaseMacroNodeData<Config = any> {
 
   completionOutputs?: StaticOrDerived<string[], Config>;
   run: InternalCodeNode["run"];
+  sourceCode?: string;
 }
 
 export interface SimpleCodeNode<Config> extends BaseMacroNodeData<Config> {

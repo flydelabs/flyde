@@ -6,7 +6,6 @@ import {
   processMacroNodeInstance,
 } from "@flyde/core";
 import { ReferencedNodeFinder } from "./ReferencedNodeFinder";
-import { existsSync, readFileSync } from "fs";
 
 export function resolveEditorInstance(
   instance: CodeNodeInstance,
@@ -61,6 +60,7 @@ export function resolveEditorInstance(
       overrideNodeBodyHtml: processedInstance.overrideNodeBodyHtml,
       defaultStyle: processedInstance.defaultStyle,
       editorConfig: macro.editorConfig,
+      sourceCode: node.sourceCode,
     },
   } as EditorNodeInstance;
 

@@ -1,5 +1,5 @@
 import { ExecuteParams, FlydeFlow, simplifiedExecute } from "@flyde/core";
-import { deserializeFlowByPath, resolveVisualNode } from "@flyde/resolver";
+import { createServerReferencedNodeFinder, deserializeFlowByPath, resolveVisualNode } from "@flyde/resolver";
 import EventEmitter = require("events");
 
 import findRoot from "find-root";
@@ -36,7 +36,8 @@ export function loadFlowFromContent<Inputs>(
   fullFlowPath: string,
   debuggerUrl: string
 ): LoadedFlowExecuteFn<Inputs> {
-  const node = resolveVisualNode(flow.node, fullFlowPath);
+  const findReferencedNode = createServerReferencedNodeFinder(fullFlowPath);
+  const node = resolveVisualNode(flow.node, findReferencedNode);
 
   return (inputs, params = {}) => {
     const { onOutputs, onCompleted, ...otherParams } = params;

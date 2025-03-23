@@ -37,7 +37,7 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
 }) => {
   const [query, setQuery] = useState("");
   const [importables, setImportables] = useState<ImportableEditorNode[]>();
-  const [recentlyUsedIds, setRecentlyUsedIds] = useLocalStorage<string[]>(
+  const [recentlyUsedIds, setRecentlyUsedIds] = useLocalStorage<{ id: string, source: string }[]>(
     RECENTLY_USED_KEY,
     []
   );
@@ -57,7 +57,7 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
       // Remove nodes that appear in Essentials from other categories
       const essentialsNodes = new Set(
         groups.find((g) => g.title === "Essentials")?.nodes.map((n) => n.id) ||
-          []
+        []
       );
 
       return groups.map((group) => {
@@ -77,9 +77,8 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
     const filteredGroups = groups.map((group) => ({
       ...group,
       nodes: group.nodes.filter((node) => {
-        const searchContent = `${node.id} ${node.displayName ?? ""} ${
-          node.description ?? ""
-        } ${node.aliases?.join(" ") ?? ""}`;
+        const searchContent = `${node.id} ${node.displayName ?? ""} ${node.description ?? ""
+          } ${node.aliases?.join(" ") ?? ""}`;
         return searchContent.toLowerCase().includes(query.toLowerCase());
       }),
     }));
@@ -104,23 +103,27 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
 
       if (!query) return true;
 
-      const content = `${importable.aliases?.join(" ") ?? ""} ${
-        importable.id
-      } ${importable.displayName ?? ""} ${importable.description ?? ""}`;
+      const content = `${importable.aliases?.join(" ") ?? ""} ${importable.id
+        } ${importable.displayName ?? ""} ${importable.description ?? ""}`;
       return content.toLowerCase().includes(query.toLowerCase());
     });
   }, [importables, query, groups]);
 
   // Get recently used nodes from current available nodes
   const recentlyUsedNodes = React.useMemo(() => {
-    const allNodes = [
-      ...groups.flatMap((g) => g.nodes.map((node) => node)),
-      ...(importables || []),
-    ];
+    const allLibraryNodes = groups.flatMap((g) => g.nodes);
+    const allImportableNodes = importables || [];
 
     return recentlyUsedIds
-      .map((id) => allNodes.find((node) => node.id === id))
-      .filter(Boolean) as ImportableEditorNode[];
+      .map(({ id, source }) => {
+        if (source === 'library') {
+          return { node: allLibraryNodes.find(node => node.id === id), source };
+        } else {
+          return { node: allImportableNodes.find(node => node.id === id), source };
+        }
+      })
+      .filter(item => !!item.node)
+      .map(item => ({ ...item.node!, source: item.source }));
   }, [recentlyUsedIds, groups, importables]);
 
   const onSelect = useCallback(
@@ -138,7 +141,7 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
           .find((n) => n.id === nodeId);
         if (node) {
           setRecentlyUsedIds(
-            [nodeId, ...recentlyUsedIds.filter((id) => id !== nodeId)].slice(
+            [{ id: nodeId, source: "library" }, ...recentlyUsedIds.filter(item => item.id !== nodeId)].slice(
               0,
               MAX_RECENT_NODES
             )
@@ -149,7 +152,7 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
         const node = importables?.find((i) => i.id === nodeId);
         if (node) {
           setRecentlyUsedIds(
-            [nodeId, ...recentlyUsedIds.filter((id) => id !== nodeId)].slice(
+            [{ id: nodeId, source: "importable" }, ...recentlyUsedIds.filter(item => item.id !== nodeId)].slice(
               0,
               MAX_RECENT_NODES
             )
@@ -185,31 +188,31 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
             <React.Fragment>
               <CommandGroup heading="Recently Used" className="pb-0.5">
                 <div className="grid grid-cols-4 gap-0">
-                  {recentlyUsedNodes.map((importable) => (
+                  {recentlyUsedNodes.map((node) => (
                     <CommandItem
-                      key={importable.id}
-                      value={`importable:${importable.id}`}
+                      key={node.id}
+                      value={`${node.source}:${node.id}`}
                       onSelect={onSelect}
                       className="text-xs py-1 px-1 cursor-pointer add-menu-item"
                     >
-                      {importable.icon && (
+                      {node.icon && (
                         <InstanceIcon
-                          icon={importable.icon}
+                          icon={node.icon}
                           className="mr-0.5"
                         />
                       )}
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger className="truncate">
-                            {importable.displayName}
+                            {node.displayName || node.id}
                           </TooltipTrigger>
-                          {importable.description &&
-                            typeof importable.description === "string" && (
+                          {node.description &&
+                            typeof node.description === "string" && (
                               <TooltipContent
                                 side="right"
                                 className="max-w-[300px]"
                               >
-                                {importable.description}
+                                {node.description}
                               </TooltipContent>
                             )}
                         </Tooltip>

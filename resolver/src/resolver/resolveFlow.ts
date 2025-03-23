@@ -3,6 +3,7 @@ import _ = require("lodash");
 import { deserializeFlowByPath } from "../serdes/deserialize";
 import { resolveVisualNode } from "./resolveVisualNode";
 import { VisualNode } from "@flyde/core";
+import { createServerReferencedNodeFinder } from "./findReferencedNodeServer";
 
 function _resolveFlow(fullFlowPath: string): InternalVisualNode {
   const flow = deserializeFlowByPath(fullFlowPath);
@@ -13,7 +14,8 @@ export function resolveFlow(
   node: VisualNode,
   flowPath: string
 ): InternalVisualNode {
-  return resolveVisualNode(node, flowPath);
+  const nodeFinder = createServerReferencedNodeFinder(flowPath);
+  return resolveVisualNode(node, nodeFinder);
 }
 
 export const resolveFlowByPath = _resolveFlow;

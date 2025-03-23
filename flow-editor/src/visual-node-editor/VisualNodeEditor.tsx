@@ -213,21 +213,22 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         ...node,
         instances: instances.map(
           (ins) =>
-            ({
-              ...ins,
-              node: {
-                id: "__loading__",
-                displayName: "Loading...",
-                inputs: {},
-                outputs: {},
-                defaultStyle: {},
-              },
-            } as EditorNodeInstance)
+          ({
+            ...ins,
+            node: {
+              id: "__loading__",
+              displayName: "Loading...",
+              inputs: {},
+              outputs: {},
+              defaultStyle: {},
+            },
+          } as EditorNodeInstance)
         ),
       });
 
-      const blah = React.useMemo(() => {
-        return instances.map((ins) => JSON.stringify((ins as any).config));
+      // this is an ugly hack to resolve instances if their config has changed. A much better approach would be running this on init + only when an instance is changed/added
+      const instanceConfigCombined = React.useMemo(() => {
+        return instances.map((ins) => JSON.stringify((ins as any).config)).join("");
       }, [instances]);
 
       useEffect(() => {
@@ -290,7 +291,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           console.error("Error resolving instances 4242", error);
         });
         // eslint-disable-next-line react-hooks/exhaustive-deps
-      }, [blah]);
+      }, [instanceConfigCombined]);
 
       // hooks area
       const [draggingId, setDraggingId] = useState<string>();
@@ -881,11 +882,10 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         });
         if (invalids.length > 0) {
           toast({
-            description: `Found ${
-              invalids.length
-            } invalid visible inputs/outputs: ${invalids.join(
-              ", "
-            )}. Resetting to full list`,
+            description: `Found ${invalids.length
+              } invalid visible inputs/outputs: ${invalids.join(
+                ", "
+              )}. Resetting to full list`,
             variant: "default",
           });
 
@@ -1365,18 +1365,24 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         : "default";
 
       const onViewForkCode = React.useCallback(
-        async (instance: EditorNodeInstance) => {
-          const nodeDef = instance.node;
+        async (instance: NodeInstance) => {
+          const node = editorNode.instances.find(
+            (ins) => ins.id === instance.id
+          )?.node;
 
-          if (isVisualNode(nodeDef as VisualNode)) {
+          if (!node) {
+            throw new Error(`Resolved node definition for instance ${instance.id} not found`);
+          }
+
+          if (isVisualNode(node as FlydeNode)) {
             toast({
-              description: "Visual nodes cannot be forked",
+              description: "Visual nodes cannot be forked yet",
               variant: "destructive",
             });
             return;
           }
 
-          const codeNodeDef = nodeDef as EditorCodeNodeDefinition;
+          const codeNodeDef = node as EditorCodeNodeDefinition;
           try {
             if (!codeNodeDef.sourceCode) {
               toast({
@@ -1386,7 +1392,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
               return;
             }
             setCustomNodeForkData({
-              node: nodeDef,
+              node: codeNodeDef,
               initialCode: codeNodeDef.sourceCode,
             });
             setIsAddingCustomNode(true);
@@ -1394,7 +1400,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             console.error("Failed to get node source:", e);
           }
         },
-        [toast]
+        [toast, editorNode]
       );
 
       const [commandMenuOpen, setCommandMenuOpen] = useState(false);
@@ -1486,8 +1492,8 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                     }
                     selectedOutput={
                       from &&
-                      isInternalConnectionNode(from) &&
-                      from.insId === ins.id
+                        isInternalConnectionNode(from) &&
+                        from.insId === ins.id
                         ? from.pinId
                         : undefined
                     }
@@ -1515,8 +1521,8 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                       from || draggedConnection?.from
                         ? "input"
                         : to || draggedConnection?.to
-                        ? "output"
-                        : undefined
+                          ? "output"
+                          : undefined
                     }
                     isConnectedInstanceSelected={selectedInstances.some(
                       (selInsId) =>
