@@ -1,6 +1,6 @@
 import * as React from "react";
 import classNames from "classnames";
-import { useCallback, useRef } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useHotkeys } from "../../lib/react-utils/use-hotkeys";
 
 import {
@@ -92,6 +92,7 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
   );
 
   const leaveTimer = useRef<number>();
+  const [isTooltipOpen, setIsTooltipOpen] = useState(false);
 
   const handleMouseEnter = useCallback(() => {
     window.clearTimeout(leaveTimer.current);
@@ -107,14 +108,16 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
   useHotkeys(
     "cmd+i,ctrl+i",
     (e) => {
-      e.preventDefault();
-      props.onInspect(currentInsId, { id, type });
+      if (isTooltipOpen) {
+        e.preventDefault();
+        props.onInspect(currentInsId, { id, type });
+      }
     },
     {
       text: "Inspect pin value",
       group: "Pin Actions",
     },
-    [currentInsId, id, type, props.onInspect]
+    [currentInsId, id, type, props.onInspect, isTooltipOpen]
   );
 
   const dark = useDarkMode();
@@ -225,7 +228,7 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
   return (
     <div className={calcClassNames()} data-pin-id={id}>
       <TooltipProvider>
-        <Tooltip>
+        <Tooltip open={isTooltipOpen} onOpenChange={setIsTooltipOpen}>
           <ContextMenu>
             <TooltipTrigger asChild>
               <ContextMenuTrigger
