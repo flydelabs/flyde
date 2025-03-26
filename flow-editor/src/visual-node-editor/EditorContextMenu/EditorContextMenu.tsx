@@ -149,15 +149,6 @@ export function EditorContextMenu(props: EditorContextMenuProps) {
         New main output {maybeDisabledLabel}
       </ContextMenuItem>
 
-      <ContextMenuItem
-        disabled={!nodeIoEditable}
-        onClick={() =>
-          window.open("https://www.flyde.dev/docs/integrate-flows/", "_blank")
-        }
-      >
-        Integrate with existing code (docs link)
-      </ContextMenuItem>
-
       <ContextMenuItem onSelect={copyNodeToClipboard}>
         Copy node to clipboard
       </ContextMenuItem>
@@ -173,8 +164,6 @@ export function EditorContextMenu(props: EditorContextMenuProps) {
       <ContextMenuItem onSelect={editNodeDescription}>
         Edit description
       </ContextMenuItem>
-
-      <ContextMenuSeparator />
     </ContextMenuContent>
   );
 }

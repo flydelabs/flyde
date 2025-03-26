@@ -405,9 +405,9 @@ export function useEditorCommands(
         source === "mouse"
           ? lastMousePos.current
           : {
-              x: viewPort.pos.x + vpSize.width / 2,
-              y: viewPort.pos.y + vpSize.height / 2,
-            };
+            x: viewPort.pos.x + vpSize.width / 2,
+            y: viewPort.pos.y + vpSize.height / 2,
+          };
       const newPos = centerBoardPosOnTarget(
         targetPos,
         vpSize,
@@ -605,7 +605,7 @@ export function useEditorCommands(
     isBoardInFocus
   );
   useHotkeys(
-    "shift+d",
+    "cmd+d, ctrl+d",
     duplicate,
     { text: "Duplicate selected instances", group: "Editing" },
     [],
