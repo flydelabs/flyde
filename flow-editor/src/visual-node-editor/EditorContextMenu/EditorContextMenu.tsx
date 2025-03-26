@@ -12,7 +12,6 @@ import produce from "immer";
 import React from "react";
 import { usePrompt, usePorts } from "../..";
 import { functionalChange } from "../../flow-editor/flyde-flow-change-type";
-import { NodeStyleMenu } from "../instance-view/NodeStyleMenu";
 import { useVisualNodeEditorContext } from "../VisualNodeEditorContext";
 import { useToast } from "@flyde/ui";
 
@@ -176,17 +175,6 @@ export function EditorContextMenu(props: EditorContextMenuProps) {
       </ContextMenuItem>
 
       <ContextMenuSeparator />
-
-      <ContextMenuSub>
-        <ContextMenuSubTrigger>Default Style</ContextMenuSubTrigger>
-        <ContextMenuSubContent>
-          <NodeStyleMenu
-            style={node.defaultStyle}
-            onChange={onChangeDefaultStyle}
-            promptFn={_prompt}
-          />
-        </ContextMenuSubContent>
-      </ContextMenuSub>
     </ContextMenuContent>
   );
 }
