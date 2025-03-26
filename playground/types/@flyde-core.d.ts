@@ -319,12 +319,12 @@ declare module '@flyde/core/flow-schema' {
                 description: z.ZodOptional<z.ZodString>;
                 defaultValue: z.ZodOptional<z.ZodAny>;
             }, "strip", z.ZodTypeAny, {
-                mode?: "required" | "optional" | "required-if-connected";
+                mode?: "optional" | "required" | "required-if-connected";
                 type?: string;
                 description?: string;
                 defaultValue?: any;
             }, {
-                mode?: "required" | "optional" | "required-if-connected";
+                mode?: "optional" | "required" | "required-if-connected";
                 type?: string;
                 description?: string;
                 defaultValue?: any;
@@ -389,7 +389,7 @@ declare module '@flyde/core/flow-schema' {
         }, "strip", z.ZodTypeAny, {
             id?: string;
             inputs?: Record<string, string | {
-                mode?: "required" | "optional" | "required-if-connected";
+                mode?: "optional" | "required" | "required-if-connected";
                 type?: string;
                 description?: string;
                 defaultValue?: any;
@@ -421,7 +421,7 @@ declare module '@flyde/core/flow-schema' {
         }, {
             id?: string;
             inputs?: Record<string, string | {
-                mode?: "required" | "optional" | "required-if-connected";
+                mode?: "optional" | "required" | "required-if-connected";
                 type?: string;
                 description?: string;
                 defaultValue?: any;
@@ -499,7 +499,7 @@ declare module '@flyde/core/flow-schema' {
         } & {
             id?: string;
             inputs?: Record<string, string | {
-                mode?: "required" | "optional" | "required-if-connected";
+                mode?: "optional" | "required" | "required-if-connected";
                 type?: string;
                 description?: string;
                 defaultValue?: any;
@@ -577,7 +577,7 @@ declare module '@flyde/core/flow-schema' {
         } & {
             id?: string;
             inputs?: Record<string, string | {
-                mode?: "required" | "optional" | "required-if-connected";
+                mode?: "optional" | "required" | "required-if-connected";
                 type?: string;
                 description?: string;
                 defaultValue?: any;
@@ -1416,7 +1416,6 @@ declare module '@flyde/core/types/core' {
     import { InputPin, OutputPin } from "@flyde/core/types/pins";
     export type NodeTypeIcon = string | [string, string];
     export interface NodeStyle {
-            icon?: NodeTypeIcon;
             color?: string | [string, string];
             cssOverride?: Record<string, string>;
     }

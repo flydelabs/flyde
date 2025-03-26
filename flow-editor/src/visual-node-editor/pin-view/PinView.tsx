@@ -97,11 +97,13 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
   const handleMouseEnter = useCallback(() => {
     window.clearTimeout(leaveTimer.current);
     refreshHistory();
+    setIsTooltipOpen(true);
   }, [refreshHistory]);
 
   const handleMouseLeave = useCallback(() => {
     leaveTimer.current = window.setTimeout(() => {
       resetHistory();
+      setIsTooltipOpen(false);
     }, LEAVE_DELAY);
   }, [resetHistory]);
 
@@ -228,7 +230,11 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
   return (
     <div className={calcClassNames()} data-pin-id={id}>
       <TooltipProvider>
-        <Tooltip open={isTooltipOpen} onOpenChange={setIsTooltipOpen}>
+        <Tooltip
+          open={isTooltipOpen}
+          onOpenChange={setIsTooltipOpen}
+          key={`tooltip-${currentInsId}-${id}-${type}`}
+        >
           <ContextMenu>
             <TooltipTrigger asChild>
               <ContextMenuTrigger
