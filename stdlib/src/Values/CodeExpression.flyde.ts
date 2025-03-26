@@ -9,9 +9,7 @@ export const CodeExpression: CodeNode<CodeExpressionConfig> = {
   id: "CodeExpression",
   namespace: "Values",
   mode: "advanced",
-  defaultStyle: {
-    icon: "code",
-  },
+  icon: "code",
   menuDisplayName: "JS Expression",
   menuDescription: "Evaluates a JS expression. Supports dynamic variables",
   displayName: () => "Code Expression",

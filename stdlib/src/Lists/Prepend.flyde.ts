@@ -14,7 +14,5 @@ export const Prepend: InternalCodeNode = {
   run: ({ list, item }, { list: outputList }) => {
     outputList.next([item, ...list]);
   },
-  defaultStyle: {
-    icon: "fa-arrow-up",
-  },
+  icon: "fa-arrow-up",
 };

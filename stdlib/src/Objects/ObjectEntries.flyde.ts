@@ -4,9 +4,7 @@ const namespace = "Objects";
 
 export const ObjectEntries: InternalCodeNode = {
   id: "Entries",
-  defaultStyle: {
-    icon: "fa-box",
-  },
+  icon: "fa-box",
   namespace,
   description: "Emits the entries of an object",
   inputs: { object: { description: "Object to get entries of" } },

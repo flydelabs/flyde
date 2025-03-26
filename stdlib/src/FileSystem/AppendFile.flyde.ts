@@ -3,9 +3,7 @@ import * as fs from "fs";
 
 export const AppendFile: InternalCodeNode = {
   id: "Append File",
-  defaultStyle: {
-    icon: "fa-file",
-  },
+  icon: "fa-file",
   namespace: "File System",
   description: "Appends a file to the file system",
   inputs: {

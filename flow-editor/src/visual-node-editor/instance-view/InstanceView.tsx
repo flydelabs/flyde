@@ -50,7 +50,6 @@ import {
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@flyde/ui";
 
-import { NodeStyleMenu } from "./NodeStyleMenu";
 import { useDarkMode } from "../../flow-editor/DarkModeContext";
 import {
   VisualNodeEditorContextType,
@@ -221,7 +220,6 @@ export const InstanceView: React.FC<InstanceViewProps> =
 
     const style = React.useMemo(() => {
       return {
-        icon: node?.icon ?? node?.defaultStyle?.icon,
         color: node?.defaultStyle?.color,
         size: node?.defaultStyle?.color ?? "regular",
         cssOverride: node?.defaultStyle?.cssOverride,
@@ -538,16 +536,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
           <ContextMenuItem onClick={(e) => onDblClick(e)}>
             Change configuration
           </ContextMenuItem>
-          <ContextMenuSub>
-            <ContextMenuSubTrigger>Style</ContextMenuSubTrigger>
-            <ContextMenuSubContent>
-              <NodeStyleMenu
-                style={style}
-                onChange={(s) => onChangeStyle(instance, s)}
-                promptFn={_prompt}
-              />
-            </ContextMenuSubContent>
-          </ContextMenuSub>
+
           {inputMenuItems}
           {outputMenuItems}
           {isInlineVisualNodeInstance(instance) && (
@@ -741,7 +730,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
           domId={instanceDomId}
           heading={content}
           description={node.description}
-          icon={style.icon}
+          icon={node.icon}
           leftSide={renderInputs()}
           rightSide={renderOutputs()}
           selected={selected}

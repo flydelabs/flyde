@@ -25,9 +25,7 @@ export const InlineValue: CodeNode<InlineValueConfig> = {
   menuDisplayName: "Inline Value",
   menuDescription:
     "Emits a value each time it's called. Supports dynamic variables",
-  defaultStyle: {
-    icon: "pencil",
-  },
+  icon: "pencil",
   displayName: (config) => JSON.stringify(config.value.value),
   description: (config) =>
     `Emits the value \`${JSON.stringify(config.value.value)}\``,

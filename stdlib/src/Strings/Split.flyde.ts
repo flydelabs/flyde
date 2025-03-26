@@ -2,7 +2,7 @@ import { CodeNode } from "@flyde/core";
 
 export const Split: CodeNode = {
   id: "Split",
-  defaultStyle: { icon: "fa-font" },
+  icon: "fa-font",
   description: "Splits a string",
   inputs: {
     string: { description: "String to split" },

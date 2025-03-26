@@ -4,9 +4,7 @@ const namespace = "Lists";
 
 export const Repeat: InternalCodeNode = {
   id: "Repeat",
-  defaultStyle: {
-    icon: "fa-list",
-  },
+  icon: "fa-list",
   namespace,
   description: "Repeats a value a number of times",
   inputs: {

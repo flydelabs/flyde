@@ -4,9 +4,7 @@ const namespace = "Objects";
 
 export const JSONParse: InternalCodeNode = {
   id: "JSON Parse",
-  defaultStyle: {
-    icon: "fa-glasses",
-  },
+  icon: "fa-glasses",
   namespace,
   description: "Parses a JSON string into an object",
   inputs: { json: { description: "JSON string to parse" } },

@@ -7,12 +7,11 @@ import {
 } from "@flyde/core";
 
 import * as _StdLib from "@flyde/stdlib/dist/all";
-import { join, dirname } from "path";
+import { join } from "path";
 import { existsSync, readFileSync } from "fs";
 import { resolveImportablePaths } from "./resolveImportablePaths";
 import { deserializeFlowByPath } from "../serdes";
 import { ReferencedNodeFinder } from "./ReferencedNodeFinder";
-import { resolveFlowByPath } from "./resolveFlow";
 import { resolveCodeNodeDependencies } from "./serverUtils";
 
 const LocalStdLib = Object.values(_StdLib).reduce<Record<string, CodeNode>>(

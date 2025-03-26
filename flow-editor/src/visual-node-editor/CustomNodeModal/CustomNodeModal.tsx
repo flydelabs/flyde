@@ -33,9 +33,7 @@ import type { CodeNode } from "@flyde/core";
 const node: CodeNode = {
   id: "Add",
   displayName: "Add",
-  defaultStyle: {
-    icon: "fa-plus",
-  },
+  icon: "fa-plus",
   description: "Emits the sum of two numbers",
   inputs: {
     n1: { description: "First number to add" },

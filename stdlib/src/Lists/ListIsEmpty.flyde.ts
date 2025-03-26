@@ -4,9 +4,7 @@ const namespace = "Lists";
 
 export const ListIsEmpty: InternalCodeNode = {
   id: "List Is Empty",
-  defaultStyle: {
-    icon: "fa-list",
-  },
+  icon: "fa-list",
   namespace,
   description: "Returns true if the list is empty",
   inputs: { list: { description: "List" } },

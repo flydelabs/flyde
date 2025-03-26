@@ -4,9 +4,7 @@ const namespace = "Lists";
 
 export const ListLength: InternalCodeNode = {
   id: "List Length",
-  defaultStyle: {
-    icon: "fa-list",
-  },
+  icon: "fa-list",
   namespace,
   description: "Returns the length of a list",
   inputs: { list: { description: "List" } },

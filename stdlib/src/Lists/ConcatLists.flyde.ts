@@ -4,9 +4,7 @@ const namespace = "Lists";
 
 export const ConcatLists: InternalCodeNode = {
   id: "Concat Lists",
-  defaultStyle: {
-    icon: "fa-list",
-  },
+  icon: "fa-list",
   namespace,
   description: "Concatenates two lists",
   inputs: {

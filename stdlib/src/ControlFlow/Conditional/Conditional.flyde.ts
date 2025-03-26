@@ -62,9 +62,8 @@ export const Conditional: CodeNode<ConditionalConfig> = {
     `Evaluates if ${JSON.stringify(
       config.leftOperand.value
     )} ${conditionalConfigToDisplayName(config)}`,
-  defaultStyle: {
-    icon: "circle-question",
-  },
+  icon: "circle-question",
+
   inputs: (config) => ({
     ...extractInputsFromValue(config.leftOperand, "leftOperand"),
     ...extractInputsFromValue(config.rightOperand, "rightOperand"),

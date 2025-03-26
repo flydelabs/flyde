@@ -4,9 +4,7 @@ const namespace = "Objects";
 
 export const JSONStringify: InternalCodeNode = {
   id: "JSON Stringify",
-  defaultStyle: {
-    icon: "fa-pen-fancy",
-  },
+  icon: "fa-pen-fancy",
   namespace,
   description: "Stringifies an object into a JSON string",
   inputs: { object: { description: "Object to stringify" } },

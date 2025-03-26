@@ -3,9 +3,7 @@ import * as fs from "fs";
 
 export const DeleteFile: InternalCodeNode = {
   id: "Delete File",
-  defaultStyle: {
-    icon: "fa-file",
-  },
+  icon: "fa-file",
   namespace: "File System",
   description: "Deletes a file from the file system",
   inputs: { path: { description: "Path to the file" } },

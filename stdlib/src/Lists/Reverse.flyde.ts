@@ -4,9 +4,7 @@ const namespace = "Lists";
 
 export const Reverse: InternalCodeNode = {
   id: "Reverse",
-  defaultStyle: {
-    icon: "fa-list",
-  },
+  icon: "fa-list",
   namespace,
   description: "Reverses a list",
   inputs: { list: { description: "List" } },

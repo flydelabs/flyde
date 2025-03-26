@@ -7,9 +7,7 @@ interface DuplicateConfig {
 export const Duplicate: CodeNode<DuplicateConfig> = {
   id: "Duplicate",
   mode: "advanced",
-  defaultStyle: {
-    icon: "copy",
-  },
+  icon: "copy",
   menuDisplayName: "Duplicate",
   menuDescription: "Duplicates the input value a specified number of times",
   displayName: () => "Duplicate",

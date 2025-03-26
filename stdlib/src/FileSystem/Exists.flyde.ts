@@ -3,9 +3,7 @@ import * as fs from "fs";
 
 export const Exists: InternalCodeNode = {
   id: "Exists",
-  defaultStyle: {
-    icon: "fa-file",
-  },
+  icon: "fa-file",
   namespace: "File System",
   description: "Checks if a file exists",
   inputs: { path: { description: "Path to the file" } },

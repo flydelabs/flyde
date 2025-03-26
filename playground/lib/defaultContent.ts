@@ -13,9 +13,7 @@ const defaultCodeNodeContent = `import type { InternalCodeNode } from "@flyde/co
 
 export const Add: InternalCodeNode = {
   id: "Add",
-  defaultStyle: {
-    icon: "fa-plus",
-  },
+  icon: "fa-plus",
   description: "Emits the sum of two numbers",
   inputs: {
     n1: { description: "First number to add" },
