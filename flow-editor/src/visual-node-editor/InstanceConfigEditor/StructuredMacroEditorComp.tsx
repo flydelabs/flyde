@@ -152,7 +152,7 @@ export function StructuredMacroEditorComp<T>(
     const prompt = usePrompt();
 
     return (
-      <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
         {editorConfig.fields.map((field: any) => {
           // Check if the field is a group
           if (isGroupField(field)) {

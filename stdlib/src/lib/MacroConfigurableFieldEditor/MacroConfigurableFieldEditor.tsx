@@ -4,20 +4,24 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  Settings,
   AiGenerate,
   Dialog,
   DialogTrigger,
   DialogContent,
   Expand,
   Check,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+  Info,
 } from "@flyde/ui";
 import {
   MacroConfigurableValue,
   MacroEditorFieldDefinition,
 } from "@flyde/core";
 import { MacroConfigurableValueBaseEditor } from "./MacroConfigurableValueBaseEditor";
-import { useCallback, useMemo, useState, useEffect } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { convertValue } from "./convertValues";
 import React from "react";
 
@@ -27,22 +31,60 @@ function FieldContent({
   onChange,
   handleDialogToggle,
   isExpanded,
+  onTypeChange,
 }: {
   config: MacroEditorFieldDefinition;
   value: MacroConfigurableValue;
   onChange: (value: MacroConfigurableValue) => void;
   handleDialogToggle?: () => void;
   isExpanded?: boolean;
+  onTypeChange?: (type: MacroConfigurableValue["type"]) => void;
 }) {
   const shouldShowExpand =
     !isExpanded &&
     (value.type === "json" ||
       (value.type === "string" && config.type === "longtext"));
 
+  const typeOptions: MacroConfigurableValue["type"][] = [
+    "dynamic",
+    "number",
+    "boolean",
+    "json",
+    "string",
+  ];
+
+  const isTemplateSupported =
+    (value.type === "string" || value.type === "json") &&
+    config.templateSupport !== false;
+
   return (
     <div className="mb-1 font-medium flex items-center gap-2 justify-between">
-      {config.label}:
       <div className="flex items-center gap-2">
+        {config.label}:
+      </div>
+      <div className="flex items-center gap-2">
+        {config.typeConfigurable !== false && onTypeChange && (
+          <div className="text-xs text-gray-500 flex items-center gap-1">
+            <span className="capitalize">({value.type})</span>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="link" size="xs" className="h-4 p-0 text-xs">
+                  change
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {typeOptions.map((type) => (
+                  <DropdownMenuItem key={type} onClick={() => onTypeChange(type)}>
+                    <div className="flex items-center justify-between w-full">
+                      <span className="capitalize">{type}</span>
+                      {value.type === type && <Check className="h-4 w-4 ml-2" />}
+                    </div>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        )}
         {config.aiCompletion && (
           <div
             className={
@@ -110,58 +152,9 @@ export function MacroConfigurableFieldEditor(props: {
     setIsDialogOpen(!isDialogOpen);
   };
 
-  const typeOptions: MacroConfigurableValue["type"][] = [
-    "dynamic",
-    "number",
-    "boolean",
-    "json",
-    "string",
-  ];
-
-  const helperText = useMemo(() => {
-    const isTemplateSupported =
-      (value.type === "string" || value.type === "json") &&
-      config.templateSupport !== false;
-
-    return (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginTop: "4px",
-          fontSize: "12px",
-          color: "#666",
-        }}
-      >
-        <span>
-          {isTemplateSupported
-            ? "Use {{ }} to insert variables. For example {{myVar}}"
-            : ""}
-        </span>
-        {!isDialogOpen && config.typeConfigurable !== false ? (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="h-8">
-                <Settings className="h-4 w-4 mr-2" />
-                Change type
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {typeOptions.map((type) => (
-                <DropdownMenuItem key={type} onClick={() => changeType(type)}>
-                  <div className="flex items-center justify-between w-full">
-                    <span className="capitalize">{type}</span>
-                    {value.type === type && <Check className="h-4 w-4 ml-2" />}
-                  </div>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        ) : null}
-      </div>
-    );
-  }, [changeType, config, value.type, isDialogOpen]);
+  const isTemplateSupported =
+    (value.type === "string" || value.type === "json") &&
+    config.templateSupport !== false;
 
   return (
     <div className="mb-4 group">
@@ -170,6 +163,7 @@ export function MacroConfigurableFieldEditor(props: {
         value={value}
         onChange={onChange}
         handleDialogToggle={handleDialogToggle}
+        onTypeChange={changeType}
       />
       <MacroConfigurableValueBaseEditor
         value={value}
@@ -181,12 +175,29 @@ export function MacroConfigurableFieldEditor(props: {
         onRawJsonDataChange={setRawJsonData}
       />
 
-      {config.description && (
-        <div className="mt-2 text-xs text-gray-500 dark:text-gray-400 italic">
-          {config.description}
-        </div>
-      )}
-      {helperText}
+      <div className="mt-2 flex justify-between items-center">
+        {config.description ? (
+          <div className="text-xs text-gray-500 dark:text-gray-400 italic">
+            {config.description}
+          </div>
+        ) : (
+          <div></div>
+        )}
+        {isTemplateSupported && (
+          <TooltipProvider delayDuration={0}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" size="xs" className="p-0 h-4 text-xs text-gray-500">
+                  Variables supported <Info className="h-3 w-3 text-gray-500 ml-1" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent className="max-w-[300px]">
+                Use &#123;&#123; &#125;&#125; to insert variables. For example &#123;&#123;myVar&#125;&#125; or &#123;&#123;myVar.someProp&#125;&#125;. Each distinct variable will be exposed as an input and can be used to receive dynamic values from other nodes.
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        )}
+      </div>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen} modal={false}>
         <DialogTrigger asChild>
@@ -202,6 +213,7 @@ export function MacroConfigurableFieldEditor(props: {
             value={value}
             onChange={onChange}
             isExpanded={true}
+            onTypeChange={isDialogOpen ? changeType : undefined}
           />
           <MacroConfigurableValueBaseEditor
             value={value}
@@ -213,12 +225,29 @@ export function MacroConfigurableFieldEditor(props: {
             onRawJsonDataChange={setRawJsonData}
           />
 
-          {config.description && (
-            <div className="mt-2 text-xs text-gray-500 dark:text-gray-400 italic">
-              {config.description}
-            </div>
-          )}
-          {helperText}
+          <div className="mt-2 flex justify-between items-center">
+            {config.description ? (
+              <div className="text-xs text-gray-500 dark:text-gray-400 italic">
+                {config.description}
+              </div>
+            ) : (
+              <div></div>
+            )}
+            {isTemplateSupported && (
+              <TooltipProvider delayDuration={0}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="ghost" size="xs" className="p-0 h-4 text-xs text-gray-500">
+                      Variables supported <Info className="h-3 w-3 text-gray-500 ml-1" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    Use &#123;&#123; &#125;&#125; to insert variables. For example &#123;&#123;myVar&#125;&#125; or &#123;&#123;myVar.someProp&#125;&#125;
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
+          </div>
 
           <div className="mt-6 flex justify-end">
             <Button onClick={() => setIsDialogOpen(false)}>Close</Button>
