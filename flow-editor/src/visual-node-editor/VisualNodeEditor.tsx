@@ -388,7 +388,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         startSelectionBox,
         updateSelectionBox,
         endSelectionBox,
-      } = useSelectionBox(node, boardData.viewPort, boardPos, parentViewport);
+      } = useSelectionBox(editorNode, boardData.viewPort, boardPos, parentViewport);
 
       const {
         onRenameIoPin,

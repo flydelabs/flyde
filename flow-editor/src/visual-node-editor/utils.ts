@@ -185,16 +185,16 @@ export const createNewNodeInstance = (
     importableNode.type === "visual"
       ? visualNodeInstance(insId, importableNode.id, importableNode.source)
       : nodeInstance(
-          insId,
-          importableNode.id,
-          importableNode.source,
-          {},
-          {},
-          {
-            x: 0,
-            y: 0,
-          }
-        );
+        insId,
+        importableNode.id,
+        importableNode.source,
+        {},
+        {},
+        {
+          x: 0,
+          y: 0,
+        }
+      );
 
   const width = 300; // TODO - calc proper width
 
@@ -578,12 +578,10 @@ export const handleInstanceDrag = (
     });
 
     foundIns.pos = pos;
-    if (!event.shiftKey && draggingId) {
-      newSelected = [draggingId];
-    }
+
   });
 
-  return { newValue, newSelected };
+  return { newValue, newSelected: selected };
 };
 
 export const handleIoPinRename = (

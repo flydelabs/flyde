@@ -271,6 +271,13 @@ export const InstanceView: React.FC<InstanceViewProps> =
       [instance, onDragStart]
     );
 
+
+    const _onSelect = React.useCallback(
+      (e: any) => onSelect(instance, e),
+      [instance, onSelect]
+    );
+
+
     const _onDragEnd = React.useCallback(
       (event: any, data: any) => {
         const currPos = instance.pos;
@@ -280,7 +287,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
         const newY = currPos.y + dy;
         onDragEnd(instance, event, { ...data, x: newX, y: newY });
       },
-      [instance, onDragEnd, viewPort.zoom]
+      [instance, onDragEnd, viewPort.zoom, _onSelect]
     );
 
     const _onDragMove = React.useCallback(
@@ -293,11 +300,6 @@ export const InstanceView: React.FC<InstanceViewProps> =
     const _onToggleSticky = React.useCallback(
       (pinId: string) => onToggleSticky(instance, pinId),
       [instance, onToggleSticky]
-    );
-
-    const _onSelect = React.useCallback(
-      (e: any) => onSelect(instance, e),
-      [instance, onSelect]
     );
 
     const onDblClick = React.useCallback(
