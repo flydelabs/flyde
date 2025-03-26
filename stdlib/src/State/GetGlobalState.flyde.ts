@@ -4,9 +4,7 @@ const namespace = "State";
 
 export const GetGlobalState: InternalCodeNode = {
   id: "Get State",
-  defaultStyle: {
-    icon: "fa-eye",
-  },
+  icon: "fa-eye",
   namespace,
   description: "Gets a value from the global state",
   inputs: {

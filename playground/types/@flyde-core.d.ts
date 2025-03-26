@@ -319,12 +319,12 @@ declare module '@flyde/core/flow-schema' {
                 description: z.ZodOptional<z.ZodString>;
                 defaultValue: z.ZodOptional<z.ZodAny>;
             }, "strip", z.ZodTypeAny, {
-                mode?: "optional" | "required" | "required-if-connected";
+                mode?: "required" | "optional" | "required-if-connected";
                 type?: string;
                 description?: string;
                 defaultValue?: any;
             }, {
-                mode?: "optional" | "required" | "required-if-connected";
+                mode?: "required" | "optional" | "required-if-connected";
                 type?: string;
                 description?: string;
                 defaultValue?: any;
@@ -389,7 +389,7 @@ declare module '@flyde/core/flow-schema' {
         }, "strip", z.ZodTypeAny, {
             id?: string;
             inputs?: Record<string, string | {
-                mode?: "optional" | "required" | "required-if-connected";
+                mode?: "required" | "optional" | "required-if-connected";
                 type?: string;
                 description?: string;
                 defaultValue?: any;
@@ -421,7 +421,7 @@ declare module '@flyde/core/flow-schema' {
         }, {
             id?: string;
             inputs?: Record<string, string | {
-                mode?: "optional" | "required" | "required-if-connected";
+                mode?: "required" | "optional" | "required-if-connected";
                 type?: string;
                 description?: string;
                 defaultValue?: any;
@@ -499,7 +499,7 @@ declare module '@flyde/core/flow-schema' {
         } & {
             id?: string;
             inputs?: Record<string, string | {
-                mode?: "optional" | "required" | "required-if-connected";
+                mode?: "required" | "optional" | "required-if-connected";
                 type?: string;
                 description?: string;
                 defaultValue?: any;
@@ -577,7 +577,7 @@ declare module '@flyde/core/flow-schema' {
         } & {
             id?: string;
             inputs?: Record<string, string | {
-                mode?: "optional" | "required" | "required-if-connected";
+                mode?: "required" | "optional" | "required-if-connected";
                 type?: string;
                 description?: string;
                 defaultValue?: any;
@@ -758,6 +758,7 @@ declare module '@flyde/core/improved-macros/improved-macros' {
             icon?: string;
             completionOutputs?: StaticOrDerived<string[], Config>;
             run: InternalCodeNode["run"];
+            sourceCode?: string;
     }
     export interface SimpleCodeNode<Config> extends BaseMacroNodeData<Config> {
             inputs: Record<string, InputConfig>;

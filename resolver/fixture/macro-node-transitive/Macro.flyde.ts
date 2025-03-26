@@ -7,9 +7,7 @@ interface AddConfig {
 export const Add: CodeNode<AddConfig> = {
   id: "Add",
   mode: "advanced",
-  defaultStyle: {
-    icon: "plus",
-  },
+  icon: "plus",
   menuDisplayName: "Add",
   menuDescription: "Adds a configured value to the input",
   displayName: () => "Add",

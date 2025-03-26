@@ -17,9 +17,7 @@ export const SpreadList: CodeNode<SpreadListConfig> = {
   displayName: (config) => `Spreads List of ${config.count}`,
   description: (config) =>
     `Receives a list with ${config.count} items and emits ${config.count} outputs: the first item, the second item, and so on`,
-  defaultStyle: {
-    icon: "sitemap",
-  },
+  icon: "sitemap",
   inputs: {
     list: { description: "The list" },
   },

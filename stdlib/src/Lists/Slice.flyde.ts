@@ -16,7 +16,5 @@ export const Slice: InternalCodeNode = {
   run: ({ list, start, end }, { list: outputList }) => {
     outputList.next(list.slice(start, end));
   },
-  defaultStyle: {
-    icon: "fa-cut",
-  },
+  icon: "fa-cut",
 };

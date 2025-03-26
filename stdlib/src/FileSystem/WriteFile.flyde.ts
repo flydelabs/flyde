@@ -3,9 +3,7 @@ import * as fs from "fs";
 
 export const WriteFile: InternalCodeNode = {
   id: "Write File",
-  defaultStyle: {
-    icon: "fa-file",
-  },
+  icon: "fa-file",
   namespace: "File System",
   description: "Writes a file to the file system",
   inputs: {

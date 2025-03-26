@@ -4,9 +4,7 @@ const namespace = "Lists";
 
 export const HeadAndRest: InternalCodeNode = {
   id: "Head and rest",
-  defaultStyle: {
-    icon: "fa-list",
-  },
+  icon: "fa-list",
   namespace,
   description:
     "Receives a list and emits two outputs: the first item and the rest of the list",

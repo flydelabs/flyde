@@ -10,7 +10,6 @@ import {
 import { rnd } from "../physics";
 import { NodeInstance } from "@flyde/core";
 import { PromptFn } from "..";
-import { nodeStylePresetColors } from "../visual-node-editor/instance-view/NodeStyleMenu";
 
 export const createGroup = async (
   instances: NodeInstance[],
@@ -88,8 +87,8 @@ export const createGroup = async (
 
     const name = inputs[potential]
       ? (await prompt(
-          `Name this input (${potential} of ${conn.to.insId}) is already taken:`
-        )) || `i${rnd()}`
+        `Name this input (${potential} of ${conn.to.insId}) is already taken:`
+      )) || `i${rnd()}`
       : potential;
 
     renamedInputs[targetKey] = name;
@@ -121,8 +120,8 @@ export const createGroup = async (
 
     const name = outputs[potential]
       ? (await prompt(
-          `Name this output (${potential} of ${conn.from.insId} is already taken:`
-        )) || `i${rnd()}`
+        `Name this output (${potential} of ${conn.from.insId} is already taken:`
+      )) || `i${rnd()}`
       : potential;
 
     renamedOutputs[sourceKey] = name;
@@ -149,7 +148,6 @@ export const createGroup = async (
     outputs,
     instances,
     defaultStyle: {
-      color: pickRandom(nodeStylePresetColors.map((c) => c.color)),
     },
     inputsPosition: keys(inputs).reduce(
       (acc, curr, idx) => ({ ...acc, [curr]: { x: 0 + 100 * idx, y: 0 } }),

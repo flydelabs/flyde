@@ -3,9 +3,7 @@ import * as fs from "fs";
 
 export const ReadFile: InternalCodeNode = {
   id: "Read File",
-  defaultStyle: {
-    icon: "fa-file",
-  },
+  icon: "fa-file",
   namespace: "File System",
   description: "Reads a file from the file system",
   inputs: {

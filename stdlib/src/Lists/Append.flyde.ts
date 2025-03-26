@@ -14,7 +14,5 @@ export const Append: InternalCodeNode = {
   run: ({ list, item }, { list: outputList }) => {
     outputList.next([...list, item]);
   },
-  defaultStyle: {
-    icon: "fa-plus",
-  },
+  icon: "fa-plus",
 };

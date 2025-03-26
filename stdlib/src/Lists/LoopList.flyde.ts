@@ -4,9 +4,7 @@ const namespace = "Lists";
 
 export const LoopList: InternalCodeNode = {
   id: "Loop List",
-  defaultStyle: {
-    icon: "fa-list",
-  },
+  icon: "fa-list",
   namespace,
   aliases: ["each", "spread"],
   description: "Emits all values in a list",

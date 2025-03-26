@@ -14,7 +14,5 @@ export const RemoveAt: InternalCodeNode = {
   run: ({ list, index }, { list: outputList }) => {
     outputList.next(list.filter((_, idx) => idx !== index));
   },
-  defaultStyle: {
-    icon: "fa-times",
-  },
+  icon: "fa-times",
 };

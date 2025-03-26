@@ -3,9 +3,7 @@ import { CodeNode } from "@flyde/core";
 const namespace = "Numbers";
 export const SumList: CodeNode = {
   id: "Sum List",
-  defaultStyle: {
-    icon: "fa-plus",
-  },
+  icon: "fa-plus",
   namespace,
   description: "Emits the sum of a list of numbers",
   inputs: { list: { description: "List of numbers" } },

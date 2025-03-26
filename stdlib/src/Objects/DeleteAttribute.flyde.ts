@@ -4,9 +4,7 @@ const namespace = "Objects";
 
 export const DeleteAttribute: InternalCodeNode = {
   id: "Delete Attribute",
-  defaultStyle: {
-    icon: "fa-box",
-  },
+  icon: "fa-box",
   namespace,
   description: "Deletes an attribute from an object",
   inputs: {

@@ -207,13 +207,13 @@ export function processImprovedMacro(node: CodeNode): InternalMacroNode<any> {
     typeof node.displayName === "function"
       ? node.displayName
       : (config: any) =>
-          renderDerivedString(node.displayName as string, config);
+        renderDerivedString(node.displayName as string, config);
 
   const description =
     typeof node.description === "function"
       ? node.description
       : (config: any) =>
-          renderDerivedString(node.description as string, config);
+        renderDerivedString(node.description as string, config);
 
   if (isAdvanced) {
     return {
@@ -414,9 +414,6 @@ export function processImprovedMacro(node: CodeNode): InternalMacroNode<any> {
       id: node.id,
       namespace: node.namespace,
       displayName: node.menuDisplayName,
-      defaultStyle: {
-        icon: node.icon,
-      },
       defaultData,
       definitionBuilder: (config) => {
         const fieldToGroupHierarchy: Record<string, string[]> = {};

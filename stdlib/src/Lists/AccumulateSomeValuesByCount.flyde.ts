@@ -4,9 +4,7 @@ const namespace = "Lists";
 
 export const AccumulateSomeValuesByCount: InternalCodeNode = {
   id: "Accumulate Some Values by Count",
-  defaultStyle: {
-    icon: "fa-basket-shopping",
-  },
+  icon: "fa-basket-shopping",
   namespace,
   description:
     'Accumulates values sent to the "accept" input. Emits the list after the total items passed to both "accept" and "ignore" inputs reach the specified count.',

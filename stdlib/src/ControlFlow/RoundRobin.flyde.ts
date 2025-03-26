@@ -19,9 +19,8 @@ export const RoundRobin: CodeNode<RoundRobinConfig> = {
   menuDisplayName: "Round Robin",
   menuDescription:
     "Item will be emitted to one of the outputs in a round robin fashion",
-  defaultStyle: {
-    icon: "rotate",
-  },
+  icon: "rotate",
+
   inputs: {
     value: { mode: "required", description: "The value to emit" },
   },
@@ -32,11 +31,9 @@ export const RoundRobin: CodeNode<RoundRobinConfig> = {
       (obj, _, i) => ({
         ...obj,
         [`r${i + 1}`]: {
-          description: `The ${
-            i + 1
-          } output in order to emit the value received. After emitting a value, it moves to "r${
-            (i + 2) % config.count.value
-          }"'s turn.`,
+          description: `The ${i + 1
+            } output in order to emit the value received. After emitting a value, it moves to "r${(i + 2) % config.count.value
+            }"'s turn.`,
         },
       }),
       {}

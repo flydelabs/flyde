@@ -17,9 +17,7 @@ export const listFrom: CodeNode<ListFromConfig> = {
     "Receives a list of values and creates a list (array) from them",
   displayName: (config) => `List from ${config.count}`,
   description: (config) => `Creates a list from ${config.count} values`,
-  defaultStyle: {
-    icon: "list",
-  },
+  icon: "list",
   inputs: (config) =>
     Object.fromEntries(
       Array.from({ length: config.count.value }, (_, i) => [`item${i + 1}`, {}])

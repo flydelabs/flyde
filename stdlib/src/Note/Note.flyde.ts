@@ -7,15 +7,15 @@ export interface NoteConfig {
 export const Note: CodeNode = {
   id: "Note",
   displayName: "Note",
+  icon: "comment",
   defaultStyle: {
-    icon: "comment",
     cssOverride: {
       padding: "6px 8px",
     },
   },
   description: "A note node for documentation purposes",
   overrideNodeBodyHtml: (config) => parseMarkdown(config.content),
-  run: () => {},
+  run: () => { },
   inputs: {
     never: nodeInput(), // this is a hack to make the node never trigger
   },

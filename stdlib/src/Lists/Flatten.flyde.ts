@@ -11,7 +11,5 @@ export const Flatten: InternalCodeNode = {
   run: ({ list }, { list: outputList }) => {
     outputList.next(list.reduce((acc, item) => [...acc, ...item], []));
   },
-  defaultStyle: {
-    icon: "fa-compress",
-  },
+  icon: "fa-compress",
 };

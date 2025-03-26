@@ -3,7 +3,6 @@ import { InputPin, OutputPin } from "./pins";
 export type NodeTypeIcon = string | [string, string];
 
 export interface NodeStyle {
-  icon?: NodeTypeIcon;
   color?: string | [string, string];
   cssOverride?: Record<string, string>;
 }

@@ -8,22 +8,21 @@ export interface SwitchConfig {
     outputExpression: string;
   }[];
   defaultCase:
-    | {
-        enabled: true;
-        outputExpression: string;
-      }
-    | {
-        enabled: false;
-      };
+  | {
+    enabled: true;
+    outputExpression: string;
+  }
+  | {
+    enabled: false;
+  };
 }
 
 export const Switch: CodeNode<SwitchConfig> = {
   id: "Switch",
   namespace: "Control Flow",
   mode: "advanced",
-  defaultStyle: {
-    icon: "sitemap",
-  },
+  icon: "sitemap",
+
   menuDisplayName: "Switch",
   menuDescription:
     "Allows you to switch between multiple outputs based on the value of one input or more, using code expressions",

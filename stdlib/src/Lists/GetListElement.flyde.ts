@@ -4,9 +4,7 @@ const namespace = "Lists";
 
 export const GetListElement: InternalCodeNode = {
   id: "Get List Element",
-  defaultStyle: {
-    icon: "fa-list",
-  },
+  icon: "fa-list",
   namespace,
   description: "Returns the element at the specified index",
   inputs: {
