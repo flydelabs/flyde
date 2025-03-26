@@ -1,7 +1,7 @@
 import { Button, DialogTitle, useAiCompletion } from "@flyde/ui";
 import { Dialog, DialogContent, DialogHeader } from "@flyde/ui";
 
-import { Alert, AlertDescription, AlertTitle, Info, GitFork } from "@flyde/ui";
+import { GitFork } from "@flyde/ui";
 
 import {
   CodeNodeInstance,
@@ -10,11 +10,12 @@ import {
 } from "@flyde/core";
 
 import { ErrorBoundary } from "react-error-boundary";
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, useEffect } from "react";
 import { loadConfigEditorComponent } from "./loadConfigEditorComponent";
 import { usePrompt } from "../../flow-editor/ports";
 import { Loader } from "../../lib/loader";
 import { InstanceIcon } from "../instance-view/InstanceIcon";
+import { HotkeyIndication } from "@flyde/ui";
 
 export interface InstanceConfigEditorProps {
   ins: CodeNodeInstance;
@@ -69,6 +70,20 @@ export const InstanceConfigEditor: React.FC<InstanceConfigEditorProps> = (
     return loadConfigEditorComponent(nodeInstance);
   }, [nodeInstance]);
 
+  // Add keyboard shortcut handler
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+        e.preventDefault();
+        handleSubmit();
+
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleSubmit, hasUnsavedChanges]);
+
   const prompt = usePrompt();
 
   const aiCompletion = useAiCompletion();
@@ -95,57 +110,17 @@ export const InstanceConfigEditor: React.FC<InstanceConfigEditorProps> = (
             icon={node.icon}
             className="h-5 w-5 mr-2 flex-shrink-0"
           />
-          <DialogTitle className="text-base font-medium m-0">
+          <DialogTitle className="text-base font-medium m-0 truncate max-w-[85%] overflow-hidden">
             {node.displayName ?? node.id}
           </DialogTitle>
         </DialogHeader>
 
-        <div className="flex-1 overflow-y-auto p-4">
+        <div className="flex-1 overflow-y-auto px-4 pt-0">
           <div className="flex-none">
-            {_onForkNode && (
-              <div className="flex justify-end mb-3">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => _onForkNode(node)}
-                >
-                  <GitFork className="mr-2 h-4 w-4" />
-                  Fork
-                </Button>
-              </div>
-            )}
-
-            {/* {macroSiblings.length > 1 && (
-              <Select
-                value={macro.id}
-                onValueChange={(value) => {
-                  const selectedMacro = macroSiblings.find(
-                    (m) => m.id === value
-                  );
-                  if (selectedMacro) {
-                    // props.onSwitchToSiblingMacro(selectedMacro);
-                  }
-                }}
-              >
-                <SelectTrigger className="w-full mb-3">
-                  <SelectValue>{macro.displayName ?? macro.id}</SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  {macroSiblings.map((item) => (
-                    <SelectItem key={item.id} value={item.id}>
-                      {item.displayName || item.id}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )} */}
-
             {node.description && (
-              <Alert className="mb-3">
-                <Info className="h-4 w-4" />
-                <AlertTitle>{node.displayName ?? node.id}</AlertTitle>
-                <AlertDescription>{node.description}</AlertDescription>
-              </Alert>
+              <div className="flex justify-between items-center mb-3">
+                <span className="text-sm text-gray-500">{node.description}</span>
+              </div>
             )}
           </div>
 
@@ -173,13 +148,31 @@ export const InstanceConfigEditor: React.FC<InstanceConfigEditorProps> = (
           </div>
         </div>
 
-        <div className="flex justify-end gap-2 py-2 px-4 border-t border-gray-200 dark:border-gray-800">
-          <Button variant="outline" size="sm" onClick={onCancel}>
-            Cancel
-          </Button>
-          <Button size="sm" onClick={handleSubmit}>
-            Save
-          </Button>
+        <div className="flex justify-between items-center py-2 px-4 border-t border-gray-200 dark:border-gray-800">
+          {_onForkNode && (
+            <div className="text-xs text-gray-500 mr-1">
+              <span className="inline-flex items-center mr-1">Need more customization?{" "}</span>
+              <Button
+                variant="link"
+                size="xs"
+                onClick={() => _onForkNode(node)}
+                className="p-0 h-auto text-xs inline-flex items-center"
+              >
+
+                Fork
+              </Button>
+              {" "}this node and make it your own
+            </div>
+          )}
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={onCancel}>
+              Cancel
+            </Button>
+            <Button size="sm" onClick={handleSubmit} className="flex items-center gap-2">
+              Save
+              <HotkeyIndication hotkey="cmd+enter" />
+            </Button>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

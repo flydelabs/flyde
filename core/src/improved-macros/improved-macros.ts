@@ -222,6 +222,7 @@ export function processImprovedMacro(node: CodeNode): InternalMacroNode<any> {
       defaultStyle: node.defaultStyle,
       displayName: node.menuDisplayName,
       description: node.menuDescription,
+      icon: node.icon,
       namespace: node.namespace,
       definitionBuilder: (config) => {
         return {
@@ -415,6 +416,7 @@ export function processImprovedMacro(node: CodeNode): InternalMacroNode<any> {
       namespace: node.namespace,
       displayName: node.menuDisplayName,
       defaultData,
+      icon: node.icon,
       definitionBuilder: (config) => {
         const fieldToGroupHierarchy: Record<string, string[]> = {};
 
