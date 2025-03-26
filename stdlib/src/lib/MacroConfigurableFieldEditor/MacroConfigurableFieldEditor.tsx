@@ -53,10 +53,6 @@ function FieldContent({
     "string",
   ];
 
-  const isTemplateSupported =
-    (value.type === "string" || value.type === "json") &&
-    config.templateSupport !== false;
-
   return (
     <div className="mb-1 font-medium flex items-center gap-2 justify-between">
       <div className="flex items-center gap-2">
