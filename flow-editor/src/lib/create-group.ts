@@ -1,4 +1,4 @@
-import { OMap, keys, nodeOutput, pickRandom } from "@flyde/core";
+import { InputPin, OutputPin, OMap, keys, nodeOutput, pickRandom } from "@flyde/core";
 import {
   ConnectionData,
   externalConnectionNode,
@@ -70,7 +70,7 @@ export const createGroup = async (
   const externalConnections: ConnectionData[] = [];
   // const inputIds = keys(looseInputs).map(k => k.split(".")[1]);
 
-  const inputs = {};
+  const inputs: Record<string, InputPin> = {};
   for (const conn of inputCandidates) {
     const targetKey = `${conn.to.insId}.${conn.to.pinId}`;
     const sourceKey = `${conn.from.insId}.${conn.from.pinId}`;
@@ -103,7 +103,7 @@ export const createGroup = async (
     inputs[name] = nodeInput();
   }
 
-  const outputs = {};
+  const outputs: Record<string, OutputPin> = {};
   for (const conn of outputCandidates) {
     const targetKey = `${conn.to.insId}.${conn.to.pinId}`;
     const sourceKey = `${conn.from.insId}.${conn.from.pinId}`;

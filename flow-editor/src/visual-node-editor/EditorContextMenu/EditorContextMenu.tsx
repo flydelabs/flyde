@@ -65,7 +65,7 @@ export function EditorContextMenu(props: EditorContextMenuProps) {
   }, [_prompt, onChange, node, reportEvent]);
 
   const editNodeDescription = React.useCallback(async () => {
-    const description = await _prompt(`Description?`, node.description);
+    const description = await _prompt(`Description?`, node.description) ?? undefined;
     const newValue = produce(node, (draft) => {
       draft.description = description;
     });
@@ -106,13 +106,13 @@ export function EditorContextMenu(props: EditorContextMenuProps) {
             draft.inputs = {};
           }
           draft.inputs[newPinId] = nodeInput();
-          draft.inputsPosition[newPinId] = lastMousePos.current;
+          draft.inputsPosition[newPinId] = lastMousePos.current ?? { x: 0, y: 0 };
         } else {
           if (!node.outputs) {
             draft.outputs = {};
           }
           draft.outputs[newPinId] = nodeOutput();
-          draft.outputsPosition[newPinId] = lastMousePos.current;
+          draft.outputsPosition[newPinId] = lastMousePos.current ?? { x: 0, y: 0 };
 
           if (draft.completionOutputs?.length) {
             toast({

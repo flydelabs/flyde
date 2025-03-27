@@ -122,7 +122,7 @@ export function MacroConfigurableFieldEditor(props: {
   value: MacroConfigurableValue;
   onChange: (value: MacroConfigurableValue) => void;
   config: MacroEditorFieldDefinition;
-  prompt: (message: string) => Promise<string>;
+  prompt: (message: string) => Promise<string | null>;
 }) {
   const { config, value, onChange, prompt } = props;
   const [isDialogOpen, setIsDialogOpen] = useState(false);

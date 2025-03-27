@@ -37,15 +37,12 @@ import produce from "immer";
 import { handleDuplicateSelectedEditorCommand } from "./commands/duplicate-instances";
 import { groupSelected } from "../group-selected";
 import { handleConnectionCloseEditorCommand } from "./commands/close-connection";
-import { useToast } from "@flyde/ui";
+import { toast, useToast } from "@flyde/ui";
 
 export function useEditorCommands(
   lastMousePos: React.MutableRefObject<Pos>,
   vpSize: Size,
-  isBoardInFocus: React.MutableRefObject<boolean>,
-  setEditedMacroInstance: React.Dispatch<
-    React.SetStateAction<{ ins: NodeInstance } | undefined>
-  >
+  isBoardInFocus: React.MutableRefObject<boolean>
 ) {
   const {
     node,
@@ -209,8 +206,14 @@ export function useEditorCommands(
     (type: PinType, pinId: string, description: string) => {
       const newNode = produce(node, (draft) => {
         if (type === "input") {
+          if (!draft.inputs[pinId]) {
+            throw new Error("Pin does not exist");
+          }
           draft.inputs[pinId].description = description;
         } else {
+          if (!draft.outputs[pinId]) {
+            throw new Error("Pin does not exist");
+          }
           draft.outputs[pinId].description = description;
         }
       });
@@ -371,14 +374,14 @@ export function useEditorCommands(
   );
 
   const duplicate = React.useCallback(() => {
-    const { newNode, newInstances } = handleDuplicateSelectedEditorCommand(
+    const { newNode, newInstancesIds } = handleDuplicateSelectedEditorCommand(
       node,
       selectedInstances
     );
 
     onChange(newNode, functionalChange("duplicated instances"));
     onChangeBoardData({
-      selectedInstances: newInstances.map((ins) => ins.id),
+      selectedInstances: newInstancesIds,
     });
     // onChange(duplicateSelected(value), functionalChange("duplicate"));
   }, [onChange, onChangeBoardData, node, selectedInstances]);

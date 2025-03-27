@@ -101,7 +101,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
           events.forEach((event) => {
             if (event.type === DebuggerEventType.INPUTS_STATE_CHANGE) {
               setQueuedInputsData((obj) => {
-                return { ...obj, [event.insId]: event.val };
+                return { ...obj, [event.insId]: event.val as Record<string, number> };
               });
             }
 
@@ -196,7 +196,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
 
     const [inspectedItem, setInspectedItem] = React.useState<{
       insId: string;
-      pin?: { type: PinType; id: string };
+      pin: { type: PinType; id: string };
     }>();
 
     const onCloseInspectedItemModal = React.useCallback(
@@ -215,7 +215,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
 
     const AiCompletionContextValue = React.useMemo<AiCompletionContext>(() => {
       return {
-        createCompletion: createAiCompletion,
+        createCompletion: createAiCompletion ?? (() => Promise.resolve('')),
         enabled: !!createAiCompletion,
       };
     }, [createAiCompletion]);

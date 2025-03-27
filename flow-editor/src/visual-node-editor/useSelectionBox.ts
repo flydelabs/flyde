@@ -1,15 +1,15 @@
 import { useState, useCallback } from "react";
 
 import {} from "../utils";
-import { Pos } from "@flyde/core";
-import { domToViewPort, calcSelectionBoxArea, getInstancesInRect } from "..";
+import { Pos, VisualNode } from "@flyde/core";
+import { domToViewPort, calcSelectionBoxArea, getInstancesInRect, ViewPort } from "..";
 
 const ALLOWED_SELECTION_BOX_CLASSES = [
   "board-editor-inner",
   "connections-view",
 ];
 
-export const useSelectionBox = (node, viewPort, boardPos, parentViewport) => {
+export const useSelectionBox = (node: VisualNode, viewPort: ViewPort, boardPos: Pos, parentViewport: ViewPort) => {
   const [selectionBox, setSelectionBox] = useState<{ from: Pos; to: Pos }>();
 
   const startSelectionBox = useCallback(
@@ -17,8 +17,8 @@ export const useSelectionBox = (node, viewPort, boardPos, parentViewport) => {
       const target = event.nativeEvent.target as HTMLElement;
 
       if (
-        !target ||
-        !ALLOWED_SELECTION_BOX_CLASSES.includes(target.getAttribute("class"))
+        !target || 
+        !ALLOWED_SELECTION_BOX_CLASSES.includes(target.getAttribute("class") ?? '')
       ) {
         return;
       }
@@ -36,6 +36,9 @@ export const useSelectionBox = (node, viewPort, boardPos, parentViewport) => {
 
   const updateSelectionBox = useCallback(
     (posInBoard: Pos) => {
+      if (!selectionBox) {
+        return;
+      }
       setSelectionBox({ ...selectionBox, to: posInBoard });
     },
     [selectionBox]

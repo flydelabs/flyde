@@ -30,7 +30,7 @@ export const RunFlowModal: React.FC<RunFlowModalProps> = React.memo(
       Object.keys(node.inputs).reduce((acc, key) => {
         acc[key] = `Enter a value for input ${key}`;
         return acc;
-      }, {})
+      }, {} as Record<string, string>)
     );
 
     const [inputsValue, setInputsValue] = React.useState(
@@ -62,7 +62,7 @@ export const RunFlowModal: React.FC<RunFlowModalProps> = React.memo(
     const flowInputs = Object.keys(node.inputs);
 
     const optionals = flowInputs.filter(
-      (key) => node.inputs[key].mode !== "required"
+      (key) => node.inputs[key]?.mode !== "required"
     );
 
     const maybeInputs = React.useMemo(() => {
@@ -110,7 +110,7 @@ export const RunFlowModal: React.FC<RunFlowModalProps> = React.memo(
                 </div>
                 <Slider
                   value={[executionDelay]}
-                  onValueChange={([value]) => setExecutionDelay(value)}
+                  onValueChange={([value]) => setExecutionDelay(value ?? 0)}
                   min={0}
                   max={1000}
                   step={100}

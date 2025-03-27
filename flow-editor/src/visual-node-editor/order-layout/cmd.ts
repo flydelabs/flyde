@@ -48,7 +48,7 @@ export const orderVisualNode = (
 ) => {
   const { instances, connections } = node;
   const insNodes = instances.reduce((prev, curr) => {
-    const s = size(calcNodeWidth(curr, curr.node), NODE_HEIGHT);
+    const s = size(calcNodeWidth(curr), NODE_HEIGHT);
     return {
       ...prev,
       [`ins-${curr.id}`]: { p: curr.pos, s },

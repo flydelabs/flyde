@@ -40,7 +40,7 @@ export const InstanceConfigEditor: React.FC<InstanceConfigEditorProps> = (
     [onCancel]
   );
 
-  const nodeInstance: EditorNodeInstance = useMemo(() => {
+  const nodeInstance: EditorNodeInstance | undefined = useMemo(() => {
     return editorNode.instances.find((_ins) => _ins.id === ins.id);
   }, [editorNode.instances, ins.id]);
 
@@ -67,6 +67,9 @@ export const InstanceConfigEditor: React.FC<InstanceConfigEditorProps> = (
   }, [hasUnsavedChanges, onCancel]);
 
   const EditorComp = useMemo(() => {
+    if (!nodeInstance) {
+      return () => <div>Node instance not found</div>;
+    }
     return loadConfigEditorComponent(nodeInstance);
   }, [nodeInstance]);
 

@@ -3,6 +3,7 @@ import {
   MacroEditorComp,
   MacroEditorConfigStructured,
   evaluateCondition,
+  MacroConfigurableValue,
 } from "@flyde/core";
 import { MacroConfigurableFieldEditor } from "@flyde/stdlib";
 import { usePrompt } from "../../flow-editor/ports";
@@ -45,7 +46,7 @@ function GroupFields({
   group: GroupFieldDefinition;
   value: any;
   onChange: (value: any) => void;
-  prompt: (message: string) => Promise<string>;
+  prompt: (message: string) => Promise<string | null>;
 }) {
   const [isCollapsed, setIsCollapsed] = useState(
     group.typeData?.defaultCollapsed ?? false
@@ -172,14 +173,16 @@ export function StructuredMacroEditorComp<T>(
             return null;
           }
 
+          const configValue: Record<string, MacroConfigurableValue> = props.value && typeof props.value === "object" ? props.value : {};
+
+
+          const value = configValue[field.configKey] ?? macroConfigurableValue("dynamic", "");
+
           // Use MacroConfigurableFieldEditor for all fields
           return (
             <MacroConfigurableFieldEditor
               key={field.configKey}
-              value={
-                props.value[field.configKey] ??
-                macroConfigurableValue("dynamic", "")
-              }
+              value={value}
               onChange={(newValue) =>
                 props.onChange({
                   ...props.value,

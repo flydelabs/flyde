@@ -30,7 +30,7 @@ export type SelectionType =
   | SelectionTypeConnections;
 
 export interface SelectionIndicatorProps {
-  selection: SelectionType;
+  selection: SelectionType | undefined;
   onCenter: () => void;
   onGroup: () => void;
   onDelete: (ids: string[]) => void;
@@ -40,8 +40,12 @@ export const SelectionIndicator: React.FC<SelectionIndicatorProps> = (
   props
 ) => {
   const { selection, onCenter, onGroup, onDelete } = props;
-
   const dark = useDarkMode();
+
+  if (!selection) {
+    return null;
+  }
+
 
   const inner = useMemo(() => {
     switch (selection.type) {

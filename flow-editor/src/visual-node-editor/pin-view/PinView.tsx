@@ -48,9 +48,9 @@ export type PinViewProps = {
   ancestorsInsIds?: string;
   selected: boolean;
   connected: boolean;
-  onDoubleClick?: (id: string, e?: React.MouseEvent) => void;
-  onShiftClick?: (id: string, e?: React.MouseEvent) => void;
-  onClick: (id: string, type: PinType, e?: React.MouseEvent) => void;
+  onDoubleClick?: (id: string, e: React.MouseEvent) => void;
+  onShiftClick?: (id: string, e: React.MouseEvent) => void;
+  onClick: (id: string, type: PinType, e: React.MouseEvent) => void;
   isClosestToMouse: boolean;
   description?: string;
   onToggleLogged: (insId: string, pinId: string, type: PinType) => void;

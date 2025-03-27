@@ -338,7 +338,7 @@ const calcPoints = (w: number, h: number, pos: Pos, tag: string): Points => {
 
 export const calcNodesPositions = (node: EditorVisualNode): Points[] => {
   const insNodes = node.instances.map((curr) => {
-    const w = calcNodeWidth(curr, curr.node);
+    const w = calcNodeWidth(curr);
     const h = NODE_HEIGHT;
     return calcPoints(w, h, curr.pos, curr.id);
   });
@@ -513,7 +513,7 @@ export const isJsxValue = (val: any): boolean => {
 export const getInstancesInRect = (
   selectionBox: { from: Pos; to: Pos },
   viewPort: ViewPort,
-  instances: EditorNodeInstance[],
+  instances: NodeInstance[],
   parentVp: ViewPort
 ) => {
   const { from, to } = selectionBox;
@@ -522,7 +522,7 @@ export const getInstancesInRect = (
   const toSelect = instances
     .filter((ins) => {
       const { pos } = ins;
-      const w = calcNodeWidth(ins, ins.node) * viewPort.zoom * parentVp.zoom;
+      const w = calcNodeWidth(ins) * viewPort.zoom * parentVp.zoom;
       const rec2 = {
         ...pos,
         w,
@@ -592,8 +592,11 @@ export const handleIoPinRename = (
 ) => {
   return immer.produce(node, (draft) => {
     if (type === "input") {
+      if (!draft.inputs[pinId]) {
+        throw new Error("Pin does not exist");
+      }
       draft.inputs[newPinId] = draft.inputs[pinId];
-      draft.inputsPosition[newPinId] = draft.inputsPosition[pinId];
+      draft.inputsPosition[newPinId] = draft.inputsPosition[pinId]!;
       delete draft.inputs[pinId];
       draft.connections = draft.connections.map((conn) => {
         return isExternalConnectionNode(conn.from) && conn.from.pinId === pinId
@@ -601,8 +604,11 @@ export const handleIoPinRename = (
           : conn;
       });
     } else {
+      if (!draft.outputs[pinId]) {
+        throw new Error("Pin does not exist");
+      }
       draft.outputs[newPinId] = draft.outputs[pinId];
-      draft.outputsPosition[newPinId] = draft.outputsPosition[pinId];
+      draft.outputsPosition[newPinId] = draft.outputsPosition[pinId]!;
       draft.connections = draft.connections.map((conn) => {
         return isExternalConnectionNode(conn.to) && conn.to.pinId === pinId
           ? { ...conn, to: { ...conn.to, pinId: newPinId } }

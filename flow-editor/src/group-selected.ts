@@ -38,8 +38,7 @@ export const groupSelected = async (
   );
   const midPos = relevantInstances.reduce((p, c) => {
     return middlePos(c.pos, p);
-    // return { x: (c.pos.x + p.x) / 2, y: (c.pos.y + p.y) / 2 };
-  }, instances[0].pos);
+  }, instances[0]?.pos ?? { x: 0, y: 0 });
   const newInstance = inlineVisualNodeInstance(
     createInsId(visualNode),
     visualNode,

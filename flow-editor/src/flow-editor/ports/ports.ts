@@ -54,7 +54,6 @@ export interface EditorPorts {
   createAiCompletion?: (dto: { prompt: string }) => Promise<string>;
 
   resolveInstance: (dto: {
-    flow: FlydeFlow;
     instance: NodeInstance;
   }) => Promise<EditorNodeInstance>;
 }

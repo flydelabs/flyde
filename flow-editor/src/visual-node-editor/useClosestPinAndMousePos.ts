@@ -34,7 +34,7 @@ export function useClosestPinAndMousePos(
         normalizedPos,
         boardPos,
         currentInsId,
-        ancestorsInsIds,
+        ancestorsInsIds ?? "",
         viewPort
       );
 

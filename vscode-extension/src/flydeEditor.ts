@@ -572,7 +572,7 @@ export class FlydeEditorEditorProvider
                 break;
               }
               case "resolveInstance": {
-                const { flow, instance } = event.params;
+                const { instance } = event.params;
 
                 const referencedNodeFinder =
                   createServerReferencedNodeFinder(fullDocumentPath);

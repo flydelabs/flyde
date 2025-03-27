@@ -19,7 +19,7 @@ export interface NodeIoViewProps {
   type: PinType;
   pos: Pos;
   currentInsId: string;
-  ancestorInsIds: string;
+  ancestorInsIds?: string;
   connected: boolean;
   dragged?: boolean;
   inputMode?: InputMode;
@@ -103,7 +103,7 @@ export const NodeIoView: React.FC<NodeIoViewProps> = React.memo(
 
     const _onSetDescription = React.useCallback(async () => {
       const newDescription = await _prompt("Description?", description);
-      onSetDescription(type, id, newDescription);
+      onSetDescription(type, id, newDescription ?? "");
     }, [_prompt, description, onSetDescription, type, id]);
 
     const onDeleteInner = React.useCallback(() => {

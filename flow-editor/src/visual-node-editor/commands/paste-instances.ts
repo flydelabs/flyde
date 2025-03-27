@@ -18,7 +18,7 @@ export const pasteInstancesCommand = (
 
   const idMap = new Map(
     newInstances.map((ins, idx) => {
-      return [clipboardData.instances[idx].id, ins.id];
+      return [clipboardData.instances[idx]?.id, ins.id];
     })
   );
 

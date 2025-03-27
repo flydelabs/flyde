@@ -71,7 +71,7 @@ export const OnboardingTips: React.FC<OnboardingTipsProps> = () => {
 
   const [currentTip, setCurrentTip] = useLocalStorage(
     "onboarding-tip",
-    tipsOrder[0]
+    tipsOrder[0]!
   );
   const [showFeedback, setShowFeedback] = useState(false);
 
@@ -101,7 +101,7 @@ export const OnboardingTips: React.FC<OnboardingTipsProps> = () => {
   }, [showTips, boardData, node]);
 
   const currIndex = useMemo(() => {
-    return tipsOrder.indexOf(currentTip);
+    return currentTip ? tipsOrder.indexOf(currentTip) : -1;
   }, [currentTip]);
 
   const advanceTip = useCallback(() => {
@@ -110,7 +110,7 @@ export const OnboardingTips: React.FC<OnboardingTipsProps> = () => {
     const isLast = currIndex === tipsOrder.length - 1;
 
     reportEvent("onBoardingTipCompleted", {
-      tip: currentTip,
+      tip: currentTip ?? "n/a",
     });
 
     setTimeout(
@@ -120,7 +120,7 @@ export const OnboardingTips: React.FC<OnboardingTipsProps> = () => {
         if (isLast) {
           setIsCompleted(true);
         } else {
-          setCurrentTip(nextTip);
+          setCurrentTip(nextTip!);
         }
       },
       isLast
@@ -139,6 +139,10 @@ export const OnboardingTips: React.FC<OnboardingTipsProps> = () => {
     }
 
     if (isAdvancing) {
+      return;
+    }
+
+    if (!tips[currentTip]) {
       return;
     }
 
@@ -184,7 +188,7 @@ export const OnboardingTips: React.FC<OnboardingTipsProps> = () => {
             ? currIndex === tipsOrder.length - 1
               ? "Great job! For more tips, check out the help menu."
               : "Great job! Moving to the next tip..."
-            : tips[currentTip].tip}
+            : tips[currentTip]?.tip ?? "n/a"}
         </AlertDescription>
       </Alert>
     </div>

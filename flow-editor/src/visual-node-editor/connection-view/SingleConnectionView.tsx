@@ -50,8 +50,9 @@ export const SingleConnectionView: React.FC<SingleConnectionViewProps> = (
   const { from, to } = connection;
 
   const fromInstance =
-    isInternalConnectionNode(from) &&
-    instances.find((i) => i.id === from.insId);
+    isInternalConnectionNode(from) ?
+    instances.find((i) => i.id === from.insId) :
+    undefined;
 
   const toInstance =
     isInternalConnectionNode(to) && instances.find((i) => i.id === to.insId);
@@ -71,7 +72,7 @@ export const SingleConnectionView: React.FC<SingleConnectionViewProps> = (
     return null;
   }
 
-  const fromNode = fromInstance.node ?? node;
+  const fromNode = fromInstance?.node ?? node;
 
   const sourcePin = fromNode.outputs[from.pinId];
   const delayed = sourcePin && sourcePin.delayed;

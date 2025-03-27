@@ -17,11 +17,11 @@ export const useHistoryHelpers = (
 
   const refreshHistory = useCallback(() => {
     clearInterval(historyTimer.current);
-    onRequestHistory(instanceId, pinId, type).then((val) => {
+    onRequestHistory(instanceId, pinId ?? "", type ?? "input").then((val) => {
       setHistory(val);
     });
     historyTimer.current = setInterval(() => {
-      onRequestHistory(instanceId, pinId, type).then((val) => {
+      onRequestHistory(instanceId, pinId ?? "", type ?? "input").then((val) => {
         setHistory(val);
       });
     }, INSIGHTS_TOOLTIP_INTERVAL);

@@ -30,6 +30,7 @@ import { LayoutDebugger } from "./layout-debugger";
 import { useDarkMode } from "../flow-editor/DarkModeContext";
 import classNames from "classnames";
 import useComponentSize from "@rehooks/component-size";
+import { tempLoadingNode } from "./instance-view/loadingNode";
 
 const defaultViewPort: ViewPort = {
   pos: { x: 0, y: 0 },
@@ -194,7 +195,7 @@ export const VisualNodeDiffView: React.FC<VisualNodeDiffViewProps> = (
   const [viewPort, setViewPort] = React.useState(defaultViewPort);
   const [didCenterInitially, setDidCenterInitially] = React.useState(false);
 
-  const boardRef = React.useRef<HTMLDivElement>();
+  const boardRef = React.useRef<HTMLDivElement>(null);
   const vpSize: Size = useComponentSize(boardRef);
   const boardPos = useBoundingclientrect(boardRef) || { x: 0, y: 0 };
 
@@ -238,13 +239,13 @@ export const VisualNodeDiffView: React.FC<VisualNodeDiffViewProps> = (
       <NodeIoView
         {...nodeIoViewNoopProps}
         currentInsId={currentInsId}
-        ancestorInsIds={undefined}
+        ancestorInsIds={''}
         type={type}
         pos={positionMap[k] || { x: 0, y: 0 }}
         id={k}
         key={k}
         viewPort={viewPort}
-        description={v.description}
+        description={v.description ?? ''}
       />
     ));
   };
@@ -387,7 +388,7 @@ export const VisualNodeDiffView: React.FC<VisualNodeDiffViewProps> = (
           <InstanceView
             {...instanceViewNoopProps}
             connectionsPerInput={emptyObj}
-            node={node.instances[idx].node}
+            node={node.instances[idx]?.node ?? tempLoadingNode}
             ancestorsInsIds={fullInsIdPath(currentInsId, props.ancestorsInsIds)}
             queuedInputsData={emptyObj}
             instance={ins}
@@ -410,7 +411,7 @@ export const VisualNodeDiffView: React.FC<VisualNodeDiffViewProps> = (
             step={0.05}
             className="w-[100px]"
             value={[viewPort.zoom]}
-            onValueChange={([value]) => onZoom(value)}
+            onValueChange={([value]) => onZoom(value ?? 0)}
           />
         </div>
       </main>

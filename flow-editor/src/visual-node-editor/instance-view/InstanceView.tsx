@@ -55,6 +55,7 @@ import {
   VisualNodeEditorContextType,
   VisualNodeEditorProvider,
 } from "../VisualNodeEditorContext";
+import { tempLoadingNode } from "./loadingNode";
 
 export const PIECE_HORIZONTAL_PADDING = 25;
 export const PIECE_CHAR_WIDTH = 11;
@@ -151,9 +152,9 @@ export interface InstanceViewProps {
   onChangeVisibleOutputs: (ins: NodeInstance, outputs: string[]) => void;
 
   onDeleteInstance: (ins: NodeInstance) => void;
-  onSetDisplayName: (ins: NodeInstance, view: string | undefined) => void;
+  onSetDisplayName: (ins: NodeInstance, displayName: string) => void;
 
-  onViewForkCode?: (ins: NodeInstance) => void;
+  onViewForkCode: (ins: NodeInstance) => void;
 
   displayMode?: true;
 
@@ -164,7 +165,7 @@ export interface InstanceViewProps {
   inlineGroupProps?: VisualNodeEditorProps & VisualNodeEditorContextType;
   onCloseInlineEditor: () => void;
 
-  inlineEditorPortalDomNode: HTMLElement;
+  inlineEditorPortalDomNode: HTMLElement | null;
 
   onChangeStyle: (instance: NodeInstance, style: NodeStyle) => void;
   onGroupSelected: () => void;
@@ -216,7 +217,9 @@ export const InstanceView: React.FC<InstanceViewProps> =
 
     const inlineEditorRef = React.useRef();
 
-    const node = props.node;
+    const _node = props.node;
+
+    const node = _node ?? tempLoadingNode;
 
     const style = React.useMemo(() => {
       return {
@@ -250,12 +253,12 @@ export const InstanceView: React.FC<InstanceViewProps> =
     );
 
     const onInputDblClick = React.useCallback(
-      (pin: string, e) => onPinDblClick(instance, pin, "input", e),
+      (pin: string, e: any) => onPinDblClick(instance, pin, "input", e),
       [instance, onPinDblClick]
     );
 
     const onOutputDblClick = React.useCallback(
-      (pin: string, e) => onPinDblClick(instance, pin, "output", e),
+      (pin: string, e: any) => onPinDblClick(instance, pin, "output", e),
       [instance, onPinDblClick]
     );
 
@@ -306,6 +309,8 @@ export const InstanceView: React.FC<InstanceViewProps> =
       (e: React.MouseEvent) => onDoubleClick(instance, e.shiftKey),
       [instance, onDoubleClick]
     );
+
+
 
     const is = entries(node.inputs);
 
@@ -451,7 +456,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
         `Set custom display name`,
         node.displayName || node.id
       );
-      onSetDisplayName(instance, name);
+      onSetDisplayName(instance, name ?? node.displayName ?? node.id);
     }, [_prompt, node.displayName, node.id, onSetDisplayName, instance]);
 
     const inputKeys = Object.keys(getNodeInputs(node));
@@ -608,7 +613,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
                   onChangeNode={inlineGroupProps.onChangeNode}
                 >
                   <VisualNodeEditor
-                    {...props.inlineGroupProps}
+                    {...props.inlineGroupProps as any}
                     className="no-drag flex-1 w-full h-full"
                     ref={inlineEditorRef}
                   />
@@ -649,7 +654,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
                 id={k}
                 optional={optionalInputs.has(k)}
                 connected={connectedInputs.has(k)}
-                isSticky={stickyInputs[k]}
+                isSticky={stickyInputs[k] ?? false}
                 // minimized={!selected}
                 onToggleSticky={_onToggleSticky}
                 selected={k === selectedInput}
