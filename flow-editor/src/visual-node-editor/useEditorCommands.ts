@@ -611,7 +611,10 @@ export function useEditorCommands(
   );
   useHotkeys(
     "cmd+d, ctrl+d",
-    duplicate,
+    (e) => {
+      e.preventDefault();
+      duplicate();
+    },
     { text: "Duplicate selected instances", group: "Editing" },
     [],
     isBoardInFocus

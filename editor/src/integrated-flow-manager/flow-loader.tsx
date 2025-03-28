@@ -1,4 +1,4 @@
-import { EditorVisualNode, FlydeFlow } from "@flyde/core";
+import { EditorVisualNode } from "@flyde/core";
 import { File, FolderStructure } from "@flyde/dev-server";
 import React, { useCallback, useEffect, useRef } from "react";
 
