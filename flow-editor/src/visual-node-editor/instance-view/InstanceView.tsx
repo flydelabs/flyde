@@ -14,6 +14,7 @@ import {
   CodeNodeDefinition,
   VisualNodeInstance,
   CodeNodeInstance,
+  EditorNodeInstance,
 } from "@flyde/core";
 import classNames from "classnames";
 import { DiffStatus } from "../VisualNodeDiffView";
@@ -112,8 +113,7 @@ export const getVisibleOutputs = (
 };
 
 export interface InstanceViewProps {
-  instance: NodeInstance;
-  node?: CodeNodeDefinition;
+  instance: EditorNodeInstance;
   selected?: boolean;
   dragged?: boolean;
   selectedInput?: string;
@@ -135,26 +135,26 @@ export interface InstanceViewProps {
     type: PinType,
     e: React.MouseEvent
   ) => void;
-  onDragEnd: (ins: NodeInstance, ...data: any[]) => void;
-  onDragStart: (ins: NodeInstance, ...data: any[]) => void;
-  onDragMove: (ins: NodeInstance, ev: React.MouseEvent, pos: Pos) => void;
-  onSelect: (ins: NodeInstance, ev: React.MouseEvent) => void;
-  onDblClick: (ins: NodeInstance, shiftKey: boolean) => void;
-  onToggleSticky: (ins: NodeInstance, pinId: string) => void;
+  onDragEnd: (ins: EditorNodeInstance, ...data: any[]) => void;
+  onDragStart: (ins: EditorNodeInstance, ...data: any[]) => void;
+  onDragMove: (ins: EditorNodeInstance, ev: React.MouseEvent, pos: Pos) => void;
+  onSelect: (ins: EditorNodeInstance, ev: React.MouseEvent) => void;
+  onDblClick: (ins: EditorNodeInstance, shiftKey: boolean) => void;
+  onToggleSticky: (ins: EditorNodeInstance, pinId: string) => void;
   onTogglePinLog: (insId: string, pinId: string, type: PinType) => void;
   onTogglePinBreakpoint: (insId: string, pinId: string, type: PinType) => void;
 
   onInspectPin: (insId: string, pin: { id: string; type: PinType }) => void;
 
-  onUngroup: (ins: NodeInstance) => void;
+  onUngroup: (ins: EditorNodeInstance) => void;
 
-  onChangeVisibleInputs: (ins: NodeInstance, inputs: string[]) => void;
-  onChangeVisibleOutputs: (ins: NodeInstance, outputs: string[]) => void;
+  onChangeVisibleInputs: (ins: EditorNodeInstance, inputs: string[]) => void;
+  onChangeVisibleOutputs: (ins: EditorNodeInstance, outputs: string[]) => void;
 
-  onDeleteInstance: (ins: NodeInstance) => void;
-  onSetDisplayName: (ins: NodeInstance, displayName: string) => void;
+  onDeleteInstance: (ins: EditorNodeInstance) => void;
+  onSetDisplayName: (ins: EditorNodeInstance, displayName: string) => void;
 
-  onViewForkCode: (ins: NodeInstance) => void;
+  onViewForkCode: (ins: EditorNodeInstance) => void;
 
   displayMode?: true;
 
@@ -167,11 +167,11 @@ export interface InstanceViewProps {
 
   inlineEditorPortalDomNode: HTMLElement | null;
 
-  onChangeStyle: (instance: NodeInstance, style: NodeStyle) => void;
+  onChangeStyle: (instance: EditorNodeInstance, style: NodeStyle) => void;
   onGroupSelected: () => void;
 
-  onPinMouseDown: (ins: NodeInstance, pinId: string, type: PinType) => void;
-  onPinMouseUp: (ins: NodeInstance, pinId: string, type: PinType) => void;
+  onPinMouseDown: (ins: EditorNodeInstance, pinId: string, type: PinType) => void;
+  onPinMouseUp: (ins: EditorNodeInstance, pinId: string, type: PinType) => void;
 
   hadError: boolean;
 }
@@ -217,9 +217,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
 
     const inlineEditorRef = React.useRef();
 
-    const _node = props.node;
-
-    const node = _node ?? tempLoadingNode;
+    const node = instance.node;
 
     const style = React.useMemo(() => {
       return {

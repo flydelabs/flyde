@@ -1,8 +1,8 @@
-import { createInsId, VisualNode } from "@flyde/core";
+import { createInsId, EditorVisualNode } from "@flyde/core";
 import produce from "immer";
 
 export const handleDuplicateSelectedEditorCommand = (
-  node: VisualNode,
+  node: EditorVisualNode,
   selected: string[]
 ) => {
   const newInstancesIds: string[] = [];

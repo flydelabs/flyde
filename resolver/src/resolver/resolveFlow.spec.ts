@@ -351,7 +351,6 @@ describe("resolver", () => {
 
       execute({
         node,
-
         inputs: { n },
         outputs: { r },
       });

@@ -9,6 +9,7 @@ import {
   NodeInstance,
   EditorNodeInstance,
   ImportableEditorNode,
+  EditorVisualNode,
 } from "@flyde/core";
 import { ReportEvent } from "./analytics";
 
@@ -28,7 +29,7 @@ export interface EditorPorts {
   readFlow: (dto: { absPath: string }) => Promise<FlydeFlow>;
   setFlow: (dto: { absPath: string; flow: FlydeFlow }) => Promise<void>;
 
-  onExternalFlowChange: (cb: (data: { flow: FlydeFlow }) => void) => CancelFn;
+  onExternalFlowChange: (cb: (data: { flow: { node: EditorVisualNode } }) => void) => CancelFn;
 
   onRunFlow: (
     inputs: Record<string, any>,

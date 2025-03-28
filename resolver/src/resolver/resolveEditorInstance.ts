@@ -1,6 +1,7 @@
 import {
   CodeNodeInstance,
   EditorNodeInstance,
+  internalCodeNodeToEditorNode,
   isVisualNode,
   processImprovedMacro,
   processMacroNodeInstance,
@@ -24,7 +25,7 @@ export function resolveEditorInstance(
       nodeId: instance.nodeId,
       inputConfig: instance.inputConfig,
       pos: instance.pos,
-      style: { ...instance.style, icon: "fa-object-group" },
+      style: { ...instance.style },
       type: instance.type,
       source: instance.source,
       node: { ...node, icon: "fa-object-group" },
@@ -41,7 +42,6 @@ export function resolveEditorInstance(
 
   const processedInstance = processMacroNodeInstance("", macro, instance);
 
-
   const editorInstance = {
     id: instance.id,
     config: instance.config,
@@ -51,18 +51,8 @@ export function resolveEditorInstance(
     style: instance.style,
     type: instance.type,
     source: instance.source,
-    node: {
-      id: processedInstance.id,
-      inputs: processedInstance.inputs,
-      outputs: processedInstance.outputs,
-      displayName: processedInstance.displayName ?? processedInstance.id,
-      description: processedInstance.description,
-      overrideNodeBodyHtml: processedInstance.overrideNodeBodyHtml,
-      defaultStyle: processedInstance.defaultStyle,
-      editorConfig: macro.editorConfig,
-      sourceCode: node.sourceCode,
-    },
-  } as EditorNodeInstance;
+    node: internalCodeNodeToEditorNode(processedInstance, macro.editorConfig, node.sourceCode),
+  };
 
   return editorInstance;
 }

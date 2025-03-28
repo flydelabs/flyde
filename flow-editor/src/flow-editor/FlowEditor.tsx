@@ -7,6 +7,7 @@ import {
   PinType,
   DebuggerEventType,
   ROOT_INS_ID,
+  EditorVisualNode,
 } from "@flyde/core";
 import {
   VisualNodeEditor,
@@ -38,7 +39,7 @@ export * from "./DebuggerContext";
 library.add(fab, fas);
 
 export type FlowEditorState = {
-  flow: FlydeFlow;
+  flow: { node: EditorVisualNode };
   boardData: GroupEditorBoardData;
 };
 
@@ -121,7 +122,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
     const { createAiCompletion } = usePorts();
 
     const onChangeFlow = React.useCallback(
-      (newFlow: Partial<FlydeFlow>, changeType: FlydeFlowChangeType) => {
+      (newFlow: { node: EditorVisualNode }, changeType: FlydeFlowChangeType) => {
         console.info("onChangeFlow", changeType.type);
 
         if (changeType.type === "functional") {
@@ -181,7 +182,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
     );
 
     const onChangeNode = React.useCallback(
-      (newNode: VisualNode, changeType: FlydeFlowChangeType) => {
+      (newNode: EditorVisualNode, changeType: FlydeFlowChangeType) => {
         const shouldIgnore = ignoreUndoChangeTypes.some((str) =>
           changeType.message.includes(str)
         );

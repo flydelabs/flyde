@@ -4,6 +4,7 @@ import {
   nodeInput,
   nodeInstance,
   nodeOutput,
+  EditorNode,
 } from "@flyde/core";
 import { assert } from "chai";
 import { noop } from "lodash";
@@ -30,11 +31,27 @@ describe("ssg/ssr support", () => {
       ],
       connections: [connectionData("i1.r", "i2.a")],
     });
+    const dummyNode: EditorNode = {
+      id: 'dummy',
+      inputs: {},
+      outputs: {},
+      inputsPosition: {},
+      outputsPosition: {},
+      connections: [],
+      instances: [],
+
+    }
+    const editorNode = {
+      ...node,
+      instances: node.instances.map((i) => ({
+        ...i,
+        node: dummyNode
+      })),
+    };
     const props: FlydeFlowEditorProps = {
       state: {
         flow: {
-          imports: {},
-          node,
+          node: editorNode,
         },
         boardData: {
           selectedInstances: [],

@@ -1,9 +1,9 @@
-import { FlydeFlow } from "@flyde/core";
+import { EditorVisualNode } from "@flyde/core";
 import { useState } from "react";
 import { useSsr } from "usehooks-ts";
 
 export type BootstrapData = {
-  initialFlow: FlydeFlow;
+  initialNode: EditorVisualNode;
   port: number;
   executionId: string;
   darkMode: boolean;

@@ -36,7 +36,7 @@ export const emptyObj = {}; // for immutability
 export const emptyList = []; // for immutability
 
 export function getInstancePinConfig(
-  node: VisualNode,
+  node: EditorVisualNode,
   insId: string,
   pinId: string
 ): InputPinConfig {
@@ -49,7 +49,7 @@ export function getInstancePinConfig(
 }
 
 export const changePinConfig = (
-  value: VisualNode,
+  value: EditorVisualNode,
   insKey: string,
   pinId: string,
   newConfig: InputPinConfig
@@ -176,7 +176,7 @@ export const createNewNodeInstance = (
   importableNode: ImportableEditorNode,
   offset: number = -1 * NODE_HEIGHT * 1.5,
   lastMousePos: Pos
-): NodeInstance => {
+): EditorNodeInstance => {
   // TODO - handle visual node addition
 
   const insId = createInsId(importableNode);
@@ -204,7 +204,7 @@ export const createNewNodeInstance = (
     y: y + offset,
   };
 
-  return { ...ins, pos };
+  return { ...ins, pos, node: importableNode.editorNode };
 };
 
 export type ViewPort = { pos: Pos; zoom: number };
@@ -537,7 +537,7 @@ export const getInstancesInRect = (
 };
 
 export const handleInstanceDrag = (
-  value: VisualNode,
+  node: EditorVisualNode,
   ins: NodeInstance,
   pos: Pos,
   event: any,
@@ -550,7 +550,7 @@ export const handleInstanceDrag = (
   const delta = vSub(pos, ins.pos);
 
   let newSelected;
-  const newValue = immer.produce(value, (draft) => {
+  const newValue = immer.produce(node, (draft) => {
     const foundIns = draft.instances.find((itrIns) => itrIns.id === ins.id);
 
     if (!foundIns) {
@@ -585,7 +585,7 @@ export const handleInstanceDrag = (
 };
 
 export const handleIoPinRename = (
-  node: VisualNode,
+  node: EditorVisualNode,
   type: PinType,
   pinId: string,
   newPinId: string
@@ -625,7 +625,7 @@ export const handleIoPinRename = (
 };
 
 export const handleChangeNodeInputType = (
-  node: VisualNode,
+  node: EditorVisualNode,
   pinId: string,
   mode: InputMode
 ) => {

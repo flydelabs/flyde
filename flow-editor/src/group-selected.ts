@@ -4,6 +4,7 @@ import {
   ConnectionData,
   createInsId,
   inlineVisualNodeInstance,
+  EditorVisualNode,
 } from "@flyde/core";
 import produce from "immer";
 import { createGroup } from "./lib/create-group";
@@ -11,10 +12,10 @@ import { PromptFn } from "./flow-editor/ports";
 
 export const groupSelected = async (
   selected: string[],
-  node: VisualNode,
+  node: EditorVisualNode,
   nodeName: string,
   prompt: PromptFn
-): Promise<{ newNode: VisualNode; currentNode: VisualNode }> => {
+): Promise<{ newNode: EditorVisualNode; currentNode: EditorVisualNode }> => {
   const { instances, connections } = node;
   const relevantInstances = instances.filter((ins) =>
     selected.includes(ins.id)
@@ -89,7 +90,7 @@ export const groupSelected = async (
   return {
     newNode: visualNode,
     currentNode: produce(node, (draft) => {
-      draft.instances = [...newInstancesArr, newInstance];
+      draft.instances = [...newInstancesArr, { ...newInstance, node: visualNode }];
       draft.connections = newConnections;
     }),
   };

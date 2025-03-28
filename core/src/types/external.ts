@@ -9,8 +9,14 @@ import {
   CodeNode,
   CodeNodeInstance,
   CodeNodeSource,
+  EditorNodeInstance,
+  EditorVisualNode,
   InputPinsConfig,
+  internalCodeNodeToEditorNode,
+  isInternalMacroNode,
   NodeInstance,
+  processImprovedMacro,
+  processMacroNodeInstance,
   VisualNodeInstance,
   VisualNodeSource,
 } from "..";
@@ -114,6 +120,7 @@ export type ImportableEditorNode = {
   description: string;
   icon: string;
   aliases?: string[];
+  editorNode: EditorNodeInstance['node']
 } & (
     | { type: "code"; source: CodeNodeSource }
     | { type: "visual"; source: VisualNodeSource }
@@ -121,8 +128,12 @@ export type ImportableEditorNode = {
 
 export function codeNodeToImportableEditorNode(
   node: CodeNode,
-  source: CodeNodeSource
+  source: CodeNodeSource,
+  _config?: any
 ): ImportableEditorNode {
+  const macro = isInternalMacroNode(node) ? node : processImprovedMacro(node);
+  const processedNode = processMacroNodeInstance(node.id, node, { id: 'n/a', config: macro.defaultData });
+  const editorNode = internalCodeNodeToEditorNode(processedNode, macro.editorConfig, node.sourceCode);
   return {
     id: node.id,
     displayName: node.menuDisplayName,
@@ -131,6 +142,7 @@ export function codeNodeToImportableEditorNode(
     aliases: node.aliases,
     type: "code",
     source,
+    editorNode,
   };
 }
 
@@ -145,6 +157,7 @@ export function visualNodeToImportableEditorNode(
     icon: "code",
     type: "visual",
     source,
+    editorNode: node as EditorVisualNode,
   };
 }
 

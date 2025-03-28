@@ -1,4 +1,4 @@
-import { InputPin, OutputPin, OMap, keys, nodeOutput, pickRandom } from "@flyde/core";
+import { InputPin, OutputPin, OMap, keys, nodeOutput, pickRandom, EditorNodeInstance, EditorVisualNode } from "@flyde/core";
 import {
   ConnectionData,
   externalConnectionNode,
@@ -8,11 +8,10 @@ import {
   VisualNode,
 } from "@flyde/core";
 import { rnd } from "../physics";
-import { NodeInstance } from "@flyde/core";
 import { PromptFn } from "..";
 
 export const createGroup = async (
-  instances: NodeInstance[],
+  instances: EditorNodeInstance[],
   connections: ConnectionData[],
   name: string,
   prompt: PromptFn
@@ -142,7 +141,7 @@ export const createGroup = async (
       instanceIds.includes(conn.to.insId)
   );
 
-  const visualNode: VisualNode = {
+  const visualNode: EditorVisualNode = {
     id: name,
     inputs,
     outputs,
@@ -162,7 +161,4 @@ export const createGroup = async (
   };
 
   return { visualNode, renamedInputs, renamedOutputs };
-  // const ordered = orderVisualNode(visualNode, 20);
-
-  // return nodeInstance(`${name}-ins`, visualNode, {}, midPos);
 };

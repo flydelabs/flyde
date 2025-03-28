@@ -1,8 +1,8 @@
-import { ConnectionData, connectionNodeEquals, VisualNode } from "@flyde/core";
+import { ConnectionData, connectionNodeEquals, EditorVisualNode } from "@flyde/core";
 import produce from "immer";
 
 export const handleConnectionCloseEditorCommand = (
-  node: VisualNode,
+  node: EditorVisualNode,
   { from, to }: ConnectionData
 ) => {
   return produce(node, (draft) => {

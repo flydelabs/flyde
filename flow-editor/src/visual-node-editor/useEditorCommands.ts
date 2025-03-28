@@ -15,6 +15,8 @@ import {
   isInlineVisualNodeInstance,
   isExternalConnectionNode,
   ImportableEditorNode,
+  EditorNodeInstance,
+  EditorVisualNode,
 } from "@flyde/core";
 import React from "react";
 import {
@@ -157,9 +159,9 @@ export function useEditorCommands(
   );
 
   const onUnGroup = React.useCallback(
-    (groupNodeIns: NodeInstance) => {
+    (groupNodeIns: EditorNodeInstance) => {
       if (isInlineVisualNodeInstance(groupNodeIns)) {
-        const visualNode = groupNodeIns.source.data;
+        const visualNode = groupNodeIns.source.data as EditorVisualNode;
         if (!isVisualNode(visualNode)) {
           toast({
             description: "Not supported",

@@ -1,4 +1,4 @@
-import { ImportableEditorNode } from "@flyde/core";
+import { codeNodeToImportableEditorNode, ImportableEditorNode } from "@flyde/core";
 import {
   deserializeFlow,
   isCodeNodePath,
@@ -19,22 +19,10 @@ export async function resolveDependentPackages(
           if (isCodeNodePath(filePath)) {
             const obj = resolveCodeNodeDependencies(filePath).nodes.map(
               ({ node: _node }) => {
-                const node: ImportableEditorNode = {
-                  id: _node.id,
-                  displayName: _node.menuDisplayName,
-                  description: _node.menuDescription,
-                  icon: _node.icon,
-                  aliases: _node.aliases,
-                  type: "code",
-                  source: {
-                    type: "package",
-                    data: pkgName,
-                  },
-                };
-                // let node = isCodeNode(_node)
-                //   ? processImprovedMacro(_node)
-                //   : _node;
-                return node;
+                return codeNodeToImportableEditorNode(_node, {
+                  type: "package",
+                  data: pkgName
+                });
               }
             );
 
@@ -53,6 +41,7 @@ export async function resolveDependentPackages(
               aliases: flow.node.aliases,
               icon: flow.node.icon,
               source: { type: "package", data: pkgName },
+              editorNode: flow.node as any,
             };
             return { ...acc, [flow.node.id]: importableNode };
           } catch (e) {

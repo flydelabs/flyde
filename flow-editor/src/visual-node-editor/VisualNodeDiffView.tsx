@@ -261,7 +261,7 @@ export const VisualNodeDiffView: React.FC<VisualNodeDiffViewProps> = (
           return {
             ...compIns,
             diffStatus: "added",
-          } as WithDiffStatus<NodeInstance>;
+          } as WithDiffStatus<EditorNodeInstance>;
         }
         // Instance exists in both, check if it changed
         if (
@@ -301,10 +301,10 @@ export const VisualNodeDiffView: React.FC<VisualNodeDiffViewProps> = (
           )
           .map(
             (ins) =>
-              ({
-                ...ins,
-                diffStatus: "removed",
-              } as WithDiffStatus<NodeInstance>)
+            ({
+              ...ins,
+              diffStatus: "removed",
+            } as WithDiffStatus<EditorNodeInstance>)
           )
       );
   }, [instances, comparisonNode]);
@@ -388,7 +388,6 @@ export const VisualNodeDiffView: React.FC<VisualNodeDiffViewProps> = (
           <InstanceView
             {...instanceViewNoopProps}
             connectionsPerInput={emptyObj}
-            node={node.instances[idx]?.node ?? tempLoadingNode}
             ancestorsInsIds={fullInsIdPath(currentInsId, props.ancestorsInsIds)}
             queuedInputsData={emptyObj}
             instance={ins}

@@ -12,6 +12,7 @@ import {
   serializeFlow,
   resolveEditorInstance,
   createServerReferencedNodeFinder,
+  resolveEditorNode,
 } from "@flyde/resolver";
 import {
   FlydeFlow,
@@ -24,6 +25,7 @@ import {
   replaceInputsInValue,
   ImportableEditorNode,
   codeNodeToImportableEditorNode,
+  NodeLibraryData,
 } from "@flyde/core";
 import { findPackageRoot } from "./find-package-root";
 import { randomInt } from "crypto";
@@ -209,13 +211,17 @@ export class FlydeEditorEditorProvider
         return initialFlow as any;
       }
 
+      const node = initialFlow as FlydeFlow;
+
+      const resolvedNode = resolveEditorNode(node.node, createServerReferencedNodeFinder(fullDocumentPath));
+
       // used to avoid triggering "onChange" of the same webview
       webviewPanel.webview.html = await getWebviewContent({
         extensionUri: this.context.extensionUri,
         relativeFile: relative,
         port: this.params.port,
         webview: webviewPanel.webview,
-        initialFlow: initialFlow as FlydeFlow,
+        initialNode: resolvedNode,
         webviewId,
         executionId,
         darkMode: this.params.darkMode,
@@ -428,7 +434,16 @@ export class FlydeEditorEditorProvider
                 break;
               }
               case "getLibraryData": {
-                const libraryData = getBaseNodesLibraryData();
+                const libraryData2 = getBaseNodesLibraryData();
+
+                const libraryData: NodeLibraryData = {
+                  groups: [
+                    {
+                      title: "Bob",
+                      nodes: [libraryData2.groups[0].nodes[3]],
+                    },
+                  ],
+                };
 
                 try {
                   const firstWorkspace =
@@ -449,7 +464,7 @@ export class FlydeEditorEditorProvider
                   const localNodes: ImportableEditorNode[] = [];
 
                   Object.entries(libraryData).forEach(
-                    ([category, categoryNodes]) => {
+                    ([_, categoryNodes]) => {
                       // Track all stdlib nodes that are already categorized
                       categoryNodes.forEach((node: ImportableEditorNode) => {
                         categorizedNodeIds.add(node.id);

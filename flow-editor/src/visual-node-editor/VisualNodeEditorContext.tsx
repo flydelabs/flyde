@@ -1,13 +1,13 @@
 import React from "react";
-import { VisualNode } from "@flyde/core";
+import { EditorVisualNode } from "@flyde/core";
 import { GroupEditorBoardData } from "./VisualNodeEditor";
 import { FlydeFlowChangeType } from "../flow-editor/flyde-flow-change-type";
 
 export interface VisualNodeEditorContextType {
   boardData: GroupEditorBoardData;
   onChangeBoardData: (partial: Partial<GroupEditorBoardData>) => void;
-  node: VisualNode;
-  onChangeNode: (newNode: VisualNode, changeType: FlydeFlowChangeType) => void;
+  node: EditorVisualNode;
+  onChangeNode: (newNode: EditorVisualNode, changeType: FlydeFlowChangeType) => void;
 }
 
 export const VisualNodeEditorContext = React.createContext<

@@ -18,7 +18,7 @@ export function usePruneOrphanConnections(
   instances: NodeInstance[],
   connections: ConnectionData[],
   node: EditorVisualNode,
-  onChange: (newNode: VisualNode, changeType: FlydeFlowChangeType) => void
+  onChange: (newNode: EditorVisualNode, changeType: FlydeFlowChangeType) => void
 ) {
   const { toast } = useToast();
   useEffect(() => {

@@ -1,4 +1,5 @@
-import { FlydeFlow } from "@flyde/core";
+import { EditorVisualNode, FlydeFlow } from "@flyde/core";
+import { createServerReferencedNodeFinder } from "@flyde/resolver";
 import * as vscode from "vscode";
 
 export type WebviewContentParams = {
@@ -7,7 +8,7 @@ export type WebviewContentParams = {
   executionId: string;
   port: number;
   webview: vscode.Webview;
-  initialFlow: FlydeFlow;
+  initialNode: EditorVisualNode;
   webviewId: string;
   darkMode: boolean;
 };
@@ -64,7 +65,7 @@ export async function getWebviewContent(params: WebviewContentParams) {
     relativeFile,
     port,
     webview,
-    initialFlow,
+    initialNode,
     executionId,
     darkMode,
   } = params;
@@ -86,8 +87,9 @@ export async function getWebviewContent(params: WebviewContentParams) {
 
   const hasOpenAiToken = config.get("openAiToken") !== "";
 
+
   const bootstrapData = {
-    initialFlow,
+    initialNode,
     port,
     relativeFile,
     executionId,
