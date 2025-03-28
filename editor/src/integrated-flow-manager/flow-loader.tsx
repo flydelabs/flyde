@@ -77,7 +77,7 @@ export const FlowLoader: React.FC = (props) => {
       setFileName(file.relativePath);
       setExecutionId(file.fullPath);
     }
-  }, [bootstrapData, devServerClient, fileName, setFileName]);
+  }, [bootstrapData, devServerClient, fileName, setFileName, node]);
 
   useEffect(() => {
     setNode(undefined);

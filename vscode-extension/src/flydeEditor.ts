@@ -213,7 +213,14 @@ export class FlydeEditorEditorProvider
 
       const node = initialFlow as FlydeFlow;
 
-      const resolvedNode = resolveEditorNode(node.node, createServerReferencedNodeFinder(fullDocumentPath));
+      const resolvedNode = tryOrThrow(() => {
+        return resolveEditorNode(node.node, createServerReferencedNodeFinder(fullDocumentPath));
+      }, "Failed to resolve node");
+
+      if (resolvedNode instanceof Error) {
+        webviewPanel.webview.html = `Errors: <code>${resolvedNode.message}</code><hr/>Try opening it with a text editor and fix the problem`;
+        return;
+      }
 
       // used to avoid triggering "onChange" of the same webview
       webviewPanel.webview.html = await getWebviewContent({
