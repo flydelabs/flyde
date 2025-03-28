@@ -56,7 +56,7 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
 
       // Format is now "category:nodeId" but we only need the nodeId part
       const nodeId = value.split(":").pop() as string;
-      const node = nodeMap.get(nodeId);
+      const node = nodeMap[nodeId];
 
       if (node) {
         // Update recently used nodes

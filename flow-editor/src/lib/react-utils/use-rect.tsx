@@ -2,7 +2,7 @@ import { useLayoutEffect, useCallback, useState } from "react";
 
 type Rect = Omit<DOMRect, "toJSON">;
 
-export const useRect = (ref): Rect => {
+export const useRect = (ref: any): Rect => {
   const [rect, setRect] = useState(getRect(ref ? ref.current : null));
 
   const handleResize = useCallback(() => {
@@ -23,7 +23,8 @@ export const useRect = (ref): Rect => {
     handleResize();
 
     if (typeof ResizeObserver === "function") {
-      let resizeObserver = new ResizeObserver(() => handleResize());
+      let resizeObserver: ResizeObserver | undefined;
+      resizeObserver = new ResizeObserver(() => handleResize());
       resizeObserver.observe(element);
 
       return () => {
@@ -32,7 +33,7 @@ export const useRect = (ref): Rect => {
         }
 
         resizeObserver.disconnect();
-        resizeObserver = null;
+        resizeObserver = undefined;
       };
     } else {
       // Browser support, remove freely

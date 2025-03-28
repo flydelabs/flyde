@@ -618,19 +618,15 @@ declare module '@flyde/core/node' {
 }
 
 declare module '@flyde/core/connect/helpers' {
-    import { NodeDefinition } from "@flyde/core/node";
+    import { InputPin, NodeDefinition, OutputPin } from "@flyde/core/node";
     import { ConnectionData, ConnectionNode, ExternalConnectionNode, InternalConnectionNode } from "@flyde/core/types/connections";
     export const THIS_INS_ID = "__this";
     export const ERROR_PIN_ID = "__error";
     export const TRIGGER_PIN_ID = "__trigger";
-    export const getNodeInputs: (node: NodeDefinition) => {
-        __trigger: import("../node").InputPin;
-    };
+    export const getNodeInputs: (node: NodeDefinition) => Record<string, InputPin>;
     export const getInputName: (pinId: string) => string;
     export const getOutputName: (pinId: string) => string;
-    export const getNodeOutputs: (node: NodeDefinition) => {
-        __error: import("../node").OutputPin;
-    };
+    export const getNodeOutputs: (node: NodeDefinition) => Record<string, OutputPin>;
     export const isExternalConnectionNode: (node: ConnectionNode) => node is ExternalConnectionNode;
     export const isInternalConnectionNode: (node: ConnectionNode) => node is InternalConnectionNode;
     export const isExternalConnection: ({ from, to }: ConnectionData) => boolean;
@@ -726,19 +722,21 @@ declare module '@flyde/core/types/connections' {
 }
 
 declare module '@flyde/core/types/editor' {
-    import { CodeNodeDefinition, MacroEditorConfigStructured, NodeInstance, VisualNode } from "@flyde/core/node";
+    import { CodeNodeDefinition, InternalCodeNode, MacroEditorConfigResolved, MacroEditorConfigStructured, NodeInstance, VisualNode } from "@flyde/core/node";
     export type EditorCodeNodeDefinition = CodeNodeDefinition & {
         editorConfig: MacroEditorConfigStructured | {
             type: "custom";
             editorComponentBundleContent: string;
         };
     };
+    export type EditorNode = EditorCodeNodeDefinition | EditorVisualNode;
     export type EditorNodeInstance = NodeInstance & {
-        node: EditorCodeNodeDefinition | VisualNode;
+        node: EditorNode;
     };
     export type EditorVisualNode = Omit<VisualNode, "instances"> & {
         instances: EditorNodeInstance[];
     };
+    export function internalCodeNodeToEditorNode(internalNode: InternalCodeNode, editorConfig: MacroEditorConfigResolved, sourceCode: string): EditorNode;
 }
 
 declare module '@flyde/core/improved-macros/improved-macros' {
@@ -1326,7 +1324,7 @@ declare module '@flyde/core/types/external' {
         * Each connection will represent a "wire" between 2 instances, or between an instance and a main input/output pin.
         * Connecting to a main input or output is the way that a visual nodes' internal implementation can communicate with its external API.
         */
-    import { CodeNode, CodeNodeInstance, CodeNodeSource, InputPinsConfig, NodeInstance, VisualNodeInstance, VisualNodeSource } from "@flyde/core/";
+    import { CodeNode, CodeNodeInstance, CodeNodeSource, EditorNodeInstance, InputPinsConfig, NodeInstance, VisualNodeInstance, VisualNodeSource } from "@flyde/core/";
     import { OMap, Pos } from "@flyde/core/common";
     import { ConnectionData } from "@flyde/core/types/connections";
     import { BaseNode } from "@flyde/core/types/core";
@@ -1359,6 +1357,7 @@ declare module '@flyde/core/types/external' {
             description: string;
             icon: string;
             aliases?: string[];
+            editorNode: EditorNodeInstance['node'];
     } & ({
             type: "code";
             source: CodeNodeSource;
@@ -1366,7 +1365,7 @@ declare module '@flyde/core/types/external' {
             type: "visual";
             source: VisualNodeSource;
     });
-    export function codeNodeToImportableEditorNode(node: CodeNode, source: CodeNodeSource): ImportableEditorNode;
+    export function codeNodeToImportableEditorNode(node: CodeNode, source: CodeNodeSource, _config?: any): ImportableEditorNode;
     export function visualNodeToImportableEditorNode(node: VisualNode, source: VisualNodeSource): ImportableEditorNode;
     export interface NodeLibraryGroup {
             title: string;

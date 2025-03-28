@@ -216,7 +216,7 @@ export const playEvent = (event: DebuggerEvent) => {
           element.removeAttribute("data-runtime-queue");
         }
       });
-      const someWaiting = Object.values(event.val).some((v) => v > 0);
+      const someWaiting = Object.values(event.val).some((v) => (v ?? 0) > 0);
       const instanceDomId = getInstanceDomId(insId, ancestorsInsIds);
       const instanceElem =
         document.getElementById(instanceDomId)?.parentElement;

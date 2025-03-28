@@ -2,15 +2,12 @@ import {
   Vector,
   Entity,
   vec,
-  coulombs,
   vAdd,
   vMul,
   vLen,
   vNorm,
   itrPhysics,
-  hookes,
   totalEnergy,
-  size,
   vSub,
 } from "../../physics";
 import { Size } from "../../utils";
@@ -76,6 +73,10 @@ export const orderLayout = (
         if (i !== j) {
           const e1 = ents[i];
           const e2 = ents[j];
+
+          if (!e1 || !e2) {
+            continue;
+          }
 
           const diff = vSub(e1.p, e2.p);
 

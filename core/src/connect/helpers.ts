@@ -1,4 +1,4 @@
-import { NodeDefinition, nodeInput, nodeOutput } from "../node";
+import { InputPin, NodeDefinition, nodeInput, nodeOutput, OutputPin } from "../node";
 import {
   ConnectionData,
   ConnectionNode,
@@ -10,7 +10,7 @@ export const THIS_INS_ID = "__this";
 export const ERROR_PIN_ID = "__error";
 export const TRIGGER_PIN_ID = "__trigger";
 
-export const getNodeInputs = (node: NodeDefinition) => {
+export const getNodeInputs = (node: NodeDefinition): Record<string, InputPin> => {
   return { ...node.inputs, [TRIGGER_PIN_ID]: nodeInput() };
 };
 
@@ -32,7 +32,7 @@ export const getOutputName = (pinId: string) => {
   }
 };
 
-export const getNodeOutputs = (node: NodeDefinition) => {
+export const getNodeOutputs = (node: NodeDefinition): Record<string, OutputPin> => {
   return { ...node.outputs, [ERROR_PIN_ID]: nodeOutput() };
 };
 

@@ -31,8 +31,8 @@ export const PinTooltipContent = ({
       return <div className="pt-1">No values received</div>;
     }
 
-    const lastValue = lastSamples[0].val;
-    const lastTime = lastSamples[0].time;
+    const lastValue = lastSamples[0]?.val;
+    const lastTime = lastSamples[0]?.time;
     const valueType =
       typeof lastValue === "object" ? "object" : typeof lastValue;
     const formattedValue =
@@ -52,7 +52,7 @@ export const PinTooltipContent = ({
           </pre>
         </div>
         <div className="p-2 text-xs flex flex-row justify-between items-center font-semibold">
-          <span className="font-semibold">Last: {formatTimeAgo(lastTime)}</span>
+          <span className="font-semibold">Last: {formatTimeAgo(lastTime ?? 0)}</span>
           <span className="font-semibold">Total: {lastSamples.length}</span>
           <HotkeyIndication hotkey="cmd+i" label="View all" />
         </div>

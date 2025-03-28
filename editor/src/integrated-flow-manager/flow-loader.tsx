@@ -1,4 +1,4 @@
-import { FlydeFlow } from "@flyde/core";
+import { EditorVisualNode } from "@flyde/core";
 import { File, FolderStructure } from "@flyde/dev-server";
 import React, { useCallback, useEffect, useRef } from "react";
 
@@ -17,7 +17,7 @@ export const FlowLoader: React.FC = (props) => {
   const bootstrapData = useBootstrapData();
   const isEmbedded = !!bootstrapData;
 
-  const [flow, setFlow] = React.useState<FlydeFlow>();
+  const [node, setNode] = React.useState<EditorVisualNode>();
 
   const [executionId, setExecutionId] = React.useState<string>("n/a");
 
@@ -33,9 +33,9 @@ export const FlowLoader: React.FC = (props) => {
 
   const loadData = useCallback(async () => {
     if (bootstrapData) {
-      const { initialFlow, executionId } = bootstrapData;
+      const { initialNode, executionId } = bootstrapData;
 
-      setFlow(initialFlow);
+      setNode(initialNode);
       setFileName("n/a");
       setExecutionId(executionId);
     } else {
@@ -72,20 +72,20 @@ export const FlowLoader: React.FC = (props) => {
         throw new Error("No .flyde file found in project");
       }
 
-      const flow = await ports.current.readFlow({ absPath: file.fullPath });
-      setFlow(flow);
+      // const node = await ports.current.read({ absPath: file.fullPath });
+      setNode(node);
       setFileName(file.relativePath);
       setExecutionId(file.fullPath);
     }
-  }, [bootstrapData, devServerClient, fileName, setFileName]);
+  }, [bootstrapData, devServerClient, fileName, setFileName, node]);
 
   useEffect(() => {
-    setFlow(undefined);
+    setNode(undefined);
     loadData();
   }, [fileName, loadData]);
 
   // eslint-disable-next-line no-constant-condition
-  if (flow) {
+  if (node) {
     const params = new URLSearchParams(window.location.search);
     const locationPortIfNot3000 =
       location.port === "3000" ? null : location.port;
@@ -97,7 +97,7 @@ export const FlowLoader: React.FC = (props) => {
       <PortsContext.Provider value={ports.current}>
         <IntegratedFlowManager
           key={fileName}
-          flow={flow}
+          node={node}
           integratedSource={fileName}
           port={port}
           executionId={executionId}

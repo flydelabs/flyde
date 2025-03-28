@@ -36,7 +36,7 @@ export const emptyObj = {}; // for immutability
 export const emptyList = []; // for immutability
 
 export function getInstancePinConfig(
-  node: VisualNode,
+  node: EditorVisualNode,
   insId: string,
   pinId: string
 ): InputPinConfig {
@@ -49,7 +49,7 @@ export function getInstancePinConfig(
 }
 
 export const changePinConfig = (
-  value: VisualNode,
+  value: EditorVisualNode,
   insKey: string,
   pinId: string,
   newConfig: InputPinConfig
@@ -176,7 +176,7 @@ export const createNewNodeInstance = (
   importableNode: ImportableEditorNode,
   offset: number = -1 * NODE_HEIGHT * 1.5,
   lastMousePos: Pos
-): NodeInstance => {
+): EditorNodeInstance => {
   // TODO - handle visual node addition
 
   const insId = createInsId(importableNode);
@@ -204,7 +204,7 @@ export const createNewNodeInstance = (
     y: y + offset,
   };
 
-  return { ...ins, pos };
+  return { ...ins, pos, node: importableNode.editorNode };
 };
 
 export type ViewPort = { pos: Pos; zoom: number };
@@ -338,7 +338,7 @@ const calcPoints = (w: number, h: number, pos: Pos, tag: string): Points => {
 
 export const calcNodesPositions = (node: EditorVisualNode): Points[] => {
   const insNodes = node.instances.map((curr) => {
-    const w = calcNodeWidth(curr, curr.node);
+    const w = calcNodeWidth(curr);
     const h = NODE_HEIGHT;
     return calcPoints(w, h, curr.pos, curr.id);
   });
@@ -513,7 +513,7 @@ export const isJsxValue = (val: any): boolean => {
 export const getInstancesInRect = (
   selectionBox: { from: Pos; to: Pos },
   viewPort: ViewPort,
-  instances: EditorNodeInstance[],
+  instances: NodeInstance[],
   parentVp: ViewPort
 ) => {
   const { from, to } = selectionBox;
@@ -522,7 +522,7 @@ export const getInstancesInRect = (
   const toSelect = instances
     .filter((ins) => {
       const { pos } = ins;
-      const w = calcNodeWidth(ins, ins.node) * viewPort.zoom * parentVp.zoom;
+      const w = calcNodeWidth(ins) * viewPort.zoom * parentVp.zoom;
       const rec2 = {
         ...pos,
         w,
@@ -537,7 +537,7 @@ export const getInstancesInRect = (
 };
 
 export const handleInstanceDrag = (
-  value: VisualNode,
+  node: EditorVisualNode,
   ins: NodeInstance,
   pos: Pos,
   event: any,
@@ -550,7 +550,7 @@ export const handleInstanceDrag = (
   const delta = vSub(pos, ins.pos);
 
   let newSelected;
-  const newValue = immer.produce(value, (draft) => {
+  const newValue = immer.produce(node, (draft) => {
     const foundIns = draft.instances.find((itrIns) => itrIns.id === ins.id);
 
     if (!foundIns) {
@@ -585,15 +585,18 @@ export const handleInstanceDrag = (
 };
 
 export const handleIoPinRename = (
-  node: VisualNode,
+  node: EditorVisualNode,
   type: PinType,
   pinId: string,
   newPinId: string
 ) => {
   return immer.produce(node, (draft) => {
     if (type === "input") {
+      if (!draft.inputs[pinId]) {
+        throw new Error("Pin does not exist");
+      }
       draft.inputs[newPinId] = draft.inputs[pinId];
-      draft.inputsPosition[newPinId] = draft.inputsPosition[pinId];
+      draft.inputsPosition[newPinId] = draft.inputsPosition[pinId]!;
       delete draft.inputs[pinId];
       draft.connections = draft.connections.map((conn) => {
         return isExternalConnectionNode(conn.from) && conn.from.pinId === pinId
@@ -601,8 +604,11 @@ export const handleIoPinRename = (
           : conn;
       });
     } else {
+      if (!draft.outputs[pinId]) {
+        throw new Error("Pin does not exist");
+      }
       draft.outputs[newPinId] = draft.outputs[pinId];
-      draft.outputsPosition[newPinId] = draft.outputsPosition[pinId];
+      draft.outputsPosition[newPinId] = draft.outputsPosition[pinId]!;
       draft.connections = draft.connections.map((conn) => {
         return isExternalConnectionNode(conn.to) && conn.to.pinId === pinId
           ? { ...conn, to: { ...conn.to, pinId: newPinId } }
@@ -619,7 +625,7 @@ export const handleIoPinRename = (
 };
 
 export const handleChangeNodeInputType = (
-  node: VisualNode,
+  node: EditorVisualNode,
   pinId: string,
   mode: InputMode
 ) => {

@@ -2,7 +2,6 @@ import { keys, NodeInstance, Pos, NodeDefinition } from "@flyde/core";
 
 import {
   MAX_INSTANCE_WIDTH,
-  MIN_WIDTH_PER_PIN,
   PIECE_CHAR_WIDTH,
   PIECE_HORIZONTAL_PADDING,
 } from "./InstanceView";
@@ -22,19 +21,8 @@ export const calcNodeContent = (
   return node.displayName ?? node.id;
 };
 
-export const calcNodeWidth = (instance: NodeInstance, node: NodeDefinition) => {
-  const allInputKeys = keys(node.inputs);
-  const visibleInputs = allInputKeys.length;
-  const minWidth = visibleInputs * MIN_WIDTH_PER_PIN;
-  const nodeContent = calcNodeContent(instance, node);
-
-  const charWidth = PIECE_CHAR_WIDTH;
-
-  return clamp(
-    nodeContent.length * charWidth + PIECE_HORIZONTAL_PADDING * 2,
-    minWidth,
-    MAX_INSTANCE_WIDTH
-  );
+export const calcNodeWidth = (_: NodeInstance) => {
+  return 200; // TODO: calculate width based on instance content
 };
 
 export const calcInstancePosition = (

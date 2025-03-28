@@ -2,7 +2,6 @@ import { defaultNode } from "@/lib/defaultNode";
 import { HistoryPlayer } from "@/lib/executeApp/createHistoryPlayer";
 import {
   FlydeFlow,
-  ImportedNode,
   InternalMacroNode,
   MacroNodeDefinition,
   isCodeNode,
@@ -15,7 +14,7 @@ import {
   DebuggerContextProvider,
 } from "@flyde/flow-editor";
 import dynamic from "next/dynamic";
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { FullPageLoader } from "../FullPageLoader";
 
 import { macroBundlesContent } from "../../stdlib-bundle/inline-macros";
@@ -66,7 +65,7 @@ const DynamicFlowEditor = dynamic(
 
 const defaultState: FlowEditorState = {
   flow: {
-    node: { ...defaultNode },
+    node: { ...defaultNode } as any,
   },
   boardData: {
     viewPort: {
@@ -83,7 +82,9 @@ export function EmbeddedFlyde(props: EmbeddedFlydeProps) {
   const { flow, localNodes, onChange, historyPlayer } = props;
   const [state, setState] = useState<FlowEditorState>({
     ...defaultState,
-    flow,
+    flow: {
+      node: { ...defaultNode } as any,
+    },
   });
 
   const { flow: stateFlow } = state;

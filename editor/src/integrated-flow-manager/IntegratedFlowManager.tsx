@@ -1,7 +1,7 @@
 import * as React from "react";
 import "./App.scss";
 
-import { FlydeFlow, isVisualNode } from "@flyde/core";
+import { EditorVisualNode, FlydeFlow, isVisualNode } from "@flyde/core";
 
 import classNames from "classnames";
 import {
@@ -35,7 +35,7 @@ export const PIECE_HEIGHT = 28;
 
 export type IntegratedFlowManagerProps = {
   // user: string;
-  flow: FlydeFlow;
+  node: EditorVisualNode;
   integratedSource: string;
   port: number;
   executionId: string;
@@ -44,7 +44,7 @@ export type IntegratedFlowManagerProps = {
 export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
   props
 ) => {
-  const { flow: initialFlow, executionId } = props;
+  const { node: initialNode, executionId } = props;
   const boardRef = React.useRef<any>();
 
   const ports = usePorts();
@@ -56,7 +56,7 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
   const lastChangeReason = React.useRef("");
 
   const [editorState, setEditorState] = React.useState<FlowEditorState>({
-    flow: initialFlow,
+    flow: { node: initialNode },
     boardData: {
       viewPort: defaultViewPort,
       lastMousePos: { x: 0, y: 0 },
@@ -159,7 +159,7 @@ export const IntegratedFlowManager: React.FC<IntegratedFlowManagerProps> = (
   );
 
   const onChangeFlow = React.useCallback(
-    async (changedFlow: FlydeFlow, type: FlydeFlowChangeType) => {
+    async (changedFlow: { node: EditorVisualNode }, type: FlydeFlowChangeType) => {
       console.log("onChangeFlow", type);
       lastChangeReason.current = type.message;
       setEditorState((state) => ({ ...state, flow: changedFlow }));

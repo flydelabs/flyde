@@ -11,7 +11,7 @@ interface UseCommandMenuDataProps {
 }
 
 interface UseCommandMenuDataResult {
-    nodeMap: Map<string, ImportableEditorNode>;
+    nodeMap: Record<string, ImportableEditorNode>;
     filteredGroups: NodeLibraryGroup[];
     updateRecentlyUsed: (nodeId: string) => void;
     nodeMatchesQuery: (node: ImportableEditorNode) => boolean;
@@ -28,12 +28,12 @@ export const useCommandMenuData = ({
 
     // Create a map of all nodes by ID for efficient lookup
     const nodeMap = useMemo(() => {
-        const map = new Map<string, ImportableEditorNode>();
+        const map: Record<string, ImportableEditorNode> = {};
 
         // Add all library nodes to the map
         for (const group of groups) {
             for (const node of group.nodes) {
-                map.set(node.id, node);
+                map[node.id] = node;
             }
         }
 
@@ -43,7 +43,7 @@ export const useCommandMenuData = ({
     // Build the recently used nodes group
     const recentlyUsedNodes = useMemo(() => {
         return recentlyUsedIds
-            .map(id => nodeMap.get(id))
+            .map(id => nodeMap[id])
             .filter(Boolean) as ImportableEditorNode[];
     }, [recentlyUsedIds, nodeMap]);
 

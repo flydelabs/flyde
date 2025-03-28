@@ -1,11 +1,11 @@
-import { createInsId, VisualNode } from "@flyde/core";
+import { createInsId, EditorVisualNode } from "@flyde/core";
 import produce from "immer";
 
 export const handleDuplicateSelectedEditorCommand = (
-  node: VisualNode,
+  node: EditorVisualNode,
   selected: string[]
 ) => {
-  const newInstances = [];
+  const newInstancesIds: string[] = [];
   const newNode = produce(node, (draft) => {
     const instances = draft.instances;
     selected.forEach((id) => {
@@ -27,9 +27,9 @@ export const handleDuplicateSelectedEditorCommand = (
           id,
         };
         instances.push(newIns);
-        newInstances.push(newIns.id);
+        newInstancesIds.push(newIns.id);
       }
     });
   });
-  return { newNode, newInstances };
+  return { newNode, newInstancesIds };
 };

@@ -28,7 +28,7 @@ export const DataInspectionModal: React.FC<DataInspectionModalProps> = (
   const [currIdx, setCurrIdx] = React.useState(0);
   const [search, setSearch] = React.useState("");
   const [filteredValue, setFilteredValue] =
-    React.useState<HistoryPayload["lastSamples"]>();
+    React.useState<HistoryPayload["lastSamples"]>([]);
   const [debouncedSearch] = useDebounce(search, 300);
 
   useEffect(() => {
@@ -38,7 +38,7 @@ export const DataInspectionModal: React.FC<DataInspectionModalProps> = (
           return JSON.stringify(sample.val).includes(debouncedSearch);
         }
         return sample.val.toString().includes(debouncedSearch);
-      })
+      }) ?? []
     );
     setCurrIdx(0);
   }, [data?.lastSamples, debouncedSearch]);
@@ -47,8 +47,8 @@ export const DataInspectionModal: React.FC<DataInspectionModalProps> = (
     async function fetchData() {
       const data = await onRequestHistory(
         item.insId,
-        item.pin?.id,
-        item.pin?.type
+        item.pin?.id ?? "",
+        item.pin?.type ?? "input"
       );
       setData(data);
     }
@@ -64,7 +64,7 @@ export const DataInspectionModal: React.FC<DataInspectionModalProps> = (
   };
 
   const renderEmptyState = () => {
-    if (data.lastSamples.length > 0 && search.length > 0) {
+    if (!data ||data.lastSamples.length > 0 && search.length > 0) {
       return (
         <Alert>
           <AlertDescription>
@@ -182,7 +182,7 @@ export const DataInspectionModal: React.FC<DataInspectionModalProps> = (
             />
             {debouncedSearch.length > 0 && (
               <div className="text-sm text-muted-foreground">
-                Showing {filteredValue?.length} of {data.lastSamples.length}{" "}
+                Showing {filteredValue?.length} of {data?.lastSamples.length}{" "}
                 samples matching query "{debouncedSearch}"
               </div>
             )}

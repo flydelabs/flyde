@@ -68,7 +68,7 @@ export function HelpBubble() {
     if (!acc[hotkey.group]) {
       acc[hotkey.group] = [];
     }
-    acc[hotkey.group].push(hotkey);
+    acc[hotkey.group]!.push(hotkey);
     return acc;
   }, {} as { [key: string]: Array<ReturnType<typeof hotkeyToBpHotkey>> });
 
