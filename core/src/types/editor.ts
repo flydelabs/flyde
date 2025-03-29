@@ -36,6 +36,7 @@ export function internalCodeNodeToEditorNode(internalNode: InternalCodeNode, edi
     overrideNodeBodyHtml: internalNode.overrideNodeBodyHtml,
     defaultStyle: internalNode.defaultStyle,
     editorConfig: editorConfig,
+    icon: internalNode.icon,
     sourceCode: sourceCode,
   } as EditorCodeNodeDefinition;
 }
