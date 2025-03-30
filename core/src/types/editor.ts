@@ -1,5 +1,6 @@
 import {
   CodeNodeDefinition,
+  CodeNodeInstance,
   InternalCodeNode,
   MacroEditorConfigResolved,
   MacroEditorConfigStructured,
@@ -17,6 +18,10 @@ export type EditorCodeNodeDefinition = CodeNodeDefinition & {
 };
 
 export type EditorNode = EditorCodeNodeDefinition | EditorVisualNode;
+
+export type EditorCodeNodeInstance = CodeNodeInstance & {
+  node: EditorCodeNodeDefinition;
+};
 
 export type EditorNodeInstance = NodeInstance & {
   node: EditorNode;
@@ -36,6 +41,7 @@ export function internalCodeNodeToEditorNode(internalNode: InternalCodeNode, edi
     overrideNodeBodyHtml: internalNode.overrideNodeBodyHtml,
     defaultStyle: internalNode.defaultStyle,
     editorConfig: editorConfig,
+    icon: internalNode.icon,
     sourceCode: sourceCode,
   } as EditorCodeNodeDefinition;
 }

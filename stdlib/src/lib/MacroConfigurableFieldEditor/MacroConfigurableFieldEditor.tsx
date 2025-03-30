@@ -24,6 +24,7 @@ import { MacroConfigurableValueBaseEditor } from "./MacroConfigurableValueBaseEd
 import { useCallback, useState, useEffect } from "react";
 import { convertValue } from "./convertValues";
 import React from "react";
+import { Settings } from "@flyde/ui";
 
 function FieldContent({
   config,
@@ -61,11 +62,11 @@ function FieldContent({
       <div className="flex items-center gap-2">
         {config.typeConfigurable !== false && onTypeChange && (
           <div className="text-xs text-gray-500 flex items-center gap-1">
-            <span className="capitalize">({value.type})</span>
+            <span className="capitalize">{value.type}</span>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="link" size="xs" className="h-4 p-0 text-xs">
-                  change
+                  <Settings className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">

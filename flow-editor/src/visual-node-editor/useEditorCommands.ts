@@ -17,6 +17,7 @@ import {
   ImportableEditorNode,
   EditorNodeInstance,
   EditorVisualNode,
+  EditorCodeNodeDefinition,
 } from "@flyde/core";
 import React from "react";
 import {
@@ -61,7 +62,7 @@ export function useEditorCommands(
 
   const { toast } = useToast();
 
-  const { reportEvent } = usePorts();
+  const { reportEvent, resolveInstance } = usePorts();
 
   const onRenameIoPin = React.useCallback(
     async (type: PinType, pinId: string) => {
@@ -324,6 +325,17 @@ export function useEditorCommands(
         nodeId: importableNode.id,
         source: "actionMenu",
       });
+
+      // ugly hack to resolve advanced configs lazyly - TODO - make this part of the "get library data" mechanism
+      const maybeEditorConfig = (importableNode.editorNode as EditorCodeNodeDefinition).editorConfig;
+      if (maybeEditorConfig && maybeEditorConfig.type === "custom") {
+        resolveInstance({ instance: newNodeIns }).then((resolvedNode) => {
+          const newNode = produce(node, (draft) => {
+            draft.instances.push(resolvedNode);
+          });
+          onChange(newNode, functionalChange("add node - resolved"));
+        });
+      }
     },
     [
       boardData,

@@ -42,7 +42,6 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
     nodeMap,
     filteredGroups,
     updateRecentlyUsed,
-    nodeMatchesQuery
   } = useCommandMenuData({ groups, query });
 
   // Handler for selecting a node

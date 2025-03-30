@@ -13,8 +13,9 @@ export const GetAttribute: CodeNode = {
       description: "Object to get attribute from",
     },
     key: {
+      label: "Key of the attribute to retrieve",
       defaultValue: "someProperty",
-      description: "Key of the attribute to retrieve (supports nested properties with dot notation)",
+      description: "Supports nested properties with dot notation",
       editorType: "string",
     },
   },

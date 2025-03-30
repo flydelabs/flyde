@@ -142,7 +142,7 @@ export function codeNodeToImportableEditorNode(
     aliases: node.aliases,
     type: "code",
     source,
-    editorNode,
+    editorNode: { ...editorNode, icon: node.icon },
   };
 }
 

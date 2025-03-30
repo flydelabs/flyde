@@ -14,7 +14,6 @@ interface UseCommandMenuDataResult {
     nodeMap: Record<string, ImportableEditorNode>;
     filteredGroups: NodeLibraryGroup[];
     updateRecentlyUsed: (nodeId: string) => void;
-    nodeMatchesQuery: (node: ImportableEditorNode) => boolean;
 }
 
 export const useCommandMenuData = ({
@@ -61,23 +60,8 @@ export const useCommandMenuData = ({
         return result;
     }, [groups, recentlyUsedNodes]);
 
-    // Function to check if a node matches the search query
-    const nodeMatchesQuery = useCallback(
-        (node: ImportableEditorNode) => {
-            if (!query) return true;
-
-            const searchContent = `${node.id} ${node.displayName ?? ""} ${node.description ?? ""
-                } ${node.aliases?.join(" ") ?? ""}`;
-
-            return searchContent.toLowerCase().includes(query.toLowerCase());
-        },
-        [query]
-    );
-
-    // Filter groups based on search query
     const filteredGroups = useMemo(() => {
         if (!query) {
-            // Remove nodes that appear in Essentials from other categories
             const essentialsNodes = new Set(
                 allGroups.find((g) => g.title === "Essentials")?.nodes.map((n) => n.id) || []
             );
@@ -103,7 +87,7 @@ export const useCommandMenuData = ({
                 // Skip if we've already included this node in another category
                 if (seenNodeIds.has(node.id)) return false;
 
-                const searchContent = `${node.id} ${node.displayName ?? ""} ${node.description ?? ""
+                const searchContent = `${node.id}${node.editorNode.menuDisplayName ?? ""} ${node.editorNode.description ?? ""} ${node.displayName ?? ""} ${node.description ?? ""
                     } ${node.aliases?.join(" ") ?? ""}`;
 
                 const matches = searchContent.toLowerCase().includes(query.toLowerCase());
@@ -143,7 +127,6 @@ export const useCommandMenuData = ({
     return {
         nodeMap,
         filteredGroups,
-        updateRecentlyUsed,
-        nodeMatchesQuery
+        updateRecentlyUsed
     };
 }; 
