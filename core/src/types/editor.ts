@@ -1,5 +1,6 @@
 import {
   CodeNodeDefinition,
+  CodeNodeInstance,
   InternalCodeNode,
   MacroEditorConfigResolved,
   MacroEditorConfigStructured,
@@ -17,6 +18,10 @@ export type EditorCodeNodeDefinition = CodeNodeDefinition & {
 };
 
 export type EditorNode = EditorCodeNodeDefinition | EditorVisualNode;
+
+export type EditorCodeNodeInstance = CodeNodeInstance & {
+  node: EditorCodeNodeDefinition;
+};
 
 export type EditorNodeInstance = NodeInstance & {
   node: EditorNode;

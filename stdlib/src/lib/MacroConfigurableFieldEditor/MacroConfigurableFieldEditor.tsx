@@ -62,7 +62,7 @@ function FieldContent({
       <div className="flex items-center gap-2">
         {config.typeConfigurable !== false && onTypeChange && (
           <div className="text-xs text-gray-500 flex items-center gap-1">
-            <span className="capitalize">({value.type})</span>
+            <span className="capitalize">{value.type}</span>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="link" size="xs" className="h-4 p-0 text-xs">

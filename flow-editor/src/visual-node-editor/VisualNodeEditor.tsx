@@ -28,6 +28,7 @@ import {
   ImportableEditorNode,
   EditorCodeNodeDefinition,
   FlydeNode,
+  EditorCodeNodeInstance,
 } from "@flyde/core";
 
 import { InstanceView, InstanceViewProps } from "./instance-view/InstanceView";
@@ -226,7 +227,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       }>();
 
       const [editedNodeInstance, setEditedNodeInstance] = useState<{
-        ins: CodeNodeInstance;
+        ins: EditorCodeNodeInstance;
       }>();
 
       const [isAddingCustomNode, setIsAddingCustomNode] = useState(false);
@@ -632,7 +633,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             });
           } else {
             if (isCodeNodeInstance(ins)) {
-              setEditedNodeInstance({ ins });
+              setEditedNodeInstance({ ins: ins as EditorCodeNodeInstance });
             } else if (isVisualNodeInstance(ins)) {
               if (isVisualNode(ins.node as any) && ins.source.type === "inline") {
                 setOpenInlineInstance({ insId: ins.id, node: ins.node as any });
@@ -1511,6 +1512,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                     onSubmit={onSaveInstanceConfig}
                     ins={editedNodeInstance.ins}
                     editorNode={node}
+                    onFork={onViewForkCode}
                   />
                 ) : null}
                 <div className="inline-editor-portal-root" />

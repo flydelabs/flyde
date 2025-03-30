@@ -1,10 +1,10 @@
-import { EditorCodeNodeDefinition, EditorNodeInstance } from "@flyde/core";
+import { EditorCodeNodeDefinition, EditorCodeNodeInstance, EditorNodeInstance } from "@flyde/core";
 import React from "react";
 import ReactDOM from "react-dom";
 import { StructuredMacroEditorComp } from "./StructuredMacroEditorComp";
 
 export function loadConfigEditorComponent(
-  instance: EditorNodeInstance
+  instance: EditorCodeNodeInstance
 ): React.FC<any> {
   const w: any = window;
   w.React = React;

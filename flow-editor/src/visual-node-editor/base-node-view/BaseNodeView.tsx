@@ -196,7 +196,16 @@ export const BaseNodeView: React.FC<BaseNodeViewProps> =
 
     const content = (
       <div className={innerCm}>
-        <div className={headerCm}>{heading}</div>
+        <TooltipProvider>
+          <Tooltip delayDuration={HOVER_DELAY}>
+            <TooltipTrigger asChild>
+              <div className={headerCm}>{heading}</div>
+            </TooltipTrigger>
+            {description && (
+              <TooltipContent side="top">{description}</TooltipContent>
+            )}
+          </Tooltip>
+        </TooltipProvider>
         <div className={bodyCm}>{innerContent}</div>
       </div>
     );
@@ -205,21 +214,14 @@ export const BaseNodeView: React.FC<BaseNodeViewProps> =
       <span className="base-node-view-wrapper">
         <div className={cm} style={zoomFixStyle} id={props.domId}>
           <ContextMenu>
-            <TooltipProvider>
-              <Tooltip delayDuration={HOVER_DELAY}>
-                <ContextMenuTrigger
-                  onClick={onClick}
-                  onDoubleClick={onDoubleClick}
-                  className={classNames({ dark })}
-                >
-                  <TooltipTrigger asChild>{content}</TooltipTrigger>
-                </ContextMenuTrigger>
-                {description && (
-                  <TooltipContent side="top">{description}</TooltipContent>
-                )}
-                {contextMenuContent}
-              </Tooltip>
-            </TooltipProvider>
+            <ContextMenuTrigger
+              onClick={onClick}
+              onDoubleClick={onDoubleClick}
+              className={classNames({ dark })}
+            >
+              {content}
+            </ContextMenuTrigger>
+            {contextMenuContent}
           </ContextMenu>
         </div>
       </span>

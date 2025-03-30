@@ -5,8 +5,10 @@ import { GitFork } from "@flyde/ui";
 
 import {
   CodeNodeInstance,
+  EditorCodeNodeInstance,
   EditorNodeInstance,
   EditorVisualNode,
+  nodeInstance,
 } from "@flyde/core";
 
 import { ErrorBoundary } from "react-error-boundary";
@@ -18,34 +20,26 @@ import { InstanceIcon } from "../instance-view/InstanceIcon";
 import { HotkeyIndication } from "@flyde/ui";
 
 export interface InstanceConfigEditorProps {
-  ins: CodeNodeInstance;
+  ins: EditorCodeNodeInstance;
   editorNode: EditorVisualNode;
   onCancel: () => void;
   onSubmit: (value: any) => void;
+  onFork: (ins: EditorNodeInstance) => void;
   // onSwitchToSiblingMacro: (newMacro: MacroNodeDefinition<any>) => void;
 }
 
 export const InstanceConfigEditor: React.FC<InstanceConfigEditorProps> = (
   props
 ) => {
-  const { ins, onCancel, editorNode } = props;
+  const { ins, onCancel, onFork } = props;
 
-  // const [macroSiblings] = useState<MacroNodeDefinition<any>[]>([]);
-
-  const _onForkNode = useCallback(
-    (node: EditorNodeInstance["node"]) => {
-      onCancel();
-      throw new Error("Not implemented");
-    },
-    [onCancel]
-  );
-
-  const nodeInstance: EditorNodeInstance | undefined = useMemo(() => {
-    return editorNode.instances.find((_ins) => _ins.id === ins.id);
-  }, [editorNode.instances, ins.id]);
+  const _onFork = useCallback(() => {
+    onCancel();
+    props.onFork(ins);
+  }, [onCancel, onFork, ins]);
 
   const [instanceConfig, setInstanceConfig] = React.useState<any>(
-    (nodeInstance as any).config ?? {}
+    ins.config ?? {}
   );
   const [hasUnsavedChanges, setHasUnsavedChanges] = React.useState(false);
   const [showUnsavedChangesDialog, setShowUnsavedChangesDialog] = React.useState(false);
@@ -78,11 +72,8 @@ export const InstanceConfigEditor: React.FC<InstanceConfigEditorProps> = (
   }, [onCancel]);
 
   const EditorComp = useMemo(() => {
-    if (!nodeInstance) {
-      return () => <div>Node instance not found</div>;
-    }
-    return loadConfigEditorComponent(nodeInstance);
-  }, [nodeInstance]);
+    return loadConfigEditorComponent(ins);
+  }, [ins.node]);
 
   // Add keyboard shortcut handler
   useEffect(() => {
@@ -102,16 +93,7 @@ export const InstanceConfigEditor: React.FC<InstanceConfigEditorProps> = (
 
   const aiCompletion = useAiCompletion();
 
-  if (!nodeInstance || !nodeInstance.node) {
-    return (
-      <Dialog open={true}>
-        <DialogContent className="max-h-[90vh]">
-          <Loader />
-        </DialogContent>
-      </Dialog>
-    );
-  }
-  const { node } = nodeInstance;
+  const { node } = ins;
 
   return (
     <>
@@ -164,21 +146,20 @@ export const InstanceConfigEditor: React.FC<InstanceConfigEditorProps> = (
           </div>
 
           <div className="flex justify-between items-center py-2 px-4 border-t border-gray-200 dark:border-gray-800">
-            {_onForkNode && (
-              <div className="text-xs text-gray-500 mr-1">
-                <span className="inline-flex items-center mr-1">Need more customization?{" "}</span>
-                <Button
-                  variant="link"
-                  size="xs"
-                  onClick={() => _onForkNode(node)}
-                  className="p-0 h-auto text-xs inline-flex items-center"
-                >
 
-                  Fork
-                </Button>
-                {" "}this node and make it your own
-              </div>
-            )}
+            <div className="text-xs text-gray-500 mr-1">
+              <span className="inline-flex items-center mr-1">Need more customization?{" "}</span>
+              <Button
+                variant="link"
+                size="xs"
+                onClick={_onFork}
+                className="p-0 h-auto text-xs inline-flex items-center"
+              >
+
+                Fork
+              </Button>
+              {" "}this node
+            </div>
             <div className="flex gap-2">
               <Button variant="outline" size="sm" onClick={onCancel}>
                 Cancel
