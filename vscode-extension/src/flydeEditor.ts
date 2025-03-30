@@ -441,16 +441,7 @@ export class FlydeEditorEditorProvider
                 break;
               }
               case "getLibraryData": {
-                const libraryData2 = getBaseNodesLibraryData();
-
-                const libraryData: NodeLibraryData = {
-                  groups: [
-                    {
-                      title: "Bob",
-                      nodes: [libraryData2.groups[0].nodes[3]],
-                    },
-                  ],
-                };
+                const libraryData = getBaseNodesLibraryData();
 
                 try {
                   const firstWorkspace =

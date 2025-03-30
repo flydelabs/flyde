@@ -24,6 +24,7 @@ import { MacroConfigurableValueBaseEditor } from "./MacroConfigurableValueBaseEd
 import { useCallback, useState, useEffect } from "react";
 import { convertValue } from "./convertValues";
 import React from "react";
+import { Settings } from "@flyde/ui";
 
 function FieldContent({
   config,
@@ -65,7 +66,7 @@ function FieldContent({
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="link" size="xs" className="h-4 p-0 text-xs">
-                  change
+                  <Settings className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">

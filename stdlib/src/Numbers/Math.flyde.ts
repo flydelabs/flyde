@@ -3,9 +3,9 @@ import { CodeNode, createInputGroup, nodeOutput } from "@flyde/core";
 export const MathNode: CodeNode = {
   id: "Math",
   displayName: "Math {{operation}}",
-  menuDisplayName: "1 Math Operations",
+  menuDisplayName: "Math Operations",
   icon: "calculator",
-  namespace: "bob",
+  namespace: "Numbers",
   description: "Performs various mathematical operations",
   inputs: {
     operation: {

@@ -42,6 +42,8 @@ export function resolveEditorInstance(
 
   const processedInstance = processMacroNodeInstance("", macro, instance);
 
+  const editorNode = internalCodeNodeToEditorNode(processedInstance, macro.editorConfig, node.sourceCode);
+
   const editorInstance = {
     id: instance.id,
     config: instance.config,
@@ -51,7 +53,7 @@ export function resolveEditorInstance(
     style: instance.style,
     type: instance.type,
     source: instance.source,
-    node: internalCodeNodeToEditorNode(processedInstance, macro.editorConfig, node.sourceCode),
+    node: { ...editorNode, icon: node.icon },
   };
 
   return editorInstance;

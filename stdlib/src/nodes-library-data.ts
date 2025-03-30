@@ -15,6 +15,8 @@ import {
   Subscribe,
   Throttle,
   GetAttribute,
+  MathNode,
+  StringOps,
 } from "./all-browser";
 
 import { Switch } from "./ControlFlow/Switch.flyde";
@@ -46,6 +48,8 @@ export function getBaseNodesLibraryData(): NodeLibraryData {
           Conditional,
           Switch,
           Note,
+          MathNode,
+          StringOps
         ].map((node) => codeNodeToImportableEditorNode(node, stdlibSource)),
       },
       {
