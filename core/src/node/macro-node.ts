@@ -24,7 +24,8 @@ export type MacroEditorFieldDefinitionType =
   | "json"
   | "select"
   | "longtext"
-  | "dynamic";
+  | "dynamic"
+  | "secret";
 
 // Replace the conditional type with this mapped type
 export type MacroConfigurableValueTypeMap = {
@@ -34,6 +35,7 @@ export type MacroConfigurableValueTypeMap = {
   json: any;
   select: string | number;
   dynamic: undefined;
+  secret: string;
 };
 
 export type MacroConfigurableValue = {
@@ -50,7 +52,8 @@ export type MacroEditorFieldDefinition =
   | JsonFieldDefinition
   | SelectFieldDefinition
   | LongTextFieldDefinition
-  | GroupFieldDefinition;
+  | GroupFieldDefinition
+  | SecretFieldDefinition;
 
 interface BaseFieldDefinition {
   label: string;
@@ -108,9 +111,18 @@ export interface SelectFieldDefinition extends BaseFieldDefinition {
   typeData: SelectTypeData;
 }
 
+export interface SecretFieldDefinition extends BaseFieldDefinition {
+  type: "secret";
+  typeData: SecretTypeData;
+}
+
 export interface NumberTypeData {
   min?: number;
   max?: number;
+}
+
+export interface SecretTypeData {
+  defaultName?: string;
 }
 
 export interface SelectTypeData {

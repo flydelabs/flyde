@@ -14,13 +14,13 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-  Info,
+  Info
 } from "@flyde/ui";
 import {
   MacroConfigurableValue,
   MacroEditorFieldDefinition,
 } from "@flyde/core";
-import { MacroConfigurableValueBaseEditor } from "./MacroConfigurableValueBaseEditor";
+import { MacroConfigurableValueBaseEditor, PartialEditorPorts } from "./MacroConfigurableValueBaseEditor";
 import { useCallback, useState, useEffect } from "react";
 import { convertValue } from "./convertValues";
 import React from "react";
@@ -123,9 +123,9 @@ export function MacroConfigurableFieldEditor(props: {
   value: MacroConfigurableValue;
   onChange: (value: MacroConfigurableValue) => void;
   config: MacroEditorFieldDefinition;
-  prompt: (message: string) => Promise<string | null>;
+  ports: PartialEditorPorts; // Add optional ports prop
 }) {
-  const { config, value, onChange, prompt } = props;
+  const { config, value, onChange, ports } = props;
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [rawJsonData, setRawJsonData] = useState<string>(
     value.type === "json" ? JSON.stringify(value.value, null, 2) : ""
@@ -150,8 +150,8 @@ export function MacroConfigurableFieldEditor(props: {
   };
 
   const isTemplateSupported =
-    (value.type === "string" || value.type === "json") &&
-    config.templateSupport !== false;
+    ((value.type === "string" && config.type !== 'secret') || value.type === "json") &&
+    config.templateSupport !== false
 
   return (
     <div className="mb-4 group">
@@ -166,10 +166,10 @@ export function MacroConfigurableFieldEditor(props: {
         value={value}
         onChange={onChange}
         fieldDefinition={config}
-        prompt={prompt}
         isExpanded={false}
         rawJsonData={rawJsonData}
         onRawJsonDataChange={setRawJsonData}
+        ports={ports}
       />
 
       <div className="mt-2 flex justify-between items-center">
@@ -216,10 +216,10 @@ export function MacroConfigurableFieldEditor(props: {
             value={value}
             onChange={onChange}
             fieldDefinition={config}
-            prompt={prompt}
             isExpanded={true}
             rawJsonData={rawJsonData}
             onRawJsonDataChange={setRawJsonData}
+            ports={ports}
           />
 
           <div className="mt-2 flex justify-between items-center">

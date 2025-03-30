@@ -16,27 +16,37 @@ import {
 import { SimpleJsonEditor } from "../SimpleJsonEditor";
 import { useState, useEffect } from "react";
 import React from "react";
+import { SecretSelector } from "./SecretSelector";
+
+// Define a minimal EditorPorts interface with just what we need
+export interface PartialEditorPorts {
+  getAvailableSecrets: () => Promise<string[]>;
+  addNewSecret: (dto: { key: string; value: string }) => Promise<string[]>;
+  prompt: ({ text, defaultValue }: { text: string; defaultValue?: string }) => Promise<string | null>;
+}
 
 const inputClassName = "w-full";
 
 export function MacroConfigurableValueBaseEditor(props: {
   value: MacroConfigurableValue;
   onChange: (value: MacroConfigurableValue) => void;
-  prompt: (message: string) => Promise<string>;
   fieldDefinition: MacroEditorFieldDefinition;
   isExpanded?: boolean;
   rawJsonData?: string;
   onRawJsonDataChange?: (rawData: string) => void;
+  ports: PartialEditorPorts; // Add optional ports prop
 }) {
   const {
     value,
     onChange,
     fieldDefinition,
-    prompt: _prompt,
+    ports,
     isExpanded,
     rawJsonData,
     onRawJsonDataChange,
   } = props;
+
+  const { prompt: _prompt } = ports;
   const [options, setOptions] = useState<
     { value: string | number; label: string }[]
   >(
@@ -51,7 +61,7 @@ export function MacroConfigurableValueBaseEditor(props: {
   // Track raw JSON data internally if not provided from parent
   const [internalRawJsonData, setInternalRawJsonData] = useState<string>(
     rawJsonData ||
-      (value.type === "json" ? JSON.stringify(value.value, null, 2) : "")
+    (value.type === "json" ? JSON.stringify(value.value, null, 2) : "")
   );
 
   // Update internal state when rawJsonData prop changes
@@ -87,7 +97,7 @@ export function MacroConfigurableValueBaseEditor(props: {
       return; // Don't allow adding options when typeConfigurable is false
     }
 
-    const newOption = await _prompt("Enter a new option:");
+    const newOption = await _prompt({ text: "Enter a new option:" });
     if (newOption && !options.some((option) => option.value === newOption)) {
       const updatedOptions = [
         ...options,
@@ -117,6 +127,18 @@ export function MacroConfigurableValueBaseEditor(props: {
         />
       );
     case "string": {
+      // Special handling for secrets
+      if (fieldDefinition.type === "secret" && ports) {
+        return (
+          <SecretSelector
+            value={value.value as string}
+            onChange={(newValue) => props.onChange({ type: "string", value: newValue })}
+            ports={ports}
+            typeEditorData={fieldDefinition.typeData}
+          />
+        );
+      }
+
       if (fieldDefinition.type === "longtext") {
         return (
           <Textarea
