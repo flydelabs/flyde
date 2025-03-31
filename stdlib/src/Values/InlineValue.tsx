@@ -5,7 +5,7 @@ import { MacroConfigurableFieldEditor } from "../lib/MacroConfigurableFieldEdito
 
 const InlineValueEditor: MacroEditorComp<InlineValueConfig> =
   function InlineValueEditor(props) {
-    const { value, onChange, prompt } = props;
+    const { value, onChange, ports } = props;
 
     return (
       <div>
@@ -17,7 +17,7 @@ const InlineValueEditor: MacroEditorComp<InlineValueConfig> =
             label: "Value",
             configKey: "value",
           }}
-          prompt={prompt}
+          ports={ports}
         />
       </div>
     );

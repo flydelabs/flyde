@@ -10,11 +10,9 @@ For simplicity, all parts of Flyde's standard library reside in the same package
 
 - [Objects](#Objects)
 
-- [bob](#bob)
+- [Numbers](#Numbers)
 
 - [Misc](#Misc)
-
-- [Numbers](#Numbers)
 
 - [Strings](#Strings)
 
@@ -32,6 +30,8 @@ For simplicity, all parts of Flyde's standard library reside in the same package
 
 - [Values](#Values)
 
+- [ai](#ai)
+
 - [File System](#File-System)
 
 
@@ -47,7 +47,7 @@ For simplicity, all parts of Flyde's standard library reside in the same package
 | Id                   | Description                              | Inputs                                                                                                                                                                                                                      | Outputs                                                                   |
 | -------------------- | ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
 | **Delete Attribute** | Deletes an attribute from an object      | <div><strong>object</strong>: Object to delete attribute from (required)</div><div><strong>attribute</strong>: Attribute to delete (required)</div>                                                                         | <div><strong>object</strong>: The object with the attribute deleted</div> |
-| **GetAttribute**     | Retrieves a property from an object      | <div><strong>object</strong>: Object to get attribute from (required)</div><div><strong>key</strong>: Key of the attribute to retrieve (supports nested properties with dot notation) (required)</div>                      | <div><strong>value</strong>: The value of the attribute</div>             |
+| **GetAttribute**     | Retrieves a property from an object      | <div><strong>object</strong>: Object to get attribute from (required)</div><div><strong>key</strong>: Supports nested properties with dot notation (required)</div>                                                         | <div><strong>value</strong>: The value of the attribute</div>             |
 | **JSON Parse**       | Parses a JSON string into an object      | <div><strong>json</strong>: JSON string to parse (required)</div>                                                                                                                                                           | <div><strong>object</strong>: The parsed object</div>                     |
 | **JSON Stringify**   | Stringifies an object into a JSON string | <div><strong>object</strong>: Object to stringify (required)</div>                                                                                                                                                          | <div><strong>json</strong>: The stringified JSON</div>                    |
 | **Entries**          | Emits the entries of an object           | <div><strong>object</strong>: Object to get entries of (required)</div>                                                                                                                                                     | <div><strong>entries</strong>: The entries of object</div>                |
@@ -55,11 +55,12 @@ For simplicity, all parts of Flyde's standard library reside in the same package
 | **Values**           | Emits the values of an object            | <div><strong>object</strong>: Object to get values of (required)</div>                                                                                                                                                      | <div><strong>values</strong>: The values of object</div>                  |
 | **SetAttribute**     |                                          | <div><strong>object</strong>: Object to set attribute on (required)</div><div><strong>key</strong>: Key of the attribute to set (required)</div><div><strong>value</strong>: Value to set the attribute to (required)</div> | <div><strong>object</strong>: The object with the attribute set</div>     |
 
-## bob
+## Numbers
 
-| Id       | Description                              | Inputs                                                                                                                                                                                                                                                                                                                                                                                                         | Outputs                                       |
-| -------- | ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------- |
-| **Math** | Performs various mathematical operations | <div><strong>operation</strong>: The math operation to perform (required)</div><div><strong>binaryInputs</strong>: undefined (required)</div><div><strong>n1</strong>: First number operand (required)</div><div><strong>n2</strong>: Second number operand (required)</div><div><strong>unaryInputs</strong>: undefined (required)</div><div><strong>n</strong>: Number for unary operations (required)</div> | <div><strong>result</strong>: undefined</div> |
+| Id           | Description                              | Inputs                                                                                                                                                                                                                                                                                                                                                                                                         | Outputs                                                         |
+| ------------ | ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| **Math**     | Performs various mathematical operations | <div><strong>operation</strong>: The math operation to perform (required)</div><div><strong>binaryInputs</strong>: undefined (required)</div><div><strong>n1</strong>: First number operand (required)</div><div><strong>n2</strong>: Second number operand (required)</div><div><strong>unaryInputs</strong>: undefined (required)</div><div><strong>n</strong>: Number for unary operations (required)</div> | <div><strong>result</strong>: undefined</div>                   |
+| **Sum List** | Emits the sum of a list of numbers       | <div><strong>list</strong>: List of numbers (required)</div>                                                                                                                                                                                                                                                                                                                                                   | <div><strong>sum</strong>: The sum of the numbers in list</div> |
 
 ## Misc
 
@@ -71,12 +72,6 @@ For simplicity, all parts of Flyde's standard library reside in the same package
 | **Split**    | Splits a string                        | <div><strong>string</strong>: String to split (required)</div><div><strong>separator</strong>: Separator (required)</div> | <div><strong>value</strong>: Splitted value</div>                         |
 |              |                                        |                                                                                                                           |                                                                           |
 | **Note**     | A note node for documentation purposes | <div><strong>never</strong>: undefined (required)</div>                                                                   | *None*                                                                    |
-
-## Numbers
-
-| Id           | Description                        | Inputs                                                       | Outputs                                                         |
-| ------------ | ---------------------------------- | ------------------------------------------------------------ | --------------------------------------------------------------- |
-| **Sum List** | Emits the sum of a list of numbers | <div><strong>list</strong>: List of numbers (required)</div> | <div><strong>sum</strong>: The sum of the numbers in list</div> |
 
 ## Strings
 
@@ -151,6 +146,12 @@ For simplicity, all parts of Flyde's standard library reside in the same package
 | Id | Description | Inputs | Outputs |
 | -- | ----------- | ------ | ------- |
 |    |             |        |         |
+
+## ai
+
+| Id         | Description                              | Inputs                                                                                                                                                                                                                                                                                  | Outputs                                                   |
+| ---------- | ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| **OpenAI** | Generates a chat completion using OpenAI | <div><strong>apiKey</strong>: OpenAI API Key (required)</div><div><strong>model</strong>: The model to use (required)</div><div><strong>prompt</strong>: Prompt for chat completion (required)</div><div><strong>temperature</strong>: Temperature for text generation (required)</div> | <div><strong>completion</strong>: Completion output</div> |
 
 ## File System
 

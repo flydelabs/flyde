@@ -32,7 +32,7 @@ export const createWebPorts = ({
     },
     onExternalFlowChange: () => {
       console.log("Not implemented");
-      return () => {};
+      return () => { };
     },
     onRunFlow: async () => {
       alert("Not implemented");
@@ -61,6 +61,12 @@ export const createWebPorts = ({
       throw new Error("Not implemented");
     },
     resolveInstance: async () => {
+      throw new Error("Not implemented");
+    },
+    getAvailableSecrets: async () => {
+      return [];
+    },
+    addNewSecret: async () => {
       throw new Error("Not implemented");
     },
   };

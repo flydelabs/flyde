@@ -24,7 +24,8 @@ export type MacroEditorFieldDefinitionType =
   | "json"
   | "select"
   | "longtext"
-  | "dynamic";
+  | "dynamic"
+  | "secret";
 
 // Replace the conditional type with this mapped type
 export type MacroConfigurableValueTypeMap = {
@@ -34,6 +35,7 @@ export type MacroConfigurableValueTypeMap = {
   json: any;
   select: string | number;
   dynamic: undefined;
+  secret: string;
 };
 
 export type MacroConfigurableValue = {
@@ -50,7 +52,8 @@ export type MacroEditorFieldDefinition =
   | JsonFieldDefinition
   | SelectFieldDefinition
   | LongTextFieldDefinition
-  | GroupFieldDefinition;
+  | GroupFieldDefinition
+  | SecretFieldDefinition;
 
 interface BaseFieldDefinition {
   label: string;
@@ -108,9 +111,18 @@ export interface SelectFieldDefinition extends BaseFieldDefinition {
   typeData: SelectTypeData;
 }
 
+export interface SecretFieldDefinition extends BaseFieldDefinition {
+  type: "secret";
+  typeData: SecretTypeData;
+}
+
 export interface NumberTypeData {
   min?: number;
   max?: number;
+}
+
+export interface SecretTypeData {
+  defaultName?: string;
 }
 
 export interface SelectTypeData {
@@ -162,14 +174,20 @@ export type MacroNodeDefinition<T> = Omit<
   sourceCode?: string;
 };
 
-export interface MacroEditorCompProps<T> {
-  value: T;
-  onChange: (value: T) => void;
-  prompt: (message: string) => Promise<string>;
+export interface PartialEditorPorts {
+  getAvailableSecrets: () => Promise<string[]>;
+  addNewSecret: (dto: { key: string; value: string }) => Promise<string[]>;
+  prompt: ({ text, defaultValue }: { text: string; defaultValue?: string }) => Promise<string | null>;
   createAiCompletion?: (prompt: {
     prompt: string;
     currentValue?: any;
   }) => Promise<string>;
+}
+
+export interface MacroEditorCompProps<T> {
+  value: T;
+  onChange: (value: T) => void;
+  ports: PartialEditorPorts;
 }
 
 export interface MacroEditorComp<T> extends React.FC<MacroEditorCompProps<T>> { }

@@ -106,6 +106,12 @@ export const createVsCodePorts = (): EditorPorts => {
     resolveInstance: async (dto) => {
       return postMessageCallback("resolveInstance", dto);
     },
+    getAvailableSecrets: async () => {
+      return postMessageCallback("getAvailableSecrets", {});
+    },
+    addNewSecret: async (dto) => {
+      return postMessageCallback("addNewSecret", dto);
+    },
   };
 };
 

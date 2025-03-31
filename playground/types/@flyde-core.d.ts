@@ -722,7 +722,7 @@ declare module '@flyde/core/types/connections' {
 }
 
 declare module '@flyde/core/types/editor' {
-    import { CodeNodeDefinition, InternalCodeNode, MacroEditorConfigResolved, MacroEditorConfigStructured, NodeInstance, VisualNode } from "@flyde/core/node";
+    import { CodeNodeDefinition, CodeNodeInstance, InternalCodeNode, MacroEditorConfigResolved, MacroEditorConfigStructured, NodeInstance, VisualNode } from "@flyde/core/node";
     export type EditorCodeNodeDefinition = CodeNodeDefinition & {
         editorConfig: MacroEditorConfigStructured | {
             type: "custom";
@@ -730,6 +730,9 @@ declare module '@flyde/core/types/editor' {
         };
     };
     export type EditorNode = EditorCodeNodeDefinition | EditorVisualNode;
+    export type EditorCodeNodeInstance = CodeNodeInstance & {
+        node: EditorCodeNodeDefinition;
+    };
     export type EditorNodeInstance = NodeInstance & {
         node: EditorNode;
     };
@@ -742,6 +745,7 @@ declare module '@flyde/core/types/editor' {
 declare module '@flyde/core/improved-macros/improved-macros' {
     import { InternalCodeNode, InputPin, OutputPin, InternalMacroNode, NodeStyle, InputMode } from "@flyde/core/";
     export * from "@flyde/core/improved-macros/improved-macro-utils";
+    import { SecretTypeData } from "@flyde/core/node/macro-node";
     export type StaticOrDerived<T, Config> = T | ((config: Config) => T);
     export interface BaseMacroNodeData<Config = any> {
             mode?: "simple" | "advanced";
@@ -841,7 +845,7 @@ declare module '@flyde/core/improved-macros/improved-macros' {
                     editorTypeData?: EditorTypeDataMap[K];
             };
     }[EditorType];
-    type EditorType = "string" | "number" | "boolean" | "json" | "select" | "longtext" | "enum";
+    type EditorType = "string" | "number" | "boolean" | "json" | "select" | "longtext" | "enum" | "secret";
     type EditorTypeDataMap = {
             string: undefined;
             number: {
@@ -862,6 +866,7 @@ declare module '@flyde/core/improved-macros/improved-macros' {
             enum: {
                     options: string[];
             };
+            secret: SecretTypeData;
     };
     export function isAdvancedCodeNode<Config>(node: CodeNode<Config>): node is AdvancedCodeNode<Config>;
     export function isSimplifiedCodeNode<Config>(node: CodeNode<Config>): node is SimpleCodeNode<Config>;
@@ -1182,7 +1187,7 @@ declare module '@flyde/core/node/macro-node' {
     import type React from "react";
     export function macroConfigurableValue(type: MacroConfigurableValue["type"], value: MacroConfigurableValue["value"]): MacroConfigurableValue;
     import { CodeNode } from "@flyde/core/improved-macros/improved-macros";
-    export type MacroEditorFieldDefinitionType = "string" | "number" | "boolean" | "json" | "select" | "longtext" | "dynamic";
+    export type MacroEditorFieldDefinitionType = "string" | "number" | "boolean" | "json" | "select" | "longtext" | "dynamic" | "secret";
     export type MacroConfigurableValueTypeMap = {
             string: string;
             number: number;
@@ -1190,6 +1195,7 @@ declare module '@flyde/core/node/macro-node' {
             json: any;
             select: string | number;
             dynamic: undefined;
+            secret: string;
     };
     export type MacroConfigurableValue = {
             [K in keyof MacroConfigurableValueTypeMap]: {
@@ -1197,7 +1203,7 @@ declare module '@flyde/core/node/macro-node' {
                     value: MacroConfigurableValueTypeMap[K];
             };
     }[keyof MacroConfigurableValueTypeMap];
-    export type MacroEditorFieldDefinition = StringFieldDefinition | NumberFieldDefinition | BooleanFieldDefinition | JsonFieldDefinition | SelectFieldDefinition | LongTextFieldDefinition | GroupFieldDefinition;
+    export type MacroEditorFieldDefinition = StringFieldDefinition | NumberFieldDefinition | BooleanFieldDefinition | JsonFieldDefinition | SelectFieldDefinition | LongTextFieldDefinition | GroupFieldDefinition | SecretFieldDefinition;
     interface BaseFieldDefinition {
             label: string;
             description?: string;
@@ -1247,9 +1253,16 @@ declare module '@flyde/core/node/macro-node' {
             type: "select";
             typeData: SelectTypeData;
     }
+    export interface SecretFieldDefinition extends BaseFieldDefinition {
+            type: "secret";
+            typeData: SecretTypeData;
+    }
     export interface NumberTypeData {
             min?: number;
             max?: number;
+    }
+    export interface SecretTypeData {
+            defaultName?: string;
     }
     export interface SelectTypeData {
             options: {
@@ -1286,14 +1299,25 @@ declare module '@flyde/core/node/macro-node' {
             editorConfig: MacroEditorConfigDefinition;
             sourceCode?: string;
     };
-    export interface MacroEditorCompProps<T> {
-            value: T;
-            onChange: (value: T) => void;
-            prompt: (message: string) => Promise<string>;
+    export interface PartialEditorPorts {
+            getAvailableSecrets: () => Promise<string[]>;
+            addNewSecret: (dto: {
+                    key: string;
+                    value: string;
+            }) => Promise<string[]>;
+            prompt: ({ text, defaultValue }: {
+                    text: string;
+                    defaultValue?: string;
+            }) => Promise<string | null>;
             createAiCompletion?: (prompt: {
                     prompt: string;
                     currentValue?: any;
             }) => Promise<string>;
+    }
+    export interface MacroEditorCompProps<T> {
+            value: T;
+            onChange: (value: T) => void;
+            ports: PartialEditorPorts;
     }
     export interface MacroEditorComp<T> extends React.FC<MacroEditorCompProps<T>> {
     }

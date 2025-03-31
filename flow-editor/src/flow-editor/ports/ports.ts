@@ -57,6 +57,9 @@ export interface EditorPorts {
   resolveInstance: (dto: {
     instance: NodeInstance;
   }) => Promise<EditorNodeInstance>;
+
+  getAvailableSecrets: () => Promise<string[]>;
+  addNewSecret: (dto: { key: string; value: string }) => Promise<string[]>;
 }
 
 const toastNotImplemented: any = (method: string) => async () => {
@@ -87,6 +90,8 @@ export const defaultPorts: EditorPorts = {
   resolveInstance: () => {
     throw new Error("Not implemented");
   },
+  getAvailableSecrets: () => Promise.resolve([]),
+  addNewSecret: () => Promise.resolve([]),
 };
 
 export const PortsContext = createContext<EditorPorts>(defaultPorts);

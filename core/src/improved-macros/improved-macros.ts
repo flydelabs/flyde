@@ -21,6 +21,7 @@ export * from "./improved-macro-utils";
 import {
   isMacroConfigurableValue,
   macroConfigurableValue,
+  SecretTypeData,
 } from "../node/macro-node";
 
 export type StaticOrDerived<T, Config> = T | ((config: Config) => T);
@@ -142,7 +143,8 @@ type EditorType =
   | "json"
   | "select"
   | "longtext"
-  | "enum";
+  | "enum"
+  | "secret";
 
 type EditorTypeDataMap = {
   string: undefined;
@@ -152,12 +154,21 @@ type EditorTypeDataMap = {
   select: { options: string[] | { value: string | number; label: string }[] };
   longtext: { rows?: number };
   enum: { options: string[] };
+  secret: SecretTypeData;
 };
 
 function inferTypeFromInput(
   input: InputConfig
 ): MacroConfigurableValue["type"] {
   const rawType = typeof input.defaultValue;
+
+  // If editorType is explicitly specified, handle special cases
+  if (input.editorType === "select") {
+    return "select";
+  } else if (input.editorType === "secret") {
+    return "string"; // secrets are stored as strings
+  }
+
   switch (rawType) {
     case "undefined":
       return "dynamic";
@@ -167,9 +178,6 @@ function inferTypeFromInput(
       }
       break;
     case "string":
-      if (input.editorType === "select") {
-        return "select";
-      }
       return "string";
     case "number":
       return "number";

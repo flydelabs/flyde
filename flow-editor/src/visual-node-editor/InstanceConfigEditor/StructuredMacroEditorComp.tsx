@@ -4,9 +4,10 @@ import {
   MacroEditorConfigStructured,
   evaluateCondition,
   MacroConfigurableValue,
+  PartialEditorPorts,
 } from "@flyde/core";
 import { MacroConfigurableFieldEditor } from "@flyde/stdlib";
-import { usePrompt } from "../../flow-editor/ports";
+import { usePorts } from "../../flow-editor/ports";
 import { useState } from "react";
 
 // Define the GroupFieldDefinition type
@@ -41,12 +42,12 @@ function GroupFields({
   group,
   value,
   onChange,
-  prompt,
+  ports
 }: {
   group: GroupFieldDefinition;
   value: any;
   onChange: (value: any) => void;
-  prompt: (message: string) => Promise<string | null>;
+  ports: PartialEditorPorts;
 }) {
   const [isCollapsed, setIsCollapsed] = useState(
     group.typeData?.defaultCollapsed ?? false
@@ -110,7 +111,7 @@ function GroupFields({
                   group={field}
                   value={value}
                   onChange={onChange}
-                  prompt={prompt}
+                  ports={ports}
                 />
               );
             }
@@ -134,7 +135,7 @@ function GroupFields({
                     [field.configKey]: newValue,
                   })
                 }
-                prompt={prompt}
+                ports={ports}
                 config={field}
               />
             );
@@ -150,7 +151,7 @@ export function StructuredMacroEditorComp<T>(
 ): MacroEditorComp<T> {
   return (props) => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    const prompt = usePrompt();
+    const ports = usePorts();
 
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
@@ -163,7 +164,7 @@ export function StructuredMacroEditorComp<T>(
                 group={field}
                 value={props.value}
                 onChange={props.onChange}
-                prompt={prompt}
+                ports={ports}
               />
             );
           }
@@ -189,8 +190,8 @@ export function StructuredMacroEditorComp<T>(
                   [field.configKey]: newValue,
                 })
               }
-              prompt={prompt}
               config={field}
+              ports={ports}
             />
           );
         })}
