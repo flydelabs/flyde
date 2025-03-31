@@ -50,7 +50,7 @@ const rightConfig: MacroEditorFieldDefinition = {
 
 const ConditionalEditor: MacroEditorComp<ConditionalConfig> =
   function ConditionalEditor(props) {
-    const { value, onChange, prompt } = props;
+    const { value, onChange, ports } = props;
 
     const showRightOperand = ![
       ConditionType.Exists,
@@ -91,20 +91,20 @@ const ConditionalEditor: MacroEditorComp<ConditionalConfig> =
 
         {(value.condition.type === ConditionType.Contains ||
           value.condition.type === ConditionType.NotContains) && (
-          <div
-            style={{ fontSize: "0.875rem", color: "var(--muted-foreground)" }}
-          >
-            For "Contains" and "Not Contains", the input value can be a string
-            or an array. If it's a string, it checks if the string contains the
-            compared value. If it's an array, it checks if the array includes
-            the compared value.
-          </div>
-        )}
+            <div
+              style={{ fontSize: "0.875rem", color: "var(--muted-foreground)" }}
+            >
+              For "Contains" and "Not Contains", the input value can be a string
+              or an array. If it's a string, it checks if the string contains the
+              compared value. If it's an array, it checks if the array includes
+              the compared value.
+            </div>
+          )}
 
         <Separator />
 
         <MacroConfigurableFieldEditor
-          prompt={prompt}
+          ports={ports}
           value={value.leftOperand}
           onChange={(val) => {
             onChange({
@@ -117,7 +117,7 @@ const ConditionalEditor: MacroEditorComp<ConditionalConfig> =
 
         {showRightOperand && (
           <MacroConfigurableFieldEditor
-            prompt={prompt}
+            ports={ports}
             value={value.rightOperand}
             onChange={(val) => {
               onChange({

@@ -12,18 +12,12 @@ import {
   LongTextFieldDefinition,
   MacroConfigurableValue,
   MacroEditorFieldDefinition,
+  PartialEditorPorts,
 } from "@flyde/core";
 import { SimpleJsonEditor } from "../SimpleJsonEditor";
 import { useState, useEffect } from "react";
 import React from "react";
 import { SecretSelector } from "./SecretSelector";
-
-// Define a minimal EditorPorts interface with just what we need
-export interface PartialEditorPorts {
-  getAvailableSecrets: () => Promise<string[]>;
-  addNewSecret: (dto: { key: string; value: string }) => Promise<string[]>;
-  prompt: ({ text, defaultValue }: { text: string; defaultValue?: string }) => Promise<string | null>;
-}
 
 const inputClassName = "w-full";
 
@@ -34,7 +28,7 @@ export function MacroConfigurableValueBaseEditor(props: {
   isExpanded?: boolean;
   rawJsonData?: string;
   onRawJsonDataChange?: (rawData: string) => void;
-  ports: PartialEditorPorts; // Add optional ports prop
+  ports: PartialEditorPorts;
 }) {
   const {
     value,

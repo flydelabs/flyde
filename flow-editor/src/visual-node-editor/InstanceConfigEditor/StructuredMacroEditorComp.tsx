@@ -4,11 +4,11 @@ import {
   MacroEditorConfigStructured,
   evaluateCondition,
   MacroConfigurableValue,
+  PartialEditorPorts,
 } from "@flyde/core";
 import { MacroConfigurableFieldEditor } from "@flyde/stdlib";
-import { usePorts, usePrompt } from "../../flow-editor/ports";
+import { usePorts } from "../../flow-editor/ports";
 import { useState } from "react";
-import { PartialEditorPorts } from "@flyde/stdlib/dist/lib/MacroConfigurableFieldEditor/MacroConfigurableValueBaseEditor";
 
 // Define the GroupFieldDefinition type
 interface GroupFieldDefinition {

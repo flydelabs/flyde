@@ -745,6 +745,7 @@ declare module '@flyde/core/types/editor' {
 declare module '@flyde/core/improved-macros/improved-macros' {
     import { InternalCodeNode, InputPin, OutputPin, InternalMacroNode, NodeStyle, InputMode } from "@flyde/core/";
     export * from "@flyde/core/improved-macros/improved-macro-utils";
+    import { SecretTypeData } from "@flyde/core/node/macro-node";
     export type StaticOrDerived<T, Config> = T | ((config: Config) => T);
     export interface BaseMacroNodeData<Config = any> {
             mode?: "simple" | "advanced";
@@ -865,7 +866,7 @@ declare module '@flyde/core/improved-macros/improved-macros' {
             enum: {
                     options: string[];
             };
-            secret: undefined;
+            secret: SecretTypeData;
     };
     export function isAdvancedCodeNode<Config>(node: CodeNode<Config>): node is AdvancedCodeNode<Config>;
     export function isSimplifiedCodeNode<Config>(node: CodeNode<Config>): node is SimpleCodeNode<Config>;
@@ -1261,7 +1262,7 @@ declare module '@flyde/core/node/macro-node' {
             max?: number;
     }
     export interface SecretTypeData {
-            defaultSecret?: string;
+            defaultName?: string;
     }
     export interface SelectTypeData {
             options: {
@@ -1298,14 +1299,25 @@ declare module '@flyde/core/node/macro-node' {
             editorConfig: MacroEditorConfigDefinition;
             sourceCode?: string;
     };
-    export interface MacroEditorCompProps<T> {
-            value: T;
-            onChange: (value: T) => void;
-            prompt: (message: string) => Promise<string>;
+    export interface PartialEditorPorts {
+            getAvailableSecrets: () => Promise<string[]>;
+            addNewSecret: (dto: {
+                    key: string;
+                    value: string;
+            }) => Promise<string[]>;
+            prompt: ({ text, defaultValue }: {
+                    text: string;
+                    defaultValue?: string;
+            }) => Promise<string | null>;
             createAiCompletion?: (prompt: {
                     prompt: string;
                     currentValue?: any;
             }) => Promise<string>;
+    }
+    export interface MacroEditorCompProps<T> {
+            value: T;
+            onChange: (value: T) => void;
+            ports: PartialEditorPorts;
     }
     export interface MacroEditorComp<T> extends React.FC<MacroEditorCompProps<T>> {
     }

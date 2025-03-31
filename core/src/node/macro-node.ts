@@ -174,14 +174,20 @@ export type MacroNodeDefinition<T> = Omit<
   sourceCode?: string;
 };
 
-export interface MacroEditorCompProps<T> {
-  value: T;
-  onChange: (value: T) => void;
-  prompt: (message: string) => Promise<string>;
+export interface PartialEditorPorts {
+  getAvailableSecrets: () => Promise<string[]>;
+  addNewSecret: (dto: { key: string; value: string }) => Promise<string[]>;
+  prompt: ({ text, defaultValue }: { text: string; defaultValue?: string }) => Promise<string | null>;
   createAiCompletion?: (prompt: {
     prompt: string;
     currentValue?: any;
   }) => Promise<string>;
+}
+
+export interface MacroEditorCompProps<T> {
+  value: T;
+  onChange: (value: T) => void;
+  ports: PartialEditorPorts;
 }
 
 export interface MacroEditorComp<T> extends React.FC<MacroEditorCompProps<T>> { }

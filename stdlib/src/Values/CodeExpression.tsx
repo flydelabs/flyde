@@ -6,7 +6,7 @@ import { MacroEditorComp } from "@flyde/core";
 
 const CodeExpressionEditor: MacroEditorComp<CodeExpressionConfig> =
   function CodeExpressionEditor(props) {
-    const { value, onChange, createAiCompletion } = props;
+    const { value, onChange, ports } = props;
 
     const changeValue = useCallback(
       (_val) => {
@@ -19,10 +19,10 @@ const CodeExpressionEditor: MacroEditorComp<CodeExpressionConfig> =
 
     const aiContextValue = React.useMemo(() => {
       return {
-        createCompletion: createAiCompletion,
-        enabled: !!createAiCompletion,
+        createCompletion: ports.createAiCompletion,
+        enabled: !!ports.createAiCompletion,
       };
-    }, [createAiCompletion]);
+    }, [ports.createAiCompletion]);
 
     return (
       <div>

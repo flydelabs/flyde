@@ -19,8 +19,9 @@ import {
 import {
   MacroConfigurableValue,
   MacroEditorFieldDefinition,
+  PartialEditorPorts,
 } from "@flyde/core";
-import { MacroConfigurableValueBaseEditor, PartialEditorPorts } from "./MacroConfigurableValueBaseEditor";
+import { MacroConfigurableValueBaseEditor } from "./MacroConfigurableValueBaseEditor";
 import { useCallback, useState, useEffect } from "react";
 import { convertValue } from "./convertValues";
 import React from "react";
@@ -123,7 +124,7 @@ export function MacroConfigurableFieldEditor(props: {
   value: MacroConfigurableValue;
   onChange: (value: MacroConfigurableValue) => void;
   config: MacroEditorFieldDefinition;
-  ports: PartialEditorPorts; // Add optional ports prop
+  ports: PartialEditorPorts;
 }) {
   const { config, value, onChange, ports } = props;
   const [isDialogOpen, setIsDialogOpen] = useState(false);
