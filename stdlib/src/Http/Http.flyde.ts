@@ -35,7 +35,7 @@ export const Http: CodeNode = {
       condition: "method !== 'GET'",
       aiCompletion: {
         prompt: `You are an expert HTTP request body generator. The user will provide a description of the request body they want to send and you should create a valid JSON object that matches the description.
-        You can expose dynamic variables using the {{synax}}, for example {"name": {{name}}} will expose the "name" as a dynamic input.
+        You can expose dynamic variables using the {{syntax}}, for example {"name": {{name}}} will expose the "name" as a dynamic input.
         User's prompt:
         {{prompt}}
 
