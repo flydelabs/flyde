@@ -84,13 +84,7 @@ function FieldContent({
           </div>
         )}
         {config.aiCompletion && (
-          <div
-            className={
-              isExpanded
-                ? ""
-                : "opacity-0 group-hover:opacity-100 transition-opacity"
-            }
-          >
+          <div>
             <AiGenerate
               prompt={config.aiCompletion.prompt}
               placeholder={config.aiCompletion.placeholder}

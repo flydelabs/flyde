@@ -6,12 +6,11 @@ import { useHotkeys } from "../../lib/react-utils/use-hotkeys";
 import {
   ERROR_PIN_ID,
   fullInsIdPath,
-  getInputName,
-  getOutputName,
   PinType,
+  TRIGGER_PIN_ID,
 } from "@flyde/core";
 import { getPinDomId, getPinDomHandleId } from "../dom-ids";
-import { useHistoryHelpers } from "./helpers";
+import { getInputName, getOutputName, useHistoryHelpers } from "./helpers";
 import { useDarkMode } from "../../flow-editor/DarkModeContext";
 import { PinTooltipContent } from "./PinTooltipContent";
 
@@ -28,6 +27,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@flyde/ui";
+import { faBolt } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export type InputPinViewProps = {
   type: "input";
@@ -248,7 +249,7 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
                 }}
                 className={classNames(`pin-inner`, { dark })}
               >
-                {displayName}
+                {id === TRIGGER_PIN_ID ? <FontAwesomeIcon icon={faBolt} /> : displayName}
                 {maybeQueueLabel()}
               </ContextMenuTrigger>
             </TooltipTrigger>

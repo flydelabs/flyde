@@ -52,10 +52,6 @@ function GroupFields({
   const [isCollapsed, setIsCollapsed] = useState(
     group.typeData?.defaultCollapsed ?? false
   );
-
-  console.log("group", group, value, evaluateFieldVisibility(group, value));
-
-  // Only render if the group's condition is met
   if (!evaluateFieldVisibility(group, value)) {
     return null;
   }

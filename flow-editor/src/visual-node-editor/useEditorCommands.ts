@@ -337,15 +337,7 @@ export function useEditorCommands(
         });
       }
     },
-    [
-      boardData,
-      node,
-      onChange,
-      onChangeBoardData,
-      reportEvent,
-      viewPort,
-      vpSize,
-    ]
+    [boardData, node, onChange, onChangeBoardData, reportEvent, resolveInstance, viewPort.pos.x, viewPort.pos.y, viewPort.zoom, vpSize.height, vpSize.width]
   );
 
   const onSelectInstance = React.useCallback(
@@ -417,7 +409,7 @@ export function useEditorCommands(
 
   const onZoom = React.useCallback(
     (_newZoom: number, source?: "hotkey" | "mouse") => {
-      const newZoom = Math.min(Math.max(_newZoom, 0.1), 3);
+      const newZoom = Math.min(Math.max(_newZoom, 0.3), 2);
       const targetPos =
         source === "mouse"
           ? lastMousePos.current

@@ -26,7 +26,7 @@ const FormGroup = React.forwardRef<HTMLDivElement, FormGroupProps>(
         )}
         {...props}
       >
-        <div className="inline-flex items-center gap-2 space-betw">
+        <div className="inline-flex items-center w-full justify-between">
           {label && <Label>{label}</Label>}
           {aiGenerate && (
             <AiGenerate

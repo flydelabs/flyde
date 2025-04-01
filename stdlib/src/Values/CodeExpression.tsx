@@ -40,11 +40,11 @@ const CodeExpressionEditor: MacroEditorComp<CodeExpressionConfig> =
               - Do not write "return" and do not use line breaks. The expression will be evaluated directly.
               - Return plain code, no wrapping code like \`\`\`js or \`\`\` or \`
 
-              Previous expression:
+              ## Previous expression:
               ${value.value}
 
-              User request:
-              {prompt}
+              ## User request:
+              {{prompt}}
                 `,
               placeholder: "Describe the expression you want to generate",
               onComplete: (generatedText) => {

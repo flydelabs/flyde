@@ -14,23 +14,6 @@ export const getNodeInputs = (node: NodeDefinition): Record<string, InputPin> =>
   return { ...node.inputs, [TRIGGER_PIN_ID]: nodeInput() };
 };
 
-export const getInputName = (pinId: string) => {
-  switch (pinId) {
-    case TRIGGER_PIN_ID:
-      return "trigger";
-    default:
-      return pinId;
-  }
-};
-
-export const getOutputName = (pinId: string) => {
-  switch (pinId) {
-    case ERROR_PIN_ID:
-      return "error";
-    default:
-      return pinId;
-  }
-};
 
 export const getNodeOutputs = (node: NodeDefinition): Record<string, OutputPin> => {
   return { ...node.outputs, [ERROR_PIN_ID]: nodeOutput() };

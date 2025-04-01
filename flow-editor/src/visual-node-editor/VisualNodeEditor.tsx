@@ -61,7 +61,7 @@ import {
 import { OnboardingTips } from "./OnboardingTips";
 
 import { produce } from "immer";
-import { useState, useRef, useEffect, DragEvent, useMemo } from "react";
+import { useState, useRef, useEffect, DragEvent } from "react";
 import { useHotkeys } from "../lib/react-utils/use-hotkeys";
 import useComponentSize from "@rehooks/component-size";
 
@@ -105,7 +105,6 @@ import { useEditorCommands } from "./useEditorCommands";
 import { CustomNodeModal } from "./CustomNodeModal/CustomNodeModal";
 import { Button, Slider, Toaster, useToast, Play } from "@flyde/ui";
 import { CommandMenu } from "./CommandMenu/CommandMenu";
-import { tempLoadingNode } from "./instance-view/loadingNode";
 
 export const NODE_HEIGHT = 28;
 
@@ -439,7 +438,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
       const onInstanceDragMove = React.useCallback(
         (ins: EditorNodeInstance, event: any, pos: Pos) => {
-          const { newValue, newSelected } = handleInstanceDrag(
+          const newValue = handleInstanceDrag(
             node,
             ins,
             pos,
@@ -447,15 +446,9 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             selectedInstances,
             draggingId
           );
-          onChange(newValue, metaChange("drag-move"));
-          if (newSelected) {
-            onChangeBoardData({
-              selectedInstances: newSelected,
-              selectedConnections: [],
-            });
-          }
+          onChange(newValue, metaChange("drag-move"))
         },
-        [draggingId, onChange, onChangeBoardData, selectedInstances, node]
+        [draggingId, onChange, selectedInstances, node]
       );
 
       const onInstanceDragEnd = React.useCallback((_: any, event: any) => {
@@ -652,7 +645,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             }
           }
         },
-        [currentInsId, node.instances, toast]
+        [currentInsId, toast]
       );
 
       const renderMainPins = (type: PinType) => {
@@ -1154,7 +1147,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
               setEditedNodeInstance(undefined);
             });
           },
-          [node, onChange, editedNodeInstance]
+          [editedNodeInstance, resolveInstance, node, onChange]
         );
 
       const selectionIndicatorData: SelectionIndicatorProps["selection"] =
@@ -1322,17 +1315,10 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             console.error("Failed to get node source:", e);
           }
         },
-        [toast, node]
+        [toast]
       );
 
       const [commandMenuOpen, setCommandMenuOpen] = useState(false);
-
-      const nodesByIndsId = useMemo(() => {
-        return node.instances.reduce((acc, ins) => {
-          acc[ins.id] = ins.node;
-          return acc;
-        }, {} as Record<string, EditorNodeInstance["node"]>);
-      }, [node.instances]);
 
       try {
         return (
@@ -1497,8 +1483,8 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                     Center
                   </Button>
                   <Slider
-                    min={0.15}
-                    max={3}
+                    min={0.3}
+                    max={2}
                     step={0.05}
                     className="w-[100px]"
                     value={[viewPort.zoom]}

@@ -122,14 +122,13 @@ export type ImportableEditorNode = {
   aliases?: string[];
   editorNode: EditorNodeInstance['node']
 } & (
-    | { type: "code"; source: CodeNodeSource }
+    | { type: "code"; source: CodeNodeSource, config: any }
     | { type: "visual"; source: VisualNodeSource }
   );
 
 export function codeNodeToImportableEditorNode(
   node: CodeNode,
-  source: CodeNodeSource,
-  _config?: any
+  source: CodeNodeSource
 ): ImportableEditorNode {
   const macro = isInternalMacroNode(node) ? node : processImprovedMacro(node);
   const processedNode = processMacroNodeInstance(node.id, node, { id: 'n/a', config: macro.defaultData });
@@ -143,6 +142,7 @@ export function codeNodeToImportableEditorNode(
     type: "code",
     source,
     editorNode: { ...editorNode, icon: node.icon },
+    config: macro.defaultData,
   };
 }
 

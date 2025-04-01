@@ -1,9 +1,9 @@
 import * as React from "react";
-import { getOutputName, InputMode, noop, PinType, Pos } from "@flyde/core";
+import { InputMode, noop, PinType, Pos } from "@flyde/core";
 import { BaseNodeView } from "../base-node-view";
 import classNames from "classnames";
 import { usePrompt } from "../../flow-editor/ports";
-import { getInputName } from "@flyde/core";
+import { getInputName, getOutputName } from "../pin-view/helpers";
 import { useDarkMode } from "../../flow-editor/DarkModeContext";
 import { PinView } from "../pin-view/PinView";
 import { getMainPinDomId } from "../dom-ids";
@@ -157,21 +157,21 @@ export const NodeIoView: React.FC<NodeIoViewProps> = React.memo(
         </ContextMenuItem>,
         ...(props.onRename
           ? [
-              <ContextMenuItem key="rename" onClick={onRenameInner}>
-                Rename
-              </ContextMenuItem>,
-            ]
+            <ContextMenuItem key="rename" onClick={onRenameInner}>
+              Rename
+            </ContextMenuItem>,
+          ]
           : []),
         ...(props.onDelete
           ? [
-              <ContextMenuItem
-                key="delete"
-                className="text-red-500"
-                onClick={onDeleteInner}
-              >
-                Delete
-              </ContextMenuItem>,
-            ]
+            <ContextMenuItem
+              key="delete"
+              className="text-red-500"
+              onClick={onDeleteInner}
+            >
+              Delete
+            </ContextMenuItem>,
+          ]
           : []),
       ];
     }, [

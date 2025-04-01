@@ -624,8 +624,6 @@ declare module '@flyde/core/connect/helpers' {
     export const ERROR_PIN_ID = "__error";
     export const TRIGGER_PIN_ID = "__trigger";
     export const getNodeInputs: (node: NodeDefinition) => Record<string, InputPin>;
-    export const getInputName: (pinId: string) => string;
-    export const getOutputName: (pinId: string) => string;
     export const getNodeOutputs: (node: NodeDefinition) => Record<string, OutputPin>;
     export const isExternalConnectionNode: (node: ConnectionNode) => node is ExternalConnectionNode;
     export const isInternalConnectionNode: (node: ConnectionNode) => node is InternalConnectionNode;
@@ -1385,11 +1383,12 @@ declare module '@flyde/core/types/external' {
     } & ({
             type: "code";
             source: CodeNodeSource;
+            config: any;
     } | {
             type: "visual";
             source: VisualNodeSource;
     });
-    export function codeNodeToImportableEditorNode(node: CodeNode, source: CodeNodeSource, _config?: any): ImportableEditorNode;
+    export function codeNodeToImportableEditorNode(node: CodeNode, source: CodeNodeSource): ImportableEditorNode;
     export function visualNodeToImportableEditorNode(node: VisualNode, source: VisualNodeSource): ImportableEditorNode;
     export interface NodeLibraryGroup {
             title: string;
