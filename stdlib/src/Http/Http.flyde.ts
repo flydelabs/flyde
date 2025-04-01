@@ -61,7 +61,7 @@ export const Http: CodeNode = {
       editorType: "json",
       aiCompletion: {
         prompt: `You are an expert HTTP request headers generator. The user will provide a description of the request headers they want to send and you should create a valid JSON object that matches the description.
-        You can expose dynamic variables using the {{synax}}, for example {"X-Token": {{token}}} will expose the "token" as a dynamic input.
+        You can expose dynamic variables using the {{syntax}}, for example {"X-Token": {{token}}} will expose the "token" as a dynamic input.
         User's prompt:
         {{prompt}}
 
