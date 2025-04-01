@@ -1,4 +1,4 @@
-import { EditorCodeNodeDefinition, EditorCodeNodeInstance, EditorNodeInstance } from "@flyde/core";
+import { EditorCodeNodeDefinition, EditorCodeNodeInstance } from "@flyde/core";
 import React from "react";
 import ReactDOM from "react-dom";
 import { StructuredMacroEditorComp } from "./StructuredMacroEditorComp";

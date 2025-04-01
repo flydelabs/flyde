@@ -1,21 +1,17 @@
 import { Button, DialogTitle, useAiCompletion } from "@flyde/ui";
 import { Dialog, DialogContent, DialogHeader } from "@flyde/ui";
 
-import { GitFork } from "@flyde/ui";
 
 import {
-  CodeNodeInstance,
   EditorCodeNodeInstance,
   EditorNodeInstance,
   EditorVisualNode,
-  nodeInstance,
 } from "@flyde/core";
 
 import { ErrorBoundary } from "react-error-boundary";
 import React, { useCallback, useMemo, useEffect } from "react";
 import { loadConfigEditorComponent } from "./loadConfigEditorComponent";
-import { usePrompt } from "../../flow-editor/ports";
-import { Loader } from "../../lib/loader";
+import { usePorts } from "../../flow-editor/ports";
 import { InstanceIcon } from "../instance-view/InstanceIcon";
 import { HotkeyIndication } from "@flyde/ui";
 
@@ -89,7 +85,7 @@ export const InstanceConfigEditor: React.FC<InstanceConfigEditorProps> = (
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleSubmit, hasUnsavedChanges]);
 
-  const prompt = usePrompt();
+  const ports = usePorts();
 
   const aiCompletion = useAiCompletion();
 
@@ -138,7 +134,7 @@ export const InstanceConfigEditor: React.FC<InstanceConfigEditorProps> = (
                 <EditorComp
                   value={instanceConfig}
                   onChange={handleMacroDataChange}
-                  prompt={prompt}
+                  ports={ports}
                   createAiCompletion={aiCompletion.createCompletion}
                 />
               </ErrorBoundary>

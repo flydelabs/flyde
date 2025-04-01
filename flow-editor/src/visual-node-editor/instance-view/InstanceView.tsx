@@ -9,8 +9,6 @@ import {
   nodeInput,
   NodeStyle,
   getNodeOutputs,
-  getInputName,
-  getOutputName,
   CodeNodeDefinition,
   VisualNodeInstance,
   CodeNodeInstance,
@@ -45,8 +43,8 @@ import {
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuSub,
-  ContextMenuSubTrigger,
   ContextMenuSubContent,
+  ContextMenuSubTrigger,
 } from "@flyde/ui";
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@flyde/ui";
@@ -56,7 +54,7 @@ import {
   VisualNodeEditorContextType,
   VisualNodeEditorProvider,
 } from "../VisualNodeEditorContext";
-import { tempLoadingNode } from "./loadingNode";
+import { getInputName, getOutputName } from "../pin-view/helpers";
 
 export const PIECE_HORIZONTAL_PADDING = 25;
 export const PIECE_CHAR_WIDTH = 11;
@@ -78,14 +76,14 @@ export const getVisibleInputs = (
     const isConnected = connections.some(
       (c) => c.to.insId === instance.id && c.to.pinId === k
     );
-    // const isStatic = isStaticInputPinConfig(instance.inputConfig[k]);
-
-    // const isRequired = node.inputs[k] && node.inputs[k]?.mode === "required";
-
     const isOptional = node.inputs[k] && node.inputs[k]?.mode === "optional";
 
     return isConnected || (!isOptional && k !== TRIGGER_PIN_ID);
   });
+
+  if (visiblePins.length === 0) {
+    return [TRIGGER_PIN_ID];
+  }
 
   return visiblePins;
 };
@@ -204,7 +202,6 @@ export const InstanceView: React.FC<InstanceViewProps> =
       onUngroup,
       onGroupSelected,
       isConnectedInstanceSelected,
-      onChangeStyle,
       onDeleteInstance,
       onSetDisplayName,
       onPinMouseUp,
@@ -288,7 +285,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
         const newY = currPos.y + dy;
         onDragEnd(instance, event, { ...data, x: newX, y: newY });
       },
-      [instance, onDragEnd, viewPort.zoom, _onSelect]
+      [instance, onDragEnd, viewPort.zoom]
     );
 
     const _onDragMove = React.useCallback(
@@ -337,7 +334,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
       {
         ...nodeInput(),
         description:
-          "Use this pin to manually trigger the node. If not connected, the node will be triggered automatically when all required inputs have data.",
+          "Controls when this node executes. When connected, node runs only when triggered. Otherwise, automatically runs when required inputs receive data or when flow starts if no inputs exist. Can be exposed via right-click menu",
       },
     ]);
 
@@ -479,34 +476,36 @@ export const InstanceView: React.FC<InstanceViewProps> =
     );
 
     const getContextMenu = React.useCallback(() => {
-      const inputMenuItems = inputKeys.map((k) => {
-        const isVisible = _visibleInputs.includes(k);
-        const isConnectedAndNotHidden =
-          connectedInputs.has(k) && connectedInputs.get(k) !== true;
+      const inputMenuItems = inputKeys
+        .filter(k => k !== TRIGGER_PIN_ID)
+        .map((k) => {
+          const isVisible = _visibleInputs.includes(k);
+          const isConnectedAndNotHidden =
+            connectedInputs.has(k) && connectedInputs.get(k) !== true;
 
-        const pinName = getInputName(k);
+          const pinName = getInputName(k);
 
-        return (
-          <ContextMenuItem
-            key={k}
-            disabled={isConnectedAndNotHidden && isVisible}
-            onClick={() =>
-              onChangeVisibleInputs(
-                instance,
-                isVisible
-                  ? _visibleInputs.filter((i) => i !== k)
-                  : [..._visibleInputs, k]
-              )
-            }
-          >
-            {isVisible
-              ? isConnectedAndNotHidden
-                ? `Hide input "${pinName}" (disconnect first)`
-                : `Hide input "${pinName}"`
-              : `Show input "${pinName}"`}
-          </ContextMenuItem>
-        );
-      });
+          return (
+            <ContextMenuItem
+              key={k}
+              disabled={isConnectedAndNotHidden && isVisible}
+              onClick={() =>
+                onChangeVisibleInputs(
+                  instance,
+                  isVisible
+                    ? _visibleInputs.filter((i) => i !== k)
+                    : [..._visibleInputs, k]
+                )
+              }
+            >
+              {isVisible
+                ? isConnectedAndNotHidden
+                  ? `Hide "${pinName}" (disconnect first)`
+                  : `Hide "${pinName}"`
+                : `Show "${pinName}"`}
+            </ContextMenuItem>
+          );
+        });
 
       const outputMenuItems = outputKeys.map((k) => {
         const isVisible = _visibleOutputs.includes(k);
@@ -530,11 +529,29 @@ export const InstanceView: React.FC<InstanceViewProps> =
             {isVisible
               ? isConnected
                 ? `Hide output "${pinName}" (disconnect first)`
-                : `Hide output "${pinName}"`
-              : `Show output "${pinName}"`}
+                : `Hide "${pinName}"`
+              : `Show "${pinName}"`}
           </ContextMenuItem>
         );
       });
+
+      // Check if trigger pin is visible
+      const isTriggerVisible = _visibleInputs.includes(TRIGGER_PIN_ID);
+      const triggerMenuItem = (
+        <ContextMenuItem
+          key="trigger"
+          onClick={() =>
+            onChangeVisibleInputs(
+              instance,
+              isTriggerVisible
+                ? _visibleInputs.filter((i) => i !== TRIGGER_PIN_ID)
+                : [..._visibleInputs, TRIGGER_PIN_ID]
+            )
+          }
+        >
+          {isTriggerVisible ? "Hide trigger input" : "Show trigger input"}
+        </ContextMenuItem>
+      );
 
       return (
         <ContextMenuContent>
@@ -542,22 +559,37 @@ export const InstanceView: React.FC<InstanceViewProps> =
             Change configuration
           </ContextMenuItem>
 
-          {inputMenuItems}
-          {outputMenuItems}
+          <ContextMenuItem onClick={_onSetDisplayName}>
+            Set display name
+          </ContextMenuItem>
+
+          <ContextMenuSub>
+            <ContextMenuSubTrigger>Edit inputs</ContextMenuSubTrigger>
+            <ContextMenuSubContent>
+              <ContextMenuItem onClick={_onChangeVisibleInputs}>
+                Reorder inputs
+              </ContextMenuItem>
+              {inputMenuItems}
+              {triggerMenuItem}
+            </ContextMenuSubContent>
+          </ContextMenuSub>
+
+          <ContextMenuSub>
+            <ContextMenuSubTrigger>Edit outputs</ContextMenuSubTrigger>
+            <ContextMenuSubContent>
+              <ContextMenuItem onClick={_onChangeVisibleOutputs}>
+                Reorder outputs
+              </ContextMenuItem>
+              {outputMenuItems}
+            </ContextMenuSubContent>
+          </ContextMenuSub>
+
           {isInlineVisualNodeInstance(instance) && (
             <ContextMenuItem onClick={() => onUngroup(instance)}>
               Ungroup inline node
             </ContextMenuItem>
           )}
-          <ContextMenuItem onClick={_onChangeVisibleInputs}>
-            Reorder inputs
-          </ContextMenuItem>
-          <ContextMenuItem onClick={_onChangeVisibleOutputs}>
-            Reorder outputs
-          </ContextMenuItem>
-          <ContextMenuItem onClick={_onSetDisplayName}>
-            Set display name
-          </ContextMenuItem>
+
           <ContextMenuItem onClick={onGroupSelected}>
             Group selected instances
           </ContextMenuItem>
@@ -569,28 +601,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
           </ContextMenuItem>
         </ContextMenuContent>
       );
-    }, [
-      inputKeys,
-      outputKeys,
-      instance,
-      _onChangeVisibleInputs,
-      _onChangeVisibleOutputs,
-      _onSetDisplayName,
-      onGroupSelected,
-      _onDeleteInstance,
-      style,
-      _prompt,
-      _visibleInputs,
-      connectedInputs,
-      onChangeVisibleInputs,
-      _visibleOutputs,
-      connectedOutputs,
-      onChangeVisibleOutputs,
-      onUngroup,
-      props,
-      onDblClick,
-      onChangeStyle,
-    ]);
+    }, [inputKeys, outputKeys, instance, _onChangeVisibleInputs, _onChangeVisibleOutputs, _onSetDisplayName, onGroupSelected, _onDeleteInstance, _visibleInputs, connectedInputs, onChangeVisibleInputs, _visibleOutputs, connectedOutputs, onChangeVisibleOutputs, onUngroup, props, onDblClick]);
 
     const instanceDomId = getInstanceDomId(instance.id, props.ancestorsInsIds);
 

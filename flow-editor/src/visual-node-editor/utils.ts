@@ -3,7 +3,6 @@ import * as immer from "immer";
 import { NODE_HEIGHT } from "./VisualNodeEditor";
 import {
   Pos,
-  VisualNode,
   NodeInstance,
   isExternalConnectionNode,
   PinType,
@@ -28,7 +27,6 @@ import { calcNodeWidth } from "./instance-view/utils";
 
 import { calcNodeIoWidth as calcIoNodeWidth } from "./node-io-view/utils";
 import { vSub, vAdd, vMul, vDiv } from "../physics";
-import { getLeafInstancesOfSelection } from "./node-graph-utils";
 import { getVisibleInputs, getVisibleOutputs } from "./instance-view";
 import { ConnectionData } from "@flyde/core";
 
@@ -188,7 +186,7 @@ export const createNewNodeInstance = (
         insId,
         importableNode.id,
         importableNode.source,
-        {},
+        importableNode.config,
         {},
         {
           x: 0,
@@ -549,7 +547,6 @@ export const handleInstanceDrag = (
 
   const delta = vSub(pos, ins.pos);
 
-  let newSelected;
   const newValue = immer.produce(node, (draft) => {
     const foundIns = draft.instances.find((itrIns) => itrIns.id === ins.id);
 
@@ -557,31 +554,18 @@ export const handleInstanceDrag = (
       throw new Error("impossible state dragging instance that does not exist");
     }
 
-    if (!event.shiftKey && draggingId) {
-      newSelected = [draggingId];
-    }
-
     const otherInstances = draft.instances.filter(
       (ins) => selected.includes(ins.id) && ins !== foundIns
     );
 
-    const draggedInstances = [foundIns, ...otherInstances];
-
-    const leaves = getLeafInstancesOfSelection(
-      draggedInstances,
-      draft.instances,
-      draft.connections
-    );
-
-    [...otherInstances, ...leaves].forEach((ins) => {
+    otherInstances.forEach((ins) => {
       ins.pos = vAdd(ins.pos, delta);
     });
 
     foundIns.pos = pos;
-
   });
 
-  return { newValue, newSelected: selected };
+  return newValue;
 };
 
 export const handleIoPinRename = (

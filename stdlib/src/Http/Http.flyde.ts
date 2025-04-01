@@ -19,7 +19,7 @@ export const Http: CodeNode = {
       editorType: "select",
       editorTypeData: {
         options: ["GET", "POST", "PUT", "DELETE", "PATCH"],
-      },
+      }
     },
     url: {
       defaultValue: "https://www.example.com",
@@ -33,6 +33,18 @@ export const Http: CodeNode = {
       description: "The request body data",
       editorType: "json",
       condition: "method !== 'GET'",
+      aiCompletion: {
+        prompt: `You are an expert HTTP request body generator. The user will provide a description of the request body they want to send and you should create a valid JSON object that matches the description.
+        You can expose dynamic variables using the {{synax}}, for example {"name": {{name}}} will expose the "name" as a dynamic input.
+        User's prompt:
+        {{prompt}}
+
+        Existing value:
+        {{value}}
+      
+        `,
+        jsonMode: true
+      }
     },
 
     // Advanced settings (collapsible)
@@ -47,6 +59,20 @@ export const Http: CodeNode = {
       label: "Headers",
       description: "The headers to send with the request",
       editorType: "json",
+      aiCompletion: {
+        prompt: `You are an expert HTTP request headers generator. The user will provide a description of the request headers they want to send and you should create a valid JSON object that matches the description.
+        You can expose dynamic variables using the {{synax}}, for example {"X-Token": {{token}}} will expose the "token" as a dynamic input.
+        User's prompt:
+        {{prompt}}
+
+        Existing value:
+        {{value}}
+
+        prefer lowerPascalCase for input names
+      
+        `,
+        jsonMode: true
+      }
     },
     advancedSettings: {
       group: createInputGroup("Advanced Settings", ["params", "headers"], {
