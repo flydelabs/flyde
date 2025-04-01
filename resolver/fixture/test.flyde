@@ -1,165 +1,5 @@
-imports: {}
+---
 node:
-  instances:
-    - pos:
-        x: -365.9949169921875
-        y: -38.15012207031248
-      id: rhcla8cg1rsyprp0q6ouiovi
-      inputConfig: {}
-      nodeId: GetAttribute
-      config:
-        key:
-          type: string
-          value: query.name
-        object:
-          type: dynamic
-          value: ""
-      type: code
-      source:
-        type: package
-        data: "@flyde/stdlib"
-    - pos:
-        x: 520.5490186656609
-        y: -371.800444446911
-      id: f08drhtyp6l624ogsd3tfmep
-      inputConfig: {}
-      nodeId: Note
-      config:
-        content: >+
-          <strong>Welcome to Flowcode!</strong>
-
-          <div>This is a simple flow representing an HTTP </br> endpoint that showcases some of the basics in Flowcode.</div>
-
-          <br/>
-
-          <p>This HTTP endpoint will show a different response based <br/> on the "name" query parameter.</p>
-
-          <p>Try testing the flow and pass your name as  <br/>  the "name" query parameter to see it in action</p>
-
-          <p>Then, deploy it and access it from your <br/>  browser/cURL/Postman!</p>
-
-          <p>Finally, try changing the logic and start exploring <br/> with the various possibilities that Flowcode offers. <br/> Get creative with your flows! ✨</p>
-
-      type: code
-      source:
-        type: package
-        data: "@flyde/stdlib"
-    - pos:
-        x: 96.20713134765629
-        y: -86.38084301901449
-      id: lv7iua6bx4hxo6cr7uv3lsxe
-      inputConfig: {}
-      nodeId: InlineValue
-      config:
-        value:
-          type: string
-          value: Hey, {{name}} ✨
-      type: code
-      source:
-        type: package
-        data: "@flyde/stdlib"
-    - pos:
-        x: -158.58768427068514
-        y: -51.26420593261719
-      id: dktnda0y035r2wo8p4hjnnw5
-      inputConfig: {}
-      nodeId: Conditional
-      config:
-        condition:
-          type: EXISTS
-        leftOperand:
-          type: dynamic
-          value: "{{data.query.name}}"
-        rightOperand:
-          type: string
-          value: Some value
-      type: code
-      source:
-        type: package
-        data: "@flyde/stdlib"
-    - pos:
-        x: 72.2223022460937
-        y: 17.479272460937523
-      id: xpyxfgrttjd9oenllcxt6i8e
-      inputConfig: {}
-      nodeId: InlineValue
-      config:
-        value:
-          type: string
-          value: Hello, guest
-      type: code
-      source:
-        type: package
-        data: "@flyde/stdlib"
-    - pos:
-        x: 25.750720880682024
-        y: -195.83441411798674
-      id: CodeExpression-8j14goe
-      inputConfig: {}
-      nodeId: CodeExpression
-      config:
-        value: "`Hello ${inputs.firstName} ${inputs.lastName}`"
-      type: code
-      source:
-        type: package
-        data: "@flyde/stdlib"
-    - pos:
-        x: -244.95711127312552
-        y: -184.05526033330796
-      id: Switch-nw04ghx
-      inputConfig: {}
-      nodeId: Switch
-      config:
-        inputs:
-          - value
-        cases:
-          - name: case1
-            conditionExpression: inputs.value === 'case1'
-            outputExpression: inputs.value
-        defaultCase:
-          enabled: true
-          outputExpression: inputs.value
-      type: code
-      source:
-        type: package
-        data: "@flyde/stdlib"
-  connections:
-    - from:
-        insId: lv7iua6bx4hxo6cr7uv3lsxe
-        pinId: value
-      to:
-        insId: __this
-        pinId: response
-    - from:
-        insId: rhcla8cg1rsyprp0q6ouiovi
-        pinId: value
-      to:
-        insId: dktnda0y035r2wo8p4hjnnw5
-        pinId: leftOperand
-    - from:
-        insId: dktnda0y035r2wo8p4hjnnw5
-        pinId: "true"
-      to:
-        insId: lv7iua6bx4hxo6cr7uv3lsxe
-        pinId: name
-    - from:
-        insId: dktnda0y035r2wo8p4hjnnw5
-        pinId: "false"
-      to:
-        insId: xpyxfgrttjd9oenllcxt6i8e
-        pinId: __trigger
-    - from:
-        insId: xpyxfgrttjd9oenllcxt6i8e
-        pinId: value
-      to:
-        insId: __this
-        pinId: response
-    - from:
-        insId: __this
-        pinId: request
-      to:
-        insId: rhcla8cg1rsyprp0q6ouiovi
-        pinId: object
   id: HTTP Node
   inputs:
     request:
@@ -167,17 +7,139 @@ node:
   outputs:
     response:
       delayed: false
+  instances:
+  - id: rhcla8cg1rsyprp0q6ouiovi
+    pos:
+      x: -365.9949169921875
+      "y": -38.15012207031248
+    type: code
+    config:
+      key:
+        type: string
+        value: query.name
+      object:
+        type: dynamic
+        value: ''
+    nodeId: GetAttribute
+    source:
+      data: "@flyde/stdlib"
+      type: package
+    inputConfig: {}
+  - id: f08drhtyp6l624ogsd3tfmep
+    pos:
+      x: 520.5490186656609
+      "y": -371.800444446911
+    type: code
+    config:
+      content: |+
+        <strong>Welcome to Flowcode!</strong>
+        <div>This is a simple flow representing an HTTP </br> endpoint that showcases some of the basics in Flowcode.</div>
+        <br/>
+        <p>This HTTP endpoint will show a different response based <br/> on the "name" query parameter.</p>
+        <p>Try testing the flow and pass your name as  <br/>  the "name" query parameter to see it in action</p>
+        <p>Then, deploy it and access it from your <br/>  browser/cURL/Postman!</p>
+        <p>Finally, try changing the logic and start exploring <br/> with the various possibilities that Flowcode offers. <br/> Get creative with your flows! ✨</p>
+
+    nodeId: Note
+    source:
+      data: "@flyde/stdlib"
+      type: package
+    inputConfig: {}
+  - id: lv7iua6bx4hxo6cr7uv3lsxe
+    pos:
+      x: 96.20713134765629
+      "y": -86.38084301901449
+    type: code
+    config:
+      value:
+        type: string
+        value: Hey, {{name}} ✨
+    nodeId: InlineValue
+    source:
+      data: "@flyde/stdlib"
+      type: package
+    inputConfig: {}
+  - id: dktnda0y035r2wo8p4hjnnw5
+    pos:
+      x: -158.58768427068514
+      "y": -51.26420593261719
+    type: code
+    config:
+      condition:
+        type: EXISTS
+      leftOperand:
+        type: dynamic
+        value: "{{data.query.name}}"
+      rightOperand:
+        type: string
+        value: Some value
+    nodeId: Conditional
+    source:
+      data: "@flyde/stdlib"
+      type: package
+    inputConfig: {}
+  - id: xpyxfgrttjd9oenllcxt6i8e
+    pos:
+      x: 72.2223022460937
+      "y": 17.479272460937523
+    type: code
+    config:
+      value:
+        type: string
+        value: Hello, guest
+    nodeId: InlineValue
+    source:
+      data: "@flyde/stdlib"
+      type: package
+    inputConfig: {}
+  connections:
+  - to:
+      insId: __this
+      pinId: response
+    from:
+      insId: lv7iua6bx4hxo6cr7uv3lsxe
+      pinId: value
+  - to:
+      insId: dktnda0y035r2wo8p4hjnnw5
+      pinId: leftOperand
+    from:
+      insId: rhcla8cg1rsyprp0q6ouiovi
+      pinId: value
+  - to:
+      insId: lv7iua6bx4hxo6cr7uv3lsxe
+      pinId: name
+    from:
+      insId: dktnda0y035r2wo8p4hjnnw5
+      pinId: 'true'
+  - to:
+      insId: xpyxfgrttjd9oenllcxt6i8e
+      pinId: __trigger
+    from:
+      insId: dktnda0y035r2wo8p4hjnnw5
+      pinId: 'false'
+  - to:
+      insId: __this
+      pinId: response
+    from:
+      insId: xpyxfgrttjd9oenllcxt6i8e
+      pinId: value
+  - to:
+      insId: rhcla8cg1rsyprp0q6ouiovi
+      pinId: object
+    from:
+      insId: __this
+      pinId: request
   inputsPosition:
     request:
       x: -521.0330505371094
-      y: -37.31658935546875
+      "y": -37.31658935546875
     response:
       x: -59.16668701171875
-      y: 173.01328857421873
+      "y": 173.01328857421873
   outputsPosition:
     result:
       x: -23.264428942324532
-      y: 237.25953921502617
+      "y": 237.25953921502617
     response:
       x: 312.1508026123047
-      y: -45.916748046875
+      "y": -45.916748046875
