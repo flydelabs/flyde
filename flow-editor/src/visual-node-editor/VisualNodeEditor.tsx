@@ -1484,7 +1484,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                   </Button>
                   <Slider
                     min={0.3}
-                    max={5}
+                    max={2}
                     step={0.05}
                     className="w-[100px]"
                     value={[viewPort.zoom]}
