@@ -697,7 +697,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
           if (!isLikelyTrackpad.current) {
             const mod = e.deltaY > 0 ? 1 : -1;
-            const zoomDiff = mod * -0.1; // Mouse zoom adjustment
+            const zoomDiff = mod * -0.25; // Mouse zoom adjustment
             onZoom(viewPort.zoom + zoomDiff, "mouse");
           } else {
             if (e.metaKey || e.ctrlKey) {
