@@ -208,7 +208,7 @@ export function isCodeNode<Config>(node: any): node is CodeNode<Config> {
   return isAdvancedCodeNode(node) || isSimplifiedCodeNode(node);
 }
 
-export function processImprovedMacro(node: CodeNode): InternalMacroNode<any> {
+export function processImprovedMacro(node: CodeNode, secrets: Record<string, string> = {}): InternalMacroNode<any> {
   const isAdvanced = isAdvancedCodeNode(node);
 
   const displayName =
@@ -526,15 +526,20 @@ export function processImprovedMacro(node: CodeNode): InternalMacroNode<any> {
       runFnBuilder: (config) => {
         return (inputs, outputs, adv) => {
           const inputValues = Object.keys(node.inputs).reduce((acc, key) => {
-            acc[key] = replaceInputsInValue(
-              inputs,
-              config[key] ?? macroConfigurableValue("dynamic", `{{${key}}}`),
-              key
-            );
+            const configValue = config[key] ?? macroConfigurableValue("dynamic", `{{${key}}}`);
+            
+            if (
+              node.inputs[key].editorType === "secret" && 
+              secrets[configValue.value]
+            ) {
+              acc[key] = secrets[configValue.value];
+            } else {
+              acc[key] = replaceInputsInValue(inputs, configValue, key);
+            }
+            
             return acc;
           }, {} as Record<string, any>);
 
-          console.log("inputValues", inputValues, config);
           return node.run(inputValues, outputs, adv);
         };
       },

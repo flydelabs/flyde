@@ -1,8 +1,15 @@
 import { AiCompletionProvider, FormGroup, Textarea } from "@flyde/ui";
 import type { CodeExpressionConfig } from "./CodeExpression.flyde";
 import React, { useCallback } from "react";
-import { getVariables } from "./getInlineVariables";
 import { MacroEditorComp } from "@flyde/core";
+
+// Sync with CodeExpression.flyde.ts if changed
+const getVariables = (code: string) => {
+  return (code.match(/inputs\.([a-zA-Z]\w*)/g) || []).map((v) =>
+    v.replace(/inputs\./, "")
+  );
+};
+
 
 const CodeExpressionEditor: MacroEditorComp<CodeExpressionConfig> =
   function CodeExpressionEditor(props) {

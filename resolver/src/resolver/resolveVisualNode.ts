@@ -16,12 +16,13 @@ Recursively resolve all dependencies of a flow. For each node instance:
 */
 export function resolveVisualNode(
   visualNode: VisualNode,
-  nodeFinder: ReferencedNodeFinder
+  nodeFinder: ReferencedNodeFinder,
+  secrets: Record<string, string>
 ): InternalVisualNode {
 
   const internalInstances = visualNode.instances.map((instance) => {
     if (isInlineVisualNodeInstance(instance)) {
-      const resolved = resolveVisualNode(instance.source.data, nodeFinder);
+      const resolved = resolveVisualNode(instance.source.data, nodeFinder, secrets);
       // TODO: weird gap in types? This seems to be similar to createInternalInlineNodeInstance - need to double check
       return {
         id: instance.id,
@@ -41,7 +42,7 @@ export function resolveVisualNode(
       const node = nodeFinder(instance);
 
       if (isVisualNode(node)) {
-        const resolved = resolveVisualNode(node, nodeFinder);
+        const resolved = resolveVisualNode(node, nodeFinder, secrets);
 
         return {
           ...instance,
@@ -59,23 +60,22 @@ export function resolveVisualNode(
 
 
     if (isVisualNode(node)) {
-      const resolved = resolveVisualNode(node, nodeFinder);
+      const resolved = resolveVisualNode(node, nodeFinder, secrets);
       return {
         ...instance,
         node: resolved,
       };
     }
 
-    // Only process the node if it's a CodeNode, not a VisualNode
     if (node && isCodeNode(node)) {
-      const processed = processMacroNodeInstance("", node, instance);
+      const processed = processMacroNodeInstance("", node, instance, secrets);
 
       return {
         ...instance,
         node: processed,
       };
     } else {
-      throw new Error(`Cannot process node ${instance.nodeId} ${JSON.stringify(instance)  }`);
+      throw new Error(`Cannot process node ${instance.nodeId} ${JSON.stringify(instance)}`);
     }
 
   });
