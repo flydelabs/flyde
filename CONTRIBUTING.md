@@ -63,7 +63,11 @@ Small pull requests are much easier to review and more likely to get merged.
 1.  After cloning the repository, run `pnpm install`
 2.  Run `pnpm build` - this will build the project, including some binary dependencies you will be warned about in step 2.
 3.  Run `pnpm install` again - this will make ensure the binary dependencies are properly linked
-4.  Run `pnpm start` - this will open VSCode with the main workspace, and also open the extension's development instance.
+4.  Run `pnpm start` - this will open VSCode with the main workspace
+5.  Start debugging (F5 / Debug: start debugger) -> `run extension`. (not `run extension (prod)`!)
+6. You should see a new VSCode instace saying `[Extension Development Host]`
+7. Use it to open `flyde/vscode-extension` and open a Flyde file from templates folder, for example `templates/hello-world/Example.flyde`
+8. You should see the Flyde editor now. Any changes you do to the code will be visible if you refresh the editor (either by closing the .flyde file and opening again, or `Developer: Reload Window`). Note: some changes require an extension reload, so if you're not seeing your change, hit the Restart button on the debugger panel
 
 **Windows users** - please check [this issue](https://github.com/flydelabs/flyde/issues/123) for a potential workaround if something goes wrong.
 
