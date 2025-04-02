@@ -238,9 +238,8 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       const inlineEditorPortalRootRef = useRef<HTMLElement | null>(null);
 
       useDidMount(() => {
-        inlineEditorPortalRootRef.current = boardRef.current?.querySelector(
-          ".inline-editor-portal-root"
-        ) ?? null;
+        inlineEditorPortalRootRef.current =
+          boardRef.current?.querySelector(".inline-editor-portal-root") ?? null;
       });
 
       const viewPort = boardData.viewPort;
@@ -257,7 +256,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         (viewPort: ViewPort) => {
           onChangeBoardData({ viewPort });
         },
-        [onChangeBoardData]
+        [onChangeBoardData],
       );
 
       const isLikelyTrackpad = React.useRef(false);
@@ -268,7 +267,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         (insId, pin) => {
           return onInspectPin(insId, pin);
         },
-        [onInspectPin]
+        [onInspectPin],
       );
 
       useEffect(() => {
@@ -292,7 +291,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           ancestorsInsIds,
           viewPort,
           boardPos,
-          parentViewport
+          parentViewport,
         );
 
       useEffect(() => {
@@ -328,11 +327,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         onGroupSelectedInternal,
         onNodeIoPinClick,
         onPinClick,
-      } = useEditorCommands(
-        lastMousePos,
-        vpSize,
-        isBoardInFocus
-      );
+      } = useEditorCommands(lastMousePos, vpSize, isBoardInFocus);
 
       const fitToScreen = () => {
         const vp = fitViewPortToNode(node, vpSize);
@@ -384,11 +379,11 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         const { newNode, newInstances } = pasteInstancesCommand(
           node,
           lastMousePos.current,
-          props.clipboardData
+          props.clipboardData,
         );
         onChange(
           newNode as EditorVisualNode,
-          functionalChange("paste instances")
+          functionalChange("paste instances"),
         );
 
         onChangeBoardData({
@@ -433,7 +428,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           setDraggingId(ins.id);
           onChange({ ...node }, metaChange("drag-start"));
         },
-        [onChange, node]
+        [onChange, node],
       );
 
       const onInstanceDragMove = React.useCallback(
@@ -444,11 +439,11 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             pos,
             event,
             selectedInstances,
-            draggingId
+            draggingId,
           );
-          onChange(newValue, metaChange("drag-move"))
+          onChange(newValue, metaChange("drag-move"));
         },
-        [draggingId, onChange, selectedInstances, node]
+        [draggingId, onChange, selectedInstances, node],
       );
 
       const onInstanceDragEnd = React.useCallback((_: any, event: any) => {
@@ -463,7 +458,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           event.stopPropagation();
           setDraggingId(THIS_INS_ID);
         },
-        []
+        [],
       );
 
       const onDragMoveNodeIo = React.useCallback(
@@ -471,7 +466,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           type: "input" | "output",
           pin: string,
           event: any,
-          data: any
+          data: any,
         ) => {
           event.preventDefault();
           event.stopPropagation();
@@ -488,7 +483,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
           onChange(newValue, metaChange("node-io-drag-move"));
         },
-        [onChange, node]
+        [onChange, node],
       );
 
       const onDragEndNodeIo = React.useCallback(
@@ -496,14 +491,14 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           type: "input" | "output",
           pin: string,
           event: any,
-          data: any
+          data: any,
         ) => {
           event.preventDefault();
           event.stopPropagation();
           // const { x, y } = data;
           setDraggingId(undefined);
         },
-        []
+        [],
       );
 
       const [isPanning, setIsPanning] = useState(false);
@@ -537,7 +532,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             }
           }
         },
-        [node.id, isSpacePressed, onChangeBoardData, startSelectionBox]
+        [node.id, isSpacePressed, onChangeBoardData, startSelectionBox],
       );
 
       const onMouseUp: React.MouseEventHandler = React.useCallback(
@@ -555,7 +550,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             });
           }
         },
-        [node.id, endSelectionBox, onChangeBoardData, isSpacePressed]
+        [node.id, endSelectionBox, onChangeBoardData, isSpacePressed],
       );
 
       const onMouseMove: React.MouseEventHandler = React.useCallback(
@@ -595,7 +590,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           isPanning,
           viewPort,
           setViewPort,
-        ]
+        ],
       );
 
       const onMouseLeave: React.MouseEventHandler = React.useCallback((e) => {
@@ -609,7 +604,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
       const onDblClickInstance = React.useCallback(
         (ins: EditorNodeInstance, shift: boolean) => {
-
           if (shift) {
             if (!isVisualNode(ins.node as FlydeNode)) {
               toast({
@@ -628,7 +622,10 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             if (isCodeNodeInstance(ins)) {
               setEditedNodeInstance({ ins: ins as EditorCodeNodeInstance });
             } else if (isVisualNodeInstance(ins)) {
-              if (isVisualNode(ins.node as any) && ins.source.type === "inline") {
+              if (
+                isVisualNode(ins.node as any) &&
+                ins.source.type === "inline"
+              ) {
                 setOpenInlineInstance({ insId: ins.id, node: ins.node as any });
               } else {
                 toast({
@@ -645,7 +642,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             }
           }
         },
-        [currentInsId, toast]
+        [currentInsId, toast],
       );
 
       const renderMainPins = (type: PinType) => {
@@ -682,7 +679,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             onSelect={onNodeIoPinClick}
             onSetDescription={onNodeIoSetDescription}
             selected={selectionPinId === k}
-            description={v.description ?? ''}
+            description={v.description ?? ""}
             onMouseUp={onNodeIoMouseUp}
             onMouseDown={onNodeIoMouseDown}
           />
@@ -695,13 +692,16 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             isLikelyTrackpad.current = true;
           }
 
+          const isTrackpad = e.deltaMode === 0; // Trackpad typically has deltaMode 0
+          const zoomSensitivity = isTrackpad ? 0.005 : 0.1; // Adjust sensitivity for trackpad vs mouse
+
           if (!isLikelyTrackpad.current) {
             const mod = e.deltaY > 0 ? 1 : -1;
-            const zoomDiff = mod * -0.25; // because e.deltaY accumulates, I will just treat every scroll the same. Not ideal for UX but it's better than current behavior
+            const zoomDiff = mod * -0.25; // Mouse zoom adjustment
             onZoom(viewPort.zoom + zoomDiff, "mouse");
           } else {
             if (e.metaKey || e.ctrlKey) {
-              const zoomDiff = e.deltaY * -0.005;
+              const zoomDiff = e.deltaY * -zoomSensitivity; // Trackpad zoom adjustment
               onZoom(viewPort.zoom + zoomDiff, "mouse");
               e.preventDefault();
               e.stopPropagation();
@@ -719,7 +719,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             }
           }
         },
-        [onZoom, setViewPort, viewPort]
+        [onZoom, setViewPort, viewPort],
       );
 
       useEffect(() => {
@@ -741,7 +741,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
       // unoptimized code to get connected inputs
       const instancesConnectToPinsRef = React.useRef(
-        new Map<string, Record<string, NodeInstance[]>>()
+        new Map<string, Record<string, NodeInstance[]>>(),
       );
 
       // auto prune orphan connections if their inputs/outputs no longer exist
@@ -759,7 +759,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
               if (ins.visibleInputs) {
                 const invalidInputs = ins.visibleInputs.filter(
-                  (pinId) => !nodeInputs[pinId]
+                  (pinId) => !nodeInputs[pinId],
                 );
                 if (invalidInputs.length > 0) {
                   ins.visibleInputs = undefined;
@@ -769,7 +769,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
               if (ins.visibleOutputs) {
                 const invalidOutputs = ins.visibleOutputs.filter(
-                  (pinId) => !nodeOutputs[pinId]
+                  (pinId) => !nodeOutputs[pinId],
                 );
                 if (invalidOutputs.length > 0) {
                   ins.visibleOutputs = undefined;
@@ -782,16 +782,17 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         });
         if (invalids.length > 0) {
           toast({
-            description: `Found ${invalids.length
-              } invalid visible inputs/outputs: ${invalids.join(
-                ", "
-              )}. Resetting to full list`,
+            description: `Found ${
+              invalids.length
+            } invalid visible inputs/outputs: ${invalids.join(
+              ", ",
+            )}. Resetting to full list`,
             variant: "default",
           });
 
           onChange(
             newNode,
-            functionalChange("reset corrupt visible inputs/outputs")
+            functionalChange("reset corrupt visible inputs/outputs"),
           );
         }
       }, [instances, onChange, node, toast, node.instances]);
@@ -816,7 +817,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         fitToScreen,
         { text: "Center viewport", group: "Viewport Controls" },
         [],
-        isBoardInFocus
+        isBoardInFocus,
       );
 
       useHotkeys(
@@ -824,14 +825,14 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         onCopyInner,
         { text: "Copy instances", group: "Editing" },
         [],
-        isBoardInFocus
+        isBoardInFocus,
       );
       useHotkeys(
         "cmd+v, ctrl+v",
         onPaste,
         { text: "Paste instances", group: "Editing" },
         [],
-        isBoardInFocus
+        isBoardInFocus,
       );
 
       useHotkeys(
@@ -839,7 +840,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         selectClosest,
         { text: "Select pin closest to mouse", group: "Selection" },
         [],
-        isBoardInFocus
+        isBoardInFocus,
       );
 
       useHotkeys(
@@ -850,7 +851,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         },
         { text: "Open command menu", group: "General" },
         [],
-        isBoardInFocus
+        isBoardInFocus,
       );
 
       const onChangeInspected: VisualNodeEditorContextType["onChangeNode"] =
@@ -861,7 +862,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             }
             const newNode = produce(node, (draft) => {
               const ins = draft.instances.find(
-                (i) => i.id === openInlineInstance.insId
+                (i) => i.id === openInlineInstance.insId,
               );
               if (!ins || !isInlineVisualNodeInstance(ins)) {
                 throw new Error("impossible state");
@@ -871,15 +872,15 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
             onChange(
               newNode,
-              functionalChange("Inner change: " + type.message)
+              functionalChange("Inner change: " + type.message),
             );
             setOpenInlineInstance((obj) => ({
               ...obj,
               node: changedInlineNode,
-              insId: openInlineInstance.insId
+              insId: openInlineInstance.insId,
             }));
           },
-          [onChange, openInlineInstance, node]
+          [onChange, openInlineInstance, node],
         );
 
       const [inspectedBoardData, setInspectedBoardData] =
@@ -890,12 +891,15 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           lastMousePos: { x: 0, y: 0 },
         });
 
-      const onChangeInspectedBoardData = React.useCallback((partial: Partial<GroupEditorBoardData>) => {
-        return setInspectedBoardData((data) => ({ ...data, ...partial }));
-      }, []);
+      const onChangeInspectedBoardData = React.useCallback(
+        (partial: Partial<GroupEditorBoardData>) => {
+          return setInspectedBoardData((data) => ({ ...data, ...partial }));
+        },
+        [],
+      );
 
       const maybeGetInlineProps = (
-        ins: NodeInstance
+        ins: NodeInstance,
       ): (VisualNodeEditorProps & VisualNodeEditorContextType) | undefined => {
         if (openInlineInstance && openInlineInstance.insId === ins.id) {
           return {
@@ -961,7 +965,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             return {
               connection: { from, to },
               type: connections.some((conn) =>
-                connectionDataEquals(conn, maybeFutureConnection)
+                connectionDataEquals(conn, maybeFutureConnection),
               )
                 ? "future-remove"
                 : "future-add",
@@ -976,7 +980,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             if (ins) {
               const pos = vSub(
                 ins.pos,
-                vec(vpSize.width / 2, vpSize.height / 2)
+                vec(vpSize.width / 2, vpSize.height / 2),
               );
               setViewPort({ ...viewPort, pos });
             }
@@ -1018,7 +1022,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         (connection: ConnectionData) => {
           const val = produce(node, (draft) => {
             const conn = draft.connections.find((conn) =>
-              connectionDataEquals(conn, connection)
+              connectionDataEquals(conn, connection),
             );
             if (!conn) {
               console.warn("connection not found", connection);
@@ -1028,19 +1032,19 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           });
           onChange(val, functionalChange("toggle connection hidden"));
         },
-        [onChange, node]
+        [onChange, node],
       );
 
       const removeConnection = React.useCallback(
         (connection: ConnectionData) => {
           const val = produce(node, (draft) => {
             draft.connections = draft.connections.filter(
-              (conn) => !connectionDataEquals(conn, connection)
+              (conn) => !connectionDataEquals(conn, connection),
             );
           });
           onChange(val, functionalChange("remove connection"));
         },
-        [onChange, node]
+        [onChange, node],
       );
 
       const onPinMouseDown = React.useCallback<
@@ -1066,19 +1070,19 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
               onConnectionClose(
                 draggedConnection.from,
                 connectionNode(ins.id, pinId),
-                "pinDrag"
+                "pinDrag",
               );
             } else if (draggedConnection.to && pinType === "output") {
               onConnectionClose(
                 connectionNode(ins.id, pinId),
                 draggedConnection.to,
-                "pinDrag"
+                "pinDrag",
               );
             }
           }
           setDraggedConnection(null);
         },
-        [draggedConnection, onConnectionClose]
+        [draggedConnection, onConnectionClose],
       );
 
       const onNodeIoMouseDown = React.useCallback<
@@ -1104,19 +1108,19 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
               onConnectionClose(
                 draggedConnection.from,
                 externalConnectionNode(id),
-                "nodeIoPinDrag"
+                "nodeIoPinDrag",
               );
             } else if (draggedConnection.to && type === "output") {
               onConnectionClose(
                 externalConnectionNode(id),
                 draggedConnection.to,
-                "nodeIoPinDrag"
+                "nodeIoPinDrag",
               );
             }
           }
           setDraggedConnection(null);
         },
-        [draggedConnection, onConnectionClose]
+        [draggedConnection, onConnectionClose],
       );
 
       const onSaveInstanceConfig: InstanceConfigEditorProps["onSubmit"] =
@@ -1128,12 +1132,12 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
             const newInstance = { ...editedNodeInstance.ins, config: val };
 
-
             resolveInstance({ instance: newInstance }).then((resolvedNode) => {
               const newNode = produce(node, (draft) => {
-                const ins: EditorNodeInstance | undefined = draft.instances.find(
-                  (i) => i.id === editedNodeInstance.ins.id
-                );
+                const ins: EditorNodeInstance | undefined =
+                  draft.instances.find(
+                    (i) => i.id === editedNodeInstance.ins.id,
+                  );
 
                 if (!ins || !isCodeNodeInstance(ins)) {
                   throw new Error(`Impossible state`);
@@ -1147,7 +1151,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
               setEditedNodeInstance(undefined);
             });
           },
-          [editedNodeInstance, resolveInstance, node, onChange]
+          [editedNodeInstance, resolveInstance, node, onChange],
         );
 
       const selectionIndicatorData: SelectionIndicatorProps["selection"] =
@@ -1173,7 +1177,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             switch (type) {
               case "instances": {
                 const ins = node.instances.find((ins) =>
-                  selectedInstances.includes(ins.id)
+                  selectedInstances.includes(ins.id),
                 );
                 if (ins) {
                   return ins.pos;
@@ -1203,7 +1207,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
           const vp = fitViewPortToRect(
             { x: pos.x, y: pos.y, w: 1, h: 1 },
-            vpSize
+            vpSize,
           );
           vp.zoom = viewPort.zoom;
           animateViewPort(viewPort, vp, 500, (vp) => {
@@ -1242,7 +1246,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             onAddNode(droppedNode);
           }
         },
-        [onAddNode]
+        [onAddNode],
       );
 
       useEffect(() => {
@@ -1276,7 +1280,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           await onAddNode(node);
           setIsAddingCustomNode(false);
         },
-        [onAddNode, onCreateCustomNode]
+        [onAddNode, onCreateCustomNode],
       );
 
       const cursorStyle = isSpacePressed
@@ -1315,7 +1319,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             console.error("Failed to get node source:", e);
           }
         },
-        [toast]
+        [toast],
       );
 
       const [commandMenuOpen, setCommandMenuOpen] = useState(false);
@@ -1387,7 +1391,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                     }
                     ancestorsInsIds={fullInsIdPath(
                       currentInsId,
-                      ancestorsInsIds
+                      ancestorsInsIds,
                     )}
                     onPinClick={onPinClick}
                     onPinDblClick={noop}
@@ -1407,8 +1411,8 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                     }
                     selectedOutput={
                       from &&
-                        isInternalConnectionNode(from) &&
-                        from.insId === ins.id
+                      isInternalConnectionNode(from) &&
+                      from.insId === ins.id
                         ? from.pinId
                         : undefined
                     }
@@ -1445,7 +1449,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                             (from.insId === ins.id && to.insId === selInsId) ||
                             (from.insId === selInsId && to.insId === ins.id)
                           );
-                        })
+                        }),
                     )}
                     inlineGroupProps={maybeGetInlineProps(ins)}
                     onCloseInlineEditor={closeInlineEditor}
@@ -1556,7 +1560,5 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         console.error(e);
         return <div>Error rendering board - {(e as any).toString()}</div>;
       }
-    })
+    }),
   );
-
-
