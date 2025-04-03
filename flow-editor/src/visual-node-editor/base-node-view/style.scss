@@ -187,24 +187,17 @@ $light-text: #333;
           .pin-inner {
             opacity: 1;
             transition: opacity 0.2s ease;
-          }
-          &:hover {
-            .pin-inner {
+
+            &:hover {
               opacity: 1;
-            }
-            &:not(:hover) .pin-inner {
-              opacity: 0.5;
             }
           }
         }
       }
 
-      &:has(.pin:hover) .icon-container {
-        opacity: 0.5;
-      }
-
-      &:hover {
-        .pin .pin-inner {
+      &:has(.pin-inner:hover) {
+        .icon-container,
+        .pin-inner {
           opacity: 0.5;
         }
       }
