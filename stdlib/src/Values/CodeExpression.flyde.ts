@@ -1,5 +1,11 @@
 import { CodeNode } from "@flyde/core";
-import { getVariables } from "./getInlineVariables";
+
+const getVariables = (code: string) => {
+  return (code.match(/inputs\.([a-zA-Z]\w*)/g) || []).map((v) =>
+    v.replace(/inputs\./, "")
+  );
+};
+
 
 export interface CodeExpressionConfig {
   value: string;

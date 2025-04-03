@@ -34,10 +34,11 @@ const calcImplicitRoot = (fnName: string) => {
 export function loadFlowFromContent<Inputs>(
   flow: FlydeFlow,
   fullFlowPath: string,
-  debuggerUrl: string
+  debuggerUrl: string,
+  secrets: Record<string, string> = {}
 ): LoadedFlowExecuteFn<Inputs> {
   const findReferencedNode = createServerReferencedNodeFinder(fullFlowPath);
-  const node = resolveVisualNode(flow.node, findReferencedNode);
+  const node = resolveVisualNode(flow.node, findReferencedNode, secrets);
 
   return (inputs, params = {}) => {
     const { onOutputs, onCompleted, ...otherParams } = params;
