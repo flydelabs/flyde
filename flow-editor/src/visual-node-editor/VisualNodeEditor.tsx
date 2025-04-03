@@ -693,11 +693,11 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           }
 
           const isTrackpad = e.deltaMode === 0; // Trackpad typically has deltaMode 0
-          const zoomSensitivity = isTrackpad ? 0.005 : 0.1; // Adjust sensitivity for trackpad vs mouse
+          const zoomSensitivity = isTrackpad ? 0.005 : 0.02; // Adjust sensitivity for trackpad vs mouse
 
           if (!isLikelyTrackpad.current) {
             const mod = e.deltaY > 0 ? 1 : -1;
-            const zoomDiff = mod * -0.25; // Mouse zoom adjustment
+            const zoomDiff = mod * -0.1; // Mouse zoom adjustment
             onZoom(viewPort.zoom + zoomDiff, "mouse");
           } else {
             if (e.metaKey || e.ctrlKey) {
