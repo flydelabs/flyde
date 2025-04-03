@@ -1,7 +1,10 @@
 import {
+  CodeNode,
   dynamicNodeInput,
   execute,
   randomInt,
+  THIS_INS_ID,
+  VisualNode,
 } from "@flyde/core";
 import { assert } from "chai";
 import { readdirSync } from "fs";
@@ -11,6 +14,7 @@ import { resolveFlow, resolveFlowByPath } from "./resolveFlow";
 
 import { spiedOutput } from "@flyde/core/dist/test-utils";
 import _ = require("lodash");
+import { resolveVisualNode } from "./resolveVisualNode";
 
 const getFixturePath = (path: string) => join(__dirname, "../../fixture", path);
 
@@ -229,7 +233,7 @@ describe("resolver", () => {
     );
     resolveFlowByPath(path);
 
-    assert.doesNotThrow(() => {});
+    assert.doesNotThrow(() => { });
   });
 
   it("imports multiple nodes from the same package", async () => {
@@ -483,6 +487,72 @@ describe("resolver", () => {
       assert.doesNotThrow(() => {
         resolveFlowByPath(getFixturePath("MemoFibo.flyde"));
       });
+    });
+
+    it("supports secrets", async () => {
+
+      const nodeWithSecret: CodeNode = {
+        id: 'someapi',
+        mode: 'simple',
+        inputs: {
+          key: {
+            editorType: 'secret'
+          }
+        },
+        outputs: {
+          result: {
+          }
+        },
+        run: (inputs, outputs) => {
+          outputs.result.next(inputs.key);
+        }
+      }
+
+      const secretValue = `api-${randomInt(1000)}`;
+
+      const [s, r] = spiedOutput();
+
+      const flowWithSecret: VisualNode = {
+        id: "flowWithSecret",
+        instances: [{
+          id: 'ins1',
+          nodeId: 'someapi',
+          source: {
+            type: 'custom',
+            data: {}
+          },
+          inputConfig: {},
+          pos: { x: 0, y: 0 },
+          type: 'code',
+          config: {
+            key: {type: 'string', value: 'SECRET_KEY'}
+          }
+        }],
+        connections: [
+          { from: { insId: 'ins1', pinId: 'result' }, to: { insId: THIS_INS_ID, pinId: 'result' } }
+        ],
+        inputs: {},
+        outputs: {
+          result: {
+          }
+        },
+        inputsPosition: {},
+        outputsPosition: {}
+      }
+      const resolved = resolveVisualNode(flowWithSecret, () => nodeWithSecret, {
+        SECRET_KEY: secretValue,
+      });
+
+      const n = dynamicNodeInput();
+      execute({
+        node: resolved,
+        inputs: { n },
+        outputs: { result: r },
+      });
+
+      n.subject.next('');
+
+      assert.equal(s.lastCall.args[0], secretValue);
     });
   });
 });

@@ -199,11 +199,12 @@ export const isInternalMacroNode = (p: any): p is InternalMacroNode<any> => {
 export function processMacroNodeInstance(
   prefix: string,
   _macro: InternalMacroNode<any> | CodeNode,
-  instance: Pick<CodeNodeInstance, "id" | "config">
+  instance: Pick<CodeNodeInstance, "id" | "config">,
+  secrets: Record<string, string> = {},
 ) {
   const macro = isInternalMacroNode(_macro)
     ? _macro
-    : processImprovedMacro(_macro);
+    : processImprovedMacro(_macro, secrets);
 
   const metaData = macro.definitionBuilder(instance.config ?? {});
   const runFn = macro.runFnBuilder(instance.config ?? {});
