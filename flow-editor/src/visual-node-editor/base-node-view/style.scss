@@ -199,11 +199,12 @@ $light-text: #333;
         }
       }
 
+      &:has(.pin:hover) .icon-container {
+        opacity: 0.5;
+      }
+
       &:hover {
         .pin .pin-inner {
-          opacity: 0.5;
-        }
-        .icon-container {
           opacity: 0.5;
         }
       }
