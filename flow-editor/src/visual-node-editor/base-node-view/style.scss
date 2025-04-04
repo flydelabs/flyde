@@ -64,6 +64,11 @@ $light-text: #333;
         border-color: $dark-text;
       }
       &.selected {
+        .node-header {
+          background: #2987f4;
+          color: $dark-text;
+          border-bottom: 1px solid $dark-border;
+        }
         .node-body {
           background: linear-gradient(
               0deg,
@@ -90,6 +95,11 @@ $light-text: #333;
         border-color: #666;
       }
       &.selected {
+        .node-header {
+          background: #d6e6f6;
+          color: $light-text;
+          border-bottom: 1px solid $light-border;
+        }
         .node-body {
           background: linear-gradient(
               0deg,
@@ -164,12 +174,32 @@ $light-text: #333;
       .icon-container {
         text-align: center;
         width: 40px;
+        opacity: 1;
+        transition: opacity 0.2s ease;
       }
 
       .left-side,
       .right-side {
         flex: 1;
         flex-shrink: 0;
+
+        .pin {
+          .pin-inner {
+            opacity: 1;
+            transition: opacity 0.2s ease;
+
+            &:hover {
+              opacity: 1;
+            }
+          }
+        }
+      }
+
+      &:has(.pin-inner:hover) {
+        .icon-container,
+        .pin-inner {
+          opacity: 0.5;
+        }
       }
     }
 
