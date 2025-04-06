@@ -2,8 +2,8 @@ imports: {}
 node:
   instances:
     - pos:
-        x: -817.7525158691406
-        y: 91.46002197265625
+        x: -1024.391798095703
+        y: 106.26582336425781
       id: lppjv85ixcde390hug6eonj5
       inputConfig: {}
       nodeId: InlineValue
@@ -29,7 +29,7 @@ node:
       nodeId: Loop List
       config:
         list:
-          type: json
+          type: dynamic
           value:
             - 2
             - "{{item1}}"
@@ -66,8 +66,8 @@ node:
         type: package
         data: "@flyde/stdlib"
     - pos:
-        x: -701.9036999511718
-        y: -70.91557312011719
+        x: -698.4244519042968
+        y: 22.2734375
       id: Fetch Random Users-8i0496g
       inputConfig: {}
       nodeId: Example
@@ -158,8 +158,8 @@ node:
         icon: user
         color: "#ff7f00"
     - pos:
-        x: -651.3400662231445
-        y: 225.27352966308595
+        x: -686.5202420043945
+        y: 218.53086914062501
       id: Fetch Random Beers-6l1491s
       inputConfig: {}
       nodeId: Example
@@ -168,28 +168,20 @@ node:
         type: inline
         data:
           instances:
-            - pos:
-                x: -461.01594482421876
-                y: -142.90456542968747
-              id: lmfgntghsb9grf4urevt19zm
-              inputConfig: {}
-              nodeId: CodeExpression
-              source:
-                type: package
-                data: "@flyde/stdlib"
+            - id: lmfgntghsb9grf4urevt19zm
               config:
                 value: "`https://random-data-api.com/api/v2/beers?size=${inputs.count}`"
                 label: "`https://random-data-api.com/api/v2/beers?size=${inputs.count}`"
-              type: code
-            - pos:
-                x: -368.1310766601562
-                y: -37.4415606689453
-              id: Example-d3049ww
+              nodeId: CodeExpression
               inputConfig: {}
-              nodeId: Http
+              pos:
+                x: -461.01594482421876
+                y: -142.90456542968747
+              type: code
               source:
                 type: package
                 data: "@flyde/stdlib"
+            - id: Example-d3049ww
               config:
                 method:
                   type: string
@@ -205,7 +197,15 @@ node:
                 data:
                   type: json
                   value: {}
+              nodeId: Http
+              inputConfig: {}
+              pos:
+                x: -261.2439306640625
+                y: 317.8101177978516
               type: code
+              source:
+                type: package
+                data: "@flyde/stdlib"
           connections:
             - from:
                 insId: lmfgntghsb9grf4urevt19zm
@@ -298,20 +298,6 @@ node:
       source:
         type: package
         data: "@flyde/stdlib"
-    - pos:
-        x: -154.38
-        y: -76.21
-      id: Example-ky04e91
-      inputConfig: {}
-      nodeId: Loop List
-      config:
-        list:
-          type: dynamic
-          value: "{{list}}"
-      type: code
-      source:
-        type: package
-        data: "@flyde/stdlib"
   connections:
     - from:
         insId: zfhcgwxnesaxpux6bgjwnan2
@@ -349,6 +335,30 @@ node:
       to:
         insId: pcld2qma2841gzcfyqurwu4a
         pinId: object
+    - from:
+        insId: Fetch Random Users-8i0496g
+        pinId: data
+      to:
+        insId: Loop List-a2149ei
+        pinId: list
+    - from:
+        insId: lppjv85ixcde390hug6eonj5
+        pinId: value
+      to:
+        insId: Fetch Random Users-8i0496g
+        pinId: count
+    - from:
+        insId: lppjv85ixcde390hug6eonj5
+        pinId: value
+      to:
+        insId: Fetch Random Beers-6l1491s
+        pinId: count
+    - from:
+        insId: Fetch Random Beers-6l1491s
+        pinId: data
+      to:
+        insId: Example-er2490w
+        pinId: list
   id: Example
   inputs: {}
   outputs:

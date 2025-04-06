@@ -1,11 +1,4 @@
-imports:
-  "@flyde/stdlib":
-    - Subtract
-    - Add
-    - Set State
-    - Get State
-    - InlineValue
-    - Switch
+imports: {}
 node:
   instances:
     - pos:
@@ -14,6 +7,17 @@ node:
       id: Add-539
       inputConfig: {}
       nodeId: Add
+      config:
+        n1:
+          type: dynamic
+          value: "{{n1}}"
+        n2:
+          type: dynamic
+          value: "{{n2}}"
+      type: code
+      source:
+        type: package
+        data: "@flyde/stdlib"
       style:
         color: "#fee440"
     - pos:
@@ -23,10 +27,18 @@ node:
       inputConfig:
         n2:
           mode: sticky
-      visibleInputs:
-        - n1
-        - n2
       nodeId: Subtract
+      config:
+        n1:
+          type: dynamic
+          value: "{{n1}}"
+        n2:
+          type: dynamic
+          value: "{{n2}}"
+      type: code
+      source:
+        type: package
+        data: "@flyde/stdlib"
       style:
         color: "#f15bb5"
     - pos:
@@ -36,28 +48,38 @@ node:
       inputConfig:
         n2:
           mode: sticky
-      visibleInputs:
-        - n1
-        - n2
       nodeId: Subtract
+      config:
+        n1:
+          type: dynamic
+          value: "{{n1}}"
+        n2:
+          type: dynamic
+          value: "{{n2}}"
+      type: code
+      source:
+        type: package
+        data: "@flyde/stdlib"
       style:
         color: "#f15bb5"
     - pos:
-        x: -307.9129022216797
-        y: 230.36254558086398
+        x: 0
+        y: 0
       id: Fibonacci-261
       inputConfig: {}
-      visibleInputs:
-        - n
       nodeId: Fibonacci
+      type: visual
+      source:
+        type: self
     - pos:
-        x: -302.58624267578125
-        y: 324.1951385307312
+        x: 0
+        y: 0
       id: Fibonacci-379
       inputConfig: {}
-      visibleInputs:
-        - n
       nodeId: Fibonacci
+      type: visual
+      source:
+        type: self
     - pos:
         x: -928.8918239073669
         y: -5.549246342710262
@@ -65,10 +87,18 @@ node:
       inputConfig:
         defaultValue:
           mode: queue
-      visibleOutputs:
-        - value
-        - __error
       nodeId: Get State
+      config:
+        key:
+          type: dynamic
+          value: "{{key}}"
+        defaultValue:
+          type: dynamic
+          value: "{{defaultValue}}"
+      type: code
+      source:
+        type: package
+        data: "@flyde/stdlib"
     - pos:
         x: 86.97685401746526
         y: 157.9057780358312
@@ -77,15 +107,24 @@ node:
         key:
           mode: sticky
       nodeId: Set State
+      config:
+        key:
+          type: dynamic
+          value: "{{key}}"
+        value:
+          type: dynamic
+          value: "{{value}}"
+      type: code
+      source:
+        type: package
+        data: "@flyde/stdlib"
     - pos:
-        x: -764.6777648925781
+        x: -799.5610046386719
         y: 283.7032214355469
       id: cakhy4xeflrv7mec1spzru8a
       inputConfig: {}
-      visibleInputs: []
-      nodeId: InlineValue__cakhy4xeflrv7mec1spzru8a
-      macroId: InlineValue
-      macroData:
+      nodeId: InlineValue
+      config:
         value:
           type: number
           value: 1
@@ -95,15 +134,17 @@ node:
         label:
           type: string
           value: "1"
+      type: code
+      source:
+        type: package
+        data: "@flyde/stdlib"
     - pos:
         x: -767.0813684082032
         y: 370.8050549316406
       id: Fibonacci-nf049eh
       inputConfig: {}
-      visibleInputs: []
-      nodeId: InlineValue__Fibonacci-nf049eh
-      macroId: InlineValue
-      macroData:
+      nodeId: InlineValue
+      config:
         value:
           type: number
           value: 2
@@ -113,17 +154,17 @@ node:
         label:
           type: string
           value: "2"
+      type: code
+      source:
+        type: package
+        data: "@flyde/stdlib"
     - pos:
         x: -728.83802734375
         y: 84.67604919433592
       id: o97dpv9ilum2i4n47m2bxdtw
       inputConfig: {}
-      visibleInputs:
-        - value
-        - __trigger
-      nodeId: Switch__o97dpv9ilum2i4n47m2bxdtw
-      macroId: Switch
-      macroData:
+      nodeId: Switch
+      config:
         inputs:
           - value
         cases:
@@ -136,13 +177,11 @@ node:
         defaultCase:
           enabled: true
           outputExpression: inputs.value
+      type: code
+      source:
+        type: package
+        data: "@flyde/stdlib"
   connections:
-    - from:
-        insId: Fibonacci-261
-        pinId: result
-      to:
-        insId: Add-539
-        pinId: n1
     - from:
         insId: Add-539
         pinId: sum
@@ -155,12 +194,6 @@ node:
       to:
         insId: __this
         pinId: result
-    - from:
-        insId: Fibonacci-379
-        pinId: result
-      to:
-        insId: Add-539
-        pinId: n2
     - from:
         insId: clfv4afmf00084668r9nuoaoe
         pinId: value
@@ -227,18 +260,6 @@ node:
       to:
         insId: clfv4epnt001o4668lpvrlux1
         pinId: key
-    - from:
-        insId: Subtract-210
-        pinId: difference
-      to:
-        insId: Fibonacci-261
-        pinId: n
-    - from:
-        insId: Subtract-210-d215
-        pinId: difference
-      to:
-        insId: Fibonacci-379
-        pinId: n
   id: Fibonacci
   inputs:
     n:

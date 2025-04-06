@@ -15,15 +15,8 @@ function migrateVisualNode(
 ): VisualNode {
   const migratedNode = { ...node };
 
-  console.log("migrating", node.id);
   for (const instance of migratedNode.instances) {
     const anyIns = instance as any;
-    console.log(
-      "migrating instance",
-      anyIns.nodeId,
-      anyIns.macroId,
-      anyIns.node?.id
-    );
 
     if ((anyIns as CodeNodeInstance | VisualNodeInstance).source) {
       continue;
@@ -33,6 +26,15 @@ function migrateVisualNode(
       console.log("instance has no nodeId or macroId", anyIns);
       throw new Error("instance has no nodeId or macroId");
     }
+
+    console.log(
+      node.id,
+      "migrating instance",
+      anyIns.nodeId,
+      anyIns.macroId,
+      anyIns.node?.id
+    );
+
 
     if (anyIns.nodeId === node.id) {
       const source: VisualNodeSource = {
@@ -106,7 +108,7 @@ function migrateVisualNode(
         {
           type:
             importSource.endsWith(".flyde.ts") ||
-            importSource.endsWith(".flyde.js")
+              importSource.endsWith(".flyde.js")
               ? "file"
               : "package",
           data: importedNodeImport[0],

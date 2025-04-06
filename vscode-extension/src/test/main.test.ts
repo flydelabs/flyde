@@ -40,6 +40,12 @@ suite("Extension Test Suite", () => {
       throw new Error("Temporary directory already exists");
     }
   });
+
+  // Close all editors after each test
+  teardown(async () => {
+    await vscode.commands.executeCommand("workbench.action.closeAllEditors");
+  });
+
   test("Loads test flow and renders instance views", async () => {
     const testFile = vscode.Uri.file(path.resolve(tmpDir, "HelloWorld.flyde"));
 
@@ -48,15 +54,18 @@ suite("Extension Test Suite", () => {
       testFile,
       "flydeEditor"
     );
-
-    const instances = await webviewTestingCommand("$$", {
-      selector: ".ins-view",
+    
+    await eventually(async () => {
+      const instances = await webviewTestingCommand("$$", {
+        selector: ".ins-view",
+      });
+      assert(
+        instances.length === 4,
+        `Expected fixture flow to have 4 instances. Got ${instances.length} instances`
+      );
     });
 
-    assert(
-      instances.length === 4,
-      `Expected fixture flow to have 4 instances. Got ${instances.length} instances`
-    );
+
   }).retries(3);
 
   test("Renders add nodes menu", async () => {
