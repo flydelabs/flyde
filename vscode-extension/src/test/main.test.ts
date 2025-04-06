@@ -54,15 +54,16 @@ suite("Extension Test Suite", () => {
       testFile,
       "flydeEditor"
     );
-
-    const instances = await webviewTestingCommand("$$", {
-      selector: ".ins-view",
+    
+    await eventually(async () => {
+      const instances = await webviewTestingCommand("$$", {
+        selector: ".ins-view",
+      });
+      assert(
+        instances.length === 4,
+        `Expected fixture flow to have 4 instances. Got ${instances.length} instances`
+      );
     });
-
-    assert(
-      instances.length === 4,
-      `Expected fixture flow to have 4 instances. Got ${instances.length} instances`
-    );
 
 
   }).retries(3);
