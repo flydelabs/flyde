@@ -25,7 +25,8 @@ import {
   replaceInputsInValue,
   ImportableEditorNode,
   codeNodeToImportableEditorNode,
-  NodeLibraryData,
+  VisualNode,
+  EditorVisualNode,
 } from "@flyde/core";
 import { findPackageRoot } from "./find-package-root";
 import { randomInt } from "crypto";
@@ -355,7 +356,41 @@ export class FlydeEditorEditorProvider
               }
               case "setFlow": {
                 const { flow } = event.params;
-                const serialized = serializeFlow(flow);
+
+                const node = flow.node as EditorVisualNode;
+
+                function cleanNode(node: EditorVisualNode): VisualNode {
+                  const newNode: VisualNode = node;
+
+                  node.instances.forEach((instance, idx) => {
+                    if (instance.type === "code") {
+                      const { node: _, ...rest } = instance;
+                      newNode.instances[idx] = rest;
+                    } else if (instance.type === "visual") {
+
+                      const { node: _, ...rest } = instance;
+
+                      newNode.instances[idx] = rest;
+
+
+                      if (instance.source.type === "inline") {
+                        const inlineVisualNode = instance.source.data as EditorVisualNode;
+                        const newData = cleanNode(inlineVisualNode);
+                        newNode.instances[idx] = {
+                          ...rest,
+                          source: {
+                            ...instance.source,
+                            data: newData,
+                          },
+                        };
+                      }
+                    }
+                  });
+
+                  return newNode;
+                }
+
+                const serialized = serializeFlow({ node: cleanNode(node) });
                 lastFlow = flow;
                 const edit = new vscode.WorkspaceEdit();
 

@@ -1,8 +1,4 @@
-imports:
-  "@flyde/stdlib":
-    - Concat
-    - Delay
-    - InlineValue
+imports: {}
 node:
   instances:
     - pos:
@@ -11,6 +7,17 @@ node:
       id: clftmb8cw000b4668nw8u5qr9
       inputConfig: {}
       nodeId: Concat
+      config:
+        a:
+          type: dynamic
+          value: "{{a}}"
+        b:
+          type: dynamic
+          value: "{{b}}"
+      type: code
+      source:
+        type: package
+        data: "@flyde/stdlib"
     - pos:
         x: -377.41700236002595
         y: 156.1642438906713
@@ -18,26 +25,28 @@ node:
       inputConfig:
         delay:
           mode: queue
-      nodeId: Delay__clftmbihe000j4668newg9ius
-      macroId: Delay
-      macroData:
+      nodeId: Delay
+      config:
         delayMs:
           type: number
           value: 1000
         value:
           type: dynamic
           value: ""
+      type: code
+      source:
+        type: package
+        data: "@flyde/stdlib"
       style:
         size: small
         icon: fa-clock
     - pos:
         x: -510.4654296875
-        y: -107.45686747162668
+        y: -96.46501566498605
       id: amsqg1strnxzxulfuwydz998
       inputConfig: {}
-      nodeId: InlineValue__amsqg1strnxzxulfuwydz998
-      macroId: InlineValue
-      macroData:
+      nodeId: InlineValue
+      config:
         type:
           type: string
           value: string
@@ -47,14 +56,17 @@ node:
         label:
           type: string
           value: '"Hello"'
+      type: code
+      source:
+        type: package
+        data: "@flyde/stdlib"
     - pos:
         x: -667.8786462402344
         y: 182.55645894438894
       id: c574cklre7s0epev24x40rxo
       inputConfig: {}
-      nodeId: InlineValue__c574cklre7s0epev24x40rxo
-      macroId: InlineValue
-      macroData:
+      nodeId: InlineValue
+      config:
         type:
           type: string
           value: string
@@ -64,6 +76,10 @@ node:
         label:
           type: string
           value: '"World"'
+      type: code
+      source:
+        type: package
+        data: "@flyde/stdlib"
   connections:
     - from:
         insId: clftmbihe000j4668newg9ius
