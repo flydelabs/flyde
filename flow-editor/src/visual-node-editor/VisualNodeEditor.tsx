@@ -67,7 +67,7 @@ import useComponentSize from "@rehooks/component-size";
 
 import { NodeIoView, NodeIoViewProps } from "./node-io-view";
 
-import { vec, vSub, vZero } from "../physics";
+import { vec, vSub, vZero, vAdd } from "../physics";
 import { LayoutDebugger, LayoutDebuggerProps } from "./layout-debugger";
 import { preloadMonaco } from "../lib/preload-monaco";
 // import { InstancePanel } from "./instance-panel";
@@ -476,19 +476,64 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           event.preventDefault();
           event.stopPropagation();
           const { x, y } = data;
-          // setDraggingId(undefined);
+
+          // Calculate the delta from the original position
+          const currentPos = type === "input"
+            ? node.inputsPosition[pin]
+            : node.outputsPosition[pin];
+
+          if (!currentPos) return;
+
+          const delta = {
+            x: x - currentPos.x,
+            y: y - currentPos.y
+          };
+
+          const ioId = `io_${type}_${pin}`;
 
           const newValue = produce(node, (draft) => {
+            // Update the dragged pin
             if (type === "input") {
               draft.inputsPosition[pin] = { x, y };
             } else {
               draft.outputsPosition[pin] = { x, y };
             }
+
+            // Update other selected elements if this pin is part of a selection
+            if (selectedInstances.includes(ioId)) {
+              // Move other selected IO pins
+              selectedInstances.forEach(id => {
+                // Skip the pin being dragged
+                if (id === ioId) return;
+
+                // Handle other input pins
+                if (id.startsWith('io_input_')) {
+                  const pinId = id.substring('io_input_'.length);
+                  if (draft.inputsPosition[pinId]) {
+                    draft.inputsPosition[pinId] = vAdd(draft.inputsPosition[pinId], delta);
+                  }
+                }
+                // Handle other output pins
+                else if (id.startsWith('io_output_')) {
+                  const pinId = id.substring('io_output_'.length);
+                  if (draft.outputsPosition[pinId]) {
+                    draft.outputsPosition[pinId] = vAdd(draft.outputsPosition[pinId], delta);
+                  }
+                }
+                // Handle selected regular instances
+                else {
+                  const ins = draft.instances.find(ins => ins.id === id);
+                  if (ins) {
+                    ins.pos = vAdd(ins.pos, delta);
+                  }
+                }
+              });
+            }
           });
 
           onChange(newValue, metaChange("node-io-drag-move"));
         },
-        [onChange, node]
+        [onChange, node, selectedInstances]
       );
 
       const onDragEndNodeIo = React.useCallback(
@@ -679,9 +724,9 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             onDragStart={onStartDraggingNodeIo}
             onDragEnd={onDragEndNodeIo}
             onDragMove={onDragMoveNodeIo}
-            onSelect={onNodeIoPinClick}
+            onSelect={(id, type, event) => onNodeIoPinClick(id, type, event)}
             onSetDescription={onNodeIoSetDescription}
-            selected={selectionPinId === k}
+            selected={selectionPinId === k || selectedInstances.includes(`io_${type}_${k}`)}
             description={v.description ?? ''}
             onMouseUp={onNodeIoMouseUp}
             onMouseDown={onNodeIoMouseDown}
@@ -697,7 +742,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
           if (!isLikelyTrackpad.current) {
             const mod = e.deltaY > 0 ? 1 : -1;
-            const zoomDiff = mod * -0.25; // because e.deltaY accumulates, I will just treat every scroll the same. Not ideal for UX but it's better than current behavior
+            const zoomDiff = mod * -0.1; // because e.deltaY accumulates, I will just treat every scroll the same. Not ideal for UX but it's better than current behavior
             onZoom(viewPort.zoom + zoomDiff, "mouse");
           } else {
             if (e.metaKey || e.ctrlKey) {
@@ -1157,6 +1202,13 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           } else if (to) {
             return { type: "output" as const, pinId: to.pinId };
           } else if (selectedInstances.length > 0) {
+            // Filter out IO pins from regular instances
+            const regularInstances = selectedInstances.filter(
+              id => !id.startsWith('io_input_') && !id.startsWith('io_output_')
+            );
+
+            // If we have a mix of regular instances and IO pins, or just multiple IO pins,
+            // treat them all as instances for selection purposes
             return { type: "instances" as const, ids: selectedInstances };
           } else if (selectedConnections.length > 0) {
             return { type: "connections" as const, ids: selectedConnections };

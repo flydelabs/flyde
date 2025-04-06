@@ -10,6 +10,7 @@ export const Http: CodeNode = {
   icon: "globe",
   displayName: "HTTP {{method}} to {{url}}",
   description: "Sends an HTTP request",
+  aliases: ["Http", "get", "post", "put", "delete", "patch"],
   inputs: {
     method: {
       defaultValue: "GET",

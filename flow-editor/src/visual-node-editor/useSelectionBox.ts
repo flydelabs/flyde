@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 
-import {} from "../utils";
+import { } from "../utils";
 import { Pos, VisualNode } from "@flyde/core";
 import { domToViewPort, calcSelectionBoxArea, getInstancesInRect, ViewPort } from "..";
 
@@ -17,7 +17,7 @@ export const useSelectionBox = (node: VisualNode, viewPort: ViewPort, boardPos: 
       const target = event.nativeEvent.target as HTMLElement;
 
       if (
-        !target || 
+        !target ||
         !ALLOWED_SELECTION_BOX_CLASSES.includes(target.getAttribute("class") ?? '')
       ) {
         return;
@@ -51,13 +51,15 @@ export const useSelectionBox = (node: VisualNode, viewPort: ViewPort, boardPos: 
           selectionBox,
           viewPort,
           node.instances,
-          parentViewport
+          parentViewport,
+          node.inputsPosition,
+          node.outputsPosition
         );
         onSelect(toSelect);
       }
       setSelectionBox(undefined);
     },
-    [selectionBox, viewPort, node.instances, parentViewport]
+    [selectionBox, viewPort, node, parentViewport]
   );
 
   return {

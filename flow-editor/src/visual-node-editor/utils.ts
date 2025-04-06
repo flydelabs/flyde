@@ -512,12 +512,16 @@ export const getInstancesInRect = (
   selectionBox: { from: Pos; to: Pos },
   viewPort: ViewPort,
   instances: NodeInstance[],
-  parentVp: ViewPort
+  parentVp: ViewPort,
+  inputsPosition: Record<string, Pos | undefined> = {},
+  outputsPosition: Record<string, Pos | undefined> = {}
 ) => {
   const { from, to } = selectionBox;
 
   const rect = getSelectionBoxRect(from, to);
-  const toSelect = instances
+
+  // Handle regular instances
+  const selectedInstanceIds = instances
     .filter((ins) => {
       const { pos } = ins;
       const w = calcNodeWidth(ins) * viewPort.zoom * parentVp.zoom;
@@ -531,7 +535,33 @@ export const getInstancesInRect = (
     })
     .map((ins) => ins.id);
 
-  return toSelect;
+  // Handle main inputs - use special "io_input_" prefix to identify them
+  const selectedInputs = Object.entries(inputsPosition)
+    .filter(([_, pos]) => {
+      if (!pos) return false;
+      const rec2 = {
+        ...pos,
+        w: calcIoNodeWidth('input') * viewPort.zoom * parentVp.zoom,
+        h: NODE_HEIGHT * viewPort.zoom * parentVp.zoom,
+      };
+      return intersectRect(rect, rec2) || intersectRect(rec2, rect);
+    })
+    .map(([pinId, _]) => `io_input_${pinId}`);
+
+  // Handle main outputs - use special "io_output_" prefix to identify them
+  const selectedOutputs = Object.entries(outputsPosition)
+    .filter(([_, pos]) => {
+      if (!pos) return false;
+      const rec2 = {
+        ...pos,
+        w: calcIoNodeWidth('output') * viewPort.zoom * parentVp.zoom,
+        h: NODE_HEIGHT * viewPort.zoom * parentVp.zoom,
+      };
+      return intersectRect(rect, rec2) || intersectRect(rec2, rect);
+    })
+    .map(([pinId, _]) => `io_output_${pinId}`);
+
+  return [...selectedInstanceIds, ...selectedInputs, ...selectedOutputs];
 };
 
 export const handleInstanceDrag = (
@@ -554,12 +584,31 @@ export const handleInstanceDrag = (
       throw new Error("impossible state dragging instance that does not exist");
     }
 
+    // Update selected regular instances
     const otherInstances = draft.instances.filter(
       (ins) => selected.includes(ins.id) && ins !== foundIns
     );
 
     otherInstances.forEach((ins) => {
       ins.pos = vAdd(ins.pos, delta);
+    });
+
+    // Update selected IO pins
+    selected.forEach(id => {
+      // Handle input pins (format: io_input_pinId)
+      if (id.startsWith('io_input_')) {
+        const pinId = id.substring('io_input_'.length);
+        if (draft.inputsPosition[pinId]) {
+          draft.inputsPosition[pinId] = vAdd(draft.inputsPosition[pinId], delta);
+        }
+      }
+      // Handle output pins (format: io_output_pinId)
+      else if (id.startsWith('io_output_')) {
+        const pinId = id.substring('io_output_'.length);
+        if (draft.outputsPosition[pinId]) {
+          draft.outputsPosition[pinId] = vAdd(draft.outputsPosition[pinId], delta);
+        }
+      }
     });
 
     foundIns.pos = pos;
