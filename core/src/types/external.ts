@@ -141,7 +141,7 @@ export function codeNodeToImportableEditorNode(
     aliases: node.aliases,
     type: "code",
     source,
-    editorNode: { ...editorNode, icon: node.icon },
+    editorNode: { ...editorNode, icon: node.icon, aliases: node.aliases },
     config: macro.defaultData,
   };
 }

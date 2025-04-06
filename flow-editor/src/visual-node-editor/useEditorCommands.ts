@@ -495,8 +495,23 @@ export function useEditorCommands(
   ]);
 
   const onNodeIoPinClick = React.useCallback(
-    (pinId: string, type: PinType) => {
-      const { to: currTo, from: currFrom } = boardData;
+    (pinId: string, type: PinType, event?: React.MouseEvent) => {
+      const { to: currTo, from: currFrom, selectedInstances } = boardData;
+      const ioId = `io_${type}_${pinId}`;
+
+      // If shift key is pressed, toggle selection of this pin as part of a multi-select
+      if (event?.shiftKey) {
+        const newSelected = selectedInstances.includes(ioId)
+          ? selectedInstances.filter(id => id !== ioId)
+          : [...selectedInstances, ioId];
+
+        onChangeBoardData({
+          selectedInstances: newSelected,
+          from: undefined,
+          to: undefined
+        });
+        return;
+      }
 
       const relevantCurrPin = type === "input" ? currFrom : currTo;
       const relevantTargetPin = type === "input" ? currTo : currFrom;
@@ -509,7 +524,10 @@ export function useEditorCommands(
         onChangeBoardData({ from: undefined, to: undefined });
       } else if (!relevantTargetPin) {
         // nothing was selected, selecting a new pin
-        onChangeBoardData(targetObj);
+        onChangeBoardData({
+          ...targetObj,
+          selectedInstances: [], // Clear selected instances when selecting a pin
+        });
       } else {
         //close the connection if we have a target match
         if (type === "input" && currTo) {

@@ -37,7 +37,7 @@ export interface NodeIoViewProps {
   onMouseUp: (id: string, type: PinType, e: React.MouseEvent) => void;
   onMouseDown: (id: string, type: PinType, e: React.MouseEvent) => void;
 
-  onSelect: (id: string, type: PinType) => void;
+  onSelect: (id: string, type: PinType, event?: React.MouseEvent) => void;
   selected: boolean;
 
   description: string;
@@ -197,9 +197,9 @@ export const NodeIoView: React.FC<NodeIoViewProps> = React.memo(
       [onDblClick, props.id]
     );
 
-    const _onClick = React.useCallback(() => {
+    const _onClick = React.useCallback((e: React.MouseEvent) => {
       if (Date.now() - lastDragEndTimeRef.current > 200) {
-        onSelect(id, type);
+        onSelect(id, type, e);
       }
     }, [id, type, onSelect]);
 
@@ -234,7 +234,7 @@ export const NodeIoView: React.FC<NodeIoViewProps> = React.memo(
             connected={props.connected}
             isClosestToMouse={closest}
             selected={selected}
-            onClick={(pinId, pinType) => onSelect(pinId, pinType)}
+            onClick={(pinId, pinType, e) => onSelect(pinId, pinType, e)}
             onDoubleClick={(pinId, e) => onDblClick && onDblClick(pinId, e)}
             onToggleLogged={noop}
             onToggleBreakpoint={noop}

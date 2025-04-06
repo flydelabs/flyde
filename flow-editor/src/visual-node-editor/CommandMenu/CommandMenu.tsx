@@ -52,6 +52,7 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
     updateRecentlyUsed,
   } = useCommandMenuData({ groups, query });
 
+
   // Handler for selecting a node
   const onSelect = useCallback(
     (value: string) => {
@@ -78,9 +79,10 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
     [nodeMap, onAddNode, onClickCustomNode, onOpenChange, updateRecentlyUsed, setQuery]
   );
 
+
   return (
     <CommandDialog open={open} onOpenChange={onOpenChange}>
-      <Command className="[&_[cmdk-group-heading]]:px-1 [&_[cmdk-group-heading]]:py-1 [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-1 [&_[cmdk-group]]:px-1 [&_[cmdk-item]]:py-1 ">
+      <Command className="[&_[cmdk-group-heading]]:px-1 [&_[cmdk-group-heading]]:py-1 [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-1 [&_[cmdk-group]]:px-1 [&_[cmdk-item]]:py-1 " shouldFilter={false}>
         <CommandInput
           placeholder="Search nodes..."
           value={query}
@@ -94,20 +96,22 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
             </div>
           ) : (
             <>
-              <CommandEmpty>No results found.</CommandEmpty>
-
-              {filteredGroups.map((group) => (
-                <React.Fragment key={group.title}>
-                  <CommandGroup heading={group.title} className="pb-0.5">
-                    <div className={cn("grid gap-0", query ? "" : "grid-cols-4")}>
-                      {group.title === "Essentials" &&
-                        (!query ||
-                          "Custom Node"
-                            .toLowerCase()
-                            .includes(query.toLowerCase())) && (
-                          <CustomNodeButton onSelect={onSelect} />
-                        )}
-                      {group.nodes.map((node) => (
+             
+          {(filteredGroups.length === 0 || filteredGroups.every(g => g.nodes.length === 0)) && <CommandEmpty>No results found.</CommandEmpty>}
+          {filteredGroups.map((group) => {
+            return (
+              <React.Fragment key={group.title}>
+                <CommandGroup heading={group.title} className="pb-0.5">
+                  <div className={cn("grid gap-0", query ? "" : "grid-cols-4")}>
+                    {group.title === "Essentials" &&
+                      (!query ||
+                        "Custom Node"
+                          .toLowerCase()
+                          .includes(query.toLowerCase())) && (
+                        <CustomNodeButton onSelect={onSelect} />
+                      )}
+                    {group.nodes.map((node) => {
+                      return (
                         <NodeItem
                           key={node.id}
                           node={node}
@@ -122,8 +126,16 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
               ))}
             </>
           )}
+                      )
+                    })}
+                  </div>
+                </CommandGroup>
+                <CommandSeparator className="my-0.5" />
+              </React.Fragment>
+            )
+          })}
         </CommandList>
       </Command>
-    </CommandDialog>
+    </CommandDialog >
   );
 };
