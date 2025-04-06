@@ -23,7 +23,7 @@
 
   display: flex;
 
-  & > .side-bar {
+  &>.side-bar {
     width: 40px;
     white-space: nowrap;
 
@@ -38,14 +38,14 @@
     z-index: 1;
   }
 
-  & > main {
+  &>main {
     flex: 1;
     overflow: hidden;
     // box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.5);
     background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%2CBCDCF' fill-opacity='0.1' fill-rule='evenodd'%3E%3Ccircle cx='20' cy='20' r='2'/%3E%3C/g%3E%3C/svg%3E");
   }
 
-  &.dark > main {
+  &.dark>main {
     background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%20A0A0A' fill-opacity='0.3' fill-rule='evenodd'%3E%3Ccircle cx='20' cy='20' r='2'/%3E%3C/g%3E%3C/svg%3E");
   }
 
@@ -93,7 +93,7 @@
     display: flex;
     flex-direction: column;
 
-    > header {
+    >header {
       background: #2f2f2f;
       border-radius: 5px 5px 0 0;
       flex-grow: 0;
@@ -110,7 +110,7 @@
       }
     }
 
-    > main {
+    >main {
       position: relative;
       flex: 1;
       overflow: auto;
@@ -125,7 +125,7 @@
   .viewport-controls-and-help {
     position: absolute;
     bottom: 10px;
-    right: 20px;
+    left: 20px;
     // width: 200px;
     height: 30px;
     display: flex;
@@ -159,7 +159,7 @@
     // z-index: 999999;
     border: 1px solid gray;
 
-    > header {
+    >header {
       background: white;
       padding: 10px 5px;
     }
@@ -169,7 +169,7 @@
       // overflow: hidden;
       flex: 1;
 
-      > main {
+      >main {
         box-shadow: none;
       }
 
@@ -192,11 +192,6 @@
     font-family: monospace;
   }
 
-  .run-btn {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-  }
 
   .onboarding-tips {
     position: absolute;

@@ -31,7 +31,7 @@ export const InstanceConfigEditor: React.FC<InstanceConfigEditorProps> = (
 
   const _onFork = useCallback(() => {
     onCancel();
-    props.onFork(ins);
+    onFork(ins);
   }, [onCancel, onFork, ins]);
 
   const [instanceConfig, setInstanceConfig] = React.useState<any>(
@@ -162,7 +162,7 @@ export const InstanceConfigEditor: React.FC<InstanceConfigEditorProps> = (
               </Button>
               <Button size="sm" onClick={handleSubmit} className="flex items-center gap-2">
                 Save
-                <HotkeyIndication hotkey="cmd+enter" />
+                <HotkeyIndication hotkey="ctrl+enter" />
               </Button>
             </div>
           </div>

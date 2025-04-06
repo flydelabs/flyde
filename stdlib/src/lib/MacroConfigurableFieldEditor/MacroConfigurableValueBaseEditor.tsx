@@ -117,6 +117,8 @@ export function MacroConfigurableValueBaseEditor(props: {
               value: parseFloat(e.target.value),
             })
           }
+          min={fieldDefinition.type === "number" && fieldDefinition.typeData?.min !== undefined ? fieldDefinition.typeData.min : undefined}
+          max={fieldDefinition.type === "number" && fieldDefinition.typeData?.max !== undefined ? fieldDefinition.typeData.max : undefined}
           className={inputClassName}
         />
       );
