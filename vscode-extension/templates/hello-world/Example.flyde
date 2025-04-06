@@ -7,13 +7,7 @@ node:
       id: clftmb8cw000b4668nw8u5qr9
       inputConfig: {}
       nodeId: Concat
-      config:
-        a:
-          type: dynamic
-          value: "{{a}}"
-        b:
-          type: dynamic
-          value: "{{b}}"
+      config: {}
       type: code
       source:
         type: package
@@ -59,8 +53,8 @@ node:
         type: package
         data: "@flyde/stdlib"
     - pos:
-        x: -548.8223657226563
-        y: 12.173806152343786
+        x: -463.8223657226563
+        y: 8.173806152343786
       id: HelloWorld-pf049m0
       inputConfig: {}
       nodeId: InlineValue
