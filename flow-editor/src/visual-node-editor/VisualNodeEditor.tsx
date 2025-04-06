@@ -1518,7 +1518,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                 <SelectionBox selectionBox={selectionBox} viewPort={viewPort} />
                 {/* {maybeRenderEditGroupModal()} */}
                 {renderMainPins("output")}
-                <div className="absolute top-3 left-1/2 -translate-x-1/2 z-10">
+                <div className="absolute top-4 right-5 z-10">
                   <Button
                     variant="outline"
                     onClick={() => setCommandMenuOpen(true)}
@@ -1527,7 +1527,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                     <span className="size-5">
                       <Plus className="w-5 h-5 dark:text-white text-neutral-800" />
                     </span>{" "}
-                    <HotkeyIndication hotkey="⌘K" />
+                    <HotkeyIndication hotkey="ctrl+K" />
                   </Button>
                 </div>
                 <div className="viewport-controls-and-help">
@@ -1583,7 +1583,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
               ) : null}
               <div className="run-btn-container">
                 <Button
-                  className="run-btn"
+                  className="run-btn absolute top-4 left-1/2 -translate-x-1/2 z-10"
                   onClick={openRunModal}
                   size="sm"
                   variant="outline"

@@ -555,10 +555,6 @@ export const InstanceView: React.FC<InstanceViewProps> =
 
       return (
         <ContextMenuContent>
-          <ContextMenuItem onClick={(e) => onDblClick(e)}>
-            Change configuration
-          </ContextMenuItem>
-
           <ContextMenuItem onClick={_onSetDisplayName}>
             Set display name
           </ContextMenuItem>
@@ -593,15 +589,12 @@ export const InstanceView: React.FC<InstanceViewProps> =
           <ContextMenuItem onClick={onGroupSelected}>
             Group selected instances
           </ContextMenuItem>
-          <ContextMenuItem onClick={() => props.onViewForkCode(instance)}>
-            View/fork code
-          </ContextMenuItem>
           <ContextMenuItem className="text-red-500" onClick={_onDeleteInstance}>
             Delete instance
           </ContextMenuItem>
         </ContextMenuContent>
       );
-    }, [inputKeys, outputKeys, instance, _onChangeVisibleInputs, _onChangeVisibleOutputs, _onSetDisplayName, onGroupSelected, _onDeleteInstance, _visibleInputs, connectedInputs, onChangeVisibleInputs, _visibleOutputs, connectedOutputs, onChangeVisibleOutputs, onUngroup, props, onDblClick]);
+    }, [inputKeys, outputKeys, instance, _onChangeVisibleInputs, _onChangeVisibleOutputs, _onSetDisplayName, onGroupSelected, _onDeleteInstance, _visibleInputs, connectedInputs, onChangeVisibleInputs, _visibleOutputs, connectedOutputs, onChangeVisibleOutputs, onUngroup]);
 
     const instanceDomId = getInstanceDomId(instance.id, props.ancestorsInsIds);
 

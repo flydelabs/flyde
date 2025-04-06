@@ -584,14 +584,15 @@ export const handleInstanceDrag = (
       throw new Error("impossible state dragging instance that does not exist");
     }
 
-    // Update selected regular instances
-    const otherInstances = draft.instances.filter(
-      (ins) => selected.includes(ins.id) && ins !== foundIns
-    );
+    if (selected.includes(ins.id)) {
+      const otherInstances = draft.instances.filter(
+        (ins) => selected.includes(ins.id) && ins !== foundIns
+      );
 
-    otherInstances.forEach((ins) => {
-      ins.pos = vAdd(ins.pos, delta);
-    });
+      otherInstances.forEach((ins) => {
+        ins.pos = vAdd(ins.pos, delta);
+      });
+    }
 
     // Update selected IO pins
     selected.forEach(id => {

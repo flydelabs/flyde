@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo, useEffect } from "react";
-import { Editor, useMonaco } from "@monaco-editor/react";
+import { Editor, useMonaco, OnMount } from "@monaco-editor/react";
 import { NodeOrMacroDefinition } from "@flyde/core";
 import { configureMonaco } from "../../lib/customCodeNode/configureMonaco";
 import { useConfirm } from "../../flow-editor/ports/ports";
@@ -10,8 +10,9 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@flyde/ui";
-import { Button } from "@flyde/ui";
-import { Alert, AlertDescription } from "@flyde/ui";
+import { Button, HotkeyIndication } from "@flyde/ui";
+import { Alert, AlertDescription, AlertTitle } from "@flyde/ui";
+import { useToast } from "@flyde/ui";
 
 interface CustomNodeModalProps {
   isOpen: boolean;
@@ -53,6 +54,7 @@ export function CustomNodeModal({
   forkMode,
 }: CustomNodeModalProps) {
   const confirm = useConfirm();
+  const { toast } = useToast();
   const [code, setCode] = useState<string>(
     forkMode?.initialCode || defaultContent
   );
@@ -87,6 +89,13 @@ export function CustomNodeModal({
     try {
       await onSave(code);
       onClose(); // Close the modal only after successful save
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error Saving Node",
+        description: error instanceof Error ? error.message : "Failed to save custom node",
+      });
+      console.error("Error saving custom node:", error);
     } finally {
       setIsSaving(false);
     }
@@ -100,9 +109,32 @@ export function CustomNodeModal({
     }
   }, [monaco]);
 
+  // Monaco editor onMount handler to add custom commands
+  const handleEditorDidMount: OnMount = (editor) => {
+    if (monaco?.KeyMod && monaco?.KeyCode) {
+      editor.addCommand(
+        monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter,
+        () => {
+          handleSave();
+        }
+      );
+    }
+
+    // Focus the editor when it mounts
+    editor.focus();
+  };
+
+  // Additional keyboard handler for when focus is outside the editor
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+      e.preventDefault();
+      handleSave();
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-4xl">
+      <DialogContent className="max-w-4xl" onKeyDown={handleKeyDown} tabIndex={0}>
         <DialogHeader>
           <DialogTitle>
             {forkMode ? "Fork Custom Node" : "Create Custom Node"}
@@ -125,14 +157,16 @@ export function CustomNodeModal({
             theme="vs-dark"
             options={editorOptions}
             loading={<div>Loading editor...</div>}
+            onMount={handleEditorDidMount}
           />
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={handleClose} disabled={isSaving}>
             Cancel
           </Button>
-          <Button onClick={handleSave} disabled={isSaving}>
+          <Button onClick={handleSave} disabled={isSaving} className="flex items-center gap-2">
             {isSaving ? "Saving..." : "Save"}
+            <HotkeyIndication hotkey="ctrl+enter" />
           </Button>
         </DialogFooter>
       </DialogContent>

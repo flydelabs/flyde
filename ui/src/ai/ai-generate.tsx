@@ -116,7 +116,7 @@ export function AiGenerate({
                 <>Generating...</>
               ) : (
                 <>
-                  Create <HotkeyIndication hotkey="↵" />
+                  Create <HotkeyIndication hotkey="enter" />
                 </>
               )}
             </Button>

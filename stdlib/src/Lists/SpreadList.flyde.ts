@@ -40,6 +40,10 @@ export const SpreadList: CodeNode<SpreadListConfig> = {
         label: "Count",
         type: "number",
         typeConfigurable: false,
+        typeData: {
+          min: 1,
+          max: 7
+        },
       },
     ],
   },

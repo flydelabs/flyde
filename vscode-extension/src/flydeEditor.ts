@@ -588,26 +588,24 @@ export class FlydeEditorEditorProvider
                     vscode.Uri.file(nodeFilePath),
                     Buffer.from(code)
                   );
+                  const editorNode = codeNodeToImportableEditorNode(node, {
+                    type: "file",
+                    data: nodeFileName,
+                  });
                   vscode.window.showInformationMessage(
                     `Custom node saved as ${nodeFileName}`
                   );
+                  messageResponse(event, editorNode);
                 } catch (error) {
                   console.error("Error saving custom node file:", error);
                   vscode.window.showErrorMessage(
                     `Failed to save custom node: ${error instanceof Error ? error.message : "Unknown error"
                     }`
                   );
-                }
 
-                const editorNode = codeNodeToImportableEditorNode(node, {
-                  type: "file",
-                  data: nodeFileName,
-                });
-                // const importableSource: ImportableSource = {
-                //   node: node as any,
-                //   module: nodeFileName,
-                // };
-                messageResponse(event, editorNode);
+                  messageError(event, error);
+                  return;
+                }
                 break;
               }
               case "createAiCompletion": {

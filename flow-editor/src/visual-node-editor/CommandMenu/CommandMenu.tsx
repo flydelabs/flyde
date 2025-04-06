@@ -29,14 +29,22 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
 }) => {
   const [query, setQuery] = useState("");
   const [groups, setGroups] = useState<NodeLibraryGroup[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const { getLibraryData } = usePorts();
 
   useEffect(() => {
-    getLibraryData().then((data) => {
-      setGroups(data.groups);
-    });
-  }, [getLibraryData]);
+    if (open) {
+      setLoading(true);
+      getLibraryData()
+        .then((data) => {
+          setGroups(data.groups);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+  }, [getLibraryData, open]);
 
   const {
     nodeMap,
@@ -50,6 +58,7 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
     (value: string) => {
       if (value === "custom") {
         onClickCustomNode();
+        setQuery("");
         onOpenChange(false);
         return;
       }
@@ -64,9 +73,10 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
         onAddNode(node);
       }
 
+      setQuery("");
       onOpenChange(false);
     },
-    [nodeMap, onAddNode, onClickCustomNode, onOpenChange, updateRecentlyUsed]
+    [nodeMap, onAddNode, onClickCustomNode, onOpenChange, updateRecentlyUsed, setQuery]
   );
 
 
@@ -80,35 +90,45 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
           className="h-7"
         />
         <CommandList>
-          {(filteredGroups.length === 0 || filteredGroups.every(g => g.nodes.length === 0)) && <CommandEmpty>No results found.</CommandEmpty>}
-          {filteredGroups.map((group) => {
-            return (
-              <React.Fragment key={group.title}>
-                <CommandGroup heading={group.title} className="pb-0.5">
-                  <div className={cn("grid gap-0", query ? "" : "grid-cols-4")}>
-                    {group.title === "Essentials" &&
-                      (!query ||
-                        "Custom Node"
-                          .toLowerCase()
-                          .includes(query.toLowerCase())) && (
-                        <CustomNodeButton onSelect={onSelect} />
-                      )}
-                    {group.nodes.map((node) => {
-                      return (
-                        <NodeItem
-                          key={node.id}
-                          node={node}
-                          groupTitle={group.title}
-                          onSelect={onSelect}
-                        />
-                      )
-                    })}
-                  </div>
-                </CommandGroup>
-                <CommandSeparator className="my-0.5" />
-              </React.Fragment>
-            )
-          })}
+          {loading ? (
+            <div className="flex justify-center items-center py-8">
+              <div className="text-sm text-muted-foreground animate-pulse">Loading...</div>
+            </div>
+          ) : (
+            <>
+
+              {(filteredGroups.length === 0 || filteredGroups.every(g => g.nodes.length === 0)) && <CommandEmpty>No results found.</CommandEmpty>}
+              {filteredGroups.map((group) => {
+                return (
+                  <React.Fragment key={group.title}>
+                    <CommandGroup heading={group.title} className="pb-0.5">
+                      <div className={cn("grid gap-0", query ? "" : "grid-cols-4")}>
+                        {group.title === "Essentials" &&
+                          (!query ||
+                            "Custom Node"
+                              .toLowerCase()
+                              .includes(query.toLowerCase())) && (
+                            <CustomNodeButton onSelect={onSelect} />
+                          )}
+                        {group.nodes.map((node) => {
+                          return (
+                            <NodeItem
+                              key={node.id}
+                              node={node}
+                              groupTitle={group.title}
+                              onSelect={onSelect}
+                            />
+                          )
+                        })}
+                      </div>
+                    </CommandGroup>
+                    <CommandSeparator className="my-0.5" />
+                  </React.Fragment>
+
+                )
+              })}
+            </>
+          )}
         </CommandList>
       </Command>
     </CommandDialog >
