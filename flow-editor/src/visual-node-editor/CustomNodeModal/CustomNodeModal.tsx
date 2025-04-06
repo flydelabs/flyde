@@ -166,7 +166,7 @@ export function CustomNodeModal({
           </Button>
           <Button onClick={handleSave} disabled={isSaving} className="flex items-center gap-2">
             {isSaving ? "Saving..." : "Save"}
-            <HotkeyIndication hotkey="ctrl+enter" />
+            <HotkeyIndication hotkey="cmd+enter" />
           </Button>
         </DialogFooter>
       </DialogContent>

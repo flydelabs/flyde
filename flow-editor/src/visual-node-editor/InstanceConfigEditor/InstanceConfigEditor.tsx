@@ -162,7 +162,7 @@ export const InstanceConfigEditor: React.FC<InstanceConfigEditorProps> = (
               </Button>
               <Button size="sm" onClick={handleSubmit} className="flex items-center gap-2">
                 Save
-                <HotkeyIndication hotkey="ctrl+enter" />
+                <HotkeyIndication hotkey="cmd+enter" />
               </Button>
             </div>
           </div>

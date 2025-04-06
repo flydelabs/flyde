@@ -1527,7 +1527,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                     <span className="size-5">
                       <Plus className="w-5 h-5 dark:text-white text-neutral-800" />
                     </span>{" "}
-                    <HotkeyIndication hotkey="ctrl+K" />
+                    <HotkeyIndication hotkey="cmd+K" />
                   </Button>
                 </div>
                 <div className="viewport-controls-and-help">
