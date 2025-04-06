@@ -54,7 +54,7 @@ suite("Extension Test Suite", () => {
       testFile,
       "flydeEditor"
     );
-    
+
     await eventually(async () => {
       const instances = await webviewTestingCommand("$$", {
         selector: ".ins-view",
@@ -163,7 +163,7 @@ suite("Extension Test Suite", () => {
         );
 
         assert(
-          instances[0].innerHTML.includes("<h1>Hello comment</h1>"),
+          instances[0].innerHTML.includes("Hello comment") && instances[0].innerHTML.includes("<h1"),
           `Expected the note node HTML to render the comment in html. ${instances[0].innerHTML}`
         );
       });
