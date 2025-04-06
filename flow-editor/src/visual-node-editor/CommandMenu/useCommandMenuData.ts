@@ -87,8 +87,14 @@ export const useCommandMenuData = ({
                 // Skip if we've already included this node in another category
                 if (seenNodeIds.has(node.id)) return false;
 
-                const searchContent = `${node.id}${node.editorNode.menuDisplayName ?? ""} ${node.editorNode.description ?? ""} ${node.displayName ?? ""} ${node.description ?? ""
-                    } ${node.aliases?.join(" ") ?? ""}`;
+                const searchContent = [
+                    node.id,
+                    node.editorNode?.menuDisplayName,
+                    node.editorNode?.description,
+                    node.displayName,
+                    node.description,
+                    node.aliases?.join(" ")
+                ].filter(Boolean).join(" ");
 
                 const matches = searchContent.toLowerCase().includes(query.toLowerCase());
 

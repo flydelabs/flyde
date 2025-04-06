@@ -20,6 +20,7 @@ export const CodeExpression: CodeNode<CodeExpressionConfig> = {
   menuDescription: "Evaluates a JS expression. Supports dynamic variables",
   displayName: () => "Code Expression",
   description: (config) => `Evaluates the expression \`${config.value}\``,
+  aliases: ["JS", "JavaScript", "Custom"],
   defaultConfig: {
     value: "`Hello ${inputs.firstName} ${inputs.lastName}`",
   },
