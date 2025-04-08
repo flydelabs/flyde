@@ -243,6 +243,8 @@ export const center = (
 export const easeInOutQuad = (t: number) =>
   t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
 
+export const easeOutQuint = (t: number) => 1 - Math.pow(1 - t, 5);
+
 export const easeInOutPos = (
   p1: Pos,
   p2: Pos,
@@ -308,6 +310,36 @@ export const animateViewPort = (
 
   requestAnimationFrame(animate);
 };
+
+export const animateZoom = (
+  from: number,
+  to: number,
+  duration: number,
+  cb: (zoom: number) => void
+) => {
+  const start = Date.now();
+
+  if (from === to) {
+    cb(from);
+    return;
+  }
+
+  const animate = () => {
+    const now = Date.now();
+    const t = Math.min(1, (now - start) / duration);
+    const eased = easeOutQuint(t);
+    const zoom = from + (to - from) * eased;
+    cb(zoom);
+
+    if (t < 1) {
+      requestAnimationFrame(animate);
+    } else {
+      cb(to);
+    }
+  };
+
+  requestAnimationFrame(animate);
+}
 
 export const calcSelectionBoxArea = (box: { from: Pos; to: Pos }): number => {
   const rect = getSelectionBoxRect(box.from, box.to);

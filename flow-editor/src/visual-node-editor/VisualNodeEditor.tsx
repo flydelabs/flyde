@@ -56,6 +56,7 @@ import {
   animateViewPort,
   fitViewPortToRect,
   isEventOnCurrentBoard,
+  animateZoom,
 } from "./utils";
 
 import { OnboardingTips } from "./OnboardingTips";
@@ -742,8 +743,13 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
           if (!isLikelyTrackpad.current) {
             const mod = e.deltaY > 0 ? 1 : -1;
-            const zoomDiff = mod * -0.1; // because e.deltaY accumulates, I will just treat every scroll the same. Not ideal for UX but it's better than current behavior
-            onZoom(viewPort.zoom + zoomDiff, "mouse");
+            const zoomDiff = mod * -0.25; // because e.deltaY accumulates, I will just treat every scroll the same. Not ideal for UX but it's better than current behavior
+            const newZoom = viewPort.zoom + zoomDiff;
+            const newTargetZoom = Math.min(Math.max(newZoom, 0.3), 2);
+            const duration = 400;
+            animateZoom(viewPort.zoom, newTargetZoom, duration, (val) =>
+              onZoom(val, "mouse")
+            );
           } else {
             if (e.metaKey || e.ctrlKey) {
               const zoomDiff = e.deltaY * -0.005;
