@@ -408,8 +408,7 @@ export function useEditorCommands(
   );
 
   const onZoom = React.useCallback(
-    (_newZoom: number, source?: "hotkey" | "mouse") => {
-      const newZoom = Math.min(Math.max(_newZoom, 0.3), 2);
+    (newZoom: number, source?: "hotkey" | "mouse") => {
       const targetPos =
         source === "mouse"
           ? lastMousePos.current
