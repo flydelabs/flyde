@@ -41,7 +41,7 @@ const tips: Record<string, TipData> = {
     },
   },
   addNode: {
-    tip: "Add a new node by clicking or dragging from the library",
+    tip: "Add a new node from the Cmd/Ctrl+K menu",
     predicate: ([lastNode, currNode]) => {
       return currNode.instances.length > lastNode.instances.length;
     },
@@ -58,7 +58,7 @@ export type TipAction = keyof typeof tips;
 
 const tipsOrder: TipAction[] = ["pan", "zoom", "addNode", "connect"];
 
-interface OnboardingTipsProps {}
+interface OnboardingTipsProps { }
 
 const TIPS_ADVANCE_TIMEOUT = 1000;
 const TIP_COMPLETED_FEEDBACK_TIMEOUT = 3000;
