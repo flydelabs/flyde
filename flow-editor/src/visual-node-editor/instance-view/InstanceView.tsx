@@ -168,7 +168,11 @@ export interface InstanceViewProps {
   onChangeStyle: (instance: EditorNodeInstance, style: NodeStyle) => void;
   onGroupSelected: () => void;
 
-  onPinMouseDown: (ins: EditorNodeInstance, pinId: string, type: PinType) => void;
+  onPinMouseDown: (
+    ins: EditorNodeInstance,
+    pinId: string,
+    type: PinType
+  ) => void;
   onPinMouseUp: (ins: EditorNodeInstance, pinId: string, type: PinType) => void;
 
   hadError: boolean;
@@ -269,12 +273,10 @@ export const InstanceView: React.FC<InstanceViewProps> =
       [instance, onDragStart]
     );
 
-
     const _onSelect = React.useCallback(
       (e: any) => onSelect(instance, e),
       [instance, onSelect]
     );
-
 
     const _onDragEnd = React.useCallback(
       (event: any, data: any) => {
@@ -304,8 +306,6 @@ export const InstanceView: React.FC<InstanceViewProps> =
       (e: React.MouseEvent) => onDoubleClick(instance, e.shiftKey),
       [instance, onDoubleClick]
     );
-
-
 
     const is = entries(node.inputs);
 
@@ -477,7 +477,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
 
     const getContextMenu = React.useCallback(() => {
       const inputMenuItems = inputKeys
-        .filter(k => k !== TRIGGER_PIN_ID)
+        .filter((k) => k !== TRIGGER_PIN_ID)
         .map((k) => {
           const isVisible = _visibleInputs.includes(k);
           const isConnectedAndNotHidden =
@@ -594,7 +594,23 @@ export const InstanceView: React.FC<InstanceViewProps> =
           </ContextMenuItem>
         </ContextMenuContent>
       );
-    }, [inputKeys, outputKeys, instance, _onChangeVisibleInputs, _onChangeVisibleOutputs, _onSetDisplayName, onGroupSelected, _onDeleteInstance, _visibleInputs, connectedInputs, onChangeVisibleInputs, _visibleOutputs, connectedOutputs, onChangeVisibleOutputs, onUngroup]);
+    }, [
+      inputKeys,
+      outputKeys,
+      instance,
+      _onChangeVisibleInputs,
+      _onChangeVisibleOutputs,
+      _onSetDisplayName,
+      onGroupSelected,
+      _onDeleteInstance,
+      _visibleInputs,
+      connectedInputs,
+      onChangeVisibleInputs,
+      _visibleOutputs,
+      connectedOutputs,
+      onChangeVisibleOutputs,
+      onUngroup,
+    ]);
 
     const instanceDomId = getInstanceDomId(instance.id, props.ancestorsInsIds);
 
@@ -615,7 +631,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
                   onChangeNode={inlineGroupProps.onChangeNode}
                 >
                   <VisualNodeEditor
-                    {...props.inlineGroupProps as any}
+                    {...(props.inlineGroupProps as any)}
                     className="no-drag flex-1 w-full h-full"
                     ref={inlineEditorRef}
                   />
@@ -637,7 +653,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
       const hasLongDisplayName = content?.length > 20;
       const longestInput = Math.max(...inputsToRender.map(([k]) => k.length));
       const longestOutput = Math.max(...outputsToRender.map(([k]) => k.length));
-      const hasLongPin = longestInput > 7 || longestOutput > 7;
+      const hasLongPin = longestInput > 12 || longestOutput > 12;
       return hasLongDisplayName || hasLongPin ? "wide" : "normal";
     }, [content, inputsToRender, outputsToRender]);
 
