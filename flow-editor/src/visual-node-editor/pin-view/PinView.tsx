@@ -288,7 +288,7 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
         onMouseUp={_onMouseUp}
         onClick={onPinHandleClick}
       >
-        <div className={classNames("pin-handle-inner", type )} />
+        <div className={classNames("pin-handle-inner", type, { dark } )} />
       </div>
     </div>
   );
