@@ -1,8 +1,9 @@
 // Theme colors
 $dark-pin-text: #fff;
 $light-pin-text: #333;
-$dark-pin-handle-border: #aaaaaa;
+$dark-pin-handle-border: #cccccc;
 $light-pin-handle-border: #666666;
+$pin-highlight: #2887f4;
 
 .pin {
   cursor: pointer;
@@ -14,6 +15,9 @@ $light-pin-handle-border: #666666;
     text-overflow: ellipsis;
     white-space: nowrap;
     display: inline-block;
+    vertical-align: middle;
+    padding-bottom: 2px;
+    font-size: 12px;
   }
 
   .size-wide & .pin-inner {
@@ -47,35 +51,109 @@ $light-pin-handle-border: #666666;
 
 .pin-handle {
   position: absolute;
-  z-index: -1;
-  box-sizing: border-box;
-  position: absolute;
-  width: 8px;
-  height: 8px;
   top: 50%;
+  width: 64px;
+  height: 32px;
+  transform: translateY(-50%);
   border-radius: 50%;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   transition: width 0.15s ease-out, height 0.15s ease-out,
     transform 0.15s ease-out;
 
-  &.dark {
-    background: #ffffff;
-    border: 1px solid $dark-pin-handle-border;
+  // Input & Output position and masks
+  &.input {
+    left: -16px;
+    mask-image: linear-gradient(to right, black 50%, transparent 50%);
   }
 
-  &:not(.dark) {
-    background: #ffffff;
-    border: 1px solid $light-pin-handle-border;
+  &.output {
+    right: -16px;
+    mask-image: linear-gradient(to left, black 50%, transparent 50%);
   }
 
-  &::before {
-    content: "";
-    position: absolute;
-    width: 30px;
-    height: 30px;
-    top: 50%;
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+
+  // Highlight outer rings
+  &.closest::before,
+  &:hover::before {
+    opacity: 1;
+  }
+
+  .pin-handle-inner {
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
-    transform: translate(-50%, -50%);
-    z-index: -1;
+    position: relative;
+    transition: all 0.15s ease-out;
+
+    // Theme colors
+    &.dark {
+      background: #ffffff;
+      border: 1px solid $dark-pin-handle-border;
+    }
+
+    &:not(.dark) {
+      background: #ffffff;
+      border: 1px solid $light-pin-handle-border;
+    }
+
+    // Outer rings
+    &::before,
+    &::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0;
+      transition: opacity 0.15s ease-out, transform 0.15s ease-out;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    &::before {
+      width: 12px;
+      height: 12px;
+    }
+
+    &::after {
+      width: 16px;
+      height: 16px;
+    }
+
+    // Theme-based ring border colors
+    &.dark::before {
+      border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+
+    &.dark::after {
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    &:not(.dark)::before {
+      border: 1px solid rgba(0, 0, 0, 0.2);
+    }
+
+    &:not(.dark)::after {
+      border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    // Semi-circle masks for outer rings
+    &.input::before,
+    &.input::after {
+      mask-image: linear-gradient(to right, black 50%, transparent 50%);
+    }
+
+    &.output::before,
+    &.output::after {
+      mask-image: linear-gradient(to left, black 50%, transparent 50%);
+    }
+
+    mask-size: 100% 100%;
+    mask-repeat: no-repeat;
   }
 
   &.input {
@@ -95,25 +173,17 @@ $light-pin-handle-border: #666666;
     }
   }
 
-  &:hover,
-  &.closest {
-    width: 13px;
-    height: 13px;
-
-    &.input {
-      left: -1px;
-    }
-
-    &.output {
-      right: -1px;
-    }
+  // Hover/closest state ring animation and color shift
+  &:hover .pin-handle-inner,
+  &.selected .pin-handle-inner {
+    background: $pin-highlight;
   }
 
-  &:hover {
-    background: rgb(128, 187, 255);
-  }
-
-  &.selected {
-    background: rgba(40, 135, 244, 1);
+  // Ring opacity on interaction
+  &.closest .pin-handle-inner::before,
+  &:hover .pin-handle-inner::before,
+  &.closest .pin-handle-inner::after,
+  &:hover .pin-handle-inner::after {
+    opacity: 1;
   }
 }
