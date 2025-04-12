@@ -3,7 +3,7 @@ $dark-pin-text: #fff;
 $light-pin-text: #333;
 $dark-pin-handle-border: #aaaaaa;
 $light-pin-handle-border: #666666;
-$pin-highlight: rgba(40, 135, 244, 1);
+$pin-highlight: #2887f4;
 
 .pin {
   cursor: pointer;
@@ -52,7 +52,7 @@ $pin-highlight: rgba(40, 135, 244, 1);
 .pin-handle {
   position: absolute;
   top: 50%;
-  width: 32px;
+  width: 64px;
   height: 32px;
   transform: translateY(-50%);
   border-radius: 50%;
@@ -115,14 +115,14 @@ $pin-highlight: rgba(40, 135, 244, 1);
     }
 
     &::before {
-      width: 16px;
-      height: 16px;
+      width: 12px;
+      height: 12px;
       border: 1px solid rgba(255, 255, 255, 0.5);
     }
 
     &::after {
-      width: 24px;
-      height: 24px;
+      width: 16px;
+      height: 16px;
       border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
