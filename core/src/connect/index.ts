@@ -219,7 +219,7 @@ export const composeExecutableNode = (
         }
 
         if (!targetArg) {
-          throw new Error(`Target arg - [${to}] not found in node [${nodeId}]`);
+          throw new Error(`Target arg - [${to.insId}.${to.pinId}] not found in node [${nodeId}]`);
         }
 
         const sub = sourceOutput.subscribe(async (val: any) => {
