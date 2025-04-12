@@ -17,3 +17,4 @@ export { GitFork } from "./GitFork";
 export { HelpCircle } from "../components/ui/HelpCircle";
 export { AiIcon } from "./AiIcon";
 export { Expand } from "./Expand";
+export { SendIcon } from './SendIcon';

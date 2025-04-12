@@ -48,7 +48,7 @@
     "immer": "^4.0.2",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
-    "monaco-editor": "^0.41.0",
+    "monaco-editor": "0.50.0",
     "react-draggable": "^4.4.5",
     "react-error-boundary": "^4.0.12",
     "react-hook-form": "^7.54.2",
