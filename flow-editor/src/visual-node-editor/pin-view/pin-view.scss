@@ -7,34 +7,39 @@ $light-pin-handle-border: #666666;
 .pin {
   cursor: pointer;
   user-select: none;
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 24px; // Ensure consistent height for alignment
 
   .pin-inner {
-    max-width: 60px;
+    max-width: 80px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    display: inline-block;
+    padding: 4px 8px;
+    line-height: 1.2;
+    position: relative;
   }
 
   .size-wide & .pin-inner {
-    max-width: 80px;
+    max-width: 120px;
   }
 
   &.input {
+    padding-left: 12px; // Space for handle
     .pin-inner {
       text-align: left;
     }
   }
 
   &.output {
-    text-align: right;
-
+    padding-right: 12px; // Space for handle
+    justify-content: flex-end;
     .pin-inner {
       text-align: right;
     }
   }
-
-  user-select: none;
 
   &.dark {
     color: $dark-pin-text;
@@ -47,15 +52,39 @@ $light-pin-handle-border: #666666;
 
 .pin-handle {
   position: absolute;
-  z-index: -1;
+  z-index: 1;
   box-sizing: border-box;
-  position: absolute;
   width: 8px;
   height: 8px;
   top: 50%;
   border-radius: 50%;
-  transition: width 0.15s ease-out, height 0.15s ease-out,
-    transform 0.15s ease-out;
+  transition: all 0.2s ease-out;
+
+  // Improved hit detection area
+  &::before {
+    content: "";
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    top: 50%;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+    transition: all 0.2s ease-out;
+    pointer-events: auto;
+  }
+
+  // Extended catch area into node
+  &::after {
+    content: "";
+    position: absolute;
+    width: 40px;
+    height: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: -1;
+    pointer-events: auto;
+  }
 
   &.dark {
     background: #ffffff;
@@ -67,45 +96,42 @@ $light-pin-handle-border: #666666;
     border: 1px solid $light-pin-handle-border;
   }
 
-  &::before {
-    content: "";
-    position: absolute;
-    width: 30px;
-    height: 30px;
-    top: 50%;
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    z-index: -1;
-  }
-
   &.input {
-    left: -1px;
+    left: 0;
     transform: translateX(-50%) translateY(-50%);
     &::before {
       left: 50%;
     }
+    &::after {
+      left: 100%;
+    }
   }
 
   &.output {
-    right: -1px;
+    right: 0;
     transform: translateX(50%) translateY(-50%);
     &::before {
       right: 50%;
       transform: translate(50%, -50%);
     }
+    &::after {
+      right: 100%;
+    }
   }
 
+  // Improved hover and proximity states
   &:hover,
   &.closest {
-    width: 13px;
-    height: 13px;
+    width: 12px;
+    height: 12px;
+    z-index: 2;
+    border-color: rgb(40, 135, 244);
+    box-shadow: 0 0 0 4px rgba(40, 135, 244, 0.2);
 
-    &.input {
-      left: -1px;
-    }
-
-    &.output {
-      right: -1px;
+    &::before {
+      background-color: rgba(40, 135, 244, 0.1);
+      width: 60px; // Maintain size during hover
+      height: 60px;
     }
   }
 
@@ -115,5 +141,13 @@ $light-pin-handle-border: #666666;
 
   &.selected {
     background: rgba(40, 135, 244, 1);
+  }
+
+  &.closest:not(:hover) {
+    background: #ffffff;
+    border-color: rgba(40, 135, 244, 0.8);
+    &::before {
+      background-color: rgba(40, 135, 244, 0.05);
+    }
   }
 }
