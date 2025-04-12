@@ -1,7 +1,7 @@
 // Theme colors
 $dark-pin-text: #fff;
 $light-pin-text: #333;
-$dark-pin-handle-border: #aaaaaa;
+$dark-pin-handle-border: #cccccc;
 $light-pin-handle-border: #666666;
 $pin-highlight: #2887f4;
 
@@ -117,13 +117,28 @@ $pin-highlight: #2887f4;
     &::before {
       width: 12px;
       height: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.5);
     }
 
     &::after {
       width: 16px;
       height: 16px;
+    }
+
+    // Theme-based ring border colors
+    &.dark::before {
+      border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+
+    &.dark::after {
       border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    &:not(.dark)::before {
+      border: 1px solid rgba(0, 0, 0, 0.2);
+    }
+
+    &:not(.dark)::after {
+      border: 1px solid rgba(0, 0, 0, 0.1);
     }
 
     // Semi-circle masks for outer rings
