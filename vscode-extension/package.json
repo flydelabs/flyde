@@ -2,7 +2,7 @@
   "name": "flyde-vscode",
   "displayName": "Flyde",
   "description": "Flyde is an open-source, visual programming language. It runs in the IDE, integrates with existing TypeScript code, both browser and Node.js.",
-  "version": "1.0.0-alpha.12",
+  "version": "1.0.0-alpha.13",
   "publisher": "flyde",
   "engines": {
     "vscode": "^1.75.0"
