@@ -226,4 +226,10 @@
       font-weight: normal;
     }
   }
+
+  &.dragged {
+    .pin-handle {
+      width: 64px;
+    }
+  }
 }

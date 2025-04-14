@@ -1378,6 +1378,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             <ContextMenuTrigger
               className={classNames("visual-node-editor", props.className, {
                 dark: darkMode,
+                dragged: draggedConnection !== null,
               })}
               data-id={node.id}
               disabled={!isBoardInFocus.current}
