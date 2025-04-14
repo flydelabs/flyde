@@ -37,8 +37,8 @@ const CodeExpressionEditor: MacroEditorComp<CodeExpressionConfig> =
           <FormGroup
             label="Accepts any valid JS code that returns an expression"
             aiGenerate={{
-              prompt: `You are a master JS inline expression generator. You will receive a user's request, and an optional existing value. 
-              Your task is to return a single JS expression that adheres to the user's request.  You can use the "inputs" object to access the external inputs.
+              prompt: `You are a master Node JS inline expression generator. You will receive a user's request, and an optional existing value. 
+              Your task is to return a single Node JS expression that adheres to the user's request.  You can use the "inputs" object to access the external inputs.
                 Example:
                 Add 2 numbers: inputs.a + inputs.b
                 Uppercase: inputs.name.toUpperCase()
@@ -46,6 +46,7 @@ const CodeExpressionEditor: MacroEditorComp<CodeExpressionConfig> =
               
               - Do not write "return" and do not use line breaks. The expression will be evaluated directly.
               - Return plain code, no wrapping code like \`\`\`js or \`\`\` or \`
+              - Assume it runs in the server and cannot use any external apis, just an inline expression
 
               ## Previous expression:
               ${value.value}
