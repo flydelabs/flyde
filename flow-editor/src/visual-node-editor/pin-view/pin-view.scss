@@ -47,6 +47,12 @@ $pin-highlight: #2887f4;
   &:not(.dark) {
     color: $light-pin-text;
   }
+
+  &.increased-drop-area {
+    .pin-handle {
+      width: 64px;
+    }
+  }
 }
 
 .pin-handle {
@@ -159,6 +165,7 @@ $pin-highlight: #2887f4;
   &.input {
     left: -1px;
     transform: translateX(-50%) translateY(-50%);
+
     &::before {
       left: 50%;
     }
@@ -167,6 +174,7 @@ $pin-highlight: #2887f4;
   &.output {
     right: -1px;
     transform: translateX(50%) translateY(-50%);
+
     &::before {
       right: 50%;
       transform: translate(50%, -50%);
