@@ -49,6 +49,7 @@ export type PinViewProps = {
   ancestorsInsIds?: string;
   selected: boolean;
   connected: boolean;
+  increasedDropArea?: boolean;
   onDoubleClick?: (id: string, e: React.MouseEvent) => void;
   onShiftClick?: (id: string, e: React.MouseEvent) => void;
   onClick: (id: string, type: PinType, e: React.MouseEvent) => void;
@@ -57,7 +58,6 @@ export type PinViewProps = {
   onToggleLogged: (insId: string, pinId: string, type: PinType) => void;
   onToggleBreakpoint: (insId: string, pinId: string, type: PinType) => void;
   onInspect: (insId: string, pin: { id: string; type: PinType }) => void;
-
   onMouseUp: (id: string, type: PinType, e: React.MouseEvent) => void;
   onMouseDown: (id: string, type: PinType, e: React.MouseEvent) => void;
   isMain: boolean;
@@ -172,6 +172,7 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
         "pin",
         {
           selected,
+          "increased-drop-area": props.increasedDropArea,
           closest: isClosestToMouse,
           optional,
           connected,
@@ -185,6 +186,7 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
         {
           selected,
           connected,
+          "increased-drop-area": props.increasedDropArea,
           closest: isClosestToMouse,
           optional,
           "error-pin": id === ERROR_PIN_ID,
@@ -288,7 +290,7 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
         onMouseUp={_onMouseUp}
         onClick={onPinHandleClick}
       >
-        <div className={classNames("pin-handle-inner", type, { dark } )} />
+        <div className={classNames("pin-handle-inner", type, { dark })} />
       </div>
     </div>
   );

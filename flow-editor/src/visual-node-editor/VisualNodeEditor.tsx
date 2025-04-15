@@ -6,7 +6,6 @@ import {
   isCodeNodeInstance,
   ConnectionData,
   isInternalConnectionNode,
-  VisualNode,
   NodeInstance,
   PinType,
   isVisualNode,
@@ -23,7 +22,6 @@ import {
   EditorVisualNode,
   EditorNodeInstance,
   FlydeFlow,
-  CodeNodeInstance,
   isVisualNodeInstance,
   ImportableEditorNode,
   EditorCodeNodeDefinition,
@@ -730,6 +728,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             description={v.description ?? ''}
             onMouseUp={onNodeIoMouseUp}
             onMouseDown={onNodeIoMouseDown}
+            increasedDropArea={!!draggedConnection}
           />
         ));
       };
@@ -1377,7 +1376,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           <ContextMenu>
             <ContextMenuTrigger
               className={classNames("visual-node-editor", props.className, {
-                dark: darkMode,
+                dark: darkMode
               })}
               data-id={node.id}
               disabled={!isBoardInFocus.current}
@@ -1451,6 +1450,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                     onToggleSticky={onToggleSticky}
                     selected={selectedInstances.indexOf(ins.id) !== -1}
                     dragged={draggingId === ins.id}
+                    increasedPinDropArea={!!draggedConnection}
                     onInspectPin={_onInspectPin}
                     selectedInput={
                       to && isInternalConnectionNode(to) && to.insId === ins.id

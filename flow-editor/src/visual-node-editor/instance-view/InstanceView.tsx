@@ -160,6 +160,8 @@ export interface InstanceViewProps {
 
   isConnectedInstanceSelected: boolean;
 
+  increasedPinDropArea?: boolean;
+
   inlineGroupProps?: VisualNodeEditorProps & VisualNodeEditorContextType;
   onCloseInlineEditor: () => void;
 
@@ -657,6 +659,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
                 optional={optionalInputs.has(k)}
                 connected={connectedInputs.has(k)}
                 isSticky={stickyInputs[k] ?? false}
+                increasedDropArea={props.increasedPinDropArea}
                 // minimized={!selected}
                 onToggleSticky={_onToggleSticky}
                 selected={k === selectedInput}
@@ -694,6 +697,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
                 currentInsId={instance.id}
                 ancestorsInsIds={props.ancestorsInsIds}
                 connected={connectedOutputs.has(k)}
+                increasedDropArea={props.increasedPinDropArea}
                 type="output"
                 id={k}
                 // minimized={selected ? false : outputsToRender.length === 1}

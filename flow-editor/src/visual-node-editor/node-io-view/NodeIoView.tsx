@@ -25,6 +25,7 @@ export interface NodeIoViewProps {
   inputMode?: InputMode;
   closest: boolean;
   viewPort: { pos: Pos; zoom: number };
+  increasedDropArea?: boolean;
   onDblClick?: (pinId: string, e: React.MouseEvent) => void;
   onDelete?: (type: PinType, pin: string) => void;
   onRename?: (type: PinType, pin: string) => void;
@@ -240,6 +241,7 @@ export const NodeIoView: React.FC<NodeIoViewProps> = React.memo(
             onToggleBreakpoint={noop}
             onInspect={noop}
             description={description}
+            increasedDropArea={props.increasedDropArea}
             onMouseUp={(pinId, pinType, e) => {
               e.stopPropagation();
               _onMouseUp(e);
@@ -265,6 +267,7 @@ export const NodeIoView: React.FC<NodeIoViewProps> = React.memo(
             onToggleBreakpoint={noop}
             onInspect={noop}
             description={description}
+            increasedDropArea={props.increasedDropArea}
             onMouseUp={(pinId, pinType, e) => {
               e.stopPropagation();
               _onMouseUp(e);
