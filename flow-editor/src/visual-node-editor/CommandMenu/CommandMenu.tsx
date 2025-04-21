@@ -31,20 +31,19 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
   const [groups, setGroups] = useState<NodeLibraryGroup[]>([]);
   const [loading, setLoading] = useState(false);
 
+
   const { getLibraryData } = usePorts();
 
   useEffect(() => {
-    if (open) {
-      setLoading(true);
-      getLibraryData()
-        .then((data) => {
-          setGroups(data.groups);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    }
-  }, [getLibraryData, open]);
+    setLoading(true);
+    getLibraryData()
+      .then((data) => {
+        setGroups(data.groups);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [getLibraryData]);
 
   const {
     nodeMap,

@@ -48,8 +48,11 @@ export const ConnectionViewPath: React.FC<ConnectionViewPathProps> = forwardRef(
       curvature: 0.3,
     });
 
-    const strokeWidth = 2.5 * zoom;
-    const strokeDasharray = dashed ? 6 * zoom : undefined;
+    const isSelected = className.split(/\s+/).includes("selected");
+    const isPendingSelection = className.includes("pending-selection");
+
+    const strokeWidth = (isSelected ? 4 : 2.5) * zoom;
+    const strokeDasharray = dashed || isPendingSelection ? 6 * zoom : undefined;
 
     const pathProximityMask = (
       <path
@@ -62,37 +65,45 @@ export const ConnectionViewPath: React.FC<ConnectionViewPathProps> = forwardRef(
       />
     );
 
+    // Determine stroke color based on status
+    const getBorderStroke = () => {
+      if (className.includes("added")) return "#4ADE80";
+      if (className.includes("removed")) return "#F87171";
+      if (className.includes("changed")) return "#60A5FA";
+      if (isSelected) return "#0EA5E9"; // Brand blue for selected
+      // No special color for pending selection
+      return "#6A6A6A"; // Default
+    };
+
     const borderPath = (
       <path
         d={d}
         ref={ref as any}
         style={{
-          stroke: className.includes("added")
-            ? "#4ADE80"
-            : className.includes("removed")
-            ? "#F87171"
-            : className.includes("changed")
-            ? "#60A5FA"
-            : "#6A6A6A",
-          strokeWidth: 3 * zoom,
+          stroke: getBorderStroke(),
+          strokeWidth: strokeWidth,
           fill: "none",
           strokeDasharray,
         }}
       />
     );
 
+    // Determine inner path stroke color
+    const getPathStroke = () => {
+      if (className.includes("added")) return "#86EFAC";
+      if (className.includes("removed")) return "#FCA5A5";
+      if (className.includes("changed")) return "#93C5FD";
+      if (isSelected) return "#7DD3FC"; // Lighter brand blue for selected
+      // No special color for pending selection
+      return "#D0D0D0"; // Default
+    };
+
     const path = (
       <path
         d={d}
         style={{
-          stroke: className.includes("added")
-            ? "#86EFAC"
-            : className.includes("removed")
-            ? "#FCA5A5"
-            : className.includes("changed")
-            ? "#93C5FD"
-            : "#D0D0D0",
-          strokeWidth: zoom,
+          stroke: getPathStroke(),
+          strokeWidth: isSelected ? 2 * zoom : zoom,
           fill: "none",
           strokeDasharray,
         }}

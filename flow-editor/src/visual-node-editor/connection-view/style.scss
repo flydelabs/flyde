@@ -27,6 +27,7 @@ path.connection {
 
   &.hidden {
     stroke: transparent;
+
     &.parent-selected {
       stroke-dasharray: 8;
       stroke: #6c6c6c;
@@ -51,27 +52,36 @@ path.connection {
 }
 
 :not(.dark) {
-  .connection.selected {
+
+  .connection.selected,
+  .connection-view-path.selected path {
     stroke: $gray-800;
+    stroke-width: 3;
   }
 
-  .connection.pending-selection {
+  .connection.pending-selection,
+  .connection-view-path.pending-selection path {
     stroke: $gray-800;
   }
 }
 
 .dark {
-  .connection.selected {
+
+  .connection.selected,
+  .connection-view-path.selected path {
     stroke: $neutral-200;
+    stroke-width: 3;
   }
-  
-  .connection.pending-selection {
+
+  .connection.pending-selection,
+  .connection-view-path.pending-selection path {
     stroke-dasharray: 6;
     stroke: $neutral-200;
   }
 }
 
-.connection.pending-selection {
+.connection.pending-selection,
+.connection-view-path.pending-selection path {
   stroke-dasharray: 6;
 }
 
@@ -84,7 +94,8 @@ path.connection {
   }
 }
 
-.connection.delayed polyline {
+.connection.delayed polyline,
+.connection-view-path.delayed path {
   stroke-dasharray: 6;
 }
 

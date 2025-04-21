@@ -290,7 +290,7 @@ export const NodeIoView: React.FC<NodeIoViewProps> = React.memo(
       <BaseNodeView
         className={classNames(`node-io-view`, type, { dark })}
         pos={pos}
-        icon={type === "output" ? "paper-plane" : "arrow-right-long"}
+        icon={"arrow-right-long"}
         description={description ?? `Main ${type} pin - ${id}`}
         onDragEnd={_onDragEnd}
         onDragStart={_onDragStart}

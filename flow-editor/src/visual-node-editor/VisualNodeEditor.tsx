@@ -1172,8 +1172,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
             const newInstance = { ...editedNodeInstance.ins, config: val };
 
-
-            resolveInstance({ instance: newInstance }).then((resolvedNode) => {
+            return resolveInstance({ instance: newInstance }).then((resolvedNode) => {
               const newNode = produce(node, (draft) => {
                 const ins: EditorNodeInstance | undefined = draft.instances.find(
                   (i) => i.id === editedNodeInstance.ins.id
@@ -1189,6 +1188,9 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
               onChange(newNode, functionalChange("save macro instance"));
               setEditedNodeInstance(undefined);
+            }).catch(error => {
+              console.error("Failed to resolve instance:", error);
+              throw error;
             });
           },
           [editedNodeInstance, resolveInstance, node, onChange]
