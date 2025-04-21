@@ -34,8 +34,19 @@ function parseMarkdown(markdown: string): string {
   // Replace headers
   markdown = markdown.replace(/^(#{1,6})\s(.+)$/gm, (_, hashes, content) => {
     const level = hashes.length;
-    const fontSize = Math.max(24 - (level * 2), 12); // Decrease font size by level
-    return `<h${level} style="font-weight: bold; font-size: ${fontSize}px; margin-bottom: 0.5em;">${content}</h${level}>`;
+    let fontSize;
+
+    // Specific size for each heading level
+    switch (level) {
+      case 1: fontSize = 24; break;
+      case 2: fontSize = 20; break;
+      case 3: fontSize = 16; break;
+      case 4: case 5: case 6: fontSize = 14; break;
+      default: fontSize = 14;
+    }
+
+    // Add a special marker to indicate this line shouldn't have a <br> added
+    return `<h${level} style="font-family: Inter, sans-serif; font-weight: bold; font-size: ${fontSize}px; margin-bottom: 5px;">${content}</h${level}><!--no-break-->`;
   });
 
   // Replace bold
@@ -72,10 +83,10 @@ function parseMarkdown(markdown: string): string {
 
       if (match) {
         if (!inList) {
-          result += "<ul style='margin-left: 20px; margin-top: 5px; margin-bottom: 5px;'>";
+          result += "<ul style='margin-left: 15px; margin-top: 5px; margin-bottom: 5px;'>";
           inList = true;
         }
-        result += `<li>${match[1]}</li>`;
+        result += `<li style="font-family: Inter, sans-serif; font-size: 14px;">${match[1]}</li>`;
       } else {
         if (inList) {
           result += "</ul>";
@@ -105,10 +116,10 @@ function parseMarkdown(markdown: string): string {
 
       if (match) {
         if (!inList) {
-          result += "<ol style='margin-left: 20px; margin-top: 5px; margin-bottom: 5px;'>";
+          result += "<ol style='margin-left: 15px; margin-top: 5px; margin-bottom: 5px;'>";
           inList = true;
         }
-        result += `<li>${match[2]}</li>`;
+        result += `<li style="font-family: Inter, sans-serif; font-size: 14px;">${match[2]}</li>`;
       } else {
         if (inList) {
           result += "</ol>";
@@ -126,7 +137,15 @@ function parseMarkdown(markdown: string): string {
   }
 
   // Replace line breaks (do this last to avoid interfering with list processing)
+  // Skip line breaks after headings by looking for the special marker
+  markdown = markdown.replace(/<!--no-break-->\n/g, '<!--no-break-->');
   markdown = markdown.replace(/\n/g, "<br>");
+  markdown = markdown.replace(/<!--no-break-->/g, ''); // Clean up markers
+
+  // Wrap any plain text in a paragraph with the correct styling
+  if (!markdown.includes("<p") && markdown.length > 0) {
+    markdown = `<div style="font-family: Inter, sans-serif; font-size: 14px;">${markdown}</div>`;
+  }
 
   return markdown;
 }

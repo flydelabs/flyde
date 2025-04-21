@@ -14,12 +14,13 @@ import { loadConfigEditorComponent } from "./loadConfigEditorComponent";
 import { usePorts } from "../../flow-editor/ports";
 import { InstanceIcon } from "../instance-view/InstanceIcon";
 import { HotkeyIndication } from "@flyde/ui";
+import { Loader } from "@/lib/loader";
 
 export interface InstanceConfigEditorProps {
   ins: EditorCodeNodeInstance;
   editorNode: EditorVisualNode;
   onCancel: () => void;
-  onSubmit: (value: any) => void;
+  onSubmit: (value: any) => Promise<void>;
   onFork: (ins: EditorNodeInstance) => void;
   // onSwitchToSiblingMacro: (newMacro: MacroNodeDefinition<any>) => void;
 }
@@ -28,6 +29,7 @@ export const InstanceConfigEditor: React.FC<InstanceConfigEditorProps> = (
   props
 ) => {
   const { ins, onCancel, onFork } = props;
+  const [isLoading, setIsLoading] = React.useState(false);
 
   const _onFork = useCallback(() => {
     onCancel();
@@ -46,26 +48,39 @@ export const InstanceConfigEditor: React.FC<InstanceConfigEditorProps> = (
   }, []);
 
   const handleSubmit = useCallback(() => {
-    props.onSubmit(instanceConfig);
-    setHasUnsavedChanges(false);
-  }, [props, instanceConfig]);
+    if (isLoading) return;
+
+    setIsLoading(true);
+    props.onSubmit(instanceConfig)
+      .then(() => {
+        setHasUnsavedChanges(false);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.error("Failed to save config:", error);
+        setIsLoading(false);
+      });
+  }, [props, instanceConfig, isLoading]);
 
   const handleCancel = useCallback(() => {
+    if (isLoading) return;
     if (!hasUnsavedChanges) {
       onCancel();
       return;
     }
     setShowUnsavedChangesDialog(true);
-  }, [hasUnsavedChanges, onCancel]);
+  }, [hasUnsavedChanges, onCancel, isLoading]);
 
   const handleCloseUnsavedChangesDialog = useCallback(() => {
+    if (isLoading) return;
     setShowUnsavedChangesDialog(false);
-  }, []);
+  }, [isLoading]);
 
   const handleDiscardChanges = useCallback(() => {
+    if (isLoading) return;
     setShowUnsavedChangesDialog(false);
     onCancel();
-  }, [onCancel]);
+  }, [onCancel, isLoading]);
 
   const EditorComp = useMemo(() => {
     return loadConfigEditorComponent(ins);
@@ -77,7 +92,6 @@ export const InstanceConfigEditor: React.FC<InstanceConfigEditorProps> = (
       if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
         e.preventDefault();
         handleSubmit();
-
       }
     };
 
@@ -96,7 +110,7 @@ export const InstanceConfigEditor: React.FC<InstanceConfigEditorProps> = (
       <Dialog open={true} onOpenChange={handleCancel} modal={false}>
         <DialogContent
           className="flex flex-col max-h-[90vh] p-0"
-          noInteractOutside={hasUnsavedChanges}
+          noInteractOutside={hasUnsavedChanges || isLoading}
         >
           <DialogHeader className="flex flex-row items-center py-2 px-4 border-b border-gray-200 dark:border-gray-800 space-y-0">
             <InstanceIcon
@@ -150,19 +164,32 @@ export const InstanceConfigEditor: React.FC<InstanceConfigEditorProps> = (
                 size="xs"
                 onClick={_onFork}
                 className="p-0 h-auto text-xs inline-flex items-center"
+                disabled={isLoading}
               >
-
                 Fork
               </Button>
               {" "}this node
             </div>
             <div className="flex gap-2">
-              <Button variant="outline" size="sm" onClick={onCancel}>
+              <Button variant="outline" size="sm" onClick={onCancel} disabled={isLoading}>
                 Cancel
               </Button>
-              <Button size="sm" onClick={handleSubmit} className="flex items-center gap-2">
-                Save
-                <HotkeyIndication hotkey="cmd+enter" />
+              <Button
+                size="sm"
+                onClick={handleSubmit}
+                className="flex items-center gap-2"
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <>
+                    Saving <Loader minimal />
+                  </>
+                ) : (
+                  <>
+                    Save
+                    <HotkeyIndication hotkey="cmd+enter" />
+                  </>
+                )}
               </Button>
             </div>
           </div>

@@ -2,9 +2,6 @@ import {
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuSeparator,
-  ContextMenuSub,
-  ContextMenuSubContent,
-  ContextMenuSubTrigger,
 } from "@flyde/ui";
 import { isDefined } from "../../utils";
 import { NodeStyle, PinType, nodeInput, nodeOutput } from "@flyde/core";
@@ -131,7 +128,7 @@ export function EditorContextMenu(props: EditorContextMenuProps) {
 
   return (
     <ContextMenuContent className="w-64">
-      <ContextMenuItem onSelect={onOpenNodesLibrary}>Add Node</ContextMenuItem>
+      <ContextMenuItem onSelect={onOpenNodesLibrary}>Open nodes menu</ContextMenuItem>
 
       <ContextMenuSeparator />
 
@@ -139,14 +136,14 @@ export function EditorContextMenu(props: EditorContextMenuProps) {
         disabled={!nodeIoEditable}
         onSelect={() => onAddMainPin("input")}
       >
-        New main input {maybeDisabledLabel}
+        Add input node {maybeDisabledLabel}
       </ContextMenuItem>
 
       <ContextMenuItem
         disabled={!nodeIoEditable}
         onSelect={() => onAddMainPin("output")}
       >
-        New main output {maybeDisabledLabel}
+        Add output node {maybeDisabledLabel}
       </ContextMenuItem>
 
       <ContextMenuItem onSelect={copyNodeToClipboard}>

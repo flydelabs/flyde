@@ -64,6 +64,7 @@ export const Collect: CodeNode<CollectConfig> = {
   namespace: "Lists",
   mode: "advanced",
   icon: "bucket",
+  aliases: ["aggregate", "combine"],
   menuDisplayName: "Collect",
   menuDescription: "Collects values into a list. Over time, count, or trigger.",
   displayName: (config) => getDisplayName(config),

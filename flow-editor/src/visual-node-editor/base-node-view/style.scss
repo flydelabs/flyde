@@ -51,61 +51,70 @@ $light-text: #333;
 
     &.dark {
       border-color: $dark-border-light;
+
       .node-header {
         background: $dark-header-bg;
         color: $dark-text;
         border-bottom: 1px solid $dark-border;
       }
+
       .node-body {
         background: $dark-body-bg;
         color: $key-1;
+        color: $dark-text;
       }
+
       &:hover {
         border-color: $dark-text;
       }
+
       &.selected {
         .node-header {
           background: #2987f4;
           color: $dark-text;
           border-bottom: 1px solid $dark-border;
         }
+
         .node-body {
-          background: linear-gradient(
-              0deg,
+          background: linear-gradient(0deg,
               rgba(40, 135, 244, 0.5),
-              rgba(40, 135, 244, 0.5)
-            ),
+              rgba(40, 135, 244, 0.5)),
             $dark-body-bg;
         }
       }
+
     }
 
     &:not(.dark) {
       border-color: $light-border;
+
       .node-header {
         background: $light-header-bg;
         color: $light-text;
         border-bottom: 1px solid $light-border;
       }
+
       .node-body {
         background: $light-body-bg;
         color: $key-1;
+        color: $light-text;
       }
+
       &:hover {
         border-color: #666;
       }
+
       &.selected {
         .node-header {
           background: #d6e6f6;
           color: $light-text;
           border-bottom: 1px solid $light-border;
         }
+
         .node-body {
-          background: linear-gradient(
-              0deg,
+          background: linear-gradient(0deg,
               rgba(40, 135, 244, 0.3),
-              rgba(40, 135, 244, 0.3)
-            ),
+              rgba(40, 135, 244, 0.3)),
             $light-body-bg;
         }
       }
@@ -196,6 +205,7 @@ $light-text: #333;
       }
 
       &:has(.pin-inner:hover) {
+
         .icon-container,
         .pin-inner {
           opacity: 0.5;
@@ -204,8 +214,36 @@ $light-text: #333;
     }
 
     .node-overridden-body {
-      color: #fff;
       display: block;
+      font-size: 12px;
+
+      ul,
+      ol {
+        padding-left: 10px;
+        margin: 8px 0;
+        list-style-position: outside;
+      }
+
+      ul {
+        list-style-type: disc;
+      }
+
+      ol {
+        list-style-type: decimal;
+      }
+
+      li {
+        margin-bottom: 4px;
+      }
+
+      a {
+        color: $key-1;
+        text-decoration: underline;
+
+        &:hover {
+          opacity: 0.8;
+        }
+      }
     }
   }
 }

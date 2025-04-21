@@ -68,7 +68,8 @@ export interface OptionalPinViewProps {
   onSelect: (k: string) => void;
 }
 
-const LEAVE_DELAY = 200; // 200ms delay before hiding tooltip
+const LEAVE_DELAY = 500; // Increased from 200ms to 500ms for better UX
+const SHOW_DELAY = 250; // Delay before showing tooltip
 
 export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
   props
@@ -84,6 +85,7 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
     onMouseDown,
     onMouseUp,
     isMain,
+    onInspect,
   } = props;
 
   const { history, resetHistory, refreshHistory } = useHistoryHelpers(
@@ -93,34 +95,77 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
   );
 
   const leaveTimer = useRef<number>();
+  const showTimer = useRef<number>();
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
+  const [isDataLoading, setIsDataLoading] = useState(false);
+  const [isTooltipHovered, setIsTooltipHovered] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const handleMouseEnter = useCallback(() => {
     window.clearTimeout(leaveTimer.current);
+    setIsDataLoading(true);
+    // Clear previous history data to prevent showing stale data
+    resetHistory();
+
+    // Start loading the data
     refreshHistory();
-    setIsTooltipOpen(true);
-  }, [refreshHistory]);
+
+    // Set a delay before showing the tooltip
+    showTimer.current = window.setTimeout(() => {
+      setIsTooltipOpen(true);
+      setTimeout(() => {
+        setIsDataLoading(false);
+      }, 100);
+    }, SHOW_DELAY);
+  }, [refreshHistory, resetHistory]);
 
   const handleMouseLeave = useCallback(() => {
+    window.clearTimeout(showTimer.current);
+
+    leaveTimer.current = window.setTimeout(() => {
+      if (!isTooltipHovered) {
+        resetHistory();
+        setIsTooltipOpen(false);
+        setIsExpanded(false);
+      }
+    }, LEAVE_DELAY);
+  }, [resetHistory, isTooltipHovered]);
+
+  const handleTooltipMouseEnter = useCallback(() => {
+    window.clearTimeout(leaveTimer.current);
+    setIsTooltipHovered(true);
+  }, []);
+
+  const handleTooltipMouseLeave = useCallback(() => {
+    setIsTooltipHovered(false);
     leaveTimer.current = window.setTimeout(() => {
       resetHistory();
       setIsTooltipOpen(false);
+      setIsExpanded(false);
     }, LEAVE_DELAY);
   }, [resetHistory]);
+
+  const handleInspect = useCallback(() => {
+    onInspect(currentInsId, { id, type });
+  }, [currentInsId, id, type, onInspect]);
+
+  const toggleExpanded = useCallback(() => {
+    setIsExpanded(prev => !prev);
+  }, []);
 
   useHotkeys(
     "cmd+i,ctrl+i",
     (e) => {
       if (isTooltipOpen) {
         e.preventDefault();
-        props.onInspect(currentInsId, { id, type });
+        handleInspect();
       }
     },
     {
       text: "Inspect pin value",
       group: "Pin Actions",
     },
-    [currentInsId, id, type, props.onInspect, isTooltipOpen]
+    [handleInspect, isTooltipOpen]
   );
 
   const dark = useDarkMode();
@@ -257,7 +302,13 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
             </TooltipTrigger>
             <ContextMenuContent>{getContextMenuContent()}</ContextMenuContent>
           </ContextMenu>
-          <TooltipContent side="top" align="start" className="p-0 rounded-md">
+          <TooltipContent
+            side="top"
+            align="start"
+            className="p-0 rounded-md"
+            onMouseEnter={handleTooltipMouseEnter}
+            onMouseLeave={handleTooltipMouseLeave}
+          >
             <PinTooltipContent
               displayName={displayName}
               typeLabel={
@@ -270,6 +321,10 @@ export const PinView: React.FC<PinViewProps> = React.memo(function PinView(
               description={props.description}
               history={history}
               queuedValues={type === "input" ? props.queuedValues : undefined}
+              isLoading={isDataLoading}
+              onInspect={handleInspect}
+              isExpanded={isExpanded}
+              onToggleExpand={toggleExpanded}
             />
           </TooltipContent>
         </Tooltip>

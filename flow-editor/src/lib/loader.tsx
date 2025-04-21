@@ -1,13 +1,13 @@
-export const Loader = () => {
+export const Loader = ({ minimal }: { minimal?: boolean }) => {
   // <!-- By Sam Herbert (@sherb), for everyone. More @ http://goo.gl/7AJzbL -->
   return (
-    <div className="loader">
+    <div className={`loader ${minimal ? 'loader-minimal' : ''}`}>
       <svg
-        width="38"
-        height="38"
+        width={minimal ? "12" : "38"}
+        height={minimal ? "12" : "38"}
         viewBox="0 0 38 38"
         xmlns="http://www.w3.org/2000/svg"
-        stroke="#007ec6"
+        stroke={minimal ? "#000" : "#007ec6"}
       >
         <g fill="none" fillRule="evenodd">
           <g transform="translate(1 1)" strokeWidth="2">
