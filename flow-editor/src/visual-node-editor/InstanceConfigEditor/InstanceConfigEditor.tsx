@@ -149,6 +149,8 @@ export const InstanceConfigEditor: React.FC<InstanceConfigEditorProps> = (
                   value={instanceConfig}
                   onChange={handleMacroDataChange}
                   ports={ports}
+                  nodeId={ins.nodeId}
+                  insId={ins.id}
                   createAiCompletion={aiCompletion.createCompletion}
                 />
               </ErrorBoundary>

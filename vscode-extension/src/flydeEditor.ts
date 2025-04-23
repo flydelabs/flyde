@@ -610,10 +610,12 @@ export class FlydeEditorEditorProvider
               }
               case "createAiCompletion": {
                 try {
-                  const { prompt, jsonMode } = event.params;
+                  const { prompt, jsonMode, nodeId, insId } = event.params;
                   const completion = await createAiCompletion({
                     prompt,
                     jsonMode,
+                    nodeId,
+                    insId
                   });
                   messageResponse(event, completion);
                 } catch (error) {

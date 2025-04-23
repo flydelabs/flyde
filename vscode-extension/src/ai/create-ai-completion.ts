@@ -1,15 +1,13 @@
+import { AiCompletionDto } from "@flyde/core";
 import { OpenAI } from "openai";
 import * as vscode from "vscode";
 
-export interface CreateAiCompletionParams {
-  prompt: string;
-  jsonMode?: boolean;
-}
+
 
 export async function createAiCompletion({
   prompt,
   jsonMode,
-}: CreateAiCompletionParams): Promise<string> {
+}: AiCompletionDto): Promise<string> {
   const config = vscode.workspace.getConfiguration("flyde");
   let openAiToken = config.get<string>("openAiToken");
 
@@ -32,14 +30,14 @@ export async function createAiCompletion({
     });
 
     const response = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4.1",
       // eslint-disable-next-line @typescript-eslint/naming-convention
       response_format: jsonMode ? { type: "json_object" } : undefined,
       messages: [
         {
           role: "system",
           content:
-            "You are a helpful coding assistant. Provide direct code responses without explanations.",
+            `You are a helpful assistant helping a user fill in values for node configuration of a visual-programming platform. Reply with just the ${jsonMode ? "JSON" : "string"} value. No wrappers, no explanations, just the required value (either code or string, as requested).`,
         },
         {
           role: "user",

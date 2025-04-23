@@ -34,6 +34,8 @@ function FieldContent({
   handleDialogToggle,
   isExpanded,
   onTypeChange,
+  nodeId,
+  insId,
 }: {
   config: MacroEditorFieldDefinition;
   value: MacroConfigurableValue;
@@ -41,6 +43,8 @@ function FieldContent({
   handleDialogToggle?: () => void;
   isExpanded?: boolean;
   onTypeChange?: (type: MacroConfigurableValue["type"]) => void;
+  nodeId: string;
+  insId?: string;
 }) {
   const shouldShowExpand =
     !isExpanded &&
@@ -83,13 +87,16 @@ function FieldContent({
             </DropdownMenu>
           </div>
         )}
-        {config.aiCompletion && (
+        {config.aiCompletion && (value.type === "json" || value.type === "string") && (
           <div>
             <AiGenerate
               prompt={config.aiCompletion.prompt}
               placeholder={config.aiCompletion.placeholder}
-              jsonMode={config.aiCompletion.jsonMode}
+              jsonMode={value.type === "json"}
               currentValue={value.value}
+              nodeId={nodeId}
+              insId={insId}
+
               onComplete={(text: string) => {
                 try {
                   const parsed = JSON.parse(text);
@@ -119,8 +126,10 @@ export function MacroConfigurableFieldEditor(props: {
   onChange: (value: MacroConfigurableValue) => void;
   config: MacroEditorFieldDefinition;
   ports: PartialEditorPorts;
+  nodeId: string;
+  insId?: string;
 }) {
-  const { config, value, onChange, ports } = props;
+  const { config, value, onChange, ports, nodeId, insId } = props;
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [rawJsonData, setRawJsonData] = useState<string>(
     value.type === "json" ? JSON.stringify(value.value, null, 2) : ""
@@ -156,6 +165,8 @@ export function MacroConfigurableFieldEditor(props: {
         onChange={onChange}
         handleDialogToggle={handleDialogToggle}
         onTypeChange={changeType}
+        nodeId={nodeId}
+        insId={insId}
       />
       <MacroConfigurableValueBaseEditor
         value={value}
@@ -206,6 +217,8 @@ export function MacroConfigurableFieldEditor(props: {
             onChange={onChange}
             isExpanded={true}
             onTypeChange={isDialogOpen ? changeType : undefined}
+            nodeId={nodeId}
+            insId={insId}
           />
           <MacroConfigurableValueBaseEditor
             value={value}

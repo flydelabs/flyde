@@ -17,6 +17,8 @@ export * from "./analytics";
 
 export type CancelFn = () => void;
 
+export interface AiCompletionDto { prompt: string; nodeId: string; insId: string; jsonMode?: boolean; };
+
 export interface EditorPorts {
   prompt: (dto: {
     defaultValue?: string;
@@ -52,7 +54,7 @@ export interface EditorPorts {
     node: NodeOrMacroDefinition;
   }) => Promise<string>;
   onCreateCustomNode: (dto: { code: string }) => Promise<ImportableEditorNode>;
-  createAiCompletion?: (dto: { prompt: string }) => Promise<string>;
+  createAiCompletion?: (dto: AiCompletionDto) => Promise<string>;
 
   resolveInstance: (dto: {
     instance: NodeInstance;

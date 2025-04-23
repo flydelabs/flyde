@@ -13,7 +13,7 @@ const getVariables = (code: string) => {
 
 const CodeExpressionEditor: MacroEditorComp<CodeExpressionConfig> =
   function CodeExpressionEditor(props) {
-    const { value, onChange, ports } = props;
+    const { value, onChange, ports, nodeId, insId } = props;
 
     const changeValue = useCallback(
       (_val) => {
@@ -58,6 +58,8 @@ const CodeExpressionEditor: MacroEditorComp<CodeExpressionConfig> =
               onComplete: (generatedText) => {
                 changeValue(generatedText);
               },
+              nodeId,
+              insId
             }}
           >
             <Textarea
