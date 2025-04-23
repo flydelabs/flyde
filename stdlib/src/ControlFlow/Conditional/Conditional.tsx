@@ -50,7 +50,7 @@ const rightConfig: MacroEditorFieldDefinition = {
 
 const ConditionalEditor: MacroEditorComp<ConditionalConfig> =
   function ConditionalEditor(props) {
-    const { value, onChange, ports } = props;
+    const { value, onChange, ports, nodeId, insId } = props;
 
     const showRightOperand = ![
       ConditionType.Exists,
@@ -113,6 +113,8 @@ const ConditionalEditor: MacroEditorComp<ConditionalConfig> =
             });
           }}
           config={leftConfig}
+          nodeId={nodeId}
+          insId={insId}
         />
 
         {showRightOperand && (
@@ -126,6 +128,8 @@ const ConditionalEditor: MacroEditorComp<ConditionalConfig> =
               });
             }}
             config={rightConfig}
+            nodeId={nodeId}
+            insId={insId}
           />
         )}
       </div>

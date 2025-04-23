@@ -1,7 +1,6 @@
 const path = require("path");
 
 const pairs = [
-  { entry: "./src/Values/InlineValue.tsx", name: "InlineValue" },
   { entry: "./src/Values/CodeExpression.tsx", name: "CodeExpression" },
   {
     entry: "./src/ControlFlow/Conditional/Conditional.tsx",

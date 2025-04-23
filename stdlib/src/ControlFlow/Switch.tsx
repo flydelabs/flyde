@@ -59,7 +59,9 @@ const ExpressionInput = ({
   onChange,
   aiPrompt,
   placeholder = "Describe the expression",
-  description
+  description,
+  nodeId,
+  insId
 }) => (
   <div style={{ marginBottom: "1rem" }}>
     <FormGroup
@@ -67,7 +69,9 @@ const ExpressionInput = ({
       aiGenerate={{
         prompt: aiPrompt,
         placeholder,
-        onComplete: onChange
+        onComplete: onChange,
+        nodeId,
+        insId
       }}
     >
       <Input
@@ -86,7 +90,7 @@ const ExpressionInput = ({
 const SwitchEditor: MacroEditorComp<SwitchConfig> = function SwitchEditor(
   props
 ) {
-  const { value, onChange, ports } = props;
+  const { value, onChange, ports, nodeId, insId } = props;
 
   const aiContextValue = React.useMemo(() => {
     return {
@@ -224,6 +228,8 @@ const SwitchEditor: MacroEditorComp<SwitchConfig> = function SwitchEditor(
             aiPrompt={createConditionPrompt(inputsList, case_.conditionExpression)}
             placeholder="Describe the condition (e.g. 'value less than 2')"
             description={conditionDesc}
+            nodeId={nodeId}
+            insId={insId}
           />
 
           <ExpressionInput
@@ -233,6 +239,8 @@ const SwitchEditor: MacroEditorComp<SwitchConfig> = function SwitchEditor(
             aiPrompt={createOutputPrompt(inputsList, case_.conditionExpression, case_.outputExpression)}
             placeholder="Describe what to output when this condition is true"
             description={outputDesc}
+            nodeId={nodeId}
+            insId={insId}
           />
         </div>
       );
@@ -281,6 +289,8 @@ const SwitchEditor: MacroEditorComp<SwitchConfig> = function SwitchEditor(
               )}
               placeholder="Describe what to output when no conditions match"
               description="The expression to output if no case is activated. Accepts any JS expression. You can access the inputs data using the inputs object."
+              nodeId={nodeId}
+              insId={insId}
             />
           )}
         </div>

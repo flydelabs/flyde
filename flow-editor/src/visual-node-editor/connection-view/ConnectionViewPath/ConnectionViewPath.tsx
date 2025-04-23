@@ -70,7 +70,7 @@ export const ConnectionViewPath: React.FC<ConnectionViewPathProps> = forwardRef(
       if (className.includes("added")) return "#4ADE80";
       if (className.includes("removed")) return "#F87171";
       if (className.includes("changed")) return "#60A5FA";
-      if (isSelected) return "#0EA5E9"; // Brand blue for selected
+      if (isSelected) return "#2887f4"; // Brand blue for selected
       // No special color for pending selection
       return "#6A6A6A"; // Default
     };
@@ -93,7 +93,7 @@ export const ConnectionViewPath: React.FC<ConnectionViewPathProps> = forwardRef(
       if (className.includes("added")) return "#86EFAC";
       if (className.includes("removed")) return "#FCA5A5";
       if (className.includes("changed")) return "#93C5FD";
-      if (isSelected) return "#7DD3FC"; // Lighter brand blue for selected
+      if (isSelected) return "#2987f4"; // Lighter brand blue for selected
       // No special color for pending selection
       return "#D0D0D0"; // Default
     };
@@ -103,7 +103,7 @@ export const ConnectionViewPath: React.FC<ConnectionViewPathProps> = forwardRef(
         d={d}
         style={{
           stroke: getPathStroke(),
-          strokeWidth: isSelected ? 2 * zoom : zoom,
+          strokeWidth: isSelected ? 1.2 * zoom : zoom,
           fill: "none",
           strokeDasharray,
         }}

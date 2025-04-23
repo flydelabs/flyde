@@ -31,7 +31,7 @@ describe("findReferencedNodeServer", () => {
 
   it("resolves custom editor component bundle paths for build in stdlib nodes", async () => {
     const fixturePath = getFixturePath("custom-editor-component/flow.flyde");
-    const instance = codeNodeInstance("someInsId", "InlineValue", {
+    const instance = codeNodeInstance("someInsId", "CodeExpression", {
       type: "package",
       data: "@flyde/stdlib",
     });
@@ -93,7 +93,7 @@ describe("findReferencedNodeServer", () => {
     assert.include(node.sourceCode.toLowerCase(), "add");
   });
 
- 
+
 });
 
 function getFixturePath(path: string) {

@@ -11,6 +11,8 @@ export interface FormGroupProps extends React.HTMLAttributes<HTMLDivElement> {
     placeholder?: string;
     onComplete: (generatedText: string) => void;
     jsonMode?: boolean;
+    nodeId: string;
+    insId?: string;
   };
 }
 
@@ -30,10 +32,7 @@ const FormGroup = React.forwardRef<HTMLDivElement, FormGroupProps>(
           {label && <Label>{label}</Label>}
           {aiGenerate && (
             <AiGenerate
-              prompt={aiGenerate.prompt}
-              placeholder={aiGenerate.placeholder}
-              onComplete={aiGenerate.onComplete}
-              jsonMode={aiGenerate.jsonMode}
+              {...aiGenerate}
             />
           )}
         </div>

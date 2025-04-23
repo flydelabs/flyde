@@ -1,13 +1,15 @@
 import { createContext, useContext } from "react";
 
-export interface AiPromptRequest {
+// copied from ports, TODO - merge somehow using a lower-level pkg
+export interface AiCompletionDto {
   prompt: string;
+  nodeId: string;
+  insId: string;
   jsonMode?: boolean;
-  currentValue?: any;
-}
+};
 
 export interface AiCompletionContext {
-  createCompletion: (data: AiPromptRequest) => Promise<string>;
+  createCompletion: (dto: AiCompletionDto) => Promise<string>;
   enabled: boolean;
 }
 

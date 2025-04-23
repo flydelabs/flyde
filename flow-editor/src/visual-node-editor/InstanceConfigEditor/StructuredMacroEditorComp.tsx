@@ -42,12 +42,16 @@ function GroupFields({
   group,
   value,
   onChange,
-  ports
+  ports,
+  nodeId,
+  insId
 }: {
   group: GroupFieldDefinition;
   value: any;
   onChange: (value: any) => void;
   ports: PartialEditorPorts;
+  nodeId: string;
+  insId?: string;
 }) {
   const [isCollapsed, setIsCollapsed] = useState(
     group.typeData?.defaultCollapsed ?? false
@@ -108,6 +112,8 @@ function GroupFields({
                   value={value}
                   onChange={onChange}
                   ports={ports}
+                  nodeId={nodeId}
+                  insId={insId}
                 />
               );
             }
@@ -133,6 +139,8 @@ function GroupFields({
                 }
                 ports={ports}
                 config={field}
+                nodeId={nodeId}
+                insId={insId}
               />
             );
           })}
@@ -161,6 +169,8 @@ export function StructuredMacroEditorComp<T>(
                 value={props.value}
                 onChange={props.onChange}
                 ports={ports}
+                nodeId={props.nodeId}
+                insId={props.insId}
               />
             );
           }
@@ -188,6 +198,8 @@ export function StructuredMacroEditorComp<T>(
               }
               config={field}
               ports={ports}
+              nodeId={props.nodeId}
+              insId={props.insId}
             />
           );
         })}

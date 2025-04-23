@@ -18,6 +18,8 @@ interface AiGenerateProps {
   className?: string;
   jsonMode?: boolean;
   currentValue?: any;
+  nodeId: string;
+  insId?: string;
 }
 
 export function AiGenerate({
@@ -27,6 +29,8 @@ export function AiGenerate({
   className,
   jsonMode = false,
   currentValue,
+  nodeId,
+  insId
 }: AiGenerateProps) {
   const { createCompletion, enabled } = useAiCompletion();
   const [isOpen, setIsOpen] = useState(false);
@@ -66,7 +70,9 @@ export function AiGenerate({
       const result = await createCompletion({
         prompt: processedPrompt,
         jsonMode,
-        currentValue,
+        nodeId,
+        insId
+
       });
       onComplete(result);
       setInput("");

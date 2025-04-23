@@ -19,14 +19,14 @@ import { Template, getTemplates, scaffoldTemplate } from "./templateUtils";
 // the application insights key (also known as instrumentation key)
 
 // telemetry reporter
-let reporter: TelemetryReporter;
+let reporter: TelemetryReporter | undefined;
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 
 let server: any;
 
-let process: execa.ExecaChildProcess;
+let process: execa.ExecaChildProcess | undefined;
 
 const FLYDE_DEFAULT_SERVER_PORT = 8545;
 
@@ -90,7 +90,9 @@ export function activate(context: vscode.ExtensionContext) {
 
     // Show the document in the text editor
     await vscode.window.showTextDocument(document);
-    reporter.sendTelemetryEvent("openAsText");
+    if (reporter) {
+      reporter.sendTelemetryEvent("openAsText");
+    }
   };
 
   context.subscriptions.push(

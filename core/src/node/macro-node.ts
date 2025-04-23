@@ -174,20 +174,23 @@ export type MacroNodeDefinition<T> = Omit<
   sourceCode?: string;
 };
 
+// copied from flow-editor/ports.ts TODO - merge
+export interface AiCompletionDto { prompt: string; nodeId: string; insId: string; jsonMode?: boolean; };
+
 export interface PartialEditorPorts {
   getAvailableSecrets: () => Promise<string[]>;
   addNewSecret: (dto: { key: string; value: string }) => Promise<string[]>;
   prompt: ({ text, defaultValue }: { text: string; defaultValue?: string }) => Promise<string | null>;
-  createAiCompletion?: (prompt: {
-    prompt: string;
-    currentValue?: any;
-  }) => Promise<string>;
+  createAiCompletion?: (dto: AiCompletionDto) => Promise<string>;
 }
 
 export interface MacroEditorCompProps<T> {
   value: T;
   onChange: (value: T) => void;
   ports: PartialEditorPorts;
+  insId?: string;
+  nodeId: string;
+  createAiCompletion?: PartialEditorPorts['createAiCompletion'];
 }
 
 export interface MacroEditorComp<T> extends React.FC<MacroEditorCompProps<T>> { }
