@@ -42,7 +42,7 @@ export function resolveEditorInstance(
 
   const processedInstance = processMacroNodeInstance("", macro, instance);
 
-  const editorNode = internalCodeNodeToEditorNode(processedInstance, macro.editorConfig, node.sourceCode);
+  const editorNode = internalCodeNodeToEditorNode(processedInstance, { editorConfig: macro.editorConfig, isTrigger: node.isTrigger, sourceCode: node.sourceCode });
 
   const editorInstance = {
     id: instance.id,

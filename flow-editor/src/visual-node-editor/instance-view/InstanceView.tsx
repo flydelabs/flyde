@@ -13,6 +13,8 @@ import {
   VisualNodeInstance,
   CodeNodeInstance,
   EditorNodeInstance,
+  isCodeNodeInstance,
+  isCodeNode,
 } from "@flyde/core";
 import classNames from "classnames";
 import { DiffStatus } from "../VisualNodeDiffView";
@@ -81,7 +83,7 @@ export const getVisibleInputs = (
     return isConnected || (!isOptional && k !== TRIGGER_PIN_ID);
   });
 
-  if (visiblePins.length === 0) {
+  if (visiblePins.length === 0 && !node.isTrigger) {
     return [TRIGGER_PIN_ID];
   }
 
@@ -208,6 +210,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
       onSetDisplayName,
       onPinMouseUp,
       onPinMouseDown,
+      onViewForkCode,
     } = props;
 
     const dark = useDarkMode();
@@ -477,6 +480,12 @@ export const InstanceView: React.FC<InstanceViewProps> =
       [instance, onPinMouseDown]
     );
 
+    const onOptionsClick = React.useCallback(() => {
+      if (isCodeNodeInstance(instance)) {
+        onDoubleClick(instance, false);
+      }
+    }, [instance, onDoubleClick]);
+
     const getContextMenu = React.useCallback(() => {
       const inputMenuItems = inputKeys
         .filter(k => k !== TRIGGER_PIN_ID)
@@ -508,6 +517,8 @@ export const InstanceView: React.FC<InstanceViewProps> =
             </ContextMenuItem>
           );
         });
+
+
 
       const outputMenuItems = outputKeys.map((k) => {
         const isVisible = _visibleOutputs.includes(k);
@@ -555,13 +566,21 @@ export const InstanceView: React.FC<InstanceViewProps> =
         </ContextMenuItem>
       );
 
+      const isTrigger = isCodeNode(node) && node.isTrigger;
+
       return (
         <ContextMenuContent>
           <ContextMenuItem onClick={_onSetDisplayName}>
-            Set display name
+            Rename
           </ContextMenuItem>
+          <ContextMenuItem onClick={onOptionsClick}>
+            Options
+          </ContextMenuItem>
+          {isTrigger ? null : <ContextMenuItem onClick={() => onViewForkCode(instance)}>
+            View/fork code
+          </ContextMenuItem>}
 
-          <ContextMenuSub>
+          {isTrigger ? null : (<ContextMenuSub>
             <ContextMenuSubTrigger>Edit inputs</ContextMenuSubTrigger>
             <ContextMenuSubContent>
               <ContextMenuItem onClick={_onChangeVisibleInputs}>
@@ -570,7 +589,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
               {inputMenuItems}
               {triggerMenuItem}
             </ContextMenuSubContent>
-          </ContextMenuSub>
+          </ContextMenuSub>)}
 
           <ContextMenuSub>
             <ContextMenuSubTrigger>Edit outputs</ContextMenuSubTrigger>
@@ -596,7 +615,7 @@ export const InstanceView: React.FC<InstanceViewProps> =
           </ContextMenuItem>
         </ContextMenuContent>
       );
-    }, [inputKeys, outputKeys, instance, _onChangeVisibleInputs, _onChangeVisibleOutputs, _onSetDisplayName, onGroupSelected, _onDeleteInstance, _visibleInputs, connectedInputs, onChangeVisibleInputs, _visibleOutputs, connectedOutputs, onChangeVisibleOutputs, onUngroup]);
+    }, [inputKeys, outputKeys, _visibleInputs, node, _onSetDisplayName, onOptionsClick, _onChangeVisibleInputs, _onChangeVisibleOutputs, instance, onGroupSelected, _onDeleteInstance, connectedInputs, onChangeVisibleInputs, _visibleOutputs, connectedOutputs, onChangeVisibleOutputs, onUngroup, onViewForkCode]);
 
     const instanceDomId = getInstanceDomId(instance.id, props.ancestorsInsIds);
 
