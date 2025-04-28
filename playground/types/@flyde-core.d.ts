@@ -651,43 +651,43 @@ declare module '@flyde/core/execute' {
     export type CancelFn = () => void;
     export type InnerExecuteFn = (node: InternalNode, args: NodeInputs, outputs: NodeOutputs, insId: string) => CancelFn;
     export type CodeExecutionData = {
-            node: InternalCodeNode;
-            inputs: NodeInputs;
-            outputs: NodeOutputs;
-            _debugger?: Debugger;
-            /**
-                * If the node is an instance of another node, this is the id of the instance.
-                * If the node is the root node, this is "__root".
-                * Used for debugger events and state namespacing
-                */
-            insId: string;
-            /**
-                * A full path of ancestor insIds, separated by dots.
-                * Used for debugger events and state namespacing
-                */
-            ancestorsInsIds?: string;
-            extraContext?: Record<string, any>;
-            mainState: OMap<NodeState>;
-            onError: (err: any) => void;
-            onBubbleError: (err: any) => void;
-            onCompleted?: (data: any) => void;
-            onStarted?: () => void;
+        node: InternalCodeNode;
+        inputs: NodeInputs;
+        outputs: NodeOutputs;
+        _debugger?: Debugger;
+        /**
+            * If the node is an instance of another node, this is the id of the instance.
+            * If the node is the root node, this is "__root".
+            * Used for debugger events and state namespacing
+            */
+        insId: string;
+        /**
+            * A full path of ancestor insIds, separated by dots.
+            * Used for debugger events and state namespacing
+            */
+        ancestorsInsIds?: string;
+        extraContext?: Record<string, any>;
+        mainState: OMap<NodeState>;
+        onError: (err: any) => void;
+        onBubbleError: (err: any) => void;
+        onCompleted?: (data: any) => void;
+        onStarted?: () => void;
     };
     export const INNER_STATE_SUFFIX = "_inner";
     export const INPUTS_STATE_SUFFIX = "_inputs";
     export type ExecuteFn = (params: ExecuteParams) => CancelFn;
     export type ExecuteParams = {
-            node: InternalNode;
-            inputs: NodeInputs;
-            outputs: NodeOutputs;
-            _debugger?: Debugger;
-            insId?: string;
-            ancestorsInsIds?: string;
-            mainState?: OMap<NodeState>;
-            onBubbleError?: (err: NodeInstanceError) => void;
-            extraContext?: Record<string, any>;
-            onCompleted?: (data: any) => void;
-            onStarted?: () => void;
+        node: InternalNode;
+        inputs: NodeInputs;
+        outputs: NodeOutputs;
+        _debugger?: Debugger;
+        insId?: string;
+        ancestorsInsIds?: string;
+        mainState?: OMap<NodeState>;
+        onBubbleError?: (err: NodeInstanceError) => void;
+        extraContext?: Record<string, any>;
+        onCompleted?: (data: any) => void;
+        onStarted?: () => void;
     };
     export const ROOT_INS_ID = "__root";
     export const GLOBAL_STATE_NS = "____global";
@@ -745,126 +745,126 @@ declare module '@flyde/core/improved-macros/improved-macros' {
     export * from "@flyde/core/improved-macros/improved-macro-utils";
     import { SecretTypeData } from "@flyde/core/node/macro-node";
     export type StaticOrDerived<T, Config> = T | ((config: Config) => T);
-    export interface BaseMacroNodeData<Config = any> {
-            mode?: "simple" | "advanced";
-            id: string;
-            namespace?: string;
-            menuDisplayName?: string;
-            menuDescription?: string;
-            displayName?: StaticOrDerived<string, Config>;
-            description?: StaticOrDerived<string, Config>;
-            overrideNodeBodyHtml?: StaticOrDerived<string, Config>;
-            aliases?: string[];
-            icon?: string;
-            completionOutputs?: StaticOrDerived<string[], Config>;
-            run: InternalCodeNode["run"];
-            sourceCode?: string;
+    export interface BaseCodeNodeData<Config = any> {
+        mode?: "simple" | "advanced";
+        id: string;
+        namespace?: string;
+        menuDisplayName?: string;
+        menuDescription?: string;
+        displayName?: StaticOrDerived<string, Config>;
+        description?: StaticOrDerived<string, Config>;
+        overrideNodeBodyHtml?: StaticOrDerived<string, Config>;
+        aliases?: string[];
+        icon?: string;
+        completionOutputs?: StaticOrDerived<string[], Config>;
+        run: InternalCodeNode["run"];
+        sourceCode?: string;
     }
-    export interface SimpleCodeNode<Config> extends BaseMacroNodeData<Config> {
-            inputs: Record<string, InputConfig>;
-            outputs: Record<string, {
-                    description?: string;
-            }>;
+    export interface SimpleCodeNode<Config> extends BaseCodeNodeData<Config> {
+        inputs: Record<string, InputConfig>;
+        outputs: Record<string, {
+            description?: string;
+        }>;
     }
-    export interface AdvancedCodeNode<Config> extends BaseMacroNodeData<Config> {
-            mode: "advanced";
-            inputs: StaticOrDerived<Record<string, InputPin>, Config>;
-            outputs: StaticOrDerived<Record<string, OutputPin>, Config>;
-            reactiveInputs?: StaticOrDerived<string[], Config>;
-            defaultConfig: Config;
-            editorConfig?: InternalMacroNode<Config>["editorConfig"];
-            defaultStyle?: NodeStyle;
+    export interface AdvancedCodeNode<Config> extends BaseCodeNodeData<Config> {
+        mode: "advanced";
+        inputs: StaticOrDerived<Record<string, InputPin>, Config>;
+        outputs: StaticOrDerived<Record<string, OutputPin>, Config>;
+        reactiveInputs?: StaticOrDerived<string[], Config>;
+        defaultConfig: Config;
+        editorConfig?: InternalMacroNode<Config>["editorConfig"];
+        defaultStyle?: NodeStyle;
     }
     export type CodeNode<Config = any> = SimpleCodeNode<Config> | AdvancedCodeNode<Config>;
     export type InputConfig = {
-            defaultValue?: any;
+        defaultValue?: any;
+        /**
+            * The label displayed above the input field.
+            * If not provided, the description will be used as the label.
+            * @recommended
+            */
+        label?: string;
+        description?: string;
+        mode?: InputMode | "reactive";
+        /**
+            * Whether the type of this input can be changed in the editor.
+            * When false, the "Change type" button will not be shown and the input won't be exposed as an input pin.
+            * @default true
+            */
+        typeConfigurable?: boolean;
+        aiCompletion?: {
+            prompt: string;
+            placeholder?: string;
+            jsonMode?: boolean;
+        };
+        /**
+            * Optional condition that determines whether this input should be shown.
+            * If the condition evaluates to false, the input will be hidden.
+            *
+            * Uses a string expression like "method !== 'GET'" that will be evaluated against the config.
+            * The expression can reference other field values directly by their key.
+            *
+            * @example
+            * condition: "method !== 'GET'"
+            */
+        condition?: string;
+        /**
+            * Optional group configuration for organizing inputs.
+            * When specified, this input will be treated as a group container.
+            */
+        group?: {
             /**
-                * The label displayed above the input field.
-                * If not provided, the description will be used as the label.
-                * @recommended
+                * The title of the group
                 */
-            label?: string;
-            description?: string;
-            mode?: InputMode | "reactive";
+            title: string;
             /**
-                * Whether the type of this input can be changed in the editor.
-                * When false, the "Change type" button will not be shown and the input won't be exposed as an input pin.
-                * @default true
+                * Whether the group is collapsible
                 */
-            typeConfigurable?: boolean;
-            aiCompletion?: {
-                    prompt: string;
-                    placeholder?: string;
-                    jsonMode?: boolean;
-            };
+            collapsible?: boolean;
             /**
-                * Optional condition that determines whether this input should be shown.
-                * If the condition evaluates to false, the input will be hidden.
-                *
-                * Uses a string expression like "method !== 'GET'" that will be evaluated against the config.
-                * The expression can reference other field values directly by their key.
-                *
-                * @example
-                * condition: "method !== 'GET'"
+                * Whether the group is collapsed by default (only applies if collapsible is true)
                 */
-            condition?: string;
+            defaultCollapsed?: boolean;
             /**
-                * Optional group configuration for organizing inputs.
-                * When specified, this input will be treated as a group container.
+                * Fields to include in this group.
+                * Can include both regular field keys and other group keys for nested groups.
                 */
-            group?: {
-                    /**
-                        * The title of the group
-                        */
-                    title: string;
-                    /**
-                        * Whether the group is collapsible
-                        */
-                    collapsible?: boolean;
-                    /**
-                        * Whether the group is collapsed by default (only applies if collapsible is true)
-                        */
-                    defaultCollapsed?: boolean;
-                    /**
-                        * Fields to include in this group.
-                        * Can include both regular field keys and other group keys for nested groups.
-                        */
-                    fields: string[];
-                    /**
-                        * Optional parent group key. When specified, this group will be nested inside the parent group.
-                        * If not specified, the group will be at the top level.
-                        */
-                    parentGroup?: string;
-            };
+            fields: string[];
+            /**
+                * Optional parent group key. When specified, this group will be nested inside the parent group.
+                * If not specified, the group will be at the top level.
+                */
+            parentGroup?: string;
+        };
     } & EditorTypeConfig;
     type EditorTypeConfig = {
-            [K in EditorType]: {
-                    editorType?: K;
-                    editorTypeData?: EditorTypeDataMap[K];
-            };
+        [K in EditorType]: {
+            editorType?: K;
+            editorTypeData?: EditorTypeDataMap[K];
+        };
     }[EditorType];
     type EditorType = "string" | "number" | "boolean" | "json" | "select" | "longtext" | "enum" | "secret";
     type EditorTypeDataMap = {
-            string: undefined;
-            number: {
-                    min?: number;
-                    max?: number;
-            };
-            boolean: undefined;
-            json: undefined;
-            select: {
-                    options: string[] | {
-                            value: string | number;
-                            label: string;
-                    }[];
-            };
-            longtext: {
-                    rows?: number;
-            };
-            enum: {
-                    options: string[];
-            };
-            secret: SecretTypeData;
+        string: undefined;
+        number: {
+            min?: number;
+            max?: number;
+        };
+        boolean: undefined;
+        json: undefined;
+        select: {
+            options: string[] | {
+                value: string | number;
+                label: string;
+            }[];
+        };
+        longtext: {
+            rows?: number;
+        };
+        enum: {
+            options: string[];
+        };
+        secret: SecretTypeData;
     };
     export function isAdvancedCodeNode<Config>(node: CodeNode<Config>): node is AdvancedCodeNode<Config>;
     export function isSimplifiedCodeNode<Config>(node: CodeNode<Config>): node is SimpleCodeNode<Config>;
@@ -908,12 +908,12 @@ declare module '@flyde/core/improved-macros/improved-macro-utils' {
         * @returns A group configuration object
         */
     export function createInputGroup(title: string, fields: string[], options?: {
-            collapsible?: boolean;
-            defaultCollapsed?: boolean;
-            parentGroup?: string;
-            condition?: string;
+        collapsible?: boolean;
+        defaultCollapsed?: boolean;
+        parentGroup?: string;
+        condition?: string;
     }): NonNullable<InputConfig["group"]> & {
-            condition?: string;
+        condition?: string;
     };
 }
 
@@ -1020,58 +1020,58 @@ declare module '@flyde/core/common/full-ins-id-path' {
 declare module '@flyde/core/node/node-instance' {
     import { InputPinsConfig, NodeDefinition, NodeStyle, Pos, VisualNode } from "@flyde/core/";
     export interface NodeInstanceConfig {
-            inputConfig: InputPinsConfig;
-            visibleInputs?: string[];
-            visibleOutputs?: string[];
-            displayName?: string;
-            style?: NodeStyle;
-            id: string;
-            pos: Pos;
+        inputConfig: InputPinsConfig;
+        visibleInputs?: string[];
+        visibleOutputs?: string[];
+        displayName?: string;
+        style?: NodeStyle;
+        id: string;
+        pos: Pos;
     }
     export interface CodeNodeSource {
-            type: "package" | "file" | "custom";
-            data: any;
+        type: "package" | "file" | "custom";
+        data: any;
     }
     export interface CodeNodeInstance extends NodeInstanceConfig {
-            type: "code";
-            nodeId: string;
-            source: CodeNodeSource;
-            config: any;
-            /**
-                * @deprecated Use nodeId instead
-                */
-            macroId?: string;
-            /**
-                * @deprecated Use config instead
-                */
-            macroData?: any;
+        type: "code";
+        nodeId: string;
+        source: CodeNodeSource;
+        config: any;
+        /**
+            * @deprecated Use nodeId instead
+            */
+        macroId?: string;
+        /**
+            * @deprecated Use config instead
+            */
+        macroData?: any;
     }
     export interface VisualNodeSourceRef {
-            type: "package" | "file" | "custom";
-            data: string;
+        type: "package" | "file" | "custom";
+        data: string;
     }
     export interface VisualNodeSourceInline {
-            type: "inline";
-            data: VisualNode;
+        type: "inline";
+        data: VisualNode;
     }
     export interface VisualNodeSourceSelf {
-            type: "self";
+        type: "self";
     }
     export type VisualNodeSource = VisualNodeSourceRef | VisualNodeSourceInline | VisualNodeSourceSelf;
     export interface VisualNodeInstance extends NodeInstanceConfig {
-            type: "visual";
-            nodeId: string;
-            source: VisualNodeSource;
+        type: "visual";
+        nodeId: string;
+        source: VisualNodeSource;
     }
     /** @deprecated */
     export interface RefNodeInstance extends NodeInstanceConfig {
-            nodeId: string;
-            source?: CodeNodeSource;
-            config?: any;
+        nodeId: string;
+        source?: CodeNodeSource;
+        config?: any;
     }
     /** @deprecated */
     export interface InlineNodeInstance extends NodeInstanceConfig {
-            node: VisualNode;
+        node: VisualNode;
     }
     export type NodeInstance = CodeNodeInstance | VisualNodeInstance;
     export type ResolvedNodeInstance = NodeInstance;
@@ -1079,7 +1079,7 @@ declare module '@flyde/core/node/node-instance' {
     export const isCodeNodeInstance: (ins: NodeInstance) => ins is CodeNodeInstance;
     export const isVisualNodeInstance: (ins: NodeInstance) => ins is VisualNodeInstance;
     export const isInlineVisualNodeInstance: (ins: NodeInstance) => ins is VisualNodeInstance & {
-            source: VisualNodeSourceInline;
+        source: VisualNodeSourceInline;
     };
     export const createInsId: (node: Pick<NodeDefinition, "id">) => string;
 }
@@ -1187,156 +1187,156 @@ declare module '@flyde/core/node/macro-node' {
     import { CodeNode } from "@flyde/core/improved-macros/improved-macros";
     export type MacroEditorFieldDefinitionType = "string" | "number" | "boolean" | "json" | "select" | "longtext" | "dynamic" | "secret";
     export type MacroConfigurableValueTypeMap = {
-            string: string;
-            number: number;
-            boolean: boolean;
-            json: any;
-            select: string | number;
-            dynamic: undefined;
-            secret: string;
+        string: string;
+        number: number;
+        boolean: boolean;
+        json: any;
+        select: string | number;
+        dynamic: undefined;
+        secret: string;
     };
     export type MacroConfigurableValue = {
-            [K in keyof MacroConfigurableValueTypeMap]: {
-                    type: K;
-                    value: MacroConfigurableValueTypeMap[K];
-            };
+        [K in keyof MacroConfigurableValueTypeMap]: {
+            type: K;
+            value: MacroConfigurableValueTypeMap[K];
+        };
     }[keyof MacroConfigurableValueTypeMap];
     export type MacroEditorFieldDefinition = StringFieldDefinition | NumberFieldDefinition | BooleanFieldDefinition | JsonFieldDefinition | SelectFieldDefinition | LongTextFieldDefinition | GroupFieldDefinition | SecretFieldDefinition;
     interface BaseFieldDefinition {
-            label: string;
-            description?: string;
-            configKey: string;
-            templateSupport?: boolean;
-            typeConfigurable?: boolean;
-            aiCompletion?: {
-                    prompt: string;
-                    placeholder?: string;
-                    jsonMode?: boolean;
-            };
-            /**
-                * Optional condition that determines whether this field should be shown.
-                * If the condition evaluates to false, the field will be hidden.
-                *
-                * Uses a string expression like "method !== 'GET'" that will be evaluated against the values.
-                * The expression can reference other field values directly by their key.
-                *
-                * @example
-                * condition: "method === 'POST'"
-                */
-            condition?: string;
+        label: string;
+        description?: string;
+        configKey: string;
+        templateSupport?: boolean;
+        typeConfigurable?: boolean;
+        aiCompletion?: {
+            prompt: string;
+            placeholder?: string;
+            jsonMode?: boolean;
+        };
+        /**
+            * Optional condition that determines whether this field should be shown.
+            * If the condition evaluates to false, the field will be hidden.
+            *
+            * Uses a string expression like "method !== 'GET'" that will be evaluated against the values.
+            * The expression can reference other field values directly by their key.
+            *
+            * @example
+            * condition: "method === 'POST'"
+            */
+        condition?: string;
     }
     export interface StringFieldDefinition extends BaseFieldDefinition {
-            type: "string";
+        type: "string";
     }
     export interface BooleanFieldDefinition extends BaseFieldDefinition {
-            type: "boolean";
+        type: "boolean";
     }
     export interface JsonFieldDefinition extends BaseFieldDefinition {
-            type: "json";
-            typeData?: {
-                    helperText?: string;
-            };
+        type: "json";
+        typeData?: {
+            helperText?: string;
+        };
     }
     export interface LongTextFieldDefinition extends BaseFieldDefinition {
-            type: "longtext";
-            typeData?: {
-                    rows?: number;
-            };
+        type: "longtext";
+        typeData?: {
+            rows?: number;
+        };
     }
     export interface NumberFieldDefinition extends BaseFieldDefinition {
-            type: "number";
-            typeData?: NumberTypeData;
+        type: "number";
+        typeData?: NumberTypeData;
     }
     export interface SelectFieldDefinition extends BaseFieldDefinition {
-            type: "select";
-            typeData: SelectTypeData;
+        type: "select";
+        typeData: SelectTypeData;
     }
     export interface SecretFieldDefinition extends BaseFieldDefinition {
-            type: "secret";
-            typeData: SecretTypeData;
+        type: "secret";
+        typeData: SecretTypeData;
     }
     export interface NumberTypeData {
-            min?: number;
-            max?: number;
+        min?: number;
+        max?: number;
     }
     export interface SecretTypeData {
-            defaultName?: string;
+        defaultName?: string;
     }
     export interface SelectTypeData {
-            options: {
-                    value: string | number;
-                    label: string;
-            }[];
+        options: {
+            value: string | number;
+            label: string;
+        }[];
     }
     export interface MacroEditorConfigCustom {
-            type: "custom";
-            editorComponentBundlePath?: string;
-            editorComponentBundleContent?: string;
+        type: "custom";
+        editorComponentBundlePath?: string;
+        editorComponentBundleContent?: string;
     }
     export interface MacroEditorConfigStructured {
-            type: "structured";
-            fields: MacroEditorFieldDefinition[];
+        type: "structured";
+        fields: MacroEditorFieldDefinition[];
     }
     export type MacroEditorConfigResolved = MacroEditorConfigCustom | MacroEditorConfigStructured;
     export type MacroEditorConfigDefinition = MacroEditorConfigCustom | MacroEditorConfigStructured;
     export interface InternalMacroNode<T = any> extends NodeMetadata {
-            definitionBuilder: (data: T) => Omit<CodeNodeDefinition, "id" | "namespace">;
-            runFnBuilder: (data: T) => InternalCodeNode["run"];
-            defaultData: T;
-            /**
-                * Assumes you are bundling the editor component using webpack library+window config.
-                * The name of the window variable that holds the component should be __MacroNode__{id}
-                * The path should be relative to the root of the project (package.json location)
-                */
-            editorConfig: MacroEditorConfigResolved;
+        definitionBuilder: (data: T) => Omit<CodeNodeDefinition, "id" | "namespace">;
+        runFnBuilder: (data: T) => InternalCodeNode["run"];
+        defaultData: T;
+        /**
+            * Assumes you are bundling the editor component using webpack library+window config.
+            * The name of the window variable that holds the component should be __MacroNode__{id}
+            * The path should be relative to the root of the project (package.json location)
+            */
+        editorConfig: MacroEditorConfigResolved;
     }
     export type MacroNodeDefinition<T> = Omit<InternalMacroNode<T>, "definitionBuilder" | "runFnBuilder" | "editorComponentBundlePath" | "editorConfig"> & {
-            /**
-                * Resolver will use this to load the editor component bundle into the editor
-                */
-            editorConfig: MacroEditorConfigDefinition;
-            sourceCode?: string;
+        /**
+            * Resolver will use this to load the editor component bundle into the editor
+            */
+        editorConfig: MacroEditorConfigDefinition;
+        sourceCode?: string;
     };
     export interface PartialEditorPorts {
-            getAvailableSecrets: () => Promise<string[]>;
-            addNewSecret: (dto: {
-                    key: string;
-                    value: string;
-            }) => Promise<string[]>;
-            prompt: ({ text, defaultValue }: {
-                    text: string;
-                    defaultValue?: string;
-            }) => Promise<string | null>;
-            createAiCompletion?: (prompt: {
-                    prompt: string;
-                    currentValue?: any;
-            }) => Promise<string>;
+        getAvailableSecrets: () => Promise<string[]>;
+        addNewSecret: (dto: {
+            key: string;
+            value: string;
+        }) => Promise<string[]>;
+        prompt: ({ text, defaultValue }: {
+            text: string;
+            defaultValue?: string;
+        }) => Promise<string | null>;
+        createAiCompletion?: (prompt: {
+            prompt: string;
+            currentValue?: any;
+        }) => Promise<string>;
     }
     export interface MacroEditorCompProps<T> {
-            value: T;
-            onChange: (value: T) => void;
-            ports: PartialEditorPorts;
+        value: T;
+        onChange: (value: T) => void;
+        ports: PartialEditorPorts;
     }
     export interface MacroEditorComp<T> extends React.FC<MacroEditorCompProps<T>> {
     }
     export const isInternalMacroNode: (p: any) => p is InternalMacroNode<any>;
     export function processMacroNodeInstance(prefix: string, _macro: InternalMacroNode<any> | CodeNode, instance: Pick<CodeNodeInstance, "id" | "config">): InternalCodeNode;
     export interface GroupFieldDefinition extends BaseFieldDefinition {
-            type: "group";
-            fields: MacroEditorFieldDefinition[];
-            typeData?: {
-                    /**
-                        * Whether the group is collapsible
-                        */
-                    collapsible?: boolean;
-                    /**
-                        * Whether the group is collapsed by default (only applies if collapsible is true)
-                        */
-                    defaultCollapsed?: boolean;
-            };
+        type: "group";
+        fields: MacroEditorFieldDefinition[];
+        typeData?: {
+            /**
+                * Whether the group is collapsible
+                */
+            collapsible?: boolean;
+            /**
+                * Whether the group is collapsed by default (only applies if collapsible is true)
+                */
+            defaultCollapsed?: boolean;
+        };
     }
     export function isMacroConfigurableValue(value: any): value is MacroConfigurableValue;
-    export {};
+    export { };
 }
 
 declare module '@flyde/core/types/external' {
@@ -1352,14 +1352,14 @@ declare module '@flyde/core/types/external' {
     import { BaseNode } from "@flyde/core/types/core";
     import { InternalCodeNode } from "@flyde/core/types/internal";
     export interface VisualNode extends BaseNode {
-            /** a map holding the position for each main input. Used in the editor only. */
-            inputsPosition: OMap<Pos>;
-            /** a map holding the position for each main output. Used in the editor only. */
-            outputsPosition: OMap<Pos>;
-            /** the visual nodes internal node instances, either referring to other nodes by id or by value (inline) */
-            instances: NodeInstance[];
-            /** each connection represents a "wire" between 2 different instances, or between an instance and a main input/output*/
-            connections: ConnectionData[];
+        /** a map holding the position for each main input. Used in the editor only. */
+        inputsPosition: OMap<Pos>;
+        /** a map holding the position for each main output. Used in the editor only. */
+        outputsPosition: OMap<Pos>;
+        /** the visual nodes internal node instances, either referring to other nodes by id or by value (inline) */
+        instances: NodeInstance[];
+        /** each connection represents a "wire" between 2 different instances, or between an instance and a main input/output*/
+        connections: ConnectionData[];
     }
     export const isVisualNode: (p: FlydeNode) => p is VisualNode;
     export const visualNode: import("..").TestDataCreator<VisualNode>;
@@ -1367,35 +1367,35 @@ declare module '@flyde/core/types/external' {
     export function visualNodeInstance(insId: string, nodeId: string, source: VisualNodeSource, inputConfig?: InputPinsConfig, pos?: Pos): VisualNodeInstance;
     export function inlineVisualNodeInstance(insId: string, node: VisualNode, inputConfig?: InputPinsConfig, pos?: Pos): VisualNodeInstance;
     export type CodeNodeDefinition = Omit<InternalCodeNode, "run"> & {
-            /**
-                * The source code of the node, if available. Used for editing and forking nodes in the editor.
-                */
-            sourceCode?: string;
+        /**
+            * The source code of the node, if available. Used for editing and forking nodes in the editor.
+            */
+        sourceCode?: string;
     };
     export type FlydeNode<T = any> = VisualNode | CodeNode<T>;
     export type ImportableEditorNode = {
-            id: string;
-            displayName: string;
-            description: string;
-            icon: string;
-            aliases?: string[];
-            editorNode: EditorNodeInstance['node'];
+        id: string;
+        displayName: string;
+        description: string;
+        icon: string;
+        aliases?: string[];
+        editorNode: EditorNodeInstance['node'];
     } & ({
-            type: "code";
-            source: CodeNodeSource;
-            config: any;
+        type: "code";
+        source: CodeNodeSource;
+        config: any;
     } | {
-            type: "visual";
-            source: VisualNodeSource;
+        type: "visual";
+        source: VisualNodeSource;
     });
     export function codeNodeToImportableEditorNode(node: CodeNode, source: CodeNodeSource): ImportableEditorNode;
     export function visualNodeToImportableEditorNode(node: VisualNode, source: VisualNodeSource): ImportableEditorNode;
     export interface NodeLibraryGroup {
-            title: string;
-            nodes: ImportableEditorNode[];
+        title: string;
+        nodes: ImportableEditorNode[];
     }
     export interface NodeLibraryData {
-            groups: NodeLibraryGroup[];
+        groups: NodeLibraryGroup[];
     }
 }
 
@@ -1438,90 +1438,90 @@ declare module '@flyde/core/types/core' {
     import { InputPin, OutputPin } from "@flyde/core/types/pins";
     export type NodeTypeIcon = string | [string, string];
     export interface NodeStyle {
-            color?: string | [string, string];
-            cssOverride?: Record<string, string>;
+        color?: string | [string, string];
+        cssOverride?: Record<string, string>;
     }
     export interface NodeMetadata {
-            /**
-                * Node's unique id. {@link VisualNode.instances }  refer use this to refer to the correct node
-                */
-            id: string;
-            /**
-                * A human readable name for the node. Used in the visual editor.
-                */
-            displayName?: string;
-            menuDisplayName?: string;
-            /**
-                * Is displayed in the visual editor and used to search for nodes.
-                */
-            description?: string;
-            /**
-                * A list of keywords that can be used to search for the node. Useful for node that users might search using different words.
-                */
-            aliases?: string[];
-            /**
-                * TBD
-                */
-            namespace?: string;
-            icon?: string;
-            /**
-                * All instances of this node will inherit the default style if it is supplied.
-                * See {@link NodeStyle} for the full options supported
-                */
-            defaultStyle?: NodeStyle;
-            /**
-                * Hack to support note node without adding first class support for it.
-                * This is used to override the node body html for a node.
-                */
-            overrideNodeBodyHtml?: string;
+        /**
+            * Node's unique id. {@link VisualNode.instances }  refer use this to refer to the correct node
+            */
+        id: string;
+        /**
+            * A human readable name for the node. Used in the visual editor.
+            */
+        displayName?: string;
+        menuDisplayName?: string;
+        /**
+            * Is displayed in the visual editor and used to search for nodes.
+            */
+        description?: string;
+        /**
+            * A list of keywords that can be used to search for the node. Useful for node that users might search using different words.
+            */
+        aliases?: string[];
+        /**
+            * TBD
+            */
+        namespace?: string;
+        icon?: string;
+        /**
+            * All instances of this node will inherit the default style if it is supplied.
+            * See {@link NodeStyle} for the full options supported
+            */
+        defaultStyle?: NodeStyle;
+        /**
+            * Hack to support note node without adding first class support for it.
+            * This is used to override the node body html for a node.
+            */
+        overrideNodeBodyHtml?: string;
     }
     /**
         * Extended by {@link VisualNode}, {@link InternalCodeNode} and {@link InlineValueNode}
         */
     export interface BaseNode extends NodeMetadata {
-            /**
-                * A pin on a node that receives data. Each node can have zero or more input pins.
-                *
-                * Example for the inputs of a mathematical multiplier node:
-                * ```ts
-                * {
-                *  multiplicand: { description: "The number to be multiplied" },
-                *  multiplier: { description: "The number with which we multiply" },
-                * }
-                * ```
-                */
-            inputs: Record<string, InputPin>;
-            /**
-                * A pin on a node that sends data. Each node can have zero or more output pins.
-                * For example, a "Split array" node might have one input pin for an array and two output pins for the first and second halves of the array:
-                *
-                * @example
-                * ```ts
-                * {
-                *  'first half': { description: "The first half of the array" },
-                *  'second half': { description: "The second half of the array" },
-                * }
-                * ```
-                */
-            outputs: Record<string, OutputPin>;
-            /**
-                * Instructs Flyde that the node is in "explicit completion" mode and describes which outputs trigger the node's completion. Receives a list of outputs that should trigger an explicit completion of the node when they emit a value. Any of the listed outputs will trigger a completion (i.e. completionOutput[0] `OR` completionOutput[1])
-                * Leave empty for implicit completion. This should work best for 99% of the case.
-                *
-                * To declare that 2 different outputs must emit a value in order to trigger a completion, different outputs can be joined together with a `+` sign as following:
-                * ``` ts
-                * {
-                * ...
-                *  completionOutputs: ["data+headers", "error"] // this means either data AND headers, OR "error" will trigger an explicit completion.
-                * ```
-                *
-                * See the [Nodes lifecycle](/docs/lifecycle) for more info
-                */
-            completionOutputs?: string[];
-            /**
-                * @deprecated - TBD
-                */
-            reactiveInputs?: string[];
+        /**
+            * A pin on a node that receives data. Each node can have zero or more input pins.
+            *
+            * Example for the inputs of a mathematical multiplier node:
+            * ```ts
+            * {
+            *  multiplicand: { description: "The number to be multiplied" },
+            *  multiplier: { description: "The number with which we multiply" },
+            * }
+            * ```
+            */
+        inputs: Record<string, InputPin>;
+        /**
+            * A pin on a node that sends data. Each node can have zero or more output pins.
+            * For example, a "Split array" node might have one input pin for an array and two output pins for the first and second halves of the array:
+            *
+            * @example
+            * ```ts
+            * {
+            *  'first half': { description: "The first half of the array" },
+            *  'second half': { description: "The second half of the array" },
+            * }
+            * ```
+            */
+        outputs: Record<string, OutputPin>;
+        /**
+            * Instructs Flyde that the node is in "explicit completion" mode and describes which outputs trigger the node's completion. Receives a list of outputs that should trigger an explicit completion of the node when they emit a value. Any of the listed outputs will trigger a completion (i.e. completionOutput[0] `OR` completionOutput[1])
+            * Leave empty for implicit completion. This should work best for 99% of the case.
+            *
+            * To declare that 2 different outputs must emit a value in order to trigger a completion, different outputs can be joined together with a `+` sign as following:
+            * ``` ts
+            * {
+            * ...
+            *  completionOutputs: ["data+headers", "error"] // this means either data AND headers, OR "error" will trigger an explicit completion.
+            * ```
+            *
+            * See the [Nodes lifecycle](/docs/lifecycle) for more info
+            */
+        completionOutputs?: string[];
+        /**
+            * @deprecated - TBD
+            */
+        reactiveInputs?: string[];
     }
 }
 

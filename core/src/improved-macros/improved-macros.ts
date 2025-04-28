@@ -26,7 +26,7 @@ import {
 
 export type StaticOrDerived<T, Config> = T | ((config: Config) => T);
 
-export interface BaseMacroNodeData<Config = any> {
+export interface BaseCodeNodeData<Config = any> {
   mode?: "simple" | "advanced";
   id: string;
   namespace?: string;
@@ -41,9 +41,17 @@ export interface BaseMacroNodeData<Config = any> {
   completionOutputs?: StaticOrDerived<string[], Config>;
   run: InternalCodeNode["run"];
   sourceCode?: string;
+
+  /**
+   * Whether this node is a trigger node.
+   * If true, the node will be treated as a trigger node and will not be editable.
+   * Experimental
+   * @default false
+   */
+  isTrigger?: boolean;
 }
 
-export interface SimpleCodeNode<Config> extends BaseMacroNodeData<Config> {
+export interface SimpleCodeNode<Config> extends BaseCodeNodeData<Config> {
   inputs: Record<string, InputConfig>;
   outputs: Record<
     string,
@@ -53,7 +61,7 @@ export interface SimpleCodeNode<Config> extends BaseMacroNodeData<Config> {
   >;
 }
 
-export interface AdvancedCodeNode<Config> extends BaseMacroNodeData<Config> {
+export interface AdvancedCodeNode<Config> extends BaseCodeNodeData<Config> {
   mode: "advanced";
   inputs: StaticOrDerived<Record<string, InputPin>, Config>;
   outputs: StaticOrDerived<Record<string, OutputPin>, Config>;
@@ -527,16 +535,16 @@ export function processImprovedMacro(node: CodeNode, secrets: Record<string, str
         return (inputs, outputs, adv) => {
           const inputValues = Object.keys(node.inputs).reduce((acc, key) => {
             const configValue = config[key] ?? macroConfigurableValue("dynamic", `{{${key}}}`);
-            
+
             if (
-              node.inputs[key].editorType === "secret" && 
+              node.inputs[key].editorType === "secret" &&
               secrets[configValue.value]
             ) {
               acc[key] = secrets[configValue.value];
             } else {
               acc[key] = replaceInputsInValue(inputs, configValue, key);
             }
-            
+
             return acc;
           }, {} as Record<string, any>);
 

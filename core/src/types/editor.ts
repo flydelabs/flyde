@@ -31,7 +31,13 @@ export type EditorVisualNode = Omit<VisualNode, "instances"> & {
   instances: EditorNodeInstance[];
 };
 
-export function internalCodeNodeToEditorNode(internalNode: InternalCodeNode, editorConfig: MacroEditorConfigResolved, sourceCode: string): EditorNode {
+export interface EditorNodeParams {
+  sourceCode: string;
+  editorConfig: MacroEditorConfigResolved;
+  isTrigger: boolean;
+}
+
+export function internalCodeNodeToEditorNode(internalNode: InternalCodeNode, { editorConfig, isTrigger, sourceCode }: EditorNodeParams): EditorNode {
   return {
     id: internalNode.id,
     inputs: internalNode.inputs,
@@ -43,5 +49,6 @@ export function internalCodeNodeToEditorNode(internalNode: InternalCodeNode, edi
     editorConfig: editorConfig,
     icon: internalNode.icon,
     sourceCode: sourceCode,
+    isTrigger
   } as EditorCodeNodeDefinition;
 }

@@ -745,7 +745,7 @@ declare module '@flyde/core/improved-macros/improved-macros' {
     import { InternalCodeNode, InputPin, OutputPin, InternalMacroNode, NodeStyle, InputMode } from "@flyde/core/";
     export * from "@flyde/core/improved-macros/improved-macro-utils";
     export type StaticOrDerived<T, Config> = T | ((config: Config) => T);
-    export interface BaseMacroNodeData<Config = any> {
+    export interface BaseCodeNodeData<Config = any> {
             mode?: "simple" | "advanced";
             id: string;
             namespace?: string;
@@ -759,13 +759,13 @@ declare module '@flyde/core/improved-macros/improved-macros' {
             completionOutputs?: StaticOrDerived<string[], Config>;
             run: InternalCodeNode["run"];
     }
-    export interface SimpleCodeNode<Config> extends BaseMacroNodeData<Config> {
+    export interface SimpleCodeNode<Config> extends BaseCodeNodeData<Config> {
             inputs: Record<string, InputConfig>;
             outputs: Record<string, {
                     description?: string;
             }>;
     }
-    export interface AdvancedCodeNode<Config> extends BaseMacroNodeData<Config> {
+    export interface AdvancedCodeNode<Config> extends BaseCodeNodeData<Config> {
             mode: "advanced";
             inputs: StaticOrDerived<Record<string, InputPin>, Config>;
             outputs: StaticOrDerived<Record<string, OutputPin>, Config>;

@@ -14,7 +14,7 @@ import {
   getPinDomId,
 } from "../dom-ids";
 
-const BLINK_TIMEOUT = 8000; // also change animation time in scss
+const BLINK_TIMEOUT = 20000; // also change animation time in scss
 
 const debug = debugLogger("runtime-player:play-event");
 
@@ -27,9 +27,8 @@ const getCancelTimerKey = (event: DebuggerEvent, suffix?: string) => {
     event.type === DebuggerEventType.INPUT_CHANGE ||
     event.type === DebuggerEventType.OUTPUT_CHANGE
   ) {
-    return `${fullInsIdPath(event.insId, event.ancestorsInsIds)}.${
-      event.pinId
-    }`;
+    return `${fullInsIdPath(event.insId, event.ancestorsInsIds)}.${event.pinId
+      }`;
   } else {
     return fullInsIdPath(event.insId, event.ancestorsInsIds);
   }

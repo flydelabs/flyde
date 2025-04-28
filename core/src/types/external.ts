@@ -110,6 +110,14 @@ export type CodeNodeDefinition = Omit<InternalCodeNode, "run"> & {
    * The source code of the node, if available. Used for editing and forking nodes in the editor.
    */
   sourceCode?: string;
+
+  /**
+   * Whether this node is a trigger node.
+   * If true, the node will be treated as a trigger node and will not be editable.
+   * Experimental
+   * @default false
+   */
+  isTrigger?: boolean;
 };
 
 export type FlydeNode<T = any> = VisualNode | CodeNode<T>;
@@ -132,7 +140,7 @@ export function codeNodeToImportableEditorNode(
 ): ImportableEditorNode {
   const macro = isInternalMacroNode(node) ? node : processImprovedMacro(node);
   const processedNode = processMacroNodeInstance(node.id, node, { id: 'n/a', config: macro.defaultData });
-  const editorNode = internalCodeNodeToEditorNode(processedNode, macro.editorConfig, node.sourceCode);
+  const editorNode = internalCodeNodeToEditorNode(processedNode, { editorConfig: macro.editorConfig, isTrigger: node.isTrigger, sourceCode: node.sourceCode });
   return {
     id: node.id,
     displayName: node.menuDisplayName,
