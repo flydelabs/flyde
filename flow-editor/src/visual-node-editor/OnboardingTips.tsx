@@ -24,7 +24,7 @@ interface TipData {
 
 const tips: Record<string, TipData> = {
   pan: {
-    tip: "Try panning the canvas by holding the space bar and dragging",
+    tip: "Try panning the canvas by clicking and dragging the background",
     predicate: (_, [lastBoardData, currBoardData]) => {
       const dx = lastBoardData.viewPort.pos.x - currBoardData.viewPort.pos.x;
       const dy = lastBoardData.viewPort.pos.y - currBoardData.viewPort.pos.y;
@@ -34,7 +34,7 @@ const tips: Record<string, TipData> = {
     },
   },
   zoom: {
-    tip: "Zoom in and out using Ctrl/Cmd + mouse wheel",
+    tip: "Zoom in and out using the mouse wheel or trackpad scroll",
     predicate: (_, [lastBoardData, currBoardData]) => {
       const dz = lastBoardData.viewPort.zoom - currBoardData.viewPort.zoom;
       return Math.abs(dz) > 0.25;
@@ -85,8 +85,6 @@ export const OnboardingTips: React.FC<OnboardingTipsProps> = () => {
 
   const [showTips, setShowTips] = useState(false);
   const [isAdvancing, setIsAdvancing] = useState(false);
-
-  const isDark = useDarkMode();
 
   useEffect(() => {
     setTimeout(() => setShowTips(true), 1000);

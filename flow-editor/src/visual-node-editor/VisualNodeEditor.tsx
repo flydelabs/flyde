@@ -550,7 +550,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       );
 
       const [isPanning, setIsPanning] = useState(false);
-      const [isSpacePressed, setIsSpacePressed] = useState(false);
       const panStartPos = useRef<Pos | null>(null);
 
       const onMouseDown: React.MouseEventHandler = React.useCallback(
@@ -561,13 +560,9 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
           ) {
             return;
           }
-          if (isSpacePressed) {
-            setIsPanning(true);
-            panStartPos.current = { x: e.clientX, y: e.clientY };
-          } else {
+          if (e.shiftKey) {
             if (e.target) {
               const el = e.target as HTMLElement;
-              // hacky way to say "only when the actual board is clicked"
               if (el.classList.contains("connections-view")) {
                 onChangeBoardData({
                   selectedInstances: [],
@@ -578,9 +573,18 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                 startSelectionBox(e);
               }
             }
+          } else {
+            // Default to panning only if the click is on the background
+            if (e.target) {
+              const el = e.target as HTMLElement;
+              if (el.classList.contains("connections-view")) {
+                setIsPanning(true);
+                panStartPos.current = { x: e.clientX, y: e.clientY };
+              }
+            }
           }
         },
-        [node.id, isSpacePressed, onChangeBoardData, startSelectionBox]
+        [node.id, onChangeBoardData, startSelectionBox]
       );
 
       const onMouseUp: React.MouseEventHandler = React.useCallback(
@@ -592,13 +596,13 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
             return;
           }
 
-          if (!isSpacePressed) {
+          if (selectionBox) {
             endSelectionBox(e.shiftKey, (ids) => {
               onChangeBoardData({ selectedInstances: ids });
             });
           }
         },
-        [node.id, endSelectionBox, onChangeBoardData, isSpacePressed]
+        [node.id, endSelectionBox, onChangeBoardData, selectionBox]
       );
 
       const onMouseMove: React.MouseEventHandler = React.useCallback(
@@ -735,31 +739,21 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
       const onMaybeZoomOrPan = React.useCallback(
         (e: WheelEvent) => {
-          if (Math.abs(e.deltaX) > 0) {
-            isLikelyTrackpad.current = true;
-          }
+          e.preventDefault();
+          e.stopPropagation();
 
-          if (!isLikelyTrackpad.current) {
-            const mod = e.deltaY > 0 ? 1 : -1;
-            const zoomDiff = mod * -0.1; // because e.deltaY accumulates, I will just treat every scroll the same. Not ideal for UX but it's better than current behavior
-            onZoom(viewPort.zoom + zoomDiff, "mouse");
-          } else {
-            if (e.metaKey || e.ctrlKey) {
-              const zoomDiff = e.deltaY * -0.005;
+          const scrollThreshold = 0.5; // Ignore very small deltas
+
+          if (e.ctrlKey) { // Explicit zoom gesture (pinch)
+            if (Math.abs(e.deltaY) > scrollThreshold) {
+              const zoomDiff = e.deltaY * -0.005; // Sensitivity for pinch
               onZoom(viewPort.zoom + zoomDiff, "mouse");
-              e.preventDefault();
-              e.stopPropagation();
-            } else {
-              const dx = e.deltaX;
-              const dy = e.deltaY;
-
-              const newViewPort = produce(viewPort, (vp) => {
-                vp.pos.x = vp.pos.x + dx / vp.zoom;
-                vp.pos.y = vp.pos.y + dy / vp.zoom;
-              });
-              setViewPort(newViewPort);
-              e.stopPropagation();
-              e.preventDefault();
+            }
+          } else {
+            // Handle Vertical Scroll (Zoom)
+            if (Math.abs(e.deltaY) > scrollThreshold) {
+              const zoomDiff = e.deltaY * -0.01; // Sensitivity for scroll zoom
+              onZoom(viewPort.zoom + zoomDiff, "mouse");
             }
           }
         },
@@ -769,10 +763,12 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
       useEffect(() => {
         const { current } = boardRef;
         if (current) {
-          current.addEventListener("wheel", onMaybeZoomOrPan);
+          // Use passive: false since we call preventDefault
+          current.addEventListener("wheel", onMaybeZoomOrPan, { passive: false });
 
           return () => {
-            current.removeEventListener("wheel", onMaybeZoomOrPan);
+            // Ensure the listener is removed with the same options
+            current.removeEventListener("wheel", onMaybeZoomOrPan, { capture: false } as any);
           };
         }
       }, [onMaybeZoomOrPan]);
@@ -1298,29 +1294,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         [onAddNode]
       );
 
-      useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-          if (e.code === "Space" && !isSpacePressed) {
-            setIsSpacePressed(true);
-          }
-        };
-
-        const handleKeyUp = (e: KeyboardEvent) => {
-          if (e.code === "Space") {
-            setIsSpacePressed(false);
-            setIsPanning(false);
-          }
-        };
-
-        window.addEventListener("keydown", handleKeyDown);
-        window.addEventListener("keyup", handleKeyUp);
-
-        return () => {
-          window.removeEventListener("keydown", handleKeyDown);
-          window.removeEventListener("keyup", handleKeyUp);
-        };
-      }, [isSpacePressed]);
-
       const onSaveCustomNode = React.useCallback(
         async (code: string) => {
           const node = await onCreateCustomNode({ code });
@@ -1331,12 +1304,6 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         },
         [onAddNode, onCreateCustomNode]
       );
-
-      const cursorStyle = isSpacePressed
-        ? isPanning
-          ? "grabbing"
-          : "grab"
-        : "default";
 
       const onViewForkCode = React.useCallback(
         async (instance: EditorNodeInstance) => {
@@ -1394,7 +1361,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
                 ref={boardRef as any}
                 style={{
                   ...backgroundStyle,
-                  cursor: cursorStyle,
+                  cursor: isPanning ? 'grabbing' : 'default',
                 }}
               >
                 <React.Fragment>
