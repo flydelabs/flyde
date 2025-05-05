@@ -41,14 +41,30 @@ function getControlWithCurvature({
   c,
 }: GetControlWithCurvatureParams): [number, number] {
   let ctX: number, ctY: number;
+
+  const verticalDistance = y2 - y1;
+  const horizontalDistance = x2 - x1;
+  const isPerfectlyVertical = Math.abs(horizontalDistance) < 5;
+  const verticalCurveOffset = 50;
+
   switch (pos) {
     case Position.Left:
-      ctX = x1 - calculateControlOffset(x1 - x2, c);
-      ctY = y1;
+      if (isPerfectlyVertical) {
+        ctX = x1 - verticalCurveOffset;
+        ctY = y1 + verticalDistance * 0.5;
+      } else {
+        ctX = x1 - calculateControlOffset(x1 - x2, c);
+        ctY = y1 + (Math.abs(verticalDistance) > Math.abs(horizontalDistance) ? verticalDistance * 0.3 : 0);
+      }
       break;
     case Position.Right:
-      ctX = x1 + calculateControlOffset(x2 - x1, c);
-      ctY = y1;
+      if (isPerfectlyVertical) {
+        ctX = x1 + verticalCurveOffset;
+        ctY = y1 + verticalDistance * 0.5;
+      } else {
+        ctX = x1 + calculateControlOffset(x2 - x1, c);
+        ctY = y1 + (Math.abs(verticalDistance) > Math.abs(horizontalDistance) ? verticalDistance * 0.3 : 0);
+      }
       break;
     case Position.Top:
       ctX = x1;
@@ -72,7 +88,7 @@ export const calcBezierPath = ({
   curvature = 0.25,
 }: GetBezierPathParams): string => {
   const [sourceControlX, sourceControlY] = getControlWithCurvature({
-      pos: sourcePosition,
+    pos: sourcePosition,
     x1: sourceX,
     y1: sourceY,
     x2: targetX,
