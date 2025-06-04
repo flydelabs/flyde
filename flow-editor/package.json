@@ -65,8 +65,8 @@
   "devDependencies": {
     "@types/chai": "^4.3.5",
     "@types/mocha": "^10.0.1",
-    "@types/react": "^18.2.0",
-    "@types/react-dom": "^18.2.0",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
     "autoprefixer": "10.4.14",
     "chai": "^4.3.7",
     "concurrently": "^9.1.2",
@@ -75,8 +75,8 @@
     "patch-package": "^6.5.1",
     "postcss": "8.4.24",
     "postinstall-postinstall": "^2.1.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "sass": "^1.66.1",
     "sinon": "^14.0.2",
     "tailwindcss": "3.3.2",
@@ -86,10 +86,10 @@
     "tsx": "^4.7.1"
   },
   "peerDependencies": {
-    "@types/react": "^18.2.0",
-    "@types/react-dom": "^18.2.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "gitHead": "5f06bd4a0f3da610e64d74c19cc84babc4557f56"
 }

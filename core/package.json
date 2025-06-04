@@ -22,7 +22,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@types/react": "~18.2.0",
+    "@types/react": "^18.3.0",
     "cuid": "^3.0.0",
     "debug": "^4.3.4",
     "dependency-graph": "^0.8.1",

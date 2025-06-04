@@ -3,7 +3,6 @@ import {
   Pos,
   VisualNode,
   NodeInstance,
-  FlydeFlow,
   PinType,
   DebuggerEventType,
   ROOT_INS_ID,
