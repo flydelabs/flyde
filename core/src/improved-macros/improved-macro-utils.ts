@@ -93,6 +93,14 @@ export function replaceInputsInValue(
           return ignoreMissingInputs ? match : "";
         }
       }
+      if (typeof result === "object") {
+        try {
+          return JSON.stringify(result);
+        } catch (error) {
+          console.error("Error stringifying result:", error);
+          return match;
+        }
+      }
       return result !== undefined ? result : match;
     });
   }

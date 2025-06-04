@@ -81,23 +81,25 @@ export function loadFlowFromContent<Inputs>(
 
 export function loadFlowByPath<Inputs>(
   relativePath: string,
-  root?: string
+  root?: string,
+  secrets?: Record<string, string>
 ): LoadedFlowExecuteFn<Inputs> {
   const _root = root || calcImplicitRoot("loadFlowByPath");
   const flowPath = join(_root, relativePath);
   const flow = deserializeFlowByPath(flowPath);
 
-  return loadFlowFromContent(flow, flowPath, "http://localhost:8545");
+  return loadFlowFromContent(flow, flowPath, "http://localhost:8545", secrets);
 }
 
 export function loadFlow<Inputs>(
   flowOrPath: FlydeFlow | string,
-  root?: string
+  root?: string,
+  secrets?: Record<string, string>
 ): LoadedFlowExecuteFn<Inputs> {
   const _root = root || calcImplicitRoot("loadFlow");
   if (typeof flowOrPath === "string") {
-    return loadFlowByPath(flowOrPath, _root);
+    return loadFlowByPath(flowOrPath, _root, secrets);
   } else {
-    return loadFlowFromContent(flowOrPath, _root, "http://localhost:8545");
+    return loadFlowFromContent(flowOrPath, _root, "http://localhost:8545", secrets);
   }
 }

@@ -61,7 +61,7 @@ export const BaseNodeIcon: React.FC<{ icon?: NodeTypeIcon }> =
     if (typeof icon === "string" && icon.trim().startsWith("<")) {
       return (
         <span
-          className="svg-icon-container"
+          className="svg-icon-container flex flex-row items-center justify-center"
           dangerouslySetInnerHTML={{ __html: icon }}
         />
       );

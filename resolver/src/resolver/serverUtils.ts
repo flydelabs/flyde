@@ -1,6 +1,14 @@
 import { CodeNode, isCodeNode } from "@flyde/core";
 import { existsSync } from "fs";
 
+/**
+ * Helper to require a module without caching
+ */
+const requireNoCache = (modulePath: string) => {
+    delete require.cache[require.resolve(modulePath)];
+    return require(modulePath);
+};
+
 export function resolveCodeNodeDependencies(path: string): {
     errors: string[];
     nodes: {
@@ -15,7 +23,7 @@ export function resolveCodeNodeDependencies(path: string): {
     try {
         // This is a hack to require the file
         // eslint-disable-next-line @typescript-eslint/no-var-requires
-        let result = require(path);
+        let result = requireNoCache(path);
         if (result.__esModule) {
             result = result.default || result;
         }

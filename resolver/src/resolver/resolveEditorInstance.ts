@@ -44,7 +44,7 @@ export function resolveEditorInstance(
 
   const editorNode = internalCodeNodeToEditorNode(processedInstance, { editorConfig: macro.editorConfig, isTrigger: node.isTrigger, sourceCode: node.sourceCode });
 
-  const editorInstance = {
+  const editorInstance: EditorNodeInstance = {
     id: instance.id,
     config: instance.config,
     nodeId: instance.nodeId,
@@ -53,8 +53,12 @@ export function resolveEditorInstance(
     style: instance.style,
     type: instance.type,
     source: instance.source,
+    displayName: instance.displayName,
     node: { ...editorNode, icon: node.icon },
   };
+  if (instance.displayName) {
+    editorInstance.node.displayName = instance.displayName;
+  }
 
   return editorInstance;
 }

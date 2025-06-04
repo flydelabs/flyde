@@ -3,6 +3,14 @@ import * as glob from "glob";
 
 import resolveFrom from "resolve-from";
 
+/**
+ * Helper to require a module without caching
+ */
+const requireNoCache = (modulePath: string) => {
+  delete require.cache[require.resolve(modulePath)];
+  return require(modulePath);
+};
+
 export const resolveImportablePaths = (
   rootPath: string,
   importPath: string
@@ -12,7 +20,7 @@ export const resolveImportablePaths = (
     importPath + "/package.json"
   );
 
-  const { flyde } = require(resolvedModulePath);
+  const { flyde } = requireNoCache(resolvedModulePath);
 
   if (!flyde || !flyde.exposes) {
     throw new Error(

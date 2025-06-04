@@ -27,6 +27,7 @@ const instance = z.object({
   inputConfig: z.optional(z.record(z.string(), inputConfig)).default({}),
   visibleInputs: z.optional(z.array(z.string())),
   visibleOutputs: z.optional(z.array(z.string())),
+  displayName: z.optional(z.string()),
   nodeId: z.optional(z.string()),
   // @deprecated
   macroId: z.optional(z.string()),
