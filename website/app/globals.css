@@ -1,0 +1,54 @@
+@import "tailwindcss";
+
+:root {
+  --primary: #2887F4;
+  --background: #ffffff;
+  --foreground: #171717;
+  --card: #f9f9f9;
+  --card-foreground: #171717;
+  --border: #e5e5e5;
+  --muted: #f1f1f1;
+  --muted-foreground: #737373;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --primary: #2887F4;
+    --background: #0a0a0a;
+    --foreground: #ededed;
+    --card: #171717;
+    --card-foreground: #ededed;
+    --border: #333333;
+    --muted: #262626;
+    --muted-foreground: #a3a3a3;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+
+.flyde-flow-editor {
+  width: 100%;
+  height: 100%;
+  /* overflow: hidden; */
+  position: relative;
+}
+
+
+.canvas-positioning-hack {
+  /* display: flex; */
+  width: 100%;
+  height: 100%;
+}
