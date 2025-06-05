@@ -37,7 +37,7 @@ export function Header() {
       <div className="container flex h-16 max-w-screen-2xl items-center px-8">
         <div className="mr-8 flex">
           <Link href="/" className="mr-6 flex items-center space-x-2">
-              <Image src="/logo-text.png" alt="Flyde" width={80} height={32} />
+            <Image src="/logo-text.png" alt="Flyde" width={80} height={32} />
           </Link>
         </div>
         <nav className="flex items-center space-x-8 text-sm font-medium">
@@ -45,9 +45,8 @@ export function Header() {
             <Link
               key={item.href}
               href={item.href}
-              className={`transition-colors hover:text-white/80 ${
-                pathname === item.href ? 'text-white' : 'text-white/60'
-              }`}
+              className={`transition-colors hover:text-white/80 ${pathname === item.href ? 'text-white' : 'text-white/60'
+                }`}
             >
               {item.name}
             </Link>

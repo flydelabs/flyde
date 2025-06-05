@@ -1,0 +1,50 @@
+imports: {}
+node:
+  instances:
+    - pos:
+        x: -130.5
+        y: 20
+      id: Notion-x804gyx
+      inputConfig: {}
+      nodeId: Notion
+      config:
+        apiKey:
+          type: string
+          value: "{{apiKey}}"
+        action:
+          type: select
+          value: queryDatabase
+        databaseId:
+          type: string
+          value: ""
+        pageId:
+          type: string
+          value: ""
+        filter:
+          type: json
+          value: {}
+        sorts:
+          type: json
+          value: []
+        properties:
+          type: json
+          value: {}
+        content:
+          type: json
+          value: []
+        query:
+          type: string
+          value: ""
+      type: code
+      source:
+        type: package
+        data: "@flyde/stdlib"
+  connections: []
+  id: Example
+  inputs: {}
+  outputs: {}
+  inputsPosition: {}
+  outputsPosition:
+    result:
+      x: -23.264428942324532
+      y: 237.25953921502617

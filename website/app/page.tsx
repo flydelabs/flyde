@@ -21,15 +21,15 @@ export default function Home() {
               A holistic solution for prototyping, integrating, evaluating and iterating on AI-heavy backend logic, directly in your codebase.
             </p>
             <div className="flex flex-wrap gap-4 animate-in fade-in-50 duration-1000 delay-500">
-              <Link 
-                href="/docs" 
+              <Link
+                href="/docs"
                 className="px-6 py-3 rounded-md bg-blue-600 text-white font-medium hover:bg-blue-700 transition-all hover:scale-105 duration-300 flex items-center"
               >
                 Get started
                 <ChevronRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </Link>
-              <Link 
-                href="/playground" 
+              <Link
+                href="/playground"
                 className="px-6 py-3 rounded-md bg-zinc-800 text-white font-medium hover:bg-zinc-700 border border-zinc-700 transition-all hover:scale-105 duration-300"
               >
                 Try the playground
@@ -37,7 +37,7 @@ export default function Home() {
             </div>
           </div>
         </div>
-        
+
         {/* Demo preview positioned lower to not overlap CTAs */}
         <div className="absolute bottom-[-400px] left-0 right-0 z-10">
           <div className="container mx-auto max-w-6xl px-8 md:px-12">
@@ -108,14 +108,14 @@ export default function Home() {
             Start building powerful AI agents and workflows visually, with the full power of your codebase.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <Link 
-              href="/docs" 
+            <Link
+              href="/docs"
               className="px-8 py-4 rounded-md bg-blue-600 text-white font-medium hover:bg-blue-700 transition-all hover:scale-105 duration-300"
             >
               Get started
             </Link>
-            <Link 
-              href="https://github.com/flyde/flyde" 
+            <Link
+              href="https://github.com/flyde/flyde"
               className="px-8 py-4 rounded-md bg-zinc-900 text-white font-medium hover:bg-zinc-800 border border-zinc-800 transition-all hover:scale-105 duration-300 flex items-center group"
             >
               <Star className="mr-2 h-4 w-4 text-white group-hover:text-blue-400 transition-colors group-hover:rotate-12 duration-300" />

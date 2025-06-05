@@ -10,4 +10,4 @@ export * from "./State";
 export * from "./Timing";
 export * from "./Values/index";
 export * from "./Note/Note.flyde";
-export * from "./ThirdParty/openai.flyde";
+export * from "./ThirdParty";

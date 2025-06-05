@@ -20,6 +20,7 @@
     "@react-three/drei": "^10.1.2",
     "@react-three/fiber": "^9.1.2",
     "@types/mdx": "^2.0.13",
+    "@types/react-syntax-highlighter": "^15.5.13",
     "gray-matter": "^4.0.3",
     "lucide-react": "^0.513.0",
     "next": "15.3.3",
@@ -27,19 +28,21 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-markdown": "^10.1.0",
+    "react-syntax-highlighter": "^15.6.1",
     "rehype-highlight": "^7.0.2",
     "remark-gfm": "^4.0.1",
     "three": "^0.177.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
-    "@tailwindcss/postcss": "^4.1.8",
     "@types/node": "^20",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
+    "autoprefixer": "10.4.14",
     "eslint": "^9",
     "eslint-config-next": "15.3.3",
-    "tailwindcss": "^4.1.8",
+    "postcss": "8.4.24",
+    "tailwindcss": "3.3.2",
     "typescript": "^5"
   }
 }
