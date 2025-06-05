@@ -158,7 +158,7 @@ export const PinTooltipContent = ({
   return (
     <div
       className={cn(
-        "w-[300px] overflow-hidden rounded-md p-0 bg-gradient-to-b from-black to-[#222] text-white border border-neutral-700",
+        "w-[300px] overflow-hidden rounded-md p-0 bg-linear-to-b from-black to-[#222] text-white border border-neutral-700",
         className
       )}
     >
