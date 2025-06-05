@@ -55,26 +55,24 @@ export interface PinViewProps {
 
 export const BaseNodeIcon: React.FC<{ icon?: NodeTypeIcon }> =
   function BaseNodeIcon({ icon }) {
-    return <div></div>;
-    // console.log("icon", icon);
-    // if (!icon) {
-    //   return <FontAwesomeIcon icon="code" size="lg" />;
-    // }
-    // if (typeof icon === "string" && icon.trim().startsWith("<")) {
-    //   return (
-    //     <span
-    //       className="svg-icon-container flex flex-row items-center justify-center"
-    //       dangerouslySetInnerHTML={{ __html: icon }}
-    //     />
-    //   );
-    // } else {
-    //   const iconValue = Array.isArray(icon) ? icon[0] : icon;
-    //   if (!iconValue) {
-    //     return <FontAwesomeIcon icon="code" size="lg" />;
-    //   }
-    //   console.log("iconValue", iconValue, typeof iconValue);
-    //   return <FontAwesomeIcon icon={iconValue as any} size="lg" />;
-    // }
+    if (!icon) {
+      return <FontAwesomeIcon icon="code" size="lg" />;
+    }
+    if (typeof icon === "string" && icon.trim().startsWith("<")) {
+      return (
+        <span
+          className="svg-icon-container flex flex-row items-center justify-center"
+          dangerouslySetInnerHTML={{ __html: icon }}
+        />
+      );
+    } else {
+      const iconValue = Array.isArray(icon) ? icon[0] : icon;
+      if (!iconValue) {
+        return <FontAwesomeIcon icon="code" size="lg" />;
+      }
+      console.log("iconValue", iconValue, typeof iconValue);
+      return <FontAwesomeIcon icon={iconValue as any} size="lg" />;
+    }
   };
 
 const HOVER_DELAY = 400;

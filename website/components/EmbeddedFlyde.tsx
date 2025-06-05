@@ -1,6 +1,6 @@
 "use client";
 
-// import "@flyde/flow-editor/src/index.scss";
+import "@flyde/flow-editor/src/index.scss";
 import {
   noop,
 } from "@flyde/core";
@@ -84,13 +84,12 @@ export const EmbeddedFlyde = forwardRef((props: EmbeddedFlydeProps, _: React.Ref
     <PortsContext.Provider value={portsContextValue}>
       <DebuggerContextProvider value={debuggerContextValue}>
         <CanvasPositioningWaitHack>
-          <h2>Interactive Example Placeholder</h2>
-          {/* <FlowEditor
+          <FlowEditor
             state={internalEditorState}
             onChangeEditorState={setInternalEditorState}
             initialPadding={initialPadding}
             darkMode={true}
-          /> */}
+          />
         </CanvasPositioningWaitHack>
       </DebuggerContextProvider>
     </PortsContext.Provider>
