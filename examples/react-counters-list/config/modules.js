@@ -105,7 +105,7 @@ function getModules() {
   let config;
 
   // If there's a tsconfig.json we assume it's a
-  // TypeScript project and set up the config
+// TypeScript project and set up the config
   // based on tsconfig.json
   if (hasTsConfig) {
     const ts = require(resolve.sync('typescript', {

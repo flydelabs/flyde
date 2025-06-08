@@ -1,5 +1,4 @@
 import {
-  processImprovedMacro,
   createInputGroup,
   CodeNode,
 } from "@flyde/core";
@@ -109,39 +108,40 @@ export const Tavily: CodeNode = {
       includeDomains,
       excludeDomains,
     } = inputs;
-  
+
     if (!apiKey) {
       throw new Error("Tavily API key is required");
     }
-  
+
     if (!query) {
       throw new Error("Query is required");
     }
-  
+
     const headers = {
       "Content-Type": "application/json",
       Authorization: `Bearer ${apiKey}`,
     };
-  
+
     const baseUrl = "https://api.tavily.com/v1";
-  
+
     let endpoint = "";
-    let method = "POST";
-    let data: any = { query };
-  
+    const method = "POST";
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const data: any = { query };
+
     try {
       switch (action) {
         case "search":
           endpoint = "/search";
-  
+
           if (searchDepth) {
             data.search_depth = searchDepth;
           }
-  
+
           if (maxResults) {
             data.max_results = maxResults;
           }
-  
+
           if (
             includeDomains &&
             Array.isArray(includeDomains) &&
@@ -149,7 +149,7 @@ export const Tavily: CodeNode = {
           ) {
             data.include_domains = includeDomains;
           }
-  
+
           if (
             excludeDomains &&
             Array.isArray(excludeDomains) &&
@@ -158,14 +158,14 @@ export const Tavily: CodeNode = {
             data.exclude_domains = excludeDomains;
           }
           break;
-  
+
         case "questionAnswer":
           endpoint = "/question";
-  
+
           if (searchDepth) {
             data.search_depth = searchDepth;
           }
-  
+
           if (
             includeDomains &&
             Array.isArray(includeDomains) &&
@@ -173,7 +173,7 @@ export const Tavily: CodeNode = {
           ) {
             data.include_domains = includeDomains;
           }
-  
+
           if (
             excludeDomains &&
             Array.isArray(excludeDomains) &&
@@ -182,25 +182,24 @@ export const Tavily: CodeNode = {
             data.exclude_domains = excludeDomains;
           }
           break;
-  
+
         default:
           throw new Error(`Unsupported action: ${action}`);
       }
-  
+
       const res = await axios({
         method,
         url: baseUrl + endpoint,
         headers,
         data,
       });
-  
+
       outputs.result.next(res.data);
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         const errorData = error.response.data as TavilyErrorResponse;
         adv.onError(
-          `Tavily API Error ${error.response.status}: ${
-            errorData.error?.message || error.response.statusText
+          `Tavily API Error ${error.response.status}: ${errorData.error?.message || error.response.statusText
           }`
         );
         return;

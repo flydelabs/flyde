@@ -167,6 +167,8 @@ export const GoogleSheets: CodeNode = {
         // Parse the service account key
         const serviceAccount = JSON.parse(serviceAccountKey);
 
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore-error - type should be a peer-dependency
         const { JWT } = await import("google-auth-library");
 
         // Create a JWT client using the service account credentials

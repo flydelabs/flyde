@@ -44,10 +44,17 @@ export const Anthropic: CodeNode = {
       editorType: "select",
       editorTypeData: {
         options: [
+          "claude-opus-4-20250514",
+          "claude-sonnet-4-20250514",
+          "claude-3-7-sonnet-20250219",
           "claude-3-7-sonnet-latest",
+          "claude-3-5-sonnet-20241022",
+          "claude-3-5-sonnet-latest",
           "claude-3-5-sonnet-20240620",
-          "claude-3-5-haiku",
+          "claude-3-5-haiku-20241022",
+          "claude-3-5-haiku-latest",
           "claude-3-opus-20240229",
+          "claude-3-opus-latest",
           "claude-3-sonnet-20240229",
           "claude-3-haiku-20240307",
         ],
@@ -75,7 +82,7 @@ export const Anthropic: CodeNode = {
       description: "Generated text response",
     },
   },
-  run: async (inputs, outputs, adv) => {
+  run: async (inputs, outputs) => {
     const { apiKey, model, prompt, temperature, maxTokens } = inputs;
 
     const headers = {
@@ -104,8 +111,7 @@ export const Anthropic: CodeNode = {
       if (axios.isAxiosError(error) && error.response) {
         const errorData = error.response.data as AnthropicErrorResponse;
         throw new Error(
-          `Anthropic API Error ${error.response.status}: ${
-            errorData.error?.message || error.response.statusText
+          `Anthropic API Error ${error.response.status}: ${errorData.error?.message || error.response.statusText
           }`
         );
       }

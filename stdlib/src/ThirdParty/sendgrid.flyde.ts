@@ -1,5 +1,5 @@
 import axios from "axios";
-import { processImprovedMacro, CodeNode } from "@flyde/core";
+import { CodeNode } from "@flyde/core";
 
 interface SendGridErrorResponse {
   error: {
@@ -75,7 +75,7 @@ export const SendGrid: CodeNode = {
       description: "Email sent successfully",
     },
   },
-  run: async (inputs, outputs, adv) => {
+  run: async (inputs, outputs) => {
     const {
       apiKey,
       from,
@@ -94,7 +94,8 @@ export const SendGrid: CodeNode = {
       "Content-Type": "application/json",
     };
 
-    const data: Record<string, any> = {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const data: any = {
       personalizations: [
         {
           to: to.split(",").map((email: string) => ({ email: email.trim() })),
@@ -153,8 +154,7 @@ export const SendGrid: CodeNode = {
       if (axios.isAxiosError(error) && error.response) {
         const errorData = error.response.data as SendGridErrorResponse;
         throw new Error(
-          `SendGrid API Error ${error.response.status}: ${
-            errorData.error?.message || error.response.statusText
+          `SendGrid API Error ${error.response.status}: ${errorData.error?.message || error.response.statusText
           }`
         );
       }

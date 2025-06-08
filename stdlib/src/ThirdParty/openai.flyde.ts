@@ -29,6 +29,8 @@ export const OpenAI: CodeNode = {
       editorTypeData: {
         options: [
           "gpt-4.1",
+          "gpt-4.1-mini",
+          "gpt-4.1-nano",
           "gpt-4o",
           "chatgpt-4o-latest",
           "gpt-4o-mini",
@@ -100,7 +102,7 @@ export const OpenAI: CodeNode = {
       description: "Generated completion (as string)",
     }
   },
-  run: async (inputs, outputs, adv) => {
+  run: async (inputs, outputs) => {
     const { apiKey, model, prompt, temperature, responseFormat, jsonSchema } = inputs;
 
     const headers = {
@@ -109,7 +111,8 @@ export const OpenAI: CodeNode = {
     };
 
     // Prepare request data based on the response format
-    let data: any = {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const data: any = {
       model,
       messages: [{ role: "system", content: prompt }],
       temperature,
@@ -134,8 +137,9 @@ export const OpenAI: CodeNode = {
             strict: true
           }
         };
-      } catch (e: any) {
-        throw new Error(`Invalid JSON schema: ${e.message}`);
+      } catch (e: unknown) {
+        const error = e as Error;
+        throw new Error(`Invalid JSON schema: ${error.message}`);
       }
     }
 
@@ -154,10 +158,11 @@ export const OpenAI: CodeNode = {
           const parsedOutput = JSON.parse(output);
           // Output the parsed JSON to both outputs
           outputs.completion.next(parsedOutput);
-        } catch (e: any) {
+        } catch (e: unknown) {
+          const error = e as Error;
           // If parsing fails, output the raw text
           outputs.completion.next(output);
-          throw new Error(`Failed to parse JSON output: ${e.message}`);
+          throw new Error(`Failed to parse JSON output: ${error.message}`);
         }
       } else {
         // For text format, output the raw text

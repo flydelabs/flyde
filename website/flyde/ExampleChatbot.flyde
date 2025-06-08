@@ -1,0 +1,228 @@
+imports: {}
+node:
+  instances:
+    - pos:
+        x: -335.3414882017174
+        y: -177.90182403618172
+      id: OpenAI-ls04gsf
+      inputConfig: {}
+      nodeId: OpenAI
+      config:
+        apiKey:
+          type: string
+          value: OPENAI_API_KEY
+        model:
+          type: select
+          value: gpt-4.1-mini
+        prompt:
+          type: string
+          value: >-
+            You are a helpful support agent. Your task is understand what is the
+            topic of the user's question: refund, technical or other.
+
+            Question:
+
+            {{question}}
+        temperature:
+          type: number
+          value: 0.7
+        responseFormat:
+          type: select
+          value: json_schema
+        jsonSchema:
+          type: json
+          value:
+            type: object
+            properties:
+              classification:
+                type: string
+                enum:
+                  - refund
+                  - technical
+                  - other
+                description: The classification of the text
+            required:
+              - classification
+      type: code
+      source:
+        type: package
+        data: "@flyde/stdlib"
+    - pos:
+        x: -103.28728116814
+        y: -149.94936179684908
+      id: Switch-4v04goe
+      inputConfig: {}
+      nodeId: Switch
+      config:
+        inputs:
+          - value
+          - question
+        cases:
+          - name: refund
+            conditionExpression: inputs.value.classification === 'refund'
+            outputExpression: inputs.question
+        defaultCase:
+          enabled: true
+          outputExpression: inputs.question
+      type: code
+      source:
+        type: package
+        data: "@flyde/stdlib"
+    - pos:
+        x: 179.3705435571759
+        y: -193.22462568285454
+      id: Anthropic-ed04gxr
+      inputConfig: {}
+      nodeId: Anthropic
+      config:
+        apiKey:
+          type: string
+          value: ANTHROPIC_API_KEY
+        model:
+          type: select
+          value: claude-sonnet-4-20250514
+        prompt:
+          type: string
+          value: >-
+            You are a helpful refund assistant. You should answer the user's
+            refund request below with by mentioning that they should visit
+            https://www.acme.com/refund
+
+
+            Question: 
+
+            {{question}}
+        temperature:
+          type: number
+          value: 0.7
+        maxTokens:
+          type: number
+          value: 1000
+      type: code
+      source:
+        type: package
+        data: "@flyde/stdlib"
+    - pos:
+        x: 178.8547061696238
+        y: 21.887591178627417
+      id: OpenAIResponsesAPI-wm14gof
+      inputConfig: {}
+      nodeId: OpenAIResponsesAPI
+      config:
+        apiKey:
+          type: string
+          value: OPENAI_API_KEY
+        stateMode:
+          type: select
+          value: managed
+        model:
+          type: select
+          value: gpt-4.1
+        input:
+          type: string
+          value: |-
+            You are a helpful assistant. Please answer the following question:
+            {{question}}
+        previousResponseId:
+          type: string
+          value: "{{previousResponseId}}"
+        conversationHistory:
+          type: json
+          value: []
+        temperature:
+          type: number
+          value: 1
+        maxCompletionTokens:
+          type: number
+          value: 1000
+        topP:
+          type: number
+          value: 1
+        tools:
+          type: json
+          value: []
+        toolChoice:
+          type: select
+          value: auto
+        reasoningEffort:
+          type: select
+          value: "{{reasoningEffort}}"
+      type: code
+      source:
+        type: package
+        data: "@flyde/stdlib"
+  connections:
+    - from:
+        insId: __this
+        pinId: question
+      to:
+        insId: OpenAI-ls04gsf
+        pinId: question
+    - from:
+        insId: OpenAI-ls04gsf
+        pinId: completion
+      to:
+        insId: Switch-4v04goe
+        pinId: value
+    - from:
+        insId: __this
+        pinId: question
+      to:
+        insId: Switch-4v04goe
+        pinId: question
+    - from:
+        insId: Switch-4v04goe
+        pinId: refund
+      to:
+        insId: Anthropic-ed04gxr
+        pinId: question
+    - from:
+        insId: Switch-4v04goe
+        pinId: default
+      to:
+        insId: OpenAIResponsesAPI-wm14gof
+        pinId: question
+    - from:
+        insId: __this
+        pinId: previousResponseId
+      to:
+        insId: OpenAIResponsesAPI-wm14gof
+        pinId: previousResponseId
+    - from:
+        insId: Anthropic-ed04gxr
+        pinId: response
+      to:
+        insId: __this
+        pinId: response
+    - from:
+        insId: OpenAIResponsesAPI-wm14gof
+        pinId: response
+      to:
+        insId: __this
+        pinId: response
+  id: Example
+  inputs:
+    question:
+      mode: required
+    previousResponseId:
+      mode: required
+  outputs:
+    response:
+      delayed: false
+  inputsPosition:
+    question:
+      x: -510.8552075195313
+      y: -107.54765991210937
+    userId:
+      x: -521.2010229492188
+      y: -5.160607910156251
+    previousResponseId:
+      x: -515.9654418945313
+      y: -34.89077392578125
+  outputsPosition:
+    result:
+      x: -23.264428942324532
+      y: 237.25953921502617
+    response:
+      x: 558.0886145019531
+      y: -115.25990112304689

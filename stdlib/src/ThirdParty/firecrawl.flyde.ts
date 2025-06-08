@@ -87,26 +87,27 @@ export const Firecrawl: CodeNode = {
   },
   run: async (inputs, outputs, adv) => {
     const { apiKey, action, url, maxPages, wait, extractionPrompt } = inputs;
-  
+
     if (!apiKey) {
       throw new Error("Firecrawl API key is required");
     }
-  
+
     if (!url) {
       throw new Error("URL is required");
     }
-  
+
     const headers = {
       "x-api-key": apiKey,
       "Content-Type": "application/json",
     };
-  
+
     const baseUrl = "https://api.firecrawl.dev/v1";
-  
+
     let endpoint = "";
-    let method = "POST";
-    let data: any = { url };
-  
+    const method = "POST";
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const data: any = { url };
+
     try {
       switch (action) {
         case "scrape":
@@ -115,7 +116,7 @@ export const Firecrawl: CodeNode = {
             data.wait = wait;
           }
           break;
-  
+
         case "crawl":
           endpoint = "/crawl";
           if (maxPages) {
@@ -125,7 +126,7 @@ export const Firecrawl: CodeNode = {
             data.wait = wait;
           }
           break;
-  
+
         case "extractJson":
           endpoint = "/extract-json";
           if (extractionPrompt) {
@@ -135,25 +136,24 @@ export const Firecrawl: CodeNode = {
             data.wait = wait;
           }
           break;
-  
+
         default:
           throw new Error(`Unsupported action: ${action}`);
       }
-  
+
       const res = await axios({
         method,
         url: baseUrl + endpoint,
         headers,
         data,
       });
-  
+
       outputs.result.next(res.data);
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         const errorData = error.response.data as FirecrawlErrorResponse;
         adv.onError(
-          `Firecrawl API Error ${error.response.status}: ${
-            errorData.error?.message || error.response.statusText
+          `Firecrawl API Error ${error.response.status}: ${errorData.error?.message || error.response.statusText
           }`
         );
         return;
