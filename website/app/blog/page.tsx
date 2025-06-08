@@ -65,12 +65,12 @@ export default function BlogPage() {
                   Explore Flyde
                   <ArrowRight className="w-3 h-3" />
                 </a>
-                <a 
+                <Link 
                   href="/docs" 
                   className="inline-flex items-center gap-2 bg-muted text-foreground px-4 py-2 rounded-md text-sm font-medium hover:bg-muted/80 transition-colors"
                 >
                   Read Docs
-                </a>
+                </Link>
               </div>
             </div>
           </div>

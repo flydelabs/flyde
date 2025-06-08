@@ -5,22 +5,22 @@ import { EmbeddedFlyde } from "@/components/EmbeddedFlyde";
 export default function Home() {
   return (
     <div className="flex flex-col w-full bg-black text-white">
-      {/* Hero Section */}
-      <section className="min-h-[90vh] flex items-center justify-center relative overflow-hidden pb-32">
+      {/* Hero Section - More breathing room */}
+      <section className="pt-20 pb-20 flex items-center justify-center relative overflow-hidden">
         <div className="absolute inset-0 z-0 opacity-30">
           <div className="absolute top-[20%] right-[10%] w-64 h-64 rounded-full bg-blue-500 blur-[120px] animate-pulse" style={{ animationDuration: '8s' }} />
           <div className="absolute bottom-[30%] left-[5%] w-96 h-96 rounded-full bg-blue-400 blur-[150px] animate-pulse" style={{ animationDuration: '12s' }} />
           <div className="absolute top-[50%] left-[30%] w-32 h-32 rounded-full bg-indigo-500 blur-[80px] animate-pulse" style={{ animationDuration: '10s' }} />
         </div>
         <div className="container px-8 md:px-12 relative z-10">
-          <div className="max-w-4xl mx-auto">
-            <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-br from-white via-blue-100 to-zinc-400 animate-in slide-in-from-bottom-4 duration-700">
+          <div className="max-w-4xl mx-auto text-center">
+            <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-8 bg-clip-text text-transparent bg-gradient-to-br from-white via-blue-100 to-zinc-400 animate-in slide-in-from-bottom-4 duration-700">
               Visual AI Flows<span className="text-blue-400 animate-in fade-in duration-1000 delay-300">.</span> <span className="relative inline-block text-blue-400 animate-in slide-in-from-bottom-8 duration-700 delay-150">In Your <span className="relative">Codebase<span className="absolute -bottom-1 left-0 w-full h-[2px] bg-gradient-to-r from-blue-400/0 via-blue-400 to-blue-400/0"></span></span></span>
             </h1>
-            <p className="text-xl md:text-2xl leading-relaxed text-zinc-400 mb-10 max-w-3xl animate-in fade-in duration-1000 delay-300">
+            <p className="text-xl md:text-2xl leading-relaxed text-zinc-400 mb-10 max-w-3xl mx-auto animate-in fade-in duration-1000 delay-300">
               A holistic solution for prototyping, integrating, evaluating and iterating on AI-heavy backend logic, directly in your codebase.
             </p>
-            <div className="flex flex-wrap gap-4 animate-in fade-in-50 duration-1000 delay-500">
+            <div className="flex flex-wrap justify-center gap-4 animate-in fade-in-50 duration-1000 delay-500">
               <Link
                 href="/docs"
                 className="px-6 py-3 rounded-md bg-blue-600 text-white font-medium hover:bg-blue-700 transition-all hover:scale-105 duration-300 flex items-center"
@@ -37,20 +37,15 @@ export default function Home() {
             </div>
           </div>
         </div>
-
-        {/* Demo preview positioned lower to not overlap CTAs */}
-        <div className="absolute bottom-[-400px] left-0 right-0 z-10">
-          <div className="container mx-auto max-w-6xl px-8 md:px-12">
-            <div className="w-full h-[600px] bg-zinc-900 rounded-xl shadow-2xl overflow-hidden border border-zinc-800 transition-all hover:border-zinc-700 hover:shadow-blue-900/10 hover:shadow-[0_0_30px_rgba(30,64,175,0.07)]">
-              <EmbeddedFlyde />
-            </div>
-          </div>
-        </div>
       </section>
 
-      {/* Increased spacing for the embedded component */}
-      <section className="py-80 md:py-96">
-        {/* This section is intentionally empty to provide space for the embedded component */}
+      {/* Demo Section - Takes up most of the viewport */}
+      <section className="px-8 md:px-12 pb-16 relative">
+        <div className="container mx-auto max-w-7xl">
+          <div className="w-full h-[80vh] bg-zinc-900 rounded-xl shadow-2xl overflow-hidden border border-zinc-800 transition-all hover:border-zinc-700 hover:shadow-blue-900/10 hover:shadow-[0_0_30px_rgba(30,64,175,0.07)]">
+            <EmbeddedFlyde />
+          </div>
+        </div>
       </section>
 
       {/* Features Section */}
@@ -115,7 +110,7 @@ export default function Home() {
               Get started
             </Link>
             <Link
-              href="https://github.com/flyde/flyde"
+              href="https://github.com/flydelabs/flyde"
               className="px-8 py-4 rounded-md bg-zinc-900 text-white font-medium hover:bg-zinc-800 border border-zinc-800 transition-all hover:scale-105 duration-300 flex items-center group"
             >
               <Star className="mr-2 h-4 w-4 text-white group-hover:text-blue-400 transition-colors group-hover:rotate-12 duration-300" />

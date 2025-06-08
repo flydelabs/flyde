@@ -5,14 +5,6 @@ import { readFileSync } from "fs";
 
 import { runMigrations } from "./migrations/runMigrations";
 
-require("ts-node").register({
-  transpileOnly: true,
-  compilerOptions: {
-    moduleResolution: "NodeNext",
-    module: "NodeNext",
-  },
-});
-
 export function deserializeFlow(flowContents: string, path: string): FlydeFlow {
   const unsafeflow = yaml.parse(flowContents);
 

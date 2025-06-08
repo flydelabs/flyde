@@ -43,7 +43,7 @@ export const DiscordMessage: CodeNode = {
       description: "The sent message content",
     },
   },
-  run: async (inputs, outputs, adv) => {
+  run: async (inputs, outputs) => {
     const { webhookUrl, username, content, avatarUrl } = inputs;
 
     try {

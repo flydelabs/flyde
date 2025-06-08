@@ -73,7 +73,7 @@ export const Resend: CodeNode = {
       description: "Email sent successfully",
     },
   },
-  run: async (inputs, outputs, adv) => {
+  run: async (inputs, outputs) => {
     const { apiKey, from, to, subject, html, text, cc, bcc, replyTo } = inputs;
 
     const headers = {
@@ -81,7 +81,8 @@ export const Resend: CodeNode = {
       "Content-Type": "application/json",
     };
 
-    const data: Record<string, any> = {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const data: any = {
       from,
       to,
       subject,
@@ -113,8 +114,7 @@ export const Resend: CodeNode = {
         const errorData = error.response.data as ResendErrorResponse;
         console.error(errorData);
         throw new Error(
-          `Resend API Error ${error.response.status}: ${
-            errorData.error?.message || error.response.statusText
+          `Resend API Error ${error.response.status}: ${errorData.error?.message || error.response.statusText
           }`
         );
       }

@@ -1,5 +1,4 @@
 import { CodeNode } from "@flyde/core";
-import { Client } from "pg";
 
 const namespace = "db";
 
@@ -50,6 +49,9 @@ export const PostgreSQL: CodeNode = {
       adv.onError("Invalid JSON format for parameters");
       return;
     }
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore-error - type should be a peer-dependency  
+    const { Client } = await import("pg");
     const client = new Client({ connectionString });
     try {
       await client.connect();

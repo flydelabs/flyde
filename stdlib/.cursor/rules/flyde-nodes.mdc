@@ -1,0 +1,222 @@
+---
+description: 
+globs: *.flyde.ts
+alwaysApply: false
+---
+### Flyde Node Creation Guide (`.flyde.ts`)
+
+This guide provides instructions and best practices for creating new Flyde nodes in the `stdlib`.
+
+#### File Naming
+
+-   Node files must end with `.flyde.ts`.
+-   The filename should be `PascalCase` and match the `id` of the node. For example, a node with `id: "MyNode"` should be in a file named `MyNode.flyde.ts`.
+
+#### Node Definition (`CodeNode`)
+
+Each node is defined as a `CodeNode` object, exported from its file.
+
+```typescript
+import { CodeNode } from "@flyde/core";
+
+export const MyNode: CodeNode = {
+  // ... properties
+};
+```
+
+#### Core Properties
+
+-   `id`: (string) Unique identifier for the node. Should be `PascalCase` and match the filename. **Required**.
+-   `menuDisplayName`: (string) The name displayed in the node menu. **Required**.
+-   `namespace`: (string) Category for the node in the menu (e.g., "ai", "spreadsheets", "text"). **Required**.
+-   `displayName`: (string | (config) => string) The name displayed on the node instance in the graph. Can use `{{configKey}}` placeholders to be dynamic. **Required**.
+-   `description`: (string | (config) => string) A description of what the node does. Displayed in the menu and on the node. Can be a function of the config. **Required**.
+-   `icon`: (string) Icon for the node. Can be a Font-Awesome icon name (e.g., `"fa-robot"`) or an SVG string.
+
+#### Inputs (`inputs` object)
+
+The `inputs` object defines the configuration fields of the node. Each key is an input ID.
+
+-   **`label`**: (string) User-friendly label for the input field.
+-   **`description`**: (string) More detailed explanation of the input.
+-   **`defaultValue`**: The default value for the input. The type of this value helps infer the editor type.
+-   **`editorType`**: Explicitly sets the UI component for the input.
+    -   `"string"`: Single-line text input.
+    -   `"longtext"`: Multi-line text area.
+    -   `"number"`: Number input.
+    -   `"boolean"`: Checkbox.
+    -   `"json"`: JSON editor.
+    -   `"select"`: Dropdown menu. Requires `editorTypeData: { options: [...] }`.
+    -   `"secret"`: For sensitive data like API keys.
+-   **`editorTypeData`**: Provides extra data for certain `editorType`s (e.g., `options` for `select`).
+-   **`condition`**: (string) A string expression to conditionally show/hide the input (e.g., `"authMethod === 'oauth'"`).
+-   **`typeConfigurable`**: (boolean, default: `true`) Whether the user can connect a wire to this input instead of configuring it with a static value. Set to `false` for inputs that should always be static configuration.
+
+#### Input Groups
+
+Use `createInputGroup` to group related inputs for a cleaner UI.
+
+```typescript
+import { CodeNode, createInputGroup } from "@flyde/core";
+
+// ...
+inputs: {
+  // A "virtual" input to define the group
+  myGroup: {
+    group: createInputGroup("My Group Title", ["input1", "input2"], {
+      collapsible: true,
+      defaultCollapsed: true,
+    }),
+  },
+  input1: { ... },
+  input2: { ... },
+}
+```
+
+#### Outputs (`outputs` object)
+
+The `outputs` object defines the output pins of the node. Each key is an output ID.
+
+-   **`description`**: (string) Description of what data this output emits.
+
+#### `run` Function
+
+The `run` function contains the node's execution logic.
+
+```typescript
+run: async (inputs, outputs, adv) => {
+  // inputs: An object with the resolved values of all configured inputs.
+  // outputs: An object with `next(value)` methods for each output pin.
+  // adv: Advanced context (for state, error handling, etc.).
+
+  try {
+    const result = doSomething(inputs.myInput);
+    outputs.result.next(result);
+  } catch (error) {
+    adv.onError(error);
+  }
+}
+```
+
+-   Input values are already resolved (placeholders like `{{...}}` are filled).
+-   Use `outputs.myOutput.next(value)` to emit data from an output.
+-   Use `adv.onError(error)` to report errors to the user.
+
+---
+### Template `.flyde.ts`
+
+```typescript
+import { CodeNode, createInputGroup } from "@flyde/core";
+// Import any other necessary libraries, e.g., axios
+
+// Define interfaces for external API responses if applicable
+// export interface MyApiResponse { ... }
+
+export const MyNewNode: CodeNode = {
+  id: "MyNewNode", // PascalCase, should match the file name
+  menuDisplayName: "My New Node",
+  namespace: "custom", // e.g., "text", "ai", "data"
+  icon: "fa-star", // Font-Awesome icon or SVG string
+  displayName: "My New Node", // Can be dynamic: "Action: {{action}}"
+  description: "This is a description of what my new node does.",
+
+  inputs: {
+    // --- Basic Inputs ---
+    textInput: {
+      label: "Text Input",
+      description: "A simple text input",
+      defaultValue: "Hello World",
+      editorType: "string",
+    },
+    numericInput: {
+      label: "Numeric Input",
+      description: "A number input with min/max",
+      defaultValue: 10,
+      editorType: "number",
+      editorTypeData: { min: 0, max: 100 },
+    },
+    // --- Select Input ---
+    action: {
+      label: "Action",
+      description: "The action to perform",
+      defaultValue: "action1",
+      editorType: "select",
+      editorTypeData: {
+        options: [
+          { value: "action1", label: "Perform Action 1" },
+          { value: "action2", label: "Perform Action 2" },
+        ],
+      },
+    },
+    // --- Conditional Input ---
+    conditionalParam: {
+      label: "Conditional Parameter",
+      description: "This only shows when Action 2 is selected",
+      defaultValue: "",
+      condition: "action === 'action2'",
+    },
+    // --- Secret Input ---
+    apiKey: {
+      label: "API Key",
+      description: "Your secret API key",
+      editorType: "secret",
+      editorTypeData: {
+        defaultName: "MY_API_KEY",
+      },
+    },
+
+    // --- Input Group Definition ---
+    advancedOptions: {
+      group: createInputGroup("Advanced Options", ["jsonInput"], {
+        collapsible: true,
+        defaultCollapsed: true,
+      }),
+    },
+    jsonInput: {
+      label: "JSON Input",
+      description: "Advanced configuration as JSON",
+      editorType: "json",
+      defaultValue: { key: "value" },
+    },
+  },
+
+  outputs: {
+    result: {
+      description: "The result of the operation",
+    },
+    error: {
+      description: "Emits an error message if something goes wrong.",
+    },
+  },
+
+  run: async (inputs, outputs, adv) => {
+    // Destructure inputs for easier access
+    const { textInput, numericInput, action, apiKey, jsonInput, conditionalParam } = inputs;
+
+    if (!apiKey) {
+      adv.onError(new Error("API Key is required."));
+      // Or outputs.error.next("API Key is required.");
+      return;
+    }
+
+    try {
+      // Your node's logic goes here
+      // For example, make an API call using the inputs
+
+      const resultData = {
+        message: `Performed ${action} on '${textInput}' with number ${numericInput}.`,
+        config: jsonInput,
+        extra: action === 'action2' ? conditionalParam : undefined,
+      };
+
+      outputs.result.next(resultData);
+    } catch (e) {
+      const error = e as Error;
+      adv.onError(error); // Recommended for general errors
+      outputs.error.next(error.message); // For specific error flow
+    }
+  },
+};
+
+
+More examples at: [googlesheets.flyde.ts](mdc:src/ThirdParty/googlesheets.flyde.ts), [openai.flyde.ts](mdc:src/ThirdParty/openai.flyde.ts), [Switch.flyde.ts](mdc:src/ControlFlow/Switch.flyde.ts)
