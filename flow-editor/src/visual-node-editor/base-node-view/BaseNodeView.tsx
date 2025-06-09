@@ -70,7 +70,6 @@ export const BaseNodeIcon: React.FC<{ icon?: NodeTypeIcon }> =
       if (!iconValue) {
         return <FontAwesomeIcon icon="code" size="lg" />;
       }
-      console.log("iconValue", iconValue, typeof iconValue);
       return <FontAwesomeIcon icon={iconValue as any} size="lg" />;
     }
   };
