@@ -128,7 +128,7 @@ export const EmbeddedFlyde = (props: EmbeddedFlydeProps) => {
       <DebuggerContextProvider value={debuggerContextValue}>
           <FlowEditor
             state={internalEditorState}
-            onChangeEditorState={setInternalEditorState}
+            onChangeEditorState={setInternalEditorState} 
             initialPadding={initialPadding}
             darkMode={true}
           />

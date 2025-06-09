@@ -44,3 +44,22 @@ body {
   width: 100%;
   height: 100%;
 }
+
+/* flyde hacks */
+/* cmd +k */
+.flyde-flow-editor .absolute.top-4.right-5.z-10 {
+  display: none;
+}
+
+.flyde-flow-editor .help-bubble {
+  display: none;
+}
+
+/* hide onboarding tips */
+.flyde-flow-editor .onboarding-tips {
+  display: none;
+}
+
+.flyde-flow-editor {
+  /* pointer-events: none; */
+}

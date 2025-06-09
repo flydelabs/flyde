@@ -258,6 +258,9 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
       );
     };
 
+
+    console.log("renderInner");
+
     return <div className="flyde-flow-editor">{renderInner()}</div>;
   })
 );

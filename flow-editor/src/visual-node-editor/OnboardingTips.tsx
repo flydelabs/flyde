@@ -175,7 +175,8 @@ export const OnboardingTips: React.FC<OnboardingTipsProps> = () => {
       className={cn(
         "fixed bottom-4 left-1/2 -translate-x-1/2 z-50 max-w-md transition-all duration-200 ease-in-out",
         !showTips && "opacity-0 -translate-y-2",
-        showTips && "opacity-100 translate-y-0"
+        showTips && "opacity-100 translate-y-0",
+        "onboarding-tips"
       )}
     >
       <Alert
