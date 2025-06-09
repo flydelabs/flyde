@@ -25,11 +25,7 @@ interface GetControlWithCurvatureParams {
 }
 
 function calculateControlOffset(distance: number, curvature: number): number {
-  if (distance >= 0) {
-    return 0.5 * distance;
-  } else {
-    return curvature * 35 * Math.sqrt(-distance);
-  }
+  return 0.5 * Math.abs(distance) * curvature;
 }
 
 function getControlWithCurvature({
@@ -41,6 +37,7 @@ function getControlWithCurvature({
   c,
 }: GetControlWithCurvatureParams): [number, number] {
   let ctX: number, ctY: number;
+
   switch (pos) {
     case Position.Left:
       ctX = x1 - calculateControlOffset(x1 - x2, c);
@@ -58,7 +55,11 @@ function getControlWithCurvature({
       ctX = x1;
       ctY = y1 + calculateControlOffset(y2 - y1, c);
       break;
+    default:
+      ctX = x1;
+      ctY = y1;
   }
+
   return [ctX, ctY];
 }
 
@@ -72,13 +73,14 @@ export const calcBezierPath = ({
   curvature = 0.25,
 }: GetBezierPathParams): string => {
   const [sourceControlX, sourceControlY] = getControlWithCurvature({
-      pos: sourcePosition,
+    pos: sourcePosition,
     x1: sourceX,
     y1: sourceY,
     x2: targetX,
     y2: targetY,
     c: curvature,
   });
+
   const [targetControlX, targetControlY] = getControlWithCurvature({
     pos: targetPosition,
     x1: targetX,
@@ -87,6 +89,7 @@ export const calcBezierPath = ({
     y2: sourceY,
     c: curvature,
   });
+
   return `M${sourceX},${sourceY} C${sourceControlX},${sourceControlY} ${targetControlX},${targetControlY} ${targetX},${targetY}`;
 };
 
@@ -107,6 +110,7 @@ export function getBezierCenter({
     y2: targetY,
     c: curvature,
   });
+
   const [targetControlX, targetControlY] = getControlWithCurvature({
     pos: targetPosition,
     x1: targetX,
@@ -122,12 +126,15 @@ export function getBezierCenter({
     sourceControlX * 0.375 +
     targetControlX * 0.375 +
     targetX * 0.125;
+
   const centerY =
     sourceY * 0.125 +
     sourceControlY * 0.375 +
     targetControlY * 0.375 +
     targetY * 0.125;
+
   const xOffset = Math.abs(centerX - sourceX);
   const yOffset = Math.abs(centerY - sourceY);
+
   return [centerX, centerY, xOffset, yOffset];
 }
