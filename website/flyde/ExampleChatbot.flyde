@@ -147,6 +147,9 @@ node:
         reasoningEffort:
           type: select
           value: "{{reasoningEffort}}"
+        maxOutputTokens:
+          type: number
+          value: 1000
       type: code
       source:
         type: package
@@ -211,8 +214,8 @@ node:
       delayed: false
   inputsPosition:
     question:
-      x: -510.8552075195313
-      y: -107.54765991210937
+      x: -519.6851635742188
+      y: -109.02706054687499
     userId:
       x: -521.2010229492188
       y: -5.160607910156251
