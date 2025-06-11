@@ -64,10 +64,21 @@ const TIPS_ADVANCE_TIMEOUT = 1000;
 const TIP_COMPLETED_FEEDBACK_TIMEOUT = 3000;
 const ALL_TIPS_COMPLETED_FEEDBACK_TIMEOUT = 10000;
 
+const useIsMounted = () => {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  return isMounted;
+};
+
 export const OnboardingTips: React.FC<OnboardingTipsProps> = () => {
   const { node, boardData } = useVisualNodeEditorContext();
 
   const { reportEvent } = usePorts();
+  const isMounted = useIsMounted();
 
   const [currentTip, setCurrentTip] = useLocalStorage(
     "onboarding-tip",
@@ -159,12 +170,13 @@ export const OnboardingTips: React.FC<OnboardingTipsProps> = () => {
     }
   }, [currentTip, advanceTip, isCompleted, node, boardData, isAdvancing]);
 
-  return isCompleted ? null : (
+  return !isMounted || isCompleted ? null : (
     <div
       className={cn(
         "fixed bottom-4 left-1/2 -translate-x-1/2 z-50 max-w-md transition-all duration-200 ease-in-out",
         !showTips && "opacity-0 -translate-y-2",
-        showTips && "opacity-100 translate-y-0"
+        showTips && "opacity-100 translate-y-0",
+        "onboarding-tips"
       )}
     >
       <Alert

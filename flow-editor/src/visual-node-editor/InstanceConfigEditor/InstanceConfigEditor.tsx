@@ -115,7 +115,7 @@ export const InstanceConfigEditor: React.FC<InstanceConfigEditorProps> = (
           <DialogHeader className="flex flex-row items-center py-2 px-4 border-b border-gray-200 dark:border-gray-800 space-y-0">
             <InstanceIcon
               icon={node.icon}
-              className="h-5 w-5 mr-2 flex-shrink-0"
+              className="h-5 w-5 mr-2 shrink-0"
             />
             <DialogTitle className="text-base font-medium m-0 truncate max-w-[85%] overflow-hidden">
               {node.displayName ?? node.id}

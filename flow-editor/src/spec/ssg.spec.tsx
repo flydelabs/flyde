@@ -66,7 +66,7 @@ describe("ssg/ssr support", () => {
     let s = "";
     assert.doesNotThrow(() => {
       const comp = <FlowEditor {...props} />;
-      s = ReactDOMServer.renderToString(comp);
+      s = ReactDOMServer.renderToString(comp as any);
       // assert.notInclude(s, 'Error')
     });
 

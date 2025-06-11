@@ -8,7 +8,7 @@ packages:
   - "remote-debugger"
   - "resolver"
   - "runtime"
-  - "playground"
   - "vscode-extension"
   - "ui"
+  - "navan-flyde-demo"
   - "!examples/*"

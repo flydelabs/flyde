@@ -7,21 +7,3 @@
 @import "./flow-editor/style.scss";
 @import "./visual-node-editor/style.scss";
 @import "./lib/react-utils/react-resizable.scss";
-
-body {
-  margin: 0;
-  padding: 0;
-  font-family: "DM Sans", sans-serif;
-}
-
-.home-page {
-  flex: 1;
-  width: 100%;
-  padding: 50px;
-  a {
-    display: block;
-    margin: 20px auto;
-    font-size: 30px;
-    text-align: center;
-  }
-}

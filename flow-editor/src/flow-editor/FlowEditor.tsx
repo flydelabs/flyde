@@ -3,7 +3,6 @@ import {
   Pos,
   VisualNode,
   NodeInstance,
-  FlydeFlow,
   PinType,
   DebuggerEventType,
   ROOT_INS_ID,
@@ -258,6 +257,9 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
         </DarkModeProvider>
       );
     };
+
+
+    console.log("renderInner");
 
     return <div className="flyde-flow-editor">{renderInner()}</div>;
   })

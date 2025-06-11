@@ -16,12 +16,12 @@
     "@flyde/core": "workspace:*",
     "@flyde/ui": "workspace:*",
     "@types/pg": "^8.10.2",
-    "@types/react": "^18.2.0",
+    "@types/react": "^18.3.0",
     "axios": "^0.27.2",
     "mongodb": "^4.17.0",
     "pg": "^8.11.3",
     "pubsub-js": "^1.9.4",
-    "react": "^18.2.0"
+    "react": "^18.3.1"
   },
   "devDependencies": {
     "@types/jscodeshift": "^0.11.6",
