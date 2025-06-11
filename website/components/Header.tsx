@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { Star, Menu, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 const navigation = [
   { name: 'Home', href: '/' },
@@ -17,6 +18,7 @@ export function Header() {
   const pathname = usePathname();
   const [starCount, setStarCount] = useState<number | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { track } = useAnalytics();
 
   useEffect(() => {
     // Fetch star count from GitHub API
@@ -33,11 +35,51 @@ export function Header() {
       });
   }, []);
 
+  const handleStarClick = () => {
+    track({
+      name: 'github_star_clicked',
+      properties: {
+        location: 'header',
+        star_count: starCount
+      },
+      gaCategory: 'engagement',
+      gaLabel: 'github_star'
+    });
+  };
+
+  const handleNavigationClick = (itemName: string, href: string) => {
+    track({
+      name: 'navigation_clicked',
+      properties: {
+        item_name: itemName,
+        href: href,
+        current_page: pathname
+      },
+      gaCategory: 'navigation',
+      gaLabel: itemName.toLowerCase()
+    });
+  };
+
+  const handleMobileMenuToggle = (isOpen: boolean) => {
+    track({
+      name: 'mobile_menu_toggled',
+      properties: {
+        action: isOpen ? 'opened' : 'closed'
+      },
+      gaCategory: 'ui_interaction',
+      gaLabel: 'mobile_menu'
+    });
+  };
+
   return (
     <header className="sticky top-0 z-40 w-full bg-black backdrop-blur supports-[backdrop-filter]:bg-black/80">
       <div className="container flex h-16 max-w-screen-2xl items-center px-4 sm:px-8">
         <div className="mr-4 sm:mr-8 flex">
-          <Link href="/" className="mr-6 flex items-center space-x-2">
+          <Link 
+            href="/" 
+            className="mr-6 flex items-center space-x-2"
+            onClick={() => handleNavigationClick('Logo', '/')}
+          >
             <Image src="/logo-text.png" alt="Flyde" width={80} height={32} className="w-16 sm:w-20" />
           </Link>
         </div>
@@ -50,6 +92,7 @@ export function Header() {
               href={item.href}
               className={`transition-colors hover:text-white/80 ${pathname === item.href ? 'text-white' : 'text-white/60'
                 }`}
+              onClick={() => handleNavigationClick(item.name, item.href)}
             >
               {item.name}
             </Link>
@@ -64,6 +107,7 @@ export function Header() {
               target="_blank"
               rel="noreferrer"
               className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1.5 rounded-full bg-zinc-900 hover:bg-zinc-800 text-xs sm:text-sm text-white border border-zinc-800 transition-colors group"
+              onClick={handleStarClick}
             >
               <Star className="h-3 w-3 sm:h-4 sm:w-4 text-white group-hover:text-blue-400 transition-colors" />
               <span className="hidden sm:inline">Star</span>
@@ -78,7 +122,10 @@ export function Header() {
           {/* Mobile Menu Button */}
           <button
             className="md:hidden p-2 text-white hover:text-white/80 transition-colors"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            onClick={() => {
+              setMobileMenuOpen(!mobileMenuOpen);
+              handleMobileMenuToggle(!mobileMenuOpen);
+            }}
             aria-label="Toggle mobile menu"
           >
             {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -96,7 +143,10 @@ export function Header() {
                 href={item.href}
                 className={`block py-2 text-sm font-medium transition-colors hover:text-white/80 ${pathname === item.href ? 'text-white' : 'text-white/60'
                   }`}
-                onClick={() => setMobileMenuOpen(false)}
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  handleNavigationClick(item.name, item.href);
+                }}
               >
                 {item.name}
               </Link>

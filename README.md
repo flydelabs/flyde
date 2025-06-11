@@ -1,14 +1,14 @@
 <h1 align="center">
     <a href="https://www.flyde.dev/#gh-light-mode-only" style="color: black">
-    <img src="https://github.com/user-attachments/assets/febdbeda-b437-4280-bb7d-0dcb396612ce" height="40"/>
+    <img src="https://github.com/user-attachments/assets/c4a2e1e0-b142-403d-9965-1f131f73896f" height="40"/>
     </a>
     <a href="https://www.flyde.dev/#gh-dark-mode-only" style="color: black">
-    <img src="https://github.com/user-attachments/assets/77711d3a-6e4f-444d-9994-aec6bf0bb1e8" height="40"/>
+    <img src="https://github.com/user-attachments/assets/79183bb4-7938-495d-88c8-496b96400665" height="40"/>
     </a>
 </h1>
 
 <p align="center">
-    <i>Visual Programming. For Developers.</i> Open-source, runs in <strong>VS Code</strong>.<br/>Integrates with existing <strong>TypeScript</strong> code, browser and Node.js.
+    <i>Visual AI Flows. In Your Codebase.</i> Open-source, runs in <strong>VS Code</strong>.<br/>Integrates with existing <strong>TypeScript</strong> code.
 </p>
 
 <h4 align="center">
@@ -31,18 +31,14 @@
     <img src="https://img.shields.io/badge/discord-7289da.svg?style=flat-square&logo=discord" alt="discord" style="height: 20px;">
   </a>
 
-  <a href="https://twitter.com/FlydeLabs">
+<a href="https://twitter.com/FlydeLabs">
     <img src="https://img.shields.io/twitter/follow/FlydeLabs?style=social"/>
-  </a>
-
-  <a href="https://www.getflowcode.io?ref=readme">
-    <img src="https://img.shields.io/badge/Flowcode: API Builder-0D439E?style=flat&logo=world&logoColor=white"/>
   </a>
 
 </h4>
 
 <div align="center">
-    <img src="https://github.com/flydelabs/flyde/assets/3727015/5d2d917b-48f6-49db-a1a9-e7fe685c408f"/>
+    <img src="https://github.com/user-attachments/assets/97a5ce55-da02-4d76-bf4d-d0b1800f8c56"/>
 </div>
 
 <h5 align="center">
@@ -52,9 +48,24 @@
 <strong>Rich Standard Library ✔️</strong> · <strong>Visual Debugger ✔️</strong> · <strong>TypeScript Support ✔️</strong>
 </h5>
 
+## Why Flyde?
+
+### 🔧 In-Codebase Integration
+Runs directly in your codebase with access to runtime code and existing backend frameworks. Unlike standalone tools, Flyde is integrated as a library into your existing tools and CI/CD pipelines.
+
+### 🤖 Visual Backend AI Workflows  
+Prototype, integrate, evaluate and iterate on AI-heavy backend logic visually. Build backend AI agents, prompt chains, and agentic workflows with a visual interface while maintaining full code control.
+
+### 🤝 Lower Collaboration Barrier
+A visual extension of TypeScript that bridges the gap between developers and non-developers. Enable your entire team to contribute to backend AI workflow development.
+
+> 🚀 **Flyde 1.0.0 is coming soon!** We're working on a complete platform overhaul with improved documentation, comprehensive examples, and a revamped VS Code extension. Stay tuned!
+
 ## Introduction
 
-`Flyde` is an open-source visual programming language built to integrate with your existing codebase. It allows you to create and run visual programs and is designed to complement and enhance traditional textual coding, not to replace it. It includes a [VSCode extension](https://marketplace.visualstudio.com/items?itemName=flyde.flyde-vscode), seamlessly integrates with existing TypeScript/JavaScript code and runs on Node.js and in the browser.
+`Flyde` is a holistic solution for prototyping, integrating, evaluating and iterating on AI-heavy backend logic. It's a visual extension of TypeScript that runs in-codebase, providing the missing link between developers and non-developers working on backend AI workflows. 
+
+Flyde allows you to create visual flows for backend services like AI agents, prompt chains, API orchestration, and agentic workflows - directly integrated with your existing codebase. It includes a [VSCode extension](https://marketplace.visualstudio.com/items?itemName=flyde.flyde-vscode) and seamlessly integrates with existing TypeScript/JavaScript code.
 
 ## Quick Start
 
@@ -72,15 +83,11 @@ The easiest way to experiment with Flyde is to visit the [online playground](htt
 
 ## Who is Flyde for?
 
-- **Novice Developers and Non-Technical Users:** Flyde simplifies programming by transforming complex code into accessible visual blocks, making it an ideal entry point for those new to development or from non-technical backgrounds.
+- **Product Teams & Developers:** Flyde bridges the gap between technical and non-technical team members. Product managers, designers, and backend developers can collaborate on the same visual flows, making complex backend logic transparent and enabling everyone to contribute meaningfully to the development process.
 
-- **Team Collaboration Across Roles:** Flyde democratizes innovation by enabling team members like product managers and data engineers to contribute directly to the codebase through visual programming, fostering collaboration and understanding.
+- **Developers Building AI-Powered Backends:** If you're dealing with complex prompt chains, AI agents, or multi-step backend AI workflows, Flyde provides a more manageable way to build, debug, and maintain these systems while keeping everything in your codebase.
 
-- **Educators in Programming:** Flyde is a valuable resource for educators seeking to provide hands-on, interactive programming education by blending visual learning with real-world coding concepts.
-
-- **Seasoned Developers:** Flyde offers experienced developers a new dimension of efficiency for designing, prototyping, and managing APIs and microservices visually, while retaining the flexibility and power of traditional coding. Its open-source nature and the commercial platform [Flowcode](https://www.getflowcode.io?ref=readme) provide further customization and cloud-hosted capabilities.
-
-And many more!
+- **Teams Seeking Visual Clarity:** Whether you're prototyping new backend features, managing complex business logic, API orchestration, or simply looking for a better way to document and understand your backend application flow, Flyde's visual approach helps you see the big picture while maintaining the power of code.
 
 ## Contributing
 

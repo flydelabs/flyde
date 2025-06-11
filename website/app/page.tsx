@@ -1,6 +1,7 @@
 import Link from "next/link";
-import Image from "next/image";
-import { ChevronRight, Star } from "lucide-react";
+import { Star } from "lucide-react";
+import VideoPlayer from "./components/VideoPlayer";
+import SubscribeButton from "./components/SubscribeButton";
 
 export default function Home() {
   return (
@@ -31,22 +32,20 @@ export default function Home() {
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold tracking-tight mb-6 sm:mb-8 bg-clip-text text-transparent bg-gradient-to-br from-white via-blue-100 to-zinc-400 animate-in slide-in-from-bottom-4 duration-700">
               Visual AI Flows<span className="text-blue-400 animate-in fade-in duration-1000 delay-300">.</span> <span className="relative inline-block text-blue-400 animate-in slide-in-from-bottom-8 duration-700 delay-150">In Your <span className="relative">Codebase<span className="absolute -bottom-1 left-0 w-full h-[2px] bg-gradient-to-r from-blue-400/0 via-blue-400 to-blue-400/0"></span></span></span>
             </h1>
-            <p className="text-base sm:text-lg md:text-xl lg:text-2xl leading-relaxed text-zinc-400 mb-8 sm:mb-10 max-w-3xl mx-auto animate-in fade-in duration-1000 delay-300">
+            <p className="text-base sm:text-lg md:text-xl lg:text-2xl leading-relaxed text-zinc-400 mb-10 sm:mb-12 max-w-3xl mx-auto animate-in fade-in duration-1000 delay-300">
               An enterprise-ready, holistic solution for prototyping, integrating, evaluating and iterating on AI-heavy backend logic, directly in your codebase.
             </p>
-            <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-3 sm:gap-4 animate-in fade-in-50 duration-1000 delay-500">
+            <div className="flex flex-col items-center gap-8 animate-in fade-in-50 duration-1000 delay-500">
+              <div className="w-full">
+                <p className="text-xs text-zinc-500 mb-2.5 subscription-label">Subscribe to be notified when Flyde 1.0.0 launches</p>
+                <SubscribeButton />
+              </div>
               <Link
-                href="/docs"
-                className="px-6 py-3 rounded-md bg-blue-600 text-white font-medium hover:bg-blue-700 transition-all hover:scale-105 duration-300 flex items-center justify-center"
+                href="https://github.com/flydelabs/flyde"
+                className="inline-flex items-center text-xs text-zinc-400 hover:text-zinc-200 transition-colors py-1"
               >
-                Get started
-                <ChevronRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-              </Link>
-              <Link
-                href="/playground"
-                className="px-6 py-3 rounded-md bg-zinc-800 text-white font-medium hover:bg-zinc-700 border border-zinc-700 transition-all hover:scale-105 duration-300"
-              >
-                Try the playground
+                <Star className="mr-1.5 h-3.5 w-3.5" />
+                <span>View on GitHub</span>
               </Link>
             </div>
           </div>
@@ -56,24 +55,9 @@ export default function Home() {
       {/* Demo Section - Takes up most of the viewport */}
       <section className="px-4 sm:px-8 md:px-12 pb-12 md:pb-16 relative">
         <div className="container mx-auto max-w-7xl">
-          <div className="w-full h-[50vh] sm:h-[60vh] md:h-[70vh] lg:h-[80vh] bg-zinc-900 rounded-xl shadow-2xl overflow-hidden border border-zinc-800 transition-all hover:border-zinc-700 hover:shadow-blue-900/10 hover:shadow-[0_0_30px_rgba(30,64,175,0.07)] group relative">
-            {/* Interactive Example Placeholder */}
-            <div className="relative w-full h-full">
-              <Image
-                src="/example-placeholder.png"
-                alt="Flyde Flow Example"
-                fill
-                className="object-cover object-center"
-                priority
-              />
-              {/* Hover Tooltip with Delay */}
-              <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-[2000ms] flex items-center justify-center p-4">
-                <div className="bg-zinc-800 border border-zinc-700 rounded-lg px-4 sm:px-6 py-3 sm:py-4 shadow-xl transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-[2000ms] max-w-sm text-center">
-                  <p className="text-white font-medium mb-1 text-sm sm:text-base">Interactive Example Coming Soon</p>
-                  <p className="text-zinc-300 text-xs sm:text-sm">We&apos;re working on bringing you a fully interactive flow editor</p>
-                </div>
-              </div>
-            </div>
+          <div className="w-full h-[40vh] sm:h-[50vh] md:h-[60vh] lg:h-[70vh] bg-zinc-900 rounded-xl shadow-2xl overflow-hidden border border-zinc-800 transition-all hover:border-zinc-700 hover:shadow-blue-900/10 hover:shadow-[0_0_30px_rgba(30,64,175,0.07)] group relative">
+            {/* Video Demo with Image Fallback */}
+            <VideoPlayer />
           </div>
         </div>
       </section>
