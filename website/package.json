@@ -20,8 +20,6 @@
     "@mdx-js/react": "^3.1.0",
     "@next/mdx": "^15.3.3",
     "@next/third-parties": "^15.3.3",
-    "@react-three/drei": "^10.1.2",
-    "@react-three/fiber": "^9.1.2",
     "@types/mdx": "^2.0.13",
     "@types/react-syntax-highlighter": "^15.5.13",
     "gray-matter": "^4.0.3",
@@ -34,8 +32,7 @@
     "react-markdown": "^10.1.0",
     "react-syntax-highlighter": "^15.6.1",
     "rehype-highlight": "^7.0.2",
-    "remark-gfm": "^4.0.1",
-    "three": "^0.177.0"
+    "remark-gfm": "^4.0.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

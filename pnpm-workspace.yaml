@@ -10,5 +10,3 @@ packages:
   - "runtime"
   - "vscode-extension"
   - "ui"
-  - "navan-flyde-demo"
-  - "!examples/*"

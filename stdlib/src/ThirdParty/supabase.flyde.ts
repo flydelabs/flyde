@@ -196,6 +196,7 @@ export const Supabase: CodeNode = {
 
     try {
       // Initialize Supabase client
+      const { createClient } = await import("@supabase/supabase-js");
       const supabase = createClient(url, apiKey);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let query: any;
