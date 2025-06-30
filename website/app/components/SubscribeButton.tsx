@@ -4,7 +4,11 @@ import { useState, useEffect } from "react";
 import { ChevronRight, Loader2 } from "lucide-react";
 import Link from "next/link";
 
-export default function SubscribeButton() {
+interface SubscribeButtonProps {
+    source?: string;
+}
+
+export default function SubscribeButton({ source = "home" }: SubscribeButtonProps) {
     const [email, setEmail] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
@@ -35,7 +39,7 @@ export default function SubscribeButton() {
             const response = await fetch("/api/subscribe", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email }),
+                body: JSON.stringify({ email, source }),
             });
 
             if (response.ok) {

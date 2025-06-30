@@ -38,7 +38,7 @@ export default function Home() {
             <div className="flex flex-col items-center gap-8 animate-in fade-in-50 duration-1000 delay-500">
               <div className="w-full">
                 <p className="text-xs text-zinc-500 mb-2.5 subscription-label">Subscribe to be notified when Flyde 1.0.0 launches</p>
-                <SubscribeButton />
+                <SubscribeButton source="flyde" />
               </div>
               <Link
                 href="https://github.com/flydelabs/flyde"

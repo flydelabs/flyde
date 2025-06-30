@@ -3,7 +3,7 @@ import { supabase } from '../../../lib/supabase';
 
 export async function POST(request: Request) {
     try {
-        const { email } = await request.json();
+        const { email, source } = await request.json();
 
         // Simple validation
         if (!email || typeof email !== 'string' || !email.includes('@')) {
@@ -14,7 +14,7 @@ export async function POST(request: Request) {
         }
 
         // Log the email to console
-        console.log(`[SUBSCRIPTION] New email subscription: ${email}`);
+        console.log(`[SUBSCRIPTION] New email subscription: ${email} (source: ${source || 'unknown'})`);
 
         // Store the email in Supabase
         const { error } = await supabase
@@ -22,6 +22,7 @@ export async function POST(request: Request) {
             .insert([
                 {
                     email,
+                    source: source || 'unknown',
                     created_at: new Date().toISOString()
                 }
             ]);

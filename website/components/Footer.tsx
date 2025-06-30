@@ -41,6 +41,14 @@ export function Footer() {
               >
                 Playground
               </Link>
+              <Link
+                href="https://studio.flyde.dev"
+                className="text-zinc-400 hover:text-white transition-colors text-sm"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Studio
+              </Link>
             </div>
             
             <div className="flex items-center space-x-4">

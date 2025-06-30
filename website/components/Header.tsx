@@ -12,6 +12,7 @@ const navigation = [
   { name: 'Blog', href: '/blog' },
   { name: 'Playground', href: '/playground' },
   { name: 'Documentation', href: '/docs' },
+  { name: 'Studio', href: 'https://studio.flyde.dev', highlight: true },
 ];
 
 export function Header() {
@@ -80,7 +81,13 @@ export function Header() {
             className="mr-6 flex items-center space-x-2"
             onClick={() => handleNavigationClick('Logo', '/')}
           >
-            <Image src="/logo-text.png" alt="Flyde" width={80} height={32} className="w-16 sm:w-20" />
+            <Image 
+              src={pathname.startsWith('/studio') ? "/logo-studio.svg" : "/logo-text.png"} 
+              alt={pathname.startsWith('/studio') ? "Flyde Studio" : "Flyde"} 
+              width={80} 
+              height={32} 
+              className="w-16 sm:w-20" 
+            />
           </Link>
         </div>
         
@@ -90,9 +97,15 @@ export function Header() {
             <Link
               key={item.href}
               href={item.href}
-              className={`transition-colors hover:text-white/80 ${pathname === item.href ? 'text-white' : 'text-white/60'
-                }`}
+              className={`transition-colors hover:text-white/80 ${
+                pathname === item.href ? 'text-white' : 'text-white/60'
+              } ${
+                item.highlight 
+                  ? 'relative after:absolute after:-bottom-1 after:left-0 after:w-full after:h-0.5 after:bg-gradient-to-r after:from-blue-500 after:to-blue-400 after:rounded-full after:opacity-60' 
+                  : ''
+              }`}
               onClick={() => handleNavigationClick(item.name, item.href)}
+              {...(item.href.startsWith('http') && { target: '_blank', rel: 'noopener noreferrer' })}
             >
               {item.name}
             </Link>
@@ -141,12 +154,18 @@ export function Header() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`block py-2 text-sm font-medium transition-colors hover:text-white/80 ${pathname === item.href ? 'text-white' : 'text-white/60'
-                  }`}
+                className={`block py-2 text-sm font-medium transition-colors hover:text-white/80 ${
+                  pathname === item.href ? 'text-white' : 'text-white/60'
+                } ${
+                  item.highlight 
+                    ? 'relative after:absolute after:-bottom-0.5 after:left-0 after:w-full after:h-0.5 after:bg-gradient-to-r after:from-blue-500 after:to-blue-400 after:rounded-full after:opacity-60' 
+                    : ''
+                }`}
                 onClick={() => {
                   setMobileMenuOpen(false);
                   handleNavigationClick(item.name, item.href);
                 }}
+                {...(item.href.startsWith('http') && { target: '_blank', rel: 'noopener noreferrer' })}
               >
                 {item.name}
               </Link>
