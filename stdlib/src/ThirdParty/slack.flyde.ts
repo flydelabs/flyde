@@ -162,23 +162,23 @@ export const Slack: CodeNode = {
       latest,
       webhookUrl,
     } = inputs;
-  
+
     // Only validate token for non-webhook actions
     if (action !== 'postMessageWebhook' && !token) {
       throw new Error("Slack token is required");
     }
-    
+
     // Validate webhook URL for webhook action
     if (action === 'postMessageWebhook' && !webhookUrl) {
       throw new Error("Webhook URL is required");
     }
-  
+
     try {
       let url = "";
       let method = "POST";
-      let data: Record<string, any> = {};
+      let data: Record<string, unknown> = {};
       let headers: Record<string, string> = {};
-      
+
       // Set headers based on action type
       if (action !== 'postMessageWebhook') {
         headers = {
@@ -190,7 +190,7 @@ export const Slack: CodeNode = {
           "Content-Type": "application/json",
         };
       }
-  
+
       switch (action) {
         case "postMessage":
           if (!channel) {
@@ -198,111 +198,111 @@ export const Slack: CodeNode = {
           }
           url = "https://slack.com/api/chat.postMessage";
           data = { channel };
-  
+
           if (text) {
             data.text = text;
           }
-  
+
           if (blocks && Array.isArray(blocks) && blocks.length > 0) {
             data.blocks = blocks;
           }
-  
+
           if (!text && (!blocks || blocks.length === 0)) {
             throw new Error(
               "Either text or blocks must be provided for posting a message"
             );
           }
           break;
-          
+
         case "postMessageWebhook":
           url = webhookUrl;
-          
+
           if (text) {
             data.text = text;
           }
-  
+
           if (blocks && Array.isArray(blocks) && blocks.length > 0) {
             data.blocks = blocks;
           }
-  
+
           if (!text && (!blocks || blocks.length === 0)) {
             throw new Error(
               "Either text or blocks must be provided for posting a message"
             );
           }
           break;
-  
+
         case "uploadFile":
           if (!channel) {
             throw new Error("Channel is required for uploading a file");
           }
-  
+
           if (!fileContent) {
             throw new Error("File content is required for uploading a file");
           }
-  
+
           if (!fileName) {
             throw new Error("File name is required for uploading a file");
           }
-  
+
           url = "https://slack.com/api/files.upload";
           data = {
             channels: channel,
             content: fileContent,
             filename: fileName,
           };
-  
+
           if (fileType) {
             data.filetype = fileType;
           }
           break;
-  
+
         case "getChannelList":
           url = "https://slack.com/api/conversations.list";
           method = "GET";
           data = {};
-  
+
           if (limit) {
             data.limit = limit;
           }
           break;
-  
+
         case "getUserList":
           url = "https://slack.com/api/users.list";
           method = "GET";
           data = {};
-  
+
           if (limit) {
             data.limit = limit;
           }
           break;
-  
+
         case "getChannelHistory":
           if (!channel) {
             throw new Error("Channel is required for getting channel history");
           }
-  
+
           url = "https://slack.com/api/conversations.history";
           method = "GET";
           data = { channel };
-  
+
           if (limit) {
             data.limit = limit;
           }
-  
+
           if (oldest) {
             data.oldest = oldest;
           }
-  
+
           if (latest) {
             data.latest = latest;
           }
           break;
-  
+
         default:
           throw new Error(`Unsupported action: ${action}`);
       }
-  
+
       const response = await axios({
         method,
         url,
@@ -310,7 +310,7 @@ export const Slack: CodeNode = {
         data: method === "POST" ? data : undefined,
         params: method === "GET" ? data : undefined,
       });
-  
+
       // For webhook calls, success is indicated by a 200 status rather than a data.ok field
       if (action === 'postMessageWebhook') {
         outputs.result.next({ ok: true, ...response.data });
@@ -325,8 +325,7 @@ export const Slack: CodeNode = {
       if (axios.isAxiosError(error) && error.response) {
         const errorData = error.response.data as SlackErrorResponse;
         adv.onError(
-          `Slack API Error ${error.response.status}: ${
-            errorData?.error || error.response.statusText
+          `Slack API Error ${error.response.status}: ${errorData?.error || error.response.statusText
           }`
         );
         return;

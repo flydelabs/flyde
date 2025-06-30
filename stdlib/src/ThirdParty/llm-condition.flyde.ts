@@ -1,4 +1,3 @@
-// @ts-ignore
 import axios from "axios";
 import { CodeNode } from "@flyde/core";
 

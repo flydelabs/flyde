@@ -122,16 +122,16 @@ export const Notion: CodeNode = {
       content,
       query,
     } = inputs;
-  
+
     if (!apiKey) {
       throw new Error("Notion API key is required");
     }
-  
+
     try {
       let url = "";
       let method = "GET";
-      let data: Record<string, any> = {};
-  
+      let data: Record<string, unknown> = {};
+
       switch (action) {
         case "queryDatabase":
           if (!databaseId) {
@@ -139,16 +139,16 @@ export const Notion: CodeNode = {
           }
           url = `https://api.notion.com/v1/databases/${databaseId}/query`;
           method = "POST";
-  
+
           if (filter && Object.keys(filter).length > 0) {
             data.filter = filter;
           }
-  
+
           if (sorts && Array.isArray(sorts) && sorts.length > 0) {
             data.sorts = sorts;
           }
           break;
-  
+
         case "createPage":
           if (!databaseId) {
             throw new Error("Database ID is required for creating a page");
@@ -159,12 +159,12 @@ export const Notion: CodeNode = {
             parent: { database_id: databaseId },
             properties: properties || {},
           };
-  
+
           if (content && Array.isArray(content) && content.length > 0) {
             data.children = content;
           }
           break;
-  
+
         case "updatePage":
           if (!pageId) {
             throw new Error("Page ID is required for updating a page");
@@ -174,12 +174,12 @@ export const Notion: CodeNode = {
           data = {
             properties: properties || {},
           };
-  
+
           if (content && Array.isArray(content) && content.length > 0) {
             data.children = content;
           }
           break;
-  
+
         case "retrievePage":
           if (!pageId) {
             throw new Error("Page ID is required for retrieving a page");
@@ -187,20 +187,20 @@ export const Notion: CodeNode = {
           url = `https://api.notion.com/v1/pages/${pageId}`;
           method = "GET";
           break;
-  
+
         case "search":
           url = "https://api.notion.com/v1/search";
           method = "POST";
-  
+
           if (query) {
             data.query = query;
           }
           break;
-  
+
         default:
           throw new Error(`Unsupported action: ${action}`);
       }
-  
+
       const response = await axios({
         method,
         url,
@@ -211,14 +211,13 @@ export const Notion: CodeNode = {
         },
         data: method !== "GET" ? data : undefined,
       });
-  
+
       outputs.result.next(response.data);
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         const errorData = error.response.data as NotionErrorResponse;
         adv.onError(
-          `Notion API Error ${error.response.status}: ${
-            errorData?.error?.message || error.response.statusText
+          `Notion API Error ${error.response.status}: ${errorData?.error?.message || error.response.statusText
           }`
         );
         return;

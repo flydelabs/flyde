@@ -109,35 +109,35 @@ export const Airtable: CodeNode = {
       maxRecords,
       filterFormula,
     } = inputs;
-  
+
     if (!apiKey) {
       throw new Error("Airtable API key is required");
     }
-  
+
     if (!baseId) {
       throw new Error("Airtable base ID is required");
     }
-  
+
     if (!tableName) {
       throw new Error("Table name is required");
     }
-  
+
     const headers = {
       Authorization: `Bearer ${apiKey}`,
       "Content-Type": "application/json",
     };
-  
+
     const baseUrl = `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(
       tableName
     )}`;
-  
+
     let url = baseUrl;
     let method = "GET";
     let data = undefined;
-  
+
     try {
       switch (action) {
-        case "listRecords":
+        case "listRecords": {
           const params = new URLSearchParams();
           if (maxRecords) {
             params.append("maxRecords", maxRecords.toString());
@@ -145,18 +145,18 @@ export const Airtable: CodeNode = {
           if (filterFormula) {
             params.append("filterByFormula", filterFormula);
           }
-  
+
           const paramString = params.toString();
           url = paramString ? `${baseUrl}?${paramString}` : baseUrl;
           break;
-  
+        }
         case "getRecord":
           if (!recordId) {
             throw new Error("Record ID is required for getting a record");
           }
           url = `${baseUrl}/${recordId}`;
           break;
-  
+
         case "createRecord":
           if (!fields || Object.keys(fields).length === 0) {
             throw new Error("Fields are required for creating a record");
@@ -164,7 +164,7 @@ export const Airtable: CodeNode = {
           method = "POST";
           data = { fields };
           break;
-  
+
         case "updateRecord":
           if (!recordId) {
             throw new Error("Record ID is required for updating a record");
@@ -176,25 +176,24 @@ export const Airtable: CodeNode = {
           url = `${baseUrl}/${recordId}`;
           data = { fields };
           break;
-  
+
         default:
           throw new Error(`Unsupported action: ${action}`);
       }
-  
+
       const res = await axios({
         method,
         url,
         headers,
         data,
       });
-  
+
       outputs.result.next(res.data);
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         const errorData = error.response.data as AirtableErrorResponse;
         adv.onError(
-          `Airtable API Error ${error.response.status}: ${
-            errorData.error?.message || error.response.statusText
+          `Airtable API Error ${error.response.status}: ${errorData.error?.message || error.response.statusText
           }`
         );
         return;
