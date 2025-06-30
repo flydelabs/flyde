@@ -22,7 +22,7 @@ export enum AppState {
   LOADED,
 }
 
-const RoutedApp = () => {
+const RoutedApp: React.FC = () => {
   return (
     <BrowserRouter basename={baseName}>
       <QueryParamProvider adapter={ReactRouter6Adapter}>
@@ -36,4 +36,4 @@ const RoutedApp = () => {
 };
 
 const root = createRoot(document.getElementById("root") as HTMLElement); // createRoot(container!) if you use TypeScript
-root.render(<RoutedApp />);
+root.render(<RoutedApp /> as any);

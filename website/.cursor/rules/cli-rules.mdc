@@ -1,0 +1,8 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# CLI rules
+1. never run dev server, assume it is running by me
+2. always use pnpm

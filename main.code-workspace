@@ -37,9 +37,6 @@
       "path": "examples"
     },
     {
-      "path": "playground"
-    },
-    {
       "path": "ui"
     }
   ],
@@ -49,7 +46,11 @@
     "search.exclude": {
       "**/dist": true
     },
-    "cSpell.words": ["Importables", "Templating", "Ungroup"],
+    "cSpell.words": [
+      "Importables",
+      "Templating",
+      "Ungroup"
+    ],
     "files.exclude": {
       "**/node_modules": true
     },
@@ -71,7 +72,10 @@
         "label": "Flyde - watch all",
         "type": "shell",
         "command": "npm",
-        "args": ["run", "dev"],
+        "args": [
+          "run",
+          "dev"
+        ],
         "options": {
           "cwd": ".."
         },

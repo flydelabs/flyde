@@ -67,6 +67,9 @@ export const BaseNodeIcon: React.FC<{ icon?: NodeTypeIcon }> =
       );
     } else {
       const iconValue = Array.isArray(icon) ? icon[0] : icon;
+      if (!iconValue) {
+        return <FontAwesomeIcon icon="code" size="lg" />;
+      }
       return <FontAwesomeIcon icon={iconValue as any} size="lg" />;
     }
   };
@@ -210,8 +213,10 @@ export const BaseNodeView: React.FC<BaseNodeViewProps> =
       </div>
     );
 
+    const dragNodeRef = React.useRef<HTMLDivElement>(null);
+
     const draggableContent = (
-      <span className="base-node-view-wrapper">
+      <span className="base-node-view-wrapper" ref={dragNodeRef}>
         <div className={cm} style={zoomFixStyle} id={props.domId}>
           <ContextMenu>
             <ContextMenuTrigger
@@ -227,6 +232,7 @@ export const BaseNodeView: React.FC<BaseNodeViewProps> =
       </span>
     );
 
+
     return (
       <div className={outerCm} style={fixerStyle}>
         <Draggable
@@ -235,6 +241,7 @@ export const BaseNodeView: React.FC<BaseNodeViewProps> =
           onDrag={_onDragMove}
           position={pos}
           cancel=".no-drag"
+          nodeRef={dragNodeRef}
         >
           {draggableContent}
         </Draggable>

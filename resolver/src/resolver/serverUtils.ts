@@ -9,6 +9,8 @@ const requireNoCache = (modulePath: string) => {
     return require(modulePath);
 };
 
+let tsNodeRegistered = false;
+
 export function resolveCodeNodeDependencies(path: string): {
     errors: string[];
     nodes: {
@@ -18,6 +20,21 @@ export function resolveCodeNodeDependencies(path: string): {
 } {
     if (!path.endsWith(".js") && !path.endsWith(".ts")) {
         throw new Error(`Path ${path} is not a JS or TS file`);
+    }
+
+    if (path.endsWith(".ts") && !tsNodeRegistered) {
+        try {
+            require("ts-node").register({
+                transpileOnly: true,
+                compilerOptions: {
+                    moduleResolution: "NodeNext",
+                    module: "NodeNext",
+                }
+            });
+            tsNodeRegistered = true;
+        } catch (e) {
+            console.error(`Error registering ts-node for ${path}`, e);
+        }
     }
 
     try {

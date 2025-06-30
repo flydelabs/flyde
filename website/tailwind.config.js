@@ -1,20 +1,38 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./src/**/*.{js,jsx,ts,tsx}"],
+  darkMode: ["class"],
+  content: [
+    './app/**/*.{js,ts,jsx,tsx,mdx}',
+    './components/**/*.{js,ts,jsx,tsx,mdx}'
+  ],
+  important: true,
   theme: {
-    extend: {},
+    container: {
+      center: true,
+      padding: '2rem',
+      screens: {
+        '2xl': '1400px',
+      },
+    },
+    extend: {
+      colors: {
+        border: 'hsl(var(--border))',
+        background: 'hsl(var(--background))',
+        foreground: 'hsl(var(--foreground))',
+        primary: {
+          DEFAULT: 'hsl(var(--primary))',
+          foreground: 'hsl(var(--primary-foreground))',
+        },
+        card: {
+          DEFAULT: 'hsl(var(--card))',
+          foreground: 'hsl(var(--card-foreground))',
+        },
+        muted: {
+          DEFAULT: 'hsl(var(--muted))',
+          foreground: 'hsl(var(--muted-foreground))',
+        },
+      },
+    },
   },
   plugins: [],
-  // This ensures Tailwind classes don't conflict with existing styles
-  important: true,
-  // Ensure all classes are generated in production
-  safelist: [
-    {
-      pattern: /.*/,
-    },
-  ],
-  // Output file for other projects to consume
-  output: {
-    file: "./src/styles/tailwind-output.css",
-  },
-};
+}; 

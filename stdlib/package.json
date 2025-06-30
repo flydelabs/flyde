@@ -16,14 +16,15 @@
     "@flyde/core": "workspace:*",
     "@flyde/ui": "workspace:*",
     "@types/pg": "^8.10.2",
-    "@types/react": "^18.2.0",
+    "@types/react": "~18.2.0",
     "axios": "^0.27.2",
     "mongodb": "^4.17.0",
     "pg": "^8.11.3",
     "pubsub-js": "^1.9.4",
-    "react": "^18.2.0"
+    "react": "~18.2.0"
   },
   "devDependencies": {
+    "@supabase/supabase-js": "^2.50.0",
     "@types/jscodeshift": "^0.11.6",
     "@types/mocha": "^10.0.1",
     "@typescript-eslint/eslint-plugin": "^7.3.1",
@@ -62,5 +63,8 @@
     "clean": "rm -rf dist",
     "__publish": "npm version patch && npm publish",
     "lint": "eslint . --ext .ts && ts-node scripts/check-unique-node-ids.ts"
+  },
+  "peerDependencies": {
+    "@supabase/supabase-js": "^2.50.0"
   }
 }

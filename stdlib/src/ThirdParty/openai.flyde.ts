@@ -18,16 +18,19 @@ export const OpenAI: CodeNode = {
   inputs: {
     apiKey: {
       editorType: "secret",
-      description: "OpenAI API Key",
       editorTypeData: {
         defaultName: "OPENAI_API_KEY",
       },
+      description: "OpenAI API Key",
     },
     model: {
-      defaultValue: "gpt-4o",
+      defaultValue: "gpt-4.1",
       editorType: "select",
       editorTypeData: {
         options: [
+          "gpt-4.1",
+          "gpt-4.1-mini",
+          "gpt-4.1-nano",
           "gpt-4o",
           "chatgpt-4o-latest",
           "gpt-4o-mini",
@@ -52,25 +55,93 @@ export const OpenAI: CodeNode = {
       editorType: "number",
       description: "Temperature for text generation",
     },
+    responseFormat: {
+      defaultValue: "text",
+      editorType: "select",
+      typeConfigurable: false,
+      editorTypeData: {
+        options: [
+          "text",
+          "json_object",
+          "json_schema"
+        ],
+      },
+      label: "Response Format",
+      description: "Format of the response (text, JSON object, or structured JSON according to schema)",
+    },
+    jsonSchema: {
+      defaultValue: {
+        "type": "object",
+        "properties": {
+          "summary": {
+            "type": "string",
+            "description": "A summary of the text"
+          },
+          "keyPoints": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Key points from the text"
+          }
+        },
+        "required": ["summary", "keyPoints"]
+      },
+      editorType: "json",
+      label: "JSON Schema",
+      description: "JSON schema to structure the output (only used when responseFormat is 'json_schema')",
+      aiCompletion: {
+        prompt: "Generate a JSON schema matching the following requirements: {{prompt}}. Current schema: {{value}}",
+        placeholder: "Describe the structure you want for your JSON output"
+      },
+      condition: "responseFormat === 'json_schema'"
+    },
   },
   outputs: {
     completion: {
-      description: "Completion output",
-    },
+      description: "Generated completion (as string)",
+    }
   },
   run: async (inputs, outputs) => {
-    const { apiKey, model, prompt, temperature } = inputs;
+    const { apiKey, model, prompt, temperature, responseFormat, jsonSchema } = inputs;
 
     const headers = {
       Authorization: `Bearer ${apiKey}`,
       "Content-Type": "application/json",
     };
 
-    const data = {
+    // Prepare request data based on the response format
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const data: any = {
       model,
       messages: [{ role: "system", content: prompt }],
       temperature,
     };
+
+    // Add response_format based on selected format
+    if (responseFormat === "json_object") {
+      data.response_format = { type: "json_object" };
+    } else if (responseFormat === "json_schema" && jsonSchema) {
+      try {
+        const parsedSchema = typeof jsonSchema === 'string' ? JSON.parse(jsonSchema) : jsonSchema;
+
+        if (!parsedSchema.additionalProperties) {
+          parsedSchema.additionalProperties = false;
+        }
+
+        data.response_format = {
+          type: "json_schema",
+          json_schema: {
+            name: 'response_format',
+            schema: parsedSchema,
+            strict: true
+          }
+        };
+      } catch (e: unknown) {
+        const error = e as Error;
+        throw new Error(`Invalid JSON schema: ${error.message}`);
+      }
+    }
 
     try {
       const res = await axios.post(
@@ -78,8 +149,25 @@ export const OpenAI: CodeNode = {
         data,
         { headers }
       );
+
       const output = res.data.choices[0].message.content;
-      outputs.completion.next(output);
+
+      // Parse JSON output if using JSON response formats
+      if (responseFormat === "json_object" || responseFormat === "json_schema") {
+        try {
+          const parsedOutput = JSON.parse(output);
+          // Output the parsed JSON to both outputs
+          outputs.completion.next(parsedOutput);
+        } catch (e: unknown) {
+          const error = e as Error;
+          // If parsing fails, output the raw text
+          outputs.completion.next(output);
+          throw new Error(`Failed to parse JSON output: ${error.message}`);
+        }
+      } else {
+        // For text format, output the raw text
+        outputs.completion.next(output);
+      }
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         const errorData = error.response.data as OpenAIErrorResponse;
@@ -98,4 +186,3 @@ export const OpenAI: CodeNode = {
     }
   },
 };
-

@@ -37,28 +37,29 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.8",
     "@types/mocha": "^10.0.1",
-    "@types/react": "^18.2.0",
-    "@types/react-dom": "^18.2.0",
+    "@types/react": "~18.2.0",
+    "@types/react-dom": "~18.2.0",
     "chai": "^4.3.7",
     "concurrently": "^9.1.2",
     "mocha": "^10.2.0",
     "patch-package": "^6.5.1",
     "postcss": "8.4.24",
     "postinstall-postinstall": "^2.1.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "tailwindcss": "3.3.2",
+    "react": "~18.2.0",
+    "react-dom": "~18.2.0",
+    "tailwindcss": "4.1.8",
     "tsc-alias": "^1.8.10",
     "tsconfig-paths": "^4.2.0",
     "tsx": "^4.7.1",
     "typescript": "^5.5.4"
   },
   "peerDependencies": {
-    "@types/react": "^18.2.0",
-    "@types/react-dom": "^18.2.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "gitHead": "5f06bd4a0f3da610e64d74c19cc84babc4557f56"
 }

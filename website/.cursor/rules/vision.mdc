@@ -1,0 +1,17 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Vision
+
+Name: Flyde
+Website: https://www.flyde.dev
+Author: Gabriel Grinberg
+
+Flyde is the missing link between developers and non-developers working on AI workflows.
+
+It provides an holistic solution for prototyping, integrating, evaluating and iterating on AI-heavy backend logic, such as AI agents, prompt chains, agentic workflows. 
+
+Unlike existing tools, it runs in-codebase, via a library, with access to runtime code and is integrated as a library into existing frameworks, tools and CI/CD pipelines.
+It is a visual extension of Typescript that lowers the collaboration barrier
