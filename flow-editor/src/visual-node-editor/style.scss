@@ -195,21 +195,11 @@
 
 
   .onboarding-tips {
-    position: absolute;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 2;
-    color: #0a649a;
-    background: rgba(255, 255, 255, 0.5);
-    padding: 6px 12px;
-    border-radius: 5px;
-    font-size: 12px;
-    line-height: 0;
+    // Position and other styles now handled by Tailwind classes in the component
+    // Only keep the old tip feedback and text styles for backward compatibility
 
     &.dark {
-      background: rgba(255, 255, 255, 0.1);
-      color: #87c7e7;
+      // Only apply dark mode styles if needed by the Alert component
     }
 
     .onboarding-tip-feedback {

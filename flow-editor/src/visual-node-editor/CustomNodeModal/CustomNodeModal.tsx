@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo, useEffect } from "react";
 import { Editor, useMonaco, OnMount } from "@monaco-editor/react";
-import { NodeOrMacroDefinition } from "@flyde/core";
+import { NodeOrConfigurableDefinition } from "@flyde/core";
 import { configureMonaco } from "../../lib/customCodeNode/configureMonaco";
 import { useConfirm } from "../../flow-editor/ports/ports";
 import {
@@ -18,7 +18,7 @@ interface CustomNodeModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (code: string) => Promise<void>;
-  forkMode?: { node: NodeOrMacroDefinition; initialCode: string };
+  forkMode?: { node: NodeOrConfigurableDefinition; initialCode: string };
 }
 
 const defaultContent = `

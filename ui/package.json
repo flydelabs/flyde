@@ -3,12 +3,31 @@
   "version": "1.0.0-alpha.18",
   "description": "",
   "main": "dist/index.js",
+  "module": "dist/esm/index.js",
   "typings": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./dist/icons": {
+      "import": "./dist/esm/icons/index.js",
+      "require": "./dist/icons/index.js",
+      "types": "./dist/icons/index.d.ts"
+    },
+    "./dist/icons/*": {
+      "import": "./dist/esm/icons/*.js",
+      "require": "./dist/icons/*.js",
+      "types": "./dist/icons/*.d.ts"
+    }
+  },
   "scripts": {
     "test": ":",
     "dev:ts": "tsc -p . -w --incremental",
     "dev": "concurrently \"tsc -p . -w --incremental\" \"tsc-alias -w\"",
-    "build": "rm -rf dist && tsc -p . && tsc-alias",
+    "build:esm": "tsc -p tsconfig.esm.json && tsc-alias -p tsconfig.esm.json",
+    "build": "rm -rf dist && tsc -p . && tsc-alias && pnpm run build:esm",
     "start": "npm run watch"
   },
   "author": "",

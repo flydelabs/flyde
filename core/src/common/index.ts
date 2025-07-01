@@ -13,4 +13,5 @@ export * from "./data-shaper";
 
 export * from "./full-ins-id-path";
 
-export const DepGraph = require("dependency-graph").DepGraph;
+import { DepGraph as _DepGraph } from "dependency-graph";
+export const DepGraph = _DepGraph;

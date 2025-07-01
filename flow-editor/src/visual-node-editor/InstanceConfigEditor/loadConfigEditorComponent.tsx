@@ -1,11 +1,11 @@
-import { EditorCodeNodeDefinition, EditorCodeNodeInstance, MacroEditorComp } from "@flyde/core";
+import { EditorCodeNodeDefinition, EditorCodeNodeInstance, ConfigurableEditorComp } from "@flyde/core";
 import React from "react";
 import ReactDOM from "react-dom";
-import { StructuredMacroEditorComp } from "./StructuredMacroEditorComp";
+import { StructuredConfigurableEditorComp } from "./StructuredConfigurableEditorComp";
 
 export function loadConfigEditorComponent(
   instance: EditorCodeNodeInstance
-): MacroEditorComp<unknown> {
+): ConfigurableEditorComp<unknown> {
   const w: any = window;
   w.React = React;
   w.ReactDOM = ReactDOM;
@@ -26,7 +26,7 @@ export function loadConfigEditorComponent(
         return function () {
           return (
             <span>
-              Failed to load macro node - please check that bundle that {nodeId}{" "}
+              Failed to load configurable node - please check that bundle that {nodeId}{" "}
               exposes an editable component to window.{exportId}
             </span>
           );
@@ -41,13 +41,13 @@ export function loadConfigEditorComponent(
       return function () {
         return (
           <span>
-            Failed to load macro node - please check that bundle that {nodeId}{" "}
+            Failed to load configurable node - please check that bundle that {nodeId}{" "}
             exposes an editable component to window.{exportId}
           </span>
         );
       };
     }
   } else {
-    return StructuredMacroEditorComp(editorConfig);
+    return StructuredConfigurableEditorComp(editorConfig);
   }
 }

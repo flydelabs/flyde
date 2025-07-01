@@ -3,7 +3,7 @@ import { Subject } from "rxjs";
 
 import { CancelFn, InnerExecuteFn } from "../execute";
 
-import { MacroNodeDefinition } from "./macro-node";
+import { ConfigurableNodeDefinition } from "./configurable-value";
 import { VisualNode } from "../types/external";
 import { CodeNodeDefinition } from "../types/external";
 
@@ -26,10 +26,10 @@ export type RunNodeFunction = (
   adv: NodeAdvancedContext
 ) => void | CancelFn | Promise<void | CancelFn>;
 
-export * from "./macro-node";
+export * from "./configurable-value";
 
 export type NodeDefinition = VisualNode | CodeNodeDefinition;
-export type NodeOrMacroDefinition = NodeDefinition | MacroNodeDefinition<any>;
+export type NodeOrConfigurableDefinition = NodeDefinition | ConfigurableNodeDefinition<any>;
 
 export * from "./node-instance";
 export * from "../types/internal";

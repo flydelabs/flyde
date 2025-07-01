@@ -1,1 +1,1 @@
-export * from "./lib/MacroConfigurableFieldEditor/MacroConfigurableFieldEditor";
+export * from "./lib/ConfigurableFieldEditor/ConfigurableFieldEditor";

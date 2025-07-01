@@ -1,4 +1,4 @@
-import { macroConfigurableValue, MacroConfigurableValue } from "@flyde/core";
+import { configurableValue, ConfigurableValue } from "@flyde/core";
 import {
   CodeNode,
   extractInputsFromValue,
@@ -17,8 +17,8 @@ enum ConditionType {
 
 export interface ConditionalConfig {
   condition: { type: ConditionType; data?: string };
-  leftOperand: MacroConfigurableValue;
-  rightOperand: MacroConfigurableValue;
+  leftOperand: ConfigurableValue;
+  rightOperand: ConfigurableValue;
 }
 
 function conditionalConfigToDisplayName(config: ConditionalConfig) {
@@ -52,8 +52,8 @@ export const Conditional: CodeNode<ConditionalConfig> = {
     condition: {
       type: ConditionType.Equal,
     },
-    leftOperand: macroConfigurableValue("string", "{{value}}"),
-    rightOperand: macroConfigurableValue("string", "Some value"),
+    leftOperand: configurableValue("string", "{{value}}"),
+    rightOperand: configurableValue("string", "Some value"),
   },
   menuDescription:
     "Evaluates the condition, and if it's true, emits the left operand value to the 'true' output, otherwise emits the left operand value to the 'false' output",

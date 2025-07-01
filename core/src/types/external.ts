@@ -15,8 +15,8 @@ import {
   internalCodeNodeToEditorNode,
   isInternalMacroNode,
   NodeInstance,
-  processImprovedMacro,
-  processMacroNodeInstance,
+  processConfigurableNode,
+  processConfigurableNodeInstance,
   VisualNodeInstance,
   VisualNodeSource,
 } from "..";
@@ -138,8 +138,8 @@ export function codeNodeToImportableEditorNode(
   node: CodeNode,
   source: CodeNodeSource
 ): ImportableEditorNode {
-  const macro = isInternalMacroNode(node) ? node : processImprovedMacro(node);
-  const processedNode = processMacroNodeInstance(node.id, node, { id: 'n/a', config: macro.defaultData });
+  const macro = isInternalMacroNode(node) ? node : processConfigurableNode(node);
+  const processedNode = processConfigurableNodeInstance(node.id, node, { id: 'n/a', config: macro.defaultData });
   const editorNode = internalCodeNodeToEditorNode(processedNode, { editorConfig: macro.editorConfig, isTrigger: node.isTrigger, sourceCode: node.sourceCode });
   return {
     id: node.id,

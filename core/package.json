@@ -3,7 +3,20 @@
   "version": "1.0.0-alpha.18",
   "description": "",
   "main": "dist/index.js",
+  "module": "dist/esm/index.js",
   "typings": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./dist/*": {
+      "import": "./dist/esm/*.js",
+      "require": "./dist/*.js",
+      "types": "./dist/*.d.ts"
+    }
+  },
   "files": [
     "dist/",
     "README.md"
@@ -16,7 +29,8 @@
     "dev": "tsc -p . -w --incremental",
     "__publish": "npm version patch && npm publish",
     "bts": "tsc -p .",
-    "build": "rm -rf dist && tsc -p .",
+    "build:esm": "tsc -p tsconfig.esm.json",
+    "build": "rm -rf dist && tsc -p . && pnpm run build:esm",
     "lint": "knip"
   },
   "author": "",

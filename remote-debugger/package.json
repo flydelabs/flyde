@@ -3,12 +3,26 @@
   "version": "1.0.0-alpha.18",
   "description": "",
   "main": "dist/index.js",
+  "module": "dist/esm/index.js",
   "typings": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./dist/*": {
+      "import": "./dist/esm/*.js",
+      "require": "./dist/*.js",
+      "types": "./dist/*.d.ts"
+    }
+  },
   "scripts": {
     "build:ts": "tsc -p .",
+    "build:esm": "tsc -p tsconfig.esm.json",
     "dev": "pnpm run watch:ts",
     "bts": "tsc -p .",
-    "build": "rm -rf dist && pnpm run build:ts",
+    "build": "rm -rf dist && pnpm run build:ts && pnpm run build:esm",
     "watch:ts": "tsc -p . -w --incremental"
   },
   "files": [

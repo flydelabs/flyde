@@ -1,8 +1,8 @@
-import { macroConfigurableValue, MacroConfigurableValue } from "@flyde/core";
+import { configurableValue, ConfigurableValue } from "@flyde/core";
 import { CodeNode } from "@flyde/core";
 
 export interface ListFromConfig {
-  count: MacroConfigurableValue;
+  count: ConfigurableValue;
 }
 
 export const listFrom: CodeNode<ListFromConfig> = {
@@ -11,7 +11,7 @@ export const listFrom: CodeNode<ListFromConfig> = {
   mode: "advanced",
   menuDisplayName: "Merge to List",
   defaultConfig: {
-    count: macroConfigurableValue("number", 2),
+    count: configurableValue("number", 2),
   },
   menuDescription:
     "Receives a list of values and creates a list (array) from them",

@@ -1,5 +1,5 @@
 import { spy } from "sinon";
-import Sinon = require("sinon");
+import * as Sinon from "sinon";
 import { entries, OMap, RunNodeFunction } from "./.";
 
 import { connectionNode, externalConnectionNode } from "./connect/helpers";

@@ -17,7 +17,7 @@ import {
   getNodeInputs,
   externalConnectionNode,
   fullInsIdPath,
-  NodeOrMacroDefinition,
+  NodeDefinition,
   getNodeOutputs,
   EditorVisualNode,
   EditorNodeInstance,
@@ -27,6 +27,7 @@ import {
   EditorCodeNodeDefinition,
   FlydeNode,
   EditorCodeNodeInstance,
+  NodeOrConfigurableDefinition,
 } from "@flyde/core";
 
 import { InstanceView, InstanceViewProps } from "./instance-view/InstanceView";
@@ -229,7 +230,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
       const [isAddingCustomNode, setIsAddingCustomNode] = useState(false);
       const [customNodeForkData, setCustomNodeForkData] = useState<{
-        node: NodeOrMacroDefinition;
+        node: NodeOrConfigurableDefinition;
         initialCode: string;
       }>();
 

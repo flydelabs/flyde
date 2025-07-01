@@ -13,7 +13,7 @@ export * from "./types/connections";
 
 export * from "./types/editor";
 
-export * from "./improved-macros/improved-macros";
+export * from "./configurable-nodes/configurable-nodes";
 export {
   extractInputsFromValue,
   replaceInputsInValue,
@@ -21,7 +21,7 @@ export {
   evaluateCondition,
   evaluateFieldVisibility,
   createInputGroup,
-} from "./improved-macros/improved-macro-utils";
+} from "./configurable-nodes/configurable-node-utils";
 
 export interface InstanceViewData {
   id: string;

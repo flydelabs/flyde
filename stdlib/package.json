@@ -9,7 +9,20 @@
     "typings": "flyde-typings.d.ts"
   },
   "main": "dist/index.js",
+  "module": "dist/esm/index.js",
   "typings": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./dist/*": {
+      "import": "./dist/esm/*.js",
+      "require": "./dist/*.js",
+      "types": "./dist/*.d.ts"
+    }
+  },
   "author": "Flyde",
   "license": "MIT",
   "dependencies": {
@@ -55,7 +68,8 @@
     "dev": "pnpm run watch",
     "nodes-ui:bundle": "webpack --config webpack.config.js",
     "nodes-ui:watch": "webpack --config webpack.config.js --watch",
-    "build": "pnpm run clean && tsc -p tsconfig.build.json && pnpm run nodes-ui:bundle && pnpm run build:docs-data && pnpm run build:bundled-config",
+    "build": "pnpm run clean && tsc -p tsconfig.build.json && pnpm run build:esm && pnpm run nodes-ui:bundle && pnpm run build:docs-data && pnpm run build:bundled-config",
+    "build:esm": "tsc -p tsconfig.esm.json",
     "build:docs-data": "ts-node scripts/docs-data.ts",
     "build:node-sources": "ts-node scripts/build-node-sources.ts",
     "build:bundled-config": "ts-node scripts/create-bundled-config.ts",

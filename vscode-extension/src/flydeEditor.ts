@@ -20,8 +20,7 @@ import {
   extractInputsFromValue,
   formatEvent,
   keys,
-  macroConfigurableValue,
-  processImprovedMacro,
+  configurableValue,
   replaceInputsInValue,
   ImportableEditorNode,
   codeNodeToImportableEditorNode,
@@ -573,8 +572,7 @@ export class FlydeEditorEditorProvider
                 const node = customCodeNodeFromCode(code, undefined, {
                   // eslint-disable-next-line @typescript-eslint/naming-convention
                   "@flyde/core": {
-                    processImprovedMacro: processImprovedMacro,
-                    macroConfigurableValue: macroConfigurableValue,
+                    configurableValue: configurableValue,
                     extractInputsFromValue: extractInputsFromValue,
                     replaceInputsInValue: replaceInputsInValue,
                   },

@@ -3,8 +3,8 @@ import {
   EditorNodeInstance,
   internalCodeNodeToEditorNode,
   isVisualNode,
-  processImprovedMacro,
-  processMacroNodeInstance,
+  processConfigurableNode,
+  processConfigurableNodeInstance,
 } from "@flyde/core";
 import { ReferencedNodeFinder } from "./ReferencedNodeFinder";
 
@@ -32,17 +32,17 @@ export function resolveEditorInstance(
     } as EditorNodeInstance;
   }
 
-  const macro = processImprovedMacro(node);
+  const configurable = processConfigurableNode(node);
 
-  for (const key in macro.defaultData) {
+  for (const key in configurable.defaultData) {
     if (!instance.config[key]) {
-      instance.config[key] = macro.defaultData[key];
+      instance.config[key] = configurable.defaultData[key];
     }
   }
 
-  const processedInstance = processMacroNodeInstance("", macro, instance);
+  const processedInstance = processConfigurableNodeInstance("", configurable, instance);
 
-  const editorNode = internalCodeNodeToEditorNode(processedInstance, { editorConfig: macro.editorConfig, isTrigger: node.isTrigger, sourceCode: node.sourceCode });
+  const editorNode = internalCodeNodeToEditorNode(processedInstance, { editorConfig: configurable.editorConfig, isTrigger: node.isTrigger, sourceCode: node.sourceCode });
 
   const editorInstance: EditorNodeInstance = {
     id: instance.id,

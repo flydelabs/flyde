@@ -1,7 +1,7 @@
 import { AiCompletionProvider, FormGroup, Textarea } from "@flyde/ui";
 import type { CodeExpressionConfig } from "./CodeExpression.flyde";
 import React, { useCallback } from "react";
-import { MacroEditorComp } from "@flyde/core";
+import { ConfigurableEditorComp } from "@flyde/core";
 
 // Sync with CodeExpression.flyde.ts if changed
 const getVariables = (code: string) => {
@@ -11,7 +11,7 @@ const getVariables = (code: string) => {
 };
 
 
-const CodeExpressionEditor: MacroEditorComp<CodeExpressionConfig> =
+const CodeExpressionEditor: ConfigurableEditorComp<CodeExpressionConfig> =
   function CodeExpressionEditor(props) {
     const { value, onChange, ports, nodeId, insId } = props;
 

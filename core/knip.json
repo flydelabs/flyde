@@ -13,7 +13,6 @@
     "project": [
         "**/*.{js,ts,tsx}",
         "!dist/**/*",
-        "!src/misc",
-        "!src/improved-macros"
+        "!src/misc"
     ]
 }

@@ -389,9 +389,9 @@ describe("resolver", () => {
 
   // these were the original macro node tests, might be redundant now
   describe("new code nodes", () => {
-    it("resolves a macro node dependency", async () => {
+    it("resolves a configurable node dependency", async () => {
       const node = resolveFlowByPath(
-        getFixturePath("macro-node-simple/a.flyde")
+        getFixturePath("configurable-node-simple/a.flyde")
       );
 
       const [s, r] = spiedOutput();
@@ -410,12 +410,12 @@ describe("resolver", () => {
       n.subject.next(2);
 
       assert.equal(s.lastCall.args[0], 2);
-      assert.equal(s.getCalls().length, 3); // duplicate macro duplicates to 3
+      assert.equal(s.getCalls().length, 3); // duplicate configurable duplicates to 3
     });
 
-    it("resolves a transitive macro node dependency", async () => {
+    it("resolves a transitive configurable node dependency", async () => {
       const node = resolveFlowByPath(
-        getFixturePath("macro-node-transitive/flow.flyde")
+        getFixturePath("configurable-node-transitive/flow.flyde")
       );
 
       const [s, r] = spiedOutput();
@@ -436,8 +436,8 @@ describe("resolver", () => {
       assert.equal(s.lastCall.args[0], 3);
     });
 
-    it("resolves a macro from external packages", async () => {
-      const node = resolveFlowByPath(getFixturePath("macro-node-dep/a.flyde"));
+    it("resolves a configurable from external packages", async () => {
+      const node = resolveFlowByPath(getFixturePath("configurable-node-dep/a.flyde"));
 
       const [s, r] = spiedOutput();
 
@@ -455,12 +455,12 @@ describe("resolver", () => {
       n.subject.next(2);
 
       assert.equal(s.lastCall.args[0], 2);
-      assert.equal(s.getCalls().length, 3); // duplicate macro duplicates to 3
+      assert.equal(s.getCalls().length, 3); // duplicate configurable duplicates to 3
     });
 
-    it('resolves stdlib macros from the internal copy of "@flyde/stdlib"', async () => {
+    it('resolves stdlib configurables from the internal copy of "@flyde/stdlib"', async () => {
       const node = resolveFlowByPath(
-        getFixturePath("a-imports-b-macro-from-stdlib/flow.flyde")
+        getFixturePath("a-imports-b-configurable-from-stdlib/flow.flyde")
       );
 
       const [s, r] = spiedOutput();

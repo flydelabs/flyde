@@ -4,8 +4,8 @@ import {
   NodeLibraryData,
   noop,
   FlowJob,
-  MacroNodeDefinition,
-  NodeOrMacroDefinition,
+  ConfigurableNodeDefinition,
+  NodeOrConfigurableDefinition,
   NodeInstance,
   EditorNodeInstance,
   ImportableEditorNode,
@@ -47,11 +47,11 @@ export interface EditorPorts {
   getLibraryData: () => Promise<NodeLibraryData>;
 
   onRequestSiblingNodes: (dto: {
-    macro: MacroNodeDefinition<any>;
-  }) => Promise<MacroNodeDefinition<any>[]>;
+    node: ConfigurableNodeDefinition<any>;
+  }) => Promise<ConfigurableNodeDefinition<any>[]>;
 
   onRequestNodeSource: (dto: {
-    node: NodeOrMacroDefinition;
+    node: NodeOrConfigurableDefinition;
   }) => Promise<string>;
   onCreateCustomNode: (dto: { code: string }) => Promise<ImportableEditorNode>;
   createAiCompletion?: (dto: AiCompletionDto) => Promise<string>;

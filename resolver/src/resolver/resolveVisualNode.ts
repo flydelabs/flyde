@@ -2,7 +2,8 @@ import {
   InternalVisualNode,
   isVisualNode,
   isVisualNodeInstance,
-  processMacroNodeInstance,
+  processConfigurableNode,
+  processConfigurableNodeInstance,
   VisualNode,
   isInlineVisualNodeInstance,
   isCodeNode,
@@ -68,7 +69,8 @@ export function resolveVisualNode(
     }
 
     if (node && isCodeNode(node)) {
-      const processed = processMacroNodeInstance("", node, instance, secrets);
+      const processedConfigurable = processConfigurableNode(node, secrets);
+      const processed = processConfigurableNodeInstance("", processedConfigurable, instance);
 
       return {
         ...instance,

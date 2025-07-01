@@ -8,9 +8,9 @@ import {
 } from "@flyde/ui";
 import { ConditionalConfig } from "./Conditional.flyde";
 import React from "react";
-import { MacroEditorComp, MacroEditorFieldDefinition } from "@flyde/core";
+import { ConfigurableEditorComp, ConfigurableFieldDefinition } from "@flyde/core";
 
-import { MacroConfigurableFieldEditor } from "../../lib/MacroConfigurableFieldEditor/MacroConfigurableFieldEditor";
+import { ConfigurableFieldEditor } from "../../lib/ConfigurableFieldEditor/ConfigurableFieldEditor";
 
 // copied from Conditional.flyde.ts
 enum ConditionType {
@@ -36,19 +36,19 @@ const conditionEnumToLabel: Record<
   [ConditionType.NotExists]: "Does Not Exist (null, undefined, or empty)",
 };
 
-const leftConfig: MacroEditorFieldDefinition = {
+const leftConfig: ConfigurableFieldDefinition = {
   type: "string",
   configKey: "leftOperand",
   label: "Left Operand",
 };
 
-const rightConfig: MacroEditorFieldDefinition = {
+const rightConfig: ConfigurableFieldDefinition = {
   type: "string",
   configKey: "rightOperand",
   label: "Right Operand",
 };
 
-const ConditionalEditor: MacroEditorComp<ConditionalConfig> =
+const ConditionalEditor: ConfigurableEditorComp<ConditionalConfig> =
   function ConditionalEditor(props) {
     const { value, onChange, ports, nodeId, insId } = props;
 
@@ -103,7 +103,7 @@ const ConditionalEditor: MacroEditorComp<ConditionalConfig> =
 
         <Separator />
 
-        <MacroConfigurableFieldEditor
+        <ConfigurableFieldEditor
           ports={ports}
           value={value.leftOperand}
           onChange={(val) => {
@@ -118,7 +118,7 @@ const ConditionalEditor: MacroEditorComp<ConditionalConfig> =
         />
 
         {showRightOperand && (
-          <MacroConfigurableFieldEditor
+          <ConfigurableFieldEditor
             ports={ports}
             value={value.rightOperand}
             onChange={(val) => {

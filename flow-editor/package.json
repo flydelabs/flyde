@@ -3,14 +3,31 @@
   "version": "1.0.0-alpha.18",
   "description": "",
   "main": "dist/index.js",
+  "module": "dist/esm/index.js",
   "typings": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./dist/*": {
+      "import": "./dist/esm/*.js",
+      "require": "./dist/*.js",
+      "types": "./dist/*.d.ts"
+    },
+    "./dist/styles/tailwind.scss": "./dist/styles/tailwind.scss",
+    "./src/index.scss": "./src/index.scss",
+    "./src/*": "./src/*"
+  },
   "scripts": {
     "test": "mocha src/**/*.spec.tsx --require ts-node/register --require tsconfig-paths/register",
     "dev:ts": "tsc -p . -w --incremental",
     "dev": "concurrently \"tsc -p . -w --incremental\" \"tsc-alias -w\" \"npx tailwindcss -i ./src/styles/tailwind-entry.css -o ./dist/styles/tailwind.scss --watch\"",
     "__publish": "npm version patch && npm publish",
     "prebuild": "pnpm run bundle-types",
-    "build": "rm -rf dist && tsc -p . && pnpm run build:tw && tsc-alias",
+    "build:esm": "tsc -p tsconfig.esm.json && tsc-alias -p tsconfig.esm.json",
+    "build": "rm -rf dist && tsc -p . && pnpm run build:tw && tsc-alias && pnpm run build:esm",
     "build:tw": "tailwindcss -i ./src/styles/tailwind-entry.css -o ./dist/styles/tailwind.scss --minify",
     "start": "npm run watch",
     "storybook": "start-storybook",
