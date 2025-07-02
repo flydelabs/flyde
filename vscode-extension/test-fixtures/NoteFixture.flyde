@@ -1,19 +1,20 @@
-imports:
-  "@flyde/stdlib":
-    - Note
+imports: {}
 node:
   instances:
     - pos:
-        x: -986.7986482747394
-        y: 49.84219543457033
+        x: -1009.7986482747394
+        y: 46.84219543457033
       id: rhwh49xq3syxrx9h8z6nvmmq
       inputConfig: {}
-      nodeId: Note__rhwh49xq3syxrx9h8z6nvmmq
-      macroId: Note
-      macroData:
+      nodeId: Note
+      config:
         content: |-
           # Hello comment
           **bold** not bold
+      type: code
+      source:
+        type: package
+        data: "@flyde/stdlib"
   connections: []
   id: NoteFixture
   inputs: {}

@@ -6,8 +6,5 @@ export function runMigrations(data: { node?: VisualNode; imports?: any }): {
   imports?: any;
 } {
   migrateToPR198Structure(data);
-
-  console.log("Migrated data", data);
-
   return data;
 }

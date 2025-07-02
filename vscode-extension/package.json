@@ -27,11 +27,11 @@
     "link-all": "npm link @flyde/core @flyde/resolver @flyde/dev-server @flyde/runtime @flyde/remote-debugger @flyde/flow-editor @flyde/stdlib",
     "update-all": "npm update @flyde/core @flyde/resolver @flyde/dev-server @flyde/runtime @flyde/remote-debugger @flyde/flow-editor",
     "compile": "tsc -p ./",
-    "build": "npm run compile && npm run build-webview",
-    "build-webview": "vite build",
+    "build": "npm run compile && npm run typecheck:webview && npm run build:webview",
+    "build:webview": "vite build",
+    "typecheck:webview": "tsc --noEmit --project tsconfig.webview.json",
     "watch": "tsc -watch -p ./",
-    "dev": ":",
-    "dev-webview": "vite",
+    "dev": "vite",
     "compile-tests": "tsc -p . --outDir out",
     "watch-tests": "tsc -p . -w --outDir out",
     "pretest": "npm run compile-tests && npm run build && npm run lint",
@@ -189,6 +189,7 @@
   },
   "devDependencies": {
     "@types/glob": "^8.0.0",
+    "@types/lodash": "^4.14.197",
     "@types/mocha": "^10.0.1",
     "@types/node": "18.11.9",
     "@types/react": "^18.2.0",
@@ -205,7 +206,8 @@
     "mocha": "^10.0.0",
     "sinon": "^15.0.4",
     "typescript": "^5.5.4",
-    "vite": "^5.0.0"
+    "vite": "^5.0.0",
+    "vite-plugin-checker": "^0.9.3"
   },
   "dependencies": {
     "@flyde/core": "workspace:*",
@@ -226,7 +228,6 @@
     "cuid": "^2.1.8",
     "execa": "^6.1.0",
     "find-free-port": "^2.0.0",
-    "lodash": "^4.17.21",
     "openai": "^4.47.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

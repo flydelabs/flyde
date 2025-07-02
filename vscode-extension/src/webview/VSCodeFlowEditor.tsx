@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { BootstrapData } from "./bootstrap";
 import {
   FlowEditor,
@@ -7,25 +7,36 @@ import {
   createRuntimePlayer,
   DebuggerContextProvider,
   DarkModeProvider,
-  useDebounce,
+  PortsContext,
+  RuntimePlayer,
 } from "@flyde/flow-editor";
 import "@flyde/flow-editor/dist/styles/tailwind.scss";
 import "@flyde/flow-editor/src/index.scss";
 import {
-  EditorVisualNode,
   FlydeFlow,
-  DebuggerEvent,
-  noop,
+  isVisualNode,
 } from "@flyde/core";
-import { createEditorClient } from "@flyde/remote-debugger";
+import { createEditorClient, EditorDebuggerClient } from "@flyde/remote-debugger/dist/client";
+import { createVsCodePorts } from "./vscode-ports";
+import { useDebouncedCallback } from "use-debounce";
 
-declare global {
-  interface Window {
-    acquireVsCodeApi?: () => any;
+const isEqual = (a: any, b: any): boolean => {
+  if (a === b) return true;
+  if (a == null || b == null) return false;
+  if (typeof a !== typeof b) return false;
+  if (typeof a !== 'object') return false;
+  
+  const keysA = Object.keys(a);
+  const keysB = Object.keys(b);
+  if (keysA.length !== keysB.length) return false;
+  
+  for (const key of keysA) {
+    if (!keysB.includes(key)) return false;
+    if (!isEqual(a[key], b[key])) return false;
   }
-}
-
-const vscode = window.acquireVsCodeApi?.();
+  
+  return true;
+};
 
 export const VSCodeFlowEditor: React.FC<BootstrapData> = ({
   initialNode,
@@ -44,122 +55,130 @@ export const VSCodeFlowEditor: React.FC<BootstrapData> = ({
     },
   });
 
-  const debuggerUrl = `http://localhost:${port}`;
-  
-  const debuggerClient = useMemo(() => {
-    return createEditorClient(debuggerUrl, executionId);
-  }, [debuggerUrl, executionId]);
+  const [debuggerClient, setDebuggerClient] = useState<EditorDebuggerClient>();
+  const runtimePlayer = useRef<RuntimePlayer>();
+  const lastChangeReason = useRef<string>("");
+  const didMount = useRef(false);
 
-  const runtimePlayer = useMemo(() => {
-    return createRuntimePlayer({
-      onBatchedEvents: debuggerClient.onBatchedEvents,
-      onRuntimeError: (error) => {
-        console.error("Runtime error:", error);
-      },
-      onRuntimeReady: debuggerClient.onRuntimeReady,
-      requestState: debuggerClient.requestState,
-    });
-  }, [debuggerClient]);
+  const ports = useMemo(() => createVsCodePorts(), []);
 
-  // Debounced flow change handler for saving to VS Code
-  const debouncedFlowChange = useDebounce((flow: FlydeFlow) => {
-    if (vscode) {
-      vscode.postMessage({
-        type: "setFlow",
-        requestId: `flow-${Date.now()}`,
-        params: { flow },
-      });
+  const connectToRemoteDebugger = useCallback((url: string) => {
+    const newClient = createEditorClient(url, executionId);
+
+    if (debuggerClient) {
+      debuggerClient.destroy();
     }
-  }, 500);
 
-  const handleFlowChange = useCallback((newState: FlowEditorState) => {
-    setEditorState(newState);
-    debouncedFlowChange(newState.flow);
-  }, [debouncedFlowChange]);
+    setDebuggerClient(newClient);
+    if (runtimePlayer.current) {
+      runtimePlayer.current.destroy();
+    }
+    const newPlayer = createRuntimePlayer();
+    runtimePlayer.current = newPlayer;
 
-  // Listen for external flow changes from VS Code
+    (window as any).__runtimePlayer = runtimePlayer;
+
+    const dt = 0;
+    runtimePlayer.current.start(dt);
+  }, [debuggerClient, executionId]);
+
   useEffect(() => {
-    const handleMessage = (event: MessageEvent) => {
-      const message = event.data;
-      if (message.type === "onExternalFlowChange") {
-        const { flow } = message.params;
-        setEditorState(prev => ({
-          ...prev,
-          flow,
-        }));
+    connectToRemoteDebugger(`http://localhost:${port}`);
+    return () => {
+      if (debuggerClient) {
+        debuggerClient.destroy();
       }
     };
-
-    window.addEventListener("message", handleMessage);
-    return () => window.removeEventListener("message", handleMessage);
   }, []);
 
-  // VS Code ports integration
-  const ports = useMemo(() => {
-    if (!vscode) return {};
-
-    const createPortFn = (type: string) => (...params: any[]) => {
-      return new Promise((resolve, reject) => {
-        const requestId = `${type}-${Date.now()}-${Math.random()}`;
-        
-        const handleResponse = (event: MessageEvent) => {
-          const message = event.data;
-          if (message.requestId === requestId) {
-            window.removeEventListener("message", handleResponse);
-            if (message.status === "success") {
-              resolve(message.payload);
-            } else {
-              reject(new Error(message.payload?.message || "Request failed"));
-            }
-          }
-        };
-
-        window.addEventListener("message", handleResponse);
-        
-        vscode.postMessage({
-          type,
-          requestId,
-          params: params.length === 1 ? params[0] : params,
-        });
+  useEffect(() => {
+    if (debuggerClient) {
+      return debuggerClient.onBatchedEvents((events) => {
+        if (runtimePlayer.current) {
+          console.info(`Batched events - ${events.length} into player`, events);
+          runtimePlayer.current.addEvents(events);
+        } else {
+          console.info(`Batched events - ${events.length} but no player`, events);
+        }
       });
-    };
+    }
+  }, [debuggerClient]);
 
-    return {
-      prompt: createPortFn("prompt"),
-      confirm: createPortFn("confirm"),
-      openFile: createPortFn("openFile"),
-      readFlow: createPortFn("readFlow"),
-      generateNodeFromPrompt: createPortFn("generateNodeFromPrompt"),
-      onInstallRuntimeRequest: createPortFn("onInstallRuntimeRequest"),
-      onRunFlow: createPortFn("onRunFlow"),
-      hasOpenAiToken: createPortFn("hasOpenAiToken"),
-      reportEvent: createPortFn("reportEvent"),
-      getLibraryData: createPortFn("getLibraryData"),
-      onRequestSiblingNodes: createPortFn("onRequestSiblingNodes"),
-      onCreateCustomNode: createPortFn("onCreateCustomNode"),
-      createAiCompletion: createPortFn("createAiCompletion"),
-      resolveInstance: createPortFn("resolveInstance"),
-      getAvailableSecrets: createPortFn("getAvailableSecrets"),
-      addNewSecret: createPortFn("addNewSecret"),
-    };
-  }, []);
+  const debouncedSaveFile = useDebouncedCallback(
+    (flow: FlydeFlow, src: string) => {
+      const cleanFlow: FlydeFlow = {
+        ...flow,
+        node: {
+          ...flow.node,
+          instances: flow.node.instances.map((ins) => {
+            const copy = { ...ins };
+            const node = (ins as any).node;
+            if (node && !isVisualNode(node)) {
+              delete (copy as any).node;
+            }
+            return copy;
+          }),
+        },
+      };
+      ports.setFlow({ absPath: src, flow: cleanFlow });
+    },
+    500
+  );
+
+  useEffect(() => {
+    return ports.onExternalFlowChange(({ flow }) => {
+      if (isEqual(flow, editorState.flow) === false) {
+        setEditorState((state) => ({ ...state, flow }));
+        lastChangeReason.current = "external-changes";
+      }
+    });
+  }, [editorState.flow, ports]);
+
+  useEffect(() => {
+    if (!didMount.current) {
+      didMount.current = true;
+    } else {
+      if (lastChangeReason.current !== "external-changes") {
+        debouncedSaveFile(editorState.flow, relativeFile);
+        lastChangeReason.current = "n/a";
+      }
+    }
+  }, [editorState.flow, debouncedSaveFile, relativeFile]);
+
+  const onRequestHistory = useCallback(
+    (insId: string, pinId?: string, pinType?: any) => {
+      if (!debuggerClient) {
+        return Promise.resolve({ total: 0, lastSamples: [] });
+      }
+      return debuggerClient.getHistory({
+        insId,
+        pinId,
+        type: pinType,
+        limit: 10,
+        executionId,
+      });
+    },
+    [debuggerClient, executionId]
+  );
+
+  const debuggerContextValue = useMemo(() => ({
+    onRequestHistory,
+    debuggerClient,
+  }), [onRequestHistory, debuggerClient]);
 
   return (
     <DarkModeProvider value={darkMode}>
-      <DebuggerContextProvider 
-        value={{
-          onRequestHistory: debuggerClient.getHistory,
-          debuggerClient,
-        }}
-      >
-        <div className="vscode-flow-editor" style={{ height: "100vh", width: "100vw" }}>
-          <FlowEditor
-            state={editorState}
-            onChangeEditorState={setEditorState}
-            darkMode={darkMode}
-          />
-        </div>
-      </DebuggerContextProvider>
+      <PortsContext.Provider value={ports}>
+        <DebuggerContextProvider value={debuggerContextValue}>
+          <div className="vscode-flow-editor" style={{ height: "100vh", width: "100vw" }}>
+            <FlowEditor
+              state={editorState}
+              onChangeEditorState={setEditorState}
+              darkMode={darkMode}
+            />
+          </div>
+        </DebuggerContextProvider>
+      </PortsContext.Provider>
     </DarkModeProvider>
   );
 };

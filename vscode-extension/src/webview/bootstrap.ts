@@ -13,7 +13,7 @@ export const getBootstrapData = (): BootstrapData | null => {
   // Check for query param first (for testing)
   const urlParams = new URLSearchParams(window.location.search);
   const dummyData = urlParams.get('dummy');
-  
+
   if (dummyData === 'true') {
     // Return dummy bootstrap data for testing
     return {
@@ -23,8 +23,8 @@ export const getBootstrapData = (): BootstrapData | null => {
         outputs: {},
         instances: [],
         connections: [],
-        inputsPosition: 'left',
-        outputsPosition: 'right'
+        inputsPosition: {},
+        outputsPosition: {}
       },
       port: 3030,
       relativeFile: 'test.flyde',
@@ -33,7 +33,7 @@ export const getBootstrapData = (): BootstrapData | null => {
       darkMode: false
     };
   }
-  
+
   try {
     const rawData = (window as any).__bootstrapData;
     if (!rawData) {
