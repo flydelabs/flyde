@@ -37,6 +37,7 @@
     "pretest": "npm run compile-tests && npm run build && npm run lint",
     "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js && npm run test:visual",
+    "pretest:visual": "npx puppeteer browsers install chrome",
     "test:visual": "node scripts/visual-regression.mjs",
     "test:visual:update": "node scripts/visual-regression.mjs --update-baseline",
     "release": "vsce package --no-yarn && vsce publish minor"
