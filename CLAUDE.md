@@ -20,18 +20,6 @@ pnpm bump:minor      # Bump minor version across all packages
 pnpm bump:alpha      # Bump to alpha version
 ```
 
-### Running Individual Package Tests
-```bash
-# Run tests for a specific package
-pnpm --filter @flyde/core test
-
-# Run a single test file
-pnpm --filter @flyde/core test src/path/to/file.spec.ts
-
-# Run tests with coverage
-pnpm --filter @flyde/core test:coverage
-```
-
 ### VS Code Extension Development
 - Open the workspace file: `code main.code-workspace`
 - Press F5 to launch a new VS Code window with the extension loaded
@@ -46,6 +34,7 @@ pnpm --filter @flyde/core test:coverage
 2. Run `pnpm dev` at the root to start all packages in watch mode
 3. The website runs on port 3003 in development mode
 4. Test files use `.spec.ts` or `.spec.tsx` naming convention
+5. **Any changes require a full build and visual test**: Run `pnpm run test:visual` from `vscode-extension/` directory
 
 ## Architecture Overview
 
