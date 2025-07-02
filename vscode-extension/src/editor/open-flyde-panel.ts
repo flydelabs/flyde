@@ -17,45 +17,55 @@ const isDev = process.env.MODE === "dev";
 
 const { fs } = vscode.workspace;
 
-const getScriptTagsFromReactAppHtml = async (
+const getViteAssets = async (
   root: vscode.Uri,
   webview: vscode.Webview,
   isDev: boolean
 ) => {
   if (isDev) {
-    return '<script defer="defer" src="http://localhost:3000/static/js/bundle.js"></script>';
+    return {
+      scriptTags: '<script type="module" src="http://localhost:5173/src/webview/index.tsx"></script>',
+      styleTags: ''
+    };
   } else {
-    // this assumes react scripts will always remain on the same structure
-    const html = (
-      await fs.readFile(vscode.Uri.joinPath(root, "editor-build/index.html"))
-    ).toString();
-
-    const scriptMatches = html.match(/static\/js\/(.*)\.js/) || [];
-    const styleMatches = html.match(/static\/css\/(.*)\.css/) || [];
-
-    if (!scriptMatches || scriptMatches.length === 0) {
-      throw new Error(`Cannot find script urls in editor-build/index.html`);
+    // Read the built manifest to get the asset files
+    const manifestPath = vscode.Uri.joinPath(root, "webview-dist/.vite/manifest.json");
+    let manifest: any = {};
+    
+    try {
+      const manifestContent = await fs.readFile(manifestPath);
+      manifest = JSON.parse(manifestContent.toString());
+    } catch (error) {
+      throw new Error(`Cannot find or parse webview-dist/.vite/manifest.json: ${error}`);
     }
 
-    if (!styleMatches || styleMatches.length === 0) {
-      throw new Error(`Cannot find style urls in editor-build/index.html`);
+    const indexEntry = manifest["index.html"];
+    if (!indexEntry) {
+      throw new Error("Cannot find index.html entry in Vite manifest");
     }
 
-    const scriptUri =
-      scriptMatches[0] &&
-      webview.asWebviewUri(
-        vscode.Uri.joinPath(root, "editor-build", scriptMatches[0])
-      );
-    const styleUri =
-      styleMatches[0] &&
-      webview.asWebviewUri(
-        vscode.Uri.joinPath(root, "editor-build", styleMatches[0])
-      );
+    let scriptTags = '';
+    let styleTags = '';
 
-    return `
-    <script defer="defer" src="${scriptUri}"></script>
-    <link href="${styleUri}" rel="stylesheet">
-    `;
+    // Add the main JS file
+    if (indexEntry.file) {
+      const scriptUri = webview.asWebviewUri(
+        vscode.Uri.joinPath(root, "webview-dist", indexEntry.file)
+      );
+      scriptTags += `<script type="module" src="${scriptUri}"></script>`;
+    }
+
+    // Add CSS files
+    if (indexEntry.css) {
+      for (const cssFile of indexEntry.css) {
+        const styleUri = webview.asWebviewUri(
+          vscode.Uri.joinPath(root, "webview-dist", cssFile)
+        );
+        styleTags += `<link href="${styleUri}" rel="stylesheet">`;
+      }
+    }
+
+    return { scriptTags, styleTags };
   }
 };
 
@@ -75,9 +85,7 @@ export async function getWebviewContent(params: WebviewContentParams) {
     vscode.Uri.joinPath(stylePath)
   );
 
-  const buildUri = webview.asWebviewUri(
-    vscode.Uri.joinPath(extensionUri, "editor-build")
-  );
+  const { scriptTags, styleTags } = await getViteAssets(extensionUri, webview, isDev);
 
   // const INITIAL_DATA = JSON.stringify({webviewId, initialFlow, dependencies});
 
@@ -123,7 +131,7 @@ export async function getWebviewContent(params: WebviewContentParams) {
             height: 100vh;
         }
       </style>
-      ${await getScriptTagsFromReactAppHtml(extensionUri, webview, isDev)}
+      ${styleTags}
     </head>
     <body class="${darkMode ? "dark" : ""}">
     <script type="text/javascript">
@@ -132,10 +140,11 @@ export async function getWebviewContent(params: WebviewContentParams) {
 
     <div id="root">
       <div style="display: flex; align-items: center;justify-content: center;height:100vh;width: 100vw;">
-        <img src="${buildUri}/loader.svg" />
+        Loading...
       </div>
     </div>
 
+    ${scriptTags}
     </body>
     </html>`;
 }

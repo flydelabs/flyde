@@ -1,4 +1,4 @@
-import { MacroEditorComp } from "@flyde/core";
+import { ConfigurableEditorComp } from "@flyde/core";
 import { CollectConfig } from "./Collect.flyde";
 import { FormGroup, NumericInput, RadioGroup, RadioGroupItem } from "@flyde/ui";
 
@@ -22,7 +22,7 @@ const defaultValuePerStrategy: Record<
   },
 };
 
-const CollectEditor: MacroEditorComp<CollectConfig> = function CollectEditor({
+const CollectEditor: ConfigurableEditorComp<CollectConfig> = function CollectEditor({
   value,
   onChange,
 }) {

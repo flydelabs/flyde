@@ -4,8 +4,8 @@ import {
   execute,
   internalNodeInstance,
   InternalVisualNode,
-  processImprovedMacro,
-  processMacroNodeInstance,
+  processConfigurableNode,
+  processConfigurableNodeInstance,
   randomInt,
 } from "@flyde/core";
 import { assert } from "chai";
@@ -24,14 +24,14 @@ describe("ControlFlow", () => {
       const key = "bla";
       const value = randomInt(42);
 
-      const _pub = processImprovedMacro(Publish);
-      const _sub = processImprovedMacro(Subscribe);
+      const _pub = processConfigurableNode(Publish);
+      const _sub = processConfigurableNode(Subscribe);
 
-      const _pubNode = processMacroNodeInstance("i1", _pub, {
+      const _pubNode = processConfigurableNodeInstance("i1", _pub, {
         id: "i1",
         config: {},
       });
-      const _subNode = processMacroNodeInstance("i2", _sub, {
+      const _subNode = processConfigurableNodeInstance("i2", _sub, {
         id: "i2",
         config: {},
       });

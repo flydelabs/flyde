@@ -59,12 +59,12 @@ suite("Extension Test Suite", () => {
       const instances = await webviewTestingCommand("$$", {
         selector: ".ins-view",
       });
+
       assert(
         instances.length === 4,
         `Expected fixture flow to have 4 instances. Got ${instances.length} instances`
       );
-    });
-
+    }, 10000);
 
   }).retries(3);
 

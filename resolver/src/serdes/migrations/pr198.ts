@@ -23,8 +23,8 @@ function migrateVisualNode(
     }
 
     if (!anyIns.nodeId && !anyIns.macroId && !anyIns.node) {
-      console.log("instance has no nodeId or macroId", anyIns);
-      throw new Error("instance has no nodeId or macroId");
+      console.log("instance has no nodeId or macroId (legacy configurable)", anyIns);
+      throw new Error("instance has no nodeId or macroId (legacy configurable)");
     }
 
     console.log(
@@ -83,7 +83,7 @@ function migrateVisualNode(
       continue;
     }
 
-    const importedNodeId = anyIns.macroId ?? anyIns.nodeId;
+    const importedNodeId = anyIns.macroId ?? anyIns.nodeId; // macroId is legacy name for configurable
     const importedNodeImport = imports.find(([pkg, nodeIds]) =>
       nodeIds.includes(importedNodeId)
     );

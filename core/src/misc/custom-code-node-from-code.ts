@@ -1,5 +1,5 @@
 import { transpileFile } from "./transpile-file/transpile-file";
-import { CodeNode, isCodeNode } from "../improved-macros/improved-macros";
+import { CodeNode, isCodeNode } from "../configurable-nodes/configurable-nodes";
 
 export function customCodeNodeFromCode(
   code: string,

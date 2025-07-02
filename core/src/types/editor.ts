@@ -2,15 +2,15 @@ import {
   CodeNodeDefinition,
   CodeNodeInstance,
   InternalCodeNode,
-  MacroEditorConfigResolved,
-  MacroEditorConfigStructured,
+  ConfigurableEditorConfigResolved,
+  ConfigurableEditorConfigStructured,
   NodeInstance,
   VisualNode,
 } from "../node";
 
 export type EditorCodeNodeDefinition = CodeNodeDefinition & {
   editorConfig:
-  | MacroEditorConfigStructured
+  | ConfigurableEditorConfigStructured
   | {
     type: "custom";
     editorComponentBundleContent: string;
@@ -33,7 +33,7 @@ export type EditorVisualNode = Omit<VisualNode, "instances"> & {
 
 export interface EditorNodeParams {
   sourceCode: string;
-  editorConfig: MacroEditorConfigResolved;
+  editorConfig: ConfigurableEditorConfigResolved;
   isTrigger: boolean;
 }
 

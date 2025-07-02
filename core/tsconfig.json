@@ -4,7 +4,7 @@
     "outDir": "dist",
     "types": ["node", "mocha"]
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/misc/improved-macros"],
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
 
   "exclude": ["node_modules", "dist"]
 }

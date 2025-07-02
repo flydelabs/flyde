@@ -1,7 +1,6 @@
 import {
   codeNodeInstance,
   AdvancedCodeNode,
-  MacroEditorConfigCustom,
   CodeNode
 } from "@flyde/core";
 import { assert } from "chai";
@@ -23,7 +22,7 @@ describe("findReferencedNodeServer", () => {
     const node = findReferencedNode(instance);
 
     const editorConfig = (node as AdvancedCodeNode<any>)
-      .editorConfig as MacroEditorConfigCustom;
+      .editorConfig as { type: "custom"; editorComponentBundleContent: string };
 
     const contentOfCompJs = "// dummy component content for test";
     assert.equal(editorConfig.editorComponentBundleContent, contentOfCompJs);
@@ -41,7 +40,7 @@ describe("findReferencedNodeServer", () => {
     const node = findReferencedNode(instance);
 
     const editorConfig = (node as AdvancedCodeNode<any>)
-      .editorConfig as MacroEditorConfigCustom;
+      .editorConfig as { type: "custom"; editorComponentBundleContent: string };
 
     assert.include(editorConfig.editorComponentBundleContent, "React"); // naive check
   });
@@ -58,7 +57,7 @@ describe("findReferencedNodeServer", () => {
     const node = findReferencedNode(instance);
 
     const editorConfig = (node as AdvancedCodeNode<any>)
-      .editorConfig as MacroEditorConfigCustom;
+      .editorConfig as { type: "custom"; editorComponentBundleContent: string };
 
     assert.include(editorConfig.editorComponentBundleContent, "// dummy component content for test");
   });

@@ -1,8 +1,8 @@
-import { macroConfigurableValue, MacroConfigurableValue } from "@flyde/core";
+import { configurableValue, ConfigurableValue } from "@flyde/core";
 import { CodeNode } from "@flyde/core";
 
 export interface SpreadListConfig {
-  count: MacroConfigurableValue;
+  count: ConfigurableValue;
 }
 
 export const SpreadList: CodeNode<SpreadListConfig> = {
@@ -11,7 +11,7 @@ export const SpreadList: CodeNode<SpreadListConfig> = {
   mode: "advanced",
   menuDisplayName: "Spread List",
   defaultConfig: {
-    count: macroConfigurableValue("number", 3),
+    count: configurableValue("number", 3),
   },
   menuDescription: "Receives an array and emits its values as separate outputs",
   displayName: (config) => `Spreads List of ${config.count}`,

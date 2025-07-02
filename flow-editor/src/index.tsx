@@ -1,4 +1,5 @@
 export * from "./flow-editor/FlowEditor";
+export * from "./flow-editor/DarkModeContext";
 export * from "./utils";
 export * from "./lib/user-preferences";
 export * from "./lib/loader";
@@ -14,3 +15,4 @@ export * from "./visual-node-editor/utils";
 export * from "./lib/logger";
 
 export * from "./visual-node-editor";
+export { defaultViewPort } from "./visual-node-editor/VisualNodeEditor";

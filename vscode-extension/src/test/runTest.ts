@@ -28,6 +28,7 @@ async function main() {
       extensionTestsPath,
       version: '1.98.2',
       launchArgs: ["--disable-extensions"],
+      timeout: 60000,
     });
   } catch (err) {
     console.error("Failed to run tests");

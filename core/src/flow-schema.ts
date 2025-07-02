@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { VisualNode, NodeDefinition } from "./node";
-import { CodeNode } from "./improved-macros/improved-macros";
+import { CodeNode } from "./configurable-nodes/configurable-nodes";
 
 const importSchema = z.record(z.string(), z.string().or(z.array(z.string())));
 const position = z.strictObject({ x: z.number(), y: z.number() });

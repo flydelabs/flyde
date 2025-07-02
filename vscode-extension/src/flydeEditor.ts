@@ -20,8 +20,7 @@ import {
   extractInputsFromValue,
   formatEvent,
   keys,
-  macroConfigurableValue,
-  processImprovedMacro,
+  configurableValue,
   replaceInputsInValue,
   ImportableEditorNode,
   codeNodeToImportableEditorNode,
@@ -140,12 +139,6 @@ export class FlydeEditorEditorProvider
     let lastFlow: FlydeFlow;
 
     const messageResponse = (event: FlydePortMessage<any>, payload: any) => {
-      console.info(
-        "Responding to message from webview",
-        event.type,
-        event.requestId,
-        payload
-      );
       webviewPanel.webview.postMessage({
         type: event.type,
         requestId: event.requestId,
@@ -269,11 +262,7 @@ export class FlydeEditorEditorProvider
     webviewPanel.webview.onDidReceiveMessage(
       async (event: FlydePortMessage<any>) => {
         if (event.type && event.requestId) {
-          console.info(
-            "Received message from webview",
-            event.type,
-            event.requestId
-          );
+
 
           try {
             switch (event.type) {
@@ -573,8 +562,7 @@ export class FlydeEditorEditorProvider
                 const node = customCodeNodeFromCode(code, undefined, {
                   // eslint-disable-next-line @typescript-eslint/naming-convention
                   "@flyde/core": {
-                    processImprovedMacro: processImprovedMacro,
-                    macroConfigurableValue: macroConfigurableValue,
+                    configurableValue: configurableValue,
                     extractInputsFromValue: extractInputsFromValue,
                     replaceInputsInValue: replaceInputsInValue,
                   },

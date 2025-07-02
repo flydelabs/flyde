@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { MacroEditorComp } from "@flyde/core";
+import { ConfigurableEditorComp } from "@flyde/core";
 import { NoteConfig } from "./Note.flyde";
 import { Alert, AlertDescription, Textarea } from "@flyde/ui";
 
-export const NoteEditor: MacroEditorComp<NoteConfig> = ({
+export const NoteEditor: ConfigurableEditorComp<NoteConfig> = ({
   value,
   onChange,
 }) => {

@@ -7,3 +7,4 @@ out
 editor-build
 *.vsix
 .vscode-test
+webview-dist

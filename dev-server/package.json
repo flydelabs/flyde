@@ -4,6 +4,16 @@
   "description": "",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./dist/*": {
+      "require": "./dist/*.js",
+      "types": "./dist/*.d.ts"
+    }
+  },
   "files": [
     "dist/",
     "README.md"

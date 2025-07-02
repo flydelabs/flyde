@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import React from "react";
-import { MacroEditorComp } from "@flyde/core";
+import { ConfigurableEditorComp } from "@flyde/core";
 import { SwitchConfig } from "./Switch.flyde";
 import { Button, Input, Label, Separator, Checkbox, AiCompletionProvider, FormGroup } from "@flyde/ui";
 
@@ -87,7 +87,7 @@ const ExpressionInput = ({
   </div>
 );
 
-const SwitchEditor: MacroEditorComp<SwitchConfig> = function SwitchEditor(
+const SwitchEditor: ConfigurableEditorComp<SwitchConfig> = function SwitchEditor(
   props
 ) {
   const { value, onChange, ports, nodeId, insId } = props;

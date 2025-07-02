@@ -4,7 +4,6 @@ packages:
   - "dev-server"
   - "stdlib"
   - "website"
-  - "editor"
   - "remote-debugger"
   - "resolver"
   - "runtime"
