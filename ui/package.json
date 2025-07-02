@@ -57,7 +57,6 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.1.8",
     "@types/mocha": "^10.0.1",
     "@types/react": "~18.2.0",
     "@types/react-dom": "~18.2.0",
@@ -69,7 +68,7 @@
     "postinstall-postinstall": "^2.1.0",
     "react": "~18.2.0",
     "react-dom": "~18.2.0",
-    "tailwindcss": "4.1.8",
+    "tailwindcss": "3.3.2",
     "tsc-alias": "^1.8.10",
     "tsconfig-paths": "^4.2.0",
     "tsx": "^4.7.1",
