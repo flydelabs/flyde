@@ -203,9 +203,6 @@ importers:
       '@flyde/remote-debugger':
         specifier: workspace:*
         version: link:../remote-debugger
-      '@flyde/stdlib':
-        specifier: workspace:*
-        version: link:../stdlib
       '@flyde/ui':
         specifier: workspace:*
         version: link:../ui
