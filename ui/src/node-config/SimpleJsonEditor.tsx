@@ -1,5 +1,6 @@
-import { Label, Textarea } from "@flyde/ui";
 import React, { useCallback } from "react";
+import { Label } from '../components/ui/label';
+import { Textarea } from '../components/ui/textarea';
 
 export type JsonValue =
   | string

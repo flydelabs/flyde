@@ -1,21 +1,4 @@
-import {
-  Button,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  AiGenerate,
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  Expand,
-  Check,
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-  Info
-} from "@flyde/ui";
+
 import {
   ConfigurableValue,
   ConfigurableFieldDefinition,
@@ -24,8 +7,10 @@ import {
 import { ConfigurableValueBaseEditor } from "./ConfigurableValueBaseEditor";
 import { useCallback, useState, useEffect } from "react";
 import { convertValue } from "./convertValues";
-import React from "react";
-import { Settings } from "@flyde/ui";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger, Button, Settings, DropdownMenuContent, DropdownMenuItem, Check, AiGenerate, Expand, TooltipProvider, Tooltip, TooltipTrigger, Info, TooltipContent, Dialog, DialogTrigger, DialogContent
+} from "../..";
 
 function FieldContent({
   config,

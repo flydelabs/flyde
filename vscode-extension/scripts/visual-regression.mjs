@@ -1,5 +1,19 @@
 #!/usr/bin/env node
 
+/**
+ * Visual Regression Test Script for Flyde VS Code Extension
+ * 
+ * Tests both light and dark themes of the flow editor webview.
+ * 
+ * Usage:
+ *   npm run test:visual                 # Run tests against baseline
+ *   npm run test:visual -- --update-baseline   # Update baseline images
+ *   npm run test:visual -- -u          # Short form for updating baseline
+ * 
+ * Baseline images are stored in test-screenshots/baseline/
+ * Diff images are saved to test-screenshots/diff/ when differences are found
+ */
+
 import puppeteer from 'puppeteer';
 import { spawn } from 'child_process';
 import fs from 'fs';
@@ -13,6 +27,11 @@ const __dirname = path.dirname(__filename);
 
 const WEBVIEW_PORT = 5174; // Vite dev server port
 const FIXTURE_FILE = 'HelloWorld.flyde';
+
+// Parse command line arguments
+const args = process.argv.slice(2);
+const UPDATE_BASELINE = args.includes('--update-baseline') || args.includes('-u');
+const THEMES = ['light', 'dark'];
 
 // Helper to wait for server to be ready
 function waitForServer(port, timeout = 30000) {
@@ -58,9 +77,9 @@ async function startViteServer() {
   return viteProcess;
 }
 
-async function takeScreenshot() {
+async function takeScreenshot(theme = 'light') {
   const browser = await puppeteer.launch({ 
-    headless: true, // Back to headless
+    headless: true,
     args: ['--no-sandbox', '--disable-setuid-sandbox']
   });
   
@@ -68,39 +87,31 @@ async function takeScreenshot() {
     const page = await browser.newPage();
     await page.setViewport({ width: 1200, height: 800 });
     
-    // Navigate to the webview with dummy data to load the fixture
-    const url = `http://localhost:${WEBVIEW_PORT}?dummy=true`;
-    console.log(`📍 Navigating to: ${url}`);
-    await page.goto(url, { waitUntil: 'networkidle0' });
-    
-    // Debug: Take a full page screenshot first
-    await page.screenshot({ path: '/tmp/debug-full-page.png' });
-    console.log('🔍 Full page screenshot saved to /tmp/debug-full-page.png');
-    
-    // Check what elements exist
-    const bodyContent = await page.evaluate(() => document.body.innerHTML);
-    console.log('📝 Page content length:', bodyContent.length);
-    
-    // Check for any error messages
-    const errorElement = await page.$('.error');
-    if (errorElement) {
-      const errorText = await errorElement.textContent();
-      console.log('❌ Error found on page:', errorText);
+    // Set theme preference for dark mode
+    if (theme === 'dark') {
+      await page.emulateMediaFeatures([
+        { name: 'prefers-color-scheme', value: 'dark' }
+      ]);
     }
+    
+    // Navigate to the webview with dummy data to load the fixture
+    const url = `http://localhost:${WEBVIEW_PORT}?dummy=true&theme=${theme}`;
+    console.log(`📍 Navigating to: ${url} (${theme} mode)`);
+    await page.goto(url, { waitUntil: 'networkidle0' });
     
     // Wait for the root element to be rendered
     try {
       await page.waitForSelector('#root', { timeout: 10000 });
-      console.log('✅ Root element found');
+      console.log(`✅ Root element found (${theme} mode)`);
     } catch (e) {
-      console.log('❌ Root element not found');
+      console.log(`❌ Root element not found (${theme} mode)`);
       throw e;
     }
     
-    // Wait a bit more for everything to stabilize
+    // Wait a bit more for everything to stabilize and theme to apply
     await new Promise(resolve => setTimeout(resolve, 3000));
     
-    // Take screenshot of the whole page for now (we'll refine this later)
+    // Take screenshot
     const screenshot = await page.screenshot({ 
       type: 'png',
       clip: { x: 0, y: 0, width: 1200, height: 800 }
@@ -112,15 +123,20 @@ async function takeScreenshot() {
   }
 }
 
-async function compareScreenshots(currentBuffer, baselinePath) {
+async function compareScreenshots(currentBuffer, baselinePath, theme) {
   const currentPng = PNG.sync.read(currentBuffer);
   
-  // If baseline doesn't exist, create it
-  if (!fs.existsSync(baselinePath)) {
+  // If we're updating baseline or it doesn't exist, create/update it
+  if (UPDATE_BASELINE || !fs.existsSync(baselinePath)) {
     fs.mkdirSync(path.dirname(baselinePath), { recursive: true });
     fs.writeFileSync(baselinePath, currentBuffer);
-    console.log(`✅ Created baseline screenshot: ${baselinePath}`);
-    return { isFirstRun: true };
+    if (UPDATE_BASELINE) {
+      console.log(`✅ Updated baseline screenshot (${theme}): ${baselinePath}`);
+      return { isBaselineUpdate: true };
+    } else {
+      console.log(`✅ Created baseline screenshot (${theme}): ${baselinePath}`);
+      return { isFirstRun: true };
+    }
   }
   
   // Compare with baseline
@@ -131,7 +147,7 @@ async function compareScreenshots(currentBuffer, baselinePath) {
   
   // Ensure dimensions match
   if (baselinePng.width !== width || baselinePng.height !== height) {
-    console.log(`⚠️  Dimension mismatch: baseline ${baselinePng.width}x${baselinePng.height}, current ${width}x${height}`);
+    console.log(`⚠️  Dimension mismatch (${theme}): baseline ${baselinePng.width}x${baselinePng.height}, current ${width}x${height}`);
     return { 
       hasDifferences: true, 
       diffPixels: -1,
@@ -156,17 +172,17 @@ async function compareScreenshots(currentBuffer, baselinePath) {
     const diffDir = path.resolve(__dirname, '../test-screenshots/diff');
     fs.mkdirSync(diffDir, { recursive: true });
     
-    const diffPath = path.join(diffDir, 'helloworld-diff.png');
-    const currentPath = path.join(diffDir, 'helloworld-current.png');
+    const diffPath = path.join(diffDir, `helloworld-${theme}-diff.png`);
+    const currentPath = path.join(diffDir, `helloworld-${theme}-current.png`);
     
     fs.writeFileSync(diffPath, PNG.sync.write(diff));
     fs.writeFileSync(currentPath, currentBuffer);
     
-    console.log(`❌ Visual differences detected: ${diffPixels} pixels differ`);
+    console.log(`❌ Visual differences detected (${theme}): ${diffPixels} pixels differ`);
     console.log(`   Diff saved to: ${diffPath}`);
     console.log(`   Current saved to: ${currentPath}`);
   } else {
-    console.log(`✅ No visual differences detected`);
+    console.log(`✅ No visual differences detected (${theme})`);
   }
   
   return { hasDifferences, diffPixels };
@@ -175,27 +191,45 @@ async function compareScreenshots(currentBuffer, baselinePath) {
 async function main() {
   console.log('🚀 Starting visual regression test...');
   
+  if (UPDATE_BASELINE) {
+    console.log('📝 Updating baseline mode enabled');
+  }
+  
   let viteServer;
+  let hasFailures = false;
+  
   try {
     // Start Vite dev server
     console.log('📦 Starting Vite dev server...');
     viteServer = await startViteServer();
     console.log(`✅ Vite server started on port ${WEBVIEW_PORT}`);
     
-    // Take screenshot
-    console.log('📸 Taking screenshot...');
-    const screenshot = await takeScreenshot();
-    console.log('✅ Screenshot captured');
+    // Test both themes
+    for (const theme of THEMES) {
+      console.log(`\n🎨 Testing ${theme} theme...`);
+      
+      // Take screenshot
+      console.log(`📸 Taking screenshot (${theme})...`);
+      const screenshot = await takeScreenshot(theme);
+      console.log(`✅ Screenshot captured (${theme})`);
+      
+      // Compare with baseline
+      const baselinePath = path.resolve(__dirname, `../test-screenshots/baseline/helloworld-flow-${theme}.png`);
+      const result = await compareScreenshots(screenshot, baselinePath, theme);
+      
+      if (result.hasDifferences) {
+        hasFailures = true;
+      }
+    }
     
-    // Compare with baseline
-    const baselinePath = path.resolve(__dirname, '../test-screenshots/baseline/helloworld-flow.png');
-    const result = await compareScreenshots(screenshot, baselinePath);
-    
-    if (result.isFirstRun) {
+    if (UPDATE_BASELINE) {
+      console.log('\n✅ All baselines updated successfully');
       process.exit(0);
-    } else if (result.hasDifferences) {
+    } else if (hasFailures) {
+      console.log('\n❌ Visual regression test failed - differences detected');
       process.exit(1);
     } else {
+      console.log('\n✅ All visual regression tests passed');
       process.exit(0);
     }
     

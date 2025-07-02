@@ -699,6 +699,9 @@ importers:
 
   ui:
     dependencies:
+      '@flyde/core':
+        specifier: workspace:1.0.0-alpha.18
+        version: link:../core
       '@radix-ui/react-checkbox':
         specifier: ^1.0.4
         version: 1.0.4(@types/react-dom@18.2.0)(@types/react@18.2.12)(react-dom@18.2.0)(react@18.2.0)

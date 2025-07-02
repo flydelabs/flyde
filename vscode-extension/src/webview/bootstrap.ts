@@ -15,6 +15,10 @@ export const getBootstrapData = (): BootstrapData | null => {
   const dummyData = urlParams.get('dummy');
 
   if (dummyData === 'true') {
+    // Check for theme param
+    const theme = urlParams.get('theme');
+    const isDarkMode = theme === 'dark';
+    
     // Return HelloWorld.flyde dummy data for testing
     return {
       initialNode: {
@@ -162,7 +166,7 @@ export const getBootstrapData = (): BootstrapData | null => {
       relativeFile: 'HelloWorld.flyde',
       executionId: 'test-execution',
       hasOpenAiToken: false,
-      darkMode: false
+      darkMode: isDarkMode
     };
   }
 

@@ -26,6 +26,10 @@ export * from "./components/ui/radio-group";
 export * from "./components/ui/numeric-input";
 export * from "./components/ui/form-group";
 export * from "./components/ui/hotkey-indication";
+
+export * from "./node-config";
+
+
 export * from "./hooks/use-toast";
 export * from "./lib/utils";
 

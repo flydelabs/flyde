@@ -6,6 +6,13 @@ import "./index.css";
 
 const bootstrap = getBootstrapData();
 
+// Apply dark mode class to body if needed
+if (bootstrap?.darkMode) {
+  document.body.classList.add('dark');
+} else {
+  document.body.classList.remove('dark');
+}
+
 const root = createRoot(document.getElementById("root") as HTMLElement);
 
 if (!bootstrap) {

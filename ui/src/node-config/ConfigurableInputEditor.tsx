@@ -1,6 +1,6 @@
 import React from "react";
-import { RadioGroup, RadioGroupItem } from "@flyde/ui";
-import { Label } from "@flyde/ui";
+import { RadioGroup, RadioGroupItem } from "../components/ui/radio-group";
+import { Label } from "../components/ui/label";
 
 export type ConfigurableInputStatic<T> = {
   mode: "static";

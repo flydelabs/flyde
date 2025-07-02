@@ -10,7 +10,7 @@ import { ConditionalConfig } from "./Conditional.flyde";
 import React from "react";
 import { ConfigurableEditorComp, ConfigurableFieldDefinition } from "@flyde/core";
 
-import { ConfigurableFieldEditor } from "../../lib/ConfigurableFieldEditor/ConfigurableFieldEditor";
+import { ConfigurableFieldEditor } from "@flyde/ui";
 
 // copied from Conditional.flyde.ts
 enum ConditionType {

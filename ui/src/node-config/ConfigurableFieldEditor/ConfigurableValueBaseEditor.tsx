@@ -1,13 +1,4 @@
-import {
-  Input,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  Textarea,
-  Checkbox,
-} from "@flyde/ui";
+
 import {
   LongTextFieldDefinition,
   ConfigurableValue,
@@ -16,8 +7,8 @@ import {
 } from "@flyde/core";
 import { SimpleJsonEditor } from "../SimpleJsonEditor";
 import { useState, useEffect } from "react";
-import React from "react";
 import { SecretSelector } from "./SecretSelector";
+import { Checkbox, Input, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Textarea } from "../..";
 
 const inputClassName = "w-full";
 

@@ -7,7 +7,7 @@ import {
     SelectValue,
     Input,
     Button,
-} from "@flyde/ui";
+} from "../..";
 import { SecretTypeData } from "@flyde/core";
 
 // Define a minimal EditorPorts interface with just what we need

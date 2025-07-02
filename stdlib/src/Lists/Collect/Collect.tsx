@@ -3,7 +3,7 @@ import { CollectConfig } from "./Collect.flyde";
 import { FormGroup, NumericInput, RadioGroup, RadioGroupItem } from "@flyde/ui";
 
 import React from "react";
-import { ConfigurableInputEditor } from "../../lib/ConfigurableInputEditor";
+import { ConfigurableInputEditor } from "@flyde/ui";
 
 const defaultValuePerStrategy: Record<
   CollectConfig["strategy"],
