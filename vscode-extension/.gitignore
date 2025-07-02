@@ -8,3 +8,4 @@ editor-build
 *.vsix
 .vscode-test
 webview-dist
+test-screenshots/diff

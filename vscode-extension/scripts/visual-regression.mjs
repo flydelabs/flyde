@@ -162,7 +162,7 @@ async function compareScreenshots(currentBuffer, baselinePath, theme) {
     diff.data,
     width,
     height,
-    { threshold: 0.1 }
+    { threshold: 0 }
   );
   
   const hasDifferences = diffPixels > 0;
