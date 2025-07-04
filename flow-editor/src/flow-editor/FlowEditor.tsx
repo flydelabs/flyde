@@ -30,7 +30,7 @@ import { DarkModeProvider } from "./DarkModeContext";
 import { useDarkMode } from "usehooks-ts";
 
 import { VisualNodeEditorProvider } from "../visual-node-editor/VisualNodeEditorContext";
-import { AiCompletionContext, AiCompletionProvider } from "@flyde/ui";
+import { AiCompletionContext, AiCompletionProvider } from "../ui";
 
 export * from "./ports";
 export * from "./DebuggerContext";

@@ -7,7 +7,7 @@ import {
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuTrigger,
-} from "@flyde/ui";
+} from "../../../ui";
 
 export interface ConnectionViewPathProps {
   from: Pos;

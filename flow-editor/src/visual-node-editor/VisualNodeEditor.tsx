@@ -42,7 +42,7 @@ import {
   ContextMenuTrigger,
   HotkeyIndication,
   Plus,
-} from "@flyde/ui";
+} from "../ui";
 import { useBoundingclientrect, useDidMount } from "rooks";
 
 import {
@@ -102,7 +102,7 @@ import {
 } from "./VisualNodeEditorContext";
 import { useEditorCommands } from "./useEditorCommands";
 import { CustomNodeModal } from "./CustomNodeModal/CustomNodeModal";
-import { Button, Slider, Toaster, useToast, Play } from "@flyde/ui";
+import { Button, Slider, Toaster, useToast, Play } from "../ui";
 import { CommandMenu } from "./CommandMenu/CommandMenu";
 
 export const NODE_HEIGHT = 28;

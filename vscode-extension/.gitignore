@@ -8,3 +8,6 @@ editor-build
 *.vsix
 .vscode-test
 webview-dist
+test-results/
+tests/visual/test-results/
+playwright-report/

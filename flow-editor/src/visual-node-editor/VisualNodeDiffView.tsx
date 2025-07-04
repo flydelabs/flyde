@@ -14,7 +14,7 @@ import { InstanceView } from "./instance-view/InstanceView";
 import { ConnectionView } from "./connection-view/ConnectionView";
 import { entries, Size } from "../utils";
 import { useBoundingclientrect } from "rooks";
-import { Button, Slider } from "@flyde/ui";
+import { Button, Slider } from "../ui";
 
 import {
   emptyObj,

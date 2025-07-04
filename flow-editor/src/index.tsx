@@ -16,3 +16,6 @@ export * from "./lib/logger";
 
 export * from "./visual-node-editor";
 export { defaultViewPort } from "./visual-node-editor/VisualNodeEditor";
+
+// UI exports
+export * from "./ui";

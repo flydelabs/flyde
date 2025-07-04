@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { ConfigurableEditorComp } from "@flyde/core";
 import { NoteConfig } from "./Note.flyde";
-import { Alert, AlertDescription, Textarea } from "@flyde/ui";
+import { Alert, AlertDescription, Textarea } from "@flyde/flow-editor";
 
 export const NoteEditor: ConfigurableEditorComp<NoteConfig> = ({
   value,

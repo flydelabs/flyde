@@ -40,7 +40,7 @@ import produce from "immer";
 import { handleDuplicateSelectedEditorCommand } from "./commands/duplicate-instances";
 import { groupSelected } from "../group-selected";
 import { handleConnectionCloseEditorCommand } from "./commands/close-connection";
-import { useToast } from "@flyde/ui";
+import { useToast } from "../ui";
 
 export function useEditorCommands(
   lastMousePos: React.MutableRefObject<Pos>,

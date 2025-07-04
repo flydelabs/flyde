@@ -7,10 +7,10 @@ import {
   CommandInput,
   CommandList,
   CommandSeparator,
-} from "@flyde/ui";
+} from "../../ui";
 import { ImportableEditorNode, NodeLibraryGroup } from "@flyde/core";
-import { cn } from "@flyde/ui";
-import { usePorts } from "@/flow-editor/ports";
+import { cn } from "../../ui";
+import { usePorts } from "../../flow-editor/ports";
 import { NodeItem, CustomNodeButton } from "./CommandMenuNodeItem";
 import { useCommandMenuData } from "./useCommandMenuData";
 

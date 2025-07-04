@@ -1,7 +1,7 @@
-import { Button } from "@flyde/ui";
+import { Button } from "../../ui";
 import React, { useMemo } from "react";
 import { useDarkMode } from "../../flow-editor/DarkModeContext";
-import { cn } from "@/lib/utils";
+import { cn } from "../../lib/utils";
 
 export type SelectionTypeInput = {
   type: "input";

@@ -1,0 +1,138 @@
+name: Visual Regression Tests
+
+# DISABLED: Managing visual test baselines across different machines is too much of a hassle
+# Visual tests can still be run locally using: pnpm run test:visual
+
+# on:
+#   pull_request:
+#     branches: [main]
+#     paths:
+#       - 'vscode-extension/**'
+#       - 'flow-editor/**'
+#       - '.github/workflows/visual-tests.yml'
+
+jobs:
+  visual-tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: vscode-extension
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 9
+          run_install: false
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
+        id: pnpm-cache
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install
+        working-directory: .
+
+      - name: Build packages
+        run: pnpm run build
+        working-directory: .
+
+      - name: Install Playwright browsers
+        run: npx playwright install chromium --with-deps
+
+      - name: Run visual tests
+        run: pnpm run test:visual
+        env:
+          CI: true
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-test-results
+          path: |
+            vscode-extension/test-results/
+            vscode-extension/tests/visual/**/test-results/
+          retention-days: 7
+
+      - name: Upload HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-test-report
+          path: vscode-extension/playwright-report/
+          retention-days: 7
+
+      - name: Comment PR with test results
+        if: failure() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            
+            // Check if results file exists
+            const resultsPath = 'vscode-extension/test-results/results.json';
+            if (!fs.existsSync(resultsPath)) {
+              console.log('No results file found');
+              return;
+            }
+            
+            const results = JSON.parse(fs.readFileSync(resultsPath, 'utf8'));
+            const failed = results.suites.flatMap(suite => 
+              suite.specs.filter(spec => spec.tests.some(test => test.status === 'failed'))
+            );
+            
+            if (failed.length > 0) {
+              const comment = `## 🔍 Visual Regression Test Results
+            
+            **❌ ${failed.length} visual test(s) failed**
+            
+            The visual tests detected differences in the UI. Please review the test results:
+            
+            - 📊 [View detailed test report](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            - 🖼️ Download the \`visual-test-results\` artifact to see diff images
+            
+            ### Failed Tests:
+            ${failed.map(spec => `- ${spec.title}`).join('\n')}
+            
+            ### Next Steps:
+            1. **Review the changes**: Download the artifact and examine the diff images
+            2. **If changes are intentional**: Run \`pnpm run test:visual:update\` locally to update baselines
+            3. **If changes are bugs**: Fix the issues and push new commits
+            
+            ### Updating Baselines:
+            If the visual changes are intentional, update the baselines locally:
+            \`\`\`bash
+            cd vscode-extension
+            pnpm run test:visual:update
+            git add tests/visual/
+            git commit -m "Update visual test baselines"
+            \`\`\`
+            `;
+            
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: comment
+              });
+            }

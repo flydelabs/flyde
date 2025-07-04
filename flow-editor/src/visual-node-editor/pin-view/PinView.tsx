@@ -19,14 +19,14 @@ import {
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuTrigger,
-} from "@flyde/ui";
+} from "../../ui";
 
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@flyde/ui";
+} from "../../ui";
 import { faBolt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 

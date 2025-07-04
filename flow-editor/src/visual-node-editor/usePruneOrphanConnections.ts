@@ -12,7 +12,7 @@ import {
   EditorVisualNode,
 } from "@flyde/core";
 import { FlydeFlowChangeType } from "../flow-editor/flyde-flow-change-type";
-import { useToast } from "@flyde/ui";
+import { useToast } from "../ui";
 
 export function usePruneOrphanConnections(
   instances: NodeInstance[],

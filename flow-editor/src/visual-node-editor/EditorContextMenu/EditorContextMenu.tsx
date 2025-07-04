@@ -2,7 +2,7 @@ import {
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuSeparator,
-} from "@flyde/ui";
+} from "../../ui";
 import { isDefined } from "../../utils";
 import { NodeStyle, PinType, nodeInput, nodeOutput } from "@flyde/core";
 import produce from "immer";
@@ -10,7 +10,7 @@ import React from "react";
 import { usePrompt, usePorts } from "../..";
 import { functionalChange } from "../../flow-editor/flyde-flow-change-type";
 import { useVisualNodeEditorContext } from "../VisualNodeEditorContext";
-import { useToast } from "@flyde/ui";
+import { useToast } from "../../ui";
 
 export interface EditorContextMenuProps {
   nodeIoEditable: boolean;

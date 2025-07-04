@@ -47,9 +47,9 @@ import {
   ContextMenuSub,
   ContextMenuSubContent,
   ContextMenuSubTrigger,
-} from "@flyde/ui";
+} from "../../ui";
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@flyde/ui";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../ui";
 
 import { useDarkMode } from "../../flow-editor/DarkModeContext";
 import {

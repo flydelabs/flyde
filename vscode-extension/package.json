@@ -36,7 +36,12 @@
     "watch-tests": "tsc -p . -w --outDir out",
     "pretest": "npm run compile-tests && npm run build && npm run lint",
     "lint": "eslint src --ext ts",
-    "test": "node ./out/test/runTest.js",
+    "test": "node ./out/test/runTest.js && ([ \"$SKIP_VISUAL_TESTS\" = \"true\" ] || npm run test:visual)",
+    "pretest:visual": "npx playwright install chromium",
+    "test:visual": "npx playwright test",
+    "test:visual:update": "npx playwright test --update-snapshots",
+    "test:visual:ui": "npx playwright test --ui",
+    "test:visual:report": "npx playwright show-report playwright-report",
     "release": "vsce package --no-yarn && vsce publish minor"
   },
   "main": "./out/extension.js",
@@ -188,6 +193,7 @@
     }
   },
   "devDependencies": {
+    "@playwright/test": "^1.53.2",
     "@types/glob": "^8.0.0",
     "@types/lodash": "^4.14.197",
     "@types/mocha": "^10.0.1",
