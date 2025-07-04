@@ -31,6 +31,20 @@ function calculateControlOffset(distance: number, curvature: number): number {
     return curvature * 35 * Math.sqrt(-distance);
   }
 }
+function calculateHorizontalOffset(distanceX: number, distanceY: number): number {
+  distanceX = Math.abs(distanceX);
+  distanceY = Math.abs(distanceY);
+
+  let cx = distanceX / 2;
+
+  if (cx < 50 && cx >= 0) {
+    cx = 50;
+    if (distanceY < 50) cx -= 50 - distanceY;
+  }
+
+  if (cx > 230) cx = 230;
+  return cx;
+}
 
 function getControlWithCurvature({
   pos,
@@ -43,11 +57,11 @@ function getControlWithCurvature({
   let ctX: number, ctY: number;
   switch (pos) {
     case Position.Left:
-      ctX = x1 - calculateControlOffset(x1 - x2, c);
+      ctX = x1 - calculateHorizontalOffset(x2 - x1, y2 - y1);
       ctY = y1;
       break;
     case Position.Right:
-      ctX = x1 + calculateControlOffset(x2 - x1, c);
+      ctX = x1 + calculateHorizontalOffset(x2 - x1, y2 - y1);
       ctY = y1;
       break;
     case Position.Top:
@@ -72,7 +86,7 @@ export const calcBezierPath = ({
   curvature = 0.25,
 }: GetBezierPathParams): string => {
   const [sourceControlX, sourceControlY] = getControlWithCurvature({
-      pos: sourcePosition,
+    pos: sourcePosition,
     x1: sourceX,
     y1: sourceY,
     x2: targetX,
