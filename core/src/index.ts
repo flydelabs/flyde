@@ -23,6 +23,8 @@ export {
   createInputGroup,
 } from "./configurable-nodes/configurable-node-utils";
 
+export * from "./remote-debugger";
+
 export interface InstanceViewData {
   id: string;
   nodeIdOrGroup: string | VisualNode;

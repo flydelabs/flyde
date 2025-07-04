@@ -1,16 +1,17 @@
-import { debugLogger, DebuggerEvent, PinType } from "@flyde/core";
-
-import { default as axios } from "axios";
-
-import { io as _io } from "socket.io-client";
-import {
+import { 
+  debugLogger, 
+  DebuggerEvent, 
+  PinType,
   RemoteDebuggerCallback,
   RemoteDebuggerCancelFn,
   enumToArray,
   DebuggerServerEventType,
-} from "../common";
+  HistoryPayload
+} from "@flyde/core";
 
-import { HistoryPayload } from "..";
+import { default as axios } from "axios";
+
+import { io as _io } from "socket.io-client";
 
 const debug = debugLogger("remote-debugger:editor-client");
 
@@ -123,7 +124,7 @@ export const createEditorClient = (
       return () => socket.off(DebuggerServerEventType.EVENTS_BATCH, cb);
     },
     requestState: () => {
-      return axios.get(`${url}/state`).then((r) => r.data.state);
+      return axios.get(`${url}/state`).then((r: any) => r.data.state);
     },
     getHistory: (dto) => {
       return axios
@@ -135,7 +136,7 @@ export const createEditorClient = (
             executionId,
           },
         })
-        .then((r) => r.data);
+        .then((r: any) => r.data);
     },
     clearHistory: () => {
       return axios.delete(`${url}/history`).then(() => {});
@@ -143,7 +144,7 @@ export const createEditorClient = (
     triggerNode: (nodeId, inputs) => {
       return axios
         .post(`${url}/trigger`, { nodeId, inputs })
-        .then((r) => r.data);
+        .then((r: any) => r.data);
     },
   };
 };

@@ -41,6 +41,7 @@
     "debug": "^4.3.4",
     "dependency-graph": "^0.8.1",
     "rxjs": "^6.6.7",
+    "serialize-error": "^11.0.0",
     "zod": "^3.22.2"
   },
   "devDependencies": {

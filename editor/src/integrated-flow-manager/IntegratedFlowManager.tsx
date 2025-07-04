@@ -7,7 +7,7 @@ import classNames from "classnames";
 import {
   createEditorClient,
   EditorDebuggerClient,
-} from "@flyde/remote-debugger/dist/client";
+} from "@flyde/flow-editor";
 
 import {
   DebuggerContextData,

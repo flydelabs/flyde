@@ -4,15 +4,13 @@ import {
   cappedArrayDebounce,
   DebuggerEvent,
   delay,
-} from "@flyde/core";
-
-import { io } from "socket.io-client";
-import {
   RemoteDebuggerCallback,
   RemoteDebuggerCancelFn,
   enumToArray,
   DebuggerServerEventType,
-} from "../common";
+} from "@flyde/core";
+
+import { io } from "socket.io-client";
 import { normalizeData } from "./normalize-data";
 
 const debug = debugLogger("remote-debugger:runtime-client");

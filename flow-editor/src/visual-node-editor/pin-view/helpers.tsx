@@ -1,8 +1,6 @@
-import { HistoryPayload } from "@flyde/remote-debugger";
 import React, { ReactElement, useCallback, useRef, useState } from "react";
 import { useDebuggerContext } from "../../flow-editor/DebuggerContext";
-import { TRIGGER_PIN_ID } from "@flyde/core";
-import { ERROR_PIN_ID } from "@flyde/core";
+import { TRIGGER_PIN_ID, ERROR_PIN_ID, HistoryPayload } from "@flyde/core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlay } from "@fortawesome/free-solid-svg-icons";
 

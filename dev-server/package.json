@@ -34,7 +34,6 @@
   "license": "MIT",
   "dependencies": {
     "@flyde/core": "workspace:*",
-    "@flyde/remote-debugger": "workspace:*",
     "@flyde/resolver": "workspace:*",
     "@flyde/runtime": "workspace:*",
     "@flyde/stdlib": "workspace:*",
@@ -59,6 +58,7 @@
     "openai": "^4.47.1",
     "pkg-up": "^3.1.0",
     "resolve-from": "^5.0.0",
+    "socket.io": "^4.5.1",
     "source-map-support": "^0.5.21",
     "toml": "^3.0.0",
     "typescript": "^5.5.4",

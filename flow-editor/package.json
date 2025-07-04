@@ -40,7 +40,6 @@
   "license": "agpl-3.0",
   "dependencies": {
     "@flyde/core": "workspace:*",
-    "@flyde/remote-debugger": "workspace:*",
     "@fortawesome/fontawesome-svg-core": "^6.4.2",
     "@fortawesome/free-brands-svg-icons": "^6.4.2",
     "@fortawesome/free-solid-svg-icons": "^6.4.2",
@@ -69,6 +68,7 @@
     "@types/lodash": "^4.14.197",
     "@types/node": "^12.20.55",
     "@types/react-resizable": "^3.0.0",
+    "axios": "^0.27.2",
     "class-variance-authority": "^0.7.1",
     "classnames": "^2.3.2",
     "clsx": "^1.2.1",
@@ -85,6 +85,7 @@
     "react-resizable": "^3.0.5",
     "react18-json-view": "^0.2.1",
     "rooks": "^7.14.1",
+    "socket.io-client": "^4.5.1",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
     "typescript": "^5.5.4",

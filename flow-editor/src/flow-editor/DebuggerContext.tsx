@@ -1,5 +1,5 @@
-import { PinType } from "@flyde/core";
-import { EditorDebuggerClient, HistoryPayload } from "@flyde/remote-debugger";
+import { PinType, HistoryPayload } from "@flyde/core";
+import { EditorDebuggerClient } from "../debugger";
 import { createContext, useContext } from "react";
 
 export interface DebuggerContextData {

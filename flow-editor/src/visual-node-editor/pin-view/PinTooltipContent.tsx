@@ -1,4 +1,4 @@
-import { HistoryPayload } from "@flyde/remote-debugger";
+import { HistoryPayload } from "@flyde/core";
 import * as React from "react";
 import { cn } from "../../lib/utils";
 import { formatTimeAgo } from "../../lib/format-time";

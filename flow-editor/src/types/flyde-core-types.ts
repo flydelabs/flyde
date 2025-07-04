@@ -21,6 +21,7 @@ declare module '@flyde/core' {
     export * from "@flyde/core/types/editor";
     export * from "@flyde/core/configurable-nodes/configurable-nodes";
     export { extractInputsFromValue, replaceInputsInValue, renderDerivedString, evaluateCondition, evaluateFieldVisibility, createInputGroup, } from "@flyde/core/configurable-nodes/configurable-node-utils";
+    export * from "@flyde/core/remote-debugger";
     export interface InstanceViewData {
         id: string;
         nodeIdOrGroup: string | VisualNode;
@@ -940,6 +941,11 @@ declare module '@flyde/core/configurable-nodes/configurable-node-utils' {
     };
 }
 
+declare module '@flyde/core/remote-debugger' {
+    export * from "@flyde/core/remote-debugger/types";
+    export * from "@flyde/core/remote-debugger/utils";
+}
+
 declare module '@flyde/core/common/test-data-creator' {
     export type TestDataCreator<T> = (partial?: Partial<T>) => T;
     export type ObjOrObjCreator<T> = T | (() => T);
@@ -1355,6 +1361,7 @@ declare module '@flyde/core/' {
     export * from "@flyde/core/types/editor";
     export * from "@flyde/core/configurable-nodes/configurable-nodes";
     export { extractInputsFromValue, replaceInputsInValue, renderDerivedString, evaluateCondition, evaluateFieldVisibility, createInputGroup, } from "@flyde/core/configurable-nodes/configurable-node-utils";
+    export * from "@flyde/core/remote-debugger";
     export interface InstanceViewData {
         id: string;
         nodeIdOrGroup: string | VisualNode;
@@ -1366,6 +1373,41 @@ declare module '@flyde/core/' {
         flow: FlydeFlow;
         id: string;
     }
+}
+
+declare module '@flyde/core/remote-debugger/types' {
+    import { DebuggerEvent } from "@flyde/core/execute/debugger/events";
+    export type RemoteDebuggerCallback<T> = (data: T) => void;
+    export type RemoteDebuggerCancelFn = () => void;
+    export enum DebuggerServerEventType {
+        RUNTIME_READY = "runtime-ready",
+        CHANGE_EVENT_NAME = "change",
+        PUSH_INPUT_VALUE = "push-input-value",
+        CHANGE_AWK = "live-change-awk",
+        CHANGE_ERROR = "live-change-error",
+        IS_ALIVE = "is-alive",
+        UPDATE_BREAKPOINTS = "update-breakpoints",
+        INPUT_VALUE_OVERRIDE = "input-value-override",
+        OUTPUT_VALUE_OVERRIDE = "output-value-override",
+        INPUT_VALUE_CHANGE = "input-value-changed",
+        OUTPUT_VALUE_CHANGE = "output-value-changed",
+        PROCESSING_CHANGE = "processing-changed",
+        INPUTS_STATE_CHANGE = "inputs-state-changed",
+        NODE_ERROR = "node-error",
+        EVENTS_BATCH = "events-batch"
+    }
+    export type HistoryPayload = {
+        total: number;
+        lastSamples: DebuggerEvent[];
+    };
+}
+
+declare module '@flyde/core/remote-debugger/utils' {
+    export const toString: (v: any) => string;
+    export const valuePreview: (v: any) => string;
+    export const isSimpleType: (v: any) => boolean;
+    export const isNumber: (v: any) => boolean;
+    export function enumToArray(aEnum: any): any[];
 }
 
 declare module '@flyde/core/types/external' {
