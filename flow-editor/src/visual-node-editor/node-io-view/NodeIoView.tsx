@@ -12,7 +12,7 @@ import {
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuSeparator,
-} from "@flyde/ui";
+} from "../../ui";
 
 export interface NodeIoViewProps {
   id: string;

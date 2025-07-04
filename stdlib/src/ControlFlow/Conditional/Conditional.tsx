@@ -5,12 +5,12 @@ import {
   SelectTrigger,
   SelectValue,
   Separator,
-} from "@flyde/ui";
+} from "@flyde/flow-editor";
 import { ConditionalConfig } from "./Conditional.flyde";
 import React from "react";
 import { ConfigurableEditorComp, ConfigurableFieldDefinition } from "@flyde/core";
 
-import { ConfigurableFieldEditor } from "@flyde/ui";
+import { ConfigurableFieldEditor } from "@flyde/flow-editor";
 
 // copied from Conditional.flyde.ts
 enum ConditionType {

@@ -203,9 +203,6 @@ importers:
       '@flyde/remote-debugger':
         specifier: workspace:*
         version: link:../remote-debugger
-      '@flyde/ui':
-        specifier: workspace:*
-        version: link:../ui
       '@fortawesome/fontawesome-svg-core':
         specifier: ^6.4.2
         version: 6.4.2
@@ -653,9 +650,9 @@ importers:
       '@flyde/core':
         specifier: workspace:*
         version: link:../core
-      '@flyde/ui':
+      '@flyde/flow-editor':
         specifier: workspace:*
-        version: link:../ui
+        version: link:../flow-editor
       '@types/pg':
         specifier: ^8.10.2
         version: 8.10.2
@@ -738,124 +735,6 @@ importers:
       webpack-cli:
         specifier: ^5.1.4
         version: 5.1.4(webpack@5.89.0)
-
-  ui:
-    dependencies:
-      '@flyde/core':
-        specifier: workspace:1.0.0-alpha.18
-        version: link:../core
-      '@radix-ui/react-checkbox':
-        specifier: ^1.0.4
-        version: 1.0.4(@types/react-dom@18.2.0)(@types/react@18.2.12)(react-dom@18.2.0)(react@18.2.0)
-      '@radix-ui/react-context-menu':
-        specifier: ^2.2.4
-        version: 2.2.4(@types/react-dom@18.2.0)(@types/react@18.2.12)(react-dom@18.2.0)(react@18.2.0)
-      '@radix-ui/react-dialog':
-        specifier: ^1.1.4
-        version: 1.1.4(@types/react-dom@18.2.0)(@types/react@18.2.12)(react-dom@18.2.0)(react@18.2.0)
-      '@radix-ui/react-dropdown-menu':
-        specifier: ^2.1.4
-        version: 2.1.4(@types/react-dom@18.2.0)(@types/react@18.2.12)(react-dom@18.2.0)(react@18.2.0)
-      '@radix-ui/react-label':
-        specifier: ^2.1.1
-        version: 2.1.1(@types/react-dom@18.2.0)(@types/react@18.2.12)(react-dom@18.2.0)(react@18.2.0)
-      '@radix-ui/react-popover':
-        specifier: 1.1.2
-        version: 1.1.2(@types/react-dom@18.2.0)(@types/react@18.2.12)(react-dom@18.2.0)(react@18.2.0)
-      '@radix-ui/react-radio-group':
-        specifier: ^1.2.2
-        version: 1.2.2(@types/react-dom@18.2.0)(@types/react@18.2.12)(react-dom@18.2.0)(react@18.2.0)
-      '@radix-ui/react-scroll-area':
-        specifier: ^1.2.2
-        version: 1.2.2(@types/react-dom@18.2.0)(@types/react@18.2.12)(react-dom@18.2.0)(react@18.2.0)
-      '@radix-ui/react-select':
-        specifier: ^2.1.4
-        version: 2.1.4(@types/react-dom@18.2.0)(@types/react@18.2.12)(react-dom@18.2.0)(react@18.2.0)
-      '@radix-ui/react-separator':
-        specifier: ^1.1.1
-        version: 1.1.1(@types/react-dom@18.2.0)(@types/react@18.2.12)(react-dom@18.2.0)(react@18.2.0)
-      '@radix-ui/react-slider':
-        specifier: ^1.2.2
-        version: 1.2.2(@types/react-dom@18.2.0)(@types/react@18.2.12)(react-dom@18.2.0)(react@18.2.0)
-      '@radix-ui/react-slot':
-        specifier: ^1.1.1
-        version: 1.1.1(@types/react@18.2.12)(react@18.2.0)
-      '@radix-ui/react-tabs':
-        specifier: ^1.1.2
-        version: 1.1.2(@types/react-dom@18.2.0)(@types/react@18.2.12)(react-dom@18.2.0)(react@18.2.0)
-      '@radix-ui/react-toast':
-        specifier: ^1.2.5
-        version: 1.2.5(@types/react-dom@18.2.0)(@types/react@18.2.12)(react-dom@18.2.0)(react@18.2.0)
-      '@radix-ui/react-tooltip':
-        specifier: ^1.1.6
-        version: 1.1.6(@types/react-dom@18.2.0)(@types/react@18.2.12)(react-dom@18.2.0)(react@18.2.0)
-      class-variance-authority:
-        specifier: ^0.7.1
-        version: 0.7.1
-      clsx:
-        specifier: ^1.2.1
-        version: 1.2.1
-      cmdk:
-        specifier: 1.0.0
-        version: 1.0.0(@types/react-dom@18.2.0)(@types/react@18.2.12)(react-dom@18.2.0)(react@18.2.0)
-      react-hook-form:
-        specifier: ^7.54.2
-        version: 7.54.2(react@18.2.0)
-      tailwind-merge:
-        specifier: ^2.6.0
-        version: 2.6.0
-      tailwindcss-animate:
-        specifier: ^1.0.7
-        version: 1.0.7(tailwindcss@3.3.2)
-    devDependencies:
-      '@types/mocha':
-        specifier: ^10.0.1
-        version: 10.0.1
-      '@types/react':
-        specifier: ~18.2.0
-        version: 18.2.12
-      '@types/react-dom':
-        specifier: ~18.2.0
-        version: 18.2.0
-      chai:
-        specifier: ^4.3.7
-        version: 4.3.8
-      concurrently:
-        specifier: ^9.1.2
-        version: 9.1.2
-      mocha:
-        specifier: ^10.2.0
-        version: 10.2.0
-      patch-package:
-        specifier: ^6.5.1
-        version: 6.5.1
-      postcss:
-        specifier: 8.4.24
-        version: 8.4.24
-      postinstall-postinstall:
-        specifier: ^2.1.0
-        version: 2.1.0
-      react:
-        specifier: ~18.2.0
-        version: 18.2.0
-      react-dom:
-        specifier: ~18.2.0
-        version: 18.2.0(react@18.2.0)
-      tailwindcss:
-        specifier: 3.3.2
-        version: 3.3.2
-      tsc-alias:
-        specifier: ^1.8.10
-        version: 1.8.10
-      tsconfig-paths:
-        specifier: ^4.2.0
-        version: 4.2.0
-      tsx:
-        specifier: ^4.7.1
-        version: 4.7.1
-      typescript:
-        specifier: ^5.5.4
-        version: 5.5.4
 
   vscode-extension:
     dependencies:

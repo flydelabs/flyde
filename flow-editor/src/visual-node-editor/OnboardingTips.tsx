@@ -11,8 +11,8 @@ import { GroupEditorBoardData } from "./VisualNodeEditor";
 import { usePorts } from "../flow-editor/ports";
 import { useLocalStorage } from "../lib/user-preferences";
 import { useDarkMode } from "../flow-editor/DarkModeContext";
-import { Alert, AlertDescription, Lightbulb, Check } from "@flyde/ui";
-import { cn } from "@/lib/utils";
+import { Alert, AlertDescription, Lightbulb, Check } from "../ui";
+import { cn } from "../lib/utils";
 
 interface TipData {
   tip: string;

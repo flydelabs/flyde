@@ -1,9 +1,9 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@flyde/ui";
-import { Card } from "@flyde/ui";
-import { Input } from "@flyde/ui";
-import { ScrollArea } from "@flyde/ui";
-import { Alert, AlertDescription } from "@flyde/ui";
-import { Button } from "@flyde/ui";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../ui";
+import { Card } from "../../ui";
+import { Input } from "../../ui";
+import { ScrollArea } from "../../ui";
+import { Alert, AlertDescription } from "../../ui";
+import { Button } from "../../ui";
 import { DebuggerEvent, PinDebuggerEvent, PinType } from "@flyde/core";
 import { HistoryPayload } from "@flyde/remote-debugger";
 import React, { useEffect } from "react";

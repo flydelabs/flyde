@@ -9,10 +9,10 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "@flyde/ui";
-import { Button, HotkeyIndication } from "@flyde/ui";
-import { Alert, AlertDescription, AlertTitle } from "@flyde/ui";
-import { useToast } from "@flyde/ui";
+} from "../../ui";
+import { Button, HotkeyIndication } from "../../ui";
+import { Alert, AlertDescription, AlertTitle } from "../../ui";
+import { useToast } from "../../ui";
 
 interface CustomNodeModalProps {
   isOpen: boolean;

@@ -1,5 +1,5 @@
-import { Button, DialogTitle, useAiCompletion } from "@flyde/ui";
-import { Dialog, DialogContent, DialogHeader } from "@flyde/ui";
+import { Button, DialogTitle, useAiCompletion } from "../../ui";
+import { Dialog, DialogContent, DialogHeader } from "../../ui";
 
 
 import {
@@ -13,8 +13,8 @@ import React, { useCallback, useMemo, useEffect } from "react";
 import { loadConfigEditorComponent } from "./loadConfigEditorComponent";
 import { usePorts } from "../../flow-editor/ports";
 import { InstanceIcon } from "../instance-view/InstanceIcon";
-import { HotkeyIndication } from "@flyde/ui";
-import { Loader } from "@/lib/loader";
+import { HotkeyIndication } from "../../ui";
+import { Loader } from "../../lib/loader";
 
 export interface InstanceConfigEditorProps {
   ins: EditorCodeNodeInstance;

@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import React from "react";
 import { ConfigurableEditorComp } from "@flyde/core";
 import { SwitchConfig } from "./Switch.flyde";
-import { Button, Input, Label, Separator, Checkbox, AiCompletionProvider, FormGroup } from "@flyde/ui";
+import { Button, Input, Label, Separator, Checkbox, AiCompletionProvider, FormGroup } from "@flyde/flow-editor";
 
 const MAX_CASES = 6;
 

@@ -1,12 +1,12 @@
-import { Button } from "@flyde/ui";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@flyde/ui";
+import { Button } from "../../ui";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../ui";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@flyde/ui";
+} from "../../ui";
 import { useMemo } from "react";
 import * as React from "react";
 import {

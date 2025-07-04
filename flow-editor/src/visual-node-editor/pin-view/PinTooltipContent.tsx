@@ -2,7 +2,7 @@ import { HistoryPayload } from "@flyde/remote-debugger";
 import * as React from "react";
 import { cn } from "../../lib/utils";
 import { formatTimeAgo } from "../../lib/format-time";
-import { HotkeyIndication } from "@flyde/ui";
+import { HotkeyIndication } from "../../ui";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faChevronUp, faSpinner } from "@fortawesome/free-solid-svg-icons";
 

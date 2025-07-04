@@ -1,6 +1,6 @@
 import { CodeNode, isDefined } from "@flyde/core";
 import { timeToString } from "../../Timing/common";
-import type { ConfigurableInput } from "@flyde/ui";
+import type { ConfigurableInput } from "@flyde/flow-editor";
 
 export type CollectConfigTime = {
   strategy: "time";

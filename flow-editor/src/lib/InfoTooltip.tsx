@@ -1,12 +1,12 @@
 import React from "react";
 
-import { Info } from "@flyde/ui/dist/icons";
+import { Info } from "../ui/icons";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@flyde/ui";
+} from "../ui";
 
 export interface InfoTooltipProps {
   content: string | JSX.Element;

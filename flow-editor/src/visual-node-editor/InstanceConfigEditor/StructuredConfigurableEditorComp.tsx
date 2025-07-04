@@ -6,7 +6,7 @@ import {
   ConfigurableValue,
   PartialEditorPorts,
 } from "@flyde/core";
-import { ConfigurableFieldEditor } from "@flyde/ui";
+import { ConfigurableFieldEditor } from "../../ui";
 import { usePorts } from "../../flow-editor/ports";
 import { useState } from "react";
 

@@ -1,4 +1,4 @@
-import { AiCompletionProvider, FormGroup, Textarea } from "@flyde/ui";
+import { AiCompletionProvider, FormGroup, Textarea } from "@flyde/flow-editor";
 import type { CodeExpressionConfig } from "./CodeExpression.flyde";
 import React, { useCallback } from "react";
 import { ConfigurableEditorComp } from "@flyde/core";

@@ -5,7 +5,7 @@ import {
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
-} from "@flyde/ui";
+} from "../../ui";
 import { ImportableEditorNode } from "@flyde/core";
 import { InstanceIcon } from "../instance-view";
 
