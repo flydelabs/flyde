@@ -1,12 +1,15 @@
 name: Visual Regression Tests
 
-on:
-  pull_request:
-    branches: [main]
-    paths:
-      - 'vscode-extension/**'
-      - 'flow-editor/**'
-      - '.github/workflows/visual-tests.yml'
+# DISABLED: Managing visual test baselines across different machines is too much of a hassle
+# Visual tests can still be run locally using: pnpm run test:visual
+
+# on:
+#   pull_request:
+#     branches: [main]
+#     paths:
+#       - 'vscode-extension/**'
+#       - 'flow-editor/**'
+#       - '.github/workflows/visual-tests.yml'
 
 jobs:
   visual-tests:
