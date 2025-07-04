@@ -8,22 +8,28 @@ on:
     branches:
       - main
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-test-lint:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Install Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 20
-      - uses: pnpm/action-setup@v2
+      - uses: pnpm/action-setup@v4
         name: Install pnpm
         id: pnpm-install
         with:
-          version: 9
+          version: 10.12.4
           run_install: false
 
       - name: Get pnpm store directory
@@ -32,7 +38,7 @@ jobs:
         run: |
           echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         name: Setup pnpm cache
         with:
           path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
@@ -40,7 +46,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --no-frozen-lockfile
       - name: Lint
         run: pnpm run lint
       - name: Build
@@ -55,27 +61,55 @@ jobs:
           SKIP_VISUAL_TESTS: true
       - name: If release, Publish to NPM
         if: github.ref == 'refs/heads/main' && (startsWith(github.event.head_commit.message, 'Prepare for v') || startsWith(github.event.head_commit.message, 'Prepare for v1.0.0-alpha'))
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
+          if [ -z "$NODE_AUTH_TOKEN" ]; then
+            echo "Error: NPM_TOKEN is not set"
+            exit 1
+          fi
+          
           git config --global user.name "GitHub Actions"
           git config --global user.email "github-actions@users.noreply.github.com"
           echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
+          
+          root_dir=$(pwd)
+          
           for package in $(pnpm list --json --only-projects -r | jq -c '.[]'); do
             name=$(echo $package | jq -r '.name')
             path=$(echo $package | jq -r '.path')
-            cd $path
+            cd "$path"
+            
             is_private=$(echo $package | jq '.private')
             if [[ "$is_private" == "true" ]]; then
               echo "Skipping private package: $name"
-              cd $root
+              cd "$root_dir"
               continue
             fi
+            
             if [[ "$name" == "website" || "$name" == "flyde-vscode" ]]; then
                 echo "Skipping package: $name"
-                cd $root
+                cd "$root_dir"
                 continue
             fi
             
-            # Check if this is an alpha release
+            # Dry run first to validate
+            echo "Validating package: $name"
+            if [[ $(grep -o '"version": "1.0.0-alpha' package.json) ]]; then
+              pnpm publish --dry-run --access public --no-git-checks --tag alpha || {
+                echo "Dry run failed for $name"
+                cd "$root_dir"
+                continue
+              }
+            else
+              pnpm publish --dry-run --access public --no-git-checks || {
+                echo "Dry run failed for $name"
+                cd "$root_dir"
+                continue
+              }
+            fi
+            
+            # Actual publish
             if [[ $(grep -o '"version": "1.0.0-alpha' package.json) ]]; then
               echo "Publishing alpha version of $name"
               pnpm publish --access public --force --no-git-checks --tag alpha
@@ -85,5 +119,5 @@ jobs:
             fi
             
             echo "Published $name\n\n"
-            cd $root
+            cd "$root_dir"
           done
