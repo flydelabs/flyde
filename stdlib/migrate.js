@@ -6,8 +6,8 @@ const {
   isRefNodeInstance,
   flydeFlowSchema,
 } = require("@flyde/core");
-const { deserializeFlow, serializeFlow } = require("@flyde/runtime");
-const res = require("@flyde/runtime");
+const { deserializeFlow, serializeFlow } = require("@flyde/resolver");
+const res = require("@flyde/resolver");
 const fs = require("fs");
 const path = require("path");
 const yaml = require("yaml");

@@ -13,7 +13,6 @@
     "@flyde/core": "workspace:1.0.0-alpha.18",
     "@flyde/flow-editor": "workspace:1.0.0-alpha.18",
     "@flyde/resolver": "workspace:1.0.0-alpha.18",
-    "@flyde/runtime": "workspace:1.0.0-alpha.18",
     "@flyde/stdlib": "workspace:1.0.0-alpha.18",
     "@mdx-js/loader": "^3.1.0",
     "@mdx-js/react": "^3.1.0",

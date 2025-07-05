@@ -404,8 +404,8 @@ export class FlydeEditorEditorProvider
 
                 const command =
                   res === "Use Yarn"
-                    ? "yarn add @flyde/runtime"
-                    : "npm install @flyde/runtime";
+                    ? "yarn add @flyde/resolver"
+                    : "npm install @flyde/resolver";
 
                 // notify user
                 vscode.window.showInformationMessage(

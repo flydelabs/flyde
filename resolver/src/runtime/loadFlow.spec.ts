@@ -5,7 +5,7 @@ import Sinon = require("sinon");
 import { loadFlow } from ".";
 
 const loadFixture = (name: string) => {
-  return loadFlow(`./src/fixture/${name}.flyde`, join(__dirname, ".."));
+  return loadFlow(`./src/runtime/fixture/${name}.flyde`, join(__dirname, "../.."));
 };
 describe("runtime", () => {
   describe("loadFlow", () => {

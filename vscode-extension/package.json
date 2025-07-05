@@ -220,7 +220,6 @@
     "@flyde/core": "workspace:*",
     "@flyde/flow-editor": "workspace:*",
     "@flyde/resolver": "workspace:*",
-    "@flyde/runtime": "workspace:*",
     "@flyde/stdlib": "workspace:*",
     "@paralleldrive/cuid2": "^2.2.2",
     "@tsconfig/node16": "^1.0.3",

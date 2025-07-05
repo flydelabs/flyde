@@ -1,0 +1,109 @@
+import { ExecuteParams, FlydeFlow, simplifiedExecute } from "@flyde/core";
+import { createServerReferencedNodeFinder, resolveVisualNode } from "../resolver";
+import { deserializeFlowByPath } from "../serdes";
+import EventEmitter = require("events");
+
+import findRoot from "find-root";
+import { join } from "path";
+import { createDebugger } from "./create-debugger";
+
+import { getCallPath } from "./get-call-path";
+import { debugLogger } from "./logger";
+
+// convenience exports
+export { InternalCodeNode, BaseNode, VisualNode } from "@flyde/core";
+
+// debugger exports
+export * from "./debugger";
+
+export type PromiseWithEmitter<T> = Promise<T> & { on: EventEmitter["on"] };
+
+export type LoadedFlowExecuteFn<Inputs> = (
+  inputs?: Inputs,
+  extraParams?: Partial<
+    ExecuteParams & { onOutputs?: (key: string, data: any) => void } & {
+      executionDelay?: number;
+    }
+  >
+) => {
+  result: Promise<Record<string, any>>;
+  destroy: () => void;
+};
+
+const calcImplicitRoot = (fnName: string) => {
+  const callPath = getCallPath(fnName);
+  return findRoot(callPath);
+};
+
+export function loadFlowFromContent<Inputs>(
+  flow: FlydeFlow,
+  fullFlowPath: string,
+  debuggerUrl: string,
+  secrets: Record<string, string> = {}
+): LoadedFlowExecuteFn<Inputs> {
+  const findReferencedNode = createServerReferencedNodeFinder(fullFlowPath);
+  const node = resolveVisualNode(flow.node, findReferencedNode, secrets);
+
+  return (inputs, params = {}) => {
+    const { onOutputs, onCompleted, ...otherParams } = params;
+    debugLogger("Executing flow %s", params);
+
+    let destroy;
+    const promise: any = new Promise(async (res, rej) => {
+      const _debugger =
+        otherParams._debugger ||
+        (await createDebugger(
+          debuggerUrl,
+          fullFlowPath,
+          params.executionDelay
+        ));
+
+      debugLogger("Using debugger %o", _debugger);
+      destroy = await simplifiedExecute(node, inputs ?? {}, onOutputs, {
+        _debugger: _debugger,
+        onCompleted: (data) => {
+          void (async function () {
+            if (_debugger && _debugger.destroy) {
+              await _debugger.destroy();
+            }
+            console.log("onCompleted", data);
+            res(data);
+            if (onCompleted) {
+              onCompleted(data);
+            }
+          })();
+        },
+        onBubbleError: (err) => {
+          rej(err);
+        },
+        ...otherParams,
+      });
+    }) as any;
+    return { result: promise, destroy };
+  };
+}
+
+export function loadFlowByPath<Inputs>(
+  relativePath: string,
+  root?: string,
+  secrets?: Record<string, string>
+): LoadedFlowExecuteFn<Inputs> {
+  const _root = root || calcImplicitRoot("loadFlowByPath");
+  const flowPath = join(_root, relativePath);
+  const flow = deserializeFlowByPath(flowPath);
+
+  return loadFlowFromContent(flow, flowPath, "http://localhost:8545", secrets);
+}
+
+export function loadFlow<Inputs>(
+  flowOrPath: FlydeFlow | string,
+  root?: string,
+  secrets?: Record<string, string>
+): LoadedFlowExecuteFn<Inputs> {
+  const _root = root || calcImplicitRoot("loadFlow");
+  if (typeof flowOrPath === "string") {
+    return loadFlowByPath(flowOrPath, _root, secrets);
+  } else {
+    return loadFlowFromContent(flowOrPath, _root, "http://localhost:8545", secrets);
+  }
+}
