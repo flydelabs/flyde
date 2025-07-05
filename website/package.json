@@ -12,7 +12,6 @@
   "dependencies": {
     "@flyde/core": "workspace:1.0.0-alpha.18",
     "@flyde/flow-editor": "workspace:1.0.0-alpha.18",
-    "@flyde/remote-debugger": "workspace:1.0.0-alpha.18",
     "@flyde/resolver": "workspace:1.0.0-alpha.18",
     "@flyde/runtime": "workspace:1.0.0-alpha.18",
     "@flyde/stdlib": "workspace:1.0.0-alpha.18",

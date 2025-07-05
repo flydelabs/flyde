@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import { createService } from "./service/service";
 
-import { setupRemoteDebuggerServer } from "@flyde/remote-debugger/dist/setup-server";
+import { setupRemoteDebuggerServer } from "./debugger";
 import { createServer } from "http";
 import { resolveFlowByPath } from "@flyde/resolver";
 import { join } from "path";

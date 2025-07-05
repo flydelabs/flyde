@@ -1,6 +1,6 @@
 import { Server as HttpServer } from "http";
-import { DebuggerServerEventType } from "./common";
 import {
+  DebuggerServerEventType,
   OMap,
   isDefined,
   debugLogger,
@@ -8,11 +8,11 @@ import {
   DebuggerEventType,
   ERROR_PIN_ID,
   PinDebuggerEvent,
+  HistoryPayload,
 } from "@flyde/core";
 
 import { Server } from "socket.io";
 import { Express } from "express";
-import { HistoryPayload } from ".";
 
 const debug = debugLogger(`remote-debugger:server`);
 

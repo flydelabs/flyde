@@ -28,7 +28,6 @@
   "license": "MIT",
   "dependencies": {
     "@flyde/core": "workspace:*",
-    "@flyde/remote-debugger": "workspace:*",
     "@flyde/resolver": "workspace:*",
     "@flyde/stdlib": "workspace:*",
     "@types/callsite": "^1.0.31",
@@ -45,6 +44,8 @@
     "module-from-string": "^3.3.0",
     "require-from-string": "^2.0.2",
     "resolve-from": "^5.0.0",
+    "serialize-error": "^11.0.0",
+    "socket.io-client": "^4.5.1",
     "ts-node": "^10.9.1",
     "yaml": "^2.3.1",
     "zod": "^3.22.2"

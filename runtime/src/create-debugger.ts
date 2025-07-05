@@ -2,7 +2,7 @@ import { Debugger } from "@flyde/core";
 import {
   createRuntimeClient,
   RuntimeDebuggerClient,
-} from "@flyde/remote-debugger/dist/clients/runtime";
+} from "./debugger";
 import { debugLogger } from "./logger";
 
 const withTimeout = <T>(promise: Promise<T>, timeout: number): Promise<T> => {

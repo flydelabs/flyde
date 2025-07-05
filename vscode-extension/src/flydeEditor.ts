@@ -34,7 +34,7 @@ import { reportEvent, reportException } from "./telemetry";
 import { Uri } from "vscode";
 
 import { forkRunFlow } from "@flyde/dev-server/dist/runner/runFlow.host";
-import { createEditorClient } from "@flyde/remote-debugger";
+import { createEditorClient } from "@flyde/flow-editor";
 import { maybeAskToStarProject } from "./maybeAskToStarProject";
 import { customCodeNodeFromCode } from "@flyde/core/dist/misc/custom-code-node-from-code";
 import { createAiCompletion } from "./ai";

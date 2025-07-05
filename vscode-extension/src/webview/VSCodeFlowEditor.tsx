@@ -16,7 +16,7 @@ import {
   FlydeFlow,
   isVisualNode,
 } from "@flyde/core";
-import { createEditorClient, EditorDebuggerClient } from "@flyde/remote-debugger/dist/client";
+import { createEditorClient, EditorDebuggerClient } from "@flyde/flow-editor";
 import { createVsCodePorts } from "./vscode-ports";
 import { useDebouncedCallback } from "use-debounce";
 

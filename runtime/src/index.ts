@@ -12,6 +12,9 @@ import { debugLogger } from "./logger";
 // convenience exports
 export { InternalCodeNode, BaseNode, VisualNode } from "@flyde/core";
 
+// debugger exports
+export * from "./debugger";
+
 export type PromiseWithEmitter<T> = Promise<T> & { on: EventEmitter["on"] };
 
 export type LoadedFlowExecuteFn<Inputs> = (
