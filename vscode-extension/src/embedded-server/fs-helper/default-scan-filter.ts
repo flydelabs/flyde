@@ -4,7 +4,7 @@ import { existsSync, readFileSync } from "fs";
 import ignore from "ignore";
 import { join, relative } from "path";
 
-let cache = {};
+let cache: Record<string, string> = {};
 
 const safelyGetGitRoot = (path: string): string | undefined => {
   if (cache[path]) {
@@ -24,9 +24,9 @@ const safelyGetGitRoot = (path: string): string | undefined => {
 
 export const defaultScanFilter = (path: string, root: string): boolean => {
   const gitRoot = safelyGetGitRoot(root);
-  const ignoreFilePath = gitRoot && join(gitRoot, "../.gitignore");
+  const ignoreFilePath = gitRoot ? join(gitRoot, "../.gitignore") : undefined;
 
-  if (gitRoot && existsSync(ignoreFilePath)) {
+  if (gitRoot && ignoreFilePath && existsSync(ignoreFilePath)) {
     const relativePath = relative(path, gitRoot);
 
     const ig = ignore().add(readFileSync(ignoreFilePath, "utf-8"));

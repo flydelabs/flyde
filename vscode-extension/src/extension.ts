@@ -7,7 +7,7 @@ import * as execa from "execa";
 
 var fp = require("find-free-port");
 
-import { initFlydeDevServer } from "@flyde/dev-server/dist/lib";
+import { createEmbeddedServer } from "./embedded-server";
 
 import { join } from "path";
 
@@ -62,11 +62,14 @@ export function activate(context: vscode.ExtensionContext) {
   fp(FLYDE_DEFAULT_SERVER_PORT).then(([port]: [number]) => {
     reportEvent("devServerStart");
 
-    const editorStaticsRoot = join(__dirname, "../editor-build");
-    const cleanServer = initFlydeDevServer({
+    const editorStaticsRoot = join(__dirname, "../webview-dist");
+    const cleanServer = createEmbeddedServer({
       port,
-      root: fileRoot,
       editorStaticsRoot,
+    }, (events) => {
+      events.forEach((event) => {
+        debugOutputChannel.appendLine(JSON.stringify(event));
+      });
     });
 
     context.subscriptions.push({

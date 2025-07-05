@@ -1,7 +1,6 @@
 packages:
   - "core"
   - "flow-editor"
-  - "dev-server"
   - "stdlib"
   - "website"
   - "resolver"

@@ -1,6 +1,5 @@
-// runFlow.ts
-import { runFlow } from "./runFlow";
-import { onMessage, sendMessage } from "./typedProcessMessage";
+import { runFlow } from "./run-flow";
+import { onMessage, sendMessage } from "./typed-process-message";
 
 onMessage(process, "runFlow", async (params) => {
   const { job, destroy, result } = await runFlow(...params);

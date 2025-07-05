@@ -24,13 +24,20 @@ async function generateNode(
   });
 
   const code = response.choices[0].message.content;
+  if (!code) {
+    throw new Error("No code generated from OpenAI");
+  }
+  
   const usage = response.usage?.total_tokens ?? -1;
 
   console.info(`Flyde node generation used a total of ${usage} tokens`);
 
   const nodeId = code.match(/export const (\w+)/)?.[1];
+  if (!nodeId) {
+    throw new Error("Could not extract node ID from generated code");
+  }
 
-  const fileName = nodeId?.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
+  const fileName = nodeId.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
 
   return { code, fileName };
 }

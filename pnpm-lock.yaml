@@ -98,106 +98,6 @@ importers:
         specifier: ^5.5.4
         version: 5.8.3
 
-  dev-server:
-    dependencies:
-      '@flyde/core':
-        specifier: workspace:*
-        version: link:../core
-      '@flyde/resolver':
-        specifier: workspace:*
-        version: link:../resolver
-      '@flyde/runtime':
-        specifier: workspace:*
-        version: link:../runtime
-      '@flyde/stdlib':
-        specifier: workspace:*
-        version: link:../stdlib
-      '@paralleldrive/cuid2':
-        specifier: ^2.2.2
-        version: 2.2.2
-      '@types/args':
-        specifier: ^5.0.0
-        version: 5.0.3
-      '@types/cuid':
-        specifier: ^1.3.1
-        version: 1.3.1
-      '@types/express':
-        specifier: ^4.17.17
-        version: 4.17.23
-      '@types/glob':
-        specifier: ^7.2.0
-        version: 7.2.0
-      '@types/node':
-        specifier: ^11.15.54
-        version: 11.15.54
-      args:
-        specifier: ^5.0.3
-        version: 5.0.3
-      axios:
-        specifier: ^0.27.2
-        version: 0.27.2
-      body-parser:
-        specifier: ^1.20.2
-        version: 1.20.3
-      chokidar:
-        specifier: ^3.5.3
-        version: 3.6.0
-      concurrently:
-        specifier: ^5.3.0
-        version: 5.3.0
-      cors:
-        specifier: ^2.8.5
-        version: 2.8.5
-      dotenv:
-        specifier: ^16.3.1
-        version: 16.6.1
-      ejs:
-        specifier: ^3.1.9
-        version: 3.1.10
-      express:
-        specifier: ^4.18.2
-        version: 4.21.2
-      find-git-root:
-        specifier: ^1.0.4
-        version: 1.0.4
-      glob:
-        specifier: ^8.1.0
-        version: 8.1.0
-      ignore:
-        specifier: ^5.2.4
-        version: 5.3.2
-      openai:
-        specifier: ^4.47.1
-        version: 4.104.0(ws@8.18.3)(zod@3.25.74)
-      pkg-up:
-        specifier: ^3.1.0
-        version: 3.1.0
-      resolve-from:
-        specifier: ^5.0.0
-        version: 5.0.0
-      socket.io:
-        specifier: ^4.5.1
-        version: 4.8.1
-      source-map-support:
-        specifier: ^0.5.21
-        version: 0.5.21
-      toml:
-        specifier: ^3.0.0
-        version: 3.0.0
-      typescript:
-        specifier: ^5.5.4
-        version: 5.8.3
-      walker:
-        specifier: ^1.0.8
-        version: 1.0.8
-    devDependencies:
-      fs-extra:
-        specifier: ^10.1.0
-        version: 10.1.0
-      ts-node-dev:
-        specifier: ^2.0.0
-        version: 2.0.0(@types/node@11.15.54)(typescript@5.8.3)
-
   flow-editor:
     dependencies:
       '@flyde/core':
@@ -696,9 +596,6 @@ importers:
       '@flyde/core':
         specifier: workspace:*
         version: link:../core
-      '@flyde/dev-server':
-        specifier: workspace:*
-        version: link:../dev-server
       '@flyde/flow-editor':
         specifier: workspace:*
         version: link:../flow-editor
@@ -711,12 +608,18 @@ importers:
       '@flyde/stdlib':
         specifier: workspace:*
         version: link:../stdlib
+      '@paralleldrive/cuid2':
+        specifier: ^2.2.2
+        version: 2.2.2
       '@tsconfig/node16':
         specifier: ^1.0.3
         version: 1.0.4
       '@types/axios':
         specifier: ^0.14.4
         version: 0.14.4
+      '@types/express':
+        specifier: ^4.17.17
+        version: 4.17.23
       '@types/fs-extra':
         specifier: ^11.0.1
         version: 11.0.4
@@ -741,12 +644,24 @@ importers:
       execa:
         specifier: ^6.1.0
         version: 6.1.0
+      express:
+        specifier: ^4.18.2
+        version: 4.21.2
       find-free-port:
         specifier: ^2.0.0
         version: 2.0.0
+      find-git-root:
+        specifier: ^1.0.4
+        version: 1.0.4
+      ignore:
+        specifier: ^5.2.4
+        version: 5.3.2
       openai:
         specifier: ^4.47.1
         version: 4.104.0(ws@8.18.3)(zod@3.25.74)
+      pkg-up:
+        specifier: ^3.1.0
+        version: 3.1.0
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -756,12 +671,18 @@ importers:
       resolve-from:
         specifier: ^5.0.0
         version: 5.0.0
+      socket.io:
+        specifier: ^4.5.1
+        version: 4.8.1
       ts-node:
         specifier: ^10.9.2
         version: 10.9.2(@types/node@18.11.9)(typescript@5.8.3)
       use-debounce:
         specifier: ^8.0.4
         version: 8.0.4(react@18.2.0)
+      walker:
+        specifier: ^1.0.8
+        version: 1.0.8
     devDependencies:
       '@playwright/test':
         specifier: ^1.53.2
@@ -3555,9 +3476,6 @@ packages:
   '@tybys/wasm-util@0.9.0':
     resolution: {integrity: sha512-6+7nlbMVX/PVDCwaIQ8nTOPveOcFLSt8GcXdx8hD0bt39uWxYT88uXzqTd4fTvqta7oeUJqudepapKNt2DYJFw==}
 
-  '@types/args@5.0.3':
-    resolution: {integrity: sha512-7dNWhsptvu0ZgJPAqXlG3DtK5/YHWCtaixBPunNBDRyY9Scy2jQfIb2s7rWIN4Mx9bRnbVM72lEnQd3X8UxJTA==}
-
   '@types/axios@0.14.4':
     resolution: {integrity: sha512-9JgOaunvQdsQ/qW2OPmE5+hCeUB52lQSolecrFrthct55QekhmXEwT203s20RL+UHtCQc15y3VXpby9E7Kkh/g==}
     deprecated: This is a stub types definition. axios provides its own type definitions, so you do not need this installed.
@@ -3627,9 +3545,6 @@ packages:
 
   '@types/glob@5.0.30':
     resolution: {integrity: sha512-ZM05wDByI+WA153sfirJyEHoYYoIuZ7lA2dB/Gl8ymmpMTR78fNRtDMqa7Z6SdH4fZdLWZNRE6mZpx3XqBOrHw==}
-
-  '@types/glob@7.2.0':
-    resolution: {integrity: sha512-ZUxbzKl0IfJILTS6t7ip5fQQM/J3TJYubDm3nMbgubNNYS62eXeUpoLUC8/7fJNiFYHTrGPQn7hspDUzIHX3UA==}
 
   '@types/glob@8.1.0':
     resolution: {integrity: sha512-IO+MJPVhoqz+28h1qLAcBEH2+xHMK6MTyHJc7MTnnYb6wsoLR29POVGJ7LycmVXIqyy/4/2ShP5sUwTXuOwb/w==}
@@ -4313,10 +4228,6 @@ packages:
   argparse@2.0.1:
     resolution: {integrity: sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q==}
 
-  args@5.0.3:
-    resolution: {integrity: sha512-h6k/zfFgusnv3i5TU08KQkVKuCPBtL/PWQbWkHUxvJrZ2nAyeaUupneemcrgn1xmqxPQsPIzwkUhOpoqPDRZuA==}
-    engines: {node: '>= 6.0.0'}
-
   aria-hidden@1.2.6:
     resolution: {integrity: sha512-ik3ZgC9dY/lYVVM++OISsaYDeg1tb0VtP5uL3ouh1koGOaUMDPpbFIei4JkFimWUFPn90sbMNMXQAIVOlnYKJA==}
     engines: {node: '>=10'}
@@ -4409,9 +4320,6 @@ packages:
   async-listener@0.6.10:
     resolution: {integrity: sha512-gpuo6xOyF4D5DE5WvyqZdPA3NGhiT6Qf07l7DCB0wwDEsLvDIbCr6j9S5aj5Ch96dLace5tXVzWBZkxU/c5ohw==}
     engines: {node: <=0.11.8 || >0.11.10}
-
-  async@3.2.6:
-    resolution: {integrity: sha512-htCUDlxyyCLMgaM3xXg0C0LW2xqfuQ6p05pCEIsXuyQ+a1koYKTuBMzRNwmybfLgvJDMd0r1LTn4+E0Ti6C2AA==}
 
   asynckit@0.4.0:
     resolution: {integrity: sha512-Oei9OH4tRh0YqU3GxhX79dM/mwVgvbZJaSNaRk+bshkj0S5cfHcgYakreBjrHwatXKbz+IoIdYLxrKim2MjW0Q==}
@@ -4584,10 +4492,6 @@ packages:
   camelcase-css@2.0.1:
     resolution: {integrity: sha512-QOSvevhslijgYwRx6Rv7zKdMF8lbRmx+uQGx2+vDc+KI/eBnsy9kit5aj23AgGu3pa4t9AgwbnXWqS+iOY+2aA==}
     engines: {node: '>= 6'}
-
-  camelcase@5.0.0:
-    resolution: {integrity: sha512-faqwZqnWxbxn+F1d399ygeamQNy3lPp/H9H6rNrqYh4FSVCtcY+3cub1MxA8o9mDd55mM8Aghuu/kuyYA6VTsA==}
-    engines: {node: '>=6'}
 
   camelcase@5.3.1:
     resolution: {integrity: sha512-L28STB170nwWS63UjtlEOE3dldQApaJXZkOI1uMFfzf3rRuPegHaHesyee+YxQ+W6SvRDQV6UrdOdRiR153wJg==}
@@ -5143,10 +5047,6 @@ packages:
   domutils@3.2.2:
     resolution: {integrity: sha512-6kZKyUajlDuqlHKVX1w7gyslj9MPIXzIFiz/rGu35uC1wMi+kMhQwGhl4lt9unC9Vb9INnY9Z3/ZA3+FhASLaw==}
 
-  dotenv@16.6.1:
-    resolution: {integrity: sha512-uBq4egWHTcTt33a72vpSG0z3HnPuIl6NqYcTrKEg2azoEyl2hpW0zqlxysq2pK9HlDIHyHyakeYaYnSAwd8bow==}
-    engines: {node: '>=12'}
-
   dts-bundle@0.7.3:
     resolution: {integrity: sha512-EEAEuPRk8QyKhoN90NHTh+spSQujkkvOnKWUfuzpmC/fgryiWopL1SegSktx0UsoPfNidIGVDN7/AXpBDBv0WQ==}
     engines: {node: '>= 0.10.0'}
@@ -5170,11 +5070,6 @@ packages:
 
   ee-first@1.1.1:
     resolution: {integrity: sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==}
-
-  ejs@3.1.10:
-    resolution: {integrity: sha512-UeJmFfOrAQS8OJWPZ4qtgHyWExa088/MtK5UEyoJGFH67cDEXkZSviOiKRCZ4Xij0zxI3JECgYs3oKx+AizQBA==}
-    engines: {node: '>=0.10.0'}
-    hasBin: true
 
   electron-to-chromium@1.5.179:
     resolution: {integrity: sha512-UWKi/EbBopgfFsc5k61wFpV7WrnnSlSzW/e2XcBmS6qKYTivZlLtoll5/rdqRTxGglGHkmkW0j0pFNJG10EUIQ==}
@@ -5589,9 +5484,6 @@ packages:
   file-entry-cache@8.0.0:
     resolution: {integrity: sha512-XXTUwCvisa5oacNGRP9SfNtYBNAMi+RPwBFmblZEF7N7swHYQS6/Zfk7SRwx4D5j3CH211YNRco1DEMNVfZCnQ==}
     engines: {node: '>=16.0.0'}
-
-  filelist@1.0.4:
-    resolution: {integrity: sha512-w1cEuf3S+DrLCQL7ET6kz+gmlJdbq9J7yXCSjK/OZCPA+qEN1WyF4ZAf0YYJa4/shHJra2t/d/r8SV4Ji+x+8Q==}
 
   fill-range@7.1.1:
     resolution: {integrity: sha512-YsGpe3WHLK8ZYi4tWDg2Jy3ebRz2rXowDxnld4bkQB00cc/1Zw9AWnC0i9ztDJitivtQvaI9KaLyKrc+hBW0yg==}
@@ -6370,11 +6262,6 @@ packages:
   jackspeak@3.4.3:
     resolution: {integrity: sha512-OGlZQpz2yfahA/Rd1Y8Cd9SIEsqvXkLVoSw/cgwhnhFMDbsQFeZYoJJ7bIZBS9BcamUW96asq/npPWugM+RQBw==}
 
-  jake@10.9.2:
-    resolution: {integrity: sha512-2P4SQ0HrLQ+fw6llpLnOaGAvN2Zu6778SJMrCUwns4fOoG9ayrTiZk3VV8sCPkVZF8ab0zksVpS8FDY5pRCNBA==}
-    engines: {node: '>=10'}
-    hasBin: true
-
   jest-diff@26.6.2:
     resolution: {integrity: sha512-6m+9Z3Gv9wN0WFVasqjCL/06+EFCMTqDEUl/b87HYK2rAPTyfz4ZIuSlPhY51PIQRWx5TaxeF1qmXKe9gfN3sA==}
     engines: {node: '>= 10.14.2'}
@@ -6532,10 +6419,6 @@ packages:
   lcid@2.0.0:
     resolution: {integrity: sha512-avPEb8P8EGnwXKClwsNUgryVjllcRqtMYa49NTsbQagYuT1DcXnl1915oxWjoyGrXR6zH/Y0Zc96xWsPcoDKeA==}
     engines: {node: '>=6'}
-
-  leven@2.1.0:
-    resolution: {integrity: sha512-nvVPLpIHUxCUoRLrFqTgSxXJ614d8AgQoWl7zPe/2VadE8+1dpU3LBhowRuBAcuwruWtOdD8oYC9jDNJjXDPyA==}
-    engines: {node: '>=0.10.0'}
 
   leven@3.1.0:
     resolution: {integrity: sha512-qsda+H8jTaUaN/x5vzW2rzc+8Rw4TAQ/4KjB46IwK5VH+IlVeeeje/EoZRpiXvIqjFgK84QffqPztGI3VBLG1A==}
@@ -7058,10 +6941,6 @@ packages:
   mongodb@4.17.2:
     resolution: {integrity: sha512-mLV7SEiov2LHleRJPMPrK2PMyhXFZt2UQLC4VD4pnth3jMjYKHhtqfwwkkvS/NXuo/Fp3vbhaNcXrIDaLRb9Tg==}
     engines: {node: '>=12.9.0'}
-
-  mri@1.1.4:
-    resolution: {integrity: sha512-6y7IjGPm8AzlvoUrwAaw1tLnUBudaS3752vcd8JtrpGGQn+rXIe63LFVHm/YMwtqAuh+LJPCFdlLYPWM1nYn6w==}
-    engines: {node: '>=4'}
 
   ms@2.0.0:
     resolution: {integrity: sha512-Tpp60P6IUJDTuOq/5Z8cdskzJujfwqfOTkrwIwj7IRISpnkJnT6SyJ4PCPnGMoFjC9ddhal5KVIYtAt97ix05A==}
@@ -8640,9 +8519,6 @@ packages:
   toidentifier@1.0.1:
     resolution: {integrity: sha512-o5sSPKEkg/DIQNmH43V0/uerLrpzVedkUh8tGNvaeXpfpuwjKenlSox/2O/BTlZUtEe+JG7s5YhEz608PlAHRA==}
     engines: {node: '>=0.6'}
-
-  toml@3.0.0:
-    resolution: {integrity: sha512-y/mWCZinnvxjTKYhJ+pYxwD0mRLVvOtdS2Awbgxln6iEnt4rk0yBxeSBHkGJcPucRiG0e55mwWp+g/05rsrd6w==}
 
   touch@3.1.1:
     resolution: {integrity: sha512-r0eojU4bI8MnHr8c5bNo7lJDdI2qXlWWJk6a9EAFG7vbhTjElYhBVS3/miuE0uOuoLdb8Mc/rVfsmm6eo5o9GA==}
@@ -12218,8 +12094,6 @@ snapshots:
       tslib: 2.8.1
     optional: true
 
-  '@types/args@5.0.3': {}
-
   '@types/axios@0.14.4':
     dependencies:
       axios: 0.27.2
@@ -12315,11 +12189,6 @@ snapshots:
     dependencies:
       '@types/minimatch': 6.0.0
       '@types/node': 12.20.55
-
-  '@types/glob@7.2.0':
-    dependencies:
-      '@types/minimatch': 6.0.0
-      '@types/node': 11.15.54
 
   '@types/glob@8.1.0':
     dependencies:
@@ -13118,13 +12987,6 @@ snapshots:
 
   argparse@2.0.1: {}
 
-  args@5.0.3:
-    dependencies:
-      camelcase: 5.0.0
-      chalk: 2.4.2
-      leven: 2.1.0
-      mri: 1.1.4
-
   aria-hidden@1.2.6:
     dependencies:
       tslib: 2.8.1
@@ -13238,8 +13100,6 @@ snapshots:
     dependencies:
       semver: 5.7.2
       shimmer: 1.2.1
-
-  async@3.2.6: {}
 
   asynckit@0.4.0: {}
 
@@ -13421,8 +13281,6 @@ snapshots:
   callsites@3.1.0: {}
 
   camelcase-css@2.0.1: {}
-
-  camelcase@5.0.0: {}
 
   camelcase@5.3.1: {}
 
@@ -13982,8 +13840,6 @@ snapshots:
       domelementtype: 2.3.0
       domhandler: 5.0.3
 
-  dotenv@16.6.1: {}
-
   dts-bundle@0.7.3:
     dependencies:
       '@types/detect-indent': 0.1.30
@@ -14017,10 +13873,6 @@ snapshots:
       safe-buffer: 5.2.1
 
   ee-first@1.1.1: {}
-
-  ejs@3.1.10:
-    dependencies:
-      jake: 10.9.2
 
   electron-to-chromium@1.5.179: {}
 
@@ -14324,7 +14176,7 @@ snapshots:
       eslint: 9.30.1(jiti@2.4.2)
       eslint-import-resolver-node: 0.3.9
       eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@7.18.0(eslint@9.30.1(jiti@2.4.2))(typescript@5.8.3))(eslint@9.30.1(jiti@2.4.2)))(eslint@9.30.1(jiti@2.4.2))
-      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@7.18.0(eslint@9.30.1(jiti@2.4.2))(typescript@5.8.3))(eslint-import-resolver-typescript@3.10.1)(eslint@9.30.1(jiti@2.4.2))
+      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@7.18.0(eslint@9.30.1(jiti@2.4.2))(typescript@5.8.3))(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@7.18.0(eslint@9.30.1(jiti@2.4.2))(typescript@5.8.3))(eslint@9.30.1(jiti@2.4.2)))(eslint@9.30.1(jiti@2.4.2)))(eslint@9.30.1(jiti@2.4.2))
       eslint-plugin-jsx-a11y: 6.10.2(eslint@9.30.1(jiti@2.4.2))
       eslint-plugin-react: 7.37.5(eslint@9.30.1(jiti@2.4.2))
       eslint-plugin-react-hooks: 5.2.0(eslint@9.30.1(jiti@2.4.2))
@@ -14354,7 +14206,7 @@ snapshots:
       tinyglobby: 0.2.14
       unrs-resolver: 1.10.1
     optionalDependencies:
-      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@7.18.0(eslint@9.30.1(jiti@2.4.2))(typescript@5.8.3))(eslint-import-resolver-typescript@3.10.1)(eslint@9.30.1(jiti@2.4.2))
+      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@7.18.0(eslint@9.30.1(jiti@2.4.2))(typescript@5.8.3))(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@7.18.0(eslint@9.30.1(jiti@2.4.2))(typescript@5.8.3))(eslint@9.30.1(jiti@2.4.2)))(eslint@9.30.1(jiti@2.4.2)))(eslint@9.30.1(jiti@2.4.2))
     transitivePeerDependencies:
       - supports-color
 
@@ -14369,7 +14221,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-plugin-import@2.32.0(@typescript-eslint/parser@7.18.0(eslint@9.30.1(jiti@2.4.2))(typescript@5.8.3))(eslint-import-resolver-typescript@3.10.1)(eslint@9.30.1(jiti@2.4.2)):
+  eslint-plugin-import@2.32.0(@typescript-eslint/parser@7.18.0(eslint@9.30.1(jiti@2.4.2))(typescript@5.8.3))(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@7.18.0(eslint@9.30.1(jiti@2.4.2))(typescript@5.8.3))(eslint@9.30.1(jiti@2.4.2)))(eslint@9.30.1(jiti@2.4.2)))(eslint@9.30.1(jiti@2.4.2)):
     dependencies:
       '@rtsao/scc': 1.1.0
       array-includes: 3.1.9
@@ -14745,10 +14597,6 @@ snapshots:
   file-entry-cache@8.0.0:
     dependencies:
       flat-cache: 4.0.1
-
-  filelist@1.0.4:
-    dependencies:
-      minimatch: 5.1.6
 
   fill-range@7.1.1:
     dependencies:
@@ -15557,13 +15405,6 @@ snapshots:
     optionalDependencies:
       '@pkgjs/parseargs': 0.11.0
 
-  jake@10.9.2:
-    dependencies:
-      async: 3.2.6
-      chalk: 4.1.2
-      filelist: 1.0.4
-      minimatch: 3.1.2
-
   jest-diff@26.6.2:
     dependencies:
       chalk: 4.1.2
@@ -15783,8 +15624,6 @@ snapshots:
   lcid@2.0.0:
     dependencies:
       invert-kv: 2.0.0
-
-  leven@2.1.0: {}
 
   leven@3.1.0: {}
 
@@ -16552,8 +16391,6 @@ snapshots:
       '@mongodb-js/saslprep': 1.3.0
     transitivePeerDependencies:
       - aws-crt
-
-  mri@1.1.4: {}
 
   ms@2.0.0: {}
 
@@ -18511,8 +18348,6 @@ snapshots:
   toggle-selection@1.0.6: {}
 
   toidentifier@1.0.1: {}
-
-  toml@3.0.0: {}
 
   touch@3.1.1: {}
 

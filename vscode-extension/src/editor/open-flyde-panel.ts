@@ -1,5 +1,4 @@
-import { EditorVisualNode, FlydeFlow } from "@flyde/core";
-import { createServerReferencedNodeFinder } from "@flyde/resolver";
+import { EditorVisualNode } from "@flyde/core";
 import * as vscode from "vscode";
 
 export type WebviewContentParams = {
@@ -22,12 +21,7 @@ const getViteAssets = async (
   webview: vscode.Webview,
   isDev: boolean
 ) => {
-  if (isDev) {
-    return {
-      scriptTags: '<script type="module" src="http://localhost:5173/src/webview/index.tsx"></script>',
-      styleTags: ''
-    };
-  } else {
+  
     // Read the built manifest to get the asset files
     const manifestPath = vscode.Uri.joinPath(root, "webview-dist/.vite/manifest.json");
     let manifest: any = {};
@@ -67,7 +61,6 @@ const getViteAssets = async (
 
     return { scriptTags, styleTags };
   }
-};
 
 export async function getWebviewContent(params: WebviewContentParams) {
   const {

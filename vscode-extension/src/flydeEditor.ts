@@ -3,8 +3,7 @@ import * as vscode from "vscode";
 import { getWebviewContent } from "./editor/open-flyde-panel";
 var fp = require("find-free-port");
 
-import { scanImportableNodes } from "@flyde/dev-server/dist/service/scan-importable-nodes";
-import { generateAndSaveNode } from "@flyde/dev-server/dist/service/ai/generate-node-from-prompt";
+import { scanImportableNodes, generateAndSaveNode } from "./embedded-server";
 import { getBaseNodesLibraryData } from "@flyde/stdlib/dist/nodes-library-data";
 
 import {
@@ -33,7 +32,7 @@ import { reportEvent, reportException } from "./telemetry";
 
 import { Uri } from "vscode";
 
-import { forkRunFlow } from "@flyde/dev-server/dist/runner/runFlow.host";
+import { EmbeddedFlowRunner } from "./embedded-server";
 import { createEditorClient } from "@flyde/flow-editor";
 import { maybeAskToStarProject } from "./maybeAskToStarProject";
 import { customCodeNodeFromCode } from "@flyde/core/dist/misc/custom-code-node-from-code";
@@ -245,6 +244,8 @@ export class FlydeEditorEditorProvider
       executionId
     );
 
+    const flowRunner = new EmbeddedFlowRunner(this.params.port);
+
     _debugger.onBatchedEvents((events) => {
       const { mainOutputChannel, debugOutputChannel } = this.params;
       events.forEach((event) => {
@@ -427,7 +428,7 @@ export class FlydeEditorEditorProvider
                 });
 
                 const secrets = await getSecrets();
-                const job = await forkRunFlow({
+                const job = await flowRunner.forkRunFlow({
                   runFlowParams: [
                     lastFlow,
                     fullDocumentPath,

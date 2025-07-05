@@ -1,4 +1,4 @@
-import pkgUp from "pkg-up";
+import pkgUp = require("pkg-up");
 
 const FLYDE_PACKAGE_PATTERN = /^\@flyde\/(.*)/;
 const FLYDE_LIBRARY = /^flyde[-_](.*)/;

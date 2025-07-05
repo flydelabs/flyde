@@ -1,4 +1,4 @@
-import { codeNodeToImportableEditorNode, ImportableEditorNode } from "@flyde/core";
+import { codeNodeToImportableEditorNode, ImportableEditorNode, visualNodeToImportableEditorNode } from "@flyde/core";
 import {
   deserializeFlow,
   isCodeNodePath,
@@ -33,16 +33,10 @@ export async function resolveDependentPackages(
               readFileSync(filePath, "utf8"),
               filePath
             );
-            const importableNode: ImportableEditorNode = {
-              id: flow.node.id,
-              type: "visual",
-              displayName: flow.node.displayName,
-              description: flow.node.description,
-              aliases: flow.node.aliases,
-              icon: flow.node.icon,
-              source: { type: "package", data: pkgName },
-              editorNode: flow.node as any,
-            };
+            const importableNode = visualNodeToImportableEditorNode(flow.node, {
+              type: "package",
+              data: pkgName,
+            });
             return { ...acc, [flow.node.id]: importableNode };
           } catch (e) {
             console.error(`Skipping corrupt flow at ${filePath}, error: ${e}`);

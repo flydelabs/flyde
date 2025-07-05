@@ -1,5 +1,5 @@
 import { ChildProcess } from "child_process";
-import type { runFlow } from "./runFlow";
+import type { runFlow } from "./run-flow";
 import { FlowJob } from "@flyde/core";
 
 export interface ProcessMessageEventsMap {
@@ -17,7 +17,7 @@ export function sendMessage<T extends ProcessMessageEventType>(
   type: T,
   data: ProcessMessageEventsMap[T]
 ) {
-  process.send({ type, data });
+  process.send?.({ type, data });
 }
 
 export function onMessage<T extends ProcessMessageEventType>(

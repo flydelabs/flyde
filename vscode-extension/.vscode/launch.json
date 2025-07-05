@@ -17,17 +17,6 @@
       }
     },
     {
-      "name": "Run Extension (prod mode)",
-      "type": "extensionHost",
-      "request": "launch",
-      "args": ["--extensionDevelopmentPath=${workspaceFolder}"],
-      "outFiles": ["${workspaceFolder}/out/**/*.js"],
-      "preLaunchTask": "${defaultBuildTask}",
-      "env": {
-        "MODE": "prod"
-      }
-    },
-    {
       "name": "Extension Tests",
       "type": "extensionHost",
       "request": "launch",
