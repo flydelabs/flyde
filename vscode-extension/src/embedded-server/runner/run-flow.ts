@@ -2,8 +2,6 @@ import { FlowJob, FlydeFlow } from "@flyde/core";
 import { createId } from "@paralleldrive/cuid2";
 import { loadFlowFromContent } from "@flyde/runtime";
 
-import "dotenv/config";
-
 export async function runFlow(
   flow: FlydeFlow,
   flowPath: string,
@@ -34,4 +32,3 @@ export async function runFlow(
 
   return { job, result: data.result, destroy: data.destroy };
 }
-2;

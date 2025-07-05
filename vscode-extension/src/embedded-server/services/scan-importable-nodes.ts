@@ -110,7 +110,7 @@ export async function scanImportableNodes(
       } catch (e) {
         allErrors.push({
           path: file.fullPath,
-          message: e.message,
+          message: e instanceof Error ? e.message : String(e),
         });
         console.error(`Skipping corrupt flow at ${file.fullPath}, error: ${e}`);
         return acc;
@@ -135,9 +135,9 @@ function getLocalFlydeFiles(rootPath: string) {
   const queue = [...structure];
   while (queue.length) {
     const item = queue.pop();
-    if (item.isFolder === true) {
-      queue.push(...item.children);
-    } else if (item.isFlyde || item.isFlydeCode) {
+    if (item && 'isFolder' in item && item.isFolder === true) {
+      queue.push(...('children' in item ? item.children : []));
+    } else if (item && 'isFlyde' in item && (item.isFlyde || ('isFlydeCode' in item && item.isFlydeCode))) {
       localFlydeFiles.push(item as FlydeFile);
     }
   }
