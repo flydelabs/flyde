@@ -28,11 +28,11 @@ describe("findReferencedNodeServer", () => {
     assert.equal(editorConfig.editorComponentBundleContent, contentOfCompJs);
   });
 
-  it("resolves custom editor component bundle paths for build in stdlib nodes", async () => {
+  it("resolves custom editor component bundle paths for built-in nodes", async () => {
     const fixturePath = getFixturePath("custom-editor-component/flow.flyde");
     const instance = codeNodeInstance("someInsId", "CodeExpression", {
       type: "package",
-      data: "@flyde/stdlib",
+      data: "@flyde/nodes",
     });
 
     const findReferencedNode = createServerReferencedNodeFinder(fixturePath);
@@ -81,7 +81,7 @@ describe("findReferencedNodeServer", () => {
     const fixturePath = getFixturePath("a-imports-b-code-from-stdlib/flow.flyde");
     const instance = codeNodeInstance("someInsId", "Add", {
       type: "package",
-      data: "@flyde/stdlib",
+      data: "@flyde/nodes",
     });
 
     const findReferencedNode = createServerReferencedNodeFinder(fixturePath);

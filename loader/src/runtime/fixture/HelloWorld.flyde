@@ -14,7 +14,7 @@ node:
       type: code
       source:
         type: package
-        data: "@flyde/stdlib"
+        data: "@flyde/nodes"
   connections:
     - from:
         insId: ar205nq5xbkfixibwz516z0q

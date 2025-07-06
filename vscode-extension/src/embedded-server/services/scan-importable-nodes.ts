@@ -18,7 +18,7 @@ import {
 import { FlydeFile } from "../fs-helper/shared";
 import { getFlydeDependencies } from "./get-flyde-dependencies";
 import { resolveDependentPackages } from "./resolve-dependent-packages";
-import * as StdLib from "@flyde/stdlib/dist/all";
+import * as StdLib from "@flyde/nodes/dist/all";
 import { readFileSync } from "fs";
 import { scanFolderStructure } from "./scan-folders-structure";
 

@@ -1,5 +1,5 @@
 imports:
-  "@flyde/stdlib":
+  "@flyde/nodes":
     - InlineValue
 node:
   instances:

@@ -56,7 +56,7 @@ export const ExampleBlogpost = {
       "type": "code",
       "source": {
         "type": "package",
-        "data": "@flyde/stdlib"
+        "data": "@flyde/nodes"
       },
       "displayName": "Generate subject",
       "node": {
@@ -180,7 +180,7 @@ export const ExampleBlogpost = {
       "type": "code",
       "source": {
         "type": "package",
-        "data": "@flyde/stdlib"
+        "data": "@flyde/nodes"
       },
       "node": {
         "id": "Anthropic__Anthropic-1j14gnl",
@@ -270,7 +270,7 @@ export const ExampleBlogpost = {
       "type": "code",
       "source": {
         "type": "package",
-        "data": "@flyde/stdlib"
+        "data": "@flyde/nodes"
       },
       "displayName": "Blog post data",
       "node": {
@@ -368,7 +368,7 @@ export const ExampleBlogpost = {
       "type": "code",
       "source": {
         "type": "package",
-        "data": "@flyde/stdlib"
+        "data": "@flyde/nodes"
       },
       "node": {
         "id": "OpenAI__OpenAI-bt14gqc",

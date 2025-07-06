@@ -1,18 +1,18 @@
 imports:
-  "@flyde/stdlib":
+  "@flyde/nodes":
     - CodeExpression
 node:
   instances:
     - pos:
-        x: -239.89255249023438
-        y: -19.17472473144535
+        x: -163.24603759765625
+        y: -17.4033013916016
       id: vgfkmgitsirzego7i4gksg3w
       inputConfig: {}
       nodeId: CodeExpression__vgfkmgitsirzego7i4gksg3w
       macroId: CodeExpression
       macroData:
-        value: 1 + 1
-        label: 1 + 1
+        value: inputs.a + adv.context.magicNumber
+        label: inputs.a + adv.context.magicNumber
   connections:
     - from:
         insId: vgfkmgitsirzego7i4gksg3w
@@ -25,7 +25,7 @@ node:
         pinId: input
       to:
         insId: vgfkmgitsirzego7i4gksg3w
-        pinId: __trigger
+        pinId: a
   id: Fixture
   inputs:
     input:
@@ -42,5 +42,5 @@ node:
       x: -23.264428942324532
       y: 237.25953921502617
     output:
-      x: -51.684790039062506
-      y: 153.5158935546875
+      x: -58.35034790039063
+      y: 114.3506103515625

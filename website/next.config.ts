@@ -7,7 +7,7 @@ const nextConfig: NextConfig = {
     "@flyde/core",
     "@flyde/flow-editor",
     "@flyde/loader",
-    "@flyde/stdlib"
+    "@flyde/nodes"
   ],
 
   // Configure Turbopack for development

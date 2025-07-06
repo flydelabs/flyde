@@ -4,7 +4,7 @@ import { getWebviewContent } from "./editor/open-flyde-panel";
 var fp = require("find-free-port");
 
 import { scanImportableNodes, generateAndSaveNode } from "./embedded-server";
-import { getBaseNodesLibraryData } from "@flyde/stdlib/dist/nodes-library-data";
+import { getBaseNodesLibraryData } from "@flyde/nodes/dist/nodes-library-data";
 
 import {
   deserializeFlow,

@@ -11,7 +11,7 @@ node:
       type: code
       source:
         type: package
-        data: "@flyde/stdlib"
+        data: "@flyde/nodes"
       style:
         icon: fa-file
         color: "#00f5d4"
@@ -36,7 +36,7 @@ node:
               nodeId: Split
               source:
                 type: package
-                data: "@flyde/stdlib"
+                data: "@flyde/nodes"
               config: {}
               type: code
             - pos:
@@ -47,7 +47,7 @@ node:
               nodeId: Head and rest
               source:
                 type: package
-                data: "@flyde/stdlib"
+                data: "@flyde/nodes"
               config: {}
               type: code
             - pos:
@@ -58,7 +58,7 @@ node:
               nodeId: Loop List
               source:
                 type: package
-                data: "@flyde/stdlib"
+                data: "@flyde/nodes"
               config: {}
               type: code
             - pos:
@@ -71,7 +71,7 @@ node:
               nodeId: Split
               source:
                 type: package
-                data: "@flyde/stdlib"
+                data: "@flyde/nodes"
               config: {}
               type: code
             - pos:
@@ -82,7 +82,7 @@ node:
               nodeId: InlineValue
               source:
                 type: package
-                data: "@flyde/stdlib"
+                data: "@flyde/nodes"
               config:
                 value:
                   type: string
@@ -102,7 +102,7 @@ node:
               nodeId: CodeExpression
               source:
                 type: package
-                data: "@flyde/stdlib"
+                data: "@flyde/nodes"
               config:
                 value: '"\n"'
                 label: \n
@@ -115,7 +115,7 @@ node:
               nodeId: Collect
               source:
                 type: package
-                data: "@flyde/stdlib"
+                data: "@flyde/nodes"
               config:
                 strategy: count
                 count:
@@ -210,7 +210,7 @@ node:
       type: code
       source:
         type: package
-        data: "@flyde/stdlib"
+        data: "@flyde/nodes"
     - pos:
         x: -308.2318115234375
         y: 299.2100143432617
@@ -232,7 +232,7 @@ node:
               nodeId: Loop List
               source:
                 type: package
-                data: "@flyde/stdlib"
+                data: "@flyde/nodes"
               config: {}
               type: code
             - pos:
@@ -245,7 +245,7 @@ node:
               nodeId: Get List Element
               source:
                 type: package
-                data: "@flyde/stdlib"
+                data: "@flyde/nodes"
               config: {}
               type: code
             - pos:
@@ -258,7 +258,7 @@ node:
               nodeId: Conditional
               source:
                 type: package
-                data: "@flyde/stdlib"
+                data: "@flyde/nodes"
               config:
                 compareTo:
                   type: dynamic
@@ -286,7 +286,7 @@ node:
               nodeId: InlineValue
               source:
                 type: package
-                data: "@flyde/stdlib"
+                data: "@flyde/nodes"
               config:
                 value:
                   type: number
@@ -306,7 +306,7 @@ node:
               nodeId: Collect
               source:
                 type: package
-                data: "@flyde/stdlib"
+                data: "@flyde/nodes"
               config:
                 strategy: time
                 time:
@@ -379,7 +379,7 @@ node:
       type: code
       source:
         type: package
-        data: "@flyde/stdlib"
+        data: "@flyde/nodes"
     - pos:
         x: -944.0381005859375
         y: 246.93364501953124
@@ -399,7 +399,7 @@ node:
       type: code
       source:
         type: package
-        data: "@flyde/stdlib"
+        data: "@flyde/nodes"
     - pos:
         x: -512.8389892578125
         y: 367.9654006958008
@@ -419,7 +419,7 @@ node:
       type: code
       source:
         type: package
-        data: "@flyde/stdlib"
+        data: "@flyde/nodes"
   connections:
     - from:
         insId: clfuqs69n00014668p8jg106j

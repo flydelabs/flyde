@@ -365,7 +365,7 @@ describe("resolver", () => {
     });
   });
 
-  it('resolves stdlib nodes from the internal copy of "@flyde/stdlib"', async () => {
+  it('resolves stdlib nodes from the internal copy of "@flyde/nodes"', async () => {
     const node = resolveFlowByPath(
       getFixturePath("a-imports-b-code-from-stdlib/flow.flyde")
     );
@@ -458,7 +458,7 @@ describe("resolver", () => {
       assert.equal(s.getCalls().length, 3); // duplicate configurable duplicates to 3
     });
 
-    it('resolves stdlib configurables from the internal copy of "@flyde/stdlib"', async () => {
+    it('resolves stdlib configurables from the internal copy of "@flyde/nodes"', async () => {
       const node = resolveFlowByPath(
         getFixturePath("a-imports-b-configurable-from-stdlib/flow.flyde")
       );

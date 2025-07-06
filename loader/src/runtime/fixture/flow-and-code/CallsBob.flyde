@@ -1,5 +1,5 @@
 imports:
-  "@flyde/stdlib": []
+  "@flyde/nodes": []
   bob.flyde.ts:
     - Bob
 node:

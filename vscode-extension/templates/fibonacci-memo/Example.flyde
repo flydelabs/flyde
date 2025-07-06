@@ -17,7 +17,7 @@ node:
       type: code
       source:
         type: package
-        data: "@flyde/stdlib"
+        data: "@flyde/nodes"
       style:
         color: "#fee440"
     - pos:
@@ -38,7 +38,7 @@ node:
       type: code
       source:
         type: package
-        data: "@flyde/stdlib"
+        data: "@flyde/nodes"
       style:
         color: "#f15bb5"
     - pos:
@@ -59,7 +59,7 @@ node:
       type: code
       source:
         type: package
-        data: "@flyde/stdlib"
+        data: "@flyde/nodes"
       style:
         color: "#f15bb5"
     - pos:
@@ -98,7 +98,7 @@ node:
       type: code
       source:
         type: package
-        data: "@flyde/stdlib"
+        data: "@flyde/nodes"
     - pos:
         x: 86.97685401746526
         y: 157.9057780358312
@@ -117,7 +117,7 @@ node:
       type: code
       source:
         type: package
-        data: "@flyde/stdlib"
+        data: "@flyde/nodes"
     - pos:
         x: -799.5610046386719
         y: 283.7032214355469
@@ -137,7 +137,7 @@ node:
       type: code
       source:
         type: package
-        data: "@flyde/stdlib"
+        data: "@flyde/nodes"
     - pos:
         x: -767.0813684082032
         y: 370.8050549316406
@@ -157,7 +157,7 @@ node:
       type: code
       source:
         type: package
-        data: "@flyde/stdlib"
+        data: "@flyde/nodes"
     - pos:
         x: -728.83802734375
         y: 84.67604919433592
@@ -180,7 +180,7 @@ node:
       type: code
       source:
         type: package
-        data: "@flyde/stdlib"
+        data: "@flyde/nodes"
   connections:
     - from:
         insId: Add-539

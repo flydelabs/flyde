@@ -45,7 +45,7 @@ pnpm bump:alpha      # Bump to alpha version
     ↓
 @flyde/loader
     ↓
-@flyde/stdlib & @flyde/loader & @flyde/flow-editor
+@flyde/nodes & @flyde/loader & @flyde/flow-editor
     ↓
 @flyde/dev-server
     ↓

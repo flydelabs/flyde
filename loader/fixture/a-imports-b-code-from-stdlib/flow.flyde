@@ -12,7 +12,7 @@ node:
       config: {}
       source:
         type: package
-        data: "@flyde/stdlib"
+        data: "@flyde/nodes"
   connections:
     - from:
         insId: __this

@@ -44,7 +44,7 @@ graph TD
 
 - **@flyde/core**: Foundation package with no Flyde dependencies, only external libs (rxjs, zod, cuid)
 - **@flyde/loader**: Depends on core, stdlib, and remote-debugger
-- **@flyde/stdlib**: Depends on core and ui
+- **@flyde/nodes**: Depends on core and ui
 - **VS Code Extension**: Consumes all packages to provide the IDE integration
 
 ## 2. Node Capabilities and Types

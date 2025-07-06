@@ -22,7 +22,7 @@ node:
         value: ''
     nodeId: GetAttribute
     source:
-      data: "@flyde/stdlib"
+      data: "@flyde/nodes"
       type: package
     inputConfig: {}
   - id: f08drhtyp6l624ogsd3tfmep
@@ -42,7 +42,7 @@ node:
 
     nodeId: Note
     source:
-      data: "@flyde/stdlib"
+      data: "@flyde/nodes"
       type: package
     inputConfig: {}
   - id: lv7iua6bx4hxo6cr7uv3lsxe
@@ -56,7 +56,7 @@ node:
         value: Hey, {{name}} ✨
     nodeId: InlineValue
     source:
-      data: "@flyde/stdlib"
+      data: "@flyde/nodes"
       type: package
     inputConfig: {}
   - id: dktnda0y035r2wo8p4hjnnw5
@@ -75,7 +75,7 @@ node:
         value: Some value
     nodeId: Conditional
     source:
-      data: "@flyde/stdlib"
+      data: "@flyde/nodes"
       type: package
     inputConfig: {}
   - id: xpyxfgrttjd9oenllcxt6i8e
@@ -89,7 +89,7 @@ node:
         value: Hello, guest
     nodeId: InlineValue
     source:
-      data: "@flyde/stdlib"
+      data: "@flyde/nodes"
       type: package
     inputConfig: {}
   connections:
