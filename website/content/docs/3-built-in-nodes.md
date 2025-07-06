@@ -10,7 +10,7 @@ sidebar_position: 3
 This article is a work in progress. It will be updated with more information soon.
 :::
 
-Flyde comes with a set of built-in nodes that can be used to build flows. All of these nodes can be found in the [standard library](https://github.com/flydelabs/flyde/tree/main/stdlib) and are available as an npm package `@flyde/stdlib`.
+Flyde comes with a set of built-in nodes that can be used to build flows. All of these nodes can be found in the [standard library](https://github.com/flydelabs/flyde/tree/main/nodes) and are available as an npm package `@flyde/nodes`.
 
 ## Control Flow
 

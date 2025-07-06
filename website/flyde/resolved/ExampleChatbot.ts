@@ -53,7 +53,7 @@ export const ExampleChatbot = {
       "type": "code",
       "source": {
         "type": "package",
-        "data": "@flyde/stdlib"
+        "data": "@flyde/nodes"
       },
       "node": {
         "id": "OpenAI__OpenAI-ls04gsf",
@@ -171,7 +171,7 @@ export const ExampleChatbot = {
       "type": "code",
       "source": {
         "type": "package",
-        "data": "@flyde/stdlib"
+        "data": "@flyde/nodes"
       },
       "node": {
         "id": "Switch__Switch-4v04goe",
@@ -235,7 +235,7 @@ export const ExampleChatbot = {
       "type": "code",
       "source": {
         "type": "package",
-        "data": "@flyde/stdlib"
+        "data": "@flyde/nodes"
       },
       "node": {
         "id": "Anthropic__Anthropic-ed04gxr",
@@ -370,7 +370,7 @@ export const ExampleChatbot = {
       "type": "code",
       "source": {
         "type": "package",
-        "data": "@flyde/stdlib"
+        "data": "@flyde/nodes"
       },
       "node": {
         "id": "OpenAIResponsesAPI__OpenAIResponsesAPI-wm14gof",

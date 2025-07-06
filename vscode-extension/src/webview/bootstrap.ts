@@ -40,7 +40,7 @@ export const getBootstrapData = (): BootstrapData | null => {
               b: { type: 'dynamic', value: '{{b}}' }
             },
             type: 'code',
-            source: { type: 'package', data: '@flyde/stdlib' },
+            source: { type: 'package', data: '@flyde/nodes' },
             node: {
               id: 'Concat',
               displayName: 'Concat',
@@ -68,7 +68,7 @@ export const getBootstrapData = (): BootstrapData | null => {
               value: { type: 'dynamic', value: '' }
             },
             type: 'code',
-            source: { type: 'package', data: '@flyde/stdlib' },
+            source: { type: 'package', data: '@flyde/nodes' },
             node: {
               id: 'Delay',
               displayName: 'Delay',
@@ -97,7 +97,7 @@ export const getBootstrapData = (): BootstrapData | null => {
               label: { type: 'string', value: '"Hello"' }
             },
             type: 'code',
-            source: { type: 'package', data: '@flyde/stdlib' },
+            source: { type: 'package', data: '@flyde/nodes' },
             node: {
               id: 'InlineValue',
               displayName: 'Inline Value',
@@ -123,7 +123,7 @@ export const getBootstrapData = (): BootstrapData | null => {
               label: { type: 'string', value: '"World"' }
             },
             type: 'code',
-            source: { type: 'package', data: '@flyde/stdlib' },
+            source: { type: 'package', data: '@flyde/nodes' },
             node: {
               id: 'InlineValue',
               displayName: 'Inline Value',

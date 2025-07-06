@@ -1,5 +1,5 @@
 imports:
-  "@flyde/stdlib":
+  "@flyde/nodes":
     - name: ListFrom3
       alias: ListFrom3
     - name: ListFrom2

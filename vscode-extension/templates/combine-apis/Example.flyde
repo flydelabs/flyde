@@ -20,7 +20,7 @@ node:
       type: code
       source:
         type: package
-        data: "@flyde/stdlib"
+        data: "@flyde/nodes"
     - pos:
         x: -415.4161682128906
         y: -21.21417236328125
@@ -37,7 +37,7 @@ node:
       type: code
       source:
         type: package
-        data: "@flyde/stdlib"
+        data: "@flyde/nodes"
     - pos:
         x: -411.33513061523433
         y: 180.83938903808593
@@ -51,7 +51,7 @@ node:
       type: code
       source:
         type: package
-        data: "@flyde/stdlib"
+        data: "@flyde/nodes"
     - pos:
         x: 42.321480712890605
         y: 111.49931770630582
@@ -64,7 +64,7 @@ node:
       type: code
       source:
         type: package
-        data: "@flyde/stdlib"
+        data: "@flyde/nodes"
     - pos:
         x: -698.4244519042968
         y: 22.2734375
@@ -84,7 +84,7 @@ node:
               nodeId: CodeExpression
               source:
                 type: package
-                data: "@flyde/stdlib"
+                data: "@flyde/nodes"
               config:
                 value: "`https://random-data-api.com/api/v2/users?size=${inputs.count}`"
                 label: "`https://random-data-api.com/api/v2/users?size=${inputs.count}`"
@@ -97,7 +97,7 @@ node:
               nodeId: Http
               source:
                 type: package
-                data: "@flyde/stdlib"
+                data: "@flyde/nodes"
               config:
                 method:
                   type: string
@@ -180,7 +180,7 @@ node:
               type: code
               source:
                 type: package
-                data: "@flyde/stdlib"
+                data: "@flyde/nodes"
             - id: Example-d3049ww
               config:
                 method:
@@ -205,7 +205,7 @@ node:
               type: code
               source:
                 type: package
-                data: "@flyde/stdlib"
+                data: "@flyde/nodes"
           connections:
             - from:
                 insId: lmfgntghsb9grf4urevt19zm
@@ -263,7 +263,7 @@ node:
       type: code
       source:
         type: package
-        data: "@flyde/stdlib"
+        data: "@flyde/nodes"
     - pos:
         x: -192.55480590820315
         y: 174.76429070499591
@@ -280,7 +280,7 @@ node:
       type: code
       source:
         type: package
-        data: "@flyde/stdlib"
+        data: "@flyde/nodes"
     - pos:
         x: -179.01827636718747
         y: 53.728411865234364
@@ -297,7 +297,7 @@ node:
       type: code
       source:
         type: package
-        data: "@flyde/stdlib"
+        data: "@flyde/nodes"
   connections:
     - from:
         insId: zfhcgwxnesaxpux6bgjwnan2

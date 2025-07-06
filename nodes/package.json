@@ -1,7 +1,7 @@
 {
-  "name": "@flyde/stdlib",
+  "name": "@flyde/nodes",
   "version": "1.0.0-alpha.18",
-  "description": "Flyde's StdLib",
+  "description": "Flyde's Standard Node Library",
   "flyde": {
     "exposes": [
       "dist/**/*.flyde.js"

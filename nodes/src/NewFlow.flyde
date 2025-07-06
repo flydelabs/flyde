@@ -1,5 +1,5 @@
 imports:
-  "@flyde/stdlib": []
+  "@flyde/nodes": []
   ControlFlow/Console.flyde.ts:
     - Log2
 node:

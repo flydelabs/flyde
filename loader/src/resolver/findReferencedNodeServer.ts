@@ -6,7 +6,7 @@ import {
   AdvancedCodeNode,
 } from "@flyde/core";
 
-import * as _StdLib from "@flyde/stdlib/dist/all";
+import * as _StdLib from "@flyde/nodes/dist/all";
 import { join } from "path";
 import { existsSync, readFileSync } from "fs";
 import { resolveImportablePaths } from "./resolveImportablePaths";
@@ -63,26 +63,26 @@ export function createServerReferencedNodeFinder(
           .find((node) => node.id === instance.nodeId);
 
         if (!nodeWrapper) {
-          if (instance.source.data === "@flyde/stdlib") {
+          if (instance.source.data === "@flyde/nodes") {
             const maybeFromStdlib = LocalStdLib[instance.nodeId];
 
             if (!maybeFromStdlib) {
               throw new Error(
-                `Cannot find node ${instance.nodeId} in ${fullFlowPath}, even not in the internal copy of "@flyde/stdlib"`
+                `Cannot find node ${instance.nodeId} in ${fullFlowPath}, even not in the internal copy of "@flyde/nodes"`
               );
             }
 
             const maybeAdvancedNode = maybeFromStdlib as AdvancedCodeNode<any>;
 
             if (maybeAdvancedNode.editorConfig?.type === "custom") {
-              const content = require("@flyde/stdlib/dist/bundled-config/" +
+              const content = require("@flyde/nodes/dist/bundled-config/" +
                 instance.nodeId);
 
               maybeAdvancedNode.editorConfig.editorComponentBundleContent =
                 content;
             }
 
-            // Add sourceCode for stdlib nodes
+            // Add sourceCode for nodes
             if (isCodeNode(maybeFromStdlib)) {
               return {
                 ...maybeFromStdlib,
@@ -209,7 +209,7 @@ function getLocalOrPackagePaths(fullFlowPath: string, importPath: string) {
     try {
       return resolveImportablePaths(fullFlowPath, importPath);
     } catch (e) {
-      if (importPath !== "@flyde/stdlib") {
+      if (importPath !== "@flyde/nodes") {
         throw new Error(`Cannot find module ${importPath} in ${fullFlowPath}`);
       }
       return [];
@@ -227,20 +227,20 @@ function getNodeSourceCode(filePath: string, nodeId: string): string {
   }
 }
 
-// Helper function to get the source code of a stdlib node
+// Helper function to get the source code of a node
 function getStdlibSourceCode(nodeId: string): string {
   try {
-    // Try to find the actual implementation in the stdlib package
-    const stdlibNodePath = require.resolve(`@flyde/stdlib/dist/${nodeId}`);
+    // Try to find the actual implementation in the nodes package
+    const stdlibNodePath = require.resolve(`@flyde/nodes/dist/${nodeId}`);
     const fileContent = readFileSync(stdlibNodePath, "utf-8");
     return fileContent;
   } catch (e) {
     try {
       // Fallback to the bundled version
-      const stdlibNodeContent = require(`@flyde/stdlib/dist/all`)[nodeId];
+      const stdlibNodeContent = require(`@flyde/nodes/dist/all`)[nodeId];
       return `// Bundled content\n${JSON.stringify(stdlibNodeContent, null, 2)}`;
     } catch (err) {
-      return `// Error loading stdlib source code: ${e.message}`;
+      return `// Error loading nodes source code: ${e.message}`;
     }
   }
 }
@@ -248,13 +248,13 @@ function getStdlibSourceCode(nodeId: string): string {
 // Example of how to import and use the bundled configs:
 /*
 // Import all bundled configs
-const bundledConfigs = require('@flyde/stdlib/dist/bundled-config');
+const bundledConfigs = require('@flyde/nodes/dist/bundled-config');
 
 // Access a specific node bundle
 const inlineValueBundle = bundledConfigs.InlineValue;
 
 // Or import a specific node directly
-const nodeBundle = require('@flyde/stdlib/dist/bundled-config/InlineValue');
+const nodeBundle = require('@flyde/nodes/dist/bundled-config/InlineValue');
 
 // Each import provides the full bundle JavaScript as a string
 */

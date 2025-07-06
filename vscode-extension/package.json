@@ -24,7 +24,7 @@
   ],
   "scripts": {
     "vscode:prepackage": "npm run build",
-    "link-all": "npm link @flyde/core @flyde/loader @flyde/dev-server @flyde/flow-editor @flyde/stdlib",
+    "link-all": "npm link @flyde/core @flyde/loader @flyde/dev-server @flyde/flow-editor @flyde/nodes",
     "update-all": "npm update @flyde/core @flyde/loader @flyde/dev-server @flyde/flow-editor",
     "compile": "tsc -p ./",
     "build": "npm run compile && npm run typecheck:webview && npm run build:webview",
@@ -220,7 +220,7 @@
     "@flyde/core": "workspace:*",
     "@flyde/flow-editor": "workspace:*",
     "@flyde/loader": "workspace:*",
-    "@flyde/stdlib": "workspace:*",
+    "@flyde/nodes": "workspace:*",
     "@paralleldrive/cuid2": "^2.2.2",
     "@tsconfig/node16": "^1.0.3",
     "@types/axios": "^0.14.4",

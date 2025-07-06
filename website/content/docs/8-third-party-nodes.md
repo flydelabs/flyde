@@ -35,5 +35,5 @@ For better community discoverability, we recommend adding the "flyde" keyword to
 ```
 
 :::note
-Flyde's standard library is also published as an npm package, `@flyde/stdlib`. You can use it as a reference for how to publish your own nodes.
+Flyde's standard library is also published as an npm package, `@flyde/nodes`. You can use it as a reference for how to publish your own nodes.
 :::

@@ -11,7 +11,7 @@ node:
       type: code
       source:
         type: package
-        data: "@flyde/stdlib"
+        data: "@flyde/nodes"
     - pos:
         x: -303.85145060221345
         y: 10.403486444382224
@@ -28,7 +28,7 @@ node:
       type: code
       source:
         type: package
-        data: "@flyde/stdlib"
+        data: "@flyde/nodes"
       style:
         size: small
         icon: fa-clock
@@ -51,7 +51,7 @@ node:
       type: code
       source:
         type: package
-        data: "@flyde/stdlib"
+        data: "@flyde/nodes"
     - pos:
         x: -463.8223657226563
         y: 8.173806152343786
@@ -71,7 +71,7 @@ node:
       type: code
       source:
         type: package
-        data: "@flyde/stdlib"
+        data: "@flyde/nodes"
   connections:
     - from:
         insId: clftmbihe000j4668newg9ius
