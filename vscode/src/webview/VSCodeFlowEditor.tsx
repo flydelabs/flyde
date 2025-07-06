@@ -38,6 +38,13 @@ const isEqual = (a: any, b: any): boolean => {
   return true;
 };
 
+// Global variable to store debugger events during testing
+declare global {
+  interface Window {
+    __testCapturedDebuggerEvents?: any[];
+  }
+}
+
 export const VSCodeFlowEditor: React.FC<BootstrapData> = ({
   initialNode,
   port,
@@ -45,6 +52,17 @@ export const VSCodeFlowEditor: React.FC<BootstrapData> = ({
   executionId,
   darkMode
 }) => {
+  // Check if we're in test mode (either dummy data or vscode test environment)
+  const isDummyMode = new URLSearchParams(window.location.search).get('dummy') === 'true';
+  const isVSCodeTest = relativeFile && relativeFile.includes('HelloWorld.flyde');
+  const isTestMode = isDummyMode || isVSCodeTest;
+  
+  // Initialize test event capture
+  React.useEffect(() => {
+    if (isTestMode) {
+      window.__testCapturedDebuggerEvents = [];
+    }
+  }, [isTestMode]);
   const [editorState, setEditorState] = useState<FlowEditorState>({
     flow: { node: initialNode },
     boardData: {
@@ -94,6 +112,11 @@ export const VSCodeFlowEditor: React.FC<BootstrapData> = ({
   useEffect(() => {
     if (debuggerClient) {
       return debuggerClient.onBatchedEvents((events) => {
+        // Capture events for testing
+        if (isTestMode && window.__testCapturedDebuggerEvents) {
+          window.__testCapturedDebuggerEvents.push(...events);
+        }
+        
         if (runtimePlayer.current) {
           console.info(`Batched events - ${events.length} into player`, events);
           runtimePlayer.current.addEvents(events);
@@ -102,7 +125,7 @@ export const VSCodeFlowEditor: React.FC<BootstrapData> = ({
         }
       });
     }
-  }, [debuggerClient]);
+  }, [debuggerClient, isTestMode]);
 
   const debouncedSaveFile = useDebouncedCallback(
     (flow: FlydeFlow, src: string) => {

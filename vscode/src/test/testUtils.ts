@@ -14,6 +14,12 @@ export type WebViewTestingCommands = {
     response: { innerHTML: string; textContent: string }[];
   };
   click: { params: { selector: string }; response: void };
+  clickByText: { params: { text: string; tagName?: string }; response: void };
+  hasText: { params: { selector: string; text: string }; response: boolean };
+  getDebuggerEvents: {
+    params: {};
+    response: any[];
+  };
 };
 
 export async function webviewTestingCommand<

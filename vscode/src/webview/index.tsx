@@ -50,10 +50,36 @@ window.addEventListener("message", (event) => {
         const { selector } = data.params;
         const element = document.querySelector(selector);
         if (element) {
-          element.click();
+          (element as HTMLElement).click();
           response = {};
         } else {
           error = `Element not found: ${selector}`;
+        }
+        break;
+      }
+      case "clickByText": {
+        const { text, tagName = "button" } = data.params;
+        const elements = document.querySelectorAll(tagName);
+        let found = false;
+        for (const element of elements) {
+          if (element.textContent && element.textContent.toLowerCase().includes(text.toLowerCase())) {
+            (element as HTMLElement).click();
+            found = true;
+            break;
+          }
+        }
+        if (found) {
+          response = {};
+        } else {
+          error = `Element with text "${text}" not found`;
+        }
+        break;
+      }
+      case "getDebuggerEvents": {
+        response = (window as any).__testCapturedDebuggerEvents || [];
+        // Clear events after retrieval to avoid accumulation
+        if ((window as any).__testCapturedDebuggerEvents) {
+          (window as any).__testCapturedDebuggerEvents = [];
         }
         break;
       }
