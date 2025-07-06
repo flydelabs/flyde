@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@flyde/core": "workspace:1.0.0-alpha.18",
-    "@flyde/flow-editor": "workspace:1.0.0-alpha.18",
+    "@flyde/editor": "workspace:1.0.0-alpha.18",
     "@flyde/loader": "workspace:1.0.0-alpha.18",
     "@flyde/nodes": "workspace:1.0.0-alpha.18",
     "@mdx-js/loader": "^3.1.0",

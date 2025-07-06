@@ -24,8 +24,8 @@
   ],
   "scripts": {
     "vscode:prepackage": "npm run build",
-    "link-all": "npm link @flyde/core @flyde/loader @flyde/dev-server @flyde/flow-editor @flyde/nodes",
-    "update-all": "npm update @flyde/core @flyde/loader @flyde/dev-server @flyde/flow-editor",
+    "link-all": "npm link @flyde/core @flyde/loader @flyde/dev-server @flyde/editor @flyde/nodes",
+    "update-all": "npm update @flyde/core @flyde/loader @flyde/dev-server @flyde/editor",
     "compile": "tsc -p ./",
     "build": "npm run compile && npm run typecheck:webview && npm run build:webview",
     "build:webview": "vite build",
@@ -218,7 +218,7 @@
   },
   "dependencies": {
     "@flyde/core": "workspace:*",
-    "@flyde/flow-editor": "workspace:*",
+    "@flyde/editor": "workspace:*",
     "@flyde/loader": "workspace:*",
     "@flyde/nodes": "workspace:*",
     "@paralleldrive/cuid2": "^2.2.2",

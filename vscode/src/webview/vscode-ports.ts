@@ -1,4 +1,4 @@
-import { EditorPorts } from "@flyde/flow-editor";
+import { EditorPorts } from "@flyde/editor";
 import { slug } from "cuid";
 
 export type EditorPortType = keyof EditorPorts;

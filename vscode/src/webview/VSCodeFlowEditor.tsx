@@ -9,14 +9,14 @@ import {
   DarkModeProvider,
   PortsContext,
   RuntimePlayer,
-} from "@flyde/flow-editor";
-import "@flyde/flow-editor/dist/styles/tailwind.scss";
-import "@flyde/flow-editor/src/index.scss";
+} from "@flyde/editor";
+import "@flyde/editor/dist/styles/tailwind.scss";
+import "@flyde/editor/src/index.scss";
 import {
   FlydeFlow,
   isVisualNode,
 } from "@flyde/core";
-import { createEditorClient, EditorDebuggerClient } from "@flyde/flow-editor";
+import { createEditorClient, EditorDebuggerClient } from "@flyde/editor";
 import { createVsCodePorts } from "./vscode-ports";
 import { useDebouncedCallback } from "use-debounce";
 

@@ -16,13 +16,10 @@
       "path": "website"
     },
     {
-      "path": "flow-editor"
-    },
-    {
       "path": "stdlib"
     },
     {
-      "path": "vscode-extension"
+      "path": "vscode"
     },
     {
       "path": "examples/discord-tasks-manager"

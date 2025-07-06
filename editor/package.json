@@ -1,5 +1,5 @@
 {
-  "name": "@flyde/flow-editor",
+  "name": "@flyde/editor",
   "version": "1.0.0-alpha.18",
   "description": "",
   "main": "dist/index.js",

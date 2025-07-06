@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
   // Transpile workspace packages for hot reloads and proper bundling
   transpilePackages: [
     "@flyde/core",
-    "@flyde/flow-editor",
+    "@flyde/editor",
     "@flyde/loader",
     "@flyde/nodes"
   ],

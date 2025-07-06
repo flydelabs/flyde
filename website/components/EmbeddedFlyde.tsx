@@ -1,6 +1,6 @@
 "use client";
 
-import "@flyde/flow-editor/src/index.scss";
+import "@flyde/editor/src/index.scss";
 import {
   noop,
 } from "@flyde/core";
@@ -13,7 +13,7 @@ import {
   defaultPorts,
   FlowEditorState,
   defaultBoardData,
-} from "@flyde/flow-editor";
+} from "@flyde/editor";
 import React, {
   useState,
   useEffect,

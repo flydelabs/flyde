@@ -33,7 +33,7 @@ import { reportEvent, reportException } from "./telemetry";
 import { Uri } from "vscode";
 
 import { EmbeddedFlowRunner } from "./embedded-server";
-import { createEditorClient } from "@flyde/flow-editor";
+import { createEditorClient } from "@flyde/editor";
 import { maybeAskToStarProject } from "./maybeAskToStarProject";
 import { customCodeNodeFromCode } from "@flyde/core/dist/misc/custom-code-node-from-code";
 import { createAiCompletion } from "./ai";

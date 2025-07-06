@@ -60,7 +60,7 @@ pnpm bump:alpha      # Bump to alpha version
   - Visual node models and utilities
   - No external Flyde dependencies
 
-- **`flow-editor/`**: React-based visual flow editor
+- **`editor/`**: React-based visual flow editor
   - Main component: `VisualNodeEditor.tsx`
   - Handles visual editing, node positioning, connections
   - Consumed by VS Code extension via modern Vite-based webview
@@ -71,7 +71,7 @@ pnpm bump:alpha      # Bump to alpha version
   - Handles flow deserialization and execution
   - Integrates with debugger
 
-- **`stdlib/`**: Standard library of built-in nodes
+- **`nodes/`**: Standard library of built-in nodes
   - Control flow (Conditional, Switch, Debounce, Throttle)
   - Data operations (Lists, Objects, HTTP)
   - AI integrations (OpenAI, Anthropic, Google, Groq)
@@ -153,12 +153,12 @@ myFlow({input: "test"}).output.subscribe(value => {
   - Custom editor provider for `.flyde` files
   - Modern Vite-based webview for visual editor
   - Integrated debugging with real-time flow execution visualization
-  - Direct integration with `@flyde/flow-editor` (no intermediate packages)
+  - Direct integration with `@flyde/editor` (no intermediate packages)
 
 ### Important Implementation Details
 
 1. **Never add comments to code unless crucial** (from Cursor rules)
-2. **Main editor component**: `VisualNodeEditor.tsx` in flow-editor
+2. **Main editor component**: `VisualNodeEditor.tsx` in editor
 3. **Execution uses RxJS**: All data flow is reactive
 4. **Resolution happens at runtime**: Nodes are resolved when flows load
 5. **TypeScript integration**: Flows compile to executable functions
@@ -166,7 +166,7 @@ myFlow({input: "test"}).output.subscribe(value => {
    - Uses modern Vite for webview bundling (fast, efficient builds)
    - TypeScript compilation excludes webview files (handled by Vite)
    - Webview communicates with extension via VS Code API messaging
-   - No intermediate editor package - direct integration with flow-editor
+   - No intermediate editor package - direct integration with editor
 
 ### Testing Strategy
 

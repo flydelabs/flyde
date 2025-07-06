@@ -1,8 +1,8 @@
 packages:
   - "core"
-  - "flow-editor"
+  - "editor"
   - "nodes"
   - "website"
   - "loader"
-  - "vscode-extension"
+  - "vscode"
   - "ui"

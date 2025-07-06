@@ -1,9 +1,9 @@
 import { ConfigurableEditorComp } from "@flyde/core";
 import { CollectConfig } from "./Collect.flyde";
-import { FormGroup, NumericInput, RadioGroup, RadioGroupItem } from "@flyde/flow-editor";
+import { FormGroup, NumericInput, RadioGroup, RadioGroupItem } from "@flyde/editor";
 
 import React from "react";
-import { ConfigurableInputEditor } from "@flyde/flow-editor";
+import { ConfigurableInputEditor } from "@flyde/editor";
 
 const defaultValuePerStrategy: Record<
   CollectConfig["strategy"],

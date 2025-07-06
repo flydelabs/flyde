@@ -98,7 +98,7 @@ importers:
         specifier: ^5.5.4
         version: 5.8.3
 
-  flow-editor:
+  editor:
     dependencies:
       '@flyde/core':
         specifier: workspace:*
@@ -429,9 +429,9 @@ importers:
       '@flyde/core':
         specifier: workspace:*
         version: link:../core
-      '@flyde/flow-editor':
+      '@flyde/editor':
         specifier: workspace:*
-        version: link:../flow-editor
+        version: link:../editor
       '@types/pg':
         specifier: ^8.10.2
         version: 8.15.4
@@ -515,14 +515,14 @@ importers:
         specifier: ^5.1.4
         version: 5.1.4(webpack@5.99.9)
 
-  vscode-extension:
+  vscode:
     dependencies:
       '@flyde/core':
         specifier: workspace:*
         version: link:../core
-      '@flyde/flow-editor':
+      '@flyde/editor':
         specifier: workspace:*
-        version: link:../flow-editor
+        version: link:../editor
       '@flyde/loader':
         specifier: workspace:*
         version: link:../loader
@@ -677,9 +677,9 @@ importers:
       '@flyde/core':
         specifier: workspace:1.0.0-alpha.18
         version: link:../core
-      '@flyde/flow-editor':
+      '@flyde/editor':
         specifier: workspace:1.0.0-alpha.18
-        version: link:../flow-editor
+        version: link:../editor
       '@flyde/loader':
         specifier: workspace:1.0.0-alpha.18
         version: link:../loader
