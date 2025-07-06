@@ -114,8 +114,7 @@ Check out the official website at [https://flyde.dev](https://flyde.dev) for mor
 Everything needed to run a Flyde file is _MIT-licensed_. That includes:
 
 - `@flyde/core`
-- `@flyde/resolver`
-- `@flyde/runtime`
+- `@flyde/loader`
 - `@flyde/stdlib`
 
 The UI library and other nodes of the toolkit are GNU AGPLv3 licensed.

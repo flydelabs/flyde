@@ -43,9 +43,9 @@ pnpm bump:alpha      # Bump to alpha version
 ```
 @flyde/core (no Flyde dependencies)
     ↓
-@flyde/resolver
+@flyde/loader
     ↓
-@flyde/stdlib & @flyde/runtime & @flyde/flow-editor
+@flyde/stdlib & @flyde/loader & @flyde/flow-editor
     ↓
 @flyde/dev-server
     ↓
@@ -125,7 +125,7 @@ export const MyNode: CodeNode = {
 ### Flow Integration in TypeScript
 
 ```typescript
-import { loadFlow } from "@flyde/runtime";
+import { loadFlow } from "@flyde/loader";
 
 // Load a flow file
 const myFlow = loadFlow<{input: string}, {output: number}>("./MyFlow.flyde");

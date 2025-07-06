@@ -3,7 +3,7 @@ import {
   isCodeNodePath,
   resolveCodeNodeDependencies,
   deserializeFlow,
-} from "@flyde/resolver";
+} from "@flyde/loader";
 
 import {
   BaseNode,

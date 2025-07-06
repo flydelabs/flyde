@@ -1,5 +1,5 @@
 import { CodeNode, randomInt } from "@flyde/core";
-import { resolveCodeNodeDependencies } from "@flyde/resolver";
+import { resolveCodeNodeDependencies } from "@flyde/loader";
 import { existsSync, writeFileSync } from "fs";
 
 import OpenAI from "openai";

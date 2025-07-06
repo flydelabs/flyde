@@ -10,7 +10,7 @@ sidebar_position: 9
 
 Flyde comes with a visual debugger that can help you troubleshoot your flows. When using the "test flow" feature from the editor, you can see the flow's execution in real-time, and inspect the values of each node's inputs and outputs.
 
-When running flows locally using the `@flyde/runtime` package, the runtime will try to connect to the local debugger server running from the visual editor automatically. If you're running the visual editor locally, you can see the flow's execution in real-time, and inspect the values of each node's inputs and outputs.
+When running flows locally using the `@flyde/loader` package, the runtime will try to connect to the local debugger server running from the visual editor automatically. If you're running the visual editor locally, you can see the flow's execution in real-time, and inspect the values of each node's inputs and outputs.
 
 ## Extension Troubleshooting
 

@@ -4,7 +4,7 @@ import {
   isCodeNodePath,
   resolveCodeNodeDependencies,
   resolveImportablePaths,
-} from "@flyde/resolver";
+} from "@flyde/loader";
 import { readFileSync } from "fs";
 
 export async function resolveDependentPackages(

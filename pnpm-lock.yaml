@@ -324,7 +324,7 @@ importers:
         specifier: ^4.7.1
         version: 4.20.3
 
-  resolver:
+  loader:
     dependencies:
       '@flyde/core':
         specifier: workspace:*
@@ -387,8 +387,8 @@ importers:
         specifier: ^5.0.0
         version: 5.0.0
       serialize-error:
-        specifier: ^11.0.0
-        version: 11.0.3
+        specifier: ^8.1.0
+        version: 8.1.0
       socket.io-client:
         specifier: ^4.5.1
         version: 4.8.1
@@ -414,100 +414,6 @@ importers:
       mocha:
         specifier: ^10.2.0
         version: 10.8.2
-      sinon:
-        specifier: ^14.0.2
-        version: 14.0.2
-      ts-node-dev:
-        specifier: ^2.0.0
-        version: 2.0.0(@types/node@11.15.54)(typescript@5.8.3)
-      typescript:
-        specifier: ^5.5.4
-        version: 5.8.3
-
-  runtime:
-    dependencies:
-      '@flyde/core':
-        specifier: workspace:*
-        version: link:../core
-      '@flyde/resolver':
-        specifier: workspace:*
-        version: link:../resolver
-      '@flyde/stdlib':
-        specifier: workspace:*
-        version: link:../stdlib
-      '@types/callsite':
-        specifier: ^1.0.31
-        version: 1.0.34
-      '@types/cuid':
-        specifier: ^1.3.1
-        version: 1.3.1
-      '@types/find-root':
-        specifier: ^1.1.2
-        version: 1.1.4
-      '@types/node':
-        specifier: ^11.15.54
-        version: 11.15.54
-      axios:
-        specifier: ^0.27.2
-        version: 0.27.2
-      body-parser:
-        specifier: ^1.20.2
-        version: 1.20.3
-      caller-path:
-        specifier: ^3.0.1
-        version: 3.0.1
-      callsite:
-        specifier: ^1.0.0
-        version: 1.0.0
-      cuid:
-        specifier: ^2.1.8
-        version: 2.1.8
-      find-root:
-        specifier: ^1.1.0
-        version: 1.1.0
-      glob:
-        specifier: ^8.1.0
-        version: 8.1.0
-      module-from-string:
-        specifier: ^3.3.0
-        version: 3.3.1
-      require-from-string:
-        specifier: ^2.0.2
-        version: 2.0.2
-      resolve-from:
-        specifier: ^5.0.0
-        version: 5.0.0
-      serialize-error:
-        specifier: ^11.0.0
-        version: 11.0.3
-      socket.io-client:
-        specifier: ^4.5.1
-        version: 4.8.1
-      ts-node:
-        specifier: ^10.9.1
-        version: 10.9.2(@types/node@11.15.54)(typescript@5.8.3)
-      yaml:
-        specifier: ^2.3.1
-        version: 2.8.0
-      zod:
-        specifier: ^3.22.2
-        version: 3.25.74
-    devDependencies:
-      '@types/mocha':
-        specifier: ^10.0.1
-        version: 10.0.10
-      chai:
-        specifier: ^4.3.7
-        version: 4.5.0
-      concurrently:
-        specifier: ^5.3.0
-        version: 5.3.0
-      mocha:
-        specifier: ^10.2.0
-        version: 10.8.2
-      nodemon:
-        specifier: ^2.0.22
-        version: 2.0.22
       sinon:
         specifier: ^14.0.2
         version: 14.0.2
@@ -617,9 +523,9 @@ importers:
       '@flyde/flow-editor':
         specifier: workspace:*
         version: link:../flow-editor
-      '@flyde/resolver':
+      '@flyde/loader':
         specifier: workspace:*
-        version: link:../resolver
+        version: link:../loader
       '@flyde/stdlib':
         specifier: workspace:*
         version: link:../stdlib
@@ -774,9 +680,9 @@ importers:
       '@flyde/flow-editor':
         specifier: workspace:1.0.0-alpha.18
         version: link:../flow-editor
-      '@flyde/resolver':
+      '@flyde/loader':
         specifier: workspace:1.0.0-alpha.18
-        version: link:../resolver
+        version: link:../loader
       '@flyde/stdlib':
         specifier: workspace:1.0.0-alpha.18
         version: link:../stdlib
@@ -8034,10 +7940,6 @@ packages:
     resolution: {integrity: sha512-dW41u5VfLXu8SJh5bwRmyYUbAoSB3c9uQh6L8h/KtsFREPWpbX1lrljJo186Jc4nmci/sGUZ9a0a0J2zgfq2hw==}
     engines: {node: '>= 0.8.0'}
 
-  serialize-error@11.0.3:
-    resolution: {integrity: sha512-2G2y++21dhj2R7iHAdd0FIzjGwuKZld+7Pl/bTU6YIkrC2ZMbVUjm+luj6A6V34Rv9XfKJDKpTWu9W4Gse1D9g==}
-    engines: {node: '>=14.16'}
-
   serialize-error@8.1.0:
     resolution: {integrity: sha512-3NnuWfM6vBYoy5gZFvHiYsVbafvI9vZv/+jlIigFn4oP4zjNPK3LhcY0xSCgeb1a5L8jO71Mit9LlNoi2UfDDQ==}
     engines: {node: '>=10'}
@@ -8666,10 +8568,6 @@ packages:
   type-fest@0.8.1:
     resolution: {integrity: sha512-4dbzIzqvjtgiM5rw1k5rEHtBANKmdudhGyBEajN01fEyhaAIhsoKNy6y7+IN93IfpFtwY9iqi7kD+xwKhQsNJA==}
     engines: {node: '>=8'}
-
-  type-fest@2.19.0:
-    resolution: {integrity: sha512-RAH822pAdBgcNMAfWnCBU3CFZcfZ/i1eZjwFU/dsLKumyuuP3niueg2UAukXYF0E2AAoc82ZSSf9J0WQBinzHA==}
-    engines: {node: '>=12.20'}
 
   type-is@1.6.18:
     resolution: {integrity: sha512-TkRKr9sUTxEH8MdfuCSP7VizJyzRNMjj2J2do2Jr3Kym598JVdEksuzPQCnlFPW4ky9Q+iA+ma9BGm06XQBy8g==}
@@ -10479,7 +10377,7 @@ snapshots:
     dependencies:
       '@types/istanbul-lib-coverage': 2.0.6
       '@types/istanbul-reports': 3.0.4
-      '@types/node': 12.20.55
+      '@types/node': 22.16.0
       '@types/yargs': 15.0.19
       chalk: 4.1.2
 
@@ -12136,7 +12034,7 @@ snapshots:
   '@types/body-parser@1.19.6':
     dependencies:
       '@types/connect': 3.4.38
-      '@types/node': 11.15.54
+      '@types/node': 22.16.0
 
   '@types/callsite@1.0.34': {}
 
@@ -12144,7 +12042,7 @@ snapshots:
 
   '@types/connect@3.4.38':
     dependencies:
-      '@types/node': 11.15.54
+      '@types/node': 22.16.0
 
   '@types/cors@2.8.19':
     dependencies:
@@ -12178,7 +12076,7 @@ snapshots:
 
   '@types/express-serve-static-core@4.19.6':
     dependencies:
-      '@types/node': 11.15.54
+      '@types/node': 22.16.0
       '@types/qs': 6.14.0
       '@types/range-parser': 1.2.7
       '@types/send': 0.17.5
@@ -12200,7 +12098,7 @@ snapshots:
   '@types/glob@5.0.30':
     dependencies:
       '@types/minimatch': 6.0.0
-      '@types/node': 12.20.55
+      '@types/node': 22.16.0
 
   '@types/glob@8.1.0':
     dependencies:
@@ -12269,7 +12167,7 @@ snapshots:
 
   '@types/node-fetch@2.6.12':
     dependencies:
-      '@types/node': 11.15.54
+      '@types/node': 22.16.0
       form-data: 4.0.3
 
   '@types/node@10.17.60': {}
@@ -12332,12 +12230,12 @@ snapshots:
   '@types/send@0.17.5':
     dependencies:
       '@types/mime': 1.3.5
-      '@types/node': 11.15.54
+      '@types/node': 22.16.0
 
   '@types/serve-static@1.15.8':
     dependencies:
       '@types/http-errors': 2.0.5
-      '@types/node': 11.15.54
+      '@types/node': 22.16.0
       '@types/send': 0.17.5
 
   '@types/sinon@10.0.20':
@@ -17712,10 +17610,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  serialize-error@11.0.3:
-    dependencies:
-      type-fest: 2.19.0
-
   serialize-error@8.1.0:
     dependencies:
       type-fest: 0.20.2
@@ -18632,8 +18526,6 @@ snapshots:
   type-fest@0.20.2: {}
 
   type-fest@0.8.1: {}
-
-  type-fest@2.19.0: {}
 
   type-is@1.6.18:
     dependencies:

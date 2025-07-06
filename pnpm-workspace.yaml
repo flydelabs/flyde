@@ -3,7 +3,6 @@ packages:
   - "flow-editor"
   - "stdlib"
   - "website"
-  - "resolver"
-  - "runtime"
+  - "loader"
   - "vscode-extension"
   - "ui"

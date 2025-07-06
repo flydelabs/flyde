@@ -1,4 +1,4 @@
-import * as resolver from '@flyde/resolver';
+import * as resolver from '@flyde/loader';
 import { join } from 'path';
 import { writeFileSync, mkdirSync } from 'fs';
 

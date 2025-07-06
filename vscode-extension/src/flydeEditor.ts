@@ -12,7 +12,7 @@ import {
   resolveEditorInstance,
   createServerReferencedNodeFinder,
   resolveEditorNode,
-} from "@flyde/resolver";
+} from "@flyde/loader";
 import {
   FlydeFlow,
   MAJOR_DEBUGGER_EVENT_TYPES,
@@ -404,8 +404,8 @@ export class FlydeEditorEditorProvider
 
                 const command =
                   res === "Use Yarn"
-                    ? "yarn add @flyde/resolver"
-                    : "npm install @flyde/resolver";
+                    ? "yarn add @flyde/loader"
+                    : "npm install @flyde/loader";
 
                 // notify user
                 vscode.window.showInformationMessage(

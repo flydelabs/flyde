@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
   transpilePackages: [
     "@flyde/core",
     "@flyde/flow-editor",
-    "@flyde/resolver",
+    "@flyde/loader",
     "@flyde/stdlib"
   ],
 

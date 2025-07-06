@@ -11,8 +11,7 @@ Flyde is a visual programming language that runs in the IDE and integrates with 
 ```
 flyde/ (root)
 ├── core/           - Core types, execution engine, and flow compilation
-├── runtime/        - Flow execution runtime (depends on core, resolver, stdlib)
-├── resolver/       - Node resolution and flow deserialization (depends on core, stdlib)
+├── loader/         - Flow execution runtime (depends on core, stdlib)
 ├── stdlib/         - Standard library of built-in nodes (depends on core, ui)
 ├── dev-server/     - Development server for running flows (depends on all above)
 ├── flow-editor/    - Visual flow editor UI (depends on core)
@@ -44,8 +43,7 @@ graph TD
 ### Key Dependencies
 
 - **@flyde/core**: Foundation package with no Flyde dependencies, only external libs (rxjs, zod, cuid)
-- **@flyde/runtime**: Depends on core, resolver, stdlib, and remote-debugger
-- **@flyde/resolver**: Depends on core and has stdlib as peer dependency
+- **@flyde/loader**: Depends on core, stdlib, and remote-debugger
 - **@flyde/stdlib**: Depends on core and ui
 - **VS Code Extension**: Consumes all packages to provide the IDE integration
 
@@ -200,7 +198,7 @@ export const Conditional: CodeNode<ConditionalConfig> = {
 
 1. **Importing Flows**:
    ```typescript
-   import { loadFlow } from "@flyde/runtime";
+   import { loadFlow } from "@flyde/loader";
    
    const execute = loadFlow<{name: string}>("./MyFlow.flyde");
    const { greeting } = await execute({ name: "World" }).result;
