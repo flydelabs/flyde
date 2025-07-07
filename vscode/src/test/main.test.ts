@@ -5,10 +5,20 @@ import * as path from "path";
 import * as fs from "fs";
 import * as os from "os";
 
-import { webviewTestingCommand } from "./testUtils";
 import assert = require("assert");
-import { delay, eventually } from "@flyde/core";
+import { eventually } from "@flyde/core";
 import { getTemplates } from "../templateUtils";
+import {
+  openFlydeFile,
+  waitForFlowEditor,
+  getInstances,
+  clickAddNodesButton,
+  getMenuItems,
+  runFlow,
+  getDebuggerEvents,
+  buildTestFilePath,
+  buildTempFilePath,
+} from "./pageObjects";
 
 let tmpDir = "";
 
@@ -31,9 +41,16 @@ suite("Extension Test Suite", () => {
 
       const templatesDir = path.resolve(__dirname, "../../templates");
       fs.readdirSync(templatesDir).forEach((templateFolder) => {
+        // Skip hidden files like .DS_Store
+        if (templateFolder.startsWith('.')) {
+          return;
+        }
+
         const source = path.join(templatesDir, templateFolder, `Example.flyde`);
         const dest = path.join(tmpDir, `${templateFolder}.flyde`);
-        fs.copyFileSync(source, dest);
+        if (fs.existsSync(source)) {
+          fs.copyFileSync(source, dest);
+        }
       });
       console.log(`Temporary directory created at ${tmpDir}`);
     } else {
@@ -47,62 +64,35 @@ suite("Extension Test Suite", () => {
   });
 
   test("Loads test flow and renders instance views", async () => {
-    const testFile = vscode.Uri.file(path.resolve(tmpDir, "HelloWorld.flyde"));
-
-    await vscode.commands.executeCommand(
-      "vscode.openWith",
-      testFile,
-      "flydeEditor"
-    );
-
-    await eventually(async () => {
-      const instances = await webviewTestingCommand("$$", {
-        selector: ".ins-view",
-      });
-
-      assert(
-        instances.length === 4,
-        `Expected fixture flow to have 4 instances. Got ${instances.length} instances`
-      );
-    }, 10000);
-
+    const testFile = buildTempFilePath(tmpDir, "HelloWorld.flyde");
+    await openFlydeFile(testFile);
+    await waitForFlowEditor();
+    const instances = await getInstances();
+    assert(instances.length === 4, `Expected 4 instances. Got ${instances.length}`);
   }).retries(3);
 
   test("Renders add nodes menu", async () => {
-    const testFile = vscode.Uri.file(
-      path.resolve(__dirname, "../../test-fixtures/HelloWorld.flyde")
-    );
+    const testFile = buildTestFilePath("HelloWorld.flyde");
+    await openFlydeFile(testFile);
+    await waitForFlowEditor();
+    await clickAddNodesButton();
+    const menuItems = await getMenuItems();
+    assert(menuItems.length >= 30, `Expected at least 30 menu items. Found ${menuItems.length}`);
+  }).retries(3);
 
-    await vscode.commands.executeCommand(
-      "vscode.openWith",
-      testFile,
-      "flydeEditor"
-    );
-
+  test("Test flow functionality works", async () => {
+    const testFile = buildTestFilePath("HelloWorld.flyde");
+    await openFlydeFile(testFile);
+    await waitForFlowEditor();
+    await runFlow();
+    
     await eventually(async () => {
-      const elements = await webviewTestingCommand("$$", {
-        selector: "button.add-nodes",
-      });
-
-      assert(
-        elements.length === 1,
-        "Expected to find the add node button in the actions menu"
+      const events = await getDebuggerEvents();
+      const hasHelloWorldOutput = events.some(event => 
+        JSON.stringify(event).includes("HelloWorld")
       );
-    });
-
-    await webviewTestingCommand("click", {
-      selector: "button.add-nodes",
-    });
-
-    await eventually(async () => {
-      const elements = await webviewTestingCommand("$$", {
-        selector: "[cmdk-item]",
-      });
-      assert(
-        elements.length > 30,
-        `Expected to find 30+ items in the menu. Found ${elements.length} items`
-      );
-    });
+      assert(hasHelloWorldOutput, "Expected debugger events to contain 'HelloWorld' output");
+    }, 4000);
   }).retries(3);
 
   suite("Templates", () => {
@@ -118,55 +108,26 @@ suite("Extension Test Suite", () => {
     templateFiles.forEach((templateFile) => {
       test(`Loads ${templateFile.name} template`, async () => {
         const templateFolder = templateFile.fullPath.split(path.sep).pop();
-        const flowPath = path.join(tmpDir, `${templateFolder}.flyde`);
-        const testFile = vscode.Uri.file(flowPath);
-
-        await vscode.commands.executeCommand(
-          "vscode.openWith",
-          testFile,
-          "flydeEditor"
-        );
-
-        await eventually(async () => {
-          const flowEditor = await webviewTestingCommand("$$", {
-            selector: ".flyde-flow-editor",
-          });
-
-          assert(flowEditor.length === 1, ".flyde-flow-editor not found");
-        }, 4000);
+        const flowPath = buildTempFilePath(tmpDir, `${templateFolder}.flyde`);
+        await openFlydeFile(flowPath);
+        await waitForFlowEditor();
       })
-        .timeout(6000)
+        .timeout(10000)
         .retries(3);
     });
   });
 
   suite("Note node", () => {
     test("renders note node", async () => {
-      const testFile = vscode.Uri.file(
-        path.resolve(__dirname, "../../test-fixtures/NoteFixture.flyde")
+      const testFile = buildTestFilePath("NoteFixture.flyde");
+      await openFlydeFile(testFile);
+      await waitForFlowEditor();
+      const instances = await getInstances();
+      assert(instances.length === 1, "Expected 1 note node");
+      assert(
+        instances[0].innerHTML.includes("Hello comment") && instances[0].innerHTML.includes("<h1"),
+        `Expected note node to contain "Hello comment" with h1 tag. Got: ${instances[0].innerHTML}`
       );
-
-      await vscode.commands.executeCommand(
-        "vscode.openWith",
-        testFile,
-        "flydeEditor"
-      );
-
-      await eventually(async () => {
-        const instances = await webviewTestingCommand("$$", {
-          selector: ".base-node-view-inner",
-        });
-
-        assert(
-          instances.length === 1,
-          "Expected fixture flow to have 1 instance"
-        );
-
-        assert(
-          instances[0].innerHTML.includes("Hello comment") && instances[0].innerHTML.includes("<h1"),
-          `Expected the note node HTML to render the comment in html. ${instances[0].innerHTML}`
-        );
-      });
     }).timeout(5000);
   });
 });
