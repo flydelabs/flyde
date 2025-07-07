@@ -43,3 +43,18 @@ export async function clickAddNodesButton() {
 export async function getMenuItems() {
   return await webviewTestingCommand("$$", { selector: "[cmdk-item]" });
 }
+
+export async function runFlow() {
+  await webviewTestingCommand("click", { selector: "button.run-btn" });
+  
+  await eventually(async () => {
+    const dialogs = await webviewTestingCommand("$$", { selector: "[role=dialog]" });
+    assert(dialogs.length === 1, "Test dialog not found");
+  });
+  
+  await webviewTestingCommand("clickByText", { text: "Run", tagName: "button" });
+}
+
+export async function getDebuggerEvents() {
+  return await webviewTestingCommand("getDebuggerEvents", {});
+}

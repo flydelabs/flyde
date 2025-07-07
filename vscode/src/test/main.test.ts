@@ -6,6 +6,7 @@ import * as fs from "fs";
 import * as os from "os";
 
 import assert = require("assert");
+import { eventually } from "@flyde/core";
 import { getTemplates } from "../templateUtils";
 import {
   openFlydeFile,
@@ -13,6 +14,8 @@ import {
   getInstances,
   clickAddNodesButton,
   getMenuItems,
+  runFlow,
+  getDebuggerEvents,
   buildTestFilePath,
   buildTempFilePath,
 } from "./pageObjects";
@@ -75,6 +78,21 @@ suite("Extension Test Suite", () => {
     await clickAddNodesButton();
     const menuItems = await getMenuItems();
     assert(menuItems.length >= 30, `Expected at least 30 menu items. Found ${menuItems.length}`);
+  }).retries(3);
+
+  test("Test flow functionality works", async () => {
+    const testFile = buildTestFilePath("HelloWorld.flyde");
+    await openFlydeFile(testFile);
+    await waitForFlowEditor();
+    await runFlow();
+    
+    await eventually(async () => {
+      const events = await getDebuggerEvents();
+      const hasHelloWorldOutput = events.some(event => 
+        JSON.stringify(event).includes("HelloWorld")
+      );
+      assert(hasHelloWorldOutput, "Expected debugger events to contain 'HelloWorld' output");
+    }, 4000);
   }).retries(3);
 
   suite("Templates", () => {
