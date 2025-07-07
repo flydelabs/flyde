@@ -4,38 +4,20 @@
       "path": "core"
     },
     {
+      "path": "loader"
+    },
+    {
+      "path": "nodes"
+    },
+    {
       "path": "editor"
-    },
-    {
-      "path": "dev-server"
-    },
-    {
-      "path": "runtime"
     },
     {
       "path": "website"
     },
     {
-      "path": "stdlib"
-    },
-    {
       "path": "vscode"
     },
-    {
-      "path": "examples/discord-tasks-manager"
-    },
-    {
-      "path": "remote-debugger"
-    },
-    {
-      "path": "resolver"
-    },
-    {
-      "path": "examples"
-    },
-    {
-      "path": "ui"
-    }
   ],
   "settings": {
     "search.useGlobalIgnoreFiles": true,
