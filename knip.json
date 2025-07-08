@@ -1,0 +1,140 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "workspaces": {
+    "vscode": {
+      "entry": ["src/test/*.ts"],
+      "project": ["src/**/*.{js,ts,tsx}", "!src/test/**/*", "!src/webview/**/*"],
+      "ignoreDependencies": [
+        "@tsconfig/node16",
+        "@types/axios",
+        "@types/fs-extra",
+        "axios",
+        "callsite",
+        "chalk",
+        "cuid",
+        "resolve-from",
+        "ts-node",
+        "use-debounce",
+        "walker"
+      ],
+      "ignoreDevDependencies": [
+        "@types/glob",
+        "@types/lodash",
+        "@types/mocha",
+        "@types/sinon",
+        "@vscode/sqlite3",
+        "fs-extra",
+        "glob",
+        "mocha",
+        "sinon",
+        "vite-plugin-checker"
+      ],
+      "ignore": [
+        "media/**/*",
+        "src/embedded-server/runner/run-flow-child.ts",
+        "src/webview/**/*",
+        "src/test/**/*"
+      ],
+      "ignoreExportsUsedInFile": true
+    },
+    "website": {
+      "entry": ["components/**/*.{js,ts,tsx}", "lib/**/*.{js,ts}"],
+      "project": ["**/*.{js,ts,tsx}", "!.next/**/*"],
+      "next": {
+        "entry": ["pages/**/*.{js,jsx,ts,tsx}"]
+      },
+      "ignoreDependencies": [
+        "@flyde/loader",
+        "@flyde/nodes",
+        "next-mdx-remote",
+        "rehype-highlight"
+      ],
+      "ignoreBinaries": ["vercel"],
+      "ignoreDevDependencies": [],
+      "ignore": [
+        "content/**/*",
+        "flyde/resolved/**/*",
+        "scripts/sync-examples.ts",
+        "components/EmbeddedFlyde.tsx"
+      ],
+      "ignoreExportsUsedInFile": true
+    },
+    ".": {
+      "entry": ["*.ts"],
+      "project": ["**/*.{js,ts,tsx}", "!**/dist/**/*", "!**/node_modules/**/*"],
+      "ignoreDependencies": ["mixpanel-browser"],
+      "ignoreBinaries": ["code", "only-allow", "playwright"],
+      "ignoreDevDependencies": []
+    },
+    "core": {
+      "entry": [
+        "src/{index,main,cli}.{js,cjs,mjs,jsx,ts,cts,mts,tsx}",
+        "wallaby.js"
+      ],
+      "project": [
+        "**/*.{js,ts,tsx}",
+        "!dist/**/*",
+        "!src/misc"
+      ],
+      "mocha": {
+        "entry": ["src/**/spec.{ts,tsx,js,jsx}"]
+      }
+    },
+    "editor": {
+      "entry": ["scripts/**/*.ts"],
+      "project": [
+        "src/**/*.{js,ts,tsx}",
+        "scripts/**/*.ts",
+        "!dist/**/*"
+      ],
+      "mocha": {
+        "entry": ["src/**/*.spec.{ts,tsx,js,jsx}"]
+      },
+      "ignoreDependencies": [
+        "ts-node",
+        "@types/mocha",
+        "sass"
+      ],
+      "ignoreBinaries": [
+        "start-storybook"
+      ]
+    },
+    "loader": {
+      "entry": ["src/runtime/fixture/**/*.ts"],
+      "project": [
+        "src/**/*.{js,ts,tsx}",
+        "!dist/**/*",
+        "!fixture/**/*"
+      ],
+      "mocha": {
+        "entry": ["src/**/*.spec.{ts,tsx,js,jsx}"]
+      },
+      "ignoreDependencies": [
+        "@types/mocha",
+        "ts-node-dev"
+      ]
+    },
+    "nodes": {
+      "entry": [
+        "src/**/*.flyde.ts",
+        "src/**/*.tsx",
+        "scripts/**/*.ts"
+      ],
+      "project": [
+        "src/**/*.{js,ts,tsx}",
+        "scripts/**/*.ts",
+        "!dist/**/*"
+      ],
+      "webpack": {
+        "config": ["webpack.config.js"]
+      },
+      "mocha": {
+        "entry": ["src/**/*.spec.{ts,tsx,js,jsx}"]
+      },
+      "ignoreDependencies": [
+        "google-auth-library",
+        "@types/mocha"
+      ]
+    }
+  }
+}
