@@ -68,8 +68,7 @@
     },
     "core": {
       "entry": [
-        "src/{index,main,cli}.{js,cjs,mjs,jsx,ts,cts,mts,tsx}",
-        "wallaby.js"
+        "src/{index,main,cli}.{js,cjs,mjs,jsx,ts,cts,mts,tsx}"
       ],
       "project": [
         "**/*.{js,ts,tsx}",
@@ -78,7 +77,8 @@
       ],
       "mocha": {
         "entry": ["src/**/spec.{ts,tsx,js,jsx}"]
-      }
+      },
+      "ignore": ["wallaby.js"]
     },
     "editor": {
       "entry": ["scripts/**/*.ts"],
