@@ -11,15 +11,13 @@ import { createEmbeddedServer } from "./embedded-server";
 
 import { join } from "path";
 
-import TelemetryReporter from "@vscode/extension-telemetry";
-import { activateReporter, reportEvent } from "./telemetry";
+import { activateReporter, reportEvent, analytics } from "./analytics";
+import { showFirstRunPrivacyNotice, showPrivacySettings } from "./privacyNotice";
 
 import { Template, getTemplates, scaffoldTemplate } from "./templateUtils";
 
 // the application insights key (also known as instrumentation key)
 
-// telemetry reporter
-let reporter: TelemetryReporter | undefined;
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -39,10 +37,20 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders[0];
   const fileRoot = firstWorkspace ? firstWorkspace.uri.fsPath : "";
 
-  // ensure it gets properly disposed. Upon disposal the events will be flushed
-  context.subscriptions.push(activateReporter());
-
-  reportEvent("activate");
+  // Initialize analytics with context
+  analytics.setContext(context);
+  
+  // Show first-run privacy notice and initialize analytics
+  showFirstRunPrivacyNotice(context).then(() => {
+    activateReporter();
+    reportEvent("activate");
+  });
+  
+  context.subscriptions.push({
+    dispose() {
+      analytics.dispose();
+    }
+  });
 
   const mainOutputChannel = vscode.window.createOutputChannel("Flyde");
   const debugOutputChannel = vscode.window.createOutputChannel("Flyde (Debug)");
@@ -93,9 +101,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     // Show the document in the text editor
     await vscode.window.showTextDocument(document);
-    if (reporter) {
-      reporter.sendTelemetryEvent("openAsText");
-    }
+    reportEvent("openAsText");
   };
 
   context.subscriptions.push(
@@ -219,6 +225,12 @@ export function activate(context: vscode.ExtensionContext) {
         .update("flyde.openAiToken", "", vscode.ConfigurationTarget.Global);
 
       vscode.window.showInformationMessage("OpenAI API Token cleared");
+    })
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand("flyde.showPrivacySettings", async () => {
+      await showPrivacySettings();
     })
   );
 }

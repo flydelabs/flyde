@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { reportEvent } from "./telemetry";
+import { reportEvent } from "./analytics";
 
 let askedThisSession = false;
 

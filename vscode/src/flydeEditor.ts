@@ -28,7 +28,7 @@ import {
 } from "@flyde/core";
 import { findPackageRoot } from "./find-package-root";
 import { randomInt } from "crypto";
-import { reportEvent, reportException } from "./telemetry";
+import { reportEvent, reportException } from "./analytics";
 
 import { Uri } from "vscode";
 
