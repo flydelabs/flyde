@@ -524,7 +524,7 @@ export class FlydeEditorEditorProvider
                     if (
                       node.type === "code" &&
                       node.source.type === "package" &&
-                      node.source.data === "@flyde/stdlib" &&
+                      node.source.data === "@flyde/nodes" &&
                       !categorizedNodeIds.has(node.id)
                     ) {
                       otherNodes.push(node);
