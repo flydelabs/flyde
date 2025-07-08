@@ -5,7 +5,9 @@ import {
   Pos,
   VisualNode,
 } from "..";
-import { slug } from "cuid";
+import { init } from "@paralleldrive/cuid2";
+
+const createId = init({ length: 8 });
 
 export interface NodeInstanceConfig {
   inputConfig: InputPinsConfig;
@@ -121,5 +123,5 @@ export const isInlineVisualNodeInstance = (
 };
 
 export const createInsId = (node: Pick<NodeDefinition, "id">) => {
-  return `${node.id}-${slug()}`;
+  return `${node.id}-${createId()}`;
 };
