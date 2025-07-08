@@ -73,7 +73,7 @@
     "prod": "node dist/index.js",
     "clean": "rm -rf dist",
     "__publish": "npm version patch && npm publish",
-    "lint": "eslint . --ext .ts && ts-node scripts/check-unique-node-ids.ts && knip"
+    "lint": "eslint . --ext .ts && ts-node scripts/check-unique-node-ids.ts"
   },
   "peerDependencies": {
     "@supabase/supabase-js": "^2.50.0"

@@ -30,8 +30,7 @@
     "__publish": "npm version patch && npm publish",
     "bts": "tsc -p .",
     "build:esm": "tsc -p tsconfig.esm.json",
-    "build": "rm -rf dist && tsc -p . && pnpm run build:esm",
-    "lint": "knip"
+    "build": "rm -rf dist && tsc -p . && pnpm run build:esm"
   },
   "author": "",
   "license": "MIT",

@@ -12,6 +12,7 @@
     "build": "pnpm run -r build",
     "test": "pnpm run -r test",
     "lint": "pnpm run -r lint",
+    "lint:knip": "knip",
     "clean": "pnpm run -r -y",
     "clean-dist": "pnpm exec -r \"rm -rf dist\"",
     "bump-all-patch": "pnpm -r version patch",
@@ -37,6 +38,7 @@
   },
   "devDependencies": {
     "@types/node": "^22.13.11",
-    "concurrently": "^9.1.2"
+    "concurrently": "^9.1.2",
+    "knip": "^5.61.3"
   }
 }
