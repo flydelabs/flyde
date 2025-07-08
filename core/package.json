@@ -37,7 +37,7 @@
   "license": "MIT",
   "dependencies": {
     "@types/react": "~18.2.0",
-    "cuid": "^3.0.0",
+    "@paralleldrive/cuid2": "^2.2.2",
     "debug": "^4.3.4",
     "dependency-graph": "^0.8.1",
     "rxjs": "^6.6.7",
@@ -48,7 +48,7 @@
     "@types/chai": "^4.3.5",
     "@types/debug": "^4.1.8",
     "@types/mocha": "^10.0.1",
-    "@types/node": "^10.17.60",
+    "@types/node": "^20.0.0",
     "@types/sinon": "^7.5.2",
     "badge-maker": "^3.3.1",
     "chai": "^4.3.7",

@@ -25,7 +25,6 @@
   "author": "",
   "dependencies": {
     "@supabase/supabase-js": "^2.50.0",
-    "concurrently": "^4.1.2",
     "mixpanel-browser": "^2.47.0",
     "tsx": "^4.7.1"
   },
@@ -37,6 +36,7 @@
     }
   },
   "devDependencies": {
-    "@types/node": "^22.13.11"
+    "@types/node": "^22.13.11",
+    "concurrently": "^9.1.2"
   }
 }
