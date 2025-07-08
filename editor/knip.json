@@ -1,0 +1,23 @@
+{
+    "$schema": "https://unpkg.com/knip@5/schema.json",
+    "mocha": {
+        "entry": ["src/**/*.spec.{ts,tsx,js,jsx}"]
+    },
+    "entry": [
+        "scripts/**/*.ts"
+    ],
+    "project": [
+        "src/**/*.{js,ts,tsx}",
+        "scripts/**/*.ts",
+        "!dist/**/*"
+    ],
+    "ignoreDependencies": [
+        "@flyde/core",
+        "ts-node",
+        "@types/mocha",
+        "sass"
+    ],
+    "ignoreBinaries": [
+        "start-storybook"
+    ]
+}
