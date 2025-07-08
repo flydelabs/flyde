@@ -1,0 +1,20 @@
+{
+    "$schema": "https://unpkg.com/knip@5/schema.json",
+    "mocha": {
+        "entry": [
+            "src/**/*.spec.{ts,tsx,js,jsx}"
+        ]
+    },
+    "entry": [
+        "src/runtime/fixture/**/*.ts"
+    ],
+    "project": [
+        "src/**/*.{js,ts,tsx}",
+        "!dist/**/*",
+        "!fixture/**/*"
+    ],
+    "ignoreDependencies": [
+        "@types/mocha",
+        "ts-node-dev"
+    ]
+}
