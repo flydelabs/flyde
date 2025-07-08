@@ -43,7 +43,7 @@ export async function scanImportableNodes(
   const depsNodes = await resolveDependentPackages(rootPath, depsNames);
 
   let builtInStdLib: Record<string, ImportableEditorNode[]> = {};
-  if (!depsNames.includes("@flyde/stdlib")) {
+  if (!depsNames.includes("@flyde/nodes")) {
     debugLogger("Using built-in stdlib");
 
     const nodes = Object.fromEntries(
@@ -53,12 +53,12 @@ export async function scanImportableNodes(
           id,
           codeNodeToImportableEditorNode(node, {
             type: "package",
-            data: "@flyde/stdlib",
+            data: "@flyde/nodes",
           }),
         ])
     );
     builtInStdLib = {
-      "@flyde/stdlib": Object.values(nodes),
+      "@flyde/nodes": Object.values(nodes),
     };
   }
 

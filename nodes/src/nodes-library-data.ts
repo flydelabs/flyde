@@ -32,7 +32,7 @@ import {
 
 const stdlibSource: CodeNodeSource = {
   type: "package",
-  data: "@flyde/stdlib",
+  data: "@flyde/nodes",
 };
 
 export function getBaseNodesLibraryData(): NodeLibraryData {
