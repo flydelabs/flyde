@@ -1,0 +1,29 @@
+{
+    "$schema": "https://unpkg.com/knip@5/schema.json",
+    "mocha": {
+        "entry": [
+            "src/**/*.spec.{ts,tsx,js,jsx}"
+        ]
+    },
+    "webpack": {
+        "config": ["webpack.config.js"]
+    },
+    "entry": [
+        "src/**/*.flyde.ts",
+        "src/**/*.tsx",
+        "src/all.ts",
+        "src/all-browser.ts",
+        "scripts/**/*.ts"
+    ],
+    "project": [
+        "src/**/*.{js,ts,tsx}",
+        "scripts/**/*.ts",
+        "!dist/**/*"
+    ],
+    "ignoreDependencies": [
+        "google-auth-library",
+        "@flyde/core",
+        "@flyde/editor",
+        "@types/mocha"
+    ]
+}

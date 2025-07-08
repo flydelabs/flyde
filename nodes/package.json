@@ -31,14 +31,12 @@
     "@types/pg": "^8.10.2",
     "@types/react": "~18.2.0",
     "axios": "^1.10.0",
-    "mongodb": "^4.17.0",
     "pg": "^8.11.3",
     "pubsub-js": "^1.9.4",
     "react": "~18.2.0"
   },
   "devDependencies": {
     "@supabase/supabase-js": "^2.50.0",
-    "@types/jscodeshift": "^0.11.6",
     "@types/mocha": "^10.0.1",
     "@typescript-eslint/eslint-plugin": "^7.3.1",
     "@typescript-eslint/parser": "^7.3.1",
@@ -47,13 +45,12 @@
     "css-loader": "^6.8.1",
     "eslint": "^8.57.0",
     "eslint-plugin-local-rules": "^2.0.1",
-    "jscodeshift": "^0.15.0",
+    "knip": "^5.27.0",
     "mocha": "^10.2.0",
     "nodemon": "^2.0.22",
-    "sinon": "^15.2.0",
+    "style-loader": "^3.3.3",
     "ts-loader": "^9.5.1",
     "ts-node": "^10.9.1",
-    "ts-node-dev": "^2.0.0",
     "typescript": "^5.5.4",
     "webpack": "^5.89.0",
     "webpack-cli": "^5.1.4"
@@ -76,7 +73,7 @@
     "prod": "node dist/index.js",
     "clean": "rm -rf dist",
     "__publish": "npm version patch && npm publish",
-    "lint": "eslint . --ext .ts && ts-node scripts/check-unique-node-ids.ts"
+    "lint": "eslint . --ext .ts && ts-node scripts/check-unique-node-ids.ts && knip"
   },
   "peerDependencies": {
     "@supabase/supabase-js": "^2.50.0"
