@@ -1,0 +1,33 @@
+imports:
+  "./b.flyde": AddOne
+node:
+  id: TestLocalVisualImport
+  inputs:
+    n:
+      mode: required
+      type: number
+  outputs:
+    r:
+      type: number
+  instances:
+    - id: addOneInst
+      nodeId: AddOne
+      inputConfig: {}
+      pos:
+        x: 200
+        y: 100
+  connections:
+    - from:
+        insId: __this
+        pinId: n
+      to:
+        insId: addOneInst
+        pinId: n
+    - from:
+        insId: addOneInst
+        pinId: r
+      to:
+        insId: __this
+        pinId: r
+  inputsPosition: {}
+  outputsPosition: {}
