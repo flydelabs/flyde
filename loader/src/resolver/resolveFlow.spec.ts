@@ -27,7 +27,7 @@ describe("resolver", () => {
     assert.exists(data.connections);
   });
 
-  it("resolves a .flyde with dependency on an inline code node from another Flyde file ", async () => {
+  it("resolves a .flyde with dependency on an inline code node from a flyde.js file ", async () => {
     const data = resolveFlowByPath(
       getFixturePath("a-imports-js-node-from-b/a.flyde")
     );
@@ -118,7 +118,7 @@ describe("resolver", () => {
       assert.equal(s2.lastCall.args[0], n - 1);
     });
 
-    it("namespaces instances in inline nodes as well", () => {
+    it("namespaces instances in inline nodes", () => {
       const data = resolveFlowByPath(
         getFixturePath(
           "namespaces-imported-inline-visual-node-references/Flow.flyde"
@@ -159,7 +159,7 @@ describe("resolver", () => {
   });
 
   // TODO: this text is failing in CI, but not locally, investigate
-  it.skip("resolves a .flyde with dependency on a visual node from a different package", async () => {
+  it("resolves a .flyde with dependency on a visual node from a different package", async () => {
     const data = resolveFlowByPath(
       getFixturePath("a-imports-b-grouped-from-package/a.flyde")
     );
@@ -173,6 +173,28 @@ describe("resolver", () => {
 
     assert.equal(s.lastCall.args[0], 3);
   });
+
+  it("resolves a .flyde with dependency on a local visual node file", async () => {
+    const data = resolveFlowByPath(
+      getFixturePath("a-imports-b-visual-local/a.flyde")
+    );
+    const [s, r] = spiedOutput();
+    const n = dynamicNodeInput();
+    execute({
+      node: data,
+      inputs: { n },
+      outputs: { r },
+      onBubbleError: (e) => {
+        console.error("Error in test:", e);
+      },
+    });
+
+    n.subject.next(2);
+
+    await new Promise(resolve => setTimeout(resolve, 50));
+
+    assert.equal(s.lastCall.args[0], 3);
+  }).timeout(100);
 
   it("breaks on invalid schemas", () => {
     const invalidsRoot = getFixturePath("schema-validation/invalid");

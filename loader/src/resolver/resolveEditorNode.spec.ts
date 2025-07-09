@@ -122,4 +122,45 @@ describe("resolveEditorNode", () => {
     assert.equal(firstResolvedNode.instances[0].node.id, `fake-node-for-${mockVisualNode.instances[0].id}__instance1`);
   });
 
+  it("resolves visual node instances with file source type", () => {
+    const mockVisualNode: VisualNode = {
+      id: "TestNode",
+      inputs: {},
+      outputs: {},
+      instances: [{
+        id: "fileBasedInstance",
+        nodeId: "ExternalVisualNode",
+        type: 'visual',
+        source: { type: "file", data: "./external.flyde" },
+        inputConfig: {},
+        pos: { x: 100, y: 100 },
+      }],
+      connections: [],
+      inputsPosition: {},
+      outputsPosition: {},
+    };
+
+    const externalVisualNode: VisualNode = {
+      id: "ExternalVisualNode",
+      inputs: { n: {} },
+      outputs: { r: {} },
+      instances: [],
+      connections: [],
+      inputsPosition: {},
+      outputsPosition: {},
+    };
+
+    const findReferencedNode: ReferencedNodeFinder = (ins) => {
+      if (ins.nodeId === "ExternalVisualNode") {
+        return externalVisualNode;
+      }
+      return null;
+    };
+
+    const result = resolveEditorNode(mockVisualNode, findReferencedNode);
+
+    assert.equal(result.instances.length, 1);
+    assert.equal(result.instances[0].node.id, "ExternalVisualNode");
+  });
+
 });

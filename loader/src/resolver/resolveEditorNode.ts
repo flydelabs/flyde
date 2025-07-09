@@ -2,6 +2,7 @@ import {
   EditorNode,
   EditorVisualNode,
   isVisualNodeInstance,
+  isVisualNode,
   VisualNode,
 } from "@flyde/core";
 import { ReferencedNodeFinder } from "./ReferencedNodeFinder";
@@ -37,7 +38,17 @@ export function resolveEditorNode(
               node: resolveEditorNode(instance.source.data, findReferencedNode),
             };
           } else {
-            throw new Error("Unsupported instance source type: " + instance.source.type);
+            const referencedNode = findReferencedNode(instance);
+            if (!referencedNode) {
+              throw new Error(`Could not find node definition for ${instance.nodeId}`);
+            }
+            if (!isVisualNode(referencedNode)) {
+              throw new Error(`Node ${instance.nodeId} is not a visual node`);
+            }
+            return {
+              ...instance,
+              node: resolveEditorNode(referencedNode, findReferencedNode),
+            };
           }
         } else {
           return resolveEditorInstance(instance, findReferencedNode);

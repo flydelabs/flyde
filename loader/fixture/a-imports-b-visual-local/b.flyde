@@ -1,0 +1,39 @@
+node:
+  id: AddOne
+  inputs:
+    n:
+      mode: required
+      type: number
+  outputs:
+    r:
+      type: number
+  instances:
+    - id: plus1
+      nodeId: Add
+      inputConfig: {}
+      source:
+        type: package
+        data: "@flyde/nodes"
+      pos:
+        x: 200
+        y: 100
+      type: code
+      config:
+        n2:
+          type: value
+          value: 1
+  connections:
+    - from:
+        insId: __this
+        pinId: n
+      to:
+        insId: plus1
+        pinId: n1
+    - from:
+        insId: plus1
+        pinId: sum
+      to:
+        insId: __this
+        pinId: r
+  inputsPosition: {}
+  outputsPosition: {}
