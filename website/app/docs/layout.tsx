@@ -19,7 +19,7 @@ export default function DocsLayout({
         </div>
       </aside>
       <div className="flex-1 min-w-0">
-        <article className="prose prose-invert max-w-none">
+        <article className="prose prose-slate max-w-none text-white">
           {children}
         </article>
       </div>
