@@ -29,6 +29,8 @@ import {
   codeNodeToImportableEditorNode,
   NodeLibraryData,
 } from "@flyde/core";
+import { Airtable, Anthropic, DiscordMessage, Firecrawl, GoogleSheets, LLMCondition, Notion, PostgreSQL, Resend, ScrapingBee, SendGrid, Slack, Supabase, Tavily } from "./ThirdParty";
+import { OpenAIResponsesAPI } from "./ThirdParty/openai-responses.flyde";
 
 const stdlibSource: CodeNodeSource = {
   type: "package",
@@ -50,6 +52,29 @@ export function getBaseNodesLibraryData(): NodeLibraryData {
           Note,
           MathNode,
           StringOps
+        ].map((node) => codeNodeToImportableEditorNode(node, stdlibSource)),
+      },
+      {
+        title: 'Integrations',
+        nodes: [
+          Airtable,
+          Anthropic,
+          DiscordMessage,
+          Firecrawl,
+          GoogleSheets,
+          LLMCondition,
+          Notion,
+          OpenAIResponsesAPI,
+          PostgreSQL,
+          Resend,
+          ScrapingBee,
+          SendGrid,
+          Slack,
+          Tavily,
+          PostgreSQL,
+          GoogleSheets,
+          Slack,
+          Supabase
         ].map((node) => codeNodeToImportableEditorNode(node, stdlibSource)),
       },
       {
