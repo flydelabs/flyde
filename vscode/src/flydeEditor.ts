@@ -1,5 +1,6 @@
 import path = require("path");
 import * as vscode from "vscode";
+import * as fs from "fs";
 import { getWebviewContent } from "./editor/open-flyde-panel";
 var fp = require("find-free-port");
 
@@ -10,7 +11,6 @@ import {
   deserializeFlow,
   serializeFlow,
   resolveEditorInstance,
-  createServerReferencedNodeFinder,
   resolveEditorNode,
 } from "@flyde/loader";
 import {
@@ -38,6 +38,7 @@ import { maybeAskToStarProject } from "./maybeAskToStarProject";
 import { customCodeNodeFromCode } from "@flyde/core/dist/misc/custom-code-node-from-code";
 import { createAiCompletion } from "./ai";
 import { getAvailableSecrets, addNewSecret, getSecrets } from "./secretsService";
+import { createNodeFinderWithOverrides } from "./createNodeFinderWithOverrides";
 
 // Helper functions
 // export type EditorPortType = keyof any;
@@ -209,7 +210,7 @@ export class FlydeEditorEditorProvider
       const node = initialFlow as FlydeFlow;
 
       const resolvedNode = tryOrThrow(() => {
-        return resolveEditorNode(node.node, createServerReferencedNodeFinder(fullDocumentPath));
+        return resolveEditorNode(node.node, createNodeFinderWithOverrides(fullDocumentPath));
       }, "Failed to resolve node");
 
       if (resolvedNode instanceof Error) {
@@ -471,8 +472,6 @@ export class FlydeEditorEditorProvider
                 break;
               }
               case "getLibraryData": {
-                const libraryData = getBaseNodesLibraryData();
-
                 try {
                   const firstWorkspace =
                     vscode.workspace.workspaceFolders &&
@@ -480,6 +479,46 @@ export class FlydeEditorEditorProvider
                   const rootPath = firstWorkspace
                     ? firstWorkspace.uri.fsPath
                     : path.dirname(fullDocumentPath);
+                  
+                  // Check for .flyde-nodes.json override file
+                  const overridePath = path.join(path.dirname(fullDocumentPath), '.flyde-nodes.json');
+                  if (fs.existsSync(overridePath)) {
+                    try {
+                      const overrideContent = fs.readFileSync(overridePath, 'utf8');
+                      const overrideData = JSON.parse(overrideContent);
+                      
+                      // Transform the new structure to the expected format
+                      if (overrideData.nodes && overrideData.groups) {
+                        const transformedGroups = overrideData.groups.map((group: any) => ({
+                          title: group.title,
+                          nodes: group.nodeIds.map((nodeId: string) => {
+                            const nodeDefinition = overrideData.nodes[nodeId];
+                            if (!nodeDefinition) {
+                              throw new Error(`Node definition not found for ${nodeId}`);
+                            }
+                            
+                            // Return the node definition as ImportableEditorNode - now includes editorNode
+                            return nodeDefinition;
+                          })
+                        }));
+                        
+                        messageResponse(event, { groups: transformedGroups });
+                        break;
+                      }
+                      
+                      // Legacy format fallback - if override file exists and has groups, use it directly
+                      if (overrideData.groups && Array.isArray(overrideData.groups)) {
+                        messageResponse(event, overrideData);
+                        break;
+                      }
+                    } catch (err) {
+                      console.error("Error reading .flyde-nodes.json:", err);
+                      // Fall through to default behavior if override file is invalid
+                    }
+                  }
+                  
+                  // Default behavior: get standard library nodes
+                  const libraryData = getBaseNodesLibraryData();
                   const relativePath = path.relative(rootPath, fullDocumentPath);
 
                   const { nodes } = await scanImportableNodes(
@@ -616,8 +655,7 @@ export class FlydeEditorEditorProvider
               case "resolveInstance": {
                 const { instance } = event.params;
 
-                const referencedNodeFinder =
-                  createServerReferencedNodeFinder(fullDocumentPath);
+                const referencedNodeFinder = createNodeFinderWithOverrides(fullDocumentPath);
 
                 try {
                   const editorInstance = resolveEditorInstance(

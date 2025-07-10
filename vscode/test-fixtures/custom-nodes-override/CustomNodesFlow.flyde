@@ -1,0 +1,23 @@
+imports: {}
+node:
+  instances:
+    - pos:
+        x: -195
+        y: 70
+      id: CustomBob-n553n0v3
+      inputConfig: {}
+      nodeId: CustomBob
+      config:
+        value:
+          type: dynamic
+          value: "{{value}}"
+      type: code
+      source:
+        type: custom
+        data: custom://CustomBob
+  connections: []
+  id: CustomNodesFlow
+  inputs: {}
+  outputs: {}
+  inputsPosition: {}
+  outputsPosition: {}

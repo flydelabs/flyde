@@ -1,0 +1,104 @@
+{
+  "nodes": {
+    "CustomBob": {
+      "id": "CustomBob",
+      "type": "code",
+      "displayName": "Custom Bob",
+      "description": "A custom external node named Bob",
+      "icon": "fa-solid fa-user",
+      "source": {
+        "type": "custom",
+        "data": "custom://CustomBob"
+      },
+      "editorNode": {
+        "id": "CustomBob",
+        "displayName": "Custom Bob",
+        "description": "A custom external node named Bob",
+        "icon": "fa-solid fa-user",
+        "inputs": {
+          "value": {
+            "description": "Input value to process"
+          }
+        },
+        "outputs": {
+          "result": {
+            "description": "Processed result from external runtime"
+          }
+        },
+        "editorConfig": {
+          "type": "structured"
+        }
+      },
+      "config": {}
+    },
+    "CustomAlice": {
+      "id": "CustomAlice",
+      "type": "code", 
+      "displayName": "Custom Alice",
+      "description": "Another custom external node",
+      "icon": "fa-globe",
+      "source": {
+        "type": "custom",
+        "data": "custom://CustomAlice"
+      },
+      "editorNode": {
+        "id": "CustomAlice",
+        "displayName": "Custom Alice",
+        "description": "Another custom external node",
+        "icon": "fa-globe",
+        "inputs": {
+          "input1": {
+            "description": "First input"
+          },
+          "input2": {
+            "description": "Second input"
+          }
+        },
+        "outputs": {
+          "output": {
+            "description": "Combined output"
+          }
+        },
+        "editorConfig": {
+          "type": "structured"
+        }
+      },
+      "config": {}
+    },
+    "InlineValue": {
+      "id": "InlineValue",
+      "type": "code",
+      "displayName": "Overridden Inline Value",
+      "description": "This overrides the standard InlineValue node",
+      "source": {
+        "type": "package",
+        "data": "@flyde/nodes"
+      },
+      "editorNode": {
+        "id": "InlineValue",
+        "displayName": "Overridden Inline Value",
+        "description": "This overrides the standard InlineValue node",
+        "inputs": {},
+        "outputs": {
+          "value": {
+            "description": "The overridden value"
+          }
+        },
+        "editorConfig": {
+          "type": "structured"
+        }
+      },
+      "config": {}
+    }
+  },
+  "groups": [
+    {
+      "title": "Custom Runtime Nodes",
+      "nodeIds": ["CustomBob", "CustomAlice"]
+    },
+    {
+      "title": "Overridden Stdlib",
+      "nodeIds": ["InlineValue"]
+    }
+  ]
+}

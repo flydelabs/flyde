@@ -2,11 +2,9 @@
 // as well as import your extension to test it
 import * as vscode from "vscode";
 import * as path from "path";
-import * as fs from "fs";
-import * as os from "os";
 
 import assert = require("assert");
-import { eventually } from "@flyde/core";
+import { delay, eventually } from "@flyde/core";
 import { getTemplates } from "../templateUtils";
 import {
   openFlydeFile,
@@ -19,43 +17,19 @@ import {
   buildTestFilePath,
   buildTempFilePath,
 } from "./pageObjects";
+import { createTempTestWorkspace } from "./testFileUtils";
+import { webviewTestingCommand } from "./testUtils";
 
 let tmpDir = "";
 
 suite("Extension Test Suite", () => {
   suiteSetup(() => {
-    // copy all test-fixtures to a temp directory
-    // and set the workspace to that directory
-    tmpDir = path.join(os.tmpdir(), `flyde-test-fixtures-${Date.now()}`);
+    // Copy all test-fixtures to a temp directory and set the workspace to that directory
+    const fixturesDir = path.resolve(__dirname, "../../test-fixtures");
+    const templatesDir = path.resolve(__dirname, "../../templates");
 
-    if (!fs.existsSync(tmpDir)) {
-      fs.mkdirSync(tmpDir, { recursive: true });
-
-      const fixturesDir = path.resolve(__dirname, "../../test-fixtures");
-
-      fs.readdirSync(fixturesDir).forEach((file) => {
-        const source = path.join(fixturesDir, file);
-        const dest = path.join(tmpDir, file);
-        fs.copyFileSync(source, dest);
-      });
-
-      const templatesDir = path.resolve(__dirname, "../../templates");
-      fs.readdirSync(templatesDir).forEach((templateFolder) => {
-        // Skip hidden files like .DS_Store
-        if (templateFolder.startsWith('.')) {
-          return;
-        }
-
-        const source = path.join(templatesDir, templateFolder, `Example.flyde`);
-        const dest = path.join(tmpDir, `${templateFolder}.flyde`);
-        if (fs.existsSync(source)) {
-          fs.copyFileSync(source, dest);
-        }
-      });
-      console.log(`Temporary directory created at ${tmpDir}`);
-    } else {
-      throw new Error("Temporary directory already exists");
-    }
+    tmpDir = createTempTestWorkspace(fixturesDir, templatesDir);
+    console.log(`Temporary directory created at ${tmpDir}`);
   });
 
   // Close all editors after each test
@@ -85,15 +59,70 @@ suite("Extension Test Suite", () => {
     await openFlydeFile(testFile);
     await waitForFlowEditor();
     await runFlow();
-    
+
     await eventually(async () => {
       const events = await getDebuggerEvents();
-      const hasHelloWorldOutput = events.some(event => 
+      const hasHelloWorldOutput = events.some(event =>
         JSON.stringify(event).includes("HelloWorld")
       );
       assert(hasHelloWorldOutput, "Expected debugger events to contain 'HelloWorld' output");
     }, 4000);
   }).retries(3);
+
+  test("Loads custom nodes from .flyde-nodes.json override", async () => {
+    // Open the flow file from the custom-nodes-override directory  
+    const testFile = path.join(tmpDir, "custom-nodes-override", "CustomNodesFlow.flyde");
+    await openFlydeFile(testFile);
+    await waitForFlowEditor();
+
+    // Initially, flow should only contain Bob
+    const initialInstances = await getInstances();
+    assert(initialInstances.length === 1, `Expected exactly 1 initial instance (Bob), but got ${initialInstances.length}`);
+    const bobExists = initialInstances.some(instance =>
+      instance.textContent?.includes("Custom Bob")
+    );
+    assert(bobExists, "Expected to find 'Custom Bob' instance in the initial flow");
+
+    await delay(5000);
+
+    // Click add nodes button to open the menu
+    await clickAddNodesButton();
+
+    // Get all menu items
+    const menuItems = await getMenuItems();
+
+    await delay(5000);
+
+    // Check if all custom nodes appear in the menu
+    const customBobExists = menuItems.some(item =>
+      item.textContent?.includes("Custom Bob")
+    );
+    const customAliceExists = menuItems.some(item =>
+      item.textContent?.includes("Custom Alice")
+    );
+
+    assert(customBobExists, "Expected 'Custom Bob' node to appear in the menu");
+    assert(customAliceExists, "Expected 'Custom Alice' node to appear in the menu");
+
+    // Click on Alice to add it to the canvas
+    await webviewTestingCommand("clickByText", { text: "Custom Alice" });
+
+    // Wait a moment for the node to be added
+    await eventually(async () => {
+      const instancesAfterAdd = await getInstances();
+      assert(instancesAfterAdd.length === 2, `Expected 2 instances after adding Alice, but got ${instancesAfterAdd.length}`);
+    }, 2000);
+
+    // Verify Alice is now visible in the canvas
+    const finalInstances = await getInstances();
+    const aliceExists = finalInstances.some(instance =>
+      instance.textContent?.includes("Custom Alice")
+    );
+    assert(aliceExists, "Expected to find 'Custom Alice' instance in the canvas after adding it");
+
+    await delay(5000);
+  }).retries(3);
+
 
   suite("Templates", () => {
     const templateFiles = getTemplates();
