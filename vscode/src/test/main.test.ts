@@ -82,17 +82,11 @@ suite("Extension Test Suite", () => {
       instance.textContent?.includes("Custom Bob")
     );
     assert(bobExists, "Expected to find 'Custom Bob' instance in the initial flow");
-
-    await delay(5000);
-
     // Click add nodes button to open the menu
     await clickAddNodesButton();
 
     // Get all menu items
     const menuItems = await getMenuItems();
-
-    await delay(5000);
-
     // Check if all custom nodes appear in the menu
     const customBobExists = menuItems.some(item =>
       item.textContent?.includes("Custom Bob")
@@ -120,7 +114,6 @@ suite("Extension Test Suite", () => {
     );
     assert(aliceExists, "Expected to find 'Custom Alice' instance in the canvas after adding it");
 
-    await delay(5000);
   }).retries(3);
 
 
