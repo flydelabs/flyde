@@ -6,7 +6,7 @@ import {
   AdvancedCodeNode,
 } from "@flyde/core";
 
-import * as _StdLib from "@flyde/nodes/dist/all";
+import * as _Nodes from "@flyde/nodes/dist/all";
 import { join } from "path";
 import { existsSync, readFileSync } from "fs";
 import { resolveImportablePaths } from "./resolveImportablePaths";
@@ -14,7 +14,7 @@ import { deserializeFlowByPath } from "../serdes";
 import { ReferencedNodeFinder } from "./ReferencedNodeFinder";
 import { resolveCodeNodeDependencies } from "./serverUtils";
 
-const LocalStdLib = Object.values(_StdLib).reduce<Record<string, CodeNode>>(
+const LocalNodes = Object.values(_Nodes).reduce<Record<string, CodeNode>>(
   (acc, curr) => {
     if (isCodeNode(curr)) {
       return { ...acc, [curr.id]: curr };
@@ -64,15 +64,15 @@ export function createServerReferencedNodeFinder(
 
         if (!nodeWrapper) {
           if (instance.source.data === "@flyde/nodes") {
-            const maybeFromStdlib = LocalStdLib[instance.nodeId];
+            const maybeFromNodes = LocalNodes[instance.nodeId];
 
-            if (!maybeFromStdlib) {
+            if (!maybeFromNodes) {
               throw new Error(
                 `Cannot find node ${instance.nodeId} in ${fullFlowPath}, even not in the internal copy of "@flyde/nodes"`
               );
             }
 
-            const maybeAdvancedNode = maybeFromStdlib as AdvancedCodeNode<any>;
+            const maybeAdvancedNode = maybeFromNodes as AdvancedCodeNode<any>;
 
             if (maybeAdvancedNode.editorConfig?.type === "custom") {
               const content = require("@flyde/nodes/dist/bundled-config/" +
@@ -83,15 +83,15 @@ export function createServerReferencedNodeFinder(
             }
 
             // Add sourceCode for nodes
-            if (isCodeNode(maybeFromStdlib)) {
+            if (isCodeNode(maybeFromNodes)) {
               return {
-                ...maybeFromStdlib,
-                sourceCode: getStdlibSourceCode(instance.nodeId)
+                ...maybeFromNodes,
+                sourceCode: getSourceCode(instance.nodeId)
               };
             }
 
             // The bundle content is already included during the post-processing step
-            return maybeFromStdlib as FlydeNode;
+            return maybeFromNodes as FlydeNode;
           }
 
           throw new Error(
@@ -228,17 +228,17 @@ function getNodeSourceCode(filePath: string, nodeId: string): string {
 }
 
 // Helper function to get the source code of a node
-function getStdlibSourceCode(nodeId: string): string {
+function getSourceCode(nodeId: string): string {
   try {
     // Try to find the actual implementation in the nodes package
-    const stdlibNodePath = require.resolve(`@flyde/nodes/dist/${nodeId}`);
-    const fileContent = readFileSync(stdlibNodePath, "utf-8");
+    const nodePath = require.resolve(`@flyde/nodes/dist/${nodeId}`);
+    const fileContent = readFileSync(nodePath, "utf-8");
     return fileContent;
   } catch (e) {
     try {
       // Fallback to the bundled version
-      const stdlibNodeContent = require(`@flyde/nodes/dist/all`)[nodeId];
-      return `// Bundled content\n${JSON.stringify(stdlibNodeContent, null, 2)}`;
+      const nodeContent = require(`@flyde/nodes/dist/all`)[nodeId];
+      return `// Bundled content\n${JSON.stringify(nodeContent, null, 2)}`;
     } catch (err) {
       return `// Error loading nodes source code: ${e.message}`;
     }

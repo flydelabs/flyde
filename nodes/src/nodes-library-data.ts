@@ -32,7 +32,7 @@ import {
 import { Airtable, Anthropic, DiscordMessage, Firecrawl, GoogleSheets, LLMCondition, Notion, PostgreSQL, Resend, ScrapingBee, SendGrid, Slack, Supabase, Tavily } from "./ThirdParty";
 import { OpenAIResponsesAPI } from "./ThirdParty/openai-responses.flyde";
 
-const stdlibSource: CodeNodeSource = {
+const nodesSource: CodeNodeSource = {
   type: "package",
   data: "@flyde/nodes",
 };
@@ -52,7 +52,7 @@ export function getBaseNodesLibraryData(): NodeLibraryData {
           Note,
           MathNode,
           StringOps
-        ].map((node) => codeNodeToImportableEditorNode(node, stdlibSource)),
+        ].map((node) => codeNodeToImportableEditorNode(node, nodesSource)),
       },
       {
         title: 'Integrations',
@@ -75,7 +75,7 @@ export function getBaseNodesLibraryData(): NodeLibraryData {
           GoogleSheets,
           Slack,
           Supabase
-        ].map((node) => codeNodeToImportableEditorNode(node, stdlibSource)),
+        ].map((node) => codeNodeToImportableEditorNode(node, nodesSource)),
       },
       {
         title: "Lists",
@@ -86,7 +86,7 @@ export function getBaseNodesLibraryData(): NodeLibraryData {
           Lists.GetListElement,
           Lists.Append,
           Lists.Reverse,
-        ].map((node) => codeNodeToImportableEditorNode(node, stdlibSource)),
+        ].map((node) => codeNodeToImportableEditorNode(node, nodesSource)),
       },
       {
         title: "Control Flow",
@@ -100,7 +100,7 @@ export function getBaseNodesLibraryData(): NodeLibraryData {
           Switch,
           Publish,
           Subscribe,
-        ].map((node) => codeNodeToImportableEditorNode(node, stdlibSource)),
+        ].map((node) => codeNodeToImportableEditorNode(node, nodesSource)),
       },
       {
         title: "Objects",
@@ -111,18 +111,18 @@ export function getBaseNodesLibraryData(): NodeLibraryData {
           Objects.JSONParse,
           Objects.JSONStringify,
           Objects.ObjectEntries,
-        ].map((node) => codeNodeToImportableEditorNode(node, stdlibSource)),
+        ].map((node) => codeNodeToImportableEditorNode(node, nodesSource)),
       },
       {
         title: "State",
         nodes: [GetGlobalState, SetGlobalState].map((node) =>
-          codeNodeToImportableEditorNode(node, stdlibSource)
+          codeNodeToImportableEditorNode(node, nodesSource)
         ),
       },
       {
         title: "Timing",
         nodes: [Delay, Throttle, Debounce, Interval, RoundRobin].map((node) =>
-          codeNodeToImportableEditorNode(node, stdlibSource)
+          codeNodeToImportableEditorNode(node, nodesSource)
         ),
       },
     ],
