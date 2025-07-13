@@ -1,0 +1,61 @@
+imports: {}
+node:
+  instances:
+    - pos:
+        x: 89.57865951397048
+        y: -168.91223409434372
+      id: InlineValue-lt28i55w
+      inputConfig: {}
+      nodeId: InlineValue
+      config:
+        value:
+          type: string
+          value: Hello, {{name}}
+      type: code
+      source:
+        type: package
+        data: "@flyde/nodes"
+  connections:
+    - from:
+        insId: __this
+        pinId: name
+      to:
+        insId: InlineValue-lt28i55w
+        pinId: name
+    - from:
+        insId: InlineValue-lt28i55w
+        pinId: value
+      to:
+        insId: __this
+        pinId: response
+  id: Example
+  inputs:
+    name:
+      mode: required
+  outputs:
+    response:
+      delayed: false
+  inputsPosition:
+    question:
+      x: -510.8552075195313
+      y: -106.74767211914062
+    userId:
+      x: -521.2010229492188
+      y: -5.160607910156251
+    topic:
+      x: -523.7615185546875
+      y: -160.86858276367187
+    name:
+      x: -217.2192211914063
+      y: -169.20122436523437
+  outputsPosition:
+    result:
+      x: -23.264428942324532
+      y: 237.25953921502617
+    blogPost:
+      x: 663.252458190918
+      y: -186.23055786132812
+    response:
+      x: 363.25312957763674
+      y: -169.17501586914062
+  completionOutputs: []

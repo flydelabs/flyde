@@ -17,7 +17,10 @@
       "types": "./dist/*.d.ts"
     },
     "./dist/styles/tailwind.scss": "./dist/styles/tailwind.scss",
+    "./dist/styles/editor-no-tailwind.css": "./dist/styles/editor-no-tailwind.css",
+    "./dist/styles/editor-complete.css": "./dist/styles/editor-complete.css",
     "./src/index.scss": "./src/index.scss",
+    "./src/index-no-tailwind.scss": "./src/index-no-tailwind.scss",
     "./src/*": "./src/*"
   },
   "scripts": {
@@ -27,8 +30,10 @@
     "__publish": "npm version patch && npm publish",
     "prebuild": "pnpm run bundle-types",
     "build:esm": "tsc -p tsconfig.esm.json && tsc-alias -p tsconfig.esm.json",
-    "build": "rm -rf dist && tsc -p . && pnpm run build:tw && tsc-alias && pnpm run build:esm",
+    "build": "rm -rf dist && tsc -p . && pnpm run build:tw && pnpm run build:css && pnpm run build:css-complete && tsc-alias && pnpm run build:esm",
     "build:tw": "tailwindcss -i ./src/styles/tailwind-entry.css -o ./dist/styles/tailwind.scss --minify",
+    "build:css": "sass ./src/index-no-tailwind.scss ./dist/styles/editor-no-tailwind.css --style=compressed --load-path=node_modules",
+    "build:css-complete": "tailwindcss -i ./src/index-complete.css -o ./dist/styles/editor-tailwind.css --minify && cat ./dist/styles/editor-tailwind.css ./dist/styles/editor-no-tailwind.css > ./dist/styles/editor-complete.css",
     "start": "npm run watch",
     "storybook": "start-storybook",
     "bundle-types:core": "dts-bundle --name @flyde/core --main node_modules/@flyde/core/dist/index.d.ts --out ../../../../src/types/@flyde-core.d.ts",

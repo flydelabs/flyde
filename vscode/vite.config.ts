@@ -10,7 +10,7 @@ export default defineConfig({
     rollupOptions: {
       input: path.resolve(__dirname, 'src/webview/index.html')
     },
-    sourcemap: true,
+    sourcemap: 'inline',
   },
   root: 'src/webview',
   publicDir: false

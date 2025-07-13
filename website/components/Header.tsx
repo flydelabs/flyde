@@ -54,7 +54,7 @@ export function Header() {
       properties: {
         item_name: itemName,
         href: href,
-        current_page: pathname
+        current_page: pathname || ''
       },
       gaCategory: 'navigation',
       gaLabel: itemName.toLowerCase()
@@ -82,8 +82,8 @@ export function Header() {
             onClick={() => handleNavigationClick('Logo', '/')}
           >
             <Image 
-              src={pathname.startsWith('/studio') ? "/logo-studio.svg" : "/logo-text.png"} 
-              alt={pathname.startsWith('/studio') ? "Flyde Studio" : "Flyde"} 
+              src={pathname?.startsWith('/studio') ? "/logo-studio.svg" : "/logo-text.png"} 
+              alt={pathname?.startsWith('/studio') ? "Flyde Studio" : "Flyde"} 
               width={80} 
               height={32} 
               className="w-16 sm:w-20" 

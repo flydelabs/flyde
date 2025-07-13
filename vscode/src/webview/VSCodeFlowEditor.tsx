@@ -25,16 +25,16 @@ const isEqual = (a: any, b: any): boolean => {
   if (a == null || b == null) return false;
   if (typeof a !== typeof b) return false;
   if (typeof a !== 'object') return false;
-  
+
   const keysA = Object.keys(a);
   const keysB = Object.keys(b);
   if (keysA.length !== keysB.length) return false;
-  
+
   for (const key of keysA) {
     if (!keysB.includes(key)) return false;
     if (!isEqual(a[key], b[key])) return false;
   }
-  
+
   return true;
 };
 
@@ -56,7 +56,7 @@ export const VSCodeFlowEditor: React.FC<BootstrapData> = ({
   const isDummyMode = new URLSearchParams(window.location.search).get('dummy') === 'true';
   const isVSCodeTest = relativeFile && relativeFile.includes('HelloWorld.flyde');
   const isTestMode = isDummyMode || isVSCodeTest;
-  
+
   // Initialize test event capture
   React.useEffect(() => {
     if (isTestMode) {
@@ -116,7 +116,7 @@ export const VSCodeFlowEditor: React.FC<BootstrapData> = ({
         if (isTestMode && window.__testCapturedDebuggerEvents) {
           window.__testCapturedDebuggerEvents.push(...events);
         }
-        
+
         if (runtimePlayer.current) {
           console.info(`Batched events - ${events.length} into player`, events);
           runtimePlayer.current.addEvents(events);

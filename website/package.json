@@ -3,8 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "PORT=3003 next dev --turbopack",
-    "build": "next build",
+    "dev": "PORT=3003 next dev",
+    "build:examples": "tsx scripts/build-examples.ts",
+    "build:next": "next build",
+    "build": "npm run build:next && npm run build:examples",
     "start": "next start",
     "lint": "next lint",
     "deploy:prod": "cd .. && npx vercel --prod"

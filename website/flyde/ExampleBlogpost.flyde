@@ -2,8 +2,8 @@ imports: {}
 node:
   instances:
     - pos:
-        x: -353.1742691082022
-        y: -224.93605186203484
+        x: -340.3115371746085
+        y: -237.2306685612536
       id: OpenAI-7904gip
       inputConfig: {}
       displayName: Generate subject
@@ -21,7 +21,8 @@ node:
             You are a master blog post author, and a master on the topic of
             "{{topic}}"
 
-            Please generate a captivating blog post title. Return just the title, no wrappers.
+            Please generate a captivating blog post title. Return just the
+            title, no wrappers.
         temperature:
           type: number
           value: 0.7
@@ -53,9 +54,6 @@ node:
         y: -126.85574595958127
       id: Anthropic-1j14gnl
       inputConfig: {}
-      visibleInputs:
-        - subject
-        - topic
       nodeId: Anthropic
       config:
         apiKey:
@@ -70,12 +68,14 @@ node:
             You are a master blog post author, expert in the topic of {{topic}}
 
 
-            Please generarate a short (3 paragraphs tops) blog post content, in HTML, for the following subject:
+            Please generarate a short (3 paragraphs tops) blog post content, in
+            HTML, for the following subject:
 
             {{subject}}
 
 
-            Return  just HTML for the blog's content, no metadata or title, just HTML
+            Return  just HTML for the blog's content, no metadata or title, just
+            HTML
         temperature:
           type: number
           value: 0.7
@@ -219,5 +219,5 @@ node:
       x: -23.264428942324532
       y: 237.25953921502617
     blogPost:
-      x: 645.8526779174805
-      y: -181.16329711914062
+      x: 663.252458190918
+      y: -186.23055786132812

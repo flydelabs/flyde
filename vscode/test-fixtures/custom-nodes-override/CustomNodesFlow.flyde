@@ -15,6 +15,17 @@ node:
       source:
         type: custom
         data: custom://CustomBob
+    - pos:
+        x: -433
+        y: 102
+      id: CustomAlice-aqemao50
+      inputConfig: {}
+      nodeId: CustomAlice
+      config: {}
+      type: code
+      source:
+        type: custom
+        data: custom://CustomAlice
   connections: []
   id: CustomNodesFlow
   inputs: {}

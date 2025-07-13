@@ -21,6 +21,13 @@
       "import": "./dist/esm/*.js",
       "require": "./dist/*.js",
       "types": "./dist/*.d.ts"
+    },
+    "./dist/bundled-config": {
+      "require": "./dist/bundled-config/index.js"
+    },
+    "./dist/bundled-config/*": {
+      "require": "./dist/bundled-config/*.js",
+      "types": "./dist/bundled-config/*.d.ts"
     }
   },
   "author": "Flyde",
