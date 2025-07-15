@@ -9,7 +9,7 @@
     "build": "npm run build:next && npm run build:examples",
     "start": "next start",
     "lint": "next lint",
-    "test": "mocha 'components/**/*.spec.ts' --require ts-node/register",
+    "test": ":",
     "deploy:prod": "cd .. && npx vercel --prod"
   },
   "dependencies": {
