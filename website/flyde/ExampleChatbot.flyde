@@ -49,7 +49,7 @@ node:
         data: "@flyde/nodes"
     - pos:
         x: -103.28728116814
-        y: -149.94936179684908
+        y: -148.94936179684908
       id: Switch-4v04goe
       inputConfig: {}
       nodeId: Switch
@@ -180,25 +180,7 @@ node:
         insId: Anthropic-ed04gxr
         pinId: question
     - from:
-        insId: Switch-4v04goe
-        pinId: default
-      to:
-        insId: OpenAIResponsesAPI-wm14gof
-        pinId: question
-    - from:
-        insId: __this
-        pinId: previousResponseId
-      to:
-        insId: OpenAIResponsesAPI-wm14gof
-        pinId: previousResponseId
-    - from:
         insId: Anthropic-ed04gxr
-        pinId: response
-      to:
-        insId: __this
-        pinId: response
-    - from:
-        insId: OpenAIResponsesAPI-wm14gof
         pinId: response
       to:
         insId: __this

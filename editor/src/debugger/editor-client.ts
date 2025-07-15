@@ -1,6 +1,6 @@
-import { 
-  debugLogger, 
-  DebuggerEvent, 
+import {
+  debugLogger,
+  DebuggerEvent,
   PinType,
   RemoteDebuggerCallback,
   RemoteDebuggerCancelFn,
@@ -66,9 +66,8 @@ export const createEditorClient = (
   const urlNodes = new URL(url);
 
   const socket = _io(urlNodes.origin, {
-    path: `${
-      urlNodes.pathname === "/" ? "" : urlNodes.pathname
-    }/socket.io/editor`,
+    path: `${urlNodes.pathname === "/" ? "" : urlNodes.pathname
+      }/socket.io/editor`,
     timeout: 30000,
   });
 
@@ -139,7 +138,7 @@ export const createEditorClient = (
         .then((r: any) => r.data);
     },
     clearHistory: () => {
-      return axios.delete(`${url}/history`).then(() => {});
+      return axios.delete(`${url}/history`).then(() => { });
     },
     triggerNode: (nodeId, inputs) => {
       return axios

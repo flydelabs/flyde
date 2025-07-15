@@ -1,0 +1,80 @@
+imports: {}
+node:
+  instances:
+    - pos:
+        x: -200
+        y: -50
+      id: hello-input
+      nodeId: InlineValue
+      config:
+        type:
+          type: string
+          value: string
+        value:
+          type: string
+          value: "Hello, "
+        label:
+          type: string
+          value: '"Hello, "'
+      type: code
+      source:
+        type: package
+        data: "@flyde/nodes"
+    - pos:
+        x: -200
+        y: 50
+      id: world-input
+      nodeId: InlineValue
+      config:
+        type:
+          type: string
+          value: string
+        value:
+          type: string
+          value: "World!"
+        label:
+          type: string
+          value: '"World!"'
+      type: code
+      source:
+        type: package
+        data: "@flyde/nodes"
+    - pos:
+        x: 0
+        y: 0
+      id: concat-node
+      nodeId: Concat
+      config: {}
+      type: code
+      source:
+        type: package
+        data: "@flyde/nodes"
+  connections:
+    - from:
+        insId: hello-input
+        pinId: value
+      to:
+        insId: concat-node
+        pinId: a
+    - from:
+        insId: world-input
+        pinId: value
+      to:
+        insId: concat-node
+        pinId: b
+    - from:
+        insId: concat-node
+        pinId: value
+      to:
+        insId: __this
+        pinId: result
+  id: HelloWorld
+  inputs: {}
+  outputs:
+    result:
+      delayed: false
+  inputsPosition: {}
+  outputsPosition:
+    result:
+      x: 200
+      y: 0

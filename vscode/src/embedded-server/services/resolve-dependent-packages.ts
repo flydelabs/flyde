@@ -1,10 +1,6 @@
 import { codeNodeToImportableEditorNode, ImportableEditorNode, visualNodeToImportableEditorNode } from "@flyde/core";
-import {
-  deserializeFlow,
-  isCodeNodePath,
-  resolveCodeNodeDependencies,
-  resolveImportablePaths,
-} from "@flyde/loader";
+import { isCodeNodePath } from "@flyde/loader/dist/resolver/server/serverUtils";
+import { resolveCodeNodeDependencies, resolveImportablePaths, deserializeFlow } from "@flyde/loader/dist/server";
 import { readFileSync } from "fs";
 
 export async function resolveDependentPackages(

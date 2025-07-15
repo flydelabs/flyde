@@ -1,0 +1,73 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+:root {
+  --website-primary: #2887F4;
+  --website-background: #ffffff;
+  --website-foreground: #171717;
+  --website-card: #f9f9f9;
+  --website-card-foreground: #171717;
+  --website-border: #e5e5e5;
+  --website-muted: #f1f1f1;
+  --website-muted-foreground: #737373;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --website-primary: #2887F4;
+    --website-background: #0a0a0a;
+    --website-foreground: #ededed;
+    --website-card: #171717;
+    --website-card-foreground: #ededed;
+    --website-border: #333333;
+    --website-muted: #262626;
+    --website-muted-foreground: #a3a3a3;
+  }
+}
+
+body {
+  background: var(--website-background);
+  color: var(--website-foreground);
+  font-family: var(--font-sans);
+}
+
+.flyde-flow-editor {
+  width: 100%;
+  height: 100%;
+  /* overflow: hidden; */
+  position: relative;
+}
+
+.canvas-positioning-hack {
+  /* display: flex; */
+  width: 100%;
+  height: 100%;
+}
+
+/* flyde hacks */
+/* cmd +k */
+.flyde-flow-editor .absolute.top-4.right-5.z-10 {
+  display: none;
+}
+
+.flyde-flow-editor .help-bubble {
+  display: none;
+}
+
+/* hide onboarding tips */
+.flyde-flow-editor .onboarding-tips {
+  display: none;
+}
+
+.flyde-flow-editor {
+  /* pointer-events: none; */
+}
+
+.flyde-flow-editor .run-btn-container {
+  display: none;
+}
+
+/* Import Flyde editor styles (complete CSS with all needed styles for shadcn) */
+@import "@flyde/editor/dist/styles/editor-complete.css";

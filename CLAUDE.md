@@ -180,3 +180,8 @@ myFlow({input: "test"}).output.subscribe(value => {
 
 - Core runtime: MIT License
 - Visual editor: AGPL v3 License
+
+## Development Assumptions
+
+- Always assume dev server are already running
+- Never run dev server, always assume it is running

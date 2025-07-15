@@ -2,8 +2,8 @@ imports: {}
 node:
   instances:
     - pos:
-        x: -353.1742691082022
-        y: -224.93605186203484
+        x: -372.3106216472647
+        y: -237.38023521164422
       id: OpenAI-7904gip
       inputConfig: {}
       displayName: Generate subject
@@ -21,7 +21,8 @@ node:
             You are a master blog post author, and a master on the topic of
             "{{topic}}"
 
-            Please generate a captivating blog post title. Return just the title, no wrappers.
+            Please generate a captivating blog post title. Return just the
+            title, no wrappers.
         temperature:
           type: number
           value: 0.7
@@ -53,9 +54,6 @@ node:
         y: -126.85574595958127
       id: Anthropic-1j14gnl
       inputConfig: {}
-      visibleInputs:
-        - subject
-        - topic
       nodeId: Anthropic
       config:
         apiKey:
@@ -70,12 +68,14 @@ node:
             You are a master blog post author, expert in the topic of {{topic}}
 
 
-            Please generarate a short (3 paragraphs tops) blog post content, in HTML, for the following subject:
+            Please generarate a short (3 paragraphs tops) blog post content, in
+            HTML, for the following subject:
 
             {{subject}}
 
 
-            Return  just HTML for the blog's content, no metadata or title, just HTML
+            Return  just HTML for the blog's content, no metadata or title, just
+            HTML
         temperature:
           type: number
           value: 0.7
@@ -95,20 +95,18 @@ node:
       nodeId: InlineValue
       config:
         value:
-          type: string
-          value: |-
-            {
-              subject: "{{subject}}",
-              content: "{{content}}",
-              summary: "{{summary}}"
-            }
+          type: json
+          value:
+            subject: "{{subject}}"
+            content: "{{content}}"
+            summary: "{{summary}}"
       type: code
       source:
         type: package
         data: "@flyde/nodes"
     - pos:
-        x: 140.85429615350995
-        y: -47.827206516241176
+        x: 153.96672291132245
+        y: -57.827328586553676
       id: OpenAI-bt14gqc
       inputConfig: {}
       nodeId: OpenAI
@@ -212,12 +210,12 @@ node:
       x: -521.2010229492188
       y: -5.160607910156251
     topic:
-      x: -523.7615185546875
-      y: -160.86858276367187
+      x: -560.4830456542969
+      y: -109.08241943359374
   outputsPosition:
     result:
       x: -23.264428942324532
       y: 237.25953921502617
     blogPost:
-      x: 645.8526779174805
-      y: -181.16329711914062
+      x: 633.4904876708985
+      y: -180.87246459960937

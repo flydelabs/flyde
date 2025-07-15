@@ -5,3 +5,4 @@ packages:
   - "website"
   - "loader"
   - "vscode"
+  - "create-flyde-app"

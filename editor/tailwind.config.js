@@ -47,7 +47,6 @@ module.exports = {
     },
   },
   plugins: [require("tailwindcss-animate")],
-  important: true,
   // Output file for other projects to consume
   output: {
     file: "./src/styles/tailwind-output.css",

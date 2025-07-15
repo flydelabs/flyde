@@ -1,5 +1,5 @@
 import { CodeNode, randomInt } from "@flyde/core";
-import { resolveCodeNodeDependencies } from "@flyde/loader";
+import { resolveCodeNodeDependencies } from "@flyde/loader/dist/server";
 import { existsSync, writeFileSync } from "fs";
 
 import OpenAI from "openai";
@@ -27,7 +27,7 @@ async function generateNode(
   if (!code) {
     throw new Error("No code generated from OpenAI");
   }
-  
+
   const usage = response.usage?.total_tokens ?? -1;
 
   console.info(`Flyde node generation used a total of ${usage} tokens`);

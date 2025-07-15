@@ -1,12 +1,19 @@
+// Import the editor's Tailwind config to extend from it
+const editorConfig = require('../editor/tailwind.config.js');
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ["class"],
   content: [
+    './pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './components/**/*.{js,ts,jsx,tsx,mdx}',
     './app/**/*.{js,ts,jsx,tsx,mdx}',
-    './components/**/*.{js,ts,jsx,tsx,mdx}'
+    // Include Flyde editor components so their Tailwind classes are built
+    '../editor/src/**/*.{js,ts,jsx,tsx}',
   ],
-  important: true,
   theme: {
+    // Inherit the editor's theme
+    ...editorConfig.theme,
     container: {
       center: true,
       padding: '2rem',
@@ -14,25 +21,9 @@ module.exports = {
         '2xl': '1400px',
       },
     },
-    extend: {
-      colors: {
-        border: 'hsl(var(--border))',
-        background: 'hsl(var(--background))',
-        foreground: 'hsl(var(--foreground))',
-        primary: {
-          DEFAULT: 'hsl(var(--primary))',
-          foreground: 'hsl(var(--primary-foreground))',
-        },
-        card: {
-          DEFAULT: 'hsl(var(--card))',
-          foreground: 'hsl(var(--card-foreground))',
-        },
-        muted: {
-          DEFAULT: 'hsl(var(--muted))',
-          foreground: 'hsl(var(--muted-foreground))',
-        },
-      },
-    },
   },
-  plugins: [],
+  plugins: [
+    // Include the editor's plugins
+    ...(editorConfig.plugins || []),
+  ],
 }; 

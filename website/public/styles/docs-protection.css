@@ -1,0 +1,81 @@
+/* CSS protection for docs page against EmbeddedFlyde pollution */
+.docs-page-container {
+  /* Ensure flex layout works correctly */
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 100vh !important;
+}
+
+.docs-page-container .container {
+  /* Protect container layout */
+  display: flex !important;
+  flex-direction: column !important;
+  padding: 0 1rem !important;
+  margin: 0 auto !important;
+}
+
+@media (min-width: 768px) {
+  .docs-page-container .container {
+    flex-direction: row !important;
+    gap: 2rem !important;
+    padding: 2rem !important;
+  }
+}
+
+.docs-page-container .flex-1 {
+  /* Ensure main content area displays */
+  flex: 1 1 0% !important;
+  min-width: 0 !important;
+  display: block !important;
+}
+
+.docs-page-container .min-w-0 {
+  min-width: 0 !important;
+}
+
+.docs-page-container .prose {
+  /* Protect prose styling */
+  max-width: none !important;
+  color: white !important;
+}
+
+.docs-page-container .grid {
+  /* Protect grid layouts */
+  display: grid !important;
+}
+
+.docs-page-container .grid-cols-1 {
+  grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+}
+
+@media (min-width: 768px) {
+  .docs-page-container .grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .docs-page-container .grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+
+.docs-page-container .gap-4 {
+  gap: 1rem !important;
+}
+
+.docs-page-container .bg-card {
+  background-color: hsl(var(--card)) !important;
+}
+
+.docs-page-container .text-primary {
+  color: hsl(var(--primary)) !important;
+}
+
+.docs-page-container .text-foreground {
+  color: hsl(var(--foreground)) !important;
+}
+
+.docs-page-container .text-white {
+  color: white !important;
+}

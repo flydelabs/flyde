@@ -3,10 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "PORT=3003 next dev --turbopack",
-    "build": "next build",
+    "dev": "PORT=3003 next dev",
+    "build:examples": "tsx scripts/sync-examples.ts",
+    "build:next": "next build",
+    "build": "npm run build:next && npm run build:examples",
     "start": "next start",
     "lint": "next lint",
+    "test": ":",
     "deploy:prod": "cd .. && npx vercel --prod"
   },
   "dependencies": {
@@ -34,14 +37,20 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@types/chai": "^4.3.5",
+    "@types/mocha": "^10.0.1",
     "@types/node": "^20",
     "@types/react": "~18.2.0",
     "@types/react-dom": "~18.2.0",
     "autoprefixer": "10.4.14",
+    "chai": "^4.3.7",
     "eslint": "^9",
     "eslint-config-next": "15.3.3",
+    "mocha": "^10.2.0",
     "postcss": "8.4.31",
     "tailwindcss": "3.3.2",
+    "ts-node": "^10.9.1",
+    "tsx": "^4.7.1",
     "typescript": "^5"
   }
 }
