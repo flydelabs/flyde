@@ -10,6 +10,11 @@
       "import": "./dist/index.js",
       "require": "./dist/index.js"
     },
+    "./browser": {
+      "types": "./dist/browser.d.ts",
+      "import": "./dist/browser.js",
+      "require": "./dist/browser.js"
+    },
     "./server": {
       "types": "./dist/server.d.ts",
       "import": "./dist/server.js",
@@ -22,7 +27,7 @@
     }
   },
   "scripts": {
-    "test": "mocha src/**/*.spec.ts --require ts-node/register --no-timeout",
+    "test": "mocha src/**/*.spec.ts src/*.spec.ts  --require ts-node/register --no-timeout",
     "dev": "tsc -p . -w --incremental",
     "build": "rm -rf dist && tsc -p .",
     "prod": "node dist/index.js",

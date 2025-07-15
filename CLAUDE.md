@@ -175,6 +175,8 @@ myFlow({input: "test"}).output.subscribe(value => {
 - **Mocking**: Sinon
 - **Coverage**: NYC
 - **Continuous Testing**: Wallaby.js configuration
+- **Test Writing Guidelines**:
+  - Never use "should" in tests, i.e. "should return" is bad, "returns" is good
 
 ### License Structure
 
@@ -182,6 +184,4 @@ myFlow({input: "test"}).output.subscribe(value => {
 - Visual editor: AGPL v3 License
 
 ## Development Assumptions
-
-- Always assume dev server are already running
 - Never run dev server, always assume it is running

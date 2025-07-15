@@ -31,7 +31,7 @@ import React, {
 import { websiteNodesFinder } from "./nodesFinder";
 import { ExampleChatbot } from "../flyde/resolved/ExampleChatbot";
 import { ExampleBlogpost } from "../flyde/resolved/ExampleBlogpost";
-import { resolveVisualNode } from "@flyde/loader";
+import { resolveVisualNode } from "@flyde/loader/browser";
 import { createRuntimeClientDebugger } from "./createRuntimePlayerDebugger";
 import { createHistoryPlayer } from "./createHistoryPlayer";
 import { EditorInterface, EditorTab } from "./EditorInterface";
