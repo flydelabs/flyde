@@ -60,6 +60,21 @@ export function reportEvent(
     return;
   }
 
+  // Disable in CI/CD and production environments
+  if (typeof process !== 'undefined' && process.env) {
+    const env = process.env;
+    
+    // Disable in CI
+    if (env.CI === 'true') {
+      return;
+    }
+
+    // Disable in production
+    if (env.NODE_ENV === 'production') {
+      return;
+    }
+  }
+
   // Fire and forget
   (async () => {
     try {

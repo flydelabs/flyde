@@ -5,8 +5,38 @@ import * as path from 'path';
 import { execSync } from 'child_process';
 import chalk from 'chalk';
 import prompts from 'prompts';
+import { reportEvent } from '@flyde/core';
+import * as os from 'os';
+
+// Generate anonymous ID for this session
+const generateAnonymousId = () => 'user_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+
+// Get CLI version from package.json
+const getCliVersion = () => {
+  try {
+    const packageJsonPath = path.join(__dirname, '..', 'package.json');
+    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+    return packageJson.version;
+  } catch {
+    return 'unknown';
+  }
+};
+
+// Build system info
+const getSystemInfo = () => ({
+  cliVersion: getCliVersion(),
+  platform: process.platform,
+  arch: process.arch,
+  nodeVersion: process.version,
+  osRelease: os.release(),
+  osType: os.type(),
+  timestamp: new Date().toISOString()
+});
 
 async function main() {
+  const userId = generateAnonymousId();
+  const systemInfo = getSystemInfo();
+
   console.log(chalk.blue('🚀 Welcome to Flyde!'));
   console.log(chalk.gray('Creating your visual flow project...\n'));
 
@@ -83,8 +113,18 @@ async function main() {
       console.log(chalk.gray(`   Please run: cd ${projectName} && code .`));
     }
 
+    // Report success
+    reportEvent(userId, 'create-project:success', systemInfo);
+
   } catch (error) {
     console.error(chalk.red('❌ Error creating project:'), error);
+    
+    // Report error
+    reportEvent(userId, 'create-project:error', {
+      ...systemInfo,
+      errorMessage: error instanceof Error ? error.message : 'Unknown error'
+    });
+    
     // Clean up on error
     if (fs.existsSync(projectPath)) {
       fs.removeSync(projectPath);
