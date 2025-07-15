@@ -4,7 +4,7 @@ import Link from 'next/link';
 export default function QuickStart() {
   const [copied, setCopied] = useState(false);
   
-  const command = 'npx create-flyde-app my-flows';
+  const command = 'npx create-flyde-app';
   
   const copyCommand = async () => {
     await navigator.clipboard.writeText(command);
@@ -21,8 +21,8 @@ export default function QuickStart() {
             <h1 className="text-4xl sm:text-5xl font-bold mb-6">
               Get Flyde
             </h1>
-            <p className="text-xl text-zinc-400">
-              Choose your path
+            <p className="text-xl text-zinc-400 mb-4">
+              Flyde combines a visual editor that lives in VS Code/Cursor/Windsurf with the <code className="bg-zinc-800 px-2 py-1 rounded text-sm">@flyde/loader</code> npm package that runs your flows.
             </p>
           </div>
 
@@ -65,6 +65,9 @@ export default function QuickStart() {
                   <code className="block bg-black rounded p-2 text-blue-400 text-xs">
                     code --install-extension flyde.flyde-vscode
                   </code>
+                  <p className="text-zinc-400 text-xs">
+                    Or <a href="https://marketplace.visualstudio.com/items?itemName=flyde.flyde-vscode" className="text-blue-400 hover:text-blue-300" target="_blank" rel="noopener noreferrer">download from marketplace</a>
+                  </p>
                 </div>
                 
                 <div className="space-y-2">
@@ -72,7 +75,7 @@ export default function QuickStart() {
                   <div className="bg-black rounded p-2 text-xs space-y-1">
                     <code className="block text-blue-400">mkdir my-flyde-project && cd my-flyde-project</code>
                     <code className="block text-blue-400">npm init -y</code>
-                    <code className="block text-blue-400">npm install @flyde/loader @flyde/nodes</code>
+                    <code className="block text-blue-400">npm install @flyde/loader</code>
                   </div>
                 </div>
                 
@@ -91,12 +94,22 @@ export default function QuickStart() {
             <p className="text-zinc-400 mb-6">
               Once you have Flyde running, learn how to build powerful AI workflows.
             </p>
-            <Link
-              href="/docs"
-              className="inline-flex px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              View Documentation
-            </Link>
+            <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
+              <Link
+                href="/docs"
+                className="inline-flex px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                View Documentation
+              </Link>
+              <a
+                href="https://discord.gg/ZKgW6Xa8fz"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex px-6 py-3 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition-colors"
+              >
+                Join Discord
+              </a>
+            </div>
           </div>
 
         </div>
