@@ -22,6 +22,7 @@ declare module '@flyde/core' {
     export * from "@flyde/core/configurable-nodes/configurable-nodes";
     export { extractInputsFromValue, replaceInputsInValue, renderDerivedString, evaluateCondition, evaluateFieldVisibility, createInputGroup, } from "@flyde/core/configurable-nodes/configurable-node-utils";
     export * from "@flyde/core/remote-debugger";
+    export * from "@flyde/core/run-node";
     export interface InstanceViewData {
         id: string;
         nodeIdOrGroup: string | VisualNode;
@@ -946,6 +947,15 @@ declare module '@flyde/core/remote-debugger' {
     export * from "@flyde/core/remote-debugger/utils";
 }
 
+declare module '@flyde/core/run-node' {
+    import { ExecuteParams, InternalNode } from "@flyde/core/";
+    export interface RunNodeOptions extends Omit<ExecuteParams, 'node' | 'inputs' | 'outputs'> {
+        onOutputs?: (key: string, data: any) => void;
+        executionDelay?: number;
+    }
+    export function runNode<TInputs = any, TOutputs = any>(node: InternalNode, inputs: TInputs, options?: RunNodeOptions): Promise<TOutputs>;
+}
+
 declare module '@flyde/core/common/test-data-creator' {
     export type TestDataCreator<T> = (partial?: Partial<T>) => T;
     export type ObjOrObjCreator<T> = T | (() => T);
@@ -1362,6 +1372,7 @@ declare module '@flyde/core/' {
     export * from "@flyde/core/configurable-nodes/configurable-nodes";
     export { extractInputsFromValue, replaceInputsInValue, renderDerivedString, evaluateCondition, evaluateFieldVisibility, createInputGroup, } from "@flyde/core/configurable-nodes/configurable-node-utils";
     export * from "@flyde/core/remote-debugger";
+    export * from "@flyde/core/run-node";
     export interface InstanceViewData {
         id: string;
         nodeIdOrGroup: string | VisualNode;

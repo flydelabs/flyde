@@ -24,6 +24,7 @@ export {
 } from "./configurable-nodes/configurable-node-utils";
 
 export * from "./remote-debugger";
+export * from "./run-node";
 
 export interface InstanceViewData {
   id: string;
