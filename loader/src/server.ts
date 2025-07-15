@@ -1,12 +1,11 @@
-// Server-specific exports from @flyde/loader
-// This file exports modules that use server-side Node.js APIs
+// Server-side exports - includes all browser-safe exports plus server-specific ones
+export * from "./resolver";
+export * from "./serdes";
+export * from "./runtime";
+export * from "./run-flow";
 
+// Server-specific exports
 export { createServerReferencedNodeFinder } from "./resolver/server/findReferencedNodeServer";
 export * from "./resolver/server/resolveImportablePaths";
 export { resolveFlowByPath } from "./resolver/server/resolveFlowServer";
 export { resolveCodeNodeDependencies, isCodeNodePath } from "./resolver/server/serverUtils";
-
-export * from "./serdes";
-
-// Re-export the main runtime that uses server-side features
-export * from "./runtime";

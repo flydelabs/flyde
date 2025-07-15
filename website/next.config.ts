@@ -11,18 +11,20 @@ const nextConfig: NextConfig = {
   ],
 
   // Configure Turbopack for development
+  turbopack: {
+    // Enable source maps in development
+    resolveAlias: {
+      // Ensure proper module resolution for workspace packages
+    }
+  },
+  
   experimental: {
-    turbo: {
-      // Enable source maps in development
-      resolveAlias: {
-        // Ensure proper module resolution for workspace packages
-      }
-    },
     mdxRs: true
   },
   
   // Configure pageExtensions to include mdx
   pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'mdx'],
+
 };
 
 const withMDX = createMDX({
