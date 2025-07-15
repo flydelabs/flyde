@@ -160,6 +160,7 @@ export type VisualNodeEditorProps = {
   instancesWithErrors?: Set<string>;
 
   initialPadding?: [number, number];
+  requireModifierForZoom?: boolean;
 
   tempFlow?: FlydeFlow;
 };
@@ -182,6 +183,7 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         ancestorsInsIds,
         queuedInputsData: queueInputsData,
         initialPadding,
+        requireModifierForZoom,
       } = props;
 
       const { toast } = useToast();
@@ -740,25 +742,33 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
 
       const onMaybeZoomOrPan = React.useCallback(
         (e: WheelEvent) => {
+          const scrollThreshold = 0.5; // Ignore very small deltas
+          
+          // If requireModifierForZoom is true, only zoom when modifier key is pressed
+          const shouldZoom = requireModifierForZoom ? (e.ctrlKey || e.metaKey) : true;
+          
+          if (!shouldZoom) {
+            // Allow the event to bubble up for normal page scrolling
+            return;
+          }
+
           e.preventDefault();
           e.stopPropagation();
 
-          const scrollThreshold = 0.5; // Ignore very small deltas
-
-          if (e.ctrlKey) { // Explicit zoom gesture (pinch)
+          if (e.ctrlKey || e.metaKey) { // Explicit zoom gesture (pinch or cmd/ctrl+scroll)
             if (Math.abs(e.deltaY) > scrollThreshold) {
               const zoomDiff = e.deltaY * -0.005; // Sensitivity for pinch
               onZoom(viewPort.zoom + zoomDiff, "mouse");
             }
           } else {
-            // Handle Vertical Scroll (Zoom)
+            // Handle Vertical Scroll (Zoom) - only when requireModifierForZoom is false
             if (Math.abs(e.deltaY) > scrollThreshold) {
               const zoomDiff = e.deltaY * -0.01; // Sensitivity for scroll zoom
               onZoom(viewPort.zoom + zoomDiff, "mouse");
             }
           }
         },
-        [onZoom, setViewPort, viewPort]
+        [onZoom, viewPort, requireModifierForZoom]
       );
 
       useEffect(() => {

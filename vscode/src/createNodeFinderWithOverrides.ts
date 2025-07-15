@@ -1,6 +1,6 @@
 import * as path from "path";
 import * as fs from "fs";
-import { createServerReferencedNodeFinder } from "@flyde/loader";
+import { createServerReferencedNodeFinder } from "@flyde/loader/dist/server";
 import { ReferencedNodeFinder } from "@flyde/loader/dist/resolver/ReferencedNodeFinder";
 import { NodeInstance } from "@flyde/core";
 
@@ -16,16 +16,16 @@ import { NodeInstance } from "@flyde/core";
  */
 export function createNodeFinderWithOverrides(flowPath: string): ReferencedNodeFinder {
   const baseNodeFinder = createServerReferencedNodeFinder(flowPath);
-  
+
   return (instance: NodeInstance) => {
     // Check if we have a .flyde-nodes.json override in the same directory
     const overridePath = path.join(path.dirname(flowPath), '.flyde-nodes.json');
-    
+
     if (fs.existsSync(overridePath) && instance.source?.type === 'custom') {
       try {
         const overrideContent = fs.readFileSync(overridePath, 'utf8');
         const overrideData = JSON.parse(overrideContent);
-        
+
         // Look for node definition in the nodes section
         if (overrideData.nodes && overrideData.nodes[instance.nodeId]) {
           const nodeDefinition = overrideData.nodes[instance.nodeId];
@@ -36,7 +36,7 @@ export function createNodeFinderWithOverrides(flowPath: string): ReferencedNodeF
         console.error("Error reading .flyde-nodes.json for node resolution:", err);
       }
     }
-    
+
     // Fall back to default resolution
     return baseNodeFinder(instance);
   };

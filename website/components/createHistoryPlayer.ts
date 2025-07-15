@@ -4,6 +4,7 @@ import {
   ERROR_PIN_ID,
   PinDebuggerEvent,
   PinType,
+  ROOT_INS_ID,
 } from "@flyde/core";
 import { HistoryPayload } from "@flyde/core";
 
@@ -30,10 +31,11 @@ export const createHistoryPlayer = (): HistoryPlayer => {
 
   return {
     requestHistory: async (insId: string, pinId: string, pinType: PinType) => {
-      const type =
-        pinType === "input"
-          ? DebuggerEventType.INPUT_CHANGE
-          : DebuggerEventType.OUTPUT_CHANGE;
+
+      const _pintType = insId === ROOT_INS_ID ? pinType === "input" ? "output" : "input" : pinType;
+      const type = _pintType === "input"
+        ? DebuggerEventType.INPUT_CHANGE
+        : DebuggerEventType.OUTPUT_CHANGE;
 
       if (pinId) {
         const id = `${insId}.${pinId}.${type}`;

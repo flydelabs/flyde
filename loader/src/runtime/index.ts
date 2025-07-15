@@ -1,5 +1,6 @@
 import { ExecuteParams, FlydeFlow, simplifiedExecute } from "@flyde/core";
-import { createServerReferencedNodeFinder, resolveVisualNode } from "../resolver";
+import { resolveVisualNode } from "../resolver";
+import { createServerReferencedNodeFinder } from "../resolver/server/findReferencedNodeServer";
 import { deserializeFlowByPath } from "../serdes";
 import EventEmitter = require("events");
 

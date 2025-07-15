@@ -2,9 +2,13 @@ import Link from "next/link";
 import { Star } from "lucide-react";
 import SubscribeButton from "@/components/SubscribeButton";
 import { EmbeddedFlyde } from "@/components/EmbeddedFlyde";
+import { SubtleExamplePicker } from "@/components/SubtleExamplePicker";
 import Head from "next/head";
+import { useState } from "react";
 
 export default function Home() {
+  const [activeExample, setActiveExample] = useState('blog-generator');
+
   return (
     <>
       <Head>
@@ -28,7 +32,7 @@ export default function Home() {
         </div>
 
         {/* Hero Section - More breathing room */}
-        <section className="pt-12 sm:pt-16 md:pt-20 pb-16 md:pb-20 flex items-center justify-center relative overflow-hidden">
+        <section className="pt-12 sm:pt-16 md:pt-20 pb-8 md:pb-8 flex items-center justify-center relative overflow-hidden">
           <div className="absolute inset-0 z-0 opacity-30">
             <div className="absolute top-[20%] right-[10%] w-32 sm:w-48 md:w-64 h-32 sm:h-48 md:h-64 rounded-full bg-blue-500 blur-[120px] animate-pulse" style={{ animationDuration: '8s' }} />
             <div className="absolute bottom-[30%] left-[5%] w-48 sm:w-72 md:w-96 h-48 sm:h-72 md:h-96 rounded-full bg-blue-400 blur-[150px] animate-pulse" style={{ animationDuration: '12s' }} />
@@ -39,22 +43,9 @@ export default function Home() {
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold tracking-tight mb-6 sm:mb-8 text-white">
                 Visual AI Flows<span className="text-blue-400">.</span> <span className="text-blue-400">In Your <span className="relative">Codebase<span className="absolute -bottom-1 left-0 w-full h-[2px] bg-gradient-to-r from-blue-400/0 via-blue-400 to-blue-400/0"></span></span></span>
               </h1>
-              <p className="text-base sm:text-lg md:text-xl lg:text-2xl leading-relaxed text-zinc-400 mb-10 sm:mb-12 max-w-3xl mx-auto animate-in fade-in duration-1000 delay-300">
+              <p className="text-base sm:text-lg md:text-xl lg:text-2xl leading-relaxed text-zinc-400 max-w-3xl mx-auto animate-in fade-in duration-1000 delay-300">
                 An enterprise-ready, holistic solution for prototyping, integrating, evaluating and iterating on AI-heavy backend logic, directly in your codebase.
               </p>
-              <div className="flex flex-col items-center gap-8 animate-in fade-in-50 duration-1000 delay-500">
-                <div className="w-full">
-                  <p className="text-xs text-zinc-500 mb-2.5 subscription-label">Subscribe to be notified when Flyde 1.0.0 launches</p>
-                  <SubscribeButton source="flyde" />
-                </div>
-                <Link
-                  href="https://github.com/flydelabs/flyde"
-                  className="inline-flex items-center text-xs text-zinc-400 hover:text-zinc-200 transition-colors py-1"
-                >
-                  <Star className="mr-1.5 h-3.5 w-3.5" />
-                  <span>View on GitHub</span>
-                </Link>
-              </div>
             </div>
           </div>
         </section>
@@ -63,8 +54,48 @@ export default function Home() {
         <section className="px-4 sm:px-8 md:px-12 pb-12 md:pb-16 relative">
           <div className="container mx-auto max-w-7xl">
             <div className="w-full h-[40vh] sm:h-[50vh] md:h-[60vh] lg:h-[70vh] bg-zinc-900 rounded-xl shadow-2xl overflow-hidden border border-zinc-800 transition-all hover:border-zinc-700 hover:shadow-blue-900/10 hover:shadow-[0_0_30px_rgba(30,64,175,0.07)] group relative">
-              <EmbeddedFlyde />
+              <EmbeddedFlyde
+                activeExample={activeExample}
+                onExampleChange={setActiveExample}
+              />
             </div>
+            <p className="text-xs text-zinc-500 mt-2 text-center">
+              This flow demonstrates LLM integration across multiple providers (OpenAI & Anthropic) with structured output generation, content processing, and response formatting.
+            </p>
+
+            {/* CTA after demo */}
+            <div className="mt-8 text-center">
+              <Link
+                href="/quick-start"
+                className="inline-flex px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Get started
+              </Link>
+            </div>
+
+            {/* Subtle Example Picker Below
+            <div className="mt-4 flex justify-center">
+              <SubtleExamplePicker
+                activeExample={activeExample}
+                onExampleChange={setActiveExample}
+              />
+            </div> */}
+          </div>
+        </section>
+
+        <section className="py-16 sm:py-20 md:py-24 relative text-center">
+          <div className="flex flex-col items-center gap-8 animate-in fade-in-50 duration-1000 delay-500">
+            <div className="w-full">
+              <p className="text-xs text-zinc-500 mb-2.5 subscription-label">Subscribe to be notified when Flyde 1.0.0 launches</p>
+              <SubscribeButton source="flyde" />
+            </div>
+            <Link
+              href="https://github.com/flydelabs/flyde"
+              className="inline-flex items-center text-xs text-zinc-400 hover:text-zinc-200 transition-colors py-1"
+            >
+              <Star className="mr-1.5 h-3.5 w-3.5" />
+              <span>View on GitHub</span>
+            </Link>
           </div>
         </section>
 
@@ -124,10 +155,10 @@ export default function Home() {
             </p>
             <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-3 sm:gap-4">
               <Link
-                href="/docs"
+                href="/quick-start"
                 className="px-6 sm:px-8 py-3 sm:py-4 rounded-md bg-blue-600 text-white font-medium hover:bg-blue-700 transition-all hover:scale-105 duration-300"
               >
-                Get started
+                Try Flyde Locally
               </Link>
               <Link
                 href="https://github.com/flydelabs/flyde"

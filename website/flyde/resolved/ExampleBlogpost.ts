@@ -50,8 +50,8 @@ export const ExampleBlogpost = {
       "nodeId": "OpenAI",
       "inputConfig": {},
       "pos": {
-        "x": -340.3115371746085,
-        "y": -237.2306685612536
+        "x": -372.3106216472647,
+        "y": -237.38023521164422
       },
       "type": "code",
       "source": {
@@ -257,8 +257,12 @@ export const ExampleBlogpost = {
       "id": "InlineValue-4y04ggy",
       "config": {
         "value": {
-          "type": "string",
-          "value": "{\n  subject: \"{{subject}}\",\n  content: \"{{content}}\",\n  summary: \"{{summary}}\"\n}"
+          "type": "json",
+          "value": {
+            "subject": "{{subject}}",
+            "content": "{{content}}",
+            "summary": "{{summary}}"
+          }
         }
       },
       "nodeId": "InlineValue",
@@ -292,7 +296,7 @@ export const ExampleBlogpost = {
           }
         },
         "displayName": "Blog post data",
-        "description": "Emits the value `\"{\\n  subject: \\\"{{subject}}\\\",\\n  content: \\\"{{content}}\\\",\\n  summary: \\\"{{summary}}\\\"\\n}\"`",
+        "description": "Emits the value `{\"subject\":\"{{subject}}\",\"content\":\"{{content}}\",\"summary\":\"{{summary}}\"}`",
         "editorConfig": {
           "type": "structured",
           "fields": [
@@ -362,8 +366,8 @@ export const ExampleBlogpost = {
       "nodeId": "OpenAI",
       "inputConfig": {},
       "pos": {
-        "x": 140.85429615350995,
-        "y": -47.827206516241176
+        "x": 153.96672291132245,
+        "y": -57.827328586553676
       },
       "type": "code",
       "source": {
@@ -562,8 +566,8 @@ export const ExampleBlogpost = {
       "y": -5.160607910156251
     },
     "topic": {
-      "x": -523.7615185546875,
-      "y": -160.86858276367187
+      "x": -560.4830456542969,
+      "y": -109.08241943359374
     }
   },
   "outputsPosition": {
@@ -572,8 +576,8 @@ export const ExampleBlogpost = {
       "y": 237.25953921502617
     },
     "blogPost": {
-      "x": 663.252458190918,
-      "y": -186.23055786132812
+      "x": 633.4904876708985,
+      "y": -180.87246459960937
     }
   }
 };

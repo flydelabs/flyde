@@ -1,12 +1,11 @@
 import { join, relative } from "path";
 import {
-  isCodeNodePath,
   resolveCodeNodeDependencies,
   deserializeFlow,
-} from "@flyde/loader";
+  isCodeNodePath,
+} from "@flyde/loader/dist/server";
 
 import {
-  BaseNode,
   debugLogger,
   isCodeNode,
   ImportableEditorNode,

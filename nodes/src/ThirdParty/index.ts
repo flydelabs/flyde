@@ -2,7 +2,6 @@ export { CodeNode } from "@flyde/core";
 export { Supabase } from "./supabase.flyde";
 export { OpenAI } from "./openai.flyde";
 export { OpenAIResponsesAPI } from "./openai-responses.flyde";
-export { PostgreSQL } from "./postgres.flyde";
 export { Airtable } from "./airtable.flyde";
 export { Anthropic } from "./anthropic.flyde";
 export { DiscordMessage } from "./discord.flyde";

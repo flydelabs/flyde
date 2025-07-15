@@ -1,4 +1,5 @@
 import * as resolver from '@flyde/loader';
+import {createServerReferencedNodeFinder, resolveFlowByPath} from '@flyde/loader/server';
 import { join } from 'path';
 import { writeFileSync, mkdirSync, readdirSync } from 'fs';
 
@@ -11,9 +12,9 @@ mkdirSync(resolvedDir, { recursive: true });
 // Process each example
 examples.forEach(exampleName => {
     const flowPath = join(__dirname, `../flyde/${exampleName}.flyde`);
-    const flow = resolver.resolveFlowByPath(flowPath);
+    const flow = resolveFlowByPath(flowPath);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const editorNode = resolver.resolveEditorNode(flow as any, resolver.createServerReferencedNodeFinder(flowPath));
+    const editorNode = resolver.resolveEditorNode(flow as any, createServerReferencedNodeFinder(flowPath));
 
     // Write to TypeScript file
     const outputPath = join(resolvedDir, `${exampleName}.ts`);

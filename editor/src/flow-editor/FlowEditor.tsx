@@ -52,6 +52,7 @@ export type FlydeFlowEditorProps = {
 
   initialPadding?: [number, number];
   darkMode?: boolean;
+  requireModifierForZoom?: boolean;
 
   comparisonNode?: VisualNode;
 };
@@ -250,6 +251,7 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
                   initialPadding={props.initialPadding}
                   instancesWithErrors={instancesWithErrors}
                   tempFlow={state.flow}
+                  requireModifierForZoom={props.requireModifierForZoom}
                 />
               </React.Fragment>
             </VisualNodeEditorProvider>

@@ -2,8 +2,8 @@ imports: {}
 node:
   instances:
     - pos:
-        x: -340.3115371746085
-        y: -237.2306685612536
+        x: -372.3106216472647
+        y: -237.38023521164422
       id: OpenAI-7904gip
       inputConfig: {}
       displayName: Generate subject
@@ -95,20 +95,18 @@ node:
       nodeId: InlineValue
       config:
         value:
-          type: string
-          value: |-
-            {
-              subject: "{{subject}}",
-              content: "{{content}}",
-              summary: "{{summary}}"
-            }
+          type: json
+          value:
+            subject: "{{subject}}"
+            content: "{{content}}"
+            summary: "{{summary}}"
       type: code
       source:
         type: package
         data: "@flyde/nodes"
     - pos:
-        x: 140.85429615350995
-        y: -47.827206516241176
+        x: 153.96672291132245
+        y: -57.827328586553676
       id: OpenAI-bt14gqc
       inputConfig: {}
       nodeId: OpenAI
@@ -212,12 +210,12 @@ node:
       x: -521.2010229492188
       y: -5.160607910156251
     topic:
-      x: -523.7615185546875
-      y: -160.86858276367187
+      x: -560.4830456542969
+      y: -109.08241943359374
   outputsPosition:
     result:
       x: -23.264428942324532
       y: 237.25953921502617
     blogPost:
-      x: 663.252458190918
-      y: -186.23055786132812
+      x: 633.4904876708985
+      y: -180.87246459960937

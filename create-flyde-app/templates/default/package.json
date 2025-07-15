@@ -1,0 +1,19 @@
+{
+  "name": "my-flyde-project",
+  "version": "1.0.0",
+  "description": "A Flyde visual programming project",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "tsx watch index.ts"
+  },
+  "dependencies": {
+    "@flyde/loader": "latest",
+    "@flyde/nodes": "latest"
+  },
+  "devDependencies": {
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0",
+    "@types/node": "^18.0.0"
+  }
+}

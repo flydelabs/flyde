@@ -8,11 +8,11 @@ import { scanImportableNodes, generateAndSaveNode } from "./embedded-server";
 import { getBaseNodesLibraryData } from "@flyde/nodes/dist/nodes-library-data";
 
 import {
-  deserializeFlow,
-  serializeFlow,
   resolveEditorInstance,
   resolveEditorNode,
 } from "@flyde/loader";
+import { deserializeFlow, serializeFlow } from "@flyde/loader/dist/server";
+
 import {
   FlydeFlow,
   MAJOR_DEBUGGER_EVENT_TYPES,
@@ -479,14 +479,14 @@ export class FlydeEditorEditorProvider
                   const rootPath = firstWorkspace
                     ? firstWorkspace.uri.fsPath
                     : path.dirname(fullDocumentPath);
-                  
+
                   // Check for .flyde-nodes.json override file
                   const overridePath = path.join(path.dirname(fullDocumentPath), '.flyde-nodes.json');
                   if (fs.existsSync(overridePath)) {
                     try {
                       const overrideContent = fs.readFileSync(overridePath, 'utf8');
                       const overrideData = JSON.parse(overrideContent);
-                      
+
                       // Transform the new structure to the expected format
                       if (overrideData.nodes && overrideData.groups) {
                         const transformedGroups = overrideData.groups.map((group: any) => ({
@@ -496,16 +496,16 @@ export class FlydeEditorEditorProvider
                             if (!nodeDefinition) {
                               throw new Error(`Node definition not found for ${nodeId}`);
                             }
-                            
+
                             // Return the node definition as ImportableEditorNode - now includes editorNode
                             return nodeDefinition;
                           })
                         }));
-                        
+
                         messageResponse(event, { groups: transformedGroups });
                         break;
                       }
-                      
+
                       // Legacy format fallback - if override file exists and has groups, use it directly
                       if (overrideData.groups && Array.isArray(overrideData.groups)) {
                         messageResponse(event, overrideData);
@@ -516,7 +516,7 @@ export class FlydeEditorEditorProvider
                       // Fall through to default behavior if override file is invalid
                     }
                   }
-                  
+
                   // Default behavior: get standard library nodes
                   const libraryData = getBaseNodesLibraryData();
                   const relativePath = path.relative(rootPath, fullDocumentPath);

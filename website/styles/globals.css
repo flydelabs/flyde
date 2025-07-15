@@ -65,5 +65,9 @@ body {
   /* pointer-events: none; */
 }
 
+.flyde-flow-editor .run-btn-container {
+  display: none;
+}
+
 /* Import Flyde editor styles (complete CSS with all needed styles for shadcn) */
 @import "@flyde/editor/dist/styles/editor-complete.css";

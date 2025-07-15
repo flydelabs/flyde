@@ -1,6 +1,6 @@
 import { FlowJob, FlydeFlow } from "@flyde/core";
 import { createId } from "@paralleldrive/cuid2";
-import { loadFlowFromContent } from "@flyde/loader";
+import { loadFlowFromContent } from "@flyde/loader/dist/server";
 
 export async function runFlow(
   flow: FlydeFlow,

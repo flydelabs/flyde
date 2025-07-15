@@ -64,6 +64,16 @@ The site uses a file-based content system:
 - Build script (`scripts/sync-examples.ts`) converts .flyde files to TypeScript
 - EmbeddedFlyde component loads and displays flows
 
+#### Browser-Compatible LLM Stubs
+
+The website includes browser-safe stubs for LLM nodes to enable interactive demos:
+
+- `components/llm-stubs.ts` - Mock implementations of OpenAI and Anthropic nodes
+- `components/nodesFinder.ts` - Browser node resolver that uses stubs for LLM nodes
+- Stubs generate realistic content (blog titles, HTML content, summaries) without API calls
+- Support topic-aware responses and async delays to simulate real API behavior
+- Used in ExampleBlogpost flow for interactive demonstrations
+
 ### Styling
 
 - Dark-mode first design with Tailwind CSS
@@ -78,3 +88,12 @@ The site uses a file-based content system:
 - Never add new .md documentation files unless explicitly asked
 - Content files support both `.md` and `.mdx` extensions
 - All Flyde workspace packages must be listed in transpilePackages for proper bundling
+
+## Testing
+
+```bash
+# Run tests (includes LLM stub validation)
+npm test
+```
+
+The test suite includes validation of browser-compatible LLM stubs to ensure they maintain compatibility with Flyde's node interface and provide realistic mock responses for interactive demos.

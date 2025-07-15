@@ -1,0 +1,40 @@
+{
+  "name": "create-flyde-app",
+  "version": "1.0.0",
+  "description": "Create a new Flyde project with a single command",
+  "main": "dist/index.js",
+  "bin": {
+    "create-flyde-app": "dist/index.js"
+  },
+  "files": [
+    "dist",
+    "templates"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "prompts": "^2.4.2",
+    "fs-extra": "^11.1.1",
+    "chalk": "^4.1.2",
+    "commander": "^9.4.1"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "@types/prompts": "^2.4.4",
+    "@types/fs-extra": "^11.0.1",
+    "typescript": "^5.0.0"
+  },
+  "keywords": [
+    "flyde",
+    "visual",
+    "programming",
+    "flow",
+    "cli",
+    "create"
+  ],
+  "author": "Flyde Team",
+  "license": "MIT"
+}

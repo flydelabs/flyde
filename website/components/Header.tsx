@@ -92,7 +92,7 @@ export function Header() {
         </div>
         
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-8 text-sm font-medium">
+        <nav className="md:flex items-center space-x-8 text-sm font-medium">
           {navigation.map((item) => (
             <Link
               key={item.href}

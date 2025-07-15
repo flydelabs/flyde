@@ -29,7 +29,7 @@ import {
   codeNodeToImportableEditorNode,
   NodeLibraryData,
 } from "@flyde/core";
-import { Airtable, Anthropic, DiscordMessage, Firecrawl, GoogleSheets, LLMCondition, Notion, PostgreSQL, Resend, ScrapingBee, SendGrid, Slack, Supabase, Tavily } from "./ThirdParty";
+import { Airtable, Anthropic, DiscordMessage, Firecrawl, GoogleSheets, LLMCondition, Notion, Resend, ScrapingBee, SendGrid, Slack, Supabase, Tavily } from "./ThirdParty";
 import { OpenAIResponsesAPI } from "./ThirdParty/openai-responses.flyde";
 
 const nodesSource: CodeNodeSource = {
@@ -65,16 +65,12 @@ export function getBaseNodesLibraryData(): NodeLibraryData {
           LLMCondition,
           Notion,
           OpenAIResponsesAPI,
-          PostgreSQL,
           Resend,
           ScrapingBee,
           SendGrid,
           Slack,
+          Supabase,
           Tavily,
-          PostgreSQL,
-          GoogleSheets,
-          Slack,
-          Supabase
         ].map((node) => codeNodeToImportableEditorNode(node, nodesSource)),
       },
       {

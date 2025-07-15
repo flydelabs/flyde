@@ -2,8 +2,14 @@
   "$schema": "https://unpkg.com/knip@5/schema.json",
   "workspaces": {
     "vscode": {
-      "entry": ["src/test/*.ts"],
-      "project": ["src/**/*.{js,ts,tsx}", "!src/test/**/*", "!src/webview/**/*"],
+      "entry": [
+        "src/test/*.ts"
+      ],
+      "project": [
+        "src/**/*.{js,ts,tsx}",
+        "!src/test/**/*",
+        "!src/webview/**/*"
+      ],
       "ignoreDependencies": [
         "@tsconfig/node16",
         "@types/axios",
@@ -38,32 +44,30 @@
       "ignoreExportsUsedInFile": true
     },
     "website": {
-      "entry": ["components/**/*.{js,ts,tsx}", "lib/**/*.{js,ts}"],
-      "project": ["**/*.{js,ts,tsx}", "!.next/**/*"],
-      "next": {
-        "entry": ["pages/**/*.{js,jsx,ts,tsx}"]
-      },
-      "ignoreDependencies": [
-        "@flyde/loader",
-        "@flyde/nodes",
-        "next-mdx-remote",
-        "rehype-highlight"
-      ],
-      "ignoreBinaries": ["vercel"],
-      "ignoreDevDependencies": [],
       "ignore": [
         "content/**/*",
         "flyde/resolved/**/*",
         "scripts/sync-examples.ts",
         "components/EmbeddedFlyde.tsx"
-      ],
-      "ignoreExportsUsedInFile": true
+      ]
     },
     ".": {
-      "entry": ["*.ts"],
-      "project": ["**/*.{js,ts,tsx}", "!**/dist/**/*", "!**/node_modules/**/*"],
-      "ignoreDependencies": ["mixpanel-browser"],
-      "ignoreBinaries": ["code", "only-allow", "playwright"],
+      "entry": [
+        "*.ts"
+      ],
+      "project": [
+        "**/*.{js,ts,tsx}",
+        "!**/dist/**/*",
+        "!**/node_modules/**/*"
+      ],
+      "ignoreDependencies": [
+        "mixpanel-browser"
+      ],
+      "ignoreBinaries": [
+        "code",
+        "only-allow",
+        "playwright"
+      ],
       "ignoreDevDependencies": []
     },
     "core": {
@@ -76,38 +80,49 @@
         "!src/misc"
       ],
       "mocha": {
-        "entry": ["src/**/spec.{ts,tsx,js,jsx}"]
+        "entry": [
+          "src/**/spec.{ts,tsx,js,jsx}"
+        ]
       },
-      "ignore": ["wallaby.js"]
+      "ignore": [
+        "wallaby.js"
+      ]
     },
     "editor": {
-      "entry": ["scripts/**/*.ts"],
+      "entry": [
+        "scripts/**/*.ts"
+      ],
       "project": [
         "src/**/*.{js,ts,tsx}",
         "scripts/**/*.ts",
         "!dist/**/*"
       ],
       "mocha": {
-        "entry": ["src/**/*.spec.{ts,tsx,js,jsx}"]
+        "entry": [
+          "src/**/*.spec.{ts,tsx,js,jsx}"
+        ]
       },
       "ignoreDependencies": [
         "ts-node",
-        "@types/mocha",
-        "sass"
+        "@types/mocha"
       ],
       "ignoreBinaries": [
         "start-storybook"
       ]
     },
     "loader": {
-      "entry": ["src/runtime/fixture/**/*.ts"],
+      "entry": [
+        "src/runtime/fixture/**/*.ts"
+      ],
       "project": [
         "src/**/*.{js,ts,tsx}",
         "!dist/**/*",
         "!fixture/**/*"
       ],
       "mocha": {
-        "entry": ["src/**/*.spec.{ts,tsx,js,jsx}"]
+        "entry": [
+          "src/**/*.spec.{ts,tsx,js,jsx}"
+        ]
       },
       "ignoreDependencies": [
         "@types/mocha",
@@ -126,10 +141,14 @@
         "!dist/**/*"
       ],
       "webpack": {
-        "config": ["webpack.config.js"]
+        "config": [
+          "webpack.config.js"
+        ]
       },
       "mocha": {
-        "entry": ["src/**/*.spec.{ts,tsx,js,jsx}"]
+        "entry": [
+          "src/**/*.spec.{ts,tsx,js,jsx}"
+        ]
       },
       "ignoreDependencies": [
         "google-auth-library",
