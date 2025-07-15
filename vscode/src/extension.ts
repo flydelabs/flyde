@@ -39,13 +39,13 @@ export function activate(context: vscode.ExtensionContext) {
 
   // Initialize analytics with context
   analytics.setContext(context);
-  
+
   // Show first-run privacy notice and initialize analytics
   showFirstRunPrivacyNotice(context).then(() => {
     activateReporter();
     reportEvent("activate");
   });
-  
+
   context.subscriptions.push({
     dispose() {
       analytics.dispose();
@@ -68,7 +68,6 @@ export function activate(context: vscode.ExtensionContext) {
   });
 
   fp(FLYDE_DEFAULT_SERVER_PORT).then(([port]: [number]) => {
-    reportEvent("devServerStart");
 
     const editorStaticsRoot = join(__dirname, "../webview-dist");
     const cleanServer = createEmbeddedServer({
@@ -101,7 +100,6 @@ export function activate(context: vscode.ExtensionContext) {
 
     // Show the document in the text editor
     await vscode.window.showTextDocument(document);
-    reportEvent("openAsText");
   };
 
   context.subscriptions.push(
@@ -123,7 +121,6 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand(
       "flyde.newVisualFlow",
       async (dirName: vscode.Uri) => {
-        reportEvent("newVisualFlow:start");
         let folderOrFileUri = dirName ?? getWorkspaceRootPath(); // folder will be undefined when triggered by keybinding
 
         if (!folderOrFileUri) {
@@ -177,14 +174,13 @@ export function activate(context: vscode.ExtensionContext) {
           return;
         }
         try {
-          reportEvent("newVisualFlow:before", { template: template.name });
           scaffoldTemplate(template, folderUri.fsPath, fileName);
           vscode.commands.executeCommand(
             "vscode.openWith",
             targetPath,
             "flydeEditor"
           );
-          reportEvent("newVisualFlow:success", { template: template.name });
+          reportEvent("newVisualFlow", { template: template.name });
           vscode.window.showInformationMessage(
             `New flow created at ${fileName}.flyde!`
           );

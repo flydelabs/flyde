@@ -103,6 +103,9 @@ importers:
 
   create-flyde-app:
     dependencies:
+      '@flyde/core':
+        specifier: workspace:1.0.0-alpha.18
+        version: link:../core
       chalk:
         specifier: ^4.1.2
         version: 4.1.2
@@ -539,9 +542,6 @@ importers:
       pkg-up:
         specifier: ^3.1.0
         version: 3.1.0
-      posthog-node:
-        specifier: ^5.2.1
-        version: 5.2.1
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -678,6 +678,9 @@ importers:
       posthog-js:
         specifier: ^1.250.2
         version: 1.256.2
+      posthog-node:
+        specifier: ^5.2.1
+        version: 5.2.1
       react:
         specifier: ~18.2.0
         version: 18.2.0

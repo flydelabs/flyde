@@ -38,3 +38,5 @@ export interface FlowJob {
   flow: FlydeFlow;
   id: string;
 }
+
+export * from "./telemetry";

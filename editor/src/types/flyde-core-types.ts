@@ -34,6 +34,7 @@ declare module '@flyde/core' {
         flow: FlydeFlow;
         id: string;
     }
+    export * from "@flyde/core/telemetry";
 }
 
 declare module '@flyde/core/common' {
@@ -956,6 +957,15 @@ declare module '@flyde/core/run-node' {
     export function runNode<TInputs = any, TOutputs = any>(node: InternalNode, inputs: TInputs, options?: RunNodeOptions): Promise<TOutputs>;
 }
 
+declare module '@flyde/core/telemetry' {
+    export interface TelemetryEvent {
+        distinctId: string;
+        event: string;
+        properties?: Record<string, any>;
+    }
+    export function reportEvent(distinctId: string, event: string, properties?: Record<string, any>): void;
+}
+
 declare module '@flyde/core/common/test-data-creator' {
     export type TestDataCreator<T> = (partial?: Partial<T>) => T;
     export type ObjOrObjCreator<T> = T | (() => T);
@@ -1384,6 +1394,7 @@ declare module '@flyde/core/' {
         flow: FlydeFlow;
         id: string;
     }
+    export * from "@flyde/core/telemetry";
 }
 
 declare module '@flyde/core/remote-debugger/types' {
