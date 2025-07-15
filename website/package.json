@@ -28,6 +28,7 @@
     "next": "15.3.3",
     "next-mdx-remote": "^5.0.0",
     "posthog-js": "^1.250.2",
+    "posthog-node": "^5.2.1",
     "react": "~18.2.0",
     "react-dom": "~18.2.0",
     "react-markdown": "^10.1.0",

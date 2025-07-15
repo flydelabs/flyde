@@ -1,5 +1,5 @@
-import { PostHog } from 'posthog-node';
 import * as vscode from 'vscode';
+import { reportEvent as coreReportEvent } from '@flyde/core';
 
 interface TelemetryEvent {
   name: string;
@@ -13,7 +13,6 @@ interface TelemetryException {
 
 
 class FlydeAnalytics {
-  private posthog: PostHog | null = null;
   private userId: string | null = null;
   private isEnabled = false;
   private isTestEnvironment = false;
@@ -102,21 +101,9 @@ class FlydeAnalytics {
 
     this.isEnabled = enabled && vscodeEnabled;
 
-    if (this.isEnabled && !this.posthog) {
-      // Build static info before initializing PostHog
+    if (this.isEnabled) {
+      // Build static info when enabling telemetry
       this.buildStaticInfo();
-      const apiKey = 'phc_Sfg0m6OUVf32CH7J3tC0M9ikI3cWf1plqoPVO08OP82';
-      this.posthog = new PostHog(apiKey, {
-        host: 'https://app.posthog.com',
-        flushAt: 1,
-        flushInterval: 1000,
-        personalApiKey: undefined,
-        featureFlagsPollingInterval: 0,
-        requestTimeout: 10000,
-      });
-    } else if (!this.isEnabled && this.posthog) {
-      this.posthog.shutdown();
-      this.posthog = null;
     }
   }
 
@@ -137,106 +124,39 @@ class FlydeAnalytics {
   }
 
   public reportEvent(eventName: string, properties?: Record<string, any>): void {
-    if (this.isTestEnvironment || !this.isEnabled || !this.posthog) {
+    if (this.isTestEnvironment || !this.isEnabled) {
       return;
     }
 
-    const sanitizedProperties = this.sanitizeProperties(properties);
     const eventData: Record<string, any> = {
       ...this.staticInfo,
-      ...sanitizedProperties,
+      ...properties,
       timestamp: new Date().toISOString(),
     };
 
-    this.posthog.capture({
-      distinctId: this.userId!,
-      event: eventName,
-      properties: eventData
-    });
+    coreReportEvent(this.userId!, eventName, eventData);
   }
 
   public reportException(error: Error, properties?: Record<string, any>): void {
-    if (this.isTestEnvironment || !this.isEnabled || !this.posthog) {
+    if (this.isTestEnvironment || !this.isEnabled) {
       return;
     }
 
-    const sanitizedProperties = this.sanitizeProperties(properties);
     const errorData: Record<string, any> = {
       ...this.staticInfo,
-      ...sanitizedProperties,
+      ...properties,
       timestamp: new Date().toISOString(),
       errorName: error.name,
       errorMessage: error.message,
       stackTrace: error.stack,
     };
 
-    this.posthog.capture({
-      distinctId: this.userId!,
-      event: 'exception',
-      properties: errorData
-    });
+    coreReportEvent(this.userId!, 'exception', errorData);
   }
 
-
-  private sanitizeProperties(properties?: Record<string, any>): Record<string, any> {
-    if (!properties) {
-      return {};
-    }
-
-    const sanitized: Record<string, any> = {};
-
-    for (const [key, value] of Object.entries(properties)) {
-      if (this.isSafeProperty(key, value)) {
-        sanitized[key] = this.sanitizeValue(value);
-      }
-    }
-
-    return sanitized;
-  }
-
-  private isSafeProperty(key: string, value: any): boolean {
-    const sensitiveKeys = [
-      'token', 'password', 'secret', 'key', 'auth', 'credential',
-      'email', 'username', 'user', 'name', 'id', 'uuid', 'path',
-      'file', 'directory', 'folder', 'content', 'code', 'data'
-    ];
-
-    const lowerKey = key.toLowerCase();
-    if (sensitiveKeys.some(sensitive => lowerKey.includes(sensitive))) {
-      return false;
-    }
-
-    if (typeof value === 'string' && value.length > 100) {
-      return false;
-    }
-
-    return true;
-  }
-
-  private sanitizeValue(value: any): any {
-    if (typeof value === 'string') {
-      return value.length > 50 ? value.substring(0, 50) + '...' : value;
-    }
-
-    if (typeof value === 'number' || typeof value === 'boolean') {
-      return value;
-    }
-
-    if (Array.isArray(value)) {
-      return value.length;
-    }
-
-    if (value && typeof value === 'object') {
-      return '[Object]';
-    }
-
-    return value;
-  }
 
   public dispose(): void {
-    if (this.posthog) {
-      this.posthog.shutdown();
-    }
+    // Nothing to dispose
   }
 }
 

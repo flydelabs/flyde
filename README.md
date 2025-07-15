@@ -109,6 +109,10 @@ Not sure where to start? Join our [discord](https://www.flyde.dev/discord) and w
 
 Check out the official website at [https://flyde.dev](https://flyde.dev) for more information.
 
+## Telemetry
+
+Flyde VS Code extension collects anonymous usage data to help improve the product. This includes events like extension activation, flow creation, and error reporting. No personal information or code content is collected. You can disable telemetry in VS Code settings (`flyde.telemetry.enabled`) or by setting the environment variable `FLYDE_TELEMETRY_DISABLED=true`.
+
 ## License
 
 Everything needed to run a Flyde file is _MIT-licensed_. That includes:

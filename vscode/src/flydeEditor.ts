@@ -424,7 +424,7 @@ export class FlydeEditorEditorProvider
                 break;
               }
               case "onRunFlow": {
-                reportEvent("runFlow:before", {
+                reportEvent("runFlow", {
                   inputsCount: `${keys(event.params.inputs).length}`,
                 });
 

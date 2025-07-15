@@ -1,5 +1,4 @@
 import * as vscode from "vscode";
-import { reportEvent } from "./analytics";
 
 let askedThisSession = false;
 
@@ -12,7 +11,6 @@ export function maybeAskToStarProject(delay: number) {
   askedThisSession = true;
 
   setTimeout(async () => {
-    reportEvent("askedToStarProject");
     const answer = await vscode.window.showInformationMessage(
       "If you like Flyde, please star the project on GitHub!",
       "Sure, I'll star it! 🌟",
@@ -21,14 +19,11 @@ export function maybeAskToStarProject(delay: number) {
     );
     switch (answer) {
       case "Don't ask again":
-        reportEvent("askedToStarProject:doNotAskAgain");
         setAskedToStarProject(true);
         break;
       case "No, maybe later":
-        reportEvent("askedToStarProject:maybeLater");
         break;
       case "Sure, I'll star it! 🌟":
-        reportEvent("askedToStarProject:star");
         vscode.env.openExternal(
           vscode.Uri.parse(
             "https://www.github.com/FlydeHQ/flyde?ref=vscode-toast"
