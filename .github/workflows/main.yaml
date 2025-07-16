@@ -57,7 +57,6 @@ jobs:
       - name: Test
         run: xvfb-run -a pnpm run test
         env:
-          # Skip visual tests in main workflow - they run separately
           SKIP_VISUAL_TESTS: true
       - name: If release, Publish to NPM
         if: github.ref == 'refs/heads/main' && (startsWith(github.event.head_commit.message, 'Prepare for v') || startsWith(github.event.head_commit.message, 'Prepare for v1.0.0-alpha'))

@@ -36,6 +36,8 @@ jobs:
       - name: Test extension
         working-directory: ./vscode
         run: xvfb-run -a npm run test
+        env:
+          SKIP_VISUAL_TESTS: true
 
       # - name: Bump minor version
       #   working-directory: ./vscode
