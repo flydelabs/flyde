@@ -13,10 +13,10 @@
     "deploy:prod": "cd .. && npx vercel --prod"
   },
   "dependencies": {
-    "@flyde/core": "workspace:1.0.0-alpha.18",
-    "@flyde/editor": "workspace:1.0.0-alpha.18",
-    "@flyde/loader": "workspace:1.0.0-alpha.18",
-    "@flyde/nodes": "workspace:1.0.0-alpha.18",
+    "@flyde/core": "workspace:1.0.0",
+    "@flyde/editor": "workspace:1.0.0",
+    "@flyde/loader": "workspace:1.0.0",
+    "@flyde/nodes": "workspace:1.0.0",
     "@mdx-js/loader": "^3.1.0",
     "@mdx-js/react": "^3.1.0",
     "@next/mdx": "^15.3.3",
