@@ -231,7 +231,7 @@
     "@flyde/loader": "workspace:*",
     "@flyde/nodes": "workspace:*",
     "@paralleldrive/cuid2": "^2.2.2",
-    "@tsconfig/node16": "^1.0.43",
+    "@tsconfig/node16": "^1.0.3",
     "@types/axios": "^0.14.4",
     "@types/express": "^4.17.17",
     "@types/fs-extra": "^11.0.1",

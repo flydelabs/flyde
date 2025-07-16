@@ -41,7 +41,7 @@
   "license": "MIT",
   "dependencies": {
     "@flyde/core": "workspace:*",
-    "@types/callsite": "^1.0.431",
+    "@types/callsite": "^1.0.31",
     "@types/find-root": "^1.1.2",
     "@types/node": "^20.0.0",
     "callsite": "^1.0.0",
