@@ -220,6 +220,7 @@
     "fs-extra": "^10.1.0",
     "glob": "^8.0.3",
     "mocha": "^10.0.0",
+    "sass-embedded": "^1.89.2",
     "sinon": "^15.0.4",
     "typescript": "^5.5.4",
     "vite": "^5.0.0",
