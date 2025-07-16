@@ -16,7 +16,7 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@flyde/core": "workspace:1.0.0",
+    "@flyde/core": "workspace:*",
     "prompts": "^2.4.2",
     "fs-extra": "^11.1.1",
     "chalk": "^4.1.2",
