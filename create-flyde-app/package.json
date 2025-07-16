@@ -1,6 +1,6 @@
 {
   "name": "create-flyde-app",
-  "version": "1.0.1",
+  "version": "1.0.44",
   "description": "Create a new Flyde project with a single command",
   "main": "dist/index.js",
   "bin": {

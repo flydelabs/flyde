@@ -1,6 +1,6 @@
 {
   "name": "@flyde/core",
-  "version": "1.0.1",
+  "version": "1.0.44",
   "description": "",
   "main": "dist/index.js",
   "module": "dist/esm/index.js",

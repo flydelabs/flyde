@@ -104,7 +104,7 @@ importers:
   create-flyde-app:
     dependencies:
       '@flyde/core':
-        specifier: workspace:1.0.0
+        specifier: workspace:*
         version: link:../core
       chalk:
         specifier: ^4.1.2
@@ -634,16 +634,16 @@ importers:
   website:
     dependencies:
       '@flyde/core':
-        specifier: workspace:1.0.0
+        specifier: workspace:*
         version: link:../core
       '@flyde/editor':
-        specifier: workspace:1.0.0
+        specifier: workspace:*
         version: link:../editor
       '@flyde/loader':
-        specifier: workspace:1.0.0
+        specifier: workspace:*
         version: link:../loader
       '@flyde/nodes':
-        specifier: workspace:1.0.0
+        specifier: workspace:*
         version: link:../nodes
       '@mdx-js/loader':
         specifier: ^3.1.0
