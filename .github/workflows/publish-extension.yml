@@ -17,28 +17,28 @@ jobs:
           node-version: 18
 
       - name: Install dependencies and update @flyde/* packages
-        working-directory: ./vscode-extension
+        working-directory: ./vscode
         run: |
           ./prepublish.sh
           npm install
           npm update --scope=@flyde\
       - name: Print flyde versions
-        working-directory: ./vscode-extension
+        working-directory: ./vscode
         run: |
           cat node_modules/@flyde/core/package.json | jq -r '.version'
           cat node_modules/@flyde/stdlib/package.json | jq -r '.version'
           cat node_modules/@flyde/runtime/package.json | jq -r '.version'
           cat node_modules/@flyde/resolver/package.json | jq -r '.version'
       - name: Build extension
-        working-directory: ./vscode-extension
+        working-directory: ./vscode
         run: npm run build
 
       - name: Test extension
-        working-directory: ./vscode-extension
+        working-directory: ./vscode
         run: xvfb-run -a npm run test
 
       # - name: Bump minor version
-      #   working-directory: ./vscode-extension
+      #   working-directory: ./vscode
       #   run: |
       #     git config --global user.name "GitHub Actions"
       #     git config --global user.email "github-actions@users.noreply.github.com"
@@ -47,7 +47,7 @@ jobs:
       #     git push origin main
 
       - name: Package and publish extension
-        working-directory: ./vscode-extension
+        working-directory: ./vscode
         env:
           VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
         run: |

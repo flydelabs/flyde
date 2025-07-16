@@ -7,7 +7,7 @@ name: Visual Regression Tests
 #   pull_request:
 #     branches: [main]
 #     paths:
-#       - 'vscode-extension/**'
+#       - 'vscode/**'
 #       - 'flow-editor/**'
 #       - '.github/workflows/visual-tests.yml'
 
@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: vscode-extension
+        working-directory: vscode
     
     steps:
       - name: Checkout
@@ -69,8 +69,8 @@ jobs:
         with:
           name: visual-test-results
           path: |
-            vscode-extension/test-results/
-            vscode-extension/tests/visual/**/test-results/
+            vscode/test-results/
+            vscode/tests/visual/**/test-results/
           retention-days: 7
 
       - name: Upload HTML report
@@ -78,7 +78,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: visual-test-report
-          path: vscode-extension/playwright-report/
+          path: vscode/playwright-report/
           retention-days: 7
 
       - name: Comment PR with test results
@@ -90,7 +90,7 @@ jobs:
             const path = require('path');
             
             // Check if results file exists
-            const resultsPath = 'vscode-extension/test-results/results.json';
+            const resultsPath = 'vscode/test-results/results.json';
             if (!fs.existsSync(resultsPath)) {
               console.log('No results file found');
               return;
@@ -122,7 +122,7 @@ jobs:
             ### Updating Baselines:
             If the visual changes are intentional, update the baselines locally:
             \`\`\`bash
-            cd vscode-extension
+            cd vscode
             pnpm run test:visual:update
             git add tests/visual/
             git commit -m "Update visual test baselines"
