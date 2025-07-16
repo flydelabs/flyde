@@ -59,8 +59,6 @@ Prototype, integrate, evaluate and iterate on AI-heavy backend logic visually. B
 ### 🤝 Lower Collaboration Barrier
 A visual extension of TypeScript that bridges the gap between developers and non-developers. Enable your entire team to contribute to backend AI workflow development.
 
-> 🚀 **Flyde 1.0.0 is coming soon!** We're working on a complete platform overhaul with improved documentation, comprehensive examples, and a revamped VS Code extension. Stay tuned!
-
 ## Introduction
 
 `Flyde` is a holistic solution for prototyping, integrating, evaluating and iterating on AI-heavy backend logic. It's a visual extension of TypeScript that runs in-codebase, providing the missing link between developers and non-developers working on backend AI workflows. 
@@ -69,17 +67,8 @@ Flyde allows you to create visual flows for backend services like AI agents, pro
 
 ## Quick Start
 
-### Playground
-
-The easiest way to experiment with Flyde is to visit the [online playground](https://flyde.dev/playground), which allows you to create and run flows in the browser.
-
-### Running locally
-
-1. Install the [VSCode extension](https://marketplace.visualstudio.com/items?itemName=flyde.flyde-vscode)
-2. `mkdir my-flyde-project && cd my-flyde-project`
-3. Open your project in VSCode
-4. Command Palette (Ctrl+Shift+P) -> `Flyde: New visual flow`
-5. Check out the [Integrating with Existing Code](https://www.flyde.dev/docs/integrate-flows) guide to learn how to integrate your flows with your code
+`npx create-flyde-app`  
+More info at [https://flyde.dev/quick-start](https://flyde.dev/quick-start)
 
 ## Who is Flyde for?
 

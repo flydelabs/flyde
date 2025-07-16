@@ -114,8 +114,14 @@ jobs:
               echo "Publishing alpha version of $name"
               pnpm publish --access public --force --no-git-checks --tag alpha
             else
-              echo "Publishing $name"
-              pnpm publish --access public --force --no-git-checks
+              # Check if version already exists for non-alpha versions
+              current_version=$(grep -o '"version": "[^"]*"' package.json | cut -d'"' -f4)
+              if npm view $name@$current_version > /dev/null 2>&1; then
+                echo "Version $current_version of $name already exists, skipping"
+              else
+                echo "Publishing $name version $current_version"
+                pnpm publish --access public --force --no-git-checks
+              fi
             fi
             
             echo "Published $name\n\n"

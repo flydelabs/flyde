@@ -1,9 +1,10 @@
 <p align="center">
-    <i>Visual Programming. For Developers.</i> Open-source, runs in <strong>VS Code</strong>.<br/>Integrates with existing <strong>TypeScript</strong> code, browser and Node.js.
+    <i>Visual AI Flows. In Your Codebase.</i> Open-source, runs in <strong>VS Code</strong>.<br/>Integrates with existing <strong>TypeScript</strong> code.
 </p>
 
+
 <div align="center">
-    <img src="https://github.com/flydelabs/flyde/assets/3727015/5d2d917b-48f6-49db-a1a9-e7fe685c408f"/>
+    <img src="https://github.com/user-attachments/assets/97a5ce55-da02-4d76-bf4d-d0b1800f8c56"/>
 </div>
 
 <h5 align="center">
@@ -13,35 +14,36 @@
 <strong>Rich Standard Library ✔️</strong> · <strong>Visual Debugger ✔️</strong> · <strong>TypeScript Support ✔️</strong>
 </h5>
 
+## Why Flyde?
+
+### 🔧 In-Codebase Integration
+Runs directly in your codebase with access to runtime code and existing backend frameworks. Unlike standalone tools, Flyde is integrated as a library into your existing tools and CI/CD pipelines.
+
+### 🤖 Visual Backend AI Workflows  
+Prototype, integrate, evaluate and iterate on AI-heavy backend logic visually. Build backend AI agents, prompt chains, and agentic workflows with a visual interface while maintaining full code control.
+
+### 🤝 Lower Collaboration Barrier
+A visual extension of TypeScript that bridges the gap between developers and non-developers. Enable your entire team to contribute to backend AI workflow development.
+
 ## Introduction
 
-`Flyde` is an open-source visual programming language built to integrate with your existing codebase. It allows you to create and run visual programs and is designed to complement and enhance traditional textual coding, not to replace it. It includes a [VSCode extension](https://marketplace.visualstudio.com/items?itemName=flyde.flyde-vscode), seamlessly integrates with existing TypeScript/JavaScript code and runs on Node.js and in the browser.
+`Flyde` is a holistic solution for prototyping, integrating, evaluating and iterating on AI-heavy backend logic. It's a visual extension of TypeScript that runs in-codebase, providing the missing link between developers and non-developers working on backend AI workflows. 
+
+Flyde allows you to create visual flows for backend services like AI agents, prompt chains, API orchestration, and agentic workflows - directly integrated with your existing codebase. It includes a [VSCode extension](https://marketplace.visualstudio.com/items?itemName=flyde.flyde-vscode) and seamlessly integrates with existing TypeScript/JavaScript code.
 
 ## Quick Start
 
-### Playground
+`npx create-flyde-app`  
+More info at [https://flyde.dev/quick-start](https://flyde.dev/quick-start)
 
-The easiest way to experiment with Flyde is to visit the [online playground](https://flyde.dev/playground), which allows you to create and run flows in the browser.
-
-### Running locally
-
-1. Install the [VSCode extension](https://marketplace.visualstudio.com/items?itemName=flyde.flyde-vscode)
-2. `mkdir my-flyde-project && cd my-flyde-project`
-3. Open your project in VSCode
-4. Command Palette (Ctrl+Shift+P) -> `Flyde: New visual flow`
-5. Check out the [Integrating with Existing Code](https://www.flyde.dev/docs/integrate-flows) guide to learn how to integrate your flows with your code
 
 ## Who is Flyde for?
 
-- **Novice Developers and Non-Technical Users:** Flyde simplifies programming by transforming complex code into accessible visual blocks, making it an ideal entry point for those new to development or from non-technical backgrounds.
+- **Product Teams & Developers:** Flyde bridges the gap between technical and non-technical team members. Product managers, designers, and backend developers can collaborate on the same visual flows, making complex backend logic transparent and enabling everyone to contribute meaningfully to the development process.
 
-- **Team Collaboration Across Roles:** Flyde democratizes innovation by enabling team members like product managers and data engineers to contribute directly to the codebase through visual programming, fostering collaboration and understanding.
+- **Developers Building AI-Powered Backends:** If you're dealing with complex prompt chains, AI agents, or multi-step backend AI workflows, Flyde provides a more manageable way to build, debug, and maintain these systems while keeping everything in your codebase.
 
-- **Educators in Programming:** Flyde is a valuable resource for educators seeking to provide hands-on, interactive programming education by blending visual learning with real-world coding concepts.
-
-- **Seasoned Developers:** Flyde offers experienced developers a new dimension of efficiency for designing, prototyping, and managing APIs and microservices visually, while retaining the flexibility and power of traditional coding. Its open-source nature and the commercial platform [Flowcode](https://www.getflowcode.io?ref=readme) provide further customization and cloud-hosted capabilities.
-
-And many more!
+- **Teams Seeking Visual Clarity:** Whether you're prototyping new backend features, managing complex business logic, API orchestration, or simply looking for a better way to document and understand your backend application flow, Flyde's visual approach helps you see the big picture while maintaining the power of code.
 
 ## Contributing
 
@@ -53,11 +55,19 @@ Flyde is an open-source project. We are committed to a fully transparent develop
 
 - Documentation Request: If you're reading the Flyde docs and feel like you're missing something, please submit a [documentation request](https://github.com/flydelabs/flyde/issues/new).
 
-Not sure where to start? Join our discord and we will help you get started!
+Not sure where to start? Join our [discord](https://www.flyde.dev/discord) and we will help you get started!
+
+<a href="https://flyde.dev/discord">
+    <img src="https://img.shields.io/badge/discord-7289da.svg?style=flat-square&logo=discord" alt="discord" style="height: 20px;">
+  </a>
 
 ## Learn more
 
 Check out the official website at [https://flyde.dev](https://flyde.dev) for more information.
+
+## Telemetry
+
+Flyde VS Code extension collects anonymous usage data to help improve the product. This includes events like extension activation, flow creation, and error reporting. No personal information or code content is collected. You can disable telemetry in VS Code settings (`flyde.telemetry.enabled`) or by setting the environment variable `FLYDE_TELEMETRY_DISABLED=true`.
 
 ## License
 
