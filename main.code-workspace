@@ -18,6 +18,9 @@
     {
       "path": "vscode"
     },
+    {
+      "path": "create-flyde-app"
+    }
   ],
   "settings": {
     "search.useGlobalIgnoreFiles": true,

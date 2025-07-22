@@ -2,9 +2,9 @@
   "name": "my-flyde-project",
   "version": "1.0.0",
   "description": "A Flyde visual programming project",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
-    "start": "node index.js",
+    "start": "tsx index.ts",
     "dev": "tsx watch index.ts"
   },
   "dependencies": {

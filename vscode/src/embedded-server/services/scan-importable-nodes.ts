@@ -101,7 +101,7 @@ export async function scanImportableNodes(
 
         const importableNode = visualNodeToImportableEditorNode(flow.node, {
           type: "file",
-          data: file.fullPath,
+          data: relativePath,
         });
         acc[relativePath].push(importableNode);
 

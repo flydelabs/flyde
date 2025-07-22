@@ -29,7 +29,7 @@ import {
   codeNodeToImportableEditorNode,
   NodeLibraryData,
 } from "@flyde/core";
-import { Airtable, Anthropic, DiscordMessage, Firecrawl, GoogleSheets, LLMCondition, Notion, Resend, ScrapingBee, SendGrid, Slack, Supabase, Tavily } from "./ThirdParty";
+import { Airtable, Anthropic, DiscordMessage, Firecrawl, GoogleSheets, LLMCondition, Notion, Resend, ScrapingBee, SendGrid, Slack, Supabase, Tavily } from "./ThirdParty/browser";
 import { OpenAIResponsesAPI } from "./ThirdParty/openai-responses.flyde";
 
 const nodesSource: CodeNodeSource = {

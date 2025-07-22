@@ -17,23 +17,25 @@ For example, given a .flyde flow that converts Celsius to Fahrenheit:
 You can load and run it from your code as following:
 
 ```ts
-import { loadFlow } from "@flyde/loader";
+import { runFlow } from "@flyde/loader";
+import path from "path";
 
-const execute = await loadFlow("./celsius-to-fahrenheit.flyde");
-
-const inputs = { celsius: 0 }; // "celcius" is a main input in the flow, therefore it must be provided when executing the flow
-const { result } = execute(inputs); // execute returns a "result" promise, along with a cleanup function that can be used to cancel the execution.
-
-const { fahrenheit } = await result; // each output in the flow is a property on the result object
+// Execute the flow directly with inputs
+const result = await runFlow(path.join(__dirname, "celsius-to-fahrenheit.flyde"), {
+  celsius: 0 // "celsius" is a main input in the flow
+});
 
 console.log(result.fahrenheit); // 32
 ```
 
-The `execute` function returns an object with a `result` property - a promise that resolves to the result of the flow.
+The `runFlow` function directly returns the result of the flow execution.
 
-You may also listen to outputs before the flow completes by passing an "onOutputs" callback to the second argument of `execute`:
+For more advanced use cases, you can use the `loadFlow` function to get more control over execution:
 
 ```ts
+import { loadFlow } from "@flyde/loader";
+
+const execute = await loadFlow("./celsius-to-fahrenheit.flyde");
 const { result } = execute(inputs, {
   onOutputs: (key, value) => {
     console.log(`output with key ${key} emitted value ${value}`);

@@ -15,6 +15,7 @@ export type WebViewTestingCommands = {
   };
   click: { params: { selector: string }; response: void };
   clickByText: { params: { text: string; tagName?: string }; response: void };
+  type: { params: { selector: string; text: string }; response: void };
   hasText: { params: { selector: string; text: string }; response: boolean };
   getDebuggerEvents: {
     params: {};
