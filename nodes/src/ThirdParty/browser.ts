@@ -1,4 +1,3 @@
-export { CodeNode } from "@flyde/core";
 export { Supabase } from "./supabase.flyde";
 export { OpenAI } from "./openai.flyde";
 export { OpenAIResponsesAPI } from "./openai-responses.flyde";

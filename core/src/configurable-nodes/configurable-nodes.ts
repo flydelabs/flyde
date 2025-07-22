@@ -489,9 +489,9 @@ export function processConfigurableNode(node: CodeNode, secrets: Record<string, 
 
             let configValue = config[key];
             if (!isConfigurableValue(configValue)) {
-              console.warn(
-                `Config value ${key} isn't a valid ConfigurableValue, converting to dynamic`
-              );
+              // console.warn(
+              //   `Config value ${key} isn't a valid ConfigurableValue, converting to dynamic`
+              // );
               configValue = configurableValue("dynamic", configValue);
             }
 

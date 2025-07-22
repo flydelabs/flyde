@@ -122,11 +122,11 @@ export const EmbeddedFlyde = (props: EmbeddedFlydeProps) => {
           let parsedValue = value;
           if (typeof value === 'string' && value.includes('subject:') && value.includes('content:')) {
             console.log("Raw InlineValue output:", value);
-              // The InlineValue outputs a template string, let's try to parse it as an object
-              const cleaned = value.replace(/^\s*{\s*/, '{').replace(/\s*}\s*$/, '}').replace(/(\w+):\s*"([^"]*?)"/g, '"$1": "$2"');
-              console.log("Attempting to parse cleaned string:", cleaned);
-              parsedValue = JSON.parse(cleaned);
-          
+            // The InlineValue outputs a template string, let's try to parse it as an object
+            const cleaned = value.replace(/^\s*{\s*/, '{').replace(/\s*}\s*$/, '}').replace(/(\w+):\s*"([^"]*?)"/g, '"$1": "$2"');
+            console.log("Attempting to parse cleaned string:", cleaned);
+            parsedValue = JSON.parse(cleaned);
+
           }
 
           console.log("Setting execution results for key:", key, "with parsed value:", parsedValue);
@@ -155,7 +155,7 @@ export const EmbeddedFlyde = (props: EmbeddedFlydeProps) => {
 
           // Show results panel after successful run
           setShowResults(true);
-          
+
           // Re-center the board after showing results
           setTimeout(() => {
             if (flowEditorRef.current && flowEditorRef.current.centerViewPort) {
@@ -232,27 +232,16 @@ export const EmbeddedFlyde = (props: EmbeddedFlydeProps) => {
 
   // Generate example code based on active example
   const getExampleCode = () => {
-    const exampleName = activeExample === 'blog-generator' ? 'BlogGenerator' : 'Chatbot';
-    const inputType = activeExample === 'blog-generator' ? '{topic: string}' : '{message: string}';
-    const outputType = activeExample === 'blog-generator' ? '{blogPost: any}' : '{response: string}';
-    const inputExample = activeExample === 'blog-generator' ? "'AI in 2024'" : "'Hello, how are you?'";
+    const inputExample = activeExample === 'blog-generator' ? "'AI in 2025'" : "'Hello, how are you?'";
 
-    return `import { loadFlow } from '@flyde/loader';
+    return `import { runFlow } from '@flyde/loader';
 
-// Load the visual flow as a TypeScript function
-const ${activeExample.replace('-', '')}Flow = loadFlow<${inputType}, ${outputType}>('./Flow.flyde');
+const topic = ${inputExample};
 
-// Execute with input
-async function run${exampleName}(input: string) {
-  const result = await ${activeExample.replace('-', '')}Flow({ 
-    ${activeExample === 'blog-generator' ? 'topic' : 'message'}: input 
-  });
-  return result.${activeExample === 'blog-generator' ? 'blogPost' : 'response'};
-}
+// Execute the flow directly
+const result = await runFlow('Flow.flyde', {topic});
 
-// Usage example
-const result = await run${exampleName}(${inputExample});
-console.log(result);`;
+console.log(result.${activeExample === 'blog-generator' ? 'blogPost' : 'response'});`;
   };
 
 
@@ -334,7 +323,7 @@ console.log(result);`;
       onToggleResults={() => {
         const newShowResults = !showResults;
         setShowResults(newShowResults);
-        
+
         // Re-center the board after toggling results
         // Use a longer delay when opening the panel
         const delay = newShowResults ? 500 : 300;

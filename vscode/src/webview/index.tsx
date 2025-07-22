@@ -75,6 +75,42 @@ window.addEventListener("message", (event) => {
         }
         break;
       }
+      case "type": {
+        const { selector, text } = data.params;
+        const element = document.querySelector(selector) as HTMLInputElement;
+        if (element) {
+          element.focus();
+          // Clear existing value first
+          element.value = '';
+          
+          // Simulate typing each character
+          for (const char of text) {
+            element.value += char;
+            // Dispatch events that React and cmdk expect
+            element.dispatchEvent(new InputEvent('input', { 
+              bubbles: true, 
+              cancelable: true,
+              data: char,
+              inputType: 'insertText'
+            }));
+            element.dispatchEvent(new KeyboardEvent('keydown', { 
+              key: char, 
+              bubbles: true 
+            }));
+            element.dispatchEvent(new KeyboardEvent('keyup', { 
+              key: char, 
+              bubbles: true 
+            }));
+          }
+          
+          // Final change event
+          element.dispatchEvent(new Event('change', { bubbles: true }));
+          response = {};
+        } else {
+          error = `Element not found: ${selector}`;
+        }
+        break;
+      }
       case "getDebuggerEvents": {
         response = (window as any).__testCapturedDebuggerEvents || [];
         // Clear events after retrieval to avoid accumulation

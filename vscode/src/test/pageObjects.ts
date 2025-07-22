@@ -44,17 +44,47 @@ export async function getMenuItems() {
   return await webviewTestingCommand("$$", { selector: "[cmdk-item]" });
 }
 
+
 export async function runFlow() {
   await webviewTestingCommand("click", { selector: "button.run-btn" });
-  
+
   await eventually(async () => {
     const dialogs = await webviewTestingCommand("$$", { selector: "[role=dialog]" });
     assert(dialogs.length === 1, "Test dialog not found");
   });
-  
+
   await webviewTestingCommand("clickByText", { text: "Run", tagName: "button" });
 }
 
 export async function getDebuggerEvents() {
   return await webviewTestingCommand("getDebuggerEvents", {});
+}
+
+// Menu utilities
+export async function findMenuItemByText(text: string) {
+  const menuItems = await getMenuItems();
+  return menuItems.find(item => 
+    item.textContent?.includes(text)
+  );
+}
+
+export async function addNodeFromMenu(nodeText: string) {
+  await clickAddNodesButton();
+  
+  const menuItem = await findMenuItemByText(nodeText);
+  if (!menuItem) {
+    const allMenuItems = await getMenuItems();
+    const allTexts = allMenuItems.map(item => item.textContent);
+    throw new Error(`Node "${nodeText}" not found in menu. Available: ${allTexts.join(', ')}`);
+  }
+  
+  await webviewTestingCommand("clickByText", { text: nodeText });
+}
+
+export async function waitForInstanceCount(expectedCount: number, timeout = 2000) {
+  await eventually(async () => {
+    const instances = await getInstances();
+    assert(instances.length === expectedCount, 
+      `Expected ${expectedCount} instances, but got ${instances.length}`);
+  }, timeout);
 }

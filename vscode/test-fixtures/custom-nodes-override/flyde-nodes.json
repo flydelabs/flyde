@@ -1,0 +1,68 @@
+{
+  "nodes": {
+    "CustomBob": {
+      "id": "CustomBob",
+      "displayName": "Custom Bob",
+      "description": "A custom Bob node for testing",
+      "icon": "fa-user",
+      "type": "code",
+      "source": {
+        "type": "custom",
+        "data": "custom://CustomBob"
+      },
+      "editorNode": {
+        "id": "CustomBob",
+        "displayName": "Custom Bob",
+        "description": "A custom Bob node for testing",
+        "inputs": {
+          "value": {
+            "description": "Input value"
+          }
+        },
+        "outputs": {
+          "result": {
+            "description": "Output result"
+          }
+        }
+      }
+    },
+    "CustomAlice": {
+      "id": "CustomAlice", 
+      "displayName": "Custom Alice",
+      "description": "A custom Alice node for testing",
+      "icon": "fa-user-friends",
+      "type": "code",
+      "source": {
+        "type": "custom",
+        "data": "custom://CustomAlice"
+      },
+      "editorNode": {
+        "id": "CustomAlice",
+        "displayName": "Custom Alice",
+        "description": "A custom Alice node for testing",
+        "inputs": {
+          "message": {
+            "description": "Message input"
+          }
+        },
+        "outputs": {
+          "greeting": {
+            "description": "Greeting output"
+          }
+        }
+      }
+    },
+    "GetAttribute": "@flyde/nodes",
+    "Http": "@flyde/nodes"
+  },
+  "groups": [
+    {
+      "title": "Custom Runtime Nodes",
+      "nodeIds": ["CustomBob", "CustomAlice"]
+    },
+    {
+      "title": "Standard Library Shortcuts", 
+      "nodeIds": ["GetAttribute", "Http"]
+    }
+  ]
+}

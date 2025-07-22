@@ -41,11 +41,13 @@ export default function Home() {
           <div className="container px-4 sm:px-8 md:px-12 relative z-10">
             <div className="max-w-4xl mx-auto text-center">
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold tracking-tight mb-6 sm:mb-8 text-white">
-                Visual AI Flows<span className="text-blue-400">.</span> <span className="text-blue-400">In Your <span className="relative">Codebase<span className="absolute -bottom-1 left-0 w-full h-[2px] bg-gradient-to-r from-blue-400/0 via-blue-400 to-blue-400/0"></span></span></span>
+                Stop building AI logic<br className="hidden sm:block" /> <span className="text-blue-400">outside</span> your <span className="relative">codebase<span className="absolute -bottom-1 left-0 w-full h-[2px] bg-gradient-to-r from-blue-400/0 via-blue-400 to-blue-400/0"></span></span>
               </h1>
-              <p className="text-base sm:text-lg md:text-xl lg:text-2xl leading-relaxed text-zinc-400 max-w-3xl mx-auto animate-in fade-in duration-1000 delay-300">
-                An enterprise-ready, holistic solution for prototyping, integrating, evaluating and iterating on AI-heavy backend logic, directly in your codebase.
-              </p>
+              <div className="max-w-3xl mx-auto animate-in fade-in duration-1000 delay-300">
+                <p className="text-base sm:text-lg md:text-xl lg:text-2xl leading-relaxed text-zinc-400">
+                  Like n8n, but for TypeScript. Build AI agents visually, import your functions, deploy with your app. Works with VS Code, Cursor, Windsurf. Plays nicely with Claude Code, Gemini CLI, and more.
+                </p>
+              </div>
             </div>
           </div>
         </section>
@@ -63,14 +65,15 @@ export default function Home() {
               This flow demonstrates LLM integration across multiple providers (OpenAI & Anthropic) with structured output generation, content processing, and response formatting.
             </p>
 
-            {/* CTA after demo */}
-            <div className="mt-8 text-center">
+            {/* CTA after demo - More prominent */}
+            <div className="mt-12 text-center">
               <Link
                 href="/quick-start"
-                className="inline-flex px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                className="inline-flex px-8 py-4 bg-blue-600 text-white font-semibold text-lg rounded-lg hover:bg-blue-700 transition-all hover:scale-105 duration-300 shadow-lg hover:shadow-blue-500/25"
               >
-                Get started
+                Quick Start
               </Link>
+              <p className="text-xs text-zinc-500 mt-3">Get Flyde running in your project in under 5 minutes</p>
             </div>
 
             {/* Subtle Example Picker Below
@@ -85,10 +88,6 @@ export default function Home() {
 
         <section className="py-16 sm:py-20 md:py-24 relative text-center">
           <div className="flex flex-col items-center gap-8 animate-in fade-in-50 duration-1000 delay-500">
-            <div className="w-full">
-              <p className="text-xs text-zinc-500 mb-2.5 subscription-label">Subscribe to be notified when Flyde 1.0.0 launches</p>
-              <SubscribeButton source="flyde" />
-            </div>
             <Link
               href="https://github.com/flydelabs/flyde"
               className="inline-flex items-center text-xs text-zinc-400 hover:text-zinc-200 transition-colors py-1"
@@ -111,10 +110,10 @@ export default function Home() {
               </div>
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-4">Why Flyde</h2>
               <p className="text-zinc-400 text-center max-w-2xl text-sm sm:text-base">
-                The only visual flow builder that runs in-codebase, with full access to your runtime code
+                The only visual flow builder that runs in-codebase, with full access to your runtime code. Works seamlessly with AI coding tools like Cursor and Windsurf.
               </p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
               <div className="p-6 sm:p-8 bg-zinc-900 rounded-xl border border-zinc-800 hover:border-zinc-700 transition-all hover:translate-y-[-4px] hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)] duration-300 group">
                 <div className="w-12 h-12 flex items-center justify-center bg-blue-500/10 rounded-lg mb-4 sm:mb-6 group-hover:scale-110 transition-transform duration-300">
                   <svg className="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -142,6 +141,15 @@ export default function Home() {
                 <h3 className="text-lg sm:text-xl font-semibold mb-3">Lower Collaboration Barrier</h3>
                 <p className="text-zinc-400 text-sm sm:text-base">A visual extension of TypeScript that bridges the gap between developers and non-developers.</p>
               </div>
+              <div className="p-6 sm:p-8 bg-zinc-900 rounded-xl border border-zinc-800 hover:border-zinc-700 transition-all hover:translate-y-[-4px] hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)] duration-300 group">
+                <div className="w-12 h-12 flex items-center justify-center bg-blue-500/10 rounded-lg mb-4 sm:mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <svg className="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                  </svg>
+                </div>
+                <h3 className="text-lg sm:text-xl font-semibold mb-3">AI Coding Enhanced</h3>
+                <p className="text-zinc-400 text-sm sm:text-base">Works seamlessly with Cursor, Windsurf, and other AI coding tools. Augments rather than replaces your development workflow.</p>
+              </div>
             </div>
           </div>
         </section>
@@ -158,7 +166,7 @@ export default function Home() {
                 href="/quick-start"
                 className="px-6 sm:px-8 py-3 sm:py-4 rounded-md bg-blue-600 text-white font-medium hover:bg-blue-700 transition-all hover:scale-105 duration-300"
               >
-                Try Flyde Locally
+                Start Now
               </Link>
               <Link
                 href="https://github.com/flydelabs/flyde"

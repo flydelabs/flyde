@@ -480,8 +480,8 @@ export class FlydeEditorEditorProvider
                     ? firstWorkspace.uri.fsPath
                     : path.dirname(fullDocumentPath);
 
-                  // Check for .flyde-nodes.json override file
-                  const overridePath = path.join(path.dirname(fullDocumentPath), '.flyde-nodes.json');
+                  // Check for flyde-nodes.json override file
+                  const overridePath = path.join(path.dirname(fullDocumentPath), 'flyde-nodes.json');
                   if (fs.existsSync(overridePath)) {
                     try {
                       const overrideContent = fs.readFileSync(overridePath, 'utf8');
@@ -489,6 +489,10 @@ export class FlydeEditorEditorProvider
 
                       // Transform the new structure to the expected format
                       if (overrideData.nodes && overrideData.groups) {
+                        // Get base library data for resolving @flyde/nodes shorthand references
+                        const baseLibraryData = getBaseNodesLibraryData();
+                        const allBaseNodes = baseLibraryData.groups.flatMap((group: any) => group.nodes);
+                        
                         const transformedGroups = overrideData.groups.map((group: any) => ({
                           title: group.title,
                           nodes: group.nodeIds.map((nodeId: string) => {
@@ -497,7 +501,16 @@ export class FlydeEditorEditorProvider
                               throw new Error(`Node definition not found for ${nodeId}`);
                             }
 
-                            // Return the node definition as ImportableEditorNode - now includes editorNode
+                            // Check if this is a shorthand reference to @flyde/nodes
+                            if (nodeDefinition === "@flyde/nodes") {
+                              const baseNode = allBaseNodes.find((node: any) => node.id === nodeId);
+                              if (!baseNode) {
+                                throw new Error(`Node ${nodeId} not found in @flyde/nodes`);
+                              }
+                              return baseNode;
+                            }
+
+                            // Return the full node definition as ImportableEditorNode - now includes editorNode
                             return nodeDefinition;
                           })
                         }));
@@ -512,7 +525,7 @@ export class FlydeEditorEditorProvider
                         break;
                       }
                     } catch (err) {
-                      console.error("Error reading .flyde-nodes.json:", err);
+                      console.error("Error reading flyde-nodes.json:", err);
                       // Fall through to default behavior if override file is invalid
                     }
                   }

@@ -3,13 +3,14 @@ import * as fs from "fs";
 import { createServerReferencedNodeFinder } from "@flyde/loader/dist/server";
 import { ReferencedNodeFinder } from "@flyde/loader/dist/resolver/ReferencedNodeFinder";
 import { NodeInstance } from "@flyde/core";
+import { getBaseNodesLibraryData } from "@flyde/nodes/dist/nodes-library-data";
 
 /**
- * Creates a node finder that checks for .flyde-nodes.json overrides before
+ * Creates a node finder that checks for flyde-nodes.json overrides before
  * falling back to the default server-based node resolution.
  * 
  * This allows users to define custom nodes from external runtimes
- * by placing a .flyde-nodes.json file in the same directory as their flow file.
+ * by placing a flyde-nodes.json file in the same directory as their flow file.
  * 
  * @param flowPath - The full path to the current flow file
  * @returns A ReferencedNodeFinder function that includes override support
@@ -18,8 +19,8 @@ export function createNodeFinderWithOverrides(flowPath: string): ReferencedNodeF
   const baseNodeFinder = createServerReferencedNodeFinder(flowPath);
 
   return (instance: NodeInstance) => {
-    // Check if we have a .flyde-nodes.json override in the same directory
-    const overridePath = path.join(path.dirname(flowPath), '.flyde-nodes.json');
+    // Check if we have a flyde-nodes.json override in the same directory
+    const overridePath = path.join(path.dirname(flowPath), 'flyde-nodes.json');
 
     if (fs.existsSync(overridePath) && instance.source?.type === 'custom') {
       try {
@@ -29,11 +30,22 @@ export function createNodeFinderWithOverrides(flowPath: string): ReferencedNodeF
         // Look for node definition in the nodes section
         if (overrideData.nodes && overrideData.nodes[instance.nodeId]) {
           const nodeDefinition = overrideData.nodes[instance.nodeId];
+          
+          // Check if this is a shorthand reference to @flyde/nodes
+          if (nodeDefinition === "@flyde/nodes") {
+            const baseLibraryData = getBaseNodesLibraryData();
+            const allBaseNodes = baseLibraryData.groups.flatMap((group: any) => group.nodes);
+            const baseNode = allBaseNodes.find((node: any) => node.id === instance.nodeId);
+            if (baseNode) {
+              return baseNode.editorNode;
+            }
+          }
+          
           // Return the editorNode part, which is what resolveEditorNode expects
           return nodeDefinition.editorNode;
         }
       } catch (err) {
-        console.error("Error reading .flyde-nodes.json for node resolution:", err);
+        console.error("Error reading flyde-nodes.json for node resolution:", err);
       }
     }
 

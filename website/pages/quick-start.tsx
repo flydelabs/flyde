@@ -3,6 +3,7 @@ import Link from 'next/link';
 
 export default function QuickStart() {
   const [copied, setCopied] = useState(false);
+  const [selectedIde, setSelectedIde] = useState<'vscode' | 'cursor' | 'windsurf'>('vscode');
   
   const command = 'npx create-flyde-app';
   
@@ -10,6 +11,18 @@ export default function QuickStart() {
     await navigator.clipboard.writeText(command);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const ideCommands = {
+    vscode: 'code',
+    cursor: 'cursor', 
+    windsurf: 'windsurf'
+  };
+
+  const ideNames = {
+    vscode: 'VS Code',
+    cursor: 'Cursor',
+    windsurf: 'Windsurf'
   };
 
   return (
@@ -22,7 +35,7 @@ export default function QuickStart() {
               Get Flyde
             </h1>
             <p className="text-xl text-zinc-400 mb-4">
-              Flyde combines a visual editor that lives in VS Code/Cursor/Windsurf with the <code className="bg-zinc-800 px-2 py-1 rounded text-sm">@flyde/loader</code> npm package that runs your flows.
+              Flyde combines a visual editor that lives in your IDE with the <code className="bg-zinc-800 px-2 py-1 rounded text-sm">@flyde/loader</code> npm package that runs your flows.
             </p>
           </div>
 
@@ -49,8 +62,8 @@ export default function QuickStart() {
 
               <div className="space-y-2 text-sm text-zinc-400">
                 <p>✓ Creates project with working flow</p>
-                <p>✓ Installs VS Code extension</p>  
-                <p>✓ Opens VS Code with your first flow</p>
+                <p>✓ Installs editor extension</p>  
+                <p>✓ Opens your editor with your first flow</p>
               </div>
             </div>
 
@@ -60,13 +73,38 @@ export default function QuickStart() {
               <p className="text-zinc-400 mb-6">Step-by-step control.</p>
               
               <div className="space-y-4 text-sm">
+                {/* IDE Selector */}
                 <div className="space-y-2">
-                  <p className="text-white font-medium">1. Install VS Code Extension</p>
+                  <p className="text-white font-medium">Choose your IDE</p>
+                  <div className="flex gap-2">
+                    {Object.entries(ideNames).map(([key, name]) => (
+                      <button
+                        key={key}
+                        onClick={() => setSelectedIde(key as 'vscode' | 'cursor' | 'windsurf')}
+                        className={`px-3 py-2 rounded text-xs font-medium transition-colors ${
+                          selectedIde === key
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
+                        }`}
+                      >
+                        {name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <p className="text-white font-medium">1. Install {ideNames[selectedIde]} Extension</p>
                   <code className="block bg-black rounded p-2 text-blue-400 text-xs">
-                    code --install-extension flyde.flyde-vscode
+                    {ideCommands[selectedIde]} --install-extension flyde.flyde-vscode
                   </code>
                   <p className="text-zinc-400 text-xs">
-                    Or <a href="https://marketplace.visualstudio.com/items?itemName=flyde.flyde-vscode" className="text-blue-400 hover:text-blue-300" target="_blank" rel="noopener noreferrer">download from marketplace</a>
+                    Or <a href={selectedIde === 'vscode' 
+                      ? "https://marketplace.visualstudio.com/items?itemName=flyde.flyde-vscode"
+                      : "https://open-vsx.org/extension/flyde/flyde-vscode"} 
+                      className="text-blue-400 hover:text-blue-300" target="_blank" rel="noopener noreferrer">
+                      download from {selectedIde === 'vscode' ? 'marketplace' : 'Open VSX'}
+                    </a>
                   </p>
                 </div>
                 
@@ -81,7 +119,7 @@ export default function QuickStart() {
                 
                 <div className="space-y-2">
                   <p className="text-white font-medium">3. Create Your First Flow</p>
-                  <p className="text-zinc-400 text-xs">Right-click in VS Code → "New Flyde Flow"</p>
+                  <p className="text-zinc-400 text-xs">Right-click in {ideNames[selectedIde]} → "New Flyde Flow"</p>
                 </div>
               </div>
             </div>

@@ -1,0 +1,43 @@
+imports: {}
+node:
+  instances:
+    - pos:
+        x: 300
+        y: 200
+      id: nested-instance
+      inputConfig: {}
+      nodeId: ChildFlow
+      config: {}
+      type: visual
+      source:
+        type: file
+        data: ./ChildFlow.flyde
+  connections:
+    - from:
+        insId: __this
+        pinId: n
+      to:
+        insId: nested-instance
+        pinId: n
+    - from:
+        insId: nested-instance
+        pinId: r
+      to:
+        insId: __this
+        pinId: r
+  id: ParentFlow
+  inputs:
+    n:
+      mode: required
+      type: number
+  outputs:
+    r:
+      type: number
+  inputsPosition:
+    n:
+      x: 100
+      y: 200
+  outputsPosition:
+    r:
+      x: 500
+      y: 200

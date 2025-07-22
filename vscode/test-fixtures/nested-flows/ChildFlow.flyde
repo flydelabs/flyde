@@ -1,0 +1,44 @@
+imports: {}
+node:
+  id: ChildFlow
+  inputs:
+    n:
+      mode: required
+      type: number
+  outputs:
+    r:
+      type: number
+  instances:
+    - id: add-one
+      nodeId: Add
+      inputConfig: {}
+      config:
+        b: 1
+      pos:
+        x: 300
+        y: 200
+      type: code
+      source:
+        type: package
+        data: "@flyde/nodes"
+  connections:
+    - from:
+        insId: __this
+        pinId: n
+      to:
+        insId: add-one
+        pinId: a
+    - from:
+        insId: add-one
+        pinId: r
+      to:
+        insId: __this
+        pinId: r
+  inputsPosition:
+    n:
+      x: 100
+      y: 200
+  outputsPosition:
+    r:
+      x: 500
+      y: 200

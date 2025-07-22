@@ -36,9 +36,9 @@ export function extractInputsFromValue(
   let val: ConfigurableValue = _val as any;
 
   if (!isConfigurableValue(val)) {
-    console.warn(
-      `Value ${key} isn't a valid ConfigurableValue, converting to dynamic`
-    );
+    // console.warn(
+    //   `Value ${key} isn't a valid ConfigurableValue, converting to dynamic`
+    // );
     val = configurableValue("dynamic", `{{${key}}}`);
   }
 
