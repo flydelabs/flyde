@@ -1,6 +1,6 @@
 {
   "name": "@flyde/loader",
-  "version": "1.0.44",
+  "version": "1.0.45",
   "description": "",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
