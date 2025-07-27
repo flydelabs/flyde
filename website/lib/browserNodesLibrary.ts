@@ -99,16 +99,15 @@ export function getBrowserSafeNodesLibraryData(customNodes: any[] = []): NodeLib
 
   // Add custom nodes as the first group if any exist
   if (customNodes.length > 0) {
-    const customNodesSource: CodeNodeSource = {
-      type: "package",
-      data: "playground",
-    };
-
     groups.push({
       title: "Custom Nodes",
-      nodes: customNodes.map((node) =>
-        codeNodeToImportableEditorNode(enhanceNodeWithUI(node), customNodesSource)
-      ),
+      nodes: customNodes.map((node) => {
+        const customNodesSource: CodeNodeSource = {
+          type: "file",
+          data: `${node.id}.flyde.ts`,
+        };
+        return codeNodeToImportableEditorNode(enhanceNodeWithUI(node), customNodesSource);
+      }),
     });
   }
 

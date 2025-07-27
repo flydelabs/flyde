@@ -17,19 +17,7 @@ export default function Home() {
       </Head>
 
       <div className="flex flex-col w-full bg-black text-white">
-        {/* WIP Banner */}
-        <div className="sticky top-16 z-30 border-b border-zinc-800/30 bg-black/60 backdrop-blur-xl">
-          <div className="container mx-auto px-4 sm:px-8 md:px-12 py-2">
-            <div className="text-center">
-              <p className="text-xs text-zinc-400">
-                This website is a work in progress. Flyde 1.0.0 is coming soon with a complete platform overhaul.
-                <Link href="/docs" className="ml-2 text-zinc-300 hover:text-white transition-colors underline underline-offset-4">
-                  View current docs
-                </Link>
-              </p>
-            </div>
-          </div>
-        </div>
+
 
         {/* Hero Section - More breathing room */}
         <section className="pt-12 sm:pt-16 md:pt-20 pb-8 md:pb-8 flex items-center justify-center relative overflow-hidden">

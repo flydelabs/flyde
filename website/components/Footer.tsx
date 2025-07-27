@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Github, MessageSquareMore, Twitter } from 'lucide-react';
+import { Github, Mail, MessageSquareMore, Twitter } from 'lucide-react';
 import Image from 'next/image';
 
 export function Footer() {
@@ -20,7 +20,7 @@ export function Footer() {
               Built with ❤️ by Flyde Labs
             </p>
           </div>
-          
+
           <nav className="flex flex-col md:flex-row items-center gap-6 sm:gap-8">
             <div className="flex flex-wrap justify-center gap-4 sm:space-x-6 sm:gap-0">
               <Link
@@ -50,40 +50,48 @@ export function Footer() {
                 Studio
               </Link>
             </div>
-            
+
             <div className="flex items-center space-x-4">
-              <Link 
-                href="https://github.com/flydelabs/flyde" 
+              <Link
+                href="https://github.com/flydelabs/flyde"
                 className="text-zinc-400 hover:text-white transition-colors"
                 aria-label="GitHub"
               >
                 <Github size={18} />
               </Link>
-              <Link 
-                href="https://twitter.com/flydedlabs" 
+              <Link
+                href="https://twitter.com/flydedlabs"
                 className="text-zinc-400 hover:text-white transition-colors"
                 aria-label="Twitter"
               >
                 <Twitter size={18} />
               </Link>
 
-              <Link 
-                href="https://www.flyde.dev/discord" 
+              <Link
+                href="https://www.flyde.dev/discord"
                 className="text-zinc-400 hover:text-white transition-colors"
                 aria-label="Discord"
               >
                 <MessageSquareMore size={18} />
               </Link>
+
+              <Link
+                href="mailto:gabriel@flyde.dev"
+                className="text-zinc-400 hover:text-white transition-colors"
+                aria-label="Email"
+              >
+                <Mail size={18} />
+              </Link>
             </div>
-            
+
           </nav>
         </div>
-        
+
         <div className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-zinc-800/50 flex flex-col md:flex-row justify-between items-center gap-3 sm:gap-4">
           <p className="text-xs text-zinc-500 text-center md:text-left">
             © {new Date().getFullYear()} Flyde Labs. All rights reserved.
           </p>
-         
+
         </div>
       </div>
     </footer>

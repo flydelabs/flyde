@@ -4,7 +4,6 @@ import React, { useState, useEffect, useCallback, SetStateAction, useMemo } from
 import { MonacoCodeEditor } from './MonacoCodeEditor';
 import { FlydeEditorWithDebugger } from './FlydeEditorWithDebugger';
 import { FlowEditorState, defaultBoardData } from '@flyde/editor';
-import { getExampleById } from '../lib/generated/playground-examples';
 import { resolveEditorNode } from '@flyde/loader/browser';
 import { websiteNodesFinder } from './nodesFinder';
 
@@ -46,16 +45,18 @@ export const FileEditor: React.FC<FileEditorProps> = ({
   const runtimeNodeFinder = useMemo(() => {
     return (instance: any) => {
       const { type, source, nodeId } = instance;
-      
+
       // First try to find in custom nodes from playground
-      if (type === "code" && source?.type === "file") {
+      if (type === "code" && (
+        (source?.type === "file") ||
+        (source?.type === "package" && source?.data === "playground")
+      )) {
         const customNode = customNodes.find(node => node.id === nodeId);
         if (customNode) {
           console.log("Runtime resolving custom node:", nodeId, customNode);
           return customNode;
         }
       }
-      
       // Fallback to the website nodes finder for standard nodes
       return websiteNodesFinder(instance);
     };
@@ -107,33 +108,31 @@ export const FileEditor: React.FC<FileEditorProps> = ({
     if (fileType === 'flyde') {
       setFlydeEditorState(prev => {
         const updatedState = typeof newState === 'function' ? newState(prev!) : newState;
-        
         // Only sync if the flow actually changed (not just board data like mouse position)
         if (updatedState && prev && updatedState.flow.node !== prev.flow.node) {
           console.log('[FileEditor] Flow actually changed, syncing...');
           console.log('[FileEditor] Old instances count:', prev.flow.node.instances?.length || 0);
           console.log('[FileEditor] New instances count:', updatedState.flow.node.instances?.length || 0);
-          
+
           setIsUpdatingFromEditor(true);
-          
+
           const flowData = updatedState.flow.node;
           const serializedFlow = JSON.stringify(flowData, null, 2);
-          
+
           console.log('[FileEditor] Serialized flow preview:', serializedFlow.substring(0, 200) + '...');
-          
+
           // Update the file content
           onContentChange(fileName, serializedFlow);
-          
+
           // Update the raw flow data to match what's in the editor
           setRawFlowData(flowData);
-          
+
           // Reset flag after a brief delay to allow the update to propagate
           setTimeout(() => {
             console.log('[FileEditor] Resetting isUpdatingFromEditor flag');
             setIsUpdatingFromEditor(false);
           }, 100);
         }
-        
         return updatedState;
       });
     }

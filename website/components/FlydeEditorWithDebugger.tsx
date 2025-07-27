@@ -80,16 +80,19 @@ export const FlydeEditorWithDebugger = forwardRef<any, FlydeEditorWithDebuggerPr
   const customNodesFinder = useMemo(() => {
     return (instance: any) => {
       const { type, source, nodeId } = instance;
-      
+
       // First try to find in custom nodes from playground
-      if (type === "code" && source?.type === "file") {
+      if (type === "code" && (
+        (source?.type === "file") ||
+        (source?.type === "package" && source?.data === "playground")
+      )) {
         const customNode = customNodes.find(node => node.id === nodeId);
         if (customNode) {
           console.log("Found custom node:", nodeId, customNode);
           return customNode;
         }
       }
-      
+
       // Fallback to the website nodes finder for standard nodes
       return websiteNodesFinder(instance);
     };
@@ -128,7 +131,7 @@ export const FlydeEditorWithDebugger = forwardRef<any, FlydeEditorWithDebuggerPr
         if (!secretManager) {
           return [];
         }
-        
+
         // Show dialog and wait for user choice
         return new Promise<string[]>((resolve) => {
           setSecretDialogState({
@@ -145,7 +148,7 @@ export const FlydeEditorWithDebugger = forwardRef<any, FlydeEditorWithDebuggerPr
           const customNode = customNodes.find(n => n.id === node.id);
           return customNode?.sourceCode || '';
         }
-        
+
         // For standard library nodes, check bundled sources first
         const bundledSource = getNodeSource(node.id);
         if (bundledSource) {
@@ -163,9 +166,9 @@ export const ${nodeId}Fork: CodeNode = {
   outputs: ${JSON.stringify(outputs, null, 2)},
   run: (inputs, outputs) => {
     // TODO: Implement the forked node logic based on original ${node.id}
-    ${Object.keys(outputs).map(key => 
-      `// outputs.${key}.next(someValue);`
-    ).join('\n    ')}
+    ${Object.keys(outputs).map(key =>
+          `// outputs.${key}.next(someValue);`
+        ).join('\n    ')}
   }
 };`;
       },
@@ -179,16 +182,16 @@ export const ${nodeId}Fork: CodeNode = {
               replaceInputsInValue: replaceInputsInValue,
             },
           });
-          
+
           // Add sourceCode to the node
           customNode.sourceCode = code;
-          
+
           // Convert to importable editor node
           const editorNode = codeNodeToImportableEditorNode(customNode, {
             type: "file",
             data: `${customNode.id}.flyde.ts`,
           });
-          
+
           // Update custom nodes list
           if (onContentChange) {
             // Trigger parent to update files
@@ -199,7 +202,7 @@ export const ${nodeId}Fork: CodeNode = {
             };
             onFilesChange?.([...fileContents, newFile]);
           }
-          
+
           return editorNode;
         } catch (error) {
           console.error("Error creating custom node:", error);
@@ -218,13 +221,13 @@ export const ${nodeId}Fork: CodeNode = {
     if (secretManager && secretDialogState.key && secretDialogState.value) {
       secretManager.setSecret(secretDialogState.key, secretDialogState.value, storage);
       const secrets = secretManager.getAvailableSecrets();
-      
+
       // Resolve the promise with updated secrets
       if (secretDialogState.resolve) {
         secretDialogState.resolve(secrets);
       }
     }
-    
+
     setSecretDialogState({
       isOpen: false,
       key: '',
@@ -238,7 +241,7 @@ export const ${nodeId}Fork: CodeNode = {
     if (secretDialogState.resolve && secretManager) {
       secretDialogState.resolve(secretManager.getAvailableSecrets());
     }
-    
+
     setSecretDialogState({
       isOpen: false,
       key: '',
@@ -262,7 +265,7 @@ export const ${nodeId}Fork: CodeNode = {
           />
         </DebuggerContextProvider>
       </PortsContext.Provider>
-      
+
       <SecretSaveDialog
         isOpen={secretDialogState.isOpen}
         secretKey={secretDialogState.key}

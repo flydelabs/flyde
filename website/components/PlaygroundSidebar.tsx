@@ -27,14 +27,17 @@ node:
   connections: []
   id: MyFlow
   inputs: {}
-  outputs: {}`,
+  outputs: {}
+  inputsPosition: {}
+  outputsPosition: {}
+  completionOutputs: []`,
     'Simple Example': `imports: {}
 node:
   instances:
     - pos:
         x: 100
         y: -150
-      id: InlineValue-1
+      id: InlineValue-lt28i55w
       inputConfig: {}
       nodeId: InlineValue
       config:
@@ -50,10 +53,10 @@ node:
         insId: __this
         pinId: name
       to:
-        insId: InlineValue-1
+        insId: InlineValue-lt28i55w
         pinId: name
     - from:
-        insId: InlineValue-1
+        insId: InlineValue-lt28i55w
         pinId: value
       to:
         insId: __this
@@ -64,16 +67,25 @@ node:
       mode: required
   outputs:
     greeting:
-      delayed: false`,
+      delayed: false
+  inputsPosition:
+    name:
+      x: -217
+      y: -169
+  outputsPosition:
+    greeting:
+      x: 363
+      y: -169
+  completionOutputs: []`,
     'Complex Example': `imports: {}
 node:
   instances:
     - pos:
         x: 100
         y: -150
-      id: If-1
+      id: Conditional-k3qp7t6n
       inputConfig: {}
-      nodeId: If
+      nodeId: Conditional
       config:
         condition:
           type: string
@@ -85,7 +97,7 @@ node:
     - pos:
         x: 300
         y: -100
-      id: InlineValue-1
+      id: InlineValue-1r8x9m2k
       inputConfig: {}
       nodeId: InlineValue
       config:
@@ -99,7 +111,7 @@ node:
     - pos:
         x: 300
         y: -200
-      id: InlineValue-2
+      id: InlineValue-9k2m1r8x
       inputConfig: {}
       nodeId: InlineValue
       config:
@@ -115,28 +127,28 @@ node:
         insId: __this
         pinId: input
       to:
-        insId: If-1
+        insId: Conditional-k3qp7t6n
         pinId: input
     - from:
-        insId: If-1
+        insId: Conditional-k3qp7t6n
         pinId: true
       to:
-        insId: InlineValue-1
+        insId: InlineValue-1r8x9m2k
         pinId: trigger
     - from:
-        insId: If-1
+        insId: Conditional-k3qp7t6n
         pinId: false
       to:
-        insId: InlineValue-2
+        insId: InlineValue-9k2m1r8x
         pinId: trigger
     - from:
-        insId: InlineValue-1
+        insId: InlineValue-1r8x9m2k
         pinId: value
       to:
         insId: __this
         pinId: result
     - from:
-        insId: InlineValue-2
+        insId: InlineValue-9k2m1r8x
         pinId: value
       to:
         insId: __this
@@ -147,85 +159,134 @@ node:
       mode: required
   outputs:
     result:
-      delayed: false`
+      delayed: false
+  inputsPosition:
+    input:
+      x: -217
+      y: -150
+  outputsPosition:
+    result:
+      x: 500
+      y: -150
+  completionOutputs: []`
   },
   ts: {
-    'Flyde Code Node': `import { CodeNode } from "@flyde/core";
-
-// This creates a custom Flyde code node that you can use in your visual flows
-// After creating this file, you can drag this node from the command palette (Cmd+K)
-// into your visual flows and connect it to other nodes
+    'Simple Value Emitter': `import { CodeNode } from "@flyde/core";
 
 export const MyNode: CodeNode = {
-  // Unique identifier for this node
   id: "MyNode",
-  
-  // Description that appears in tooltips and documentation
-  description: "Processes a value and emits it to different outputs based on conditions",
-  
-  // Define the input pins for this node
+  description: "Emits a simple value",
   inputs: {
-    value: { 
-      description: "The input value to process",
-      // mode: "required" // Uncomment to make this input required
-      // mode: "reactive" // Uncomment to make this input reactive (re-triggers on changes)
-    },
-    threshold: {
-      description: "Threshold value for comparison",
-      // mode: "sticky" // Uncomment to make this input sticky (retains last value)
+    trigger: { 
+      description: "Trigger to emit the value"
     }
   },
-  
-  // Define the output pins for this node
   outputs: {
-    result: {
-      description: "The processed result",
-      // delayed: true // Uncomment if this output should be delayed
-    },
-    success: {
-      description: "Emitted when value passes threshold"
-    },
-    error: {
-      description: "Emitted when value fails threshold"  
+    value: {
+      description: "The emitted value"
     }
   },
-  
-  // Optional: Specify which outputs complete the node execution
-  // completionOutputs: ["success", "error"], // Uncomment to require one of these outputs to complete
-  
-  // The main execution function
-  run: (inputs, outputs, adv) => {
-    const { value, threshold } = inputs;
-    const { result, success, error } = outputs;
-    
-    // Process the input value
-    const processedValue = value * 2;
-    
-    // Always emit the processed result
-    result.next(processedValue);
-    
-    // Conditional outputs based on threshold
-    if (threshold !== undefined) {
-      if (processedValue >= threshold) {
-        success.next({ value: processedValue, message: "Success!" });
-      } else {
-        error.next({ value: processedValue, message: "Below threshold" });
-      }
+  run: (inputs, outputs) => {
+    const { value } = outputs;
+    value.next("Hello World!");
+  },
+};`,
+    'Add Two Numbers': `import { CodeNode } from "@flyde/core";
+
+export const MyNode: CodeNode = {
+  id: "MyNode",
+  description: "Adds two numbers together",
+  inputs: {
+    a: { 
+      description: "First number",
+      mode: "required"
+    },
+    b: {
+      description: "Second number", 
+      mode: "required"
     }
+  },
+  outputs: {
+    sum: {
+      description: "The sum of a and b"
+    }
+  },
+  run: (inputs, outputs) => {
+    const { a, b } = inputs;
+    const { sum } = outputs;
     
-    // Access node state (persisted across executions)
-    // const currentCount = adv.state.get('count') || 0;
-    // adv.state.set('count', currentCount + 1);
+    const result = Number(a) + Number(b);
+    sum.next(result);
+  },
+};`,
+    'Debounce': `import { CodeNode } from "@flyde/core";
+
+export const MyNode: CodeNode = {
+  id: "MyNode",
+  description: "Debounces input values with a configurable delay",
+  inputs: {
+    value: {
+      description: "Value to debounce",
+      mode: "reactive",
+    },
+    delayMs: {
+      description: "Debounce delay in milliseconds",
+      defaultValue: 420
+    },
+  },
+  outputs: {
+    debouncedValue: { 
+      description: "Debounced value" 
+    },
+  },
+  completionOutputs: ["debouncedValue"],
+  run: (inputs, outputs, adv) => {
+    const { value, delayMs } = inputs;
+    const { debouncedValue } = outputs;
+
+    const timer = adv.state.get("timer");
+    if (timer) {
+      clearTimeout(timer);
+    }
+
+    const newTimer = setTimeout(() => {
+      debouncedValue.next(value);
+    }, delayMs || 420);
+
+    adv.state.set("timer", newTimer);
+
+    adv.onCleanup(() => {
+      const currentTimer = adv.state.get("timer");
+      if (currentTimer) {
+        clearTimeout(currentTimer);
+      }
+    });
+  },
+};`,
+    'Value Emitter': `import { CodeNode } from "@flyde/core";
+
+export const MyNode: CodeNode = {
+  id: "MyNode",
+  description: "Emits a configured value when triggered",
+  inputs: {
+    trigger: { 
+      description: "Trigger to emit the value"
+    },
+    value: {
+      description: "Value to emit",
+      defaultValue: "Default Value"
+    }
+  },
+  outputs: {
+    output: {
+      description: "The emitted value"
+    }
+  },
+  run: (inputs, outputs) => {
+    const { value } = inputs;
+    const { output } = outputs;
     
-    // Access global state (shared across all nodes)
-    // const globalData = adv.globalState.get('myData');
-    // adv.globalState.set('myData', { timestamp: Date.now() });
-    
-    // Handle errors
-    // if (someErrorCondition) {
-    //   adv.onError(new Error("Something went wrong"));
-    //   return;
-    // }
+    output.next(value);
   },
 };`
   }
@@ -259,29 +320,29 @@ export const PlaygroundSidebar: React.FC<PlaygroundSidebarProps> = ({
   const handleNewFile = (type: 'flyde' | 'ts', templateName: string) => {
     const templates = fileTemplates[type];
     const template = templates[templateName as keyof typeof templates] as string;
-    const extension = type === 'flyde' ? '.flyde' : (templateName === 'Flyde Code Node' ? '.flyde.ts' : '.ts');
-    
+    const extension = type === 'flyde' ? '.flyde' : '.flyde.ts';
+
     let fileName: string = '';
     let content: string = template;
-    
-    if (templateName === 'Flyde Code Node') {
+
+    if (type === 'ts') {
       const name = prompt('Enter a name for your node:');
       if (!name || name.trim() === '') return;
-      
+
       const cleanName = toPascalCase(name.trim());
       if (cleanName === '') {
         alert('Please enter a valid node name.');
         return;
       }
-      
+
       fileName = `${cleanName}.flyde.ts`;
-      
+
       // Replace the template placeholders with the actual name
       content = template
         .replace(/MyNode/g, cleanName)
         .replace(/export const MyNode/g, `export const ${cleanName}`);
     } else {
-      // Find unique filename
+      // Find unique filename for flyde files
       let counter = 1;
       fileName = `new-file${extension}`;
       while (files.some(f => f.name === fileName)) {
@@ -295,7 +356,7 @@ export const PlaygroundSidebar: React.FC<PlaygroundSidebarProps> = ({
       type,
       content
     });
-    
+
     setShowTsMenu(false);
     setShowFlydeMenu(false);
   };
@@ -343,9 +404,8 @@ export const PlaygroundSidebar: React.FC<PlaygroundSidebarProps> = ({
         {files.map(file => (
           <div
             key={file.name}
-            className={`flex items-center gap-2 px-3 py-1.5 text-sm hover:bg-[#2a2d2e] group ${
-              activeFile === file.name ? 'bg-[#37373d] text-white' : ''
-            }`}
+            className={`flex items-center gap-2 px-3 py-1.5 text-sm hover:bg-[#2a2d2e] group ${activeFile === file.name ? 'bg-[#37373d] text-white' : ''
+              }`}
           >
             <button
               onClick={() => onFileSelect(file.name)}
@@ -370,9 +430,8 @@ export const PlaygroundSidebar: React.FC<PlaygroundSidebarProps> = ({
               )}
               <button
                 onClick={(e) => handleDeleteFile(file.name, e)}
-                className={`p-0.5 hover:bg-red-600 rounded text-xs ${
-                  file.name === 'index.ts' ? 'opacity-50 cursor-not-allowed' : ''
-                }`}
+                className={`p-0.5 hover:bg-red-600 rounded text-xs ${file.name === 'index.ts' ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
                 title={file.name === 'index.ts' ? 'Cannot delete index.ts' : 'Delete file'}
               >
                 ×
@@ -385,15 +444,15 @@ export const PlaygroundSidebar: React.FC<PlaygroundSidebarProps> = ({
       {/* New File Buttons */}
       <div className="p-2 border-t border-[#3c3c3c] flex-shrink-0 space-y-1">
         <div className="relative">
-          <button
+          {/* <button
             onClick={() => setShowFlydeMenu(!showFlydeMenu)}
             className="w-full flex items-center gap-2 px-3 py-2 text-xs text-gray-300 hover:text-blue-400 hover:bg-[#2a2d2e] rounded transition-colors"
           >
             <Plus className="w-3.5 h-3.5" />
             <FileText className="w-3.5 h-3.5 text-blue-400" />
             <span>New Visual Flow</span>
-          </button>
-          
+          </button> */}
+
           {showFlydeMenu && (
             <div className="absolute bottom-full mb-1 left-0 right-0 bg-[#3c3c3c] border border-[#464647] rounded shadow-lg z-10">
               <div className="p-0.5">
@@ -411,14 +470,32 @@ export const PlaygroundSidebar: React.FC<PlaygroundSidebarProps> = ({
           )}
         </div>
 
-        <button
-          onClick={() => handleNewFile('ts', 'Flyde Code Node')}
-          className="w-full flex items-center gap-2 px-3 py-2 text-xs text-gray-300 hover:text-yellow-400 hover:bg-[#2a2d2e] rounded transition-colors"
-        >
-          <Plus className="w-3.5 h-3.5" />
-          <FileCode className="w-3.5 h-3.5 text-yellow-400" />
-          <span>New Code Node</span>
-        </button>
+        <div className="relative">
+          <button
+            onClick={() => setShowTsMenu(!showTsMenu)}
+            className="w-full flex items-center gap-2 px-3 py-2 text-xs text-gray-300 hover:text-yellow-400 hover:bg-[#2a2d2e] rounded transition-colors"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <FileCode className="w-3.5 h-3.5 text-yellow-400" />
+            <span>New Code Node</span>
+          </button>
+
+          {showTsMenu && (
+            <div className="absolute bottom-full mb-1 left-0 right-0 bg-[#3c3c3c] border border-[#464647] rounded shadow-lg z-10">
+              <div className="p-0.5">
+                {Object.keys(fileTemplates.ts).map(template => (
+                  <button
+                    key={template}
+                    onClick={() => handleNewFile('ts', template)}
+                    className="w-full text-left px-2 py-1 text-xs hover:bg-[#094771] rounded"
+                  >
+                    {template}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
