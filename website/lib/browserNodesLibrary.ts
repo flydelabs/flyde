@@ -36,10 +36,11 @@ import {
   codeNodeToImportableEditorNode,
   NodeLibraryData,
   AdvancedCodeNode,
-  ConfigurableEditorConfigCustom,
+  isCodeNode,
 } from "@flyde/core";
 
 import { getUIBundle, hasUIBundle } from "./generated/ui-bundles";
+import { getNodeSource } from "./generated/node-sources";
 
 // Import browser-safe third-party nodes
 import {
@@ -64,13 +65,14 @@ const nodesSource: CodeNodeSource = {
   data: "@flyde/nodes",
 };
 
-// Enhances an advanced node with its UI bundle if available
+// Enhances an advanced node with its UI bundle and source code if available
 export function enhanceNodeWithUI(node: any): any {
   const advancedNode = { ...node } as AdvancedCodeNode<unknown>;
 
+  let enhancedNode = node;
+
   if (advancedNode.editorConfig?.type === "custom" && hasUIBundle(node.id)) {
-    // advancedNode.editorConfig.editorComponentBundleContent = getUIBundle(node.id);
-    return {
+    enhancedNode = {
       ...node, editorConfig: {
         ...advancedNode.editorConfig,
         editorComponentBundleContent: getUIBundle(node.id)
@@ -78,7 +80,18 @@ export function enhanceNodeWithUI(node: any): any {
     };
   }
 
-  return node;
+  // Add sourceCode for code nodes
+  if (isCodeNode(enhancedNode)) {
+    const sourceCode = getNodeSource(node.id);
+    if (sourceCode) {
+      enhancedNode = {
+        ...enhancedNode,
+        sourceCode
+      };
+    }
+  }
+
+  return enhancedNode;
 }
 
 export function getBrowserSafeNodesLibraryData(customNodes: any[] = []): NodeLibraryData {
