@@ -5,7 +5,6 @@ export { Airtable } from "./airtable.flyde";
 export { Anthropic } from "./anthropic.flyde";
 export { DiscordMessage } from "./discord.flyde";
 export { Firecrawl } from "./firecrawl.flyde";
-export { GoogleSheets } from "./googlesheets.flyde";
 export { LLMCondition } from "./llm-condition.flyde";
 export { Notion } from "./notion.flyde";
 export { Resend } from "./resend.flyde";

@@ -45,7 +45,7 @@ export default function Home() {
               </h1>
               <div className="max-w-3xl mx-auto animate-in fade-in duration-1000 delay-300">
                 <p className="text-base sm:text-lg md:text-xl lg:text-2xl leading-relaxed text-zinc-400">
-                  Like n8n, but for TypeScript. Build AI agents visually, import your functions, deploy with your app. Works with VS Code, Cursor, Windsurf. Plays nicely with Claude Code, Gemini CLI, and more.
+                  Like n8n, but inside your codebase. Build AI agents visually, import your functions, deploy with your app. Works with VS Code, Cursor, Windsurf. Plays nicely with Claude Code, Gemini CLI, and more.
                 </p>
               </div>
             </div>
@@ -67,12 +67,20 @@ export default function Home() {
 
             {/* CTA after demo - More prominent */}
             <div className="mt-12 text-center">
-              <Link
-                href="/quick-start"
-                className="inline-flex px-8 py-4 bg-blue-600 text-white font-semibold text-lg rounded-lg hover:bg-blue-700 transition-all hover:scale-105 duration-300 shadow-lg hover:shadow-blue-500/25"
-              >
-                Quick Start
-              </Link>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link
+                  href="/quick-start"
+                  className="inline-flex px-8 py-4 bg-blue-600 text-white font-semibold text-lg rounded-lg hover:bg-blue-700 transition-all hover:scale-105 duration-300 shadow-lg hover:shadow-blue-500/25"
+                >
+                  Quick Start
+                </Link>
+                <Link
+                  href="/playground/blog-generator"
+                  className="inline-flex px-8 py-4 bg-zinc-800 text-white font-semibold text-lg rounded-lg hover:bg-zinc-700 transition-all hover:scale-105 duration-300 shadow-lg border border-zinc-700"
+                >
+                  Try Playground
+                </Link>
+              </div>
               <p className="text-xs text-zinc-500 mt-3">Get Flyde running in your project in under 5 minutes</p>
             </div>
 

@@ -1,0 +1,21 @@
+{
+  "id": "hello-world",
+  "name": "Hello World",
+  "description": "Simple greeting flow that demonstrates basic Flyde concepts",
+  "order": 0,
+  "flow": "main.flyde",
+  "files": [
+    {
+      "name": "main.flyde",
+      "description": "Simple greeting flow with string interpolation"
+    },
+    {
+      "name": "index.ts",
+      "description": "Basic usage example"
+    },
+    {
+      "name": "demo.ts",
+      "description": "Greeting multiple people with examples"
+    }
+  ]
+}
