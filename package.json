@@ -1,6 +1,6 @@
 {
   "name": "flyde",
-  "version": "1.0.45",
+  "version": "1.0.46",
   "main": "index.js",
   "description": "",
   "proxy": "http://localhost:8484",

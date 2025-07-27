@@ -1,6 +1,6 @@
 {
   "name": "@flyde/nodes",
-  "version": "1.0.45",
+  "version": "1.0.46",
   "description": "Flyde's Nodes Library",
   "flyde": {
     "exposes": [

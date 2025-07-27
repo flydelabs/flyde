@@ -1,6 +1,6 @@
 {
   "name": "website",
-  "version": "1.0.45",
+  "version": "1.0.46",
   "private": true,
   "scripts": {
     "dev": "npm run build:main-examples && npm run build:playground-examples && concurrently \"PORT=3003 next dev\" \"npm run dev:examples\"",
