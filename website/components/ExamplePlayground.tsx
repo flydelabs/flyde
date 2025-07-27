@@ -33,14 +33,14 @@ export const ExamplePlayground: React.FC<ExamplePlaygroundProps> = ({
   const [runtimeStatus, setRuntimeStatus] = useState<RuntimeStatus>({ type: "stopped" });
   const [consoleOutput, setConsoleOutput] = useState<Array<{ type: 'log' | 'error'; args: any[]; timestamp: number }>>([]);
   const [showConsole, setShowConsole] = useState(false);
-  
+
   const stopExecutionRef = useRef<(() => void) | null>(null);
   const secretManager = useMemo(() => getSecretManager(), []);
 
   // Initialize files for this example
   React.useEffect(() => {
     let filesToUse: PlaygroundFile[] = [];
-    
+
     if (initialFiles) {
       // Use provided initial files (for saved flows)
       filesToUse = initialFiles;
@@ -69,7 +69,7 @@ export const ExamplePlayground: React.FC<ExamplePlaygroundProps> = ({
   // Check for file content changes
   const hasFileContentChanges = React.useMemo(() => {
     if (originalFileContents.length === 0) return false;
-    
+
     return fileContents.some((file, index) => {
       const originalFile = originalFileContents[index];
       return originalFile && file.content !== originalFile.content;
@@ -95,17 +95,17 @@ export const ExamplePlayground: React.FC<ExamplePlaygroundProps> = ({
     const nodes: any[] = [];
     const customNodeFiles = fileContents.filter(file => file.name.endsWith('.flyde.ts'));
     const secrets = secretManager.getSecrets();
-    
+
     customNodeFiles.forEach(file => {
       try {
-        const node = customCodeNodeFromCode(file.content, secrets, {
+        const node = customCodeNodeFromCode(file.content, undefined, {
           "@flyde/core": {
             configurableValue: configurableValue,
             extractInputsFromValue: extractInputsFromValue,
             replaceInputsInValue: replaceInputsInValue,
           },
         });
-        
+
         if (node) {
           // Add sourceCode to the node for fork functionality
           node.sourceCode = file.content;
@@ -115,7 +115,7 @@ export const ExamplePlayground: React.FC<ExamplePlaygroundProps> = ({
         console.warn(`Failed to parse custom node from ${file.name}:`, error);
       }
     });
-    
+
     return nodes;
   }, [fileContents.filter(f => f.name.endsWith('.flyde.ts')).map(f => f.content).join('|||'), secretManager]);
 
@@ -172,7 +172,7 @@ export const ExamplePlayground: React.FC<ExamplePlaygroundProps> = ({
         debugger: localDebugger,
         secrets: secretManager.getSecrets()
       });
-      
+
       stopExecutionRef.current = stop;
       await promise;
     } catch (error) {
