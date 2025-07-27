@@ -1,14 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useEffect, useRef } from 'react';
-
-// Monaco Editor types (will be loaded dynamically)
-declare global {
-  interface Window {
-    monaco: any;
-  }
-}
+import React, { useRef, useCallback } from 'react';
+import Editor from '@monaco-editor/react';
+import * as monaco from 'monaco-editor';
 
 export type MonacoCodeEditorProps = {
   code: string;
@@ -16,6 +10,69 @@ export type MonacoCodeEditorProps = {
   onChange?: (value: string) => void;
   readOnly?: boolean;
   className?: string;
+  filename?: string;
+};
+
+// Global flag to track Monaco configuration
+let isMonacoConfigured = false;
+
+// Configure Monaco with Flyde types
+const configureMonacoTypes = async (monacoInstance: typeof monaco) => {
+  if (isMonacoConfigured) {
+    return;
+  }
+  
+  try {
+    // Load Flyde core types
+    const coreResponse = await fetch('/types/@flyde-core.d.ts');
+    if (coreResponse.ok) {
+      const flydeCoreDts = await coreResponse.text();
+      monacoInstance.languages.typescript.typescriptDefaults.addExtraLib(
+        flydeCoreDts,
+        'file:///node_modules/@types/@flyde-core.d.ts'
+      );
+    }
+  } catch (error) {
+    console.warn('Could not load Flyde core types:', error);
+  }
+
+  try {
+    // Load Flyde loader types
+    const loaderResponse = await fetch('/types/@flyde-loader.d.ts');
+    if (loaderResponse.ok) {
+      const flydeLoaderDts = await loaderResponse.text();
+      monacoInstance.languages.typescript.typescriptDefaults.addExtraLib(
+        flydeLoaderDts,
+        'file:///node_modules/@types/@flyde-loader.d.ts'
+      );
+    }
+  } catch (error) {
+    console.warn('Could not load Flyde loader types:', error);
+  }
+
+  // Configure TypeScript compiler options
+  const opts = monacoInstance.languages.typescript.typescriptDefaults.getCompilerOptions();
+
+  monacoInstance.languages.typescript.typescriptDefaults.setCompilerOptions({
+    ...opts,
+    target: monacoInstance.languages.typescript.ScriptTarget.ESNext,
+    module: monacoInstance.languages.typescript.ModuleKind.ESNext,
+    moduleResolution: monacoInstance.languages.typescript.ModuleResolutionKind.NodeJs,
+    esModuleInterop: true,
+    allowSyntheticDefaultImports: true,
+    strict: false,
+    noImplicitAny: false,
+    strictNullChecks: false,
+  });
+
+  // Set diagnostic options
+  monacoInstance.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
+    noSemanticValidation: false,
+    noSyntaxValidation: false,
+    noSuggestionDiagnostics: true,
+  });
+
+  isMonacoConfigured = true;
 };
 
 export const MonacoCodeEditor: React.FC<MonacoCodeEditorProps> = ({
@@ -23,43 +80,44 @@ export const MonacoCodeEditor: React.FC<MonacoCodeEditorProps> = ({
   language = 'typescript',
   onChange,
   readOnly = true,
-  className = ''
+  className = '',
+  filename = 'untitled.ts'
 }) => {
-  const editorRef = useRef<HTMLDivElement>(null);
-  const monacoEditorRef = useRef<any>(null);
+  const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
 
-  useEffect(() => {
-    const loadMonaco = async () => {
-      // Load Monaco Editor dynamically
-      if (!window.monaco) {
-        // Add Monaco Editor CDN
-        const loaderScript = document.createElement('script');
-        loaderScript.src = 'https://unpkg.com/monaco-editor@0.44.0/min/vs/loader.js';
-        document.head.appendChild(loaderScript);
+  const handleEditorDidMount = useCallback(async (editor: monaco.editor.IStandaloneCodeEditor, monacoInstance: typeof monaco) => {
+    editorRef.current = editor;
+    
+    // Configure Monaco types when editor mounts
+    await configureMonacoTypes(monacoInstance);
+    
+    // Create a model with the filename as URI for proper TypeScript resolution
+    const uri = monacoInstance.Uri.file(filename);
+    const model = monacoInstance.editor.createModel(code, language, uri);
+    editor.setModel(model);
+    
+    // Clean up previous models to prevent memory leaks
+    return () => {
+      model.dispose();
+    };
+  }, [filename, language, code]);
 
-        await new Promise((resolve) => {
-          loaderScript.onload = resolve;
-        });
+  const handleChange = useCallback((value: string | undefined) => {
+    if (onChange && value !== undefined) {
+      onChange(value);
+    }
+  }, [onChange]);
 
-        // Configure Monaco
-        (window as any).require.config({
-          paths: { 
-            vs: 'https://unpkg.com/monaco-editor@0.44.0/min/vs' 
-          }
-        });
-
-        await new Promise((resolve) => {
-          (window as any).require(['vs/editor/editor.main'], resolve);
-        });
-      }
-
-      if (editorRef.current && window.monaco && !monacoEditorRef.current) {
-        // Create the editor
-        monacoEditorRef.current = window.monaco.editor.create(editorRef.current, {
-          value: code,
-          language: language,
-          theme: 'vs-dark',
-          readOnly: readOnly,
+  return (
+    <div className={`h-full w-full ${className}`}>
+      <Editor
+        value={code}
+        language={language}
+        theme="vs-dark"
+        onMount={handleEditorDidMount}
+        onChange={handleChange}
+        options={{
+          readOnly,
           minimap: { enabled: false },
           scrollBeyondLastLine: false,
           fontSize: 13,
@@ -83,41 +141,7 @@ export const MonacoCodeEditor: React.FC<MonacoCodeEditorProps> = ({
             verticalScrollbarSize: 8,
             horizontalScrollbarSize: 8
           }
-        });
-
-        // Handle changes
-        if (onChange && !readOnly) {
-          monacoEditorRef.current.onDidChangeModelContent(() => {
-            const value = monacoEditorRef.current.getValue();
-            onChange(value);
-          });
-        }
-      }
-    };
-
-    loadMonaco().catch(console.error);
-
-    return () => {
-      if (monacoEditorRef.current) {
-        monacoEditorRef.current.dispose();
-        monacoEditorRef.current = null;
-      }
-    };
-  }, []);
-
-  // Update code when prop changes
-  useEffect(() => {
-    if (monacoEditorRef.current && code !== monacoEditorRef.current.getValue()) {
-      monacoEditorRef.current.setValue(code);
-    }
-  }, [code]);
-
-  return (
-    <div className={`h-full w-full ${className}`}>
-      <div 
-        ref={editorRef} 
-        className="h-full w-full"
-        style={{ minHeight: '200px' }}
+        }}
       />
     </div>
   );

@@ -10,6 +10,19 @@ const nextConfig: NextConfig = {
     "@flyde/nodes"
   ],
 
+  // Configure webpack for Monaco Editor
+  webpack: (config, { isServer }) => {
+    // Don't bundle Monaco on the server side
+    if (!isServer) {
+      // Monaco Editor requires special handling
+      config.module.rules.push({
+        test: /\.ttf$/,
+        type: 'asset/resource'
+      });
+    }
+    return config;
+  },
+
   // Configure Turbopack for development
   turbopack: {
     // Enable source maps in development

@@ -1,0 +1,221 @@
+imports: {}
+node:
+  instances:
+    - pos:
+        x: -372.3106216472647
+        y: -237.38023521164422
+      id: OpenAI-7904gip
+      inputConfig: {}
+      displayName: Generate subject
+      nodeId: OpenAIStub
+      config:
+        apiKey:
+          type: string
+          value: OPENAI_API_KEY
+        model:
+          type: select
+          value: gpt-4.1
+        prompt:
+          type: string
+          value: >-
+            You are a master blog post author, and a master on the topic of
+            "{{topic}}"
+
+            Please generate a captivating blog post title. Return just the
+            title, no wrappers.
+        temperature:
+          type: number
+          value: 0.7
+        responseFormat:
+          type: select
+          value: text
+        jsonSchema:
+          type: json
+          value:
+            type: object
+            properties:
+              summary:
+                type: string
+                description: A summary of the text
+              keyPoints:
+                type: array
+                items:
+                  type: string
+                description: Key points from the text
+            required:
+              - summary
+              - keyPoints
+      type: code
+      source:
+        type: file
+        data: "./OpenAIStub.flyde.ts"
+    - pos:
+        x: -116.18342374876022
+        y: -126.85574595958127
+      id: Anthropic-1j14gnl
+      inputConfig: {}
+      nodeId: AnthropicStub
+      config:
+        apiKey:
+          type: string
+          value: ANTHROPIC_API_KEY
+        model:
+          type: select
+          value: claude-sonnet-4-20250514
+        prompt:
+          type: string
+          value: >-
+            You are a master blog post author, expert in the topic of {{topic}}
+
+
+            Please generarate a short (3 paragraphs tops) blog post content, in
+            HTML, for the following subject:
+
+            {{subject}}
+
+
+            Return  just HTML for the blog's content, no metadata or title, just
+            HTML
+        temperature:
+          type: number
+          value: 0.7
+        maxTokens:
+          type: number
+          value: 1000
+      type: code
+      source:
+        type: file
+        data: "./AnthropicStub.flyde.ts"
+    - pos:
+        x: 410.1566191297444
+        y: -201.59529702959708
+      id: InlineValue-4y04ggy
+      inputConfig: {}
+      displayName: Blog post data
+      nodeId: InlineValue
+      config:
+        value:
+          type: json
+          value:
+            subject: "{{subject}}"
+            content: "{{content}}"
+            summary: "{{summary}}"
+      type: code
+      source:
+        type: package
+        data: "@flyde/nodes"
+    - pos:
+        x: 153.96672291132245
+        y: -57.827328586553676
+      id: OpenAI-bt14gqc
+      inputConfig: {}
+      nodeId: OpenAIStub
+      config:
+        apiKey:
+          type: string
+          value: OPENAI_API_KEY
+        model:
+          type: select
+          value: gpt-4.1-mini
+        prompt:
+          type: string
+          value: "Generate a summary of the following blog post content: {{content}}"
+        temperature:
+          type: number
+          value: 0.7
+        responseFormat:
+          type: select
+          value: text
+        jsonSchema:
+          type: json
+          value:
+            type: object
+            properties:
+              summary:
+                type: string
+                description: A summary of the text
+              keyPoints:
+                type: array
+                items:
+                  type: string
+                description: Key points from the text
+            required:
+              - summary
+              - keyPoints
+      type: code
+      source:
+        type: file
+        data: "./OpenAIStub.flyde.ts"
+  connections:
+    - from:
+        insId: __this
+        pinId: topic
+      to:
+        insId: OpenAI-7904gip
+        pinId: topic
+    - from:
+        insId: OpenAI-7904gip
+        pinId: completion
+      to:
+        insId: Anthropic-1j14gnl
+        pinId: subject
+    - from:
+        insId: __this
+        pinId: topic
+      to:
+        insId: Anthropic-1j14gnl
+        pinId: topic
+    - from:
+        insId: OpenAI-7904gip
+        pinId: completion
+      to:
+        insId: InlineValue-4y04ggy
+        pinId: subject
+    - from:
+        insId: Anthropic-1j14gnl
+        pinId: response
+      to:
+        insId: OpenAI-bt14gqc
+        pinId: content
+    - from:
+        insId: OpenAI-bt14gqc
+        pinId: completion
+      to:
+        insId: InlineValue-4y04ggy
+        pinId: summary
+    - from:
+        insId: Anthropic-1j14gnl
+        pinId: response
+      to:
+        insId: InlineValue-4y04ggy
+        pinId: content
+    - from:
+        insId: InlineValue-4y04ggy
+        pinId: value
+      to:
+        insId: __this
+        pinId: blogPost
+  id: Example
+  inputs:
+    topic:
+      mode: required
+  outputs:
+    blogPost:
+      delayed: false
+  inputsPosition:
+    question:
+      x: -510.8552075195313
+      y: -106.74767211914062
+    userId:
+      x: -521.2010229492188
+      y: -5.160607910156251
+    topic:
+      x: -560.4830456542969
+      y: -109.08241943359374
+  outputsPosition:
+    result:
+      x: -23.264428942324532
+      y: 237.25953921502617
+    blogPost:
+      x: 633.4904876708985
+      y: -180.87246459960937

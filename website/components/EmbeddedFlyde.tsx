@@ -11,16 +11,10 @@ import {
   NodeOutput,
 } from "@flyde/core";
 import {
-  DebuggerContextData,
-  DebuggerContextProvider,
-  FlowEditor,
-  PortsContext,
-  EditorPorts,
-  defaultPorts,
   FlowEditorState,
   defaultBoardData,
-  createRuntimePlayer,
 } from "@flyde/editor";
+import { FlydeEditorWithDebugger, historyPlayer, runtimePlayer, createRuntimeClientDebugger } from "./FlydeEditorWithDebugger";
 import React, {
   useState,
   useEffect,
@@ -32,8 +26,6 @@ import { websiteNodesFinder } from "./nodesFinder";
 import { ExampleChatbot } from "../flyde/resolved/ExampleChatbot";
 import { ExampleBlogpost } from "../flyde/resolved/ExampleBlogpost";
 import { resolveVisualNode } from "@flyde/loader/browser";
-import { createRuntimeClientDebugger } from "./createRuntimePlayerDebugger";
-import { createHistoryPlayer } from "./createHistoryPlayer";
 import { EditorInterface, EditorTab } from "./EditorInterface";
 import { MonacoCodeEditor } from "./MonacoCodeEditor";
 import { BlogPreview } from "./BlogPreview";
@@ -46,9 +38,6 @@ export interface EmbeddedFlydeProps {
 }
 
 const initialPadding = [10, 10] as [number, number];
-
-const historyPlayer = createHistoryPlayer();
-const runtimePlayer = createRuntimePlayer();
 
 const exampleFlows = {
   'blog-generator': ExampleBlogpost,
@@ -86,7 +75,7 @@ export const EmbeddedFlyde = (props: EmbeddedFlydeProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const currExample = exampleFlows[activeExample as keyof typeof exampleFlows];
+  const currExample = exampleFlows[activeExample as keyof typeof exampleFlows] as VisualNode;
 
 
 
@@ -114,28 +103,12 @@ export const EmbeddedFlyde = (props: EmbeddedFlydeProps) => {
 
       const outputs = Object.keys(resolvedNode.outputs).reduce((acc, key) => {
         acc[key] = dynamicOutput();
-        acc[key].subscribe((value) => {
-          console.log("Flow output:", key, value);
-          console.log("Raw value type:", typeof value, value);
+        acc[key].subscribe((value: any) => {
 
-          // Parse the InlineValue template string if it's a string that looks like a template
-          let parsedValue = value;
-          if (typeof value === 'string' && value.includes('subject:') && value.includes('content:')) {
-            console.log("Raw InlineValue output:", value);
-            // The InlineValue outputs a template string, let's try to parse it as an object
-            const cleaned = value.replace(/^\s*{\s*/, '{').replace(/\s*}\s*$/, '}').replace(/(\w+):\s*"([^"]*?)"/g, '"$1": "$2"');
-            console.log("Attempting to parse cleaned string:", cleaned);
-            parsedValue = JSON.parse(cleaned);
-
-          }
-
-          console.log("Setting execution results for key:", key, "with parsed value:", parsedValue);
-          // Update execution results immediately when we get an output
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           setExecutionResults((prev: any) => {
             const newResults = {
               ...prev,
-              [key]: parsedValue
+              [key]: value
             };
             console.log("New execution results:", newResults);
             return newResults;
@@ -194,7 +167,6 @@ export const EmbeddedFlyde = (props: EmbeddedFlydeProps) => {
         setInternalEditorState(prevState => ({
           ...prevState,
           flow: {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             node: currExample as any, // Cast to any to avoid type issues
           },
         }));
@@ -209,25 +181,6 @@ export const EmbeddedFlyde = (props: EmbeddedFlydeProps) => {
     loadFlowData();
   }, [currExample]);
 
-  const debuggerContextValue = React.useMemo<DebuggerContextData>(() => {
-
-
-    return {
-      onRequestHistory: (...args) => historyPlayer.requestHistory(...args),
-      debuggerClient: {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onBatchedEvents: noop as any,
-      },
-    };
-  }, []);
-
-  const portsContextValue = useMemo<EditorPorts>(() => {
-    const ports: EditorPorts = {
-      ...defaultPorts,
-    };
-
-    return ports;
-  }, []);
 
 
   // Generate example code based on active example
@@ -265,18 +218,14 @@ console.log(result.${activeExample === 'blog-generator' ? 'blogPost' : 'response
           </div>
         </div>
       ) : (
-        <PortsContext.Provider value={portsContextValue}>
-          <DebuggerContextProvider value={debuggerContextValue}>
-            <FlowEditor
-              ref={flowEditorRef}
-              state={internalEditorState}
-              onChangeEditorState={setInternalEditorState}
-              initialPadding={initialPadding}
-              darkMode={true}
-              requireModifierForZoom={true}
-            />
-          </DebuggerContextProvider>
-        </PortsContext.Provider>
+        <FlydeEditorWithDebugger
+          ref={flowEditorRef}
+          state={internalEditorState}
+          onChangeEditorState={setInternalEditorState}
+          initialPadding={initialPadding}
+          darkMode={true}
+          requireModifierForZoom={true}
+        />
       )
     },
     {

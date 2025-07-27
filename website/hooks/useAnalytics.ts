@@ -13,6 +13,11 @@ export function useAnalytics() {
   const posthog = usePostHog();
 
   const track = (event: AnalyticsEvent) => {
+    // Skip tracking in development
+    if (process.env.NODE_ENV === 'development') {
+      return;
+    }
+    
     // Track with PostHog
     posthog?.capture(event.name, event.properties);
 
@@ -28,14 +33,17 @@ export function useAnalytics() {
   };
 
   const identify = (userId: string, properties?: Record<string, unknown>) => {
+    if (process.env.NODE_ENV === 'development') return;
     posthog?.identify(userId, properties);
   };
 
   const reset = () => {
+    if (process.env.NODE_ENV === 'development') return;
     posthog?.reset();
   };
 
   const setFeatureFlag = (flag: string, value: boolean) => {
+    if (process.env.NODE_ENV === 'development') return;
     posthog?.setPersonProperties({ [flag]: value });
   };
 

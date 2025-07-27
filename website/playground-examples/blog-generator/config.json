@@ -1,0 +1,25 @@
+{
+  "id": "blog-generator",
+  "name": "Blog Generator",
+  "description": "Generate blog posts using AI with title generation, content creation, and summarization",
+  "order": 1,
+  "flow": "main.flyde",
+  "files": [
+    {
+      "name": "main.flyde",
+      "description": "The main flow that orchestrates blog post generation"
+    },
+    {
+      "name": "index.ts",
+      "description": "Simple usage example"
+    },
+    {
+      "name": "OpenAIStub.flyde.ts",
+      "description": "🎭 Editable OpenAI stub - customize responses here!"
+    },
+    {
+      "name": "AnthropicStub.flyde.ts", 
+      "description": "🎭 Editable Anthropic stub - customize responses here!"
+    }
+  ]
+}

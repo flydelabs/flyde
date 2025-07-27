@@ -64,6 +64,26 @@ The site uses a file-based content system:
 - Build script (`scripts/sync-examples.ts`) converts .flyde files to TypeScript
 - EmbeddedFlyde component loads and displays flows
 
+#### Browser-Safe Node Library
+
+The playground requires a browser-safe implementation of the node library:
+
+- `lib/browserNodesLibrary.ts` - Provides browser-compatible nodes for the editor
+- Imports from `@flyde/nodes/dist/all-browser` for browser-safe node implementations
+- Excludes server-only nodes (e.g., GoogleSheets which requires `google-auth-library`)
+- Individual nodes imported from their `.flyde` modules (e.g., `@flyde/nodes/dist/Lists/Append.flyde`)
+- Used by `FlydeEditorWithDebugger` to override the `getLibraryData` port
+- Enables Cmd+K command palette functionality in the playground
+
+#### Browser-Safe Editor Ports
+
+The `FlydeEditorWithDebugger` component implements browser-safe versions of editor ports:
+
+- `getLibraryData` - Returns browser-compatible node library from `browserNodesLibrary.ts`
+- `resolveInstance` - Uses `resolveEditorInstance` from `@flyde/loader/browser` (not main export)
+- Uses `websiteNodesFinder` for browser-safe node resolution
+- **Important**: Always import from `@flyde/loader/browser` to avoid server-side dependencies
+
 #### Browser-Compatible LLM Stubs
 
 The website includes browser-safe stubs for LLM nodes to enable interactive demos:

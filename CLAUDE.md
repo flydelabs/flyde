@@ -77,6 +77,9 @@ pnpm bump:alpha      # Bump to alpha version
   - AI integrations (OpenAI, Anthropic, Google, Groq)
   - File system operations
   - Each node is a `.flyde.ts` file with metadata
+  - Browser-safe exports available via `all-browser.js`
+  - Third-party integrations split between `browser.ts` and `server.ts`
+  - Node exports follow pattern: `@flyde/nodes/dist/Category/NodeName.flyde`
 
 ### Node Types and Capabilities
 
