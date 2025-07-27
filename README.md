@@ -23,7 +23,7 @@
     <img src="https://img.shields.io/badge/Website-007ec6?style=flat&logo=world&logoColor=white"/>
   </a>
 
-  <a href="https://play.flyde.dev">
+  <a href="https://www.flyde.dev/playground">
     <img src="https://img.shields.io/badge/Playground-007ec6?style=flat&logo=world&logoColor=white"/>
   </a>
   <br>
@@ -47,6 +47,17 @@
 <br/>
 <strong>Rich Standard Library ✔️</strong> · <strong>Visual Debugger ✔️</strong> · <strong>TypeScript Support ✔️</strong>
 </h5>
+
+## Quick Start
+
+### Playground
+Visit [https://www.flyde.dev/playground](https://www.flyde.dev/playground) to try out Flyde in your browser.
+
+### CLI
+`npx create-flyde-app`
+
+### Manual
+See [https://flyde.dev/quick-start](https://flyde.dev/quick-start) for more information.
 
 ## Why Flyde?
 
