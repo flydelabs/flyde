@@ -31,7 +31,8 @@
     "dev": "tsc -p . -w --incremental",
     "build": "rm -rf dist && tsc -p .",
     "prod": "node dist/index.js",
-    "start": "concurrently 'ts-node-dev src/index.ts' 'npm run dev'"
+    "start": "concurrently 'ts-node-dev src/index.ts' 'npm run dev'",
+    "generate-flow-types": "ts-node src/type-generation/cli.ts"
   },
   "files": [
     "dist/",

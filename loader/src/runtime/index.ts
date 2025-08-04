@@ -11,6 +11,9 @@ import { createDebugger } from "./create-debugger";
 import { getCallPath } from "./get-call-path";
 import { debugLogger } from "./logger";
 
+// Type imports for type-safe loadFlow (will be generated)
+type FlowRegistry = Record<string, { inputs: any; outputs: any; path: string }>;
+
 // Generate anonymous ID for telemetry
 const generateAnonymousId = () => 'user_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
@@ -152,6 +155,21 @@ export function loadFlowByPath<Inputs>(
   return loadFlowFromContent(flow, flowPath, "http://localhost:8545", secrets);
 }
 
+// Type-safe overload for when flow types are available
+export function loadFlow<K extends keyof FlowRegistry>(
+  flowPath: K,
+  root?: string,
+  secrets?: Record<string, string>
+): LoadedFlowExecuteFn<FlowRegistry[K]["inputs"]>;
+
+// Backward compatible generic overload
+export function loadFlow<Inputs>(
+  flowOrPath: FlydeFlow | string,
+  root?: string,
+  secrets?: Record<string, string>
+): LoadedFlowExecuteFn<Inputs>;
+
+// Implementation
 export function loadFlow<Inputs>(
   flowOrPath: FlydeFlow | string,
   root?: string,
