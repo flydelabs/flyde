@@ -15,6 +15,7 @@ import { activateReporter, reportEvent, analytics } from "./analytics";
 import { showFirstRunPrivacyNotice, showPrivacySettings } from "./privacyNotice";
 
 import { Template, getTemplates, scaffoldTemplate } from "./templateUtils";
+import { registerImportUpdater } from "./updateImportsOnFileMove";
 
 // the application insights key (also known as instrumentation key)
 
@@ -51,6 +52,8 @@ export function activate(context: vscode.ExtensionContext) {
       analytics.dispose();
     }
   });
+
+  registerImportUpdater(context);
 
   const mainOutputChannel = vscode.window.createOutputChannel("Flyde");
   const debugOutputChannel = vscode.window.createOutputChannel("Flyde (Debug)");
