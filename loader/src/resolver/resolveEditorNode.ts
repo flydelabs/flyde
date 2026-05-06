@@ -5,7 +5,7 @@ import {
   isVisualNode,
   VisualNode,
 } from "@flyde/core";
-import { ReferencedNodeFinder } from "./ReferencedNodeFinder";
+import { NestedReferencedNodeFinder } from "./ReferencedNodeFinder";
 import { resolveEditorInstance } from "./resolveEditorInstance";
 
 function dummyErrorNode(msg: string): EditorNode {
@@ -24,8 +24,11 @@ function dummyErrorNode(msg: string): EditorNode {
 
 export function resolveEditorNode(
   visualNode: VisualNode,
-  findReferencedNode: ReferencedNodeFinder
+  findReferencedNode: NestedReferencedNodeFinder
 ): EditorVisualNode {
+  const finderForNode = (node: VisualNode) =>
+    findReferencedNode.forVisualNode?.(node) ?? findReferencedNode;
+
   return {
     ...visualNode,
     instances: visualNode.instances.map((instance) => {
@@ -47,7 +50,10 @@ export function resolveEditorNode(
             }
             return {
               ...instance,
-              node: resolveEditorNode(referencedNode, findReferencedNode),
+              node: resolveEditorNode(
+                referencedNode,
+                finderForNode(referencedNode)
+              ),
             };
           }
         } else {

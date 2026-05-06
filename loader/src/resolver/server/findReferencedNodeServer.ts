@@ -11,7 +11,7 @@ import { join } from "path";
 import { existsSync, readFileSync } from "fs";
 import { resolveImportablePaths } from "./resolveImportablePaths";
 import { deserializeFlowByPath } from "../../serdes";
-import { ReferencedNodeFinder } from "./../ReferencedNodeFinder";
+import { NestedReferencedNodeFinder } from "./../ReferencedNodeFinder";
 import { resolveCodeNodeDependencies } from "./serverUtils";
 
 const LocalNodes = Object.values(_Nodes).reduce<Record<string, CodeNode>>(
@@ -29,8 +29,10 @@ type NodeWithSource = FlydeNode & { sourcePath: string };
 
 export function createServerReferencedNodeFinder(
   fullFlowPath: string
-): ReferencedNodeFinder {
-  return (instance: NodeInstance): FlydeNode | (CodeNode & { sourceCode: string }) => {
+): NestedReferencedNodeFinder {
+  const finder: NestedReferencedNodeFinder = (
+    instance: NodeInstance
+  ): FlydeNode | (CodeNode & { sourceCode: string }) => {
     // Handle the case where instance.source is undefined (likely an inline node)
     if (!instance.source) {
       return instance as unknown as FlydeNode;
@@ -145,7 +147,7 @@ export function createServerReferencedNodeFinder(
               `Node ID mismatch: expected ${instance.nodeId} but found ${node.id} in ${fullFilePath}`
             );
           }
-          return node as unknown as FlydeNode;
+          return { ...node, sourcePath: fullFilePath } as unknown as FlydeNode;
         }
 
         // Update editorComponentBundlePath if it exists
@@ -198,6 +200,13 @@ export function createServerReferencedNodeFinder(
       }
     }
   };
+
+  finder.forVisualNode = (node: FlydeNode) => {
+    const sourcePath = (node as { sourcePath?: string }).sourcePath;
+    return sourcePath ? createServerReferencedNodeFinder(sourcePath) : finder;
+  };
+
+  return finder;
 }
 
 function getLocalOrPackagePaths(fullFlowPath: string, importPath: string) {

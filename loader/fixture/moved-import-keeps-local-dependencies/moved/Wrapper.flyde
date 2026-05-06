@@ -1,0 +1,31 @@
+---
+imports:
+  "./AddOne.flyde.js": AddOne
+node:
+  id: AddOneWrapper
+  inputs:
+    n:
+      type: number
+      mode: required
+  outputs:
+    r:
+      type: number
+  instances:
+    - id: addOne
+      nodeId: AddOne
+      pos:
+        x: 0
+        y: 0
+  connections:
+    - from:
+        insId: __this
+        pinId: n
+      to:
+        insId: addOne
+        pinId: n
+    - from:
+        insId: addOne
+        pinId: r
+      to:
+        insId: __this
+        pinId: r
