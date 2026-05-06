@@ -1,0 +1,31 @@
+---
+imports:
+  "./moved/Wrapper.flyde": AddOneWrapper
+node:
+  id: Root
+  inputs:
+    n:
+      type: number
+      mode: required
+  outputs:
+    r:
+      type: number
+  instances:
+    - id: addOne
+      nodeId: AddOneWrapper
+      pos:
+        x: 0
+        y: 0
+  connections:
+    - from:
+        insId: __this
+        pinId: n
+      to:
+        insId: addOne
+        pinId: n
+    - from:
+        insId: addOne
+        pinId: r
+      to:
+        insId: __this
+        pinId: r

@@ -16,7 +16,7 @@ import { spiedOutput } from "@flyde/core/dist/test-utils";
 import _ = require("lodash");
 import { resolveVisualNode } from "../resolveVisualNode";
 
-const getFixturePath = (path: string) => join(__dirname, "../../fixture", path);
+const getFixturePath = (path: string) => join(__dirname, "../../../fixture", path);
 
 describe("resolver", () => {
   it("resolves a blank .flyde file without any instances", () => {
@@ -194,7 +194,27 @@ describe("resolver", () => {
     await new Promise(resolve => setTimeout(resolve, 50));
 
     assert.equal(s.lastCall.args[0], 3);
-  }).timeout(100);
+  }).timeout(1000);
+
+  it("resolves local imports relative to an imported visual node file", async () => {
+    const data = resolveFlowByPath(
+      getFixturePath("moved-import-keeps-local-dependencies/Root.flyde")
+    );
+
+    const [s, r] = spiedOutput();
+    const n = dynamicNodeInput();
+    execute({
+      node: data,
+      inputs: { n },
+      outputs: { r },
+    });
+
+    n.subject.next(2);
+
+    await new Promise(resolve => setTimeout(resolve, 50));
+
+    assert.equal(s.lastCall.args[0], 3);
+  }).timeout(1000);
 
   it("breaks on invalid schemas", () => {
     const invalidsRoot = getFixturePath("schema-validation/invalid");

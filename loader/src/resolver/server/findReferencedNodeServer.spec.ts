@@ -96,5 +96,5 @@ describe("findReferencedNodeServer", () => {
 });
 
 function getFixturePath(path: string) {
-  return join(__dirname, "../../fixture", path);
+  return join(__dirname, "../../../fixture", path);
 }

@@ -8,7 +8,7 @@ import {
   isInlineVisualNodeInstance,
   isCodeNode,
 } from "@flyde/core";
-import { ReferencedNodeFinder } from "./ReferencedNodeFinder";
+import { NestedReferencedNodeFinder } from "./ReferencedNodeFinder";
 
 /*
 Recursively resolve all dependencies of a flow. For each node instance:
@@ -17,9 +17,11 @@ Recursively resolve all dependencies of a flow. For each node instance:
 */
 export function resolveVisualNode(
   visualNode: VisualNode,
-  nodeFinder: ReferencedNodeFinder,
+  nodeFinder: NestedReferencedNodeFinder,
   secrets: Record<string, string>
 ): InternalVisualNode {
+  const finderForNode = (node: VisualNode) =>
+    nodeFinder.forVisualNode?.(node) ?? nodeFinder;
 
   const internalInstances = visualNode.instances.map((instance) => {
     if (isInlineVisualNodeInstance(instance)) {
@@ -43,7 +45,7 @@ export function resolveVisualNode(
       const node = nodeFinder(instance);
 
       if (isVisualNode(node)) {
-        const resolved = resolveVisualNode(node, nodeFinder, secrets);
+        const resolved = resolveVisualNode(node, finderForNode(node), secrets);
 
         return {
           ...instance,
@@ -61,7 +63,7 @@ export function resolveVisualNode(
 
 
     if (isVisualNode(node)) {
-      const resolved = resolveVisualNode(node, nodeFinder, secrets);
+      const resolved = resolveVisualNode(node, finderForNode(node), secrets);
       return {
         ...instance,
         node: resolved,
