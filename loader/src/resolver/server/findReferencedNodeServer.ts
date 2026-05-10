@@ -2,12 +2,14 @@ import {
   CodeNode,
   FlydeNode,
   isCodeNode,
+  isVisualNode,
   NodeInstance,
   AdvancedCodeNode,
+  VisualNode,
 } from "@flyde/core";
 
 import * as _Nodes from "@flyde/nodes/dist/all";
-import { join } from "path";
+import { dirname, join, relative } from "path";
 import { existsSync, readFileSync } from "fs";
 import { resolveImportablePaths } from "./resolveImportablePaths";
 import { deserializeFlowByPath } from "../../serdes";
@@ -50,8 +52,10 @@ export function createServerReferencedNodeFinder(
             if (isVisual) {
               try {
                 const node = deserializeFlowByPath(path).node;
-                // No longer adding sourcePath
-                return { ...node, sourcePath: path };
+                return {
+                  ...rebaseFileNodeSources(node, path, fullFlowPath),
+                  sourcePath: path,
+                };
               } catch (e) {
                 return [];
               }
@@ -145,7 +149,7 @@ export function createServerReferencedNodeFinder(
               `Node ID mismatch: expected ${instance.nodeId} but found ${node.id} in ${fullFilePath}`
             );
           }
-          return node as unknown as FlydeNode;
+          return rebaseFileNodeSources(node, fullFilePath, fullFlowPath) as unknown as FlydeNode;
         }
 
         // Update editorComponentBundlePath if it exists
@@ -197,6 +201,51 @@ export function createServerReferencedNodeFinder(
         throw new Error(`Unknown node source type: ${instance.source.type}`);
       }
     }
+  };
+}
+
+function rebaseFileNodeSources(
+  node: VisualNode,
+  sourceFlowPath: string,
+  targetFlowPath: string
+): VisualNode {
+  const sourceDir = dirname(sourceFlowPath);
+  const targetDir = dirname(targetFlowPath);
+
+  return {
+    ...node,
+    instances: node.instances.map((instance) => {
+      if (instance.source?.type === "file") {
+        const absoluteSourcePath = join(sourceDir, instance.source.data);
+        return {
+          ...instance,
+          source: {
+            ...instance.source,
+            data: relative(targetDir, absoluteSourcePath),
+          },
+        };
+      }
+
+      if (
+        instance.type === "visual" &&
+        instance.source.type === "inline" &&
+        isVisualNode(instance.source.data)
+      ) {
+        return {
+          ...instance,
+          source: {
+            ...instance.source,
+            data: rebaseFileNodeSources(
+              instance.source.data,
+              sourceFlowPath,
+              targetFlowPath
+            ),
+          },
+        };
+      }
+
+      return instance;
+    }),
   };
 }
 
