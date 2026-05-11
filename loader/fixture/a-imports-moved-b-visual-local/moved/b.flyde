@@ -1,0 +1,34 @@
+imports:
+  ./Add.flyde.js:
+    - Add
+node:
+  id: AddOne
+  inputs:
+    n:
+      mode: required
+      type: number
+  outputs:
+    r:
+      type: number
+  instances:
+    - id: add
+      nodeId: Add
+      inputConfig: {}
+      pos:
+        x: 200
+        y: 100
+  connections:
+    - from:
+        insId: __this
+        pinId: n
+      to:
+        insId: add
+        pinId: a
+    - from:
+        insId: add
+        pinId: r
+      to:
+        insId: __this
+        pinId: r
+  inputsPosition: {}
+  outputsPosition: {}

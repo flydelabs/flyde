@@ -16,7 +16,7 @@ import { spiedOutput } from "@flyde/core/dist/test-utils";
 import _ = require("lodash");
 import { resolveVisualNode } from "../resolveVisualNode";
 
-const getFixturePath = (path: string) => join(__dirname, "../../fixture", path);
+const getFixturePath = (path: string) => join(__dirname, "../../../fixture", path);
 
 describe("resolver", () => {
   it("resolves a blank .flyde file without any instances", () => {
@@ -186,6 +186,32 @@ describe("resolver", () => {
       outputs: { r },
       onBubbleError: (e) => {
         console.error("Error in test:", e);
+      },
+    });
+
+    n.subject.next(2);
+
+    await new Promise(resolve => setTimeout(resolve, 50));
+
+    assert.equal(s.lastCall.args[0], 3);
+  }).timeout(100);
+
+  it("resolves a moved local visual node's own relative file imports", async () => {
+    const data = resolveFlowByPath(
+      getFixturePath("a-imports-moved-b-visual-local/a.flyde")
+    );
+    assert.equal(
+      (data.instances[0].node as any).instances[0].source.data,
+      "moved/Add.flyde.js"
+    );
+    const [s, r] = spiedOutput();
+    const n = dynamicNodeInput();
+    execute({
+      node: data,
+      inputs: { n },
+      outputs: { r },
+      onBubbleError: (e) => {
+        console.error("Error in moved import test:", e);
       },
     });
 

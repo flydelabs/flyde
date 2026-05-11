@@ -7,7 +7,7 @@ import {
 } from "@flyde/core";
 
 import * as _Nodes from "@flyde/nodes/dist/all";
-import { join } from "path";
+import { dirname, isAbsolute, join, relative, resolve } from "path";
 import { existsSync, readFileSync } from "fs";
 import { resolveImportablePaths } from "./resolveImportablePaths";
 import { deserializeFlowByPath } from "../../serdes";
@@ -50,8 +50,10 @@ export function createServerReferencedNodeFinder(
             if (isVisual) {
               try {
                 const node = deserializeFlowByPath(path).node;
-                // No longer adding sourcePath
-                return { ...node, sourcePath: path };
+                return {
+                  ...rebaseRelativeFileSources(node, path, fullFlowPath),
+                  sourcePath: path,
+                };
               } catch (e) {
                 return [];
               }
@@ -145,7 +147,11 @@ export function createServerReferencedNodeFinder(
               `Node ID mismatch: expected ${instance.nodeId} but found ${node.id} in ${fullFilePath}`
             );
           }
-          return node as unknown as FlydeNode;
+          return rebaseRelativeFileSources(
+            node,
+            fullFilePath,
+            fullFlowPath
+          ) as unknown as FlydeNode;
         }
 
         // Update editorComponentBundlePath if it exists
@@ -198,6 +204,64 @@ export function createServerReferencedNodeFinder(
       }
     }
   };
+}
+
+function rebaseRelativeFileSources<T extends FlydeNode>(
+  node: T,
+  sourceFlowPath: string,
+  rootFlowPath: string
+): T {
+  const instances = (node as any).instances;
+  if (!Array.isArray(instances)) {
+    return node;
+  }
+
+  const sourceDir = dirname(sourceFlowPath);
+  const rootDir = dirname(rootFlowPath);
+
+  return {
+    ...node,
+    instances: instances.map((instance) => {
+      const source = instance.source;
+      let nextInstance = instance;
+
+      if (
+        source?.type === "file" &&
+        typeof source.data === "string" &&
+        !isAbsolute(source.data)
+      ) {
+        const absoluteSourcePath = resolve(sourceDir, source.data);
+        const rebasedSourcePath = relative(rootDir, absoluteSourcePath).replace(
+          /\\/g,
+          "/"
+        );
+
+        nextInstance = {
+          ...nextInstance,
+          source: {
+            ...source,
+            data: rebasedSourcePath,
+          },
+        };
+      }
+
+      if (source?.type === "inline" && source.data) {
+        nextInstance = {
+          ...nextInstance,
+          source: {
+            ...nextInstance.source,
+            data: rebaseRelativeFileSources(
+              source.data,
+              sourceFlowPath,
+              rootFlowPath
+            ),
+          },
+        };
+      }
+
+      return nextInstance;
+    }),
+  } as T;
 }
 
 function getLocalOrPackagePaths(fullFlowPath: string, importPath: string) {
