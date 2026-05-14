@@ -15,6 +15,11 @@ import { activateReporter, reportEvent, analytics } from "./analytics";
 import { showFirstRunPrivacyNotice, showPrivacySettings } from "./privacyNotice";
 
 import { Template, getTemplates, scaffoldTemplate } from "./templateUtils";
+import {
+  FileMove,
+  updateFlowFileReferencesForMoves,
+} from "./flow-file-references";
+import { TextDecoder, TextEncoder } from "util";
 
 // the application insights key (also known as instrumentation key)
 
@@ -27,6 +32,99 @@ let server: any;
 let process: execa.ExecaChildProcess | undefined;
 
 const FLYDE_DEFAULT_SERVER_PORT = 8545;
+
+const isFlydeImportFilePath = (filePath: string) => {
+  const importableExtensions = [".flyde", ".flyde.ts", ".flyde.js"];
+
+  return importableExtensions.some((extension) => filePath.endsWith(extension));
+};
+
+const isDirectoryUri = async (uri: vscode.Uri) => {
+  try {
+    const stat = await vscode.workspace.fs.stat(uri);
+    return stat.type === vscode.FileType.Directory;
+  } catch {
+    return false;
+  }
+};
+
+const shouldUpdateMovedFlowReferences = async (
+  event: vscode.FileRenameEvent
+) => {
+  if (
+    event.files.some(
+      ({ oldUri, newUri }) =>
+        isFlydeImportFilePath(oldUri.fsPath) ||
+        isFlydeImportFilePath(newUri.fsPath)
+    )
+  ) {
+    return true;
+  }
+
+  const directoryMoves = await Promise.all(
+    event.files.map(({ newUri }) => isDirectoryUri(newUri))
+  );
+
+  return directoryMoves.some(Boolean);
+};
+
+async function updateMovedFlowReferences(
+  event: vscode.FileRenameEvent,
+  outputChannel: vscode.OutputChannel
+) {
+  const moves: FileMove[] = event.files.map(({ oldUri, newUri }) => ({
+    oldPath: oldUri.fsPath,
+    newPath: newUri.fsPath,
+  }));
+
+  if (!(await shouldUpdateMovedFlowReferences(event))) {
+    return;
+  }
+
+  const flydeFiles = await vscode.workspace.findFiles(
+    "**/*.flyde",
+    "**/node_modules/**"
+  );
+  const decoder = new TextDecoder("utf-8");
+  const encoder = new TextEncoder();
+  let updatedFiles = 0;
+
+  for (const file of flydeFiles) {
+    try {
+      const originalContents = decoder.decode(
+        await vscode.workspace.fs.readFile(file)
+      );
+      const updated = updateFlowFileReferencesForMoves(
+        originalContents,
+        file.fsPath,
+        moves
+      );
+
+      if (!updated.changed) {
+        continue;
+      }
+
+      await vscode.workspace.fs.writeFile(
+        file,
+        encoder.encode(updated.contents)
+      );
+      updatedFiles += 1;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      outputChannel.appendLine(
+        `Failed to update Flyde imports in ${file.fsPath}: ${message}`
+      );
+    }
+  }
+
+  if (updatedFiles > 0) {
+    vscode.window.showInformationMessage(
+      `Updated ${updatedFiles} Flyde flow file import path${
+        updatedFiles === 1 ? "" : "s"
+      } after file move.`
+    );
+  }
+}
 
 export function activate(context: vscode.ExtensionContext) {
   // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -54,6 +152,17 @@ export function activate(context: vscode.ExtensionContext) {
 
   const mainOutputChannel = vscode.window.createOutputChannel("Flyde");
   const debugOutputChannel = vscode.window.createOutputChannel("Flyde (Debug)");
+
+  context.subscriptions.push(
+    vscode.workspace.onDidRenameFiles((event) => {
+      updateMovedFlowReferences(event, mainOutputChannel).catch((error) => {
+        const message = error instanceof Error ? error.message : String(error);
+        mainOutputChannel.appendLine(
+          `Failed to process Flyde file move: ${message}`
+        );
+      });
+    })
+  );
 
   let currentTheme = vscode.window.activeColorTheme;
 

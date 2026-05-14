@@ -22,6 +22,7 @@ import {
 } from "./pageObjects";
 import { createTempTestWorkspace } from "./testFileUtils";
 import { webviewTestingCommand } from "./testUtils";
+import { updateFlowFileReferencesForMoves } from "../flow-file-references";
 
 let tmpDir = "";
 
@@ -38,6 +39,100 @@ suite("Extension Test Suite", () => {
   // Close all editors after each test
   teardown(async () => {
     await vscode.commands.executeCommand("workbench.action.closeAllEditors");
+  });
+
+  suite("Flow file reference updates", () => {
+    const parentFlowContents = `imports: {}
+node:
+  instances:
+    - pos:
+        x: 300
+        y: 200
+      id: nested-instance
+      inputConfig: {}
+      nodeId: ChildFlow
+      config: {}
+      type: visual
+      source:
+        type: file
+        data: ./ChildFlow.flyde
+  connections: []
+  id: ParentFlow
+  inputs: {}
+  outputs: {}
+  inputsPosition: {}
+  outputsPosition: {}
+`;
+
+    test("updates references when an imported flow file is moved", () => {
+      const flowPath = path.join(tmpDir, "flows", "ParentFlow.flyde");
+      const oldChildPath = path.join(tmpDir, "flows", "ChildFlow.flyde");
+      const newChildPath = path.join(
+        tmpDir,
+        "flows",
+        "nested",
+        "ChildFlow.flyde"
+      );
+
+      const result = updateFlowFileReferencesForMoves(
+        parentFlowContents,
+        flowPath,
+        [{ oldPath: oldChildPath, newPath: newChildPath }]
+      );
+
+      assert(result.changed, "Expected the parent flow reference to update");
+      assert(
+        result.contents.includes("data: ./nested/ChildFlow.flyde"),
+        `Expected updated nested import path. Got:\n${result.contents}`
+      );
+    });
+
+    test("rebases relative references when the importing flow is moved", () => {
+      const oldFlowPath = path.join(tmpDir, "flows", "ParentFlow.flyde");
+      const newFlowPath = path.join(
+        tmpDir,
+        "flows",
+        "moved",
+        "ParentFlow.flyde"
+      );
+
+      const result = updateFlowFileReferencesForMoves(
+        parentFlowContents,
+        newFlowPath,
+        [{ oldPath: oldFlowPath, newPath: newFlowPath }]
+      );
+
+      assert(result.changed, "Expected moved flow references to be rebased");
+      assert(
+        result.contents.includes("data: ../ChildFlow.flyde"),
+        `Expected rebased import path. Got:\n${result.contents}`
+      );
+    });
+
+    test("updates references when an imported flow directory is moved", () => {
+      const nestedFlowContents = parentFlowContents.replace(
+        "data: ./ChildFlow.flyde",
+        "data: ./nested/ChildFlow.flyde"
+      );
+      const flowPath = path.join(tmpDir, "flows", "ParentFlow.flyde");
+      const oldDirectoryPath = path.join(tmpDir, "flows", "nested");
+      const newDirectoryPath = path.join(tmpDir, "shared.flows");
+
+      const result = updateFlowFileReferencesForMoves(
+        nestedFlowContents,
+        flowPath,
+        [{ oldPath: oldDirectoryPath, newPath: newDirectoryPath }]
+      );
+
+      assert(
+        result.changed,
+        "Expected references inside the moved directory to update"
+      );
+      assert(
+        result.contents.includes("data: ../shared.flows/ChildFlow.flyde"),
+        `Expected rebased moved directory import path. Got:\n${result.contents}`
+      );
+    });
   });
 
   test("Loads test flow and renders instance views", async () => {
