@@ -15,6 +15,7 @@ import { activateReporter, reportEvent, analytics } from "./analytics";
 import { showFirstRunPrivacyNotice, showPrivacySettings } from "./privacyNotice";
 
 import { Template, getTemplates, scaffoldTemplate } from "./templateUtils";
+import { updateImportsOnFileMove } from "./updateImportsOnFileMove";
 
 // the application insights key (also known as instrumentation key)
 
@@ -104,6 +105,14 @@ export function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(
     vscode.commands.registerCommand("flyde.openAsText", openAsTextHandler)
+  );
+
+  context.subscriptions.push(
+    vscode.workspace.onDidRenameFiles((event) => {
+      void updateImportsOnFileMove(event).catch((error) => {
+        console.warn("Failed to update Flyde imports after file rename", error);
+      });
+    })
   );
 
   function getWorkspaceRootPath(): vscode.Uri | undefined {
