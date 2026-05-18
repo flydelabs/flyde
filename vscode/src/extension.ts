@@ -12,6 +12,7 @@ import { createEmbeddedServer } from "./embedded-server";
 import { join } from "path";
 
 import { activateReporter, reportEvent, analytics } from "./analytics";
+import { registerFlydeImportRewriter } from "./flydeImportRewriter";
 import { showFirstRunPrivacyNotice, showPrivacySettings } from "./privacyNotice";
 
 import { Template, getTemplates, scaffoldTemplate } from "./templateUtils";
@@ -29,6 +30,9 @@ let process: execa.ExecaChildProcess | undefined;
 const FLYDE_DEFAULT_SERVER_PORT = 8545;
 
 export function activate(context: vscode.ExtensionContext) {
+  // Keep .flyde imports valid when files get moved/renamed.
+  registerFlydeImportRewriter(context);
+
   // eslint-disable-next-line @typescript-eslint/naming-convention
   const { Uri } = vscode;
   const { fs } = vscode.workspace;
