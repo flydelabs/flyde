@@ -15,6 +15,7 @@ import { activateReporter, reportEvent, analytics } from "./analytics";
 import { showFirstRunPrivacyNotice, showPrivacySettings } from "./privacyNotice";
 
 import { Template, getTemplates, scaffoldTemplate } from "./templateUtils";
+import { registerFlydeImportPathRewriter } from "./registerFlydeImportPathRewriter";
 
 // the application insights key (also known as instrumentation key)
 
@@ -36,6 +37,8 @@ export function activate(context: vscode.ExtensionContext) {
   const firstWorkspace =
     vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders[0];
   const fileRoot = firstWorkspace ? firstWorkspace.uri.fsPath : "";
+
+  registerFlydeImportPathRewriter(context);
 
   // Initialize analytics with context
   analytics.setContext(context);
