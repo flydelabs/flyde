@@ -15,6 +15,10 @@ import { activateReporter, reportEvent, analytics } from "./analytics";
 import { showFirstRunPrivacyNotice, showPrivacySettings } from "./privacyNotice";
 
 import { Template, getTemplates, scaffoldTemplate } from "./templateUtils";
+import {
+  rewriteMovedFlowImports,
+  rewriteMovedImportTarget,
+} from "./flydeImportPathRewriter";
 
 // the application insights key (also known as instrumentation key)
 
@@ -54,6 +58,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   const mainOutputChannel = vscode.window.createOutputChannel("Flyde");
   const debugOutputChannel = vscode.window.createOutputChannel("Flyde (Debug)");
+  const textEncoder = new TextEncoder();
 
   let currentTheme = vscode.window.activeColorTheme;
 
@@ -104,6 +109,73 @@ export function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(
     vscode.commands.registerCommand("flyde.openAsText", openAsTextHandler)
+  );
+
+  async function readTextFile(uri: vscode.Uri): Promise<string> {
+    return Buffer.from(await fs.readFile(uri)).toString("utf8");
+  }
+
+  async function writeTextFile(uri: vscode.Uri, content: string): Promise<void> {
+    await fs.writeFile(uri, textEncoder.encode(content));
+  }
+
+  async function updateFlowFile(
+    uri: vscode.Uri,
+    updater: (content: string, filePath: string) => { changed: boolean; content: string }
+  ): Promise<void> {
+    try {
+      const content = await readTextFile(uri);
+      const result = updater(content, uri.fsPath);
+
+      if (result.changed) {
+        await writeTextFile(uri, result.content);
+      }
+    } catch (error) {
+      debugOutputChannel.appendLine(
+        `Failed to update Flyde imports for ${uri.fsPath}: ${error}`
+      );
+    }
+  }
+
+  context.subscriptions.push(
+    vscode.workspace.onDidRenameFiles(async (event) => {
+      const movedFlydeFiles = event.files.filter(
+        ({ oldUri, newUri }) =>
+          oldUri.fsPath.endsWith(".flyde") && newUri.fsPath.endsWith(".flyde")
+      );
+
+      if (movedFlydeFiles.length === 0) {
+        return;
+      }
+
+      for (const { oldUri, newUri } of movedFlydeFiles) {
+        await updateFlowFile(newUri, (content) =>
+          rewriteMovedFlowImports(content, oldUri.fsPath, newUri.fsPath)
+        );
+      }
+
+      const workspaceFlowFiles = await vscode.workspace.findFiles(
+        "**/*.flyde",
+        "**/node_modules/**"
+      );
+
+      for (const flowUri of workspaceFlowFiles) {
+        for (const { oldUri, newUri } of movedFlydeFiles) {
+          if (flowUri.fsPath === newUri.fsPath) {
+            continue;
+          }
+
+          await updateFlowFile(flowUri, (content, filePath) =>
+            rewriteMovedImportTarget(
+              content,
+              filePath,
+              oldUri.fsPath,
+              newUri.fsPath
+            )
+          );
+        }
+      }
+    })
   );
 
   function getWorkspaceRootPath(): vscode.Uri | undefined {
