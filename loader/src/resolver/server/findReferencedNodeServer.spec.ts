@@ -1,10 +1,13 @@
 import {
-  codeNodeInstance,
   AdvancedCodeNode,
-  CodeNode
+  CodeNode,
+  codeNodeInstance,
+  visualNodeInstance,
 } from "@flyde/core";
 import { assert } from "chai";
 import { join } from "path";
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "fs";
+import { tmpdir } from "os";
 import { createServerReferencedNodeFinder } from "./findReferencedNodeServer";
 
 
@@ -92,6 +95,38 @@ describe("findReferencedNodeServer", () => {
     assert.include(node.sourceCode.toLowerCase(), "add");
   });
 
+  it("resolves a moved local visual node by node id when the stored relative path is stale", async () => {
+    const tempRoot = mkdtempSync(join(tmpdir(), "flyde-moved-node-"));
+
+    try {
+      const flowPath = join(tempRoot, "flow.flyde");
+      const movedNodePath = join(tempRoot, "moved", "AddOne.flyde");
+
+      mkdirSync(join(tempRoot, "moved"));
+      writeFileSync(
+        flowPath,
+        "node:\n  id: Flow\n  inputs: {}\n  outputs: {}\n  instances: []\n  connections: []\n  inputsPosition: {}\n  outputsPosition: {}\n"
+      );
+      writeFileSync(
+        movedNodePath,
+        "node:\n  id: AddOne\n  inputs: {}\n  outputs: {}\n  instances: []\n  connections: []\n  inputsPosition: {}\n  outputsPosition: {}\n",
+        { flag: "wx" }
+      );
+
+      const instance = visualNodeInstance("addOne", "AddOne", {
+        type: "file",
+        data: "./AddOne.flyde",
+      });
+
+      const findReferencedNode = createServerReferencedNodeFinder(flowPath);
+
+      const node = findReferencedNode(instance);
+
+      assert.equal(node.id, "AddOne");
+    } finally {
+      rmSync(tempRoot, { force: true, recursive: true });
+    }
+  });
 
 });
 

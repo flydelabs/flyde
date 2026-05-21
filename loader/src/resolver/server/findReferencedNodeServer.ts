@@ -7,8 +7,9 @@ import {
 } from "@flyde/core";
 
 import * as _Nodes from "@flyde/nodes/dist/all";
-import { join } from "path";
+import { basename, join } from "path";
 import { existsSync, readFileSync } from "fs";
+import * as glob from "glob";
 import { resolveImportablePaths } from "./resolveImportablePaths";
 import { deserializeFlowByPath } from "../../serdes";
 import { ReferencedNodeFinder } from "./../ReferencedNodeFinder";
@@ -135,7 +136,11 @@ export function createServerReferencedNodeFinder(
         return nodeWrapper;
       }
       case "file": {
-        const fullFilePath = join(fullFlowPath, "..", instance.source.data);
+        const fullFilePath = resolveLocalFilePath(
+          fullFlowPath,
+          instance.source.data,
+          instance.nodeId
+        );
 
         // Check if the file is a .flyde file (visual flow)
         if (fullFilePath.endsWith('.flyde')) {
@@ -215,6 +220,46 @@ function getLocalOrPackagePaths(fullFlowPath: string, importPath: string) {
       return [];
     }
   }
+}
+
+function resolveLocalFilePath(
+  fullFlowPath: string,
+  importPath: string,
+  nodeId: string
+) {
+  const fullFilePath = join(fullFlowPath, "..", importPath);
+
+  if (existsSync(fullFilePath)) {
+    return fullFilePath;
+  }
+
+  const fileName = basename(importPath);
+  const flowDir = join(fullFlowPath, "..");
+  const candidates = glob.sync(`**/${fileName}`, {
+    cwd: flowDir,
+    absolute: true,
+    ignore: ["**/node_modules/**"],
+    nodir: true,
+  });
+
+  const matchingCandidate = candidates.find((candidate) =>
+    localFileContainsNode(candidate, nodeId)
+  );
+
+  return matchingCandidate ?? fullFilePath;
+}
+
+function localFileContainsNode(filePath: string, nodeId: string) {
+  if (filePath.endsWith(".flyde")) {
+    try {
+      return deserializeFlowByPath(filePath).node.id === nodeId;
+    } catch {
+      return false;
+    }
+  }
+
+  const resolved = resolveCodeNodeDependencies(filePath);
+  return resolved.nodes.some(({ node }) => node.id === nodeId);
 }
 
 // Helper function to get the source code of a node from a file
