@@ -3,6 +3,9 @@ name: Visual Regression Tests
 # DISABLED: Managing visual test baselines across different machines is too much of a hassle
 # Visual tests can still be run locally using: pnpm run test:visual
 
+on:
+  workflow_dispatch:
+
 # on:
 #   pull_request:
 #     branches: [main]
