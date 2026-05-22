@@ -10,11 +10,13 @@ var fp = require("find-free-port");
 import { createEmbeddedServer } from "./embedded-server";
 
 import { join } from "path";
+import { deserializeFlow, serializeFlow } from "@flyde/loader/dist/server";
 
 import { activateReporter, reportEvent, analytics } from "./analytics";
 import { showFirstRunPrivacyNotice, showPrivacySettings } from "./privacyNotice";
 
 import { Template, getTemplates, scaffoldTemplate } from "./templateUtils";
+import { updateMovedFlydeImportPaths } from "./update-flyde-import-paths";
 
 // the application insights key (also known as instrumentation key)
 
@@ -54,6 +56,44 @@ export function activate(context: vscode.ExtensionContext) {
 
   const mainOutputChannel = vscode.window.createOutputChannel("Flyde");
   const debugOutputChannel = vscode.window.createOutputChannel("Flyde (Debug)");
+
+  const rewriteMovedFlydeImports = async (event: vscode.FileRenameEvent) => {
+    const moves = event.files.map((file) => ({
+      oldPath: file.oldUri.fsPath,
+      newPath: file.newUri.fsPath,
+    }));
+
+    const flowUris = await vscode.workspace.findFiles(
+      "**/*.flyde",
+      "**/node_modules/**"
+    );
+
+    for (const flowUri of flowUris) {
+      try {
+        const contents = Buffer.from(await fs.readFile(flowUri)).toString(
+          "utf8"
+        );
+        const flow = deserializeFlow(contents, flowUri.fsPath);
+
+        if (!updateMovedFlydeImportPaths(flow, flowUri.fsPath, moves)) {
+          continue;
+        }
+
+        await fs.writeFile(flowUri, Buffer.from(serializeFlow(flow), "utf8"));
+        mainOutputChannel.appendLine(
+          `Updated moved Flyde imports in ${flowUri.fsPath}`
+        );
+      } catch (error) {
+        mainOutputChannel.appendLine(
+          `Failed to update moved Flyde imports in ${flowUri.fsPath}: ${error}`
+        );
+      }
+    }
+  };
+
+  context.subscriptions.push(
+    vscode.workspace.onDidRenameFiles(rewriteMovedFlydeImports)
+  );
 
   let currentTheme = vscode.window.activeColorTheme;
 
