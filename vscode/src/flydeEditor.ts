@@ -39,6 +39,7 @@ import { customCodeNodeFromCode } from "@flyde/core/dist/misc/custom-code-node-f
 import { createAiCompletion } from "./ai";
 import { getAvailableSecrets, addNewSecret, getSecrets } from "./secretsService";
 import { createNodeFinderWithOverrides } from "./createNodeFinderWithOverrides";
+import { updateFileReferencesOnRename } from "./update-file-references-on-rename";
 
 // Helper functions
 // export type EditorPortType = keyof any;
@@ -105,7 +106,44 @@ export class FlydeEditorEditorProvider
       provider
     );
 
-    return providerRegistration;
+    const renameSubscription = vscode.workspace.onDidRenameFiles(async (event) => {
+      const renamedFiles = event.files.map((file) => ({
+        oldPath: file.oldUri.fsPath,
+        newPath: file.newUri.fsPath,
+      }));
+      const flowFiles = await vscode.workspace.findFiles(
+        "**/*.flyde",
+        "**/{node_modules,.git}/**"
+      );
+      const edit = new vscode.WorkspaceEdit();
+
+      for (const flowUri of flowFiles) {
+        const document = await vscode.workspace.openTextDocument(flowUri);
+        try {
+          const flow = deserializeFlow(document.getText(), flowUri.fsPath);
+          if (!updateFileReferencesOnRename(flow, flowUri.fsPath, renamedFiles)) {
+            continue;
+          }
+
+          edit.replace(
+            flowUri,
+            new vscode.Range(
+              document.positionAt(0),
+              document.positionAt(document.getText().length)
+            ),
+            serializeFlow(flow)
+          );
+        } catch (error) {
+          console.warn(`Skipping ${flowUri.fsPath} while updating moved imports`, error);
+        }
+      }
+
+      if (edit.size > 0) {
+        await vscode.workspace.applyEdit(edit);
+      }
+    });
+
+    return vscode.Disposable.from(providerRegistration, renameSubscription);
   }
 
   private static readonly viewType = "flydeEditor";
