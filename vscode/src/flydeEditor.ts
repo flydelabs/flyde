@@ -12,6 +12,7 @@ import {
   resolveEditorNode,
 } from "@flyde/loader";
 import { deserializeFlow, serializeFlow } from "@flyde/loader/dist/server";
+import { registerRenameReferences } from "./renameReferences";
 
 import {
   FlydeFlow,
@@ -105,7 +106,9 @@ export class FlydeEditorEditorProvider
       provider
     );
 
-    return providerRegistration;
+    const renameRegistration = registerRenameReferences(params.mainOutputChannel);
+
+    return vscode.Disposable.from(providerRegistration, renameRegistration);
   }
 
   private static readonly viewType = "flydeEditor";
