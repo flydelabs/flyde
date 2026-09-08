@@ -3,16 +3,18 @@ import * as vscode from "vscode";
 import * as path from "path";
 import { tmpdir } from "os";
 import { mkdtempSync, rmSync } from "fs";
-import { registerImportRenames } from "../renameImports";
 
 suite("Flyde file rename integration", () => {
   test("renames a target and updates a dirty open flow without losing edits", async () => {
+    const extension = vscode.extensions.getExtension("flyde.flyde-vscode");
+    assert.ok(extension, "The Flyde development extension must be loaded");
+    // Activation owns the rename listener. Registering another listener here
+    // would return overlapping edits when the full extension suite runs.
+    await extension.activate();
     const directory = mkdtempSync(path.join(tmpdir(), "flyde-import-rename-"));
     const parent = vscode.Uri.file(path.join(directory, "Parent.flyde"));
     const child = vscode.Uri.file(path.join(directory, "Child.flyde"));
     const renamed = vscode.Uri.file(path.join(directory, "Renamed.flyde"));
-    const output = vscode.window.createOutputChannel("Flyde rename test");
-    const registration = registerImportRenames(output);
     try {
       const content =
         "# unsaved comment\nnode:\n  instances:\n    - source: {type: file, data: ./Child.flyde}\n";
@@ -41,8 +43,6 @@ suite("Flyde file rename integration", () => {
       assert.ok(document.isDirty);
       await document.save();
     } finally {
-      registration.dispose();
-      output.dispose();
       rmSync(directory, { recursive: true, force: true });
     }
   });
