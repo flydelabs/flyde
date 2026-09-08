@@ -65,6 +65,15 @@ Not sure where to start? Join our [discord](https://www.flyde.dev/discord) and w
 
 Check out the official website at [https://flyde.dev](https://flyde.dev) for more information.
 
+## Moving imported flows
+
+Renaming or moving files and folders through VS Code updates local file imports
+in workspace `.flyde` documents, including imports inside a moved flow. The edit
+preserves YAML comments and unsaved document changes. Package imports are not
+rewritten. This applies to VS Code rename operations; changes made externally on
+disk do not emit the event used by the extension. Files with invalid YAML are
+skipped with a message in the Flyde output channel.
+
 ## Telemetry
 
 Flyde VS Code extension collects anonymous usage data to help improve the product. This includes events like extension activation, flow creation, and error reporting. No personal information or code content is collected. You can disable telemetry in VS Code settings (`flyde.telemetry.enabled`) or by setting the environment variable `FLYDE_TELEMETRY_DISABLED=true`.

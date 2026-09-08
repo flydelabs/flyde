@@ -3,6 +3,7 @@
 import * as vscode from "vscode";
 
 import { FlydeEditorEditorProvider } from "./flydeEditor";
+import { registerImportRenames } from "./renameImports";
 import * as execa from "execa";
 
 var fp = require("find-free-port");
@@ -53,6 +54,7 @@ export function activate(context: vscode.ExtensionContext) {
   });
 
   const mainOutputChannel = vscode.window.createOutputChannel("Flyde");
+  context.subscriptions.push(registerImportRenames(mainOutputChannel));
   const debugOutputChannel = vscode.window.createOutputChannel("Flyde (Debug)");
 
   let currentTheme = vscode.window.activeColorTheme;
