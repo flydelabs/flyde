@@ -1,0 +1,10 @@
+{
+  "status": "passed",
+  "vscode": "1.135.0",
+  "checks": [
+    "actual file rename",
+    "unsaved buffer preserved",
+    "importer move rebases references"
+  ],
+  "importerText": "# Unsaved editor note must survive\n# Move Node.flyde.ts into nodes/\nnode:\n  instances:\n    - source:\n        type: file\n        data: \"../nodes/Node.flyde.ts\"\n"
+}
