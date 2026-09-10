@@ -15,6 +15,7 @@ import { activateReporter, reportEvent, analytics } from "./analytics";
 import { showFirstRunPrivacyNotice, showPrivacySettings } from "./privacyNotice";
 
 import { Template, getTemplates, scaffoldTemplate } from "./templateUtils";
+import { handleFileRenames } from "./fileMoveHandler";
 
 // the application insights key (also known as instrumentation key)
 
@@ -228,6 +229,10 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand("flyde.showPrivacySettings", async () => {
       await showPrivacySettings();
     })
+  );
+
+  context.subscriptions.push(
+    vscode.workspace.onDidRenameFiles(handleFileRenames)
   );
 }
 

@@ -7,8 +7,9 @@ import {
 } from "@flyde/core";
 
 import * as _Nodes from "@flyde/nodes/dist/all";
-import { join } from "path";
+import { join, dirname } from "path";
 import { existsSync, readFileSync } from "fs";
+import * as glob from "glob";
 import { resolveImportablePaths } from "./resolveImportablePaths";
 import { deserializeFlowByPath } from "../../serdes";
 import { ReferencedNodeFinder } from "./../ReferencedNodeFinder";
@@ -205,15 +206,67 @@ function getLocalOrPackagePaths(fullFlowPath: string, importPath: string) {
 
   if (existsSync(fullImportPath)) {
     return [fullImportPath];
-  } else {
-    try {
-      return resolveImportablePaths(fullFlowPath, importPath);
-    } catch (e) {
-      if (importPath !== "@flyde/nodes") {
-        throw new Error(`Cannot find module ${importPath} in ${fullFlowPath}`);
-      }
-      return [];
+  }
+
+  const extensions = [".flyde", ".flyde.ts", ".ts", ".js"];
+  for (const ext of extensions) {
+    if (existsSync(fullImportPath + ext)) {
+      return [fullImportPath + ext];
     }
+  }
+
+  // If a relative import is broken because the file was moved to another folder, search project tree
+  if (importPath.startsWith(".")) {
+    const flowDir = dirname(fullFlowPath);
+    const fileName = importPath.split("/").pop() || "";
+    if (fileName) {
+      const candidates = [fileName];
+      for (const ext of extensions) {
+        if (!fileName.endsWith(ext)) {
+          candidates.push(fileName + ext);
+        }
+      }
+
+      let currentDir = flowDir;
+      let projectRoot = flowDir;
+      for (let i = 0; i < 5; i++) {
+        if (
+          existsSync(join(currentDir, "package.json")) ||
+          existsSync(join(currentDir, ".git"))
+        ) {
+          projectRoot = currentDir;
+          break;
+        }
+        const parent = dirname(currentDir);
+        if (parent === currentDir) break;
+        currentDir = parent;
+      }
+
+      for (const cand of candidates) {
+        const matches = glob.sync(`**/${cand}`, {
+          cwd: projectRoot,
+          ignore: [
+            "**/node_modules/**",
+            "**/dist/**",
+            "**/build/**",
+            "**/.git/**",
+          ],
+          absolute: true,
+        });
+        if (matches.length > 0) {
+          return [matches[0]];
+        }
+      }
+    }
+  }
+
+  try {
+    return resolveImportablePaths(fullFlowPath, importPath);
+  } catch (e) {
+    if (importPath !== "@flyde/nodes") {
+      throw new Error(`Cannot find module ${importPath} in ${fullFlowPath}`);
+    }
+    return [];
   }
 }
 
