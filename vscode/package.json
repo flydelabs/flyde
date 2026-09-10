@@ -254,7 +254,8 @@
     "socket.io": "^4.5.1",
     "ts-node": "^10.9.2",
     "use-debounce": "^8.0.4",
-    "walker": "^1.0.8"
+    "walker": "^1.0.8",
+    "yaml": "^2.8.0"
   },
   "packageManager": "yarn@3.3.1"
 }
