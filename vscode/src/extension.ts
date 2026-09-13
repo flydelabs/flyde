@@ -15,6 +15,7 @@ import { activateReporter, reportEvent, analytics } from "./analytics";
 import { showFirstRunPrivacyNotice, showPrivacySettings } from "./privacyNotice";
 
 import { Template, getTemplates, scaffoldTemplate } from "./templateUtils";
+import { updateFlowReferencesForRename } from "./updateFlowReferencesOnRename";
 
 // the application insights key (also known as instrumentation key)
 
@@ -51,6 +52,17 @@ export function activate(context: vscode.ExtensionContext) {
       analytics.dispose();
     }
   });
+
+  context.subscriptions.push(
+    vscode.workspace.onDidRenameFiles((event) => {
+      updateFlowReferencesForRename(
+        event.files.map(({ oldUri, newUri }) => ({
+          oldPath: oldUri.fsPath,
+          newPath: newUri.fsPath,
+        }))
+      ).catch((error) => console.error("Failed to update Flyde flow references", error));
+    })
+  );
 
   const mainOutputChannel = vscode.window.createOutputChannel("Flyde");
   const debugOutputChannel = vscode.window.createOutputChannel("Flyde (Debug)");
