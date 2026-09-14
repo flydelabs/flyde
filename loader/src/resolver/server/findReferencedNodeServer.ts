@@ -10,6 +10,7 @@ import * as _Nodes from "@flyde/nodes/dist/all";
 import { join } from "path";
 import { existsSync, readFileSync } from "fs";
 import { resolveImportablePaths } from "./resolveImportablePaths";
+import { recoverMovedFileSource } from "./recoverMovedFileSource";
 import { deserializeFlowByPath } from "../../serdes";
 import { ReferencedNodeFinder } from "./../ReferencedNodeFinder";
 import { resolveCodeNodeDependencies } from "./serverUtils";
@@ -135,7 +136,12 @@ export function createServerReferencedNodeFinder(
         return nodeWrapper;
       }
       case "file": {
-        const fullFilePath = join(fullFlowPath, "..", instance.source.data);
+        const directPath = join(fullFlowPath, "..", instance.source.data);
+        // Issue #112: the stored relative path breaks when the imported file is
+        // moved to another folder. Recover by searching the project for the file.
+        const fullFilePath = existsSync(directPath)
+          ? directPath
+          : recoverMovedFileSource(fullFlowPath, instance.source.data) ?? directPath;
 
         // Check if the file is a .flyde file (visual flow)
         if (fullFilePath.endsWith('.flyde')) {
