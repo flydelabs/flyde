@@ -10,11 +10,15 @@ var fp = require("find-free-port");
 import { createEmbeddedServer } from "./embedded-server";
 
 import { join } from "path";
+import * as path from "path";
+import * as nodeFs from "fs";
 
 import { activateReporter, reportEvent, analytics } from "./analytics";
 import { showFirstRunPrivacyNotice, showPrivacySettings } from "./privacyNotice";
 
 import { Template, getTemplates, scaffoldTemplate } from "./templateUtils";
+import { deserializeFlow, serializeFlow } from "@flyde/loader/dist/server";
+import { updateFlowImportForRename } from "./flow-imports";
 
 // the application insights key (also known as instrumentation key)
 
@@ -105,6 +109,39 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.commands.registerCommand("flyde.openAsText", openAsTextHandler)
   );
+
+  const renameImportListener = vscode.workspace.onDidRenameFiles(async (event) => {
+    const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+    if (!workspaceFolder) return;
+
+    for (const moved of event.files) {
+      if (!moved.oldUri.fsPath.endsWith(".flyde") || !moved.newUri.fsPath.endsWith(".flyde")) {
+        continue;
+      }
+
+      const flowUris = await vscode.workspace.findFiles(
+        new vscode.RelativePattern(workspaceFolder, "**/*.flyde"),
+        "**/node_modules/**",
+      );
+
+      for (const uri of flowUris) {
+        if (path.normalize(uri.fsPath) === path.normalize(moved.newUri.fsPath)) continue;
+
+        try {
+          const contents = await nodeFs.promises.readFile(uri.fsPath, "utf8");
+          const flow = deserializeFlow(contents, uri.fsPath);
+          if (!updateFlowImportForRename(flow, uri.fsPath, moved.oldUri.fsPath, moved.newUri.fsPath)) {
+            continue;
+          }
+
+          await nodeFs.promises.writeFile(uri.fsPath, serializeFlow(flow), "utf8");
+        } catch (error) {
+          console.warn(`Could not update Flyde imports in ${uri.fsPath}:`, error);
+        }
+      }
+    }
+  });
+  context.subscriptions.push(renameImportListener);
 
   function getWorkspaceRootPath(): vscode.Uri | undefined {
     // Check if there is an open workspace
