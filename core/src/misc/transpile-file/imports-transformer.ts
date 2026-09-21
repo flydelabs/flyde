@@ -1,100 +1,42 @@
-import * as ts from "typescript";
+import * as ts from 'typescript';
+import * as path from 'path';
+import { resolveImportPath } from './resolve-import';
 
-export function importToGlobalTransformer(): ts.TransformerFactory<ts.SourceFile> {
-  return (context) => {
-    const visit: ts.Visitor = (node) => {
-      if (ts.isImportDeclaration(node)) {
-        const moduleName = node.moduleSpecifier.getText().slice(1, -1); // Remove quotes
-        const importClause = node.importClause;
+/**
+ * Transforms import declarations so that they remain valid after a file
+ * has been moved within the workspace.
+ *
+ * The transformer walks the AST, finds `ImportDeclaration` nodes and rewrites
+ * their module specifiers using `resolveImportPath`.
+ */
+export function importsTransformer(context: ts.TransformationContext) {
+  const visitor: ts.Visitor = (node) => {
+    if (ts.isImportDeclaration(node) && ts.isStringLiteral(node.moduleSpecifier)) {
+      const sourceFile = node.getSourceFile();
+      const originalSpecifier = node.moduleSpecifier.text;
 
-        const declarations: ts.VariableDeclaration[] = [];
+      const newSpecifier = resolveImportPath(originalSpecifier, sourceFile.fileName);
 
-        if (importClause) {
-          // Handle default imports
-          // Skip over 'import type' statements
-
-          if (importClause.isTypeOnly) {
-            return node;
-          }
-
-          if (importClause.name) {
-            const defaultImportName = importClause.name.getText();
-            declarations.push(
-              ts.factory.createVariableDeclaration(
-                defaultImportName,
-                undefined,
-                undefined,
-                ts.factory.createPropertyAccessExpression(
-                  ts.factory.createElementAccessExpression(
-                    ts.factory.createIdentifier("__imports"),
-                    ts.factory.createStringLiteral(moduleName)
-                  ),
-                  ts.factory.createIdentifier("default")
-                )
-              )
-            );
-          }
-
-          // Handle named and namespace imports
-          const namedBindings = importClause.namedBindings;
-          if (namedBindings) {
-            if (ts.isNamedImports(namedBindings)) {
-              namedBindings.elements.forEach((el) => {
-                const name = el.name.getText();
-                const propertyName = el.propertyName
-                  ? el.propertyName.getText()
-                  : name;
-                declarations.push(
-                  ts.factory.createVariableDeclaration(
-                    name,
-                    undefined,
-                    undefined,
-                    ts.factory.createPropertyAccessExpression(
-                      ts.factory.createElementAccessExpression(
-                        ts.factory.createIdentifier("__imports"),
-                        ts.factory.createStringLiteral(moduleName)
-                      ),
-                      ts.factory.createIdentifier(propertyName)
-                    )
-                  )
-                );
-              });
-            }
-
-            // Handle namespace imports
-            if (ts.isNamespaceImport(namedBindings)) {
-              const name = namedBindings.name.getText();
-              declarations.push(
-                ts.factory.createVariableDeclaration(
-                  name,
-                  undefined,
-                  undefined,
-                  ts.factory.createElementAccessExpression(
-                    ts.factory.createIdentifier("__imports"),
-                    ts.factory.createStringLiteral(moduleName)
-                  )
-                )
-              );
-            }
-          }
-
-          return ts.factory.createVariableStatement(
-            undefined,
-            ts.factory.createVariableDeclarationList(
-              declarations,
-              ts.NodeFlags.Const
-            )
-          );
-        }
+      // If the specifier didn't change, keep the original node.
+      if (newSpecifier === originalSpecifier) {
+        return ts.visitEachChild(node, visitor, context);
       }
 
-      try {
-        return ts.visitEachChild(node, visit, context);
-      } catch (e) {
-        console.warn(`[importToGlobalTransformer] Error`, e);
-        return node;
-      }
-    };
-    return (node: ts.SourceFile) => ts.visitNode(node, visit) as ts.SourceFile;
+      const updatedModuleSpecifier = ts.createStringLiteral(newSpecifier);
+      const updatedImport = ts.updateImportDeclaration(
+        node,
+        node.decorators,
+        node.modifiers,
+        node.importClause,
+        updatedModuleSpecifier,
+        node.assertClause
+      );
+
+      return ts.visitEachChild(updatedImport, visitor, context);
+    }
+
+    return ts.visitEachChild(node, visitor, context);
   };
+
+  return (file: ts.SourceFile) => ts.visitNode(file, visitor);
 }
