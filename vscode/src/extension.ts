@@ -2,6 +2,8 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
 
+import { deserializeFlow, serializeFlow } from "@flyde/loader/dist/server";
+import { updateMovedFileReferences } from "./updateMovedFileReferences";
 import { FlydeEditorEditorProvider } from "./flydeEditor";
 import * as execa from "execa";
 
@@ -54,6 +56,78 @@ export function activate(context: vscode.ExtensionContext) {
 
   const mainOutputChannel = vscode.window.createOutputChannel("Flyde");
   const debugOutputChannel = vscode.window.createOutputChannel("Flyde (Debug)");
+
+  // Update Flyde references before VS Code moves or renames files.
+  context.subscriptions.push(
+    vscode.workspace.onWillRenameFiles((event) => {
+      event.waitUntil(
+        (async () => {
+          const edit = new vscode.WorkspaceEdit();
+
+          const moves = event.files.map(({ oldUri, newUri }) => ({
+            oldPath: oldUri.fsPath,
+            newPath: newUri.fsPath,
+          }));
+
+          // Search for Flyde flows in the workspace.
+          const flowFiles = await vscode.workspace.findFiles(
+            "**/*.flyde",
+            "**/node_modules/**"
+          );
+
+          for (const flowUri of flowFiles) {
+            try {
+              // Read the current document, including unsaved changes.
+              const document =
+                await vscode.workspace.openTextDocument(flowUri);
+
+              const originalText = document.getText();
+
+              if (!originalText.trim()) {
+                continue;
+              }
+
+              const flow = deserializeFlow(
+                originalText,
+                flowUri.fsPath
+              );
+
+              // Recalculate file-backed references.
+              const changed = updateMovedFileReferences(
+                flow,
+                flowUri.fsPath,
+                moves
+              );
+
+              if (!changed) {
+                continue;
+              }
+
+              const updatedText = serializeFlow(flow);
+
+              const entireDocument = new vscode.Range(
+                document.positionAt(0),
+                document.positionAt(originalText.length)
+              );
+
+              edit.replace(
+                flowUri,
+                entireDocument,
+                updatedText
+              );
+
+            } catch (error) {
+              mainOutputChannel.appendLine(
+                `Could not update references in ${flowUri.fsPath}: ${String(error)}`
+              );
+            }
+          }
+
+          return edit;
+        })()
+      );
+    })
+  );
 
   let currentTheme = vscode.window.activeColorTheme;
 
