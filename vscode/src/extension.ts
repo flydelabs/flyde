@@ -15,6 +15,7 @@ import { activateReporter, reportEvent, analytics } from "./analytics";
 import { showFirstRunPrivacyNotice, showPrivacySettings } from "./privacyNotice";
 
 import { Template, getTemplates, scaffoldTemplate } from "./templateUtils";
+import { registerFlydeImportMoveUpdater } from "./update-imports-on-rename";
 
 // the application insights key (also known as instrumentation key)
 
@@ -105,6 +106,8 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.commands.registerCommand("flyde.openAsText", openAsTextHandler)
   );
+
+  registerFlydeImportMoveUpdater(context);
 
   function getWorkspaceRootPath(): vscode.Uri | undefined {
     // Check if there is an open workspace

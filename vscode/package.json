@@ -45,7 +45,9 @@
     "release": "vsce package --no-yarn && vsce publish minor"
   },
   "main": "./out/extension.js",
-  "activationEvents": [],
+  "activationEvents": [
+    "workspaceContains:**/*.flyde"
+  ],
   "contributes": {
     "customEditors": [
       {
