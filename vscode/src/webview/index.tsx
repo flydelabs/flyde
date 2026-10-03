@@ -131,7 +131,7 @@ window.addEventListener("message", (event) => {
     }
 
     vscode.postMessage(
-      { type: "__webviewTestingResponse", response, error },
+      { type: "__webviewTestingResponse", testingRequestId: data.testingRequestId, response, error },
       "*"
     );
   }

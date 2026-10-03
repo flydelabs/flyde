@@ -15,6 +15,7 @@ import { activateReporter, reportEvent, analytics } from "./analytics";
 import { showFirstRunPrivacyNotice, showPrivacySettings } from "./privacyNotice";
 
 import { Template, getTemplates, scaffoldTemplate } from "./templateUtils";
+import { registerFlowImportRenameHandler } from "./updateFlowImportsOnRename";
 
 // the application insights key (also known as instrumentation key)
 
@@ -54,6 +55,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   const mainOutputChannel = vscode.window.createOutputChannel("Flyde");
   const debugOutputChannel = vscode.window.createOutputChannel("Flyde (Debug)");
+  context.subscriptions.push(registerFlowImportRenameHandler(mainOutputChannel));
 
   let currentTheme = vscode.window.activeColorTheme;
 

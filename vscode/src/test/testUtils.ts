@@ -23,6 +23,8 @@ export type WebViewTestingCommands = {
   };
 };
 
+let nextTestingRequestId = 0;
+
 export async function webviewTestingCommand<
   T extends keyof WebViewTestingCommands
 >(
@@ -30,9 +32,16 @@ export async function webviewTestingCommand<
   params: WebViewTestingCommands[T]["params"]
 ): Promise<WebViewTestingCommands[T]["response"]> {
   const webview = await getLastWebview();
+  const testingRequestId = ++nextTestingRequestId;
   return new Promise((res, rej) => {
-    webview.onDidReceiveMessage((message) => {
-      if (message.type === "__webviewTestingResponse") {
+    const timer = setTimeout(() => {
+      listener.dispose();
+      rej(new Error(`Webview did not answer ${command} within 1000ms`));
+    }, 1000);
+    const listener = webview.onDidReceiveMessage((message) => {
+      if (message.type === "__webviewTestingResponse" && message.testingRequestId === testingRequestId) {
+        clearTimeout(timer);
+        listener.dispose();
         if (message.error) {
           rej(message.error);
         } else {
@@ -43,6 +52,7 @@ export async function webviewTestingCommand<
 
     webview.postMessage({
       type: "__webviewTestingCommand",
+      testingRequestId,
       command,
       params,
     });

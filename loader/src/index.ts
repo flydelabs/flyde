@@ -3,6 +3,7 @@ export * from "./resolver";
 export * from "./serdes";
 export * from "./runtime";
 export * from "./run-flow";
+export { updateFlowPathsForRenames, FlowPathRename } from "./serdes/updateFlowPathsForRenames";
 
 // Server-specific exports
 export { createServerReferencedNodeFinder } from "./resolver/server/findReferencedNodeServer";

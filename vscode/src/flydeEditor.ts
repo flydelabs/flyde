@@ -39,6 +39,7 @@ import { customCodeNodeFromCode } from "@flyde/core/dist/misc/custom-code-node-f
 import { createAiCompletion } from "./ai";
 import { getAvailableSecrets, addNewSecret, getSecrets } from "./secretsService";
 import { createNodeFinderWithOverrides } from "./createNodeFinderWithOverrides";
+import { FlowDocumentWriter } from "./flowDocumentSync";
 
 // Helper functions
 // export type EditorPortType = keyof any;
@@ -134,9 +135,18 @@ export class FlydeEditorEditorProvider
 
     const relative = path.relative(fileRoot, document.fileName);
 
-    let lastSaveBy = "";
-
     let lastFlow: FlydeFlow;
+    const documentWriter = new FlowDocumentWriter({
+      getText: () => document.getText(),
+      get version() { return document.version; },
+      apply: async (text) => {
+        const edit = new vscode.WorkspaceEdit();
+        edit.replace(document.uri, new vscode.Range(
+          document.positionAt(0), document.positionAt(document.getText().length)
+        ), text);
+        return vscode.workspace.applyEdit(edit);
+      },
+    });
 
     const messageResponse = (event: FlydePortMessage<any>, payload: any) => {
       webviewPanel.webview.postMessage({
@@ -171,8 +181,50 @@ export class FlydeEditorEditorProvider
 
     const webviewId = `wv-${(Date.now() + randomInt(999)).toString(32)}`;
 
-    const fullDocumentPath = document.uri.fsPath;
+    let fullDocumentPath = document.uri.fsPath;
     const executionId = fullDocumentPath;
+    let pendingResolution = { needsResolution: false, importPaths: new Set<string>() };
+
+    const getResolutionState = (node: EditorVisualNode) => {
+      const state = { needsResolution: false, importPaths: new Set<string>() };
+      const visit = (visualNode: EditorVisualNode) => {
+        for (const instance of visualNode.instances) {
+          if (instance.node?.id === "__errorResolvingNode") {
+            state.needsResolution = true;
+            if (instance.source.type === "file" && typeof instance.source.data === "string") {
+              state.importPaths.add(path.resolve(path.dirname(fullDocumentPath), instance.source.data));
+            }
+          } else if (instance.node && "instances" in instance.node) {
+            visit(instance.node);
+          }
+        }
+      };
+      visit(node);
+      return state;
+    };
+
+    const notifyExternalFlowChange = () => {
+      fullDocumentPath = document.uri.fsPath;
+      try {
+        const flow = deserializeFlow(document.getText(), fullDocumentPath);
+        lastFlow = flow;
+        const node = resolveEditorNode(flow.node, createNodeFinderWithOverrides(fullDocumentPath));
+        // The resolver catches failed imports and returns an Error placeholder.
+        // Those imports still need another resolution once a rename completes.
+        pendingResolution = getResolutionState(node);
+        webviewPanel.webview.postMessage({
+          type: "onExternalFlowChange",
+          requestId: "TODO-cuid",
+          params: { flow: { ...flow, node }, documentVersion: document.version },
+          source: "extension",
+        });
+      } catch (error) {
+        // Preserve pending imports for a matching rename; later document edits
+        // also retry when the document itself cannot currently be read.
+        pendingResolution.needsResolution = true;
+        this.params.mainOutputChannel.appendLine(`Could not refresh ${fullDocumentPath}: ${error}`);
+      }
+    };
 
     const renderWebview = async () => {
       const raw = document.getText();
@@ -217,6 +269,7 @@ export class FlydeEditorEditorProvider
         webviewPanel.webview.html = `Errors: <code>${resolvedNode.message}</code><hr/>Try opening it with a text editor and fix the problem`;
         return;
       }
+      pendingResolution = getResolutionState(resolvedNode);
 
       // used to avoid triggering "onChange" of the same webview
       webviewPanel.webview.html = await getWebviewContent({
@@ -228,6 +281,7 @@ export class FlydeEditorEditorProvider
         webviewId,
         executionId,
         darkMode: this.params.darkMode,
+        documentVersion: document.version,
       });
 
       lastFlow = initialFlow as FlydeFlow;
@@ -382,15 +436,14 @@ export class FlydeEditorEditorProvider
                 }
 
                 const serialized = serializeFlow({ node: cleanNode(node) });
-                lastFlow = flow;
-                const edit = new vscode.WorkspaceEdit();
-
-                // replacing everything for simplicity. TODO - pass only delta changes
-                const range = new vscode.Range(0, 0, document.lineCount, 0);
-                edit.replace(document.uri, range, serialized);
-                lastSaveBy = webviewId;
-                await vscode.workspace.applyEdit(edit);
-                messageResponse(event, undefined);
+                const result = await documentWriter.write(serialized, event.params.documentVersion);
+                if (result.applied && document.getText() === serialized) {
+                  lastFlow = flow;
+                } else {
+                  // A save posted before an external edit must not restore stale imports.
+                  notifyExternalFlowChange();
+                }
+                messageResponse(event, result);
                 break;
               }
 
@@ -751,22 +804,32 @@ export class FlydeEditorEditorProvider
       (e) => {
         const isSameUri = e.document.uri.toString() === document.uri.toString();
 
-        if (isSameUri && lastSaveBy !== webviewId) {
-          const raw = document.getText();
-          const flow: FlydeFlow = deserializeFlow(raw, fullDocumentPath);
-          webviewPanel.webview.postMessage({
-            type: "onExternalFlowChange",
-            requestId: "TODO-cuid",
-            params: { flow },
-            source: "extension",
-          });
+        if (isSameUri && e.contentChanges.length > 0 &&
+          !documentWriter.isOwnChange(document.getText(), document.version)) {
+          notifyExternalFlowChange();
         }
       }
     );
 
+    const renameSubscription = vscode.workspace.onDidRenameFiles((event) => {
+      const includesUnresolvedImport = (uri: vscode.Uri) => uri.scheme === "file" &&
+        [...pendingResolution.importPaths].some((importPath) => {
+          const relative = path.relative(uri.fsPath, importPath);
+          return relative === "" || (!path.isAbsolute(relative) && relative !== ".." &&
+            !relative.startsWith(`..${path.sep}`));
+        });
+      const resolvesPendingImport = pendingResolution.needsResolution && event.files.some(
+        ({ oldUri, newUri }) => includesUnresolvedImport(oldUri) || includesUnresolvedImport(newUri)
+      );
+      if (resolvesPendingImport || document.uri.fsPath !== fullDocumentPath) {
+        notifyExternalFlowChange();
+      }
+    });
+
     // Make sure we get rid of the listener when our editor is closed.
     webviewPanel.onDidDispose(() => {
       changeDocumentSubscription.dispose();
+      renameSubscription.dispose();
     });
   }
 

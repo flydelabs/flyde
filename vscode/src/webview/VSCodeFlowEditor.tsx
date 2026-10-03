@@ -17,8 +17,8 @@ import {
   isVisualNode,
 } from "@flyde/core";
 import { createEditorClient, EditorDebuggerClient } from "@flyde/editor";
-import { createVsCodePorts } from "./vscode-ports";
-import { useDebouncedCallback } from "use-debounce";
+import { createVsCodePorts, postMessageCallback } from "./vscode-ports";
+import { WebviewFlowSaver, FlowSaveResult } from "../flowDocumentSync";
 
 const isEqual = (a: any, b: any): boolean => {
   if (a === b) return true;
@@ -50,7 +50,8 @@ export const VSCodeFlowEditor: React.FC<BootstrapData> = ({
   port,
   relativeFile,
   executionId,
-  darkMode
+  darkMode,
+  documentVersion = 0,
 }) => {
   // Check if we're in test mode (either dummy data or vscode test environment)
   const isDummyMode = new URLSearchParams(window.location.search).get('dummy') === 'true';
@@ -75,7 +76,7 @@ export const VSCodeFlowEditor: React.FC<BootstrapData> = ({
 
   const [debuggerClient, setDebuggerClient] = useState<EditorDebuggerClient>();
   const runtimePlayer = useRef<RuntimePlayer>();
-  const lastChangeReason = useRef<string>("");
+  const externallyAppliedFlow = useRef<FlydeFlow>();
   const didMount = useRef(false);
 
   const ports = useMemo(() => createVsCodePorts(), []);
@@ -127,8 +128,9 @@ export const VSCodeFlowEditor: React.FC<BootstrapData> = ({
     }
   }, [debuggerClient, isTestMode]);
 
-  const debouncedSaveFile = useDebouncedCallback(
-    (flow: FlydeFlow, src: string) => {
+  const flowSaver = useMemo(() => new WebviewFlowSaver<FlydeFlow>(
+    documentVersion,
+    async (flow, version): Promise<FlowSaveResult> => {
       const cleanFlow: FlydeFlow = {
         ...flow,
         node: {
@@ -143,30 +145,40 @@ export const VSCodeFlowEditor: React.FC<BootstrapData> = ({
           }),
         },
       };
-      ports.setFlow({ absPath: src, flow: cleanFlow });
+      return postMessageCallback("setFlow", {
+        absPath: relativeFile,
+        flow: cleanFlow,
+        documentVersion: version,
+      });
     },
-    500
-  );
+    (error) => console.error("Failed to save flow", error)
+  ), [documentVersion, relativeFile]);
+
+  useEffect(() => () => flowSaver.dispose(), [flowSaver]);
 
   useEffect(() => {
-    return ports.onExternalFlowChange(({ flow }) => {
+    return ports.onExternalFlowChange((change) => {
+      const { flow, documentVersion: version } = change as typeof change & { documentVersion?: number };
+      if (!flowSaver.acceptExternalChange(version)) { return; }
       if (isEqual(flow, editorState.flow) === false) {
+        externallyAppliedFlow.current = flow;
         setEditorState((state) => ({ ...state, flow }));
-        lastChangeReason.current = "external-changes";
       }
     });
-  }, [editorState.flow, ports]);
+  }, [editorState.flow, ports, flowSaver]);
 
   useEffect(() => {
     if (!didMount.current) {
       didMount.current = true;
     } else {
-      if (lastChangeReason.current !== "external-changes") {
-        debouncedSaveFile(editorState.flow, relativeFile);
-        lastChangeReason.current = "n/a";
+      if (externallyAppliedFlow.current === editorState.flow) {
+        externallyAppliedFlow.current = undefined;
+      } else {
+        externallyAppliedFlow.current = undefined;
+        flowSaver.schedule(editorState.flow);
       }
     }
-  }, [editorState.flow, debouncedSaveFile, relativeFile]);
+  }, [editorState.flow, flowSaver]);
 
   const onRequestHistory = useCallback(
     (insId: string, pinId?: string, pinType?: any) => {

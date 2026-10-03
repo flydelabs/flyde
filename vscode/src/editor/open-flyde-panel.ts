@@ -10,6 +10,7 @@ export type WebviewContentParams = {
   initialNode: EditorVisualNode;
   webviewId: string;
   darkMode: boolean;
+  documentVersion?: number;
 };
 
 const isDev = process.env.MODE === "dev";
@@ -71,6 +72,7 @@ export async function getWebviewContent(params: WebviewContentParams) {
     initialNode,
     executionId,
     darkMode,
+    documentVersion,
   } = params;
   const stylePath = vscode.Uri.joinPath(extensionUri, "media", "style.css");
 
@@ -96,6 +98,7 @@ export async function getWebviewContent(params: WebviewContentParams) {
     executionId,
     hasOpenAiToken,
     darkMode,
+    documentVersion,
   };
   const serializedBootstrapData = Buffer.from(
     JSON.stringify(bootstrapData)
