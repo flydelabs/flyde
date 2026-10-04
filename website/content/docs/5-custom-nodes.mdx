@@ -84,18 +84,106 @@ It will appear on the "Current project" section of the "nodes library -> view al
 
 ## Macro Nodes
 
-:::info
-Macro node docs are still in progress. Please refer to the [flyde/stdlib](https://github.com/flydelabs/flyde/tree/main/stdlib) for examples.
-:::
+Macro nodes are code nodes with **edit-time configuration**. Use them when an instance's configuration should change its pins, display text, or runtime behavior.
 
-Each macro node is expected to expose an already bundled React component that can render and edit the node's configuration.
-Each component is expected to be bundled separately, and export a window variable named `__MacroNode__ID`, which is the ID of the macro node.  
+In the current API, define a macro node as a `CodeNode<Config>` with `mode: "advanced"`.
 
-Until this is properly documented, and potentially abstracted, you may follow the stdlib's bundle config to see how it is done there - https://github.com/flydelabs/flyde/blob/main/stdlib/package.json#L52.
+### Basic structure
 
+```ts
+import { CodeNode } from "@flyde/core";
 
+interface FanOutConfig {
+  count: number;
+}
 
+export const FanOut: CodeNode<FanOutConfig> = {
+  id: "FanOut",
+  mode: "advanced",
 
+  defaultConfig: {
+    count: 2,
+  },
 
+  inputs: {
+    value: { description: "Value to fan out" },
+  },
 
+  outputs: (config) =>
+    Object.fromEntries(
+      Array.from({ length: config.count }, (_, index) => [
+        `item${index + 1}`,
+        { description: `Output ${index + 1}` },
+      ])
+    ),
 
+  displayName: (config) => `Fan out to ${config.count} outputs`,
+
+  run: ({ value }, outputs, { context }) => {
+    for (let index = 0; index < context.config.count; index++) {
+      outputs[`item${index + 1}`].next(value);
+    }
+  },
+
+  editorConfig: {
+    type: "structured",
+    fields: [
+      {
+        type: "number",
+        configKey: "count",
+        label: "Output count",
+        typeData: { min: 1 },
+      },
+    ],
+  },
+};
+```
+
+The important pieces are:
+
+- `defaultConfig` is the starting configuration for a new node instance.
+- `inputs` and `outputs` may be objects or functions of the current configuration. Functions let the node's shape change when configuration changes.
+- `displayName`, `description`, `reactiveInputs`, `completionOutputs`, and `overrideNodeBodyHtml` can also depend on configuration where supported.
+- During execution, Flyde exposes the resolved instance configuration on `context.config`.
+
+If a configured value should also be able to become a runtime input, use `ConfigurableValue` together with helpers such as `configurableValue`, `extractInputsFromValue`, and `replaceInputsInValue`. The [Inline Value node](https://github.com/flydelabs/flyde/blob/main/nodes/src/Values/InlineValue.flyde.ts) is a good example.
+
+### Configuration editors
+
+For most macro nodes, use a structured editor:
+
+```ts
+editorConfig: {
+  type: "structured",
+  fields: [
+    {
+      type: "number",
+      configKey: "count",
+      label: "Output count",
+    },
+  ],
+}
+```
+
+Structured fields can use the supported editor types such as `string`, `number`, `boolean`, `json`, `select`, `longtext`, and `secret`. Fields can also define descriptions, numeric limits, conditions, and other type-specific options.
+
+If `editorConfig` is omitted from an advanced node, Flyde generates a structured editor from `defaultConfig`.
+
+For a fully custom editor, use:
+
+```ts
+editorConfig: {
+  type: "custom",
+  editorComponentBundlePath: "../../dist/ui/MyNode.js",
+}
+```
+
+A custom editor bundle is a React component bundle. The bundle path is relative to the package root, and the component is expected to be exposed on `window` as `__MacroNode__{id}`.
+
+### Examples in the standard nodes
+
+- [Inline Value](https://github.com/flydelabs/flyde/blob/main/nodes/src/Values/InlineValue.flyde.ts) derives runtime inputs from configured values.
+- [Merge to List](https://github.com/flydelabs/flyde/blob/main/nodes/src/Lists/ListFrom.flyde.ts) changes its input pins based on configuration.
+- [Note](https://github.com/flydelabs/flyde/blob/main/nodes/src/Note/Note.flyde.ts) uses a fully custom editor component.
+
+These examples are useful references for dynamic pins, configuration-aware runtime behavior, and custom configuration UIs.
