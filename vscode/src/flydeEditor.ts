@@ -11,7 +11,7 @@ import {
   resolveEditorInstance,
   resolveEditorNode,
 } from "@flyde/loader";
-import { deserializeFlow, serializeFlow } from "@flyde/loader/dist/server";
+import { deserializeFlow, serializeFlow, fileReferenceEditsForRenames, renameFileReferencePath } from "@flyde/loader/dist/server";
 
 import {
   FlydeFlow,
@@ -132,7 +132,7 @@ export class FlydeEditorEditorProvider
       vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders[0];
     const fileRoot = firstWorkspace ? firstWorkspace.uri.fsPath : "";
 
-    const relative = path.relative(fileRoot, document.fileName);
+    let relative = path.relative(fileRoot, document.fileName);
 
     let lastSaveBy = "";
 
@@ -171,10 +171,21 @@ export class FlydeEditorEditorProvider
 
     const webviewId = `wv-${(Date.now() + randomInt(999)).toString(32)}`;
 
-    const fullDocumentPath = document.uri.fsPath;
-    const executionId = fullDocumentPath;
+    let fullDocumentPath = document.uri.fsPath;
+    let executionId = fullDocumentPath;
+    let renderNumber = 0;
+    let activeRenderGeneration = "";
+    let renameInProgress = false;
+    let renamedDocumentUri = document.uri;
+    let renameCancellation: vscode.Disposable | undefined;
 
     const renderWebview = async () => {
+      const renderGeneration = `${webviewId}-${++renderNumber}`;
+      activeRenderGeneration = renderGeneration;
+      fullDocumentPath = document.uri.fsPath;
+      relative = path.relative(fileRoot, fullDocumentPath);
+      const snapshotDocument = document;
+      const snapshotVersion = document.version;
       const raw = document.getText();
       const fileName = (
         document.uri.fsPath.split(path.sep).pop() ?? "Default"
@@ -219,7 +230,7 @@ export class FlydeEditorEditorProvider
       }
 
       // used to avoid triggering "onChange" of the same webview
-      webviewPanel.webview.html = await getWebviewContent({
+      const html = await getWebviewContent({
         extensionUri: this.context.extensionUri,
         relativeFile: relative,
         port: this.params.port,
@@ -228,7 +239,14 @@ export class FlydeEditorEditorProvider
         webviewId,
         executionId,
         darkMode: this.params.darkMode,
+        renderGeneration,
       });
+      if (activeRenderGeneration !== renderGeneration) { return; }
+      if (document !== snapshotDocument || document.version !== snapshotVersion) {
+        // Edits made while the manifest loads must not become stale editor state.
+        return renderWebview();
+      }
+      webviewPanel.webview.html = html;
 
       lastFlow = initialFlow as FlydeFlow;
 
@@ -240,14 +258,14 @@ export class FlydeEditorEditorProvider
 
     vscode.commands.executeCommand("setContext", "flyde.flowLoaded", true);
 
-    const _debugger = createEditorClient(
+    let _debugger = createEditorClient(
       `http://localhost:${this.params.port}`,
       executionId
     );
 
     const flowRunner = new EmbeddedFlowRunner(this.params.port);
 
-    _debugger.onBatchedEvents((events) => {
+    const onDebuggerEvents: Parameters<ReturnType<typeof createEditorClient>["onBatchedEvents"]>[0] = (events) => {
       const { mainOutputChannel, debugOutputChannel } = this.params;
       events.forEach((event) => {
         debugOutputChannel.appendLine(formatEvent(event));
@@ -257,7 +275,8 @@ export class FlydeEditorEditorProvider
           }
         }
       });
-    });
+    };
+    _debugger.onBatchedEvents(onDebuggerEvents);
 
     let didFocusOutput = false;
 
@@ -346,6 +365,9 @@ export class FlydeEditorEditorProvider
                 break;
               }
               case "setFlow": {
+                if (renameInProgress || event.params.renderGeneration !== activeRenderGeneration) {
+                  throw new Error("The flow changed after a file move or editor refresh. Please retry your edit.");
+                }
                 const { flow } = event.params;
 
                 const node = flow.node as EditorVisualNode;
@@ -389,7 +411,11 @@ export class FlydeEditorEditorProvider
                 const range = new vscode.Range(0, 0, document.lineCount, 0);
                 edit.replace(document.uri, range, serialized);
                 lastSaveBy = webviewId;
-                await vscode.workspace.applyEdit(edit);
+                try {
+                  await vscode.workspace.applyEdit(edit);
+                } finally {
+                  lastSaveBy = "";
+                }
                 messageResponse(event, undefined);
                 break;
               }
@@ -742,7 +768,7 @@ export class FlydeEditorEditorProvider
 
     webviewPanel.onDidChangeViewState(async (e) => {
       // when the webview is refocused, it needs to receive a new html to contain the correct initial flow
-      if (e.webviewPanel.active) {
+      if (e.webviewPanel.active && !renameInProgress) {
         await renderWebview();
       }
     });
@@ -751,9 +777,10 @@ export class FlydeEditorEditorProvider
       (e) => {
         const isSameUri = e.document.uri.toString() === document.uri.toString();
 
-        if (isSameUri && lastSaveBy !== webviewId) {
+        if (isSameUri && lastSaveBy !== webviewId && !renameInProgress) {
           const raw = document.getText();
           const flow: FlydeFlow = deserializeFlow(raw, fullDocumentPath);
+          lastFlow = flow;
           webviewPanel.webview.postMessage({
             type: "onExternalFlowChange",
             requestId: "TODO-cuid",
@@ -764,9 +791,55 @@ export class FlydeEditorEditorProvider
       }
     );
 
+    const beforeRenameSubscription = vscode.workspace.onWillRenameFiles(event => {
+      const renames = event.files.filter(({ oldUri, newUri }) => oldUri.scheme === document.uri.scheme && oldUri.authority === document.uri.authority &&
+        newUri.scheme === document.uri.scheme && newUri.authority === document.uri.authority)
+        .map(({ oldUri, newUri }) => ({ oldPath: oldUri.fsPath, newPath: newUri.fsPath }));
+      try {
+        const renamedPath = renameFileReferencePath(fullDocumentPath, renames);
+        renamedDocumentUri = document.uri.with({ path: document.uri.scheme === "file" ? vscode.Uri.file(renamedPath).path : renamedPath.split(path.sep).join("/") });
+        if (renamedPath !== fullDocumentPath || fileReferenceEditsForRenames(document.getText(), fullDocumentPath, renames).length) {
+          // Invalidate already-posted saves before the participant changes text.
+          const previousGeneration = activeRenderGeneration;
+          activeRenderGeneration = "";
+          renameInProgress = true;
+          renameCancellation?.dispose();
+          renameCancellation = event.token.onCancellationRequested(() => {
+            if (renameInProgress) {
+              renameInProgress = false;
+              activeRenderGeneration = previousGeneration;
+              renamedDocumentUri = document.uri;
+            }
+          });
+        }
+      } catch { /* A malformed text buffer cannot be safely refreshed. */ }
+    });
+    const afterRenameSubscription = vscode.workspace.onDidRenameFiles(async () => {
+      if (renameInProgress) {
+        renameCancellation?.dispose();
+        try {
+          document = await vscode.workspace.openTextDocument(renamedDocumentUri);
+          if (executionId !== document.uri.fsPath) {
+            executionId = document.uri.fsPath;
+            _debugger.destroy();
+            _debugger = createEditorClient(`http://localhost:${this.params.port}`, executionId);
+            _debugger.onBatchedEvents(onDebuggerEvents);
+          }
+          await renderWebview();
+        } finally {
+          lastSaveBy = "";
+          renameInProgress = false;
+        }
+      }
+    });
+
     // Make sure we get rid of the listener when our editor is closed.
     webviewPanel.onDidDispose(() => {
       changeDocumentSubscription.dispose();
+      beforeRenameSubscription.dispose();
+      afterRenameSubscription.dispose();
+      renameCancellation?.dispose();
+      _debugger.destroy();
     });
   }
 

@@ -46,7 +46,7 @@ export const postMessageCallback = (
   });
 };
 
-export const createVsCodePorts = (): EditorPorts => {
+export const createVsCodePorts = (renderGeneration?: string): EditorPorts => {
   return {
     prompt: ({ text, defaultValue }) => {
       return postMessageCallback("prompt", { text, defaultValue });
@@ -61,7 +61,7 @@ export const createVsCodePorts = (): EditorPorts => {
       return postMessageCallback("readFlow", dto);
     },
     setFlow: async (dto) => {
-      return postMessageCallback("setFlow", dto);
+      return postMessageCallback("setFlow", { ...dto, renderGeneration });
     },
     generateNodeFromPrompt: async (dto) => {
       return postMessageCallback("generateNodeFromPrompt", dto);

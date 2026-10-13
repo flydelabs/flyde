@@ -50,7 +50,8 @@ export const VSCodeFlowEditor: React.FC<BootstrapData> = ({
   port,
   relativeFile,
   executionId,
-  darkMode
+  darkMode,
+  renderGeneration
 }) => {
   // Check if we're in test mode (either dummy data or vscode test environment)
   const isDummyMode = new URLSearchParams(window.location.search).get('dummy') === 'true';
@@ -78,7 +79,7 @@ export const VSCodeFlowEditor: React.FC<BootstrapData> = ({
   const lastChangeReason = useRef<string>("");
   const didMount = useRef(false);
 
-  const ports = useMemo(() => createVsCodePorts(), []);
+  const ports = useMemo(() => createVsCodePorts(renderGeneration), [renderGeneration]);
 
   const connectToRemoteDebugger = useCallback((url: string) => {
     const newClient = createEditorClient(url, executionId);

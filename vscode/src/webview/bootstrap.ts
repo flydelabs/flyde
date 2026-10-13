@@ -7,6 +7,7 @@ export interface BootstrapData {
   executionId: string;
   hasOpenAiToken: boolean;
   darkMode: boolean;
+  renderGeneration?: string;
 }
 
 export const getBootstrapData = (): BootstrapData | null => {
