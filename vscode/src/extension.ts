@@ -15,6 +15,7 @@ import { activateReporter, reportEvent, analytics } from "./analytics";
 import { showFirstRunPrivacyNotice, showPrivacySettings } from "./privacyNotice";
 
 import { Template, getTemplates, scaffoldTemplate } from "./templateUtils";
+import { registerFileImportRenames } from "./renameFileImports";
 
 // the application insights key (also known as instrumentation key)
 
@@ -29,6 +30,7 @@ let process: execa.ExecaChildProcess | undefined;
 const FLYDE_DEFAULT_SERVER_PORT = 8545;
 
 export function activate(context: vscode.ExtensionContext) {
+  context.subscriptions.push(registerFileImportRenames());
   // eslint-disable-next-line @typescript-eslint/naming-convention
   const { Uri } = vscode;
   const { fs } = vscode.workspace;
