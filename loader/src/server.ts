@@ -3,6 +3,7 @@ export * from "./resolver";
 export * from "./serdes";
 export * from "./runtime";
 export * from "./run-flow";
+export * from "./serdes/renameFileImports";
 
 // Server-specific exports
 export { createServerReferencedNodeFinder } from "./resolver/server/findReferencedNodeServer";
