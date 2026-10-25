@@ -1,18 +1,31 @@
 import * as ts from "typescript";
+import * as path from "path";
 
-export function importToGlobalTransformer(): ts.TransformerFactory<ts.SourceFile> {
+/**
+ * Transforms ES module imports into accesses on a global __imports object.
+ * Additionally, resolves relative import specifiers to absolute paths based on the
+ * source file location. This ensures that after a file is moved, the import still
+ * points to the correct module.
+ */
+export function importToGlobalTransformer(fileName?: string): ts.TransformerFactory<ts.SourceFile> {
   return (context) => {
     const visit: ts.Visitor = (node) => {
       if (ts.isImportDeclaration(node)) {
-        const moduleName = node.moduleSpecifier.getText().slice(1, -1); // Remove quotes
+        // Extract the raw module specifier string (without quotes)
+        let moduleName = node.moduleSpecifier.getText().slice(1, -1);
+        // Resolve relative paths to absolute paths based on the file location
+        if (fileName && (moduleName.startsWith("./") || moduleName.startsWith("../"))) {
+          const dir = path.dirname(fileName);
+          const resolved = path.resolve(dir, moduleName);
+          // Use POSIX style for consistency (VS Code works with forward slashes)
+          moduleName = resolved.split(path.sep).join("/");
+        }
         const importClause = node.importClause;
 
         const declarations: ts.VariableDeclaration[] = [];
 
         if (importClause) {
-          // Handle default imports
           // Skip over 'import type' statements
-
           if (importClause.isTypeOnly) {
             return node;
           }
@@ -41,9 +54,7 @@ export function importToGlobalTransformer(): ts.TransformerFactory<ts.SourceFile
             if (ts.isNamedImports(namedBindings)) {
               namedBindings.elements.forEach((el) => {
                 const name = el.name.getText();
-                const propertyName = el.propertyName
-                  ? el.propertyName.getText()
-                  : name;
+                const propertyName = el.propertyName ? el.propertyName.getText() : name;
                 declarations.push(
                   ts.factory.createVariableDeclaration(
                     name,
@@ -80,10 +91,7 @@ export function importToGlobalTransformer(): ts.TransformerFactory<ts.SourceFile
 
           return ts.factory.createVariableStatement(
             undefined,
-            ts.factory.createVariableDeclarationList(
-              declarations,
-              ts.NodeFlags.Const
-            )
+            ts.factory.createVariableDeclarationList(declarations, ts.NodeFlags.Const)
           );
         }
       }

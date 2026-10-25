@@ -11,7 +11,8 @@ export function transpileFile(fileName: string, content: string) {
     },
     transformers: {
       before: [
-        importToGlobalTransformer(),
+        // Pass the file name so that relative imports can be resolved to absolute paths.
+        importToGlobalTransformer(fileName),
         stripTypesTransformer(),
         exportToGlobalTransformer(fileName),
       ],
