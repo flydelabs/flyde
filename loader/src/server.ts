@@ -9,3 +9,4 @@ export { createServerReferencedNodeFinder } from "./resolver/server/findReferenc
 export * from "./resolver/server/resolveImportablePaths";
 export { resolveFlowByPath } from "./resolver/server/resolveFlowServer";
 export { resolveCodeNodeDependencies, isCodeNodePath } from "./resolver/server/serverUtils";
+export * from "./resolver/server/movedFileImports";
