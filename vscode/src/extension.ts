@@ -15,6 +15,12 @@ import { activateReporter, reportEvent, analytics } from "./analytics";
 import { showFirstRunPrivacyNotice, showPrivacySettings } from "./privacyNotice";
 
 import { Template, getTemplates, scaffoldTemplate } from "./templateUtils";
+import { deserializeFlow, serializeFlow } from "@flyde/loader/dist/server";
+import {
+  RenamedFileEntry,
+  resolveMovedTargetPath,
+  updateFlowObjectImportsOnMove,
+} from "./fileMoveImportUpdater";
 
 // the application insights key (also known as instrumentation key)
 
@@ -227,6 +233,78 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.commands.registerCommand("flyde.showPrivacySettings", async () => {
       await showPrivacySettings();
+    })
+  );
+
+  context.subscriptions.push(
+    vscode.workspace.onDidRenameFiles(async (event) => {
+      try {
+        const renamedEntries: RenamedFileEntry[] = event.files.map((f) => ({
+          oldPath: f.oldUri.fsPath,
+          newPath: f.newUri.fsPath,
+        }));
+        if (renamedEntries.length === 0) {
+          return;
+        }
+
+        const flydeUris = await vscode.workspace.findFiles(
+          "**/*.flyde",
+          "**/node_modules/**"
+        );
+
+        const edit = new vscode.WorkspaceEdit();
+        let anyUpdated = false;
+
+        for (const flowUri of flydeUris) {
+          const newFlowPath = flowUri.fsPath;
+          let oldFlowPath = newFlowPath;
+          for (const entry of renamedEntries) {
+            if (entry.newPath === newFlowPath) {
+              oldFlowPath = entry.oldPath;
+              break;
+            } else if (
+              newFlowPath.startsWith(entry.newPath + "/") ||
+              newFlowPath.startsWith(entry.newPath + "\\")
+            ) {
+              const suffix = newFlowPath.slice(entry.newPath.length);
+              oldFlowPath = entry.oldPath + suffix;
+              break;
+            }
+          }
+
+          try {
+            const doc = await vscode.workspace.openTextDocument(flowUri);
+            const raw = doc.getText();
+            if (!raw.trim()) {
+              continue;
+            }
+            const flow = deserializeFlow(raw, newFlowPath);
+            const changed = updateFlowObjectImportsOnMove(
+              flow as any,
+              oldFlowPath,
+              newFlowPath,
+              renamedEntries
+            );
+            if (changed) {
+              const serialized = serializeFlow(flow);
+              const fullRange = new vscode.Range(0, 0, doc.lineCount, 0);
+              edit.replace(flowUri, fullRange, serialized);
+              anyUpdated = true;
+            }
+          } catch (flowErr) {
+            console.error(
+              `Failed to update imports for ${newFlowPath} after file move:`,
+              flowErr
+            );
+          }
+        }
+
+        if (anyUpdated) {
+          await vscode.workspace.applyEdit(edit);
+        }
+      } catch (err) {
+        console.error("Error handling onDidRenameFiles in Flyde:", err);
+      }
     })
   );
 }
