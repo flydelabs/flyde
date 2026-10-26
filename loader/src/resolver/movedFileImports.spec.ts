@@ -10,6 +10,53 @@ import { createServerReferencedNodeFinder } from "./server/findReferencedNodeSer
 import { updateFlowImportsForMovedFiles } from "./server/movedFileImports";
 import { resolveFlowByPath } from "./server/resolveFlowServer";
 
+function singleNodeFlowYaml(
+  flowId: string,
+  insId: string,
+  nodeId: string,
+  type: "code" | "visual",
+  filePath: string
+): string {
+  return `imports: {}
+node:
+  id: ${flowId}
+  inputs:
+    n:
+      mode: required
+      type: number
+  outputs:
+    r:
+      type: number
+  instances:
+    - id: ${insId}
+      nodeId: ${nodeId}
+      type: ${type}
+      source:
+        type: file
+        data: ${filePath}
+      config: {}
+      inputConfig: {}
+      pos:
+        x: 0
+        y: 0
+  connections:
+    - from:
+        insId: __this
+        pinId: n
+      to:
+        insId: ${insId}
+        pinId: n
+    - from:
+        insId: ${insId}
+        pinId: r
+      to:
+        insId: __this
+        pinId: r
+  inputsPosition: {}
+  outputsPosition: {}
+`;
+}
+
 describe("moved file imports", () => {
   let tempRoot: string;
 
@@ -42,56 +89,14 @@ describe("moved file imports", () => {
     const flowPath = join(tempRoot, "Main.flyde");
     writeFileSync(
       flowPath,
-      `imports: {}
-node:
-  id: Main
-  inputs:
-    n:
-      mode: required
-      type: number
-  outputs:
-    r:
-      type: number
-  instances:
-    - id: ins1
-      nodeId: AddOne
-      type: code
-      source:
-        type: file
-        data: ./AddOne.flyde.js
-      config: {}
-      inputConfig: {}
-      pos:
-        x: 0
-        y: 0
-  connections:
-    - from:
-        insId: __this
-        pinId: n
-      to:
-        insId: ins1
-        pinId: n
-    - from:
-        insId: ins1
-        pinId: r
-      to:
-        insId: __this
-        pinId: r
-  inputsPosition: {}
-  outputsPosition: {}
-`
+      singleNodeFlowYaml("Main", "ins1", "AddOne", "code", "./AddOne.flyde.js")
     );
 
     const resolved = resolveFlowByPath(flowPath);
     const [spy, r] = spiedOutput();
     const n = dynamicNodeInput();
 
-    execute({
-      node: resolved,
-      inputs: { n },
-      outputs: { r },
-    });
-
+    execute({ node: resolved, inputs: { n }, outputs: { r } });
     n.subject.next(10);
     assert.equal(spy.lastCall.args[0], 11);
   });
@@ -113,56 +118,20 @@ node:
 
     writeFileSync(
       flowPath,
-      `imports: {}
-node:
-  id: MovedFlow
-  inputs:
-    n:
-      mode: required
-      type: number
-  outputs:
-    r:
-      type: number
-  instances:
-    - id: ins1
-      nodeId: MultiplyTwo
-      type: code
-      source:
-        type: file
-        data: ./MultiplyTwo.flyde.js
-      config: {}
-      inputConfig: {}
-      pos:
-        x: 0
-        y: 0
-  connections:
-    - from:
-        insId: __this
-        pinId: n
-      to:
-        insId: ins1
-        pinId: n
-    - from:
-        insId: ins1
-        pinId: r
-      to:
-        insId: __this
-        pinId: r
-  inputsPosition: {}
-  outputsPosition: {}
-`
+      singleNodeFlowYaml(
+        "MovedFlow",
+        "ins1",
+        "MultiplyTwo",
+        "code",
+        "./MultiplyTwo.flyde.js"
+      )
     );
 
     const resolved = resolveFlowByPath(flowPath);
     const [spy, r] = spiedOutput();
     const n = dynamicNodeInput();
 
-    execute({
-      node: resolved,
-      inputs: { n },
-      outputs: { r },
-    });
-
+    execute({ node: resolved, inputs: { n }, outputs: { r } });
     n.subject.next(7);
     assert.equal(spy.lastCall.args[0], 14);
   });
@@ -183,96 +152,24 @@ node:
 
     writeFileSync(
       join(subDir, "ChildFlow.flyde"),
-      `imports: {}
-node:
-  id: ChildFlow
-  inputs:
-    n:
-      mode: required
-      type: number
-  outputs:
-    r:
-      type: number
-  instances:
-    - id: step1
-      nodeId: Step
-      type: code
-      source:
-        type: file
-        data: ./Step.flyde.js
-      config: {}
-      inputConfig: {}
-      pos:
-        x: 0
-        y: 0
-  connections:
-    - from:
-        insId: __this
-        pinId: n
-      to:
-        insId: step1
-        pinId: n
-    - from:
-        insId: step1
-        pinId: r
-      to:
-        insId: __this
-        pinId: r
-  inputsPosition: {}
-  outputsPosition: {}
-`
+      singleNodeFlowYaml("ChildFlow", "step1", "Step", "code", "./Step.flyde.js")
     );
 
     const parentPath = join(tempRoot, "ParentFlow.flyde");
-    const parentRaw = `imports: {}
-node:
-  id: ParentFlow
-  inputs:
-    n:
-      mode: required
-      type: number
-  outputs:
-    r:
-      type: number
-  instances:
-    - id: child1
-      nodeId: ChildFlow
-      type: visual
-      source:
-        type: file
-        data: ./subflows/ChildFlow.flyde
-      inputConfig: {}
-      pos:
-        x: 0
-        y: 0
-  connections:
-    - from:
-        insId: __this
-        pinId: n
-      to:
-        insId: child1
-        pinId: n
-    - from:
-        insId: child1
-        pinId: r
-      to:
-        insId: __this
-        pinId: r
-  inputsPosition: {}
-  outputsPosition: {}
-`;
+    const parentRaw = singleNodeFlowYaml(
+      "ParentFlow",
+      "child1",
+      "ChildFlow",
+      "visual",
+      "./subflows/ChildFlow.flyde"
+    );
     writeFileSync(parentPath, parentRaw);
 
     const resolvedRuntime = resolveFlowByPath(parentPath);
     const [spy, r] = spiedOutput();
     const n = dynamicNodeInput();
 
-    execute({
-      node: resolvedRuntime,
-      inputs: { n },
-      outputs: { r },
-    });
-
+    execute({ node: resolvedRuntime, inputs: { n }, outputs: { r } });
     n.subject.next(3);
     assert.equal(spy.lastCall.args[0], 8);
 
@@ -378,13 +275,10 @@ node:
   outputsPosition: {}
 `;
 
-    const oldFlowPath = "/workspace/project/ParentFlow.flyde";
-    const newFlowPath = "/workspace/project/flows/ParentFlow.flyde";
-
     const result = updateFlowImportsForMovedFiles(
       rawFlow,
-      oldFlowPath,
-      newFlowPath,
+      "/workspace/project/ParentFlow.flyde",
+      "/workspace/project/flows/ParentFlow.flyde",
       [
         {
           oldPath: "/workspace/project/ParentFlow.flyde",

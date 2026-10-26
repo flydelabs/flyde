@@ -5,7 +5,8 @@ import {
   NodeInstance,
   VisualNode,
 } from "@flyde/core";
-import { existsSync, lstatSync, readdirSync } from "fs";
+import { existsSync } from "fs";
+import * as glob from "glob";
 import { basename, dirname, join, relative, resolve, sep } from "path";
 import * as yaml from "yaml";
 import findRoot = require("find-root");
@@ -16,16 +17,6 @@ export interface FileMove {
   oldPath: string;
   newPath: string;
 }
-
-const IGNORED_DIRS = new Set([
-  "node_modules",
-  ".git",
-  "dist",
-  "out",
-  "build",
-  ".next",
-  "coverage",
-]);
 
 export function formatRelativeImportPath(
   fromDir: string,
@@ -40,11 +31,7 @@ export function formatRelativeImportPath(
   const needsDotPrefix =
     forceDotPrefix || (originalPath ? originalPath.startsWith("./") : false);
 
-  if (needsDotPrefix && !rel.startsWith(".")) {
-    return `./${rel}`;
-  }
-
-  return rel;
+  return needsDotPrefix && !rel.startsWith(".") ? `./${rel}` : rel;
 }
 
 function getMovedTargetPath(
@@ -93,16 +80,15 @@ export function rebaseVisualNodeFileSources(
         nextInstance.source.data,
         nextInstance.nodeId
       );
-      const rebasedData = formatRelativeImportPath(
-        toDir,
-        resolvedTarget,
-        nextInstance.source.data
-      );
       nextInstance = {
         ...nextInstance,
         source: {
           ...nextInstance.source,
-          data: rebasedData,
+          data: formatRelativeImportPath(
+            toDir,
+            resolvedTarget,
+            nextInstance.source.data
+          ),
         },
       };
     } else if (isInlineVisualNodeInstance(nextInstance)) {
@@ -137,46 +123,6 @@ export function rebaseVisualNodeFileSources(
   };
 }
 
-function collectCandidateFiles(
-  dir: string,
-  predicate: (filePath: string, fileName: string) => boolean,
-  maxDepth = 7,
-  results: string[] = []
-): string[] {
-  if (maxDepth < 0 || !existsSync(dir)) {
-    return results;
-  }
-
-  let entries: string[];
-  try {
-    entries = readdirSync(dir);
-  } catch {
-    return results;
-  }
-
-  for (const entry of entries) {
-    if (IGNORED_DIRS.has(entry)) {
-      continue;
-    }
-
-    const fullPath = join(dir, entry);
-    let stats;
-    try {
-      stats = lstatSync(fullPath);
-    } catch {
-      continue;
-    }
-
-    if (stats.isDirectory()) {
-      collectCandidateFiles(fullPath, predicate, maxDepth - 1, results);
-    } else if (stats.isFile() && predicate(fullPath, entry)) {
-      results.push(fullPath);
-    }
-  }
-
-  return results;
-}
-
 function candidateDefinesNode(candidatePath: string, nodeId?: string): boolean {
   if (!nodeId) {
     return true;
@@ -184,8 +130,7 @@ function candidateDefinesNode(candidatePath: string, nodeId?: string): boolean {
 
   try {
     if (candidatePath.endsWith(".flyde")) {
-      const flow = deserializeFlowByPath(candidatePath);
-      return flow.node.id === nodeId;
+      return deserializeFlowByPath(candidatePath).node.id === nodeId;
     }
 
     if (isCodeNodePath(candidatePath)) {
@@ -204,24 +149,8 @@ function getSearchRoot(fullFlowPath: string): string {
   try {
     return findRoot(flowDir);
   } catch {
-    let current = flowDir;
-    for (let i = 0; i < 2; i++) {
-      const parent = dirname(current);
-      if (parent === current) {
-        break;
-      }
-      current = parent;
-    }
-    return current;
+    return resolve(flowDir, "../..");
   }
-}
-
-function rankByProximity(flowDir: string, candidates: string[]): string[] {
-  return [...candidates].sort((a, b) => {
-    const relA = relative(flowDir, a).split(sep).length;
-    const relB = relative(flowDir, b).split(sep).length;
-    return relA - relB;
-  });
 }
 
 export function resolveMovedFilePath(
@@ -237,70 +166,27 @@ export function resolveMovedFilePath(
   }
 
   const targetFileName = basename(relativeImportPath);
-  const directDir = dirname(directPath);
-  if (existsSync(directDir)) {
-    try {
-      const siblingMatch = readdirSync(directDir).find(
-        (entry) => entry.toLowerCase() === targetFileName.toLowerCase()
-      );
-      if (siblingMatch) {
-        const matchedSiblingPath = join(directDir, siblingMatch);
-        if (existsSync(matchedSiblingPath)) {
-          return matchedSiblingPath;
-        }
-      }
-    } catch {
-      // Ignore directory read errors
-    }
-  }
-
   const searchRoot = getSearchRoot(fullFlowPath);
+  const candidates = glob
+    .sync(`**/${targetFileName}`, {
+      cwd: searchRoot,
+      ignore: ["**/node_modules/**", "**/.git/**", "**/dist/**", "**/out/**"],
+      absolute: true,
+    })
+    .filter((filePath) => resolve(filePath) !== resolve(fullFlowPath))
+    .sort(
+      (a, b) =>
+        relative(flowDir, a).split(sep).length -
+        relative(flowDir, b).split(sep).length
+    );
 
-  const sameNameCandidates = rankByProximity(
-    flowDir,
-    collectCandidateFiles(
-      searchRoot,
-      (filePath, fileName) =>
-        fileName.toLowerCase() === targetFileName.toLowerCase() &&
-        resolve(filePath) !== resolve(fullFlowPath)
-    )
-  );
-
-  for (const candidate of sameNameCandidates) {
+  for (const candidate of candidates) {
     if (candidateDefinesNode(candidate, nodeId)) {
       return candidate;
     }
   }
 
-  if (sameNameCandidates.length === 1) {
-    return sameNameCandidates[0];
-  }
-
-  if (nodeId) {
-    const isVisualTarget = targetFileName.endsWith(".flyde");
-    const nodeMatchCandidates = rankByProximity(
-      flowDir,
-      collectCandidateFiles(searchRoot, (filePath, fileName) => {
-        if (resolve(filePath) === resolve(fullFlowPath)) {
-          return false;
-        }
-        if (isVisualTarget) {
-          return fileName.endsWith(".flyde");
-        }
-        return (
-          fileName.endsWith(".flyde.ts") || fileName.endsWith(".flyde.js")
-        );
-      })
-    );
-
-    for (const candidate of nodeMatchCandidates) {
-      if (candidateDefinesNode(candidate, nodeId)) {
-        return candidate;
-      }
-    }
-  }
-
-  return directPath;
+  return candidates.length === 1 ? candidates[0] : directPath;
 }
 
 export function updateVisualNodeMovedFileImports(
@@ -322,9 +208,8 @@ export function updateVisualNodeMovedFileImports(
     ) {
       const oldTargetAbsPath = resolve(oldFlowDir, instance.source.data);
       const newTargetAbsPath = getMovedTargetPath(oldTargetAbsPath, moves);
-      const targetMoved = newTargetAbsPath !== oldTargetAbsPath;
 
-      if (flowMoved || targetMoved) {
+      if (flowMoved || newTargetAbsPath !== oldTargetAbsPath) {
         const nextRelPath = formatRelativeImportPath(
           newFlowDir,
           newTargetAbsPath,
@@ -366,17 +251,9 @@ export function updateVisualNodeMovedFileImports(
     return instance;
   });
 
-  if (!changed) {
-    return { node, changed: false };
-  }
-
-  return {
-    node: {
-      ...node,
-      instances: updatedInstances,
-    },
-    changed: true,
-  };
+  return changed
+    ? { node: { ...node, instances: updatedInstances }, changed: true }
+    : { node, changed: false };
 }
 
 export function updateFlowImportsForMovedFiles(
@@ -406,9 +283,8 @@ export function updateFlowImportsForMovedFiles(
       if (importKey.startsWith(".")) {
         const oldTargetAbsPath = resolve(oldFlowDir, importKey);
         const newTargetAbsPath = getMovedTargetPath(oldTargetAbsPath, moves);
-        const targetMoved = newTargetAbsPath !== oldTargetAbsPath;
 
-        if (flowMoved || targetMoved) {
+        if (flowMoved || newTargetAbsPath !== oldTargetAbsPath) {
           const nextKey = formatRelativeImportPath(
             newFlowDir,
             newTargetAbsPath,
