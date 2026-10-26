@@ -13,6 +13,10 @@ import { resolveImportablePaths } from "./resolveImportablePaths";
 import { deserializeFlowByPath } from "../../serdes";
 import { ReferencedNodeFinder } from "./../ReferencedNodeFinder";
 import { resolveCodeNodeDependencies } from "./serverUtils";
+import {
+  rebaseVisualNodeFileSources,
+  resolveMovedFilePath,
+} from "./movedFileImports";
 
 const LocalNodes = Object.values(_Nodes).reduce<Record<string, CodeNode>>(
   (acc, curr) => {
@@ -49,8 +53,12 @@ export function createServerReferencedNodeFinder(
 
             if (isVisual) {
               try {
-                const node = deserializeFlowByPath(path).node;
-                // No longer adding sourcePath
+                const rawNode = deserializeFlowByPath(path).node;
+                const node = rebaseVisualNodeFileSources(
+                  rawNode,
+                  path,
+                  fullFlowPath
+                );
                 return { ...node, sourcePath: path };
               } catch (e) {
                 return [];
@@ -135,16 +143,25 @@ export function createServerReferencedNodeFinder(
         return nodeWrapper;
       }
       case "file": {
-        const fullFilePath = join(fullFlowPath, "..", instance.source.data);
+        const fullFilePath = resolveMovedFilePath(
+          fullFlowPath,
+          instance.source.data,
+          instance.nodeId
+        );
 
         // Check if the file is a .flyde file (visual flow)
-        if (fullFilePath.endsWith('.flyde')) {
-          const node = deserializeFlowByPath(fullFilePath).node;
-          if (node.id !== instance.nodeId) {
+        if (fullFilePath.endsWith(".flyde")) {
+          const rawNode = deserializeFlowByPath(fullFilePath).node;
+          if (rawNode.id !== instance.nodeId) {
             throw new Error(
-              `Node ID mismatch: expected ${instance.nodeId} but found ${node.id} in ${fullFilePath}`
+              `Node ID mismatch: expected ${instance.nodeId} but found ${rawNode.id} in ${fullFilePath}`
             );
           }
+          const node = rebaseVisualNodeFileSources(
+            rawNode,
+            fullFilePath,
+            fullFlowPath
+          );
           return node as unknown as FlydeNode;
         }
 
@@ -169,11 +186,18 @@ export function createServerReferencedNodeFinder(
           "type" in maybeAdvancedNode.editorConfig &&
           maybeAdvancedNode.editorConfig.type === "custom"
         ) {
-          const fullPath = join(
-            fullFlowPath,
+          const nodeDirBundlePath = join(
+            fullFilePath,
             "..",
             maybeAdvancedNode.editorConfig.editorComponentBundlePath
           );
+          const fullPath = existsSync(nodeDirBundlePath)
+            ? nodeDirBundlePath
+            : join(
+                fullFlowPath,
+                "..",
+                maybeAdvancedNode.editorConfig.editorComponentBundlePath
+              );
           const fileContent = readFileSync(fullPath, "utf-8");
           maybeAdvancedNode.editorConfig.editorComponentBundleContent =
             fileContent;
@@ -205,15 +229,20 @@ function getLocalOrPackagePaths(fullFlowPath: string, importPath: string) {
 
   if (existsSync(fullImportPath)) {
     return [fullImportPath];
-  } else {
-    try {
-      return resolveImportablePaths(fullFlowPath, importPath);
-    } catch (e) {
-      if (importPath !== "@flyde/nodes") {
-        throw new Error(`Cannot find module ${importPath} in ${fullFlowPath}`);
-      }
-      return [];
+  } else if (importPath.startsWith(".")) {
+    const movedPath = resolveMovedFilePath(fullFlowPath, importPath);
+    if (existsSync(movedPath)) {
+      return [movedPath];
     }
+  }
+
+  try {
+    return resolveImportablePaths(fullFlowPath, importPath);
+  } catch (e) {
+    if (importPath !== "@flyde/nodes") {
+      throw new Error(`Cannot find module ${importPath} in ${fullFlowPath}`);
+    }
+    return [];
   }
 }
 
@@ -244,17 +273,3 @@ function getSourceCode(nodeId: string): string {
     }
   }
 }
-
-// Example of how to import and use the bundled configs:
-/*
-// Import all bundled configs
-const bundledConfigs = require('@flyde/nodes/dist/bundled-config');
-
-// Access a specific node bundle
-const inlineValueBundle = bundledConfigs.InlineValue;
-
-// Or import a specific node directly
-const nodeBundle = require('@flyde/nodes/dist/bundled-config/InlineValue');
-
-// Each import provides the full bundle JavaScript as a string
-*/
