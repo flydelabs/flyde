@@ -15,6 +15,7 @@ import { activateReporter, reportEvent, analytics } from "./analytics";
 import { showFirstRunPrivacyNotice, showPrivacySettings } from "./privacyNotice";
 
 import { Template, getTemplates, scaffoldTemplate } from "./templateUtils";
+import { registerFileMoveImportUpdater } from "./updateImportsOnMove";
 
 // the application insights key (also known as instrumentation key)
 
@@ -229,6 +230,8 @@ export function activate(context: vscode.ExtensionContext) {
       await showPrivacySettings();
     })
   );
+
+  registerFileMoveImportUpdater(context);
 }
 
 // this method is called when your extension is deactivated
