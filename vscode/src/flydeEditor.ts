@@ -8,6 +8,8 @@ import { scanImportableNodes, generateAndSaveNode } from "./embedded-server";
 import { getBaseNodesLibraryData } from "@flyde/nodes/dist/nodes-library-data";
 
 import {
+  mapPathThroughMovesBackwards,
+  mergeFileImportPaths,
   resolveEditorInstance,
   resolveEditorNode,
 } from "@flyde/loader";
@@ -39,6 +41,13 @@ import { customCodeNodeFromCode } from "@flyde/core/dist/misc/custom-code-node-f
 import { createAiCompletion } from "./ai";
 import { getAvailableSecrets, addNewSecret, getSecrets } from "./secretsService";
 import { createNodeFinderWithOverrides } from "./createNodeFinderWithOverrides";
+import { isImportPathRepair } from "./importPathRepairMarkers";
+import { onFlowFileMoves } from "./importPathUpdates";
+
+export {
+  markImportPathRepairs,
+  clearImportPathRepairs,
+} from "./importPathRepairMarkers";
 
 // Helper functions
 // export type EditorPortType = keyof any;
@@ -136,6 +145,8 @@ export class FlydeEditorEditorProvider
 
     let lastSaveBy = "";
 
+    let lastKnownRaw = document.getText();
+
     let lastFlow: FlydeFlow;
 
     const messageResponse = (event: FlydePortMessage<any>, payload: any) => {
@@ -174,8 +185,24 @@ export class FlydeEditorEditorProvider
     const fullDocumentPath = document.uri.fsPath;
     const executionId = fullDocumentPath;
 
+    const fileMoveSubscription = onFlowFileMoves(({ moves }) => {
+      webviewPanel.webview.postMessage({
+        type: "onImportPathsMoved",
+        params: {
+          moves,
+          flowBefore: mapPathThroughMovesBackwards(
+            document.uri.fsPath,
+            moves
+          ),
+          flowAfter: document.uri.fsPath,
+        },
+        source: "extension",
+      });
+    });
+
     const renderWebview = async () => {
       const raw = document.getText();
+      lastKnownRaw = raw;
       const fileName = (
         document.uri.fsPath.split(path.sep).pop() ?? "Default"
       ).replace(".flyde", "");
@@ -348,7 +375,19 @@ export class FlydeEditorEditorProvider
               case "setFlow": {
                 const { flow } = event.params;
 
-                const node = flow.node as EditorVisualNode;
+                let node = flow.node as EditorVisualNode;
+                try {
+                  const raw = document.getText();
+                  if (raw.trim() !== "") {
+                    const onDiskFlow = deserializeFlow(raw, fullDocumentPath);
+                    node = mergeFileImportPaths(
+                      node,
+                      onDiskFlow.node
+                    ) as EditorVisualNode;
+                  }
+                } catch (error) {
+                  console.error("Failed to merge on-disk import paths", error);
+                }
 
                 function cleanNode(node: EditorVisualNode): VisualNode {
                   const newNode: VisualNode = node;
@@ -382,14 +421,19 @@ export class FlydeEditorEditorProvider
                 }
 
                 const serialized = serializeFlow({ node: cleanNode(node) });
-                lastFlow = flow;
+                lastFlow = { ...flow, node };
                 const edit = new vscode.WorkspaceEdit();
 
                 // replacing everything for simplicity. TODO - pass only delta changes
                 const range = new vscode.Range(0, 0, document.lineCount, 0);
                 edit.replace(document.uri, range, serialized);
                 lastSaveBy = webviewId;
-                await vscode.workspace.applyEdit(edit);
+                try {
+                  await vscode.workspace.applyEdit(edit);
+                } finally {
+                  lastSaveBy = "";
+                }
+                lastKnownRaw = document.getText();
                 messageResponse(event, undefined);
                 break;
               }
@@ -751,21 +795,61 @@ export class FlydeEditorEditorProvider
       (e) => {
         const isSameUri = e.document.uri.toString() === document.uri.toString();
 
-        if (isSameUri && lastSaveBy !== webviewId) {
+        if (isSameUri) {
           const raw = document.getText();
-          const flow: FlydeFlow = deserializeFlow(raw, fullDocumentPath);
-          webviewPanel.webview.postMessage({
-            type: "onExternalFlowChange",
-            requestId: "TODO-cuid",
-            params: { flow },
-            source: "extension",
-          });
+
+          // Dirty-state transitions emit change events without a content
+          // change. They must not consume repair markers reserved for the
+          // repair's own content event.
+          if (raw === lastKnownRaw) {
+            return;
+          }
+          lastKnownRaw = raw;
+
+          if (lastSaveBy === webviewId) {
+            return;
+          }
+
+          // A repair is suppressed only by the exact content it produced, no
+          // matter in which order its change events arrive. Do not consume the
+          // marker here: split custom editors share one TextDocument but each
+          // panel has its own listener, and all of them must recognize the same
+          // repaired content. The TTL in importPathUpdates clears it later.
+          const isRepair = isImportPathRepair(
+            document.uri.fsPath,
+            raw,
+            e.document.version
+          );
+
+          try {
+            const flow: FlydeFlow = deserializeFlow(raw, fullDocumentPath);
+            const resolvedNode = resolveEditorNode(
+              flow.node,
+              createNodeFinderWithOverrides(fullDocumentPath)
+            );
+
+            lastFlow = flow;
+
+            // A repair must not replace unsaved webview state; the webview's
+            // next save merges the repaired paths from disk instead.
+            if (!isRepair) {
+              webviewPanel.webview.postMessage({
+                type: "onExternalFlowChange",
+                requestId: "TODO-cuid",
+                params: { flow: { ...flow, node: resolvedNode } },
+                source: "extension",
+              });
+            }
+          } catch (error) {
+            console.error("Failed to resolve externally changed flow", error);
+          }
         }
       }
     );
 
     // Make sure we get rid of the listener when our editor is closed.
     webviewPanel.onDidDispose(() => {
+      fileMoveSubscription();
       changeDocumentSubscription.dispose();
     });
   }

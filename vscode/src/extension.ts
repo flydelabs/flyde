@@ -3,6 +3,7 @@
 import * as vscode from "vscode";
 
 import { FlydeEditorEditorProvider } from "./flydeEditor";
+import { registerImportPathUpdatesForFileMoves } from "./importPathUpdates";
 import * as execa from "execa";
 
 var fp = require("find-free-port");
@@ -93,6 +94,8 @@ export function activate(context: vscode.ExtensionContext) {
         darkMode: useDarkMode,
       })
     );
+
+    registerImportPathUpdatesForFileMoves(context);
   });
 
   const openAsTextHandler = async (uri: vscode.Uri) => {

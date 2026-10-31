@@ -19,6 +19,17 @@ export type CancelFn = () => void;
 
 export interface AiCompletionDto { prompt: string; nodeId: string; insId: string; jsonMode?: boolean; };
 
+export interface ImportPathMove {
+  from: string;
+  to: string;
+}
+
+export interface ImportPathMoveContext {
+  moves: ImportPathMove[];
+  flowBefore: string;
+  flowAfter: string;
+}
+
 export interface EditorPorts {
   prompt: (dto: {
     defaultValue?: string;
@@ -32,6 +43,10 @@ export interface EditorPorts {
   setFlow: (dto: { absPath: string; flow: FlydeFlow }) => Promise<void>;
 
   onExternalFlowChange: (cb: (data: { flow: { node: EditorVisualNode } }) => void) => CancelFn;
+
+  onImportPathsMoved?: (
+    cb: (data: ImportPathMoveContext) => void
+  ) => CancelFn;
 
   onRunFlow: (
     inputs: Record<string, any>,
