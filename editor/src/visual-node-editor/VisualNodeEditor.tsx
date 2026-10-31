@@ -226,6 +226,30 @@ export const VisualNodeEditor: React.FC<VisualNodeEditorProps & { ref?: any }> =
         insId: string;
       }>();
 
+      useEffect(() => {
+        if (!openInlineInstance) {
+          return;
+        }
+        const inlineInstance = node.instances.find(
+          (instance) => instance.id === openInlineInstance.insId
+        );
+        if (
+          !inlineInstance ||
+          !isInlineVisualNodeInstance(inlineInstance)
+        ) {
+          return;
+        }
+        const currentInlineNode = inlineInstance.source
+          .data as EditorVisualNode;
+        if (currentInlineNode !== openInlineInstance.node) {
+          setOpenInlineInstance((current) =>
+            current && current.insId === openInlineInstance.insId
+              ? { ...current, node: currentInlineNode }
+              : current
+          );
+        }
+      }, [node, openInlineInstance?.insId]);
+
       const [editedNodeInstance, setEditedNodeInstance] = useState<{
         ins: EditorCodeNodeInstance;
       }>();

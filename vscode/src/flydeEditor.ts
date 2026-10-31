@@ -8,6 +8,7 @@ import { scanImportableNodes, generateAndSaveNode } from "./embedded-server";
 import { getBaseNodesLibraryData } from "@flyde/nodes/dist/nodes-library-data";
 
 import {
+  mapPathThroughMovesBackwards,
   mergeFileImportPaths,
   resolveEditorInstance,
   resolveEditorNode,
@@ -40,6 +41,13 @@ import { customCodeNodeFromCode } from "@flyde/core/dist/misc/custom-code-node-f
 import { createAiCompletion } from "./ai";
 import { getAvailableSecrets, addNewSecret, getSecrets } from "./secretsService";
 import { createNodeFinderWithOverrides } from "./createNodeFinderWithOverrides";
+import { isImportPathRepair } from "./importPathRepairMarkers";
+import { onFlowFileMoves } from "./importPathUpdates";
+
+export {
+  markImportPathRepairs,
+  clearImportPathRepairs,
+} from "./importPathRepairMarkers";
 
 // Helper functions
 // export type EditorPortType = keyof any;
@@ -77,25 +85,6 @@ const tryOrThrow = <T>(fn: () => T, msg: string): T | Error => {
 };
 
 let lastWebview: any = null;
-
-const pendingImportPathRepairs = new Map<string, string>();
-
-/**
- * Remembers the exact contents a repair produced for each file. The editor's
- * change listener suppresses the resulting external-change notification only
- * for that content, so a stale marker can never hide a later edit.
- */
-export const markImportPathRepairs = (
-  repairs: { filePath: string; contents: string }[]
-) => {
-  repairs.forEach(({ filePath, contents }) =>
-    pendingImportPathRepairs.set(filePath, contents)
-  );
-};
-
-export const clearImportPathRepairs = (filePaths: string[]) => {
-  filePaths.forEach((filePath) => pendingImportPathRepairs.delete(filePath));
-};
 
 export const getLastWebviewForTests = () => {
   return lastWebview;
@@ -195,6 +184,21 @@ export class FlydeEditorEditorProvider
 
     const fullDocumentPath = document.uri.fsPath;
     const executionId = fullDocumentPath;
+
+    const fileMoveSubscription = onFlowFileMoves(({ moves }) => {
+      webviewPanel.webview.postMessage({
+        type: "onImportPathsMoved",
+        params: {
+          moves,
+          flowBefore: mapPathThroughMovesBackwards(
+            document.uri.fsPath,
+            moves
+          ),
+          flowAfter: document.uri.fsPath,
+        },
+        source: "extension",
+      });
+    });
 
     const renderWebview = async () => {
       const raw = document.getText();
@@ -807,12 +811,15 @@ export class FlydeEditorEditorProvider
           }
 
           // A repair is suppressed only by the exact content it produced, no
-          // matter in which order its change events arrive.
-          const isImportPathRepair =
-            pendingImportPathRepairs.get(document.uri.fsPath) === raw;
-          if (isImportPathRepair) {
-            pendingImportPathRepairs.delete(document.uri.fsPath);
-          }
+          // matter in which order its change events arrive. Do not consume the
+          // marker here: split custom editors share one TextDocument but each
+          // panel has its own listener, and all of them must recognize the same
+          // repaired content. The TTL in importPathUpdates clears it later.
+          const isRepair = isImportPathRepair(
+            document.uri.fsPath,
+            raw,
+            e.document.version
+          );
 
           try {
             const flow: FlydeFlow = deserializeFlow(raw, fullDocumentPath);
@@ -825,7 +832,7 @@ export class FlydeEditorEditorProvider
 
             // A repair must not replace unsaved webview state; the webview's
             // next save merges the repaired paths from disk instead.
-            if (!isImportPathRepair) {
+            if (!isRepair) {
               webviewPanel.webview.postMessage({
                 type: "onExternalFlowChange",
                 requestId: "TODO-cuid",
@@ -842,6 +849,7 @@ export class FlydeEditorEditorProvider
 
     // Make sure we get rid of the listener when our editor is closed.
     webviewPanel.onDidDispose(() => {
+      fileMoveSubscription();
       changeDocumentSubscription.dispose();
     });
   }

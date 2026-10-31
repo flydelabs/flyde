@@ -7,10 +7,50 @@ import {
 import {
   clearImportPathRepairs,
   markImportPathRepairs,
-} from "./flydeEditor";
+} from "./importPathRepairMarkers";
 
 const RENAME_COALESCE_MS = 150;
 const REPAIR_MARKER_TTL_MS = 1000;
+
+// A repair marker is valid only for the generation that marked it. An older
+// batch's cleanup timer must not delete a newer batch's marker for the same
+// file, or that newer repair would be posted as an external edit.
+const repairGenerationByPath = new Map<string, number>();
+
+const flowFileMoveListeners = new Set<
+  (notice: FlowFileMovesNotice) => void
+>();
+
+export interface FlowFileMovesNotice {
+  moves: FileMove[];
+}
+
+/**
+ * Notifies open editors after a move batch has been reflected on disk. This
+ * carries the moves themselves, not only the paths that happened to be in a
+ * TextDocument, so unsaved instances and retained paste/undo state can be
+ * repaired too.
+ */
+export const onFlowFileMoves = (
+  listener: (notice: FlowFileMovesNotice) => void
+) => {
+  flowFileMoveListeners.add(listener);
+  return () => {
+    flowFileMoveListeners.delete(listener);
+  };
+};
+
+const notifyFlowFileMoves = (moves: FileMove[]) => {
+  flowFileMoveListeners.forEach((listener) => {
+    try {
+      listener({ moves });
+    } catch (error) {
+      // A disposed or broken panel must not keep the repair loop in its
+      // `repairing` state or hide the move from the remaining editors.
+      console.error("Failed to notify an editor about moved files", error);
+    }
+  });
+};
 
 interface ChangedDocument {
   document: vscode.TextDocument;
@@ -24,10 +64,18 @@ async function repairImportPaths(
   moves: FileMove[],
   hasPendingMoves: () => boolean
 ): Promise<RepairResult> {
-  const flowUris = await vscode.workspace.findFiles(
-    "**/*.flyde",
-    "**/node_modules/**"
-  );
+  let flowUris: vscode.Uri[];
+  try {
+    flowUris = await vscode.workspace.findFiles(
+      "**/*.flyde",
+      "**/node_modules/**"
+    );
+  } catch (error) {
+    if (hasPendingMoves()) {
+      return "aborted";
+    }
+    throw error;
+  }
 
   const documentResults = await Promise.allSettled(
     flowUris.map((uri) => vscode.workspace.openTextDocument(uri))
@@ -93,6 +141,12 @@ async function repairImportPaths(
   const changedPaths = changedDocuments.map(
     ({ document }) => document.uri.fsPath
   );
+  const generations = new Map<string, number>();
+  for (const filePath of changedPaths) {
+    const generation = (repairGenerationByPath.get(filePath) ?? 0) + 1;
+    repairGenerationByPath.set(filePath, generation);
+    generations.set(filePath, generation);
+  }
   markImportPathRepairs(
     changedDocuments.map(({ document, updated }) => ({
       filePath: document.uri.fsPath,
@@ -105,23 +159,43 @@ async function repairImportPaths(
     applied = await vscode.workspace.applyEdit(edit);
   } catch (error) {
     clearImportPathRepairs(changedPaths);
+    if (hasPendingMoves()) {
+      return "aborted";
+    }
     throw error;
   }
 
   if (!applied) {
     console.error("Failed to apply import path updates after rename");
     clearImportPathRepairs(changedPaths);
-    return "failed";
+    // The move that caused this batch may have arrived while applyEdit was
+    // outstanding and invalidated its URIs. Requeue instead of dropping the
+    // unapplied chain; the next batch sees the newer move too.
+    return hasPendingMoves() ? "aborted" : "failed";
   }
 
-  // The editor's change listener consumes a marker when its exact repaired
-  // content arrives. Clear anything unconsumed shortly afterwards: a flow with
-  // no open editor has no listener, and leaving its marker forever would leak
-  // memory and could hide a later edit that happens to restore that content.
-  const markerCleanup = setTimeout(
-    () => clearImportPathRepairs(changedPaths),
-    REPAIR_MARKER_TTL_MS
+  // Now that the edit is applied, bind each marker to the exact document
+  // version it produced. A later external edit that happens to restore the
+  // same contents is not mistaken for this repair.
+  markImportPathRepairs(
+    changedDocuments.map(({ document, updated }) => ({
+      filePath: document.uri.fsPath,
+      contents: updated,
+      version: document.version,
+    }))
   );
+  // Every editor listener checks a marker when its exact repaired content
+  // arrives. Clear anything unconsumed shortly afterwards: a flow with no open
+  // editor has no listener, and leaving its marker forever would leak memory
+  // and could hide a later edit that happens to restore that content.
+  const markerCleanup = setTimeout(() => {
+    const stalePaths = changedPaths.filter(
+      (filePath) =>
+        repairGenerationByPath.get(filePath) === generations.get(filePath)
+    );
+    clearImportPathRepairs(stalePaths);
+    stalePaths.forEach((filePath) => repairGenerationByPath.delete(filePath));
+  }, REPAIR_MARKER_TTL_MS);
   markerCleanup.unref?.();
 
   try {
@@ -162,8 +236,9 @@ export function registerImportPathUpdatesForFileMoves(
     }
 
     repairing = true;
+    let result: RepairResult | undefined;
     try {
-      const result = await repairImportPaths(
+      result = await repairImportPaths(
         moves,
         () => pendingMoves.length > 0
       );
@@ -174,6 +249,9 @@ export function registerImportPathUpdatesForFileMoves(
     } catch (error) {
       console.error("Failed to update import paths after rename", error);
     } finally {
+      if (result === "applied") {
+        notifyFlowFileMoves(moves);
+      }
       repairing = false;
 
       if (pendingMoves.length > 0 && flushTimer === undefined) {

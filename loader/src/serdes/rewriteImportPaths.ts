@@ -18,6 +18,8 @@ export interface RewriteImportPathsOptions {
   flowAfter: string;
   moves: FileMove[];
   pathImpl?: PathApi;
+  /** Called for every import path that is actually rewritten. */
+  onPathRewritten?: (from: string, to: string) => void;
 }
 
 const normalizeForComparison = (filePath: string, pathImpl: PathApi) => {
@@ -84,6 +86,56 @@ export function mapPathThroughMovesBackwards(
 const resolveNode = (node: unknown, doc: yaml.Document): unknown =>
   yaml.isAlias(node) ? node.resolve(doc) : node;
 
+const nodeAnchor = (node: unknown): string | undefined => {
+  if (!node || typeof node !== "object") {
+    return undefined;
+  }
+  const anchor = (node as { anchor?: unknown }).anchor;
+  return typeof anchor === "string" ? anchor : undefined;
+};
+
+/**
+ * Collects anchors on scalar names inside a value. Replacing a sequence can
+ * otherwise leave aliases inside that sequence unresolved. Anchors on nested
+ * collections are not materialized; callers decline those merges.
+ */
+const collectAnchoredScalars = (
+  node: unknown,
+  anchors: Map<string, string>,
+  onConflict: () => void,
+  isTopLevel: boolean
+) => {
+  if (yaml.isAlias(node)) {
+    return;
+  }
+
+  const anchor = nodeAnchor(node);
+  if (anchor !== undefined) {
+    if (isTopLevel) {
+      // Whole-value anchors are copied by the survivor logic.
+    } else if (yaml.isScalar(node) && typeof node.value === "string") {
+      const existing = anchors.get(node.value);
+      if (existing !== undefined && existing !== anchor) {
+        onConflict();
+      } else {
+        anchors.set(node.value, anchor);
+      }
+    } else {
+      onConflict();
+    }
+  }
+
+  if (yaml.isSeq(node)) {
+    for (const item of node.items) {
+      collectAnchoredScalars(item, anchors, onConflict, false);
+    }
+  } else if (yaml.isMap(node)) {
+    for (const pair of node.items) {
+      collectAnchoredScalars(pair.value, anchors, onConflict, false);
+    }
+  }
+};
+
 /**
  * Updates relative file import paths in a flow so they keep pointing at the same
  * targets after imports, the flow itself, or any parent folder is moved. Covers
@@ -127,7 +179,11 @@ export function rewriteImportPathsAfterMove(
       // Absolute imports do not depend on where the flow lives, but they do
       // break when the imported file itself moves.
       const movedTarget = mapPathThroughMoves(data, moves, pathImpl);
-      return isSamePath(movedTarget, data, pathImpl) ? undefined : movedTarget;
+      if (isSamePath(movedTarget, data, pathImpl)) {
+        return undefined;
+      }
+      options.onPathRewritten?.(data, movedTarget);
+      return movedTarget;
     }
 
     const absoluteTarget = pathImpl.resolve(beforeDir, data);
@@ -146,6 +202,7 @@ export function rewriteImportPathsAfterMove(
       return undefined;
     }
 
+    options.onPathRewritten?.(data, nextData);
     return nextData;
   };
 
@@ -287,6 +344,8 @@ export function rewriteImportPathsAfterMove(
     ): boolean => {
       const names: string[] = [];
       let hasArrayValue = false;
+      const scalarAnchors = new Map<string, string>();
+      let anchorConflict = false;
       for (const entry of group) {
         const entryNames = importNames(entry.pair.value);
         if (entryNames === undefined) {
@@ -295,23 +354,101 @@ export function rewriteImportPathsAfterMove(
         if (yaml.isSeq(resolveNode(entry.pair.value, doc))) {
           hasArrayValue = true;
         }
+        if (group.length > 1) {
+          collectAnchoredScalars(
+            entry.pair.value,
+            scalarAnchors,
+            () => {
+              anchorConflict = true;
+            },
+            true
+          );
+        }
         for (const name of entryNames) {
           if (!names.includes(name)) {
             names.push(name);
           }
         }
       }
+      if (anchorConflict) {
+        return false;
+      }
 
-      const survivor =
-        group.find((entry) => entry.originalKey === target) ?? group[0];
+      // Only an anchor written on the entry's own value can be materialized
+      // here. `resolveNode` would also expose an anchor that lives on an
+      // aliased target elsewhere in the document; copying that name onto the
+      // merged value would create a duplicate anchor.
+      const anchoredEntries = group.filter(
+        (entry) => nodeAnchor(entry.pair.value) !== undefined
+      );
+      if (anchoredEntries.length > 1) {
+        // Merging would leave aliases to the removed anchors unresolved.
+        // Leave this group untouched rather than emit invalid YAML.
+        return false;
+      }
+
+      // Keep the first occurrence. Moving a later anchored entry to the front
+      // would place its anchor after aliases that already point at it, and
+      // YAML cannot resolve a forward alias. Anchors are materialized at this
+      // position instead, see below.
+      const survivor = group[0];
       const keyChanged = survivor.originalKey !== target;
       const valueChanged = group.length > 1;
+      const anchoredValue = anchoredEntries[0]
+        ? resolveNode(anchoredEntries[0].pair.value, doc)
+        : undefined;
+      const survivorAnchor = anchoredEntries[0]
+        ? nodeAnchor(anchoredEntries[0].pair.value)
+        : undefined;
+      const anchoredScalar =
+        yaml.isScalar(anchoredValue) && typeof anchoredValue.value === "string"
+          ? anchoredValue.value
+          : undefined;
 
       if (valueChanged) {
-        survivor.pair.value =
+        const nextValue =
           hasArrayValue || names.length > 1
             ? doc.createNode(names)
             : doc.createNode(names[0]);
+        if (yaml.isSeq(nextValue)) {
+          for (const item of nextValue.items) {
+            if (yaml.isScalar(item) && typeof item.value === "string") {
+              const anchor = scalarAnchors.get(item.value);
+              if (anchor !== undefined) {
+                item.anchor = anchor;
+              }
+            }
+          }
+        } else if (yaml.isScalar(nextValue)) {
+          const anchor = scalarAnchors.get(String(nextValue.value));
+          if (anchor !== undefined) {
+            nextValue.anchor = anchor;
+          }
+        }
+
+        if (survivorAnchor !== undefined) {
+          if (anchoredScalar !== undefined && yaml.isSeq(nextValue)) {
+            // A whole-value scalar anchor cannot move onto the merged
+            // sequence: aliases would start resolving to an array. Keep it on
+            // the scalar item so the alias keeps its original type.
+            const anchoredItem = nextValue.items.find(
+              (item) =>
+                yaml.isScalar(item) && item.value === anchoredScalar
+            );
+            if (yaml.isScalar(anchoredItem)) {
+              if (
+                anchoredItem.anchor !== undefined &&
+                anchoredItem.anchor !== survivorAnchor
+              ) {
+                return false;
+              }
+              anchoredItem.anchor = survivorAnchor;
+            }
+          } else {
+            nextValue.anchor = survivorAnchor;
+          }
+        }
+        survivor.pair.value = nextValue;
       }
       if (keyChanged) {
         survivor.key.value = target;

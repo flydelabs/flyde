@@ -483,6 +483,169 @@ node:
     assert.equal(resolveKey("../b.flyde.ts"), "/ws/b.flyde.ts");
   });
 
+  it("does not duplicate an anchor that lives on an aliased target", () => {
+    const contents = `path: &childPath ../lib/child.flyde
+imports:
+  ./b.flyde.ts: *childPath
+  b.flyde.ts: [Two]
+node:
+  id: Main
+  instances:
+    - id: rootInst
+      nodeId: Root
+  connections: []
+`;
+    const updated = rewriteImportPathsAfterMove(contents, {
+      flowBefore: "/ws/main.flyde",
+      flowAfter: "/ws/nested/main.flyde",
+      moves: [{ from: "/ws/main.flyde", to: "/ws/nested/main.flyde" }],
+      pathImpl: posix,
+    });
+
+    const flow = yaml.parse(updated);
+    assert.deepEqual(flow.imports["../b.flyde.ts"], [
+      "../lib/child.flyde",
+      "Two",
+    ]);
+    assert.equal(flow.path, "../lib/child.flyde");
+    assert.equal(
+      updated.match(/&childPath/g)?.length,
+      1,
+      "the external anchor must be defined only once"
+    );
+  });
+
+  it("preserves a YAML anchor when merging colliding legacy keys", () => {
+    const contents = `imports:
+  ./b.flyde.ts: &Names [One]
+  b.flyde.ts: [Two]
+  ./c.flyde.ts: *Names
+node:
+  id: Main
+  instances:
+    - id: rootInst
+      nodeId: Root
+  connections: []
+`;
+    const updated = rewriteImportPathsAfterMove(contents, {
+      flowBefore: "/ws/main.flyde",
+      flowAfter: "/ws/nested/main.flyde",
+      moves: [{ from: "/ws/main.flyde", to: "/ws/nested/main.flyde" }],
+      pathImpl: posix,
+    });
+
+    const flow = yaml.parse(updated);
+    assert.deepEqual(Object.keys(flow.imports).sort(), [
+      "../b.flyde.ts",
+      "../c.flyde.ts",
+    ]);
+    assert.deepEqual(flow.imports["../b.flyde.ts"], ["One", "Two"]);
+    assert.deepEqual(flow.imports["../c.flyde.ts"], ["One", "Two"]);
+  });
+
+  it("keeps a later whole-value anchor before its aliases", () => {
+    const contents = `imports:
+  ./b.flyde.ts: [One]
+  b.flyde.ts: &Names [Two]
+  ./c.flyde.ts: *Names
+node:
+  id: Main
+  instances:
+    - id: rootInst
+      nodeId: Root
+  connections: []
+`;
+    const updated = rewriteImportPathsAfterMove(contents, {
+      flowBefore: "/ws/main.flyde",
+      flowAfter: "/ws/nested/main.flyde",
+      moves: [{ from: "/ws/main.flyde", to: "/ws/nested/main.flyde" }],
+      pathImpl: posix,
+    });
+
+    const flow = yaml.parse(updated);
+    assert.deepEqual(flow.imports["../b.flyde.ts"], ["One", "Two"]);
+    assert.deepEqual(flow.imports["../c.flyde.ts"], ["One", "Two"]);
+    assert.isAbove(
+      updated.indexOf("&Names"),
+      updated.indexOf("imports:")
+    );
+    assert.isBelow(
+      updated.indexOf("&Names"),
+      updated.indexOf("*Names")
+    );
+  });
+
+  it("keeps a whole-value scalar anchor on a scalar after merging into a sequence", () => {
+    const contents = `imports:
+  ./b.flyde.ts: &Names One
+  b.flyde.ts: [Two]
+  ./c.flyde.ts: [*Names]
+node:
+  id: Main
+  instances:
+    - id: rootInst
+      nodeId: Root
+  connections: []
+`;
+    const updated = rewriteImportPathsAfterMove(contents, {
+      flowBefore: "/ws/main.flyde",
+      flowAfter: "/ws/nested/main.flyde",
+      moves: [{ from: "/ws/main.flyde", to: "/ws/nested/main.flyde" }],
+      pathImpl: posix,
+    });
+
+    const flow = yaml.parse(updated);
+    assert.deepEqual(flow.imports["../b.flyde.ts"], ["One", "Two"]);
+    assert.deepEqual(flow.imports["../c.flyde.ts"], ["One"]);
+  });
+
+  it("preserves an anchor on a scalar inside a merged sequence", () => {
+    const contents = `imports:
+  ./b.flyde.ts: [&Name One]
+  b.flyde.ts: [Two]
+  ./c.flyde.ts: [*Name]
+node:
+  id: Main
+  instances:
+    - id: rootInst
+      nodeId: Root
+  connections: []
+`;
+    const updated = rewriteImportPathsAfterMove(contents, {
+      flowBefore: "/ws/main.flyde",
+      flowAfter: "/ws/nested/main.flyde",
+      moves: [{ from: "/ws/main.flyde", to: "/ws/nested/main.flyde" }],
+      pathImpl: posix,
+    });
+
+    const flow = yaml.parse(updated);
+    assert.deepEqual(flow.imports["../b.flyde.ts"], ["One", "Two"]);
+    assert.deepEqual(flow.imports["../c.flyde.ts"], ["One"]);
+  });
+
+  it("reports each rewritten import path", () => {
+    const contents = `node:
+  id: Main
+  instances:
+    - id: childInst
+      source:
+        type: file
+        data: ../lib/child.flyde
+`;
+    const rewrites: { from: string; to: string }[] = [];
+    rewriteImportPathsAfterMove(contents, {
+      flowBefore: "/ws/flows/main.flyde",
+      flowAfter: "/ws/flows/main.flyde",
+      moves: [{ from: "/ws/lib/child.flyde", to: "/ws/other/child.flyde" }],
+      pathImpl: posix,
+      onPathRewritten: (from, to) => rewrites.push({ from, to }),
+    });
+
+    assert.deepEqual(rewrites, [
+      { from: "../lib/child.flyde", to: "../other/child.flyde" },
+    ]);
+  });
+
   it("distinguishes parent traversal from names starting with two dots", () => {
     const moves = [{ from: "/ws/lib", to: "/ws/libs" }];
 

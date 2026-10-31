@@ -79,6 +79,19 @@ export const createVsCodePorts = (): EditorPorts => {
         window.removeEventListener("message", handler);
       };
     },
+    onImportPathsMoved: (cb) => {
+      const handler = (event: MessageEvent) => {
+        const { data } = event;
+        if (data.type === "onImportPathsMoved") {
+          cb(data.params);
+        }
+      };
+      window.addEventListener("message", handler);
+
+      return () => {
+        window.removeEventListener("message", handler);
+      };
+    },
     onRunFlow: async (inputs, executionDelay) => {
       return postMessageCallback("onRunFlow", { inputs, executionDelay });
     },

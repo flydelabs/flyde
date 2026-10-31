@@ -31,6 +31,13 @@ import { useDarkMode } from "usehooks-ts";
 
 import { VisualNodeEditorProvider } from "../visual-node-editor/VisualNodeEditorContext";
 import { AiCompletionContext, AiCompletionProvider } from "../ui";
+import {
+  mapClipboardImportPaths,
+  mapImportPathsInNode,
+} from "./mapImportPaths";
+import type { ImportPathMapper } from "./mapImportPaths";
+
+export type { ImportPathMapper } from "./mapImportPaths";
 
 export * from "./ports";
 export * from "./DebuggerContext";
@@ -45,6 +52,13 @@ export type FlowEditorState = {
 export type FlydeFlowEditorProps = {
   state: FlowEditorState;
   onChangeEditorState: React.Dispatch<React.SetStateAction<FlowEditorState>>;
+
+  /**
+   * Maps a file import path from the flow's pre-move location to its current
+   * location. Applied to retained paste and undo state as well as to the flow
+   * itself, so snapshots cannot reintroduce a stale path.
+   */
+  mapImportPath?: ImportPathMapper;
 
   onNewEnvVar?: (name: string, val: any) => void;
 
@@ -144,6 +158,48 @@ export const FlowEditor: React.FC<FlydeFlowEditorProps> = React.memo(
       instances: [],
       connections: [],
     });
+
+    React.useEffect(() => {
+      if (!props.mapImportPath) {
+        return;
+      }
+
+      setClipboardData((clipboard) =>
+        mapClipboardImportPaths(clipboard, props.mapImportPath!)
+      );
+      setUndoStack((stack) =>
+        stack.map((snapshot) =>
+          snapshot.flow
+            ? {
+                ...snapshot,
+                flow: {
+                  ...snapshot.flow,
+                  node: mapImportPathsInNode(
+                    snapshot.flow.node,
+                    props.mapImportPath!
+                  ),
+                },
+              }
+            : snapshot
+        )
+      );
+      setRedoStack((stack) =>
+        stack.map((snapshot) =>
+          snapshot.flow
+            ? {
+                ...snapshot,
+                flow: {
+                  ...snapshot.flow,
+                  node: mapImportPathsInNode(
+                    snapshot.flow.node,
+                    props.mapImportPath!
+                  ),
+                },
+              }
+            : snapshot
+        )
+      );
+    }, [props.mapImportPath]);
 
     const onChangeEditorBoardData = React.useCallback(
       (partial: Partial<GroupEditorBoardData>) => {

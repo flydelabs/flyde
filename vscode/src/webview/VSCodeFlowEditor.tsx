@@ -18,6 +18,11 @@ import {
 } from "@flyde/core";
 import { createEditorClient, EditorDebuggerClient } from "@flyde/editor";
 import { createVsCodePorts } from "./vscode-ports";
+import {
+  applyImportPathMoves,
+  createImportPathMapper,
+} from "./importPathReplacements";
+import type { ImportPathMoveContext } from "./importPathReplacements";
 import { useDebouncedCallback } from "use-debounce";
 
 const isEqual = (a: any, b: any): boolean => {
@@ -74,11 +79,38 @@ export const VSCodeFlowEditor: React.FC<BootstrapData> = ({
   });
 
   const [debuggerClient, setDebuggerClient] = useState<EditorDebuggerClient>();
+  const [importPathMoves, setImportPathMoves] =
+    useState<ImportPathMoveContext>();
   const runtimePlayer = useRef<RuntimePlayer>();
   const lastChangeReason = useRef<string>("");
   const didMount = useRef(false);
+  const editorStateRef = useRef(editorState);
+
+  // Update the latest flow synchronously. A move can arrive directly after an
+  // edit, before React has rendered that edit; reading only the rendered flow
+  // would miss the new instance and let the pending save write a stale path.
+  const updateEditorState = useCallback(
+    (action: React.SetStateAction<FlowEditorState>) => {
+      const next =
+        typeof action === "function"
+          ? (action as (state: FlowEditorState) => FlowEditorState)(
+              editorStateRef.current
+            )
+          : action;
+      editorStateRef.current = next;
+      setEditorState(next);
+    },
+    []
+  );
 
   const ports = useMemo(() => createVsCodePorts(), []);
+  const mapImportPath = useMemo(
+    () =>
+      importPathMoves
+        ? createImportPathMapper(importPathMoves)
+        : undefined,
+    [importPathMoves]
+  );
 
   const connectToRemoteDebugger = useCallback((url: string) => {
     const newClient = createEditorClient(url, executionId);
@@ -150,12 +182,36 @@ export const VSCodeFlowEditor: React.FC<BootstrapData> = ({
 
   useEffect(() => {
     return ports.onExternalFlowChange(({ flow }) => {
-      if (isEqual(flow, editorState.flow) === false) {
-        setEditorState((state) => ({ ...state, flow }));
+      if (isEqual(flow, editorStateRef.current.flow) === false) {
+        updateEditorState((state) => ({ ...state, flow }));
         lastChangeReason.current = "external-changes";
       }
     });
-  }, [editorState.flow, ports]);
+  }, [ports, updateEditorState]);
+
+  useEffect(() => {
+    return ports.onImportPathsMoved?.((data) => {
+      if (data.moves.length === 0) {
+        return;
+      }
+
+      const current = editorStateRef.current.flow;
+      const nextNode = applyImportPathMoves(current.node, data);
+      const nextFlow = { ...current, node: nextNode };
+      const nodeChanged = nextNode !== current.node;
+      setImportPathMoves(data);
+      lastChangeReason.current = "external-changes";
+      updateEditorState((state) => ({ ...state, flow: nextFlow }));
+
+      if (nodeChanged) {
+        // A save for an older flow may already be queued. Replacing it with
+        // the repaired flow keeps unsaved duplicates from reintroducing the
+        // stale path half a second later.
+        debouncedSaveFile.cancel();
+        debouncedSaveFile(nextFlow, relativeFile);
+      }
+    });
+  }, [debouncedSaveFile, ports, relativeFile]);
 
   useEffect(() => {
     if (!didMount.current) {
@@ -200,8 +256,9 @@ export const VSCodeFlowEditor: React.FC<BootstrapData> = ({
           <div className="vscode-flow-editor" style={{ height: "100vh", width: "100vw" }}>
             <FlowEditor
               state={editorState}
-              onChangeEditorState={setEditorState}
+              onChangeEditorState={updateEditorState}
               darkMode={darkMode}
+              mapImportPath={mapImportPath}
             />
           </div>
         </DebuggerContextProvider>
