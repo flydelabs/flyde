@@ -8,6 +8,7 @@ import { scanImportableNodes, generateAndSaveNode } from "./embedded-server";
 import { getBaseNodesLibraryData } from "@flyde/nodes/dist/nodes-library-data";
 
 import {
+  mergeFileImportPaths,
   resolveEditorInstance,
   resolveEditorNode,
 } from "@flyde/loader";
@@ -77,6 +78,25 @@ const tryOrThrow = <T>(fn: () => T, msg: string): T | Error => {
 
 let lastWebview: any = null;
 
+const pendingImportPathRepairs = new Map<string, string>();
+
+/**
+ * Remembers the exact contents a repair produced for each file. The editor's
+ * change listener suppresses the resulting external-change notification only
+ * for that content, so a stale marker can never hide a later edit.
+ */
+export const markImportPathRepairs = (
+  repairs: { filePath: string; contents: string }[]
+) => {
+  repairs.forEach(({ filePath, contents }) =>
+    pendingImportPathRepairs.set(filePath, contents)
+  );
+};
+
+export const clearImportPathRepairs = (filePaths: string[]) => {
+  filePaths.forEach((filePath) => pendingImportPathRepairs.delete(filePath));
+};
+
 export const getLastWebviewForTests = () => {
   return lastWebview;
 };
@@ -136,6 +156,8 @@ export class FlydeEditorEditorProvider
 
     let lastSaveBy = "";
 
+    let lastKnownRaw = document.getText();
+
     let lastFlow: FlydeFlow;
 
     const messageResponse = (event: FlydePortMessage<any>, payload: any) => {
@@ -176,6 +198,7 @@ export class FlydeEditorEditorProvider
 
     const renderWebview = async () => {
       const raw = document.getText();
+      lastKnownRaw = raw;
       const fileName = (
         document.uri.fsPath.split(path.sep).pop() ?? "Default"
       ).replace(".flyde", "");
@@ -348,7 +371,19 @@ export class FlydeEditorEditorProvider
               case "setFlow": {
                 const { flow } = event.params;
 
-                const node = flow.node as EditorVisualNode;
+                let node = flow.node as EditorVisualNode;
+                try {
+                  const raw = document.getText();
+                  if (raw.trim() !== "") {
+                    const onDiskFlow = deserializeFlow(raw, fullDocumentPath);
+                    node = mergeFileImportPaths(
+                      node,
+                      onDiskFlow.node
+                    ) as EditorVisualNode;
+                  }
+                } catch (error) {
+                  console.error("Failed to merge on-disk import paths", error);
+                }
 
                 function cleanNode(node: EditorVisualNode): VisualNode {
                   const newNode: VisualNode = node;
@@ -382,14 +417,19 @@ export class FlydeEditorEditorProvider
                 }
 
                 const serialized = serializeFlow({ node: cleanNode(node) });
-                lastFlow = flow;
+                lastFlow = { ...flow, node };
                 const edit = new vscode.WorkspaceEdit();
 
                 // replacing everything for simplicity. TODO - pass only delta changes
                 const range = new vscode.Range(0, 0, document.lineCount, 0);
                 edit.replace(document.uri, range, serialized);
                 lastSaveBy = webviewId;
-                await vscode.workspace.applyEdit(edit);
+                try {
+                  await vscode.workspace.applyEdit(edit);
+                } finally {
+                  lastSaveBy = "";
+                }
+                lastKnownRaw = document.getText();
                 messageResponse(event, undefined);
                 break;
               }
@@ -751,15 +791,51 @@ export class FlydeEditorEditorProvider
       (e) => {
         const isSameUri = e.document.uri.toString() === document.uri.toString();
 
-        if (isSameUri && lastSaveBy !== webviewId) {
+        if (isSameUri) {
           const raw = document.getText();
-          const flow: FlydeFlow = deserializeFlow(raw, fullDocumentPath);
-          webviewPanel.webview.postMessage({
-            type: "onExternalFlowChange",
-            requestId: "TODO-cuid",
-            params: { flow },
-            source: "extension",
-          });
+
+          // Dirty-state transitions emit change events without a content
+          // change. They must not consume repair markers reserved for the
+          // repair's own content event.
+          if (raw === lastKnownRaw) {
+            return;
+          }
+          lastKnownRaw = raw;
+
+          if (lastSaveBy === webviewId) {
+            return;
+          }
+
+          // A repair is suppressed only by the exact content it produced, no
+          // matter in which order its change events arrive.
+          const isImportPathRepair =
+            pendingImportPathRepairs.get(document.uri.fsPath) === raw;
+          if (isImportPathRepair) {
+            pendingImportPathRepairs.delete(document.uri.fsPath);
+          }
+
+          try {
+            const flow: FlydeFlow = deserializeFlow(raw, fullDocumentPath);
+            const resolvedNode = resolveEditorNode(
+              flow.node,
+              createNodeFinderWithOverrides(fullDocumentPath)
+            );
+
+            lastFlow = flow;
+
+            // A repair must not replace unsaved webview state; the webview's
+            // next save merges the repaired paths from disk instead.
+            if (!isImportPathRepair) {
+              webviewPanel.webview.postMessage({
+                type: "onExternalFlowChange",
+                requestId: "TODO-cuid",
+                params: { flow: { ...flow, node: resolvedNode } },
+                source: "extension",
+              });
+            }
+          } catch (error) {
+            console.error("Failed to resolve externally changed flow", error);
+          }
         }
       }
     );

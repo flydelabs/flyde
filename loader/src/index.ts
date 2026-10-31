@@ -1,6 +1,7 @@
 // Main exports - includes everything for Node.js
 export * from "./resolver";
 export * from "./serdes";
+export * from "./misc/mergeFileImportPaths";
 export * from "./runtime";
 export * from "./run-flow";
 

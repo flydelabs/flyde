@@ -160,12 +160,16 @@ export const VSCodeFlowEditor: React.FC<BootstrapData> = ({
   useEffect(() => {
     if (!didMount.current) {
       didMount.current = true;
-    } else {
-      if (lastChangeReason.current !== "external-changes") {
-        debouncedSaveFile(editorState.flow, relativeFile);
-        lastChangeReason.current = "n/a";
-      }
+      return;
     }
+
+    if (lastChangeReason.current === "external-changes") {
+      lastChangeReason.current = "n/a";
+      return;
+    }
+
+    debouncedSaveFile(editorState.flow, relativeFile);
+    lastChangeReason.current = "n/a";
   }, [editorState.flow, debouncedSaveFile, relativeFile]);
 
   const onRequestHistory = useCallback(
