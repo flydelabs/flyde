@@ -10,6 +10,7 @@ import {
 } from "./flydeEditor";
 
 const RENAME_COALESCE_MS = 150;
+const REPAIR_MARKER_TTL_MS = 1000;
 
 interface ChangedDocument {
   document: vscode.TextDocument;
@@ -28,9 +29,16 @@ async function repairImportPaths(
     "**/node_modules/**"
   );
 
-  const documents = await Promise.all(
+  const documentResults = await Promise.allSettled(
     flowUris.map((uri) => vscode.workspace.openTextDocument(uri))
   );
+  const documents = documentResults.flatMap((result) => {
+    if (result.status === "fulfilled") {
+      return [result.value];
+    }
+    console.error("Failed to open a flow for import repair", result.reason);
+    return [];
+  });
 
   const edit = new vscode.WorkspaceEdit();
   const changedDocuments: ChangedDocument[] = [];
@@ -39,11 +47,17 @@ async function repairImportPaths(
   // reading a document and applying its replacement.
   for (const document of documents) {
     const contents = document.getText();
-    const updated = rewriteImportPathsAfterMove(contents, {
-      flowBefore: mapPathThroughMovesBackwards(document.uri.fsPath, moves),
-      flowAfter: document.uri.fsPath,
-      moves,
-    });
+    let updated: string;
+    try {
+      updated = rewriteImportPathsAfterMove(contents, {
+        flowBefore: mapPathThroughMovesBackwards(document.uri.fsPath, moves),
+        flowAfter: document.uri.fsPath,
+        moves,
+      });
+    } catch (error) {
+      console.error("Failed to rewrite imports for a flow", error);
+      continue;
+    }
 
     if (updated === contents) {
       continue;
@@ -65,7 +79,11 @@ async function repairImportPaths(
   }
 
   if (changedDocuments.length === 0) {
-    return "applied";
+    // A move can arrive while findFiles resolves, after the flow has already
+    // reached its final location. The current batch then looks like a no-op;
+    // abort instead of dropping it, so the next flush can process the full
+    // chain from the original path.
+    return hasPendingMoves() ? "aborted" : "applied";
   }
 
   if (hasPendingMoves()) {
@@ -96,14 +114,27 @@ async function repairImportPaths(
     return "failed";
   }
 
-  // Markers are consumed by the editor's change listener. Clearing them here
-  // would race the asynchronous change events and could let a repair replace
-  // unsaved webview state.
-  await Promise.all(
-    changedDocuments
-      .filter(({ wasDirty }) => !wasDirty)
-      .map(({ document }) => document.save())
+  // The editor's change listener consumes a marker when its exact repaired
+  // content arrives. Clear anything unconsumed shortly afterwards: a flow with
+  // no open editor has no listener, and leaving its marker forever would leak
+  // memory and could hide a later edit that happens to restore that content.
+  const markerCleanup = setTimeout(
+    () => clearImportPathRepairs(changedPaths),
+    REPAIR_MARKER_TTL_MS
   );
+  markerCleanup.unref?.();
+
+  try {
+    await Promise.all(
+      changedDocuments
+        .filter(({ wasDirty }) => !wasDirty)
+        .map(({ document }) => document.save())
+    );
+  } catch (error) {
+    clearTimeout(markerCleanup);
+    clearImportPathRepairs(changedPaths);
+    throw error;
+  }
 
   return "applied";
 }

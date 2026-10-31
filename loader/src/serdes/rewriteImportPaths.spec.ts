@@ -446,7 +446,7 @@ node:
     assert.equal(flow.imports["../b.flyde"], "Root");
   });
 
-  it("never creates duplicate keys when legacy targets collide", () => {
+  it("merges legacy entries that resolve to the same new key", () => {
     const contents = `imports:
   nested/b.flyde.ts: Nested
   b.flyde.ts: One
@@ -473,7 +473,14 @@ node:
     const keys = Object.keys(flow.imports);
 
     assert.equal(new Set(keys).size, keys.length);
-    assert.equal(keys.length, 3);
+    assert.deepEqual(keys.sort(), ["../b.flyde.ts", "b.flyde.ts"]);
+    assert.equal(flow.imports["b.flyde.ts"], "Nested");
+    assert.deepEqual(flow.imports["../b.flyde.ts"], ["One", "Two"]);
+
+    const resolveKey = (key: string) =>
+      posix.resolve(posix.dirname("/ws/nested/main.flyde"), key);
+    assert.equal(resolveKey("b.flyde.ts"), "/ws/nested/b.flyde.ts");
+    assert.equal(resolveKey("../b.flyde.ts"), "/ws/b.flyde.ts");
   });
 
   it("distinguishes parent traversal from names starting with two dots", () => {

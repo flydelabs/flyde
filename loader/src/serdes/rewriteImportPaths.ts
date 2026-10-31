@@ -198,85 +198,188 @@ export function rewriteImportPathsAfterMove(
     }
   };
 
+  interface LegacyImportEntry {
+    pair: yaml.Pair<unknown, unknown>;
+    key: yaml.Scalar;
+    originalKey: string;
+    nextKey: string | undefined;
+    removed: boolean;
+    settled: boolean;
+  }
+
+  const importNames = (value: unknown): string[] | undefined => {
+    const resolved = resolveNode(value, doc);
+    if (yaml.isScalar(resolved) && typeof resolved.value === "string") {
+      return [resolved.value];
+    }
+    if (yaml.isSeq(resolved)) {
+      const names: string[] = [];
+      for (const item of resolved.items) {
+        const resolvedItem = resolveNode(item, doc);
+        if (
+          !yaml.isScalar(resolvedItem) ||
+          typeof resolvedItem.value !== "string"
+        ) {
+          return undefined;
+        }
+        names.push(resolvedItem.value);
+      }
+      return names;
+    }
+    return undefined;
+  };
+
   const rewriteLegacyImports = () => {
     const imports = resolveNode(doc.get("imports"), doc);
     if (!yaml.isMap(imports)) {
       return;
     }
 
-    const entries = imports.items
-      .map((pair) => {
-        const key = pair.key;
-        if (!yaml.isScalar(key) || typeof key.value !== "string") {
-          return undefined;
-        }
-        return { key, value: key.value };
-      })
-      .filter(
-        (entry): entry is { key: yaml.Scalar; value: string } =>
-          entry !== undefined
-      );
+    const entries: LegacyImportEntry[] = [];
+    for (const pair of imports.items) {
+      const key = pair.key;
+      if (!yaml.isScalar(key) || typeof key.value !== "string") {
+        continue;
+      }
 
-    const planned = entries.map(({ key, value }) => {
+      const originalKey = key.value;
       const isFileImport =
-        value.startsWith(".") ||
-        pathImpl.isAbsolute(value) ||
-        value.endsWith(".flyde") ||
-        value.endsWith(".flyde.ts") ||
-        value.endsWith(".flyde.js");
+        originalKey.startsWith(".") ||
+        pathImpl.isAbsolute(originalKey) ||
+        originalKey.endsWith(".flyde") ||
+        originalKey.endsWith(".flyde.ts") ||
+        originalKey.endsWith(".flyde.js");
 
-      return {
+      entries.push({
+        pair,
         key,
-        value,
+        originalKey,
         nextKey: isFileImport ? rewritePath(key) : undefined,
-      };
-    });
+        removed: false,
+        settled: false,
+      });
+    }
 
-    const applied = new Set<(typeof planned)[number]>();
-    let foundRewrite = true;
+    const occupied = new Map<string, LegacyImportEntry[]>();
+    for (const entry of entries) {
+      const matches = occupied.get(entry.originalKey) ?? [];
+      matches.push(entry);
+      occupied.set(entry.originalKey, matches);
+    }
 
-    while (foundRewrite) {
-      foundRewrite = false;
+    const detach = (entry: LegacyImportEntry) => {
+      const matches = occupied.get(entry.originalKey);
+      if (!matches) {
+        return;
+      }
+      const index = matches.indexOf(entry);
+      if (index !== -1) {
+        matches.splice(index, 1);
+      }
+      if (matches.length === 0) {
+        occupied.delete(entry.originalKey);
+      }
+    };
 
-      const retainedKeys = new Set(
-        planned
-          .filter((entry) => !applied.has(entry))
-          .map((entry) => entry.value)
-      );
-      const pendingTargets = new Map<string, number>();
-      for (const entry of planned) {
-        if (!applied.has(entry) && entry.nextKey !== undefined) {
-          pendingTargets.set(
-            entry.nextKey,
-            (pendingTargets.get(entry.nextKey) ?? 0) + 1
-          );
+    const applyGroup = (
+      group: LegacyImportEntry[],
+      target: string
+    ): boolean => {
+      const names: string[] = [];
+      let hasArrayValue = false;
+      for (const entry of group) {
+        const entryNames = importNames(entry.pair.value);
+        if (entryNames === undefined) {
+          return false;
+        }
+        if (yaml.isSeq(resolveNode(entry.pair.value, doc))) {
+          hasArrayValue = true;
+        }
+        for (const name of entryNames) {
+          if (!names.includes(name)) {
+            names.push(name);
+          }
         }
       }
 
-      for (const entry of planned) {
-        const { nextKey, value } = entry;
-        if (
-          applied.has(entry) ||
-          nextKey === undefined ||
-          nextKey === value ||
-          retainedKeys.has(nextKey) ||
-          (pendingTargets.get(nextKey) ?? 0) > 1
-        ) {
+      const survivor =
+        group.find((entry) => entry.originalKey === target) ?? group[0];
+      const keyChanged = survivor.originalKey !== target;
+      const valueChanged = group.length > 1;
+
+      if (valueChanged) {
+        survivor.pair.value =
+          hasArrayValue || names.length > 1
+            ? doc.createNode(names)
+            : doc.createNode(names[0]);
+      }
+      if (keyChanged) {
+        survivor.key.value = target;
+      }
+
+      for (const entry of group) {
+        detach(entry);
+        entry.settled = true;
+        if (entry !== survivor) {
+          entry.removed = true;
+        }
+      }
+
+      const targetMatches = occupied.get(target) ?? [];
+      targetMatches.push(survivor);
+      occupied.set(target, targetMatches);
+
+      if (keyChanged || valueChanged) {
+        changed = true;
+      }
+
+      return true;
+    };
+
+    let foundRewrite = true;
+    while (foundRewrite) {
+      foundRewrite = false;
+
+      const groups = new Map<string, LegacyImportEntry[]>();
+      for (const entry of entries) {
+        if (entry.removed || entry.settled || entry.nextKey === undefined) {
+          continue;
+        }
+        const group = groups.get(entry.nextKey) ?? [];
+        group.push(entry);
+        groups.set(entry.nextKey, group);
+      }
+
+      for (const [target, group] of groups) {
+        if (group.length === 1 && group[0].originalKey === target) {
+          group[0].settled = true;
           continue;
         }
 
-        applied.add(entry);
+        const blockedBy = (occupied.get(target) ?? []).filter(
+          (entry) => !entry.removed && !group.includes(entry)
+        );
+        if (blockedBy.length > 0) {
+          continue;
+        }
+
+        if (!applyGroup(group, target)) {
+          // Values that cannot be merged safely must stay untouched rather
+          // than produce duplicate YAML keys.
+          group.forEach((entry) => {
+            entry.settled = true;
+          });
+          continue;
+        }
+
         foundRewrite = true;
       }
     }
 
-    for (const { key, nextKey } of applied) {
-      if (nextKey === undefined) {
-        continue;
-      }
-
-      key.value = nextKey;
-      changed = true;
+    if (entries.some((entry) => entry.removed)) {
+      imports.items = imports.items.filter(
+        (pair) => !entries.some((entry) => entry.removed && entry.pair === pair)
+      );
     }
   };
 
