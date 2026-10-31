@@ -1,4 +1,6 @@
+import { registerFlowImportRenames } from "./flow-import-renames";
 // The module 'vscode' contains the VS Code extensibility API
+  context.subscriptions.push(registerFlowImportRenames());
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
 
