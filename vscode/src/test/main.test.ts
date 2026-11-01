@@ -31,7 +31,7 @@ suite("Extension Test Suite", () => {
     const fixturesDir = path.resolve(__dirname, "../../test-fixtures");
     const templatesDir = path.resolve(__dirname, "../../templates");
 
-    tmpDir = createTempTestWorkspace(fixturesDir, templatesDir);
+    tmpDir = createTempTestWorkspace(fixturesDir, templatesDir, vscode.workspace.workspaceFolders?.[0]?.uri.fsPath);
     console.log(`Temporary directory created at ${tmpDir}`);
   });
 

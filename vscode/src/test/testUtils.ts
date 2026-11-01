@@ -31,8 +31,14 @@ export async function webviewTestingCommand<
 ): Promise<WebViewTestingCommands[T]["response"]> {
   const webview = await getLastWebview();
   return new Promise((res, rej) => {
-    webview.onDidReceiveMessage((message) => {
+    const timeout = setTimeout(() => {
+      listener.dispose();
+      rej(new Error(`Webview test command ${command} timed out after 1000ms`));
+    }, 1000);
+    const listener = webview.onDidReceiveMessage((message) => {
       if (message.type === "__webviewTestingResponse") {
+        clearTimeout(timeout);
+        listener.dispose();
         if (message.error) {
           rej(message.error);
         } else {
@@ -41,7 +47,7 @@ export async function webviewTestingCommand<
       }
     });
 
-    webview.postMessage({
+    void webview.postMessage({
       type: "__webviewTestingCommand",
       command,
       params,

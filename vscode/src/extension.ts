@@ -15,6 +15,8 @@ import { activateReporter, reportEvent, analytics } from "./analytics";
 import { showFirstRunPrivacyNotice, showPrivacySettings } from "./privacyNotice";
 
 import { Template, getTemplates, scaffoldTemplate } from "./templateUtils";
+import { deserializeFlow, serializeFlow } from "@flyde/loader/dist/server";
+import { rebaseFlowImports } from "./rebaseFlowImports";
 
 // the application insights key (also known as instrumentation key)
 
@@ -54,6 +56,34 @@ export function activate(context: vscode.ExtensionContext) {
 
   const mainOutputChannel = vscode.window.createOutputChannel("Flyde");
   const debugOutputChannel = vscode.window.createOutputChannel("Flyde (Debug)");
+
+  context.subscriptions.push(
+    vscode.workspace.onWillRenameFiles((event) => {
+      const moves = event.files
+        .filter(({ oldUri, newUri }) => oldUri.scheme === "file" && newUri.scheme === "file")
+        .map(({ oldUri, newUri }) => ({ oldPath: oldUri.fsPath, newPath: newUri.fsPath }));
+      if (!moves.length) {
+        return;
+      }
+      event.waitUntil((async () => {
+        const edits = new vscode.WorkspaceEdit();
+        const files = await vscode.workspace.findFiles("**/*.flyde", "**/node_modules/**");
+        for (const uri of files) {
+          try {
+            const document = await vscode.workspace.openTextDocument(uri);
+            const flow = deserializeFlow(document.getText(), uri.fsPath);
+            const updated = rebaseFlowImports(flow, uri.fsPath, moves);
+            if (updated) {
+              edits.replace(uri, new vscode.Range(document.positionAt(0), document.positionAt(document.getText().length)), serializeFlow(updated));
+            }
+          } catch (error) {
+            mainOutputChannel.appendLine(`Could not update imports in ${uri.fsPath}: ${error}`);
+          }
+        }
+        return edits;
+      })());
+    })
+  );
 
   let currentTheme = vscode.window.activeColorTheme;
 

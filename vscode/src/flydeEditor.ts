@@ -117,6 +117,13 @@ export class FlydeEditorEditorProvider
     webviewPanel: vscode.WebviewPanel,
     _token: vscode.CancellationToken
   ): Promise<void> {
+    const testWebview = webviewPanel.webview;
+    lastWebview = testWebview;
+    webviewPanel.onDidDispose(() => {
+      if (lastWebview === testWebview) {
+        lastWebview = null;
+      }
+    });
     // Setup initial content for the webview
     webviewPanel.webview.options = {
       enableScripts: true,
@@ -232,7 +239,6 @@ export class FlydeEditorEditorProvider
 
       lastFlow = initialFlow as FlydeFlow;
 
-      lastWebview = webviewPanel.webview;
     };
 
     await renderWebview();
