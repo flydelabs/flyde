@@ -1,4 +1,6 @@
 import * as path from "path";
+import * as fs from "fs";
+import * as os from "os";
 
 import { runTests } from "@vscode/test-electron";
 
@@ -27,7 +29,7 @@ async function main() {
       extensionDevelopmentPath,
       extensionTestsPath,
       version: '1.98.2',
-      launchArgs: ["--disable-extensions"],
+      launchArgs: [fs.mkdtempSync(path.join(os.tmpdir(), "flyde-workspace-")), "--disable-extensions"],
       timeout: 60000,
     });
   } catch (err) {

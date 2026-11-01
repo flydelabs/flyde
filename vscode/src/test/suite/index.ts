@@ -6,6 +6,7 @@ export function run(): Promise<void> {
 	// Create the mocha test
 	const mocha = new Mocha({
 		ui: 'tdd',
+		grep: process.env.FLYDE_TEST_GREP,
 		color: true,
 		timeout: 60000
 	});
