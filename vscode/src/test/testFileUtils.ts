@@ -28,8 +28,8 @@ export function copyRecursive(src: string, dest: string): void {
  * @param templatesDir - Path to the templates directory
  * @returns Path to the temporary directory
  */
-export function createTempTestWorkspace(fixturesDir: string, templatesDir: string): string {
-  const tmpDir = path.join(os.tmpdir(), `flyde-test-fixtures-${Date.now()}`);
+export function createTempTestWorkspace(fixturesDir: string, templatesDir: string, parentDir = os.tmpdir()): string {
+  const tmpDir = path.join(parentDir, `flyde-test-fixtures-${Date.now()}`);
 
   if (fs.existsSync(tmpDir)) {
     throw new Error("Temporary directory already exists");
