@@ -104,6 +104,42 @@ suite("Rename imports integration", () => {
     assert.doesNotThrow(() => resolveFlowByPath(document.fileName));
   });
 
+  test("updates imports when the dependency folder is renamed", async () => {
+    const fixtures = path.resolve(
+      __dirname,
+      "../../test-fixtures/nested-flows",
+    );
+    const parent = deserializeFlow(
+      fs.readFileSync(path.join(fixtures, "ParentFlow.flyde"), "utf8"),
+      "folder-parent.flyde",
+    );
+    parent.node.instances[0].source = {
+      type: "file",
+      data: "./source-folder/ChildFlow.flyde",
+    };
+    await vscode.workspace.fs.createDirectory(uri("source-folder"));
+    await vscode.workspace.fs.writeFile(
+      uri("source-folder/ChildFlow.flyde"),
+      fs.readFileSync(path.join(fixtures, "ChildFlow.flyde")),
+    );
+    await vscode.workspace.fs.writeFile(
+      uri("folder-parent.flyde"),
+      Buffer.from(serializeFlow(parent)),
+    );
+    const rename = new vscode.WorkspaceEdit();
+    rename.renameFile(uri("source-folder"), uri("destination-folder"));
+    assert.ok(await vscode.workspace.applyEdit(rename));
+    const document = await vscode.workspace.openTextDocument(
+      uri("folder-parent.flyde"),
+    );
+    assert.strictEqual(
+      source(document.getText()),
+      "./destination-folder/ChildFlow.flyde",
+    );
+    assert.ok(await document.save());
+    assert.doesNotThrow(() => resolveFlowByPath(document.fileName));
+  });
+
   test("rebases an importing flow moved into a folder", async () => {
     const fixture = fs.readFileSync(
       path.resolve(__dirname, "../../test-fixtures/HelloWorld.flyde"),

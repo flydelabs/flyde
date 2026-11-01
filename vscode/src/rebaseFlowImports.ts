@@ -40,10 +40,11 @@ export function rebaseFlowImports(
     if (path.isAbsolute(specifier)) {
       return newTarget;
     }
-    const relative = path
-      .relative(path.dirname(newFilename), newTarget)
-      .split(path.sep)
-      .join("/");
+    const relativePath = path.relative(path.dirname(newFilename), newTarget);
+    if (path.isAbsolute(relativePath)) {
+      return newTarget;
+    }
+    const relative = relativePath.split(path.sep).join("/");
     return relative.startsWith(".") ? relative : `./${relative}`;
   };
   const visit = (node: VisualNode) => {
