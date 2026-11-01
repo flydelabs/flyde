@@ -24,12 +24,16 @@ async function main() {
       };
     }
 
+    const testRoot = fs.mkdtempSync(path.join(os.tmpdir(), "flyde-test-"));
+    const workspace = path.join(testRoot, "workspace");
+    fs.mkdirSync(workspace);
+
     // Download VS Code, unzip it and run the integration test
     await runTests({
       extensionDevelopmentPath,
       extensionTestsPath,
       version: '1.98.2',
-      launchArgs: [fs.mkdtempSync(path.join(os.tmpdir(), "flyde-workspace-")), "--disable-extensions"],
+      launchArgs: [workspace, `--user-data-dir=${path.join(testRoot, "profile")}`, "--disable-extensions", "--skip-welcome", "--skip-release-notes"],
       timeout: 60000,
     });
   } catch (err) {
