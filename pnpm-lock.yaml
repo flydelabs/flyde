@@ -563,6 +563,9 @@ importers:
       walker:
         specifier: ^1.0.8
         version: 1.0.8
+      yaml:
+        specifier: ^2.3.1
+        version: 2.8.0
     devDependencies:
       '@playwright/test':
         specifier: ^1.53.2

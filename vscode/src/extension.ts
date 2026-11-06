@@ -1,6 +1,7 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
+import { registerFlowRenameHandler } from "./flowRename";
 
 import { FlydeEditorEditorProvider } from "./flydeEditor";
 import * as execa from "execa";
@@ -29,6 +30,7 @@ let process: execa.ExecaChildProcess | undefined;
 const FLYDE_DEFAULT_SERVER_PORT = 8545;
 
 export function activate(context: vscode.ExtensionContext) {
+  registerFlowRenameHandler(context);
   // eslint-disable-next-line @typescript-eslint/naming-convention
   const { Uri } = vscode;
   const { fs } = vscode.workspace;
