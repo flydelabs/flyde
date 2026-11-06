@@ -7,8 +7,10 @@ import {
 } from "@flyde/core";
 
 import * as _Nodes from "@flyde/nodes/dist/all";
-import { join } from "path";
+import { basename, join, relative } from "path";
 import { existsSync, readFileSync } from "fs";
+import * as glob from "glob";
+import findRoot from "find-root";
 import { resolveImportablePaths } from "./resolveImportablePaths";
 import { deserializeFlowByPath } from "../../serdes";
 import { ReferencedNodeFinder } from "./../ReferencedNodeFinder";
@@ -40,7 +42,8 @@ export function createServerReferencedNodeFinder(
       case "package": {
         const paths = getLocalOrPackagePaths(
           fullFlowPath,
-          instance.source.data
+          instance.source.data,
+          instance.nodeId
         );
 
         const nodeWrapper = paths
@@ -135,7 +138,12 @@ export function createServerReferencedNodeFinder(
         return nodeWrapper;
       }
       case "file": {
-        const fullFilePath = join(fullFlowPath, "..", instance.source.data);
+        const fullFilePath =
+          resolveExistingOrMovedPath(
+            fullFlowPath,
+            instance.source.data,
+            instance.nodeId
+          ) ?? join(fullFlowPath, "..", instance.source.data);
 
         // Check if the file is a .flyde file (visual flow)
         if (fullFilePath.endsWith('.flyde')) {
@@ -200,7 +208,11 @@ export function createServerReferencedNodeFinder(
   };
 }
 
-function getLocalOrPackagePaths(fullFlowPath: string, importPath: string) {
+function getLocalOrPackagePaths(
+  fullFlowPath: string,
+  importPath: string,
+  nodeId?: string
+) {
   const fullImportPath = join(fullFlowPath, "..", importPath);
 
   if (existsSync(fullImportPath)) {
@@ -209,12 +221,84 @@ function getLocalOrPackagePaths(fullFlowPath: string, importPath: string) {
     try {
       return resolveImportablePaths(fullFlowPath, importPath);
     } catch (e) {
+      const movedPath = resolveExistingOrMovedPath(
+        fullFlowPath,
+        importPath,
+        nodeId
+      );
+      if (movedPath) {
+        return [movedPath];
+      }
       if (importPath !== "@flyde/nodes") {
         throw new Error(`Cannot find module ${importPath} in ${fullFlowPath}`);
       }
       return [];
     }
   }
+}
+
+/**
+ * Fallback for #112 – when a stored relative import path no longer exists
+ * (the imported file or the importing flow was moved), search the project
+ * root for a file with the same name that actually defines the requested node.
+ * shortcut: scans the project root by basename only on broken imports;
+ * upgrade to rewriting .flyde paths on rename events if this proves too slow.
+ */
+function resolveExistingOrMovedPath(
+  fullFlowPath: string,
+  data: string,
+  nodeId?: string
+): string | undefined {
+  const directPath = join(fullFlowPath, "..", data);
+  if (existsSync(directPath)) {
+    return directPath;
+  }
+
+  // only relative imports can break on a move; npm packages are resolved elsewhere
+  if (!/^\.{1,2}[\\/]/.test(data)) {
+    return undefined;
+  }
+
+  let root: string;
+  try {
+    root = findRoot(fullFlowPath);
+  } catch (e) {
+    return undefined;
+  }
+
+  const candidates = glob
+    .sync("**/" + basename(data), { cwd: root, ignore: "**/node_modules/**" })
+    .map((relPath) => join(root, relPath))
+    .filter((p) => p !== directPath && definesNode(p, nodeId));
+
+  if (candidates.length === 0) {
+    return undefined;
+  }
+
+  const flowDir = join(fullFlowPath, "..");
+  return candidates.sort(
+    (a, b) => pathDepth(flowDir, a) - pathDepth(flowDir, b)
+  )[0];
+}
+
+function definesNode(path: string, nodeId?: string): boolean {
+  if (!nodeId) {
+    return existsSync(path);
+  }
+  try {
+    if (path.endsWith(".flyde")) {
+      return deserializeFlowByPath(path).node.id === nodeId;
+    }
+    return resolveCodeNodeDependencies(path).nodes.some(
+      ({ node }) => node.id === nodeId
+    );
+  } catch (e) {
+    return false;
+  }
+}
+
+function pathDepth(fromDir: string, path: string): number {
+  return relative(fromDir, path).split(/[\\/]/).length;
 }
 
 // Helper function to get the source code of a node from a file
