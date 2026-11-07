@@ -15,6 +15,7 @@ import { activateReporter, reportEvent, analytics } from "./analytics";
 import { showFirstRunPrivacyNotice, showPrivacySettings } from "./privacyNotice";
 
 import { Template, getTemplates, scaffoldTemplate } from "./templateUtils";
+import { registerImportUpdater } from "./updateImportsOnFileMove";
 
 // the application insights key (also known as instrumentation key)
 
@@ -29,6 +30,8 @@ let process: execa.ExecaChildProcess | undefined;
 const FLYDE_DEFAULT_SERVER_PORT = 8545;
 
 export function activate(context: vscode.ExtensionContext) {
+  // Listen to vscode.workspace.onDidRenameFiles to update relative paths on file moves (#112)
+  registerImportUpdater(context);
   // eslint-disable-next-line @typescript-eslint/naming-convention
   const { Uri } = vscode;
   const { fs } = vscode.workspace;
