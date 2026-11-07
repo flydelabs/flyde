@@ -7,5 +7,6 @@ export * from "./run-flow";
 // Server-specific exports
 export { createServerReferencedNodeFinder } from "./resolver/server/findReferencedNodeServer";
 export * from "./resolver/server/resolveImportablePaths";
+export * from "./resolver/server/resolveMovedFileImport";
 export { resolveFlowByPath } from "./resolver/server/resolveFlowServer";
 export { resolveCodeNodeDependencies, isCodeNodePath } from "./resolver/server/serverUtils";
