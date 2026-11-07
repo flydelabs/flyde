@@ -10,6 +10,8 @@ var fp = require("find-free-port");
 import { createEmbeddedServer } from "./embedded-server";
 
 import { join } from "path";
+import * as path from "path";
+import * as yaml from "yaml";
 
 import { activateReporter, reportEvent, analytics } from "./analytics";
 import { showFirstRunPrivacyNotice, showPrivacySettings } from "./privacyNotice";
@@ -227,6 +229,72 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.commands.registerCommand("flyde.showPrivacySettings", async () => {
       await showPrivacySettings();
+    })
+  );
+
+  context.subscriptions.push(
+    vscode.workspace.onDidRenameFiles(async (event) => {
+      const flydeFiles = await vscode.workspace.findFiles("**/*.flyde", "**/node_modules/**");
+
+      for (const { oldUri, newUri } of event.files) {
+        const oldFsPath = oldUri.fsPath;
+        const newFsPath = newUri.fsPath;
+
+        for (const flydeUri of flydeFiles) {
+          const currentFlydePath =
+            flydeUri.fsPath === oldFsPath ? newFsPath : flydeUri.fsPath;
+          const docBytes = await vscode.workspace.fs.readFile(
+            vscode.Uri.file(currentFlydePath)
+          );
+          const content = Buffer.from(docBytes).toString("utf8");
+          let parsed: { imports?: Record<string, string | string[]> };
+          try {
+            parsed = yaml.parse(content);
+          } catch {
+            continue;
+          }
+          if (!parsed || typeof parsed !== "object" || !parsed.imports) {
+            continue;
+          }
+
+          const flydeDir = path.dirname(currentFlydePath);
+          const oldFlydeDir =
+            flydeUri.fsPath === newFsPath ? path.dirname(oldFsPath) : flydeDir;
+          const updatedImports: Record<string, string | string[]> = {};
+          let changed = false;
+
+          for (const [impPath, symbols] of Object.entries(parsed.imports)) {
+            const absTarget = path.resolve(oldFlydeDir, impPath);
+            const resolvedTarget =
+              absTarget === oldFsPath
+                ? newFsPath
+                : absTarget.startsWith(oldFsPath + path.sep)
+                ? path.join(newFsPath, path.relative(oldFsPath, absTarget))
+                : absTarget;
+
+            let nextRel = path
+              .relative(flydeDir, resolvedTarget)
+              .split(path.sep)
+              .join("/");
+            if (!nextRel.startsWith(".")) {
+              nextRel = `./${nextRel}`;
+            }
+            if (nextRel !== impPath) {
+              changed = true;
+            }
+            updatedImports[nextRel] = symbols;
+          }
+
+          if (changed) {
+            parsed.imports = updatedImports;
+            const nextYaml = yaml.stringify(parsed);
+            await vscode.workspace.fs.writeFile(
+              vscode.Uri.file(currentFlydePath),
+              Buffer.from(nextYaml, "utf8")
+            );
+          }
+        }
+      }
     })
   );
 }
