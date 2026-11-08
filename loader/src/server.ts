@@ -9,3 +9,5 @@ export { createServerReferencedNodeFinder } from "./resolver/server/findReferenc
 export * from "./resolver/server/resolveImportablePaths";
 export { resolveFlowByPath } from "./resolver/server/resolveFlowServer";
 export { resolveCodeNodeDependencies, isCodeNodePath } from "./resolver/server/serverUtils";
+export { getFlowEditsForFileMoves } from "./refactor/getFlowEditsForFileMoves";
+export type { FileMove, FlowTextEdit } from "./refactor/getFlowEditsForFileMoves";

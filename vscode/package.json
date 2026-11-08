@@ -45,7 +45,9 @@
     "release": "vsce package --no-yarn && vsce publish minor"
   },
   "main": "./out/extension.js",
-  "activationEvents": [],
+  "activationEvents": [
+    "workspaceContains:**/*.flyde"
+  ],
   "contributes": {
     "customEditors": [
       {
@@ -197,6 +199,21 @@
           "type": "boolean",
           "default": true,
           "description": "Enable anonymous usage analytics to help improve Flyde. No personal information is collected."
+        },
+        "flyde.updateImportsOnFileMove.enabled": {
+          "type": "string",
+          "enum": [
+            "prompt",
+            "always",
+            "never"
+          ],
+          "enumDescriptions": [
+            "Prompt on each move.",
+            "Always update imports automatically.",
+            "Never update imports and don't prompt."
+          ],
+          "default": "prompt",
+          "description": "Controls whether relative imports in Flyde flows are updated when a file or folder is moved or renamed in VS Code."
         }
       }
     }
