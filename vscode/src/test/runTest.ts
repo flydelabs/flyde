@@ -1,3 +1,5 @@
+import * as fs from "fs";
+import * as os from "os";
 import * as path from "path";
 
 import { runTests } from "@vscode/test-electron";
@@ -28,6 +30,18 @@ async function main() {
       extensionTestsPath,
       version: '1.98.2',
       launchArgs: ["--disable-extensions"],
+      timeout: 60000,
+    });
+
+    // Tests that need an open workspace folder (e.g. workspace-wide file events)
+    const workspacePath = fs.mkdtempSync(path.join(os.tmpdir(), "flyde-test-workspace-"));
+    await runTests({
+      extensionDevelopmentPath,
+      extensionTestsPath,
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      extensionTestsEnv: { FLYDE_TEST_SUITE: "workspace" },
+      version: '1.98.2',
+      launchArgs: [workspacePath, "--disable-extensions"],
       timeout: 60000,
     });
   } catch (err) {

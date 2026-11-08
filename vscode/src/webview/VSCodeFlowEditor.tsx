@@ -161,9 +161,10 @@ export const VSCodeFlowEditor: React.FC<BootstrapData> = ({
     if (!didMount.current) {
       didMount.current = true;
     } else {
-      if (lastChangeReason.current !== "external-changes") {
-        debouncedSaveFile(editorState.flow, relativeFile);
+      if (lastChangeReason.current === "external-changes") {
         lastChangeReason.current = "n/a";
+      } else {
+        debouncedSaveFile(editorState.flow, relativeFile);
       }
     }
   }, [editorState.flow, debouncedSaveFile, relativeFile]);

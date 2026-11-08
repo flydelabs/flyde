@@ -389,7 +389,11 @@ export class FlydeEditorEditorProvider
                 const range = new vscode.Range(0, 0, document.lineCount, 0);
                 edit.replace(document.uri, range, serialized);
                 lastSaveBy = webviewId;
-                await vscode.workspace.applyEdit(edit);
+                try {
+                  await vscode.workspace.applyEdit(edit);
+                } finally {
+                  lastSaveBy = "";
+                }
                 messageResponse(event, undefined);
                 break;
               }
@@ -751,15 +755,22 @@ export class FlydeEditorEditorProvider
       (e) => {
         const isSameUri = e.document.uri.toString() === document.uri.toString();
 
-        if (isSameUri && lastSaveBy !== webviewId) {
-          const raw = document.getText();
-          const flow: FlydeFlow = deserializeFlow(raw, fullDocumentPath);
-          webviewPanel.webview.postMessage({
-            type: "onExternalFlowChange",
-            requestId: "TODO-cuid",
-            params: { flow },
-            source: "extension",
-          });
+        if (isSameUri && lastSaveBy !== webviewId && e.contentChanges.length > 0) {
+          try {
+            const flow = deserializeFlow(document.getText(), fullDocumentPath);
+            const node = resolveEditorNode(
+              flow.node,
+              createNodeFinderWithOverrides(fullDocumentPath)
+            );
+            webviewPanel.webview.postMessage({
+              type: "onExternalFlowChange",
+              requestId: "TODO-cuid",
+              params: { flow: { ...flow, node } },
+              source: "extension",
+            });
+          } catch (error) {
+            console.error("Failed to sync external flow change", error);
+          }
         }
       }
     );

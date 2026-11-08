@@ -12,8 +12,13 @@ export function run(): Promise<void> {
 
 	const testsRoot = path.resolve(__dirname, '..');
 
+	const workspaceTests = 'workspace/**/*.test.js';
+	const isWorkspaceSuite = process.env.FLYDE_TEST_SUITE === 'workspace';
+	const pattern = isWorkspaceSuite ? workspaceTests : '**/**.test.js';
+	const ignore = isWorkspaceSuite ? [] : [workspaceTests];
+
 	return new Promise((c, e) => {
-		glob('**/**.test.js', { cwd: testsRoot }, (err, files) => {
+		glob(pattern, { cwd: testsRoot, ignore }, (err, files) => {
 			if (err) {
 				return e(err);
 			}
