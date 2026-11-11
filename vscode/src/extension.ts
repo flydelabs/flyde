@@ -10,6 +10,7 @@ var fp = require("find-free-port");
 import { createEmbeddedServer } from "./embedded-server";
 
 import { join } from "path";
+import { updateFlowImportsOnMove } from "@flyde/loader";
 
 import { activateReporter, reportEvent, analytics } from "./analytics";
 import { showFirstRunPrivacyNotice, showPrivacySettings } from "./privacyNotice";
@@ -229,7 +230,44 @@ export function activate(context: vscode.ExtensionContext) {
       await showPrivacySettings();
     })
   );
+  context.subscriptions.push(
+    vscode.workspace.onDidRenameFiles(async (event) => {
+      const movedFiles = event.files.map((f) => ({
+        oldPath: f.oldUri.fsPath,
+        newPath: f.newUri.fsPath,
+      }));
+      const renamedMap = new Map<string, string>(
+        movedFiles.map((m) => [m.newPath, m.oldPath])
+      );
+      const flydeUris = await vscode.workspace.findFiles(
+        "**/*.flyde",
+        "**/node_modules/**"
+      );
+      for (const uri of flydeUris) {
+        try {
+          const rawBytes = await fs.readFile(uri);
+          const text = Buffer.from(rawBytes).toString("utf8");
+          const currentPath = uri.fsPath;
+          const previousFlowPath = renamedMap.get(currentPath) ?? currentPath;
+          const result = updateFlowImportsOnMove(
+            text,
+            previousFlowPath,
+            currentPath,
+            movedFiles
+          );
+          if (result.updated) {
+            await fs.writeFile(uri, Buffer.from(result.content, "utf8"));
+          }
+        } catch (err) {
+          debugOutputChannel.appendLine(
+            `Failed updating imports for ${uri.fsPath}: ${err}`
+          );
+        }
+      }
+    })
+  );
 }
+
 
 // this method is called when your extension is deactivated
 export function deactivate() {

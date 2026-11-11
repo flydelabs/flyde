@@ -8,7 +8,8 @@ import {
 
 import * as _Nodes from "@flyde/nodes/dist/all";
 import { join } from "path";
-import { existsSync, readFileSync } from "fs";
+import { existsSync, readdirSync, readFileSync, statSync } from "fs";
+import { basename, dirname } from "path";
 import { resolveImportablePaths } from "./resolveImportablePaths";
 import { deserializeFlowByPath } from "../../serdes";
 import { ReferencedNodeFinder } from "./../ReferencedNodeFinder";
@@ -135,7 +136,7 @@ export function createServerReferencedNodeFinder(
         return nodeWrapper;
       }
       case "file": {
-        const fullFilePath = join(fullFlowPath, "..", instance.source.data);
+        const fullFilePath = resolveFileWithMovedFallback(fullFlowPath, instance.source.data);
 
         // Check if the file is a .flyde file (visual flow)
         if (fullFilePath.endsWith('.flyde')) {
@@ -200,8 +201,49 @@ export function createServerReferencedNodeFinder(
   };
 }
 
+function findMovedFileInTree(rootDir: string, targetBaseName: string, maxDepth = 4): string | undefined {
+  if (maxDepth < 0 || !existsSync(rootDir)) {
+    return undefined;
+  }
+  try {
+    const entries = readdirSync(rootDir);
+    for (const entry of entries) {
+      if (entry === "node_modules" || entry === ".git" || entry === "dist") continue;
+      const full = join(rootDir, entry);
+      const st = statSync(full);
+      if (st.isFile() && entry === targetBaseName) {
+        return full;
+      }
+      if (st.isDirectory()) {
+        const found = findMovedFileInTree(full, targetBaseName, maxDepth - 1);
+        if (found) return found;
+      }
+    }
+  } catch {
+    return undefined;
+  }
+  return undefined;
+}
+
+function resolveFileWithMovedFallback(fullFlowPath: string, relativePath: string): string {
+  const directPath = join(fullFlowPath, "..", relativePath);
+  if (existsSync(directPath)) {
+    return directPath;
+  }
+  const targetBaseName = basename(relativePath);
+  const flowDir = dirname(fullFlowPath);
+  const searchRoots = [flowDir, dirname(flowDir), dirname(dirname(flowDir))];
+  for (const root of searchRoots) {
+    const fallback = findMovedFileInTree(root, targetBaseName, 3);
+    if (fallback) {
+      return fallback;
+    }
+  }
+  return directPath;
+}
+
 function getLocalOrPackagePaths(fullFlowPath: string, importPath: string) {
-  const fullImportPath = join(fullFlowPath, "..", importPath);
+  const fullImportPath = resolveFileWithMovedFallback(fullFlowPath, importPath);
 
   if (existsSync(fullImportPath)) {
     return [fullImportPath];
