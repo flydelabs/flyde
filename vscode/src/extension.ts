@@ -14,7 +14,11 @@ import { join } from "path";
 import { activateReporter, reportEvent, analytics } from "./analytics";
 import { showFirstRunPrivacyNotice, showPrivacySettings } from "./privacyNotice";
 
-import { Template, getTemplates, scaffoldTemplate } from "./templateUtils";
+import {
+  createRenameMapper,
+  updateFlowReferences,
+} from "./updateFlowReferences";
+import { Template,getTemplates, scaffoldTemplate } from "./templateUtils";
 
 // the application insights key (also known as instrumentation key)
 
@@ -221,6 +225,38 @@ export function activate(context: vscode.ExtensionContext) {
         .update("flyde.openAiToken", "", vscode.ConfigurationTarget.Global);
 
       vscode.window.showInformationMessage("OpenAI API Token cleared");
+    })
+  );
+
+  context.subscriptions.push(
+    vscode.workspace.onDidRenameFiles(async (event) => {
+      const renames = event.files.map((f) => ({
+        oldPath: f.oldUri.fsPath,
+        newPath: f.newUri.fsPath,
+      }));
+      const mapper = createRenameMapper(renames);
+      const reverse = createRenameMapper(
+        renames.map((r) => ({ oldPath: r.newPath, newPath: r.oldPath }))
+      );
+      const flowUris = await vscode.workspace.findFiles(
+        "**/*.flyde",
+        "**/node_modules/**"
+      );
+      for (const uri of flowUris) {
+        try {
+          const newPath = uri.fsPath;
+          const oldPath = reverse(newPath);
+          const text = Buffer.from(await fs.readFile(uri)).toString("utf8");
+          const updated = updateFlowReferences(text, oldPath, newPath, mapper);
+          if (updated !== text) {
+            await fs.writeFile(uri, Buffer.from(updated, "utf8"));
+          }
+        } catch (error) {
+          mainOutputChannel.appendLine(
+            `Failed updating references in ${uri.fsPath}: ${error}`
+          );
+        }
+      }
     })
   );
 
