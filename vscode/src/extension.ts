@@ -15,6 +15,7 @@ import { activateReporter, reportEvent, analytics } from "./analytics";
 import { showFirstRunPrivacyNotice, showPrivacySettings } from "./privacyNotice";
 
 import { Template, getTemplates, scaffoldTemplate } from "./templateUtils";
+import { RenamedFileEntry, updateFlowContentOnFileRename } from "./updateMovedFileImports";
 
 // the application insights key (also known as instrumentation key)
 
@@ -227,6 +228,71 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.commands.registerCommand("flyde.showPrivacySettings", async () => {
       await showPrivacySettings();
+    })
+  );
+
+  context.subscriptions.push(
+    vscode.workspace.onDidRenameFiles(async (event) => {
+      const renamedFiles: RenamedFileEntry[] = event.files.map((f) => ({
+        oldFsPath: f.oldUri.fsPath,
+        newFsPath: f.newUri.fsPath,
+      }));
+
+      if (renamedFiles.length === 0) {
+        return;
+      }
+
+      const flowUris = await vscode.workspace.findFiles(
+        "**/*.flyde",
+        "**/node_modules/**"
+      );
+      if (flowUris.length === 0) {
+        return;
+      }
+
+      const edit = new vscode.WorkspaceEdit();
+      let hasEdits = false;
+
+      for (const flowUri of flowUris) {
+        const flowNewFsPath = flowUri.fsPath;
+        let flowOldFsPath = flowNewFsPath;
+
+        for (const entry of renamedFiles) {
+          const normFlow = flowNewFsPath.replace(/\\/g, "/");
+          const normNew = entry.newFsPath.replace(/\\/g, "/").replace(/\/$/, "");
+          if (normFlow === normNew) {
+            flowOldFsPath = entry.oldFsPath;
+            break;
+          }
+          if (normFlow.startsWith(`${normNew}/`)) {
+            const sub = flowNewFsPath.slice(entry.newFsPath.replace(/[\\/]+$/, "").length);
+            flowOldFsPath = `${entry.oldFsPath.replace(/[\\/]+$/, "")}${sub}`;
+            break;
+          }
+        }
+
+        const doc = await vscode.workspace.openTextDocument(flowUri);
+        const originalText = doc.getText();
+        const result = updateFlowContentOnFileRename(
+          originalText,
+          flowOldFsPath,
+          flowNewFsPath,
+          renamedFiles
+        );
+
+        if (result.changed && result.content !== originalText) {
+          const fullRange = new vscode.Range(
+            doc.positionAt(0),
+            doc.positionAt(originalText.length)
+          );
+          edit.replace(flowUri, fullRange, result.content);
+          hasEdits = true;
+        }
+      }
+
+      if (hasEdits) {
+        await vscode.workspace.applyEdit(edit);
+      }
     })
   );
 }
